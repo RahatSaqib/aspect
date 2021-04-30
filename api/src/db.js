@@ -17,7 +17,7 @@ function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
     defaultSort
   )
   queryBuilder
-    .orderBy(sortingAndPagingValues.sortCol, sortingAndPagingValues.sortDir)
+    .orderBy(sortingAndPagingValues.orderBy)
     .limit(sortingAndPagingValues.size)
     .offset(sortingAndPagingValues.skip)
 }
@@ -25,8 +25,8 @@ function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
 // extracts the parameters related to sorting from the candidate params and
 // modifies the query builder with the sort modifications
 function sortParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingValues = getSortParams(params, sortColumnMapping, defaultSort)
-  queryBuilder.orderBy(sortingValues.sortCol, sortingValues.sortDir)
+  const { orderBy } = getSortParams(params, sortColumnMapping, defaultSort)
+  queryBuilder.orderBy(orderBy)
 }
 
 // extracts the parameters related to paging from the candidate params and

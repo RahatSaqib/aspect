@@ -27,6 +27,7 @@ const { exportDevices } = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
+const { taskTracker } = require('../scheduler/taskTracker')
 
 function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
@@ -939,7 +940,8 @@ const subscriptions = [
       DEVICE_MAINTENANCE: onDeviceUpdateMaintenanceStatus,
       DEVICE_NO_RESULTS: onDeviceUpdateMaintenanceStatusNoResults,
       DEVICE_MAINTENANCE_RESOLVED: onDeviceMaintenanceResolved,
-      DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: onDeviceMaintenanceStatusLogScheduled,
+      DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: async (action, context) =>
+        taskTracker(onDeviceMaintenanceStatusLogScheduled, action, context),
     },
   },
 ]

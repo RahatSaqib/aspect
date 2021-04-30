@@ -2,11 +2,9 @@ import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import partial from 'lodash/partial'
-import identity from 'lodash/identity'
 
 import Immutable from 'immutable'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -45,124 +43,50 @@ import { receiveList, Items } from '../../shared/metaReducers/items'
 
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./ReporterList.css'))
 
-const messages = defineMessages({
-  reportersTitle: {
-    id: 'pages.ReporterList.reportersTitle',
-    defaultMessage: 'Reporters',
-  },
-  reporterUser: {
-    id: 'pages.ReporterList.user',
-    defaultMessage: 'User',
-  },
-  reporterDevice: {
-    id: 'pages.ReporterList.reporterDevice',
-    defaultMessage: 'Device',
-  },
-  revoked: {
-    id: 'pages.ReporterList.revoked',
-    defaultMessage: 'Revoked',
-  },
-  connectedSince: {
-    id: 'pages.ReporterList.connectedSince',
-    defaultMessage: 'Connected Since',
-  },
-  lastSeen: {
-    id: 'pages.ReporterList.lastSeen',
-    defaultMessage: 'Last Seen',
-  },
-  numberOfTests: {
-    id: 'pages.ReporterList.numberOfTestsLeft',
-    defaultMessage: 'Number Of Tests Delivered',
-  },
-  delivered: {
-    id: 'pages.ReporterList.delivered',
-    defaultMessage: 'Delivered',
-  },
-  requiresFollowUp: {
-    id: 'pages.ReporterList.requiresFollowUp',
-    defaultMessage: 'Requires Follow-up',
-  },
-  comfirmedFollowup: {
-    id: 'pages.ReporterList.followup',
-    defaultMessage: '% Confirmed Follow-up',
-  },
-  acknowledgedRatio: {
-    id: 'pages.ReporterList.acknowledgedRatio',
-    defaultMessage: '% Acknowledged',
-  },
-  totalOnTreatment: {
-    id: 'pages.ReporterList.totalOnTreatment',
-    defaultMessage: 'On Treatment',
-  },
-  paginatorStatus: {
-    id: 'pages.ReporterList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# reporter}
-      other {# reporters}
-    }`,
-  },
-})
-const messageByI18nKey = partial(
-  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
-  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
-  {
-    default: identity,
-  }
-)
-
-const getBaseColumns = intl => {
+const getBaseColumns = formatMessage => {
   return Immutable.List([
     {
-      key: 'user',
-      label: intl.formatMessage(messages.reporterUser),
+      key: 'siteName',
+      label: formatMessage(messages.siteName),
       sortable: true,
     },
     {
-      key: 'deviceName',
-      label: intl.formatMessage(messages.reporterDevice),
-      sortable: true,
-    },
-    {
-      key: 'createdOn',
-      label: intl.formatMessage(messages.connectedSince),
-      sortable: true,
-    },
-    {
-      key: 'lastSeen',
-      label: intl.formatMessage(messages.lastSeen),
+      key: 'totalResults',
+      label: formatMessage(messages.totalResults),
       sortable: true,
     },
     {
       key: 'delivered',
-      label: intl.formatMessage(messages.delivered),
+      label: formatMessage(messages.delivered),
       sortable: true,
     },
     {
-      key: 'requiresFollowUp',
-      label: intl.formatMessage(messages.requiresFollowUp),
+      key: 'requiresTreatment',
+      label: formatMessage(messages.requiresTreatment),
       sortable: true,
     },
     {
-      key: 'confirmFollowUpRatio',
-      label: intl.formatMessage(messages.comfirmedFollowup),
+      key: 'onTreatment',
+      label: formatMessage(messages.onTreatment),
       sortable: true,
     },
     {
-      key: 'acknowledgedRatio',
-      label: intl.formatMessage(messages.acknowledgedRatio),
+      key: 'transferred',
+      label: formatMessage(messages.transferred),
       sortable: true,
     },
     {
-      key: 'totalOnTreatment',
-      label: intl.formatMessage(messages.totalOnTreatment),
+      key: 'notPossible',
+      label: formatMessage(messages.notPossible),
       sortable: true,
     },
     {
-      key: 'revoked',
-      label: intl.formatMessage(messages.revoked),
+      key: 'notOnTreatment',
+      label: formatMessage(messages.notOnTreatment),
       sortable: true,
     },
   ])
@@ -171,14 +95,9 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    contactNameOrEmail: true,
-    requiredPermissions: [],
-  },
   { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
   { revoked: true, requiredPermissions: [] },
-  { treatmentStatus: true, requiredPermissions: [] },
   {
     assayAndResultCategory: true,
     requiredPermissions: ['assay:view'],
@@ -187,16 +106,14 @@ const FILTERS_CONFIG = [
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
-    'user',
-    'deviceName',
-    'createdOn',
-    'lastSeen',
+    'siteName',
+    'totalResults',
     'delivered',
-    'confirmFollowUpRatio',
-    'approval',
-    'acknowledgedRatio',
-    'requiresFollowUp',
-    'totalOnTreatment',
+    'requiresTreatment',
+    'onTreatment',
+    'transferred',
+    'notPossible',
+    'notOnTreatment',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -261,7 +178,7 @@ export const ReporterListWithProps = ({
               .map(id => items.byId.get(id))
               .map(reporter => (
                 <ReporterDataTableRow
-                  key={reporter.get('id')}
+                  key={reporter.get('siteId')}
                   intl={intl}
                   reporter={reporter}
                   onRevokedItem={onRevokedItem}
@@ -287,7 +204,6 @@ export const ReporterListWithProps = ({
 )
 
 const ReporterList = () => {
-  // >>>>>> Hooks <<<<<<
   const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
@@ -295,11 +211,10 @@ const ReporterList = () => {
     jwt: { permissions: userPermissions },
   } = useAuthState()
 
-  // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(
     new Table({
-      sortCol: 'user',
+      sortCol: 'siteName',
       sortDir: 'desc',
       filters: Immutable.fromJS({
         assayId: null,
@@ -312,7 +227,6 @@ const ReporterList = () => {
   const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
 
-  // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
@@ -331,7 +245,6 @@ const ReporterList = () => {
     }
   )
 
-  // >>>>>> Queries <<<<<<
   const { isLoading, isError, data, error } = useQuery(
     [REPORTERS_LIST.KEY, { params }],
     async () =>
@@ -357,7 +270,7 @@ const ReporterList = () => {
     }
 
     const sortPage = makeSortPageSelector({
-      sortCol: 'user',
+      sortCol: 'siteName',
       sortDir: 'desc',
     })
     const urlSearchParams = new URLSearchParams(location.search)
@@ -370,32 +283,17 @@ const ReporterList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
-  // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
       const { data: list, total: totalItems } = data
-
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems))
-      setColumns(
-        getBaseColumns(intl).concat(
-          table.extraColumns.map(column => ({
-            key: column.get('db'),
-            label: messageByI18nKey(column.get('i18nKey'))(
-              column.get('title'),
-              intl
-            ),
-            sortable: true,
-            hiddenOn: 'md',
-          }))
-        )
-      )
+      setColumns(getBaseColumns(intl.formatMessage))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {

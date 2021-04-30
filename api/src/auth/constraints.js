@@ -544,21 +544,27 @@ function addConstraintWithJobFunction({
   allowAdminThrough = false,
 }) {
   if (alias && constraint) {
-    queryBuilder.andWhere(qb => {
-      if (
-        jobFunctionAlias &&
-        jobFunctionConstraint &&
-        (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
-      ) {
-        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
-          _.mapKeys(
-            _.omit(jobFunctionConstraint, 'isAdmin'),
-            (v, k) => `${jobFunctionAlias}.${k}`
+    queryBuilder.where(qb => {
+      Object.keys(constraint).forEach(k => {
+        qb.orWhere(qb => qb.whereNull(`${alias}.${k}`))
+      })
+      qb.orWhere(qb => {
+        qb.orWhere(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
+        if (
+          jobFunctionAlias &&
+          jobFunctionConstraint &&
+          (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
+        ) {
+          qb.andWhere(
+            _.mapKeys(
+              _.omit(jobFunctionConstraint, 'isAdmin'),
+              (v, k) => `${jobFunctionAlias}.${k}`
+            )
           )
-        )
-      } else {
-        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
-      }
+        }
+      })
+    })
+    queryBuilder.andWhere(qb => {
       if (personAlias && personConstraint) {
         qb.andWhere(
           _.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`)

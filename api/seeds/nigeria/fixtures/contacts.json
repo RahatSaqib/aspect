@@ -539,13 +539,17 @@
     "username": "ghmoniya_dots",
     "password": "n2BtRG",
     "personCell": "07067176150",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Akinyele"
-    }],
-    "sites": [{
-      "shortName": "General Hospital Moniya"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Moniya"
+      }
+    ]
   },
   {
     "personName": "General Hospital Igboho",
@@ -555,13 +559,17 @@
     "username": "ghigboho_dots",
     "password": "fyLSU9",
     "personCell": "08051686730",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Orelope"
-    }],
-    "sites": [{
-      "shortName": "General Hospital Igboho"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Orelope"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Igboho"
+      }
+    ]
   },
   {
     "personName": "Phc Agbongbon",
@@ -571,13 +579,17 @@
     "username": "agbongbon_dots",
     "password": "dcuT5P",
     "personCell": "08035632096",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan South-East"
-    }],
-    "sites": [{
-      "shortName": "Phc Agbongbon"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Agbongbon"
+      }
+    ]
   },
   {
     "personName": "Idi Ogungun Primary Health Center",
@@ -587,13 +599,17 @@
     "username": "idi_dots",
     "password": "qsMSK8",
     "personCell": "08054033411",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan North"
-    }],
-    "sites": [{
-      "shortName": "Idi Ogungun Primary Health Center"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Idi Ogungun Primary Health Center"
+      }
+    ]
   },
   {
     "personName": "St Peter General Hospital",
@@ -603,13 +619,17 @@
     "username": "stpeter_dots",
     "password": "qhhahg",
     "personCell": "08051192859",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan North-East"
-    }],
-    "sites": [{
-      "shortName": "St Peter General Hospital"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "St Peter General Hospital"
+      }
+    ]
   },
   {
     "personName": "Omi Adio Primary Health Center",
@@ -619,13 +639,17 @@
     "username": "omi_dots",
     "password": "mjjrpq",
     "personCell": "08034646586",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ido"
-    }],
-    "sites": [{
-      "shortName": "Omi Adio Primary Health Center"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Omi Adio Primary Health Center"
+      }
+    ]
   },
   {
     "personName": "Alegongo Primary Health Center",
@@ -635,13 +659,17 @@
     "username": "alegongo_dots",
     "password": "adyxfs",
     "personCell": "08052344809",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Lagelu"
-    }],
-    "sites": [{
-      "shortName": "Alegongo Primary Health Center"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Lagelu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Alegongo Primary Health Center"
+      }
+    ]
   },
   {
     "personName": "Phc Iwo Road",
@@ -651,13 +679,17 @@
     "username": "iworoad_dots",
     "password": "8yTLnk",
     "personCell": "08053444331",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan North-East"
-    }],
-    "sites": [{
-      "shortName": "Phc Iwo Road"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Iwo Road"
+      }
+    ]
   },
   {
     "personName": "Phc Molete",
@@ -667,13 +699,17 @@
     "username": "molete_dots",
     "password": "UrH4v4",
     "personCell": "08035772255",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan South-West"
-    }],
-    "sites": [{
-      "shortName": "Phc Molete"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Molete"
+      }
+    ]
   },
   {
     "personName": "General Hospital Adeoyo",
@@ -683,13 +719,17 @@
     "username": "ghadeoyo_dots",
     "password": "Y5sBPB",
     "personCell": "08038012049",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan North"
-    }],
-    "sites": [{
-      "shortName": "General Hospital Adeoyo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Adeoyo"
+      }
+    ]
   },
   {
     "personName": "Phc Odo Ona Elewe",
@@ -699,13 +739,17 @@
     "username": "phcodo_dots",
     "password": "NUkj6p",
     "personCell": "0810 176 6026",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Oluyole"
-    }],
-    "sites": [{
-      "shortName": "Phc Odo Ona Elewe"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Odo Ona Elewe"
+      }
+    ]
   },
   {
     "personName": "General Hospital Eruwa",
@@ -715,13 +759,17 @@
     "username": "gheruwa_dots",
     "password": "kPpdgW",
     "personCell": "0806 633 4593",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibarapa East"
-    }],
-    "sites": [{
-      "shortName": "General Hospital Eruwa"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Eruwa"
+      }
+    ]
   },
   {
     "personName": "Gh Igbo Ora",
@@ -731,13 +779,17 @@
     "username": "ghigbo_dots",
     "password": "QVXtJR",
     "personCell": "09035348084",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibarapa Central"
-    }],
-    "sites": [{
-      "shortName": "Gh Igbo Ora"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Gh Igbo Ora"
+      }
+    ]
   },
   {
     "personName": "Chest Hospital Jericho",
@@ -747,13 +799,17 @@
     "username": "jericho_dots",
     "password": "VmAVGW",
     "personCell": "08036976413",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan North-West"
-    }],
-    "sites": [{
-      "shortName": "GCH Jericho Ibadan"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GCH Jericho Ibadan"
+      }
+    ]
   },
   {
     "personName": "Ring Road State Hospital",
@@ -763,13 +819,17 @@
     "username": "ring_dots",
     "password": "X2agjs",
     "personCell": "07055012111",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan South-West"
-    }],
-    "sites": [{
-      "shortName": "Ring-Road State Hosp. Ibadan"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ring-Road State Hosp. Ibadan"
+      }
+    ]
   },
   {
     "personName": "Phc Adaramagbo",
@@ -779,13 +839,17 @@
     "username": "adaramagbo_dots",
     "password": "27Qc7G",
     "personCell": "08033935325",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Oluyole"
-    }],
-    "sites": [{
-      "shortName": "Phc Adaramagbo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Adaramagbo"
+      }
+    ]
   },
   {
     "personName": "Phc Ojoo",
@@ -795,13 +859,17 @@
     "username": "ojoo_dots",
     "password": "t9Nemk",
     "personCell": "09037406685",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Akinyele"
-    }],
-    "sites": [{
-      "shortName": "Phc Ojoo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Ojoo"
+      }
+    ]
   },
   {
     "personName": "General Hospital Saki",
@@ -811,13 +879,17 @@
     "username": "ghsaki_dots",
     "password": "YYy76K",
     "personCell": "08077800387",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Saki West"
-    }],
-    "sites": [{
-      "shortName": "State Hospital, Saki"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Saki West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Saki"
+      }
+    ]
   },
   {
     "personName": "2nd Division Hospital",
@@ -826,13 +898,17 @@
     "username": "nddivision_dots",
     "password": "4hdut3",
     "personCell": "08106397600",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Akinyele"
-    }],
-    "sites": [{
-      "shortName": "2 Division Hospital"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "2 Division Hospital"
+      }
+    ]
   },
   {
     "personName": "Phc Apete",
@@ -841,13 +917,17 @@
     "username": "apete_dots",
     "password": "YabfmA",
     "personCell": "08034080021",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ido"
-    }],
-    "sites": [{
-      "shortName": "Phc Apete"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Apete"
+      }
+    ]
   },
   {
     "personName": "Sh Oyo",
@@ -857,13 +937,17 @@
     "username": "oyo_dots",
     "password": "pSVa8Y",
     "personCell": "08057209991",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Oyo East"
-    }],
-    "sites": [{
-      "shortName": "State Hospital, OYO"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oyo East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, OYO"
+      }
+    ]
   },
   {
     "personName": "Sh Ogbomosho",
@@ -873,13 +957,17 @@
     "username": "ogbomoo_dots",
     "password": "xjwZu6",
     "personCell": "08066443117",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ogbomosho South"
-    }],
-    "sites": [{
-      "shortName": "Sh Ogbomosho"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sh Ogbomosho"
+      }
+    ]
   },
   {
     "personName": "Odo Oba Phc",
@@ -888,13 +976,17 @@
     "username": "odo_dots",
     "password": "sQKvhU",
     "personCell": "08162180175",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ogo Oluwa"
-    }],
-    "sites": [{
-      "shortName": "Odo Oba Phc"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogo Oluwa"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Odo Oba Phc"
+      }
+    ]
   },
   {
     "personName": "Iseyin Gh",
@@ -903,13 +995,17 @@
     "username": "iseyin_dots",
     "password": "TFD5Pc",
     "personCell": "08038094176",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Iseyin"
-    }],
-    "sites": [{
-      "shortName": "Iseyin Gh"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Iseyin"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Iseyin Gh"
+      }
+    ]
   },
   {
     "personName": "Phc Ajibode",
@@ -919,13 +1015,17 @@
     "username": "ajibode_dots",
     "password": "bKGBy8",
     "personCell": "08110806093",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Akinyele"
-    }],
-    "sites": [{
-      "shortName": "Phc Ajibode"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Ajibode"
+      }
+    ]
   },
   {
     "personName": "Lautech Teaching Hospital",
@@ -935,13 +1035,17 @@
     "username": "lautechth_dots",
     "password": "SjU66k",
     "personCell": "08033597979",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ogbomosho North"
-    }],
-    "sites": [{
-      "shortName": "LAUTECH Teaching Hosp., Osogbo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "LAUTECH Teaching Hosp., Osogbo"
+      }
+    ]
   },
   {
     "personName": "Lad Medical Centre",
@@ -951,13 +1055,17 @@
     "username": "ladmedical_dots",
     "password": "LvdkTh",
     "personCell": "08032512206",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Oluyole"
-    }],
-    "sites": [{
-      "shortName": "Lad Medical Centre"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Lad Medical Centre"
+      }
+    ]
   },
   {
     "personName": "Durojaiye Hospital",
@@ -966,13 +1074,17 @@
     "username": "durojaiye_dots",
     "password": "YvtpMt",
     "personCell": "08020823557",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Oluyole"
-    }],
-    "sites": [{
-      "shortName": "Durojaiye Hospital"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Durojaiye Hospital"
+      }
+    ]
   },
   {
     "personName": "Alafara",
@@ -982,13 +1094,17 @@
     "username": "alafara_dots",
     "password": "FJ8yPT",
     "personCell": "08163630211",
-    "geographies": [{
-      "stateName": "Oyo",
-      "lgaName": "Ibadan North-East"
-    }],
-    "sites": [{
-      "shortName": "Alafara"
-    }]
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Alafara"
+      }
+    ]
   },
   {
     "personName": "Hansens Disease Centre",
@@ -998,13 +1114,17 @@
     "username": "hansens_dots",
     "password": "2LFBhc",
     "personCell": "8034240090",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Abeokuta North"
-    }],
-    "sites": [{
-      "shortName": "Hansens Disease Centre"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Hansens Disease Centre"
+      }
+    ]
   },
   {
     "personName": "Chest Clinic, State Hospital Ijaye",
@@ -1014,13 +1134,17 @@
     "username": "ijaye_dots",
     "password": "ukUSj8",
     "personCell": "8066570063",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Abeokuta South"
-    }],
-    "sites": [{
-      "shortName": "State Hospital Ijaye, Abeokuta"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital Ijaye, Abeokuta"
+      }
+    ]
   },
   {
     "personName": "Sacred Heart Hospital, Lantoro",
@@ -1030,13 +1154,17 @@
     "username": "lantoro_dots",
     "password": "pLa6Xt",
     "personCell": "8038271484",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Abeokuta South"
-    }],
-    "sites": [{
-      "shortName": "Sacred Heart Hosp."
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sacred Heart Hosp."
+      }
+    ]
   },
   {
     "personName": "Federal Medical Centre, Abeokuta",
@@ -1046,13 +1174,17 @@
     "username": "abeokuta_dots",
     "password": "529Cbc",
     "personCell": "0803 577 8186",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Abeokuta South"
-    }],
-    "sites": [{
-      "shortName": "FMC Abeokuta"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "FMC Abeokuta"
+      }
+    ]
   },
   {
     "personName": "Ota",
@@ -1062,13 +1194,17 @@
     "username": "phcota_dots",
     "password": "vQjaaH",
     "personCell": "08029548439",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ado-Odo/Ota"
-    }],
-    "sites": [{
-      "shortName": "Ota"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ota"
+      }
+    ]
   },
   {
     "personName": "Atan Health Centre",
@@ -1078,13 +1214,17 @@
     "username": "atan_dots",
     "password": "DJys9g",
     "personCell": "07082430295",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ado-Odo/Ota"
-    }],
-    "sites": [{
-      "shortName": "Atan Health Centre"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Atan Health Centre"
+      }
+    ]
   },
   {
     "personName": "State Hospital Ota",
@@ -1094,13 +1234,17 @@
     "username": "shota_dots",
     "password": "gk2ZSk",
     "personCell": "08139691019",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ado-Odo/Ota"
-    }],
-    "sites": [{
-      "shortName": "State Hospital, Ota"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Ota"
+      }
+    ]
   },
   {
     "personName": "Oluwalogbon Medical Centre",
@@ -1110,13 +1254,17 @@
     "username": "oluwalogbon_dots",
     "password": "PPSPaa",
     "personCell": "08130158362",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ado-Odo/Ota"
-    }],
-    "sites": [{
-      "shortName": "Oluwalogbon Medical Centre"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Oluwalogbon Medical Centre"
+      }
+    ]
   },
   {
     "personName": "State Hospital, Ilaro",
@@ -1126,13 +1274,17 @@
     "username": "shilaro_dots",
     "password": "B6VYcH",
     "personCell": "08030153839",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Yewa South"
-    }],
-    "sites": [{
-      "shortName": "State Hospital, Ilaro"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Ilaro"
+      }
+    ]
   },
   {
     "personName": "Health Centre, Isaga Owode",
@@ -1141,13 +1293,17 @@
     "username": "isaga_dots",
     "password": "H6LBzm",
     "personCell": "07065439693",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Yewa South"
-    }],
-    "sites": [{
-      "shortName": "Health Centre, Isaga Owode"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Health Centre, Isaga Owode"
+      }
+    ]
   },
   {
     "personName": "Olose",
@@ -1157,13 +1313,17 @@
     "username": "olose_dots",
     "password": "kj52vP",
     "personCell": "08037019490",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ifo"
-    }],
-    "sites": [{
-      "shortName": "Olose"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Olose"
+      }
+    ]
   },
   {
     "personName": "General Hospital Ifo",
@@ -1172,13 +1332,17 @@
     "username": "ifo_dots",
     "password": "xwjCYW",
     "personCell": "08062542570",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ifo"
-    }],
-    "sites": [{
-      "shortName": "GH Ifo, Ogun State"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ifo, Ogun State"
+      }
+    ]
   },
   {
     "personName": "HC Agbado",
@@ -1187,13 +1351,17 @@
     "username": "agbado_dots",
     "password": "8TVe4r",
     "personCell": "09063926072",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ifo"
-    }],
-    "sites": [{
-      "shortName": "HC Agbado"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "HC Agbado"
+      }
+    ]
   },
   {
     "personName": "Obada Prim Health Centre",
@@ -1202,13 +1370,17 @@
     "username": "obada_dots",
     "password": "pwGmf2",
     "personCell": "08050595049",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ijebu North"
-    }],
-    "sites": [{
-      "shortName": "Obada Prim Health Centre"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Obada Prim Health Centre"
+      }
+    ]
   },
   {
     "personName": "State Hospital Ijebu Ode",
@@ -1217,13 +1389,17 @@
     "username": "shijebu_dots",
     "password": "7dGQHs",
     "personCell": "08034495998",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ijebu Ode"
-    }],
-    "sites": [{
-      "shortName": "SH Ijebu-Ode"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu Ode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "SH Ijebu-Ode"
+      }
+    ]
   },
   {
     "personName": "Health Centre, Idobi(Oke Oyinbo)",
@@ -1232,13 +1408,17 @@
     "username": "idobi_dots",
     "password": "ejfuuE",
     "personCell": "08033601131",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ijebu Ode"
-    }],
-    "sites": [{
-      "shortName": "Health Centre, Idobi(Oke Oyinbo)"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu Ode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Health Centre, Idobi(Oke Oyinbo)"
+      }
+    ]
   },
   {
     "personName": "General Hosp Iperu",
@@ -1248,13 +1428,17 @@
     "username": "iperu_dots",
     "password": "9N2ruc",
     "personCell": "8029526349",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ikenne"
-    }],
-    "sites": [{
-      "shortName": "General Hosp Iperu"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ikenne"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hosp Iperu"
+      }
+    ]
   },
   {
     "personName": "General Hosp Idiroko",
@@ -1264,13 +1448,17 @@
     "username": "idiroko_dots",
     "password": "xjSLes",
     "personCell": "08060401313",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ipokia"
-    }],
-    "sites": [{
-      "shortName": "GH Idiroko Ogun State"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ipokia"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Idiroko Ogun State"
+      }
+    ]
   },
   {
     "personName": "General Hospital Isara",
@@ -1280,13 +1468,17 @@
     "username": "isara_dots",
     "password": "FAch8b",
     "personCell": "8075893041",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Remo North"
-    }],
-    "sites": [{
-      "shortName": "State Hospital Isara Ogun State"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Remo North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital Isara Ogun State"
+      }
+    ]
   },
   {
     "personName": "CMPC OOUTH Sagamu",
@@ -1296,13 +1488,17 @@
     "username": "cmpc_dots",
     "password": "aC7hVs",
     "personCell": "8033525790",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Sagamu"
-    }],
-    "sites": [{
-      "shortName": "OOUTH Sagamu"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Sagamu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OOUTH Sagamu"
+      }
+    ]
   },
   {
     "personName": "Itori",
@@ -1312,13 +1508,17 @@
     "username": "itori_dots",
     "password": "VpV4qC",
     "personCell": "08169413908",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ewekoro"
-    }],
-    "sites": [{
-      "shortName": "Itori"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ewekoro"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Itori"
+      }
+    ]
   },
   {
     "personName": "GH Ijebu Ife",
@@ -1327,13 +1527,17 @@
     "username": "ghijebu_dots",
     "password": "d9mcwW",
     "personCell": "8163459112",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ijebu East"
-    }],
-    "sites": [{
-      "shortName": "GH Ijebu Ife"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ijebu Ife"
+      }
+    ]
   },
   {
     "personName": "GH Owode",
@@ -1342,13 +1546,17 @@
     "username": "owode_dots",
     "password": "wS7jhZ",
     "personCell": "8035144894",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Obafemi Owode"
-    }],
-    "sites": [{
-      "shortName": "GH Owode-Egba Ogun State"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Obafemi Owode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Owode-Egba Ogun State"
+      }
+    ]
   },
   {
     "personName": "Obantoko",
@@ -1357,13 +1565,17 @@
     "username": "obantoko_dots",
     "password": "XUwz3F",
     "personCell": "8094684263",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Odeda"
-    }],
-    "sites": [{
-      "shortName": "Obantoko"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Odeda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Obantoko"
+      }
+    ]
   },
   {
     "personName": "GH Imeko",
@@ -1372,13 +1584,17 @@
     "username": "imeko_dots",
     "password": "2LFBhc",
     "personCell": "8032160453",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Imeko Afon"
-    }],
-    "sites": [{
-      "shortName": "GH Imeko"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Imeko Afon"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Imeko"
+      }
+    ]
   },
   {
     "personName": "GH Ayetoro",
@@ -1387,13 +1603,17 @@
     "username": "ayetoro_dots",
     "password": "d6Fsvy",
     "personCell": "8062753960",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Yewa North"
-    }],
-    "sites": [{
-      "shortName": "GH Ayetoro"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ayetoro"
+      }
+    ]
   },
   {
     "personName": "Abigi",
@@ -1402,13 +1622,17 @@
     "username": "abigi_dots",
     "password": "pLa6Xt",
     "personCell": "8072321414",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ogun Waterside"
-    }],
-    "sites": [{
-      "shortName": "Abigi"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ogun Waterside"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Abigi"
+      }
+    ]
   },
   {
     "personName": "M IJARI",
@@ -1417,13 +1641,17 @@
     "username": "ijari_dots",
     "password": "SL6xh6",
     "personCell": "8055231265",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Ijebu North East"
-    }],
-    "sites": [{
-      "shortName": "M IJARI"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu North East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "M IJARI"
+      }
+    ]
   },
   {
     "personName": "Odogbolu",
@@ -1432,13 +1660,17 @@
     "username": "odogbolu_dots",
     "password": "DJys9g",
     "personCell": "8162380547",
-    "geographies": [{
-      "stateName": "Ogun",
-      "lgaName": "Odogbolu"
-    }],
-    "sites": [{
-      "shortName": "Odogbolu"
-    }]
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Odogbolu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Odogbolu"
+      }
+    ]
   },
   {
     "personName": "NIMR",
@@ -1447,13 +1679,17 @@
     "username": "nimr_dots",
     "password": "cgKg77",
     "personCell": "08060077387",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "NIMR3"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "NIMR3"
+      }
+    ]
   },
   {
     "personName": "Orthopedic National Hospital Igbobi",
@@ -1462,13 +1698,17 @@
     "username": "orthopedic_dots",
     "password": "4dFr3R",
     "personCell": "07055067933",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Orthopedic National Hospital Igbobi"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Orthopedic National Hospital Igbobi"
+      }
+    ]
   },
   {
     "personName": "Mainland GH",
@@ -1477,13 +1717,17 @@
     "username": "mainland_dots",
     "password": "hG5R6d",
     "personCell": "08034743512",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Mainland Hospital Yaba"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Mainland Hospital Yaba"
+      }
+    ]
   },
   {
     "personName": "Ori Okuta",
@@ -1493,13 +1737,17 @@
     "username": "ori_dots",
     "password": "XGFLyr",
     "personCell": "08082139998",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Ori Okuta"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ori Okuta"
+      }
+    ]
   },
   {
     "personName": "Tolu",
@@ -1508,13 +1756,17 @@
     "username": "tolu_dots",
     "password": "ZaMmcY",
     "personCell": "08037481325",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Tolu"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Tolu"
+      }
+    ]
   },
   {
     "personName": "Akerele",
@@ -1523,13 +1775,17 @@
     "username": "akerele_dots",
     "password": "SX2qZ5",
     "personCell": "08028586778",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Akerele"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Akerele"
+      }
+    ]
   },
   {
     "personName": "LUTH",
@@ -1539,13 +1795,17 @@
     "username": "luth_dots",
     "password": "TRyeKX",
     "personCell": "08034299611",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "LUTH Idi-Araba"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "LUTH Idi-Araba"
+      }
+    ]
   },
   {
     "personName": "Emmanuel (EOOCC)",
@@ -1554,13 +1814,17 @@
     "username": "emmanuel_dots",
     "password": "yczAFz",
     "personCell": "08164852080",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Emmanuel (EOOCC)"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Emmanuel (EOOCC)"
+      }
+    ]
   },
   {
     "personName": "Olowogbowo",
@@ -1569,13 +1833,17 @@
     "username": "olowogbowo_dots",
     "password": "rTL8k3",
     "personCell": "08023676330",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Olowogbowo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Olowogbowo"
+      }
+    ]
   },
   {
     "personName": "Oloja",
@@ -1585,13 +1853,17 @@
     "username": "oloja_dots",
     "password": "d7rSRz",
     "personCell": "08130607886",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Oloja"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Oloja"
+      }
+    ]
   },
   {
     "personName": "Ebute Metta HC",
@@ -1601,13 +1873,17 @@
     "username": "ebute_dots",
     "password": "Fha76y",
     "personCell": "008034967718",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Ebute Metta HC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ebute Metta HC"
+      }
+    ]
   },
   {
     "personName": "Fed Med Centre",
@@ -1616,13 +1892,17 @@
     "username": "fedmed_dots",
     "password": "99gf82",
     "personCell": "08091339773",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Fed Med Centre"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Fed Med Centre"
+      }
+    ]
   },
   {
     "personName": "Harvey Road HC",
@@ -1631,13 +1911,17 @@
     "username": "harvey_dots",
     "password": "jBjRyC",
     "personCell": "08062926550",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Harvey Road HC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Harvey Road HC"
+      }
+    ]
   },
   {
     "personName": "Ijede GH",
@@ -1646,13 +1930,17 @@
     "username": "ijede_dots",
     "password": "LmHYeQ",
     "personCell": "08034992944",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Ijede GH"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ijede GH"
+      }
+    ]
   },
   {
     "personName": "Onikan HC",
@@ -1662,13 +1950,17 @@
     "username": "onikan_dots",
     "password": "hPFTw6",
     "personCell": "080166157417",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Onikan HC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Onikan HC"
+      }
+    ]
   },
   {
     "personName": "Shomolu GH",
@@ -1677,13 +1969,17 @@
     "username": "shomolu_dots",
     "password": "7az3Hu",
     "personCell": "08023295676",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "GH, Shomolu"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH, Shomolu"
+      }
+    ]
   },
   {
     "personName": "Ita Elewa",
@@ -1692,13 +1988,17 @@
     "username": "ita_dots",
     "password": "LSNDqw",
     "personCell": "08164852080",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Ita Elewa"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ita Elewa"
+      }
+    ]
   },
   {
     "personName": "Ajegunle ilo",
@@ -1708,13 +2008,17 @@
     "username": "ajegunle_dots",
     "password": "MLrJqj",
     "personCell": "08083170701",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Ajegunle ilo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ajegunle ilo"
+      }
+    ]
   },
   {
     "personName": "Mowo",
@@ -1723,13 +2027,17 @@
     "username": "mowo_dots",
     "password": "egXxm6",
     "personCell": "08029317409",
-    "geographies": [{
-      "stateName": "Lagos",
-      "lgaName": "Lagos"
-    }],
-    "sites": [{
-      "shortName": "Mowo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Mowo"
+      }
+    ]
   },
   {
     "personName": "Aderemi PHC",
@@ -1738,13 +2046,17 @@
     "username": "aderemi_dots",
     "password": "wdralech1",
     "personCell": "8036364944",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Ife Central"
-    }],
-    "sites": [{
-      "shortName": "Aderemi PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Aderemi PHC"
+      }
+    ]
   },
   {
     "personName": "Total PHC",
@@ -1753,13 +2065,17 @@
     "username": "total_dots",
     "password": "kuhastax3",
     "personCell": "7061346654",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Isokan"
-    }],
-    "sites": [{
-      "shortName": "Total PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Isokan"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Total PHC"
+      }
+    ]
   },
   {
     "personName": "Sabo Owoope",
@@ -1768,13 +2084,17 @@
     "username": "sabo_owoope_dots",
     "password": "matyptia4",
     "personCell": "8035876308",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Olorunda"
-    }],
-    "sites": [{
-      "shortName": "Sabo Owoope"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Olorunda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sabo Owoope"
+      }
+    ]
   },
   {
     "personName": "Lautech Hospital",
@@ -1783,13 +2103,17 @@
     "username": "lautech_dots",
     "password": "J8s2zPep",
     "personCell": "8038002539",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Olorunda"
-    }],
-    "sites": [{
-      "shortName": "Lautech Hospital"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Olorunda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Lautech Hospital"
+      }
+    ]
   },
   {
     "personName": "Popo Olupona PHC",
@@ -1798,13 +2122,17 @@
     "username": "olupona_dots",
     "password": "xhouneth2",
     "personCell": "8068331019",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Aiyedire"
-    }],
-    "sites": [{
-      "shortName": "Popo Olupona PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Aiyedire"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Popo Olupona PHC"
+      }
+    ]
   },
   {
     "personName": "Wesley Guild",
@@ -1813,13 +2141,17 @@
     "username": "wesley_dots",
     "password": "iplainsy8",
     "personCell": "8033567435",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Ilesa East"
-    }],
-    "sites": [{
-      "shortName": "Wesley Guild"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Wesley Guild"
+      }
+    ]
   },
   {
     "personName": "Irojo PHC",
@@ -1828,13 +2160,17 @@
     "username": "irojo_dots",
     "password": "kayeampt6",
     "personCell": "7031845823",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Ilesa East"
-    }],
-    "sites": [{
-      "shortName": "Irojo PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Irojo PHC"
+      }
+    ]
   },
   {
     "personName": "Imo PHC",
@@ -1843,13 +2179,17 @@
     "username": "imo_dots",
     "password": "chestalr5",
     "personCell": "7038184897",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Ilesa East"
-    }],
-    "sites": [{
-      "shortName": "Imo PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Imo PHC"
+      }
+    ]
   },
   {
     "personName": "Ayedaade PHC",
@@ -1858,13 +2198,17 @@
     "username": "ayedaade_dots",
     "password": "orymperi3",
     "personCell": "8166682737",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Irewole"
-    }],
-    "sites": [{
-      "shortName": "Ayedaade PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Irewole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ayedaade PHC"
+      }
+    ]
   },
   {
     "personName": "Popo PHC",
@@ -1873,13 +2217,17 @@
     "username": "popo_dots",
     "password": "hashonya3",
     "personCell": "7055539528",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Ejigbo"
-    }],
-    "sites": [{
-      "shortName": "Popo PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ejigbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Popo PHC"
+      }
+    ]
   },
   {
     "personName": "Ikoyi PHC",
@@ -1888,13 +2236,17 @@
     "username": "ikoyi_dots",
     "password": "dupticiv8",
     "personCell": "7069768332",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Isokan"
-    }],
-    "sites": [{
-      "shortName": "Ikoyi PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Isokan"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ikoyi PHC"
+      }
+    ]
   },
   {
     "personName": "Ifelodun PHC",
@@ -1903,12 +2255,16 @@
     "username": "ifelodun_dots",
     "password": "odhomewi6",
     "personCell": "8039339216",
-    "geographies": [{
-      "stateName": "Osun",
-      "lgaName": "Ife East"
-    }],
-    "sites": [{
-      "shortName": "Ifelodun PHC"
-    }]
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ifelodun PHC"
+      }
+    ]
   }
 ]
