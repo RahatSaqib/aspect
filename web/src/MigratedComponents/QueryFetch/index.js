@@ -35,8 +35,6 @@ const fetchWrapperForQueries = ({
     },
     body,
   })
-    .then(data => data)
-    .catch(err => err)
 }
 
 export default fetchWrapperForQueries

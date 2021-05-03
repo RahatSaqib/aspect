@@ -112,8 +112,8 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
     .catch(err => {
       let errorNotification = get(
         options,
-        `errorNotifications.${err.statusCode}`,
-        get(options, 'errorNotifications.default')
+        `errors.${err.statusCode}`,
+        get(options, 'errors.default')
       )
 
       if (errorNotification) {
