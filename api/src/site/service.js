@@ -414,7 +414,7 @@ async function listSitesWithReporters(request) {
      */
     .whereRaw(
       `(
-        tag.title     LIKE ? or 
+        tag.title     LIKE ? or
         tag.title     LIKE ? or
         s.name        LIKE ? or
         s.externalId  LIKE ?
@@ -502,12 +502,11 @@ async function listSitesWithReporters(request) {
       's.id as siteId',
       's.id as id',
       's.name as siteName',
-      's.shortName as siteShortName'
+      knex.raw('coalesce(s.shortName,s.externalId) as siteShortName')
     )
 
   // run both queries
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
   /**
    * to make last 4 columns to add up to the total-columns - add 'transferred' to first 3 counts
    */
