@@ -34,7 +34,7 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
   ENDPOINT: '/device/maintenance-status-by-period/{deviceId}',
   ERRORS: {
     400: {
-      "You cannot change the status of a device in days when it was active": {
+      'You cannot change the status of a device in days when it was active': {
         severity: 'warn',
         ...defineMessages({
           title: {
@@ -45,7 +45,8 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
           message: {
             id:
               'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.message',
-            defaultMessage: 'You cannot change the status of a device in days when it was active',
+            defaultMessage:
+              'You cannot change the status of a device in days when it was active',
           },
           resolution: {
             id:
@@ -56,7 +57,7 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         }),
       },
     },
-    "You cannot change the status of a device in days when it was decommissioned": {
+    'You cannot change the status of a device in days when it was decommissioned': {
       severity: 'warn',
       ...defineMessages({
         title: {
@@ -67,7 +68,8 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         message: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromDecommissioned.message',
-          defaultMessage: 'You cannot change the status of a device in days when it was decommissioned',
+          defaultMessage:
+            'You cannot change the status of a device in days when it was decommissioned',
         },
         resolution: {
           id:
@@ -88,17 +90,17 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         message: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.statusCannotBeSetManually.message',
-          defaultMessage: "The status you are trying to assign can't be set manually",
+          defaultMessage:
+            "The status you are trying to assign can't be set manually",
         },
         resolution: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.statusCannotBeSetManually.resolution',
-          defaultMessage:
-            "Please, select another maintenance status.",
+          defaultMessage: 'Please, select another maintenance status.',
         },
       }),
     },
-    "Status \"Decommissioned\" cannot be set for a date range": {
+    'Status "Decommissioned" cannot be set for a date range': {
       severity: 'warn',
       ...defineMessages({
         title: {
@@ -109,17 +111,17 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         message: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.decommissionedCannotBeSetForDateRange.message',
-          defaultMessage: "The status \"Decommissioned\" cannot be set for a date range",
+          defaultMessage:
+            'The status "Decommissioned" cannot be set for a date range',
         },
         resolution: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.decommissionedCannotBeSetForDateRange.resolution',
-          defaultMessage:
-            "Please, select another maintenance status.",
+          defaultMessage: 'Please, select another maintenance status.',
         },
       }),
     },
-    "You cannot change the status of a device to \"Reported Active\" for days when it was reported as \"No Tests Performed\"": {
+    'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"': {
       severity: 'warn',
       ...defineMessages({
         title: {
@@ -130,17 +132,17 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         message: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotSetActiveForDaysWhenNoTestsPerformed.message',
-          defaultMessage: "You cannot change the status of a device to \"Reported Active\" for days when it was reported as \"No Tests Performed\"",
+          defaultMessage:
+            'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"',
         },
         resolution: {
           id:
             'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotSetActiveForDaysWhenNoTestsPerformed.resolution',
-          defaultMessage:
-            "Please, select another maintenance status.",
+          defaultMessage: 'Please, select another maintenance status.',
         },
       }),
     },
-  }
+  },
 }
 
 export {

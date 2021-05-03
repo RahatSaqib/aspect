@@ -11,7 +11,11 @@ import messages from '../messages'
 import { extractOptionValue } from '../../Helpers/Formatters'
 
 import fetchWrapperForQueries from '../../../QueryFetch'
-import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
+import {
+  DAILY_STATUS,
+  DEVICE_STATUS,
+  DEVICE_MAINTENANCE_STATUS_BY_PERIOD,
+} from '../../../QueryFetch/Device'
 
 const useDailyStatus = (
   minDate,
@@ -55,7 +59,10 @@ const useDailyStatus = (
   const [changeDeviceStatus] = useMutation(
     ({ deviceId, values }) =>
       fetchWrapperForQueries({
-        endpoint: DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT.replace('{deviceId}', deviceId),
+        endpoint: DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT.replace(
+          '{deviceId}',
+          deviceId
+        ),
         method: 'POST',
         params: {
           externalId: values.reason,

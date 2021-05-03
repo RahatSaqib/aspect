@@ -103,6 +103,7 @@ DailyStatusClinicDay.propTypes = {
     PropTypes.string,
     PropTypes.bool,
   ]),
+  maintenanceStatusExternalId: PropTypes.string.isRequired,
   daysInSameStatus: PropTypes.string.isRequired,
   statuses: PropTypes.string.isRequired,
   consts: PropTypes.shape({
