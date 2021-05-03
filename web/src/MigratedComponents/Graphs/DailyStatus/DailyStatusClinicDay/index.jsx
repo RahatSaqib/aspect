@@ -32,7 +32,7 @@ DayBlock.propTypes = {
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]).isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -41,6 +41,7 @@ const DailyStatusClinicDay = ({
   isWeekend,
   maintenanceStatusName,
   maintenanceStatusI18nKey,
+  maintenanceStatusExternalId,
   statuses,
   totalResults,
   onClickDay,
@@ -84,7 +85,7 @@ const DailyStatusClinicDay = ({
       <DayBlock
         consts={consts}
         dayModifier={dayModifier}
-        onClick={onClickDay}
+        onClick={maintenanceStatusExternalId !== 'active' ? onClickDay : false}
       />
     </AspectTooltip>
   )
