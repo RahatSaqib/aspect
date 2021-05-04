@@ -2002,6 +2002,13 @@ msgstr "Générateur de clés d'API de périphérique"
 msgid "Device Activity"
 msgstr "Type d'appareil"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Activité de l'appareil (pourcentage)"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration

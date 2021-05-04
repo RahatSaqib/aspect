@@ -1989,6 +1989,13 @@ msgstr "Gerador de chaves API do dispositivo"
 msgid "Device Activity"
 msgstr "Actividade do dispositivo"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Atividade do dispositivo (porcentagem)"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration

@@ -1991,6 +1991,13 @@ msgstr "Генератор ключей API устройства"
 msgid "Device Activity"
 msgstr "Тип устройства"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Активность устройства (в процентах)"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration

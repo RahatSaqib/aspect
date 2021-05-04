@@ -1992,6 +1992,13 @@ msgstr "Geräte-API-Schlüssel-Generator"
 msgid "Device Activity"
 msgstr "Gerätetyp"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Geräteaktivität (Prozent)"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration

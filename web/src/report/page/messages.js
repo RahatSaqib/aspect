@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.deviceActivityReport',
     defaultMessage: 'Device Activity',
   },
+  deviceActivityPercentReport: {
+    id: 'pages.ReportIndex.deviceActivityPercentReport',
+    defaultMessage: 'Device Activity (Percent)',
+  },
   moduleSwapsReport: {
     id: 'pages.ReportIndex.moduleSwapsReport',
     defaultMessage: 'Module Swaps',

@@ -1979,6 +1979,13 @@ msgstr "Generador de claves de acceso de dispositivos a la API"
 msgid "Device Activity"
 msgstr "Actividad de dispositivo"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Actividad del dispositivo (porcentaje)"
+
 #. [browsePage.browseDropdown.deviceApiKey]
 #. defaultMessage is:
 #. Device Api Keys

@@ -117,6 +117,29 @@ const deviceActivity = {
   ],
 }
 
+const deviceActivityPercent = {
+  name: 'Device Activity (Percent)',
+  description:
+    'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+  i18nKey: 'deviceActivityPercentReport',
+  externalId: 'device_percent_activity',
+  i18nKeyDescription: 'device_percent_activity_description',
+  fileName: 'deviceActivityPercent',
+  sortOrder: 6,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDeviceActivityPercentReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
+    },
+  ],
+}
+
 const moduleSwaps = {
   name: 'Module Swaps',
   description:
@@ -125,7 +148,7 @@ const moduleSwaps = {
   externalId: 'module_swaps',
   fileName: 'moduleSwaps',
   i18nKeyDescription: 'moduleSwapsReport_description',
-  sortOrder: 6,
+  sortOrder: 7,
   sheets: [
     {
       sortOrder: 0,
@@ -148,7 +171,7 @@ const deviceCalibrationReport = {
   i18nKeyDescription: 'Device_Calibration_Report_description',
   externalId: 'device_calibration_report',
   fileName: 'DeviceCalibrationReport',
-  sortOrder: 5,
+  sortOrder: 8,
   sheets: [
     {
       sortOrder: 0,
@@ -170,7 +193,7 @@ const geneXpertIssues = {
   i18nKeyDescription: 'geneXpertIssues_description',
   externalId: 'genexpert_issues',
   fileName: 'geneXpertIssues',
-  sortOrder: 7,
+  sortOrder: 9,
   sheets: [
     {
       sortOrder: 0,
@@ -191,6 +214,7 @@ module.exports = {
   criticalErrorsByDevice,
   mtbDetectedRRDetected,
   deviceActivity,
+  deviceActivityPercent,
   moduleSwaps,
   deviceCalibrationReport,
   geneXpertIssues,
@@ -200,6 +224,7 @@ module.exports = {
     rifResistanceRate,
     criticalErrorsByDevice,
     deviceActivity,
+    deviceActivityPercent,
     moduleSwaps,
     deviceCalibrationReport,
     geneXpertIssues,
