@@ -122,8 +122,8 @@ const deviceActivityPercent = {
   description:
     'This report shows the activity percentage of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
   i18nKey: 'deviceActivityPercentReport',
-  externalId: 'device_percent_activity',
-  i18nKeyDescription: 'device_percent_activity_description',
+  externalId: 'device_activity_percent',
+  i18nKeyDescription: 'device_activity_percent_description',
   fileName: 'deviceActivityPercent',
   sortOrder: 6,
   sheets: [

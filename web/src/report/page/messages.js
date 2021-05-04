@@ -64,8 +64,8 @@ const messages = defineMessages({
     defaultMessage:
       'This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
   },
-  device_percent_activity_description: {
-    id: 'pages.ReportIndex.device_percent_activity_description',
+  device_activity_percent_description: {
+    id: 'pages.ReportIndex.device_activity_percent_description',
     defaultMessage:
       'This report shows the activity percentage of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
   },
