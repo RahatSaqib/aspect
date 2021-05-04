@@ -28,7 +28,6 @@
         "title": "Field metadata",
         "description": "All the properties needed for this field to be rendered",
         "required": ["name", "i18nKey", "fieldType", "order"],
-        "additionalProperties": true,
         "properties": {
           "id": {
             "$id": "#/properties/fields/items/properties/id",
