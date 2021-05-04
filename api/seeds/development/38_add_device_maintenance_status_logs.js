@@ -230,15 +230,25 @@ async function seed(knex) {
         })
       }
     }
-
+    let deviceMaintenanceStatusLogId = null
     await Promise.each(dayAndStatus, async ({ dayDate, statusId }) => {
-      await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
+      deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatusLog(
+        knex,
+        deviceId,
+        dayDate,
+        statusId
+      )
       if (statusId === active) {
         await ensureResultExists(knex, deviceId, dayDate, userId, partnerId)
       } else {
         await ensureResultDoesNotExist(knex, deviceId, dayDate)
       }
     })
+    if (deviceMaintenanceStatusLogId) {
+      await knex('Device').where('id', deviceId).update({
+        deviceMaintenanceStatusLogId,
+      })
+    }
   })
 }
 
@@ -248,13 +258,16 @@ async function setDeviceMaintenanceStatusLog(
   dayDate,
   deviceMaintenanceStatusId
 ) {
-  await knex('DeviceMaintenanceStatusLog').insert({
+  const [deviceMaintenanceStatusLogId] = await knex(
+    'DeviceMaintenanceStatusLog'
+  ).insert({
     deviceId,
     deviceMaintenanceStatusId,
     data: '{}',
     day: dayDate,
     createdOn: now,
   })
+  return deviceMaintenanceStatusLogId
 }
 
 async function getResultsOnDay(knex, deviceId, dayDate) {
