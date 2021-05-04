@@ -266,9 +266,58 @@ async function getGeneXpertIssuesReport(auth, query) {
   return dataset
 }
 
+async function getGeneXpertOperationLogsReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const {
+    minDate,
+    maxDate,
+    minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
+    maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
+  } = query
+  // get rows
+  const data = await knex('Device as d')
+    .join('DeviceOperation as dl', 'dl.deviceId', 'd.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .modify(
+      filterDateRangeParams,
+      { minDate: minDateFormatted, maxDate: maxDateFormatted },
+      'dl.startedOn'
+    )
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      geography: 'g',
+      site: 's',
+    })
+    .select(
+      'dl.startedOn as createdOn',
+      's.name as siteName',
+      'd.name as deviceName',
+      'dl.data as data',
+      knex.raw("dl.data ->> '$.details' as logDetails"),
+      knex.raw("dl.data ->> '$.logLevel' as logLevel"),
+      knex.raw("dl.data ->> '$.RawText' as logText"),
+      knex.raw("dl.data ->> '$.Errors' as errors"),
+      knex.raw("dl.data ->> '$.type' as logType"),
+      knex.raw("dl.data ->> '$.Calibrations' as calibrations")
+    )
+
+  const dataset = {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
+  return dataset
+}
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
   getModuleSwapsReport,
   getGeneXpertIssuesReport,
+  getGeneXpertOperationLogsReport,
 }
