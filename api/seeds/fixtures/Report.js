@@ -129,7 +129,7 @@ const deviceActivityPercent = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'device/serviceReports',
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
       functionName: 'getDeviceActivityPercentReport',
       query: {
         sortCol: 'name',
