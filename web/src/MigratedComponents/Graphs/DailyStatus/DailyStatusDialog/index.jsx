@@ -15,7 +15,6 @@ const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
 
 const getFormConfig = (formConfig, statuses, data) => {
   setClassNames(formConfig, cssClasses)
-
   formConfig.sections.forEach(section => {
     setClassNames(section, cssClasses)
     section.rows.forEach(({ items }) => {
@@ -30,7 +29,7 @@ const getFormConfig = (formConfig, statuses, data) => {
           // init dropdown options
           item.controlType.options = statuses
             // show only statuses with manuallySet flag
-            .filter(({ manuallySet }) => manuallySet === 1)
+            .filter(({ externalId, manuallySet }) => manuallySet === 1 && externalId !== 'inactiveDecommissioned')
             .map(({ externalId, name }) => ({
               label: name,
               value: externalId,

@@ -866,24 +866,12 @@ describe('Device routes', () => {
         await statusTestDeviceContext.cleanUp()
       })
 
-      it('should save the maintenance status of the device for a date range', async () => {
-        const { id: deviceId } = theGreatestDeviceIEverCreated
-
-        const dateFrom = '2020-12-12T00:00:00.000-03:00'
-        const dateTo = '2020-12-19T00:00:00.000-03:00'
-        const payload = {
-          externalId: deviceMaintenanceStatusExternalId,
-          dateFrom,
-          dateTo,
-          notes:
-            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
-        }
-
-        const updateMaintenanceStatusResponse = await server
-          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .send(payload)
-
+      const assertValidStatusInDateRange = async (
+        dateFrom,
+        dateTo,
+        deviceMaintenanceStatusLogIds,
+        deviceMaintenanceStatusExternalId
+      ) => {
         const logs = await knex('DeviceMaintenanceStatusLog as dmsl')
           .innerJoin('Device as d', 'dmsl.deviceId', 'd.id')
           .innerJoin(
@@ -891,11 +879,7 @@ describe('Device routes', () => {
             'dmsl.deviceMaintenanceStatusId',
             'dms.id'
           )
-          .whereIn(
-            'dmsl.id',
-            updateMaintenanceStatusResponse.body.data
-              .deviceMaintenanceStatusLogIds
-          )
+          .whereIn('dmsl.id', deviceMaintenanceStatusLogIds)
           .select(
             'd.name as deviceName',
             'dms.externalId',
@@ -913,12 +897,107 @@ describe('Device routes', () => {
             deviceMaintenanceStatusExternalId
           )
         })
-        assert.isOk(updateMaintenanceStatusResponse.body.ok)
-        assert.equal(
-          updateMaintenanceStatusResponse.body.data
-            .deviceMaintenanceStatusLogIds.length,
-          8
+        assert.equal(deviceMaintenanceStatusLogIds.length, 8)
+      }
+
+      it('should save the maintenance status of the device for a date range', async () => {
+        const { id: deviceId } = theGreatestDeviceIEverCreated
+
+        const dateFrom = '2020-12-12T00:00:00.000-03:00'
+        const dateTo = '2020-12-19T00:00:00.000-03:00'
+        const payload = {
+          externalId: deviceMaintenanceStatusExternalId,
+          dateFrom,
+          dateTo,
+          notes:
+            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+        }
+
+        // Should update to inactiveDownForRepair
+        const toInactiveDownForRepairResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.isOk(toInactiveDownForRepairResponse.body.ok)
+        await assertValidStatusInDateRange(
+          dateFrom,
+          dateTo,
+          toInactiveDownForRepairResponse.body.data
+            .deviceMaintenanceStatusLogIds,
+          deviceMaintenanceStatusExternalId
         )
+
+        const {
+          deviceMaintenanceStatusLogIds,
+        } = toInactiveDownForRepairResponse.body.data
+
+        // Decommissioned shouldn't be allowed
+        payload.externalId = 'inactiveDecommissioned'
+        const toDecommissionedResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.equal(toDecommissionedResponse.body.statusCode, 400)
+        assert.equal(
+          toDecommissionedResponse.body.message,
+          'Status "Decommissioned" cannot be set for a date range'
+        )
+
+        // Change all the inserted logs to Active
+        const [activeStatusId] = await knex('DeviceMaintenanceStatus')
+          .where({ externalId: 'active' })
+          .pluck('id')
+        await knex('DeviceMaintenanceStatusLog')
+          .whereIn('id', deviceMaintenanceStatusLogIds)
+          .update({ deviceMaintenanceStatusId: activeStatusId })
+
+        // Active days cannot be changed
+        payload.externalId = 'inactiveDownForRepair'
+        const fromActiveResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.equal(fromActiveResponse.body.statusCode, 400)
+        assert.equal(
+          fromActiveResponse.body.message,
+          'You cannot change the status of a device in days when it was active'
+        )
+
+        // Active days cannot be changed
+        payload.externalId = 'active'
+        const toActiveResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.equal(toActiveResponse.body.statusCode, 400)
+        assert.equal(
+          toActiveResponse.body.message,
+          "The status you are trying to assign can't be set manually"
+        )
+
+        // Change all the inserted logs to Decommissioned
+        const [inactiveDecommissionedStatusId] = await knex(
+          'DeviceMaintenanceStatus'
+        )
+          .where({ externalId: 'inactiveDecommissioned' })
+          .pluck('id')
+        await knex('DeviceMaintenanceStatusLog')
+          .whereIn('id', deviceMaintenanceStatusLogIds)
+          .update({ deviceMaintenanceStatusId: inactiveDecommissionedStatusId })
+
+        // Decommissioned days cannot be changed
+        payload.externalId = 'inactiveDownForRepair'
+        const fromDecommissionedResponse = await server
+          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .send(payload)
+        assert.equal(fromDecommissionedResponse.body.statusCode, 400)
+        assert.equal(
+          fromDecommissionedResponse.body.message,
+          'You cannot change the status of a device in days when it was decommissioned'
+        )
+
+        // TODO: add validations for 'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"'
       })
     })
 

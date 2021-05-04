@@ -1053,16 +1053,16 @@ async function setStatusForDateRange(request) {
       throw Boom.badRequest(
         'You cannot change the status of a device in days when it was decommissioned'
       )
+    else if (!manuallySet)
+      throw Boom.badRequest(
+        "The status you are trying to assign can't be set manually"
+      )
     else if (
       statusesInDateRange.includes('active') &&
       externalId !== 'reportedActive'
     )
       throw Boom.badRequest(
         'You cannot change the status of a device in days when it was active'
-      )
-    else if (!manuallySet)
-      throw Boom.badRequest(
-        "The status you are trying to assign can't be set manually"
       )
     else if (externalId === 'inactiveDecommissioned')
       throw Boom.badRequest(
