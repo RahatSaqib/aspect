@@ -120,7 +120,7 @@ const deviceActivity = {
 const deviceActivityPercent = {
   name: 'Device Activity (Percent)',
   description:
-    'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+    'This report shows the activity percentage of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
   i18nKey: 'deviceActivityPercentReport',
   externalId: 'device_percent_activity',
   i18nKeyDescription: 'device_percent_activity_description',

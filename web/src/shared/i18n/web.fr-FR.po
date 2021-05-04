@@ -7733,16 +7733,16 @@ msgstr ""
 
 #. [pages.ReportIndex.device_percent_activity_description]
 #. defaultMessage is:
-#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#. This report shows the activity percentage of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
 #: extracted_strings.json
 msgid ""
-"This report shows the utilization rate of the devices during the selected period of "
+"This report shows the activity percentage of the devices during the selected period of "
 "time, breaking it down by months (By default last 12 months), and all the "
 "tests performed during the last year."
 msgstr ""
-"Ce rapport montre le taux d'utilisation des appareils pendant la période "
-"sélectionnée, en le décomposant par mois (par défaut les 12 derniers mois), "
-"et tous les tests effectués au cours de la dernière année."
+"Ce rapport montre le pourcentage d'activité des appareils pendant la période sélectionnée, "
+"en le décomposant par mois (par défaut les 12 derniers mois), et tous les tests effectués "
+"au cours de la dernière année."
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
