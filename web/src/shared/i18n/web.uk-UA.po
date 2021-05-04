@@ -7694,6 +7694,19 @@ msgstr ""
 "розбиваючи його за місяцями (за замовчуванням останні 12 місяців), і всі "
 "тести, проведені за останній рік."
 
+#. [pages.ReportIndex.device_percent_activity_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+"Цей звіт показує рівень використання пристроїв протягом обраного періоду "
+"часу, розбиваючи його за місяцями (за замовчуванням останні 12 місяців), і "
+"всі тести, проведені протягом останнього року."
+
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
 #. This username is unavailable

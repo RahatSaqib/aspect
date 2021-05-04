@@ -7699,6 +7699,19 @@ msgstr ""
 "tempo seleccionado, decompondo-a por meses (Por defeito, duram 12 meses), e "
 "todos os testes realizados durante o último ano."
 
+#. [pages.ReportIndex.device_percent_activity_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+"Este relatório mostra a taxa de utilização dos dispositivos durante o período "
+"de tempo selecionado, dividindo-o por meses (por padrão últimos 12 meses), "
+"e todos os testes realizados durante o último ano."
+
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
 #. This username is unavailable

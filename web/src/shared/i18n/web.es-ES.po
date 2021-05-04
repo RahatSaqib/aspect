@@ -7700,6 +7700,19 @@ msgstr ""
 "tiempo seleccionado, desglosándola por meses (Por defecto los últimos 12 "
 "meses), y todas las pruebas realizadas durante el último año."
 
+#. [pages.ReportIndex.device_percent_activity_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected period of "
+"time, breaking it down by months (By default last 12 months), and all the "
+"tests performed during the last year."
+msgstr ""
+"Este informe muestra la tasa de utilización de los dispositivos durante el "
+"período de tiempo seleccionado, desglosada por meses (por defecto los "
+"últimos 12 meses), y todas las pruebas realizadas durante el último año."
+
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
 #. This username is unavailable
