@@ -74,7 +74,6 @@ async function getDeviceActivityPercentReport(auth, query) {
     getItems,
     activityPercentPerMonth,
   ])
-
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
@@ -97,7 +96,9 @@ async function getDeviceActivityPercentReport(auth, query) {
       ),
       detail => {
         elem[detail.monthYear] = detail.daysInMonth
-          ? detail.activeDaysInMonth / detail.daysInMonth
+          ? `${((detail.activeDaysInMonth / detail.daysInMonth) * 100).toFixed(
+              2
+            )}%`
           : ''
       }
     )

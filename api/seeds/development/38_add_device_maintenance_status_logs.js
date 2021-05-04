@@ -13,9 +13,11 @@ const {
 
 const { generateResults } = require('../commonGenerateResults')
 
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
+const logHistoryMonths = Math.ceil(resultMultiplier / 100)
 const now = new Date()
-const previousMonth = subMonths(now, 1)
-const minDate = parseISO(`${format(previousMonth, 'yyyy-MM-01')}T00:00:00.000Z`)
+const historicMonth = subMonths(now, logHistoryMonths)
+const minDate = parseISO(`${format(historicMonth, 'yyyy-MM-01')}T00:00:00.000Z`)
 const maxDate = now
 
 async function seed(knex) {
