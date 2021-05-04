@@ -7709,16 +7709,14 @@ msgstr ""
 
 #. [pages.ReportIndex.device_activity_percent_description]
 #. defaultMessage is:
-#. This report shows the activity percentage of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.
+#. This report shows the activity percentage, per month, of the devices during the selected period of time. (By default last 12 months)
 #: extracted_strings.json
 msgid ""
-"This report shows the activity percentage of the devices during the selected period of "
-"time, breaking it down by months (By default last 12 months), and all the "
-"tests performed during the last year."
+"This report shows the activity percentage, per month, of the devices during the "
+"selected period of time. (By default last 12 months)"
 msgstr ""
-"В этом отчете отображается процент активности устройств за выбранный период "
-"времени с разбивкой по месяцам (по умолчанию за последние 12 месяцев), а также "
-"все тесты, выполненные за последний год."
+"В этом отчете отображается процент активности устройств в месяц за выбранный "
+"период времени. (По умолчанию последние 12 месяцев)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
