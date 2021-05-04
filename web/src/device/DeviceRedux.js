@@ -262,7 +262,41 @@ export function updateSingleDevice(deviceId, data) {
     )
   }
 }
-
+// TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
+export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
+  return dispatch => {
+    const filters = fromPairs([...filtersParams.entries()])
+    return aspectFetch(
+      `/device/exportDeviceLogs?${stringify({
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.400.title',
+                defaultMessage: 'Exporting DeviceLog Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.default.title',
+                defaultMessage: 'Exporting Device Log Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem.blob
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
+  }
+}
 export function exportDevices(
   rawFiltersParams,
   extraFilters = {},

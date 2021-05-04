@@ -20,6 +20,7 @@ const {
   getOffsetFromIsoDateString,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
+const { generateReport } = require('../report/serviceReports')
 
 async function exportDevices(request, reply) {
   const { data } = await listDevices(request)
@@ -266,6 +267,29 @@ async function getGeneXpertIssuesReport(auth, query) {
   return dataset
 }
 
+async function exportDeviceOperationLogReport(request, reply) {
+  const { auth, query } = request
+  const dataset = await getGeneXpertOperationLogsReport(auth, query)
+  const { culture } = await getUser(auth.credentials.name)
+
+  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
+  const extension = query.format || 'xlsx'
+  const sheetData = {
+    dataRows: dataset,
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+  return generateReport(
+    reply,
+    culture,
+    'device_operation_logs',
+    sheetData,
+    extension,
+    [],
+    'device_operation_logs'
+  )
+}
+
 async function getGeneXpertOperationLogsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -312,6 +336,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
     length: data.length,
     data,
   }
+  // console.log('data', data)
   return dataset
 }
 module.exports = {
@@ -320,4 +345,5 @@ module.exports = {
   getModuleSwapsReport,
   getGeneXpertIssuesReport,
   getGeneXpertOperationLogsReport,
+  exportDeviceOperationLogReport,
 }

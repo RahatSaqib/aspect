@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.deviceType',
     defaultMessage: 'Device type',
   },
+  deviceLogs: {
+    id: 'pages.DeviceDetailProfile.deviceLogs',
+    defaultMessage: 'Device logs',
+  },
   approval: {
     id: 'pages.DeviceDetailProfile.approval',
     defaultMessage: 'Approval',
