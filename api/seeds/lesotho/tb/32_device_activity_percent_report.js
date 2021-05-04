@@ -2,7 +2,7 @@ const updateReportsAndJobFunctions = require('../../common/upsert_reports_&_job_
 const jobFunctionFixture = require('../shared/fixtures/jobFunctions')
 const { partnerName } = require('./fixtures/partnerVariables.json')
 
-module.exports = require('../utils').seed(
+module.exports = require('../../utils').seed(
   async knex =>
     updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName),
   __filename
