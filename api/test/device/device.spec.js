@@ -963,7 +963,7 @@ describe('Device routes', () => {
           'You cannot change the status of a device in days when it was active'
         )
 
-        // Active days cannot be changed
+        // Active status cannot be manuallyset
         payload.externalId = 'active'
         const toActiveResponse = await server
           .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
