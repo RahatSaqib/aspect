@@ -20,7 +20,6 @@ const {
   getOffsetFromIsoDateString,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
-const { generateReport } = require('../report/serviceReports')
 
 async function exportDevices(request, reply) {
   const { data } = await listDevices(request)
@@ -269,25 +268,21 @@ async function getGeneXpertIssuesReport(auth, query) {
 
 async function exportDeviceOperationLogReport(request, reply) {
   const { auth, query } = request
-  const dataset = await getGeneXpertOperationLogsReport(auth, query)
-  const { culture } = await getUser(auth.credentials.name)
+  const { data, replacements } = await getGeneXpertOperationLogsReport(
+    auth,
+    query
+  )
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension = query.format || 'xlsx'
   const sheetData = {
-    dataRows: dataset,
+    dataRows: data,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
-  return generateReport(
-    reply,
-    culture,
-    'device_operation_logs',
-    sheetData,
-    extension,
-    [],
-    'device_operation_logs'
-  )
+
+  return exportData(request, reply, sheetData, 'device_operation_logs', {
+    replacements,
+  })
 }
 
 async function getGeneXpertOperationLogsReport(auth, query) {
@@ -300,6 +295,11 @@ async function getGeneXpertOperationLogsReport(auth, query) {
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
   // get rows
+
+  const deviceData = await knex('Device as d')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .where('d.id', query.deviceId)
+    .first('d.name as deviceName', 's.name as siteName')
   const data = await knex('Device as d')
     .join('DeviceOperation as dl', 'dl.deviceId', 'd.id')
     .join('Site as s', 'd.siteId', 's.id')
@@ -323,11 +323,13 @@ async function getGeneXpertOperationLogsReport(auth, query) {
       'd.name as deviceName',
       'dl.data as data',
       knex.raw("dl.data ->> '$.details' as logDetails"),
-      knex.raw("dl.data ->> '$.logLevel' as logLevel"),
-      knex.raw("dl.data ->> '$.RawText' as logText"),
-      knex.raw("dl.data ->> '$.Errors' as errors"),
-      knex.raw("dl.data ->> '$.type' as logType"),
-      knex.raw("dl.data ->> '$.Calibrations' as calibrations")
+      knex.raw("dl.data ->> '$.details.logLevel' as logLevel"),
+      knex.raw("dl.data ->> '$.details.RawText' as logText"),
+      knex.raw("dl.data ->> '$.details.Errors' as errors"),
+      knex.raw("dl.data ->> '$.details.type' as logType"),
+      knex.raw("dl.data ->> '$.details.Calibrations' as calibrations"),
+      knex.raw("dl.data ->> '$.voltage' as voltage"),
+      knex.raw("dl.data ->> '$.temperature' as temperature")
     )
 
   const dataset = {
@@ -335,8 +337,17 @@ async function getGeneXpertOperationLogsReport(auth, query) {
     total: data.length,
     length: data.length,
     data,
+    replacements: [
+      {
+        placeholder: '<deviceName>',
+        value: deviceData.deviceName,
+      },
+      {
+        placeholder: '<siteName>',
+        value: deviceData.siteName,
+      },
+    ],
   }
-  // console.log('data', data)
   return dataset
 }
 module.exports = {
