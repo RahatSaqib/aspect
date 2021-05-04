@@ -155,6 +155,7 @@ const deviceCalibrationReport = {
       moduleName: 'device/service',
       functionName: 'getDeviceCalibrationsForReport',
       query: {
+        hasResults: 1,
         sortCol: 'name',
         sortDir: 'asc',
       },
