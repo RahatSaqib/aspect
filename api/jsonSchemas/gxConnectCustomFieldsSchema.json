@@ -13,6 +13,7 @@
       "minItems": 0,
       "title": "The CustomFields object containing the array of fields.",
       "default": null,
+      "required": ["Fields"],
       "properties": {
         "Fields": {
           "$id": "#/properties/CustomFields/Fields",

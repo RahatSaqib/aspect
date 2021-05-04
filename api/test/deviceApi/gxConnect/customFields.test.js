@@ -495,4 +495,16 @@ describe('Custom field mapper', () => {
     }
     assert.isFalse(validate(gxConnectSchema, form))
   })
+
+  it('should validate the GxConnect form to have the field CustomFields.Fields', () => {
+    const form = {
+      CustomFields: {},
+    }
+    assert.isFalse(validate(gxConnectSchema, form))
+  })
+
+  it('should validate the GxConnect form to have the field CustomFields', () => {
+    const form = {}
+    assert.isFalse(validate(gxConnectSchema, form))
+  })
 })
