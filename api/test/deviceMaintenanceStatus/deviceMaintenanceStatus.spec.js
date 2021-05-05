@@ -10,6 +10,7 @@ const find = require('lodash/find')
 const range = require('lodash/range')
 const random = require('lodash/random')
 const last = require('lodash/last')
+const reduce = require('lodash/reduce')
 
 const server = require('../utils/testUtils')
 const {
@@ -21,21 +22,35 @@ const {
 const { knex } = require('../../src/db')
 const {
   returnIso8601StringWithoutTimeZoneOffset,
+  dayOfYear,
 } = require('../../src/shared/date')
 const shared = require('../utils/sharedToken')
-const {
-  allDeviceMaintenanceStatusToId,
-} = require('../../src/shared/dictionary')
 
 describe('Maintenance Reports', () => {
   let context
   let deviceId
+  let deviceMaintenanceStatuses
+  let activeDeviceMaintenanceStatusExternalIds
+  let statuses
+  let personId
+
+  before(async () => {
+    deviceMaintenanceStatuses = await knex('DeviceMaintenanceStatus').select()
+    activeDeviceMaintenanceStatusExternalIds = deviceMaintenanceStatuses
+      .filter(dms => dms.active)
+      .map(dms => dms.externalId)
+    statuses = reduce(
+      deviceMaintenanceStatuses,
+      (memo, deviceMaintenanceStatus) => {
+        memo[deviceMaintenanceStatus.externalId] = deviceMaintenanceStatus.id
+        return memo
+      },
+      {}
+    )
+    ;({ id: personId } = await knex('Person').where({ name: 'Admin' }).first())
+  })
 
   async function insertMaintenanceStatusLogs(goingBackFrom = new Date()) {
-    const statuses = await allDeviceMaintenanceStatusToId()
-    const { id: personId } = await knex('Person')
-      .where({ name: 'Admin' })
-      .first()
     // Inserting logs for last Wednesday, Thursday and Friday UTC: inserting date formatted without time prevent unexpected timezone conversions
     const logEntryBase = {
       deviceId,
@@ -45,14 +60,40 @@ describe('Maintenance Reports', () => {
       createdOn: new Date(),
       createdBy: personId,
     }
+    const activeLogDate1 = subDays(goingBackFrom, 2)
     await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
-      day: dateFormat(subDays(goingBackFrom, 2), 'yyyy-MM-dd'),
+      day: dateFormat(activeLogDate1, 'yyyy-MM-dd'),
     })
+    if (dayOfYear(goingBackFrom) % 3 === 0) {
+      await context.createResultForThisDevice({
+        resultDetails: {
+          consumableLot: 'Lot 0',
+          moduleName: 'Module A',
+          moduleSerial: 'MOD-SER12345',
+          instrumentSerial: 'SER1-02349',
+          startedOn: activeLogDate1,
+          endedOn: activeLogDate1,
+        },
+      })
+    }
+    const activeLogDate2 = subDays(goingBackFrom, 1)
     await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
-      day: dateFormat(subDays(goingBackFrom, 1), 'yyyy-MM-dd'),
+      day: dateFormat(activeLogDate2, 'yyyy-MM-dd'),
     })
+    if (dayOfYear(goingBackFrom) % 5 === 0) {
+      await context.createResultForThisDevice({
+        resultDetails: {
+          consumableLot: 'Lot 1',
+          moduleName: 'Module B',
+          moduleSerial: 'MOD-SER12346',
+          instrumentSerial: 'SER1-02349',
+          startedOn: activeLogDate2,
+          endedOn: activeLogDate2,
+        },
+      })
+    }
     await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
       deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
@@ -64,6 +105,18 @@ describe('Maintenance Reports', () => {
       ...logEntryBase,
       day: dateFormat(goingBackFrom, 'yyyy-MM-dd'),
     })
+    if (dayOfYear(goingBackFrom) % 7 === 0) {
+      await context.createResultForThisDevice({
+        resultDetails: {
+          consumableLot: 'Lot 2',
+          moduleName: 'Module D',
+          moduleSerial: 'MOD-SER12347',
+          instrumentSerial: 'SER1-02349',
+          startedOn: goingBackFrom,
+          endedOn: goingBackFrom,
+        },
+      })
+    }
     await knex('Device')
       .where({ id: deviceId })
       .update({ deviceMaintenanceStatusLogId })
@@ -263,14 +316,41 @@ describe('Maintenance Reports', () => {
       expect(convergingDeviceActivityPercentData).to.have.lengthOf(
         convergingMaintenanceStatusOverTime.length
       )
-      console.log(
-        'convergingMaintenanceStatusOverTime',
-        convergingMaintenanceStatusOverTime
-      )
-      console.log(
-        'convergingDeviceActivityPercentData',
-        convergingDeviceActivityPercentData
-      )
+      convergingDeviceActivityPercentData.forEach(deviceActivityPercent => {
+        Object.keys(deviceActivityPercent)
+          .filter(deviceActivityPercentKey =>
+            /^\d{4}-\d{2}$/.test(deviceActivityPercentKey)
+          )
+          .forEach(deviceActivityPercentMonth => {
+            const maintenanceStatusOverTimeDevice = convergingMaintenanceStatusOverTime.find(
+              device => device.id === deviceActivityPercent.id
+            )
+            const maintenanceStatusHistoryForMonth = maintenanceStatusOverTimeDevice.maintenanceStatusHistory.filter(
+              day =>
+                day.day.substring(0, deviceActivityPercentMonth.length) ===
+                deviceActivityPercentMonth
+            )
+            const activeMaintenanceStatusHistoryForMonth = maintenanceStatusHistoryForMonth.filter(
+              msh =>
+                msh.totalResults > 0 ||
+                (activeDeviceMaintenanceStatusExternalIds.includes(
+                  msh.maintenanceStatusExternalId
+                ) &&
+                  msh.maintenanceStatusExternalId !== 'active')
+            )
+            if (deviceActivityPercent[deviceActivityPercentMonth] === '0.00%') {
+              expect(activeMaintenanceStatusHistoryForMonth).to.have.lengthOf(0)
+            } else {
+              expect(
+                `${(
+                  (activeDeviceMaintenanceStatusExternalIds.length /
+                    maintenanceStatusHistoryForMonth.length) *
+                  100
+                ).toFixed(2)}%`
+              ).to.equal(deviceActivityPercent[deviceActivityPercentMonth])
+            }
+          })
+      })
     })
   })
 })

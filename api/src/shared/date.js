@@ -201,6 +201,12 @@ function getDateSubstring(isoDateTime) {
   return isoDateTime.substring(0, 10)
 }
 
+function dayOfYear(date) {
+  return Math.floor(
+    (date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
+  )
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -221,4 +227,5 @@ module.exports = {
   getMonthYearField,
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
+  dayOfYear,
 }

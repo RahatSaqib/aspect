@@ -49,27 +49,55 @@ async function getDeviceActivityPercentReport(auth, query) {
   const minDateDateValue = parseDateOrDefault(minDate)
   const activityPercentPerMonth = knex
     .from(
-      deviceStatusByDayQuery(dataConstraints, minDate, maxDate).as(
-        'deviceStatusByDay'
-      )
+      knex
+        .from(
+          deviceStatusByDayQuery(dataConstraints, minDate, maxDate).as(
+            'deviceStatusByDay'
+          )
+        )
+        .leftJoin('Result as r', qb => {
+          qb.on('deviceStatusByDay.deviceId', 'r.deviceId')
+            .andOn('r.endedOn', '>=', 'deviceStatusByDay.day')
+            .andOn(
+              'r.endedOn',
+              '<',
+              knex.raw('DATE_ADD(deviceStatusByDay.day, INTERVAL 1 DAY)')
+            )
+        })
+        .select(
+          'deviceStatusByDay.deviceId',
+          'deviceStatusByDay.day',
+          'deviceStatusByDay.maintenanceStatusExternalId',
+          'deviceStatusByDay.maintenanceStatusIsActive',
+          knex.raw(
+            'SUM(CASE WHEN r.id IS NULL THEN 0 ELSE 1 END) as numberOfResultsForDay'
+          )
+        )
+        .groupBy('deviceStatusByDay.deviceId', 'deviceStatusByDay.day')
+        .as('deviceStatusByDayWithResultCounts')
     )
     .groupBy([
-      'deviceStatusByDay.deviceId',
-      knex.raw(`YEAR(deviceStatusByDay.day)`),
-      knex.raw(`MONTH(deviceStatusByDay.day)`),
+      'deviceStatusByDayWithResultCounts.deviceId',
+      knex.raw(`YEAR(deviceStatusByDayWithResultCounts.day)`),
+      knex.raw(`MONTH(deviceStatusByDayWithResultCounts.day)`),
     ])
     .select(
-      'deviceStatusByDay.deviceId',
+      'deviceStatusByDayWithResultCounts.deviceId',
       // We are going to return the dates grouped by the user's timezone, and as the days are stored as only date,
       // then we will just transform (not convert!!!) those dates to the given offset
-      knex.raw(`MONTH(deviceStatusByDay.day) as monthNumber`),
-      knex.raw(`YEAR(deviceStatusByDay.day) as year`),
-      getMonthYearField(knex, 'deviceStatusByDay.day', 'monthYear', offset),
-      knex.raw(
-        'SUM(deviceStatusByDay.maintenanceStatusIsActive) AS activeDaysInMonth'
+      knex.raw(`MONTH(deviceStatusByDayWithResultCounts.day) as monthNumber`),
+      knex.raw(`YEAR(deviceStatusByDayWithResultCounts.day) as year`),
+      getMonthYearField(
+        knex,
+        'deviceStatusByDayWithResultCounts.day',
+        'monthYear',
+        offset
       ),
       knex.raw(
-        `DAY(LAST_DAY(MAX(deviceStatusByDay.day))) - (CASE WHEN YEAR(deviceStatusByDay.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDay.day) = ${
+        `SUM(CASE WHEN deviceStatusByDayWithResultCounts.maintenanceStatusExternalId = 'active' AND deviceStatusByDayWithResultCounts.numberOfResultsForDay = 0 THEN 0 ELSE deviceStatusByDayWithResultCounts.maintenanceStatusIsActive END) AS activeDaysInMonth`
+      ),
+      knex.raw(
+        `DAY(LAST_DAY(MAX(deviceStatusByDayWithResultCounts.day))) - (CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
           minDateDateValue.getMonth() + 1
         } THEN ${minDateDateValue.getDate()} ELSE 0 END) AS daysInMonth`
       )
