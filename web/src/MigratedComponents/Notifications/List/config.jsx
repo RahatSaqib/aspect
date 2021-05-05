@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /**
  * name: 'string' [self defined, required]
  * columns: 'array' [self-defined, required]
@@ -16,6 +17,9 @@
  *  initialOrder: 'array' [self defined, optional]
  * contextualMenu: 'function|component' [self defined, optional]
  */
+import React from 'react'
+import { components } from 'react-select'
+import union from 'lodash/union'
 
 import messages from './messages'
 import tableMessages from '../../AspectTable/TableCell/messages'
@@ -24,8 +28,88 @@ import ContactsCell from '../../AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../AspectTable/TableCell/NumberCell'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
+import IconProvider from '../../IconProvider'
 
-const baseConfig = ({ formatMessage, formatNumber }) => ({
+const resultNotifications = [
+  { id: 'result-based', name: 'Result Based', icon: 'AiOutlineSolution' },
+  { id: 'test-updated', name: 'Test Updated', icon: 'AiOutlineShake' },
+]
+
+const deviceNotifications = [
+  { id: 'offline', name: 'Offline', icon: 'AiOutlineApi', isDisabled: true },
+  { id: 'report', name: 'Report', icon: 'AiOutlineBarChart' },
+  { id: 'low-inventory', name: 'Low Inventory', icon: 'AiOutlineDashboard' },
+  { id: 'calibration', name: 'Calibration', icon: 'AiOutlineTool' }, // AiOutlineSetting' },
+  { id: 'module', name: 'Module', icon: 'AiOutlineBlock' },
+  { id: 'critical-error', name: 'Critical Error', icon: 'AiOutlineInfoCircle' },
+  { id: 'online-date', name: 'Online Date', icon: 'AiOutlineCalendar' },
+]
+
+const groupedOptions = [
+  {
+    label: 'Notification for Results',
+    options: resultNotifications,
+  },
+  {
+    label: 'Notification for Devices',
+    options: deviceNotifications,
+  },
+]
+
+const options = groupedOptions
+
+export const getNotificationMeta = notificationType => {
+  const allOptions = union(...options.map(({ options }) => options))
+  const { name, icon } =
+    allOptions.find(({ id }) => id === notificationType) || {}
+  return { name, value: notificationType, icon }
+}
+
+const Group = props => <components.Group {...props} />
+
+const CustomOption = props => {
+  const {
+    data: { icon, name },
+    ...rest
+  } = props
+  return (
+    <components.Option {...rest}>
+      {icon ? <IconProvider icon={icon} /> : null}
+      {name}
+    </components.Option>
+  )
+}
+
+// const Control = ({ children, ...props }) => {
+//   return (
+//     <components.Control {...props}>
+//       {children}
+//     </components.Control>
+//   )
+// }
+
+const groupStyles = {
+  color: '#444',
+  fontWeight: 'bold',
+  fontSize: '15px',
+  // opacity: 0.8,
+  textTransform: 'none',
+}
+const GroupHeading = props => (
+  <components.GroupHeading {...props} style={groupStyles} />
+)
+
+export const notificationMenuProps = {
+  components: {
+    // Control,
+    Group,
+    GroupHeading,
+    Option: CustomOption,
+  },
+  options,
+}
+
+export const baseConfig = ({ formatMessage, formatNumber }) => ({
   name: 'notification',
   columns: [
     {
