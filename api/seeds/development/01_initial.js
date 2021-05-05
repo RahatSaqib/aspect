@@ -4286,16 +4286,67 @@ async function seed(knex) {
         createdBy: auditFields.createdBy,
       })
 
-      // Create DeviceOperation
-      const operationNumber = _.random(3, 11)
+      // Create DeviceOperation (temperature and voltage)
+      let operationNumber = _.random(3, 11)
       await Promise.each(_.range(operationNumber), async j => {
         await knex('DeviceOperation').insert({
           deviceId: device.id,
           data: JSON.stringify({
+            type: 'gx-log',
+            logLevel: 'INFO',
             voltage: _.random(1.35, 1.65, true),
             temperature: _.random(30, 70),
           }),
-          startedOn: new Date(+now + _.random(j, j + 1, true) * millisInHour),
+          startedOn: new Date(+now - _.random(j, j + 1, true) * millisInHour),
+          createdOn: now,
+        })
+      })
+      operationNumber = _.random(3, 11)
+      // Create DeviceOperation (calibrations and errors)
+      await Promise.each(_.range(operationNumber), async j => {
+        await knex('DeviceOperation').insert({
+          deviceId: device.id,
+          data: JSON.stringify(
+            _.sample([
+              {
+                type: 'gx-log',
+                details: {
+                  Errors: [],
+                  RawText:
+                    '<ModuleStartCalibrationTask>Site B2: calibration was successful',
+                  Calibrations: [
+                    {
+                      Site: 'Site B2',
+                      Source: 'ModuleStartCalibrationTask',
+                      Message: 'calibration was successful',
+                    },
+                  ],
+                },
+                logLevel: 'INFO',
+                logFileName:
+                  'C:\\GeneXpert\\XpertCal\\log\\XpertCal-2015.11.05_12.33.00.000-0.log',
+              },
+              {
+                type: 'gx-log',
+                details: {
+                  Errors: [
+                    {
+                      Message:
+                        'The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+                      ErrorCode: '2034',
+                    },
+                  ],
+                  RawText:
+                    '<_e>Operation terminated during test at B1:\r\nError 2034: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+                  Calibrations: [],
+                },
+                logLevel: 'ERROR',
+                logFileName:
+                  'C:\\GeneXpert\\log\\genexpert-2020.11.23_08.57.21.741-0.log',
+              },
+            ])
+          ),
+          startedOn: new Date(+now - _.random(j, j + 1, true) * millisInHour),
           createdOn: now,
         })
       })
