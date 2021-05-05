@@ -321,39 +321,19 @@ async function getGeneXpertOperationLogsReport(auth, query) {
       'dl.startedOn as createdOn',
       's.name as siteName',
       'd.name as deviceName',
-      'dl.data as data',
       knex.raw("dl.data ->> '$.details' as logDetails"),
       knex.raw("dl.data ->> '$.logLevel' as logLevel"),
-      knex.raw("dl.data ->> '$.details.RawText' as logText"),
+      knex.raw("dl.data ->> '$.details.RawText' as message"),
       knex.raw("dl.data ->> '$.details.Errors' as errors"),
       knex.raw("dl.data ->> '$.type' as logType"),
-      knex.raw("dl.data ->> '$.details.Calibrations' as calibrations"),
-      knex.raw("dl.data ->> '$.voltage' as voltage"),
-      knex.raw("dl.data ->> '$.temperature' as temperature")
+      knex.raw("dl.data ->> '$.details.Calibrations' as calibrations")
     )
 
   const dataset = {
     ok: true,
     total: data.length,
     length: data.length,
-    data: _.map(data, elem => ({
-      ...elem,
-      errorMessage: _.join(
-        _.map(
-          JSON.parse(elem.errors),
-          error => `${error.ErrorCode}:${error.Message}`
-        ),
-        '\n'
-      ),
-      calibrationMessage: _.join(
-        _.map(
-          JSON.parse(elem.calibrations),
-          calibration =>
-            `${calibration.Site}:${calibration.Source} - ${calibration.Message}`
-        ),
-        '\n'
-      ),
-    })),
+    data,
     replacements: [
       {
         placeholder: '<date>',
