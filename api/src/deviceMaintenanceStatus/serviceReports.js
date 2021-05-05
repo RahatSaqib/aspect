@@ -6,7 +6,7 @@ const { deviceStatusByDayQuery } = require('./service')
 const { knex, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const {
-  getMonthYearUserTimeZoneField,
+  getMonthYearField,
   getOffsetFromIsoDateString,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
@@ -15,7 +15,10 @@ async function getDeviceActivityPercentReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  const {
+    minDate = addMonths(new Date(), -12).toISOString(),
+    maxDate = new Date().toISOString(),
+  } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
   // get rows
@@ -59,12 +62,7 @@ async function getDeviceActivityPercentReport(auth, query) {
       // then we will just transform (not convert!!!) those dates to the given offset
       knex.raw(`MONTH(deviceStatusByDay.day) as monthNumber`),
       knex.raw(`YEAR(deviceStatusByDay.day) as year`),
-      getMonthYearUserTimeZoneField(
-        knex,
-        'deviceStatusByDay.day',
-        'monthYear',
-        offset
-      ),
+      getMonthYearField(knex, 'deviceStatusByDay.day', 'monthYear', offset),
       knex.raw(
         'SUM(deviceStatusByDay.maintenanceStatusIsActive) AS activeDaysInMonth'
       ),

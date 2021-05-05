@@ -2,6 +2,7 @@ const chai = require('chai')
 
 const { assert, expect } = chai
 const subDays = require('date-fns/subDays')
+const subMonths = require('date-fns/subMonths')
 const isValid = require('date-fns/isValid')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
@@ -14,7 +15,13 @@ const server = require('../utils/testUtils')
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
+const {
+  getDeviceActivityPercentReport,
+} = require('../../src/deviceMaintenanceStatus/serviceReports')
 const { knex } = require('../../src/db')
+const {
+  returnIso8601StringWithoutTimeZoneOffset,
+} = require('../../src/shared/date')
 const shared = require('../utils/sharedToken')
 const {
   allDeviceMaintenanceStatusToId,
@@ -122,33 +129,38 @@ describe('Maintenance Reports', () => {
   })
 
   afterEach(async () => {
-    await context.cleanUp()
+    // await context.cleanUp()
   })
 
+  const maintenanceOverTimePath = '/api/device/maintenance-over-time'
+  shared.checkToken(server, maintenanceOverTimePath)
+
+  async function getMaintenanceStatusOverTimeResponse(offset) {
+    // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
+    const minDate = `${dateFormat(
+      monthAgo,
+      'yyyy-MM-dd'
+    )}T00:00:00.000${offset}`
+    const maxDate = `${dateFormat(
+      lastFriday,
+      'yyyy-MM-dd'
+    )}T00:00:00.000${offset}`
+
+    // Then, in the API we consider the same dates but in UTC (without conversion)
+    return server
+      .get(
+        `${maintenanceOverTimePath}?minDate=${encodeURIComponent(
+          minDate
+        )}&maxDate=${encodeURIComponent(maxDate)}`
+      )
+      .set('Authorization', `Bearer ${shared.token}`)
+  }
+
   describe('device/maintenance-over-time', () => {
-    const path = '/api/device/maintenance-over-time'
-
-    shared.checkToken(server, path)
-
     const evaluateCorrectDailyStatus = async offset => {
-      // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
-      const minDate = `${dateFormat(
-        monthAgo,
-        'yyyy-MM-dd'
-      )}T00:00:00.000${offset}`
-      const maxDate = `${dateFormat(
-        lastFriday,
-        'yyyy-MM-dd'
-      )}T00:00:00.000${offset}`
-
-      // Then, in the API we consider the same dates but in UTC (without conversion)
-      const maintenanceStatusOverTime = await server
-        .get(
-          `${path}?minDate=${encodeURIComponent(
-            minDate
-          )}&maxDate=${encodeURIComponent(maxDate)}`
-        )
-        .set('Authorization', `Bearer ${shared.token}`)
+      const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
+        offset
+      )
       assert.equal(maintenanceStatusOverTime.status, 200)
       assert.typeOf(maintenanceStatusOverTime.body, 'Object')
       assert.property(maintenanceStatusOverTime.body, 'data')
@@ -212,6 +224,37 @@ describe('Maintenance Reports', () => {
       assert.equal(tamagotchi.latitude, 1)
       assert.equal(tamagotchi.longitude, 5)
       expect(tamagotchi.maintenanceStatusExternalId).equals('active')
+    })
+  })
+
+  describe('device_activity_percent', () => {
+    it('should balance with device active rate in /api/device/maintenance-over-time', async () => {
+      await Promise.each(range(1, 12), async month =>
+        insertMaintenanceStatusLogs(subMonths(monthAgo, month))
+      )
+      const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
+        'Z'
+      )
+      const minDate = returnIso8601StringWithoutTimeZoneOffset(
+        subMonths(new Date(), 12)
+      )
+      const maxDate = returnIso8601StringWithoutTimeZoneOffset(new Date())
+      const deviceActivityPercentData = await getDeviceActivityPercentReport(
+        { credentials: { name: 'admin' } },
+        {
+          minDate,
+          maxDate,
+        }
+      )
+
+      console.log(
+        'maintenanceStatusOverTime',
+        maintenanceStatusOverTime.body.data.map(ms => ({
+          id: ms.id,
+          maintenanceStatusHistory: JSON.stringify(ms.maintenanceStatusHistory),
+        }))
+      )
+      console.log('deviceActivityPercentData', deviceActivityPercentData.data)
     })
   })
 })
