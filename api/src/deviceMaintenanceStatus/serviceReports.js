@@ -47,6 +47,7 @@ async function getDeviceActivityPercentReport(auth, query) {
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
   const minDateDateValue = parseDateOrDefault(minDate)
+  const maxDateDateValue = parseDateOrDefault(maxDate)
   const activityPercentPerMonth = knex
     .from(
       knex
@@ -89,17 +90,35 @@ async function getDeviceActivityPercentReport(auth, query) {
       knex.raw(`YEAR(deviceStatusByDayWithResultCounts.day) as year`),
       getMonthYearField(
         knex,
-        'deviceStatusByDayWithResultCounts.day',
+        'MAX(deviceStatusByDayWithResultCounts.day)',
         'monthYear',
         offset
       ),
       knex.raw(
-        `SUM(CASE WHEN deviceStatusByDayWithResultCounts.maintenanceStatusExternalId = 'active' AND deviceStatusByDayWithResultCounts.numberOfResultsForDay = 0 THEN 0 ELSE deviceStatusByDayWithResultCounts.maintenanceStatusIsActive END) AS activeDaysInMonth`
+        `SUM(CASE WHEN DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 7 OR DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 1 OR (deviceStatusByDayWithResultCounts.maintenanceStatusExternalId = 'active' AND deviceStatusByDayWithResultCounts.numberOfResultsForDay = 0) THEN 0 ELSE deviceStatusByDayWithResultCounts.maintenanceStatusIsActive END) AS activeDaysInMonth`
       ),
       knex.raw(
-        `DAY(LAST_DAY(MAX(deviceStatusByDayWithResultCounts.day))) - (CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+        `(5 * (DATEDIFF(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          maxDateDateValue.getMonth() + 1
+        } THEN '${format(
+          maxDateDateValue,
+          'yyyy-MM-dd'
+        )}' ELSE LAST_DAY(deviceStatusByDayWithResultCounts.day) END, CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
           minDateDateValue.getMonth() + 1
-        } THEN ${minDateDateValue.getDate()} ELSE 0 END) AS daysInMonth`
+        } THEN '${format(
+          minDateDateValue,
+          'yyyy-MM-dd'
+        )}' ELSE DATE_SUB(deviceStatusByDayWithResultCounts.day, INTERVAL DAYOFMONTH(deviceStatusByDayWithResultCounts.day) - 1 DAY) END) DIV 7) + MID('0123444401233334012222340111123400001234000123440', 7 * WEEKDAY(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          minDateDateValue.getMonth() + 1
+        } THEN '${format(
+          minDateDateValue,
+          'yyyy-MM-dd'
+        )}' ELSE DATE_SUB(deviceStatusByDayWithResultCounts.day, INTERVAL DAYOFMONTH(deviceStatusByDayWithResultCounts.day) - 1 DAY) END) + WEEKDAY(CASE WHEN YEAR(deviceStatusByDayWithResultCounts.day) = ${maxDateDateValue.getFullYear()} AND MONTH(deviceStatusByDayWithResultCounts.day) = ${
+          maxDateDateValue.getMonth() + 1
+        } THEN '${format(
+          maxDateDateValue,
+          'yyyy-MM-dd'
+        )}' ELSE LAST_DAY(deviceStatusByDayWithResultCounts.day) END) + 1, 1)) + 1 AS daysInMonth`
       )
     )
   const [data, deviceDetails] = await Promise.all([

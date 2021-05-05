@@ -327,23 +327,25 @@ describe('Maintenance Reports', () => {
             )
             const maintenanceStatusHistoryForMonth = maintenanceStatusOverTimeDevice.maintenanceStatusHistory.filter(
               day =>
+                !day.isWeekend &&
                 day.day.substring(0, deviceActivityPercentMonth.length) ===
-                deviceActivityPercentMonth
+                  deviceActivityPercentMonth
             )
             const activeMaintenanceStatusHistoryForMonth = maintenanceStatusHistoryForMonth.filter(
               msh =>
-                msh.totalResults > 0 ||
-                (activeDeviceMaintenanceStatusExternalIds.includes(
-                  msh.maintenanceStatusExternalId
-                ) &&
-                  msh.maintenanceStatusExternalId !== 'active')
+                !msh.isWeekend &&
+                ((msh.totalResults > 0 && msh.maintenanceStatusExternalId) ||
+                  (activeDeviceMaintenanceStatusExternalIds.includes(
+                    msh.maintenanceStatusExternalId
+                  ) &&
+                    msh.maintenanceStatusExternalId !== 'active'))
             )
             if (deviceActivityPercent[deviceActivityPercentMonth] === '0.00%') {
               expect(activeMaintenanceStatusHistoryForMonth).to.have.lengthOf(0)
             } else {
               expect(
                 `${(
-                  (activeDeviceMaintenanceStatusExternalIds.length /
+                  (activeMaintenanceStatusHistoryForMonth.length /
                     maintenanceStatusHistoryForMonth.length) *
                   100
                 ).toFixed(2)}%`
