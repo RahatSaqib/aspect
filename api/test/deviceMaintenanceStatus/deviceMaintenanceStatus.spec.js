@@ -128,9 +128,7 @@ describe('Maintenance Reports', () => {
     })
   })
 
-  afterEach(async () => {
-    // await context.cleanUp()
-  })
+  afterEach(async () => context.cleanUp())
 
   const maintenanceOverTimePath = '/api/device/maintenance-over-time'
   shared.checkToken(server, maintenanceOverTimePath)

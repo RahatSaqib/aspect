@@ -66,7 +66,7 @@ async function getDeviceActivityPercentReport(auth, query) {
       knex.raw(
         'SUM(deviceStatusByDay.maintenanceStatusIsActive) AS activeDaysInMonth'
       ),
-      knex.raw('COUNT(deviceStatusByDay.day) AS daysInMonth')
+      knex.raw('DAY(LAST_DAY(MAX(deviceStatusByDay.day))) AS daysInMonth')
     )
   const [data, deviceDetails] = await Promise.all([
     getItems,
