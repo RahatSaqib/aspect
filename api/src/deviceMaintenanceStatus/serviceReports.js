@@ -8,6 +8,7 @@ const { getConstraints } = require('../auth/constraints')
 const {
   getMonthYearField,
   getOffsetFromIsoDateString,
+  parseDateOrDefault,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
 
@@ -45,6 +46,7 @@ async function getDeviceActivityPercentReport(auth, query) {
     .max('r.endedOn as lastUploadOn')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
+  const minDateDateValue = parseDateOrDefault(minDate)
   const activityPercentPerMonth = knex
     .from(
       deviceStatusByDayQuery(dataConstraints, minDate, maxDate).as(
@@ -66,7 +68,11 @@ async function getDeviceActivityPercentReport(auth, query) {
       knex.raw(
         'SUM(deviceStatusByDay.maintenanceStatusIsActive) AS activeDaysInMonth'
       ),
-      knex.raw('DAY(LAST_DAY(MAX(deviceStatusByDay.day))) AS daysInMonth')
+      knex.raw(
+        `DAY(LAST_DAY(MAX(deviceStatusByDay.day))) - (CASE WHEN YEAR(deviceStatusByDay.day) = ${minDateDateValue.getFullYear()} AND MONTH(deviceStatusByDay.day) = ${
+          minDateDateValue.getMonth() + 1
+        } THEN ${minDateDateValue.getDate()} ELSE 0 END) AS daysInMonth`
+      )
     )
   const [data, deviceDetails] = await Promise.all([
     getItems,

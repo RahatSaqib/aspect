@@ -133,16 +133,17 @@ describe('Maintenance Reports', () => {
   const maintenanceOverTimePath = '/api/device/maintenance-over-time'
   shared.checkToken(server, maintenanceOverTimePath)
 
-  async function getMaintenanceStatusOverTimeResponse(offset) {
+  async function getMaintenanceStatusOverTimeResponse(
+    offset,
+    fromDate = monthAgo,
+    toDate = lastFriday
+  ) {
     // From the Web we will always send the start of each day of the range, so we are just concatenating the offset
     const minDate = `${dateFormat(
-      monthAgo,
+      fromDate,
       'yyyy-MM-dd'
     )}T00:00:00.000${offset}`
-    const maxDate = `${dateFormat(
-      lastFriday,
-      'yyyy-MM-dd'
-    )}T00:00:00.000${offset}`
+    const maxDate = `${dateFormat(toDate, 'yyyy-MM-dd')}T00:00:00.000${offset}`
 
     // Then, in the API we consider the same dates but in UTC (without conversion)
     return server
@@ -230,29 +231,46 @@ describe('Maintenance Reports', () => {
       await Promise.each(range(1, 12), async month =>
         insertMaintenanceStatusLogs(subMonths(monthAgo, month))
       )
+      const minDate = subMonths(new Date(), 12)
+      const maxDate = new Date()
       const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
-        'Z'
+        'Z',
+        minDate,
+        maxDate
       )
-      const minDate = returnIso8601StringWithoutTimeZoneOffset(
-        subMonths(new Date(), 12)
-      )
-      const maxDate = returnIso8601StringWithoutTimeZoneOffset(new Date())
+      const minDateString = returnIso8601StringWithoutTimeZoneOffset(minDate)
+      const maxDateString = returnIso8601StringWithoutTimeZoneOffset(maxDate)
       const deviceActivityPercentData = await getDeviceActivityPercentReport(
         { credentials: { name: 'admin' } },
         {
-          minDate,
-          maxDate,
+          minDateString,
+          maxDateString,
         }
       )
-
-      console.log(
-        'maintenanceStatusOverTime',
-        maintenanceStatusOverTime.body.data.map(ms => ({
-          id: ms.id,
-          maintenanceStatusHistory: JSON.stringify(ms.maintenanceStatusHistory),
-        }))
+      const convergingMaintenanceStatusOverTime = maintenanceStatusOverTime.body.data.filter(
+        device =>
+          deviceActivityPercentData.data
+            .map(activityPercent => activityPercent.id)
+            .includes(device.id)
       )
-      console.log('deviceActivityPercentData', deviceActivityPercentData.data)
+      expect(convergingMaintenanceStatusOverTime).to.have.lengthOf.above(0)
+      const convergingDeviceActivityPercentData = deviceActivityPercentData.data.filter(
+        deviceActivityPercentData =>
+          convergingMaintenanceStatusOverTime
+            .map(device => device.id)
+            .includes(deviceActivityPercentData.id)
+      )
+      expect(convergingDeviceActivityPercentData).to.have.lengthOf(
+        convergingMaintenanceStatusOverTime.length
+      )
+      console.log(
+        'convergingMaintenanceStatusOverTime',
+        convergingMaintenanceStatusOverTime
+      )
+      console.log(
+        'convergingDeviceActivityPercentData',
+        convergingDeviceActivityPercentData
+      )
     })
   })
 })
