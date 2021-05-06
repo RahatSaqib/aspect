@@ -151,11 +151,9 @@ async function getDeviceActivityPercentReport(auth, query) {
         deviceDetails,
         filteredElem => filteredElem.deviceId === elem.id
       ),
-      detail => {
-        elem[detail.monthYear] = detail.daysInMonth
-          ? `${((detail.activeDaysInMonth / detail.daysInMonth) * 100).toFixed(
-              2
-            )}%`
+      ({ activeDaysInMonth, daysInMonth, monthYear }) => {
+        elem[monthYear] = daysInMonth
+          ? `${((activeDaysInMonth / daysInMonth) * 100).toFixed(2)}%`
           : ''
       }
     )
