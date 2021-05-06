@@ -10,6 +10,31 @@ import { useFormikState } from '../Formik/Context'
 import AspectDropDown from '../../AspectDropDown'
 import UI_CONSTS from '../../../globals/consts/UI'
 
+const getPlaceholder = (placeholder, formik) => {
+  if (isFunction(placeholder)) {
+    return placeholder(formik)
+  }
+  return placeholder
+}
+const getState = (queryKey, formik, defaultValue) => {
+  if (!queryKey) {
+    return defaultValue
+  }
+  if (isFunction(queryKey)) {
+    return queryKey(formik)
+  }
+  return queryKey
+}
+const getValue = (selectedOption, formik, id) => {
+  if (!selectedOption) {
+    return formik.initialValues[id] // reset to initial value
+  }
+  if (isArray(selectedOption)) {
+    return selectedOption // selected values in multiple-selection mode
+  }
+  return selectedOption.value // selected value
+}
+
 const AspectSelect = props => {
   const { updateField } = useFormikState()
   const {
@@ -59,21 +84,11 @@ const AspectSelect = props => {
             nameKey: 'label',
           },
           normalizeLoadedData,
-          placeholder: isFunction(placeholder)
-            ? placeholder(formik)
-            : placeholder,
-          state: queryKey
-            ? isFunction(queryKey)
-              ? queryKey(formik)
-              : queryKey
-            : id,
+          placeholder: getPlaceholder(placeholder, formik),
+          state: getState(queryKey, formik, id),
         }}
         action={({ identifier, selectedOption }) => {
-          const value = selectedOption
-            ? isArray(selectedOption)
-              ? selectedOption
-              : selectedOption.value // selected value
-            : formik.initialValues[id] // reset to initial value
+          const value = getValue(selectedOption, formik, id)
           updateField(identifier, value, formik)
         }}
         theme={UI_CONSTS.themeName.mui}
