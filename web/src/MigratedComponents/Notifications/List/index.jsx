@@ -15,7 +15,7 @@ import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
 import AspectTable from '../../AspectTable'
 import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
-import { baseConfig, notificationMenuProps } from './config'
+import { baseConfig, getCreateNotificationMenuProps } from './config'
 
 const cssClasses = classnames.bind(require('../Notifications.css'))
 
@@ -35,6 +35,7 @@ const NotificationList = () => {
   } = useAuthState()
   const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
   const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
+  const notificationMenuProps = getCreateNotificationMenuProps(intl)
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />

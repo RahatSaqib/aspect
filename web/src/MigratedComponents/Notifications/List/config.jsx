@@ -30,35 +30,74 @@ import NumberCell from '../../AspectTable/TableCell/NumberCell'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
 import IconProvider from '../../IconProvider'
 
-const resultNotifications = [
-  { id: 'result-based', name: 'Result Based', icon: 'AiOutlineSolution' },
-  { id: 'test-updated', name: 'Test Updated', icon: 'AiOutlineShake' },
-]
-
-const deviceNotifications = [
-  { id: 'offline', name: 'Offline', icon: 'AiOutlineApi', isDisabled: true },
-  { id: 'report', name: 'Report', icon: 'AiOutlineBarChart' },
-  { id: 'low-inventory', name: 'Low Inventory', icon: 'AiOutlineDashboard' },
-  { id: 'calibration', name: 'Calibration', icon: 'AiOutlineTool' }, // AiOutlineSetting' },
-  { id: 'module', name: 'Module', icon: 'AiOutlineBlock' },
-  { id: 'critical-error', name: 'Critical Error', icon: 'AiOutlineInfoCircle' },
-  { id: 'online-date', name: 'Online Date', icon: 'AiOutlineCalendar' },
-]
-
-const groupedOptions = [
+const groupedOptions = ({ formatMessage }) => [
   {
-    label: 'Notification for Results',
-    options: resultNotifications,
+    label: formatMessage(messages.notificationCreateGroupForResults),
+    options: [
+      {
+        id: 'result-based',
+        name: formatMessage(messages.notificationTypeResultBased),
+        icon: 'AiOutlineSolution',
+      },
+      {
+        id: 'test-updated',
+        name: formatMessage(messages.notificationTypeTestUpdated),
+        icon: 'AiOutlineShake',
+        isDisabled: true,
+      },
+    ],
   },
   {
-    label: 'Notification for Devices',
-    options: deviceNotifications,
+    label: formatMessage(messages.notificationCreateGroupForDevices),
+    options: [
+      {
+        id: 'offline',
+        name: formatMessage(messages.notificationTypeOffline),
+        icon: 'AiOutlineApi',
+        isDisabled: true,
+      },
+      {
+        id: 'report',
+        name: formatMessage(messages.notificationTypeReport),
+        icon: 'AiOutlineBarChart',
+        isDisabled: true,
+      },
+      {
+        id: 'low-inventory',
+        name: formatMessage(messages.notificationTypeLowInventory),
+        icon: 'AiOutlineDashboard',
+        isDisabled: true,
+      },
+      {
+        id: 'calibration',
+        name: formatMessage(messages.notificationTypeCalibration),
+        icon: 'AiOutlineTool',
+        isDisabled: true,
+      },
+      {
+        id: 'module',
+        name: formatMessage(messages.notificationTypeModule),
+        icon: 'AiOutlineBlock',
+        isDisabled: true,
+      },
+      {
+        id: 'critical-error',
+        name: formatMessage(messages.notificationTypeCriticalError),
+        icon: 'AiOutlineInfoCircle',
+        isDisabled: true,
+      },
+      {
+        id: 'online-date',
+        name: formatMessage(messages.notificationTypeOnlineDate),
+        icon: 'AiOutlineCalendar',
+        isDisabled: true,
+      },
+    ],
   },
 ]
 
-const options = groupedOptions
-
-export const getNotificationMeta = notificationType => {
+export const getNotificationMeta = (notificationType, intl) => {
+  const options = groupedOptions(intl)
   const allOptions = union(...options.map(({ options }) => options))
   const { name, icon } =
     allOptions.find(({ id }) => id === notificationType) || {}
@@ -66,20 +105,20 @@ export const getNotificationMeta = notificationType => {
 }
 
 const Group = props => <components.Group {...props} />
-
 const CustomOption = props => {
   const {
-    data: { icon, name },
+    data: { icon, name, isDisabled },
     ...rest
   } = props
   return (
     <components.Option {...rest}>
-      {icon ? <IconProvider icon={icon} /> : null}
-      {name}
+      <span style={{ opacity: isDisabled ? 0.4 : 1 }}>
+        {icon ? <IconProvider icon={icon} /> : null}
+      </span>
+      <span style={{ opacity: isDisabled ? 0.4 : 1 }}>{name}</span>
     </components.Option>
   )
 }
-
 const groupStyles = {
   color: '#444',
   fontWeight: 'bold',
@@ -90,14 +129,14 @@ const GroupHeading = props => (
   <components.GroupHeading {...props} style={groupStyles} />
 )
 
-export const notificationMenuProps = {
+export const getCreateNotificationMenuProps = intl => ({
   components: {
     Group,
     GroupHeading,
     Option: CustomOption,
   },
-  options,
-}
+  options: groupedOptions(intl),
+})
 
 export const baseConfig = ({ formatMessage, formatNumber }) => ({
   name: 'notification',

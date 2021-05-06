@@ -424,7 +424,6 @@ const getSectionsBase = formatMessage => [
             },
             label: 'Assay',
             labelI18nKey: 'nationalTags',
-            validate: validationBase.required,
             visibleIf: values => values.toNationalContacts === true,
           },
         ],

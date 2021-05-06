@@ -21,13 +21,13 @@ import { getNotificationMeta } from '../../List/config'
 import messages from '../messages'
 
 const AspectResultDetail = ({ notificationType }) => {
-  const { formatMessage } = useI18n()
+  const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
   useEffect(() => {
     if (!formConfig) {
-      const formSchema = getFormConfig(formatMessage, notificationType)
-      const { name, value } = getNotificationMeta(notificationType)
+      const formSchema = getFormConfig(intl.formatMessage, notificationType)
+      const { name, value } = getNotificationMeta(notificationType, intl)
       const initialValues = {
         ...getInitialValuesFromFormConfig(formSchema),
         notificationTypeName: name, // to display as read-only field
@@ -37,7 +37,7 @@ const AspectResultDetail = ({ notificationType }) => {
         mergeFormConfigWithData(initialValues, formSchema, messages)
       )
     }
-  }, [formConfig, formatMessage, notificationType])
+  }, [formConfig, intl, notificationType])
 
   return (
     <Shell>
