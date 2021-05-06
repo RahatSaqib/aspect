@@ -18,6 +18,7 @@ import {
   getDateObject,
 } from '../../../shared/utils/dateFormat'
 import { useAuthState } from '../../../Providers/AuthProvider'
+import { useFormikState } from '../Formik/Context'
 
 const cssClasses = classnames.bind(require('./DatePicker.css'))
 
@@ -31,15 +32,14 @@ const getDisplayValue = (value, showTimeSelect) => {
 
 const AspectDatePickerBase = props => {
   const {
-    id,
-    value,
-    InputProps,
-    placeholder,
     className,
     culture,
     dateFormat,
-    setFieldValue,
+    InputProps,
+    onChange,
+    placeholder,
     showTimeSelect,
+    value,
   } = props
   registerLocale(culture, enUS)
   const [selectedDate, setSelectedDate] = useState(getDateObject(value))
@@ -58,7 +58,7 @@ const AspectDatePickerBase = props => {
   )
 
   const updateSelectDate = date => {
-    setFieldValue(id, date)
+    onChange(date)
     setSelectedDate(date)
   }
 
@@ -81,10 +81,11 @@ const AspectDatePickerBase = props => {
 }
 
 const AspectDatePicker = props => {
+  const { updateField } = useFormikState()
   const { displayPreferences, culture } = useAuthState()
   const {
     controlType,
-    formik: { setFieldValue, values },
+    formik: { values },
   } = props
   const {
     format,
@@ -117,7 +118,9 @@ const AspectDatePicker = props => {
     ...omit(props, ['controlType', 'formik']),
     ...optionalProps,
     culture,
-    setFieldValue, // use only this method from formik
+    onChange: value => {
+      updateField(props.id, value, props.formik)
+    },
     dateFormat: format || displayPreferences.dateTimeFormat, // use `format` from `controlType` or default
     showTimeSelect: isBoolean(props.showTimeSelect)
       ? props.showTimeSelect // use direct prop if defined

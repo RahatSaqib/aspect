@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const messages = {
+const messagesBase = {
   ...defineMessages({
     site: {
       id: 'forms.formSectionHeader.site',
@@ -43,21 +43,35 @@ const messages = {
   }),
 }
 
-const FormSectionHeader = ({ header, headerI18nKey }) => {
+const FormSectionHeader = ({
+  classNames,
+  header,
+  headerI18nKey,
+  messages = messagesBase,
+}) => {
   const intl = useIntl()
   return (
-    <Grid item xs={2} className={cssClasses('form__sectionHeader')}>
+    <Grid
+      item
+      xs={2}
+      className={cssClasses('form__sectionHeader', {
+        [classNames.sectionHeader]: !!classNames.sectionHeader,
+      })}
+    >
       {headerI18nKey ? intl.formatMessage(messages[headerI18nKey]) : header}
     </Grid>
   )
 }
 
 FormSectionHeader.propTypes = {
+  classNames: PropTypes.objectOf(PropTypes.shape),
   header: PropTypes.string.isRequired,
   headerI18nKey: PropTypes.string,
+  messages: PropTypes.objectOf(PropTypes.shape).isRequired,
 }
 
 FormSectionHeader.defaultProps = {
+  classNames: {},
   headerI18nKey: null,
 }
 
