@@ -80,19 +80,10 @@ const CustomOption = props => {
   )
 }
 
-// const Control = ({ children, ...props }) => {
-//   return (
-//     <components.Control {...props}>
-//       {children}
-//     </components.Control>
-//   )
-// }
-
 const groupStyles = {
   color: '#444',
   fontWeight: 'bold',
   fontSize: '15px',
-  // opacity: 0.8,
   textTransform: 'none',
 }
 const GroupHeading = props => (
@@ -101,7 +92,6 @@ const GroupHeading = props => (
 
 export const notificationMenuProps = {
   components: {
-    // Control,
     Group,
     GroupHeading,
     Option: CustomOption,

@@ -48,7 +48,6 @@ const NotificationList = () => {
         >
           <AspectDropDown
             props={{
-              // classNames,
               components: notificationMenuProps.components,
               identifier: 'createNotification',
               data: {
