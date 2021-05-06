@@ -1,5 +1,11 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
+const {
+  format,
+  parseISO,
+  addMonths,
+  subMonths,
+  differenceInMonths,
+} = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery, listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
@@ -59,7 +65,7 @@ async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
   // get rows
@@ -151,7 +157,7 @@ async function getModuleSwapsReport(auth, query) {
   const {
     minDate,
     maxDate,
-    minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
+    minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
 
@@ -290,7 +296,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
   const {
     minDate,
     maxDate,
-    minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
+    minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
   // get rows

@@ -1,5 +1,11 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
+const {
+  format,
+  parseISO,
+  addMonths,
+  subMonths,
+  differenceInMonths,
+} = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery } = require('../device/service')
 const { deviceStatusByDayQuery } = require('./service')
@@ -17,7 +23,7 @@ async function getDeviceActivityPercentReport(auth, query) {
   const { culture } = await getUser(auth.credentials.name)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
   const {
-    minDate = addMonths(new Date(), -12).toISOString(),
+    minDate = subMonths(new Date(), 12).toISOString(),
     maxDate = new Date().toISOString(),
   } = query
   const offset = getOffsetFromIsoDateString(maxDate)
