@@ -202,9 +202,7 @@ function getDateSubstring(isoDateTime) {
 }
 
 function dayOfYear(date) {
-  return Math.floor(
-    (date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
-  )
+  return parseInt(format(date, 'D', { useAdditionalDayOfYearTokens: true }), 10)
 }
 
 module.exports = {
