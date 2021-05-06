@@ -1,8 +1,10 @@
 import * as Yup from 'yup'
+
+import cloneDeep from 'lodash/cloneDeep'
+import flatten from 'lodash/flatten'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
-import cloneDeep from 'lodash/cloneDeep'
 
 import messages from '../messages'
 
@@ -55,23 +57,19 @@ const getInitialValuesFromFormConfig = config => {
   return initialValues
 }
 
-const pickKeys = (data, key, defaultValue) => {
+const pickKeys = (sections, key, defaultValue) => {
   const picked = {}
-  if (data && data.length) {
-    data.forEach(({ rows }) => {
-      rows.forEach(({ items }) => {
-        items.forEach(
-          ({ controlType: { component } = {}, id, [key]: keyToPick }) => {
-            let value = keyToPick || defaultValue
-            if (key === 'initialValue') {
-              if (component === 'checkbox') {
-                value = keyToPick === true
-              }
-            }
-            picked[id] = value
-          }
-        )
-      })
+  if (sections && sections.length) {
+    flatten(
+      sections.map(({ rows }) => flatten(rows.map(row => row.items)))
+    ).forEach(({ controlType: { component } = {}, id, [key]: keyToPick }) => {
+      let value = keyToPick || defaultValue
+      if (key === 'initialValue') {
+        if (component === 'checkbox') {
+          value = keyToPick === true
+        }
+      }
+      picked[id] = value
     })
   }
   return picked
@@ -80,11 +78,9 @@ const pickKeys = (data, key, defaultValue) => {
 const pickItems = sections => {
   let items = []
   if (sections && sections.length) {
-    sections.forEach(({ rows }) => {
-      rows.forEach(row => {
-        items = [...items, ...row.items]
-      })
-    })
+    items = flatten(
+      sections.map(({ rows }) => flatten(rows.map(row => row.items)))
+    )
   }
   return items
 }
