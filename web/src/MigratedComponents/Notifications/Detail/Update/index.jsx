@@ -23,7 +23,7 @@ import { NOTIFICATION_DETAIL } from '../../../QueryFetch/Notification'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import messages from '../messages'
 
-const AspectResultDetail = ({ notificationId }) => {
+const AspectNotificationDetail = ({ notificationId }) => {
   const { formatMessage } = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
@@ -75,8 +75,8 @@ const AspectResultDetail = ({ notificationId }) => {
   )
 }
 
-AspectResultDetail.propTypes = {
+AspectNotificationDetail.propTypes = {
   notificationId: PropTypes.number.isRequired,
 }
 
-export default AspectResultDetail
+export default AspectNotificationDetail

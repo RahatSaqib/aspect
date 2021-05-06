@@ -20,7 +20,7 @@ import getFormConfig from '../../Forms/editConfig'
 import { getNotificationMeta } from '../../List/config'
 import messages from '../messages'
 
-const AspectResultDetail = ({ notificationType }) => {
+const AspectNotificationDetail = ({ notificationType }) => {
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
@@ -58,8 +58,8 @@ const AspectResultDetail = ({ notificationType }) => {
   )
 }
 
-AspectResultDetail.propTypes = {
+AspectNotificationDetail.propTypes = {
   notificationType: PropTypes.string.isRequired,
 }
 
-export default AspectResultDetail
+export default AspectNotificationDetail
