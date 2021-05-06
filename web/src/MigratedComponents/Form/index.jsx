@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
-// import { Field, Form, Formik, FormikProps } from 'formik'
 
 import FormSection from './FormSection'
 import FormSectionHeader from './FormSectionHeader'

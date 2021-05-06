@@ -32,7 +32,6 @@ const AspectResultDetail = ({ notificationId }) => {
     async (key, { notificationId }) =>
       fetchWrapperForQueries({
         endpoint: `${NOTIFICATION_DETAIL.ENDPOINT}/${notificationId}`,
-        // errors: ResultDetailsErrors,
       }),
     {
       onSuccess: resp => {

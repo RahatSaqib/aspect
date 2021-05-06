@@ -37,15 +37,13 @@ export default defineMessages({
   },
 
   // --------------------------------------------------------------
-  //
-  // --------------------------------------------------------------
   notificationTitle: {
     id: 'pages.NotificationDetail.notificationTitle',
     defaultMessage: 'Notification Title',
   },
 
   // --------------------------------------------------------------
-  //
+  // section "When the result is"
   // --------------------------------------------------------------
   assayTitle: {
     id: 'pages.NotificationDetail.assayTitle',
@@ -65,8 +63,9 @@ export default defineMessages({
   },
 
   // --------------------------------------------------------------
-  // Device Area Level
+  // section "From this device"
   // --------------------------------------------------------------
+  //  Device Area Level
   SelectAreaTitle: {
     id: 'pages.NotificationDetail.SelectAreaTitle',
     defaultMessage: 'Device Area Level',
@@ -96,9 +95,7 @@ export default defineMessages({
     defaultMessage: 'Select Level',
   },
 
-  // --------------------------------------------------------------
   // device area items
-  // --------------------------------------------------------------
   SelectNationalTitle: {
     id: 'pages.NotificationDetail.SelectNationalTitle',
     defaultMessage: 'Device Country',
@@ -132,7 +129,9 @@ export default defineMessages({
     defaultMessage: 'Choose Labs ...',
   },
 
-  //
+  // --------------------------------------------------------------
+  // section "Send"
+  // --------------------------------------------------------------
   email: {
     id: 'pages.NotificationDetail.email',
     defaultMessage: 'Email',
@@ -162,6 +161,9 @@ export default defineMessages({
     defaultMessage: 'Web Body',
   },
 
+  // --------------------------------------------------------------
+  // section "To any of these contacts"
+  // --------------------------------------------------------------
   toNationalContacts: {
     id: 'pages.NotificationDetail.toNationalContacts',
     defaultMessage: 'National Contacts',
@@ -183,8 +185,6 @@ export default defineMessages({
     defaultMessage: 'Laboratory Contacts',
   },
 
-  // --------------------------------------------------------------
-  //
   // --------------------------------------------------------------
   site: {
     id: 'forms.formSectionHeader.site',
@@ -279,8 +279,6 @@ export default defineMessages({
       'After clicking the OK button below, you will be redirected to the list of results.',
   },
 
-  // --------------------------------------------------------------
-  //
   // --------------------------------------------------------------
   fieldName: {
     id: 'pages.NotificationDetail.fieldName',
