@@ -116,7 +116,28 @@ const deviceActivity = {
     },
   ],
 }
-
+const deviceCapacityReport = {
+  name: 'Device Capacity',
+  description:
+    'This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+  i18nKey: 'deviceCapacityReport',
+  externalId: 'device_capacity',
+  i18nKeyDescription: 'device_capacity_description',
+  fileName: 'deviceCapacity',
+  sortOrder: 7,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDeviceCapacityReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
+    },
+  ],
+}
 const moduleSwaps = {
   name: 'Module Swaps',
   description:
@@ -192,6 +213,7 @@ module.exports = {
   mtbDetectedRRDetected,
   deviceActivity,
   moduleSwaps,
+  deviceCapacityReport,
   deviceCalibrationReport,
   geneXpertIssues,
   fixture: [
@@ -202,6 +224,7 @@ module.exports = {
     deviceActivity,
     moduleSwaps,
     deviceCalibrationReport,
+    deviceCapacityReport,
     geneXpertIssues,
   ],
 }
