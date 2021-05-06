@@ -1989,6 +1989,13 @@ msgstr "Gerador de chaves API do dispositivo"
 msgid "Device Activity"
 msgstr "Actividade do dispositivo"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Atividade do dispositivo (porcentagem)"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
@@ -7698,6 +7705,17 @@ msgstr ""
 "Este relatório mostra a actividade dos dispositivos durante o período de "
 "tempo seleccionado, decompondo-a por meses (Por defeito, duram 12 meses), e "
 "todos os testes realizados durante o último ano."
+
+#. [pages.ReportIndex.device_activity_percent_description]
+#. defaultMessage is:
+#. This report shows the activity percentage, per month, of the devices during the selected period of time. (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the activity percentage, per month, of the devices during the "
+"selected period of time. (By default last 12 months)"
+msgstr ""
+"Este relatório mostra a porcentagem de atividade, por mês, dos dispositivos "
+"durante o período de tempo selecionado. (Por padrão, últimos 12 meses)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
