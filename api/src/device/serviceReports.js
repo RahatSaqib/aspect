@@ -1,13 +1,18 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInMonths } = require('date-fns')
+const {
+  format,
+  parseISO,
+  addMonths,
+  subMonths,
+  differenceInMonths,
+} = require('date-fns')
 const locales = require('date-fns/locale')
-const { listDevices } = require('./service')
+const { getDeviceBaseQuery, listDevices } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const {
   issueCategoryIntlToShortname,
   issueTypeToId,
 } = require('../shared/dictionary')
-const { getDeviceBaseQuery } = require('./service')
 const {
   knex,
   filterDateRangeParams,
@@ -60,7 +65,7 @@ async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
   const addingGroupingAndSelect = (builder, { select, groupBy }) => {
@@ -163,7 +168,7 @@ async function getModuleSwapsReport(auth, query) {
   const {
     minDate,
     maxDate,
-    minDateFormatted = minDate ? parseISO(minDate) : addMonths(new Date(), -12),
+    minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
     maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
   } = query
 
@@ -277,9 +282,96 @@ async function getGeneXpertIssuesReport(auth, query) {
   return dataset
 }
 
+async function exportDeviceOperationLogReport(request, reply) {
+  const { auth, query } = request
+  const { data, replacements } = await getGeneXpertOperationLogsReport(
+    auth,
+    query
+  )
+
+  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
+  const sheetData = {
+    dataRows: data,
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+
+  return exportData(request, reply, sheetData, 'device_operation_logs', {
+    replacements,
+  })
+}
+
+async function getGeneXpertOperationLogsReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const {
+    minDate,
+    maxDate,
+    minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
+    maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
+  } = query
+  // get rows
+
+  const deviceData = await knex('Device as d')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .where('d.id', query.deviceId)
+    .first('d.name as deviceName', 's.name as siteName')
+  const data = await knex('Device as d')
+    .join('DeviceOperation as dl', 'dl.deviceId', 'd.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .modify(
+      filterDateRangeParams,
+      { minDate: minDateFormatted, maxDate: maxDateFormatted },
+      'dl.startedOn'
+    )
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      geography: 'g',
+      site: 's',
+    })
+    .select(
+      'dl.startedOn as createdOn',
+      's.name as siteName',
+      'd.name as deviceName',
+      knex.raw("dl.data ->> '$.details' as logDetails"),
+      knex.raw("dl.data ->> '$.logLevel' as logLevel"),
+      knex.raw("dl.data ->> '$.details.RawText' as message"),
+      knex.raw("dl.data ->> '$.details.Errors' as errors"),
+      knex.raw("dl.data ->> '$.type' as logType"),
+      knex.raw("dl.data ->> '$.details.Calibrations' as calibrations")
+    )
+
+  const dataset = {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+    replacements: [
+      {
+        placeholder: '<date>',
+        value: format(new Date(), 'yyyy-MM-dd'),
+      },
+      {
+        placeholder: '<deviceName>',
+        value: deviceData.deviceName,
+      },
+      {
+        placeholder: '<siteName>',
+        value: deviceData.siteName,
+      },
+    ],
+  }
+  return dataset
+}
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
   getModuleSwapsReport,
   getGeneXpertIssuesReport,
+  getGeneXpertOperationLogsReport,
+  exportDeviceOperationLogReport,
 }

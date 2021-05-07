@@ -12,15 +12,16 @@ const cssClasses = classnames.bind(require('./Form.css'))
 const FormActionButton = ({ formik, action, onClick, isVisible }) => {
   return formik ? (
     <Button
-      variant="contained"
-      color={action.id === 'cancel' ? 'default' : 'primary'}
-      onClick={() =>
-        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
-      }
       className={cssClasses('form__button', `form__button--${action.id}`, {
         'form__button--enabled': isVisible,
         'form__button--disabled': !isVisible,
       })}
+      color={action.id === 'cancel' ? 'default' : 'primary'}
+      disabled={!formik.isValid}
+      onClick={() =>
+        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
+      }
+      variant="contained"
     >
       {action.text}
     </Button>

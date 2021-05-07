@@ -215,7 +215,6 @@ async function renderExcelTemplate({
           allHeaderRows.length
         )
       }
-
       // fill in array 'rows'
       let rows = []
       if (dataRows.length > 0) {

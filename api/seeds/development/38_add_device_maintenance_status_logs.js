@@ -13,9 +13,11 @@ const {
 
 const { generateResults } = require('../commonGenerateResults')
 
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
+const logHistoryMonths = Math.ceil(resultMultiplier / 100)
 const now = new Date()
-const previousMonth = subMonths(now, 1)
-const minDate = parseISO(`${format(previousMonth, 'yyyy-MM-01')}T00:00:00.000Z`)
+const historicMonth = subMonths(now, logHistoryMonths)
+const minDate = parseISO(`${format(historicMonth, 'yyyy-MM-01')}T00:00:00.000Z`)
 const maxDate = now
 
 async function seed(knex) {
@@ -228,15 +230,25 @@ async function seed(knex) {
         })
       }
     }
-
+    let deviceMaintenanceStatusLogId = null
     await Promise.each(dayAndStatus, async ({ dayDate, statusId }) => {
-      await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
+      deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatusLog(
+        knex,
+        deviceId,
+        dayDate,
+        statusId
+      )
       if (statusId === active) {
         await ensureResultExists(knex, deviceId, dayDate, userId, partnerId)
       } else {
         await ensureResultDoesNotExist(knex, deviceId, dayDate)
       }
     })
+    if (deviceMaintenanceStatusLogId) {
+      await knex('Device').where('id', deviceId).update({
+        deviceMaintenanceStatusLogId,
+      })
+    }
   })
 }
 
@@ -246,13 +258,16 @@ async function setDeviceMaintenanceStatusLog(
   dayDate,
   deviceMaintenanceStatusId
 ) {
-  await knex('DeviceMaintenanceStatusLog').insert({
+  const [deviceMaintenanceStatusLogId] = await knex(
+    'DeviceMaintenanceStatusLog'
+  ).insert({
     deviceId,
     deviceMaintenanceStatusId,
     data: '{}',
     day: dayDate,
     createdOn: now,
   })
+  return deviceMaintenanceStatusLogId
 }
 
 async function getResultsOnDay(knex, deviceId, dayDate) {

@@ -9,7 +9,7 @@ import FormSectionHeader from './FormSectionHeader'
 
 const cssClasses = classnames.bind(require('./Form.css'))
 
-const AspectForm = ({ config: { sections, classNames } }) => {
+const AspectForm = ({ config: { sections, classNames, messages } }) => {
   classNames = classNames || {}
   return (
     <Grid
@@ -34,13 +34,16 @@ const AspectForm = ({ config: { sections, classNames } }) => {
                 <Grid container>
                   {hideHeader === true ? null : (
                     <FormSectionHeader
+                      classNames={classNames}
                       header={label}
                       headerI18nKey={labelI18nKey}
+                      messages={messages}
                     />
                   )}
                   <FormSection
                     classNames={classNames}
                     fullWidth={hideHeader === true}
+                    messages={messages}
                     rows={rows}
                   />
                 </Grid>

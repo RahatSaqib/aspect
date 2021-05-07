@@ -86,6 +86,9 @@ module.exports = async function cleanIssueTypes(
       await knex('NotificationType')
         .where({ issueTypeId: issueType.id })
         .delete()
+      await knex('IssueEscalationTrigger')
+        .where({ issueTypeId: issueType.id })
+        .delete()
       await knex('IssueType').where({ id: issueType.id }).delete()
     }
   })

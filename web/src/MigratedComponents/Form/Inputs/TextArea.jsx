@@ -1,16 +1,33 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
-import omit from 'lodash/omit'
-import omitBy from 'lodash/omitBy'
+
 import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
+
+import { getFieldErrorProps } from '../Formik/Helpers'
+import { useFormikState } from '../Formik/Context'
 
 const AspectTextArea = props => {
-  const { controlType: { rowsMax, rows } = {} } = props
+  const { updateField } = useFormikState()
+  const { formik, controlType: { rowsMax, rows } = {}, ...rest } = props
+
   const mergedProps = {
-    ...omit(props, ['controlType']),
+    ...rest,
     ...omitBy({ rowsMax, rows }, v => isNil(v)),
   }
-  return <TextField {...mergedProps} multiline />
+
+  const onChangeLocal = event => {
+    updateField(rest.id, event.target.value, formik)
+  }
+
+  return (
+    <TextField
+      {...mergedProps}
+      multiline
+      onChange={onChangeLocal}
+      {...getFieldErrorProps(formik, rest.id)}
+    />
+  )
 }
 
 export default AspectTextArea

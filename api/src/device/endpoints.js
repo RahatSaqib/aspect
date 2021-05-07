@@ -23,7 +23,10 @@ const {
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
-const { exportDevices } = require('./serviceReports')
+const {
+  exportDevices,
+  exportDeviceOperationLogReport,
+} = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
@@ -531,6 +534,28 @@ const routes = [
       description: 'Export Device List into Excel or CSV',
       notes: 'Filtered and sorted list of devices',
       ...listDevicesBaseRequest(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/exportDeviceLogs',
+    handler: exportDeviceOperationLogReport,
+    config: {
+      description: 'Export Device logs List into Excel or CSV',
+      notes: 'Filtered and sorted list of device logs',
+      auth: { scope: ['device:view', 'operationalData:view'] },
+      validate: {
+        query: {
+          deviceId: Joi.number().allow('').description('Filter for device ID'),
+          deviceType: Joi.string()
+            .allow('')
+            .description('Filter for device type ExternalId'),
+          format: Joi.string()
+            .allow('')
+            .description('File format for exporting data'),
+          ...validateDateRangeParams(false),
+        },
+      },
     },
   },
   {
