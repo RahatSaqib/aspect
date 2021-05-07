@@ -94,6 +94,7 @@ async function getDeviceActivityReport(auth, query) {
     )
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
@@ -110,6 +111,7 @@ async function getDeviceActivityReport(auth, query) {
       'd.id',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
     )
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished

@@ -755,7 +755,6 @@ function getDeviceBaseQuery(
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
