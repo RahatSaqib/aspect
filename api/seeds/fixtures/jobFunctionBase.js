@@ -9,6 +9,7 @@ const admin = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_activity_percent',
     'module_swaps',
     'device_capacity',
     'genexpert_issues',
@@ -139,6 +140,7 @@ const manager = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -223,6 +225,7 @@ const regionalOfficer = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -311,6 +314,7 @@ const labUser = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -399,6 +403,7 @@ const clinician = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -500,6 +505,7 @@ const deviceMaker = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'genexpert_issues',
   ],
   permissions: [
@@ -540,6 +546,7 @@ const ntp = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -565,6 +572,7 @@ const ntpNoResults = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -589,6 +597,7 @@ const technician = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -613,6 +622,7 @@ const donor = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -649,6 +659,7 @@ const resultViewerNo = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -688,6 +699,7 @@ const resultViewerYes = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -805,6 +817,7 @@ const labManager = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -877,6 +890,7 @@ const labSupervisor = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -949,6 +963,7 @@ const medTech = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -1021,6 +1036,7 @@ const dataViewer = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -1094,6 +1110,7 @@ const labAdmin = {
     'device_calibration_report',
     'device_activity',
     'device_capacity',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [

@@ -758,11 +758,11 @@ function getDeviceBaseQuery(
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
-    .where(function () {
+    .where(queryBuilder => {
       if (!query.deviceIds) {
         return
       }
-      this.whereIn('d.id', query.deviceIds.split(','))
+      queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
       if (!query.assayId) {
