@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import filter from 'lodash/filter'
+import noop from 'lodash/noop'
 import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'
@@ -85,7 +86,7 @@ const DailyStatusClinicDay = ({
       <DayBlock
         consts={consts}
         dayModifier={dayModifier}
-        onClick={maintenanceStatusExternalId !== 'active' ? onClickDay : false}
+        onClick={maintenanceStatusExternalId !== 'active' ? onClickDay : noop}
       />
     </AspectTooltip>
   )
