@@ -119,7 +119,7 @@ const deviceActivity = {
 const deviceCapacityReport = {
   name: 'Device Capacity',
   description:
-    'This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+    'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
   i18nKey: 'deviceCapacityReport',
   externalId: 'device_capacity',
   i18nKeyDescription: 'device_capacity_description',

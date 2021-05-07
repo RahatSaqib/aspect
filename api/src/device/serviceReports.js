@@ -68,7 +68,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 1; i <= monthDiff; i++) {
+  for (let i = 0; i <= monthDiff + 1; i++) {
     dateFields.push({
       key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
       header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
