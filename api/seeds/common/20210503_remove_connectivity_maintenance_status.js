@@ -1,9 +1,9 @@
 module.exports = async knex => {
-  const statusInactiveConnectiviy = await knex('DeviceMaintenanceStatus')
+  const statusInactiveConnectivity = await knex('DeviceMaintenanceStatus')
     .where({ externalId: 'inactiveConnectivity' })
     .first()
-  if (statusInactiveConnectiviy) {
-    const { id: inactiveConnectivityId } = statusInactiveConnectiviy
+  if (statusInactiveConnectivity) {
+    const { id: inactiveConnectivityId } = statusInactiveConnectivity
     const { id: inactiveUnknownId } = await knex('DeviceMaintenanceStatus')
       .where({ externalId: 'inactiveUnknown' })
       .first()
