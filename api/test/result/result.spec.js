@@ -535,18 +535,17 @@ describe('Result routes', () => {
         changedOn,
       }
       // update with resultTreatmentStatusId
-      await server
+      const res = await server
         .put(`${path}/treatment-status/${resultId}`)
         .send(updateWithId)
         .set('Authorization', `Bearer${shared.token}`)
-        .then(res => {
-          baseTreatmentStatusAssertion(res)
 
-          const { treatmentStatus } = res.body.data
+      baseTreatmentStatusAssertion(res)
 
-          // check if resultWorkflowStatus was updated
-          assert.equal(treatmentStatus.externalId, 'OnTreatment')
-        })
+      const { treatmentStatus } = res.body.data
+
+      // check if resultWorkflowStatus was updated
+      assert.equal(treatmentStatus.externalId, 'OnTreatment')
     })
 
     it('Should update result treatment status given a resultId - set resultNotes', async () => {
