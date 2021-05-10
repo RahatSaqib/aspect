@@ -47,7 +47,7 @@
       "i18nKey": "inactiveDecommissioned",
       "externalId": "inactiveDecommissioned",
       "active": false,
-      "manuallySet": true
+      "manuallySet": false
     },
     {
       "name": "No Staff",

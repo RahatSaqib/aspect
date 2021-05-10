@@ -14,4 +14,8 @@ module.exports = async knex => {
       .where({ id: inactiveConnectivityId })
       .del()
   }
+
+  await knex('DeviceMaintenanceStatus')
+    .where({ externalId: 'inactiveDecommissioned' })
+    .update({ manuallySet: false })
 }
