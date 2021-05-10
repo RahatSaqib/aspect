@@ -33,7 +33,7 @@ DayBlock.propTypes = {
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
-  onClick: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]).isRequired,
+  onClick: PropTypes.func.isRequired,
 }
 
 const DailyStatusClinicDay = ({
