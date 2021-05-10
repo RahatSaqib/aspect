@@ -114,6 +114,18 @@ const deviceActivity = {
         hasResults: 1,
       },
     },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDeviceActivityReport',
+      query: {
+        groupBy: 'r.assayId',
+        select: 'a.name as assayName',
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+      },
+    },
   ],
 }
 const deviceUtilizationReport = {

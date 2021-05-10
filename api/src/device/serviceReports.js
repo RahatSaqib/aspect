@@ -86,6 +86,10 @@ async function getDeviceActivityReport(auth, query) {
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
+  const addingGroupingAndSelect = (builder, { select, groupBy }) => {
+    if (select) builder.select(select)
+    if (groupBy) builder.groupBy(groupBy)
+  }
   // get rows
   const getItems = deviceQuery
     .clone()
@@ -113,9 +117,11 @@ async function getDeviceActivityReport(auth, query) {
     )
     .countDistinct('r.id as totalResults')
     .max('r.endedOn as lastUploadOn')
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
-  const deviceResultsPerMonths = deviceQuery
+    .modify(addingGroupingAndSelect, query)
+  const deviceResultsPerMonths = await deviceQuery
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
     .countDistinct('r.id as totalResults')
@@ -128,6 +134,8 @@ async function getDeviceActivityReport(auth, query) {
       'd.id',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
     )
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished
   const [data, deviceDetails] = await Promise.all([
@@ -135,11 +143,15 @@ async function getDeviceActivityReport(auth, query) {
     deviceResultsPerMonths,
   ])
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
+  const extraField = query.select ? query.select.split(' as ')[1].trim() : null
+
   const devices = _.map(data, elem => {
     _.each(
       _.filter(
         deviceDetails,
-        filteredElem => filteredElem.deviceId === elem.id
+        filteredElem =>
+          filteredElem.deviceId === elem.id &&
+          (extraField ? elem[extraField] === filteredElem[extraField] : true)
       ),
       detail => {
         elem[detail.monthYear] = detail.totalResults
