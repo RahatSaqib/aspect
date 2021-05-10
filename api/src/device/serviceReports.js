@@ -318,11 +318,7 @@ async function getDeviceCapacityReport(auth, query) {
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
     .groupBy(
       'd.id',
-      'dcap.dailyCapacity',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset),
-      knex.raw(
-        'CASE when DATE_FORMAT(NOW(), "%Y-%m-01")=DATE_FORMAT(r.endedOn, "%Y-%m-01") then date(now()) else DATE(LAST_DAY(r.endedOn)) end'
-      )
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
     )
     .select(
       'd.name',
@@ -330,7 +326,10 @@ async function getDeviceCapacityReport(auth, query) {
       'd.id AS deviceId',
       knex.raw('COUNT(r.id) as resultCount'),
       knex.raw(
-        'CASE when DATE_FORMAT(NOW(), "%Y-%m-01")=DATE_FORMAT(r.endedOn, "%Y-%m-01") then date(now()) else DATE(LAST_DAY(r.endedOn)) end as lastDayOfMonth'
+        `CASE
+            when date(NOW()) < date(last_day(r.endedOn)) then date(now())
+            else DATE(LAST_DAY(r.endedOn))
+          end as lastDayOfMonth`
       ),
       'dcap.dailyCapacity'
     )
@@ -346,7 +345,6 @@ async function getDeviceCapacityReport(auth, query) {
     monthlyCapacity,
     devices,
   ])
-
   const data = _.map(deviceDetails, deviceRow => {
     _.each(
       _.filter(
@@ -359,7 +357,12 @@ async function getDeviceCapacityReport(auth, query) {
             filteredMonthlyCapacity.dailyCapacity) *
             differenceInBusinessDays(
               filteredMonthlyCapacity.lastDayOfMonth,
-              new Date(`${filteredMonthlyCapacity.monthYear}-01`)
+              format(
+                new Date(`${filteredMonthlyCapacity.monthYear}-01`),
+                'yyyy-MM'
+              ) === format(minDate, 'yyyy-MM')
+                ? minDate
+                : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
             ),
           2
         )}%`
