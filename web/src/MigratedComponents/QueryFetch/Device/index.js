@@ -31,7 +31,7 @@ const DEVICE_LIST = {
 }
 
 const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
-  ENDPOINT: '/device/maintenance-status-by-period/{deviceId}',
+  ENDPOINT: '/device/maintenance-status-by-period/:deviceId',
   ERRORS: {
     400: {
       'You cannot change the status of a device in days when it was active': {

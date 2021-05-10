@@ -215,12 +215,6 @@ function getColumnIdFromFilterKey(config, filters) {
   return output
 }
 
-function replaceRouteParams(route, routeParams) {
-  let newRoute = route
-  map(routeParams, (a, b) => (newRoute = newRoute.replace(`:${b}`, a)))
-  return newRoute
-}
-
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
@@ -231,7 +225,6 @@ export {
   getParamsFromUrl,
   mockDatafetch,
   removeNullFromCollection,
-  replaceRouteParams,
   shapeTableParamsForApi,
   timeAndDate,
   timeClassification,
