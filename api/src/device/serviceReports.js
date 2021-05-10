@@ -310,7 +310,8 @@ async function getDeviceCapacityReport(auth, query) {
         .on('d.id', 'r.deviceId')
         .andOn(
           knex.raw(
-            'DATE_FORMAT(NOW(), "%Y-%m-01") <= DATE(r.endedOn) AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7'
+            'DATE(r.endedOn) AND date(?) and date(?) and DAYOFWEEK(r.endedOn) not in (1,7)',
+            [minDate, maxDate]
           )
         )
     )
@@ -319,14 +320,18 @@ async function getDeviceCapacityReport(auth, query) {
       'd.id',
       'dcap.dailyCapacity',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset),
-      knex.raw('LAST_DAY(r.endedOn)')
+      knex.raw(
+        'CASE when DATE_FORMAT(NOW(), "%Y-%m-01")=DATE_FORMAT(r.endedOn, "%Y-%m-01") then date(now()) else DATE(LAST_DAY(r.endedOn)) end'
+      )
     )
     .select(
       'd.name',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
       knex.raw('COUNT(r.id) as resultCount'),
-      knex.raw('LAST_DAY(r.endedOn) as lastDayOfMonth'),
+      knex.raw(
+        'CASE when DATE_FORMAT(NOW(), "%Y-%m-01")=DATE_FORMAT(r.endedOn, "%Y-%m-01") then date(now()) else DATE(LAST_DAY(r.endedOn)) end as lastDayOfMonth'
+      ),
       'dcap.dailyCapacity'
     )
     .orderBy('d.name')
@@ -349,14 +354,15 @@ async function getDeviceCapacityReport(auth, query) {
         deviceFiltered => deviceFiltered.deviceId === deviceRow.id
       ),
       filteredMonthlyCapacity => {
-        deviceRow[filteredMonthlyCapacity.monthYear] = `${
+        deviceRow[filteredMonthlyCapacity.monthYear] = `${_.round(
           (filteredMonthlyCapacity.resultCount /
             filteredMonthlyCapacity.dailyCapacity) *
-          differenceInBusinessDays(
-            filteredMonthlyCapacity.lastDayOfMonth,
-            new Date(`${filteredMonthlyCapacity.monthYear}-01`)
-          )
-        }%`
+            differenceInBusinessDays(
+              filteredMonthlyCapacity.lastDayOfMonth,
+              new Date(`${filteredMonthlyCapacity.monthYear}-01`)
+            ),
+          2
+        )}%`
       }
     )
 

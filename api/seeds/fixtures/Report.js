@@ -116,13 +116,13 @@ const deviceActivity = {
     },
   ],
 }
-const deviceCapacityReport = {
-  name: 'Device Capacity',
+const deviceUtilizationReport = {
+  name: 'Device Average Utilization per Month',
   description:
     'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
-  i18nKey: 'deviceCapacityReport',
-  externalId: 'device_capacity',
-  i18nKeyDescription: 'device_capacity_description',
+  i18nKey: 'deviceUtilizationReport',
+  externalId: 'device_utilization',
+  i18nKeyDescription: 'device_utilization_description',
   fileName: 'deviceCapacity',
   sortOrder: 7,
   sheets: [
@@ -238,7 +238,7 @@ module.exports = {
   deviceActivity,
   deviceActivityPercent,
   moduleSwaps,
-  deviceCapacityReport,
+  deviceUtilizationReport,
   deviceCalibrationReport,
   geneXpertIssues,
   fixture: [
@@ -250,7 +250,7 @@ module.exports = {
     deviceActivityPercent,
     moduleSwaps,
     deviceCalibrationReport,
-    deviceCapacityReport,
+    deviceUtilizationReport,
     geneXpertIssues,
   ],
 }
