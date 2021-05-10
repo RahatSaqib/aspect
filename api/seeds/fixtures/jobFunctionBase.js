@@ -9,6 +9,7 @@ const admin = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_activity_per_assay',
     'device_activity_percent',
     'module_swaps',
     'genexpert_issues',
