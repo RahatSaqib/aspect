@@ -8,11 +8,8 @@ import findLastIndex from 'lodash/findLastIndex'
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
 import messages from '../messages'
 
-
 import { extractOptionValue } from '../../Helpers/Formatters'
-import {
-  replaceRouteParams,
-} from '../../../QueryFetch/Helpers'
+import { replaceRouteParams } from '../../../QueryFetch/Helpers'
 
 import fetchWrapperForQueries from '../../../QueryFetch'
 import {
@@ -63,7 +60,10 @@ const useDailyStatus = (
   const [changeDeviceStatus] = useMutation(
     ({ deviceId, values }) =>
       fetchWrapperForQueries({
-        endpoint: replaceRouteParams(DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT, { deviceId }),
+        endpoint: replaceRouteParams(
+          DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT,
+          { deviceId }
+        ),
         method: 'POST',
         params: {
           externalId: values.reason,

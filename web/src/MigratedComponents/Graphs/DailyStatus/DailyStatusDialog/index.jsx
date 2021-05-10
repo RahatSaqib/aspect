@@ -29,7 +29,7 @@ const getFormConfig = (formConfig, statuses, data) => {
           // init dropdown options
           item.controlType.options = statuses
             // show only statuses with manuallySet flag
-            .filter(({ externalId, manuallySet }) => manuallySet === 1)
+            .filter(({ manuallySet }) => manuallySet === 1)
             .map(({ externalId, name }) => ({
               label: name,
               value: externalId,
