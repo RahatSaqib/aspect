@@ -1292,7 +1292,6 @@ async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
     const aspectMaintenanceReason =
       {
         stock: 'inactiveOutOfInventory',
-        connectivity: 'inactiveConnectivity',
         repair: 'inactiveDownForRepair',
         decommissioned: 'inactiveDecommissioned',
       }[maintenanceReasonFromSource] || 'inactiveUnknown'

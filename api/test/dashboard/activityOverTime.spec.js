@@ -204,10 +204,6 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     await addDmsl(weekDays[10], statusId)
     await addDmsl(weekDays[11], statusId)
     //
-    statusId = deviceMaintenanceStatusToId.inactiveConnectivity
-    await addDmsl(weekDays[12], statusId)
-    await addDmsl(weekDays[13], statusId)
-    //
     statusId = deviceMaintenanceStatusToId.inactiveDecommissioned
     await addDmsl(weekDays[14], statusId)
   })
@@ -257,7 +253,6 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     assert.property(item, 'inactiveNoResultsReported')
     assert.property(item, 'inactiveOutOfInventory')
     assert.property(item, 'inactiveDownForRepair')
-    assert.property(item, 'inactiveConnectivity')
     assert.property(item, 'inactiveDecommissioned')
     assert.property(item, 'isWeekendOrHoliday')
 
@@ -288,9 +283,6 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     //
     assert.isAtLeast(getItem(10).inactiveDownForRepair, 1)
     assert.isAtLeast(getItem(11).inactiveDownForRepair, 1)
-    //
-    assert.isAtLeast(getItem(12).inactiveConnectivity, 1)
-    assert.isAtLeast(getItem(13).inactiveConnectivity, 1)
     //
     assert.isAtLeast(getItem(14).inactiveDecommissioned, 1)
   })

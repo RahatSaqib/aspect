@@ -463,38 +463,8 @@ describe('Device routes', () => {
       })
 
       it('should filter based on device maintenance status', async () => {
-        let filterOnDeviceMaintenanceStatus = ['inactiveConnectivity']
-        let devicesReponse = await server
-          .get(
-            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
-              startOfMonth(subMonths(new Date(), 1)),
-              'yyyy-MM-dd'
-            )}&maxDate=${formatDateOrDefault(
-              endOfMonth(subMonths(new Date(), 1)),
-              'yyyy-MM-dd'
-            )}&${filterOnDeviceMaintenanceStatus
-              .map(status => `deviceMaintenanceStatusId=${status}`)
-              .join('&')}`
-          )
-          .set('Authorization', `Bearer ${shared.token}`)
-        assert.isOk(devicesReponse.body.ok)
-        assert.isAbove(devicesReponse.body.length, 0)
-        assert.equal(
-          devicesReponse.body.length,
-          devicesReponse.body.data.length
-        )
-
-        devicesReponse.body.data.forEach(device => {
-          assert.isAbove(
-            device.days.filter(day =>
-              filterOnDeviceMaintenanceStatus.includes(day.externalId)
-            ).length,
-            0
-          )
-        })
-
-        filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
-        devicesReponse = await server
+        const filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
+        const devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
               startOfMonth(subMonths(new Date(), 1)),
@@ -569,7 +539,6 @@ describe('Device routes', () => {
           'inactiveUnknown',
           'inactiveNoResultsReported',
           'inactiveDownForRepair',
-          'inactiveConnectivity',
         ]
         let devicesReponse = await server
           .get(
@@ -686,18 +655,11 @@ describe('Device routes', () => {
             manuallySet: 1,
           },
           {
-            name: 'Connectivity',
-            i18nKey: 'inactiveConnectivity',
-            externalId: 'inactiveConnectivity',
-            active: 0,
-            manuallySet: 1,
-          },
-          {
             name: 'Decommissioned',
             i18nKey: 'inactiveDecommissioned',
             externalId: 'inactiveDecommissioned',
             active: 0,
-            manuallySet: 1,
+            manuallySet: 0,
           },
         ])
       })
