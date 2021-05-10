@@ -893,18 +893,6 @@ describe('Device routes', () => {
           deviceMaintenanceStatusLogIds,
         } = toInactiveDownForRepairResponse.body.data
 
-        // Decommissioned shouldn't be allowed
-        payload.externalId = 'inactiveDecommissioned'
-        const toDecommissionedResponse = await server
-          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .send(payload)
-        assert.equal(toDecommissionedResponse.body.statusCode, 400)
-        assert.equal(
-          toDecommissionedResponse.body.message,
-          'Status "Decommissioned" cannot be set for a date range'
-        )
-
         // Change all the inserted logs to Active
         const [activeStatusId] = await knex('DeviceMaintenanceStatus')
           .where({ externalId: 'active' })
@@ -935,28 +923,6 @@ describe('Device routes', () => {
         assert.equal(
           toActiveResponse.body.message,
           "The status you are trying to assign can't be set manually"
-        )
-
-        // Change all the inserted logs to Decommissioned
-        const [inactiveDecommissionedStatusId] = await knex(
-          'DeviceMaintenanceStatus'
-        )
-          .where({ externalId: 'inactiveDecommissioned' })
-          .pluck('id')
-        await knex('DeviceMaintenanceStatusLog')
-          .whereIn('id', deviceMaintenanceStatusLogIds)
-          .update({ deviceMaintenanceStatusId: inactiveDecommissionedStatusId })
-
-        // Decommissioned days cannot be changed
-        payload.externalId = 'inactiveDownForRepair'
-        const fromDecommissionedResponse = await server
-          .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
-          .set('Authorization', `Bearer ${shared.token}`)
-          .send(payload)
-        assert.equal(fromDecommissionedResponse.body.statusCode, 400)
-        assert.equal(
-          fromDecommissionedResponse.body.message,
-          'You cannot change the status of a device in days when it was decommissioned'
         )
 
         // TODO: add validations for 'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"'
