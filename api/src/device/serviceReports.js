@@ -365,20 +365,22 @@ async function getDeviceCapacityReport(auth, query) {
         deviceFiltered => deviceFiltered.deviceId === deviceRow.id
       ),
       filteredMonthlyCapacity => {
-        deviceRow[filteredMonthlyCapacity.monthYear] = `${_.round(
-          (filteredMonthlyCapacity.resultCount /
-            filteredMonthlyCapacity.dailyCapacity) *
-            differenceInBusinessDays(
-              filteredMonthlyCapacity.lastDayOfMonth,
-              format(
-                new Date(`${filteredMonthlyCapacity.monthYear}-01`),
-                'yyyy-MM'
-              ) === format(minDate, 'yyyy-MM')
-                ? minDate
-                : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
-            ),
-          2
-        )}%`
+        if (filteredMonthlyCapacity.deviceId === 106)
+          deviceRow[filteredMonthlyCapacity.monthYear] = `${_.round(
+            (filteredMonthlyCapacity.resultCount /
+              (filteredMonthlyCapacity.dailyCapacity *
+                differenceInBusinessDays(
+                  filteredMonthlyCapacity.lastDayOfMonth,
+                  format(
+                    new Date(`${filteredMonthlyCapacity.monthYear}-01`),
+                    'yyyy-MM'
+                  ) === format(minDate, 'yyyy-MM')
+                    ? minDate
+                    : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
+                ))) *
+              100,
+            2
+          )}%`
       }
     )
 
