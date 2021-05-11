@@ -232,19 +232,11 @@ async function listSitesForSelectList(request) {
     .select(
       's.id',
       's.name',
-      's.shortName',
       's.partnerId',
       'g.countryId',
       'g.stateId',
       'g.lgaId',
-      'l.name as lgaName',
       'st.name as stateName',
-      's.longitude',
-      's.latitude',
-      's.zip',
-      's.street1',
-      's.street2',
-      's.city',
       's.externalId'
     )
     .distinct()
