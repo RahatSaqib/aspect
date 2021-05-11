@@ -326,7 +326,7 @@ async function getDeviceCapacityReport(auth, query) {
             maxDate,
           ])
         )
-        .andOn(knex.Raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
+        .andOn(knex.raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
     .groupBy(
