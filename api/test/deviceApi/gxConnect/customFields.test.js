@@ -1,5 +1,4 @@
 const { assert } = require('chai')
-const Ajv = require('ajv')
 const {
   mapGxConnectCustomFields,
 } = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
@@ -7,13 +6,12 @@ const aspectFields = require('./customFieldsForm.json')
 const mappingResult = require('./mappingResult.json')
 const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
+const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
+const validate = require('../../../jsonSchemas/validate')
 
 describe('Custom field mapper', () => {
-  const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-  const validate = ajv.compile(schema)
-
   it('it generates the mapping between aspect dynamic forms and gxconnect expected json', () => {
-    assert.isTrue(validate(aspectFields))
+    assert.isTrue(validate(schema, aspectFields))
     const mappingOutput = mapGxConnectCustomFields(aspectFields)
     assert.deepEqual(mappingOutput, mappingResult)
   })
@@ -34,7 +32,38 @@ describe('Custom field mapper', () => {
         },
       ],
     }
-    assert.isTrue(validate(numberExample))
+    assert.isTrue(validate(schema, numberExample))
+    const mappingOutput = mapGxConnectCustomFields(numberExample)
+    assert.deepEqual(mappingOutput.CustomFields.Fields, [
+      {
+        Id: 2,
+        Name: 'PlainField',
+        Help: 'PlainField value',
+        Control: 'TextBox',
+        Type: 'int',
+        DisplayOrder: 1,
+        InputControlData: { optional: true },
+      },
+    ])
+  })
+
+  it('should transform a number field', () => {
+    const numberExample = {
+      fields: [
+        {
+          id: 2,
+          name: 'PlainField',
+          i18nKey: 'PlainFieldi18nKey',
+          fieldType: 'number',
+          order: 1,
+          caption: 'PlainField value',
+          i18nKeyCaption: 'PlainFieldi18nCaptionKey',
+          controlType: 'textBox',
+          assayExternalId: [],
+        },
+      ],
+    }
+    assert.isTrue(validate(schema, numberExample))
     const mappingOutput = mapGxConnectCustomFields(numberExample)
     assert.deepEqual(mappingOutput.CustomFields.Fields, [
       {
@@ -64,7 +93,7 @@ describe('Custom field mapper', () => {
         },
       ],
     }
-    assert.isTrue(validate(dateTimeExample))
+    assert.isTrue(validate(schema, dateTimeExample))
     const mappingOutput = mapGxConnectCustomFields(dateTimeExample)
     assert.deepEqual(mappingOutput.CustomFields.Fields, [
       {
@@ -110,7 +139,7 @@ describe('Custom field mapper', () => {
         },
       ],
     }
-    assert.isTrue(validate(displayConditionalExample))
+    assert.isTrue(validate(schema, displayConditionalExample))
     const mappingOutput = mapGxConnectCustomFields(displayConditionalExample)
     assert.deepEqual(mappingOutput, {
       CustomFields: {
@@ -357,7 +386,7 @@ describe('Custom field mapper', () => {
         },
       ],
     }
-    assert.isTrue(validate(listCustomFields))
+    assert.isTrue(validate(schema, listCustomFields))
 
     const mappingOutput = mapGxConnectCustomFields(listCustomFields)
     assert.deepEqual(mappingOutput, cascadeFieldsOutput)
@@ -366,7 +395,7 @@ describe('Custom field mapper', () => {
     const calculatedFields = {
       fields: [
         {
-          id: 2,
+          id: 1,
           name: 'PlainField',
           i18nKey: 'PlainFieldi18nKey',
           fieldType: 'text',
@@ -376,7 +405,7 @@ describe('Custom field mapper', () => {
           controlType: 'textBox',
         },
         {
-          id: 3,
+          id: 2,
           name: 'calculatedField',
           i18nKey: 'calculatedFieldi18nKey',
           fieldType: 'date',
@@ -393,14 +422,14 @@ describe('Custom field mapper', () => {
         },
       ],
     }
-    assert.isTrue(validate(calculatedFields))
+    assert.isTrue(validate(schema, calculatedFields))
 
     const mappingOutput = mapGxConnectCustomFields(calculatedFields)
     assert.deepEqual(mappingOutput, {
       CustomFields: {
         Fields: [
           {
-            Id: 2,
+            Id: 1,
             Name: 'PlainField',
             Help: 'PlainField value',
             InputControlData: {
@@ -411,7 +440,7 @@ describe('Custom field mapper', () => {
             DisplayOrder: 1,
           },
           {
-            Id: 3,
+            Id: 2,
             Name: 'calculatedField',
             Help: 'calculatedField value',
             Control: 'Label',
@@ -428,5 +457,54 @@ describe('Custom field mapper', () => {
         ],
       },
     })
+    assert.isTrue(validate(gxConnectSchema, mappingOutput))
+  })
+
+  it('should validate the GxConnect form to have unique ids', () => {
+    const form = {
+      CustomFields: {
+        Fields: [
+          {
+            Id: 1,
+            Name: 'PlainField',
+            Help: 'PlainField value',
+            InputControlData: {
+              optional: true,
+            },
+            Control: 'TextBox',
+            Type: 'string',
+            DisplayOrder: 1,
+          },
+          {
+            Id: 1,
+            Name: 'calculatedField',
+            Help: 'calculatedField value',
+            Control: 'Label',
+            Type: 'datetime',
+            DisplayOrder: 0,
+            InputControlData: {
+              calculated: true,
+              fieldId1: 2,
+              fixedValue: 'now',
+              function: 'datediff',
+              format: 'week',
+            },
+          },
+        ],
+      },
+    }
+    assert.isFalse(validate(gxConnectSchema, form))
+  })
+
+  it('should validate the GxConnect form to have the field CustomFields.Fields', () => {
+    const form = {
+      CustomFields: {},
+    }
+    assert.isFalse(validate(gxConnectSchema, form))
+  })
+
+  it('should validate the GxConnect form to have the field CustomFields', () => {
+    const form = {}
+    assert.isFalse(validate(gxConnectSchema, form))
   })
 })
