@@ -43,18 +43,11 @@
       "manuallySet": true
     },
     {
-      "name": "Connectivity",
-      "i18nKey": "inactiveConnectivity",
-      "externalId": "inactiveConnectivity",
-      "active": false,
-      "manuallySet": true
-    },
-    {
       "name": "Decommissioned",
       "i18nKey": "inactiveDecommissioned",
       "externalId": "inactiveDecommissioned",
       "active": false,
-      "manuallySet": true
+      "manuallySet": false
     },
     {
       "name": "No Staff",

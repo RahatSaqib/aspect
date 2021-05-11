@@ -18,9 +18,9 @@ import {
   getColumnIdFromFilterKey,
   getParamsFromUrl,
   removeNullFromCollection,
-  replaceRouteParams,
   useUrlQuery,
 } from './Helpers'
+import { replaceRouteParams } from '../QueryFetch/Helpers'
 
 const cssClasses = classnames.bind(require('./Table.css'))
 

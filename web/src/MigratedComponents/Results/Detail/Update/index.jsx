@@ -30,7 +30,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
     async (key, { resultId }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-        errors: ResultDetailsErrors,
+        customErrorNotifications: ResultDetailsErrors,
       }),
     { onSuccess: setFormData }
   )

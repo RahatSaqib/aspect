@@ -174,9 +174,6 @@ const routes = [
                 inactiveDownForRepair: Joi.number().description(
                   'The number of inactive "DownForRepair" devices in the system as of that day'
                 ),
-                inactiveConnectivity: Joi.number().description(
-                  'The number of inactive "Connectivity" devices in the system as of that day'
-                ),
                 inactiveDecommissioned: Joi.number().description(
                   'The number of inactive "Decommissioned" devices in the system as of that day'
                 ),

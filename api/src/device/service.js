@@ -979,6 +979,23 @@ function getDeviceByIdBaseQuery(
   return query
 }
 
+const getDeviceMaintenanceStatusesInRange = async (
+  deviceId,
+  dateFrom,
+  dateTo
+) =>
+  knex('DeviceMaintenanceStatusLog as dmsl')
+    .where({ deviceId })
+    .innerJoin(
+      'DeviceMaintenanceStatus as dms',
+      'dmsl.deviceMaintenanceStatusId',
+      'dms.id'
+    )
+    .andWhere('day', '>=', dateFrom)
+    .andWhere('day', '<=', dateTo)
+    .distinct('dms.externalId')
+    .pluck('dms.externalId')
+
 async function setStatusForDateRange(request) {
   const {
     auth: { credentials },
@@ -1005,25 +1022,52 @@ async function setStatusForDateRange(request) {
     true,
     true
   )
-
   if (!device)
     throw Boom.forbidden(
       "You don't have permissions for updating the requested device"
     )
 
-  // Get device maintenance status or throw boom error if it's a bad request
+  // >>> VALIDATIONS
   const deviceMaintenanceStatus = await getMaintenanceStatusesQuery({
     externalId,
   }).first()
-  if (deviceMaintenanceStatus) {
-    if (!deviceMaintenanceStatus.manuallySet)
-      throw Boom.badRequest(
-        `Devices cannot be manually set to ${deviceMaintenanceStatus.name}`
-      )
-  } else
+  if (!deviceMaintenanceStatus)
     throw Boom.badRequest(
       'The provided device maintenance status external id does not exist'
     )
+  else {
+    const { manuallySet } = deviceMaintenanceStatus
+    const statusesInDateRange = await getDeviceMaintenanceStatusesInRange(
+      deviceId,
+      dateFrom,
+      dateTo
+    )
+
+    if (statusesInDateRange.includes('inactiveDecommissioned'))
+      throw Boom.badRequest(
+        'You cannot change the status of a device in days when it was decommissioned'
+      )
+    else if (!manuallySet)
+      throw Boom.badRequest(
+        "The status you are trying to assign can't be set manually"
+      )
+    else if (statusesInDateRange.includes('active'))
+      throw Boom.badRequest(
+        'You cannot change the status of a device in days when it was active'
+      )
+    else if (externalId === 'inactiveDecommissioned')
+      throw Boom.badRequest(
+        'Status "Decommissioned" cannot be set for a date range'
+      )
+    else if (
+      statusesInDateRange.includes('inactiveNoTestsPerformed') &&
+      externalId === 'reportedActive'
+    )
+      throw Boom.badRequest(
+        'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"'
+      )
+  }
+  // >>>
 
   const data = {
     maintenanceStatus: deviceMaintenanceStatus.externalId,
@@ -1242,7 +1286,6 @@ async function onDeviceUpdateMaintenanceStatus(action, { messageContext }) {
     const aspectMaintenanceReason =
       {
         stock: 'inactiveOutOfInventory',
-        connectivity: 'inactiveConnectivity',
         repair: 'inactiveDownForRepair',
         decommissioned: 'inactiveDecommissioned',
       }[maintenanceReasonFromSource] || 'inactiveUnknown'
