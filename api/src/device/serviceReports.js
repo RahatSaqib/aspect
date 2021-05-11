@@ -321,11 +321,12 @@ async function getDeviceCapacityReport(auth, query) {
       builder
         .on('d.id', 'r.deviceId')
         .andOn(
-          knex.raw(
-            'DATE(r.endedOn) AND date(?) and date(?) and DAYOFWEEK(r.endedOn) not in (1,7)',
-            [minDate, maxDate]
-          )
+          knex.raw('DATE(r.endedOn) between date(?) and date(?)', [
+            minDate,
+            maxDate,
+          ])
         )
+        .andOn(knex.Raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
     .groupBy(
@@ -339,9 +340,9 @@ async function getDeviceCapacityReport(auth, query) {
       knex.raw('COUNT(r.id) as resultCount'),
       knex.raw(
         `CASE
-            when date(NOW()) < date(last_day(r.endedOn)) then date(now())
-            else DATE(LAST_DAY(r.endedOn))
-          end as lastDayOfMonth`
+            WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(now())
+            ELSE DATE(LAST_DAY(r.endedOn))
+          END as lastDayOfMonth`
       ),
       'dcap.dailyCapacity'
     )

@@ -131,11 +131,11 @@ const deviceActivity = {
 const deviceUtilizationReport = {
   name: 'Device Average Utilization per Month',
   description:
-    'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+    'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)',
   i18nKey: 'deviceUtilizationReport',
   externalId: 'device_utilization',
   i18nKeyDescription: 'device_utilization_description',
-  fileName: 'deviceCapacity',
+  fileName: 'deviceUtilization',
   sortOrder: 7,
   sheets: [
     {
