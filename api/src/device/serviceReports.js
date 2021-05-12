@@ -3,8 +3,9 @@ const {
   format,
   parseISO,
   addMonths,
-  subMonths,
   differenceInMonths,
+  differenceInBusinessDays,
+  subMonths,
 } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery, listDevices } = require('./service')
@@ -59,6 +60,23 @@ async function exportDevices(request, reply) {
   return exportData(request, reply, sheetData, scope, {
     replacements: getBaseReplacements(),
   })
+}
+
+function getMonthsDatefields(minDate, maxDate, culture) {
+  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
+  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
+  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
+  const dateFields = []
+  const locale = culture.split('-')[0].toLowerCase()
+  for (let i = 0; i <= monthDiff + 1; i++) {
+    dateFields.push({
+      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
+      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
+        locale: locales[locale],
+      }),
+    })
+  }
+  return dateFields
 }
 
 async function getDeviceActivityReport(auth, query) {
@@ -124,20 +142,9 @@ async function getDeviceActivityReport(auth, query) {
     getItems,
     deviceResultsPerMonths,
   ])
-  const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
-  const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
-  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
-  const dateFields = []
-  const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 0; i <= monthDiff; i++) {
-    dateFields.push({
-      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
-      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
-        locale: locales[locale],
-      }),
-    })
-  }
+  const dateFields = getMonthsDatefields(minDate, maxDate, culture)
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
+
   const devices = _.map(data, elem => {
     _.each(
       _.filter(
@@ -301,6 +308,93 @@ async function exportDeviceOperationLogReport(request, reply) {
   })
 }
 
+async function getDeviceCapacityReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { culture } = await getUser(auth.credentials.name)
+  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const monthlyCapacity = deviceQuery
+    .clone()
+    .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
+    .leftJoin('Result as r', builder =>
+      builder
+        .on('d.id', 'r.deviceId')
+        .andOn(
+          knex.raw('DATE(r.endedOn) between date(?) and date(?)', [
+            minDate,
+            maxDate,
+          ])
+        )
+        .andOn(knex.raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
+    )
+    .where({ 'dt.externalId': 'CepheidGeneXpert' })
+    .groupBy(
+      'd.id',
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
+    )
+    .select(
+      'd.name',
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
+      'd.id AS deviceId',
+      knex.raw('COUNT(r.id) as resultCount'),
+      knex.raw(
+        `CASE
+            WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(now())
+            ELSE DATE(LAST_DAY(r.endedOn))
+          END as lastDayOfMonth`
+      ),
+      'dcap.dailyCapacity'
+    )
+    .orderBy('d.name')
+
+  const devices = deviceQuery
+    .clone()
+    .where({ 'dt.externalId': 'CepheidGeneXpert' })
+    .select('d.name', 'd.id')
+    .orderBy('d.name')
+  // return result when both queries are finished
+  const [capacityData, deviceDetails] = await Promise.all([
+    monthlyCapacity,
+    devices,
+  ])
+  const data = _.map(deviceDetails, deviceRow => {
+    _.each(
+      _.filter(
+        capacityData,
+        deviceFiltered => deviceFiltered.deviceId === deviceRow.id
+      ),
+      filteredMonthlyCapacity => {
+        const workingDays = differenceInBusinessDays(
+          filteredMonthlyCapacity.lastDayOfMonth,
+          format(
+            new Date(`${filteredMonthlyCapacity.monthYear}-01`),
+            'yyyy-MM'
+          ) === format(minDate, 'yyyy-MM')
+            ? minDate
+            : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
+        )
+        deviceRow[filteredMonthlyCapacity.monthYear] = `${_.round(
+          (filteredMonthlyCapacity.resultCount /
+            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1)) *
+            100,
+          2
+        )}%`
+      }
+    )
+
+    return deviceRow
+  })
+  const dataset = {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+    dynamicColumns: getMonthsDatefields(minDate, maxDate, culture),
+  }
+  return dataset
+}
+
 async function getGeneXpertOperationLogsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -374,4 +468,5 @@ module.exports = {
   getGeneXpertIssuesReport,
   getGeneXpertOperationLogsReport,
   exportDeviceOperationLogReport,
+  getDeviceCapacityReport,
 }
