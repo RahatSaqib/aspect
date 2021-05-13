@@ -100,8 +100,8 @@ async function deviceStatusOverTime(request) {
     groupBy(items, item =>
       getGroupName(item[deviceIdPropName], item[datePropName])
     )
-  const inactiveNoResultsReported = await knex('DeviceMaintenanceStatus')
-    .where('id', deviceMaintenanceStatuses.inactiveNoResultsReported)
+  const inactiveUnknown = await knex('DeviceMaintenanceStatus')
+    .where('id', deviceMaintenanceStatuses.inactiveUnknown)
     .select(
       'name as maintenanceStatusName',
       'i18nKey as maintenanceStatusI18nKey',
@@ -205,7 +205,7 @@ async function deviceStatusOverTime(request) {
           // ... then change it's status to 'No Results Reported' for this day
           status = {
             ...status,
-            ...inactiveNoResultsReported,
+            ...inactiveUnknown,
           }
         }
       }
@@ -229,6 +229,11 @@ async function deviceStatusOverTime(request) {
   return { ok: true, data }
 }
 
+/**
+ * Gets a collection of devices and their latest reported maintenance status.
+ * @param {*} request The REST request object
+ * @returns A collection of devices, including data of the latest logged maintenance status.
+ */
 async function deviceStatusLastReported(request) {
   const { auth, query } = request
   const { excludeNotLocalizableDevices } = query
@@ -252,7 +257,7 @@ async function deviceStatusLastReported(request) {
       site: 's',
       device: 'd',
     })
-    // Join with DMSL only if it's not on weekend, unless it was reported something different than NO RESULT or UNKNOWN
+    // Join with DMSL only if it's not on weekend, unless it was reported something different than inactiveNoTestsPerformed or inactiveUnknown
     .leftOuterJoin('DeviceMaintenanceStatusLog as dmslInner', dmslJoin => {
       dmslJoin.on('d.id', 'dmslInner.deviceId').andOn(builder => {
         builder
@@ -268,7 +273,7 @@ async function deviceStatusLastReported(request) {
           .orOn(
             knex.raw(`
               (
-                dmslInner.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoResultsReported}
+                dmslInner.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveNoTestsPerformed}
                 AND
                 dmslInner.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}
               )

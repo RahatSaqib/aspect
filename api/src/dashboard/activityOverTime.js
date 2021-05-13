@@ -20,7 +20,7 @@ async function activityOverTimeDashboard(request) {
       devicesInactive: 0,
       devicesTotal: 0,
       inactiveUnknown: 0,
-      inactiveNoResultsReported: 0,
+      inactiveNoTestsPerformed: 0,
       inactiveOutOfInventory: 0,
       inactiveDownForRepair: 0,
       inactiveDecommissioned: 0,
@@ -123,9 +123,9 @@ async function activityOverTimeDashboard(request) {
           WHEN dms.externalId = 'inactiveUnknown'
           THEN d.id ELSE null
         END`),
-      inactiveNoResultsReported: knex.raw(`DISTINCT
+      inactiveNoTestsPerformed: knex.raw(`DISTINCT
         CASE
-          WHEN dms.externalId = 'inactiveNoResultsReported'
+          WHEN dms.externalId = 'inactiveNoTestsPerformed'
           THEN d.id ELSE null
         END`),
       inactiveOutOfInventory: knex.raw(`DISTINCT

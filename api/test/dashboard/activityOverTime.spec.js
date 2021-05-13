@@ -186,11 +186,11 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
 
     await addDmsl(weekDays[1], deviceMaintenanceStatusToId.reportedActive)
     //
-    statusId = deviceMaintenanceStatusToId.inactiveUnknown
+    statusId = deviceMaintenanceStatusToId.inactiveNoTestsPerformed
     await addDmsl(weekDays[2], statusId)
     await addDmsl(weekDays[3], statusId)
     //
-    statusId = deviceMaintenanceStatusToId.inactiveNoResultsReported
+    statusId = deviceMaintenanceStatusToId.inactiveUnknown
     await addDmsl(weekDays[4], statusId)
     await addDmsl(weekDays[5], statusId)
     await addDmsl(weekDays[6], statusId)
@@ -250,7 +250,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     assert.property(item, 'devicesTotal')
     //
     assert.property(item, 'inactiveUnknown')
-    assert.property(item, 'inactiveNoResultsReported')
+    assert.property(item, 'inactiveNoTestsPerformed')
     assert.property(item, 'inactiveOutOfInventory')
     assert.property(item, 'inactiveDownForRepair')
     assert.property(item, 'inactiveDecommissioned')
@@ -270,12 +270,12 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     assert.isAtLeast(getItem(1).devicesTotal, 1)
     assert.isAtLeast(getItem(1).devicesActive, 1)
     //
-    assert.isAtLeast(getItem(2).inactiveUnknown, 1)
-    assert.isAtLeast(getItem(3).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(2).inactiveNoTestsPerformed, 1)
+    assert.isAtLeast(getItem(3).inactiveNoTestsPerformed, 1)
     //
-    assert.isAtLeast(getItem(4).inactiveNoResultsReported, 1)
-    assert.isAtLeast(getItem(5).inactiveNoResultsReported, 1)
-    assert.isAtLeast(getItem(6).inactiveNoResultsReported, 1)
+    assert.isAtLeast(getItem(4).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(5).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(6).inactiveUnknown, 1)
     //
     assert.isAtLeast(getItem(7).inactiveOutOfInventory, 1)
     assert.isAtLeast(getItem(8).inactiveOutOfInventory, 1)

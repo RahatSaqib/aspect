@@ -235,8 +235,8 @@ describe('Maintenance Reports', () => {
               maintenanceStatusName: 'Active',
             }
           : {
-              maintenanceStatusExternalId: 'inactiveNoResultsReported',
-              maintenanceStatusI18nKey: 'inactiveNoResultsReported',
+              maintenanceStatusExternalId: 'inactiveUnknown',
+              maintenanceStatusI18nKey: 'inactiveUnknown',
               maintenanceStatusName: 'No Results Reported',
             }
       )

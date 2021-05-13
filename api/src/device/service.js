@@ -1270,7 +1270,7 @@ async function onDeviceUpdateMaintenanceStatusNoResults(
       automaticallySetDeviceMaintenanceStatus(
         deviceId,
         day,
-        'inactiveNoResultsReported',
+        'inactiveUnknown',
         action,
         messageContext
       )
@@ -1576,7 +1576,16 @@ async function deviceMaintenanceStatus(request) {
   }
 }
 
-async function getDevicesWithNoMaintenanceLogForTheDay(knex, today) {
+/**
+ * Returns a list of objects for those devices that:
+ * - Do not have a maintenance status log for the given day
+ * - Have a maintenance status log for the given day, but it's 'inactiveUnknown'
+ * - (not developed yet) Were decommissioned before the given day, but their maintenance status log for the given day is not 'inactiveDecommissioned'
+ * @param {*} knex
+ * @param {*} today The day to be processed
+ * @returns
+ */
+async function getDevicesMaintenanceLogForTheDay(knex, today) {
   return knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -1611,19 +1620,32 @@ async function getDevicesWithNoMaintenanceLogForTheDay(knex, today) {
     })
     .where('dtc.hasResults', true)
     .andWhere(queryBuilder => {
-      queryBuilder.whereNull('today_dmsl.id').orWhere(queryBuilder => {
-        queryBuilder
-          .where('da.token', 'decommissioned')
-          .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
-      })
+      // Return data if the device's log does not exist for the given day
+      // >>> We need to add the missing log
+      queryBuilder
+        .whereNull('today_dmsl.id')
+        // Return data if the device is decommissioned but the log is not set to inactiveDecommissioned
+        // >>> We need to set the maintenance as 'inactiveDecommissioned'
+        // TODO: compare only decommissioned if the approval status decommissioned was set before the given day (we need to change relationships, from device-deviceApprovalStatus to device-deviceApprovalLog)
+        .orWhere(queryBuilder => {
+          queryBuilder
+            .where('da.token', 'decommissioned')
+            .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
+        })
+
+        // Return data if the device has a log for the given day, which is set to 'inactiveUnknown'
+        // >>> We will need to to check if the device has future results, and set the current log to 'inactiveNoTestsPerformed' if that is true
+        .orWhere('today_dms.externalId', 'inactiveUnknown')
     })
     .groupBy('d.id')
     .select(
       'd.id',
       'current_dms.externalId as currentMaintenanceStatusExternalId',
+      'current_dms.active as currentMaintenanceStatusActive',
       'current_dmsl.data as currentMaintenanceStatusLogData',
       'current_dmsl.day as currentMaintenanceStatusDay',
       'da.token as approvalToken',
+      'd.deviceApprovalId as deviceApprovalId',
       knex.raw('COUNT(r.id) as totalResults')
     )
 }
@@ -1645,39 +1667,86 @@ async function onDeviceMaintenanceStatusLogScheduled(
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    const devicesWithNoMaintenanceLogForTheDay = await getDevicesWithNoMaintenanceLogForTheDay(
+    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(
       knex,
       today
     )
 
-    await Promise.each(devicesWithNoMaintenanceLogForTheDay, async device => {
+    await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {
         id,
         approvalToken,
         currentMaintenanceStatusExternalId,
         currentMaintenanceStatusLogData = '{}',
         currentMaintenanceStatusDay,
+        currentMaintenanceStatusActive,
+        deviceApprovalId,
         totalResults,
       } = device
+
       // set maintenance status external id
-      let deviceMaintenanceStatusForTheDay =
-        currentMaintenanceStatusExternalId || 'inactiveUnknown'
+      let deviceMaintenanceStatusForTheDay
+      /**
+       * If today is after the current log day,
+       * and the last log was one of the inactive statuses,
+       * then assume that the reason of inactivity is the same than before.
+       */
+      if (
+        currentMaintenanceStatusExternalId &&
+        today > currentMaintenanceStatusDay &&
+        !currentMaintenanceStatusActive
+      )
+        deviceMaintenanceStatusForTheDay = currentMaintenanceStatusExternalId
+      /**
+       * Else, as we don't know the reason of inactivity, 'inactiveUnknown' will be set as default
+       */ else deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
+
+      /**
+       * If the device is currently decommissioned, we need to check if that is the reason of inactivity
+       */
       if (approvalToken === 'decommissioned') {
-        deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
-      } else if (
         /**
-         * when device has no tests on this day (today) and
-         * it's current maintenance status is active or inactiveUnknown
-         * then change it's status to 'No Results Reported' for this day
+         * If the device's last approval log is 'inactiveDecommissioned', and the day to process is after that approval log,
+         * then we can assume the device inactivty reason is that it was decommissioned and no longer working
          */
-        totalResults === 0 &&
-        ['active', 'inactiveUnknown'].includes(deviceMaintenanceStatusForTheDay)
-      ) {
-        deviceMaintenanceStatusForTheDay = 'inactiveNoResultsReported'
+        const decommissionedId = deviceApprovalId
+        const lastDeviceApprovalLog = await knex('DeviceApprovalLog')
+          .where({ deviceId: id })
+          .orderBy('createdOn', 'desc')
+          .first()
+
+        if (lastDeviceApprovalLog) {
+          const {
+            createdOn: lastApprovalDate,
+            deviceApprovalId: lastApprovalDeviceApprovalId,
+          } = lastDeviceApprovalLog
+          if (
+            lastApprovalDate < today &&
+            lastApprovalDeviceApprovalId === decommissionedId
+          )
+            deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
+        } else deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
       } else if (
-        // if has result for TODAY
+        totalResults === 0 &&
+        deviceMaintenanceStatusForTheDay === 'inactiveUnknown'
+      ) {
+        /**
+         * If the device didn't report results in the day and we don't know the inactivity reason,
+         * then we should check if it just didn't performed tests.
+         * For checking this, we will see if it reported tests in the future, so if that's true, we can assume 'inactiveNoTestsPerformed' status.
+         */
+        const { totalFutureResults } = await knex('Result')
+          .where({ deviceId: id })
+          .andWhere('endedOn', '>', today)
+          .count('id as totalFutureResults')
+          .first()
+
+        if (totalFutureResults > 0)
+          // If has newer results, then we know that the device didn't performed tests in the day
+          deviceMaintenanceStatusForTheDay = 'inactiveNoTestsPerformed'
+      } else if (
+        // if has result for the processed day, but the status is not active - then set it to active for TODAY
         totalResults > 0 &&
-        // but current status is not active - then set it to active for TODAY
         deviceMaintenanceStatusForTheDay !== 'active'
       ) {
         deviceMaintenanceStatusForTheDay = 'active'

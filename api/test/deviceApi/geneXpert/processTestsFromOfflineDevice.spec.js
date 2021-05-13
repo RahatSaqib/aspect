@@ -159,22 +159,21 @@ describe('Backward update db after getting tests from offline device', () => {
     /**
      * 4.2. check that all processed days should be set to `inactiveUnknown` because
      * func onDeviceMaintenanceStatusLogScheduled (see in api/src/device/service.js)
-     * uses status 'inactiveNoResultsReported' for days without results (and when current
+     * uses status 'inactiveUnknown' for days without results (and when current
      * device doesn't have deviceMaintenanceStatusLogId field defined)
      */
     let logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
       expect(log.deviceMaintenanceStatusId).to.be.equal(
-        deviceMaintenanceStatusToId.inactiveNoResultsReported
+        deviceMaintenanceStatusToId.inactiveUnknown
       )
     })
 
     /**
-     * 4.3. Let's manually change statuses for 1st, 2nd and 3rd days from 'inactiveUnknown'
-     * to 'inactiveNoResultsReported', 'inactiveOutOfInventory' and 'inactiveDownForRepair'
+     * 4.3. Let's manually change statuses for 1st, and 2nd days from 'inactiveUnknown'
+     * to 'inactiveOutOfInventory' and 'inactiveDownForRepair'
      */
     const customStatuses = [
-      deviceMaintenanceStatusToId.inactiveNoResultsReported,
       deviceMaintenanceStatusToId.inactiveOutOfInventory,
       deviceMaintenanceStatusToId.inactiveDownForRepair,
     ]
@@ -191,7 +190,7 @@ describe('Backward update db after getting tests from offline device', () => {
       expect(log.deviceMaintenanceStatusId).to.be.equal(
         index < customStatuses.length
           ? customStatuses[index]
-          : deviceMaintenanceStatusToId.inactiveNoResultsReported
+          : deviceMaintenanceStatusToId.inactiveUnknown
       )
     })
 
