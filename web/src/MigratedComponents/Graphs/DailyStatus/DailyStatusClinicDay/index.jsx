@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
+
+import useI18n from '../../../../Hooks/i18n/useI18n'
 import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'
@@ -40,15 +42,16 @@ const DailyStatusClinicDay = ({
   daysInSameStatus,
   isWeekend,
   maintenanceStatusName,
+  maintenanceStatusManuallySetBy,
   maintenanceStatusI18nKey,
   statuses,
   totalResults,
   onClickDay,
 }) => {
+  const { formatDate, formatMessage } = useI18n()
   const isActive =
     maintenanceStatusI18nKey === 'active' ||
     maintenanceStatusI18nKey === 'reportedActive'
-  const { formatMessage } = useIntl()
   const { weekend } = consts
   const { checked } =
     filter(statuses, {
@@ -75,9 +78,18 @@ const DailyStatusClinicDay = ({
     maintenanceStatusI18nKey,
   })
 
+  const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
+    ? formatMessage(messages.toolTipLastUpdatedBy, {
+        username: maintenanceStatusManuallySetBy.userName,
+        updatedDate: formatDate(
+          new Date(maintenanceStatusManuallySetBy.updatedDate)
+        ),
+      })
+    : ''
+
   return (
     <AspectTooltip
-      title={title}
+      title={`${title}${manuallySet}`}
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
@@ -92,6 +104,7 @@ const DailyStatusClinicDay = ({
 
 DailyStatusClinicDay.defaultProps = {
   maintenanceStatusName: false,
+  maintenanceStatusManuallySetBy: {},
   totalResults: 0,
 }
 
@@ -102,6 +115,12 @@ DailyStatusClinicDay.propTypes = {
     PropTypes.string,
     PropTypes.bool,
   ]),
+  maintenanceStatusManuallySetBy: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    userName: PropTypes.string,
+    updatedDate: PropTypes.string,
+  }),
   daysInSameStatus: PropTypes.string.isRequired,
   statuses: PropTypes.string.isRequired,
   consts: PropTypes.shape({
