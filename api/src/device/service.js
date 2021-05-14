@@ -1222,6 +1222,7 @@ async function onResultLogged(action, { messageContext }) {
           'r.endedOn',
           'da.token as approvalToken'
         )) || {}
+    // TODO: ACÁ VA LA LÓGICA!!!
     if (deviceId && (endedOn || startedOn)) {
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,

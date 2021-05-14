@@ -1170,6 +1170,7 @@ describe('Device routes', () => {
         type: 'DaktariVirology',
         partner: 'Partner One',
       })
+      const { deviceId } = context
       const startOfTodayUtc = getLocalDateInUtc(startOfToday())
       const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(
         subDays(startOfToday(), 2)
@@ -1234,7 +1235,6 @@ describe('Device routes', () => {
           )
 
       it('should log the maintenance status `active` for un-logged device with result', async () => {
-        const { deviceId } = context
         /**
          * set device.deviceMaintenanceStatusId to 'inactiveUnknown' as of 2 days ago
          */
@@ -1252,10 +1252,8 @@ describe('Device routes', () => {
           deviceMaintenanceStatusLogId,
         })
 
-        const day = startOfTodayUtc
-
         // check before dispatch
-        let deviceDetails = await getDeviceDetails(day, deviceId)
+        let deviceDetails = await getDeviceDetails(startOfTodayUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1265,10 +1263,10 @@ describe('Device routes', () => {
           },
         ])
 
-        await dispatchDeviceMaintenanceStatusForDay(day)
+        await dispatchDeviceMaintenanceStatusForDay(startOfTodayUtc)
 
         // check after dispatch
-        deviceDetails = await getDeviceDetails(day, deviceId)
+        deviceDetails = await getDeviceDetails(startOfTodayUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1280,8 +1278,6 @@ describe('Device routes', () => {
       })
 
       it('Should re-log the last inactivity reason, when the device is inactive during the day to process and the latest log entry was for a previous day', async () => {
-        const { deviceId } = context
-
         /**
          * 3 DAYS AGO - set device.deviceMaintenanceStatusId to 'inactiveOutOfInventory'
          */
@@ -1330,8 +1326,6 @@ describe('Device routes', () => {
       })
 
       it("Should NOT re-log the last inactivity reason and log a status 'inactiveUnknown', when the device is inactive during the day to process and the latest log entry was for a posterior day", async () => {
-        const { deviceId } = context
-
         /**
          * 1 DAY AGO - Set maintenance status 'inactiveOutOfInventory'
          */
@@ -1358,11 +1352,13 @@ describe('Device routes', () => {
         /**
          * 2 DAYS AGO - Should set maintenance status 'inactiveUnknown'
          */
-        const day = startOfDayTwoDaysAgoUtc
-        await dispatchDeviceMaintenanceStatusForDay(day)
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(day, deviceId)
+        const deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1377,10 +1373,6 @@ describe('Device routes', () => {
         /**
          * TODAY - The created context created a result for today
          */
-        const { deviceId } = context
-
-        const twoDaysAgo = getLocalDateInUtc(subDays(startOfToday(), 1))
-
         await knex('Device').where('id', deviceId).update({
           deviceApprovalId: deviceApprovals.approved,
         })
@@ -1388,10 +1380,13 @@ describe('Device routes', () => {
         /**
          * 2 DAYS AGO - re-processing logs will insert a new log status 'inactiveNoTestsPerformed' as we have a test after then
          */
-        await dispatchDeviceMaintenanceStatusForDay(twoDaysAgo)
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(twoDaysAgo, deviceId)
+        const deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1403,11 +1398,6 @@ describe('Device routes', () => {
       it('should log the maintenance status `inactiveNoTestsPerformed` for a day when the device was `inactiveUnknown` but have future results', async () => {
         /**
          * TODAY - The created context created a result for today
-         */
-        const { deviceId } = context
-
-        const twoDaysAgo = getLocalDateInUtc(subDays(startOfToday(), 1))
-        /**
          * 2 DAYS AGO - create log 'inactiveUnknown'
          */
         const [deviceMaintenanceStatusLogId] = await knex(
@@ -1416,7 +1406,7 @@ describe('Device routes', () => {
           deviceId,
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
           data: '{}',
-          day: twoDaysAgo,
+          day: startOfDayTwoDaysAgoUtc,
           createdOn: new Date(),
         })
         await knex('Device').where('id', deviceId).update({
@@ -1427,10 +1417,13 @@ describe('Device routes', () => {
         /**
          * 2 DAYS AGO - re-processing logs will change 'inactiveUnknown' to 'noTestsPerformed' as we have a test after then
          */
-        await dispatchDeviceMaintenanceStatusForDay(twoDaysAgo)
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(twoDaysAgo, deviceId)
+        const deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1440,10 +1433,6 @@ describe('Device routes', () => {
       })
 
       it('should log the maintenance status `inactiveDecommissioned` for a day when the device did not report tests and it was previously decommissioned', async () => {
-        /**
-         * TODAY - The created context created a result for today
-         */
-        const { deviceId } = context
         /**
          * 2 DAYS AGO - set device approval as decommissioned
          */
@@ -1459,15 +1448,11 @@ describe('Device routes', () => {
         /**
          * 1 DAY AGO - processing logs will set 'inactiveDecommissioned', as we didn't perform tests and approval status was set to 'decommissioned' previously
          */
-        await dispatchDeviceMaintenanceStatusForDay(
-          getLocalDateInUtc(subDays(startOfToday(), 1))
-        )
+        const day = getLocalDateInUtc(subDays(startOfToday(), 1))
+        await dispatchDeviceMaintenanceStatusForDay(day)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(
-          getLocalDateInUtc(subDays(startOfToday(), 1)),
-          deviceId
-        )
+        const deviceDetails = await getDeviceDetails(day, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1478,10 +1463,6 @@ describe('Device routes', () => {
 
       it('should log the maintenance status `inactiveUnknown` for a day when the device did not report tests and it was decommissioned in the future', async () => {
         /**
-         * TODAY - The created context created a result for today
-         */
-        const { deviceId } = context
-        /**
          * 2 DAYS AGO - set device approval as decommissioned
          */
         await knex('Device').where('id', deviceId).update({
@@ -1497,53 +1478,11 @@ describe('Device routes', () => {
         /**
          * 1 DAY AGO - processing logs will set 'inactiveUnknown', as we didn't perform tests and approval status was set to 'decommissioned' after the processed date
          */
-        await dispatchDeviceMaintenanceStatusForDay(
-          getLocalDateInUtc(subDays(startOfToday(), 1))
-        )
+        const day = getLocalDateInUtc(subDays(startOfToday(), 1))
+        await dispatchDeviceMaintenanceStatusForDay(day)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(
-          getLocalDateInUtc(subDays(startOfToday(), 1)),
-          deviceId
-        )
-        expect(deviceDetails).to.containSubset([
-          {
-            id: deviceId,
-            todaysLoggedMaintenanceStatusExternalId: 'inactiveUnknown',
-          },
-        ])
-      })
-
-      it('should log the maintenance status `inactiveUnknown` for a day when the device did not report tests and it was decommissioned in the future', async () => {
-        /**
-         * TODAY - The created context created a result for today
-         */
-        const { deviceId } = context
-        /**
-         * 2 DAYS AGO - set device approval as decommissioned
-         */
-        await knex('Device').where('id', deviceId).update({
-          deviceApprovalId: deviceApprovals.decommissioned,
-        })
-        await knex('DeviceApprovalLog').insert({
-          deviceId,
-          deviceApprovalId: deviceApprovals.decommissioned,
-          createdOn: getLocalDateInUtc(startOfToday()),
-        })
-        await knex('Result').where({ deviceId }).del()
-
-        /**
-         * 1 DAY AGO - processing logs will set 'inactiveUnknown', as we didn't perform tests and approval status was set to 'decommissioned' after the processed date
-         */
-        await dispatchDeviceMaintenanceStatusForDay(
-          getLocalDateInUtc(subDays(startOfToday(), 1))
-        )
-
-        // check after dispatch
-        const deviceDetails = await getDeviceDetails(
-          getLocalDateInUtc(subDays(startOfToday(), 1)),
-          deviceId
-        )
+        const deviceDetails = await getDeviceDetails(day, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
