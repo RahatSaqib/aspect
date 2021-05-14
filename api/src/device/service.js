@@ -25,6 +25,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
   allResultCategoryToId,
+  allDeviceMaintenanceStatusToId,
   deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
@@ -1208,6 +1209,22 @@ async function onDeviceMaintenanceStatusLogged(
   })
 }
 
+/**
+ * Updates all the device maintenance status logs for days previous to the given date limit, setting their status to inactiveNoTestsPerformed
+ * @param {*} deviceId
+ * @param {*} dateLimit
+ */
+async function updateStatusUnknownToNoTestsPerformed(deviceId, dateLimit) {
+  const statusesByExternalId = await allDeviceMaintenanceStatusToId()
+  const inactiveUnknownId = statusesByExternalId.inactiveUnknown
+  const inactiveNoTestsPerformedId =
+    statusesByExternalId.inactiveNoTestsPerformed
+  await knex('DeviceMaintenanceStatusLog')
+    .where('day', '<', dateLimit)
+    .andWhere({ deviceId, deviceMaintenanceStatusId: inactiveUnknownId })
+    .update({ deviceMaintenanceStatusId: inactiveNoTestsPerformedId })
+}
+
 async function onResultLogged(action, { messageContext }) {
   const { resultId } = action
   return messageContext.run(async knex => {
@@ -1222,7 +1239,7 @@ async function onResultLogged(action, { messageContext }) {
           'r.endedOn',
           'da.token as approvalToken'
         )) || {}
-    // TODO: ACÁ VA LA LÓGICA!!!
+
     if (deviceId && (endedOn || startedOn)) {
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,
@@ -1233,6 +1250,15 @@ async function onResultLogged(action, { messageContext }) {
         action,
         messageContext
       )
+
+      const { numberOfPreviousTestsInDay } = await knex('Result as r')
+        .where(knex.raw('DATE(endedOn)'), format(endedOn, 'yyyy-MM-dd'))
+        .andWhere('id', '<', resultId)
+        .andWhere({ deviceId })
+        .count('r.id as numberOfPreviousTestsInDay')
+        .first()
+      if (numberOfPreviousTestsInDay === 0)
+        await updateStatusUnknownToNoTestsPerformed(deviceId, endedOn)
 
       await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
