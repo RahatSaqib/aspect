@@ -116,7 +116,7 @@ const DailyStatus = () => {
             action={toggleStatusVisibility}
           />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
-          {[devicesDaily[0]].map(
+          {devicesDaily.map(
             ({
               id: deviceId,
               name,
