@@ -86,7 +86,10 @@ const enhance = compose(
       )
 
       /**
-       * set filter to date range = `Last 30 days` if not set yet
+       * Set filter to date range = `Last 30 days` if missing in url.
+       * Use same steps for setting filters as in func `getMonthsSelectList`
+       * in `web/src/filter/date/DateRangeSelector.jsx`
+       *
        * TODO: check if other pages should have same pre-defined filter
        */
       if (value === '/browse/reporter') {
