@@ -75,6 +75,19 @@ const navigations = [
   { value: '/browse/case', label: 'Cases', i18nKey: 'cases' },
 ]
 
+const setFiltersForLast30Days = searchParams => {
+  const filtersParams = new URLSearchParams(searchParams.get('filters'))
+  if (!filtersParams.has('minDate') && !filtersParams.has('maxDate')) {
+    const now = new Date()
+    const last30DaysStart = subtractDays(now, 30)
+    const minDate = startOfDay(last30DaysStart)
+    const maxDate = endOfDay(now)
+    filtersParams.set('minDate', minDate.toJSON())
+    filtersParams.set('maxDate', maxDate.toJSON())
+    searchParams.set('filters', filtersParams)
+  }
+}
+
 const enhance = compose(
   mapProps(({ history, location, ...restProps }) => ({
     ...restProps,
@@ -93,16 +106,7 @@ const enhance = compose(
        * TODO: check if other pages should have same pre-defined filter
        */
       if (value === '/browse/reporter') {
-        const filtersParams = new URLSearchParams(searchParams.get('filters'))
-        if (!filtersParams.has('minDate') && !filtersParams.has('maxDate')) {
-          const now = new Date()
-          const last30DaysStart = subtractDays(now, 30)
-          const minDate = startOfDay(last30DaysStart)
-          const maxDate = endOfDay(now)
-          filtersParams.set('minDate', minDate.toJSON())
-          filtersParams.set('maxDate', maxDate.toJSON())
-          searchParams.set('filters', filtersParams)
-        }
+        setFiltersForLast30Days(searchParams)
       }
 
       history.push({
