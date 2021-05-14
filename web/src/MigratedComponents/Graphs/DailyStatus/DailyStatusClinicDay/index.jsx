@@ -80,7 +80,7 @@ const DailyStatusClinicDay = ({
 
   const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
     ? formatMessage(messages.toolTipLastUpdatedBy, {
-        username: maintenanceStatusManuallySetBy.userName,
+        username: maintenanceStatusManuallySetBy.name,
         updatedDate: formatDate(
           new Date(maintenanceStatusManuallySetBy.updatedDate)
         ),
@@ -118,7 +118,6 @@ DailyStatusClinicDay.propTypes = {
   maintenanceStatusManuallySetBy: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string,
-    userName: PropTypes.string,
     updatedDate: PropTypes.string,
   }),
   daysInSameStatus: PropTypes.string.isRequired,

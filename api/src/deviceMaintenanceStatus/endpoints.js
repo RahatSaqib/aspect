@@ -75,11 +75,6 @@ const routes = [
                     totalResults: Joi.number().description(
                       'Total results performed by the device in this day'
                     ),
-                    maintenanceManuallySetById: Joi.string()
-                      .allow(null)
-                      .description(
-                        'Member ID responsible for manually setting the status'
-                      ),
                     maintenanceStatusManuallySetBy: Joi.object()
                       .allow(null)
                       .description(

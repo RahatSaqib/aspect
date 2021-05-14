@@ -6,7 +6,6 @@ const uniq = require('lodash/uniq')
 const isNil = require('lodash/isNil')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
-// const { getUserByUserId } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
 const {
@@ -119,7 +118,7 @@ async function deviceStatusOverTime(request) {
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
-    // .innerJoin('User as uc', 'dmsl.createdBy', 'uc.id')
+    .leftJoin('Person as pe', 'dmsl.createdBy', 'pe.userId')
     // Join for checking if the current device maintenance status log ('dmsl') is the last of the day
     .leftOuterJoin(
       'DeviceMaintenanceStatusLog as newerDmslOnSameDay',
@@ -157,7 +156,8 @@ async function deviceStatusOverTime(request) {
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
-      'dmsl.createdBy as maintenanceStatusManuallySetById',
+      'pe.id as maintenanceStatusManuallySetById',
+      'pe.name as maintenanceStatusManuallySetByName',
       'dmsl.createdOn as maintenanceStatusManuallySetByDate',
     ])
   statusData = groupListBy(statusData, 'deviceId', 'day')
@@ -187,9 +187,8 @@ async function deviceStatusOverTime(request) {
             // );
             // status.maintenanceStatusManuallySetBy = { id, name, userName };
             status.maintenanceStatusManuallySetBy = {
-              id: 1,
-              name: 'admin',
-              userName: 'Admin',
+              id: status.maintenanceStatusManuallySetById,
+              name: status.maintenanceStatusManuallySetByName,
               updatedDate: status.maintenanceStatusManuallySetByDate,
             }
           } catch (error) {
@@ -203,6 +202,7 @@ async function deviceStatusOverTime(request) {
         status = omit(status, [
           'deviceId',
           'maintenanceStatusManuallySetById',
+          'maintenanceStatusManuallySetByName',
           'maintenanceStatusManuallySetByDate',
         ])
 
