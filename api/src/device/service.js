@@ -1141,6 +1141,7 @@ async function automaticallySetDeviceMaintenanceStatus(
       .andWhere('dmsl.day', dayDate)
       .orderByRaw('dmsl.createdOn desc, dmsl.id desc')
       .first('dms.*')) || {}
+
   if (
     latestDeviceMaintenanceStatusForDay.externalId ===
       deviceMaintenanceStatusExternalId ||
@@ -1151,15 +1152,14 @@ async function automaticallySetDeviceMaintenanceStatus(
     //   set active status it can't be automatically overwritten
     return
   }
-  const { id: deviceMaintenanceStatusId } = await knex(
-    'DeviceMaintenanceStatus'
-  )
-    .where({ externalId: deviceMaintenanceStatusExternalId })
-    .first('id')
+  const { id: deviceMaintenanceStatusId } =
+    (await knex('DeviceMaintenanceStatus')
+      .where({ externalId: deviceMaintenanceStatusExternalId })
+      .first('id')) || {}
 
   if (!deviceMaintenanceStatusId) {
     return Boom.badRequest(
-      `${deviceMaintenanceStatusExternalId} is not a known maintenance status that can be manually set`
+      `${deviceMaintenanceStatusExternalId} is not a known maintenance status that can be automatically set`
     )
   }
   await setDeviceMaintenanceStatus(
