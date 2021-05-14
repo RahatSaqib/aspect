@@ -74,6 +74,10 @@ const messages = defineMessages({
       other {# days}
     } since last update`,
   },
+  toolTipLastUpdatedBy: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy',
+    defaultMessage: ` Manually set by {username} ({updatedDate})`,
+  },
 })
 
 export default messages
