@@ -3,8 +3,10 @@ const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
 const uniq = require('lodash/uniq')
+const isNil = require('lodash/isNil')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
+// const { getUserByUserId } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
 const {
@@ -117,6 +119,7 @@ async function deviceStatusOverTime(request) {
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
+    // .innerJoin('User as uc', 'dmsl.createdBy', 'uc.id')
     // Join for checking if the current device maintenance status log ('dmsl') is the last of the day
     .leftOuterJoin(
       'DeviceMaintenanceStatusLog as newerDmslOnSameDay',
@@ -154,24 +157,54 @@ async function deviceStatusOverTime(request) {
       'dms.i18nKey as maintenanceStatusI18nKey',
       'dms.name as maintenanceStatusName',
       'dms.externalId as maintenanceStatusExternalId',
+      'dmsl.createdBy as maintenanceStatusManuallySetById',
+      'dmsl.createdOn as maintenanceStatusManuallySetByDate',
     ])
   statusData = groupListBy(statusData, 'deviceId', 'day')
 
   let data = []
   devices.forEach(device => {
     const maintenanceStatusHistory = []
-    days.forEach(day => {
+    days.forEach(async day => {
       // We need to transform the days to the user's offset for matching with the query results
       const isoDay = `${getDateSubstring(
         day.toISOString()
       )}T00:00:00.000${offset}`
+
       const groupName = getGroupName(device.id, isoDay)
 
       const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
 
       let [status] = statusData[groupName] || [{}]
       if (status) {
-        status = omit(status, 'deviceId')
+        if (
+          !isNil(status.maintenanceStatusManuallySetById) &&
+          !isNil(status.maintenanceStatusManuallySetByDate)
+        ) {
+          try {
+            // const { id, name, userName } = await getUserByUserId(
+            //   status.maintenanceStatusManuallySetById
+            // );
+            // status.maintenanceStatusManuallySetBy = { id, name, userName };
+            status.maintenanceStatusManuallySetBy = {
+              id: 1,
+              name: 'admin',
+              userName: 'Admin',
+              updatedDate: status.maintenanceStatusManuallySetByDate,
+            }
+          } catch (error) {
+            throw new Error(error)
+          }
+        } else {
+          status.maintenanceStatusManuallySetBy = {}
+        }
+
+        // console.log(status.maintenanceStatusManuallySetBy);
+        status = omit(status, [
+          'deviceId',
+          'maintenanceStatusManuallySetById',
+          'maintenanceStatusManuallySetByDate',
+        ])
 
         if (
           // when device has no tests on this day ...
@@ -186,6 +219,8 @@ async function deviceStatusOverTime(request) {
           }
         }
       }
+
+      // console.log(status)
 
       maintenanceStatusHistory.push({
         ...status,
