@@ -30,10 +30,17 @@ describe('Result Treatment', () => {
           assert.property(res.body, 'siteId')
 
           assert.equal(res.body.data.length, 12) // for 12 months
-          assert.property(res.body.data[0], 'monthTested')
-          assert.property(res.body.data[0], 'pcConfirmed')
-          assert.property(res.body.data[0], 'cntConfirmed')
-          assert.property(res.body.data[0], 'total')
+          const [item] = res.body.data
+          assert.property(item, 'monthTested')
+          assert.property(item, 'pcOnTreatment')
+          assert.property(item, 'total')
+          assert.property(item, 'totalResults')
+          assert.property(item, 'delivered')
+          assert.property(item, 'requiresTreatment')
+          assert.property(item, 'onTreatment')
+          assert.property(item, 'notPossible')
+          assert.property(item, 'notOnTreatment')
+          assert.property(item, 'transferred')
         })
     })
   })

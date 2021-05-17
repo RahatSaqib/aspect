@@ -48,7 +48,7 @@ const treatmentStatusGraphs = {
           params: {},
         },
         indexBy: 'monthTested',
-        keyToConsume: 'pcConfirmed',
+        keyToConsume: 'pcOnTreatment',
         i18nKey: {
           Confirmed: 'Confirmed',
           NotConfirmed: 'NotConfirmed',
@@ -80,7 +80,7 @@ const treatmentStatusGraphs = {
           params: {},
         },
         indexBy: 'monthTested',
-        keyToConsume: 'cntConfirmed',
+        keyToConsume: 'onTreatment',
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {
