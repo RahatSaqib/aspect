@@ -182,10 +182,6 @@ async function deviceStatusOverTime(request) {
           !isNil(status.maintenanceStatusManuallySetByDate)
         ) {
           try {
-            // const { id, name, userName } = await getUserByUserId(
-            //   status.maintenanceStatusManuallySetById
-            // );
-            // status.maintenanceStatusManuallySetBy = { id, name, userName };
             status.maintenanceStatusManuallySetBy = {
               id: status.maintenanceStatusManuallySetById,
               name: status.maintenanceStatusManuallySetByName,
@@ -198,7 +194,6 @@ async function deviceStatusOverTime(request) {
           status.maintenanceStatusManuallySetBy = {}
         }
 
-        // console.log(status.maintenanceStatusManuallySetBy);
         status = omit(status, [
           'deviceId',
           'maintenanceStatusManuallySetById',
