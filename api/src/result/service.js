@@ -2146,6 +2146,14 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
+    // Filter for everTransferred
+    .modify(b => {
+      if (query.everTransferred) {
+        b.whereRaw(
+          `EXISTS (SELECT rslog_transfer.resultId FROM ResultStatusLog as rslog_transfer INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id WHERE rslog_transfer.resultId = r.id and rs_transfer.externalId = 'Transfer')`
+        )
+      }
+    })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -2169,6 +2177,12 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
+      if (params.requiresTreatment) {
+        queryBuilder
+          .where('rca.requiresTreatment', true)
+          .orWhere('rca2.requiresTreatment', true)
+      }
+
       if (params.patientOrResearchId) {
         queryBuilder.where(builder =>
           builder
