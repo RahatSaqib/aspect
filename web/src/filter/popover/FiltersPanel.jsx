@@ -32,6 +32,8 @@ import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
 import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
+import OnlyEverTransferredField from '../resource/OnlyEverTransferredField'
+import OnlyTreatmentRequiredField from '../resource/OnlyTreatmentRequiredField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
@@ -168,7 +170,18 @@ const enhance = compose(
       onChangeFilters({
         onlyReportableResults,
       }),
-
+    onOnlyEverTransferredBoolChange: ({
+      onChangeFilters,
+    }) => onlyEverTransferred =>
+      onChangeFilters({
+        onlyEverTransferred,
+      }),
+    onOnlyTreatmentRequiredBoolChange: ({
+      onChangeFilters,
+    }) => onlyTreatmentRequired =>
+      onChangeFilters({
+        onlyTreatmentRequired,
+      }),
     onStockLeftChange: ({ onChangeFilters }) => stockLeft =>
       onChangeFilters({
         stockLeft,
@@ -413,6 +426,14 @@ const messages = {
       id: 'filter.popover.onlyReportableResults',
       defaultMessage: 'Only Reportable Results',
     },
+    onlyEverTransferred: {
+      id: 'filter.popover.onlyEverTransferred',
+      defaultMessage: 'Only Ever Transferred Results',
+    },
+    onlyTreatmentRequired: {
+      id: 'filter.popover.onlyTreatmentRequired',
+      defaultMessage: 'Only Results With Treatment Required',
+    },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',
       defaultMessage: 'Maintenance Status',
@@ -473,6 +494,8 @@ export const FiltersPanel = ({
   onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
+  onOnlyEverTransferredBoolChange,
+  onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
   onReportNameChange,
   user,
@@ -491,6 +514,9 @@ export const FiltersPanel = ({
       assayResultCategory2Label = resultCategory2Label
     }
   }
+
+  console.log(config.onlyTreatmentRequired)
+
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -997,6 +1023,36 @@ export const FiltersPanel = ({
                 }
                 floatingLabelText={intl.formatMessage(
                   messages.onlyReportableResults
+                )}
+                style={{ verticalAlign: 'bottom' }}
+                autoWidth
+              />
+            </div>
+          )}
+          {config.onlyEverTransferred && (
+            <div className={cssClasses('Control')}>
+              <OnlyEverTransferredField
+                value={filters.onlyEverTransferred}
+                onOnlyEverTransferredChange={
+                  onOnlyEverTransferredBoolChange
+                }
+                floatingLabelText={intl.formatMessage(
+                  messages.onlyEverTransferred
+                )}
+                style={{ verticalAlign: 'bottom' }}
+                autoWidth
+              />
+            </div>
+          )}
+          {config.onlyTreatmentRequired && (
+            <div className={cssClasses('Control')}>
+              <OnlyTreatmentRequiredField
+                value={filters.onlyTreatmentRequired}
+                onOnlyTreatmentRequiredChange={
+                  onOnlyTreatmentRequiredBoolChange
+                }
+                floatingLabelText={intl.formatMessage(
+                  messages.onlyTreatmentRequired
                 )}
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth

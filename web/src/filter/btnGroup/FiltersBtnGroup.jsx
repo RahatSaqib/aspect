@@ -116,6 +116,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.onlyReportableResults',
     defaultMessage: 'Show Only Reportable Results',
   },
+  onlyEverTransferred: {
+    id: 'filter.btnGroup.onlyEverTransferred',
+    defaultMessage: 'Show Only Results Ever Transferred',
+  },
+  onlyTreatmentRequired: {
+    id: 'filter.btnGroup.onlyTreatmentRequired',
+    defaultMessage: 'Show Only Results With Treatment Required',
+  },
   deviceIssueType: {
     id: 'filter.btnGroup.deviceIssueType',
     defaultMessage: 'Device Issue: {issueTypeId}',
@@ -218,6 +226,8 @@ const filtersOrdering = {
   siteIds: -1,
   patientOrCaseId: 23,
   onlyReportableResults: 23,
+  onlyTreatmentRequired: 33,
+  onlyEverTransferred: 34,
   issueTypeId: 24,
   stockLeft: 31,
   reportName: 32,
@@ -477,6 +487,12 @@ const buttonBy = {
   ),
   onlyReportableResults: makeButton(({ intl }) =>
     intl.formatMessage(messages.onlyReportableResults)
+  ),
+  onlyEverTransferred: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyEverTransferred)
+  ),
+  onlyTreatmentRequired: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyTreatmentRequired)
   ),
   issueTypeId: makeButton(({ intl }, issueTypeId) =>
     intl.formatMessage(messages.deviceIssueType, {

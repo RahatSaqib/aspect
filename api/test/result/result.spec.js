@@ -130,7 +130,7 @@ describe('Result routes', () => {
 
     it('should return a list of only results which result category and assay require treatment', async () => {
       const res = await server
-        .get(`${path}?requiresTreatment=true`)
+        .get(`${path}?onlyTreatmentRequired=true`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       validateResponse(res)
@@ -149,7 +149,7 @@ describe('Result routes', () => {
         .distinct()
 
       const res = await server
-        .get(`${path}?everTransferred=true`)
+        .get(`${path}?onlyEverTransferred=true`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       validateResponse(res)

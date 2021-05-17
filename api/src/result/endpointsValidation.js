@@ -508,7 +508,7 @@ function listResultsBaseConfig() {
         workflowStatusId: Joi.number()
           .allow(null, '')
           .description('Filter for Result Workflow Status ID'),
-        requiresTreatment: Joi.bool().description(
+        onlyTreatmentRequired: Joi.bool().description(
           'Filter for only results that require treatment, defined on their result category and assay'
         ),
         treatmentStatusId: Joi.number()
@@ -517,7 +517,7 @@ function listResultsBaseConfig() {
         treatmentStatus: Joi.string()
           .allow(null, '')
           .description('Filter for Result Treatment Status by External ID'),
-        everTransferred: Joi.bool().description(
+        onlyEverTransferred: Joi.bool().description(
           'Filter for only results that have been ever transferred'
         ),
         jsonFields: Joi.array()

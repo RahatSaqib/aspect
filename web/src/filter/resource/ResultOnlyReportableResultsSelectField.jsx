@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import FormLabel from '@material-ui/core/FormLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import classnames from 'classnames/bind'
@@ -9,7 +8,6 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 const cssClasses = classnames.bind(require('../popover/FiltersPanel.css'))
 
 const ResultOnlyReportableResultsSelectField = ({
-  floatingLabelText,
   onOnlyReportableResultsChange,
   value,
 }) => {
@@ -17,9 +15,6 @@ const ResultOnlyReportableResultsSelectField = ({
     onOnlyReportableResultsChange(event.target.checked || undefined)
   return (
     <div className={cssClasses('checkbox__container')}>
-      <FormLabel component="legend" className={cssClasses('checkbox__label')}>
-        {floatingLabelText}
-      </FormLabel>
       <FormGroup className={cssClasses('checkbox__group')}>
         <FormControlLabel
           control={
