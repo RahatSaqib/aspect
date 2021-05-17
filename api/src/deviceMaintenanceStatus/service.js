@@ -215,8 +215,6 @@ async function deviceStatusOverTime(request) {
         }
       }
 
-      // console.log(status)
-
       maintenanceStatusHistory.push({
         ...status,
         day: isoDay,
