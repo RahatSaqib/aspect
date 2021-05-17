@@ -5,7 +5,7 @@ const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const { knex } = require('../db')
 const { addConstraints, getConstraints } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
-const { addTransferredQuery } = require('../shared/query')
+const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 
 async function confirmedTreatmentTracking(request) {
   const { auth, payload } = request
@@ -33,31 +33,16 @@ async function confirmedTreatmentTracking(request) {
   const resultStatusTransferId = await resultStatusToId('Transfer')
 
   const query = await knex('Result as r')
-    // consider 100% as all results where requiresTreatment = 1 in the resultCategoryAssay table
-    .innerJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn(
-        'r.resultCategory1',
-        'rca.resultCategoryId'
-      )
-    })
-    .leftOuterJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'r.treatmentStatusLogId',
-      'rtsl.id'
-    )
-    .leftOuterJoin(
-      'ResultTreatmentStatus as rts',
-      'rtsl.resultTreatmentStatusId',
-      'rts.id'
-    )
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .innerJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
-    // join to ResultDownloadLog for counting results 'delivered' to Reporters
-    .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
+    // add joins and different counts for results - (not)onTreatment, requiresTreatment, notPossible, ...
+    .modify(queryBuilder => {
+      addResultCountsQuery(queryBuilder, knex)
+    })
     // add joins/count for 'transferred' results
     .modify(queryBuilder => {
       addTransferredQuery(queryBuilder, knex, resultStatusTransferId, {
@@ -89,43 +74,6 @@ async function confirmedTreatmentTracking(request) {
     // filter by date range, inclusive
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
-    .count({
-      totalResults: knex.raw('DISTINCT r.id'),
-      delivered: knex.raw('DISTINCT rdl.resultId'),
-      /**
-       * We should only be counting results that were delivered in the last four columns
-       * because we're measuring how many of the results are linked to treatment on the
-       * Reporter and they can't put results on treatment if they were never delivered
-       * to the reporter.
-       */
-      requiresTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
-          THEN rdl.resultId ELSE null
-        END`),
-      onTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
-          THEN rdl.resultId ELSE null
-        END`),
-      notPossible: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
-          THEN rdl.resultId ELSE null
-        END`),
-      notOnTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
-          THEN rdl.resultId ELSE null
-        END`),
-
-      // TODO: check with Stefan - may be need to count only delivered results (rdl.resultId)
-      total: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  ifnull(rts.externalId, '') != 'NotPossible'
-          THEN r.id ELSE null
-        END`),
-    })
     .select(
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
@@ -142,6 +90,11 @@ async function confirmedTreatmentTracking(request) {
       }
       return pc
     }
+    /**
+     * define 'total' prop as alias for 'delivered' (defined in func addResultCountsQuery),
+     * mostly for graphs which already may use it
+     */
+    d.total = d.delivered
     d.pcOnTreatment = getPercentage(d.total, d.onTreatment)
     return d
   })

@@ -9,7 +9,7 @@ const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { resultStatusToId } = require('../shared/dictionary')
-const { addTransferredQuery } = require('../shared/query')
+const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 
 const totalDevicesQuery = knex('Device as d')
   .whereRaw('d.siteId = s.id')
@@ -315,34 +315,6 @@ async function listSitesWithReporters(request) {
     .leftOuterJoin('SiteTag as siteTag', 's.id', 'siteTag.siteId')
     .leftOuterJoin('Tag as tag', 'siteTag.tagId', 'tag.id')
     /**
-     * join to ResultDownloadLog for counting results 'delivered' to Reporters
-     */
-    .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
-    /**
-     * for counting different statuses rts.externalId = 'XXX'
-     */
-    .leftOuterJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'rtsl.id',
-      'r.treatmentStatusLogId'
-    )
-    .leftOuterJoin(
-      'ResultTreatmentStatus as rts',
-      'rts.id',
-      'rtsl.resultTreatmentStatusId'
-    )
-    /**
-     * for counting  rca.requiresTreatment = 1
-     */
-    .leftOuterJoin('ResultCategoryAssay as rca', builder => {
-      builder.on('r.assayId', 'rca.assayId').andOn(function () {
-        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
-          'r.resultCategory2',
-          'rca.resultCategoryId'
-        )
-      })
-    })
-    /**
      * take only clinics
      */
     .whereRaw(
@@ -386,6 +358,11 @@ async function listSitesWithReporters(request) {
   // get page items
   const getItems = siteQuery
     .clone()
+    // add joins and different counts for results - (not)onTreatment, requiresTreatment, notPossible, ...
+    .modify(queryBuilder => {
+      addResultCountsQuery(queryBuilder, knex)
+    })
+    // add joins/count for 'transferred' results
     .modify(queryBuilder => {
       addTransferredQuery(queryBuilder, knex, resultStatusTransferId, {
         minDate,
@@ -393,37 +370,6 @@ async function listSitesWithReporters(request) {
       })
     })
     .modify(sortPageParams, query, 'siteName')
-    // all counts
-    .count({
-      totalResults: knex.raw('DISTINCT r.id'),
-      delivered: knex.raw('DISTINCT rdl.resultId'),
-      /**
-       * We should only be counting results that were delivered in the last four columns
-       * because we're measuring how many of the results are linked to treatment on the
-       * Reporter and they can't put results on treatment if they were never delivered
-       * to the reporter.
-       */
-      requiresTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
-          THEN rdl.resultId ELSE null
-        END`),
-      onTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
-          THEN rdl.resultId ELSE null
-        END`),
-      notPossible: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
-          THEN rdl.resultId ELSE null
-        END`),
-      notOnTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
-          THEN rdl.resultId ELSE null
-        END`),
-    })
     .select(
       'g.countryId',
       'g.stateId',
