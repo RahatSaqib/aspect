@@ -2178,9 +2178,12 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     .modify((queryBuilder, params) => {
       if (params.onlyTreatmentRequired) {
-        queryBuilder
-          .where('rca.requiresTreatment', true)
-          .orWhere('rca2.requiresTreatment', true)
+        queryBuilder.andWhere(b => {
+          b.where('rca.requiresTreatment', true).orWhere(
+            'rca2.requiresTreatment',
+            true
+          )
+        })
       }
 
       if (params.patientOrResearchId) {
