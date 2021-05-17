@@ -7,10 +7,7 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('../popover/FiltersPanel.css'))
 
-const OnlyEverTransferredField = ({
-  onOnlyEverTransferredChange,
-  value,
-}) => {
+const OnlyEverTransferredField = ({ onOnlyEverTransferredChange, value }) => {
   const updateSelection = () => event =>
     onOnlyEverTransferredChange(event.target.checked || undefined)
   return (
@@ -33,7 +30,6 @@ const OnlyEverTransferredField = ({
 }
 
 OnlyEverTransferredField.propTypes = {
-  floatingLabelText: PropTypes.string.isRequired,
   onOnlyEverTransferredChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,
 }

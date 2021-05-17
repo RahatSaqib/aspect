@@ -33,7 +33,6 @@ const ResultOnlyReportableResultsSelectField = ({
 }
 
 ResultOnlyReportableResultsSelectField.propTypes = {
-  floatingLabelText: PropTypes.string.isRequired,
   onOnlyReportableResultsChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,
 }

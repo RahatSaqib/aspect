@@ -1033,9 +1033,7 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <OnlyEverTransferredField
                 value={filters.onlyEverTransferred}
-                onOnlyEverTransferredChange={
-                  onOnlyEverTransferredBoolChange
-                }
+                onOnlyEverTransferredChange={onOnlyEverTransferredBoolChange}
                 floatingLabelText={intl.formatMessage(
                   messages.onlyEverTransferred
                 )}

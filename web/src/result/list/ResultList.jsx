@@ -80,7 +80,9 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['assay:view'],
   },
   {
-    onlyEverTransferred: true, requiredPermissions: [] },
+    onlyEverTransferred: true,
+    requiredPermissions: [],
+  },
   { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
 

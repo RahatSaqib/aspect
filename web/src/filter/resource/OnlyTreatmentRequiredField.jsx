@@ -33,7 +33,6 @@ const OnlyTreatmentRequiredField = ({
 }
 
 OnlyTreatmentRequiredField.propTypes = {
-  floatingLabelText: PropTypes.string.isRequired,
   onOnlyTreatmentRequiredChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,
 }
