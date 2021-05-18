@@ -162,27 +162,25 @@ async function getListDevices(query, auth) {
     })
     .modify(queryBuilder => {
       if (query.onlyOpenIssues || query.issueTypeId) {
-        queryBuilder.innerJoin('Issue as issue', 'issue.deviceId', 'd.id')
+        queryBuilder.leftJoin('Issue as issue', 'issue.deviceId', 'd.id')
         if (query.issueTypeId)
           queryBuilder
-            .innerJoin(
+            .leftJoin(
               'IssueType as issueType',
               'issue.issueTypeId',
               'issueType.id'
             )
             .whereIn('issueType.externalId', query.issueTypeId)
         if (query.onlyOpenIssues)
-          queryBuilder
-            .innerJoin(
-              'IssueStatus as issueStatus',
-              'issue.issueStatusId',
-              'issueStatus.id'
-            )
-            .whereNotIn('issueStatus.externalId', [
-              'Inactive',
-              'Ok',
-              'Resolved',
-            ])
+          queryBuilder.leftJoin('IssueStatus as issueStatus', joinBuilder =>
+            joinBuilder
+              .on('issue.issueStatusId', 'issueStatus.id')
+              .andOn(
+                knex.raw(
+                  "issueStatus.externalId in ('Inactive','Ok','Resolved')"
+                )
+              )
+          )
       }
     })
     .modify(filterParams, query, {
