@@ -1663,7 +1663,6 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
             .where('da.token', 'decommissioned')
             .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
         })
-
         // Return data if the device has a log for the given day, which is set to 'inactiveUnknown'
         // >>> REASON: We will need to to check if the device has future results, and set the current log to 'inactiveNoTestsPerformed' if that is true
         .orWhere('today_dms.externalId', 'inactiveUnknown')
@@ -1763,7 +1762,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       ) {
         /**
          * If the device didn't report results in the day and we don't know the inactivity reason,
-         * then we should check if it just didn't performed tests.
+         * then we should check if it just didn't perform tests.
          * For checking this, we will see if it reported tests in the future, so if that's true, we can assume 'inactiveNoTestsPerformed' status.
          */
         const { totalFutureResults } = await knex('Result')
