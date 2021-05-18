@@ -1251,6 +1251,10 @@ async function onResultLogged(action, { messageContext }) {
         messageContext
       )
 
+      /**
+       * If it is the first result for the current day and deviceId, then update all the previous inactiveUnknown statuses
+       * The device is active for today, and results should be synced, so the inactiveUnknown statuses should actually be inactiveNoTestsPerformed
+       */
       const { numberOfPreviousTestsInDay } = await knex('Result as r')
         .where(knex.raw('DATE(endedOn)'), format(endedOn, 'yyyy-MM-dd'))
         .andWhere('id', '<', resultId)
