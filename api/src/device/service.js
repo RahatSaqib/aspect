@@ -1210,7 +1210,7 @@ async function onDeviceMaintenanceStatusLogged(
 }
 
 /**
- * Updates all the device maintenance status logs for days previous to the given date limit, setting their status to inactiveNoTestsPerformed
+ * Updates all the device maintenance status logs set to inactiveUnknown for days previous to the given date limit, setting their status to inactiveNoTestsPerformed
  * @param {*} deviceId
  * @param {*} dateLimit
  */
