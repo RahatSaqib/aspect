@@ -327,6 +327,11 @@ describe('Device routes', () => {
     })
 
     it('should return only devices that have linked issues', async () => {
+      const devicesWithIssues = devices =>
+        _.filter(
+          devices,
+          device => device.issueCategories && device.issueCategories.length > 0
+        )
       let res = await server
         .get(`${path}?onlyOpenIssues=1`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -335,22 +340,21 @@ describe('Device routes', () => {
       assert.typeOf(res.body, 'Object')
       assert.property(res.body, 'data')
       assert.typeOf(res.body.data, 'array')
-      assert.equal(res.body.data.length, 1)
+      assert.equal(devicesWithIssues(res.body.data).length, 1)
       assertPropertiesOfListItem(res)
 
       res = await server
         .get(`${path}?onlyOpenIssues=1&issueTypeId=ModuleDisabled`)
         .set('Authorization', `Bearer ${shared.token}`)
-      assert.equal(res.body.data.length, 0)
-
+      assert.isEmpty(devicesWithIssues(res.body.data))
+      res = await server
+        .get(`${path}?issueTypeId=ModuleDisabled`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.body.data.length, 1)
       res = await server
         .get(
           `${path}?onlyOpenIssues=1&issueTypeId=ModuleReplaced&issueTypeId=ModuleDisabled"`
         )
-        .set('Authorization', `Bearer ${shared.token}`)
-      assert.equal(res.body.data.length, 1)
-      res = await server
-        .get(`${path}?issueTypeId=ModuleDisabled`)
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.body.data.length, 1)
     })

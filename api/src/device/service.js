@@ -171,6 +171,7 @@ async function getListDevices(query, auth) {
               'issueType.id'
             )
             .whereIn('issueType.externalId', query.issueTypeId)
+
         if (query.onlyOpenIssues)
           queryBuilder.leftJoin('IssueStatus as issueStatus', joinBuilder =>
             joinBuilder
