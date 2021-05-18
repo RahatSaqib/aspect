@@ -202,7 +202,7 @@ async function deviceStatusOverTime(request) {
           // ... and it's current maintenance status for the day is active ...
           status.maintenanceStatusExternalId === 'active'
         ) {
-          // ... then change it's status to 'No Results Reported' for this day
+          // ... then change it's status to 'Unknown' for this day
           status = {
             ...status,
             ...inactiveUnknown,
