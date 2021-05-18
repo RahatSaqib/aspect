@@ -107,10 +107,10 @@ const addResultCountsQuery = (
      * for counting  rca.requiresTreatment = 1
      */
     .leftOuterJoin('ResultCategoryAssay as rca', builder => {
-      builder.on('r.assayId', 'rca.assayId').andOn(function () {
-        this.on('r.resultCategory1', 'rca.resultCategoryId')
+      builder.on('r.assayId', 'rca.assayId').andOn(qb => {
+        qb.on('r.resultCategory1', 'rca.resultCategoryId')
         if (withResultCategory2 === true) {
-          this.orOn('r.resultCategory2', 'rca.resultCategoryId')
+          qb.orOn('r.resultCategory2', 'rca.resultCategoryId')
         }
       })
     })
