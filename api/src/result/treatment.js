@@ -8,18 +8,18 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 
 async function confirmedTreatmentTracking(request) {
-  const { auth, payload, query } = request
+  const { auth, query } = request
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { siteId, assayTypeId, resultCategoryId } = payload
+  const { siteId, assayTypeId, resultCategoryId } = query
 
   const now = new Date()
   const lastEndedOn = endOfMonth(subMonths(now, 1))
 
   // normalize and format 'endedOn'
-  let { endedOn } = payload
+  let { endedOn } = query
   if (!endedOn) {
     endedOn = subMonths(now, 1)
   }
@@ -66,6 +66,7 @@ async function confirmedTreatmentTracking(request) {
       deviceId: 'd.id',
       deviceName: 'd.name',
       siteName: 's.name',
+      siteId: 's.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -74,12 +75,6 @@ async function confirmedTreatmentTracking(request) {
       result: 'r',
       site: 's',
       sample: 'sp',
-    })
-    // if 'siteId' specified - filter by siteId
-    .where(function () {
-      if (siteId) {
-        this.where('s.id', siteId)
-      }
     })
     // filter by date range, inclusive
     .where('r.endedOn', '>=', startedOn)

@@ -43,7 +43,7 @@ const treatmentStatusGraphs = {
         size: 8,
         componentClasses: ['BARCLASS'],
         api: {
-          method: 'POST',
+          method: 'GET',
           endpoint: '/result/confirmed-treatment-tracking',
           params: {},
         },
@@ -75,7 +75,7 @@ const treatmentStatusGraphs = {
           NotConfirmed: 'NotConfirmed',
         },
         api: {
-          method: 'POST',
+          method: 'GET',
           endpoint: '/result/confirmed-treatment-tracking',
           params: {},
         },
