@@ -1652,11 +1652,11 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
     .where('dtc.hasResults', true)
     .andWhere(queryBuilder => {
       // Return data if the device's log does not exist for the given day
-      // >>> We need to add the missing log
+      // >>> REASON: We need to add the missing log
       queryBuilder
         .whereNull('today_dmsl.id')
         // Return data if the device is decommissioned but the log is not set to inactiveDecommissioned
-        // >>> We need to set the maintenance as 'inactiveDecommissioned'
+        // >>> REASON: We need to set the maintenance as 'inactiveDecommissioned'
         // TODO: compare only decommissioned if the approval status decommissioned was set before the given day (we need to change relationships, from device-deviceApprovalStatus to device-deviceApprovalLog)
         .orWhere(queryBuilder => {
           queryBuilder
@@ -1665,7 +1665,7 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
         })
 
         // Return data if the device has a log for the given day, which is set to 'inactiveUnknown'
-        // >>> We will need to to check if the device has future results, and set the current log to 'inactiveNoTestsPerformed' if that is true
+        // >>> REASON: We will need to to check if the device has future results, and set the current log to 'inactiveNoTestsPerformed' if that is true
         .orWhere('today_dms.externalId', 'inactiveUnknown')
     })
     .groupBy('d.id')
