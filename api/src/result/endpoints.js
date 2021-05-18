@@ -11,6 +11,7 @@ const {
   validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
+  treatmentTrackingValidationQuery,
 } = require('./endpointsValidation')
 const {
   listResults,
@@ -756,6 +757,7 @@ const routes = [
           resultCategoryId: Joi.number().integer().allow(null),
           endedOn: Joi.date().iso().allow(null).description('Ending date'),
         },
+        ...treatmentTrackingValidationQuery(),
       },
     },
   },

@@ -2,13 +2,13 @@ const Boom = require('@hapi/boom')
 const dateFormat = require('date-fns/format')
 const sortBy = require('lodash/sortBy')
 const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
-const { knex } = require('../db')
+const { knex, filterParams, filterDateRangeParams } = require('../db')
 const { addConstraints, getConstraints } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 
 async function confirmedTreatmentTracking(request) {
-  const { auth, payload } = request
+  const { auth, payload, query } = request
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -32,7 +32,7 @@ async function confirmedTreatmentTracking(request) {
   const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
   const resultStatusTransferId = await resultStatusToId('Transfer')
 
-  const query = await knex('Result as r')
+  let data = await knex('Result as r')
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -57,6 +57,16 @@ async function confirmedTreatmentTracking(request) {
           .where('r.resultCategory1', resultCategoryId)
       }
     })
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      assayId: 'r.assayId',
+      deviceId: 'd.id',
+      deviceName: 'd.name',
+      siteName: 's.name',
+    })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
       device: 'd',
@@ -79,7 +89,7 @@ async function confirmedTreatmentTracking(request) {
     )
     .groupBy('monthTested')
 
-  const data = query.map(d => {
+  data = data.map(d => {
     // add percentages
     const getPercentage = (total, value) => {
       let pc = 0
