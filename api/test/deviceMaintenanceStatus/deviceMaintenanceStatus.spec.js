@@ -237,7 +237,7 @@ describe('Maintenance Reports', () => {
           : {
               maintenanceStatusExternalId: 'inactiveUnknown',
               maintenanceStatusI18nKey: 'inactiveUnknown',
-              maintenanceStatusName: 'No Results Reported',
+              maintenanceStatusName: 'Unknown',
             }
       )
       assert.isBoolean(tamagotchiLastStatus.isWeekend)
