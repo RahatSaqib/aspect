@@ -367,9 +367,11 @@ function validateResultDetailResponse() {
       .allow(null, '')
       .description('Operator from latest ResultTreatmentWorkflowLog'),
     resultNotes: Joi.array().description('List of result notes'),
-    requiresTreatment: Joi.bool().description(
-      'Indicates if the result category and assay require treatment'
-    ),
+    requiresTreatment: Joi.number()
+      .allow(null, '')
+      .description(
+        'Indicates if the result category and assay require treatment'
+      ),
     patientCaseId: Joi.number()
       .allow(null)
       .optional()
