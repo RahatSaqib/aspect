@@ -47,11 +47,11 @@ const addTransferredQuery = (
     /**
      * for counting only rcaTransferred.requiresTreatment = 1
      */
-    .leftOuterJoin('ResultCategoryAssay as rcaTransferred', builder => {
-      builder
+    .leftOuterJoin('ResultCategoryAssay as rcaTransferred', queryBuilder => {
+      queryBuilder
         .on('resultTransferred.assayId', 'rcaTransferred.assayId')
-        .andOn(function () {
-          this.on(
+        .andOn(qb => {
+          qb.on(
             'resultTransferred.resultCategory1',
             'rcaTransferred.resultCategoryId'
           ).orOn(
