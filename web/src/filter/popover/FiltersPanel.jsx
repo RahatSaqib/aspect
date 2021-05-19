@@ -515,8 +515,6 @@ export const FiltersPanel = ({
     }
   }
 
-  console.log(config.onlyTreatmentRequired)
-
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
