@@ -1694,6 +1694,7 @@ async function seed(knex) {
 
   const resultStatuses = await allResultStatusToId()
   const resultStatusesIds = Object.values(resultStatuses)
+
   await Promise.each(resultDatas, async (resultData, i) => {
     const [resultId] = await knex('Result').insert(resultData)
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
@@ -1706,23 +1707,18 @@ async function seed(knex) {
     })
 
     // Insert one result status log (ensure we log one of each status)
+    const insertResultStatusByIndex = async ix =>
+      knex('ResultStatusLog').insert({
+        resultId,
+        resultStatusId: resultStatusesIds[ix],
+        createdOn: subMinutes(now, 90),
+        createdBy: adminId,
+      })
     let rdm = (i + 1) % resultStatusesIds.length
-    let resultStatusId = resultStatusesIds[rdm]
-    await knex('ResultStatusLog').insert({
-      resultId,
-      resultStatusId,
-      createdOn: subMinutes(now, 90),
-      createdBy: adminId,
-    })
+    await insertResultStatusByIndex(rdm)
     // Insert another random result status log
     rdm = _.random(0, resultStatusesIds.length - 1)
-    resultStatusId = resultStatusesIds[rdm]
-    await knex('ResultStatusLog').insert({
-      resultId,
-      resultStatusId,
-      createdOn: subMinutes(now, 90),
-      createdBy: adminId,
-    })
+    await insertResultStatusByIndex(rdm)
 
     await knex('Result')
       .where('id', resultId)
