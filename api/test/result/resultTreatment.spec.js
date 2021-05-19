@@ -16,10 +16,9 @@ describe('Result Treatment', () => {
     it('Should return percentages of OnTreatment and Unaccountable', async () => {
       const now = new Date()
       const endedOn = dateFormat(endOfMonth(subMonths(now, 1)), 'yyyy-MM-dd')
-      const siteId = null
       await server
-        .post(`${path}`)
-        .send({ endedOn, siteId })
+        .get(`${path}`)
+        .query({ endedOn })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           assert.equal(res.status, 200)
@@ -27,7 +26,6 @@ describe('Result Treatment', () => {
 
           assert.property(res.body, 'endedOn')
           assert.property(res.body, 'data')
-          assert.property(res.body, 'siteId')
 
           assert.equal(res.body.data.length, 12) // for 12 months
           const [item] = res.body.data

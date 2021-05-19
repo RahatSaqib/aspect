@@ -600,11 +600,15 @@ function treatmentTrackingValidationQuery() {
   return {
     query: {
       ...validateAllGeographyFilterParams(),
-      assayId: Joi.number().allow(null, '').description('Filter for assay ID'),
-      assay: Joi.string().optional().description('Assay Name'),
-      assayTypeId: Joi.number().integer().allow(null),
+      assay: Joi.string().allow(null, '').description('Assay Name'),
+      assayId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for assay ID'),
+      assayTypeId: Joi.number().integer().positive(),
       deviceId: Joi.number()
-        .allow(null, '')
+        .integer()
+        .positive()
         .description('Filter for device ID'),
       deviceName: Joi.string()
         .allow(null, '')
@@ -615,15 +619,14 @@ function treatmentTrackingValidationQuery() {
       diseaseId: Joi.number()
         .integer()
         .positive()
-        .optional()
         .description('The disease ID'),
       endedOn: Joi.date().iso().allow(null).description('Ending date'),
-      resultCategoryId: Joi.number().integer().allow(null),
+      resultCategoryId: Joi.number().integer().positive(),
       siteName: Joi.string()
         .allow(null, '')
         .description('Filter for site name'),
       siteId: Joi.number()
-        .optional()
+        .integer()
         .positive()
         .description('Filter for site Id'),
     },
