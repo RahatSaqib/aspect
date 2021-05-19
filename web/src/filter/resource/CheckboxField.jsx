@@ -7,34 +7,33 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('../popover/FiltersPanel.css'))
 
-const ResultOnlyReportableResultsSelectField = ({
-  onOnlyReportableResultsChange,
-  value,
-}) => {
+const CheckboxField = ({ onChange, name, label, value, style }) => {
   const updateSelection = () => event =>
-    onOnlyReportableResultsChange(event.target.checked || undefined)
+    onChange(event.target.checked || undefined)
   return (
     <div className={cssClasses('checkbox__container')}>
       <FormGroup className={cssClasses('checkbox__group')}>
         <FormControlLabel
           control={
             <AspectCheckbox
-              name="onlyReportableResults"
+              name={name}
               margin="normal"
               checked={value === 'true'}
-              onChange={updateSelection('onlyReportableResults')}
+              onChange={updateSelection(name)}
             />
           }
-          label="Only Reportable Results"
+          label={label}
         />
       </FormGroup>
     </div>
   )
 }
 
-ResultOnlyReportableResultsSelectField.propTypes = {
-  onOnlyReportableResultsChange: PropTypes.func.isRequired,
+CheckboxField.propTypes = {
+  onChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
 }
 
-export default ResultOnlyReportableResultsSelectField
+export default CheckboxField

@@ -31,9 +31,7 @@ import DeviceApprovalSelectField from '../resource/DeviceApprovalSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
-import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
-import OnlyEverTransferredField from '../resource/OnlyEverTransferredField'
-import OnlyTreatmentRequiredField from '../resource/OnlyTreatmentRequiredField'
+import CheckboxField from '../resource/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
@@ -1014,14 +1012,15 @@ export const FiltersPanel = ({
           )}
           {config.onlyReportableResults && (
             <div className={cssClasses('Control')}>
-              <ResultOnlyReportableResultsSelectField
+              <CheckboxField
                 value={filters.onlyReportableResults}
-                onOnlyReportableResultsChange={
+                onChange={
                   onOnlyReportableResultsBoolChange
                 }
-                floatingLabelText={intl.formatMessage(
+                label={intl.formatMessage(
                   messages.onlyReportableResults
                 )}
+                name="onlyReportableResults"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />
@@ -1029,12 +1028,15 @@ export const FiltersPanel = ({
           )}
           {config.onlyEverTransferred && (
             <div className={cssClasses('Control')}>
-              <OnlyEverTransferredField
+              <CheckboxField
                 value={filters.onlyEverTransferred}
-                onOnlyEverTransferredChange={onOnlyEverTransferredBoolChange}
-                floatingLabelText={intl.formatMessage(
+                onChange={
+                  onOnlyEverTransferredBoolChange
+                }
+                label={intl.formatMessage(
                   messages.onlyEverTransferred
                 )}
+                name="onlyEverTransferred"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />
@@ -1042,14 +1044,15 @@ export const FiltersPanel = ({
           )}
           {config.onlyTreatmentRequired && (
             <div className={cssClasses('Control')}>
-              <OnlyTreatmentRequiredField
+              <CheckboxField
                 value={filters.onlyTreatmentRequired}
-                onOnlyTreatmentRequiredChange={
+                onChange={
                   onOnlyTreatmentRequiredBoolChange
                 }
-                floatingLabelText={intl.formatMessage(
+                label={intl.formatMessage(
                   messages.onlyTreatmentRequired
                 )}
+                name="onlyEverTransferred"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />
