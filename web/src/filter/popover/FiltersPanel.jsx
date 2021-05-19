@@ -1014,12 +1014,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <CheckboxField
                 value={filters.onlyReportableResults}
-                onChange={
-                  onOnlyReportableResultsBoolChange
-                }
-                label={intl.formatMessage(
-                  messages.onlyReportableResults
-                )}
+                onChange={onOnlyReportableResultsBoolChange}
+                label={intl.formatMessage(messages.onlyReportableResults)}
                 name="onlyReportableResults"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
@@ -1030,12 +1026,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <CheckboxField
                 value={filters.onlyEverTransferred}
-                onChange={
-                  onOnlyEverTransferredBoolChange
-                }
-                label={intl.formatMessage(
-                  messages.onlyEverTransferred
-                )}
+                onChange={onOnlyEverTransferredBoolChange}
+                label={intl.formatMessage(messages.onlyEverTransferred)}
                 name="onlyEverTransferred"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
@@ -1046,12 +1038,8 @@ export const FiltersPanel = ({
             <div className={cssClasses('Control')}>
               <CheckboxField
                 value={filters.onlyTreatmentRequired}
-                onChange={
-                  onOnlyTreatmentRequiredBoolChange
-                }
-                label={intl.formatMessage(
-                  messages.onlyTreatmentRequired
-                )}
+                onChange={onOnlyTreatmentRequiredBoolChange}
+                label={intl.formatMessage(messages.onlyTreatmentRequired)}
                 name="onlyEverTransferred"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth

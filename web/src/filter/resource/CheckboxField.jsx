@@ -7,7 +7,7 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('../popover/FiltersPanel.css'))
 
-const CheckboxField = ({ onChange, name, label, value, style }) => {
+const CheckboxField = ({ onChange, name, label, value }) => {
   const updateSelection = () => event =>
     onChange(event.target.checked || undefined)
   return (
