@@ -27,13 +27,13 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
       <TableCell>{reporter.get('totalResults')}</TableCell>
       <TableCell>{reporter.get('delivered')}</TableCell>
       <TableCell>
-        <LinkToResults params={{ filters: { onlyTreatmentRequired: true } }}>
+        <LinkToResults params={{ filters: { onlyTreatmentRequired: true, sampleOriginSite: reporter.get('siteName') } }}>
           {reporter.get('requiresTreatment')}
         </LinkToResults>
       </TableCell>
       <TableCell>{reporter.get('onTreatment')}</TableCell>
       <TableCell>
-        <LinkToResults params={{ filters: { onlyEverTransferred: true } }}>
+        <LinkToResults params={{ filters: { onlyEverTransferred: true, sampleOriginSite: reporter.get('siteName') } }}>
           {reporter.get('transferred')}
         </LinkToResults>
       </TableCell>
