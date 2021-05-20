@@ -14,11 +14,11 @@ const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const LinkToResults = ({ params, children }) => (
-  <AspectLink to={buildURL('/browse/result', params)}>{children}</AspectLink>
-)
-
 const ReporterTableRow = ({ reporter, ...restProps }) => {
+  const LinkToResults = ({ params, children }) => (
+    <AspectLink to={buildURL('/browse/result', { filters: { sampleOriginSite: reporter.get('siteName'), onlyReportableResults: true, ...params }})}>{children}</AspectLink>
+  )
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
@@ -27,13 +27,13 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
       <TableCell>{reporter.get('totalResults')}</TableCell>
       <TableCell>{reporter.get('delivered')}</TableCell>
       <TableCell>
-        <LinkToResults params={{ filters: { onlyTreatmentRequired: true, sampleOriginSite: reporter.get('siteName') } }}>
+        <LinkToResults params={{ onlyTreatmentRequired: true }}>
           {reporter.get('requiresTreatment')}
         </LinkToResults>
       </TableCell>
       <TableCell>{reporter.get('onTreatment')}</TableCell>
       <TableCell>
-        <LinkToResults params={{ filters: { onlyEverTransferred: true, sampleOriginSite: reporter.get('siteName') } }}>
+        <LinkToResults params={{ onlyEverTransferred: true }}>
           {reporter.get('transferred')}
         </LinkToResults>
       </TableCell>
