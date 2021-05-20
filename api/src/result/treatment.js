@@ -17,20 +17,25 @@ async function confirmedTreatmentTracking(request) {
 
   const now = new Date()
   const lastEndedOn = endOfMonth(subMonths(now, 1))
+  const currentEndedOn = endOfMonth(now)
+  const resultStatusTransferId = await resultStatusToId('Transfer')
 
+  /**
+   * TODO: replace below `endedOn` and `startedOn` with filter params `minDate` and `maxDate`
+   * and reconfigure corresponding graph config params
+   */
   // normalize and format 'endedOn'
   let { endedOn } = query
   if (!endedOn) {
     endedOn = subMonths(now, 1)
   }
   endedOn = endOfMonth(endedOn)
-  if (endedOn > lastEndedOn) {
+  if (endedOn > currentEndedOn) {
     return Boom.expectationFailed(
-      '"endedOn" can not be greater than previous month'
+      '"endedOn" can not be greater than current month'
     )
   }
   const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
-  const resultStatusTransferId = await resultStatusToId('Transfer')
 
   let data = await knex('Result as r')
     // filter by access level of current user
