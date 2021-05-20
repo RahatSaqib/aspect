@@ -29,6 +29,7 @@ const LIST_FIELDS = [
   'dis.id as diseaseId',
   'dis.name as diseaseName',
   'dis.externalId as diseaseExternalId',
+  'rca.requiresTreatment',
 ]
 
 // Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed

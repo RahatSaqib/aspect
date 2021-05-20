@@ -31,7 +31,7 @@ import DeviceApprovalSelectField from '../resource/DeviceApprovalSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
-import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
+import CheckboxField from '../resource/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
@@ -168,7 +168,18 @@ const enhance = compose(
       onChangeFilters({
         onlyReportableResults,
       }),
-
+    onOnlyEverTransferredBoolChange: ({
+      onChangeFilters,
+    }) => onlyEverTransferred =>
+      onChangeFilters({
+        onlyEverTransferred,
+      }),
+    onOnlyTreatmentRequiredBoolChange: ({
+      onChangeFilters,
+    }) => onlyTreatmentRequired =>
+      onChangeFilters({
+        onlyTreatmentRequired,
+      }),
     onStockLeftChange: ({ onChangeFilters }) => stockLeft =>
       onChangeFilters({
         stockLeft,
@@ -413,6 +424,14 @@ const messages = {
       id: 'filter.popover.onlyReportableResults',
       defaultMessage: 'Only Reportable Results',
     },
+    onlyEverTransferred: {
+      id: 'filter.popover.onlyEverTransferred',
+      defaultMessage: 'Only Ever Transferred Results',
+    },
+    onlyTreatmentRequired: {
+      id: 'filter.popover.onlyTreatmentRequired',
+      defaultMessage: 'Only Results With Treatment Required',
+    },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',
       defaultMessage: 'Maintenance Status',
@@ -473,6 +492,8 @@ export const FiltersPanel = ({
   onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
+  onOnlyEverTransferredBoolChange,
+  onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
   onReportNameChange,
   user,
@@ -491,6 +512,7 @@ export const FiltersPanel = ({
       assayResultCategory2Label = resultCategory2Label
     }
   }
+
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -990,14 +1012,35 @@ export const FiltersPanel = ({
           )}
           {config.onlyReportableResults && (
             <div className={cssClasses('Control')}>
-              <ResultOnlyReportableResultsSelectField
+              <CheckboxField
                 value={filters.onlyReportableResults}
-                onOnlyReportableResultsChange={
-                  onOnlyReportableResultsBoolChange
-                }
-                floatingLabelText={intl.formatMessage(
-                  messages.onlyReportableResults
-                )}
+                onChange={onOnlyReportableResultsBoolChange}
+                label={intl.formatMessage(messages.onlyReportableResults)}
+                name="onlyReportableResults"
+                style={{ verticalAlign: 'bottom' }}
+                autoWidth
+              />
+            </div>
+          )}
+          {config.onlyEverTransferred && (
+            <div className={cssClasses('Control')}>
+              <CheckboxField
+                value={filters.onlyEverTransferred}
+                onChange={onOnlyEverTransferredBoolChange}
+                label={intl.formatMessage(messages.onlyEverTransferred)}
+                name="onlyEverTransferred"
+                style={{ verticalAlign: 'bottom' }}
+                autoWidth
+              />
+            </div>
+          )}
+          {config.onlyTreatmentRequired && (
+            <div className={cssClasses('Control')}>
+              <CheckboxField
+                value={filters.onlyTreatmentRequired}
+                onChange={onOnlyTreatmentRequiredBoolChange}
+                label={intl.formatMessage(messages.onlyTreatmentRequired)}
+                name="onlyEverTransferred"
                 style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />

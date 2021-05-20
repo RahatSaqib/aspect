@@ -37,7 +37,7 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
       <TableCell>{reporter.get('totalResults')}</TableCell>
       <TableCell>{reporter.get('delivered')}</TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyTreatmentRequired: true }}>
+        <LinkToResults params={{ onlyTreatmentRequired: true, treatmentStatus: 'AwaitingTreatment' }}>
           {reporter.get('requiresTreatment')}
         </LinkToResults>
       </TableCell>
