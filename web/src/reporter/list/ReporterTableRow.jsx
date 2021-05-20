@@ -24,9 +24,9 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
       </TableCell>
       <TableCell>{reporter.get('totalResults')}</TableCell>
       <TableCell>{reporter.get('delivered')}</TableCell>
-      <TableCell><LinkToResults params={{ onlyTreatmentRequired: true }}>{reporter.get('requiresTreatment')}</LinkToResults></TableCell>
+      <TableCell><LinkToResults params={{ filters: { onlyTreatmentRequired: true } }}>{reporter.get('requiresTreatment')}</LinkToResults></TableCell>
       <TableCell>{reporter.get('onTreatment')}</TableCell>
-      <TableCell><LinkToResults params={{ onlyEverTransferred: true }}>{reporter.get('transferred')}</LinkToResults></TableCell>
+      <TableCell><LinkToResults params={{ filters: { onlyEverTransferred: true } }}>{reporter.get('transferred')}</LinkToResults></TableCell>
       <TableCell>{reporter.get('notPossible')}</TableCell>
       <TableCell>{reporter.get('notOnTreatment')}</TableCell>
     </TableRow>
