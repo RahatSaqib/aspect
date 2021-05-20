@@ -1,5 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import AspectLink from '../../MigratedComponents/AspectLink'
+import { buildLink } from '../../MigratedComponents/AspectLink/helpers'
 
 import {
   DataTableRow as TableRow,
@@ -12,6 +14,8 @@ const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
+const LinkToResults = ({ params, children }) => <AspectLink to={buildLink('/browse/result', params)}>{children}</AspectLink>
+
 const ReporterTableRow = ({ reporter, ...restProps }) => {
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -20,9 +24,9 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
       </TableCell>
       <TableCell>{reporter.get('totalResults')}</TableCell>
       <TableCell>{reporter.get('delivered')}</TableCell>
-      <TableCell>{reporter.get('requiresTreatment')}</TableCell>
+      <TableCell><LinkToResults params={{ onlyTreatmentRequired: true }}>{reporter.get('requiresTreatment')}</LinkToResults></TableCell>
       <TableCell>{reporter.get('onTreatment')}</TableCell>
-      <TableCell>{reporter.get('transferred')}</TableCell>
+      <TableCell><LinkToResults params={{ onlyEverTransferred: true }}>{reporter.get('transferred')}</LinkToResults></TableCell>
       <TableCell>{reporter.get('notPossible')}</TableCell>
       <TableCell>{reporter.get('notOnTreatment')}</TableCell>
     </TableRow>
