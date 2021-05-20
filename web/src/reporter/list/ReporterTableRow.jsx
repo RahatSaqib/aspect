@@ -16,7 +16,17 @@ const cssClasses = classnames.bind(
 
 const ReporterTableRow = ({ reporter, ...restProps }) => {
   const LinkToResults = ({ params, children }) => (
-    <AspectLink to={buildURL('/browse/result', { filters: { sampleOriginSite: reporter.get('siteName'), onlyReportableResults: true, ...params }})}>{children}</AspectLink>
+    <AspectLink
+      to={buildURL('/browse/result', {
+        filters: {
+          sampleOriginSite: reporter.get('siteName'),
+          onlyReportableResults: true,
+          ...params,
+        },
+      })}
+    >
+      {children}
+    </AspectLink>
   )
 
   return (
