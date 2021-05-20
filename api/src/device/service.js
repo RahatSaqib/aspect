@@ -165,7 +165,7 @@ async function getListDevices(query, auth) {
         queryBuilder.leftJoin('Issue as issue', 'issue.deviceId', 'd.id')
         if (query.issueTypeId)
           queryBuilder
-            .leftJoin(
+            .innerJoin(
               'IssueType as issueType',
               'issue.issueTypeId',
               'issueType.id'
