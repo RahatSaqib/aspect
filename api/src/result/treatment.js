@@ -24,7 +24,7 @@ async function confirmedTreatmentTracking(request) {
    */
   let { maxDate } = query
   if (maxDate) {
-    maxDate = parseISO(maxDate)
+    maxDate = maxDate instanceof Date ? maxDate : parseISO(maxDate)
   } else {
     maxDate = endOfMonth(subMonths(now, 1))
   }
@@ -35,7 +35,7 @@ async function confirmedTreatmentTracking(request) {
   }
   let { minDate } = query
   if (minDate) {
-    minDate = parseISO(minDate)
+    minDate = minDate instanceof Date ? minDate : parseISO(minDate)
   } else {
     minDate = startOfMonth(subMonths(maxDate, 11)) // 12 months period by default
   }
