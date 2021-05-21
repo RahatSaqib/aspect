@@ -4065,7 +4065,9 @@ async function seed(knex) {
                         ? `${city} ${
                             labStrings[_.random(0, labStrings.length - 1)]
                           }`
-                        : `${lga.name} County Lab ${siteNumber}`,
+                        : `${lga.name} County ${
+                            siteNumber % 2 ? 'Lab' : 'Clinic'
+                          } ${siteNumber}`,
                       shortName:
                         city || `${lga.name}, ${stateKey} ${siteNumber}`,
                       city: city || `${lga.name} City`,
@@ -4594,7 +4596,10 @@ async function seed(knex) {
            * --> see func `transferResult` in `/result/services.js` for details
            */
           const otherSites = siteDatas.filter(
-            ({ id }) => id !== savedResult.reportableSiteId
+            ({ id, name }) =>
+              id !== savedResult.reportableSiteId &&
+              // only clinics are listed on Reporters page
+              name.toLowerCase().includes('clinic')
           )
           const anotherReportableSite =
             otherSites[_.random(0, otherSites.length - 1)]

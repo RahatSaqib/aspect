@@ -1053,7 +1053,7 @@ export const FiltersPanel = ({
                   onOnlyTreatmentRequiredBoolChange(isChecked || null)
                 }
                 label={intl.formatMessage(messages.onlyTreatmentRequired)}
-                name="onlyEverTransferred"
+                name="onlyTreatmentRequired"
                 autoWidth
               />
             </div>

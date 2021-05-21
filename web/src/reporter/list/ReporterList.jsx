@@ -267,6 +267,7 @@ const ReporterList = () => {
         ...location,
         search: searchParams.toString(),
       })
+      return
     }
 
     const sortPage = makeSortPageSelector({

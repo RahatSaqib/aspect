@@ -100,6 +100,9 @@ const sanitizerByConfigKey = {
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
   deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
+  onlyEverTransferred: defaultSanitizer,
+  onlyReportableResults: defaultSanitizer,
+  onlyTreatmentRequired: defaultSanitizer,
 }
 
 export const sanitizeFiltersStringBy = config => filtersString =>
