@@ -2149,8 +2149,21 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     // Filter for onlyEverTransferred
     .modify(b => {
       if (query.onlyEverTransferred) {
+        /**
+         * Notice that
+         * current `Result.reportableSiteId `
+         * should differ from
+         * `ResultStatusLog.data.previousReportableSiteId`
+         */
         b.whereRaw(
-          `EXISTS (SELECT rslog_transfer.resultId FROM ResultStatusLog as rslog_transfer INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id WHERE rslog_transfer.resultId = r.id and rs_transfer.externalId = 'Transfer')`
+          `EXISTS (
+            SELECT rslog_transfer.resultId
+            FROM ResultStatusLog as rslog_transfer
+              INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+            WHERE rslog_transfer.resultId = r.id
+              and rs_transfer.externalId = 'Transfer'
+              and sirep.id != CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)
+          )`
         )
       }
     })

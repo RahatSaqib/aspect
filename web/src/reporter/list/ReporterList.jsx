@@ -126,10 +126,10 @@ const filtersFromLocation = composeSanitizer(
 )
 const getCurrentFilters = locationSearch => {
   const urlSearchParams = new URLSearchParams(locationSearch)
-  const urlFilters = urlSearchParams.get('filters')
-    ? new URLSearchParams(urlSearchParams.get('filters'))
-    : []
-  return fromPairs([...urlFilters.entries()])
+  const { value: filtersParams } = filtersSanitizer(
+    urlSearchParams.get('filters') || ''
+  )
+  return fromPairs([...filtersParams.entries()])
 }
 const getCurrentPagination = location => {
   const sortPage = makeSortPageSelector({
