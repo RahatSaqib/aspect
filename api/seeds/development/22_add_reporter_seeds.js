@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 const reporters = require('../fixtures/reporters.json')
+const { upsertSingle } = require('../utils')
 
 async function seed(knex) {
   await Promise.all(
@@ -29,8 +30,8 @@ async function seed(knex) {
   )
 
   await Promise.each(resultDownload, results =>
-    knex('ResultDownloadLog').insert({
-      method: 'reporter_app',
+    upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
+      method: 'reporter app',
       createdOn: _.sample([...reporterCreatedOn]),
       createdBy: _.random(1, 6),
       resultId: results.resultId,

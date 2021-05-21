@@ -41,6 +41,7 @@ const { getRandomTBPatientData } = require('../commonTbresults')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const { upsertJobFunctionFixture } = require('../common')
+const { upsertSingle } = require('../utils')
 const upsertReports = require('../common/upsert_reports')
 const getConsumables = require('../fixtures/Consumable')
 
@@ -51,7 +52,7 @@ const resultTimeFrameInDays = 365
 const deviceNumber = 50
 const routerNumber = 20
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultMtbNumber = resultMultiplier * 0.3
+const resultMtbNumber = resultMultiplier * 0.7
 const resultMtbUltraNumber = resultMultiplier
 const resultHivVlNumber = 0.8 * resultMultiplier
 const resultEbolaNumber = 0
@@ -4610,6 +4611,14 @@ async function seed(knex) {
             sampleOriginSiteId: savedResult.sampleOriginSiteId,
           })
           resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+
+          // add entry in ResultDownloadLog to show transferred results in Reporters list
+          await upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
+            method: 'reporter app',
+            createdOn: addHours(randomDate, 2),
+            createdBy: adminId,
+            resultId,
+          })
         }
         const [resultStatusLogId] = await knex('ResultStatusLog').insert({
           resultId,
