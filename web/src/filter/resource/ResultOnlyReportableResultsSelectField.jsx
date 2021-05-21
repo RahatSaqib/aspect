@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import FormLabel from '@material-ui/core/FormLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import classnames from 'classnames/bind'
@@ -7,33 +8,39 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('../popover/FiltersPanel.css'))
 
-const CheckboxField = ({ onChange, name, label, value }) => {
+const ResultOnlyReportableResultsSelectField = ({
+  floatingLabelText,
+  onOnlyReportableResultsChange,
+  value,
+}) => {
   const updateSelection = () => event =>
-    onChange(event.target.checked || undefined)
+    onOnlyReportableResultsChange(event.target.checked || undefined)
   return (
     <div className={cssClasses('checkbox__container')}>
+      <FormLabel component="legend" className={cssClasses('checkbox__label')}>
+        {floatingLabelText}
+      </FormLabel>
       <FormGroup className={cssClasses('checkbox__group')}>
         <FormControlLabel
           control={
             <AspectCheckbox
-              name={name}
+              name="onlyReportableResults"
               margin="normal"
               checked={value === 'true'}
-              onChange={updateSelection(name)}
+              onChange={updateSelection('onlyReportableResults')}
             />
           }
-          label={label}
+          label="Only Reportable Results"
         />
       </FormGroup>
     </div>
   )
 }
 
-CheckboxField.propTypes = {
-  onChange: PropTypes.func.isRequired,
+ResultOnlyReportableResultsSelectField.propTypes = {
+  floatingLabelText: PropTypes.string.isRequired,
+  onOnlyReportableResultsChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,
-  label: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
 }
 
-export default CheckboxField
+export default ResultOnlyReportableResultsSelectField

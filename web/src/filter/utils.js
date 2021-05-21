@@ -265,12 +265,6 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'onlyReportableResults':
               result.onlyReportableResults = true
               break
-            case 'onlyEverTransferred':
-              result.onlyEverTransferred = true
-              break
-            case 'onlyTreatmentRequired':
-              result.onlyTreatmentRequired = true
-              break
             case 'issueTypeId':
               result.issueTypeId = true
               break
