@@ -379,8 +379,8 @@ const groupForDeviceStatusAPI = (
         devicesTotal,
         isWeekendOrHoliday
       ),
-      inactiveNoResultsReported: weekendOrHolidayInactive(
-        curr.inactiveNoResultsReported,
+      inactiveNoTestsPerformed: weekendOrHolidayInactive(
+        curr.inactiveNoTestsPerformed,
         devicesTotal,
         isWeekendOrHoliday
       ),

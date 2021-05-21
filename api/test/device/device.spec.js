@@ -34,6 +34,7 @@ const {
 } = require('../../src/shared/date')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
+const { resultLogged } = require('../../src/result/actions')
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -541,7 +542,7 @@ describe('Device routes', () => {
         const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
         const filterOnDeviceMaintenanceStatus = [
           'inactiveUnknown',
-          'inactiveNoResultsReported',
+          'inactiveNoTestsPerformed',
           'inactiveDownForRepair',
         ]
         let devicesReponse = await server
@@ -631,16 +632,16 @@ describe('Device routes', () => {
             manuallySet: 1,
           },
           {
+            name: 'No Tests Performed',
+            i18nKey: 'inactiveNoTestsPerformed',
+            externalId: 'inactiveNoTestsPerformed',
+            active: 0,
+            manuallySet: 0,
+          },
+          {
             name: 'Unknown',
             i18nKey: 'inactiveUnknown',
             externalId: 'inactiveUnknown',
-            active: 0,
-            manuallySet: 1,
-          },
-          {
-            name: 'No Results Reported',
-            i18nKey: 'inactiveNoResultsReported',
-            externalId: 'inactiveNoResultsReported',
             active: 0,
             manuallySet: 0,
           },
@@ -1102,195 +1103,6 @@ describe('Device routes', () => {
     })
   })
 
-  describe('Message Queue', () => {
-    describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
-      it('should log the maintenance status of each un-logged device', async () => {
-        const startOfTodayUtc = getLocalDateInUtc(startOfToday())
-        const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(
-          subDays(startOfToday(), 2)
-        )
-        const diagnosticDevices = await knex('Device as d')
-          .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-          .join(
-            'DeviceTypeCategory as dtc',
-            'dt.deviceTypeCategoryId',
-            'dtc.id'
-          )
-          .where('dtc.hasResults', true)
-          .select('d.id')
-        const { id: activeUnloggedDeviceId } = diagnosticDevices[0]
-        const { id: decommissionedDeviceId } = diagnosticDevices[1]
-        const {
-          id: inactiveOutOfInventoryUnloggedDeviceId,
-        } = diagnosticDevices[2]
-        await knex('DeviceMaintenanceStatusLog')
-          .whereIn('deviceId', [
-            activeUnloggedDeviceId,
-            inactiveOutOfInventoryUnloggedDeviceId,
-          ])
-          .andWhere('day', startOfTodayUtc)
-          .del()
-        deviceApprovals = await allDeviceApprovalToId()
-        deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        await knex('DeviceMaintenanceStatusLog')
-          .where('deviceId', decommissionedDeviceId)
-          .andWhere(
-            'deviceMaintenanceStatusId',
-            deviceMaintenanceStatuses.inactiveDecommissioned
-          )
-          .andWhere('day', startOfTodayUtc)
-          .del()
-        const [activeDeviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
-          deviceId: activeUnloggedDeviceId,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-          data: '{}',
-          day: startOfDayTwoDaysAgoUtc,
-          createdOn: startOfDayTwoDaysAgoUtc,
-        })
-        await knex('Device').where('id', activeUnloggedDeviceId).update({
-          deviceApprovalId: deviceApprovals.approved,
-          deviceMaintenanceStatusLogId: activeDeviceMaintenanceStatusLogId,
-        })
-        const [inactiveOutOfInventoryDeviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
-          deviceId: inactiveOutOfInventoryUnloggedDeviceId,
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
-          data: '{}',
-          day: startOfDayTwoDaysAgoUtc,
-          createdOn: startOfDayTwoDaysAgoUtc,
-        })
-        await knex('Device')
-          .where('id', inactiveOutOfInventoryUnloggedDeviceId)
-          .update({
-            deviceApprovalId: deviceApprovals.approved,
-            deviceMaintenanceStatusLogId: inactiveOutOfInventoryDeviceMaintenanceStatusLogId,
-          })
-        const [decommissionedActiveDeviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
-          deviceId: decommissionedDeviceId,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-          data: '{}',
-          day: startOfDayTwoDaysAgoUtc,
-          createdOn: startOfDayTwoDaysAgoUtc,
-        })
-        await knex('Device').where('id', decommissionedDeviceId).update({
-          deviceApprovalId: deviceApprovals.decommissioned,
-          deviceMaintenanceStatusLogId: decommissionedActiveDeviceMaintenanceStatusLogId,
-        })
-
-        const getDeviceDetails = async () =>
-          knex('Device as d')
-            .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-            .leftJoin(
-              'DeviceMaintenanceStatusLog as today_dmsl',
-              queryBuilder => {
-                queryBuilder
-                  .on('d.id', 'today_dmsl.deviceId')
-                  .andOn('today_dmsl.day', knex.raw('?', [startOfTodayUtc]))
-              }
-            )
-            .leftJoin(
-              'DeviceMaintenanceStatus as today_dms',
-              'today_dmsl.deviceMaintenanceStatusId',
-              'today_dms.id'
-            )
-            .leftJoin(
-              'DeviceMaintenanceStatusLog as current_dmsl',
-              'd.deviceMaintenanceStatusLogId',
-              'current_dmsl.id'
-            )
-            .leftJoin(
-              'DeviceMaintenanceStatus as current_dms',
-              'current_dmsl.deviceMaintenanceStatusId',
-              'current_dms.id'
-            )
-            .whereIn('d.id', [
-              activeUnloggedDeviceId,
-              inactiveOutOfInventoryUnloggedDeviceId,
-              decommissionedDeviceId,
-            ])
-            .select(
-              'd.id',
-              'current_dms.externalId as currentMaintenanceStatusExternalId',
-              'today_dms.externalId as todaysLoggedMaintenanceStatusExternalId',
-              'da.token as approvalToken'
-            )
-        const devicesWithNoMaintenanceLogForTheDay = await getDeviceDetails()
-
-        expect(devicesWithNoMaintenanceLogForTheDay).to.containSubset([
-          {
-            id: activeUnloggedDeviceId,
-            currentMaintenanceStatusExternalId: 'active',
-            todaysLoggedMaintenanceStatusExternalId: null,
-            approvalToken: 'approved',
-          },
-          {
-            id: inactiveOutOfInventoryUnloggedDeviceId,
-            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
-            todaysLoggedMaintenanceStatusExternalId: null,
-            approvalToken: 'approved',
-          },
-          {
-            id: decommissionedDeviceId,
-            currentMaintenanceStatusExternalId: 'active',
-            todaysLoggedMaintenanceStatusExternalId: null,
-            approvalToken: 'decommissioned',
-          },
-        ])
-
-        await knex('DeviceMaintenanceStatusLog').insert([
-          {
-            deviceId: activeUnloggedDeviceId,
-            deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-            data: '{}',
-            day: startOfTodayUtc,
-            createdOn: new Date(),
-          },
-          {
-            deviceId: inactiveOutOfInventoryUnloggedDeviceId,
-            deviceMaintenanceStatusId:
-              deviceMaintenanceStatuses.inactiveOutOfInventory,
-            data: '{}',
-            day: startOfTodayUtc,
-            createdOn: new Date(),
-          },
-        ])
-
-        const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus()
-        await messageContext.dispatch(action)
-        await waitForAction(action)
-        await waitForIdle(2000)
-        const devicesAfterDailyLog = await getDeviceDetails()
-        expect(devicesAfterDailyLog).to.containSubset([
-          {
-            id: activeUnloggedDeviceId,
-            currentMaintenanceStatusExternalId: 'active',
-            todaysLoggedMaintenanceStatusExternalId: 'active',
-            approvalToken: 'approved',
-          },
-          {
-            id: inactiveOutOfInventoryUnloggedDeviceId,
-            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
-            todaysLoggedMaintenanceStatusExternalId: 'inactiveOutOfInventory',
-            approvalToken: 'approved',
-          },
-          {
-            id: decommissionedDeviceId,
-            currentMaintenanceStatusExternalId: 'inactiveDecommissioned',
-            todaysLoggedMaintenanceStatusExternalId: 'inactiveDecommissioned',
-            approvalToken: 'decommissioned',
-          },
-        ])
-      })
-    })
-  })
-
   describe('Skips decommissioned device', () => {
     let deviceMaintenanceStatuses
     let devices
@@ -1367,6 +1179,13 @@ describe('Device routes', () => {
       const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(
         subDays(startOfToday(), 2)
       )
+      const dispatchDeviceMaintenanceStatusForDay = async day => {
+        const messageContext = await createMessageContext()
+        const action = logDeviceMaintenanceStatus(day)
+        await messageContext.dispatch(action)
+        await waitForAction(action)
+        await waitForIdle()
+      }
 
       before(async () => {
         deviceApprovals = await allDeviceApprovalToId()
@@ -1438,10 +1257,8 @@ describe('Device routes', () => {
           deviceMaintenanceStatusLogId,
         })
 
-        const day = startOfTodayUtc
-
         // check before dispatch
-        let deviceDetails = await getDeviceDetails(day, deviceId)
+        let deviceDetails = await getDeviceDetails(startOfTodayUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1451,14 +1268,10 @@ describe('Device routes', () => {
           },
         ])
 
-        const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus(day)
-        await messageContext.dispatch(action)
-        await waitForAction(action)
-        await waitForIdle()
+        await dispatchDeviceMaintenanceStatusForDay(startOfTodayUtc)
 
         // check after dispatch
-        deviceDetails = await getDeviceDetails(day, deviceId)
+        deviceDetails = await getDeviceDetails(startOfTodayUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1469,123 +1282,10 @@ describe('Device routes', () => {
         ])
       })
 
-      it('should log the maintenance status `inactiveNoResultsReported` for un-logged device without results', async () => {
+      it('Should re-log the last inactivity reason, when the device is inactive during the day to process and the latest log entry was for a previous day', async () => {
         const { deviceId } = context
         /**
-         * set device.deviceMaintenanceStatusId to 'active' for TODAY
-         */
-        const [deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
-          deviceId,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-          data: '{}',
-          day: startOfTodayUtc, // <--- insert log for TODAY
-          createdOn: new Date(),
-        })
-        await knex('Device').where('id', deviceId).update({
-          deviceApprovalId: deviceApprovals.approved,
-          deviceMaintenanceStatusLogId,
-        })
-
-        const day = startOfDayTwoDaysAgoUtc
-
-        // check before dispatch
-        let deviceDetails = await getDeviceDetails(day, deviceId)
-        expect(deviceDetails).to.containSubset([
-          {
-            id: deviceId,
-            currentMaintenanceStatusExternalId: 'active',
-            todaysLoggedMaintenanceStatusExternalId: null,
-            approvalToken: 'approved',
-          },
-        ])
-
-        const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus(day)
-        await messageContext.dispatch(action)
-        await waitForAction(action)
-        await waitForIdle()
-
-        // check after dispatch
-        /**
-         * Because 2 days ago device didn't have results - api sets
-         * status to 'inactiveNoResultsReported'
-         */
-        deviceDetails = await getDeviceDetails(day, deviceId)
-        expect(deviceDetails).to.containSubset([
-          {
-            id: deviceId,
-            currentMaintenanceStatusExternalId: 'active',
-            todaysLoggedMaintenanceStatusExternalId:
-              'inactiveNoResultsReported',
-            approvalToken: 'approved',
-          },
-        ])
-      })
-
-      it('should log the maintenance status `inactiveDecommissioned` for un-logged or active device', async () => {
-        const { deviceId } = context
-
-        /**
-         * set device.deviceMaintenanceStatusId to 'active' for 2 days ago
-         * and device to 'decommissioned'
-         */
-        const [deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
-          deviceId,
-          /**
-           * set to 'active', but may be any other value except 'inactiveDecommissioned',
-           * in a latter case API simply skip such device from processing
-           */
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-          data: '{}',
-          day: startOfDayTwoDaysAgoUtc,
-          createdOn: new Date(),
-        })
-        await knex('Device').where('id', deviceId).update({
-          deviceApprovalId: deviceApprovals.decommissioned, // <--- decommissioned
-          deviceMaintenanceStatusLogId,
-        })
-
-        const day = startOfTodayUtc
-
-        // check before dispatch
-        let deviceDetails = await getDeviceDetails(day, deviceId)
-        expect(deviceDetails).to.containSubset([
-          {
-            id: deviceId,
-            currentMaintenanceStatusExternalId: 'active',
-            todaysLoggedMaintenanceStatusExternalId: null,
-            approvalToken: 'decommissioned',
-          },
-        ])
-
-        const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus(day)
-        await messageContext.dispatch(action)
-        await waitForAction(action)
-        await waitForIdle()
-
-        // check after dispatch
-        deviceDetails = await getDeviceDetails(day, deviceId)
-        expect(deviceDetails).to.containSubset([
-          {
-            id: deviceId,
-            currentMaintenanceStatusExternalId: 'inactiveDecommissioned',
-            todaysLoggedMaintenanceStatusExternalId: 'inactiveDecommissioned',
-            approvalToken: 'decommissioned',
-          },
-        ])
-      })
-
-      it('should log the maintenance status `inactiveOutOfInventory` for un-logged device without result', async () => {
-        const { deviceId } = context
-
-        /**
-         * set device.deviceMaintenanceStatusId to 'inactiveOutOfInventory'
-         * as of 3 days ago
+         * 3 DAYS AGO - set device.deviceMaintenanceStatusId to 'inactiveOutOfInventory'
          */
         const [deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
@@ -1602,10 +1302,10 @@ describe('Device routes', () => {
           deviceMaintenanceStatusLogId,
         })
 
-        const day = startOfDayTwoDaysAgoUtc
-
-        // check before dispatch
-        let deviceDetails = await getDeviceDetails(day, deviceId)
+        let deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1615,20 +1315,255 @@ describe('Device routes', () => {
           },
         ])
 
-        const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus(day)
-        await messageContext.dispatch(action)
-        await waitForAction(action)
-        await waitForIdle()
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
-        // check after dispatch
-        deviceDetails = await getDeviceDetails(day, deviceId)
+        deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
             currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
             todaysLoggedMaintenanceStatusExternalId: 'inactiveOutOfInventory',
             approvalToken: 'approved',
+          },
+        ])
+      })
+
+      it("Should NOT re-log the last inactivity reason and log a status 'inactiveUnknown', when the device is inactive during the day to process and the latest log entry was for a posterior day", async () => {
+        const { deviceId } = context
+        /**
+         * 1 DAY AGO - Set maintenance status 'inactiveOutOfInventory'
+         */
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          data: '{}',
+          day: getLocalDateInUtc(subDays(startOfToday(), 1)),
+          createdOn: new Date(),
+        })
+        await knex('Device').where('id', deviceId).update({
+          deviceApprovalId: deviceApprovals.approved,
+          deviceMaintenanceStatusLogId,
+        })
+
+        /**
+         * Remove all device results for avoiding 'inactiveNoTestsPerformed' status
+         */
+        await knex('Result').where({ deviceId }).del()
+
+        /**
+         * 2 DAYS AGO - Should set maintenance status 'inactiveUnknown'
+         */
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
+
+        // check after dispatch
+        const deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            currentMaintenanceStatusExternalId: 'inactiveOutOfInventory',
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveUnknown',
+            approvalToken: 'approved',
+          },
+        ])
+      })
+
+      it('should log the maintenance status `inactiveNoTestsPerformed` for a day when the device has not log, but it has future results', async () => {
+        const { deviceId } = context
+        /**
+         * TODAY - The created context created a result for today
+         */
+        await knex('Device').where('id', deviceId).update({
+          deviceApprovalId: deviceApprovals.approved,
+        })
+
+        /**
+         * 2 DAYS AGO - re-processing logs will insert a new log status 'inactiveNoTestsPerformed' as we have a test after then
+         */
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
+
+        // check after dispatch
+        const deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveNoTestsPerformed',
+          },
+        ])
+      })
+
+      it('should log the maintenance status `inactiveNoTestsPerformed` for a day when the device was `inactiveUnknown` but have future results', async () => {
+        const { deviceId } = context
+        /**
+         * TODAY - The created context created a result for today
+         * 2 DAYS AGO - create log 'inactiveUnknown'
+         */
+        const [deviceMaintenanceStatusLogId] = await knex(
+          'DeviceMaintenanceStatusLog'
+        ).insert({
+          deviceId,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
+          data: '{}',
+          day: startOfDayTwoDaysAgoUtc,
+          createdOn: new Date(),
+        })
+        await knex('Device').where('id', deviceId).update({
+          deviceApprovalId: deviceApprovals.approved,
+          deviceMaintenanceStatusLogId,
+        })
+
+        /**
+         * 2 DAYS AGO - re-processing logs will change 'inactiveUnknown' to 'noTestsPerformed' as we have a test after then
+         */
+        await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
+
+        // check after dispatch
+        const deviceDetails = await getDeviceDetails(
+          startOfDayTwoDaysAgoUtc,
+          deviceId
+        )
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveNoTestsPerformed',
+          },
+        ])
+      })
+
+      it('should log the maintenance status `inactiveDecommissioned` for a day when the device did not report tests and it was previously decommissioned', async () => {
+        const { deviceId } = context
+        /**
+         * 2 DAYS AGO - set device approval as decommissioned
+         */
+        await knex('Device').where('id', deviceId).update({
+          deviceApprovalId: deviceApprovals.decommissioned,
+        })
+        await knex('DeviceApprovalLog').insert({
+          deviceId,
+          deviceApprovalId: deviceApprovals.decommissioned,
+          createdOn: getLocalDateInUtc(subDays(startOfToday(), 2)),
+        })
+
+        /**
+         * 1 DAY AGO - processing logs will set 'inactiveDecommissioned', as we didn't perform tests and approval status was set to 'decommissioned' previously
+         */
+        const day = getLocalDateInUtc(subDays(startOfToday(), 1))
+        await dispatchDeviceMaintenanceStatusForDay(day)
+
+        // check after dispatch
+        const deviceDetails = await getDeviceDetails(day, deviceId)
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveDecommissioned',
+          },
+        ])
+      })
+
+      it('should log the maintenance status `inactiveUnknown` for a day when the device did not report tests and it was decommissioned in the future', async () => {
+        const { deviceId } = context
+        /**
+         * 2 DAYS AGO - set device approval as decommissioned
+         */
+        await knex('Device').where('id', deviceId).update({
+          deviceApprovalId: deviceApprovals.decommissioned,
+        })
+        await knex('DeviceApprovalLog').insert({
+          deviceId,
+          deviceApprovalId: deviceApprovals.decommissioned,
+          createdOn: getLocalDateInUtc(startOfToday()),
+        })
+        await knex('Result').where({ deviceId }).del()
+
+        /**
+         * 1 DAY AGO - processing logs will set 'inactiveUnknown', as we didn't perform tests and approval status was set to 'decommissioned' after the processed date
+         */
+        const day = getLocalDateInUtc(subDays(startOfToday(), 1))
+        await dispatchDeviceMaintenanceStatusForDay(day)
+
+        // check after dispatch
+        const deviceDetails = await getDeviceDetails(day, deviceId)
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveUnknown',
+          },
+        ])
+      })
+
+      it('Should set the device maintenance status log to inactiveNoTestsPerformed when it is inactiveUnknown and a new result is created for a future date', async () => {
+        const { deviceId } = context
+        /**
+         * 1 DAY AGO - Set maintenance status 'inactiveUnknown'
+         */
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
+          data: '{}',
+          day: getLocalDateInUtc(subDays(startOfToday(), 1)),
+          createdOn: new Date(),
+        })
+        /**
+         * 2 DAYS AGO - Set maintenance status 'inactiveDownForRepair'
+         */
+        await knex('DeviceMaintenanceStatusLog').insert({
+          deviceId,
+          deviceMaintenanceStatusId:
+            deviceMaintenanceStatuses.inactiveDownForRepair,
+          data: '{}',
+          day: getLocalDateInUtc(subDays(startOfToday(), 2)),
+          createdOn: new Date(),
+        })
+        /**
+         * TODAY - We already have a result in the database, so we just take it and queue a new result logged action
+         * We will update all the inactiveUnknowns that were set before the result endedOn date (today)
+         */
+        const [resultId] = await knex('Result').where({ deviceId }).pluck('id')
+        const [deviceLogId] = await knex('DeviceLog')
+          .where({ resultId })
+          .pluck('id')
+        const messageContext = await createMessageContext()
+        const action = resultLogged(resultId, deviceLogId)
+        await messageContext.dispatch(action)
+        await waitForAction(action)
+        await waitForIdle()
+
+        /**
+         * 1 DAY AGO - The maintenance status log should be inactiveNoTestsPerformed
+         */
+        let deviceDetails = await getDeviceDetails(
+          getLocalDateInUtc(subDays(startOfToday(), 1)),
+          deviceId
+        )
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveNoTestsPerformed',
+          },
+        ])
+
+        /**
+         * 2 DAYS AGO - The maintenance status log should be inactiveDownForRepair (only inactiveUnknown(s) should be changed)
+         */
+        deviceDetails = await getDeviceDetails(
+          getLocalDateInUtc(subDays(startOfToday(), 2)),
+          deviceId
+        )
+        expect(deviceDetails).to.containSubset([
+          {
+            id: deviceId,
+            todaysLoggedMaintenanceStatusExternalId: 'inactiveDownForRepair',
           },
         ])
       })

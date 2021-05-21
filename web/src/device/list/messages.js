@@ -127,9 +127,9 @@ export const messages = {
       id: 'pages.DeviceList.status.inactiveDownForRepair',
       defaultMessage: 'Down For Repair',
     },
-    inactiveNoResultsReported: {
-      id: 'pages.DeviceList.status.inactiveNoResultsReported',
-      defaultMessage: 'No Results Reported',
+    inactiveNoTestsPerformed: {
+      id: 'pages.DeviceList.status.inactiveNoTestsPerformed',
+      defaultMessage: 'No Tests Performed',
     },
     inactiveOutOfInventory: {
       id: 'pages.DeviceList.status.inactiveOutOfInventory',

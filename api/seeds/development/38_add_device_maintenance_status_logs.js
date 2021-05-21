@@ -56,7 +56,7 @@ async function seed(knex) {
     inactiveUnknown,
     inactiveDownForRepair,
     inactiveOutOfInventory,
-    inactiveNoResultsReported,
+    inactiveNoTestsPerformed,
   } = deviceMaintenanceStatusToId
 
   const activityPattern = [
@@ -76,7 +76,7 @@ async function seed(knex) {
           end: 16,
         },
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 23,
           end: 31,
         },
@@ -106,7 +106,7 @@ async function seed(knex) {
       deviceIndex: 13,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 25,
           end: 31,
         },
@@ -116,7 +116,7 @@ async function seed(knex) {
       deviceIndex: 16,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 1,
           end: 31,
         },
@@ -131,7 +131,7 @@ async function seed(knex) {
           end: 24,
         },
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 25,
           end: 31,
         },
@@ -151,7 +151,7 @@ async function seed(knex) {
       deviceIndex: 25,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 26,
           end: 31,
         },
@@ -171,7 +171,7 @@ async function seed(knex) {
       deviceIndex: 31,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 24,
           end: 31,
         },
@@ -181,7 +181,7 @@ async function seed(knex) {
       deviceIndex: 34,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 26,
           end: 31,
         },
@@ -221,12 +221,12 @@ async function seed(knex) {
         ) {
           dayAndStatus.push({ dayDate, statusId: active })
         } else {
-          dayAndStatus.push({ dayDate, statusId: inactiveNoResultsReported })
+          dayAndStatus.push({ dayDate, statusId: inactiveNoTestsPerformed })
         }
       } else {
         dayAndStatus.push({
           dayDate,
-          statusId: dayStatus ? dayStatus.status : inactiveNoResultsReported,
+          statusId: dayStatus ? dayStatus.status : inactiveNoTestsPerformed,
         })
       }
     }
