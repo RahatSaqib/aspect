@@ -1,6 +1,15 @@
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
+import subMonths from 'date-fns/subMonths'
+
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import AspectDropDown from '../../../AspectDropDown'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
 
 const treatmentStatusGraphs = {
   treatmentStatus: {
@@ -43,12 +52,15 @@ const treatmentStatusGraphs = {
         size: 8,
         componentClasses: ['BARCLASS'],
         api: {
-          method: 'POST',
+          method: 'GET',
           endpoint: '/result/confirmed-treatment-tracking',
-          params: {},
+          params: {
+            [MIN_DATE]: startOfMonth(subMonths(new Date(), 12)),
+            [MAX_DATE]: endOfMonth(subMonths(new Date(), 1)),
+          },
         },
         indexBy: 'monthTested',
-        keyToConsume: 'pcConfirmed',
+        keyToConsume: 'pcOnTreatment',
         i18nKey: {
           Confirmed: 'Confirmed',
           NotConfirmed: 'NotConfirmed',
@@ -75,12 +87,15 @@ const treatmentStatusGraphs = {
           NotConfirmed: 'NotConfirmed',
         },
         api: {
-          method: 'POST',
+          method: 'GET',
           endpoint: '/result/confirmed-treatment-tracking',
-          params: {},
+          params: {
+            [MIN_DATE]: startOfMonth(subMonths(new Date(), 12)),
+            [MAX_DATE]: endOfMonth(subMonths(new Date(), 1)),
+          },
         },
         indexBy: 'monthTested',
-        keyToConsume: 'cntConfirmed',
+        keyToConsume: 'onTreatment',
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {

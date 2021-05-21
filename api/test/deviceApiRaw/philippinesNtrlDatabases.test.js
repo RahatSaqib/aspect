@@ -4506,13 +4506,16 @@ describe('Device API Raw Philippines NTRL', () => {
           expect(updateDeviceCalls).to.have.lengthOf(1)
           const actualDeviceUpdates = updateDeviceCalls[0].args[1]
 
-          expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-            now.getTime(),
-            60000
+          // initial `lastSeenOn` is less than current `lastSeenOn`
+          expect(databaseRecords.Device.lastSeenOn.getTime()).to.be.below(
+            actualDeviceUpdates.lastSeenOn.getTime()
           )
-          expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-            now.getTime(),
-            60000
+          // latest `lastSeenOn` and `updatedOn` are greater-or-equal the tests start time
+          expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.gte(
+            now.getTime()
+          )
+          expect(actualDeviceUpdates.updatedOn.getTime()).to.be.gte(
+            now.getTime()
           )
         })
       })
@@ -7056,13 +7059,16 @@ describe('Device API Raw Philippines NTRL', () => {
           expect(updateDeviceCalls).to.have.lengthOf(1)
           const actualDeviceUpdates = updateDeviceCalls[0].args[1]
 
-          expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-            now.getTime(),
-            60000
+          // initial `lastSeenOn` is less than current `lastSeenOn`
+          expect(databaseRecords.Device.lastSeenOn.getTime()).to.be.below(
+            actualDeviceUpdates.lastSeenOn.getTime()
           )
-          expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-            now.getTime(),
-            60000
+          // latest `lastSeenOn` and `updatedOn` are greater-or-equal the tests start time
+          expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.gte(
+            now.getTime()
+          )
+          expect(actualDeviceUpdates.updatedOn.getTime()).to.be.gte(
+            now.getTime()
           )
         })
       })
