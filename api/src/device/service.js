@@ -1211,8 +1211,8 @@ async function onDeviceMaintenanceStatusLogged(
 
 /**
  * Updates all the device maintenance status logs set to inactiveUnknown for days previous to the given date limit, setting their status to inactiveNoTestsPerformed
- * @param {*} deviceId
- * @param {*} dateLimit
+ * @param {int} deviceId The device id of the maintenance to be updated
+ * @param {Date} dateLimit The date limit until the statuses will be updated
  */
 async function updateStatusUnknownToNoTestsPerformed(deviceId, dateLimit) {
   const statusesByExternalId = await allDeviceMaintenanceStatusToId()
