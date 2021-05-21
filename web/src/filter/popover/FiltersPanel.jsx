@@ -31,7 +31,7 @@ import DeviceApprovalSelectField from '../resource/DeviceApprovalSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
-import CheckboxField from '../resource/CheckboxField'
+import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
@@ -1013,11 +1013,15 @@ export const FiltersPanel = ({
           {config.onlyReportableResults && (
             <div className={cssClasses('Control')}>
               <CheckboxField
-                value={filters.onlyReportableResults}
-                onChange={onOnlyReportableResultsBoolChange}
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(filters.onlyReportableResults)}
+                onChange={(event, isChecked) =>
+                  onOnlyReportableResultsBoolChange(isChecked || null)
+                }
                 label={intl.formatMessage(messages.onlyReportableResults)}
                 name="onlyReportableResults"
-                style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />
             </div>
@@ -1025,11 +1029,15 @@ export const FiltersPanel = ({
           {config.onlyEverTransferred && (
             <div className={cssClasses('Control')}>
               <CheckboxField
-                value={filters.onlyEverTransferred}
-                onChange={onOnlyEverTransferredBoolChange}
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                onChange={(event, isChecked) =>
+                  onOnlyEverTransferredBoolChange(isChecked || null)
+                }
                 label={intl.formatMessage(messages.onlyEverTransferred)}
                 name="onlyEverTransferred"
-                style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />
             </div>
@@ -1037,11 +1045,15 @@ export const FiltersPanel = ({
           {config.onlyTreatmentRequired && (
             <div className={cssClasses('Control')}>
               <CheckboxField
-                value={filters.onlyTreatmentRequired}
-                onChange={onOnlyTreatmentRequiredBoolChange}
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(filters.onlyTreatmentRequired)}
+                onChange={(event, isChecked) =>
+                  onOnlyTreatmentRequiredBoolChange(isChecked || null)
+                }
                 label={intl.formatMessage(messages.onlyTreatmentRequired)}
                 name="onlyEverTransferred"
-                style={{ verticalAlign: 'bottom' }}
                 autoWidth
               />
             </div>
