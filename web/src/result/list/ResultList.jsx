@@ -79,6 +79,11 @@ const FILTERS_CONFIG = [
     onlyReportableResults: true,
     requiredPermissions: ['assay:view'],
   },
+  {
+    onlyEverTransferred: true,
+    requiredPermissions: [],
+  },
+  { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
 
 const AddNewButton = requirePermissions({
