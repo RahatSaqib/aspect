@@ -4558,6 +4558,7 @@ async function seed(knex) {
               ? 'Exceeded cycle threshold'
               : null,
         })
+        const savedResult = await knex('Result').where('id', resultId).first()
 
         await knex('ResultWorkflowLog').insert({
           resultId,
@@ -4580,19 +4581,45 @@ async function seed(knex) {
 
         const resultStatuses = await allResultStatusToId()
         const resultStatusesIds = Object.values(resultStatuses)
+
+        const resultWithLogInfo = { resultWorkflowStatusLogId: lastLogId }
+
         // Insert another random result status log
         const rdm = _.random(0, resultStatusesIds.length - 1)
         const resultStatusId = resultStatusesIds[rdm]
+        let data = null
+        if (resultStatusId === resultStatuses.Transfer) {
+          /**
+           * for transferred result we need specify `data` field in `ResultStatusLog` table
+           * --> see func `transferResult` in `/result/services.js` for details
+           */
+          const otherSites = siteDatas.filter(
+            ({ id }) => id !== savedResult.reportableSiteId
+          )
+          const anotherReportableSite =
+            otherSites[_.random(0, otherSites.length - 1)]
+          data = JSON.stringify({
+            siteId: savedResult.siteId,
+            reportableSiteId: anotherReportableSite.id,
+            previousReportableSiteId: savedResult.reportableSiteId,
+            sampleOriginSiteId: savedResult.sampleOriginSiteId,
+          })
+          resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+        }
         const [resultStatusLogId] = await knex('ResultStatusLog').insert({
           resultId,
           resultStatusId,
           createdOn: addHours(randomDate, 2),
           createdBy: adminId,
+          data,
         })
 
         await knex('Result')
           .where('id', resultId)
-          .update({ resultWorkflowStatusLogId: lastLogId, resultStatusLogId })
+          .update({
+            ...resultWithLogInfo,
+            resultStatusLogId,
+          })
 
         await knex('DeviceLog').insert({
           deviceId: device.id,
