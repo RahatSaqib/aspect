@@ -596,6 +596,43 @@ function getResponseForComments() {
   }
 }
 
+function treatmentTrackingValidationQuery() {
+  return {
+    query: {
+      ...validateAllGeographyFilterParams(),
+      ...validateDateRangeParams(),
+      assay: Joi.string().allow(null, '').description('Assay Name'),
+      assayId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for assay ID'),
+      assayTypeId: Joi.number().integer().positive(),
+      deviceId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for device ID'),
+      deviceName: Joi.string()
+        .allow(null, '')
+        .description('Filter for device name'),
+      deviceType: Joi.string()
+        .allow(null, '')
+        .description('Filter for device type ExternalId'),
+      diseaseId: Joi.number()
+        .integer()
+        .positive()
+        .description('The disease ID'),
+      resultCategoryId: Joi.number().integer().positive(),
+      siteName: Joi.string()
+        .allow(null, '')
+        .description('Filter for site name'),
+      siteId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for site Id'),
+    },
+  }
+}
+
 module.exports = {
   listResultsBaseConfig,
   getResponseForComments,
@@ -607,4 +644,5 @@ module.exports = {
   validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
+  treatmentTrackingValidationQuery,
 }
