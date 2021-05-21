@@ -1257,7 +1257,7 @@ async function onResultLogged(action, { messageContext }) {
        */
       const { numberOfPreviousTestsInDay } = await knex('Result as r')
         .where(knex.raw('DATE(endedOn)'), format(endedOn, 'yyyy-MM-dd'))
-        .andWhere('id', '<=', resultId)
+        .andWhere('id', '<', resultId)
         .andWhere({ deviceId })
         .count('r.id as numberOfPreviousTestsInDay')
         .first()
