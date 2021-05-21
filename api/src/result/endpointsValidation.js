@@ -600,6 +600,7 @@ function treatmentTrackingValidationQuery() {
   return {
     query: {
       ...validateAllGeographyFilterParams(),
+      ...validateDateRangeParams(),
       assay: Joi.string().allow(null, '').description('Assay Name'),
       assayId: Joi.number()
         .integer()
@@ -620,7 +621,6 @@ function treatmentTrackingValidationQuery() {
         .integer()
         .positive()
         .description('The disease ID'),
-      endedOn: Joi.date().iso().allow(null).description('Ending date'),
       resultCategoryId: Joi.number().integer().positive(),
       siteName: Joi.string()
         .allow(null, '')

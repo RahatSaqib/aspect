@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const dateFormat = require('date-fns/format')
+const parseISO = require('date-fns/parseISO')
 const sortBy = require('lodash/sortBy')
 const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
@@ -16,26 +17,30 @@ async function confirmedTreatmentTracking(request) {
   const { siteId, assayTypeId, resultCategoryId } = query
 
   const now = new Date()
-  const lastEndedOn = endOfMonth(subMonths(now, 1))
-  const currentEndedOn = endOfMonth(now)
   const resultStatusTransferId = await resultStatusToId('Transfer')
 
   /**
-   * TODO: replace below `endedOn` and `startedOn` with filter params `minDate` and `maxDate`
-   * and reconfigure corresponding graph config params
+   * normalize query.minDate and query.maxDate
    */
-  // normalize and format 'endedOn'
-  let { endedOn } = query
-  if (!endedOn) {
-    endedOn = subMonths(now, 1)
+  let { maxDate } = query
+  if (maxDate) {
+    maxDate = parseISO(maxDate)
+  } else {
+    maxDate = endOfMonth(subMonths(now, 1))
   }
-  endedOn = endOfMonth(endedOn)
-  if (endedOn > currentEndedOn) {
+  if (maxDate > endOfMonth(now)) {
     return Boom.expectationFailed(
-      '"endedOn" can not be greater than current month'
+      '"maxDate" can not be greater than current month'
     )
   }
-  const startedOn = startOfMonth(subMonths(endedOn, 11)) // 12 months period
+  let { minDate } = query
+  if (minDate) {
+    minDate = parseISO(minDate)
+  } else {
+    minDate = startOfMonth(subMonths(maxDate, 11)) // 12 months period by default
+  }
+  query.maxDate = maxDate
+  query.minDate = minDate
 
   let data = await knex('Result as r')
     // filter by access level of current user
@@ -51,8 +56,8 @@ async function confirmedTreatmentTracking(request) {
     // add joins/count for 'transferred' results
     .modify(queryBuilder => {
       addTransferredQuery(queryBuilder, knex, resultStatusTransferId, {
-        minDate: startedOn,
-        maxDate: endedOn,
+        minDate,
+        maxDate,
       })
     })
     .modify(queryBuilder => {
@@ -81,9 +86,6 @@ async function confirmedTreatmentTracking(request) {
       site: 's',
       sample: 'sp',
     })
-    // filter by date range, inclusive
-    .where('r.endedOn', '>=', startedOn)
-    .where('r.endedOn', '<=', endedOn)
     .select(
       knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
     )
@@ -109,8 +111,8 @@ async function confirmedTreatmentTracking(request) {
     return d
   })
 
-  let dt = endedOn
-  while (dt >= startedOn) {
+  let dt = maxDate
+  while (dt >= minDate) {
     const monthTested = dateFormat(dt, 'yyyy-MM')
     if (!data.find(x => x.monthTested === monthTested)) {
       data.push({
@@ -131,10 +133,11 @@ async function confirmedTreatmentTracking(request) {
   }
 
   return {
-    siteId,
-    endedOn: dateFormat(endedOn, 'yyyy-MM-dd'),
-    lastOn: dateFormat(lastEndedOn, 'yyyy-MM-dd'),
+    ok: true,
     data: sortBy(data, [x => x.monthTested]),
+    siteId,
+    minDate,
+    maxDate,
   }
 }
 
