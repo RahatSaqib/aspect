@@ -1,7 +1,8 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import AspectLink from '../../MigratedComponents/AspectLink'
-import buildURL from '../../MigratedComponents/AspectLink/helpers'
+import { buildURL, getFiltersObjectFromLocation } from '../../MigratedComponents/AspectLink/helpers'
+import { useLocation } from 'react-router-dom'
 
 import {
   DataTableRow as TableRow,
@@ -15,6 +16,9 @@ const cssClasses = classnames.bind(
 )
 
 const ReporterTableRow = ({ reporter, ...restProps }) => {
+  const location = useLocation()
+  // Get current filters - Needed for adding the selected date filters
+  const currentFilters = getFiltersObjectFromLocation(location)
   const LinkToResults = ({ params, children }) => (
     <AspectLink
       to={buildURL('/browse/result', {
@@ -22,6 +26,7 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
           reportableSiteName: reporter.get('siteName'),
           onlyReportableResults: true,
           onlyTreatmentRequired: true,
+          ...currentFilters,
           ...params,
         },
       })}
