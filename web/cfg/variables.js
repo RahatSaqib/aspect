@@ -185,7 +185,7 @@ exports.customPropertiesVariables = {
   '--aspect-device-inactiveConnectivity': '#EB6562',
   '--aspect-device-inactiveDecommissioned': '#7d96bb',
   '--aspect-device-inactiveDownForRepair': '#DB3018',
-  '--aspect-device-inactiveNoResultsReported': '#6d6f7d',
+  '--aspect-device-inactiveNoTestsPerformed': '#6d6f7d',
   '--aspect-device-inactiveOutOfInventory': '#0088aa',
   '--aspect-device-inactiveNoStaff': '#F7B500',
   '--aspect-device-inactiveNoPower': '#ffbe7d',

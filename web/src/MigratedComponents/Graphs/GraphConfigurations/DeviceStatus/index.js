@@ -42,7 +42,7 @@ const deviceStatusGraphs = () => ({
           devicesActive: 'devicesActive',
           devicesInactive: 'devicesInactive',
           inactiveUnknown: 'inactiveUnknown',
-          inactiveNoResultsReported: 'inactiveNoResultsReported',
+          inactiveNoTestsPerformed: 'inactiveNoTestsPerformed',
           inactiveOutOfInventory: 'inactiveOutOfInventory',
           inactiveDownForRepair: 'inactiveDownForRepair',
           inactiveConnectivity: 'inactiveConnectivity',

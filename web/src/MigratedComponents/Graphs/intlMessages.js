@@ -301,8 +301,8 @@ export const messages = defineMessages({
     id: 'legends.Unknown.inactiveUnknown',
     defaultMessage: 'Unknown',
   },
-  inactiveNoResultsReported: {
-    id: 'legends.Unknown.inactiveNoResultsReported',
+  inactiveNoTestsPerformed: {
+    id: 'legends.Unknown.inactiveNoTestsPerformed',
     defaultMessage: 'No Results',
   },
   inactiveOutOfInventory: {

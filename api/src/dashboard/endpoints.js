@@ -165,7 +165,7 @@ const routes = [
                 inactiveUnknown: Joi.number().description(
                   'The number of inactive "Unknown" devices in the system as of that day'
                 ),
-                inactiveNoResultsReported: Joi.number().description(
+                inactiveNoTestsPerformed: Joi.number().description(
                   'The number of inactive "NoResultsReported" devices in the system as of that day'
                 ),
                 inactiveOutOfInventory: Joi.number().description(

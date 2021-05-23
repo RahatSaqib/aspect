@@ -1944,10 +1944,10 @@ async function transferResult(request) {
       createdOn: now,
       createdBy: currentUserId,
       data: JSON.stringify({
-        siteId: result.siteId,
+        siteId: result.data.siteId,
         reportableSiteId: siteId,
-        previousReportableSiteId: result.reportableSiteId,
-        sampleOriginSiteId: result.sampleOriginSiteId,
+        previousReportableSiteId: result.data.reportableSiteId,
+        sampleOriginSiteId: result.data.sampleOriginSiteId,
         comment,
       }),
       timestamp,
@@ -1970,9 +1970,9 @@ async function transferResult(request) {
       resultTreatmentStatusId,
       method: 'transfer',
       data: JSON.stringify({
-        siteId: result.siteId,
+        siteId: result.data.siteId,
         reportableSiteId: siteId,
-        sampleOriginSiteId: result.sampleOriginSiteId,
+        sampleOriginSiteId: result.data.sampleOriginSiteId,
       }),
       createdOn: now,
       changedOn: now,
@@ -2146,6 +2146,27 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
+    // Filter for onlyEverTransferred
+    .modify(b => {
+      if (query.onlyEverTransferred) {
+        /**
+         * Notice that
+         * current `Result.reportableSiteId `
+         * should differ from
+         * `ResultStatusLog.data.previousReportableSiteId`
+         */
+        b.whereRaw(
+          `EXISTS (
+            SELECT rslog_transfer.resultId
+            FROM ResultStatusLog as rslog_transfer
+              INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+            WHERE rslog_transfer.resultId = r.id
+              and rs_transfer.externalId = 'Transfer'
+              and sirep.id != CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)
+          )`
+        )
+      }
+    })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -2169,6 +2190,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
+      if (params.onlyTreatmentRequired) {
+        queryBuilder.andWhere(b => {
+          b.where('rca.requiresTreatment', true).orWhere(
+            'rca2.requiresTreatment',
+            true
+          )
+        })
+      }
+
       if (params.patientOrResearchId) {
         queryBuilder.where(builder =>
           builder

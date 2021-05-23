@@ -369,7 +369,9 @@ function validateResultDetailResponse() {
     resultNotes: Joi.array().description('List of result notes'),
     requiresTreatment: Joi.number()
       .allow(null, '')
-      .description('Predicted required treatment'),
+      .description(
+        'Indicates if the result category and assay require treatment'
+      ),
     patientCaseId: Joi.number()
       .allow(null)
       .optional()
@@ -508,12 +510,18 @@ function listResultsBaseConfig() {
         workflowStatusId: Joi.number()
           .allow(null, '')
           .description('Filter for Result Workflow Status ID'),
+        onlyTreatmentRequired: Joi.bool().description(
+          'Filter for only results that require treatment, defined on their result category and assay'
+        ),
         treatmentStatusId: Joi.number()
           .allow(null, '')
           .description('Filter for Result Treatment Status ID'),
         treatmentStatus: Joi.string()
           .allow(null, '')
           .description('Filter for Result Treatment Status by External ID'),
+        onlyEverTransferred: Joi.bool().description(
+          'Filter for only results that have been ever transferred'
+        ),
         jsonFields: Joi.array()
           .max(10)
           .items(Joi.string().max(50))
@@ -596,6 +604,43 @@ function getResponseForComments() {
   }
 }
 
+function treatmentTrackingValidationQuery() {
+  return {
+    query: {
+      ...validateAllGeographyFilterParams(),
+      ...validateDateRangeParams(),
+      assay: Joi.string().allow(null, '').description('Assay Name'),
+      assayId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for assay ID'),
+      assayTypeId: Joi.number().integer().positive(),
+      deviceId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for device ID'),
+      deviceName: Joi.string()
+        .allow(null, '')
+        .description('Filter for device name'),
+      deviceType: Joi.string()
+        .allow(null, '')
+        .description('Filter for device type ExternalId'),
+      diseaseId: Joi.number()
+        .integer()
+        .positive()
+        .description('The disease ID'),
+      resultCategoryId: Joi.number().integer().positive(),
+      siteName: Joi.string()
+        .allow(null, '')
+        .description('Filter for site name'),
+      siteId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for site Id'),
+    },
+  }
+}
+
 module.exports = {
   listResultsBaseConfig,
   getResponseForComments,
@@ -607,4 +652,5 @@ module.exports = {
   validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
+  treatmentTrackingValidationQuery,
 }
