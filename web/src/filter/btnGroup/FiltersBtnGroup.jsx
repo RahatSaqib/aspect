@@ -60,6 +60,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
   },
+  whereReportableSiteNameIncludes: {
+    id: 'filter.btnGroup.whereReportableSiteNameIncludes',
+    defaultMessage: 'reportable site name includes "{reportableSiteName}"',
+  },
   whereSiteIdIncludes: {
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'site ID includes "{siteId}"',
@@ -212,6 +216,7 @@ const filtersOrdering = {
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
+  reportableSiteName: 33,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
   consumableId: 7,
@@ -365,6 +370,11 @@ const buttonBy = {
   siteName: makeButton(({ intl }, siteName) =>
     intl.formatMessage(messages.whereSiteNameIncludes, {
       siteName,
+    })
+  ),
+  reportableSiteName: makeButton(({ intl }, reportableSiteName) =>
+    intl.formatMessage(messages.whereReportableSiteNameIncludes, {
+      reportableSiteName,
     })
   ),
   sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>

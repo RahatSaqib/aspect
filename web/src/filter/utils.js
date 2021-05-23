@@ -96,6 +96,7 @@ const sanitizerByConfigKey = {
   notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
   revoked: defaultSanitizer,
+  reportableSiteName: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
@@ -207,6 +208,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'siteName':
               result.siteName = true
+              break
+            case 'reportableSiteName':
+              result.reportableSiteName = true
               break
             case 'siteId':
               result.siteId = true

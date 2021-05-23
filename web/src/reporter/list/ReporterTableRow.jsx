@@ -19,8 +19,9 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
     <AspectLink
       to={buildURL('/browse/result', {
         filters: {
-          sampleOriginSite: reporter.get('siteName'),
+          reportableSiteName: reporter.get('siteName'),
           onlyReportableResults: true,
+          onlyTreatmentRequired: true,
           ...params,
         },
       })}

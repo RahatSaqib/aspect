@@ -2148,23 +2148,29 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     // Filter for onlyEverTransferred
     .modify(b => {
-      if (query.onlyEverTransferred) {
-        /**
-         * Notice that
-         * current `Result.reportableSiteId `
-         * should differ from
-         * `ResultStatusLog.data.previousReportableSiteId`
-         */
-        b.whereRaw(
-          `EXISTS (
-            SELECT rslog_transfer.resultId
-            FROM ResultStatusLog as rslog_transfer
-              INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
-            WHERE rslog_transfer.resultId = r.id
-              and rs_transfer.externalId = 'Transfer'
-              and sirep.id != CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)
-          )`
-        )
+      if (query.reportableSiteName) {
+        if (query.onlyEverTransferred) {
+          /**
+           * If only ever transferred is requested,
+           * then we should show only the results that were ever transferred from the reportable site
+           */
+          b.whereRaw(
+            `EXISTS (
+              SELECT rslog_transfer.resultId
+              FROM ResultStatusLog as rslog_transfer
+                INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+              WHERE rslog_transfer.resultId = r.id
+                and rs_transfer.externalId = 'Transfer'
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) IN (SELECT s_transfer.id FROM Site s_transfer WHERE s_transfer.name LIKE '%${query.reportableSiteName}%')
+            )`
+          )
+        } else {
+          /**
+           * If only ever transferred is NOT requested,
+           * then we should show only the results with the reportable site associated
+           */
+          b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+        }
       }
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')

@@ -114,6 +114,11 @@ const enhance = compose(
         siteName,
       }),
 
+    onReportableSiteNameChange: ({ onChangeFilters }) => reportableSiteName =>
+      onChangeFilters({
+        reportableSiteName,
+      }),
+
     onSiteIdChange: ({ onChangeFilters }) => siteId =>
       onChangeFilters({
         siteId,
@@ -240,6 +245,10 @@ const messages = {
       id: 'filter.popover.site',
       defaultMessage: 'Site',
     },
+    reportableSite: {
+      id: 'filter.popover.site',
+      defaultMessage: 'Reportable Site',
+    },
     siteId: {
       id: 'filter.popover.siteId',
       defaultMessage: 'Site Id',
@@ -247,6 +256,10 @@ const messages = {
     enterSiteName: {
       id: 'filter.popover.enterSiteName',
       defaultMessage: 'Enter site name...',
+    },
+    enterReportableSiteName: {
+      id: 'filter.popover.enterReportableSiteName',
+      defaultMessage: 'Enter reportable site name...',
     },
     enterSiteId: {
       id: 'filter.popover.enterSiteId',
@@ -481,6 +494,7 @@ export const FiltersPanel = ({
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
+  onReportableSiteNameChange,
   onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
@@ -829,6 +843,18 @@ export const FiltersPanel = ({
                 floatingLabelFixed
                 hintText={intl.formatMessage(messages.enterSiteName)}
                 floatingLabelText={intl.formatMessage(messages.site)}
+              />
+            </div>
+          )}
+          {config.reportableSiteName && (
+            <div className={cssClasses('Control')}>
+              <SiteAutoCompleteField
+                name="reportableSiteName"
+                value={filters.reportableSiteName || ''}
+                onSiteNameChange={onReportableSiteNameChange}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.enterReportableSiteName)}
+                floatingLabelText={intl.formatMessage(messages.reportableSite)}
               />
             </div>
           )}
