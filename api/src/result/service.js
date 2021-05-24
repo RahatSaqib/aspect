@@ -2196,7 +2196,17 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
-      if (params.onlyTreatmentRequired) {
+      if (params.onlyDownloadedByReporter)
+        queryBuilder.where(
+          'r.id',
+          'IN',
+          knex.raw('SELECT resultId FROM ResultDownloadLog')
+        )
+
+      if (params.onlyTreatmentRequired || params.treatmentStatus) {
+        /**
+         * If treatment filters are required, then we get only the results delivered and downloaded in the reporter app
+         */
         queryBuilder.andWhere(b => {
           b.where('rca.requiresTreatment', true).orWhere(
             'rca2.requiresTreatment',
@@ -2216,13 +2226,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         )
       }
       if (params.treatmentStatus === 'AwaitingTreatment') {
-        queryBuilder
-          .where(builder =>
-            builder
-              .where('rts.externalId', params.treatmentStatus)
-              .orWhereNull('rts.externalId')
-          )
-          .where('rca.requiresTreatment', 1)
+        queryBuilder.where(builder =>
+          builder
+            .where('rts.externalId', params.treatmentStatus)
+            .orWhereNull('rts.externalId')
+        )
       } else if (params.treatmentStatus) {
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       }

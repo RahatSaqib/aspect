@@ -120,6 +120,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.onlyReportableResults',
     defaultMessage: 'Show Only Reportable Results',
   },
+  onlyDownloadedByReporter: {
+    id: 'filter.btnGroup.onlyDownloadedByReporter',
+    defaultMessage: 'Show Only Results Downloaded By Reporter',
+  },
   onlyEverTransferred: {
     id: 'filter.btnGroup.onlyEverTransferred',
     defaultMessage: 'Show Only Results Ever Transferred',
@@ -232,6 +236,7 @@ const filtersOrdering = {
   patientOrCaseId: 23,
   onlyReportableResults: 23,
   onlyTreatmentRequired: 33,
+  onlyDownloadedByReporter: 35,
   onlyEverTransferred: 34,
   issueTypeId: 24,
   stockLeft: 31,
@@ -497,6 +502,9 @@ const buttonBy = {
   ),
   onlyReportableResults: makeButton(({ intl }) =>
     intl.formatMessage(messages.onlyReportableResults)
+  ),
+  onlyDownloadedByReporter: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyDownloadedByReporter)
   ),
   onlyEverTransferred: makeButton(({ intl }) =>
     intl.formatMessage(messages.onlyEverTransferred)

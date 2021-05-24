@@ -383,9 +383,6 @@ async function listSitesWithReporters(request) {
       knex.raw('coalesce(s.shortName,s.externalId) as siteShortName')
     )
 
-  // console.log('LIST>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', getItems.toString())
-  // console.log('<<<<<<<<<<<<<<<<<<<<<<LIST')
-
   // run both queries
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   /**

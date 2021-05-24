@@ -103,6 +103,7 @@ const sanitizerByConfigKey = {
   deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
   onlyEverTransferred: defaultSanitizer,
   onlyReportableResults: defaultSanitizer,
+  onlyDownloadedByReporter: defaultSanitizer,
   onlyTreatmentRequired: defaultSanitizer,
 }
 
@@ -271,6 +272,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'onlyReportableResults':
               result.onlyReportableResults = true
+              break
+            case 'onlyDownloadedByReporter':
+              result.onlyDownloadedByReporter = true
               break
             case 'onlyEverTransferred':
               result.onlyEverTransferred = true

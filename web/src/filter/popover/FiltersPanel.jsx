@@ -173,6 +173,12 @@ const enhance = compose(
       onChangeFilters({
         onlyReportableResults,
       }),
+    onOnlyDownloadedByReporterBoolChange: ({
+      onChangeFilters,
+    }) => onlyDownloadedByReporter =>
+      onChangeFilters({
+        onlyDownloadedByReporter,
+      }),
     onOnlyEverTransferredBoolChange: ({
       onChangeFilters,
     }) => onlyEverTransferred =>
@@ -437,6 +443,10 @@ const messages = {
       id: 'filter.popover.onlyReportableResults',
       defaultMessage: 'Only Reportable Results',
     },
+    onlyDownloadedByReporter: {
+      id: 'filter.popover.onlyDownloadedByReporter',
+      defaultMessage: 'Only Results Downloaded By Reporter',
+    },
     onlyEverTransferred: {
       id: 'filter.popover.onlyEverTransferred',
       defaultMessage: 'Only Ever Transferred Results',
@@ -506,6 +516,7 @@ export const FiltersPanel = ({
   onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
+  onOnlyDownloadedByReporterBoolChange,
   onOnlyEverTransferredBoolChange,
   onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
@@ -513,6 +524,7 @@ export const FiltersPanel = ({
   user,
   assays,
 }) => {
+  console.log('onlyDownloadedByReporter', config.onlyDownloadedByReporter)
   const { assayId } = filters
   const assayItems = assays.get('items')
   let assayResultCategory2Label
@@ -1048,6 +1060,22 @@ export const FiltersPanel = ({
                 }
                 label={intl.formatMessage(messages.onlyReportableResults)}
                 name="onlyReportableResults"
+                autoWidth
+              />
+            </div>
+          )}
+          {config.onlyDownloadedByReporter && (
+            <div className={cssClasses('Control')}>
+              <CheckboxField
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(filters.onlyDownloadedByReporter)}
+                onChange={(event, isChecked) =>
+                  onOnlyDownloadedByReporterBoolChange(isChecked || null)
+                }
+                label={intl.formatMessage(messages.onlyDownloadedByReporter)}
+                name="onlyDownloadedByReporter"
                 autoWidth
               />
             </div>

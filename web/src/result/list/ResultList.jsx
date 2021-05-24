@@ -84,6 +84,10 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['assay:view'],
   },
   {
+    onlyDownloadedByReporter: true,
+    requiredPermissions: [],
+  },
+  {
     onlyEverTransferred: true,
     requiredPermissions: [],
   },

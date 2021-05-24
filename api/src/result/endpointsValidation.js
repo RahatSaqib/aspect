@@ -513,6 +513,9 @@ function listResultsBaseConfig() {
         onlyTreatmentRequired: Joi.bool().description(
           'Filter for only results that require treatment, defined on their result category and assay'
         ),
+        onlyDownloadedByReporter: Joi.bool().description(
+          'Filter for only results downloaded by the Reporter App'
+        ),
         treatmentStatusId: Joi.number()
           .allow(null, '')
           .description('Filter for Result Treatment Status ID'),
