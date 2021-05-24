@@ -1,13 +1,22 @@
 const chai = require('chai')
 const _ = require('lodash')
-const { addMinutes, parseISO, format: dateFormat } = require('date-fns')
+const {
+  addMinutes,
+  subDays,
+  parseISO,
+  format: dateFormat,
+} = require('date-fns')
 const Promise = require('bluebird')
 const { createResult, getResult } = require('./result_utils')
+const {
+  createGxConnectTestContext,
+} = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
 const {
   deviceApprovalToId,
   allResultCategoryToId,
-  // resultStatusToId,
+  resultCategoryToId,
+  resultStatusToId,
   diseaseToId,
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
@@ -20,7 +29,6 @@ const {
   getLastResult,
 } = require('../deviceApi/utils')
 const { getAdminId } = require('../utils/authUtils')
-
 const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
@@ -78,6 +86,160 @@ describe('Result routes', () => {
       assert.property(res.body, 'total')
       assert.typeOf(res.body.extraColumns, 'array')
     }
+
+    describe('results with filters for treatments', () => {
+      let siteId
+      let deviceId
+      let partnerId
+      let resultsDownloadedByReporterIds
+      let deviceContext
+
+      beforeEach(async () => {
+        deviceContext = createGxConnectTestContext(server, {
+          countryCode: 'US',
+          adminUsername: 'admin',
+          adminPassword: 'test07',
+          deviceName: `An Epic Device`,
+          macAddress: `Oh wow, look at that MAC ADDRESS!`,
+          hostId: `What is a host id?`,
+          deviceSerialNumber: `I don't have more ideas`,
+        })
+        await deviceContext.beforeRegisterAndSetDevice()
+        const { device } = deviceContext
+        deviceId = device.id
+        siteId = device.siteId
+        partnerId = device.partnerId
+
+        await knex('Device')
+          .where({ id: deviceId })
+          .update({ defaultReportableSiteId: siteId })
+
+        const resultCategoryDetected = await resultCategoryToId('Detected')
+        const resultCategoryError = await resultCategoryToId('Error')
+        /**
+         * INSERT 25 RESULTS
+         */
+        await Promise.each(_.range(0, 25), async i => {
+          const resultDetails = {
+            consumableLot: 'Lot 0',
+            moduleName: 'Module A',
+            moduleSerial: 'M-123456-0',
+            instrumentSerial: 'S-1234-0',
+            endedOn: subDays(new Date(), i),
+            errorCode: null,
+            errorNotes: null,
+            /**
+             * 20 results will be reportable and will require treatment (DETECTED)
+             * 5 resutls will not be reportable and will not require treatment (ERROR)
+             */
+            resultCategory1:
+              i > 4 ? resultCategoryDetected : resultCategoryError,
+          }
+          await deviceContext.createResultForThisDevice({
+            resultDetails,
+          })
+        })
+
+        const { id: userId } = await knex('User')
+          .where({ name: 'admin' })
+          .first()
+
+        /**
+         * DOWNLOAD 15 RESULTS IN THE REPORTER APP
+         */
+        resultsDownloadedByReporterIds = await knex('Result')
+          .where({ deviceId })
+          .orderBy('id', 'desc')
+          .pluck('id')
+          .limit(15)
+        await Promise.each(resultsDownloadedByReporterIds, async resultId =>
+          knex('ResultDownloadLog').insert({
+            method: "I don't know",
+            createdOn: new Date(),
+            createdBy: userId,
+            resultId,
+          })
+        )
+      })
+
+      afterEach(async () => deviceContext.cleanUp())
+
+      it('should get all the reportable results for a reportable site', async () => {
+        const res = await server
+          .get(
+            `${path}?onlyReportableResults=true&reportableSiteName=An Epic Device`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.body.data.length, 20)
+      })
+
+      it('should get all the reportable results for a reportable site that were downloaded at the reporter app', async () => {
+        const res = await server
+          .get(
+            `${path}?onlyReportableResults=true&onlyDownloadedByReporter=true&reportableSiteName=An Epic Device`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 15)
+      })
+
+      it('should get all the reportable results for a reportable site that were downloaded at the reporter app', async () => {
+        const res = await server
+          .get(
+            `${path}?onlyReportableResults=true&onlyDownloadedByReporter=true&reportableSiteName=An Epic Device`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 15)
+      })
+
+      it('should get all the results requiring treatment for a reportable site', async () => {
+        const res = await server
+          .get(
+            `${path}?onlyTreatmentRequired=true&reportableSiteName=An Epic Device`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 20)
+      })
+
+      it('should get only the results that were transferred from a reportable site', async () => {
+        const [resultIdToTransfer] = resultsDownloadedByReporterIds
+        const { id: anotherSiteId } = await knex('Site')
+          .where({ partnerId })
+          .first()
+        /**
+         * Transfer one result to another site
+         * - Update reportableSiteId in Result table
+         * - Add a new entry in the ResultStatusLog
+         */
+        await knex('Result')
+          .where({ id: resultIdToTransfer })
+          .update({ reportableSiteId: anotherSiteId })
+        const transferStatusId = await resultStatusToId('Transfer')
+        await knex('ResultStatusLog').insert({
+          resultStatusId: transferStatusId,
+          resultId: resultIdToTransfer,
+          createdOn: new Date(),
+          createdBy: 1,
+          data: JSON.stringify({
+            siteId,
+            reportableSiteId: anotherSiteId,
+            previousReportableSiteId: siteId,
+            sampleOriginSiteId: siteId,
+          }),
+        })
+
+        const res = await server
+          .get(
+            `${path}?onlyEverTransferred=true&reportableSiteName=An Epic Device`
+          )
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 1)
+      })
+    })
+
     it('should return a list of results', async () => {
       const res = await server
         .get(path)
