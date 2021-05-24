@@ -5,11 +5,11 @@ import filter from 'lodash/filter'
 
 import { Base } from '../stories/AspectLink.stories'
 import { expected, permissions, links } from './mocks'
-import buildURL from '../helpers'
+import { buildURL } from '../helpers'
 
 describe('AspectLink', () => {
   describe('Helpers', () => {
-    it('buildURL should build a URL with parameter sections', () => {
+    it.only('buildURL should build a URL with parameter sections', () => {
       const url = buildURL('base/url', {
         filters: {
           a: 1,
@@ -20,7 +20,7 @@ describe('AspectLink', () => {
       expect(url).toBe('base/url?filters=a%3D1%26b%3DB%26&c=C&')
     })
 
-    it('buildURL should build a URL without parameter sections', () => {
+    it.only('buildURL should build a URL without parameter sections', () => {
       const url = buildURL('base/url', {
         a: 1,
         b: 'B',
