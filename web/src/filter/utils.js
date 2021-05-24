@@ -105,6 +105,7 @@ const sanitizerByConfigKey = {
   onlyReportableResults: defaultSanitizer,
   onlyDownloadedByReporter: defaultSanitizer,
   onlyTreatmentRequired: defaultSanitizer,
+  treatmentStatus: defaultSanitizer,
 }
 
 export const sanitizeFiltersStringBy = config => filtersString =>
