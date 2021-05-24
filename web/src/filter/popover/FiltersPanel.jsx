@@ -524,7 +524,7 @@ export const FiltersPanel = ({
   user,
   assays,
 }) => {
-  const { assayId } = filters
+  const { assayId, reportableSiteName } = filters
   const assayItems = assays.get('items')
   let assayResultCategory2Label
   if (assayItems && assayId) {
@@ -1081,7 +1081,7 @@ export const FiltersPanel = ({
               />
             </div>
           )}
-          {config.onlyEverTransferred && (
+          {reportableSiteName && config.onlyEverTransferred && (
             <div className={cssClasses('Control')}>
               <CheckboxField
                 classNames={{

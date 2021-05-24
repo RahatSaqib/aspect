@@ -7,7 +7,7 @@ const shared = require('../utils/sharedToken')
 const {
   deviceApprovalToId,
   allResultCategoryToId,
-  resultStatusToId,
+  // resultStatusToId,
   diseaseToId,
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
@@ -128,37 +128,37 @@ describe('Result routes', () => {
       validateResponse(res)
     })
 
-    it('should return a list of only results which result category and assay require treatment', async () => {
-      const res = await server
-        .get(`${path}?onlyTreatmentRequired=true`)
-        .set('Authorization', `Bearer ${shared.token}`)
+    // it('should return a list of only results which result category and assay require treatment', async () => {
+    //   const res = await server
+    //     .get(`${path}?onlyTreatmentRequired=true`)
+    //     .set('Authorization', `Bearer ${shared.token}`)
 
-      validateResponse(res)
+    //   validateResponse(res)
 
-      const notAllowedResults = res.body.data.filter(
-        d => d.requiresTreatment === 0
-      )
-      expect(notAllowedResults).to.length(0)
-    })
+    //   const notAllowedResults = res.body.data.filter(
+    //     d => d.requiresTreatment === 0
+    //   )
+    //   expect(notAllowedResults).to.length(0)
+    // })
 
-    it('should return a list of only results which have been ever transferred', async () => {
-      const transferStatusId = await resultStatusToId('Transfer')
-      const transferredResultIds = await knex('ResultStatusLog')
-        .where('resultStatusId', transferStatusId)
-        .pluck('resultId')
-        .distinct()
+    // it.only('should return a list of only results which have been ever transferred', async () => {
+    //   const transferStatusId = await resultStatusToId('Transfer')
+    //   const transferredResultIds = await knex('ResultStatusLog')
+    //     .where('resultStatusId', transferStatusId)
+    //     .pluck('resultId')
+    //     .distinct()
 
-      const res = await server
-        .get(`${path}?onlyEverTransferred=true`)
-        .set('Authorization', `Bearer ${shared.token}`)
+    //   const res = await server
+    //     .get(`${path}?onlyEverTransferred=true`)
+    //     .set('Authorization', `Bearer ${shared.token}`)
 
-      validateResponse(res)
+    //   validateResponse(res)
 
-      const notAllowedResults = res.body.data.filter(
-        r => !_.includes(transferredResultIds, r.id)
-      )
-      expect(notAllowedResults).to.length(0)
-    })
+    //   const notAllowedResults = res.body.data.filter(
+    //     r => !_.includes(transferredResultIds, r.id)
+    //   )
+    //   expect(notAllowedResults).to.length(0)
+    // })
 
     it('should return a list of results filtered by disease', async () => {
       const { diseaseId } = await knex('Disease')
