@@ -524,7 +524,6 @@ export const FiltersPanel = ({
   user,
   assays,
 }) => {
-  console.log('onlyDownloadedByReporter', config.onlyDownloadedByReporter)
   const { assayId } = filters
   const assayItems = assays.get('items')
   let assayResultCategory2Label
@@ -1070,7 +1069,9 @@ export const FiltersPanel = ({
                 classNames={{
                   controlContainer: cssClasses('checkbox-wrapper'),
                 }}
-                checked={[true, 'true'].includes(filters.onlyDownloadedByReporter)}
+                checked={[true, 'true'].includes(
+                  filters.onlyDownloadedByReporter
+                )}
                 onChange={(event, isChecked) =>
                   onOnlyDownloadedByReporterBoolChange(isChecked || null)
                 }

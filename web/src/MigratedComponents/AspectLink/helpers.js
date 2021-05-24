@@ -46,7 +46,15 @@ export const buildURL = (baseUrl, params = {}) => {
  * @param {string} query The URL query to be parsed
  * @returns The object containing the key-value pairs
  */
-export const getParamsFromQuery = query => query ? JSON.parse('{"' + query.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) }) : { }
+export const getParamsFromQuery = query =>
+  query
+    ? JSON.parse(
+        `{"${query.replace(/&/g, '","').replace(/=/g, '":"')}"}`,
+        function(key, value) {
+          return key === '' ? value : decodeURIComponent(value)
+        }
+      )
+    : {}
 
 /**
  * Given a location, gets the key-value pairs object from the URL filters section. For example, from '?filters=a%3Da&b=b&' gets { a: 'a' }.

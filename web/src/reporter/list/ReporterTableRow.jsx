@@ -1,8 +1,11 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import AspectLink from '../../MigratedComponents/AspectLink'
-import { buildURL, getFiltersObjectFromLocation } from '../../MigratedComponents/AspectLink/helpers'
 import { useLocation } from 'react-router-dom'
+import AspectLink from '../../MigratedComponents/AspectLink'
+import {
+  buildURL,
+  getFiltersObjectFromLocation,
+} from '../../MigratedComponents/AspectLink/helpers'
 
 import {
   DataTableRow as TableRow,
@@ -39,37 +42,73 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
         <ReporterLinkCell data={reporter} />
       </TableCell>
       <TableCell>
-        <LinkToResults>
-          {reporter.get('totalResults')}
-        </LinkToResults>
+        <LinkToResults>{reporter.get('totalResults')}</LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyDownloadedByReporter: true, onlyReportableResults: true, onlyTreatmentRequired: true }}>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+          }}
+        >
           {reporter.get('delivered')}
         </LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyDownloadedByReporter: true,onlyReportableResults: true, onlyTreatmentRequired: true }}>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+          }}
+        >
           {reporter.get('requiresTreatment')}
         </LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyDownloadedByReporter: true, onlyTreatmentRequired: true, treatmentStatus: 'OnTreatment' }}>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyTreatmentRequired: true,
+            treatmentStatus: 'OnTreatment',
+          }}
+        >
           {reporter.get('onTreatment')}
         </LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyDownloadedByReporter: true,onlyEverTransferred: true, onlyTreatmentRequired: true }}>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyEverTransferred: true,
+            onlyTreatmentRequired: true,
+          }}
+        >
           {reporter.get('transferred')}
         </LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyDownloadedByReporter: true,onlyReportableResults: true, onlyTreatmentRequired: true, treatmentStatus: 'NotPossible' }}>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+            treatmentStatus: 'NotPossible',
+          }}
+        >
           {reporter.get('notPossible')}
         </LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyDownloadedByReporter: true,onlyReportableResults: true, onlyTreatmentRequired: true, treatmentStatus: 'AwaitingTreatment' }}>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+            treatmentStatus: 'AwaitingTreatment',
+          }}
+        >
           {reporter.get('notOnTreatment')}
         </LinkToResults>
       </TableCell>
