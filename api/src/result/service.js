@@ -2146,13 +2146,16 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
-    // Filter for onlyEverTransferred
     .modify(b => {
       if (query.reportableSiteName) {
         if (query.onlyEverTransferred) {
           /**
            * If only ever transferred is requested,
-           * then we should show only the results that were ever transferred from the reportable site
+           * then we should show only the results that were ever transferred from the reportable site.
+           * For this, we should:
+           * - Get all the transfer logs
+           * - ...where this result was transferred
+           * - ...and the previous reportable site was the one specified in the reportableSiteName filter
            */
           b.whereRaw(
             `EXISTS (
@@ -2167,7 +2170,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         } else {
           /**
            * If only ever transferred is NOT requested,
-           * then we should show only the results with the reportable site associated
+           * then we should show only the results with the reportable site name associated
            */
           b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
         }
