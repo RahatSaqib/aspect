@@ -2200,10 +2200,10 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter)
-        queryBuilder.where(
+        queryBuilder.innerJoin(
+          'ResultDownloadLog as rdl',
           'r.id',
-          'IN',
-          knex.raw('SELECT resultId FROM ResultDownloadLog')
+          'rdl.resultId'
         )
 
       if (params.onlyTreatmentRequired || params.treatmentStatus) {
