@@ -65,7 +65,7 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   {
-    reportableSiteName: true,
+    reportableSiteId: true,
     requiredPermissions: ['site:view'],
   },
   {

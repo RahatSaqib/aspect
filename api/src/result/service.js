@@ -2147,9 +2147,9 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       )
     })
     .modify(b => {
-      if (query.reportableSiteName) {
+      if (query.reportableSiteId) {
         /**
-         * onlyEverTransferred filter can only be applied if reportableSiteName is set
+         * onlyEverTransferred filter can only be applied if reportableSiteId is set
          * In UI, the first one is shown only if the second one is entered.
          */
         if (query.onlyEverTransferred) {
@@ -2159,7 +2159,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
            * For this, we should:
            * - Get all the transfer logs
            * - ...where this result was transferred
-           * - ...and the previous reportable site was the one specified in the reportableSiteName filter
+           * - ...and the previous reportable site was the one specified in the reportableSiteId filter
            */
           b.whereRaw(
             `EXISTS (
@@ -2168,15 +2168,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
                 INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
               WHERE rslog_transfer.resultId = r.id
                 and rs_transfer.externalId = 'Transfer'
-                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) IN (SELECT s_transfer.id FROM Site s_transfer WHERE s_transfer.name LIKE '%${query.reportableSiteName}%')
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) = ${query.reportableSiteId})
             )`
           )
         } else {
           /**
            * If only ever transferred is NOT requested,
-           * then we should show only the results with the reportable site name associated
+           * then we should show only the results with the reportable site id associated
            */
-          b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+          b.where('sirep.id', query.reportableSiteId)
         }
       }
     })

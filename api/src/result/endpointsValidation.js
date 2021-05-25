@@ -540,11 +540,11 @@ function listResultsBaseConfig() {
         ...validateDateRangeParams(),
         ...validateSortPageParams(),
         // transfer result
-        reportableSiteName: Joi.string()
-          .allow(null, '')
-          .description(
-            'The name of reportable site, differ from siteName when transferred'
-          ),
+        reportableSiteId: Joi.number()
+          .allow(null)
+          .integer()
+          .positive()
+          .description('The id of reportable site'),
         transferredOn: Joi.date()
           .allow(null)
           .description('When result was transferred to another clinic'),

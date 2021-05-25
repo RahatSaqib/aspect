@@ -60,13 +60,17 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
   },
-  whereReportableSiteNameIncludes: {
-    id: 'filter.btnGroup.whereReportableSiteNameIncludes',
-    defaultMessage: 'reportable site name includes "{reportableSiteName}"',
+  whereReportableSiteIdIncludes: {
+    id: 'filter.btnGroup.whereReportableSiteIdIncludes',
+    defaultMessage: 'reportable site ID includes "{reportableSiteId}"',
   },
   whereSiteIdIncludes: {
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'site ID includes "{siteId}"',
+  },
+  whereReportableSiteIdIncludes: {
+    id: 'filter.btnGroup.whereSiteIdIncludes',
+    defaultMessage: 'reportable site ID includes "{reportableSiteId}"',
   },
   sampleOriginSite: {
     id: 'filter.btnGroup.sampleOriginSite',
@@ -220,7 +224,7 @@ const filtersOrdering = {
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
-  reportableSiteName: 33,
+  reportableSiteId: 33,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
   consumableId: 7,
@@ -377,9 +381,9 @@ const buttonBy = {
       siteName,
     })
   ),
-  reportableSiteName: makeButton(({ intl }, reportableSiteName) =>
-    intl.formatMessage(messages.whereReportableSiteNameIncludes, {
-      reportableSiteName,
+  reportableSiteId: makeButton(({ intl }, reportableSiteId) =>
+    intl.formatMessage(messages.whereReportableSiteIdIncludes, {
+      reportableSiteId,
     })
   ),
   sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>
