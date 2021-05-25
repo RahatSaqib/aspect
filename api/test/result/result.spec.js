@@ -163,7 +163,7 @@ describe('Result routes', () => {
           .get(path)
           .query({
             onlyReportableResults: true,
-            reportableSiteName: 'An Epic Device',
+            reportableSiteId: siteId,
           })
           .set('Authorization', `Bearer ${shared.token}`)
         assert.equal(res.body.data.length, 20)
@@ -174,7 +174,7 @@ describe('Result routes', () => {
           .get(path)
           .query({
             onlyReportableResults: true,
-            reportableSiteName: 'An Epic Device',
+            reportableSiteId: siteId,
             onlyDownloadedByReporter: true,
           })
           .set('Authorization', `Bearer ${shared.token}`)
@@ -187,7 +187,7 @@ describe('Result routes', () => {
           .get(path)
           .query({
             onlyTreatmentRequired: true,
-            reportableSiteName: 'An Epic Device',
+            reportableSiteId: siteId,
           })
           .set('Authorization', `Bearer ${shared.token}`)
 
@@ -208,6 +208,7 @@ describe('Result routes', () => {
           .where({ id: resultIdToTransfer })
           .update({ reportableSiteId: anotherSiteId })
         const transferStatusId = await resultStatusToId('Transfer')
+
         await knex('ResultStatusLog').insert({
           resultStatusId: transferStatusId,
           resultId: resultIdToTransfer,
@@ -225,7 +226,7 @@ describe('Result routes', () => {
           .get(path)
           .query({
             onlyEverTransferred: true,
-            reportableSiteName: 'An Epic Device',
+            reportableSiteId: siteId,
           })
           .set('Authorization', `Bearer ${shared.token}`)
 

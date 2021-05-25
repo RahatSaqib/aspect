@@ -2168,7 +2168,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
                 INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
               WHERE rslog_transfer.resultId = r.id
                 and rs_transfer.externalId = 'Transfer'
-                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) = ${query.reportableSiteId})
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) = ${query.reportableSiteId}
             )`
           )
         } else {

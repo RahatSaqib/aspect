@@ -60,10 +60,6 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
   },
-  whereReportableSiteIdIncludes: {
-    id: 'filter.btnGroup.whereReportableSiteIdIncludes',
-    defaultMessage: 'reportable site ID includes "{reportableSiteId}"',
-  },
   whereSiteIdIncludes: {
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'site ID includes "{siteId}"',
