@@ -2148,6 +2148,10 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     })
     .modify(b => {
       if (query.reportableSiteName) {
+        /**
+         * onlyEverTransferred filter can only be applied if reportableSiteName is set
+         * In UI, the first one is shown only if the second one is entered.
+         */
         if (query.onlyEverTransferred) {
           /**
            * If only ever transferred is requested,
