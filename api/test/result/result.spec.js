@@ -30,6 +30,7 @@ const {
 } = require('../deviceApi/utils')
 const { getAdminId } = require('../utils/authUtils')
 const server = require('../utils/testUtils')
+const { addResultDownloadLog } = require('../../src/result/service')
 
 const { assert, expect } = chai
 
@@ -152,42 +153,30 @@ describe('Result routes', () => {
           .orderBy('id', 'desc')
           .pluck('id')
           .limit(15)
-        await Promise.each(resultsDownloadedByReporterIds, async resultId =>
-          knex('ResultDownloadLog').insert({
-            method: "I don't know",
-            createdOn: new Date(),
-            createdBy: userId,
-            resultId,
-          })
-        )
+        await addResultDownloadLog(resultsDownloadedByReporterIds, userId)
       })
 
       afterEach(async () => deviceContext.cleanUp())
 
       it('should get all the reportable results for a reportable site', async () => {
         const res = await server
-          .get(
-            `${path}?onlyReportableResults=true&reportableSiteName=An Epic Device`
-          )
+          .get(path)
+          .query({
+            onlyReportableResults: true,
+            reportableSiteName: 'An Epic Device',
+          })
           .set('Authorization', `Bearer ${shared.token}`)
         assert.equal(res.body.data.length, 20)
       })
 
       it('should get all the reportable results for a reportable site that were downloaded at the reporter app', async () => {
         const res = await server
-          .get(
-            `${path}?onlyReportableResults=true&onlyDownloadedByReporter=true&reportableSiteName=An Epic Device`
-          )
-          .set('Authorization', `Bearer ${shared.token}`)
-
-        assert.equal(res.body.data.length, 15)
-      })
-
-      it('should get all the reportable results for a reportable site that were downloaded at the reporter app', async () => {
-        const res = await server
-          .get(
-            `${path}?onlyReportableResults=true&onlyDownloadedByReporter=true&reportableSiteName=An Epic Device`
-          )
+          .get(path)
+          .query({
+            onlyReportableResults: true,
+            reportableSiteName: 'An Epic Device',
+            onlyDownloadedByReporter: true,
+          })
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.length, 15)
@@ -195,9 +184,11 @@ describe('Result routes', () => {
 
       it('should get all the results requiring treatment for a reportable site', async () => {
         const res = await server
-          .get(
-            `${path}?onlyTreatmentRequired=true&reportableSiteName=An Epic Device`
-          )
+          .get(path)
+          .query({
+            onlyTreatmentRequired: true,
+            reportableSiteName: 'An Epic Device',
+          })
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.length, 20)
@@ -231,9 +222,11 @@ describe('Result routes', () => {
         })
 
         const res = await server
-          .get(
-            `${path}?onlyEverTransferred=true&reportableSiteName=An Epic Device`
-          )
+          .get(path)
+          .query({
+            onlyEverTransferred: true,
+            reportableSiteName: 'An Epic Device',
+          })
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.length, 1)
@@ -289,38 +282,6 @@ describe('Result routes', () => {
 
       validateResponse(res)
     })
-
-    // it('should return a list of only results which result category and assay require treatment', async () => {
-    //   const res = await server
-    //     .get(`${path}?onlyTreatmentRequired=true`)
-    //     .set('Authorization', `Bearer ${shared.token}`)
-
-    //   validateResponse(res)
-
-    //   const notAllowedResults = res.body.data.filter(
-    //     d => d.requiresTreatment === 0
-    //   )
-    //   expect(notAllowedResults).to.length(0)
-    // })
-
-    // it.only('should return a list of only results which have been ever transferred', async () => {
-    //   const transferStatusId = await resultStatusToId('Transfer')
-    //   const transferredResultIds = await knex('ResultStatusLog')
-    //     .where('resultStatusId', transferStatusId)
-    //     .pluck('resultId')
-    //     .distinct()
-
-    //   const res = await server
-    //     .get(`${path}?onlyEverTransferred=true`)
-    //     .set('Authorization', `Bearer ${shared.token}`)
-
-    //   validateResponse(res)
-
-    //   const notAllowedResults = res.body.data.filter(
-    //     r => !_.includes(transferredResultIds, r.id)
-    //   )
-    //   expect(notAllowedResults).to.length(0)
-    // })
 
     it('should return a list of results filtered by disease', async () => {
       const { diseaseId } = await knex('Disease')
