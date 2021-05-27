@@ -64,6 +64,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'site ID includes "{siteId}"',
   },
+  whereReportableSiteNameIncludes: {
+    id: 'filter.btnGroup.whereReportableSiteNameIncludes',
+    defaultMessage: 'reportable site name includes "{reportableSiteName}"',
+  },
+  whereReportableSiteName: {
+    id: 'filter.btnGroup.whereReportableSiteIs',
+    defaultMessage: 'reportable site "{reportableSiteName}"',
+  },
   whereReportableSiteIdIncludes: {
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'reportable site ID includes "{reportableSiteId}"',
@@ -220,6 +228,7 @@ const filtersOrdering = {
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
+  reportableSiteName: 33,
   reportableSiteId: 33,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
@@ -377,11 +386,30 @@ const buttonBy = {
       siteName,
     })
   ),
-  reportableSiteId: makeButton(({ intl }, reportableSiteId) =>
-    intl.formatMessage(messages.whereReportableSiteIdIncludes, {
-      reportableSiteId,
-    })
-  ),
+  reportableSiteName: makeButton(({ intl, filters }, reportableSiteName) => {
+    const message = filters.reportableSiteId
+      ? messages.whereReportableSiteName
+      : messages.whereReportableSiteNameIncludes
+    return intl.formatMessage(message, { reportableSiteName })
+  }),
+  reportableSiteId: (props, filterKey) => {
+    /**
+     * if filters.reportableSiteName is defined then skip processing of filters.reportableSiteId
+     * because this value will be used when showing button for filters.reportableSiteName
+     */
+    if (props.filters.reportableSiteName) {
+      return null
+    }
+    /**
+     * if filters.reportableSiteName is missing then treat filters.reportableSiteId
+     * as separate (visible) filter button
+     */
+    return makeButton(({ intl }, reportableSiteId) =>
+      intl.formatMessage(messages.whereReportableSiteIdIncludes, {
+        reportableSiteId,
+      })(props, filterKey)
+    )
+  },
   sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById

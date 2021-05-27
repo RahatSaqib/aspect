@@ -26,9 +26,18 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
     <AspectLink
       to={buildURL('/browse/result', {
         filters: {
-          reportableSiteId: reporter.get('siteId'),
           ...currentFilters,
           ...params,
+          /**
+           * when both `reportableSiteName` and `reportableSiteId` are specified then
+           * it means we fetch from API data for concrete site Id, and use name as initial text
+           * value for AutoComplete in filter panel and as label for filter button.
+           * So:
+           * - reportableSiteName - for initialInputValue in AutoComplete and to show in filter button
+           * - reportableSiteId - for payload to fetch data
+           */
+          reportableSiteName: reporter.get('siteName'),
+          reportableSiteId: reporter.get('siteId'),
         },
       })}
     >

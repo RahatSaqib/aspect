@@ -2147,9 +2147,10 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       )
     })
     .modify(b => {
-      if (query.reportableSiteId) {
+      if (query.reportableSiteId || query.reportableSiteName) {
         /**
-         * onlyEverTransferred filter can only be applied if reportableSiteId is set
+         * onlyEverTransferred filter can only be applied if
+         * reportableSiteId or reportableSiteName is set
          * In UI, the first one is shown only if the second one is entered.
          */
         if (query.onlyEverTransferred) {
@@ -2159,8 +2160,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
            * For this, we should:
            * - Get all the transfer logs
            * - ...where this result was transferred
-           * - ...and the previous reportable site was the one specified in the reportableSiteId filter
+           * - ...and the previous reportable site was the one specified in the reportableSiteId or reportableSiteName filter
            */
+          const siteOperationAndValue = query.reportableSiteId
+            ? `= ${query.reportableSiteId}`
+            : `IN (
+                SELECT s_transfer.id 
+                FROM Site s_transfer 
+                WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
+              )`
           b.whereRaw(
             `EXISTS (
               SELECT rslog_transfer.resultId
@@ -2168,15 +2176,20 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
                 INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
               WHERE rslog_transfer.resultId = r.id
                 and rs_transfer.externalId = 'Transfer'
-                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) = ${query.reportableSiteId}
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) ${siteOperationAndValue}
             )`
           )
         } else {
           /**
            * If only ever transferred is NOT requested,
-           * then we should show only the results with the reportable site id associated
+           * then we should show only the results with the reportable site id/name associated
            */
-          b.where('sirep.id', query.reportableSiteId)
+          // eslint-disable-next-line no-lonely-if
+          if (query.reportableSiteId) {
+            b.where('sirep.id', query.reportableSiteId)
+          } else {
+            b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+          }
         }
       }
     })

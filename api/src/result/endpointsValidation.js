@@ -540,6 +540,11 @@ function listResultsBaseConfig() {
         ...validateDateRangeParams(),
         ...validateSortPageParams(),
         // transfer result
+        reportableSiteName: Joi.string()
+          .allow(null, '')
+          .description(
+            'The name of reportable site, differ from siteName when transferred'
+          ),
         reportableSiteId: Joi.number()
           .allow(null)
           .integer()

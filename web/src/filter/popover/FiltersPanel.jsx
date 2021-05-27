@@ -114,10 +114,12 @@ const enhance = compose(
         siteName,
       }),
 
-    onReportableSiteIdChange: ({ onChangeFilters }) => reportableSiteId =>
+    onReportableSiteChange: ({ onChangeFilters }) => ({ id, name }) => {
       onChangeFilters({
-        reportableSiteId,
-      }),
+        reportableSiteName: name,
+        reportableSiteId: id,
+      })
+    },
 
     onSiteIdChange: ({ onChangeFilters }) => siteId =>
       onChangeFilters({
@@ -262,6 +264,10 @@ const messages = {
     enterSiteName: {
       id: 'filter.popover.enterSiteName',
       defaultMessage: 'Enter site name...',
+    },
+    enterReportableSiteName: {
+      id: 'filter.popover.enterReportableSiteName',
+      defaultMessage: 'Enter reportable site name...',
     },
     enterReportableSiteId: {
       id: 'filter.popover.enterReportableSiteId',
@@ -504,7 +510,7 @@ export const FiltersPanel = ({
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
-  onReportableSiteIdChange,
+  onReportableSiteChange,
   onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
@@ -524,7 +530,7 @@ export const FiltersPanel = ({
   user,
   assays,
 }) => {
-  const { assayId, reportableSiteId } = filters
+  const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
   let assayResultCategory2Label
   if (assayItems && assayId) {
@@ -857,14 +863,14 @@ export const FiltersPanel = ({
               />
             </div>
           )}
-          {config.reportableSiteId && (
+          {config.reportableSiteName && (
             <div className={cssClasses('Control')}>
               <SiteAutoCompleteField
-                name="reportableSiteId"
-                value={filters.reportableSiteId || ''}
-                onSiteIdChange={onReportableSiteIdChange}
+                name="reportableSiteName"
+                value={filters.reportableSiteName || ''}
+                onChange={onReportableSiteChange}
                 floatingLabelFixed
-                hintText={intl.formatMessage(messages.enterReportableSiteId)}
+                hintText={intl.formatMessage(messages.enterReportableSiteName)}
                 floatingLabelText={intl.formatMessage(messages.reportableSite)}
               />
             </div>
@@ -1081,22 +1087,23 @@ export const FiltersPanel = ({
               />
             </div>
           )}
-          {reportableSiteId && config.onlyEverTransferred && (
-            <div className={cssClasses('Control')}>
-              <CheckboxField
-                classNames={{
-                  controlContainer: cssClasses('checkbox-wrapper'),
-                }}
-                checked={[true, 'true'].includes(filters.onlyEverTransferred)}
-                onChange={(event, isChecked) =>
-                  onOnlyEverTransferredBoolChange(isChecked || null)
-                }
-                label={intl.formatMessage(messages.onlyEverTransferred)}
-                name="onlyEverTransferred"
-                autoWidth
-              />
-            </div>
-          )}
+          {(reportableSiteName || reportableSiteId) &&
+            config.onlyEverTransferred && (
+              <div className={cssClasses('Control')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                  onChange={(event, isChecked) =>
+                    onOnlyEverTransferredBoolChange(isChecked || null)
+                  }
+                  label={intl.formatMessage(messages.onlyEverTransferred)}
+                  name="onlyEverTransferred"
+                  autoWidth
+                />
+              </div>
+            )}
           {config.onlyTreatmentRequired && (
             <div className={cssClasses('Control')}>
               <CheckboxField
