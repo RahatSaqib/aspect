@@ -2146,25 +2146,51 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
-    // Filter for onlyEverTransferred
     .modify(b => {
-      if (query.onlyEverTransferred) {
+      if (query.reportableSiteId || query.reportableSiteName) {
         /**
-         * Notice that
-         * current `Result.reportableSiteId `
-         * should differ from
-         * `ResultStatusLog.data.previousReportableSiteId`
+         * onlyEverTransferred filter can only be applied if
+         * reportableSiteId or reportableSiteName is set
+         * In UI, the first one is shown only if the second one is entered.
          */
-        b.whereRaw(
-          `EXISTS (
-            SELECT rslog_transfer.resultId
-            FROM ResultStatusLog as rslog_transfer
-              INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
-            WHERE rslog_transfer.resultId = r.id
-              and rs_transfer.externalId = 'Transfer'
-              and sirep.id != CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)
-          )`
-        )
+        if (query.onlyEverTransferred) {
+          /**
+           * If only ever transferred is requested,
+           * then we should show only the results that were ever transferred from the reportable site.
+           * For this, we should:
+           * - Get all the transfer logs
+           * - ...where this result was transferred
+           * - ...and the previous reportable site was the one specified in the reportableSiteId or reportableSiteName filter
+           */
+          const siteOperationAndValue = query.reportableSiteId
+            ? `= ${query.reportableSiteId}`
+            : `IN (
+                SELECT s_transfer.id 
+                FROM Site s_transfer 
+                WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
+              )`
+          b.whereRaw(
+            `EXISTS (
+              SELECT rslog_transfer.resultId
+              FROM ResultStatusLog as rslog_transfer
+                INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+              WHERE rslog_transfer.resultId = r.id
+                and rs_transfer.externalId = 'Transfer'
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) ${siteOperationAndValue}
+            )`
+          )
+        } else {
+          /**
+           * If only ever transferred is NOT requested,
+           * then we should show only the results with the reportable site id/name associated
+           */
+          // eslint-disable-next-line no-lonely-if
+          if (query.reportableSiteId) {
+            b.where('sirep.id', query.reportableSiteId)
+          } else {
+            b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+          }
+        }
       }
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
@@ -2190,7 +2216,17 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
-      if (params.onlyTreatmentRequired) {
+      if (params.onlyDownloadedByReporter)
+        queryBuilder.innerJoin(
+          'ResultDownloadLog as rdl',
+          'r.id',
+          'rdl.resultId'
+        )
+
+      if (params.onlyTreatmentRequired || params.treatmentStatus) {
+        /**
+         * If treatment filters are required, then we get only the results delivered and downloaded in the reporter app
+         */
         queryBuilder.andWhere(b => {
           b.where('rca.requiresTreatment', true).orWhere(
             'rca2.requiresTreatment',
@@ -2210,13 +2246,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         )
       }
       if (params.treatmentStatus === 'AwaitingTreatment') {
-        queryBuilder
-          .where(builder =>
-            builder
-              .where('rts.externalId', params.treatmentStatus)
-              .orWhereNull('rts.externalId')
-          )
-          .where('rca.requiresTreatment', 1)
+        queryBuilder.where(builder =>
+          builder
+            .where('rts.externalId', params.treatmentStatus)
+            .orWhereNull('rts.externalId')
+        )
       } else if (params.treatmentStatus) {
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       }
@@ -2838,4 +2872,5 @@ module.exports = {
   updateResult,
   addPartnerQueryConstraints,
   getBaseQueryForResults,
+  addResultDownloadLog,
 }

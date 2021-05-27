@@ -96,13 +96,17 @@ const sanitizerByConfigKey = {
   notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
   revoked: defaultSanitizer,
+  reportableSiteName: defaultSanitizer,
+  reportableSiteId: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
   deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
   onlyEverTransferred: defaultSanitizer,
   onlyReportableResults: defaultSanitizer,
+  onlyDownloadedByReporter: defaultSanitizer,
   onlyTreatmentRequired: defaultSanitizer,
+  treatmentStatus: defaultSanitizer,
 }
 
 export const sanitizeFiltersStringBy = config => filtersString =>
@@ -208,6 +212,12 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'siteName':
               result.siteName = true
               break
+            case 'reportableSiteName':
+              result.reportableSiteName = true
+              break
+            case 'reportableSiteId':
+              result.reportableSiteId = true
+              break
             case 'siteId':
               result.siteId = true
               break
@@ -267,6 +277,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'onlyReportableResults':
               result.onlyReportableResults = true
+              break
+            case 'onlyDownloadedByReporter':
+              result.onlyDownloadedByReporter = true
               break
             case 'onlyEverTransferred':
               result.onlyEverTransferred = true
