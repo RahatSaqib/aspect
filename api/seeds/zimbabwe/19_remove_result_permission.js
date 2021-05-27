@@ -10,7 +10,6 @@ async function seed(knex) {
   const jobFunctionIds = await knex('JobFunction')
     .where('externalId', 'deviceMaker')
     .orWhere('externalId', 'technician')
-    .select('id')
     .pluck('id')
 
   await knex('JobFunctionPermission')

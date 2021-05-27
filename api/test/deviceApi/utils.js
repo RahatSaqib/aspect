@@ -604,7 +604,6 @@ async function getMaxDeviceId(knex) {
     .from('Device')
     .orderBy('id', 'desc')
     .limit(1)
-    .select('id')
     .pluck('id')
   return maxDeviceId
 }
