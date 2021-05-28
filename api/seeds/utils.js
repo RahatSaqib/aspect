@@ -940,7 +940,7 @@ async function upsertSingle(knex, tableName, whereClause, item) {
     item = item || whereClause
   }
   const q = knex(tableName).where(whereClause)
-  const existingItem = await q.first()
+  const existingItem = await q.clone().first()
   if (!_.isEmpty(item)) {
     if (existingItem) {
       await q.clone().update(item)

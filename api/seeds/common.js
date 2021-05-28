@@ -423,7 +423,9 @@ async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
       reportId,
     })
   )
-  await knex('JobFunctionReport').insert(JobFunctionReport)
+  if (!_.isEmpty(JobFunctionReport)) {
+    await knex('JobFunctionReport').insert(JobFunctionReport)
+  }
 }
 
 async function upsertJobFunctionPermission(
@@ -452,7 +454,9 @@ async function upsertJobFunctionPermission(
       permissionId,
     })
   )
-  await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  if (!_.isEmpty(JobFunctionPermission)) {
+    await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  }
 }
 
 async function upsertGxAlertDevice(
