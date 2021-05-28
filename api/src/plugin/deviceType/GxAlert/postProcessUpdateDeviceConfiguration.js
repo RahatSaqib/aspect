@@ -1,5 +1,6 @@
 const {
-  postProcessUpdateDeviceConfiguration: geneXpertPostProcessUpdateDeviceConfiguration,
+  postProcessUpdateDeviceConfiguration:
+    geneXpertPostProcessUpdateDeviceConfiguration,
 } = require('../gxUtils')
 
 async function postProcessUpdateDeviceConfiguration(context) {

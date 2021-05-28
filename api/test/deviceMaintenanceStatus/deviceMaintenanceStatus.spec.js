@@ -210,9 +210,8 @@ describe('Maintenance Reports', () => {
 
   describe('device/maintenance-over-time', () => {
     const evaluateCorrectDailyStatus = async offset => {
-      const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
-        offset
-      )
+      const maintenanceStatusOverTime =
+        await getMaintenanceStatusOverTimeResponse(offset)
       assert.equal(maintenanceStatusOverTime.status, 200)
       assert.typeOf(maintenanceStatusOverTime.body, 'Object')
       assert.property(maintenanceStatusOverTime.body, 'data')
@@ -286,11 +285,8 @@ describe('Maintenance Reports', () => {
       )
       const minDate = subMonths(new Date(), 12)
       const maxDate = new Date()
-      const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
-        'Z',
-        minDate,
-        maxDate
-      )
+      const maintenanceStatusOverTime =
+        await getMaintenanceStatusOverTimeResponse('Z', minDate, maxDate)
       const minDateString = returnIso8601StringWithoutTimeZoneOffset(minDate)
       const maxDateString = returnIso8601StringWithoutTimeZoneOffset(maxDate)
       const deviceActivityPercentData = await getDeviceActivityPercentReport(
@@ -300,19 +296,19 @@ describe('Maintenance Reports', () => {
           maxDateString,
         }
       )
-      const convergingMaintenanceStatusOverTime = maintenanceStatusOverTime.body.data.filter(
-        device =>
+      const convergingMaintenanceStatusOverTime =
+        maintenanceStatusOverTime.body.data.filter(device =>
           deviceActivityPercentData.data
             .map(activityPercent => activityPercent.id)
             .includes(device.id)
-      )
+        )
       expect(convergingMaintenanceStatusOverTime).to.have.lengthOf.above(0)
-      const convergingDeviceActivityPercentData = deviceActivityPercentData.data.filter(
-        deviceActivityPercentData =>
+      const convergingDeviceActivityPercentData =
+        deviceActivityPercentData.data.filter(deviceActivityPercentData =>
           convergingMaintenanceStatusOverTime
             .map(device => device.id)
             .includes(deviceActivityPercentData.id)
-      )
+        )
       expect(convergingDeviceActivityPercentData).to.have.lengthOf(
         convergingMaintenanceStatusOverTime.length
       )
@@ -322,24 +318,27 @@ describe('Maintenance Reports', () => {
             /^\d{4}-\d{2}$/.test(deviceActivityPercentKey)
           )
           .forEach(deviceActivityPercentMonth => {
-            const maintenanceStatusOverTimeDevice = convergingMaintenanceStatusOverTime.find(
-              device => device.id === deviceActivityPercent.id
-            )
-            const maintenanceStatusHistoryForMonth = maintenanceStatusOverTimeDevice.maintenanceStatusHistory.filter(
-              day =>
-                !day.isWeekend &&
-                day.day.substring(0, deviceActivityPercentMonth.length) ===
-                  deviceActivityPercentMonth
-            )
-            const activeMaintenanceStatusHistoryForMonth = maintenanceStatusHistoryForMonth.filter(
-              msh =>
-                !msh.isWeekend &&
-                ((msh.totalResults > 0 && msh.maintenanceStatusExternalId) ||
-                  (activeDeviceMaintenanceStatusExternalIds.includes(
-                    msh.maintenanceStatusExternalId
-                  ) &&
-                    msh.maintenanceStatusExternalId !== 'active'))
-            )
+            const maintenanceStatusOverTimeDevice =
+              convergingMaintenanceStatusOverTime.find(
+                device => device.id === deviceActivityPercent.id
+              )
+            const maintenanceStatusHistoryForMonth =
+              maintenanceStatusOverTimeDevice.maintenanceStatusHistory.filter(
+                day =>
+                  !day.isWeekend &&
+                  day.day.substring(0, deviceActivityPercentMonth.length) ===
+                    deviceActivityPercentMonth
+              )
+            const activeMaintenanceStatusHistoryForMonth =
+              maintenanceStatusHistoryForMonth.filter(
+                msh =>
+                  !msh.isWeekend &&
+                  ((msh.totalResults > 0 && msh.maintenanceStatusExternalId) ||
+                    (activeDeviceMaintenanceStatusExternalIds.includes(
+                      msh.maintenanceStatusExternalId
+                    ) &&
+                      msh.maintenanceStatusExternalId !== 'active'))
+              )
             if (deviceActivityPercent[deviceActivityPercentMonth] === '0.00%') {
               expect(activeMaintenanceStatusHistoryForMonth).to.have.lengthOf(0)
             } else {

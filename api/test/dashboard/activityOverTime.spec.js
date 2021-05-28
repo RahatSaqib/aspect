@@ -75,9 +75,8 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       updatedBy: userId,
     }
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const {
-      DiagnosticDevice: resultSourceDiagnosticId,
-    } = await allResultSourceToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } =
+      await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
     const {
       Detected: resultCategoryDetectedId,
