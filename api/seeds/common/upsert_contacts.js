@@ -230,15 +230,16 @@ module.exports = async (knex, partnerData, contacts) => {
               jobId,
               siteId: siteIds[site.shortName],
             }))
-          await knex('JobContext').insert(
-            expectedJobContexts.filter(
-              expectedJobContext =>
-                !_.some(
-                  existingJobContexts,
-                  jobContext => jobContext.siteId === expectedJobContext.siteId
-                )
-            )
+          const jobContextItem = expectedJobContexts.filter(
+            expectedJobContext =>
+              !_.some(
+                existingJobContexts,
+                jobContext => jobContext.siteId === expectedJobContext.siteId
+              )
           )
+          if (!_.isEmpty(jobContextItem)) {
+            await knex('JobContext').insert(jobContextItem)
+          }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
               !_.some(expectedJobContexts, {
@@ -313,16 +314,17 @@ module.exports = async (knex, partnerData, contacts) => {
               },
             ]
           })
-          await knex('JobContext').insert(
-            expectedJobContexts.filter(
-              expectedJobContext =>
-                !_.some(
-                  existingJobContexts,
-                  jobContext =>
-                    jobContext.geographyId === expectedJobContext.geographyId
-                )
-            )
+          const jobContextItem = expectedJobContexts.filter(
+            expectedJobContext =>
+              !_.some(
+                existingJobContexts,
+                jobContext =>
+                  jobContext.geographyId === expectedJobContext.geographyId
+              )
           )
+          if (!_.isEmpty(jobContextItem)) {
+            await knex('JobContext').insert(jobContextItem)
+          }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
               !_.some(expectedJobContexts, {
