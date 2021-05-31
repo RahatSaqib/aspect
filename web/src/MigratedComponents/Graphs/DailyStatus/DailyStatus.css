@@ -36,6 +36,10 @@
   position: relative;
 }
 
+.clinic__day--disabled {
+  cursor: default;
+}
+
 .clinic__day--null {
   background-color: transparent;
 }

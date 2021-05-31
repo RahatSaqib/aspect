@@ -10,19 +10,21 @@ import { getDayTitle } from '../Helpers'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
-const DayBlock = ({ consts, dayModifier, onClick }) => {
+const DayBlock = ({ consts, dayModifier, enabled, onClick }) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
   return (
     <div
-      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
+      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`, {
+        'clinic__day--disabled': !enabled,
+      })}
       style={{
         width: `${blockWidth}px`,
         height: `${blockHeight}px`,
         margin: `0 ${marginWidth / 2}px`,
       }}
-      onClick={onClick}
+      onClick={enabled ? onClick : noop}
       role="presentation"
     />
   )
@@ -34,6 +36,7 @@ DayBlock.propTypes = {
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
   onClick: PropTypes.func.isRequired,
+  enabled: PropTypes.bool.isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -50,6 +53,7 @@ const DailyStatusClinicDay = ({
   const isActive =
     maintenanceStatusI18nKey === 'active' ||
     maintenanceStatusI18nKey === 'reportedActive'
+  const isEditable = maintenanceStatusExternalId !== 'active'
   const { formatMessage } = useIntl()
   const { weekend } = consts
   const { checked } =
@@ -66,7 +70,7 @@ const DailyStatusClinicDay = ({
       : maintenanceStatusI18nKey
   }
 
-  const title = getDayTitle({
+  let title = getDayTitle({
     checked,
     daysInSameStatus,
     formatMessage,
@@ -77,6 +81,10 @@ const DailyStatusClinicDay = ({
     maintenanceStatusI18nKey,
   })
 
+  if (!isEditable) {
+    title = `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}`
+  }
+
   return (
     <AspectTooltip
       title={title}
@@ -86,7 +94,8 @@ const DailyStatusClinicDay = ({
       <DayBlock
         consts={consts}
         dayModifier={dayModifier}
-        onClick={maintenanceStatusExternalId !== 'active' ? onClickDay : noop}
+        enabled={isEditable}
+        onClick={onClickDay}
       />
     </AspectTooltip>
   )
