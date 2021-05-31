@@ -65,6 +65,7 @@ const DailyStatus = () => {
     const {
       deviceName,
       periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
+      note,
     } = getDeviceDayDetails({ day, deviceId })
     setDialogState({
       isOpen: true,
@@ -75,6 +76,7 @@ const DailyStatus = () => {
         endedOn,
         deviceId,
         maintenanceStatusExternalId,
+        note,
       },
     })
   }
