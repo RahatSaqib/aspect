@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import isEqual from 'lodash/isEqual'
 import reduce from 'lodash/reduce'
 
 import { pickItems, pickKeys } from '../Formik/Helpers/index'
@@ -36,7 +37,12 @@ const getState = formConfig => {
   }
 }
 export const useFormConfig = formConfig => {
-  const [meta] = useState(getState(formConfig))
+  const currentState = getState(formConfig)
+  const [meta, setMeta] = useState(currentState)
+
+  if (!isEqual(meta.initialValues, currentState.initialValues)) {
+    setMeta(currentState)
+  }
 
   const registerVisibleFields = useCallback((values, formik) => {
     const { items = [] } = meta
