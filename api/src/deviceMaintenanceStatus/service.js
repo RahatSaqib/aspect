@@ -73,9 +73,7 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'dms.name as maintenanceStatusName',
         'dms.externalId as maintenanceStatusExternalId',
         'dms.active as maintenanceStatusIsActive',
-        knex.raw(
-          "dmsl.data->>'$.notes' AS maintenanceStatusNotes"
-        ),
+        knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes")
       )
   )
 }
