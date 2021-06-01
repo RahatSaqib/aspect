@@ -35,6 +35,7 @@ const {
   partnerTypeToId,
 } = require('../src/shared/dictionary')
 const getConsumables = require('./fixtures/Consumable')
+const logger = require('../src/shared/logger')
 
 /**
  *
@@ -425,6 +426,8 @@ async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
   )
   if (!_.isEmpty(JobFunctionReport)) {
     await knex('JobFunctionReport').insert(JobFunctionReport)
+  } else {
+    logger.error('Attempt to insert empty data to table JobFunctionReport')
   }
 }
 
@@ -456,6 +459,8 @@ async function upsertJobFunctionPermission(
   )
   if (!_.isEmpty(JobFunctionPermission)) {
     await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  } else {
+    logger.error('Attempt to insert empty data to table JobFunctionPermission')
   }
 }
 

@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const logger = require('../../src/shared/logger')
 const { getPartnerByName } = require('../utils')
 const config = require('../../src/config')
 
@@ -239,6 +240,8 @@ module.exports = async (knex, partnerData, contacts) => {
           )
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
+          } else {
+            logger.error('Attempt to insert empty data to table JobContext')
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
@@ -324,6 +327,8 @@ module.exports = async (knex, partnerData, contacts) => {
           )
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
+          } else {
+            logger.error('Attempt to insert empty data to table JobContext')
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
