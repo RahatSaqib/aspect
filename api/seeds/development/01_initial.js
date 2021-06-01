@@ -4102,18 +4102,19 @@ async function seed(knex) {
     _.map(
       [
         'Admin',
-        'Admin1',
+        'Admin_US',
         'Admin2',
         'Admin3',
         'Admin4',
         'Admin5',
         'Admin6',
         'Admin7',
+        'Clinician_US',
+        'Technician_US',
         'Bill',
         'Bob',
         'Frank',
         'Ed',
-        'Fred',
         'Jason',
         'Jim',
         'Jon',
@@ -4172,6 +4173,7 @@ async function seed(knex) {
           lastCountryId,
           timezone,
           culture,
+          canLogIn: true,
           geographyId: _.sample(geographiesId),
           ...auditFields,
         })
@@ -5529,6 +5531,9 @@ async function seed(knex) {
   const [jobFunctionIdClinician] = await knex('JobFunction')
     .where({ partnerId: partnerOneId, externalId: 'clinician' })
     .pluck('id')
+  const [jobFunctionIdTechnician] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'Technician' })
+    .pluck('id')
   const [jobFunctionIdPartnerTwo] = await knex('JobFunction')
     .where({ partnerId: partnerTwoId, externalId: 'labManager' })
     .pluck('id')
@@ -5536,10 +5541,6 @@ async function seed(knex) {
   const [jobIdAdmin] = await knex('Job').insert([
     {
       personId: personIds.admin,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin1,
       jobFunctionId: jobFunctionIdAdmin,
     },
     {
@@ -5574,12 +5575,13 @@ async function seed(knex) {
     jobFunctionId: jobFunctionIdAdmin,
   })
 
+  const [jobIdDemoAdmin] = await knex('Job').insert({
+    personId: personIds.admin_us,
+    jobFunctionId: jobFunctionIdAdmin,
+  })
+
   const [jobIdBob] = await knex('Job').insert({
     personId: personIds.bob,
-    jobFunctionId: jobFunctionIdManager,
-  })
-  const [jobIdFrank] = await knex('Job').insert({
-    personId: personIds.frank,
     jobFunctionId: jobFunctionIdManager,
   })
 
@@ -5595,6 +5597,14 @@ async function seed(knex) {
     personId: personIds.ned,
     jobFunctionId: jobFunctionIdClinician,
   })
+  const [jobIdClinicianUS] = await knex('Job').insert({
+    personId: personIds.clinician_us,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+  const [jobIdTechnicianUs] = await knex('Job').insert({
+    personId: personIds.technician_us,
+    jobFunctionId: jobFunctionIdTechnician,
+  })
   const [jobIdJon] = await knex('Job').insert({
     personId: personIds.jon,
     jobFunctionId: jobFunctionIdClinician,
@@ -5603,14 +5613,21 @@ async function seed(knex) {
     personId: personIds.steve,
     jobFunctionId: jobFunctionIdClinician,
   })
-  const [jobIdFred] = await knex('Job').insert({
-    personId: personIds.fred,
-    jobFunctionId: jobFunctionIdClinician,
-  })
 
+  const sitesWithResults = await knex('Result as r')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('c.abbreviation', 'US')
+    .distinct('d.geographyId', 'd.siteId')
+    .orderBy('r.endedOn', 'desc')
+    .limit(3)
+
+  const siteSample = _.sample(sitesWithResults)
   // Constrain jobs by context
   await knex('JobContext').insert([
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
+    { jobId: jobIdDemoAdmin, geographyId: countries.US.geographyId },
     { jobId: jobIdJason, geographyId: countries.US.geographyId },
     { jobId: jobIdSam, geographyId: countries.NG.geographyId },
     { jobId: jobIdEd, geographyId: countries.US.geographyId },
@@ -5618,21 +5635,20 @@ async function seed(knex) {
     { jobId: jobIdJon, geographyId: countries.US.geographyId },
     { jobId: jobIdSteve, geographyId: countries.US.geographyId },
     { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
-    { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
+    {
+      jobId: jobIdClinicianUS,
+      geographyId: siteSample.geographyId,
+      siteId: siteSample.siteId,
+    },
+    {
+      jobId: jobIdTechnicianUs,
+      geographyId: countries.US.states.MA.geographyId,
+    },
     {
       jobId: jobIdNed,
       geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
     },
-    {
-      jobId: jobIdFred,
-      geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
-    },
-    {
-      jobId: jobIdFred,
-      geographyId: countries.US.states.MA.lgas.Suffolk.geographyId,
-    },
   ])
-
   // Fill device flags with random data
   // TODO: Remove when we implemented the jobs that calculate these flags
   const devices = await knex('Device').select('id')
