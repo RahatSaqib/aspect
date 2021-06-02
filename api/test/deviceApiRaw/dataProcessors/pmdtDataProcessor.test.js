@@ -5,6 +5,7 @@ const {
 } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt/mappings')
 const {
   getResultDataMapper,
+  testTypes,
 } = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
 
 const mapResultData = getResultDataMapper(resultDataMappings)
@@ -221,8 +222,9 @@ describe('Philippines PMDT Data Processor', () => {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
+        testType: testTypes.DST,
       }
-      const actualResult = mapResultData(payload, 'dst')
+      const actualResult = mapResultData(payload)
       expect(resultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -432,8 +434,9 @@ describe('Philippines PMDT Data Processor', () => {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
+        testType: testTypes.DST,
       }
-      const actualResult = mapResultData(payload, 'dst')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -652,8 +655,9 @@ describe('Philippines PMDT Data Processor', () => {
         smearResult2: '2+',
         laboratoryTechnician:
           'Kevin Joshua A. Alonzo, RMT      License #: 0072790',
+        testType: testTypes.SMEAR,
       }
-      const actualResult = mapResultData(payload, 'smear')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -849,8 +853,9 @@ describe('Philippines PMDT Data Processor', () => {
         dateReleased: '2021-05-25T00:00:00.000Z',
         processingDate: '2021-05-24T00:00:00.000Z',
         gxTestRequested: 'Xpert MTB/Rif',
+        testType: testTypes.GENEXPERT,
       }
-      const actualResult = mapResultData(payload, 'genexpert')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -1054,8 +1059,9 @@ describe('Philippines PMDT Data Processor', () => {
         lpaTestRequested: 'Second Line',
         lpaTestRequestedOther: null,
         ethionamideProthionamide: null,
+        testType: testTypes.LPA,
       }
-      const actualResult = mapResultData(payload, 'lpa')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
   })
@@ -1259,8 +1265,9 @@ describe('Philippines PMDT Data Processor', () => {
       notedBy: null,
       verifiedBy: null,
       tbLampResult: 'POSITIVE',
+      testType: testTypes.TBLAMP,
     }
-    const actualResult = mapResultData(payload, 'tblamp')
+    const actualResult = mapResultData(payload)
     expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
   })
 })

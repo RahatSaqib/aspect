@@ -5,6 +5,7 @@ const {
 } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm/mappings')
 const {
   getResultDataMapper,
+  testTypes,
 } = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
 
 const mapResultData = getResultDataMapper(resultDataMappings)
@@ -157,8 +158,9 @@ describe('Philippines RITM Data Processor', () => {
         pyrazinamide: 'NOT TESTED',
         streptomycin: 'SUSCEPTIBLE',
         testRequested: 'Drug Susceptibility Test',
+        testType: testTypes.DST,
       }
-      const actualResult = mapResultData(payload, 'dst')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -306,8 +308,9 @@ describe('Philippines RITM Data Processor', () => {
         smearDateCollected3: null,
         laboratoryTechnician:
           'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
+        testType: testTypes.SMEAR,
       }
-      const actualResult = mapResultData(payload, 'smear')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -425,8 +428,9 @@ describe('Philippines RITM Data Processor', () => {
         labManager: 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         rifampicin: null,
         dateReleased: '2021-05-27T00:00:00.000Z',
+        testType: testTypes.GENEXPERT,
       }
-      const actualResult = mapResultData(payload, 'genexpert')
+      const actualResult = mapResultData(payload)
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 

@@ -25,7 +25,7 @@ const {
   resultDataMappings,
 } = require('./mappings')
 const { getResultDateOrDefault } = require('../common/utils')
-const { getResultDataMapper } = require('../common/mapping')
+const { getResultDataMapper, testTypes } = require('../common/mapping')
 
 const mapResultData = getResultDataMapper(resultDataMappings)
 
@@ -240,8 +240,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           updatedBy: null,
         }
 
-        const dstResultData = mapResultData(payload)
-        if (dstResultData) {
+        const mappedResultData = mapResultData(payload)
+
+        if (mappedResultData.testType === testTypes.DST) {
           const dstResultOverwritePriority = [
             resultCategories.PositiveMTB,
             resultCategories.PositiveMOTT,
@@ -258,7 +259,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const assayGenericDstId = await assayToId('assayGenericDst')
           const externalId = `${site.externalId}_${samples[0].externalId}_DST`
           const resultSignOff = this.getResultSignOff('DST', payload)
-          const performedOn = getResultDateOrDefault(patientData, dstResultData)
+          const performedOn = getResultDateOrDefault(
+            patientData,
+            mappedResultData
+          )
           const result = (await knex('Result')
             .where({ externalId, deviceId })
             .orWhere(queryBuilder => {
@@ -271,17 +275,17 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             ...baseNewResult,
             externalId,
             assayId:
-              (dstResultData.methodUsed || '').indexOf('MGIT') > -1
+              (mappedResultData.methodUsed || '').indexOf('MGIT') > -1
                 ? assayBdMgitAstId
                 : assayGenericDstId,
             sampleId: samples[0].id,
             startedOn: performedOn,
             endedOn: performedOn,
             resultData: JSON.stringify({
-              encodedResult: dstResultData,
+              encodedResult: mappedResultData,
               resultSignOff,
             }),
-            senderOperator: dstResultData.labTech,
+            senderOperator: mappedResultData.labTech,
             reportableSiteId,
           }
           const resultData = JSON.parse(result.resultData)
@@ -303,23 +307,23 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
                 resultCategories.Missing,
               'Incomplete: Not submitted 2 samples w/in 3 days':
                 resultCategories.Missing,
-            }[dstResultData.idResult] || resultCategories.Missing
+            }[mappedResultData.idResult] || resultCategories.Missing
           const dstResultCategory2IdMappings = {
             RESISTANT: resultCategories.Resistant,
             SUSCEPTIBLE: resultCategories.Susceptible,
             'NOT TESTED': resultCategories.Missing,
           }
           const dstResultsForDrugsTested = [
-            dstResultData.streptomycin,
-            dstResultData.isoniazid,
-            dstResultData.rifampicin,
-            dstResultData.ethambutol,
-            dstResultData.pyrazinamide,
-            dstResultData.kanamycin,
-            dstResultData.levofloxacin,
-            dstResultData.amikacin,
-            dstResultData.capreomycin,
-            dstResultData.ofloxacin,
+            mappedResultData.streptomycin,
+            mappedResultData.isoniazid,
+            mappedResultData.rifampicin,
+            mappedResultData.ethambutol,
+            mappedResultData.pyrazinamide,
+            mappedResultData.kanamycin,
+            mappedResultData.levofloxacin,
+            mappedResultData.amikacin,
+            mappedResultData.capreomycin,
+            mappedResultData.ofloxacin,
           ]
           let resultCategory2Id = resultCategories.Missing
           if (
@@ -362,12 +366,12 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             result,
             dstResultCategory1Id,
             resultCategory2Id,
-            dstResultData,
+            mappedResultData,
             resultSignOff,
             performedOn,
             performedOn,
-            dstResultData.readBy,
-            dstResultData.remarks,
+            mappedResultData.readBy,
+            mappedResultData.remarks,
             patientData,
             utcNow,
             resultCategories,
@@ -376,19 +380,18 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        const cultureResultData = mapResultData(payload)
-        if (cultureResultData) {
+        if (mappedResultData.testType === testTypes.CULTURE) {
           // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
           const cultureSamples = []
-          if (cultureResultData.result1) {
+          if (mappedResultData.result1) {
             cultureSamples.push(samples[0])
           }
-          if (cultureResultData.result2 && samples.length > 1) {
+          if (mappedResultData.result2 && samples.length > 1) {
             cultureSamples.push(samples[1])
           }
-          if (cultureResultData.result3 && samples.length > 2) {
+          if (mappedResultData.result3 && samples.length > 2) {
             cultureSamples.push(samples[2])
           }
           const resultCategoryMappings = {
@@ -415,7 +418,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const resultSignOff = this.getResultSignOff('Culture', payload)
           const performedOn = getResultDateOrDefault(
             patientData,
-            cultureResultData
+            mappedResultData
           )
           await Promise.each(cultureSamples, async (cultureSample, index) => {
             const externalId = `${site.externalId}_${cultureSample.externalId}_CULTURE`
@@ -431,7 +434,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               ...baseNewResult,
               externalId,
               assayId:
-                (cultureResultData.methodUsed1 || '').indexOf('MGIT') > -1
+                (mappedResultData.methodUsed1 || '').indexOf('MGIT') > -1
                   ? assayBdMgitGndId
                   : assayGenericCultureId,
               sampleId: cultureSample.id,
@@ -439,10 +442,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               startedOn: performedOn,
               endedOn: performedOn,
               resultData: JSON.stringify({
-                encodedResult: cultureResultData,
+                encodedResult: mappedResultData,
                 resultSignOff,
               }),
-              senderOperator: cultureResultData.medTech,
+              senderOperator: mappedResultData.medTech,
             }
             const resultData = JSON.parse(result.resultData)
             if (resultData.testStartDateTime) {
@@ -454,10 +457,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               result.endedOn = parseDateOrDefault(resultData.testEndedDateTime)
             }
             const resultCategory1Id =
-              resultCategoryMappings[cultureResultData[`result${index + 1}`]] ||
+              resultCategoryMappings[mappedResultData[`result${index + 1}`]] ||
               resultCategories.Missing
             const resultCategory2Id =
-              resultCategoryMappings[cultureResultData.finalResult] ||
+              resultCategoryMappings[mappedResultData.finalResult] ||
               resultCategories.Missing
             await this.upsertResult(
               knex,
@@ -466,12 +469,12 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               result,
               resultCategory1Id,
               resultCategory2Id,
-              cultureResultData,
+              mappedResultData,
               resultSignOff,
               performedOn,
               performedOn,
-              cultureResultData.labTech,
-              cultureResultData.remarks,
+              mappedResultData.labTech,
+              mappedResultData.remarks,
               patientData,
               utcNow,
               resultCategories,
@@ -481,21 +484,20 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        const smearResultData = mapResultData(payload)
-        if (smearResultData) {
+        if (mappedResultData.testType === testTypes.SMEAR) {
           const performedOn = getResultDateOrDefault(
             patientData,
-            smearResultData
+            mappedResultData
           )
           const assaySmearId = await assayToId('assaySmear')
           const smearSamples = []
-          if (smearResultData.smearResult1) {
+          if (mappedResultData.smearResult1) {
             smearSamples.push(samples[0])
           }
-          if (smearResultData.smearResult2 && samples.length > 1) {
+          if (mappedResultData.smearResult2 && samples.length > 1) {
             smearSamples.push(samples[1])
           }
-          if (smearResultData.smearResult3 && samples.length > 2) {
+          if (mappedResultData.smearResult3 && samples.length > 2) {
             smearSamples.push(samples[2])
           }
           const resultCategoryMappings = {
@@ -568,15 +570,17 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               startedOn: performedOn,
               endedOn: performedOn,
               resultData: JSON.stringify({
-                encodedResult: smearResultData,
+                encodedResult: mappedResultData,
                 resultSignOff,
               }),
-              senderOperator: smearResultData.laboratoryTechnician,
+              senderOperator: mappedResultData.laboratoryTechnician,
             }
             const resultCategory1Id =
-              resultCategoryMappings[smearResultData[`smearResult${index + 1}`]]
+              resultCategoryMappings[
+                mappedResultData[`smearResult${index + 1}`]
+              ]
             const resultCategory2Id =
-              resultCategoryMappings[smearResultData.finalResult]
+              resultCategoryMappings[mappedResultData.finalResult]
             await this.upsertResult(
               knex,
               rawMessage,
@@ -584,11 +588,11 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               result,
               resultCategory1Id,
               resultCategory2Id,
-              smearResultData,
+              mappedResultData,
               resultSignOff,
               performedOn,
               performedOn,
-              smearResultData.laboratoryTechnician,
+              mappedResultData.laboratoryTechnician,
               null,
               patientData,
               utcNow,
@@ -599,13 +603,12 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        const geneXpertResultData = mapResultData(payload)
-        if (geneXpertResultData) {
+        if (mappedResultData.testType === testTypes.GENEXPERT) {
           const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
           const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
           const performedOn = getResultDateOrDefault(
             patientData,
-            geneXpertResultData
+            mappedResultData
           )
           const externalId = `${site.externalId}_${samples[0].externalId}_GX`
           const resultSignOff = this.getResultSignOff('GeneXpert', payload)
@@ -629,10 +632,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             startedOn: performedOn,
             endedOn: performedOn,
             resultData: JSON.stringify({
-              encodedResult: geneXpertResultData,
+              encodedResult: mappedResultData,
               resultSignOff,
             }),
-            senderOperator: geneXpertResultData.examiner,
+            senderOperator: mappedResultData.examiner,
           }
           const resultData = JSON.parse(result.resultData)
           if (resultData.testStartedOn) {
@@ -645,7 +648,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             DETECTED: resultCategories.Detected,
             'NOT DETECTED': resultCategories.NotDetected,
             'NOT DETECTED/ NOT DETECTED': resultCategories.NotDetected,
-          }[geneXpertResultData.mtb]
+          }[mappedResultData.mtb]
           const resultCategory2Id =
             resultCategory1Id === resultCategories.NotDetected
               ? resultCategories.NotDetected
@@ -656,7 +659,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
                   'N/A': resultCategories.Missing,
                   INDETERMINATE: resultCategories.Indeterminate,
                   'N/A / N/A': resultCategories.Missing,
-                }[geneXpertResultData.rifampicin]
+                }[mappedResultData.rifampicin]
           const resultOverwritePriority = [
             resultCategories.Detected,
             resultCategories.NotDetected,
@@ -673,12 +676,12 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             result,
             resultCategory1Id,
             resultCategory2Id,
-            geneXpertResultData,
+            mappedResultData,
             resultSignOff,
             performedOn,
             performedOn,
-            geneXpertResultData.examiner,
-            geneXpertResultData.remarks,
+            mappedResultData.examiner,
+            mappedResultData.remarks,
             patientData,
             utcNow,
             resultCategories,
@@ -687,8 +690,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        const tbLampResultData = mapResultData(payload)
-        if (tbLampResultData) {
+        if (mappedResultData.testType === testTypes.TBLAMP) {
           const assayTbLampId = await assayToId('assayTbLamp')
           const resultCategoryMappings = {
             POSITIVE: resultCategories.Positive,
@@ -699,7 +701,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const externalId = `${site.externalId}_${samples[0].externalId}_TB_LAMP`
           const performedOn = getResultDateOrDefault(
             patientData,
-            smearResultData
+            mappedResultData
           )
           const result = (await knex('Result')
             .where({ externalId, deviceId })
@@ -718,13 +720,13 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             startedOn: performedOn,
             endedOn: performedOn,
             resultData: JSON.stringify({
-              encodedResult: tbLampResultData,
+              encodedResult: mappedResultData,
               resultSignOff,
             }),
-            senderOperator: geneXpertResultData.examiner,
+            senderOperator: mappedResultData.examiner,
           }
           const resultCategory1Id =
-            resultCategoryMappings[tbLampResultData.tbLampResult]
+            resultCategoryMappings[mappedResultData.tbLampResult]
           const resultOverwritePriority = [
             resultCategories.Positive,
             resultCategories.Negative,
@@ -741,11 +743,11 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             result,
             resultCategory1Id,
             null,
-            tbLampResultData,
+            mappedResultData,
             resultSignOff,
             performedOn,
             performedOn,
-            tbLampResultData.notedBy,
+            mappedResultData.notedBy,
             null,
             patientData,
             utcNow,

@@ -122,20 +122,20 @@ const resultDataMappings = {
         notedBy: payload['DST Noted by'],
       }
     },
-    validate: (resultData, payload) =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'streptomycin',
-          'isoniazid',
-          'rifampicin',
-          'ethambutol',
-          'pyrazinamide',
-          'kanamycin',
-          'levofloxacin',
-          'amikacin',
-          'capreomycin',
-          'ofloxacin',
-          'dateReleased',
+        pick(payload, [
+          'Streptomycin',
+          'Isoniazid',
+          'Rifampicin',
+          'Ethambutol',
+          'Pyrazinamide',
+          'Kanamycin',
+          'Levofloxacin',
+          'Amikacin',
+          'Capreomycin',
+          'Ofloxacin',
+          'Date and Time of Release of DST Result',
         ])
       ) || payload['DST Final Result'],
   },
@@ -155,14 +155,14 @@ const resultDataMappings = {
         notedBy: payload['TBC Noted by'],
       }
     },
-    validate: resultData =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'result1',
-          'result2',
-          'result3',
-          'finalResult',
-          'dateReleased',
+        pick(payload, [
+          'TBC Test Result 1st Sample',
+          'TBC Test Result 2nd Sample',
+          'TBC Test Result 3rd Sample',
+          'TBC FINAL RESULT',
+          'Date and Time of Release of TBC Result',
         ])
       ),
   },
@@ -186,14 +186,14 @@ const resultDataMappings = {
         notedBy: payload['Noted by'],
       }
     },
-    validate: resultData =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'smearResult1',
-          'smearResult2',
-          'smearResult3',
-          'finalResult',
-          'dateReleased',
+        pick(payload, [
+          'Smear Result 1',
+          'Smear Result 2',
+          'Smear Result 3',
+          'FINAL RESULT',
+          'Date and Time of Release of AFB Result',
         ])
       ),
   },
@@ -211,8 +211,14 @@ const resultDataMappings = {
         notedBy: payload['GX Noted by'],
       }
     },
-    validate: resultData =>
-      objectHasValues(pick(resultData, ['mtb', 'rifampicin', 'dateReleased'])),
+    validate: payload =>
+      objectHasValues(
+        pick(payload, [
+          'MTB',
+          'Rifampicin:',
+          'Date and Time of Release of Gx Result',
+        ])
+      ),
   },
   tblamp: {
     map: payload => {
@@ -220,7 +226,7 @@ const resultDataMappings = {
         tbLampResult: payload['TB LAMP Result'],
       }
     },
-    validate: resultData => objectHasValues(pick(resultData, ['tbLampResult'])),
+    validate: payload => objectHasValues(pick(payload, ['TB LAMP Result'])),
   },
 }
 

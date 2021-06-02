@@ -114,20 +114,20 @@ const resultDataMappings = {
         notedBy: payload['DST Noted By'],
       }
     },
-    validate: (resultData, payload) =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'streptomycin',
-          'isoniazid',
-          'rifampicin',
-          'ethambutol',
-          'pyrazinamide',
-          'kanamycin',
-          'levofloxacin',
-          'amikacin',
-          'capreomycin',
-          'dstTat',
-          'dateReleased',
+        pick(payload, [
+          'Streptomycin',
+          'Isoniazid',
+          'Rifampicin',
+          'Ethambutol',
+          'Pyrazinamide',
+          'Kanamycin',
+          'Levofloxacin',
+          'Amikacin',
+          'Capreomycin',
+          'DST TAT',
+          'DST Date Released',
         ])
       ) || payload['DST ID Result'],
   },
@@ -151,15 +151,15 @@ const resultDataMappings = {
         notedBy: payload['Culture Noted By'],
       }
     },
-    validate: resultData =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'result1',
-          'grade1',
-          'result2',
-          'grade2',
-          'finalResult',
-          'dateReleased',
+        pick(payload, [
+          'Culture Result 1',
+          'Culture Grade 1',
+          'Culture Result 2',
+          'Culture Grade 2',
+          'Culture Final Result',
+          'Culture Date Released',
         ])
       ),
   },
@@ -185,16 +185,16 @@ const resultDataMappings = {
         notedBy: payload['LPA Noted By'],
       }
     },
-    validate: resultData =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'mtbComplex',
-          'rifampicin',
-          'isoniazid',
-          'ethambutol',
-          'fluoroquinolones',
-          'aminoglycoside',
-          'dateReleased',
+        pick(payload, [
+          'LPA MTB Complex',
+          'LPA Rifampicin Result',
+          'LPA Isoniazid Result',
+          'LPA Ethambutol',
+          'LPA Fluoroquinolones',
+          'LPA Aminoglycosides/ SLI',
+          'LPA Date of Release',
         ])
       ),
   },
@@ -212,13 +212,13 @@ const resultDataMappings = {
         verifiedBy: payload['Smear Verified By'],
       }
     },
-    validate: resultData =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'smearResult1',
-          'smearResult2',
-          'finalResult',
-          'dateReleased',
+        pick(payload, [
+          'Smear Result 1',
+          'Smear Result 2',
+          'Smear Final Result',
+          'Smear Date Released',
         ])
       ),
   },
@@ -237,13 +237,13 @@ const resultDataMappings = {
         notedBy: payload['Gx Noted By'],
       }
     },
-    validate: resultData =>
+    validate: payload =>
       objectHasValues(
-        pick(resultData, [
-          'processingDate',
-          'mtb',
-          'rifampicin',
-          'dateReleased',
+        pick(payload, [
+          'Gx Processing Date',
+          'Gx MTB',
+          'Gx Rifampicin',
+          'Gx Date Released',
         ])
       ),
   },
@@ -255,7 +255,7 @@ const resultDataMappings = {
         notedBy: payload['TB LAMP Noted By'],
       }
     },
-    validate: resultData => objectHasValues(pick(resultData, ['tbLampResult'])),
+    validate: payload => objectHasValues(pick(payload, ['TB LAMP Result'])),
   },
 }
 

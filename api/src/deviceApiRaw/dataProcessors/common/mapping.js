@@ -1,3 +1,12 @@
+const testTypes = {
+  GENEXPERT: 'genexpert',
+  TBLAMP: 'tblamp',
+  SMEAR: 'smear',
+  CULTURE: 'culture',
+  DST: 'dst',
+  LPA: 'lpa',
+}
+
 /**
  * Builds and returns a function that let you map a payload to the corresponding resultData object.
  * IMPORTANT! When calling the builded function, you must specify the payload and the testType (one of 'dst', 'culture', 'smear', 'genexpert', 'tblamp', 'lpa').
@@ -6,15 +15,27 @@
  * @returns The function for mapping payloads to resultData
  */
 const getResultDataMapper = mappingConfiguration => {
-  return (payload, testType) => {
-    testType = testType.toLowerCase()
+  const testTypesValues = [
+    testTypes.DST,
+    testTypes.GENEXPERT,
+    testTypes.TBLAMP,
+    testTypes.SMEAR,
+    testTypes.CULTURE,
+    testTypes.LPA,
+  ]
+
+  return payload => {
     let result = false
 
-    const config = mappingConfiguration[testType]
-    if (config) {
-      const { map, validate } = config
-      const resultData = map(payload)
-      if (validate(resultData, payload)) result = resultData
+    let i = 0
+    while (!result && i < testTypesValues.length) {
+      const config = mappingConfiguration[testTypesValues[i]]
+      if (config) {
+        const { map, validate } = config
+        if (validate(payload))
+          result = { ...map(payload), testType: testTypesValues[i] }
+      }
+      i += 1
     }
 
     return result
@@ -23,4 +44,5 @@ const getResultDataMapper = mappingConfiguration => {
 
 module.exports = {
   getResultDataMapper,
+  testTypes,
 }
