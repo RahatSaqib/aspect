@@ -441,5 +441,15 @@ describe('Philippines RITM Data Processor', () => {
     it.skip('lpa - assayTbLamp', async () => {
       // I DIDN'T FIND ANY EXISTING RESULTS
     })
+
+    it('unknown', async () => {
+      const payload = {
+        database: 'RITM_2021',
+        table: 'RITM Database',
+      }
+      const expectedResultData = false
+      const actualResult = mapResultData(payload)
+      expect(expectedResultData).equal(actualResult)
+    })
   })
 })

@@ -84,7 +84,7 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
 
 const resultDataMappings = {
   dst: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         testRequested: payload['DST Test Requested'],
         dateInoculated: payload['DST Date Inoculated'],
@@ -114,7 +114,7 @@ const resultDataMappings = {
         notedBy: payload['DST Noted By'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'Streptomycin',
@@ -132,7 +132,7 @@ const resultDataMappings = {
       ) || payload['DST ID Result'],
   },
   culture: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         dateInoculated: payload['Culture Date Inoculated'],
         medTech: payload['Culture Med Tech'],
@@ -151,7 +151,7 @@ const resultDataMappings = {
         notedBy: payload['Culture Noted By'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'Culture Result 1',
@@ -164,7 +164,7 @@ const resultDataMappings = {
       ),
   },
   lpa: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         center: payload['LPA Center'],
         lpaKit: payload['LPA Kit Used'],
@@ -185,7 +185,7 @@ const resultDataMappings = {
         notedBy: payload['LPA Noted By'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'LPA MTB Complex',
@@ -199,7 +199,7 @@ const resultDataMappings = {
       ),
   },
   smear: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         smearMethod: payload['Smear Method'],
         smearResult1: payload['Smear Result 1'],
@@ -212,7 +212,7 @@ const resultDataMappings = {
         verifiedBy: payload['Smear Verified By'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'Smear Result 1',
@@ -223,7 +223,7 @@ const resultDataMappings = {
       ),
   },
   genexpert: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         center: payload['Gx Center'],
         processingDate: payload['Gx Processing Date'],
@@ -237,7 +237,7 @@ const resultDataMappings = {
         notedBy: payload['Gx Noted By'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'Gx Processing Date',
@@ -248,14 +248,15 @@ const resultDataMappings = {
       ),
   },
   tblamp: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         tbLampResult: payload['TB LAMP Result'],
         verifiedBy: payload['TB LAMP Verified By'],
         notedBy: payload['TB LAMP Noted By'],
       }
     },
-    validate: payload => objectHasValues(pick(payload, ['TB LAMP Result'])),
+    isPayloadValid: payload =>
+      objectHasValues(pick(payload, ['TB LAMP Result'])),
   },
 }
 
