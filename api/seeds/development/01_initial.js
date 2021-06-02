@@ -4133,7 +4133,9 @@ async function seed(knex) {
             // Set pw to something that doesn't look like a bcrypt hash
             // so that Gx API is used to verify pw and set on aspect
             password:
-              name === 'Bill'
+              name.indexOf('_US') > 0
+                ? bcrypt.hashSync(name.toLowerCase(), saltRounds)
+                : name === 'Bill'
                 ? 'SOMESTRING'
                 : bcrypt.hashSync('test07', saltRounds),
             legacyPassword: name === 'Bill' ? 1 : 0,
