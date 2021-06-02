@@ -152,6 +152,24 @@ const resultDataMappings = {
       }
     },
     isPayloadValid: payload =>
+      // Should not be DST, as there is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
+      !(
+        objectHasValues(
+          pick(payload, [
+            'Streptomycin',
+            'Isoniazid',
+            'Rifampicin',
+            'Ethambutol',
+            'Pyrazinamide',
+            'Kanamycin',
+            'Levofloxacin',
+            'Amikacin',
+            'Capreomycin',
+            'DST TAT',
+            'DST Date Released',
+          ])
+        ) || payload['DST ID Result']
+      ) &&
       objectHasValues(
         pick(payload, [
           'Culture Result 1',

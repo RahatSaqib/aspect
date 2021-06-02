@@ -98,7 +98,7 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
 
 const resultDataMappings = {
   dst: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         testRequested: payload['DST Laboratory Test Performed'],
         idResult: payload['DST Final Result'] || payload['TBC FINAL RESULT'],
@@ -122,7 +122,7 @@ const resultDataMappings = {
         notedBy: payload['DST Noted by'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'Streptomycin',
@@ -140,7 +140,7 @@ const resultDataMappings = {
       ) || payload['DST Final Result'],
   },
   culture: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         medTech: payload['TBC Performed by'],
         methodUsed1: payload['TBC Laboratory Test Performed'],
@@ -155,7 +155,7 @@ const resultDataMappings = {
         notedBy: payload['TBC Noted by'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'TBC Test Result 1st Sample',
@@ -167,7 +167,7 @@ const resultDataMappings = {
       ),
   },
   smear: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         smearMethod:
           payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
@@ -186,7 +186,7 @@ const resultDataMappings = {
         notedBy: payload['Noted by'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'Smear Result 1',
@@ -198,7 +198,7 @@ const resultDataMappings = {
       ),
   },
   genexpert: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         center: payload['GX Laboratory Test Performed'],
         mtb: payload.MTB,
@@ -211,7 +211,7 @@ const resultDataMappings = {
         notedBy: payload['GX Noted by'],
       }
     },
-    validate: payload =>
+    isPayloadValid: payload =>
       objectHasValues(
         pick(payload, [
           'MTB',
@@ -221,12 +221,13 @@ const resultDataMappings = {
       ),
   },
   tblamp: {
-    map: payload => {
+    mapResultData: payload => {
       return {
         tbLampResult: payload['TB LAMP Result'],
       }
     },
-    validate: payload => objectHasValues(pick(payload, ['TB LAMP Result'])),
+    isPayloadValid: payload =>
+      objectHasValues(pick(payload, ['TB LAMP Result'])),
   },
 }
 

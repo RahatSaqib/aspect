@@ -139,6 +139,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             originSite = await knex('Site').where('id', originSiteId).first()
           }
         }
+
         const labRequestIdPrefix =
           payload.database === 'PMDT' ||
           payload.table === 'RECORDS_WITH_SIGN_OFFS_PMDT'
