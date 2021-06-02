@@ -1,11 +1,13 @@
 const deepEqualInAnyOrder = require('deep-equal-in-any-order')
 const chai = require('chai')
 const {
-  mapDstResultData,
-  mapGeneXpertResultData,
-  mapSmearResultData,
-  mapLpaResultData,
+  resultDataMappings,
 } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt/mappings')
+const {
+  getResultDataMapper,
+} = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
+
+const mapResultData = getResultDataMapper(resultDataMappings)
 
 const { expect } = chai
 
@@ -220,7 +222,7 @@ describe('Philippines PMDT Data Processor', () => {
         otherMethodUsed: null,
         dateTransferredToDst: null,
       }
-      const actualResult = mapDstResultData(payload)
+      const actualResult = mapResultData(payload, 'dst')
       expect(resultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -431,7 +433,7 @@ describe('Philippines PMDT Data Processor', () => {
         otherMethodUsed: null,
         dateTransferredToDst: null,
       }
-      const actualResult = mapDstResultData(payload)
+      const actualResult = mapResultData(payload, 'dst')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -651,7 +653,7 @@ describe('Philippines PMDT Data Processor', () => {
         laboratoryTechnician:
           'Kevin Joshua A. Alonzo, RMT      License #: 0072790',
       }
-      const actualResult = mapSmearResultData(payload)
+      const actualResult = mapResultData(payload, 'smear')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -848,7 +850,7 @@ describe('Philippines PMDT Data Processor', () => {
         processingDate: '2021-05-24T00:00:00.000Z',
         gxTestRequested: 'Xpert MTB/Rif',
       }
-      const actualResult = mapGeneXpertResultData(payload)
+      const actualResult = mapResultData(payload, 'genexpert')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -1053,8 +1055,212 @@ describe('Philippines PMDT Data Processor', () => {
         lpaTestRequestedOther: null,
         ethionamideProthionamide: null,
       }
-      const actualResult = mapLpaResultData(payload)
+      const actualResult = mapResultData(payload, 'lpa')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
+  })
+
+  it('tb lamp - assayTbLamp', async () => {
+    const payload = {
+      database: 'RecordSignOffDatabase',
+      table: 'RECORDS_WITH_SIGN_OFFS_PMDT_2021',
+      TimeStamp: '50084',
+      Age: 37,
+      Sex: 'Female',
+      City: null,
+      Site: 'Pulmonary',
+      'Gx MTB': null,
+      'Gx TAT': null,
+      Address: 'Cebu City',
+      'DST TAT': null,
+      'LPA TAT': null,
+      Amikacin: null,
+      Enrolled: null,
+      'LPA Male': false,
+      'Lab No 1': 'N-21-1549',
+      Province: null,
+      'Volume 1': '8ML',
+      'Volume 2': '8ML',
+      'Volume 3': null,
+      'Gx Center': null,
+      Isoniazid: null,
+      Kanamycin: null,
+      'Last Name': 'MORGAN',
+      Ofloxacin: null,
+      'Smear TAT': null,
+      'DST Center': 'NTRL',
+      'Encoded By': 'John Roland C. Dueñas',
+      Ethambutol: null,
+      'First Name': 'Daisy',
+      'Gx Remarks': null,
+      'LPA Center': null,
+      Rifampicin: null,
+      Capreomycin: null,
+      'Culture TAT': null,
+      'DST MT Read': null,
+      'DST Remarks': null,
+      'Gx Examiner': null,
+      'Gx Noted By': null,
+      'LPA Remarks': null,
+      'Month of tx': null,
+      'Prepared by': null,
+      'DST Lab Tech': null,
+      'DST Noted By': null,
+      'Date Encoded': '2021-03-04T00:00:00.000Z',
+      'LPA Examiner': null,
+      'LPA Kit Used': null,
+      'LPA Noted By': null,
+      'LPA Remarks:': null,
+      Levofloxacin: null,
+      Moxifloxacin: null,
+      Pyrazinamide: null,
+      'Smear Method': 'FM',
+      Streptomycin: null,
+      Ciprofloxacin: null,
+      'Consistence 3': null,
+      'Consistency 1': 'MP',
+      'Consistency 2': 'MP',
+      'DST Date Read': null,
+      'DST ID Result': null,
+      'Date Dispatch': null,
+      'Date Received': '2021-03-04T00:00:00.000Z',
+      'Gx Rifampicin': null,
+      'LPA Isoniazid': null,
+      'Serial Number': '1732',
+      'Culture Center': 'NTRL',
+      'Culture Method': 'Liquid Culture(MGIT)',
+      'DST Encoded by': null,
+      'LPA Ethambutol': null,
+      'LPA Kit Others': null,
+      'LPA Rifampicin': null,
+      'Middle Initial': 'D.',
+      SSMA_TimeStamp: { type: 'Buffer', data: [0, 0, 0, 0, 0, 2, 167, 181] },
+      'Smear Lab Tech': 'Glenn Hector S. Talaoc, RMT',
+      'Smear Method 2': null,
+      'Smear Noted By': 'Ramon P. Basilio, MD',
+      'Smear Result 1': '3+',
+      'Smear Result 2': '3+',
+      'TB Case Number': null,
+      'TB LAMP Result': 'POSITIVE',
+      'Culture Grade 1': null,
+      'Culture Grade 2': null,
+      'DST Method Used': null,
+      'LPA Lab Manager': 'Noel G. Macalalad, MD',
+      'LPA MTB Complex': null,
+      'LPA Reviewed By': null,
+      'Culture Lab Tech': null,
+      'Culture Med Tech': null,
+      'Culture Method 2': null,
+      'Culture Noted By': null,
+      'Culture Result 1': null,
+      'Culture Result 2': null,
+      'Date Collected 1': '2021-03-02T00:00:00.000Z',
+      'Date Collected 2': '2021-03-02T00:00:00.000Z',
+      'Date Collected 3': null,
+      'Gx Date Released': null,
+      'LPA Performed By': null,
+      'Smear Encoded by': 'Glenn Hector S. Talaoc, RMT',
+      'TB LAMP Noted By': null,
+      'Type of Specimen': 'Sputum',
+      'Culture Remarks 1': null,
+      'Culture Remarks 2': null,
+      'DST Date Released': null,
+      'DST MT Inoculated': null,
+      'Gx Test Requested': null,
+      'LPA Date Released': null,
+      'Repeat Collection': null,
+      'Smear Verified By': 'Roeus Vincent Arjay G. Reyes, RMT',
+      'Specimen Accepted': null,
+      'Test Requested Gx': false,
+      'Culture DST Status': null,
+      'Culture Encoded by': null,
+      'DST Test Requested': null,
+      'Gx Processing Date': null,
+      'LPA Date Processed': null,
+      'LPA Test Requested': null,
+      'MRF Date Requested': '2021-03-02T00:00:00.000Z',
+      'Registration Group': 'New',
+      'Smear Final Result': 'POSITIVE',
+      'Test Requested DST': false,
+      'Test Requested LPA': false,
+      'Treatment Category': 'New',
+      'Treatment Schedule': 'BAS',
+      '(If Others) Specify': null,
+      'Culture Lab Manager': 'Cristina C. Villarico, RMT',
+      'DST Date Inoculated': null,
+      'LPA Date of Release': null,
+      'Smear Date Released': '2021-03-09T00:00:00.000Z',
+      'TAT Culture Remarks': null,
+      'TB LAMP Verified By': null,
+      'Culture Final Result': null,
+      'DST Workbook Remarks': null,
+      'LPA Fluoroquinolones': null,
+      'LPA Isoniazid Result': null,
+      'LPA Mycobacterium Tb': null,
+      'Presumptive DS or DR': 'Presumptive DR-TB',
+      'Requesting Physician': 'Dr. Melchor',
+      'Test Requested Smear': true,
+      'Type of Collection 1': null,
+      'Type of Collection 2': null,
+      'Type of Collection 3': null,
+      'Cat IV Screening Code': null,
+      'Culture Date Released': null,
+      'Culture Result Status': null,
+      'Gx Laboratory Manager': 'Noel G. Macalalad, MD',
+      'LPA Rifampicin Result': null,
+      'DST Method Used Others': null,
+      'Date transfered to DST': null,
+      'Patient Contact Number': null,
+      'Test Requested Culture': true,
+      'Test Requested TB LAMP': null,
+      'Culture Date Inoculated': null,
+      'Facility Contact Number': null,
+      'Reason for Recollection': null,
+      'LPA Aminoglycosides/ SLI': null,
+      'Specimen Rejected Reason': null,
+      'LPA Test Requested Others': null,
+      'Paragioniamiasis Result 1': null,
+      'Paragioniamiasis Result 2': null,
+      'Referring Health Facility': 'Vicente Sotto Memorial Medical Center',
+      'Smear Only Test Requested': 'DSSM Only',
+      'DST Releasing Form MedTech': null,
+      'Laboratory Registry Remarks': null,
+      'Smear Only Test Requested 2': 'DSSM Only',
+      'LPA Ethionamide/Prothionamide': null,
+      'Test Requested Paragonimiasis': null,
+      'DST Releasing Form Lab Manager': 'Cristina C. Villarico, RMT',
+      'DST Releasing Form Released Date': null,
+      'Laboratory Releasing Form Remarks': null,
+      'DSSM&Culture Releasing Form Med Tech': null,
+      'Gx Laboratory Releasing Form Remarks': null,
+      'Laboratory Releasing Form Gx Remarks': null,
+      'DST Laboratory Releasing Form Remarks': null,
+      'Laboratory Releasing Form Smear Remarks': null,
+      'DSSM&Culture Releasing Form Date Released': null,
+      'DSSM&Culture Releasing Form Laboratory Manager':
+        'Cristina C. Villarico, RMT',
+      GeneXpertSignedOffBy1: null,
+      GeneXpertSignedOffBy2: null,
+      GeneXpertSignedOffBy3: null,
+      SmearSignedOffBy1: null,
+      SmearSignedOffBy2: null,
+      SmearSignedOffBy3: 'ltreyes',
+      CultureSignedOffBy1: null,
+      CultureSignedOffBy2: null,
+      CultureSignedOffBy3: null,
+      DSTSignedOffBy1: null,
+      DSTSignedOffBy2: null,
+      DSTSignedOffBy3: null,
+      LPASignedOffBy1: null,
+      LPASignedOffBy2: null,
+      LPASignedOffBy3: null,
+    }
+    const expectedResultData = {
+      notedBy: null,
+      verifiedBy: null,
+      tbLampResult: 'POSITIVE',
+    }
+    const actualResult = mapResultData(payload, 'tblamp')
+    expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
   })
 })

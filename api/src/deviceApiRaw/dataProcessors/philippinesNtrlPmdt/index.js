@@ -20,18 +20,15 @@ const {
 const facilityMappings = require('./facilityMappings')
 const expectedKeys = require('./expectedKeys')
 const dateKeys = require('./dateKeys')
-const { getResultDateOrDefault } = require('../common')
+const { getResultDateOrDefault } = require('../common/utils')
 const {
   mapPatientData,
-  mapDstResultData,
-  mapCultureResultData,
-  mapLpaResultData,
-  mapSmearResultData,
-  mapGeneXpertResultData,
-  mapTbLampResultData,
   sampleTypeMapping,
+  resultDataMappings,
 } = require('./mappings')
+const { getResultDataMapper } = require('../common/mapping')
 
+const mapResultData = getResultDataMapper(resultDataMappings)
 class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
   constructor(request, messageContext) {
     super(request, messageContext)
@@ -234,29 +231,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           updatedBy: null,
         }
 
-        const objectHasValues = o =>
-          Object.values(o).some(
-            value => !_.isNil(value) && `${value}`.trim() !== ''
-          )
-        const dstResultData = mapDstResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(dstResultData, [
-              'streptomycin',
-              'isoniazid',
-              'rifampicin',
-              'ethambutol',
-              'pyrazinamide',
-              'kanamycin',
-              'levofloxacin',
-              'amikacin',
-              'capreomycin',
-              'dstTat',
-              'dateReleased',
-            ])
-          ) ||
-          payload['DST ID Result']
-        ) {
+        const dstResultData = mapResultData(payload, 'dst')
+        if (dstResultData) {
           // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
           const assayBdMgitAstId = await assayToId('assayBdMgitAst')
           const assayGenericDstId = await assayToId('assayGenericDst')
@@ -400,19 +376,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
 
-        const cultureResultData = mapCultureResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(cultureResultData, [
-              'result1',
-              'grade1',
-              'result2',
-              'grade2',
-              'finalResult',
-              'dateReleased',
-            ])
-          )
-        ) {
+        const cultureResultData = mapResultData(payload, 'culture')
+        if (cultureResultData) {
           // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
@@ -516,20 +481,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           })
         }
 
-        const lpaResultData = mapLpaResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(lpaResultData, [
-              'mtbComplex',
-              'rifampicin',
-              'isoniazid',
-              'ethambutol',
-              'fluoroquinolones',
-              'aminoglycoside',
-              'dateReleased',
-            ])
-          )
-        ) {
+        const lpaResultData = mapResultData(payload, 'lpa')
+        if (lpaResultData) {
           const assayLpaId = await assayToId('assayLPA')
           const externalId = `${site.externalId}_${samples[0].externalId}_LPA`
           const resultSignOff = this.getResultSignOff('LPA', payload)
@@ -636,17 +589,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
 
-        const smearResultData = mapSmearResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(smearResultData, [
-              'smearResult1',
-              'smearResult2',
-              'finalResult',
-              'dateReleased',
-            ])
-          )
-        ) {
+        const smearResultData = mapResultData(payload, 'smear')
+        if (smearResultData) {
           const assaySmearId = await assayToId('assaySmear')
           const smearSamples = []
           if (smearResultData.smearResult1) {
@@ -761,17 +705,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           })
         }
 
-        const geneXpertResultData = mapGeneXpertResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(geneXpertResultData, [
-              'processingDate',
-              'mtb',
-              'rifampicin',
-              'dateReleased',
-            ])
-          )
-        ) {
+        const geneXpertResultData = mapResultData(payload, 'genexpert')
+        if (geneXpertResultData) {
           const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
           const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
           const performedOn = getResultDateOrDefault(
@@ -851,8 +786,8 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
 
-        const tbLampResultData = mapTbLampResultData(payload)
-        if (objectHasValues(_.pick(tbLampResultData, ['tbLampResult']))) {
+        const tbLampResultData = mapResultData(payload, 'tblamp')
+        if (tbLampResultData) {
           const assayTbLampId = await assayToId('assayTbLamp')
           const resultCategoryMappings = {
             POSITIVE: resultCategories.Positive,

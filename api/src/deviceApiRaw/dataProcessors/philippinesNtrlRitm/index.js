@@ -22,13 +22,12 @@ const dateKeys = require('./dateKeys')
 const {
   sampleTypeMapping,
   mapPatientData,
-  mapDstResultData,
-  mapCultureResultData,
-  mapSmearResultData,
-  mapGeneXpertResultData,
-  mapTbLampResultData,
+  resultDataMappings,
 } = require('./mappings')
-const { getResultDateOrDefault } = require('../common')
+const { getResultDateOrDefault } = require('../common/utils')
+const { getResultDataMapper } = require('../common/mapping')
+
+const mapResultData = getResultDataMapper(resultDataMappings)
 
 class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
   constructor(request, messageContext) {
@@ -241,41 +240,19 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           updatedBy: null,
         }
 
-        const objectHasValues = o =>
-          Object.values(o).some(
-            value => !_.isNil(value) && `${value}`.trim() !== ''
-          )
-
-        const dstResultData = mapDstResultData(payload)
-        const dstResultOverwritePriority = [
-          resultCategories.PositiveMTB,
-          resultCategories.PositiveMOTT,
-          resultCategories.Detected,
-          resultCategories.Resistant,
-          resultCategories.Susceptible,
-          resultCategories.Contaminated,
-          resultCategories.Invalid,
-          resultCategories.NotDetected,
-          resultCategories.Missing,
-        ]
-        if (
-          objectHasValues(
-            _.pick(dstResultData, [
-              'streptomycin',
-              'isoniazid',
-              'rifampicin',
-              'ethambutol',
-              'pyrazinamide',
-              'kanamycin',
-              'levofloxacin',
-              'amikacin',
-              'capreomycin',
-              'ofloxacin',
-              'dateReleased',
-            ])
-          ) ||
-          payload['DST Final Result']
-        ) {
+        const dstResultData = mapResultData(payload)
+        if (dstResultData) {
+          const dstResultOverwritePriority = [
+            resultCategories.PositiveMTB,
+            resultCategories.PositiveMOTT,
+            resultCategories.Detected,
+            resultCategories.Resistant,
+            resultCategories.Susceptible,
+            resultCategories.Contaminated,
+            resultCategories.Invalid,
+            resultCategories.NotDetected,
+            resultCategories.Missing,
+          ]
           // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
           const assayBdMgitAstId = await assayToId('assayBdMgitAst')
           const assayGenericDstId = await assayToId('assayGenericDst')
@@ -399,18 +376,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        const cultureResultData = mapCultureResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(cultureResultData, [
-              'result1',
-              'result2',
-              'result3',
-              'finalResult',
-              'dateReleased',
-            ])
-          )
-        ) {
+        const cultureResultData = mapResultData(payload)
+        if (cultureResultData) {
           // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
@@ -514,18 +481,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        const smearResultData = mapSmearResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(smearResultData, [
-              'smearResult1',
-              'smearResult2',
-              'smearResult3',
-              'finalResult',
-              'dateReleased',
-            ])
-          )
-        ) {
+        const smearResultData = mapResultData(payload)
+        if (smearResultData) {
           const performedOn = getResultDateOrDefault(
             patientData,
             smearResultData
@@ -642,12 +599,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        const geneXpertResultData = mapGeneXpertResultData(payload)
-        if (
-          objectHasValues(
-            _.pick(geneXpertResultData, ['mtb', 'rifampicin', 'dateReleased'])
-          )
-        ) {
+        const geneXpertResultData = mapResultData(payload)
+        if (geneXpertResultData) {
           const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
           const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
           const performedOn = getResultDateOrDefault(
@@ -734,8 +687,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        const tbLampResultData = mapTbLampResultData(payload)
-        if (objectHasValues(_.pick(tbLampResultData, ['tbLampResult']))) {
+        const tbLampResultData = mapResultData(payload)
+        if (tbLampResultData) {
           const assayTbLampId = await assayToId('assayTbLamp')
           const resultCategoryMappings = {
             POSITIVE: resultCategories.Positive,

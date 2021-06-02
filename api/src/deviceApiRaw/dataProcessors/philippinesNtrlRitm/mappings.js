@@ -1,3 +1,5 @@
+const pick = require('lodash/pick')
+const { objectHasValues } = require('../common/utils')
 const { convertStringToFloat } = require('../../../shared/string')
 
 const sampleTypeMapping = {
@@ -94,93 +96,136 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
   }
 }
 
-const mapDstResultData = payload => {
-  return {
-    testRequested: payload['DST Laboratory Test Performed'],
-    idResult: payload['DST Final Result'] || payload['TBC FINAL RESULT'],
-    streptomycin: payload.Streptomycin,
-    isoniazid: payload.Isoniazid,
-    rifampicin: payload.Rifampicin,
-    ethambutol: payload.Ethambutol,
-    pyrazinamide: payload.Pyrazinamide,
-    kanamycin: payload.Kanamycin,
-    levofloxacin: payload.Levofloxacin,
-    amikacin: payload.Amikacin,
-    capreomycin: payload.Capreomycin,
-    ofloxacin: payload.Ofloxacin,
-    moxifloxacin: payload.Moxifloxacin,
-    methodUsed: payload['DST Laboratory Test Performed'],
-    remarks: payload['DST Comments'],
-    dateReleased: payload['Date and Time of Release of DST Result'],
-    labTech: payload['DST Performed by'],
-    encodedBy: payload['DST Encoded by'],
-    reviewedBy: payload['DST Validated by'],
-    notedBy: payload['DST Noted by'],
-  }
-}
-
-const mapCultureResultData = payload => {
-  return {
-    medTech: payload['TBC Performed by'],
-    methodUsed1: payload['TBC Laboratory Test Performed'],
-    result1: payload['TBC Test Result 1st Sample'],
-    result2: payload['TBC Test Result 2nd Sample'],
-    result3: payload['TBC Test Result 3rd Sample'],
-    finalResult: payload['TBC FINAL RESULT'],
-    remarks: payload['TBC Comments'],
-    dateReleased: payload['Date and Time of Release of TBC Result'],
-    encodedBy: payload['TBC Encoded by'],
-    validatedBy: payload['TBC Validated by'],
-    notedBy: payload['TBC Noted by'],
-  }
-}
-
-const mapSmearResultData = payload => {
-  return {
-    smearMethod:
-      payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
-    smearDateCollected1: payload['Smear Result 1 Date Collected'],
-    smearResult1: payload['Smear Result 1'],
-    smearDateCollected2: payload['Smear Result 2 Date Collected'],
-    smearResult2: payload['Smear Result 2'],
-    smearDateCollected3: payload['Smear Result 3 Date Collected'],
-    smearResult3: payload['Smear Result 3'],
-    finalResult: payload['FINAL RESULT'],
-    dateReleased: payload['Date and Time of Release of AFB Result'],
-    comments: payload.Comments,
-    encodedBy: payload['Smear Encoded by'],
-    laboratoryTechnician: payload['Performed by'],
-    validatedBy: payload['Validated by'],
-    notedBy: payload['Noted by'],
-  }
-}
-
-const mapGeneXpertResultData = payload => {
-  return {
-    center: payload['GX Laboratory Test Performed'],
-    mtb: payload.MTB,
-    rifampicin: payload['Rifampicin:'],
-    remarks: payload['GX Comments'],
-    dateReleased: payload['Date and Time of Release of Gx Result'],
-    encodedBy: payload['GX Encoded by'],
-    examiner: payload['GX Performed by'],
-    labManager: payload['GX Validated by'],
-    notedBy: payload['GX Noted by'],
-  }
-}
-
-const mapTbLampResultData = payload => {
-  return {
-    tbLampResult: payload['TB LAMP Result'],
-  }
+const resultDataMappings = {
+  dst: {
+    map: payload => {
+      return {
+        testRequested: payload['DST Laboratory Test Performed'],
+        idResult: payload['DST Final Result'] || payload['TBC FINAL RESULT'],
+        streptomycin: payload.Streptomycin,
+        isoniazid: payload.Isoniazid,
+        rifampicin: payload.Rifampicin,
+        ethambutol: payload.Ethambutol,
+        pyrazinamide: payload.Pyrazinamide,
+        kanamycin: payload.Kanamycin,
+        levofloxacin: payload.Levofloxacin,
+        amikacin: payload.Amikacin,
+        capreomycin: payload.Capreomycin,
+        ofloxacin: payload.Ofloxacin,
+        moxifloxacin: payload.Moxifloxacin,
+        methodUsed: payload['DST Laboratory Test Performed'],
+        remarks: payload['DST Comments'],
+        dateReleased: payload['Date and Time of Release of DST Result'],
+        labTech: payload['DST Performed by'],
+        encodedBy: payload['DST Encoded by'],
+        reviewedBy: payload['DST Validated by'],
+        notedBy: payload['DST Noted by'],
+      }
+    },
+    validate: (resultData, payload) =>
+      objectHasValues(
+        pick(resultData, [
+          'streptomycin',
+          'isoniazid',
+          'rifampicin',
+          'ethambutol',
+          'pyrazinamide',
+          'kanamycin',
+          'levofloxacin',
+          'amikacin',
+          'capreomycin',
+          'ofloxacin',
+          'dateReleased',
+        ])
+      ) || payload['DST Final Result'],
+  },
+  culture: {
+    map: payload => {
+      return {
+        medTech: payload['TBC Performed by'],
+        methodUsed1: payload['TBC Laboratory Test Performed'],
+        result1: payload['TBC Test Result 1st Sample'],
+        result2: payload['TBC Test Result 2nd Sample'],
+        result3: payload['TBC Test Result 3rd Sample'],
+        finalResult: payload['TBC FINAL RESULT'],
+        remarks: payload['TBC Comments'],
+        dateReleased: payload['Date and Time of Release of TBC Result'],
+        encodedBy: payload['TBC Encoded by'],
+        validatedBy: payload['TBC Validated by'],
+        notedBy: payload['TBC Noted by'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(
+        pick(resultData, [
+          'result1',
+          'result2',
+          'result3',
+          'finalResult',
+          'dateReleased',
+        ])
+      ),
+  },
+  smear: {
+    map: payload => {
+      return {
+        smearMethod:
+          payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
+        smearDateCollected1: payload['Smear Result 1 Date Collected'],
+        smearResult1: payload['Smear Result 1'],
+        smearDateCollected2: payload['Smear Result 2 Date Collected'],
+        smearResult2: payload['Smear Result 2'],
+        smearDateCollected3: payload['Smear Result 3 Date Collected'],
+        smearResult3: payload['Smear Result 3'],
+        finalResult: payload['FINAL RESULT'],
+        dateReleased: payload['Date and Time of Release of AFB Result'],
+        comments: payload.Comments,
+        encodedBy: payload['Smear Encoded by'],
+        laboratoryTechnician: payload['Performed by'],
+        validatedBy: payload['Validated by'],
+        notedBy: payload['Noted by'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(
+        pick(resultData, [
+          'smearResult1',
+          'smearResult2',
+          'smearResult3',
+          'finalResult',
+          'dateReleased',
+        ])
+      ),
+  },
+  genexpert: {
+    map: payload => {
+      return {
+        center: payload['GX Laboratory Test Performed'],
+        mtb: payload.MTB,
+        rifampicin: payload['Rifampicin:'],
+        remarks: payload['GX Comments'],
+        dateReleased: payload['Date and Time of Release of Gx Result'],
+        encodedBy: payload['GX Encoded by'],
+        examiner: payload['GX Performed by'],
+        labManager: payload['GX Validated by'],
+        notedBy: payload['GX Noted by'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(pick(resultData, ['mtb', 'rifampicin', 'dateReleased'])),
+  },
+  tblamp: {
+    map: payload => {
+      return {
+        tbLampResult: payload['TB LAMP Result'],
+      }
+    },
+    validate: resultData => objectHasValues(pick(resultData, ['tbLampResult'])),
+  },
 }
 
 module.exports = {
   sampleTypeMapping,
   mapPatientData,
-  mapDstResultData,
-  mapCultureResultData,
-  mapSmearResultData,
-  mapGeneXpertResultData,
-  mapTbLampResultData,
+  resultDataMappings,
 }

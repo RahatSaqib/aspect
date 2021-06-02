@@ -1,10 +1,13 @@
 const deepEqualInAnyOrder = require('deep-equal-in-any-order')
 const chai = require('chai')
 const {
-  mapDstResultData,
-  mapGeneXpertResultData,
-  mapSmearResultData,
+  resultDataMappings,
 } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm/mappings')
+const {
+  getResultDataMapper,
+} = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
+
+const mapResultData = getResultDataMapper(resultDataMappings)
 
 const { expect } = chai
 
@@ -155,7 +158,7 @@ describe('Philippines RITM Data Processor', () => {
         streptomycin: 'SUSCEPTIBLE',
         testRequested: 'Drug Susceptibility Test',
       }
-      const actualResult = mapDstResultData(payload)
+      const actualResult = mapResultData(payload, 'dst')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -304,7 +307,7 @@ describe('Philippines RITM Data Processor', () => {
         laboratoryTechnician:
           'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
       }
-      const actualResult = mapSmearResultData(payload)
+      const actualResult = mapResultData(payload, 'smear')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 
@@ -423,7 +426,7 @@ describe('Philippines RITM Data Processor', () => {
         rifampicin: null,
         dateReleased: '2021-05-27T00:00:00.000Z',
       }
-      const actualResult = mapGeneXpertResultData(payload)
+      const actualResult = mapResultData(payload, 'genexpert')
       expect(expectedResultData).to.deep.equalInAnyOrder(actualResult)
     })
 

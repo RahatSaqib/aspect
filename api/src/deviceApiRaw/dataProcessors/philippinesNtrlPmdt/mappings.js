@@ -1,3 +1,6 @@
+const pick = require('lodash/pick')
+const { objectHasValues } = require('../common/utils')
+
 const sampleTypeMapping = {
   Sputum: 'Sputum',
   Isolates: 'Isolate',
@@ -79,123 +82,185 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
   }
 }
 
-const mapDstResultData = payload => {
-  return {
-    testRequested: payload['DST Test Requested'],
-    dateInoculated: payload['DST Date Inoculated'],
-    inoculatedBy: payload['DST MT Inoculated'],
-    idResult: payload['DST ID Result'] || payload['Culture Final Result'], // There is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
-    streptomycin: payload.Streptomycin,
-    isoniazid: payload.Isoniazid,
-    rifampicin: payload.Rifampicin,
-    ethambutol: payload.Ethambutol,
-    pyrazinamide: payload.Pyrazinamide,
-    kanamycin: payload.Kanamycin,
-    levofloxacin: payload.Levofloxacin,
-    amikacin: payload.Amikacin,
-    capreomycin: payload.Capreomycin,
-    moxifloxacin: payload.Moxifloxacin,
-    methodUsed: payload['DST Method Used'],
-    otherMethodUsed: payload['DST Method Used Others'],
-    remarks: payload['DST Remarks'],
-    dateTransferredToDst: payload['Date transfered to DST'],
-    dstTat: payload['DST TAT'],
-    dateRead: payload['DST Date Read'],
-    dateReleased: payload['DST Date Released'],
-    readBy: payload['DST MT Read'],
-    labTech: payload['DST Lab Tech'],
-    encodedBy: payload['DST Encoded by'],
-    reviewedBy: payload['DST Releasing Form Lab Manager'],
-    notedBy: payload['DST Noted By'],
-  }
-}
-
-const mapCultureResultData = payload => {
-  return {
-    dateInoculated: payload['Culture Date Inoculated'],
-    medTech: payload['Culture Med Tech'],
-    resultStatus: payload['Culture Result Status'],
-    dstStatus: payload['Culture DST Status'],
-    methodUsed1: payload['Culture Method'],
-    result1: payload['Culture Result 1'],
-    grade1: payload['Culture Grade 1'],
-    result2: payload['Culture Result 2'],
-    grade2: payload['Culture Grade 2'],
-    finalResult: payload['Culture Final Result'],
-    remarks: payload['Culture Remarks 1'],
-    dateReleased: payload['Culture Date Released'],
-    encodedBy: payload['Culture Encoded by'],
-    labTech: payload['Culture Lab Tech'],
-    notedBy: payload['Culture Noted By'],
-  }
-}
-
-const mapLpaResultData = payload => {
-  return {
-    center: payload['LPA Center'],
-    lpaKit: payload['LPA Kit Used'],
-    lpaKitOther: payload['LPA Kit Others'],
-    lpaTestRequested: payload['LPA Test Requested'],
-    lpaTestRequestedOther: payload['LPA Test Requested Others'],
-    mtbComplex: payload['LPA MTB Complex'],
-    rifampicin: payload['LPA Rifampicin Result'],
-    isoniazid: payload['LPA Isoniazid Result'],
-    ethambutol: payload['LPA Ethambutol'],
-    fluoroquinolones: payload['LPA Fluoroquinolones'],
-    aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
-    ethionamideProthionamide: payload['LPA Ethionamide/Prothionamide'],
-    remarks: payload['LPA Remarks:'],
-    dateReleased: payload['LPA Date of Release'],
-    performedBy: payload['LPA Performed By'],
-    reviewedBy: payload['LPA Reviewed By'],
-    notedBy: payload['LPA Noted By'],
-  }
-}
-
-const mapSmearResultData = payload => {
-  return {
-    smearMethod: payload['Smear Method'],
-    smearResult1: payload['Smear Result 1'],
-    smearResult2: payload['Smear Result 2'],
-    finalResult: payload['Smear Final Result'],
-    dateReleased: payload['Smear Date Released'],
-    encodedBy: payload['Smear Encoded by'],
-    laboratoryTechnician: payload['Smear Lab Tech'],
-    notedBy: payload['Smear Noted By'],
-    verifiedBy: payload['Smear Verified By'],
-  }
-}
-
-const mapGeneXpertResultData = payload => {
-  return {
-    center: payload['Gx Center'],
-    processingDate: payload['Gx Processing Date'],
-    mtb: payload['Gx MTB'],
-    rifampicin: payload['Gx Rifampicin'],
-    remarks: payload['Gx Remarks'],
-    dateReleased: payload['Gx Date Released'],
-    examiner: payload['Gx Examiner'],
-    labManager: payload['Gx Laboratory Manager'],
-    gxTestRequested: payload['Gx Test Requested'],
-    notedBy: payload['Gx Noted By'],
-  }
-}
-
-const mapTbLampResultData = payload => {
-  return {
-    tbLampResult: payload['TB LAMP Result'],
-    verifiedBy: payload['TB LAMP Verified By'],
-    notedBy: payload['TB LAMP Noted By'],
-  }
+const resultDataMappings = {
+  dst: {
+    map: payload => {
+      return {
+        testRequested: payload['DST Test Requested'],
+        dateInoculated: payload['DST Date Inoculated'],
+        inoculatedBy: payload['DST MT Inoculated'],
+        idResult: payload['DST ID Result'] || payload['Culture Final Result'], // There is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
+        streptomycin: payload.Streptomycin,
+        isoniazid: payload.Isoniazid,
+        rifampicin: payload.Rifampicin,
+        ethambutol: payload.Ethambutol,
+        pyrazinamide: payload.Pyrazinamide,
+        kanamycin: payload.Kanamycin,
+        levofloxacin: payload.Levofloxacin,
+        amikacin: payload.Amikacin,
+        capreomycin: payload.Capreomycin,
+        moxifloxacin: payload.Moxifloxacin,
+        methodUsed: payload['DST Method Used'],
+        otherMethodUsed: payload['DST Method Used Others'],
+        remarks: payload['DST Remarks'],
+        dateTransferredToDst: payload['Date transfered to DST'],
+        dstTat: payload['DST TAT'],
+        dateRead: payload['DST Date Read'],
+        dateReleased: payload['DST Date Released'],
+        readBy: payload['DST MT Read'],
+        labTech: payload['DST Lab Tech'],
+        encodedBy: payload['DST Encoded by'],
+        reviewedBy: payload['DST Releasing Form Lab Manager'],
+        notedBy: payload['DST Noted By'],
+      }
+    },
+    validate: (resultData, payload) =>
+      objectHasValues(
+        pick(resultData, [
+          'streptomycin',
+          'isoniazid',
+          'rifampicin',
+          'ethambutol',
+          'pyrazinamide',
+          'kanamycin',
+          'levofloxacin',
+          'amikacin',
+          'capreomycin',
+          'dstTat',
+          'dateReleased',
+        ])
+      ) || payload['DST ID Result'],
+  },
+  culture: {
+    map: payload => {
+      return {
+        dateInoculated: payload['Culture Date Inoculated'],
+        medTech: payload['Culture Med Tech'],
+        resultStatus: payload['Culture Result Status'],
+        dstStatus: payload['Culture DST Status'],
+        methodUsed1: payload['Culture Method'],
+        result1: payload['Culture Result 1'],
+        grade1: payload['Culture Grade 1'],
+        result2: payload['Culture Result 2'],
+        grade2: payload['Culture Grade 2'],
+        finalResult: payload['Culture Final Result'],
+        remarks: payload['Culture Remarks 1'],
+        dateReleased: payload['Culture Date Released'],
+        encodedBy: payload['Culture Encoded by'],
+        labTech: payload['Culture Lab Tech'],
+        notedBy: payload['Culture Noted By'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(
+        pick(resultData, [
+          'result1',
+          'grade1',
+          'result2',
+          'grade2',
+          'finalResult',
+          'dateReleased',
+        ])
+      ),
+  },
+  lpa: {
+    map: payload => {
+      return {
+        center: payload['LPA Center'],
+        lpaKit: payload['LPA Kit Used'],
+        lpaKitOther: payload['LPA Kit Others'],
+        lpaTestRequested: payload['LPA Test Requested'],
+        lpaTestRequestedOther: payload['LPA Test Requested Others'],
+        mtbComplex: payload['LPA MTB Complex'],
+        rifampicin: payload['LPA Rifampicin Result'],
+        isoniazid: payload['LPA Isoniazid Result'],
+        ethambutol: payload['LPA Ethambutol'],
+        fluoroquinolones: payload['LPA Fluoroquinolones'],
+        aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
+        ethionamideProthionamide: payload['LPA Ethionamide/Prothionamide'],
+        remarks: payload['LPA Remarks:'],
+        dateReleased: payload['LPA Date of Release'],
+        performedBy: payload['LPA Performed By'],
+        reviewedBy: payload['LPA Reviewed By'],
+        notedBy: payload['LPA Noted By'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(
+        pick(resultData, [
+          'mtbComplex',
+          'rifampicin',
+          'isoniazid',
+          'ethambutol',
+          'fluoroquinolones',
+          'aminoglycoside',
+          'dateReleased',
+        ])
+      ),
+  },
+  smear: {
+    map: payload => {
+      return {
+        smearMethod: payload['Smear Method'],
+        smearResult1: payload['Smear Result 1'],
+        smearResult2: payload['Smear Result 2'],
+        finalResult: payload['Smear Final Result'],
+        dateReleased: payload['Smear Date Released'],
+        encodedBy: payload['Smear Encoded by'],
+        laboratoryTechnician: payload['Smear Lab Tech'],
+        notedBy: payload['Smear Noted By'],
+        verifiedBy: payload['Smear Verified By'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(
+        pick(resultData, [
+          'smearResult1',
+          'smearResult2',
+          'finalResult',
+          'dateReleased',
+        ])
+      ),
+  },
+  genexpert: {
+    map: payload => {
+      return {
+        center: payload['Gx Center'],
+        processingDate: payload['Gx Processing Date'],
+        mtb: payload['Gx MTB'],
+        rifampicin: payload['Gx Rifampicin'],
+        remarks: payload['Gx Remarks'],
+        dateReleased: payload['Gx Date Released'],
+        examiner: payload['Gx Examiner'],
+        labManager: payload['Gx Laboratory Manager'],
+        gxTestRequested: payload['Gx Test Requested'],
+        notedBy: payload['Gx Noted By'],
+      }
+    },
+    validate: resultData =>
+      objectHasValues(
+        pick(resultData, [
+          'processingDate',
+          'mtb',
+          'rifampicin',
+          'dateReleased',
+        ])
+      ),
+  },
+  tblamp: {
+    map: payload => {
+      return {
+        tbLampResult: payload['TB LAMP Result'],
+        verifiedBy: payload['TB LAMP Verified By'],
+        notedBy: payload['TB LAMP Noted By'],
+      }
+    },
+    validate: resultData => objectHasValues(pick(resultData, ['tbLampResult'])),
+  },
 }
 
 module.exports = {
   sampleTypeMapping,
   mapPatientData,
-  mapDstResultData,
-  mapCultureResultData,
-  mapSmearResultData,
-  mapGeneXpertResultData,
-  mapTbLampResultData,
-  mapLpaResultData,
+  resultDataMappings,
 }
