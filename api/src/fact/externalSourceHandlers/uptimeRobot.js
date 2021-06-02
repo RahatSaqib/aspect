@@ -31,7 +31,6 @@ async function checkUptimeRobot({ messageContext }) {
 
     const aspectDeviceIds = await knex('Device')
       .where('deviceTypeId', aspectDeviceTypeId)
-      .select('id')
       .pluck('id')
 
     if (!_.isEmpty(aspectDeviceIds)) {

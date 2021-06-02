@@ -1047,7 +1047,8 @@ describe('Result routes', () => {
                 resultData: { resultText, typeOfTest: testTypeText },
                 formData: {
                   ...formDataToSend,
-                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  dateAndTimeOfTest:
+                    formDataToSend.dateAndTimeOfTest.toISOString(),
                 },
                 startedOn: dateAndTimeOfTest,
                 endedOn: dateAndTimeOfTest,
@@ -1150,7 +1151,8 @@ describe('Result routes', () => {
                 resultData: { resultText, typeOfTest: testTypeText },
                 formData: {
                   ...formDataToSend,
-                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  dateAndTimeOfTest:
+                    formDataToSend.dateAndTimeOfTest.toISOString(),
                 },
                 startedOn: dateAndTimeOfTest,
                 endedOn: dateAndTimeOfTest,
@@ -1289,7 +1291,8 @@ describe('Result routes', () => {
                   },
                   formData: {
                     ...formDataToSend,
-                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                    dateAndTimeOfTest:
+                      formDataToSend.dateAndTimeOfTest.toISOString(),
                   },
                   startedOn: resultFromInstrument.startedOn,
                   endedOn: resultFromInstrument.endedOn,
@@ -1308,7 +1311,8 @@ describe('Result routes', () => {
                   resultData: { resultText, typeOfTest: testTypeText },
                   formData: {
                     ...formDataToSend,
-                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                    dateAndTimeOfTest:
+                      formDataToSend.dateAndTimeOfTest.toISOString(),
                   },
                   startedOn: dateAndTimeOfTest,
                   endedOn: dateAndTimeOfTest,

@@ -254,38 +254,41 @@ describe('Device API Raw Philippines NTRL', () => {
                 'whereNull',
                 'whereIn',
               ]
-              const whereFunction = whereFunctionName => (...whereParams) => {
-                if (whereParams.length === 1 && _.isFunction(whereParams[0])) {
-                  whereFunctionNames.forEach(whereCallbackFunctionName => {
-                    whereParamsAccumulator[
-                      whereCallbackFunctionName
-                    ] = function (...whereCallbackParams) {
-                      this.push([
-                        whereCallbackFunctionName,
-                        ...whereCallbackParams,
-                      ])
-                      return this
-                    }.bind(whereParamsAccumulator)
-                  })
-                  const whereCallbackFunction = whereParams[0].bind(
-                    whereParamsAccumulator
-                  )
-                  whereCallbackFunction(whereParamsAccumulator)
-                  whereFunctionNames.forEach(whereFunctionName => {
-                    delete whereParamsAccumulator[whereFunctionName]
-                  })
-                } else {
-                  whereParamsAccumulator.push([
-                    whereFunctionName,
-                    ...whereParams,
-                  ])
+              const whereFunction =
+                whereFunctionName =>
+                (...whereParams) => {
+                  if (
+                    whereParams.length === 1 &&
+                    _.isFunction(whereParams[0])
+                  ) {
+                    whereFunctionNames.forEach(whereCallbackFunctionName => {
+                      whereParamsAccumulator[whereCallbackFunctionName] =
+                        function (...whereCallbackParams) {
+                          this.push([
+                            whereCallbackFunctionName,
+                            ...whereCallbackParams,
+                          ])
+                          return this
+                        }.bind(whereParamsAccumulator)
+                    })
+                    const whereCallbackFunction = whereParams[0].bind(
+                      whereParamsAccumulator
+                    )
+                    whereCallbackFunction(whereParamsAccumulator)
+                    whereFunctionNames.forEach(whereFunctionName => {
+                      delete whereParamsAccumulator[whereFunctionName]
+                    })
+                  } else {
+                    whereParamsAccumulator.push([
+                      whereFunctionName,
+                      ...whereParams,
+                    ])
+                  }
+                  return knexQueryBuilder
                 }
-                return knexQueryBuilder
-              }
               whereFunctionNames.forEach(whereFunctionName => {
-                knexQueryBuilder[whereFunctionName] = whereFunction(
-                  whereFunctionName
-                )
+                knexQueryBuilder[whereFunctionName] =
+                  whereFunction(whereFunctionName)
               })
               const join = () => knexQueryBuilder
               knexQueryBuilder.join = join
@@ -4330,14 +4333,13 @@ describe('Device API Raw Philippines NTRL', () => {
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
-        const {
-          PhilippinesNtrlPmdt,
-        } = mockOutPhilippinesNTRLDatabaseProcessors(
-          existingSamplesInDatabase,
-          existingResultRecordsInDatabase,
-          updateSpy,
-          insertSpy
-        )
+        const { PhilippinesNtrlPmdt } =
+          mockOutPhilippinesNTRLDatabaseProcessors(
+            existingSamplesInDatabase,
+            existingResultRecordsInDatabase,
+            updateSpy,
+            insertSpy
+          )
         const philippinesNTRLPMDT = new PhilippinesNtrlPmdt(
           {
             auth: { credentials: { token: deviceApiKeyToken } },
@@ -4480,9 +4482,8 @@ describe('Device API Raw Philippines NTRL', () => {
       }
 
       it('should throw a bad request when the device API key cannot be reconciled with a device', async () => {
-        const {
-          philippinesNTRLPMDT,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies('bad-token', {})
+        const { philippinesNTRLPMDT } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies('bad-token', {})
         await expect(philippinesNTRLPMDT.processRequest()).to.be.rejectedWith(
           'Invalid device API key: Cannot determine which device this came from'
         )
@@ -4490,13 +4491,11 @@ describe('Device API Raw Philippines NTRL', () => {
 
       it('should update device lastSeenOn & updatedOn', async () => {
         await Promise.each(pmdtRecordPayloads, async pmdtRecordPayload => {
-          const {
-            updateSpy,
-            philippinesNTRLPMDT,
-          } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-            'some device API key',
-            pmdtRecordPayload
-          )
+          const { updateSpy, philippinesNTRLPMDT } =
+            setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+              'some device API key',
+              pmdtRecordPayload
+            )
           await philippinesNTRLPMDT.processRequest()
           const response = await philippinesNTRLPMDT.getResponse()
           assert.equal(response.deviceId, databaseRecords.Device.id)
@@ -4581,13 +4580,11 @@ describe('Device API Raw Philippines NTRL', () => {
             pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
           )
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: dstResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
-        )
+        const { insertSpy, philippinesNTRLPMDT: dstResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
         await dstResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -4606,8 +4603,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: dstResults[0].startedOn.toISOString(),
           endedOn: dstResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(dstResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -4670,13 +4667,11 @@ describe('Device API Raw Philippines NTRL', () => {
             pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
           )
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: dstResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
-        )
+        const { insertSpy, philippinesNTRLPMDT: dstResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
         await dstResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -4695,8 +4690,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: dstResults[0].startedOn.toISOString(),
           endedOn: dstResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(dstResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -4778,13 +4773,11 @@ describe('Device API Raw Philippines NTRL', () => {
             pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
           )
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: cultureResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
-        )
+        const { insertSpy, philippinesNTRLPMDT: cultureResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
         await cultureResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -4803,8 +4796,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: cultureResults[0].startedOn.toISOString(),
           endedOn: cultureResults[0].endedOn.toISOString(),
         }
-        const sample1ExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sample1ExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(cultureResult1).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -4852,8 +4845,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: cultureResults[1].startedOn.toISOString(),
           endedOn: cultureResults[1].endedOn.toISOString(),
         }
-        const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1]
-          .externalId
+        const sample2ExternalId =
+          getSamplesFromPMDTPayload(payload)[1].externalId
         expect(cultureResult2).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -4985,8 +4978,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: newCultureResults[0].startedOn.toISOString(),
           endedOn: newCultureResults[0].endedOn.toISOString(),
         }
-        const newSampleExternalId = getSamplesFromPMDTPayload(payload)[1]
-          .externalId
+        const newSampleExternalId =
+          getSamplesFromPMDTPayload(payload)[1].externalId
         expect(newCultureResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -5053,13 +5046,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples)
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: lpaResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples
-        )
+        const { insertSpy, philippinesNTRLPMDT: lpaResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload0494CultureSmearLpaTbPositive2Samples
+          )
         await lpaResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -5078,8 +5069,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: lpaResults[0].startedOn.toISOString(),
           endedOn: lpaResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(lpaResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -5124,13 +5115,11 @@ describe('Device API Raw Philippines NTRL', () => {
             pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
           )
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: smearResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
-        )
+        const { insertSpy, philippinesNTRLPMDT: smearResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload0014SmearCultureMGITDstSusceptible2Samples
+          )
         await smearResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -5149,8 +5138,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: smearResults[0].startedOn.toISOString(),
           endedOn: smearResults[0].endedOn.toISOString(),
         }
-        const sample1ExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sample1ExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(smearResult1).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -5188,8 +5177,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: smearResults[1].startedOn.toISOString(),
           endedOn: smearResults[1].endedOn.toISOString(),
         }
-        const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1]
-          .externalId
+        const sample2ExternalId =
+          getSamplesFromPMDTPayload(payload)[1].externalId
         expect(smearResult2).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -5226,13 +5215,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(pmdtRecordPayload03694GxPositiveResistant1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: geneXpertResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload03694GxPositiveResistant1Sample
-        )
+        const { insertSpy, philippinesNTRLPMDT: geneXpertResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload03694GxPositiveResistant1Sample
+          )
         await geneXpertResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -5251,8 +5238,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: gxResults[0].startedOn.toISOString(),
           endedOn: gxResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -5290,13 +5277,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(pmdtRecordPayload03795TbLampPositiveSample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: tbLampResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload03795TbLampPositiveSample
-        )
+        const { insertSpy, philippinesNTRLPMDT: tbLampResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload03795TbLampPositiveSample
+          )
         await tbLampResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -5315,8 +5300,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: tbLampResults[0].startedOn.toISOString(),
           endedOn: tbLampResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromPMDTPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromPMDTPayload(payload)[0].externalId
         expect(tbLampResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -5370,13 +5355,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(pmdtRecordPayload1855LpaRequestedNoResults1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLPMDT: singleSampleResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload1855LpaRequestedNoResults1Sample
-        )
+        const { insertSpy, philippinesNTRLPMDT: singleSampleResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload1855LpaRequestedNoResults1Sample
+          )
         await singleSampleResultProcessor.processRequest()
         const insertedSamples = insertSpy
           .getCalls()
@@ -5562,13 +5545,11 @@ describe('Device API Raw Philippines NTRL', () => {
       })
 
       it('should update existing results', async () => {
-        const {
-          updateSpy,
-          philippinesNTRLPMDT: existingResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload8442SmearCultureNegative2Samples
-        )
+        const { updateSpy, philippinesNTRLPMDT: existingResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload8442SmearCultureNegative2Samples
+          )
         await existingResultProcessor.processRequest()
         const resultUpdates = updateSpy
           .getCalls()
@@ -5585,13 +5566,11 @@ describe('Device API Raw Philippines NTRL', () => {
       })
 
       it("should merge existing results' resultsData and patient data", async () => {
-        const {
-          updateSpy,
-          philippinesNTRLPMDT: existingResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload03695GxPositiveResistant1Sample
-        )
+        const { updateSpy, philippinesNTRLPMDT: existingResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload03695GxPositiveResistant1Sample
+          )
         await existingResultProcessor.processRequest()
         const resultUpdates = updateSpy
           .getCalls()
@@ -5628,13 +5607,11 @@ describe('Device API Raw Philippines NTRL', () => {
       })
 
       it('should fall back to the test start and end time sent by the device when updating a result', async () => {
-        const {
-          updateSpy,
-          philippinesNTRLPMDT: existingResultProcessor,
-        } = setupPhilippinesNTRLPMDTDataProcessorWithSpies(
-          'some device API key',
-          pmdtRecordPayload03695GxPositiveResistant1Sample
-        )
+        const { updateSpy, philippinesNTRLPMDT: existingResultProcessor } =
+          setupPhilippinesNTRLPMDTDataProcessorWithSpies(
+            'some device API key',
+            pmdtRecordPayload03695GxPositiveResistant1Sample
+          )
         await existingResultProcessor.processRequest()
         const resultUpdates = updateSpy
           .getCalls()
@@ -6872,14 +6849,13 @@ describe('Device API Raw Philippines NTRL', () => {
       ) {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
-        const {
-          PhilippinesNtrlRitm,
-        } = mockOutPhilippinesNTRLDatabaseProcessors(
-          existingSamplesInDatabase,
-          existingResultRecordsInDatabase,
-          updateSpy,
-          insertSpy
-        )
+        const { PhilippinesNtrlRitm } =
+          mockOutPhilippinesNTRLDatabaseProcessors(
+            existingSamplesInDatabase,
+            existingResultRecordsInDatabase,
+            updateSpy,
+            insertSpy
+          )
         const philippinesNTRLRITM = new PhilippinesNtrlRitm(
           {
             auth: { credentials: { token: deviceApiKeyToken } },
@@ -7033,9 +7009,8 @@ describe('Device API Raw Philippines NTRL', () => {
       }
 
       it('should throw a bad request when the device API key cannot be reconciled with a device', async () => {
-        const {
-          philippinesNTRLRITM,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies('bad-token', {})
+        const { philippinesNTRLRITM } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies('bad-token', {})
         await expect(philippinesNTRLRITM.processRequest()).to.be.rejectedWith(
           'Invalid device API key: Cannot determine which device this came from'
         )
@@ -7043,13 +7018,11 @@ describe('Device API Raw Philippines NTRL', () => {
 
       it('should update device lastSeenOn & updatedOn', async () => {
         await Promise.each(ritmRecordPayloads, async ritmRecordPayload => {
-          const {
-            updateSpy,
-            philippinesNTRLRITM,
-          } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-            'some device API key',
-            ritmRecordPayload
-          )
+          const { updateSpy, philippinesNTRLRITM } =
+            setupPhilippinesNTRLRITMDataProcessorWithSpies(
+              'some device API key',
+              ritmRecordPayload
+            )
           await philippinesNTRLRITM.processRequest()
           const response = await philippinesNTRLRITM.getResponse()
           assert.equal(response.deviceId, databaseRecords.Device.id)
@@ -7132,13 +7105,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(ritmRecordPayload0128CultureDstTbResistant1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLRITM: dstResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload0128CultureDstTbResistant1Sample
-        )
+        const { insertSpy, philippinesNTRLRITM: dstResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload0128CultureDstTbResistant1Sample
+          )
         await dstResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -7157,8 +7128,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: dstResults[0].startedOn.toISOString(),
           endedOn: dstResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromRITMPayload(payload)[0].externalId
         expect(dstResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -7209,13 +7180,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(ritmRecordPayload0128CultureDstTbResistant1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLRITM: cultureResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload0128CultureDstTbResistant1Sample
-        )
+        const { insertSpy, philippinesNTRLRITM: cultureResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload0128CultureDstTbResistant1Sample
+          )
         await cultureResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -7235,8 +7204,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: cultureResults[0].startedOn.toISOString(),
           endedOn: cultureResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromRITMPayload(payload)[0].externalId
         expect(cultureResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -7277,13 +7246,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(ritmRecordPayload2630CultureSmearTbPositive2Samples)
         )
-        const {
-          insertSpy,
-          philippinesNTRLRITM: smearResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload2630CultureSmearTbPositive2Samples
-        )
+        const { insertSpy, philippinesNTRLRITM: smearResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload2630CultureSmearTbPositive2Samples
+          )
         await smearResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -7348,13 +7315,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(ritmRecordPayload0423GeneXpertNotDetected1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLRITM: geneXpertResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload0423GeneXpertNotDetected1Sample
-        )
+        const { insertSpy, philippinesNTRLRITM: geneXpertResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload0423GeneXpertNotDetected1Sample
+          )
         await geneXpertResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -7373,8 +7338,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: gxResults[0].startedOn.toISOString(),
           endedOn: gxResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromRITMPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -7413,13 +7378,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(ritmRecordPayload0423GeneXpertNotDetected1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLRITM: geneXpertResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload0423GeneXpertNotDetected1Sample
-        )
+        const { insertSpy, philippinesNTRLRITM: geneXpertResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload0423GeneXpertNotDetected1Sample
+          )
         await geneXpertResultProcessor.processRequest()
         const insertResultCalls = insertSpy
           .getCalls()
@@ -7438,8 +7401,8 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: gxResults[0].startedOn.toISOString(),
           endedOn: gxResults[0].endedOn.toISOString(),
         }
-        const sampleExternalId = getSamplesFromRITMPayload(payload)[0]
-          .externalId
+        const sampleExternalId =
+          getSamplesFromRITMPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
           geographyId: databaseRecords.Site.geographyId,
@@ -7497,13 +7460,11 @@ describe('Device API Raw Philippines NTRL', () => {
         const payload = JSON.parse(
           JSON.stringify(ritmRecordPayload0423GeneXpertNotDetected1Sample)
         )
-        const {
-          insertSpy,
-          philippinesNTRLRITM: singleSampleResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload0423GeneXpertNotDetected1Sample
-        )
+        const { insertSpy, philippinesNTRLRITM: singleSampleResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload0423GeneXpertNotDetected1Sample
+          )
         await singleSampleResultProcessor.processRequest()
         const insertedSamples = insertSpy
           .getCalls()
@@ -7689,13 +7650,11 @@ describe('Device API Raw Philippines NTRL', () => {
       })
 
       it('should update existing results', async () => {
-        const {
-          updateSpy,
-          philippinesNTRLRITM: existingResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload2630CultureSmearTbPositive2Samples
-        )
+        const { updateSpy, philippinesNTRLRITM: existingResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload2630CultureSmearTbPositive2Samples
+          )
         await existingResultProcessor.processRequest()
         const resultUpdates = updateSpy
           .getCalls()
@@ -7712,13 +7671,11 @@ describe('Device API Raw Philippines NTRL', () => {
       })
 
       it('should fall back to the test start and end time sent by the device when updating a result', async () => {
-        const {
-          updateSpy,
-          philippinesNTRLRITM: existingResultProcessor,
-        } = setupPhilippinesNTRLRITMDataProcessorWithSpies(
-          'some device API key',
-          ritmRecordPayload0424GeneXpertNotDetected1Sample
-        )
+        const { updateSpy, philippinesNTRLRITM: existingResultProcessor } =
+          setupPhilippinesNTRLRITMDataProcessorWithSpies(
+            'some device API key',
+            ritmRecordPayload0424GeneXpertNotDetected1Sample
+          )
         await existingResultProcessor.processRequest()
         const resultUpdates = updateSpy
           .getCalls()

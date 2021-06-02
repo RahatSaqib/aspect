@@ -308,49 +308,46 @@ describe('case/service', () => {
       reliableCaseIdTemplateLike,
       unreliableCaseIdTemplateLike
     ) {
-      const {
-        resultCategoryId,
-        deviceTypeExternalId,
-        assayExternalId,
-      } = await knex('PartnerAssay as pa')
-        .join('Assay as a', 'pa.assayId', 'a.id')
-        .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-        .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-        .where('pa.partnerId', partnerId)
-        .andWhere(function () {
-          if (reliableCaseIdTemplateLike) {
-            this.where(
-              'pa.reliableCaseExternalIdTemplate',
-              'LIKE',
-              reliableCaseIdTemplateLike
-            )
-            if (unreliableCaseIdTemplateLike) {
-              this.andWhere(
+      const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+        await knex('PartnerAssay as pa')
+          .join('Assay as a', 'pa.assayId', 'a.id')
+          .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+          .where('pa.partnerId', partnerId)
+          .andWhere(function () {
+            if (reliableCaseIdTemplateLike) {
+              this.where(
+                'pa.reliableCaseExternalIdTemplate',
+                'LIKE',
+                reliableCaseIdTemplateLike
+              )
+              if (unreliableCaseIdTemplateLike) {
+                this.andWhere(
+                  'pa.unreliableCaseExternalIdTemplate',
+                  'LIKE',
+                  unreliableCaseIdTemplateLike
+                )
+              }
+            } else if (!unreliableCaseIdTemplateLike) {
+              this.whereNull('pa.reliableCaseExternalIdTemplate').andWhere(
+                function () {
+                  this.whereNull('pa.reliableCaseExternalIdTemplate')
+                }
+              )
+            } else {
+              this.where(
                 'pa.unreliableCaseExternalIdTemplate',
                 'LIKE',
                 unreliableCaseIdTemplateLike
               )
             }
-          } else if (!unreliableCaseIdTemplateLike) {
-            this.whereNull('pa.reliableCaseExternalIdTemplate').andWhere(
-              function () {
-                this.whereNull('pa.reliableCaseExternalIdTemplate')
-              }
-            )
-          } else {
-            this.where(
-              'pa.unreliableCaseExternalIdTemplate',
-              'LIKE',
-              unreliableCaseIdTemplateLike
-            )
-          }
-        })
-        .andWhere('rca.reportable', reportable)
-        .first(
-          'rca.resultCategoryId',
-          'dt.externalId as deviceTypeExternalId',
-          'a.externalId as assayExternalId'
-        )
+          })
+          .andWhere('rca.reportable', reportable)
+          .first(
+            'rca.resultCategoryId',
+            'dt.externalId as deviceTypeExternalId',
+            'a.externalId as assayExternalId'
+          )
       return {
         resultCategoryId,
         deviceTypeExternalId,
@@ -359,11 +356,8 @@ describe('case/service', () => {
     }
 
     it('Should not automatically create or update a case when no case ID template is specified for the assay', async () => {
-      const {
-        resultCategoryId,
-        deviceTypeExternalId,
-        assayExternalId,
-      } = await getResultCategoryDeviceTypeAndAssay()
+      const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+        await getResultCategoryDeviceTypeAndAssay()
       const caseExternalId = `CASE-${new Date().getTime()}`
       const resultId = await createResult(
         partnerId,
@@ -395,14 +389,11 @@ describe('case/service', () => {
 
     describe('when a reliable case ID template is specified', () => {
       it("should automatically create a case when the case doesn't exist", async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
-          1,
-          '%result.formData.caseId%'
-        )
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+          await getResultCategoryDeviceTypeAndAssay(
+            1,
+            '%result.formData.caseId%'
+          )
         const caseExternalId = `CASE-${new Date().getTime()}`
         const resultId = await createResult(
           partnerId,
@@ -425,14 +416,11 @@ describe('case/service', () => {
       })
 
       it('should automatically move the result to another case', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
-          1,
-          '%result.formData.caseId%'
-        )
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+          await getResultCategoryDeviceTypeAndAssay(
+            1,
+            '%result.formData.caseId%'
+          )
         const { diseaseId } = await knex('Assay as a')
           .join('AssayType as at', 'a.assayTypeId', 'at.id')
           .where('a.externalId', assayExternalId)
@@ -484,14 +472,11 @@ describe('case/service', () => {
       })
 
       it('should automatically update the case number', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
-          1,
-          '%result.formData.caseId%'
-        )
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+          await getResultCategoryDeviceTypeAndAssay(
+            1,
+            '%result.formData.caseId%'
+          )
         const { diseaseId } = await knex('Assay as a')
           .join('AssayType as at', 'a.assayTypeId', 'at.id')
           .where('a.externalId', assayExternalId)
@@ -539,14 +524,13 @@ describe('case/service', () => {
         let assayExternalId
 
         before(async () => {
-          const resultCategoryDeviceTypeAndAssay = await getResultCategoryDeviceTypeAndAssay(
-            0,
-            '%result.formData.caseId%'
-          )
-          const {
-            resultCategoryId,
-            deviceTypeExternalId,
-          } = resultCategoryDeviceTypeAndAssay
+          const resultCategoryDeviceTypeAndAssay =
+            await getResultCategoryDeviceTypeAndAssay(
+              0,
+              '%result.formData.caseId%'
+            )
+          const { resultCategoryId, deviceTypeExternalId } =
+            resultCategoryDeviceTypeAndAssay
           ;({ assayExternalId } = resultCategoryDeviceTypeAndAssay)
           const caseExternalId = `CASE-${new Date().getTime()}`
           resultId = await createResult(
@@ -612,15 +596,12 @@ describe('case/service', () => {
 
     describe('when an unreliable case ID template is specified', () => {
       it("should automatically create a case when the case doesn't exist", async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
-          1,
-          '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
-        )
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+          await getResultCategoryDeviceTypeAndAssay(
+            1,
+            '',
+            "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
+          )
         const caseExternalId = `CASE-${new Date().getTime()}`
         const resultId = await createResult(
           partnerId,
@@ -649,15 +630,12 @@ L|1`,
       })
 
       it('should NOT automatically move the result to another case', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
-          1,
-          '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
-        )
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+          await getResultCategoryDeviceTypeAndAssay(
+            1,
+            '',
+            "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
+          )
         const { diseaseId } = await knex('Assay as a')
           .join('AssayType as at', 'a.assayTypeId', 'at.id')
           .where('a.externalId', assayExternalId)
@@ -721,15 +699,12 @@ L|1`,
       })
 
       it('should NOT update an existing case number', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
-          1,
-          '',
-          "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
-        )
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } =
+          await getResultCategoryDeviceTypeAndAssay(
+            1,
+            '',
+            "%extractValueFromRegexCaptureGroup result.rawData expression='^O%"
+          )
         const { diseaseId } = await knex('Assay as a')
           .join('AssayType as at', 'a.assayTypeId', 'at.id')
           .where('a.externalId', assayExternalId)

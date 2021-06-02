@@ -146,10 +146,8 @@ async function createResults(
     })
   }
 
-  const {
-    Validated: validated,
-    Deliverable: deliverable,
-  } = await allResultWorkflowStatusToId()
+  const { Validated: validated, Deliverable: deliverable } =
+    await allResultWorkflowStatusToId()
 
   const rnd = _.random(0, 100)
   const resultSourceLimsId = await resultSourceToId('LIMS')

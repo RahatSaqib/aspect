@@ -593,10 +593,8 @@ async function seed(knex) {
     .where('externalId', 'abbottM2000DBSHivVL')
     .first()
 
-  const {
-    Validated: validated,
-    Deliverable: deliverable,
-  } = await allResultWorkflowStatusToId()
+  const { Validated: validated, Deliverable: deliverable } =
+    await allResultWorkflowStatusToId()
 
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
