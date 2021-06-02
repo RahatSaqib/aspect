@@ -454,10 +454,6 @@ const clinician = {
     },
     {
       module: 'dashboard',
-      activity: 'report',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
