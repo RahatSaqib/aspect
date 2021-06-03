@@ -72,7 +72,8 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'dms.i18nKey as maintenanceStatusI18nKey',
         'dms.name as maintenanceStatusName',
         'dms.externalId as maintenanceStatusExternalId',
-        'dms.active as maintenanceStatusIsActive'
+        'dms.active as maintenanceStatusIsActive',
+        knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes")
       )
   )
 }
@@ -176,7 +177,8 @@ async function deviceStatusOverTime(request) {
       ),
       'deviceStatusByDay.maintenanceStatusI18nKey',
       'deviceStatusByDay.maintenanceStatusName',
-      'deviceStatusByDay.maintenanceStatusExternalId'
+      'deviceStatusByDay.maintenanceStatusExternalId',
+      'deviceStatusByDay.maintenanceStatusNotes'
     )
   statusData = groupListBy(statusData, 'deviceId', 'day')
 
