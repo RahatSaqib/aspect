@@ -13,9 +13,11 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: adminId,
   }
-  const { id: countryId, culture, timezone } = await knex('Country')
-    .where('abbreviation', 'US')
-    .first()
+  const {
+    id: countryId,
+    culture,
+    timezone,
+  } = await knex('Country').where('abbreviation', 'US').first()
   const { id: partnerId } = await knex('Partner')
     .where('name', 'Partner One')
     .first('id')

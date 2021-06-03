@@ -99,10 +99,8 @@ describe('Uptime Robot External Source Fact Handler', () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
       const createFetchSpy = sinon.spy()
-      const uptimeRobotExternalFactHandler = mockOutUptimeRobotExternalFactHandler(
-        1,
-        createFetchSpy
-      )
+      const uptimeRobotExternalFactHandler =
+        mockOutUptimeRobotExternalFactHandler(1, createFetchSpy)
       await uptimeRobotExternalFactHandler(mockContext(updateSpy, insertSpy))
       assert.isOk(createFetchSpy.notCalled)
       assert.isOk(updateSpy.notCalled)
@@ -147,11 +145,12 @@ describe('Uptime Robot External Source Fact Handler', () => {
       explicitAspectDeviceIds = aspectDeviceIds,
       explicitAspectDeviceUptimeRobotFact = aspectDeviceUptimeRobotFact
     ) {
-      const uptimeRobotExternalFactHandler = mockOutUptimeRobotExternalFactHandler(
-        1,
-        createFetchSpy,
-        uptimeRobotResponse
-      )
+      const uptimeRobotExternalFactHandler =
+        mockOutUptimeRobotExternalFactHandler(
+          1,
+          createFetchSpy,
+          uptimeRobotResponse
+        )
       return uptimeRobotExternalFactHandler(
         mockContext(
           updateSpy,

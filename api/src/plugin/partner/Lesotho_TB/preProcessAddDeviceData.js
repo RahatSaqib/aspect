@@ -64,9 +64,8 @@ async function preProcessAddDeviceData(context) {
         await knex('DeviceLog')
           .where('id', context.deviceLogId)
           .update({ deviceId: hivGxAlertDeviceDetails.id })
-        const indexOfLesothoTbPluginName = context.pluginNames.indexOf(
-          'lesothoTb'
-        )
+        const indexOfLesothoTbPluginName =
+          context.pluginNames.indexOf('lesothoTb')
         if (indexOfLesothoTbPluginName) {
           context.pluginNames.splice(indexOfLesothoTbPluginName, 1)
         }

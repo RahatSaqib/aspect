@@ -71,9 +71,11 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
 
   after(async () => {
     await waitAsyncComplete()
-    const { id: deviceApiKeyId, deviceId, siteId } = await knex(
-      'DeviceApiKey as dak'
-    )
+    const {
+      id: deviceApiKeyId,
+      deviceId,
+      siteId,
+    } = await knex('DeviceApiKey as dak')
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.token', validApiKeyToken)
       .first('dak.id', 'dak.deviceId', 'd.siteId')

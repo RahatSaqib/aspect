@@ -34,8 +34,10 @@ const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
-    FailedToVerifyValidBackgroundErrorForAnalyteModule: FailedToVerifyValidBackgroundErrorForAnalyteModuleId,
-    FailedToVerifyValidBackgroundErrorForAnalyteLot: FailedToVerifyValidBackgroundErrorForAnalyteLotId,
+    FailedToVerifyValidBackgroundErrorForAnalyteModule:
+      FailedToVerifyValidBackgroundErrorForAnalyteModuleId,
+    FailedToVerifyValidBackgroundErrorForAnalyteLot:
+      FailedToVerifyValidBackgroundErrorForAnalyteLotId,
     ProbeCheckFailedModule: ProbeCheckFailedModuleId,
     ProbeCheckFailedLot: ProbeCheckFailedLotId,
   } = await allIssueTypeToId()

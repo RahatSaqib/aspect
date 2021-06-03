@@ -22,12 +22,10 @@ async function getPartnerPluginName({ partnerId, caseId }) {
     ;[partnerPluginName] = await knex('PatientCase as c')
       .innerJoin('Partner as p', 'c.partnerId', 'p.id')
       .where('c.id', caseId)
-      .select('p.plugin')
       .pluck('p.plugin')
   } else if (partnerId) {
     ;[partnerPluginName] = await knex('Partner')
       .where('id', partnerId)
-      .select('plugin')
       .pluck('plugin')
   }
   return partnerPluginName
@@ -37,7 +35,6 @@ async function getDeviceTypePluginName(deviceId) {
   const [deviceTypePluginName] = await knex('Device as d')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where('d.id', deviceId || 0)
-    .first('dt.plugin')
     .pluck('dt.plugin')
   return deviceTypePluginName
 }
@@ -159,7 +156,7 @@ async function shouldTriggerModuleDisabled(
    * If the module wasn't replaced already, we trigger the event to create the new issue.
    */
   if (!moduleReplacedIssue) {
-    logger.debug([`shouldTriggerModuleDisabled`, device, deviceModule])
+    logger.debug(['shouldTriggerModuleDisabled', device, deviceModule])
     if (!messageContext.deviceModuleDisabled) {
       messageContext = messageContext.bindActionCreators({
         deviceModuleDisabled,
@@ -377,7 +374,7 @@ async function setDeviceCalibrationStatus(
       deviceMaintenanceTypeId,
     })
     // only one entry per day
-    .whereRaw(`DATE(contextDate) = DATE(?)`, [calibratedOn])
+    .whereRaw('DATE(contextDate) = DATE(?)', [calibratedOn])
     .first()
 
   /**
@@ -393,7 +390,7 @@ async function setDeviceCalibrationStatus(
      * exists and by some reason is NOT set as 'current'
      */
     logger.silly(
-      `shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true`,
+      'shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true',
       { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
     )
     await knex('DeviceMaintenance').update({ current: 1 }).where({
@@ -401,7 +398,7 @@ async function setDeviceCalibrationStatus(
     })
   } else if (!itemToday) {
     logger.silly(
-      `shouldLogDeviceCalibration: insert item for today, because it is missing`,
+      'shouldLogDeviceCalibration: insert item for today, because it is missing',
       { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
     )
     await knex('DeviceMaintenance').insert({
