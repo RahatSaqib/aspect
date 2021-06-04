@@ -135,7 +135,7 @@ async function getListDevices(query, auth) {
         .andOn('frd30Errors.days', 30)
         .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
     })
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
