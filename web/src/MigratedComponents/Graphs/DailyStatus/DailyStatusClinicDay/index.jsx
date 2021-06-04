@@ -92,7 +92,6 @@ const DailyStatusClinicDay = ({
       <DayBlock
         consts={consts}
         dayModifier={dayModifier}
-        enabled={isEditable}
         onClick={isEditable ? onClickDay : noop}
       />
     </AspectTooltip>
