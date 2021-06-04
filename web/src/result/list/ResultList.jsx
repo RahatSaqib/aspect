@@ -65,6 +65,14 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   {
+    reportableSiteName: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
+    reportableSiteId: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
     deviceName: true,
     requiredPermissions: ['device'],
   },
@@ -79,6 +87,15 @@ const FILTERS_CONFIG = [
     onlyReportableResults: true,
     requiredPermissions: ['assay:view'],
   },
+  {
+    onlyDownloadedByReporter: true,
+    requiredPermissions: [],
+  },
+  {
+    onlyEverTransferred: true,
+    requiredPermissions: [],
+  },
+  { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
 
 const AddNewButton = requirePermissions({

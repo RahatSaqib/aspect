@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
+import noop from 'lodash/noop'
 
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import messages from '../messages'
@@ -44,6 +45,7 @@ const DailyStatusClinicDay = ({
   maintenanceStatusName,
   maintenanceStatusManuallySetBy,
   maintenanceStatusI18nKey,
+  maintenanceStatusExternalId,
   statuses,
   totalResults,
   onClickDay,
@@ -96,7 +98,7 @@ const DailyStatusClinicDay = ({
       <DayBlock
         consts={consts}
         dayModifier={dayModifier}
-        onClick={onClickDay}
+        onClick={maintenanceStatusExternalId !== 'active' ? onClickDay : noop}
       />
     </AspectTooltip>
   )
@@ -120,6 +122,7 @@ DailyStatusClinicDay.propTypes = {
     name: PropTypes.string,
     updatedDate: PropTypes.string,
   }),
+  maintenanceStatusExternalId: PropTypes.string.isRequired,
   daysInSameStatus: PropTypes.string.isRequired,
   statuses: PropTypes.string.isRequired,
   consts: PropTypes.shape({

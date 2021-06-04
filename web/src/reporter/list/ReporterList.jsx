@@ -124,6 +124,21 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
+const getCurrentFilters = locationSearch => {
+  const urlSearchParams = new URLSearchParams(locationSearch)
+  const { value: filtersParams } = filtersSanitizer(
+    urlSearchParams.get('filters') || ''
+  )
+  return fromPairs([...filtersParams.entries()])
+}
+const getCurrentPagination = location => {
+  const sortPage = makeSortPageSelector({
+    sortCol: 'siteName',
+    sortDir: 'asc',
+  })
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+  return { sortCol, sortDir, page: pageAt, size: pageSize }
+}
 
 export const ReporterListWithProps = ({
   intl,
@@ -215,7 +230,7 @@ const ReporterList = () => {
   const [table, setTable] = useState(
     new Table({
       sortCol: 'siteName',
-      sortDir: 'desc',
+      sortDir: 'asc',
       filters: Immutable.fromJS({
         assayId: null,
       }),
@@ -223,8 +238,8 @@ const ReporterList = () => {
     })
   )
   const [total, setTotal] = useState()
-  const [filters, setFilters] = useState()
-  const [pagination, setPagination] = useState({})
+  const [filters, setFilters] = useState(getCurrentFilters(location.search))
+  const [pagination, setPagination] = useState(getCurrentPagination(location))
   const [columns, setColumns] = useState([])
 
   const { sortCol, sortDir, page, size } = pagination
@@ -267,19 +282,12 @@ const ReporterList = () => {
         ...location,
         search: searchParams.toString(),
       })
+      return
     }
 
-    const sortPage = makeSortPageSelector({
-      sortCol: 'siteName',
-      sortDir: 'desc',
-    })
-    const urlSearchParams = new URLSearchParams(location.search)
-    const urlFilters = urlSearchParams.get('filters')
-      ? new URLSearchParams(urlSearchParams.get('filters'))
-      : []
-    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(fromPairs([...urlFilters.entries()]))
-    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    setFilters(getCurrentFilters(location.search))
+    setPagination(getCurrentPagination(location))
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 

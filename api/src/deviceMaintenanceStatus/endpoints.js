@@ -1,9 +1,9 @@
-const Joi = require('@hapi/joi')
+const Joi = require('@hapi/joi');
 
-const { asyncHandler } = require('../routes')
-const { deviceStatusOverTime, deviceStatusLastReported } = require('./service')
+const { asyncHandler } = require('../routes');
+const { deviceStatusOverTime, deviceStatusLastReported } = require('./service');
 
-const { REGEX_ISODATESTRING } = require('../shared/date')
+const { REGEX_ISODATESTRING } = require('../shared/date');
 
 const routes = [
   {
@@ -80,6 +80,9 @@ const routes = [
                       .description(
                         'Member responsible for manually setting the status'
                       ),
+                    maintenanceStatusNotes: Joi.string()
+                      .description('The note for current maintenance status')
+                      .allow(null),
                   })
                 )
                 .description(
@@ -140,12 +143,15 @@ const routes = [
               maintenanceStatusExternalId: Joi.string().description(
                 'The external id of the maintenance status'
               ),
+              maintenanceStatusNotes: Joi.string()
+                .description('The note for current maintenance status')
+                .allow(null),
             })
           ),
         }),
       },
     },
   },
-]
+];
 
-module.exports = { routes }
+module.exports = { routes };

@@ -199,10 +199,6 @@ function getJobContextConstraint(context) {
   if (context.deviceTypeId != null) {
     constraint.deviceType = { id: context.deviceTypeId }
     constraint.device = { deviceTypeId: context.deviceTypeId }
-    constraint.assay = {
-      ...(constraint.assay || {}),
-      deviceTypeId: context.deviceTypeId,
-    }
   }
 
   if (context.jobFunctionId) {
@@ -268,12 +264,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
         `${geography}.id`
       )
     }
-    if (
-      (constraints.disease ||
-        constraints.assayType ||
-        constraints.deviceType) &&
-      !assay
-    ) {
+    if ((constraints.disease || constraints.assayType) && !assay) {
       assay = alias('Assay')
       queryBuilder.leftOuterJoin(
         `Assay as ${assay}`,
@@ -297,11 +288,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
     if (_.get(constraints, 'assayType.id')) {
       queryBuilder.where(qb =>
         isNullInOrEqual(qb, `${assay}.assayTypeId`, constraints.assayType.id)
-      )
-    }
-    if (_.get(constraints, 'deviceType.id')) {
-      queryBuilder.where(qb =>
-        isNullInOrEqual(qb, `${assay}.deviceTypeId`, constraints.deviceType.id)
       )
     }
   } else {

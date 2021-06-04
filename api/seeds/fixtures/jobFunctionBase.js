@@ -9,7 +9,10 @@ const admin = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_activity_per_assay',
+    'device_activity_percent',
     'module_swaps',
+    'device_utilization',
     'genexpert_issues',
   ],
   permissions: [
@@ -137,6 +140,8 @@ const manager = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -220,6 +225,8 @@ const regionalOfficer = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -307,6 +314,8 @@ const labUser = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -394,6 +403,8 @@ const clinician = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -440,10 +451,6 @@ const clinician = {
     {
       module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
-      activity: 'report',
     },
     {
       module: 'dashboard',
@@ -494,6 +501,8 @@ const deviceMaker = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'genexpert_issues',
   ],
   permissions: [
@@ -533,6 +542,8 @@ const ntp = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -557,6 +568,8 @@ const ntpNoResults = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -580,6 +593,8 @@ const technician = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -587,11 +602,27 @@ const technician = {
       activity: 'edit',
     },
     {
+      module: 'site',
+      activity: 'view',
+    },
+    {
       module: 'operationalData',
       activity: 'view',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'assay',
       activity: 'view',
     },
   ],
@@ -603,6 +634,8 @@ const donor = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -638,6 +671,8 @@ const resultViewerNo = {
     'critical_errors_by_device',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
   ],
   permissions: [
     {
@@ -676,6 +711,8 @@ const resultViewerYes = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -792,6 +829,8 @@ const labManager = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -863,6 +902,8 @@ const labSupervisor = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -934,6 +975,8 @@ const medTech = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -1005,6 +1048,8 @@ const dataViewer = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [
@@ -1077,6 +1122,8 @@ const labAdmin = {
     'results_hiv_not_suppressed',
     'device_calibration_report',
     'device_activity',
+    'device_utilization',
+    'device_activity_percent',
     'module_swaps',
   ],
   permissions: [

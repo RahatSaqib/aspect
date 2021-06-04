@@ -1,12 +1,14 @@
 const Joi = require('@hapi/joi')
 
-const ok = Joi.boolean().required().description(
-  `
+const ok = Joi.boolean()
+  .required()
+  .description(
+    `
     True means workflow ran well, False - some non-breakable error happened.
     If both cases - see more details in other props (i.e. "data").
     FYI - breakable error is when returning Boom.
     `
-)
+  )
 // -------------------------------------------------------------------------------
 const contactDetailsPayload = {
   name: Joi.string().max(500).required(),

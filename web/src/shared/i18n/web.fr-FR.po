@@ -2002,6 +2002,13 @@ msgstr "Générateur de clés d'API de périphérique"
 msgid "Device Activity"
 msgstr "Type d'appareil"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Activité de l'appareil (pourcentage)"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
@@ -7723,6 +7730,17 @@ msgstr ""
 "Ce rapport montre l'activité des appareils pendant la période sélectionnée, "
 "en la ventilant par mois (par défaut les 12 derniers mois), et tous les "
 "tests effectués au cours de la dernière année."
+
+#. [pages.ReportIndex.device_activity_percent_description]
+#. defaultMessage is:
+#. This report shows the activity percentage, per month, of the devices during the selected period of time. (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the activity percentage, per month, of the devices during the "
+"selected period of time. (By default last 12 months)"
+msgstr ""
+"Ce rapport montre le pourcentage d'activité, par mois, des appareils pendant la "
+"période sélectionnée. (Par défaut les 12 derniers mois)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:

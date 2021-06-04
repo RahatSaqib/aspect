@@ -4,6 +4,7 @@ import AspectTextField from './TextField'
 import AspectTextArea from './TextArea'
 import { AspectDatePicker, AspectDateTimePicker } from './DatePicker'
 import AspectSelect from './Select'
+import Checkbox from './Checkbox'
 
 const Inputs = {
   textArea: AspectTextArea,
@@ -11,6 +12,7 @@ const Inputs = {
   datePicker: AspectDatePicker,
   dateTimePicker: AspectDateTimePicker,
   select: AspectSelect,
+  checkbox: Checkbox,
 }
 
 const AspectInput = props => {

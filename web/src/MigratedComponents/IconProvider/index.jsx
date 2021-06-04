@@ -12,6 +12,9 @@ async function loadIconModule(icon) {
     case iconFamily === 'fa':
       return import('react-icons/fa')
 
+    case iconFamily === 'ai':
+      return import('react-icons/ai')
+
     default:
       return import('react-icons/md')
   }

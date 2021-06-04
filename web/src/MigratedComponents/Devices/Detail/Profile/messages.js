@@ -130,9 +130,9 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair',
     defaultMessage: 'Down For Repair',
   },
-  inactiveNoResultsReported: {
-    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoResultsReported',
-    defaultMessage: 'No Results Reported',
+  inactiveNoTestsPerformed: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoTestsPerformed',
+    defaultMessage: 'No Tests Performed',
   },
   inactiveOutOfInventory: {
     id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory',

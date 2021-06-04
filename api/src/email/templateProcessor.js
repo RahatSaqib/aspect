@@ -2,7 +2,7 @@ const Email = require('email-templates')
 const path = require('path')
 const { promisify } = require('util')
 const _ = require('lodash')
-const encode = promisify(require('node-base64-image').encode)
+const { encode } = require('node-base64-image')
 const readdir = promisify(require('fs').readdir)
 
 async function process(templateName, tokenValues, locale) {

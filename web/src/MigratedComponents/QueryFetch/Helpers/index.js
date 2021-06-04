@@ -1,3 +1,4 @@
+import map from 'lodash/map'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isPlainObject from 'lodash/isPlainObject'
@@ -16,14 +17,24 @@ const buildEndpointAndQueryString = (endpoint, params) => {
   return endpoint
 }
 
+function replaceRouteParams(route, routeParams) {
+  let newRoute = route
+  map(
+    routeParams,
+    (paramValue, paramKey) =>
+      (newRoute = newRoute.replace(`:${paramKey}`, paramValue))
+  )
+  return newRoute
+}
+
 const buildBodyParams = (endpoint, params) => {
   switch (endpoint) {
-    case '/result/confirmed-treatment-tracking':
-      return JSON.stringify({})
+    // case '/result/confirmed-treatment-tracking':
+    //   return JSON.stringify({})
 
     default:
       return JSON.stringify(params)
   }
 }
 
-export { buildBodyParams, buildEndpointAndQueryString }
+export { buildBodyParams, buildEndpointAndQueryString, replaceRouteParams }

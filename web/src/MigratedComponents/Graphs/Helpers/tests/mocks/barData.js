@@ -87,12 +87,12 @@ const tickDataForBarDisplayMethodActualIn = [
 ]
 
 const treatmentAPIOptimumDataIn = [
-  { total: 26, cntConfirmed: 17, monthTested: '2020-05', pcConfirmed: 65.4 },
-  { total: 29, cntConfirmed: 18, monthTested: '2020-06', pcConfirmed: 62.1 },
-  { total: 36, cntConfirmed: 21, monthTested: '2020-07', pcConfirmed: 58.3 },
-  { total: 27, cntConfirmed: 13, monthTested: '2020-08', pcConfirmed: 48.1 },
-  { total: 25, cntConfirmed: 15, monthTested: '2020-09', pcConfirmed: 60 },
-  { total: 25, cntConfirmed: 17, monthTested: '2020-10', pcConfirmed: 68 },
+  { total: 26, onTreatment: 17, monthTested: '2020-05', pcOnTreatment: 65.4 },
+  { total: 29, onTreatment: 18, monthTested: '2020-06', pcOnTreatment: 62.1 },
+  { total: 36, onTreatment: 21, monthTested: '2020-07', pcOnTreatment: 58.3 },
+  { total: 27, onTreatment: 13, monthTested: '2020-08', pcOnTreatment: 48.1 },
+  { total: 25, onTreatment: 15, monthTested: '2020-09', pcOnTreatment: 60 },
+  { total: 25, onTreatment: 17, monthTested: '2020-10', pcOnTreatment: 68 },
 ]
 
 const treatmentAPIOptimumDataOut = [
@@ -135,21 +135,21 @@ const treatmentAPIOptimumDataOut = [
 ]
 
 const treatmentAPISkewedDataIn = [
-  { total: 26, cntConfirmed: 0, monthTested: '2020-05', pcConfirmed: 0 },
-  { total: 29, cntConfirmed: 0, monthTested: '2020-06', pcConfirmed: 0 },
-  { total: 36, cntConfirmed: 0, monthTested: '2020-07', pcConfirmed: 0 },
-  { total: 27, cntConfirmed: 0, monthTested: '2020-08', pcConfirmed: 0 },
-  { total: 25, cntConfirmed: 0, monthTested: '2020-09', pcConfirmed: 0 },
-  { total: 25, cntConfirmed: 0, monthTested: '2020-10', pcConfirmed: 0 },
+  { total: 26, onTreatment: 0, monthTested: '2020-05', pcOnTreatment: 0 },
+  { total: 29, onTreatment: 0, monthTested: '2020-06', pcOnTreatment: 0 },
+  { total: 36, onTreatment: 0, monthTested: '2020-07', pcOnTreatment: 0 },
+  { total: 27, onTreatment: 0, monthTested: '2020-08', pcOnTreatment: 0 },
+  { total: 25, onTreatment: 0, monthTested: '2020-09', pcOnTreatment: 0 },
+  { total: 25, onTreatment: 0, monthTested: '2020-10', pcOnTreatment: 0 },
 ]
 
 const treatmentAPISkewedDataOppositeIn = [
-  { total: 26, cntConfirmed: 26, monthTested: '2020-05', pcConfirmed: 100 },
-  { total: 29, cntConfirmed: 29, monthTested: '2020-06', pcConfirmed: 100 },
-  { total: 36, cntConfirmed: 36, monthTested: '2020-07', pcConfirmed: 100 },
-  { total: 27, cntConfirmed: 27, monthTested: '2020-08', pcConfirmed: 100 },
-  { total: 25, cntConfirmed: 25, monthTested: '2020-09', pcConfirmed: 100 },
-  { total: 25, cntConfirmed: 25, monthTested: '2020-10', pcConfirmed: 100 },
+  { total: 26, onTreatment: 26, monthTested: '2020-05', pcOnTreatment: 100 },
+  { total: 29, onTreatment: 29, monthTested: '2020-06', pcOnTreatment: 100 },
+  { total: 36, onTreatment: 36, monthTested: '2020-07', pcOnTreatment: 100 },
+  { total: 27, onTreatment: 27, monthTested: '2020-08', pcOnTreatment: 100 },
+  { total: 25, onTreatment: 25, monthTested: '2020-09', pcOnTreatment: 100 },
+  { total: 25, onTreatment: 25, monthTested: '2020-10', pcOnTreatment: 100 },
 ]
 
 const treatmentAPISkewedPercentageDataOut = [

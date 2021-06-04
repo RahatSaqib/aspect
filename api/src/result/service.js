@@ -923,9 +923,8 @@ async function updateResultWorkflowStatusByResultId(
 
   // check if a externalId is provided
   if (resultWorkflowStatusExternalId) {
-    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(
-      resultWorkflowStatusExternalId
-    )
+    resultWorkflowLogEntry.resultWorkflowStatusId =
+      await resultWorkflowStatusToId(resultWorkflowStatusExternalId)
     if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
       return 'Invalid ResultWorkflowStatus ID'
     }
@@ -984,13 +983,8 @@ async function updateTreatmentStatusPost(request) {
     Boom.notFound()
   }
 
-  const {
-    resultTreatmentStatusId,
-    externalId,
-    data,
-    method,
-    changedOn,
-  } = payload
+  const { resultTreatmentStatusId, externalId, data, method, changedOn } =
+    payload
 
   return updateTreatmentStatus(
     request,
@@ -1892,9 +1886,12 @@ async function transferResult(request) {
     params: { resultId },
     payload: { siteId, timestamp, comment, includeAllResults },
   } = request
-  const { partnerId, countryId, id: currentUserId, userName } = await getUser(
-    auth.credentials.name
-  )
+  const {
+    partnerId,
+    countryId,
+    id: currentUserId,
+    userName,
+  } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
   const result = await getResultByResultId(auth, resultId)
@@ -1944,10 +1941,10 @@ async function transferResult(request) {
       createdOn: now,
       createdBy: currentUserId,
       data: JSON.stringify({
-        siteId: result.siteId,
+        siteId: result.data.siteId,
         reportableSiteId: siteId,
-        previousReportableSiteId: result.reportableSiteId,
-        sampleOriginSiteId: result.sampleOriginSiteId,
+        previousReportableSiteId: result.data.reportableSiteId,
+        sampleOriginSiteId: result.data.sampleOriginSiteId,
         comment,
       }),
       timestamp,
@@ -1970,9 +1967,9 @@ async function transferResult(request) {
       resultTreatmentStatusId,
       method: 'transfer',
       data: JSON.stringify({
-        siteId: result.siteId,
+        siteId: result.data.siteId,
         reportableSiteId: siteId,
-        sampleOriginSiteId: result.sampleOriginSiteId,
+        sampleOriginSiteId: result.data.sampleOriginSiteId,
       }),
       createdOn: now,
       changedOn: now,
@@ -2146,6 +2143,53 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
+    .modify(b => {
+      if (query.reportableSiteId || query.reportableSiteName) {
+        /**
+         * onlyEverTransferred filter can only be applied if
+         * reportableSiteId or reportableSiteName is set
+         * In UI, the first one is shown only if the second one is entered.
+         */
+        if (query.onlyEverTransferred) {
+          /**
+           * If only ever transferred is requested,
+           * then we should show only the results that were ever transferred from the reportable site.
+           * For this, we should:
+           * - Get all the transfer logs
+           * - ...where this result was transferred
+           * - ...and the previous reportable site was the one specified in the reportableSiteId or reportableSiteName filter
+           */
+          const siteOperationAndValue = query.reportableSiteId
+            ? `= ${query.reportableSiteId}`
+            : `IN (
+                SELECT s_transfer.id 
+                FROM Site s_transfer 
+                WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
+              )`
+          b.whereRaw(
+            `EXISTS (
+              SELECT rslog_transfer.resultId
+              FROM ResultStatusLog as rslog_transfer
+                INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+              WHERE rslog_transfer.resultId = r.id
+                and rs_transfer.externalId = 'Transfer'
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) ${siteOperationAndValue}
+            )`
+          )
+        } else {
+          /**
+           * If only ever transferred is NOT requested,
+           * then we should show only the results with the reportable site id/name associated
+           */
+          // eslint-disable-next-line no-lonely-if
+          if (query.reportableSiteId) {
+            b.where('sirep.id', query.reportableSiteId)
+          } else {
+            b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+          }
+        }
+      }
+    })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -2169,6 +2213,25 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
+      if (params.onlyDownloadedByReporter)
+        queryBuilder.innerJoin(
+          'ResultDownloadLog as rdl',
+          'r.id',
+          'rdl.resultId'
+        )
+
+      if (params.onlyTreatmentRequired || params.treatmentStatus) {
+        /**
+         * If treatment filters are required, then we get only the results delivered and downloaded in the reporter app
+         */
+        queryBuilder.andWhere(b => {
+          b.where('rca.requiresTreatment', true).orWhere(
+            'rca2.requiresTreatment',
+            true
+          )
+        })
+      }
+
       if (params.patientOrResearchId) {
         queryBuilder.where(builder =>
           builder
@@ -2180,13 +2243,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         )
       }
       if (params.treatmentStatus === 'AwaitingTreatment') {
-        queryBuilder
-          .where(builder =>
-            builder
-              .where('rts.externalId', params.treatmentStatus)
-              .orWhereNull('rts.externalId')
-          )
-          .where('rca.requiresTreatment', 1)
+        queryBuilder.where(builder =>
+          builder
+            .where('rts.externalId', params.treatmentStatus)
+            .orWhereNull('rts.externalId')
+        )
       } else if (params.treatmentStatus) {
         queryBuilder.where('rts.externalId', params.treatmentStatus)
       }
@@ -2808,4 +2869,5 @@ module.exports = {
   updateResult,
   addPartnerQueryConstraints,
   getBaseQueryForResults,
+  addResultDownloadLog,
 }

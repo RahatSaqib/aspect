@@ -27,10 +27,10 @@ const messages = defineMessages({
       'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown',
     defaultMessage: 'Unknown',
   },
-  inactiveNoResultsReported: {
+  inactiveNoTestsPerformed: {
     id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported',
-    defaultMessage: 'No Results Reported',
+      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoTestsPerformed',
+    defaultMessage: 'No Tests Performed',
   },
   inactiveOutOfInventory: {
     id:
