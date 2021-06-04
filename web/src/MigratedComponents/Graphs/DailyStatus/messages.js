@@ -74,6 +74,10 @@ const messages = defineMessages({
       other {# days}
     } since last update`,
   },
+  toolTipTitleNotEditable: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable',
+    defaultMessage: `Can't be edited`,
+  },
 })
 
 export default messages
