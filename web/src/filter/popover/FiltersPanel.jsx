@@ -31,7 +31,7 @@ import DeviceApprovalSelectField from '../resource/DeviceApprovalSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
-import ResultOnlyReportableResultsSelectField from '../resource/ResultOnlyReportableResultsSelectField'
+import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
@@ -114,6 +114,13 @@ const enhance = compose(
         siteName,
       }),
 
+    onReportableSiteChange: ({ onChangeFilters }) => ({ id, name }) => {
+      onChangeFilters({
+        reportableSiteName: name,
+        reportableSiteId: id,
+      })
+    },
+
     onSiteIdChange: ({ onChangeFilters }) => siteId =>
       onChangeFilters({
         siteId,
@@ -168,7 +175,24 @@ const enhance = compose(
       onChangeFilters({
         onlyReportableResults,
       }),
-
+    onOnlyDownloadedByReporterBoolChange: ({
+      onChangeFilters,
+    }) => onlyDownloadedByReporter =>
+      onChangeFilters({
+        onlyDownloadedByReporter,
+      }),
+    onOnlyEverTransferredBoolChange: ({
+      onChangeFilters,
+    }) => onlyEverTransferred =>
+      onChangeFilters({
+        onlyEverTransferred,
+      }),
+    onOnlyTreatmentRequiredBoolChange: ({
+      onChangeFilters,
+    }) => onlyTreatmentRequired =>
+      onChangeFilters({
+        onlyTreatmentRequired,
+      }),
     onStockLeftChange: ({ onChangeFilters }) => stockLeft =>
       onChangeFilters({
         stockLeft,
@@ -229,6 +253,10 @@ const messages = {
       id: 'filter.popover.site',
       defaultMessage: 'Site',
     },
+    reportableSite: {
+      id: 'filter.popover.site',
+      defaultMessage: 'Reportable Site',
+    },
     siteId: {
       id: 'filter.popover.siteId',
       defaultMessage: 'Site Id',
@@ -236,6 +264,14 @@ const messages = {
     enterSiteName: {
       id: 'filter.popover.enterSiteName',
       defaultMessage: 'Enter site name...',
+    },
+    enterReportableSiteName: {
+      id: 'filter.popover.enterReportableSiteName',
+      defaultMessage: 'Enter reportable site name...',
+    },
+    enterReportableSiteId: {
+      id: 'filter.popover.enterReportableSiteId',
+      defaultMessage: 'Enter reportable site...',
     },
     enterSiteId: {
       id: 'filter.popover.enterSiteId',
@@ -413,6 +449,18 @@ const messages = {
       id: 'filter.popover.onlyReportableResults',
       defaultMessage: 'Only Reportable Results',
     },
+    onlyDownloadedByReporter: {
+      id: 'filter.popover.onlyDownloadedByReporter',
+      defaultMessage: 'Only Results Downloaded By Reporter',
+    },
+    onlyEverTransferred: {
+      id: 'filter.popover.onlyEverTransferred',
+      defaultMessage: 'Only Ever Transferred Results',
+    },
+    onlyTreatmentRequired: {
+      id: 'filter.popover.onlyTreatmentRequired',
+      defaultMessage: 'Only Results With Treatment Required',
+    },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',
       defaultMessage: 'Maintenance Status',
@@ -462,6 +510,7 @@ export const FiltersPanel = ({
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
+  onReportableSiteChange,
   onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
@@ -473,12 +522,15 @@ export const FiltersPanel = ({
   onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
+  onOnlyDownloadedByReporterBoolChange,
+  onOnlyEverTransferredBoolChange,
+  onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
   onReportNameChange,
   user,
   assays,
 }) => {
-  const { assayId } = filters
+  const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
   let assayResultCategory2Label
   if (assayItems && assayId) {
@@ -491,6 +543,7 @@ export const FiltersPanel = ({
       assayResultCategory2Label = resultCategory2Label
     }
   }
+
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
@@ -810,6 +863,18 @@ export const FiltersPanel = ({
               />
             </div>
           )}
+          {config.reportableSiteName && (
+            <div className={cssClasses('Control')}>
+              <SiteAutoCompleteField
+                name="reportableSiteName"
+                value={filters.reportableSiteName || ''}
+                onChange={onReportableSiteChange}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.enterReportableSiteName)}
+                floatingLabelText={intl.formatMessage(messages.reportableSite)}
+              />
+            </div>
+          )}
           {config.sampleOriginSite && (
             <div className={cssClasses('Control')}>
               <SiteAutoCompleteField
@@ -990,15 +1055,67 @@ export const FiltersPanel = ({
           )}
           {config.onlyReportableResults && (
             <div className={cssClasses('Control')}>
-              <ResultOnlyReportableResultsSelectField
-                value={filters.onlyReportableResults}
-                onOnlyReportableResultsChange={
-                  onOnlyReportableResultsBoolChange
+              <CheckboxField
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(filters.onlyReportableResults)}
+                onChange={(event, isChecked) =>
+                  onOnlyReportableResultsBoolChange(isChecked || null)
                 }
-                floatingLabelText={intl.formatMessage(
-                  messages.onlyReportableResults
+                label={intl.formatMessage(messages.onlyReportableResults)}
+                name="onlyReportableResults"
+                autoWidth
+              />
+            </div>
+          )}
+          {config.onlyDownloadedByReporter && (
+            <div className={cssClasses('Control')}>
+              <CheckboxField
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(
+                  filters.onlyDownloadedByReporter
                 )}
-                style={{ verticalAlign: 'bottom' }}
+                onChange={(event, isChecked) =>
+                  onOnlyDownloadedByReporterBoolChange(isChecked || null)
+                }
+                label={intl.formatMessage(messages.onlyDownloadedByReporter)}
+                name="onlyDownloadedByReporter"
+                autoWidth
+              />
+            </div>
+          )}
+          {(reportableSiteName || reportableSiteId) &&
+            config.onlyEverTransferred && (
+              <div className={cssClasses('Control')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                  onChange={(event, isChecked) =>
+                    onOnlyEverTransferredBoolChange(isChecked || null)
+                  }
+                  label={intl.formatMessage(messages.onlyEverTransferred)}
+                  name="onlyEverTransferred"
+                  autoWidth
+                />
+              </div>
+            )}
+          {config.onlyTreatmentRequired && (
+            <div className={cssClasses('Control')}>
+              <CheckboxField
+                classNames={{
+                  controlContainer: cssClasses('checkbox-wrapper'),
+                }}
+                checked={[true, 'true'].includes(filters.onlyTreatmentRequired)}
+                onChange={(event, isChecked) =>
+                  onOnlyTreatmentRequiredBoolChange(isChecked || null)
+                }
+                label={intl.formatMessage(messages.onlyTreatmentRequired)}
+                name="onlyTreatmentRequired"
                 autoWidth
               />
             </div>

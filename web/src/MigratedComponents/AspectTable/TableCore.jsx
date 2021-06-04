@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
-import { array, object, oneOfType } from 'prop-types'
+import { array, number, object, oneOfType, shape } from 'prop-types'
 import isEqual from 'lodash/isEqual'
 
 import {
@@ -44,7 +44,7 @@ const AspectTableCore = ({
     setSortDir,
     setPage,
   } = setters
-  const { total, data } = tableData
+  const { total = 0, data = [] } = tableData || {}
   const { name } = config
   const {
     columns,
@@ -242,7 +242,13 @@ AspectTableCore.proptTypes = {
   /**
     Data input for tables
   */
-  tableData: oneOfType([array]).isRequired,
+  tableData: oneOfType([
+    array, // TODO: remove this line and set `tableData` only with `shape`
+    shape({
+      total: number.isRequired,
+      data: oneOfType([array]).isRequired,
+    }),
+  ]).isRequired,
   /**
    Data input for tables
  */

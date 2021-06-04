@@ -34,7 +34,7 @@ import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
 import ResultDetail from '../../MigratedComponents/Results/Detail'
 import NotificationList from '../../MigratedComponents/Notifications/List'
-import NotificationDetailView from '../../notification/detail/view/NotificationDetailView'
+import NotificationDetail from '../../MigratedComponents/Notifications/Detail'
 import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
@@ -157,7 +157,7 @@ const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
 const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
 const renderNotificationList = loggedInFactory(NotificationList)
-const renderNotificationDetailView = loggedInFactory(NotificationDetailView)
+const renderNotificationDetail = loggedInFactory(NotificationDetail)
 const renderNotificationDetailHistory = loggedInFactory(
   NotificationDetailHistory
 )
@@ -529,7 +529,7 @@ const AppRoutes = ({ props }) => {
             renderRedirectToLoginOr(props) ||
             renderRedirectToLicenseOr(props) ||
             renderRedirectToNotFound(props, ['browse', 'notification:edit']) ||
-            renderNotificationDetailView
+            renderNotificationDetail
           }
         />
         <Route

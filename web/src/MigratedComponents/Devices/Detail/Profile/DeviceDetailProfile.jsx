@@ -30,6 +30,7 @@ import {
   hideDialog,
   updateDeviceMaintenance,
   updateDeviceMaintenanceStatus,
+  exportDeviceLogs,
 } from '../../../../device/DeviceRedux'
 import Summary from '../../../../globals/components/Summary'
 import requirePermissions from '../../../../components/shared/requirePermissions'
@@ -104,6 +105,7 @@ const enhance = compose(
       updateDeviceMaintenance,
       fetchResults,
       exportResults,
+      exportDeviceLogs,
     }
   ),
   withProps(
@@ -150,6 +152,13 @@ const enhance = compose(
           'xlsx',
           'deviceResults'
         )
+      }
+    },
+    onExportDeviceLogsClick: ({ match, location, exportDeviceLogs }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        filtersParams.set('deviceId', match.params.deviceId)
+        exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
       }
     },
     onRowClick: ({ history }) => ({
@@ -487,6 +496,7 @@ const DeviceDetailProfile = ({
   items,
   onRowClick,
   onExportClick,
+  onExportDeviceLogsClick,
 }) => {
   const intl = useIntl()
   const {
@@ -712,6 +722,15 @@ const DeviceDetailProfile = ({
                   {intl.formatMessage(messages.errorRate)}
                 </AspectTooltip>
               }
+              action={
+                <Button
+                  variant="contained"
+                  onClick={onExportDeviceLogsClick}
+                  disabled={disabled}
+                >
+                  {intl.formatMessage(messages.deviceLogs)}
+                </Button>
+              }
               description={
                 errorRateThisMonth !== null ? (
                   <ColoredNumber
@@ -817,6 +836,7 @@ DeviceDetailProfile.propTypes = {
   items: PropTypes.oneOf([PropTypes.object]).isRequired,
   onRowClick: PropTypes.string.isRequired,
   onExportClick: PropTypes.func.isRequired,
+  onExportDeviceLogsClick: PropTypes.func.isRequired,
 }
 
 export default enhance(DeviceDetailProfile)

@@ -21,6 +21,7 @@ const filter = AutoComplete.caseInsensitiveFilter
 const enhance = compose(
   pure,
   setPropTypes({
+    onChange: PropTypes.func,
     onSiteIdChange: PropTypes.func,
     onSiteNameChange: PropTypes.func,
     value: PropTypes.string,
@@ -39,17 +40,35 @@ const enhance = compose(
     },
   }),
   withProps(props => ({
+    onChange: props.onChange,
     onSiteIdChange: props.onSiteIdChange || _fp.noop,
     onSiteNameChange: props.onSiteNameChange || _fp.noop,
   })),
   withHandlers({
-    onSelect: ({ onSiteIdChange, onSiteNameChange }) => chosenRequest => {
+    onSelect: ({
+      onChange,
+      onSiteIdChange,
+      onSiteNameChange,
+    }) => chosenRequest => {
       if (chosenRequest) {
+        if (onChange) {
+          onChange({
+            id: chosenRequest.value,
+            name: chosenRequest.text,
+          })
+          return
+        }
+
         onSiteNameChange(chosenRequest.text)
         onSiteIdChange(chosenRequest.value)
       }
     },
-    onUpdateInput: ({ onSiteNameChange }) => text => {
+    onUpdateInput: ({ onChange, onSiteNameChange }) => text => {
+      if (onChange) {
+        onChange({ name: text })
+        return
+      }
+
       onSiteNameChange(text)
     },
   }),
@@ -69,6 +88,7 @@ const enhance = compose(
     return {
       ..._fp.omit(
         [
+          'onChange',
           'onSiteIdChange',
           'onSiteNameChange',
           'fetchSitesForSelectList',

@@ -165,7 +165,7 @@ const routes = [
                 inactiveUnknown: Joi.number().description(
                   'The number of inactive "Unknown" devices in the system as of that day'
                 ),
-                inactiveNoResultsReported: Joi.number().description(
+                inactiveNoTestsPerformed: Joi.number().description(
                   'The number of inactive "NoResultsReported" devices in the system as of that day'
                 ),
                 inactiveOutOfInventory: Joi.number().description(
@@ -173,9 +173,6 @@ const routes = [
                 ),
                 inactiveDownForRepair: Joi.number().description(
                   'The number of inactive "DownForRepair" devices in the system as of that day'
-                ),
-                inactiveConnectivity: Joi.number().description(
-                  'The number of inactive "Connectivity" devices in the system as of that day'
                 ),
                 inactiveDecommissioned: Joi.number().description(
                   'The number of inactive "Decommissioned" devices in the system as of that day'

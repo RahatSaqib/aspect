@@ -21,9 +21,9 @@ const messages = defineMessages({
     id: 'pages.DailyStatus.maintenanceStatus.inactiveUnknown',
     defaultMessage: 'Unknown',
   },
-  inactiveNoResultsReported: {
-    id: 'pages.DailyStatus.maintenanceStatus.inactiveNoResultsReported',
-    defaultMessage: 'No Results Reported',
+  inactiveNoTestsPerformed: {
+    id: 'pages.DailyStatus.maintenanceStatus.inactiveNoTestsPerformed',
+    defaultMessage: 'No Tests Performed',
   },
   inactiveOutOfInventory: {
     id: 'pages.DailyStatus.maintenanceStatus.inactiveOutOfInventory',
@@ -73,6 +73,10 @@ const messages = defineMessages({
       one {# day}
       other {# days}
     } since last update`,
+  },
+  toolTipTitleNotEditable: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable',
+    defaultMessage: `Can't be edited`,
   },
 })
 

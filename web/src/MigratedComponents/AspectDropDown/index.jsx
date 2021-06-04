@@ -3,16 +3,40 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
-import Select from 'react-select'
+import Select, { components } from 'react-select'
+import { defineMessages } from 'react-intl'
+
 import get from 'lodash/get'
+import find from 'lodash/find'
+import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
+import isNumber from 'lodash/isNumber'
+import isPlainObject from 'lodash/isPlainObject'
+import isString from 'lodash/isString'
+import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
-import filter from 'lodash/filter'
+import values from 'lodash/values'
+
 import useI18n from '../../Hooks/i18n/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
 import UI_CONSTS from '../../globals/consts/UI'
 
+const messagesBase = defineMessages({
+  noOptionsMessage: {
+    id: 'base.noOptionsMessage',
+    defaultMessage: 'No options',
+  },
+})
+
 const cssClasses = classnames.bind(require('./Dropdown.css'))
+
+const defaultSelectedOptionPropType = PropTypes.oneOf([
+  PropTypes.bool,
+  PropTypes.number,
+  PropTypes.string,
+  PropTypes.object,
+  PropTypes.array,
+])
 
 const {
   '--aspect-color-chill-blue-1': aspectChillBlue1,
@@ -21,27 +45,50 @@ const {
   '--white-lilac-2': lilac2,
 } = process.env
 
-function indexForDefaultSelected(data, defaultOption) {
-  if (typeof defaultOption === 'object') {
-    const { key, value } = defaultOption
-    const selectValue = filter(data, { [key]: value })
-    if (selectValue && selectValue.length) {
-      return selectValue[0]
-    }
-    return false
+function getOptionByValue(data, requestedValue, idKey) {
+  if (isPlainObject(requestedValue)) {
+    const { key, value } = requestedValue
+    const foundOption = find(data, { [key]: value })
+    return foundOption
   }
-  if (typeof defaultOption === 'number') {
-    return data[defaultOption]
+  if (isString(requestedValue)) {
+    const foundOption = find(data, { [idKey]: requestedValue })
+    return foundOption
   }
-  return false
+  if (isNumber(requestedValue)) {
+    return data[requestedValue]
+  }
 }
 
+function getSelectedOptions(data, someValue, idKey) {
+  if (!data || data.length === 0 || !someValue) {
+    return false
+  }
+  if (isArray(someValue)) {
+    const options = someValue.map(value => getOptionByValue(data, value, idKey))
+    return options
+  }
+
+  const option = getOptionByValue(data, someValue, idKey)
+  return option || false
+}
+
+const styleOptionBase = {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  lineHeight: 1,
+  '& svg': {
+    margin: '0 5px 0',
+  },
+}
 const getAspectTheme = () => {
   return {
     option: (provided, state) => {
       const { isSelected, isFocused } = state
       return {
         ...provided,
+        ...styleOptionBase,
         color: isSelected ? aspectWhite : aspectChillBlue1,
         backgroundColor:
           (isSelected && aspectChillBlue3) || (isFocused && lilac2),
@@ -55,6 +102,10 @@ const getAspectTheme = () => {
       borderRadius: '5px',
       padding: '0 8px 0',
       margin: '0 0 0 5px',
+      '& svg': {
+        ...provided['& svg'],
+        color: aspectWhite,
+      },
     }),
     placeholder: provided => ({
       ...provided,
@@ -83,6 +134,10 @@ const getAspectTheme = () => {
 }
 const getMuiTheme = () => {
   return {
+    option: provided => ({
+      ...provided,
+      ...styleOptionBase,
+    }),
     control: provided => ({
       ...provided,
       display: 'flex',
@@ -90,6 +145,8 @@ const getMuiTheme = () => {
       border: 0,
       height: 'auto',
       background: 'transparent',
+      borderColor: 'transparent',
+      boxShadow: 'none',
       '&:hover': {
         boxShadow: 'none',
       },
@@ -148,43 +205,47 @@ const buildCustomStyles = theme => {
 }
 
 const SelectComponent = ({
-  classNames,
-  data,
-  selectedValue,
   action: dispatchFromRedux,
+  classNames,
+  components,
+  data,
+  defaultSelectedOption,
   identifier,
-  keyMapping: { idKey, nameKey = 'i18nKey' },
   isClearable,
   isLoading,
-  defaultSelectedOption,
-  theme,
+  isMulti,
+  keyMapping: { idKey, nameKey = 'i18nKey' },
   messages,
+  placeholder,
+  selectedValue,
+  theme,
 }) => {
   messages = messages || {}
   const { formatMessage } = useI18n()
   const [busy, setBusy] = useState(true)
   const [defaultOptionValue, setDefaultOptionValue] = useState(false)
   const [defaultOption] = useState(selectedValue)
-  const [inputValue, setInputValue] = useState(false)
+  const [, setInputValue] = useState(false)
+  // const [currentValue, setCurrentValue] = useState(false)
   const [options, setOptions] = useState(false)
 
   useEffect(() => {
-    if (inputValue) {
-      const { selectedOption, action } = inputValue
-      dispatchFromRedux({ identifier, selectedOption, action })
-    }
-  }, [inputValue])
-
-  useEffect(() => {
-    if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
+    // if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
+    if (!isEqual(options, data)) {
       setDefaultOptionValue(
-        indexForDefaultSelected(data, defaultSelectedOption)
+        getSelectedOptions(data, defaultSelectedOption, idKey)
       )
       setOptions(data)
+      setBusy(false)
     } else {
       setBusy(false)
     }
   }, [data, defaultSelectedOption])
+
+  const onChange = (selectedOption, { action }) => {
+    setInputValue({ selectedOption, action })
+    dispatchFromRedux({ identifier, selectedOption, action })
+  }
   return !busy ? (
     <div
       className={cssClasses('select__container', {
@@ -192,20 +253,22 @@ const SelectComponent = ({
       })}
     >
       <Select
+        components={components}
         name={identifier}
+        id={identifier}
         getOptionLabel={val =>
           formatMessage(messages[val[nameKey]], {}, val[nameKey])
         }
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         isLoading={isLoading}
+        isMulti={isMulti}
         defaultValue={defaultOptionValue}
         options={data}
-        placeholder={defaultOption}
+        placeholder={defaultOption || placeholder}
         styles={buildCustomStyles(theme)}
-        onChange={(selectedOption, { action }) =>
-          setInputValue({ selectedOption, action })
-        }
+        onChange={onChange}
+        noOptionsMessage={() => formatMessage(messagesBase.noOptionsMessage)}
       />
     </div>
   ) : null
@@ -213,49 +276,92 @@ const SelectComponent = ({
 
 SelectComponent.defaultProps = {
   classNames: {},
+  components: undefined,
+  defaultSelectedOption: undefined,
+  isClearable: true,
+  isLoading: false,
+  isMulti: false,
   keyMapping: {
     idKey: 'id',
     nameKey: 'name',
   },
-  isClearable: true,
-  isLoading: false,
-  defaultSelectedOption: false,
   messages: null,
+  placeholder: 'Select...',
 }
 
 SelectComponent.propTypes = {
-  classNames: PropTypes.oneOf([PropTypes.object]),
-  keyMapping: PropTypes.oneOf([PropTypes.object]),
-  data: PropTypes.oneOf([PropTypes.object]).isRequired,
-  selectedValue: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
+  classNames: PropTypes.oneOf([PropTypes.object]),
+  components: PropTypes.oneOf([PropTypes.object]),
+  data: PropTypes.oneOf([PropTypes.object]).isRequired,
+  defaultSelectedOption: defaultSelectedOptionPropType,
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
   isLoading: PropTypes.bool,
-  defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
-  theme: PropTypes.string.isRequired,
+  isMulti: PropTypes.bool,
+  keyMapping: PropTypes.oneOf([PropTypes.object]),
   messages: PropTypes.oneOf([PropTypes.object]),
+  placeholder: PropTypes.oneOf([PropTypes.string, PropTypes.object]),
+  selectedValue: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
 }
+
+const getActualData = ({ data, reduxStateId, sortByKeys }) => {
+  if (data[reduxStateId]) {
+    const actualData = get(data, reduxStateId)
+    return sortByKeys ? sortBy(actualData, sortByKeys) : actualData
+  }
+  return data
+}
+
+const getQueryDependencies = (formik, initialValues, dependencies) => {
+  let queryDependencies = [...initialValues]
+  if (formik && dependencies && isArray(dependencies)) {
+    queryDependencies = [
+      ...queryDependencies,
+      ...values(pick(formik.values, dependencies)),
+    ]
+  }
+  return queryDependencies
+}
+
+const groupStyles = {
+  color: '#444',
+  fontWeight: 'bold',
+  fontSize: '15px',
+  // opacity: 0.8,
+  textTransform: 'none',
+}
+const GroupHeading = props => (
+  <components.GroupHeading {...props} style={groupStyles} />
+)
 
 const AspectDropDown = ({
   props: {
     classNames,
-    selectedValue,
-    state: reduxStateId,
-    identifier,
-    endpoint,
+    components = {}, // customization of layout, see 'MigratedComponents/Notifications/List/config.jsx'
     data: passedData,
-    sortByKeys,
-    keyMapping,
-    isClearable,
     defaultSelectedOption,
+    dependencies,
+    endpoint,
+    formik,
+    hideIfNoOptions = true,
+    identifier,
+    isClearable,
+    isMulti,
+    keyMapping,
     messages,
+    normalizeLoadedData,
+    placeholder,
+    selectedValue,
+    sortByKeys,
+    state: reduxStateId,
   },
   action,
   theme,
 }) => {
   const [selectOptions, setSelectOptions] = useState(false)
-  const { isError, data = false, error } = useQuery(
+  const { isError, data = false, error: queryErrorMessage } = useQuery(
     reduxStateId,
     async () => (endpoint ? fetchWrapperForQueries({ endpoint }) : passedData),
     {
@@ -263,31 +369,61 @@ const AspectDropDown = ({
       initialStale: true,
     }
   )
-
+  const queryDependencies = getQueryDependencies(
+    formik,
+    [data, selectOptions],
+    dependencies
+  )
   useEffect(() => {
     if (data) {
-      const dataSet = get(data, reduxStateId)
-      if (dataSet && !isEqual(dataSet, selectOptions)) {
-        setSelectOptions(dataSet)
+      const isLoadedFromApi =
+        endpoint && // if 'endpoint' is defined - we fetch data from api
+        normalizeLoadedData &&
+        !isEqual(passedData, data) // loaded data should differ from initial data
+      const options = isLoadedFromApi
+        ? normalizeLoadedData(data, formik) || []
+        : getActualData({ data, reduxStateId, sortByKeys })
+      if (options && !isEqual(options, selectOptions)) {
+        setSelectOptions(options)
+      }
+      // when `options` don't contain current value - reset field value in formik.values
+      if (
+        formik &&
+        options.find &&
+        !options.find(({ value }) => value === formik.values[identifier])
+      ) {
+        formik.setFieldValue(
+          identifier,
+          formik.initialValues[identifier],
+          false
+        )
+        // TODO: after resetting value in formik.values - also reset input text control of the Select
       }
     }
-  }, [data, selectOptions])
+  }, queryDependencies)
 
   if (isError) {
-    throw new Error(error)
+    throw new Error(queryErrorMessage)
   }
-  return selectOptions && selectOptions.length ? (
+
+  return selectOptions && (!hideIfNoOptions || selectOptions.length > 0) ? (
     <SelectComponent
-      classNames={classNames}
-      data={sortBy(get(data, reduxStateId), sortByKeys)}
-      selectedValue={selectedValue}
       action={action}
-      identifier={identifier}
-      keyMapping={keyMapping}
-      isClearable={isClearable}
+      classNames={classNames}
+      components={{
+        GroupHeading,
+        ...components,
+      }}
+      data={selectOptions}
       defaultSelectedOption={defaultSelectedOption}
-      theme={theme}
+      identifier={identifier}
+      isClearable={isClearable}
+      isMulti={isMulti}
+      keyMapping={keyMapping}
       messages={messages}
+      placeholder={placeholder}
+      selectedValue={selectedValue}
+      theme={theme}
     />
   ) : null
 }
@@ -297,23 +433,30 @@ AspectDropDown.defaultProps = {
 }
 
 AspectDropDown.propTypes = {
+  action: PropTypes.func.isRequired,
   props: PropTypes.shape({
     classNames: PropTypes.oneOf([PropTypes.object]),
-    selectedValue: PropTypes.string.isRequired,
-    state: PropTypes.string.isRequired,
-    identifier: PropTypes.string.isRequired,
-    endpoint: PropTypes.string.isRequired,
+    components: PropTypes.oneOf([PropTypes.object]),
     data: PropTypes.bool,
-    sortByKeys: PropTypes.oneOf([PropTypes.array]),
+    defaultSelectedOption: defaultSelectedOptionPropType,
+    dependencies: PropTypes.arrayOf([PropTypes.string]),
+    endpoint: PropTypes.string,
+    formik: PropTypes.oneOf([PropTypes.shape]),
+    hideIfNoOptions: PropTypes.bool,
+    identifier: PropTypes.string.isRequired,
+    isClearable: PropTypes.bool,
+    isMulti: PropTypes.bool,
     keyMapping: PropTypes.shape({
       idKey: PropTypes.string,
       nameKey: PropTypes.string,
     }),
-    isClearable: PropTypes.bool,
-    defaultSelectedOption: PropTypes.oneOf([PropTypes.bool, PropTypes.number]),
     messages: PropTypes.oneOf([PropTypes.object]),
+    normalizeLoadedData: PropTypes.func,
+    placeholder: PropTypes.oneOf([PropTypes.string, PropTypes.object]),
+    selectedValue: PropTypes.string.isRequired,
+    sortByKeys: PropTypes.oneOf([PropTypes.array]),
+    state: PropTypes.string.isRequired,
   }).isRequired,
-  action: PropTypes.func.isRequired,
   theme: PropTypes.string,
 }
 

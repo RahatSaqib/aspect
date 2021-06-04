@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const logger = require('../../src/shared/logger')
 const { getPartnerByName } = require('../utils')
 const config = require('../../src/config')
 
@@ -61,12 +62,11 @@ module.exports = async (knex, partnerData, contacts) => {
       stateName: province.name,
     })
     if (provinceDistricts) {
-      provinceMemo[
-        province.name.toLowerCase()
-      ].districts = provinceDistricts.reduce((districtMemo, district) => {
-        districtMemo[district.name.toLowerCase()] = district
-        return districtMemo
-      }, {})
+      provinceMemo[province.name.toLowerCase()].districts =
+        provinceDistricts.reduce((districtMemo, district) => {
+          districtMemo[district.name.toLowerCase()] = district
+          return districtMemo
+        }, {})
     }
     return provinceMemo
   }, {})
@@ -231,15 +231,18 @@ module.exports = async (knex, partnerData, contacts) => {
               jobId,
               siteId: siteIds[site.shortName],
             }))
-          await knex('JobContext').insert(
-            expectedJobContexts.filter(
-              expectedJobContext =>
-                !_.some(
-                  existingJobContexts,
-                  jobContext => jobContext.siteId === expectedJobContext.siteId
-                )
-            )
+          const jobContextItem = expectedJobContexts.filter(
+            expectedJobContext =>
+              !_.some(
+                existingJobContexts,
+                jobContext => jobContext.siteId === expectedJobContext.siteId
+              )
           )
+          if (!_.isEmpty(jobContextItem)) {
+            await knex('JobContext').insert(jobContextItem)
+          } else {
+            logger.error('Attempt to insert empty data to table JobContext')
+          }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
               !_.some(expectedJobContexts, {
@@ -314,16 +317,19 @@ module.exports = async (knex, partnerData, contacts) => {
               },
             ]
           })
-          await knex('JobContext').insert(
-            expectedJobContexts.filter(
-              expectedJobContext =>
-                !_.some(
-                  existingJobContexts,
-                  jobContext =>
-                    jobContext.geographyId === expectedJobContext.geographyId
-                )
-            )
+          const jobContextItem = expectedJobContexts.filter(
+            expectedJobContext =>
+              !_.some(
+                existingJobContexts,
+                jobContext =>
+                  jobContext.geographyId === expectedJobContext.geographyId
+              )
           )
+          if (!_.isEmpty(jobContextItem)) {
+            await knex('JobContext').insert(jobContextItem)
+          } else {
+            logger.error('Attempt to insert empty data to table JobContext')
+          }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
               !_.some(expectedJobContexts, {

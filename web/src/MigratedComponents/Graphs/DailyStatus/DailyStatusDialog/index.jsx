@@ -15,7 +15,6 @@ const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
 
 const getFormConfig = (formConfig, statuses, data) => {
   setClassNames(formConfig, cssClasses)
-
   formConfig.sections.forEach(section => {
     setClassNames(section, cssClasses)
     section.rows.forEach(({ items }) => {
@@ -37,7 +36,7 @@ const getFormConfig = (formConfig, statuses, data) => {
             }))
         }
       )
-      setInitialValue(items, 'note', '', cssClasses)
+      setInitialValue(items, 'note', data.note, cssClasses)
     })
   })
 

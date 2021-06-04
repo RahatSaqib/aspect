@@ -24,15 +24,15 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
           originalPayload: {
             data: {
               customFieldData: {
-                '10': {
+                10: {
                   value: 'AND LAST',
                   label: 'Last Name of Patient',
                 },
-                '11': {
+                11: {
                   value: 'HAS FIRST',
                   label: 'First Name of Patient',
                 },
-                '12': {
+                12: {
                   value: 'MIDDLE',
                   label: 'Middle Name of Patient',
                 },
@@ -54,15 +54,15 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
           originalPayload: {
             data: {
               customFieldData: {
-                '10': {
+                10: {
                   value: 'AND LAST',
                   label: 'Last Name of Patient',
                 },
-                '11': {
+                11: {
                   value: 'HAS FIRST',
                   label: 'First Name of Patient',
                 },
-                '12': {
+                12: {
                   value: 'MIDDLE',
                   label: 'Middle Name of Patient',
                 },
@@ -84,15 +84,15 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
           originalPayload: {
             data: {
               customFieldData: {
-                '10': {
+                10: {
                   value: 'RICHARDS',
                   label: 'Last Name of Patient',
                 },
-                '11': {
+                11: {
                   value: 'BRYAN',
                   label: 'First Name of Patient',
                 },
-                '12': {
+                12: {
                   value: 'MAITLAND',
                   label: 'Middle Name of Patient',
                 },
@@ -114,15 +114,15 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
           originalPayload: {
             data: {
               customFieldData: {
-                '10': {
+                10: {
                   value: 'May',
                   label: 'Last Name of Patient',
                 },
-                '11': {
+                11: {
                   value: 'Brian',
                   label: 'First Name of Patient',
                 },
-                '12': {
+                12: {
                   value: 'Harold',
                   label: 'Middle Name of Patient',
                 },
@@ -159,7 +159,7 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
           originalPayload: {
             data: {
               customFieldData: {
-                '11': {
+                11: {
                   value: 'ONLY FIRST NAME',
                   label: 'First Name of Patient',
                 },
@@ -181,11 +181,11 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
           originalPayload: {
             data: {
               customFieldData: {
-                '10': {
+                10: {
                   value: 'AND LAST NAME',
                   label: 'Last Name of Patient',
                 },
-                '12': {
+                12: {
                   value: 'MIDDLE NAME',
                   label: 'Middle Name of Patient',
                 },

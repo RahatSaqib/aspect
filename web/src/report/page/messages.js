@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.deviceActivityReport',
     defaultMessage: 'Device Activity',
   },
+  deviceActivityPercentReport: {
+    id: 'pages.ReportIndex.deviceActivityPercentReport',
+    defaultMessage: 'Device Activity (Percent)',
+  },
   moduleSwapsReport: {
     id: 'pages.ReportIndex.moduleSwapsReport',
     defaultMessage: 'Module Swaps',
@@ -59,6 +63,11 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.device_activity_description',
     defaultMessage:
       'This report shows the activity of the devices during the selected period of time, breaking it down by months (By default last 12 months), and all the tests performed during the last year.',
+  },
+  device_activity_percent_description: {
+    id: 'pages.ReportIndex.device_activity_percent_description',
+    defaultMessage:
+      'This report shows the activity percentage, per month, of the devices during the selected period of time. (By default last 12 months)',
   },
   moduleSwapsReport_description: {
     id: 'pages.ReportIndex.moduleSwapsReport_description',

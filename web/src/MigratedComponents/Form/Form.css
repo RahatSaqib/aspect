@@ -6,10 +6,10 @@
   display: flex;
   align-self: flex-start;
   justify-content: flex-end;
+  text-align: right;
   padding: 0 30px 0;
   font-size: 16px;
   font-weight: 700;
-  
 }
 
 .form__sectionContainer {
@@ -17,16 +17,30 @@
 }
 
 .form__sectionItemsContainer {
-  padding-bottom: 50px;
+  padding-bottom: 40px;
+}
+
+.form__sectionItemsContainer.flex-dir-column {
+  flex-direction: column;
+}
+
+.form__sectionItemsContainer.form__flex-dir-column > .form__sectionItemContainer{
+  max-width: none;
+  flex-basis: 100%;
 }
 
 .form__sectionItemContainer {
   width: 100%;
-  padding: 0 15px;
+  padding: 0 15px 30px;
 }
 
 .form__sectionItemInput > label {
   color: var('--aspect-color-chill-blue-1') !important;
+  font-size: 1rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  transform: translate(0, 1.5px) scale(0.75);
+  transform-origin: top left;
+  margin-bottom: -4px;
 }
 
 .form__sectionItemInput--enabled > div > input {

@@ -64,6 +64,18 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteIdIncludes',
     defaultMessage: 'site ID includes "{siteId}"',
   },
+  whereReportableSiteNameIncludes: {
+    id: 'filter.btnGroup.whereReportableSiteNameIncludes',
+    defaultMessage: 'reportable site name includes "{reportableSiteName}"',
+  },
+  whereReportableSiteName: {
+    id: 'filter.btnGroup.whereReportableSiteIs',
+    defaultMessage: 'reportable site "{reportableSiteName}"',
+  },
+  whereReportableSiteIdIncludes: {
+    id: 'filter.btnGroup.whereSiteIdIncludes',
+    defaultMessage: 'reportable site ID includes "{reportableSiteId}"',
+  },
   sampleOriginSite: {
     id: 'filter.btnGroup.sampleOriginSite',
     defaultMessage: 'sample collection site is {sampleOriginSiteName}',
@@ -115,6 +127,18 @@ const messages = defineMessages({
   onlyReportableResults: {
     id: 'filter.btnGroup.onlyReportableResults',
     defaultMessage: 'Show Only Reportable Results',
+  },
+  onlyDownloadedByReporter: {
+    id: 'filter.btnGroup.onlyDownloadedByReporter',
+    defaultMessage: 'Show Only Results Downloaded By Reporter',
+  },
+  onlyEverTransferred: {
+    id: 'filter.btnGroup.onlyEverTransferred',
+    defaultMessage: 'Show Only Results Ever Transferred',
+  },
+  onlyTreatmentRequired: {
+    id: 'filter.btnGroup.onlyTreatmentRequired',
+    defaultMessage: 'Show Only Results With Treatment Required',
   },
   deviceIssueType: {
     id: 'filter.btnGroup.deviceIssueType',
@@ -204,6 +228,8 @@ const filtersOrdering = {
   deviceName: 11,
   resultCategoryId: 5,
   siteName: 12,
+  reportableSiteName: 33,
+  reportableSiteId: 33,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
   consumableId: 7,
@@ -218,6 +244,9 @@ const filtersOrdering = {
   siteIds: -1,
   patientOrCaseId: 23,
   onlyReportableResults: 23,
+  onlyTreatmentRequired: 33,
+  onlyDownloadedByReporter: 35,
+  onlyEverTransferred: 34,
   issueTypeId: 24,
   stockLeft: 31,
   reportName: 32,
@@ -357,6 +386,30 @@ const buttonBy = {
       siteName,
     })
   ),
+  reportableSiteName: makeButton(({ intl, filters }, reportableSiteName) => {
+    const message = filters.reportableSiteId
+      ? messages.whereReportableSiteName
+      : messages.whereReportableSiteNameIncludes
+    return intl.formatMessage(message, { reportableSiteName })
+  }),
+  reportableSiteId: (props, filterKey) => {
+    /**
+     * if filters.reportableSiteName is defined then skip processing of filters.reportableSiteId
+     * because this value will be used when showing button for filters.reportableSiteName
+     */
+    if (props.filters.reportableSiteName) {
+      return null
+    }
+    /**
+     * if filters.reportableSiteName is missing then treat filters.reportableSiteId
+     * as separate (visible) filter button
+     */
+    return makeButton(({ intl }, reportableSiteId) =>
+      intl.formatMessage(messages.whereReportableSiteIdIncludes, {
+        reportableSiteId,
+      })(props, filterKey)
+    )
+  },
   sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
@@ -477,6 +530,15 @@ const buttonBy = {
   ),
   onlyReportableResults: makeButton(({ intl }) =>
     intl.formatMessage(messages.onlyReportableResults)
+  ),
+  onlyDownloadedByReporter: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyDownloadedByReporter)
+  ),
+  onlyEverTransferred: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyEverTransferred)
+  ),
+  onlyTreatmentRequired: makeButton(({ intl }) =>
+    intl.formatMessage(messages.onlyTreatmentRequired)
   ),
   issueTypeId: makeButton(({ intl }, issueTypeId) =>
     intl.formatMessage(messages.deviceIssueType, {

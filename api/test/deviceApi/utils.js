@@ -310,6 +310,13 @@ async function createResult(
   await knex('Result').where('id', resultId).update({
     resultWorkflowStatusLogId: lastLogId,
   })
+  await knex('DeviceLog').insert({
+    deviceId,
+    source: 'TEST',
+    createdOn: now,
+    senderIp: 'TEST',
+    resultId,
+  })
   return resultId
 }
 
@@ -597,7 +604,6 @@ async function getMaxDeviceId(knex) {
     .from('Device')
     .orderBy('id', 'desc')
     .limit(1)
-    .select('id')
     .pluck('id')
   return maxDeviceId
 }

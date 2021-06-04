@@ -24,7 +24,6 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
-// import CheckboxField from '../../components/shared/CheckboxField'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'

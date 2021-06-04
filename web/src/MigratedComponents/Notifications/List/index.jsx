@@ -4,6 +4,8 @@ import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 
+import AspectDropDown from '../../AspectDropDown'
+import UI_CONSTS from '../../../globals/consts/UI'
 import NavTitle from '../../../globals/components/NavTitle'
 import BrowseFilters from '../../../globals/components/BrowseFilters'
 import { reduceFiltersConfig } from '../../../filter/utils'
@@ -13,7 +15,7 @@ import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
 import AspectTable from '../../AspectTable'
 import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
-import baseConfig from './config'
+import { baseConfig, getCreateNotificationMenuProps } from './config'
 
 const cssClasses = classnames.bind(require('../Notifications.css'))
 
@@ -33,6 +35,7 @@ const NotificationList = () => {
   } = useAuthState()
   const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
   const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
+  const notificationMenuProps = getCreateNotificationMenuProps(intl)
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -43,7 +46,25 @@ const NotificationList = () => {
           location={location}
           intl={intl}
           config={reducedFilters}
-        />
+        >
+          <AspectDropDown
+            props={{
+              components: notificationMenuProps.components,
+              identifier: 'createNotification',
+              data: {
+                createNotification: notificationMenuProps.options,
+              },
+              state: 'createNotification',
+              isClearable: false,
+              placeholder: 'Create...',
+            }}
+            action={({ selectedOption }) => {
+              const { id } = selectedOption
+              history.push(`/browse/notification/${id}`)
+            }}
+            theme={UI_CONSTS.themeName.aspect}
+          />
+        </BrowseFilters>
       </div>
       <div
         /**

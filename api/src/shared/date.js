@@ -33,6 +33,13 @@ const getMonthYearUserTimeZoneField = (
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
 
+const getMonthYearField = (knex, field, alias = 'monthYear') =>
+  knex.raw(`CONCAT_WS(
+    '-',
+    CAST(YEAR(${field}) AS CHAR ),
+    LPAD(CAST(MONTH(${field}) AS CHAR ),2,'0')
+    ) ${alias ? ` as ${alias}` : ''}`)
+
 const getISODateUserTimeZoneField = (
   knex,
   field,
@@ -140,7 +147,8 @@ for further information check the unit test api/test/shared/date.test.js:65
 2020-11-26T15:00:24-11:00 (Timezone Offset Only)
 2020-11-26T15%3A00%3A24.000%2B11%3A00 (URI encoded)
 */
-const REGEX_ISODATESTRING = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d(:|%3A)[0-5]\d(:|%3A)[0-5]\d(\.\d{3})?(Z|[-+]|%2B)?(([0-2]\d)(:|%3A)([0-5]\d))?$/
+const REGEX_ISODATESTRING =
+  /^\d{4}-[01]\d-[0-3]\dT[0-2]\d(:|%3A)[0-5]\d(:|%3A)[0-5]\d(\.\d{3})?(Z|[-+]|%2B)?(([0-2]\d)(:|%3A)([0-5]\d))?$/
 
 function getOffsetFromIsoDateString(time) {
   return time.slice(-1) !== 'Z' && REGEX_ISODATESTRING.test(time)
@@ -194,6 +202,10 @@ function getDateSubstring(isoDateTime) {
   return isoDateTime.substring(0, 10)
 }
 
+function dayOfYear(date) {
+  return parseInt(format(date, 'D', { useAdditionalDayOfYearTokens: true }), 10)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -211,6 +223,8 @@ module.exports = {
   getOffsetFromIsoDateString,
   REGEX_ISODATESTRING,
   getDateSubstring,
+  getMonthYearField,
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
+  dayOfYear,
 }

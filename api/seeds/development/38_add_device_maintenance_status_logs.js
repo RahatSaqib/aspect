@@ -13,9 +13,11 @@ const {
 
 const { generateResults } = require('../commonGenerateResults')
 
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
+const logHistoryMonths = Math.ceil(resultMultiplier / 100)
 const now = new Date()
-const previousMonth = subMonths(now, 1)
-const minDate = parseISO(`${format(previousMonth, 'yyyy-MM-01')}T00:00:00.000Z`)
+const historicMonth = subMonths(now, logHistoryMonths)
+const minDate = parseISO(`${format(historicMonth, 'yyyy-MM-01')}T00:00:00.000Z`)
 const maxDate = now
 
 async function seed(knex) {
@@ -54,7 +56,7 @@ async function seed(knex) {
     inactiveUnknown,
     inactiveDownForRepair,
     inactiveOutOfInventory,
-    inactiveNoResultsReported,
+    inactiveNoTestsPerformed,
   } = deviceMaintenanceStatusToId
 
   const activityPattern = [
@@ -74,7 +76,7 @@ async function seed(knex) {
           end: 16,
         },
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 23,
           end: 31,
         },
@@ -104,7 +106,7 @@ async function seed(knex) {
       deviceIndex: 13,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 25,
           end: 31,
         },
@@ -114,7 +116,7 @@ async function seed(knex) {
       deviceIndex: 16,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 1,
           end: 31,
         },
@@ -129,7 +131,7 @@ async function seed(knex) {
           end: 24,
         },
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 25,
           end: 31,
         },
@@ -149,7 +151,7 @@ async function seed(knex) {
       deviceIndex: 25,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 26,
           end: 31,
         },
@@ -169,7 +171,7 @@ async function seed(knex) {
       deviceIndex: 31,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 24,
           end: 31,
         },
@@ -179,7 +181,7 @@ async function seed(knex) {
       deviceIndex: 34,
       statuses: [
         {
-          status: inactiveNoResultsReported,
+          status: inactiveNoTestsPerformed,
           start: 26,
           end: 31,
         },
@@ -219,24 +221,34 @@ async function seed(knex) {
         ) {
           dayAndStatus.push({ dayDate, statusId: active })
         } else {
-          dayAndStatus.push({ dayDate, statusId: inactiveNoResultsReported })
+          dayAndStatus.push({ dayDate, statusId: inactiveNoTestsPerformed })
         }
       } else {
         dayAndStatus.push({
           dayDate,
-          statusId: dayStatus ? dayStatus.status : inactiveNoResultsReported,
+          statusId: dayStatus ? dayStatus.status : inactiveNoTestsPerformed,
         })
       }
     }
-
+    let deviceMaintenanceStatusLogId = null
     await Promise.each(dayAndStatus, async ({ dayDate, statusId }) => {
-      await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
+      deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatusLog(
+        knex,
+        deviceId,
+        dayDate,
+        statusId
+      )
       if (statusId === active) {
         await ensureResultExists(knex, deviceId, dayDate, userId, partnerId)
       } else {
         await ensureResultDoesNotExist(knex, deviceId, dayDate)
       }
     })
+    if (deviceMaintenanceStatusLogId) {
+      await knex('Device').where('id', deviceId).update({
+        deviceMaintenanceStatusLogId,
+      })
+    }
   })
 }
 
@@ -246,13 +258,16 @@ async function setDeviceMaintenanceStatusLog(
   dayDate,
   deviceMaintenanceStatusId
 ) {
-  await knex('DeviceMaintenanceStatusLog').insert({
+  const [deviceMaintenanceStatusLogId] = await knex(
+    'DeviceMaintenanceStatusLog'
+  ).insert({
     deviceId,
     deviceMaintenanceStatusId,
     data: '{}',
     day: dayDate,
     createdOn: now,
   })
+  return deviceMaintenanceStatusLogId
 }
 
 async function getResultsOnDay(knex, deviceId, dayDate) {

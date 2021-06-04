@@ -41,7 +41,7 @@ const ResultTransferModal = ({
     async () =>
       fetchWrapperForQueries({
         endpoint: `${SITE_ALL.ENDPOINT}`,
-        errors: SitesAllErrors,
+        customErrorNotifications: SitesAllErrors,
       }),
     {
       onSuccess: ({ data }) =>

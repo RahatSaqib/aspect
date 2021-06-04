@@ -8,6 +8,7 @@ const {
   addHours,
   subHours,
   subDays,
+  addDays,
 } = require('date-fns')
 
 const config = require('../../src/config')
@@ -18,6 +19,7 @@ const {
   allDeviceTypeCategoryToId,
   allPartnerTypeToId,
   allResultCategoryToId,
+  allResultStatusToId,
   allResultSourceToId,
   allResultWorkflowStatusToId,
   allSampleTypeToId,
@@ -39,6 +41,7 @@ const { getRandomTBPatientData } = require('../commonTbresults')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const { upsertJobFunctionFixture } = require('../common')
+const { upsertSingle } = require('../utils')
 const upsertReports = require('../common/upsert_reports')
 const getConsumables = require('../fixtures/Consumable')
 
@@ -49,7 +52,7 @@ const resultTimeFrameInDays = 365
 const deviceNumber = 50
 const routerNumber = 20
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultMtbNumber = resultMultiplier * 0.3
+const resultMtbNumber = resultMultiplier * 0.7
 const resultMtbUltraNumber = resultMultiplier
 const resultHivVlNumber = 0.8 * resultMultiplier
 const resultEbolaNumber = 0
@@ -3256,9 +3259,8 @@ async function seed(knex) {
   const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
   // Result source
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
 
   // Assays and AssayTypes
   const {
@@ -4063,7 +4065,9 @@ async function seed(knex) {
                         ? `${city} ${
                             labStrings[_.random(0, labStrings.length - 1)]
                           }`
-                        : `${lga.name} County Lab ${siteNumber}`,
+                        : `${lga.name} County ${
+                            siteNumber % 2 ? 'Lab' : 'Clinic'
+                          } ${siteNumber}`,
                       shortName:
                         city || `${lga.name}, ${stateKey} ${siteNumber}`,
                       city: city || `${lga.name} City`,
@@ -4097,18 +4101,19 @@ async function seed(knex) {
     _.map(
       [
         'Admin',
-        'Admin1',
+        'Admin_US',
         'Admin2',
         'Admin3',
         'Admin4',
         'Admin5',
         'Admin6',
         'Admin7',
+        'Clinician_US',
+        'Technician_US',
         'Bill',
         'Bob',
         'Frank',
         'Ed',
-        'Fred',
         'Jason',
         'Jim',
         'Jon',
@@ -4127,9 +4132,11 @@ async function seed(knex) {
             // Set pw to something that doesn't look like a bcrypt hash
             // so that Gx API is used to verify pw and set on aspect
             password:
-              name === 'Bill'
+              name === 'Admin'
+                ? bcrypt.hashSync('test07', saltRounds)
+                : name === 'Bill'
                 ? 'SOMESTRING'
-                : bcrypt.hashSync('test07', saltRounds),
+                : bcrypt.hashSync(name.toLowerCase(), saltRounds),
             legacyPassword: name === 'Bill' ? 1 : 0,
             approved: 1,
             createdOn: now,
@@ -4158,7 +4165,6 @@ async function seed(knex) {
         const geographiesId = await knex('Country as c')
           .join('Geography as g', 'c.id', 'g.countryId')
           .where({ abbreviation: countryAbbreviation })
-          .select('g.id')
           .pluck('g.id')
         const [personId] = await knex('Person').insert({
           userId,
@@ -4167,6 +4173,7 @@ async function seed(knex) {
           lastCountryId,
           timezone,
           culture,
+          canLogIn: true,
           geographyId: _.sample(geographiesId),
           ...auditFields,
         })
@@ -4286,16 +4293,54 @@ async function seed(knex) {
         createdBy: auditFields.createdBy,
       })
 
-      // Create DeviceOperation
+      // Create DeviceOperation (temperature and voltage)
       const operationNumber = _.random(3, 11)
-      await Promise.each(_.range(operationNumber), async j => {
+
+      // Create DeviceOperation (calibrations and errors)
+      await Promise.each(_.range(operationNumber), async () => {
+        const bayNumber = _.random(1, 4, false)
         await knex('DeviceOperation').insert({
           deviceId: device.id,
-          data: JSON.stringify({
-            voltage: _.random(1.35, 1.65, true),
-            temperature: _.random(30, 70),
-          }),
-          startedOn: new Date(+now + _.random(j, j + 1, true) * millisInHour),
+          data: JSON.stringify(
+            _.sample([
+              {
+                type: 'gx-log',
+                details: {
+                  Errors: [],
+                  RawText: `<ModuleStartCalibrationTask>Site A${bayNumber}: calibration was successful`,
+                  Calibrations: [
+                    {
+                      Site: `Site A${bayNumber}`,
+                      Source: 'ModuleStartCalibrationTask',
+                      Message: 'calibration was successful',
+                    },
+                  ],
+                },
+                logLevel: 'INFO',
+                logFileName:
+                  'C:\\GeneXpert\\XpertCal\\log\\XpertCal-2015.11.05_12.33.00.000-0.log',
+              },
+              {
+                type: 'gx-log',
+                details: {
+                  Errors: [
+                    {
+                      Message:
+                        'Operation terminated during test at B1: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+                      ErrorCode: '2034',
+                    },
+                  ],
+                  RawText:
+                    '<_e>Operation terminated during test at B1:\r\nError 2034: The optical signal from Detector 0/LED 6 did not reach the expected value.\r\nExpected value=2000, Actual value=0 at 23/11/20 10:44:56',
+                  Calibrations: [],
+                },
+                logLevel: 'ERROR',
+                logFileName:
+                  'C:\\GeneXpert\\log\\genexpert-2020.11.23_08.57.21.741-0.log',
+              },
+            ])
+          ),
+          startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
         })
       })
@@ -4358,10 +4403,8 @@ async function seed(knex) {
 
     // only seed GeneXpert results for specific countries
     if (['Nigeria', 'United States', 'Myanmar'].indexOf(country.name) >= 0) {
-      const {
-        DBS: sampleTypeDBSId,
-        Plasma: sampleTypePlasmaId,
-      } = await allSampleTypeToId()
+      const { DBS: sampleTypeDBSId, Plasma: sampleTypePlasmaId } =
+        await allSampleTypeToId()
 
       // some TB samples:
       let samples = []
@@ -4518,6 +4561,7 @@ async function seed(knex) {
               ? 'Exceeded cycle threshold'
               : null,
         })
+        const savedResult = await knex('Result').where('id', resultId).first()
 
         await knex('ResultWorkflowLog').insert({
           resultId,
@@ -4538,9 +4582,58 @@ async function seed(knex) {
           createdBy: adminId,
         })
 
+        const resultStatuses = await allResultStatusToId()
+        const resultStatusesIds = Object.values(resultStatuses)
+
+        const resultWithLogInfo = { resultWorkflowStatusLogId: lastLogId }
+
+        // Insert another random result status log
+        const rdm = _.random(0, resultStatusesIds.length - 1)
+        const resultStatusId = resultStatusesIds[rdm]
+        let data = null
+        if (resultStatusId === resultStatuses.Transfer) {
+          /**
+           * for transferred result we need specify `data` field in `ResultStatusLog` table
+           * --> see func `transferResult` in `/result/services.js` for details
+           */
+          const otherSites = siteDatas.filter(
+            ({ id, name }) =>
+              id !== savedResult.reportableSiteId &&
+              // only clinics are listed on Reporters page
+              name.toLowerCase().includes('clinic')
+          )
+          const anotherReportableSite =
+            otherSites[_.random(0, otherSites.length - 1)]
+          data = JSON.stringify({
+            siteId: savedResult.siteId,
+            reportableSiteId: anotherReportableSite.id,
+            previousReportableSiteId: savedResult.reportableSiteId,
+            sampleOriginSiteId: savedResult.sampleOriginSiteId,
+          })
+          resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+
+          // add entry in ResultDownloadLog to show transferred results in Reporters list
+          await upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
+            method: 'reporter app',
+            createdOn: addHours(randomDate, 2),
+            createdBy: adminId,
+            resultId,
+          })
+        }
+        const [resultStatusLogId] = await knex('ResultStatusLog').insert({
+          resultId,
+          resultStatusId,
+          createdOn: addHours(randomDate, 2),
+          createdBy: adminId,
+          data,
+        })
+
         await knex('Result')
           .where('id', resultId)
-          .update({ resultWorkflowStatusLogId: lastLogId })
+          .update({
+            ...resultWithLogInfo,
+            resultStatusLogId,
+          })
 
         await knex('DeviceLog').insert({
           deviceId: device.id,
@@ -5436,6 +5529,9 @@ async function seed(knex) {
   const [jobFunctionIdClinician] = await knex('JobFunction')
     .where({ partnerId: partnerOneId, externalId: 'clinician' })
     .pluck('id')
+  const [jobFunctionIdTechnician] = await knex('JobFunction')
+    .where({ partnerId: partnerOneId, externalId: 'Technician' })
+    .pluck('id')
   const [jobFunctionIdPartnerTwo] = await knex('JobFunction')
     .where({ partnerId: partnerTwoId, externalId: 'labManager' })
     .pluck('id')
@@ -5443,10 +5539,6 @@ async function seed(knex) {
   const [jobIdAdmin] = await knex('Job').insert([
     {
       personId: personIds.admin,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin1,
       jobFunctionId: jobFunctionIdAdmin,
     },
     {
@@ -5481,12 +5573,13 @@ async function seed(knex) {
     jobFunctionId: jobFunctionIdAdmin,
   })
 
+  const [jobIdDemoAdmin] = await knex('Job').insert({
+    personId: personIds.admin_us,
+    jobFunctionId: jobFunctionIdAdmin,
+  })
+
   const [jobIdBob] = await knex('Job').insert({
     personId: personIds.bob,
-    jobFunctionId: jobFunctionIdManager,
-  })
-  const [jobIdFrank] = await knex('Job').insert({
-    personId: personIds.frank,
     jobFunctionId: jobFunctionIdManager,
   })
 
@@ -5502,6 +5595,14 @@ async function seed(knex) {
     personId: personIds.ned,
     jobFunctionId: jobFunctionIdClinician,
   })
+  const [jobIdClinicianUS] = await knex('Job').insert({
+    personId: personIds.clinician_us,
+    jobFunctionId: jobFunctionIdClinician,
+  })
+  const [jobIdTechnicianUs] = await knex('Job').insert({
+    personId: personIds.technician_us,
+    jobFunctionId: jobFunctionIdTechnician,
+  })
   const [jobIdJon] = await knex('Job').insert({
     personId: personIds.jon,
     jobFunctionId: jobFunctionIdClinician,
@@ -5510,14 +5611,21 @@ async function seed(knex) {
     personId: personIds.steve,
     jobFunctionId: jobFunctionIdClinician,
   })
-  const [jobIdFred] = await knex('Job').insert({
-    personId: personIds.fred,
-    jobFunctionId: jobFunctionIdClinician,
-  })
 
+  const sitesWithResults = await knex('Result as r')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('c.abbreviation', 'US')
+    .distinct('d.geographyId', 'd.siteId')
+    .orderBy('r.endedOn', 'desc')
+    .limit(3)
+
+  const siteSample = _.sample(sitesWithResults)
   // Constrain jobs by context
   await knex('JobContext').insert([
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
+    { jobId: jobIdDemoAdmin, geographyId: countries.US.geographyId },
     { jobId: jobIdJason, geographyId: countries.US.geographyId },
     { jobId: jobIdSam, geographyId: countries.NG.geographyId },
     { jobId: jobIdEd, geographyId: countries.US.geographyId },
@@ -5525,21 +5633,20 @@ async function seed(knex) {
     { jobId: jobIdJon, geographyId: countries.US.geographyId },
     { jobId: jobIdSteve, geographyId: countries.US.geographyId },
     { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
-    { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
+    {
+      jobId: jobIdClinicianUS,
+      geographyId: siteSample.geographyId,
+      siteId: siteSample.siteId,
+    },
+    {
+      jobId: jobIdTechnicianUs,
+      geographyId: countries.US.states.MA.geographyId,
+    },
     {
       jobId: jobIdNed,
       geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
     },
-    {
-      jobId: jobIdFred,
-      geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
-    },
-    {
-      jobId: jobIdFred,
-      geographyId: countries.US.states.MA.lgas.Suffolk.geographyId,
-    },
   ])
-
   // Fill device flags with random data
   // TODO: Remove when we implemented the jobs that calculate these flags
   const devices = await knex('Device').select('id')

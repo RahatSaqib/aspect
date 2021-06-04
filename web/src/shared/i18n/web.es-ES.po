@@ -1979,6 +1979,13 @@ msgstr "Generador de claves de acceso de dispositivos a la API"
 msgid "Device Activity"
 msgstr "Actividad de dispositivo"
 
+#. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#: extracted_strings.json
+msgid "Device Activity (Percent)"
+msgstr "Actividad del dispositivo (porcentaje)"
+
 #. [browsePage.browseDropdown.deviceApiKey]
 #. defaultMessage is:
 #. Device Api Keys
@@ -7699,6 +7706,17 @@ msgstr ""
 "Este informe muestra la actividad de los dispositivos durante el periodo de "
 "tiempo seleccionado, desglosándola por meses (Por defecto los últimos 12 "
 "meses), y todas las pruebas realizadas durante el último año."
+
+#. [pages.ReportIndex.device_activity_percent_description]
+#. defaultMessage is:
+#. This report shows the activity percentage, per month, of the devices during the selected period of time. (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the activity percentage, per month, of the devices during the "
+"selected period of time. (By default last 12 months)"
+msgstr ""
+"Este informe muestra el porcentaje de actividad, por mes, de los dispositivos "
+"durante el período de tiempo seleccionado. (Por defecto los últimos 12 meses"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:

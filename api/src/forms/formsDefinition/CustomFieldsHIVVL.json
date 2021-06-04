@@ -1,7 +1,7 @@
 {
   "fields": [
     {
-      "id": 1,
+      "id": 201,
       "name": "Gender",
       "title": "Gender",
       "i18nKey": "Genderi18nKey",
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": 202,
       "name": "Age",
       "title": "Age",
       "i18nKey": "AgeFieldi18nKey",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": 203,
       "name": "Retreatment Case",
       "i18nKey": "RetreatCaseFieldi18nKey",
       "fieldType": "number",
@@ -70,7 +70,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 204,
       "name": "Referring Facility",
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
@@ -88,7 +88,7 @@
       }
     },
     {
-      "id": 6,
+      "id": 205,
       "name": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKey": "ReferringClinicianI18nkey",
       "fieldType": "text",
@@ -100,7 +100,7 @@
       "controlType": "textBox"
     },
     {
-      "id": 7,
+      "id": 206,
       "name": "Repeat Test",
       "i18nKey": "RepeatTesti18nKey",
       "fieldType": "number",

@@ -9,6 +9,7 @@ const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { resultStatusToId } = require('../shared/dictionary')
+const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 
 const totalDevicesQuery = knex('Device as d')
   .whereRaw('d.siteId = s.id')
@@ -232,19 +233,11 @@ async function listSitesForSelectList(request) {
     .select(
       's.id',
       's.name',
-      's.shortName',
       's.partnerId',
       'g.countryId',
       'g.stateId',
       'g.lgaId',
-      'l.name as lgaName',
       'st.name as stateName',
-      's.longitude',
-      's.latitude',
-      's.zip',
-      's.street1',
-      's.street2',
-      's.city',
       's.externalId'
     )
     .distinct()
@@ -297,7 +290,7 @@ async function listSitesWithReporters(request) {
     'actionDashboard'
   )
   const { minDate, maxDate } = query
-  const resultStatusId = await resultStatusToId('Transfer')
+  const resultStatusTransferId = await resultStatusToId('Transfer')
 
   // const sites
   const siteQuery = knex('Site as s')
@@ -321,94 +314,6 @@ async function listSitesWithReporters(request) {
     .leftOuterJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftOuterJoin('SiteTag as siteTag', 's.id', 'siteTag.siteId')
     .leftOuterJoin('Tag as tag', 'siteTag.tagId', 'tag.id')
-    /**
-     * for counting results 'delivered' to Reporters
-     */
-    .leftOuterJoin('ResultDownloadLog as rdl', 'rdl.resultId', 'r.id')
-    /**
-     * for counting `transferred` results -
-     * we join `Site.id` to `ResultStatusLog.data.previousReportableSiteId`
-     * and count all 'ResultStatusLog.resultId' which have ResultStatus = 'Transfer'
-     * See func `transferResult` in `api/src/result/service.js` for details
-     * about what we store in field ResultStatusLog.data
-     */
-    .leftOuterJoin('ResultStatusLog as rslog', builder => {
-      builder
-        .on(
-          's.id',
-          knex.raw(
-            `CAST(IFNULL(rslog.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`
-          )
-        )
-        // limit this join by `Transfer` result status only
-        .andOn('rslog.resultStatusId', resultStatusId)
-    })
-    /**
-     * join ResultStatusLog and Result to limit transferred results
-     * by date range - count resultTransferred.id for `transferred` results
-     */
-    .leftOuterJoin('Result as resultTransferred', queryBuilder => {
-      queryBuilder.on('rslog.resultId', 'resultTransferred.id')
-      if (minDate) {
-        queryBuilder.andOn(
-          'resultTransferred.endedOn',
-          '>=',
-          knex.raw('?', [minDate])
-        )
-      }
-      if (maxDate) {
-        queryBuilder.andOn(
-          'resultTransferred.endedOn',
-          '<=',
-          knex.raw('?', [maxDate])
-        )
-      }
-    })
-    /**
-     * for counting different statuses rts.externalId = 'XXX'
-     */
-    .leftOuterJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'rtsl.id',
-      'r.treatmentStatusLogId'
-    )
-    .leftOuterJoin(
-      'ResultTreatmentStatus as rts',
-      'rts.id',
-      'rtsl.resultTreatmentStatusId'
-    )
-    /**
-     * for counting  rca.requiresTreatment = 1
-     */
-    .leftOuterJoin('ResultCategoryAssay as rca', builder => {
-      builder.on('r.assayId', 'rca.assayId').andOn(function () {
-        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
-          'r.resultCategory2',
-          'rca.resultCategoryId'
-        )
-      })
-    })
-    .leftOuterJoin('ResultCategoryAssay as rcaTransferred', builder => {
-      builder
-        .on('resultTransferred.assayId', 'rcaTransferred.assayId')
-        .andOn(function () {
-          this.on(
-            'resultTransferred.resultCategory1',
-            'rcaTransferred.resultCategoryId'
-          ).orOn(
-            'resultTransferred.resultCategory2',
-            'rcaTransferred.resultCategoryId'
-          )
-        })
-    })
-    /**
-     * for counting only delivered transferred results
-     */
-    .leftOuterJoin(
-      'ResultDownloadLog as rdlTransferred',
-      'rdlTransferred.resultId',
-      'resultTransferred.id'
-    )
     /**
      * take only clinics
      */
@@ -453,45 +358,18 @@ async function listSitesWithReporters(request) {
   // get page items
   const getItems = siteQuery
     .clone()
-    .modify(sortPageParams, query, 'siteName')
-    // all counts
-    .count({
-      totalResults: knex.raw('DISTINCT r.id'),
-      delivered: knex.raw('DISTINCT rdl.resultId'),
-      /**
-       * We should only be counting results that were delivered in the last four columns
-       * because we're measuring how many of the results are linked to treatment on the
-       * Reporter and they can't put results on treatment if they were never delivered
-       * to the reporter.
-       */
-      requiresTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id
-          THEN rdl.resultId ELSE null
-        END`),
-      onTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'OnTreatment'
-          THEN rdl.resultId ELSE null
-        END`),
-      notPossible: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  rts.externalId = 'NotPossible'
-          THEN rdl.resultId ELSE null
-        END`),
-      notOnTreatment: knex.raw(`DISTINCT
-        CASE
-          WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
-          THEN rdl.resultId ELSE null
-        END`),
-      // see comment for joining table ResultStatusLog
-      transferred: knex.raw(`DISTINCT
-        CASE
-          WHEN rcaTransferred.requiresTreatment = 1  AND  rcaTransferred.reportable = 1
-          THEN rdlTransferred.resultId
-          ELSE null
-        END`),
+    // add joins and different counts for results - (not)onTreatment, requiresTreatment, notPossible, ...
+    .modify(queryBuilder => {
+      addResultCountsQuery(queryBuilder, knex)
     })
+    // add joins/count for 'transferred' results
+    .modify(queryBuilder => {
+      addTransferredQuery(queryBuilder, knex, resultStatusTransferId, {
+        minDate,
+        maxDate,
+      })
+    })
+    .modify(sortPageParams, query, 'siteName')
     .select(
       'g.countryId',
       'g.stateId',

@@ -1,6 +1,7 @@
 const jobFunctions = require('./jobFunctions')
 
 module.exports = {
+  adminUserName: 'admin',
   partnerName: 'Ethiopia EPHI',
   deviceApiToken: '1tfw5604jfn09gx7upd0',
   serverUrl: 'https://ethiopia.aspect.id:8093',

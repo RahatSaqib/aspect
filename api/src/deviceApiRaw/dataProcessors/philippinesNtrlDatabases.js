@@ -2046,7 +2046,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             smearSamples.push(samples[1])
           }
           const resultCategoryMappings = {
-            '0': resultCategories.NotDetected,
+            0: resultCategories.NotDetected,
             '+1': resultCategories.Detected,
             '+2': resultCategories.Detected,
             '+3': resultCategories.Detected,
@@ -3082,7 +3082,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             smearSamples.push(samples[2])
           }
           const resultCategoryMappings = {
-            '0': resultCategories.NotDetected,
+            0: resultCategories.NotDetected,
             '+1': resultCategories.Detected,
             '+2': resultCategories.Detected,
             '+3': resultCategories.Detected,

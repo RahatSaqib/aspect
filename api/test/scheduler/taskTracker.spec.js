@@ -4,6 +4,7 @@ const { taskTracker } = require('../../src/scheduler/taskTracker')
 const {
   createMessageContext,
   waitForAction,
+  dispatchAndWaitForAction,
   waitForIdle,
   subscribe,
 } = require('../utils/mqUtils')
@@ -18,10 +19,8 @@ describe('Scheduler task tracker', () => {
      * Execute the scheduler task device maintenance status logging for the last 30 days
      */
 
-    const messageContext = await createMessageContext()
     const action = logDeviceMaintenanceStatus()
-    await messageContext.dispatch(action)
-    await waitForAction(action)
+    await dispatchAndWaitForAction(action)
   })
   describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
     it('should log the maintenance status of each un-logged device for the missing dates', async () => {
@@ -149,9 +148,10 @@ describe('Scheduler task tracker', () => {
       await waitForAction(action1)
       await waitForAction(action2)
       await waitForIdle(2000)
-      const errorRecords = await knex(
-        'SchedulerTaskExecutionLog'
-      ).whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
+      const errorRecords = await knex('SchedulerTaskExecutionLog').whereIn(
+        'taskName',
+        ['myTinyFunc1', 'myTinyFunc2']
+      )
       assert.lengthOf(errorRecords, 2)
       _.each(errorRecords, record => {
         assert.isNotEmpty(record.errorMessage)

@@ -15,16 +15,16 @@
       "manuallySet": true
     },
     {
+      "name": "No Tests Performed",
+      "i18nKey": "inactiveNoTestsPerformed",
+      "externalId": "inactiveNoTestsPerformed",
+      "active": false,
+      "manuallySet": false
+    },
+    {
       "name": "Unknown",
       "i18nKey": "inactiveUnknown",
       "externalId": "inactiveUnknown",
-      "active": false,
-      "manuallySet": true
-    },
-    {
-      "name": "No Results Reported",
-      "i18nKey": "inactiveNoResultsReported",
-      "externalId": "inactiveNoResultsReported",
       "active": false,
       "manuallySet": false
     },
@@ -43,18 +43,11 @@
       "manuallySet": true
     },
     {
-      "name": "Connectivity",
-      "i18nKey": "inactiveConnectivity",
-      "externalId": "inactiveConnectivity",
-      "active": false,
-      "manuallySet": true
-    },
-    {
       "name": "Decommissioned",
       "i18nKey": "inactiveDecommissioned",
       "externalId": "inactiveDecommissioned",
       "active": false,
-      "manuallySet": true
+      "manuallySet": false
     },
     {
       "name": "No Staff",
