@@ -14,7 +14,6 @@ const {
   removeInventory,
   transferInventory,
   receiveInventory,
-  updateInventoryStockLevel,
   getDaysByLocation,
 } = require('./service')
 
@@ -28,14 +27,6 @@ const inventoryFilters = {
     .description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
   stockLeft: Joi.string().allow('', null),
-}
-
-const addRemoveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().allow('', null),
-}
-
-const transferReceiveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().required(),
 }
 
 const adjustInventoryCommonPayloadFields = {
@@ -207,14 +198,14 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/add/{inventoryItemId}',
+    path: '/inventory/add',
     handler: asyncHandler(addInventory),
     config: {
       description: 'Add Inventory',
       notes: 'Adds quantity to inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: addRemoveInventoryCommonParams,
+        // params: addRemoveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number().integer().positive().required(),
@@ -225,14 +216,13 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/remove/{inventoryItemId}',
+    path: '/inventory/remove',
     handler: asyncHandler(removeInventory),
     config: {
       description: 'Remove Inventory',
       notes: 'Removes quantity from inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: addRemoveInventoryCommonParams,
         payload: Joi.alternatives().try(
           Joi.object().keys({
             ...removeInventoryCommonPayloadFields,
@@ -249,14 +239,13 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/transfer/{inventoryItemId}',
+    path: '/inventory/transfer',
     handler: asyncHandler(transferInventory),
     config: {
       description: 'Transfer Inventory',
       notes: 'Transfers quantity from inventory item to in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: transferReceiveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           fromSiteId: Joi.number().integer().positive().required(),
@@ -268,38 +257,18 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/receive/{inventoryItemId}',
+    path: '/inventory/receive',
     handler: asyncHandler(receiveInventory),
     config: {
       description: 'Receive Inventory',
       notes: 'Received quantity from inventory item in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: transferReceiveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           fromSiteId: Joi.number().integer().positive().required(),
           toSiteId: Joi.number().integer().positive().required(),
           dateAdjusted: Joi.date().iso().required(),
-        },
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/inventory/{siteId}/{consumableId}',
-    handler: asyncHandler(updateInventoryStockLevel),
-    config: {
-      description: 'Update Inventory Stock Level At Site',
-      notes: 'Update the total quantity of a consumable at site',
-      auth: { scope: ['inventory:edit'] },
-      validate: {
-        params: {
-          siteId: Joi.number().integer().positive().required(),
-          consumableId: Joi.number().integer().positive().required(),
-        },
-        payload: {
-          quantity: Joi.number().min(0).required(),
         },
       },
     },
