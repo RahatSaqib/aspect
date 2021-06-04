@@ -1,9 +1,9 @@
-const Joi = require('@hapi/joi')
+const Joi = require('@hapi/joi');
 const {
   asyncHandler,
   validateDateRangeParams,
   validateSortPageParams,
-} = require('../routes')
+} = require('../routes');
 const {
   listDevices,
   showDevice,
@@ -22,18 +22,18 @@ const {
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
-} = require('./service')
+} = require('./service');
 const {
   exportDevices,
   exportDeviceOperationLogReport,
-} = require('./serviceReports')
+} = require('./serviceReports');
 const {
   validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
-const { taskTracker } = require('../scheduler/taskTracker')
+} = require('../geography/requestValidation');
+const { taskTracker } = require('../scheduler/taskTracker');
 
 function listDevicesBaseConfig() {
-  return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
+  return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() };
 }
 
 function listDevicesBaseRequest(isoDateFormatExpected = false) {
@@ -120,7 +120,7 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
         ),
       },
     },
-  }
+  };
 }
 
 function listDevicesBaseResponse() {
@@ -275,7 +275,7 @@ function listDevicesBaseResponse() {
           ),
       }),
     },
-  }
+  };
 }
 
 const deviceDetailsResponseFields = Joi.object()
@@ -425,7 +425,7 @@ const deviceDetailsResponseFields = Joi.object()
     warrantyNotes: Joi.string()
       .allow('', null)
       .description('Notes on the latest warranty'),
-  })
+  });
 
 const routes = [
   {
@@ -965,7 +965,7 @@ const routes = [
       },
     },
   },
-]
+];
 
 const subscriptions = [
   {
@@ -979,6 +979,6 @@ const subscriptions = [
         taskTracker(onDeviceMaintenanceStatusLogScheduled, action, context),
     },
   },
-]
+];
 
-module.exports = { routes, subscriptions }
+module.exports = { routes, subscriptions };

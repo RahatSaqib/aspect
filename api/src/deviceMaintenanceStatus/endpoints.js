@@ -82,7 +82,7 @@ const routes = [
                       ),
                     maintenanceStatusNotes: Joi.string()
                       .description('The note for current maintenance status')
-                      .allow(null),
+                      .allow('', null),
                   })
                 )
                 .description(
@@ -145,7 +145,7 @@ const routes = [
               ),
               maintenanceStatusNotes: Joi.string()
                 .description('The note for current maintenance status')
-                .allow(null),
+                .allow('', null),
             })
           ),
         }),
