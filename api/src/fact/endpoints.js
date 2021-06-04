@@ -17,7 +17,8 @@ const subscriptions = [
       FACT_GENERATE_DEVICE_CONNECTIVITY: onFactGenerateDeviceConnectivity,
       FACT_GENERATE_RESULT_COUNTS: onFactGenerateResultCounts,
       FACT_CHECK_INVENTORY_STOCK: onFactCheckInventoryStock,
-      FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES: onFactCalculateInventoryConsumptionRates,
+      FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES:
+        onFactCalculateInventoryConsumptionRates,
       DEVICE_SEEN: onDeviceSeen,
       DEVICE_ONLINE: onDeviceUpdateFlag({ offline: 0 }),
       DEVICE_OFFLINE: onDeviceUpdateFlag({ offline: 1 }),

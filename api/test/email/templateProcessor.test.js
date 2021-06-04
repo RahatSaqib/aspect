@@ -6,7 +6,7 @@ const { runTest } = require('../utils/generatorFunctionUtils')
 describe('email/templateProcessor', () => {
   describe('process', () => {
     describe('resetPassword', () => {
-      it('should generate a reset password email', () => {
+      it('should generate a reset password email', async () => {
         const tokenValues = {
           name: 'Bryan Richards',
           aspectUrl: 'https://aspect.id',
@@ -46,7 +46,7 @@ describe('email/templateProcessor', () => {
       })
 
       describe('fr-FR locale', () => {
-        it('should generate a French reset password email', () => {
+        it('should generate a French reset password email', async () => {
           const tokenValues = {
             name: 'Jean-Luc Picard',
             aspectUrl: 'https://aspect.id',
@@ -97,7 +97,7 @@ describe('email/templateProcessor', () => {
 
   describe('generateAttachment', () => {
     describe('api/src/email/templates/systemone.jpg', () => {
-      it('should generate an attachment object with base 64 encoded string for the file', () => {
+      it('should generate an attachment object with base 64 encoded string for the file', async () => {
         const filePath = path.join(
           __dirname,
           '../../src/email/templates/systemone.jpg'
@@ -117,7 +117,7 @@ describe('email/templateProcessor', () => {
   })
 
   describe('getInlineImageAttachments', () => {
-    it('should generate an array of image attachments referenced in the content', () =>
+    it('should generate an array of image attachments referenced in the content', async () =>
       runTest(templateProcessor.getInlineImageAttachments, [
         '<html><body><img src="cid:systemone.jpg" /></body></html>',
       ])(inlineAttachments => {

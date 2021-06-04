@@ -878,12 +878,12 @@ const basicResultPayload = {
     data: {
       probeData: {},
       customFieldData: {
-        '1': {
+        1: {
           notAvailable: false,
           label: 'HIV Status',
           value: 'Unknown',
         },
-        '2': {
+        2: {
           notAvailable: false,
           label: 'Visual Analysis',
           value: 'Blood Stained',

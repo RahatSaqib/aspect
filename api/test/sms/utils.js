@@ -36,11 +36,11 @@ class SmsTestContext {
     assert.isOk(smsTemplateId)
 
     // read 1st Result and coresponding siteId/deviceId
-    const { id: resultId, siteId, deviceId } = await knex('Result').first(
-      'id',
-      'siteId',
-      'deviceId'
-    )
+    const {
+      id: resultId,
+      siteId,
+      deviceId,
+    } = await knex('Result').first('id', 'siteId', 'deviceId')
 
     const messageStatusId = await messageStatusToId('Initial')
 

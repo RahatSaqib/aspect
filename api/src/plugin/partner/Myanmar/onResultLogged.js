@@ -264,25 +264,24 @@ async function onResultLogged({ resultId }, { messageContext }) {
             )
           })()
         )
-        ;[
-          { invalidReagentErrorRatio, invalidReagentErrorCount },
-        ] = await reagentErrorQuery.clone().select(
-          (() => {
-            const errorCount =
-              "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
-            const totalCount = 'count(distinct r.id)'
+        ;[{ invalidReagentErrorRatio, invalidReagentErrorCount }] =
+          await reagentErrorQuery.clone().select(
+            (() => {
+              const errorCount =
+                "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
+              const totalCount = 'count(distinct r.id)'
 
-            return [
-              knex.raw(
-                `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
-                [REAGENT_HEALTH_ERROR_CODES]
-              ),
-              knex.raw(`${errorCount} as invalidReagentErrorCount`, [
-                REAGENT_HEALTH_ERROR_CODES,
-              ]),
-            ]
-          })()
-        )
+              return [
+                knex.raw(
+                  `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
+                  [REAGENT_HEALTH_ERROR_CODES]
+                ),
+                knex.raw(`${errorCount} as invalidReagentErrorCount`, [
+                  REAGENT_HEALTH_ERROR_CODES,
+                ]),
+              ]
+            })()
+          )
       }
     } else {
       // -----------

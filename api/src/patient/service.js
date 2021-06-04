@@ -138,10 +138,7 @@ async function updatePatient(
           : JSON.stringify(patientToUpdate.data),
       })
   )
-  const patientIds = await knex('Patient')
-    .where(whereFields)
-    .select('id')
-    .pluck('id')
+  const patientIds = await knex('Patient').where(whereFields).pluck('id')
   if (messageContext && patientIds.length) {
     // queue message for each affected Case row
     if (!messageContext.patientUpdated) {

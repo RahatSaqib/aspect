@@ -35,6 +35,7 @@ const {
   partnerTypeToId,
 } = require('../src/shared/dictionary')
 const getConsumables = require('./fixtures/Consumable')
+const logger = require('../src/shared/logger')
 
 /**
  *
@@ -108,9 +109,12 @@ async function commonUpserts(
     await upsertStatesAndLgas(knex, countryId, country.states)
   })
 
-  const { culture, timezone, id: countryId, geographyId } = countries[
-    countryAbbreviation
-  ]
+  const {
+    culture,
+    timezone,
+    id: countryId,
+    geographyId,
+  } = countries[countryAbbreviation]
   let { id: adminPersonId } =
     (await knex('Person')
       .where({
@@ -420,7 +424,11 @@ async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
       reportId,
     })
   )
-  await knex('JobFunctionReport').insert(JobFunctionReport)
+  if (!_.isEmpty(JobFunctionReport)) {
+    await knex('JobFunctionReport').insert(JobFunctionReport)
+  } else {
+    logger.error('Attempt to insert empty data to table JobFunctionReport')
+  }
 }
 
 async function upsertJobFunctionPermission(
@@ -449,7 +457,11 @@ async function upsertJobFunctionPermission(
       permissionId,
     })
   )
-  await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  if (!_.isEmpty(JobFunctionPermission)) {
+    await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  } else {
+    logger.error('Attempt to insert empty data to table JobFunctionPermission')
+  }
 }
 
 async function upsertGxAlertDevice(
@@ -612,9 +624,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   }
 
   // Add assays
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
 
   const {
     'MTB/Rif': assayTypeMTBRifId,

@@ -583,7 +583,7 @@ describe('Device routes', () => {
           )
           .where(queryBuilder => {
             queryBuilder.whereRaw(
-              `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''`
+              "IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''"
             )
           })
           .orderByRaw('dmsl.day desc, dmsl.createdOn desc, dmsl.id desc')
@@ -894,9 +894,8 @@ describe('Device routes', () => {
           deviceMaintenanceStatusExternalId
         )
 
-        const {
-          deviceMaintenanceStatusLogIds,
-        } = toInactiveDownForRepairResponse.body.data
+        const { deviceMaintenanceStatusLogIds } =
+          toInactiveDownForRepairResponse.body.data
 
         // Change all the inserted logs to Active
         const [activeStatusId] = await knex('DeviceMaintenanceStatus')
@@ -947,11 +946,9 @@ describe('Device routes', () => {
         )
           .where('manuallySet', true)
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
-          .select('id')
           .pluck('externalId')
-        const [
-          deviceMaintenanceStatusExternalId,
-        ] = editableDeviceMaintenanceStatusIds
+        const [deviceMaintenanceStatusExternalId] =
+          editableDeviceMaintenanceStatusIds
         deviceMaintenanceStatusId =
           deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
 
