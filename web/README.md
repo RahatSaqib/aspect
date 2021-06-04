@@ -63,6 +63,16 @@ As example:
 
 Make sure to run the command in the root of the folder you want to create the component, and if the folder already exists, then it will not overwrite what is there.
 
+## NVM Management
+
+- we have a `.nvmrc` file in the root that will allow us to initiate our developer environment to the correct node version on load.
+- you will be able to add a small snippet to your bash of choice to change the NVM version automatically, or
+- simply run `nvm use` (space after 'use' is intentional) and it will change to the version specified within `.nvmrc`
+
+### Using ZSH?
+
+- https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619
+
 ## i18n
 
 ### Merging with develop
@@ -70,7 +80,7 @@ Make sure to run the command in the root of the folder you want to create the co
 As a general rule please remember:
 **NOT MERGE .PO, .MO, translations.js files with develop on your PR**
 
-To avoid inserting bad and duplicated keys we are not going to merge these files. It doesn't matter which one you are going to accept in a merge action (Keep local changes or develop branch changes), just pick only one and accept it completely. Once this action was made and committed just continue with the next step to generate the ``.pot`` file and sync all the language files.
+To avoid inserting bad and duplicated keys we are not going to merge these files. It doesn't matter which one you are going to accept in a merge action (Keep local changes or develop branch changes), just pick only one and accept it completely. Once this action was made and committed just continue with the next step to generate the `.pot` file and sync all the language files.
 
 ### Extracting new translations
 
@@ -123,13 +133,13 @@ Complete the steps under "Create `.po` files" above. Then:
 
 1. Install the translate toolkit: `pip3 install translate-toolkit`
 2. Make sure that the CSV from GxAlert has three columns:
-  a. Location (resource ID)
-  b. Source Language (the English string)
-  c. Target Language (the translated string)
+   a. Location (resource ID)
+   b. Source Language (the English string)
+   c. Target Language (the translated string)
 3. Run csv2po: `csv2po -i gxalert_translations.csv -o web.LANGUAGECODE.po -t diff.pot`, where:
-  -i: The CSV containing translations from GxAlert
-  -o: The .po file you created in POEdit
-  -t: The diff.pot that is generated when running `yarn run updatemessages:start`
+   -i: The CSV containing translations from GxAlert
+   -o: The .po file you created in POEdit
+   -t: The diff.pot that is generated when running `yarn run updatemessages:start`
 4. The translations should now be part of the po file and you can now edit the .po file as usual in POEdit
 
 ## Deploying
@@ -179,11 +189,11 @@ yarn styleguide
 
 ## Updating snapshots
 
-When you have failed tests which use  ```expect(element).toMatchSnapshot()``` and you know something has changed in the
+When you have failed tests which use `expect(element).toMatchSnapshot()` and you know something has changed in the
 code but test should pass, then probably you have to update snapshot.
 
-Run command ```yarn run test:snapshot``` which regenerates snapshot artifacts in ```__snapshots__``` folders
+Run command `yarn run test:snapshot` which regenerates snapshot artifacts in `__snapshots__` folders
 
-Another possible way to update snapshots is running ```jest --updateSnapshot``` (make sure ```jest``` is globally installed)
+Another possible way to update snapshots is running `jest --updateSnapshot` (make sure `jest` is globally installed)
 
 ## Tables Placeholder
