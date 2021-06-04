@@ -1,25 +1,25 @@
-const groupBy = require('lodash/groupBy');
-const orderBy = require('lodash/orderBy');
-const omit = require('lodash/omit');
-const min = require('lodash/min');
-const uniq = require('lodash/uniq');
-const isNil = require('lodash/isNil');
-const isWeekend = require('date-fns/isWeekend');
-const getISOWeek = require('date-fns/getISOWeek');
-const { getConstraints, addConstraints } = require('../auth/constraints');
-const { knex } = require('../db');
+const groupBy = require('lodash/groupBy')
+const orderBy = require('lodash/orderBy')
+const omit = require('lodash/omit')
+const min = require('lodash/min')
+const uniq = require('lodash/uniq')
+const isNil = require('lodash/isNil')
+const isWeekend = require('date-fns/isWeekend')
+const getISOWeek = require('date-fns/getISOWeek')
+const { getConstraints, addConstraints } = require('../auth/constraints')
+const { knex } = require('../db')
 const {
   getArrayOfDaysInRange,
   getOffsetFromIsoDateString,
   startOfDayUtc,
   getDateSubstring,
   getISODateUserTimeZoneField,
-} = require('../shared/date');
-const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary');
+} = require('../shared/date')
+const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 
 function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
-  const minDateStatus = startOfDayUtc(new Date(minDate));
-  const maxDateStatus = startOfDayUtc(new Date(maxDate));
+  const minDateStatus = startOfDayUtc(new Date(minDate))
+  const maxDateStatus = startOfDayUtc(new Date(maxDate))
   return (
     knex('Device as d')
       .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -42,23 +42,20 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'dms.id'
       )
       .leftJoin('Person as pe', 'dmsl.createdBy', 'pe.userId')
-      .leftOuterJoin(
-        'DeviceMaintenanceStatusLog as newerDmslOnSameDay',
-        (qb) => {
-          qb.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
-            .andOn('newerDmslOnSameDay.day', 'dmsl.day')
-            .andOn((qb) => {
-              qb.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn');
-              qb.orOn((qb) => {
-                qb.on(
-                  'newerDmslOnSameDay.createdOn',
-                  '=',
-                  'dmsl.createdOn'
-                ).andOn('newerDmslOnSameDay.id', '>', 'dmsl.id');
-              });
-            });
-        }
-      )
+      .leftOuterJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', qb => {
+        qb.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
+          .andOn('newerDmslOnSameDay.day', 'dmsl.day')
+          .andOn(qb => {
+            qb.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn')
+            qb.orOn(qb => {
+              qb.on(
+                'newerDmslOnSameDay.createdOn',
+                '=',
+                'dmsl.createdOn'
+              ).andOn('newerDmslOnSameDay.id', '>', 'dmsl.id')
+            })
+          })
+      })
       .where('dmsl.day', '>=', minDateStatus)
       .where('dmsl.day', '<=', maxDateStatus)
       // Only get the devices of category types that perform tests
@@ -83,32 +80,32 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'dmsl.createdOn as maintenanceStatusManuallySetByDate',
         knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes")
       )
-  );
+  )
 }
 
 async function deviceStatusOverTime(request) {
-  const { auth, query } = request;
-  const dataConstraints = await getConstraints(auth.credentials);
-  const { minDate, maxDate } = query;
-  const offset = getOffsetFromIsoDateString(minDate);
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { minDate, maxDate } = query
+  const offset = getOffsetFromIsoDateString(minDate)
 
   // Filters for results: results should be filtered normally, just converting the received date to UTC
-  const minDateResults = new Date(minDate).toISOString();
-  const maxDateResults = min([new Date(maxDate), new Date()]).toISOString();
+  const minDateResults = new Date(minDate).toISOString()
+  const maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
   // Filters for statuses: statuses should be filtered differently, as they are saved as only date.
   // If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
-  const minDateStatus = startOfDayUtc(new Date(minDate));
-  const maxDateStatus = startOfDayUtc(new Date(maxDate));
+  const minDateStatus = startOfDayUtc(new Date(minDate))
+  const maxDateStatus = startOfDayUtc(new Date(maxDate))
 
-  const days = getArrayOfDaysInRange(minDateStatus, maxDateStatus);
+  const days = getArrayOfDaysInRange(minDateStatus, maxDateStatus)
 
   // helpers
-  const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId();
-  const getGroupName = (deviceId, day) => `${deviceId}-${day}`;
+  const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
+  const getGroupName = (deviceId, day) => `${deviceId}-${day}`
   const groupListBy = (items, deviceIdPropName, datePropName) =>
-    groupBy(items, (item) =>
+    groupBy(items, item =>
       getGroupName(item[deviceIdPropName], item[datePropName])
-    );
+    )
   const inactiveUnknown = await knex('DeviceMaintenanceStatus')
     .where('id', deviceMaintenanceStatuses.inactiveUnknown)
     .select(
@@ -116,7 +113,7 @@ async function deviceStatusOverTime(request) {
       'i18nKey as maintenanceStatusI18nKey',
       'externalId as maintenanceStatusExternalId'
     )
-    .first();
+    .first()
   // generic query for devices grouped by id with counts of tests
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -124,11 +121,11 @@ async function deviceStatusOverTime(request) {
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Result as r', (joinQuery) => {
+    .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
         .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`));
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
@@ -147,16 +144,16 @@ async function deviceStatusOverTime(request) {
       's.longitude',
       's.latitude',
       knex.raw('COUNT(r.id) as totalResults')
-    );
+    )
 
-  const deviceIds = uniq(devices.map(({ id }) => id));
+  const deviceIds = uniq(devices.map(({ id }) => id))
 
   let devicesByDay = await knex('Device as d')
-    .leftJoin('Result as r', (joinQuery) => {
+    .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
         .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`));
+        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -167,8 +164,8 @@ async function deviceStatusOverTime(request) {
       'd.id',
       knex.raw('COUNT(r.id) as totalResults'),
       getISODateUserTimeZoneField(knex, 'r.endedOn', 'dayDate', offset)
-    );
-  devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate');
+    )
+  devicesByDay = groupListBy(devicesByDay, 'id', 'dayDate')
 
   let statusData = await knex
     .from(
@@ -190,23 +187,23 @@ async function deviceStatusOverTime(request) {
       'deviceStatusByDay.maintenanceStatusManuallySetByName',
       'deviceStatusByDay.maintenanceStatusManuallySetByDate',
       'deviceStatusByDay.maintenanceStatusNotes'
-    );
-  statusData = groupListBy(statusData, 'deviceId', 'day');
+    )
+  statusData = groupListBy(statusData, 'deviceId', 'day')
 
-  let data = [];
-  devices.forEach((device) => {
-    const maintenanceStatusHistory = [];
-    days.forEach(async (day) => {
+  let data = []
+  devices.forEach(device => {
+    const maintenanceStatusHistory = []
+    days.forEach(async day => {
       // We need to transform the days to the user's offset for matching with the query results
       const isoDay = `${getDateSubstring(
         day.toISOString()
-      )}T00:00:00.000${offset}`;
+      )}T00:00:00.000${offset}`
 
-      const groupName = getGroupName(device.id, isoDay);
+      const groupName = getGroupName(device.id, isoDay)
 
-      const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}];
+      const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
 
-      let [status] = statusData[groupName] || [{}];
+      let [status] = statusData[groupName] || [{}]
       if (status) {
         if (
           !isNil(status.maintenanceStatusManuallySetById) &&
@@ -217,12 +214,12 @@ async function deviceStatusOverTime(request) {
               id: status.maintenanceStatusManuallySetById,
               name: status.maintenanceStatusManuallySetByName,
               updatedDate: status.maintenanceStatusManuallySetByDate,
-            };
+            }
           } catch (error) {
-            throw new Error(error);
+            throw new Error(error)
           }
         } else {
-          status.maintenanceStatusManuallySetBy = {};
+          status.maintenanceStatusManuallySetBy = {}
         }
 
         status = omit(status, [
@@ -230,7 +227,7 @@ async function deviceStatusOverTime(request) {
           'maintenanceStatusManuallySetById',
           'maintenanceStatusManuallySetByName',
           'maintenanceStatusManuallySetByDate',
-        ]);
+        ])
 
         if (
           // when device has no tests on this day ...
@@ -242,7 +239,7 @@ async function deviceStatusOverTime(request) {
           status = {
             ...status,
             ...inactiveUnknown,
-          };
+          }
         }
       }
 
@@ -252,17 +249,17 @@ async function deviceStatusOverTime(request) {
         isWeekend: isWeekend(new Date(isoDay)),
         weekNumber: getISOWeek(new Date(isoDay)),
         totalResults,
-      });
-    });
+      })
+    })
 
     data.push({
       ...device,
       maintenanceStatusHistory,
-    });
-  });
-  data = orderBy(data, ['name']);
+    })
+  })
+  data = orderBy(data, ['name'])
 
-  return { ok: true, data };
+  return { ok: true, data }
 }
 
 /**
@@ -271,14 +268,14 @@ async function deviceStatusOverTime(request) {
  * @returns A collection of devices, including data of the latest logged maintenance status.
  */
 async function deviceStatusLastReported(request) {
-  const { auth, query } = request;
-  const { excludeNotLocalizableDevices } = query;
-  const dataConstraints = await getConstraints(auth.credentials);
+  const { auth, query } = request
+  const { excludeNotLocalizableDevices } = query
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId();
+  const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
   const inactiveUnknown = await knex('DeviceMaintenanceStatus')
     .where('id', deviceMaintenanceStatuses.inactiveUnknown)
-    .first();
+    .first()
 
   // get all scoped devices and their last reported day
   const devices = knex('Device as d')
@@ -294,8 +291,8 @@ async function deviceStatusLastReported(request) {
       device: 'd',
     })
     // Join with DMSL only if it's not on weekend, unless it was reported something different than inactiveNoTestsPerformed or inactiveUnknown
-    .leftOuterJoin('DeviceMaintenanceStatusLog as dmslInner', (dmslJoin) => {
-      dmslJoin.on('d.id', 'dmslInner.deviceId').andOn((builder) => {
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmslInner', dmslJoin => {
+      dmslJoin.on('d.id', 'dmslInner.deviceId').andOn(builder => {
         builder
           .on(
             knex.raw(`
@@ -314,16 +311,16 @@ async function deviceStatusLastReported(request) {
                 dmslInner.deviceMaintenanceStatusId != ${deviceMaintenanceStatuses.inactiveUnknown}
               )
             `)
-          );
-      });
+          )
+      })
     })
     .groupBy('d.id')
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')
-    .modify((query) => {
+    .modify(query => {
       if (excludeNotLocalizableDevices) {
-        query.whereNotNull('s.longitude').whereNotNull('s.latitude');
+        query.whereNotNull('s.longitude').whereNotNull('s.latitude')
       }
     })
     .select([
@@ -334,14 +331,14 @@ async function deviceStatusLastReported(request) {
       's.latitude',
       knex.raw('MAX(dmslInner.day) as lastReportedOn'),
     ])
-    .as('devices');
+    .as('devices')
 
   // for each device, get the last status log data from the last reported day
   const data = await knex(devices)
-    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', (joinDmsl) => {
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', joinDmsl => {
       joinDmsl
         .on('devices.deviceId', 'dmsl.deviceId')
-        .andOn('devices.lastReportedOn', 'dmsl.day');
+        .andOn('devices.lastReportedOn', 'dmsl.day')
     })
     // Join for checking if the current device maintenance status log ('dmsl') is the last of the last reported day
     .leftOuterJoin(
@@ -350,15 +347,15 @@ async function deviceStatusLastReported(request) {
         this.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
           .andOn('newerDmslOnSameDay.day', 'dmsl.day')
           .andOn(function () {
-            this.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn');
+            this.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn')
             this.orOn(function () {
               this.on(
                 'newerDmslOnSameDay.createdOn',
                 '=',
                 'dmsl.createdOn'
-              ).andOn('newerDmslOnSameDay.id', '>', 'dmsl.id');
-            });
-          });
+              ).andOn('newerDmslOnSameDay.id', '>', 'dmsl.id')
+            })
+          })
       }
     )
     .leftOuterJoin(
@@ -386,13 +383,13 @@ async function deviceStatusLastReported(request) {
         `IFNULL(dms.externalId, '${inactiveUnknown.externalId}') as maintenanceStatusExternalId`
       ),
     ])
-    .orderBy('devices.name');
+    .orderBy('devices.name')
 
-  return { ok: true, data };
+  return { ok: true, data }
 }
 
 module.exports = {
   deviceStatusOverTime,
   deviceStatusLastReported,
   deviceStatusByDayQuery,
-};
+}

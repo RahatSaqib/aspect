@@ -1,9 +1,9 @@
-const Joi = require('@hapi/joi');
+const Joi = require('@hapi/joi')
 
-const { asyncHandler } = require('../routes');
-const { deviceStatusOverTime, deviceStatusLastReported } = require('./service');
+const { asyncHandler } = require('../routes')
+const { deviceStatusOverTime, deviceStatusLastReported } = require('./service')
 
-const { REGEX_ISODATESTRING } = require('../shared/date');
+const { REGEX_ISODATESTRING } = require('../shared/date')
 
 const routes = [
   {
@@ -152,6 +152,6 @@ const routes = [
       },
     },
   },
-];
+]
 
-module.exports = { routes };
+module.exports = { routes }
