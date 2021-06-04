@@ -454,10 +454,6 @@ const clinician = {
     },
     {
       module: 'dashboard',
-      activity: 'report',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
@@ -606,11 +602,27 @@ const technician = {
       activity: 'edit',
     },
     {
+      module: 'site',
+      activity: 'view',
+    },
+    {
       module: 'operationalData',
       activity: 'view',
     },
     {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'device',
+      activity: 'view',
+    },
+    {
+      module: 'assay',
       activity: 'view',
     },
   ],

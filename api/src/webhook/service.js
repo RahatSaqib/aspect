@@ -28,13 +28,8 @@ async function onWebhookMessageCreated(
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
   return context.transact(async knex => {
-    const {
-      payload,
-      url,
-      headers,
-      params,
-      fileName,
-    } = await createWebhookMessageFromTemplate(knex, webhookMessageId)
+    const { payload, url, headers, params, fileName } =
+      await createWebhookMessageFromTemplate(knex, webhookMessageId)
     const now = new Date()
     const messageStatusId = await messageStatusToId('Pending')
 

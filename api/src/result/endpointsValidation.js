@@ -513,6 +513,9 @@ function listResultsBaseConfig() {
         onlyTreatmentRequired: Joi.bool().description(
           'Filter for only results that require treatment, defined on their result category and assay'
         ),
+        onlyDownloadedByReporter: Joi.bool().description(
+          'Filter for only results downloaded by the Reporter App'
+        ),
         treatmentStatusId: Joi.number()
           .allow(null, '')
           .description('Filter for Result Treatment Status ID'),
@@ -542,6 +545,11 @@ function listResultsBaseConfig() {
           .description(
             'The name of reportable site, differ from siteName when transferred'
           ),
+        reportableSiteId: Joi.number()
+          .allow(null)
+          .integer()
+          .positive()
+          .description('The id of reportable site'),
         transferredOn: Joi.date()
           .allow(null)
           .description('When result was transferred to another clinic'),

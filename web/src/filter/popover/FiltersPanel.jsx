@@ -114,6 +114,13 @@ const enhance = compose(
         siteName,
       }),
 
+    onReportableSiteChange: ({ onChangeFilters }) => ({ id, name }) => {
+      onChangeFilters({
+        reportableSiteName: name,
+        reportableSiteId: id,
+      })
+    },
+
     onSiteIdChange: ({ onChangeFilters }) => siteId =>
       onChangeFilters({
         siteId,
@@ -167,6 +174,12 @@ const enhance = compose(
     }) => onlyReportableResults =>
       onChangeFilters({
         onlyReportableResults,
+      }),
+    onOnlyDownloadedByReporterBoolChange: ({
+      onChangeFilters,
+    }) => onlyDownloadedByReporter =>
+      onChangeFilters({
+        onlyDownloadedByReporter,
       }),
     onOnlyEverTransferredBoolChange: ({
       onChangeFilters,
@@ -240,6 +253,10 @@ const messages = {
       id: 'filter.popover.site',
       defaultMessage: 'Site',
     },
+    reportableSite: {
+      id: 'filter.popover.site',
+      defaultMessage: 'Reportable Site',
+    },
     siteId: {
       id: 'filter.popover.siteId',
       defaultMessage: 'Site Id',
@@ -247,6 +264,14 @@ const messages = {
     enterSiteName: {
       id: 'filter.popover.enterSiteName',
       defaultMessage: 'Enter site name...',
+    },
+    enterReportableSiteName: {
+      id: 'filter.popover.enterReportableSiteName',
+      defaultMessage: 'Enter reportable site name...',
+    },
+    enterReportableSiteId: {
+      id: 'filter.popover.enterReportableSiteId',
+      defaultMessage: 'Enter reportable site...',
     },
     enterSiteId: {
       id: 'filter.popover.enterSiteId',
@@ -424,6 +449,10 @@ const messages = {
       id: 'filter.popover.onlyReportableResults',
       defaultMessage: 'Only Reportable Results',
     },
+    onlyDownloadedByReporter: {
+      id: 'filter.popover.onlyDownloadedByReporter',
+      defaultMessage: 'Only Results Downloaded By Reporter',
+    },
     onlyEverTransferred: {
       id: 'filter.popover.onlyEverTransferred',
       defaultMessage: 'Only Ever Transferred Results',
@@ -481,6 +510,7 @@ export const FiltersPanel = ({
   onPartnerIdChange,
   onTextFieldCommitValue,
   onSiteNameChange,
+  onReportableSiteChange,
   onSiteIdChange,
   onSampleOriginSiteChange,
   onDateChange,
@@ -492,6 +522,7 @@ export const FiltersPanel = ({
   onDeviceTypeChange,
   onRevokedChange,
   onOnlyReportableResultsBoolChange,
+  onOnlyDownloadedByReporterBoolChange,
   onOnlyEverTransferredBoolChange,
   onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
@@ -499,7 +530,7 @@ export const FiltersPanel = ({
   user,
   assays,
 }) => {
-  const { assayId } = filters
+  const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
   let assayResultCategory2Label
   if (assayItems && assayId) {
@@ -832,6 +863,18 @@ export const FiltersPanel = ({
               />
             </div>
           )}
+          {config.reportableSiteName && (
+            <div className={cssClasses('Control')}>
+              <SiteAutoCompleteField
+                name="reportableSiteName"
+                value={filters.reportableSiteName || ''}
+                onChange={onReportableSiteChange}
+                floatingLabelFixed
+                hintText={intl.formatMessage(messages.enterReportableSiteName)}
+                floatingLabelText={intl.formatMessage(messages.reportableSite)}
+              />
+            </div>
+          )}
           {config.sampleOriginSite && (
             <div className={cssClasses('Control')}>
               <SiteAutoCompleteField
@@ -1026,22 +1069,41 @@ export const FiltersPanel = ({
               />
             </div>
           )}
-          {config.onlyEverTransferred && (
+          {config.onlyDownloadedByReporter && (
             <div className={cssClasses('Control')}>
               <CheckboxField
                 classNames={{
                   controlContainer: cssClasses('checkbox-wrapper'),
                 }}
-                checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                checked={[true, 'true'].includes(
+                  filters.onlyDownloadedByReporter
+                )}
                 onChange={(event, isChecked) =>
-                  onOnlyEverTransferredBoolChange(isChecked || null)
+                  onOnlyDownloadedByReporterBoolChange(isChecked || null)
                 }
-                label={intl.formatMessage(messages.onlyEverTransferred)}
-                name="onlyEverTransferred"
+                label={intl.formatMessage(messages.onlyDownloadedByReporter)}
+                name="onlyDownloadedByReporter"
                 autoWidth
               />
             </div>
           )}
+          {(reportableSiteName || reportableSiteId) &&
+            config.onlyEverTransferred && (
+              <div className={cssClasses('Control')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                  onChange={(event, isChecked) =>
+                    onOnlyEverTransferredBoolChange(isChecked || null)
+                  }
+                  label={intl.formatMessage(messages.onlyEverTransferred)}
+                  name="onlyEverTransferred"
+                  autoWidth
+                />
+              </div>
+            )}
           {config.onlyTreatmentRequired && (
             <div className={cssClasses('Control')}>
               <CheckboxField

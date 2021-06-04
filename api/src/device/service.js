@@ -163,7 +163,14 @@ async function getListDevices(query, auth) {
     })
     .modify(queryBuilder => {
       if (query.onlyOpenIssues || query.issueTypeId) {
-        queryBuilder.leftJoin('Issue as issue', 'issue.deviceId', 'd.id')
+        queryBuilder.innerJoin(
+          'Issue as issue',
+          joinBuilder =>
+            joinBuilder
+              .on('issue.deviceId', 'd.id')
+              .andOn(knex.raw('issue.resultId is null')) // not interested in result-specific issues
+        )
+
         if (query.issueTypeId)
           queryBuilder
             .innerJoin(
@@ -174,12 +181,12 @@ async function getListDevices(query, auth) {
             .whereIn('issueType.externalId', query.issueTypeId)
 
         if (query.onlyOpenIssues)
-          queryBuilder.leftJoin('IssueStatus as issueStatus', joinBuilder =>
+          queryBuilder.innerJoin('IssueStatus as issueStatus', joinBuilder =>
             joinBuilder
               .on('issue.issueStatusId', 'issueStatus.id')
               .andOn(
                 knex.raw(
-                  "issueStatus.externalId in ('Inactive','Ok','Resolved')"
+                  "issueStatus.externalId not in ('Inactive','OK','Resolved')"
                 )
               )
           )
@@ -238,20 +245,11 @@ async function getListDevices(query, auth) {
         .join('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
         .whereRaw('i1.deviceId = d.id')
-        // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
         .modify(addConstraints, dataConstraints, {})
         .modify(queryBuilder => {
-          if (query.onlyOpenIssues || query.issueTypeId) {
-            if (query.issueTypeId)
-              queryBuilder.whereIn('it.externalId', query.issueTypeId)
-            if (query.onlyOpenIssues)
-              queryBuilder.whereNotIn('ist.externalId', [
-                'Inactive',
-                'Ok',
-                'Resolved',
-              ])
-          }
+          if (query.issueTypeId)
+            queryBuilder.whereIn('it.externalId', query.issueTypeId)
         })
         .where('am.personId', accountDetails.id)
         .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
@@ -1696,10 +1694,8 @@ async function onDeviceMaintenanceStatusLogScheduled(
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(
-      knex,
-      today
-    )
+    const devicesMaintenanceLogForTheDay =
+      await getDevicesMaintenanceLogForTheDay(knex, today)
 
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {

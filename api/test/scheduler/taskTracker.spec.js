@@ -148,9 +148,10 @@ describe('Scheduler task tracker', () => {
       await waitForAction(action1)
       await waitForAction(action2)
       await waitForIdle(2000)
-      const errorRecords = await knex(
-        'SchedulerTaskExecutionLog'
-      ).whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
+      const errorRecords = await knex('SchedulerTaskExecutionLog').whereIn(
+        'taskName',
+        ['myTinyFunc1', 'myTinyFunc2']
+      )
       assert.lengthOf(errorRecords, 2)
       _.each(errorRecords, record => {
         assert.isNotEmpty(record.errorMessage)

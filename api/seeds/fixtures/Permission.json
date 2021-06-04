@@ -1,10 +1,6 @@
 {
   "modules": [
     {
-      "name": "assay",
-      "activities": ["view"]
-    },
-    {
       "name": "patient",
       "activities": ["view", "edit"]
     },

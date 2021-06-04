@@ -43,8 +43,7 @@ async function seed(knex) {
     .update({
       subject:
         '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
-      body:
-        '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+      body: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
       htmlBody:
         '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
     })

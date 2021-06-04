@@ -61,6 +61,10 @@ const enhance = compose(
           filtersParams.delete(filterKey)
           filtersParams.delete('lgaId')
           break
+        case 'reportableSiteName':
+          filtersParams.delete(filterKey)
+          filtersParams.delete('reportableSiteId')
+          break
         default:
           filtersParams.delete(filterKey)
           break

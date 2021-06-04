@@ -27,8 +27,7 @@ async function seed(knex) {
     .update({
       subject:
         '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-      body:
-        '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+      body: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
       htmlBody:
         '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
     })

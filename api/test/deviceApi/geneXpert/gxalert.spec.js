@@ -301,12 +301,12 @@ describe('Device API routes for GxAlert Device', () => {
       // Send new data about existing result
       const newResultData = {
         customFieldData: {
-          '1': {
+          1: {
             notAvailable: false,
             label: 'HIV Status',
             value: 'Positive',
           },
-          '2': {
+          2: {
             notAvailable: false,
             label: 'Visual Analysis',
             value: 'Blood Stained',
@@ -1537,12 +1537,12 @@ describe('Device API routes for GxAlert Device', () => {
           // Send update to test
           const newResultData = {
             customFieldData: {
-              '1': {
+              1: {
                 notAvailable: false,
                 label: 'HIV Status',
                 value: 'HIV Negative',
               },
-              '2': {
+              2: {
                 notAvailable: false,
                 label: 'Visual Analysis',
                 value: 'Spotty',

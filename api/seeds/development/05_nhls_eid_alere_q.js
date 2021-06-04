@@ -140,12 +140,11 @@ async function seed(knex) {
         stateName: province.name,
       })
       if (provinceDistricts) {
-        provinceMemo[
-          province.name.toLowerCase()
-        ].districts = provinceDistricts.reduce((districtMemo, district) => {
-          districtMemo[district.name.toLowerCase()] = district
-          return districtMemo
-        }, {})
+        provinceMemo[province.name.toLowerCase()].districts =
+          provinceDistricts.reduce((districtMemo, district) => {
+            districtMemo[district.name.toLowerCase()] = district
+            return districtMemo
+          }, {})
       }
       return provinceMemo
     },
@@ -696,10 +695,8 @@ async function seed(knex) {
     })
     .first('id', 'serial')
 
-  const {
-    OK: resultWorkflowStatusOKId,
-    Error: resultWorkflowStatusErrorId,
-  } = await allResultWorkflowStatusToId()
+  const { OK: resultWorkflowStatusOKId, Error: resultWorkflowStatusErrorId } =
+    await allResultWorkflowStatusToId()
   const resultSourceDiagnosticDeviceId = await resultSourceToId(
     'DiagnosticDevice'
   )

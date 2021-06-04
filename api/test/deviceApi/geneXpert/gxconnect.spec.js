@@ -1099,12 +1099,12 @@ describe('Device API routes for GxConnect Devices', () => {
         // Send new data about existing result
         const newResultData = {
           customFieldData: {
-            '1': {
+            1: {
               notAvailable: false,
               label: 'HIV Status',
               value: 'Positive',
             },
-            '2': {
+            2: {
               notAvailable: false,
               label: 'Visual Analysis',
               value: 'Blood Stained',
@@ -2058,12 +2058,12 @@ describe('Device API routes for GxConnect Devices', () => {
             // Send second request for same test
             const newResultData = {
               customFieldData: {
-                '1': {
+                1: {
                   notAvailable: false,
                   label: 'HIV Status',
                   value: 'Positive',
                 },
-                '2': {
+                2: {
                   notAvailable: false,
                   label: 'Visual Analysis',
                   value: 'Blood Stained',
