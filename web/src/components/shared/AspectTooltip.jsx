@@ -11,6 +11,7 @@ const AspectTooltip = ({
   title,
   children,
   showHelpIcon,
+  showPointerCursor,
   toolTipClass,
   toolTipContainerClass,
   iconClass,
@@ -22,7 +23,13 @@ const AspectTooltip = ({
     {...rest}
   >
     <div className={cssClasses(toolTipContainerClass)}>
-      <span className={cssClasses('ChildrenContainer')}>{children}</span>
+      <span
+        className={cssClasses('ChildrenContainer', {
+          ChildrenContainer_clickable: showPointerCursor,
+        })}
+      >
+        {children}
+      </span>
       {showHelpIcon ? (
         <IconProvider icon="MdHelp" className={cssClasses(iconClass)} />
       ) : null}
@@ -35,6 +42,7 @@ AspectTooltip.defaultProps = {
   toolTipClass: 'Tooltip',
   toolTipContainerClass: null,
   iconClass: 'HelpIcon',
+  showPointerCursor: true,
 }
 
 AspectTooltip.propTypes = {
@@ -44,6 +52,7 @@ AspectTooltip.propTypes = {
   toolTipClass: PropTypes.string,
   toolTipContainerClass: PropTypes.string,
   iconClass: PropTypes.string,
+  showPointerCursor: PropTypes.bool,
 }
 
 export default AspectTooltip

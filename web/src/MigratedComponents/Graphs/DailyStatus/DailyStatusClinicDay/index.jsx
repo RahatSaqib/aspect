@@ -10,21 +10,19 @@ import { getDayTitle } from '../Helpers'
 
 const cssClasses = classnames.bind(require('../DailyStatus.css'))
 
-const DayBlock = ({ consts, dayModifier, enabled, onClick }) => {
+const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
   return (
     <div
-      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`, {
-        'clinic__day--disabled': !enabled,
-      })}
+      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
       style={{
         width: `${blockWidth}px`,
         height: `${blockHeight}px`,
         margin: `0 ${marginWidth / 2}px`,
       }}
-      onClick={enabled ? onClick : noop}
+      onClick={onClick}
       role="presentation"
     />
   )
@@ -36,7 +34,6 @@ DayBlock.propTypes = {
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
   onClick: PropTypes.func.isRequired,
-  enabled: PropTypes.bool.isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -87,6 +84,7 @@ const DailyStatusClinicDay = ({
 
   return (
     <AspectTooltip
+      showPointerCursor={isEditable}
       title={title}
       toolTipContainerClass="inline__tooltip"
       placement="right"
@@ -95,7 +93,7 @@ const DailyStatusClinicDay = ({
         consts={consts}
         dayModifier={dayModifier}
         enabled={isEditable}
-        onClick={onClickDay}
+        onClick={isEditable ? onClickDay : noop}
       />
     </AspectTooltip>
   )
