@@ -36,7 +36,7 @@ const getFormConfig = (formConfig, statuses, data) => {
             }))
         }
       )
-      setInitialValue(items, 'note', '', cssClasses)
+      setInitialValue(items, 'note', data.note, cssClasses)
     })
   })
 

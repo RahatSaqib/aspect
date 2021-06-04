@@ -173,9 +173,10 @@ const useDailyStatus = (
     const { maintenanceStatusHistory, shortName } = devicesDaily.find(
       ({ id }) => id === deviceId
     )
-    const { maintenanceStatusExternalId } = maintenanceStatusHistory.find(
-      it => it.day === day
-    )
+    const {
+      maintenanceStatusExternalId,
+      maintenanceStatusNotes: note,
+    } = maintenanceStatusHistory.find(it => it.day === day)
     const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
     // helper to get forward or backward index of first day with another status
     const getIndex = findFn =>
@@ -203,6 +204,7 @@ const useDailyStatus = (
         endedOn,
         maintenanceStatusExternalId,
       },
+      note,
     }
   }
 

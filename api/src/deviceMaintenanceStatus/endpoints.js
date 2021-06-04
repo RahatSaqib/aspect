@@ -75,6 +75,9 @@ const routes = [
                     totalResults: Joi.number().description(
                       'Total results performed by the device in this day'
                     ),
+                    maintenanceStatusNotes: Joi.string()
+                      .description('The note for current maintenance status')
+                      .allow(null),
                   })
                 )
                 .description(
@@ -135,6 +138,9 @@ const routes = [
               maintenanceStatusExternalId: Joi.string().description(
                 'The external id of the maintenance status'
               ),
+              maintenanceStatusNotes: Joi.string()
+                .description('The note for current maintenance status')
+                .allow(null),
             })
           ),
         }),

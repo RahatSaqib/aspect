@@ -176,10 +176,8 @@ class DeviceApiTestContext {
   }
 
   createAlereFtpConnectorApiKey(apiKeyDetails = {}) {
-    const {
-      countryAbbreviation = 'US',
-      partnerName = 'Partner One',
-    } = apiKeyDetails
+    const { countryAbbreviation = 'US', partnerName = 'Partner One' } =
+      apiKeyDetails
     return run(async knex => {
       const alereFtpConnectorDeviceType = await knex
         .from('DeviceType')

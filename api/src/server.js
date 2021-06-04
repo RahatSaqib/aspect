@@ -119,9 +119,8 @@ const messageQueuePlugin = {
       .then(queue => {
         return continueUnprocessedRawData(queue).then(() => {
           server.ext('onPreHandler', (request, h) => {
-            request.plugins.messageContext = queue.createMessageContext(
-              'aspect_request'
-            )
+            request.plugins.messageContext =
+              queue.createMessageContext('aspect_request')
             return h.continue
           })
         })

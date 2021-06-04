@@ -714,9 +714,8 @@ async function addHivVlResults(
     assays,
     elem => elem.externalId === 'GxHiv1Vl'
   ).id
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
   const patientNumber = patients.length - 1
   // make sure we have at least one result with these status
   const ensureResultIds = [acknowledged, validated, deliverable]
@@ -872,9 +871,8 @@ async function addTBResults(
       samples.push(sample)
     }
   })
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
   // Result Workflow Status
   const {
     Validated: validated,
@@ -1214,9 +1212,8 @@ async function addEbolaResults(
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const randomDate = date || subDays(new Date(), _.random(5))
     // Result source
-    const {
-      DiagnosticDevice: resultSourceDiagnosticId,
-    } = await allResultSourceToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } =
+      await allResultSourceToId()
 
     let j = 0
     const result = _.sample(possibleResults)
