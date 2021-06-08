@@ -1872,6 +1872,7 @@ module.exports = {
       resultData: {
         mtb: 'MTB NOT DETECTED',
         center: null,
+        dateDispatched: null,
         notedBy: 'Ramon P. Basilio, MD License #: 114905',
         remarks: null,
         examiner: 'Inoh Mark M. Amboy, RMT       License #: 0077748',
@@ -2081,6 +2082,7 @@ module.exports = {
       resultData: {
         mtb: 'MTB NOT DETECTED',
         center: null,
+        dateDispatched: null,
         notedBy: 'Ramon P. Basilio, MD License #: 114905',
         remarks: null,
         examiner: 'Inoh Mark M. Amboy, RMT       License #: 0077748',
@@ -2273,6 +2275,7 @@ module.exports = {
       resultData: {
         mtb: 'MTB DETECTED',
         center: 'NTRL',
+        dateDispatched: null,
         notedBy: 'Ramon P. Basilio, MD License #: 114905',
         remarks: null,
         examiner: 'Maria Guileane S. Pogosa, RMT License #: 0053434',
@@ -2879,7 +2882,11 @@ module.exports = {
         LPASignedOffBy3: null,
       },
       resultData: {
+        dateReleased: '2021-03-09T00:00:00.000Z',
+        examiner: null,
+        laboratoryTechnician: 'Glenn Hector S. Talaoc, RMT',
         notedBy: null,
+        processingDate: null,
         verifiedBy: null,
         tbLampResult: 'POSITIVE',
       },
@@ -3064,7 +3071,11 @@ module.exports = {
           'Cristina C. Villarico, RMT',
       },
       resultData: {
+        dateReleased: '2021-03-03T00:00:00.000Z',
+        examiner: null,
+        laboratoryTechnician: 'Glenn Hector S. Talaoc RMT',
         notedBy: null,
+        processingDate: null,
         verifiedBy: null,
         tbLampResult: 'POSITIVE',
       },
