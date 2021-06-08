@@ -256,6 +256,10 @@ const resultDataMappings = {
         tbLampResult: payload['TB LAMP Result'],
         verifiedBy: payload['TB LAMP Verified By'],
         notedBy: payload['TB LAMP Noted By'],
+        processingDate: payload['Gx Processing Date'],
+        dateReleased: payload['Smear Date Released'],
+        laboratoryTechnician: payload['Smear Lab Tech'],
+        examiner: payload['Gx Examiner'],
       }
     },
     isPayloadValid: payload =>
