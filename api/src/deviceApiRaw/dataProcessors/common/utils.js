@@ -1,7 +1,10 @@
 const isNil = require('lodash/isNil')
 
 const getResultDateOrDefault = (patientData, resultData) =>
-  resultData.dateReleased || patientData.dateEncoded || new Date()
+  resultData.processingDate ||
+  resultData.dateReleased ||
+  patientData.dateEncoded ||
+  new Date()
 
 const objectHasValues = o =>
   Object.values(o).some(value => !isNil(value) && `${value}`.trim() !== '')

@@ -4409,14 +4409,14 @@ describe('Device API Raw Philippines NTRL', () => {
           mrfDateRequested: payload['MRF Date Requested'],
           referringHealthFacility: payload['Referring Health Facility'],
           requestingPhysician: payload['Requesting Physician'],
-          facilityContactNumber: payload['Facility Contact Number'],
+          facilityContactNumber: payload['Facility Contact Number'] || null,
           lastName: payload['Last Name'],
           firstName: payload['First Name'],
           middleInitialOrName: payload['Middle Initial'],
           age: payload.Age,
           sex: payload.Sex,
           address: payload.Address,
-          phone: payload['Patient Contact Number'],
+          phone: payload['Patient Contact Number'] || null,
           cultureCenter: payload['Culture Center'],
           dstCenter: payload['DST Center'],
           treatmentCategory: payload['Treatment Category'],
@@ -4440,23 +4440,24 @@ describe('Device API Raw Philippines NTRL', () => {
           dateCollected1: payload['Date Collected 1'],
           dateCollected2: payload['Date Collected 2'],
           dateCollected3: payload['Date Collected 3'],
-          dateDispatched: payload['Date Dispatch'],
+          dateDispatched: payload['Date Dispatch'] || null,
           volume1: payload['Volume 1'],
           volume2: payload['Volume 2'],
           volume3: payload['Volume 3'],
           consistency1: payload['Consistency 1'],
-          consistency2: payload['Consistency 3'],
-          consistency3: payload['Consistency 4'],
+          consistency2: payload['Consistency 3'] || null,
+          consistency3: payload['Consistency 4'] || null,
           encodedBy: payload['Encoded By'],
           dateEncoded: payload['Date Encoded'],
           healthCareSystem: 'PMDT',
-          city: payload.City,
-          province: payload.Province,
-          specimenAccepted: payload['Specimen Accepted'],
-          specimenRejectedReason: payload['Specimen Rejected Reason'],
-          testRequestedParagonimiasis: payload['Test Requested Paragonimiasis'],
-          paragioniamiasisResult1: payload['Paragioniamiasis Result 1'],
-          paragioniamiasisResult2: payload['Paragioniamiasis Result 2'],
+          city: payload.City || null,
+          province: payload.Province || null,
+          specimenAccepted: payload['Specimen Accepted'] || null,
+          specimenRejectedReason: payload['Specimen Rejected Reason'] || null,
+          testRequestedParagonimiasis:
+            payload['Test Requested Paragonimiasis'] || null,
+          paragioniamiasisResult1: payload['Paragioniamiasis Result 1'] || null,
+          paragioniamiasisResult2: payload['Paragioniamiasis Result 2'] || null,
         }
       }
 
@@ -5259,6 +5260,7 @@ describe('Device API Raw Philippines NTRL', () => {
           startedOn: gxResults[0].startedOn.toISOString(),
           endedOn: gxResults[0].endedOn.toISOString(),
         }
+
         const sampleExternalId =
           getSamplesFromPMDTPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
@@ -5285,6 +5287,7 @@ describe('Device API Raw Philippines NTRL', () => {
               rifampicin: payload['Gx Rifampicin'],
               remarks: payload['Gx Remarks'],
               dateReleased: payload['Gx Date Released'],
+              dateDispatched: null,
               examiner: payload['Gx Examiner'],
               labManager: payload['Gx Laboratory Manager'],
             },
