@@ -279,13 +279,15 @@ async function upsertJobFunction(
       partnerId,
     })
   }
-  await upsertJobFunctionReport(knex, jobFunctionId, reports)
-  await upsertJobFunctionPermission(
-    knex,
-    jobFunctionId,
-    _.uniq(permissions),
-    removeMissingPermissions
-  )
+  if (!_.isEmpty(reports))
+    await upsertJobFunctionReport(knex, jobFunctionId, reports)
+  if (!_.isEmpty(permissions))
+    await upsertJobFunctionPermission(
+      knex,
+      jobFunctionId,
+      _.uniq(permissions),
+      removeMissingPermissions
+    )
   return jobFunctionId
 }
 
