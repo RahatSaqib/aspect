@@ -725,10 +725,8 @@ async function mergeResultWithContext(context) {
     'transformMergeResultPayload'
   )
   const transformedPayload = await transformPayload(pluginContext)
-  const {
-    processedResult: result,
-    existingResult: previousResult,
-  } = await mergeResult(knex, deviceId, transformedPayload, { now })
+  const { processedResult: result, existingResult: previousResult } =
+    await mergeResult(knex, deviceId, transformedPayload, { now })
   context.addDeviceLogUpdate('resultId', result.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(
@@ -755,16 +753,13 @@ async function createDeviceApiContext(
     payload: originalRequest.payload,
     query: originalRequest.query,
   }
-  const {
-    createDevice = false,
-    deviceLogType = DEVICE_LOG_TYPE_NONE,
-  } = handlerOptions
+  const { createDevice = false, deviceLogType = DEVICE_LOG_TYPE_NONE } =
+    handlerOptions
 
-  const messageContext = originalRequest.plugins.messageContext.bindActionCreators(
-    {
+  const messageContext =
+    originalRequest.plugins.messageContext.bindActionCreators({
       resultUpdated,
-    }
-  )
+    })
 
   const { auth } = request
   const now = new Date()

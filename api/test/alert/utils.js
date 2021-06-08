@@ -38,11 +38,11 @@ class AlertTestContext {
       assert.isOk(alertTemplateId)
 
       // read 1st Result and corresponding siteId/deviceId
-      const { id: resultId, siteId, deviceId } = await knex('Result').first(
-        'id',
-        'siteId',
-        'deviceId'
-      )
+      const {
+        id: resultId,
+        siteId,
+        deviceId,
+      } = await knex('Result').first('id', 'siteId', 'deviceId')
 
       const initialMessageStatusId = await messageStatusToId('Initial')
 

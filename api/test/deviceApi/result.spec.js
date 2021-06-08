@@ -1665,7 +1665,8 @@ describe('Device Result API routes', () => {
                     assay: { id: resultDetails.assayExternalId },
                     consumable: {
                       lot: firstCartridgeConsumable.lotNumber,
-                      expirationDate: firstCartridgeConsumable.expiresOn.toJSON(),
+                      expirationDate:
+                        firstCartridgeConsumable.expiresOn.toJSON(),
                     },
                   })
                   .then(res => {
@@ -2822,15 +2823,14 @@ describe('Device Result API routes', () => {
               'il.createdOn'
             )
 
-          const {
-            count: otherInventoryConsumptionLogsForThisTest,
-          } = await knex('InventoryLog')
-            .whereNot({ id: inventoryConsumptionLog.id })
-            .andWhere({
-              siteId,
-              createdOn: inventoryConsumptionLog.createdOn,
-            })
-            .count('id as count')
+          const { count: otherInventoryConsumptionLogsForThisTest } =
+            await knex('InventoryLog')
+              .whereNot({ id: inventoryConsumptionLog.id })
+              .andWhere({
+                siteId,
+                createdOn: inventoryConsumptionLog.createdOn,
+              })
+              .count('id as count')
 
           await knex('InventoryLog')
             .where({ resultId: inventoryConsumptionLog.resultId })
@@ -2974,26 +2974,25 @@ describe('Device Result API routes', () => {
             context.deviceId
           )
 
-          const factResultsDeviceByAssayBefore = await getFactResultsDeviceByAssay(
-            knex,
-            context.deviceId,
-            assayId
-          )
+          const factResultsDeviceByAssayBefore =
+            await getFactResultsDeviceByAssay(knex, context.deviceId, assayId)
 
-          const factResultsDeviceByCategory1Before = await getFactResultsDeviceByCategory1(
-            knex,
-            context.deviceId,
-            assayId,
-            resultCategory1
-          )
+          const factResultsDeviceByCategory1Before =
+            await getFactResultsDeviceByCategory1(
+              knex,
+              context.deviceId,
+              assayId,
+              resultCategory1
+            )
 
-          const factResultsDeviceByCategory1And2Before = await getFactResultsDeviceByCategory1And2(
-            knex,
-            context.deviceId,
-            assayId,
-            resultCategory1,
-            resultCategory2
-          )
+          const factResultsDeviceByCategory1And2Before =
+            await getFactResultsDeviceByCategory1And2(
+              knex,
+              context.deviceId,
+              assayId,
+              resultCategory1,
+              resultCategory2
+            )
 
           assert.equal(
             factResultsDeviceBefore.length,
@@ -3024,26 +3023,25 @@ describe('Device Result API routes', () => {
             context.deviceId
           )
 
-          const factResultsDeviceByAssayAfter = await getFactResultsDeviceByAssay(
-            knex,
-            context.deviceId,
-            assayId
-          )
+          const factResultsDeviceByAssayAfter =
+            await getFactResultsDeviceByAssay(knex, context.deviceId, assayId)
 
-          const factResultsDeviceByCategory1After = await getFactResultsDeviceByCategory1(
-            knex,
-            context.deviceId,
-            assayId,
-            resultCategory1
-          )
+          const factResultsDeviceByCategory1After =
+            await getFactResultsDeviceByCategory1(
+              knex,
+              context.deviceId,
+              assayId,
+              resultCategory1
+            )
 
-          const factResultsDeviceByCategory1And2After = await getFactResultsDeviceByCategory1And2(
-            knex,
-            context.deviceId,
-            assayId,
-            resultCategory1,
-            resultCategory2
-          )
+          const factResultsDeviceByCategory1And2After =
+            await getFactResultsDeviceByCategory1And2(
+              knex,
+              context.deviceId,
+              assayId,
+              resultCategory1,
+              resultCategory2
+            )
 
           factResultsDeviceBefore.forEach(countBefore => {
             const countAfter = _.find(factResultsDeviceAfter, {
@@ -3183,9 +3181,10 @@ describe('Device Result API routes', () => {
             context.deviceId
           )
 
-          const factResultsDeviceBefore30And60Days = factResultsDeviceBefore.filter(
-            factResultsDevice => [30, 60].includes(factResultsDevice.days)
-          )
+          const factResultsDeviceBefore30And60Days =
+            factResultsDeviceBefore.filter(factResultsDevice =>
+              [30, 60].includes(factResultsDevice.days)
+            )
           factResultsDeviceBefore30And60Days.forEach(countBefore => {
             const countAfter = _.find(factResultsDeviceAfter, {
               days: countBefore.days,

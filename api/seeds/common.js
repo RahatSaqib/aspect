@@ -108,9 +108,12 @@ async function commonUpserts(
     await upsertStatesAndLgas(knex, countryId, country.states)
   })
 
-  const { culture, timezone, id: countryId, geographyId } = countries[
-    countryAbbreviation
-  ]
+  const {
+    culture,
+    timezone,
+    id: countryId,
+    geographyId,
+  } = countries[countryAbbreviation]
   let { id: adminPersonId } =
     (await knex('Person')
       .where({
@@ -619,9 +622,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   }
 
   // Add assays
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
 
   const {
     'MTB/Rif': assayTypeMTBRifId,

@@ -928,9 +928,8 @@ async function updateResultWorkflowStatusByResultId(
 
   // check if a externalId is provided
   if (resultWorkflowStatusExternalId) {
-    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(
-      resultWorkflowStatusExternalId
-    )
+    resultWorkflowLogEntry.resultWorkflowStatusId =
+      await resultWorkflowStatusToId(resultWorkflowStatusExternalId)
     if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
       return 'Invalid ResultWorkflowStatus ID'
     }
@@ -989,13 +988,8 @@ async function updateTreatmentStatusPost(request) {
     Boom.notFound()
   }
 
-  const {
-    resultTreatmentStatusId,
-    externalId,
-    data,
-    method,
-    changedOn,
-  } = payload
+  const { resultTreatmentStatusId, externalId, data, method, changedOn } =
+    payload
 
   return updateTreatmentStatus(
     request,
@@ -1897,9 +1891,12 @@ async function transferResult(request) {
     params: { resultId },
     payload: { siteId, timestamp, comment, includeAllResults },
   } = request
-  const { partnerId, countryId, id: currentUserId, userName } = await getUser(
-    auth.credentials.name
-  )
+  const {
+    partnerId,
+    countryId,
+    id: currentUserId,
+    userName,
+  } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
   const result = await getResultByResultId(auth, resultId)

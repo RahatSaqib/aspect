@@ -1694,10 +1694,8 @@ async function onDeviceMaintenanceStatusLogScheduled(
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(
-      knex,
-      today
-    )
+    const devicesMaintenanceLogForTheDay =
+      await getDevicesMaintenanceLogForTheDay(knex, today)
 
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {

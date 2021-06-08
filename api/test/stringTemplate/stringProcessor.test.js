@@ -1140,7 +1140,8 @@ L|1`,
             .and.containSubset([
               {
                 record_id: '1',
-                redcap_data_access_group: dataSource.siteExternalId.toLowerCase(),
+                redcap_data_access_group:
+                  dataSource.siteExternalId.toLowerCase(),
                 first_name: formData.nameOfPatient,
                 surname: formData.surnameOfPatient,
                 hospital_number: formData.hospitalNumber,
@@ -2396,8 +2397,9 @@ L|1`,
             )
           ) {
             examResult = {
-              MTB:
-                lpaMtbResultCodeMappings[dataSource.resultCategory1ExternalId],
+              MTB: lpaMtbResultCodeMappings[
+                dataSource.resultCategory1ExternalId
+              ],
               H:
                 lpaHighLowResistanceCodeMappings[
                   _.get(resultData, 'encodedResult.isoniazid')

@@ -3259,9 +3259,8 @@ async function seed(knex) {
   const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
   // Result source
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
 
   // Assays and AssayTypes
   const {
@@ -4404,10 +4403,8 @@ async function seed(knex) {
 
     // only seed GeneXpert results for specific countries
     if (['Nigeria', 'United States', 'Myanmar'].indexOf(country.name) >= 0) {
-      const {
-        DBS: sampleTypeDBSId,
-        Plasma: sampleTypePlasmaId,
-      } = await allSampleTypeToId()
+      const { DBS: sampleTypeDBSId, Plasma: sampleTypePlasmaId } =
+        await allSampleTypeToId()
 
       // some TB samples:
       let samples = []
