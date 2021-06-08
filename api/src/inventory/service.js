@@ -162,13 +162,12 @@ async function consumeInventoryForResult(
           consumablesInResultData.length > 0 ? consumablesInResultData : [null]
         for (const matchingConsumable of matchingConsumables) {
           /* eslint-disable no-await-in-loop */
-          const matchingInventoryOnHand =
-            findInventoryItemMatchingConsumableInResultData(
-              matchingConsumable,
-              matchingInventoryItems,
-              testedOn,
-              now
-            )
+          const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
+            matchingConsumable,
+            matchingInventoryItems,
+            testedOn,
+            now
+          )
 
           // Log change
           await logInventoryChange({
@@ -611,11 +610,10 @@ async function listInventoryItemsGroupedBySite(request) {
 
 function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
   // group by siteId and consumableId, and return different counts
-  const baseWithCalculatedFields =
-    getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
-      request,
-      dataConstraints
-    )
+  const baseWithCalculatedFields = getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+    request,
+    dataConstraints
+  )
   const supplyInStockBase = knex
     .from(baseWithCalculatedFields.as('t2'))
     .groupBy(['consumableId', 'siteId'])
@@ -787,11 +785,10 @@ function getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
 async function getDaysByLocation(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const baseWithCalculatedFields =
-    getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
-      request,
-      dataConstraints
-    )
+  const baseWithCalculatedFields = getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+    request,
+    dataConstraints
+  )
 
   // -----------------
   // group by location fields and consumableId, and return different counts
@@ -1168,8 +1165,9 @@ async function receiveInventory(request) {
       userId: currentlyLoggedInUser.id,
     })
 
-    const { id: transferReceivedConsumableReasonId } =
-      await findConsumableReason('Transfer Received')
+    const {
+      id: transferReceivedConsumableReasonId,
+    } = await findConsumableReason('Transfer Received')
 
     await logInventoryChange({
       knex,

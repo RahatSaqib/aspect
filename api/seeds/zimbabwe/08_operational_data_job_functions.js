@@ -17,11 +17,9 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: adminId,
   }
-  const {
-    id: countryId,
-    culture,
-    timezone,
-  } = await knex('Country').where('abbreviation', 'ZW').first()
+  const { id: countryId, culture, timezone } = await knex('Country')
+    .where('abbreviation', 'ZW')
+    .first()
   const { id: partnerId } = await knex('Partner')
     .where('name', 'Zimbabwe')
     .first('id')

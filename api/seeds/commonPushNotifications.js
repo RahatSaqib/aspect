@@ -6,7 +6,8 @@ async function insertNewResultPushTemplates(
   pushNotification = {
     pushNotificationTemplate: {
       title: 'New Results Available',
-      body: 'There are {{issue.data.numberOfResults}} new results for {{site.name}} available in Aspect Reporter',
+      body:
+        'There are {{issue.data.numberOfResults}} new results for {{site.name}} available in Aspect Reporter',
       data: null,
     },
     messageSeverityExternalId: 'Recommendation',

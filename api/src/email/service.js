@@ -34,8 +34,13 @@ async function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  const { subject, body, htmlBody, to, attachments } =
-    await createEmailFieldsFromTemplate(knex, emailMessageId)
+  const {
+    subject,
+    body,
+    htmlBody,
+    to,
+    attachments,
+  } = await createEmailFieldsFromTemplate(knex, emailMessageId)
   const pendingMessageStatusId = await messageStatusToId('Pending')
   // store generated email message into the same record and set messageStatusId
   await knex('EmailMessage')
@@ -91,8 +96,10 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   const { sendEmail } = require('./emailUtil')
 
   // assume status is 'Sent'
-  const { Sent: messageStatusIdSent, Error: messageStatusIdError } =
-    await allMessageStatusToId()
+  const {
+    Sent: messageStatusIdSent,
+    Error: messageStatusIdError,
+  } = await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
 
   // send email

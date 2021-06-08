@@ -151,8 +151,9 @@ const routes = [
             assayId: Joi.number().description('The assay Id'),
             name: Joi.string().description('The assay Name'),
             assayTypeName: Joi.string().description('The assay type Name'),
-            deviceTypeExternalId:
-              Joi.string().description('The device type id'),
+            deviceTypeExternalId: Joi.string().description(
+              'The device type id'
+            ),
             deviceTypeName: Joi.string().description('The device type Name'),
             resultCategory1Label: Joi.string()
               .allow(null)

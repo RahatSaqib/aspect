@@ -169,10 +169,12 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   }
 
   setupAssayMappings(assayIds, resultCategories) {
-    const processViralLoadResultsWithSameId =
-      this.processViralLoadResultsWithSameId.bind(this)
-    const processDaanNCovid19ResultsWithSameId =
-      this.processDaanNCovid19ResultsWithSameId.bind(this)
+    const processViralLoadResultsWithSameId = this.processViralLoadResultsWithSameId.bind(
+      this
+    )
+    const processDaanNCovid19ResultsWithSameId = this.processDaanNCovid19ResultsWithSameId.bind(
+      this
+    )
     return {
       '1mLDBSvOP': {
         id: assayIds.abbottM2000DBSHivVL,
@@ -527,11 +529,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
                               I: 'Interpretation of Final Result',
                             }[_.get(jsonAstmResult, '3.9.value')],
                             referenceRanges: _.get(jsonAstmResult, '6.value'),
-                            abnormalFlags:
-                              this.arrayFromPossibleRepeatedASTMValue(
-                                jsonAstmResult,
-                                '7'
-                              ).map(abnormalFlag => abnormalFlag.value),
+                            abnormalFlags: this.arrayFromPossibleRepeatedASTMValue(
+                              jsonAstmResult,
+                              '7'
+                            ).map(abnormalFlag => abnormalFlag.value),
                             resultText: _.get(jsonAstmResult, '4.value'),
                             resultUnit: _.get(jsonAstmResult, '5.value'),
                             resultStatus: {
@@ -690,23 +691,21 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
             qualityControlResult.sample.externalId ===
             assayMappings[assayCode].highPositiveControlSpecimenId
         )
-        const highPositiveQualityControlPreliminaryResult =
-          preliminaryResults.find(
-            qualityControlResult =>
-              qualityControlResult.sample.externalId ===
-              assayMappings[assayCode].highPositiveControlSpecimenId
-          )
+        const highPositiveQualityControlPreliminaryResult = preliminaryResults.find(
+          qualityControlResult =>
+            qualityControlResult.sample.externalId ===
+            assayMappings[assayCode].highPositiveControlSpecimenId
+        )
         const lowPositiveQualityControlFinalResult = finalResults.find(
           qualityControlResult =>
             qualityControlResult.sample.externalId ===
             assayMappings[assayCode].lowPositiveControlSpecimenId
         )
-        const lowPositiveQualityControlPreliminaryResult =
-          preliminaryResults.find(
-            qualityControlResult =>
-              qualityControlResult.sample.externalId ===
-              assayMappings[assayCode].lowPositiveControlSpecimenId
-          )
+        const lowPositiveQualityControlPreliminaryResult = preliminaryResults.find(
+          qualityControlResult =>
+            qualityControlResult.sample.externalId ===
+            assayMappings[assayCode].lowPositiveControlSpecimenId
+        )
         const positiveControlPassed = this.quantitativePositiveControlsPassed(
           highPositiveQualityControlFinalResult,
           lowPositiveQualityControlFinalResult
@@ -1011,20 +1010,19 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const orf1abGeneResults = resultsWithSameId.filter(
       result => result.assay.code === 'Daan nCOVID-19 ORF LDA'
     )
-    const orf1abGeneResult =
-      this.convertASTMResultsWithSameIdAndAssayCodeToResult(
-        orf1abGeneResults,
-        sample,
-        assayMappings,
-        device,
-        deviceApiKey,
-        site,
-        qualityControlSummaries,
-        utcNow,
-        resultCategories,
-        resultSourceDiagnosticDeviceId,
-        resultTypePatientId
-      )
+    const orf1abGeneResult = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
+      orf1abGeneResults,
+      sample,
+      assayMappings,
+      device,
+      deviceApiKey,
+      site,
+      qualityControlSummaries,
+      utcNow,
+      resultCategories,
+      resultSourceDiagnosticDeviceId,
+      resultTypePatientId
+    )
     const nGeneResults = resultsWithSameId.filter(
       result => result.assay.code === 'Daan Target N gene LDA'
     )
@@ -1261,11 +1259,10 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         qualityControlResult =>
           qualityControlResult.sampleRunNumber === sampleRunNumber
       )
-      const qualityControlSummariesForRun =
-        this.convertQcResultDetailsToQcSummary(
-          qualityControlResultsForRun,
-          assayMappings
-        )
+      const qualityControlSummariesForRun = this.convertQcResultDetailsToQcSummary(
+        qualityControlResultsForRun,
+        assayMappings
+      )
       qualityControlSummaries[sampleRunNumber] = qualityControlSummariesForRun
       return qualityControlSummaries
     }, {})

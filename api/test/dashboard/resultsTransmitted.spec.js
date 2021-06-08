@@ -160,10 +160,12 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     }
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
     const { Resolved: issueStatusResolvedId } = await allIssueStatusToId()
-    const { ResultReceived: issueTypeResultReceivedId } =
-      await allIssueTypeToId()
-    const { DiagnosticDevice: resultSourceDiagnosticId } =
-      await allResultSourceToId()
+    const {
+      ResultReceived: issueTypeResultReceivedId,
+    } = await allIssueTypeToId()
+    const {
+      DiagnosticDevice: resultSourceDiagnosticId,
+    } = await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
     const messageStatusSentId = await messageStatusToId('Sent')
     const {

@@ -894,8 +894,9 @@ describe('Device routes', () => {
           deviceMaintenanceStatusExternalId
         )
 
-        const { deviceMaintenanceStatusLogIds } =
-          toInactiveDownForRepairResponse.body.data
+        const {
+          deviceMaintenanceStatusLogIds,
+        } = toInactiveDownForRepairResponse.body.data
 
         // Change all the inserted logs to Active
         const [activeStatusId] = await knex('DeviceMaintenanceStatus')
@@ -947,8 +948,9 @@ describe('Device routes', () => {
           .where('manuallySet', true)
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .pluck('externalId')
-        const [deviceMaintenanceStatusExternalId] =
-          editableDeviceMaintenanceStatusIds
+        const [
+          deviceMaintenanceStatusExternalId,
+        ] = editableDeviceMaintenanceStatusIds
         deviceMaintenanceStatusId =
           deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
 

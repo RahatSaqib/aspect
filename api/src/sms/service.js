@@ -80,8 +80,10 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   const { sendSms } = require('./smsUtil')
 
   // assume status is 'Sent'
-  const { Sent: messageStatusIdSent, Error: messageStatusIdError } =
-    await allMessageStatusToId()
+  const {
+    Sent: messageStatusIdSent,
+    Error: messageStatusIdError,
+  } = await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
 
   // send sms

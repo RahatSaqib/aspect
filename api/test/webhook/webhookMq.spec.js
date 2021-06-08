@@ -81,11 +81,11 @@ describe('Sending Webhook Message via Message Queue', () => {
       await fileContentTypeToId('applicationJson'),
       adminId
     )
-    ;({
-      id: resultId,
-      siteId,
-      deviceId,
-    } = await knex('Result').first('id', 'siteId', 'deviceId'))
+    ;({ id: resultId, siteId, deviceId } = await knex('Result').first(
+      'id',
+      'siteId',
+      'deviceId'
+    ))
     initialMessageStatusId = await messageStatusToId('Initial')
     errorMessageStatusId = await messageStatusToId('Error')
   })

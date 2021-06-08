@@ -75,7 +75,8 @@ async function removeOld(knex) {
   await knex('EmailTemplate')
     .where('id', '>', 0)
     .where({
-      body: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      body:
+        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
     })
     .del()
 }

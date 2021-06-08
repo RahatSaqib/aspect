@@ -132,8 +132,10 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                 knex
               )
               const alereDeviceType = await getDeviceType('AlereQ', knex)
-              const devicesCreatedDuringTestBefore =
-                await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+              const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+                maxDeviceIdBefore,
+                knex
+              )
               expect(devicesCreatedDuringTestBefore).to.containSubset([
                 {
                   deviceTypeId: alereFtpConnectorDeviceType.id,
@@ -153,8 +155,10 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                   result: basicResultPayload,
                 }),
               })
-              const devicesCreatedDuringTestAfter =
-                await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+              const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+                maxDeviceIdBefore,
+                knex
+              )
               expect(devicesCreatedDuringTestAfter).to.containSubset([
                 {
                   deviceTypeId: alereFtpConnectorDeviceType.id,
@@ -179,8 +183,10 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         describe('but device serial number remains the same', () => {
           it('should not create a new device update the the existing device', () =>
             runTest(async knex => {
-              const devicesCreatedDuringTestBefore =
-                await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+              const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+                maxDeviceIdBefore,
+                knex
+              )
               const { deviceAuth, basicDevicePayload } = context
               await postToDeviceApi({
                 authHeader: deviceAuth,
@@ -188,8 +194,10 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                   result: basicResultPayload,
                 }),
               })
-              const devicesCreatedDuringTestAfter =
-                await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+              const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+                maxDeviceIdBefore,
+                knex
+              )
 
               expect(devicesCreatedDuringTestAfter.length).to.equal(
                 devicesCreatedDuringTestBefore.length

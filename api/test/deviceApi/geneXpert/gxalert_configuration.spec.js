@@ -407,8 +407,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -455,8 +457,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -496,8 +500,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -542,8 +548,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
 
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
@@ -575,8 +583,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -624,8 +634,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfterSecondMacAddress =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfterSecondMacAddress = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfterSecondMacAddress).to.have.length(
             devicesCreatedDuringTestBefore.length + 1
           )
@@ -685,8 +697,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -840,8 +854,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -888,8 +904,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
 
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
@@ -930,8 +948,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -976,8 +996,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
 
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
@@ -1009,8 +1031,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -1058,8 +1082,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfterSecondDeviceSerial =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfterSecondDeviceSerial = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
 
           expect(
             devicesCreatedDuringTestAfterSecondDeviceSerial
@@ -1119,8 +1145,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -1260,8 +1288,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -1308,8 +1338,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -1349,8 +1381,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
 
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
@@ -1396,8 +1430,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
 
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
@@ -1429,8 +1465,10 @@ describe('Device API routes for GxAlert Device', () => {
             'CepheidGeneXpert',
             knex
           )
-          const devicesCreatedDuringTestBefore =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestBefore).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -1478,8 +1516,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfterSecondHostId =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfterSecondHostId = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfterSecondHostId).to.have.length(
             devicesCreatedDuringTestBefore.length + 1
           )
@@ -1536,8 +1576,10 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
 
-          const devicesCreatedDuringTestAfter =
-            await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
+          const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+            maxDeviceIdBefore,
+            knex
+          )
           expect(devicesCreatedDuringTestAfter).to.containSubset([
             {
               name: gxAlertDeviceName,
@@ -1717,8 +1759,7 @@ describe('Device API routes for GxAlert Device', () => {
       after(afterCleanUp)
 
       it('should keep data from the prior request', async () => {
-        const geneXpertDeviceAfterDailyDetails =
-          await getCurrentGeneXpertDevice()
+        const geneXpertDeviceAfterDailyDetails = await getCurrentGeneXpertDevice()
         const { deviceAuth } = context
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
@@ -1858,8 +1899,9 @@ describe('Device API routes for GxAlert Device', () => {
         it('should create an entry in the device maintenance status log', async () => {
           const now = new Date()
 
-          const deviceMaintenanceLogBeforeMaintenanceUpdate =
-            await getLatestDeviceMaintenanceStatusLog(knex)
+          const deviceMaintenanceLogBeforeMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+            knex
+          )
           assert.isUndefined(deviceMaintenanceLogBeforeMaintenanceUpdate)
 
           const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
@@ -1902,8 +1944,9 @@ describe('Device API routes for GxAlert Device', () => {
             })
           )
           await waitForDeviceMaintenance
-          const deviceMaintenanceLogAfterSecondMaintenanceUpdate =
-            await getLatestDeviceMaintenanceStatusLog(knex)
+          const deviceMaintenanceLogAfterSecondMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+            knex
+          )
           expect(
             deviceMaintenanceLogAfterSecondMaintenanceUpdate
           ).to.containSubset({
@@ -1944,8 +1987,9 @@ describe('Device API routes for GxAlert Device', () => {
               })
             )
             await waitForDeviceMaintenance
-            const deviceMaintenanceLogAfterInactiveMaintenanceUpdate =
-              await getLatestDeviceMaintenanceStatusLog(knex)
+            const deviceMaintenanceLogAfterInactiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
             expect(
               deviceMaintenanceLogAfterInactiveMaintenanceUpdate
             ).to.containSubset({
@@ -1974,16 +2018,16 @@ describe('Device API routes for GxAlert Device', () => {
                       inactive: false,
                       inactiveMaintenanceReason: activeMaintenanceReason,
                       inactiveMaintenanceNote: activeMaintenanceNote,
-                      inactiveMaintenanceExpectedBackOnline:
-                        activeMaintenanceExpectedBackOnline,
+                      inactiveMaintenanceExpectedBackOnline: activeMaintenanceExpectedBackOnline,
                     },
                   },
                 },
               })
             )
             await waitForDeviceSeen
-            const deviceMaintenanceLogAfterActiveMaintenanceUpdate =
-              await getLatestDeviceMaintenanceStatusLog(knex)
+            const deviceMaintenanceLogAfterActiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
             expect(
               deviceMaintenanceLogAfterActiveMaintenanceUpdate
             ).to.containSubset({
@@ -2039,8 +2083,7 @@ describe('Device API routes for GxAlert Device', () => {
                       inactive: false,
                       inactiveMaintenanceReason: activeMaintenanceReason,
                       inactiveMaintenanceNote: activeMaintenanceNote,
-                      inactiveMaintenanceExpectedBackOnline:
-                        activeMaintenanceExpectedBackOnline,
+                      inactiveMaintenanceExpectedBackOnline: activeMaintenanceExpectedBackOnline,
                     },
                   },
                 },
@@ -2134,8 +2177,9 @@ describe('Device API routes for GxAlert Device', () => {
             })
           )
 
-          const deviceMaintenanceLogAfterInactiveUpdate =
-            await getLatestDeviceMaintenanceStatusLog(knex)
+          const deviceMaintenanceLogAfterInactiveUpdate = await getLatestDeviceMaintenanceStatusLog(
+            knex
+          )
           expect(deviceMaintenanceLogAfterInactiveUpdate).to.containSubset({
             status: 'Active',
             data: {
@@ -2161,8 +2205,9 @@ describe('Device API routes for GxAlert Device', () => {
             })
           )
 
-          const deviceMaintenanceLogAfterSecondInactiveUpdate =
-            await getLatestDeviceMaintenanceStatusLog(knex)
+          const deviceMaintenanceLogAfterSecondInactiveUpdate = await getLatestDeviceMaintenanceStatusLog(
+            knex
+          )
           assert.deepEqual(
             deviceMaintenanceLogAfterSecondInactiveUpdate,
             deviceMaintenanceLogAfterInactiveUpdate
@@ -2175,8 +2220,7 @@ describe('Device API routes for GxAlert Device', () => {
           useGxAlertDeviceId(gxAlertDeviceId)
           await postToDeviceApi(standardDevicePayload)
           let geneXpertDevice = await getCurrentGeneXpertDevice()
-          const deviceMaintenanceStatuses =
-            await allDeviceMaintenanceStatusToId()
+          const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
           const [deviceMaintenanceStatusLogId] = await knex(
             'DeviceMaintenanceStatusLog'
           ).insert({
@@ -2473,20 +2517,23 @@ describe('Device API routes for GxAlert Device', () => {
             .first()
           assert.equal(siteAfterUpdate.geographyId, stateGeographyId)
 
-          const { secondStateGeographyId, secondStateId, secondStateName } =
-            await knex('Geography as g')
-              .join('Country as c', 'g.countryId', 'c.id')
-              .join('State as s', 'g.stateId', 's.id')
-              .where('c.abbreviation', country)
-              .andWhere('g.stateId', '<>', stateId)
-              .andWhere(function () {
-                this.whereNull('g.lgaId')
-              })
-              .first(
-                'g.id as secondStateGeographyId',
-                'g.stateId as secondStateId',
-                's.name as secondStateName'
-              )
+          const {
+            secondStateGeographyId,
+            secondStateId,
+            secondStateName,
+          } = await knex('Geography as g')
+            .join('Country as c', 'g.countryId', 'c.id')
+            .join('State as s', 'g.stateId', 's.id')
+            .where('c.abbreviation', country)
+            .andWhere('g.stateId', '<>', stateId)
+            .andWhere(function () {
+              this.whereNull('g.lgaId')
+            })
+            .first(
+              'g.id as secondStateGeographyId',
+              'g.stateId as secondStateId',
+              's.name as secondStateName'
+            )
 
           assert.notEqual(secondStateName, stateName)
 

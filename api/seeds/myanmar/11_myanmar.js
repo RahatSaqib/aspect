@@ -62,7 +62,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .update({
       subject:
         '{{device.name}} has power errors on module {{issue.data.moduleName}}',
-      body: '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
+      body:
+        '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
       htmlBody:
         '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
     })
@@ -79,7 +80,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .where({ subject: 'Module Failure Errors' })
     .update({
       subject: '{{device.name}}: Critical Module Errors',
-      body: 'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+      body:
+        'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
       htmlBody:
         'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
     })
@@ -97,7 +99,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .where({ subject: '{{site.name}} No Testing' })
     .update({
       subject: '{{device.name}}: No Testing',
-      body: '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
+      body:
+        '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
       htmlBody:
         '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
     })
@@ -114,7 +117,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .where({ subject: 'Machine Temperature Errors' })
     .update({
       subject: '{{device.name}}: Machine Temperature Errors',
-      body: '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
+      body:
+        '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
       htmlBody:
         '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
     })
@@ -129,7 +133,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .where({ subject: 'Power error across machine' })
     .update({
       subject: '{{device.name}}: Power error across machine',
-      body: '{{device.name}}: Power error across machine, conduct troubleshooting.',
+      body:
+        '{{device.name}}: Power error across machine, conduct troubleshooting.',
       htmlBody:
         '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
     })
@@ -144,7 +149,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     })
   await knex('EmailTemplate').where({ subject: 'Procedural Errors' }).update({
     subject: '{{device.name}}: Procedural Errors',
-    body: '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
+    body:
+      '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
     htmlBody:
       '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
   })
@@ -176,7 +182,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .update({
       subject:
         '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
-      body: '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      body:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
       htmlBody:
         '{{device.name}}: Errors without code on module <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
     })
@@ -193,7 +200,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .where({ subject: 'Errors without code across machine' })
     .update({
       subject: '{{device.name}}: Errors without code across machine',
-      body: '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      body:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
       htmlBody:
         '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
     })
@@ -211,7 +219,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .where({ subject: 'Possible module failure' })
     .update({
       subject: '{{device.name}}: Possible module failure',
-      body: '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+      body:
+        '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
       htmlBody:
         '{{device.name}}: Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
@@ -234,7 +243,8 @@ async function updateTemplatesToIncludeDeviceName(knex) {
     .update({
       subject:
         '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
-      body: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+      body:
+        '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
       htmlBody:
         '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
     })

@@ -48,8 +48,12 @@ async function seed(knex) {
   const issueTypeId = issueTypes.ResultReceived
   await seedIssueTypeTemplates(knex, 'ResultReceived', { partnerId, userId })
 
-  const { alertTemplate, emailTemplate, smsTemplate, messageTypeId } =
-    await getPositiveResultIssueProps(knex, issueTypeId)
+  const {
+    alertTemplate,
+    emailTemplate,
+    smsTemplate,
+    messageTypeId,
+  } = await getPositiveResultIssueProps(knex, issueTypeId)
   // get notificationTypeId
   const { id: notificationTypeId } = await knex('NotificationType')
     .where({

@@ -19,15 +19,14 @@ module.exports = async function cleanModuleReplacedIssues(
       await updateIssueData(trx, moduleReplacedIssue)
       const possibleResultsWithIssues = await getPossibleResultsWithIssues(trx)
       await Promise.each(possibleResultsWithIssues, async result => {
-        const previousResultWithDifferentSerial =
-          await getPreviousResultWithDifferentModuleSerial(
-            knex,
-            result.deviceId,
-            result.moduleName,
-            result.moduleSerial,
-            result.instrumentSerial,
-            result.startedOn
-          )
+        const previousResultWithDifferentSerial = await getPreviousResultWithDifferentModuleSerial(
+          knex,
+          result.deviceId,
+          result.moduleName,
+          result.moduleSerial,
+          result.instrumentSerial,
+          result.startedOn
+        )
 
         if (previousResultWithDifferentSerial) {
           const action = {

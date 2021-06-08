@@ -156,12 +156,14 @@ describe('Result Follow Up', () => {
         assert.equal(responseFirst.statusCode, 200)
 
         // should have follow up with the externalId 'drtb-prexdr'
-        const { externalId: externalIdFollowUp, date: followUpDate } =
-          await knex('ResultFollowUp as rfu')
-            .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-            .where('rfu.resultId', resultId)
-            .where('rfu.externalId', resultFollowUpExternalId)
-            .first('fu.externalId', 'rfu.date')
+        const {
+          externalId: externalIdFollowUp,
+          date: followUpDate,
+        } = await knex('ResultFollowUp as rfu')
+          .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+          .where('rfu.resultId', resultId)
+          .where('rfu.externalId', resultFollowUpExternalId)
+          .first('fu.externalId', 'rfu.date')
 
         assert.equal(externalIdFollowUp, 'drtb-prexdr')
         assert.equal(date.getTime(), followUpDate.getTime())

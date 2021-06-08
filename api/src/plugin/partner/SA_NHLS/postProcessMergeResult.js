@@ -2,12 +2,11 @@ const _ = require('lodash')
 const alereFtpConnectorPostProcessMergeResult = require('../../deviceType/AlereFtpConnector/postProcessMergeResult')
 
 async function postProcessMergeResult(context, result, previousResult) {
-  const alereFtpConnectorPluginResult =
-    await alereFtpConnectorPostProcessMergeResult(
-      context,
-      result,
-      previousResult
-    )
+  const alereFtpConnectorPluginResult = await alereFtpConnectorPostProcessMergeResult(
+    context,
+    result,
+    previousResult
+  )
 
   const { knex } = context
 

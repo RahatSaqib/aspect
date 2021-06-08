@@ -48,7 +48,8 @@ async function seed(knex) {
     })
     .update({
       subject: 'Possible module failure',
-      body: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+      body:
+        'Possible module failure on module {{issue.data.moduleName}} contact engineer',
       htmlBody:
         'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })

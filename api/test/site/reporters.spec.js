@@ -205,8 +205,9 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     }
 
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const { DiagnosticDevice: resultSourceDiagnosticId } =
-      await allResultSourceToId()
+    const {
+      DiagnosticDevice: resultSourceDiagnosticId,
+    } = await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
     const {
       Detected: resultCategoryDetectedId,

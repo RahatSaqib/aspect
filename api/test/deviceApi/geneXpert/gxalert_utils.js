@@ -221,8 +221,10 @@ class GxAlertApiTestContext {
   }
 
   createGxAlertApiKey(apiKeyDetails = {}) {
-    const { countryAbbreviation = 'US', partnerName = 'Partner One' } =
-      apiKeyDetails
+    const {
+      countryAbbreviation = 'US',
+      partnerName = 'Partner One',
+    } = apiKeyDetails
     return run(async knex => {
       const gxAlertDeviceType = await knex
         .from('DeviceType')
@@ -303,8 +305,7 @@ class GxAlertApiTestContext {
       this.basicDevicePayload.configuration.data.gxAlertDeviceId !==
       gxAlertDeviceId
     ) {
-      this.basicDevicePayload.configuration.data.gxAlertDeviceId =
-        gxAlertDeviceId
+      this.basicDevicePayload.configuration.data.gxAlertDeviceId = gxAlertDeviceId
     }
   }
 

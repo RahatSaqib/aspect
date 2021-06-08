@@ -346,7 +346,8 @@ describe('Device API routes', () => {
         .send({
           type: { id: 'DaktariInSight' },
           site: { id: 'CHIZ' },
-          name: 'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
+          name:
+            'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
         })
 
       assert.equal(res.status, 200)

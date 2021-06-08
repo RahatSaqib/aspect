@@ -22,8 +22,9 @@ class DataProcessor {
     this.messageContext = messageContext
     this.encryptRawData = true
     this.saveRequestAsReady = this.saveRequestAsReady.bind(this)
-    this.populateFromDeviceApiRawRecord =
-      this.populateFromDeviceApiRawRecord.bind(this)
+    this.populateFromDeviceApiRawRecord = this.populateFromDeviceApiRawRecord.bind(
+      this
+    )
     this.start = this.start.bind(this)
     this.responseReadyPromise = this.responseReadyPromise.bind(this)
     this.dataProcessorErrorPromise = this.dataProcessorErrorPromise.bind(this)
@@ -320,8 +321,9 @@ class SynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
-    this.onDeviceRawMessageProcessed =
-      this.onDeviceRawMessageProcessed.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
+      this
+    )
     this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 
@@ -350,8 +352,9 @@ class AsynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
-    this.onDeviceRawMessageProcessed =
-      this.onDeviceRawMessageProcessed.bind(this)
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
+      this
+    )
     this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 

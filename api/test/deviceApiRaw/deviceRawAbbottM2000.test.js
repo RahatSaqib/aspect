@@ -605,7 +605,8 @@ L|1`
             comments: [
               {
                 source: 'Instrument',
-                text: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
+                text:
+                  '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
                 type: 'Exception String',
                 rawData:
                   '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',
@@ -997,7 +998,8 @@ L|1`
             comments: [
               {
                 source: 'Instrument',
-                text: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
+                text:
+                  '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
                 type: 'Exception String',
                 rawData:
                   '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',

@@ -571,8 +571,9 @@ async function createResetPasswordToken(request) {
       },
       users[0].culture
     )
-    const inlineImageAttachments =
-      await templateProcessor.getInlineImageAttachments(generatedEmail.html)
+    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(
+      generatedEmail.html
+    )
 
     await emailUtil.sendEmail(
       params.email,

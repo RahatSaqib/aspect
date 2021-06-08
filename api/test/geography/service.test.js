@@ -672,8 +672,9 @@ describe('geography service', () => {
           const knexQueryBuilderSpy = {
             on: sinon.stub(),
           }
-          const boundJoinOnCallbackFunction =
-            joinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          const boundJoinOnCallbackFunction = joinOnCallbackFunction.bind(
+            knexQueryBuilderSpy
+          )
           knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
           dbSpy.knex.raw.withArgs(2).returns(`${selectedCountryId}`)
           boundJoinOnCallbackFunction()
@@ -777,8 +778,9 @@ describe('geography service', () => {
           knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
           const stateJoinOnCallbackFunction =
             countryQuery.leftJoin.firstCall.args[1]
-          const boundStateJoinOnCallbackFunction =
-            stateJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          const boundStateJoinOnCallbackFunction = stateJoinOnCallbackFunction.bind(
+            knexQueryBuilderSpy
+          )
           dbSpy.knex.raw.withArgs(2).returns(`${selectedCountryId}`)
           boundStateJoinOnCallbackFunction()
           assert.isOk(knexQueryBuilderSpy.on.calledTwice)
@@ -797,8 +799,9 @@ describe('geography service', () => {
           assert.equal(countryQuery.leftJoin.secondCall.args[0], 'Lga as l')
           const lgaJoinOnCallbackFunction =
             countryQuery.leftJoin.secondCall.args[1]
-          const boundLgaJoinOnCallbackFunction =
-            lgaJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          const boundLgaJoinOnCallbackFunction = lgaJoinOnCallbackFunction.bind(
+            knexQueryBuilderSpy
+          )
           dbSpy.knex.raw.withArgs(32).returns(`${selectedStateId}`)
           boundLgaJoinOnCallbackFunction()
           assert.isOk(knexQueryBuilderSpy.on.calledTwice)

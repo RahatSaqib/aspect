@@ -241,7 +241,8 @@ async function seedStockIssues(knex) {
 
   const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert({
     subject: '{{site.name}} stockout',
-    body: '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    body:
+      '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
     htmlBody:
       '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
     ...auditFields,
@@ -1840,7 +1841,8 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
     {
       subject:
         '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
-      body: '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      body:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
       htmlBody:
         '{{device.name}}: Errors without code on module <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
       ...auditFields,
@@ -1879,7 +1881,8 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
     ['subject', 'body'],
     {
       subject: '{{device.name}}: Errors without code across machine',
-      body: '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      body:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
       htmlBody:
         '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
       ...auditFields,
@@ -2118,7 +2121,8 @@ async function updateUnknownErrorOnModuleMessage(knex) {
         '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
     })
     .update({
-      body: '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+      body:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
       htmlBody:
         '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
     })
@@ -3090,18 +3094,14 @@ async function seedIssueType(
       })
     : {}
 
-  const { id: pushNotificationTemplateId = null } =
-    issue.PushNotificationTemplate
-      ? await upsertSingle(
-          knex,
-          'PushNotificationTemplate',
-          ['title', 'body'],
-          {
-            ...issue.PushNotificationTemplate,
-            ...auditFields,
-          }
-        )
-      : {}
+  const {
+    id: pushNotificationTemplateId = null,
+  } = issue.PushNotificationTemplate
+    ? await upsertSingle(knex, 'PushNotificationTemplate', ['title', 'body'], {
+        ...issue.PushNotificationTemplate,
+        ...auditFields,
+      })
+    : {}
 
   // ------------------------------------------
   // MessageType

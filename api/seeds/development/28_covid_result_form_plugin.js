@@ -161,19 +161,17 @@ async function seed(knex) {
     const exposureRiskHealthcareWorkerCity = randomCityIf(
       exposureRiskHealthcareWorkerCountry === 'Wakanda'
     )
-    const exposureRiskHealthcareWorkerFacility =
-      exposureRiskHealthcareWorkerCity
-        ? (
-            utils.randomOption(
-              cityClinics.exposureRiskHealthcareWorkerCity || []
-            ) || {}
-          ).name
-        : undefined
+    const exposureRiskHealthcareWorkerFacility = exposureRiskHealthcareWorkerCity
+      ? (
+          utils.randomOption(
+            cityClinics.exposureRiskHealthcareWorkerCity || []
+          ) || {}
+        ).name
+      : undefined
     const resubmission30DaysAfterInitialReport = covidResultFormData.endedOn
       ? utils.randomOption([covidResultFormData.endedOn])
       : undefined
-    const resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms =
-      randomYesNoUnknown()
+    const resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms = randomYesNoUnknown()
     result.formData = {
       ...result.formData,
       testResult: result.resultCategory1ExternalId,
@@ -191,8 +189,9 @@ async function seed(knex) {
       underlyingConditionsPostPartum: randomYesNoIf(
         underlyingConditionsAndComorbidity === 'yes'
       ),
-      underlyingConditionsCardiovascularDiseaseIncludingHypertension:
-        randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsCardiovascularDiseaseIncludingHypertension: randomYesNoIf(
+        underlyingConditionsAndComorbidity === 'yes'
+      ),
       underlyingConditionsImmunodeficiencyIncludingHIV: randomYesNoIf(
         underlyingConditionsAndComorbidity === 'yes'
       ),
@@ -208,8 +207,9 @@ async function seed(knex) {
       underlyingConditionsChronicLungDisease: randomYesNoIf(
         underlyingConditionsAndComorbidity === 'yes'
       ),
-      underlyingConditionsChronicNeurologicalOrNeuromuscularDisease:
-        randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsChronicNeurologicalOrNeuromuscularDisease: randomYesNoIf(
+        underlyingConditionsAndComorbidity === 'yes'
+      ),
       underlyingConditionsMalignancy: randomYesNoIf(
         underlyingConditionsAndComorbidity === 'yes'
       ),
@@ -224,61 +224,51 @@ async function seed(knex) {
       exposureRiskHealthcareWorkerCountry,
       exposureRiskHealthcareWorkerCity,
       exposureRiskHealthcareWorkerFacility,
-      exposureRiskHasTravelledInThe14DaysPriorToSymptomOnset:
-        randomYesNoUnknown(),
-      exposureRiskHasVisitedHealthCareFacilityThe14DaysPriorToSymptomOnset:
-        randomYesNoUnknown(),
-      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnset:
-        randomYesNoUnknown(),
-      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetSetting:
-        utils.randomOption({
+      exposureRiskHasTravelledInThe14DaysPriorToSymptomOnset: randomYesNoUnknown(),
+      exposureRiskHasVisitedHealthCareFacilityThe14DaysPriorToSymptomOnset: randomYesNoUnknown(),
+      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnset: randomYesNoUnknown(),
+      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetSetting: utils.randomOption(
+        {
           'Lived in same house as confirmed case for up to 10  days': 5,
           'Went to prison with known confirmed cases': 6,
           'Works in a busy restaurant': 5,
           'Checks baggage at an airport for a living': 10,
           'Frequents a busy playground': 12,
           'School teacher': 16,
-        }),
+        }
+      ),
       mostLikelyCountryOfExposure: randomCountry(),
       resubmission30DaysAfterInitialReport,
-      resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms:
-        resubmission30DaysAfterInitialReport
-          ? resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms
-          : undefined,
-      resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness:
-        resubmission30DaysAfterInitialReport
-          ? utils.randomOption([covidResultFormData.endedOn])
-          : undefined,
-      resubmission30DaysAfterInitialReportAdmissionToHospital:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital:
-        resubmission30DaysAfterInitialReport
-          ? utils.randomOption([
-              addDays(covidResultFormData.endedOn, _.random(3, 7)),
-            ])
-          : undefined,
-      resubmission30DaysAfterInitialReportDidTheCaseReceiveCareInAnICU:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      resubmission30DaysAfterInitialReportDidTheCaseReceiveVentilation:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      resubmission30DaysAfterInitialReportDidTheCaseReceiveExtracorporealMembraneOxygenation:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest:
-        utils.randomOption([
-          addDays(covidResultFormData.endedOn, _.random(5, 10)),
-        ]),
+      resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms: resubmission30DaysAfterInitialReport
+        ? resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms
+        : undefined,
+      resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness: resubmission30DaysAfterInitialReport
+        ? utils.randomOption([covidResultFormData.endedOn])
+        : undefined,
+      resubmission30DaysAfterInitialReportAdmissionToHospital: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
+          'yes'
+      ),
+      resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital: resubmission30DaysAfterInitialReport
+        ? utils.randomOption([
+            addDays(covidResultFormData.endedOn, _.random(3, 7)),
+          ])
+        : undefined,
+      resubmission30DaysAfterInitialReportDidTheCaseReceiveCareInAnICU: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
+          'yes'
+      ),
+      resubmission30DaysAfterInitialReportDidTheCaseReceiveVentilation: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
+          'yes'
+      ),
+      resubmission30DaysAfterInitialReportDidTheCaseReceiveExtracorporealMembraneOxygenation: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
+          'yes'
+      ),
+      ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest: utils.randomOption(
+        [addDays(covidResultFormData.endedOn, _.random(5, 10))]
+      ),
     }
     result.patientData = {
       ...result.patientData,

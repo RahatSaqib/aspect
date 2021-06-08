@@ -387,8 +387,16 @@ function resolveOn(queryBuilder, condition) {
   let match
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(condition))) {
-    const [, conjunction, field, unary, operation, between, value0, value] =
-      match
+    const [
+      ,
+      conjunction,
+      field,
+      unary,
+      operation,
+      between,
+      value0,
+      value,
+    ] = match
 
     let funcName
     if (conjunction) {

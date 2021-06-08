@@ -8,8 +8,13 @@ const partnerData = require('./fixtures/partnerData')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { baseGxAlertMigration, upsertDashboardWidgets } = require('../common')
 
-const { partnerName, serverUrl, adminPassword, deviceApiToken, adminUserName } =
-  partnerData
+const {
+  partnerName,
+  serverUrl,
+  adminPassword,
+  deviceApiToken,
+  adminUserName,
+} = partnerData
 
 async function seed(knex) {
   await baseGxAlertMigration(

@@ -55,11 +55,13 @@ describe('Issue Trigger', () => {
       assert.isAbove(res.body.data.length, 0)
       deviceId = res.body.data[0].id
 
-      const { maxDaysDeviceOffline = 7, maxDaysDeviceNoResults = 14 } =
-        await knex('Device as d')
-          .join('Partner as p', 'd.partnerId', 'p.id')
-          .where('d.id', deviceId)
-          .first('p.maxDaysDeviceOffline', 'p.maxDaysDeviceNoResults')
+      const {
+        maxDaysDeviceOffline = 7,
+        maxDaysDeviceNoResults = 14,
+      } = await knex('Device as d')
+        .join('Partner as p', 'd.partnerId', 'p.id')
+        .where('d.id', deviceId)
+        .first('p.maxDaysDeviceOffline', 'p.maxDaysDeviceNoResults')
 
       maxLastDateOffline = subDays(now, maxDaysDeviceOffline + 1)
       maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults + 1)

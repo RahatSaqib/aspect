@@ -44,11 +44,12 @@ async function seed(knex) {
         stateName: province.name,
       })
       if (provinceDistricts) {
-        provinceMemo[province.name.toLowerCase()].districts =
-          provinceDistricts.reduce((districtMemo, district) => {
-            districtMemo[district.name.toLowerCase()] = district
-            return districtMemo
-          }, {})
+        provinceMemo[
+          province.name.toLowerCase()
+        ].districts = provinceDistricts.reduce((districtMemo, district) => {
+          districtMemo[district.name.toLowerCase()] = district
+          return districtMemo
+        }, {})
       }
       return provinceMemo
     },
