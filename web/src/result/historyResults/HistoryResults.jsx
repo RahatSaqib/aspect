@@ -74,7 +74,7 @@ export const Results = ({
                   >
                     {columns &&
                       map(columns, elem => (
-                        <TableCell hiddenOn={elem.hiddenOn || 'md'}>
+                        <TableCell hiddenOn={elem.hiddenOn || 'sm'}>
                           {elem.tooltip && result.get(elem.key) && (
                             <Tooltip title={result.get(elem.tooltip)}>
                               <PermIdentity
