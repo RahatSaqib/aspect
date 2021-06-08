@@ -26,9 +26,8 @@ const {
   sampleTypeMapping,
   resultDataMappings,
 } = require('./mappings')
-const { getResultDataMapper, testTypes } = require('../common/mapping')
+const { testTypes } = require('../common/mapping')
 
-const mapResultData = getResultDataMapper(resultDataMappings)
 class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
   constructor(request, messageContext) {
     super(request, messageContext)
@@ -233,9 +232,10 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           updatedBy: null,
         }
 
-        const mappedResultData = mapResultData(payload)
-
-        if (mappedResultData.testType === testTypes.DST) {
+        let { mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.DST]
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
           const assayBdMgitAstId = await assayToId('assayBdMgitAst')
           const assayGenericDstId = await assayToId('assayGenericDst')
@@ -379,7 +379,10 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
 
-        if (mappedResultData.testType === testTypes.CULTURE) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.CULTURE])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
@@ -483,7 +486,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           })
         }
 
-        if (mappedResultData.testType === testTypes.LPA) {
+        ;({ mapResultData, isPayloadValid } = resultDataMappings[testTypes.LPA])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const assayLpaId = await assayToId('assayLPA')
           const externalId = `${site.externalId}_${samples[0].externalId}_LPA`
           const resultSignOff = this.getResultSignOff('LPA', payload)
@@ -593,7 +598,10 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
 
-        if (mappedResultData.testType === testTypes.SMEAR) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.SMEAR])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const assaySmearId = await assayToId('assaySmear')
           const smearSamples = []
           if (mappedResultData.smearResult1) {
@@ -711,7 +719,10 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           })
         }
 
-        if (mappedResultData.testType === testTypes.GENEXPERT) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.GENEXPERT])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
           const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
           const performedOn = getResultDateOrDefault(
@@ -791,7 +802,10 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           )
         }
 
-        if (mappedResultData.testType === testTypes.TBLAMP) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.TBLAMP])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const assayTbLampId = await assayToId('assayTbLamp')
           const resultCategoryMappings = {
             POSITIVE: resultCategories.Positive,

@@ -1,7 +1,3 @@
-const {
-  testTypes,
-} = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
-
 module.exports = {
   dstAssayGenericDst: [
     {
@@ -142,7 +138,6 @@ module.exports = {
         pyrazinamide: 'NOT TESTED',
         streptomycin: 'SUSCEPTIBLE',
         testRequested: 'Drug Susceptibility Test',
-        testType: testTypes.DST,
       },
     },
   ],
@@ -282,7 +277,6 @@ module.exports = {
         smearDateCollected3: null,
         laboratoryTechnician:
           'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
-        testType: testTypes.SMEAR,
       },
     },
   ],
@@ -401,7 +395,6 @@ module.exports = {
         labManager: 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         rifampicin: null,
         dateReleased: '2021-05-27T00:00:00.000Z',
-        testType: testTypes.GENEXPERT,
       },
     },
   ],

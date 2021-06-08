@@ -1,7 +1,3 @@
-const {
-  testTypes,
-} = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
-
 module.exports = {
   dstAssayBdMgitAst: [
     {
@@ -210,7 +206,6 @@ module.exports = {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
-        testType: testTypes.DST,
       },
     },
     {
@@ -420,7 +415,6 @@ module.exports = {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
-        testType: 'dst',
       },
     },
     {
@@ -630,7 +624,6 @@ module.exports = {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
-        testType: 'dst',
       },
     },
   ],
@@ -841,7 +834,6 @@ module.exports = {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
-        testType: testTypes.DST,
       },
     },
     {
@@ -1050,7 +1042,6 @@ module.exports = {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
-        testType: 'dst',
       },
     },
     {
@@ -1275,7 +1266,6 @@ module.exports = {
         dateInoculated: null,
         otherMethodUsed: null,
         dateTransferredToDst: null,
-        testType: 'dst',
       },
     },
   ],
@@ -1487,7 +1477,6 @@ module.exports = {
         smearResult2: '0',
         laboratoryTechnician:
           'Kevin Joshua A. Alonzo, RMT      License #: 0072790',
-        testType: 'smear',
       },
     },
     {
@@ -1696,7 +1685,6 @@ module.exports = {
         smearResult1: '0',
         smearResult2: null,
         laboratoryTechnician: 'Glenn Hector S. Talaoc, RMT  License #: 0058208',
-        testType: 'smear',
       },
     },
   ],
@@ -1892,7 +1880,6 @@ module.exports = {
         dateReleased: '2021-05-12T00:00:00.000Z',
         processingDate: '2021-05-12T00:00:00.000Z',
         gxTestRequested: 'Xpert MTB/Rif',
-        testType: 'genexpert',
       },
     },
     {
@@ -2102,7 +2089,6 @@ module.exports = {
         dateReleased: '2021-05-07T00:00:00.000Z',
         processingDate: '2021-05-06T00:00:00.000Z',
         gxTestRequested: 'Xpert MTB/Rif',
-        testType: 'genexpert',
       },
     },
     {
@@ -2295,7 +2281,6 @@ module.exports = {
         dateReleased: '2021-01-07T00:00:00.000Z',
         processingDate: '2021-01-07T00:00:00.000Z',
         gxTestRequested: 'Xpert MTB/Rif',
-        testType: 'genexpert',
       },
     },
   ],
@@ -2496,7 +2481,6 @@ module.exports = {
         lpaTestRequested: 'Second Line',
         lpaTestRequestedOther: null,
         ethionamideProthionamide: null,
-        testType: testTypes.LPA,
       },
     },
     {
@@ -2695,7 +2679,6 @@ module.exports = {
         lpaTestRequested: 'Second Line',
         lpaTestRequestedOther: null,
         ethionamideProthionamide: null,
-        testType: 'lpa',
       },
     },
   ],
@@ -2899,7 +2882,6 @@ module.exports = {
         notedBy: null,
         verifiedBy: null,
         tbLampResult: 'POSITIVE',
-        testType: testTypes.TBLAMP,
       },
     },
     {
@@ -3085,7 +3067,6 @@ module.exports = {
         notedBy: null,
         verifiedBy: null,
         tbLampResult: 'POSITIVE',
-        testType: 'tblamp',
       },
     },
   ],

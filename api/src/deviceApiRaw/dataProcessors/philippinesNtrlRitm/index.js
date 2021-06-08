@@ -25,9 +25,7 @@ const {
   resultDataMappings,
 } = require('./mappings')
 const { getResultDateOrDefault } = require('../common/utils')
-const { getResultDataMapper, testTypes } = require('../common/mapping')
-
-const mapResultData = getResultDataMapper(resultDataMappings)
+const { testTypes } = require('../common/mapping')
 
 class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
   constructor(request, messageContext) {
@@ -240,9 +238,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           updatedBy: null,
         }
 
-        const mappedResultData = mapResultData(payload)
-
-        if (mappedResultData.testType === testTypes.DST) {
+        let { mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.DST]
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const dstResultOverwritePriority = [
             resultCategories.PositiveMTB,
             resultCategories.PositiveMOTT,
@@ -380,7 +379,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        if (mappedResultData.testType === testTypes.CULTURE) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.CULTURE])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
@@ -484,7 +486,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        if (mappedResultData.testType === testTypes.SMEAR) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.SMEAR])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const performedOn = getResultDateOrDefault(
             patientData,
             mappedResultData
@@ -603,7 +608,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        if (mappedResultData.testType === testTypes.GENEXPERT) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.GENEXPERT])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const assayGeneXpertMtbRifId = await assayToId('GxMtbRif')
           const assayGeneXpertMtbRifUltraId = await assayToId('GxMtbRifUltra')
           const performedOn = getResultDateOrDefault(
@@ -690,7 +698,10 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        if (mappedResultData.testType === testTypes.TBLAMP) {
+        ;({ mapResultData, isPayloadValid } =
+          resultDataMappings[testTypes.TBLAMP])
+        if (isPayloadValid(payload)) {
+          const mappedResultData = mapResultData(payload)
           const assayTbLampId = await assayToId('assayTbLamp')
           const resultCategoryMappings = {
             POSITIVE: resultCategories.Positive,

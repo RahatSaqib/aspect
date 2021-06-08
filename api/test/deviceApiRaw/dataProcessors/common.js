@@ -5,9 +5,10 @@ const { expect } = chai
 
 chai.use(deepEqualInAnyOrder)
 
-const testMappings = (mappings, mapResultDataFunc) => {
+const testMappings = (mappings, mappingConfiguration, testType) => {
   mappings.forEach(({ payload, resultData }) => {
-    const actualResult = mapResultDataFunc(payload)
+    const { mapResultData } = mappingConfiguration[testType]
+    const actualResult = mapResultData(payload)
     expect(resultData).to.deep.equalInAnyOrder(actualResult)
   })
 }

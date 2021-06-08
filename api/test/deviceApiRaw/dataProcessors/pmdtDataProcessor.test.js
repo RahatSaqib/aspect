@@ -2,7 +2,7 @@ const {
   resultDataMappings,
 } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt/mappings')
 const {
-  getResultDataMapper,
+  testTypes,
 } = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
 const {
   dstAssayBdMgitAst,
@@ -14,16 +14,14 @@ const {
 } = require('./pmdtMappings')
 const { testMappings } = require('./common')
 
-const mapResultData = getResultDataMapper(resultDataMappings)
-
 describe('Philippines PMDT Data Processor', () => {
   describe('result data mapping', () => {
     it('dst - assayBdMgitAst', async () => {
-      testMappings(dstAssayBdMgitAst, mapResultData)
+      testMappings(dstAssayBdMgitAst, resultDataMappings, testTypes.DST)
     })
 
     it('dst - assayGenericDst', async () => {
-      testMappings(dstAssayGenericDst, mapResultData)
+      testMappings(dstAssayGenericDst, resultDataMappings, testTypes.DST)
     })
 
     it.skip('culture - assayBdMgitGnd', async () => {
@@ -36,11 +34,11 @@ describe('Philippines PMDT Data Processor', () => {
     })
 
     it('smear - assaySmear', async () => {
-      testMappings(smearAssaySmear, mapResultData)
+      testMappings(smearAssaySmear, resultDataMappings, testTypes.SMEAR)
     })
 
     it('genexpert - GxMtbRif', async () => {
-      testMappings(genexpertGxMtbRif, mapResultData)
+      testMappings(genexpertGxMtbRif, resultDataMappings, testTypes.GENEXPERT)
     })
 
     it.skip('genexpert - GxMtbRifUltra', async () => {
@@ -48,11 +46,11 @@ describe('Philippines PMDT Data Processor', () => {
     })
 
     it('lpa - assayLPA', async () => {
-      testMappings(lpaAssayLpa, mapResultData)
+      testMappings(lpaAssayLpa, resultDataMappings, testTypes.LPA)
     })
 
     it('tb lamp - assayTbLamp', async () => {
-      testMappings(tbLampAssayTbLamp, mapResultData)
+      testMappings(tbLampAssayTbLamp, resultDataMappings, testTypes.TBLAMP)
     })
   })
 })
