@@ -213,6 +213,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         const resultTypeId = await resultTypeToId('Patient')
         const resultCategories = await allResultCategoryToId()
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+
         const baseNewResult = {
           partnerId: site.partnerId,
           geographyId: site.geographyId,

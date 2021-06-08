@@ -82,7 +82,44 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
   }
 }
 
+const hasCultureValues = payload => {
+  return objectHasValues(
+    pick(payload, [
+      'Culture Result 1',
+      'Culture Grade 1',
+      'Culture Result 2',
+      'Culture Grade 2',
+      'Culture Final Result',
+      'Culture Date Released',
+    ])
+  )
+}
+
+const hasDstValues = payload => {
+  return (
+    objectHasValues(
+      pick(payload, [
+        'Streptomycin',
+        'Isoniazid',
+        'Rifampicin',
+        'Ethambutol',
+        'Pyrazinamide',
+        'Kanamycin',
+        'Levofloxacin',
+        'Amikacin',
+        'Capreomycin',
+        'DST TAT',
+        'DST Date Released',
+      ])
+    ) || payload['DST ID Result']
+  )
+}
+
+const isDstMgit = payload =>
+  payload['DST Method Used'] && payload['DST Method Used'].includes('MGIT')
+
 const resultDataMappings = {
+  // Drug Susceptibility Testing for MGIT
   dst: {
     mapResultData: payload => {
       return {
@@ -114,22 +151,7 @@ const resultDataMappings = {
         notedBy: payload['DST Noted By'],
       }
     },
-    isPayloadValid: payload =>
-      objectHasValues(
-        pick(payload, [
-          'Streptomycin',
-          'Isoniazid',
-          'Rifampicin',
-          'Ethambutol',
-          'Pyrazinamide',
-          'Kanamycin',
-          'Levofloxacin',
-          'Amikacin',
-          'Capreomycin',
-          'DST TAT',
-          'DST Date Released',
-        ])
-      ) || payload['DST ID Result'],
+    isPayloadValid: payload => hasDstValues(payload),
   },
   culture: {
     mapResultData: payload => {
@@ -152,34 +174,9 @@ const resultDataMappings = {
       }
     },
     isPayloadValid: payload =>
-      // Should not be DST, as there is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
-      !(
-        objectHasValues(
-          pick(payload, [
-            'Streptomycin',
-            'Isoniazid',
-            'Rifampicin',
-            'Ethambutol',
-            'Pyrazinamide',
-            'Kanamycin',
-            'Levofloxacin',
-            'Amikacin',
-            'Capreomycin',
-            'DST TAT',
-            'DST Date Released',
-          ])
-        ) || payload['DST ID Result']
-      ) &&
-      objectHasValues(
-        pick(payload, [
-          'Culture Result 1',
-          'Culture Grade 1',
-          'Culture Result 2',
-          'Culture Grade 2',
-          'Culture Final Result',
-          'Culture Date Released',
-        ])
-      ),
+      hasCultureValues(payload) &&
+      !hasDstValues(payload) &&
+      !isDstMgit(payload),
   },
   lpa: {
     mapResultData: payload => {
@@ -238,7 +235,9 @@ const resultDataMappings = {
           'Smear Final Result',
           'Smear Date Released',
         ])
-      ),
+      ) &&
+      (!payload['DST Method Used'] ||
+        !payload['DST Method Used'].includes('MGIT')),
   },
   genexpert: {
     mapResultData: payload => {

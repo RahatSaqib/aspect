@@ -94,7 +94,7 @@ describe('Device API Raw Philippines NTRL', () => {
     },
   }
 
-  function mockOutPhilippinesNTRLDatabaseProcessors(
+  function getProxy(
     existingSamplesInDatabase,
     existingResultRecordsInDatabase,
     updateSpy,
@@ -222,105 +222,125 @@ describe('Device API Raw Philippines NTRL', () => {
         )
       }, [])
     }
-    return proxyquire(
-      '../../src/deviceApiRaw/dataProcessors/philippinesNtrlDatabases',
-      {
-        '../../db': {
-          transact: async transaction =>
-            transaction(table => {
-              const whereParamsAccumulator = []
-              const knexQueryBuilder = {
-                insert: async (...insertParams) => {
-                  insertSpy(table, ...insertParams)
-                  return Promise.resolve([insertSpy.callCount])
-                },
-                first: async (...firstParams) => {
-                  const selectQueryResults = selectResults(
-                    table,
-                    whereParamsAccumulator,
-                    firstParams
+    return {
+      '../../../db': {
+        transact: async transaction =>
+          transaction(table => {
+            const whereParamsAccumulator = []
+            const knexQueryBuilder = {
+              insert: async (...insertParams) => {
+                insertSpy(table, ...insertParams)
+                return Promise.resolve([insertSpy.callCount])
+              },
+              first: async (...firstParams) => {
+                const selectQueryResults = selectResults(
+                  table,
+                  whereParamsAccumulator,
+                  firstParams
+                )
+                return Promise.resolve(selectQueryResults[0])
+              },
+              update: async (...updateParams) => {
+                updateSpy(table, ...updateParams)
+                return Promise.resolve()
+              },
+            }
+            const whereFunctionNames = [
+              'where',
+              'andWhere',
+              'orWhere',
+              'whereNull',
+              'whereIn',
+            ]
+            const whereFunction =
+              whereFunctionName =>
+              (...whereParams) => {
+                if (whereParams.length === 1 && _.isFunction(whereParams[0])) {
+                  whereFunctionNames.forEach(whereCallbackFunctionName => {
+                    whereParamsAccumulator[whereCallbackFunctionName] =
+                      function (...whereCallbackParams) {
+                        this.push([
+                          whereCallbackFunctionName,
+                          ...whereCallbackParams,
+                        ])
+                        return this
+                      }.bind(whereParamsAccumulator)
+                  })
+                  const whereCallbackFunction = whereParams[0].bind(
+                    whereParamsAccumulator
                   )
-                  return Promise.resolve(selectQueryResults[0])
-                },
-                update: async (...updateParams) => {
-                  updateSpy(table, ...updateParams)
-                  return Promise.resolve()
-                },
-              }
-              const whereFunctionNames = [
-                'where',
-                'andWhere',
-                'orWhere',
-                'whereNull',
-                'whereIn',
-              ]
-              const whereFunction =
-                whereFunctionName =>
-                (...whereParams) => {
-                  if (
-                    whereParams.length === 1 &&
-                    _.isFunction(whereParams[0])
-                  ) {
-                    whereFunctionNames.forEach(whereCallbackFunctionName => {
-                      whereParamsAccumulator[whereCallbackFunctionName] =
-                        function (...whereCallbackParams) {
-                          this.push([
-                            whereCallbackFunctionName,
-                            ...whereCallbackParams,
-                          ])
-                          return this
-                        }.bind(whereParamsAccumulator)
-                    })
-                    const whereCallbackFunction = whereParams[0].bind(
-                      whereParamsAccumulator
-                    )
-                    whereCallbackFunction(whereParamsAccumulator)
-                    whereFunctionNames.forEach(whereFunctionName => {
-                      delete whereParamsAccumulator[whereFunctionName]
-                    })
-                  } else {
-                    whereParamsAccumulator.push([
-                      whereFunctionName,
-                      ...whereParams,
-                    ])
-                  }
-                  return knexQueryBuilder
+                  whereCallbackFunction(whereParamsAccumulator)
+                  whereFunctionNames.forEach(whereFunctionName => {
+                    delete whereParamsAccumulator[whereFunctionName]
+                  })
+                } else {
+                  whereParamsAccumulator.push([
+                    whereFunctionName,
+                    ...whereParams,
+                  ])
                 }
-              whereFunctionNames.forEach(whereFunctionName => {
-                knexQueryBuilder[whereFunctionName] =
-                  whereFunction(whereFunctionName)
-              })
-              const join = () => knexQueryBuilder
-              knexQueryBuilder.join = join
-              knexQueryBuilder.leftJoin = join
-              return knexQueryBuilder
-            }),
-        },
-        '../../shared/date': {
-          parseDateOrDefault,
-          dateEqual,
-        },
-        '../../shared/dictionary': {
-          assayToId: async assayExternalId =>
-            Promise.resolve(staticDatabaseData.Assay[assayExternalId]),
-          allAssayToId: resolveWith(staticDatabaseData.Assay),
-          sampleTypeToId: async sampleTypeExternalId =>
-            Promise.resolve(
-              staticDatabaseData.SampleType[sampleTypeExternalId]
-            ),
-          allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
-          resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
-          resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
-          allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-          allResultWorkflowStatusToId: resolveWith(
-            staticDatabaseData.ResultWorkflowStatus
-          ),
-        },
-        '../../shared/request': {
-          getRemoteAddress: () => deviceIpAddress,
-        },
-      }
-    )
+                return knexQueryBuilder
+              }
+            whereFunctionNames.forEach(whereFunctionName => {
+              knexQueryBuilder[whereFunctionName] =
+                whereFunction(whereFunctionName)
+            })
+            const join = () => knexQueryBuilder
+            knexQueryBuilder.join = join
+            knexQueryBuilder.leftJoin = join
+            return knexQueryBuilder
+          }),
+      },
+      '../../../shared/date': {
+        parseDateOrDefault,
+        dateEqual,
+      },
+      '../../../shared/dictionary': {
+        assayToId: async assayExternalId =>
+          Promise.resolve(staticDatabaseData.Assay[assayExternalId]),
+        allAssayToId: resolveWith(staticDatabaseData.Assay),
+        sampleTypeToId: async sampleTypeExternalId =>
+          Promise.resolve(staticDatabaseData.SampleType[sampleTypeExternalId]),
+        allSampleTypeToId: resolveWith(staticDatabaseData.SampleType),
+        resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
+        resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
+        allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
+        allResultWorkflowStatusToId: resolveWith(
+          staticDatabaseData.ResultWorkflowStatus
+        ),
+      },
+      '../../../shared/request': {
+        getRemoteAddress: () => deviceIpAddress,
+      },
+    }
+  }
+
+  function mockOutPhilippinesNTRLDatabaseProcessors(
+    existingSamplesInDatabase,
+    existingResultRecordsInDatabase,
+    updateSpy,
+    insertSpy
+  ) {
+    return {
+      PhilippinesNtrlPmdt: proxyquire(
+        '../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt',
+        getProxy(
+          existingSamplesInDatabase,
+          existingResultRecordsInDatabase,
+          updateSpy,
+          insertSpy
+        )
+      ),
+      PhilippinesNtrlRitm: proxyquire(
+        '../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm',
+        getProxy(
+          existingSamplesInDatabase,
+          existingResultRecordsInDatabase,
+          updateSpy,
+          insertSpy
+        )
+      ),
+    }
   }
 
   describe('PMDT Record Data Processor', () => {
@@ -4348,6 +4368,7 @@ describe('Device API Raw Philippines NTRL', () => {
           },
           { dispatch: () => {} }
         )
+
         return {
           updateSpy,
           insertSpy,
