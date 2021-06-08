@@ -2,16 +2,16 @@ const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
+const {
+  resultViewerNo,
+  resultViewerYes,
+  clinician,
+} = require('../fixtures/jobFunctionBase')
 module.exports = require('../utils').seed(seed, __filename)
 
 const now = new Date()
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const userNames = ['result-viewer', 'result-not-viewer']
-const jobFunctionNames = {
-  ResultViewerYes: 'Result Viewer - Yes',
-  ResultViewerNo: 'Result Viewer - No',
-  Clinician: 'Clinician',
-}
 
 async function seed(knex) {
   // ---------------------
@@ -88,15 +88,29 @@ async function seed(knex) {
     .select('u.id as userId', 'u.name as userName', 'p.id as personId')
   // ---------------------
   // add 2 Job Functions - one has result:view, another - not
-  const jfNames = [
-    jobFunctionNames.ResultViewerYes,
-    jobFunctionNames.ResultViewerNo,
-  ]
-  await Promise.each(jfNames, async jobFunctionName => {
+  const jf = [resultViewerYes, resultViewerNo]
+  await Promise.each(jf, async jobFunction => {
+    const { permissions: jfPermissions } = jobFunction
+    // --------
+    // get all permissions
+    const permissions = await knex('Permission')
+      .select()
+      .then(items =>
+        items.reduce((permMap, perm) => {
+          permMap[`${perm.module}:${perm.activity}`] = perm.id
+          return permMap
+        }, {})
+      )
+    const permissionsToUpsert = jfPermissions.reduce((permArray, perm) => {
+      permArray.push(permissions[`${perm.module}:${perm.activity}`])
+      return permArray
+    }, [])
     const jobFunctionId = await upsertJobFunction(
       knex,
-      jobFunctionName,
-      partnerId
+      jobFunction.name,
+      partnerId,
+      permissionsToUpsert,
+      { reports: jobFunction.reports }
     )
     // --------
     const jobFunctions = await knex('JobFunction')
@@ -108,7 +122,7 @@ async function seed(knex) {
           return jobFunctionMap
         }, {})
       )
-    const jobFunctionsClinicianId = jobFunctions[jobFunctionNames.Clinician]
+    const jobFunctionsClinicianId = jobFunctions[clinician.name]
     // --------
 
     const { id: widgetResultsId } = await knex('DashboardWidget')
@@ -139,23 +153,14 @@ async function seed(knex) {
         },
       ])
     }
-    // --------
-    // get all permissions
-    const permissions = await knex('Permission')
-      .select()
-      .then(items =>
-        items.reduce((permMap, perm) => {
-          permMap[`${perm.module}:${perm.activity}`] = perm.id
-          return permMap
-        }, {})
-      )
+
     // --------
     // make sure Job Function ResultViewerYes has permission 'result:view'
-    if (jobFunctionName === jobFunctionNames.ResultViewerYes) {
+    if (jobFunction.name === resultViewerYes.name) {
       await addPermission(knex, jobFunctionId, permissions['result:view'])
     }
     // make sure Job Function ResultViewerNo does NOT have permission 'result:view'
-    else if (jobFunctionName === jobFunctionNames.ResultViewerNo) {
+    else if (jobFunction.name === resultViewerNo.name) {
       await delPermission(knex, jobFunctionId, permissions['result:view'])
     }
     // add base permissions
@@ -167,9 +172,7 @@ async function seed(knex) {
     // --------
     // Job
     const userName =
-      jobFunctionName === jobFunctionNames.ResultViewerYes
-        ? userNames[0]
-        : userNames[1]
+      jobFunction.name === resultViewerYes.name ? userNames[0] : userNames[1]
     const [jobId] = await knex('Job').insert({
       personId: users.find(x => x.userName === userName).personId,
       jobFunctionId,
