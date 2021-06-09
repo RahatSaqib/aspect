@@ -78,6 +78,10 @@ const messages = defineMessages({
     id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy',
     defaultMessage: ` Manually set by {username} ({updatedDate})`,
   },
+  toolTipTitleNotEditable: {
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable',
+    defaultMessage: `Can't be edited`,
+  },
 })
 
 export default messages

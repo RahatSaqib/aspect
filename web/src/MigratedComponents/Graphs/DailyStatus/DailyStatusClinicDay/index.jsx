@@ -54,6 +54,7 @@ const DailyStatusClinicDay = ({
   const isActive =
     maintenanceStatusI18nKey === 'active' ||
     maintenanceStatusI18nKey === 'reportedActive'
+  const isEditable = maintenanceStatusExternalId !== 'active'
   const { weekend } = consts
   const { checked } =
     filter(statuses, {
@@ -91,14 +92,19 @@ const DailyStatusClinicDay = ({
 
   return (
     <AspectTooltip
-      title={`${title}${manuallySet}`}
+      showPointerCursor={isEditable}
+      title={
+        !isEditable
+          ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}`
+          : `${title}${manuallySet}`
+      }
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
       <DayBlock
         consts={consts}
         dayModifier={dayModifier}
-        onClick={maintenanceStatusExternalId !== 'active' ? onClickDay : noop}
+        onClick={isEditable ? onClickDay : noop}
       />
     </AspectTooltip>
   )
