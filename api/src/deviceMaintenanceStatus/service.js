@@ -193,7 +193,7 @@ async function deviceStatusOverTime(request) {
   let data = []
   devices.forEach(device => {
     const maintenanceStatusHistory = []
-    days.forEach(async day => {
+    days.forEach(day => {
       // We need to transform the days to the user's offset for matching with the query results
       const isoDay = `${getDateSubstring(
         day.toISOString()
