@@ -1041,7 +1041,7 @@ async function transferInventory(request) {
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
 
-  const sourceInventoryItem = await getInventoryItem(
+  const sourceInventoryItem = await findInventoryItem(
     fromSiteId,
     consumableId,
     expiresOn,
