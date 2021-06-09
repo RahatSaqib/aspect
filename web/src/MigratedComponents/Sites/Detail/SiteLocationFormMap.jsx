@@ -77,6 +77,7 @@ export class SiteLocationFormMap extends PureComponent {
   }
 
   // read lat, lng from form state first, otherwise use the site values from API
+  // eslint-disable-next-line react/sort-comp
   getValidLatLng({ latLngInForm, latLngInSite }) {
     if (isValidLatLng(latLngInForm)) {
       return latLngInForm
