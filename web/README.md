@@ -69,7 +69,7 @@ Make sure to run the command in the root of the folder you want to create the co
 - you will be able to add a small snippet to your bash of choice to change the NVM version automatically, or
 - simply run `nvm use` (space after 'use' is intentional) and it will change to the version specified within `.nvmrc`
 
-### Using ZSH?
+### Using ZSH
 
 - https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619
 
