@@ -26,7 +26,7 @@ const styles = theme => ({
   },
   paper: {
     zIndex: 1,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
     overflowY: 'auto',
@@ -39,8 +39,8 @@ const styles = theme => ({
     borderRadius:
       theme.customPropertiesVariables['--aspect-button-border-radius'],
     color: theme.palette.common.white,
-    padding: `0 ${theme.spacing.unit}px`,
-    marginRight: theme.spacing.unit / 2,
+    padding: `0 ${theme.spacing(1)}px`,
+    marginRight: theme.spacing(0.5),
   },
   deleteIcon: {
     color: theme.palette.common.white,

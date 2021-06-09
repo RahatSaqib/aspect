@@ -26,7 +26,10 @@ const enhance = compose(
 )
 
 const VerticalAppBar = ({ toggleDrawer, navigateRoot }) => (
-  <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')}>
+  <AppBar
+    className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')}
+    color="inherit"
+  >
     <Toolbar className={cssClasses('VerticalAppBar')}>
       <IconButton
         className={cssClasses('AppBar__leftIcon')}

@@ -378,7 +378,7 @@ export const InventoryItemsList = () => {
     onAdjustInventorySucceeded()
   }
   // Remove
-  const [onRemoveInventorySubmit] = useMutation(
+  const { mutate: onRemoveInventorySubmit } = useMutation(
     values => {
       const selectedAdjustmentReason = consumableReasons.items.find(
         reason => reason.get('id') === values.reasonId
@@ -401,7 +401,7 @@ export const InventoryItemsList = () => {
     { onSuccess }
   )
   // Add
-  const [onAddInventorySubmit] = useMutation(
+  const { mutate: onAddInventorySubmit } = useMutation(
     values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess: () => {
@@ -411,7 +411,7 @@ export const InventoryItemsList = () => {
     }
   )
   // Transfer
-  const [onTransferInventorySubmit] = useMutation(
+  const { mutate: onTransferInventorySubmit } = useMutation(
     values =>
       transferInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
@@ -419,7 +419,7 @@ export const InventoryItemsList = () => {
     }
   )
   // Receive
-  const [onReceiveInventorySubmit] = useMutation(
+  const { mutate: onReceiveInventorySubmit } = useMutation(
     values =>
       receiveInventory(omit(values, ['canExpire']), dispatch, inventory),
     {

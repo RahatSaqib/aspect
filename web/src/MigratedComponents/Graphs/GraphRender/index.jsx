@@ -59,7 +59,7 @@ const GraphRender = ({
   const [graphKeys, setGraphKeys] = useState(false)
   const { isLoading, isError, error } = useQuery(
     [id, { mergedParams }],
-    async (key, { mergedParams }) =>
+    async ({ queryKey: [, { mergedParams }] }) =>
       fetchWrapperForQueries({
         endpoint,
         method,

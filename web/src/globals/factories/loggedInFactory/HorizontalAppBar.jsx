@@ -64,7 +64,10 @@ const HorizontalAppBar = ({
     </MenuItem>
   ))
   return (
-    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}>
+    <AppBar
+      className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}
+      color="inherit"
+    >
       <Toolbar>
         <IconButton
           className={cssClasses('AppBar__leftIcon')}

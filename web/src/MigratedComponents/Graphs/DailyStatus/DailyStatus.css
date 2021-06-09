@@ -104,8 +104,8 @@
 }
 
 .status__checkbox {
-  transform: scale(1.5);
-  margin: 0 10px 0;
+  transform: scale(1.5) !important;
+  margin: 0 10px 0 !important;
 }
 
 .status__checkbox--all {
@@ -199,11 +199,11 @@
 }
 
 .statuses__statusroot {
-  margin-top: 5px;
+  margin-top: 5px !important;
 }
 
 .statuses__statuslabel {
-  margin-right: 10px;
+  margin-right: 10px !important;
 }
 
 .dailyStatus__spinner {

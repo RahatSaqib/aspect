@@ -15,7 +15,7 @@ export const DetailBackBar = ({ onBackClick, title, children }) => (
       onClick={onBackClick}
       color="primary"
     >
-      <MdKeyboardArrowLeft />
+      <MdKeyboardArrowLeft size={48} />
     </Button>
     <div className={cssClasses('Container__Title')}>{title}</div>
     <div>{children}</div>

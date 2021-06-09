@@ -1,4 +1,4 @@
-import { lighten } from '@material-ui/core/styles/colorManipulator'
+import { lighten } from '@material-ui/core/styles'
 
 export default ({ themedColors }) => ({
   MuiLinearProgress: {

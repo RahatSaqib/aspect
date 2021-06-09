@@ -172,13 +172,13 @@ export class AppNotificationDialog extends PureComponent {
             }
           >
             {notificationOptions.severity === 'info' && (
-              <InfoIcon style={iconStyle} nativeColor={lightBlue[600]} />
+              <InfoIcon style={{ ...iconStyle, color: lightBlue[600] }} />
             )}
             {notificationOptions.severity === 'warn' && (
-              <WarningIcon style={iconStyle} nativeColor={orange[500]} />
+              <WarningIcon style={{ ...iconStyle, color: orange[500] }} />
             )}
             {notificationOptions.severity === 'error' && (
-              <ErrorIcon style={iconStyle} nativeColor={red[800]} />
+              <ErrorIcon style={{ ...iconStyle, color: red[800] }} />
             )}
           </div>
         )}

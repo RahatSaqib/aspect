@@ -22,7 +22,7 @@
 }
 
 .tabs__tab {
-  width: 30vw; 
+  width: 30vw;
   min-width: 160px;
 }
 
@@ -37,11 +37,11 @@
 }
 
 .tabs__tab--inactive {
-  color: black;
-  background: var('--alto-2');
+  color: black !important;
+  background-color: var('--alto-2') !important;
 }
 
 .tabs__tab--active {
-  color: white;
-  background: var('--aspect-device-aspect');
+  color: white !important;
+  background-color: var('--aspect-device-aspect') !important;
 }

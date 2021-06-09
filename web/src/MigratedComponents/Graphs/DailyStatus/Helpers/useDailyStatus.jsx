@@ -45,7 +45,7 @@ const useDailyStatus = (
     error: devicesError,
   } = useQuery(
     [DAILY_STATUS.KEY, { params, ...extraParams }],
-    async (key, { params }) =>
+    async ({ queryKey: [, { params }] }) =>
       fetchWrapperForQueries({
         endpoint,
         params:
@@ -57,7 +57,7 @@ const useDailyStatus = (
       })
   )
 
-  const [changeDeviceStatus] = useMutation(
+  const { mutate: changeDeviceStatus } = useMutation(
     ({ deviceId, values }) =>
       fetchWrapperForQueries({
         endpoint: replaceRouteParams(

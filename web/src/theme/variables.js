@@ -1,6 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles'
-import orange from '@material-ui/core/colors/orange'
-import lightGreen from '@material-ui/core/colors/lightGreen'
+import { orange, lightGreen } from '@material-ui/core/colors'
 import { customPropertiesVariables } from '../../cfg/variables'
 
 const theme = createMuiTheme({

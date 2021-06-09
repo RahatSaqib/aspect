@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { func, object, oneOfType } from 'prop-types'
-import { usePaginatedQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
@@ -57,15 +57,9 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     removeNullFromCollection({ size, sortCol, sortDir, page, filters })
   )
 
-  const {
-    error,
-    isError,
-    isLoading,
-    isFetching,
-    resolvedData: data = false,
-  } = usePaginatedQuery(
+  const { error, isError, isLoading, isFetching, data = false } = useQuery(
     [CONSTS.KEY, { params }],
-    async (_queryId, { params }) => {
+    async ({ queryKey: [, { params }] }) => {
       return fetchWrapperForQueries({
         endpoint: replaceRouteParams(CONSTS.ENDPOINT, routeParams),
         params: allowOnlyAPIKeys(params),

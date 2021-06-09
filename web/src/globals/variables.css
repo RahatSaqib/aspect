@@ -13,6 +13,9 @@
   /* Layouts */
   --aspect-detail-horizontal-padding: 20px;
 
+  /* Height of AppBar */
+  --aspect-app-bar-height: 64px;
+
   /* Media Query */
   @custom-media --xs-viewport (min-width: 30em);
   @custom-media --sm-viewport (min-width: 35.5em);

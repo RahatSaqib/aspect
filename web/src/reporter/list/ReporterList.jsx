@@ -246,7 +246,7 @@ const ReporterList = () => {
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
-  const [onRevokedItem, { isLoading: isLoadingRevoke }] = useMutation(
+  const { mutate: onRevokedItem, isLoading: isLoadingRevoke } = useMutation(
     async ({ id, revoked }) =>
       fetchWrapperForQueries({
         endpoint: `${REPORTERS_LIST_REVOKE_ONE.ENDPOINT}/${id}`,

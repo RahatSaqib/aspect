@@ -263,7 +263,7 @@ export const SiteList = ({
 
   const { data: { data, total } = false } = useQuery(
     [SITE_LIST.KEY, { sortCol, sortDir, pageAt, pageSize, filters }],
-    async (key, { sortCol, sortDir, pageAt, pageSize, filters }) =>
+    async ({ queryKey: [, { sortCol, sortDir, pageAt, pageSize, filters }] }) =>
       fetchWrapperForQueries({
         endpoint: SITE_LIST.ENDPOINT,
         method: 'GET',

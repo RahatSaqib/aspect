@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import { Provider, connect } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { ReactQueryDevtools } from 'react-query-devtools'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 import translation from '../../shared/i18n/translation'
 import { getTimezoneById } from '../../shared/utils/timezone'
@@ -18,6 +19,8 @@ import uiProvidersFactory from './uiProvidersFactory'
 import routerFactory from './routerFactory'
 import { AuthProvider } from '../../Providers/AuthProvider'
 import { I18nProvider } from '../../Providers/I18nProvider'
+
+const queryClient = new QueryClient()
 
 const formatsByTimezoneId = timezoneId => {
   const formats = {}
@@ -135,7 +138,9 @@ export const appFactory = compose(
               displayPreferences={displayPreferences}
               drawerOpen={drawerOpen}
             />
-            {render(restProps)}
+            <QueryClientProvider client={queryClient}>
+              {render(restProps)}
+            </QueryClientProvider>
             {process.env.NODE_ENV !== 'production' ? (
               <ReactQueryDevtools initialIsOpen />
             ) : null}

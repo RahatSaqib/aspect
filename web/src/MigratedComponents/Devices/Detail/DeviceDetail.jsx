@@ -88,12 +88,12 @@ export const DeviceDetail = ({ match }) => {
     queryCache.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
   }, [deviceId])
 
-  const [updateDevice] = useMutation(
+  const { mutate: updateDevice } = useMutation(
     ({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)),
     { onSuccess }
   )
 
-  const [onMaintenanceSubmit] = useMutation(
+  const { mutate: onMaintenanceSubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenanceStatus({
@@ -106,7 +106,7 @@ export const DeviceDetail = ({ match }) => {
       onSuccess,
     }
   )
-  const [onCalibrationSubmit] = useMutation(
+  const { mutate: onCalibrationSubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenance({
@@ -119,7 +119,7 @@ export const DeviceDetail = ({ match }) => {
       onSuccess,
     }
   )
-  const [onWarrantySubmit] = useMutation(
+  const { mutate: onWarrantySubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenance({

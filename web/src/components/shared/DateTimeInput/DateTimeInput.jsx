@@ -64,28 +64,28 @@ const styles = theme => ({
   separator: {
     display: 'flex',
     alignItems: 'center',
-    margin: `0 ${theme.spacing.unit}px`,
+    margin: `0 ${theme.spacing(1)}px`,
   },
   formControl: {
     width: '100%',
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)}px 0`,
   },
   popper: {
     zIndex: theme.zIndex.tooltip,
   },
   paper: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   options: {
-    maxHeight: (OPTION_HEIGHT + theme.spacing.unit) * 5.75,
+    maxHeight: (OPTION_HEIGHT + theme.spacing(1)) * 5.75,
     overflowY: 'scroll',
   },
   option: {
     minWidth: 'auto',
   },
   button: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     alignSelf: 'flex-start',
   },
 })
