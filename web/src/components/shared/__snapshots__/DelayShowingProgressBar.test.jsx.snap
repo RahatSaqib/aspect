@@ -53,16 +53,16 @@ exports[`DelayShowingProgressBar module DelayShowingProgressBar component when c
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from disabled to enabled should enable progress bar with a delay 3`] = `
 <div
-  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
+  className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
   disabled={true}
   role="progressbar"
 >
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
     style={Object {}}
   />
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    className="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
     style={Object {}}
   />
 </div>
@@ -70,16 +70,16 @@ exports[`DelayShowingProgressBar module DelayShowingProgressBar component when c
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from disabled to enabled should enable progress bar with a delay 4`] = `
 <div
-  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
+  className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
   disabled={false}
   role="progressbar"
 >
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
     style={Object {}}
   />
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    className="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
     style={Object {}}
   />
 </div>
@@ -121,16 +121,16 @@ exports[`DelayShowingProgressBar module DelayShowingProgressBar component when c
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from enabled to disabled should disable progress bar immediately 3`] = `
 <div
-  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
+  className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
   disabled={true}
   role="progressbar"
 >
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
     style={Object {}}
   />
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    className="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
     style={Object {}}
   />
 </div>
@@ -155,16 +155,16 @@ exports[`DelayShowingProgressBar module DelayShowingProgressBar component when r
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when render once should disable progress bar give by initial condition 2`] = `
 <div
-  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
+  className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
   disabled={true}
   role="progressbar"
 >
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
     style={Object {}}
   />
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    className="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
     style={Object {}}
   />
 </div>
@@ -189,16 +189,16 @@ exports[`DelayShowingProgressBar module DelayShowingProgressBar component when r
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when render once should enable progress bar give by initial condition 2`] = `
 <div
-  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
+  className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-indeterminate"
   disabled={false}
   role="progressbar"
 >
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Indeterminate"
     style={Object {}}
   />
   <div
-    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    className="MuiLinearProgress-bar MuiLinearProgress-bar2Indeterminate MuiLinearProgress-barColorPrimary"
     style={Object {}}
   />
 </div>
