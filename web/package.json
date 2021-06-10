@@ -58,6 +58,7 @@
       "\\.scss$": "<rootDir>/src/__mocks__/globalStyleMock.js",
       "\\.css$": "identity-obj-proxy"
     },
+    "testEnvironment": "jsdom",
     "testResultsProcessor": "jest-bamboo-formatter",
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
@@ -100,6 +101,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^7.0.0",
     "@testing-library/user-event": "^13.1.9",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.1",
     "autodll-webpack-plugin": "^0.4.2",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
@@ -115,7 +117,6 @@
     "css-loader": "^3.5.3",
     "del-webpack-plugin": "^1.2.0",
     "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.6",
     "enzyme-to-json": "^3.6.2",
     "eslint": "^7.28.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -141,6 +142,7 @@
     "jest": "^27.0.4",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^3.0.3",
+    "jsdom": "^16.6.0",
     "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "0.9.0",
     "mockdate": "^3.0.5",
@@ -197,8 +199,6 @@
     "@vx/zoom": "^0.0.199",
     "ajv": "^6.12.2",
     "classnames": "^2.3.1",
-    "d3-array": "^3.0.1",
-    "d3-scale": "^4.0.0",
     "date-fns": "2.22.1",
     "date-fns-timezone": "^0.1.4",
     "dotenv-safe": "^8.2.0",

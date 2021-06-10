@@ -50,10 +50,13 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
           Object {
             "defaultFormats": Object {},
             "defaultLocale": "en",
+            "defaultRichTextElements": undefined,
             "formatDate": [Function],
+            "formatDateTimeRange": [Function],
             "formatDateToParts": [Function],
             "formatDisplayName": [Function],
             "formatList": [Function],
+            "formatListToParts": [Function],
             "formatMessage": [Function],
             "formatNumber": [Function],
             "formatNumberToParts": [Function],

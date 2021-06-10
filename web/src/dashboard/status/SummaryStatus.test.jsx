@@ -1,8 +1,8 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { SummaryStatus } from './SummaryStatus'
+import { shallowWithQuery } from '../../test/common'
 
 describe('Summary Status component', () => {
   const props = {
@@ -132,6 +132,6 @@ describe('Summary Status component', () => {
   }
 
   it('should shallow render correctly', () => {
-    shallow(<SummaryStatus {...props} />)
+    shallowWithQuery(<SummaryStatus {...props} />)
   })
 })

@@ -264,7 +264,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       reportName="DeviceApiKey"
       visible={true}
     />
-    <WithStyles(Table)
+    <WithStyles(ForwardRef(Table))
       className="DeviceApiKeyDataTable"
       selectable={false}
     >
@@ -330,7 +330,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         sortColumnDir="asc"
         sortColumnKey="createdOn"
       />
-      <WithStyles(TableBody)>
+      <WithStyles(ForwardRef(TableBody))>
         <DeviceApiKeyTableRow
           checked={false}
           deviceApiKey={
@@ -362,8 +362,8 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           onRevokedChange={[Function]}
           onSelectedChange={[Function]}
         />
-      </WithStyles(TableBody)>
-    </WithStyles(Table)>
+      </WithStyles(ForwardRef(TableBody))>
+    </WithStyles(ForwardRef(Table))>
     <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
       history={
         Object {

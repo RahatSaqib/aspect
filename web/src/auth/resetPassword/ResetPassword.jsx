@@ -195,7 +195,7 @@ export class ResetPassword extends PureComponent {
             <Unit xs="11-12" md="5-6" xl="1-2">
               <Paper>
                 <Hidden xs sm className={styles.LargeConten}>
-                  <Stepper activeStep={stepIndex}>
+                  <Stepper activeStep={stepIndex} orientation="horizontal">
                     <Step>
                       <StepLabel>
                         {formatMessage(messages.enterEmailAddress)}

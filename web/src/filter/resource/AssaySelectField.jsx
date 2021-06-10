@@ -22,7 +22,7 @@ export class AssaySelectField extends PureComponent {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
-    assayItemsLoading: PropTypes.oneOfType(['bool']).isRequired,
+    assayItemsLoading: PropTypes.bool.isRequired,
     onAssayChange: PropTypes.func.isRequired,
     diseaseId: PropTypes.string,
     assayTypeId: PropTypes.string,
