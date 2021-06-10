@@ -4,515 +4,263 @@
       "abbreviation": "PK",
       "name": "Pakistan",
       "a3": "PAK",
-      "culture": "en-GB",
-      "countryCode": "92",
-      "timezone": "Pakistan Standard Time",
+      "culture": "bn-BD",
+      "countryCode": "880",
+      "timezone": "Asia/Dhaka",
       "portNumber": null,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
       "states": [
         {
-          "name": "Punjab",
-          "abbreviation": "PB",
+          "name": "Barisal Division",
+          "abbreviation": "BD-A",
           "lgas": [
             {
-              "name": "Lahore"
+              "name": "Barisal District"
             },
             {
-              "name": "Chakwal"
+              "name": "Barguna District"
             },
             {
-              "name": "Mianwali"
+              "name": "Bhola District"
             },
             {
-              "name": "Jhelum"
+              "name": "Jhalokati District"
             },
             {
-              "name": "Sahiwal"
+              "name": "Patuakhali District"
             },
             {
-              "name": "Faisalabad"
-            },
-            {
-              "name": "Kasur"
-            },
-            {
-              "name": "Khusahab"
-            },
-            {
-              "name": "Bhakkar"
-            },
-            {
-              "name": "Attock"
-            },
-            {
-              "name": "Layyah"
-            },
-            {
-              "name": "Rajanpur"
-            },
-            {
-              "name": "Nankana"
-            },
-            {
-              "name": "Gujrat"
-            },
-            {
-              "name": "Pakpattan"
-            },
-            {
-              "name": "RY Khan"
-            },
-            {
-              "name": "Multan"
-            },
-            {
-              "name": "Sargodha"
-            },
-            {
-              "name": "Murree"
-            },
-            {
-              "name": "Sialkot"
-            },
-            {
-              "name": "Bahwalpur"
-            },
-            {
-              "name": "Bahawalnagar"
-            },
-            {
-              "name": "DG Khan"
-            },
-            {
-              "name": "Vihari"
-            },
-            {
-              "name": "Muzaffar Garh"
-            },
-            {
-              "name": "Jhang"
-            },
-            {
-              "name": "Mandi Bahauddin"
-            },
-            {
-              "name": "Rawalpindi"
-            },
-            {
-              "name": "Sheikhu pura"
-            },
-            {
-              "name": "Gujranwala"
-            },
-            {
-              "name": "Toba Tek Singh"
-            },
-            {
-              "name": "Chiniot"
-            },
-            {
-              "name": "Khanewal"
-            },
-            {
-              "name": "Hafizabad"
-            },
-            {
-              "name": "Lodhran"
-            },
-            {
-              "name": "Narowal"
-            },
-            {
-              "name": "Okara"
+              "name": "Pirojpur District"
             }
           ]
         },
         {
-          "name": "Sindh",
-          "abbreviation": "SD",
+          "name": "Chittagong Division",
+          "abbreviation": "BD-B",
           "lgas": [
             {
-              "name": "Jamshoro"
+              "name": "Brahmanbaria District"
             },
             {
-              "name": "Hyderabad"
+              "name": "Comilla District"
             },
             {
-              "name": "Mirpurkhas"
+              "name": "Chandpur District"
             },
             {
-              "name": "Shaheed Benazirabad"
+              "name": "Lakshmipur District"
             },
             {
-              "name": "Sukkur"
+              "name": "Noakhali District"
             },
             {
-              "name": "Larkana"
+              "name": "Feni District"
             },
             {
-              "name": "Jacobabad"
+              "name": "North of the Feni River"
             },
             {
-              "name": "Sanghar"
+              "name": "Khagrachhari District"
             },
             {
-              "name": "Tharparkar "
+              "name": "Rangamati District"
             },
             {
-              "name": "Khairpur"
+              "name": "Bandarban District"
             },
             {
-              "name": "Kashmore"
+              "name": "Chittagong District"
             },
             {
-              "name": "Karachi"
+              "name": "Cox's Bazar District"
             },
             {
-              "name": "Nausheroferoze"
-            },
-            {
-              "name": "Thatta"
-            },
-            {
-              "name": "Dadu"
-            },
-            {
-              "name": "Nawabshah"
-            },
-            {
-              "name": "Matiari"
-            },
-            {
-              "name": "Badin"
-            },
-            {
-              "name": "Ghotki"
-            },
-            {
-              "name": "Qambar Shahdadkot"
-            },
-            {
-              "name": "Shikarpur"
-            },
-            {
-              "name": "Sujawal"
-            },
-            {
-              "name": "Tando Allahyar"
-            },
-            {
-              "name": "Tando Muhammad Khan"
-            },
-            {
-              "name": "Umerkot"
+              "name": "South of the Feni River"
             }
           ]
         },
         {
-          "name": "Balochistan",
-          "abbreviation": "BN",
+          "name": "Dhaka Division",
+          "abbreviation": "BD-C",
           "lgas": [
             {
-              "name": "Khuzdar"
+              "name": "Dhaka District"
             },
             {
-              "name": "Lasbella"
+              "name": "Gazipur District"
             },
             {
-              "name": "Turbat"
+              "name": "Kishoreganj District"
             },
             {
-              "name": "Quetta"
+              "name": "Manikganj District"
             },
             {
-              "name": "Loralai"
+              "name": "Munshiganj District"
             },
             {
-              "name": "Nasirabad"
+              "name": "Narayanganj District"
             },
             {
-              "name": "Chaghai"
+              "name": "Narsingdi District"
             },
             {
-              "name": "Gwadar"
+              "name": "Tangail District"
             },
             {
-              "name": "Harnai"
+              "name": "North of the Padma (Ganges)"
             },
             {
-              "name": "Jaffarabad"
+              "name": "Faridpur District"
             },
             {
-              "name": "Jhal Magsi"
+              "name": "Gopalganj District"
             },
             {
-              "name": "Kacchi"
+              "name": "Madaripur District"
             },
             {
-              "name": "Kalat"
+              "name": "Rajbari District"
             },
             {
-              "name": "Kharan"
+              "name": "Shariatpur District"
             },
             {
-              "name": "Killa Saifullah"
-            },
-            {
-              "name": "Kohlu"
-            },
-            {
-              "name": "Mastung"
-            },
-            {
-              "name": "Musakhel"
-            },
-            {
-              "name": "Nushki"
-            },
-            {
-              "name": "Panjgur"
-            },
-            {
-              "name": "Pishin"
-            },
-            {
-              "name": "Sibi"
-            },
-            {
-              "name": "Washuk"
-            },
-            {
-              "name": "Zhob"
-            },
-            {
-              "name": "Ziarat"
-            },
-            {
-              "name": "Bolan"
+              "name": "South of the Padma (Ganges)"
             }
           ]
         },
         {
-          "name": "Azad Jammu & Kashmir",
-          "abbreviation": "AJK",
+          "name": "Khulna Division",
+          "abbreviation": "BD-D",
           "lgas": [
             {
-              "name": "Mirpur"
+              "name": "Bagerhat District"
             },
             {
-              "name": "Muzaffarabad"
+              "name": "Chuadanga District"
             },
             {
-              "name": "Bagh"
+              "name": "Jashore District"
             },
             {
-              "name": "Kotli"
+              "name": "Jhenaidah District"
             },
             {
-              "name": "Bhimber"
+              "name": "Khulna District"
             },
             {
-              "name": "Haveli"
+              "name": "Kushtia District"
             },
             {
-              "name": "Hattian Bala"
+              "name": "Magura District"
             },
             {
-              "name": "Neelum"
+              "name": "Meherpur District"
             },
             {
-              "name": "Poonch"
+              "name": "Narail District"
             },
             {
-              "name": "Sudhnoti"
+              "name": "Satkhira District"
             }
           ]
         },
         {
-          "name": "Federally Administered TA",
-          "abbreviation": "FATA",
+          "name": "Mymensingh Division",
+          "abbreviation": "BD-H",
           "lgas": [
             {
-              "name": "Khyber Agency"
+              "name": "Mymensingh District"
             },
             {
-              "name": "Bajaur Agency"
+              "name": "Netrokona District"
             },
             {
-              "name": "Mohmand Agency"
+              "name": "Jamalpur District"
             },
             {
-              "name": "Kurrum Agency"
-            },
-            {
-              "name": "South Waziristan Agency"
-            },
-            {
-              "name": "North Waziristan"
+              "name": "Sherpur District"
             }
           ]
         },
         {
-          "name": "Gilgit-Baltistan",
-          "abbreviation": "GB",
+          "name": "Rajshahi Division",
+          "abbreviation": "BD-E",
           "lgas": [
             {
-              "name": "Skardu"
+              "name": "Rajshahi"
             },
             {
-              "name": "Diamir"
+              "name": "Natore"
             },
             {
-              "name": "Gilgit"
+              "name": "Pabna"
             },
             {
-              "name": "Astore"
+              "name": "Bogura"
             },
             {
-              "name": "Ghanche"
+              "name": "Chapainawabganj"
             },
             {
-              "name": "Ghizer"
+              "name": "Joypurhat"
             },
             {
-              "name": "Hunza"
+              "name": "Naogaon"
             },
             {
-              "name": "Kharmung"
-            },
-            {
-              "name": "Nagar"
-            },
-            {
-              "name": "Shigar"
-            },
-            {
-              "name": "Khaplu"
-            },
-            {
-              "name": "Gahkuch"
+              "name": "Sirajganj"
             }
           ]
         },
         {
-          "name": "Khyber Pakhtunkhwa",
-          "abbreviation": "KPK",
+          "name": "Rangpur",
+          "abbreviation": "BD-F",
           "lgas": [
             {
-              "name": "Peshawar"
+              "name": "Dinajpur District"
             },
             {
-              "name": "Mardan"
+              "name": "Kurigram District"
             },
             {
-              "name": "Swabi"
+              "name": "Gaibandha District"
             },
             {
-              "name": "Nowshera"
+              "name": "Lalmonirhat District"
             },
             {
-              "name": "Haripur"
+              "name": "Nilphamari District"
             },
             {
-              "name": "Abbottabad"
+              "name": "Panchagarh District"
             },
             {
-              "name": "Mansehra"
+              "name": "Rangpur District"
             },
             {
-              "name": "Battagram"
-            },
-            {
-              "name": "Malakand"
-            },
-            {
-              "name": "Lower Dir"
-            },
-            {
-              "name": "Swat"
-            },
-            {
-              "name": "Kohat"
-            },
-            {
-              "name": "Karak"
-            },
-            {
-              "name": "Bannu"
-            },
-            {
-              "name": "DI Khan"
-            },
-            {
-              "name": "Chitral"
-            },
-            {
-              "name": "Buner"
-            },
-            {
-              "name": "Charsadda"
-            },
-            {
-              "name": "Hangu"
-            },
-            {
-              "name": "Kohistan"
-            },
-            {
-              "name": "Lakki Marwat"
-            },
-            {
-              "name": "Shangla"
-            },
-            {
-              "name": "Upper Dir"
+              "name": "Thakurgaon District"
             }
           ]
         },
         {
-          "name": "Islamabad & CT",
-          "abbreviation": "ISL-ICT",
+          "name": "Sylhet Division",
+          "abbreviation": "BD-G",
           "lgas": [
             {
-              "name": "Islamabad"
-            }
-          ]
-        },
-        {
-          "name": "Mercy Corps Sites",
-          "abbreviation": "Mercy",
-          "lgas": [
-            {
-              "name": "Gujranwala"
+              "name": "Habiganj District"
             },
             {
-              "name": "Hafizabad"
+              "name": "Moulvibazar District"
             },
             {
-              "name": "Vehari"
+              "name": "Sunamganj District"
             },
             {
-              "name": "Multan"
-            },
-            {
-              "name": "Khanewal"
-            },
-            {
-              "name": "Sanghar"
-            },
-            {
-              "name": "Khairpur"
-            },
-            {
-              "name": "Mandi Bahauddin"
-            },
-            {
-              "name": "Mardan"
-            },
-            {
-              "name": "Okara"
+              "name": "Sylhet District"
             }
           ]
         }
