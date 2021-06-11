@@ -11,7 +11,7 @@ module.exports = {
   deviceLogHistoryDays: 365,
   maxDaysDeviceOffline: 7,
   maxDaysDeviceNoResults: 14,
-  assays:[
+  assays: [
     'GxUnknown',
     'GxHcv',
     'GxHiv',

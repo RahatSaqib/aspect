@@ -14,7 +14,7 @@ const {
   maxDaysDeviceOffline,
   maxDaysDeviceNoResults,
   partnerAbbreviation,
-  assays
+  assays,
 } = require('./fixtures/partnerData')
 const {
   commonUpserts,
@@ -60,7 +60,7 @@ async function seed(knex) {
   )
 
   // GeneXpert
-  await upsertGeneXpertDeviceTypeAndAssays(knex, assays )
+  await upsertGeneXpertDeviceTypeAndAssays(knex, assays)
 
   // MGIT
   await upsertMGITDeviceTypeAndAssays(knex)
