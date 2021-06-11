@@ -7,7 +7,7 @@ module.exports = require('../utils').seed(
           `COALESCE(patientData->>'$.dateEncoded', createdOn)`
         ),
         endedOn: knex.raw(
-          `COALESCE(patientData ->> '$.dateEncoded', createdOn)`
+          `COALESCE(patientData->>'$.dateEncoded', createdOn)`
         ),
       }),
   __filename
