@@ -11,6 +11,16 @@ module.exports = {
   deviceLogHistoryDays: 365,
   maxDaysDeviceOffline: 7,
   maxDaysDeviceNoResults: 14,
+  assays:[
+    'GxUnknown',
+    'GxHcv',
+    'GxHiv',
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxHiv1Vl',
+    'GxHiv1Qual',
+    'GxEbola',
+  ],
   fixtures: {
     jobFunctions,
   },
