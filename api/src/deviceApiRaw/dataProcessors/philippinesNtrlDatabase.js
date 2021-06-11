@@ -42,7 +42,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       else if (!_.isEmpty(baseValue) && _.isEmpty(sourceValue)) {
         return baseValue
       }
-      if (_.isArray(baseValue) && _.isArray(sourceValue)) {
+      else if (_.isArray(baseValue) && _.isArray(sourceValue)) {
         return [...(baseValue || []), ...(sourceValue || [])]
       }
       if (_.isPlainObject(baseValue) && _.isPlainObject(sourceValue)) {
