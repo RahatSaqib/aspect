@@ -4,271 +4,263 @@
       "abbreviation": "BD",
       "name": "Bangladesh",
       "a3": "BGD",
-      "culture": "pt",
-      "countryCode": "670",
+      "culture": "bn-BD",
+      "countryCode": "880",
       "timezone": "Bangladesh Standard Time",
-      "portNumber": 3024,
+      "portNumber": null,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": null,
       "states": [
         {
-          "name": "Aileu",
+          "name": "Barisal Division",
+          "abbreviation": "BD-A",
           "lgas": [
             {
-              "name": "Aileu"
+              "name": "Barisal District"
             },
             {
-              "name": "Laulara"
+              "name": "Barguna District"
             },
             {
-              "name": "Lequidoe"
+              "name": "Bhola District"
             },
             {
-              "name": "Remexio"
+              "name": "Jhalokati District"
+            },
+            {
+              "name": "Patuakhali District"
+            },
+            {
+              "name": "Pirojpur District"
             }
           ]
         },
         {
-          "name": "Ainaro",
+          "name": "Chittagong Division",
+          "abbreviation": "BD-B",
           "lgas": [
             {
-              "name": "Ainaro"
+              "name": "Brahmanbaria District"
             },
             {
-              "name": "Hato-Udo"
+              "name": "Comilla District"
             },
             {
-              "name": "Hatu-Builico"
+              "name": "Chandpur District"
             },
             {
-              "name": "Maubisse"
+              "name": "Lakshmipur District"
+            },
+            {
+              "name": "Noakhali District"
+            },
+            {
+              "name": "Feni District"
+            },
+            {
+              "name": "North of the Feni River"
+            },
+            {
+              "name": "Khagrachhari District"
+            },
+            {
+              "name": "Rangamati District"
+            },
+            {
+              "name": "Bandarban District"
+            },
+            {
+              "name": "Chittagong District"
+            },
+            {
+              "name": "Cox's Bazar District"
+            },
+            {
+              "name": "South of the Feni River"
             }
           ]
         },
         {
-          "name": "Baucau",
+          "name": "Dhaka Division",
+          "abbreviation": "BD-C",
           "lgas": [
             {
-              "name": "Baguia"
+              "name": "Dhaka District"
             },
             {
-              "name": "Baucau"
+              "name": "Gazipur District"
             },
             {
-              "name": "Laga"
+              "name": "Kishoreganj District"
             },
             {
-              "name": "Quelicai"
+              "name": "Manikganj District"
             },
             {
-              "name": "Vemasse"
+              "name": "Munshiganj District"
             },
             {
-              "name": "Venilale"
+              "name": "Narayanganj District"
+            },
+            {
+              "name": "Narsingdi District"
+            },
+            {
+              "name": "Tangail District"
+            },
+            {
+              "name": "North of the Padma (Ganges)"
+            },
+            {
+              "name": "Faridpur District"
+            },
+            {
+              "name": "Gopalganj District"
+            },
+            {
+              "name": "Madaripur District"
+            },
+            {
+              "name": "Rajbari District"
+            },
+            {
+              "name": "Shariatpur District"
+            },
+            {
+              "name": "South of the Padma (Ganges)"
             }
           ]
         },
         {
-          "name": "Bobonaro",
+          "name": "Khulna Division",
+          "abbreviation": "BD-D",
           "lgas": [
             {
-              "name": "Atabae"
+              "name": "Bagerhat District"
             },
             {
-              "name": "BalibÃ³"
+              "name": "Chuadanga District"
             },
             {
-              "name": "Bobonaro"
+              "name": "Jashore District"
             },
             {
-              "name": "Cailaco"
+              "name": "Jhenaidah District"
             },
             {
-              "name": "Lolotoe"
+              "name": "Khulna District"
             },
             {
-              "name": "Maliana"
+              "name": "Kushtia District"
+            },
+            {
+              "name": "Magura District"
+            },
+            {
+              "name": "Meherpur District"
+            },
+            {
+              "name": "Narail District"
+            },
+            {
+              "name": "Satkhira District"
             }
           ]
         },
         {
-          "name": "Cova Lima",
+          "name": "Mymensingh Division",
+          "abbreviation": "BD-H",
           "lgas": [
             {
-              "name": "Fatululic"
+              "name": "Mymensingh District"
             },
             {
-              "name": "Fatumean"
+              "name": "Netrokona District"
             },
             {
-              "name": "Fohorem"
+              "name": "Jamalpur District"
             },
             {
-              "name": "Maucatar"
-            },
-            {
-              "name": "Suai"
-            },
-            {
-              "name": "Tilomar"
-            },
-            {
-              "name": "Zumalai"
+              "name": "Sherpur District"
             }
           ]
         },
         {
-          "name": "Dili",
+          "name": "Rajshahi Division",
+          "abbreviation": "BD-E",
           "lgas": [
             {
-              "name": "Atauro"
+              "name": "Rajshahi"
             },
             {
-              "name": "Cristo Rei"
+              "name": "Natore"
             },
             {
-              "name": "Dom Aleixo"
+              "name": "Pabna"
             },
             {
-              "name": "Metinaro"
+              "name": "Bogura"
             },
             {
-              "name": "Nain Feto"
+              "name": "Chapainawabganj"
             },
             {
-              "name": "Vera Cruz"
+              "name": "Joypurhat"
+            },
+            {
+              "name": "Naogaon"
+            },
+            {
+              "name": "Sirajganj"
             }
           ]
         },
         {
-          "name": "Ermera",
+          "name": "Rangpur",
+          "abbreviation": "BD-F",
           "lgas": [
             {
-              "name": "Atsabe"
+              "name": "Dinajpur District"
             },
             {
-              "name": "Ermera"
+              "name": "Kurigram District"
             },
             {
-              "name": "HatÃ³lia"
+              "name": "Gaibandha District"
             },
             {
-              "name": "Letefoho"
+              "name": "Lalmonirhat District"
             },
             {
-              "name": "Railaco"
+              "name": "Nilphamari District"
+            },
+            {
+              "name": "Panchagarh District"
+            },
+            {
+              "name": "Rangpur District"
+            },
+            {
+              "name": "Thakurgaon District"
             }
           ]
         },
         {
-          "name": "LautÃ©m",
+          "name": "Sylhet Division",
+          "abbreviation": "BD-G",
           "lgas": [
             {
-              "name": "Iliomar"
+              "name": "Habiganj District"
             },
             {
-              "name": "LautÃ©m"
+              "name": "Moulvibazar District"
             },
             {
-              "name": "Lospalos"
+              "name": "Sunamganj District"
             },
             {
-              "name": "Luro"
-            },
-            {
-              "name": "Tutuala"
-            }
-          ]
-        },
-        {
-          "name": "LiquiÃ§Ã¡",
-          "lgas": [
-            {
-              "name": "Bazartete"
-            },
-            {
-              "name": "LiquiÃ§Ã¡"
-            },
-            {
-              "name": "Maubara"
-            }
-          ]
-        },
-        {
-          "name": "Manatuto",
-          "lgas": [
-            {
-              "name": "Barique"
-            },
-            {
-              "name": "Laclo"
-            },
-            {
-              "name": "Laclubar"
-            },
-            {
-              "name": "Laleia"
-            },
-            {
-              "name": "Manatuto"
-            },
-            {
-              "name": "Soibada"
-            }
-          ]
-        },
-        {
-          "name": "Manufahi",
-          "lgas": [
-            {
-              "name": "Alas"
-            },
-            {
-              "name": "Fatuberlio"
-            },
-            {
-              "name": "Same"
-            },
-            {
-              "name": "Turiscai"
-            }
-          ]
-        },
-        {
-          "name": "Oecusse",
-          "lgas": [
-            {
-              "name": "Nitibe"
-            },
-            {
-              "name": "Oesilo"
-            },
-            {
-              "name": "Pante Macassar"
-            },
-            {
-              "name": "Passabe"
-            }
-          ]
-        },
-        {
-          "name": "Viqueque",
-          "lgas": [
-            {
-              "name": "Lacluta"
-            },
-            {
-              "name": "Ossu"
-            },
-            {
-              "name": "Uato-Lari"
-            },
-            {
-              "name": "Uatucarbau"
-            },
-            {
-              "name": "Viqueque"
+              "name": "Sylhet District"
             }
           ]
         }
