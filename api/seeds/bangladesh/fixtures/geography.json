@@ -6,7 +6,7 @@
       "a3": "BGD",
       "culture": "pt",
       "countryCode": "670",
-      "timezone": "Tokyo Standard Time",
+      "timezone": "Bangladesh Standard Time",
       "portNumber": 3024,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
       "inventoryDaysThreshold": 21,
