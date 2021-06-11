@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(
   async knex =>
     knex('Result')
-      .whereRaw('endedOn IS NULL AND startedOn IS NULL')
+      .whereNull('endedOn').whereNull('startedOn')
       .update({
         startedOn: knex.raw(
           `COALESCE(patientData ->> '$.dateEncoded', createdOn)`
