@@ -94,7 +94,15 @@ describe('Device API Raw Philippines NTRL', () => {
     },
   }
 
-  function getProxy(
+  /**
+   * Gets the PhilippinesNtrlDatabases proxies dictionary for testing.
+   * @param {Array} existingSamplesInDatabase A mockup list of samples
+   * @param {Array} existingResultRecordsInDatabase A mockup list of results
+   * @param {object} updateSpy The spy object for result updates
+   * @param {object} insertSpy The spy object for result inserts
+   * @returns A dictionary of proxies, where the key is the path, and the value is the proxy that will replace the actual module
+   */
+  function getPhilippinesNtrlDatabasesWithProxies(
     existingSamplesInDatabase,
     existingResultRecordsInDatabase,
     updateSpy,
@@ -324,7 +332,7 @@ describe('Device API Raw Philippines NTRL', () => {
     return {
       PhilippinesNtrlPmdt: proxyquire(
         '../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt',
-        getProxy(
+        getPhilippinesNtrlDatabasesWithProxies(
           existingSamplesInDatabase,
           existingResultRecordsInDatabase,
           updateSpy,
@@ -333,7 +341,7 @@ describe('Device API Raw Philippines NTRL', () => {
       ),
       PhilippinesNtrlRitm: proxyquire(
         '../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm',
-        getProxy(
+        getPhilippinesNtrlDatabasesWithProxies(
           existingSamplesInDatabase,
           existingResultRecordsInDatabase,
           updateSpy,
