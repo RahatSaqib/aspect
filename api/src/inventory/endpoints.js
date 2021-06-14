@@ -205,7 +205,6 @@ const routes = [
       notes: 'Adds quantity to inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        // params: addRemoveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number().integer().positive().required(),
