@@ -56,8 +56,6 @@ export function validate(
   if (!dateAdjusted) {
     errors.dateAdjusted = intl.formatMessage(sharedMessages.dateRequired)
   }
-  console.log('holaaa', errors, expiresOn)
-
   return errors
 }
 
