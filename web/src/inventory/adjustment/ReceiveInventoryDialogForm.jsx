@@ -119,7 +119,7 @@ const enhance = compose(
     const destination = items.byId.findEntry(
       o =>
         o.get('siteId') === values.toSiteId &&
-        new Date(o.get('expiresOn')).getTime() === values.expiresOn.getTime() &&
+        (o.get('expiresOn') && values.expiresOn && new Date(o.get('expiresOn')).getTime() === values.expiresOn.getTime()) &&
         o.get('lotNumber') === values.lotNumber &&
         o.get('inTransitFromSiteId') === null
     )
