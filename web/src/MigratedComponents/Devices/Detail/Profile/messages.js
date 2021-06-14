@@ -150,6 +150,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoStaff',
     defaultMessage: 'No Staff',
   },
+  inactiveNoSamples: {
+    id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoSamples',
+    defaultMessage: 'No Samples',
+  },
   inactiveNoPower: {
     id: 'pages.DeviceDetailProfile.maintenanceStatus.inactiveNoPower',
     defaultMessage: 'No Power',

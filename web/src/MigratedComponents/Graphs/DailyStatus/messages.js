@@ -45,6 +45,10 @@ const messages = defineMessages({
     id: 'pages.DailyStatus.maintenanceStatus.inactiveNoStaff',
     defaultMessage: 'No Staff',
   },
+  inactiveNoSamples: {
+    id: 'pages.DailyStatus.maintenanceStatus.inactiveNoSamples',
+    defaultMessage: 'No Samples',
+  },
   inactiveNoPower: {
     id: 'pages.DailyStatus.maintenanceStatus.inactiveNoPower',
     defaultMessage: 'No Power',
