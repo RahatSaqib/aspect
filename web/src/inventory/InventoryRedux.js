@@ -1,9 +1,7 @@
-import isString from 'lodash/isString'
 import fromPairs from 'lodash/fromPairs'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
-import { aspectFetch } from '../shared/utils/fetch'
 import fetchWrapperForQueries from '../MigratedComponents/QueryFetch'
 import { receiveList, Items } from '../shared/metaReducers/groupedItems'
 import {
@@ -141,45 +139,21 @@ function addInventory(data, dispatch, inventoryState) {
     inventoryAdjustment: { inventoryItemId },
   } = inventoryState
 
-  if (isString(inventoryItemId)) {
-    const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+  const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
-    return fetchWrapperForQueries({
-      endpoint: `/inventory/add/${inventoryItemId}`,
-      method: 'PUT',
-      params: { ...data, consumableId },
-      customErrorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          ...defineMessages({
-            title: {
-              id: 'errorResponseMessages.addInventory.PUT.default.title',
-              defaultMessage: 'Adding Inventory Failed',
-            },
-          }),
-          onClose: () => dispatch(showAddInventoryDialog(inventoryItemId)),
-        }),
-      },
-    })
-      .then(() => dispatch(hideAdjustInventoryDialog()))
-      .catch(err => {
-        dispatch(hideAdjustInventoryDialog())
-        throw err
-      })
-  }
-  // new
   return fetchWrapperForQueries({
     endpoint: '/inventory/add',
-    method: 'POST',
-    params: data,
+    method: 'PUT',
+    params: { ...data, consumableId },
     customErrorNotifications: {
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({
           title: {
-            id: 'errorResponseMessages.addInventory.POST.default.title',
+            id: 'errorResponseMessages.addInventory.PUT.default.title',
             defaultMessage: 'Adding Inventory Failed',
           },
         }),
-        onClose: () => dispatch(showNewInventoryDialog()),
+        onClose: () => dispatch(showAddInventoryDialog(inventoryItemId)),
       }),
     },
   })
@@ -198,7 +172,7 @@ function removeInventory(data, dispatch, inventoryState) {
   const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
   return fetchWrapperForQueries({
-    endpoint: `/inventory/remove/${inventoryItemId}`,
+    endpoint: '/inventory/remove',
     method: 'PUT',
     params: {
       ...data,
@@ -231,7 +205,7 @@ function transferInventory(data, dispatch, inventoryState) {
   const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
   return fetchWrapperForQueries({
-    endpoint: `/inventory/transfer/${inventoryItemId}`,
+    endpoint: '/inventory/transfer',
     method: 'PUT',
     params: {
       ...data,
@@ -264,7 +238,7 @@ function receiveInventory(data, dispatch, inventoryState) {
 
   const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
   return fetchWrapperForQueries({
-    endpoint: `/inventory/receive/${inventoryItemId}`,
+    endpoint: '/inventory/receive',
     method: 'PUT',
     params: {
       ...data,
@@ -289,25 +263,6 @@ function receiveInventory(data, dispatch, inventoryState) {
     })
 }
 
-function updateStockLevel(siteId, consumableId, data) {
-  return () =>
-    aspectFetch(`/inventory/${siteId}/${consumableId}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        ...data,
-      }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes({
-          ...defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateInventory.PUT.default.title',
-              defaultMessage: 'Updating Inventory Failed',
-            },
-          }),
-        }),
-      },
-    })
-}
 /*
  * ---------------- Reducers -----------------
  */
@@ -388,5 +343,4 @@ export {
   removeInventory,
   transferInventory,
   receiveInventory,
-  updateStockLevel,
 }

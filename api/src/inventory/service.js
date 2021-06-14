@@ -1010,7 +1010,6 @@ async function transferInventory(request) {
       dateAdjusted,
       notes,
     },
-    params: { inventoryItemId },
   } = request
 
   // get MQ context and bind few action creators
@@ -1041,7 +1040,13 @@ async function transferInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const sourceInventoryItem = await getInventoryItem(inventoryItemId)
+
+  const sourceInventoryItem = await findInventoryItem(
+    fromSiteId,
+    consumableId,
+    expiresOn,
+    lotNumber
+  )
   if (_.isEmpty(sourceInventoryItem)) {
     return Boom.notFound('Could not find source item')
   }
@@ -1074,7 +1079,7 @@ async function transferInventory(request) {
 
     await logInventoryChange({
       knex,
-      inventoryItemId,
+      inventoryItemId: sourceInventoryItem.id,
       consumableId,
       siteId: fromSiteId,
       consumableReasonId: transferSentConsumableReasonId,
@@ -1089,12 +1094,12 @@ async function transferInventory(request) {
     })
 
     await knex('InventoryItem')
-      .where('id', inventoryItemId)
+      .where('id', sourceInventoryItem.id)
       .update({
         expiresOn,
         lotNumber,
         siteId: fromSiteId,
-        quantityOnHand: knex.raw(`GREATEST(quantityOnHand - ${quantity}, 0)`),
+        quantityOnHand: knex.raw(`quantityOnHand - ${quantity}`),
         updatedOn: now,
         updatedBy: currentlyLoggedInUser.id,
       })
@@ -1113,7 +1118,7 @@ async function transferInventory(request) {
   return {
     ok: true,
     data: {
-      existingInventoryItem: await getInventoryItem(inventoryItemId),
+      existingInventoryItem: await getInventoryItem(sourceInventoryItem.id),
       newInventoryItem: await getInventoryItem(destinationInventoryItemId),
     },
   }
@@ -1123,6 +1128,7 @@ async function receiveInventory(request) {
   const {
     auth,
     payload: {
+      fromSiteId,
       toSiteId,
       consumableId,
       expiresOn,
@@ -1131,7 +1137,6 @@ async function receiveInventory(request) {
       dateAdjusted,
       notes,
     },
-    params: { inventoryItemId },
   } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
@@ -1144,7 +1149,13 @@ async function receiveInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const sourceInventoryItem = await getInventoryItem(inventoryItemId)
+  const sourceInventoryItem = await findInventoryItem(
+    toSiteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    fromSiteId
+  )
   if (_.isEmpty(sourceInventoryItem)) {
     return Boom.notFound('Could not find source item')
   }
@@ -1187,7 +1198,7 @@ async function receiveInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    await knex('InventoryItem').where('id', inventoryItemId).delete()
+    await knex('InventoryItem').where('id', sourceInventoryItem.id).delete()
   })
 
   return {
