@@ -120,7 +120,7 @@ const FormDialog = ({
               helperText={
                 meta.maintenanceStatus.touched && meta.maintenanceStatus.error
               }
-              onlyManuallySet={true}
+              onlyManuallySet
               intl={intl}
             />
           </div>
