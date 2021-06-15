@@ -25,6 +25,7 @@ async function activityOverTimeDashboard(request) {
       inactiveDownForRepair: 0,
       inactiveDecommissioned: 0,
       inactiveNoStaff: 0,
+      inactiveNoSamples: 0,
       inactiveNoPower: 0,
       inactiveOther: 0,
     }
@@ -146,6 +147,11 @@ async function activityOverTimeDashboard(request) {
       inactiveNoStaff: knex.raw(`DISTINCT
         CASE
           WHEN dms.externalId = 'inactiveNoStaff'
+          THEN d.id ELSE null
+        END`),
+      inactiveNoSamples: knex.raw(`DISTINCT
+        CASE
+          WHEN dms.externalId = 'inactiveNoSamples'
           THEN d.id ELSE null
         END`),
       inactiveNoPower: knex.raw(`DISTINCT
