@@ -77,7 +77,7 @@ const DeviceMaintenanceStatusSelectField = ({
   ...restProps
 }) => {
   const intl = useIntl()
-  const { data, isError } = useQuery(DEVICE_STATUS.KEY, async () => {
+  const { data, isError } = useQuery([DEVICE_STATUS.KEY, onlyManuallySet], async () => {
     return fetchWrapperForQueries({
       endpoint: DEVICE_STATUS.ENDPOINT,
       params: { onlyManuallySet },
