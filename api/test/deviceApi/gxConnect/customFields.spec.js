@@ -1,14 +1,11 @@
 const { assert } = require('chai')
-const Ajv = require('ajv')
+const validate = require('../../../jsonSchemas/validate')
 const {
   mapGxConnectCustomFieldsWithDataSources,
 } = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 
 describe('Custom field mapper', () => {
-  const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
-  const validate = ajv.compile(schema)
-
   it('should transform a datasource input control data field', async () => {
     const datasourceExample = {
       fields: [
@@ -26,7 +23,7 @@ describe('Custom field mapper', () => {
       ],
     }
 
-    assert.isTrue(validate(datasourceExample))
+    assert.isTrue(validate(schema, datasourceExample))
 
     const mappingOutput = await mapGxConnectCustomFieldsWithDataSources(
       datasourceExample,
