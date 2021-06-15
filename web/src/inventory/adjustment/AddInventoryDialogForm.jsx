@@ -96,7 +96,7 @@ const enhance = compose(
         canExpire: inventoryItem.get('canExpire') === 1,
         expiresOn: inventoryItem.get('expiresOn')
           ? new Date(inventoryItem.get('expiresOn'))
-          : undefined,
+          : null,
         toSiteId: inventoryItem.get('siteId'),
         dateAdjusted: today,
       })
@@ -111,7 +111,8 @@ const enhance = compose(
       quantity: intl.formatMessage(messages.quantity),
       dateAdjusted: intl.formatMessage(messages.dateAdjusted),
       nextQuantityStatus: intl.formatMessage(messages.nextQuantityStatus, {
-        nextQuantity: inventoryItem.get('quantityOnHand', 0) + values.quantity,
+        nextQuantity:
+          inventoryItem.get('quantityOnHand', 0) + (values.quantity || 0),
         unitShortName: consumable.get('unitShortName'),
       }),
     },

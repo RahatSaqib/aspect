@@ -4,6 +4,9 @@
   "version": "0.9.1",
   "description": "The API for aspect clients",
   "main": "server.js",
+  "engines": {
+    "node": "14"
+  },
   "scripts": {
     "db:recreate": "node ./migrations/utils/recreateDB",
     "db:reseed": "npm-run-all db:recreate knex:migrate:latest knex:seed:run",
@@ -88,6 +91,7 @@
     "bluebird": "^3.7.2",
     "date-fns": "^2.21.3",
     "date-fns-timezone": "^0.1.4",
+    "deep-equal-in-any-order": "^1.1.7",
     "debug": "^4.3.1",
     "dotenv-safe": "^8.2.0",
     "email-templates": "8.0.7",

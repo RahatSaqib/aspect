@@ -266,11 +266,11 @@ describe('Inventory Routes', () => {
       })
     )
 
-    describe('/inventory/add/{inventoryItemId}', () => {
+    describe('/inventory/add', () => {
       describe('PUT', () => {
         it('should update the quantity of an inventory item', done => {
           server
-            .put(`${addInventoryPath}/${inventoryItem.id}`)
+            .put(`${addInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -296,11 +296,11 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe('/inventory/remove/{inventoryItemId}', () => {
+    describe('/inventory/remove', () => {
       describe('PUT', () => {
         it('should update the quantity of an inventory item', done => {
           server
-            .put(`${removeInventoryPath}/${inventoryItem.id}`)
+            .put(`${removeInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -327,7 +327,7 @@ describe('Inventory Routes', () => {
 
         it('should remove the inventory item from view quantity is zero', done => {
           server
-            .put(`${removeInventoryPath}/${inventoryItem.id}`)
+            .put(`${removeInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -359,11 +359,11 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe('/inventory/transfer/{inventoryItemId}', () => {
+    describe('/inventory/transfer', () => {
       describe('PUT', () => {
         it('should add an inventory item in transit to the destination site', done => {
           server
-            .put(`${transferInventoryPath}/${inventoryItem.id}`)
+            .put(`${transferInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -395,7 +395,7 @@ describe('Inventory Routes', () => {
               })
 
               server
-                .put(`${transferInventoryPath}/${inventoryItem.id}`)
+                .put(`${transferInventoryPath}`)
                 .send({
                   consumableId: inventoryItem.consumableId,
                   lotNumber: inventoryItem.lotNumber,
@@ -438,7 +438,7 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe('/inventory/receive/{inventoryItemId}', () => {
+    describe('/inventory/receive', () => {
       describe('PUT', () => {
         let receivedItem
         afterEach(async () =>
@@ -452,7 +452,7 @@ describe('Inventory Routes', () => {
 
         it('should add an inventory item to the site', done => {
           server
-            .put(`${transferInventoryPath}/${inventoryItem.id}`)
+            .put(`${transferInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -468,7 +468,7 @@ describe('Inventory Routes', () => {
               assert.equal(res.status, 200)
               transitItem = res.body.data.newInventoryItem
               server
-                .put(`${receiveInventoryPath}/${transitItem.id}`)
+                .put(`${receiveInventoryPath}`)
                 .send({
                   consumableId: transitItem.consumableId,
                   lotNumber: transitItem.lotNumber,
