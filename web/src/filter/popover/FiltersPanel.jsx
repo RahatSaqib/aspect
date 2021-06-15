@@ -979,7 +979,6 @@ export const FiltersPanel = ({
                   messages.deviceMaintenanceStatus
                 )}
                 style={{ verticalAlign: 'bottom' }}
-                onlyManuallySet={false}
                 autoWidth
               />
             </div>
