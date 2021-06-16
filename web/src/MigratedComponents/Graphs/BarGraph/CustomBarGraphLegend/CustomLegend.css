@@ -18,7 +18,7 @@
 
 .legend__container {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   margin: 5px 15px;
 }
 

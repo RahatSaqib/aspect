@@ -1,5 +1,5 @@
 import React from 'react'
-import { func, object, shape, string } from 'prop-types'
+import { func, object, oneOfType, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
@@ -121,16 +121,16 @@ AspectWidget.propTypes = {
     icon: string,
     description: string,
     count: string,
-    extra: object,
+    extra: oneOfType([object]),
     title: string,
     unit: string,
-    subTitle: object,
+    subTitle: oneOfType([object]),
     statUnit: string,
-    statStatus: object,
-    extraLabel: object,
+    statStatus: oneOfType([object]),
+    extraLabel: oneOfType([object]),
     statUnitI18nKey: string,
     alert: shape({
-      config: object.isRequired,
+      config: oneOfType([object]).isRequired,
       display: func.isRequired,
     }),
   }).isRequired,

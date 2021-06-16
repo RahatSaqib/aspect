@@ -102,7 +102,7 @@ FormItem.propTypes = {
   initialValue: PropTypes.string.isRequired,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   labelI18nKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  link: PropTypes.oneOf([PropTypes.object, PropTypes.bool]),
+  link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   messages: PropTypes.oneOfType([PropTypes.object]).isRequired,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   type: PropTypes.string.isRequired,

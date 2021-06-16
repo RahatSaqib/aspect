@@ -28,9 +28,9 @@ const SiteDetailAlert = ({ history, location, match }) => {
 }
 
 SiteDetailAlert.propTypes = {
-  history: PropTypes.oneOf([PropTypes.object]).isRequired,
-  location: PropTypes.oneOf([PropTypes.object]).isRequired,
-  match: PropTypes.oneOf([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default SiteDetailAlert

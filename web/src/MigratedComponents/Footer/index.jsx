@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 
-import * as packageWeb from '../../../package.json'
+import packageWeb from '../../../package.json'
 
 const cssClasses = classnames.bind(require('./PageFooter.css'))
 

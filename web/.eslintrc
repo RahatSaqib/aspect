@@ -121,6 +121,6 @@
     "lodash/prefer-constant": "off",
     "lodash/prefer-lodash-typecheck": "off",
     "lodash/path-style": "off",
-    "lodash/prefer-immutable-method": "off",
+    "lodash/prefer-immutable-method": "off"
   }
 }

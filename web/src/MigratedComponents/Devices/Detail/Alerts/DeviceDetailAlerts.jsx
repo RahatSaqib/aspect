@@ -37,17 +37,17 @@ export const DeviceDetailAlerts = ({
 }
 
 DeviceDetailAlerts.propTypes = {
-  history: PropTypes.oneOf([PropTypes.object]).isRequired,
-  location: PropTypes.oneOf([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   match: PropTypes.shape({
-    params: PropTypes.oneOf([
+    params: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.shape({
-        deviceId: PropTypes.oneOf([PropTypes.bool, PropTypes.string]),
+        deviceId: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
       }),
     ]),
   }).isRequired,
-  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  device: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default enhance(DeviceDetailAlerts)
