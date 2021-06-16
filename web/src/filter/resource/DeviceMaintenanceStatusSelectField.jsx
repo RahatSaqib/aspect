@@ -73,16 +73,16 @@ const messages = defineMessages({
 const DeviceMaintenanceStatusSelectField = ({
   onDeviceMaintenanceStatusChange,
   value,
-  onlyManuallySet,
+  onlyManuallySetableStatuses,
   ...restProps
 }) => {
   const intl = useIntl()
   const { data, isError } = useQuery(
-    [DEVICE_STATUS.KEY, onlyManuallySet],
+    [DEVICE_STATUS.KEY, onlyManuallySetableStatuses],
     async () => {
       return fetchWrapperForQueries({
         endpoint: DEVICE_STATUS.ENDPOINT,
-        params: { onlyManuallySet },
+        params: { onlyManuallySet: onlyManuallySetableStatuses },
       })
     }
   )
@@ -123,14 +123,14 @@ const DeviceMaintenanceStatusSelectField = ({
 
 DeviceMaintenanceStatusSelectField.defaultProps = {
   value: null,
-  onlyManuallySet: false,
+  onlyManuallySetableStatuses: false,
 }
 
 DeviceMaintenanceStatusSelectField.propTypes = {
   onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func])
     .isRequired,
   value: PropTypes.oneOfType([PropTypes.string]),
-  onlyManuallySet: PropTypes.oneOfType([PropTypes.bool]),
+  onlyManuallySetableStatuses: PropTypes.oneOfType([PropTypes.bool]),
 }
 
 export default DeviceMaintenanceStatusSelectField
