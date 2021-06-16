@@ -1,4 +1,4 @@
-const dashboardWidgetsBase = require('../../../fixtures/dashboardWidgetsBase')
+const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
 const {
   stat: {
