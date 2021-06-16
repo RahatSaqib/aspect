@@ -329,6 +329,10 @@ export const messages = defineMessages({
     id: 'legends.Unknown.inactiveNoStaff',
     defaultMessage: 'No Staff',
   },
+  inactiveNoSamples: {
+    id: 'legends.Unknown.inactiveNoSamples',
+    defaultMessage: 'No Samples',
+  },
   inactiveNoPower: {
     id: 'legends.Unknown.inactiveNoPower',
     defaultMessage: 'No Power',

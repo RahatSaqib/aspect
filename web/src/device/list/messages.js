@@ -147,6 +147,10 @@ export const messages = {
       id: 'pages.DeviceList.status.inactiveNoStaff',
       defaultMessage: 'No Staff',
     },
+    inactiveNoSamples: {
+      id: 'pages.DeviceList.status.inactiveNoSamples',
+      defaultMessage: 'No Samples',
+    },
     inactiveNoPower: {
       id: 'pages.DeviceList.status.inactiveNoPower',
       defaultMessage: 'No Power',

@@ -183,6 +183,9 @@ const routes = [
                 inactiveNoStaff: Joi.number().description(
                   'The number of inactive "No Staff" devices in the system as of that day'
                 ),
+                inactiveNoSamples: Joi.number().description(
+                  'The number of inactive "No Samples" devices in the system as of that day'
+                ),
                 inactiveNoPower: Joi.number().description(
                   'The number of inactive "No Power" devices in the system as of that day'
                 ),
