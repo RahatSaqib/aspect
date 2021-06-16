@@ -29,10 +29,6 @@ const {
     sitesTitle,
     resultsTitle,
     geneXpertDevices,
-    dashboardWidgetTitleTotalDeaths,
-    dashboardWidgetTitleTotalActiveCases,
-    dashboardWidgetTitleTotalRecoveredCases,
-    dashboardWidgetTitleConfirmedCases,
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
   },
@@ -43,10 +39,6 @@ module.exports = {
     {
       ...resultsTitle,
       jobFunctions: ['admin', 'clinician', 'resultViewerYes', 'ntp'],
-    },
-    {
-      ...dashboardWidgetTitleTotalDeaths,
-      partnerNames: ['Wakanda'],
     },
     geneXpertDevices,
     gxPositiveResultsNotified,
@@ -74,18 +66,6 @@ module.exports = {
     personTitle,
     devicesTitle,
     sitesTitle,
-    {
-      ...dashboardWidgetTitleConfirmedCases,
-      partnerNames: ['Wakanda'],
-    },
-    {
-      ...dashboardWidgetTitleTotalActiveCases,
-      partnerNames: ['Wakanda'],
-    },
-    {
-      ...dashboardWidgetTitleTotalRecoveredCases,
-      partnerNames: ['Wakanda'],
-    },
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
   ],

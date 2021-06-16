@@ -1,4 +1,4 @@
-const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase');
+const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
 const {
   stat: {
@@ -29,24 +29,16 @@ const {
     sitesTitle,
     resultsTitle,
     geneXpertDevices,
-    dashboardWidgetTitleTotalDeaths,
-    dashboardWidgetTitleTotalActiveCases,
-    dashboardWidgetTitleTotalRecoveredCases,
-    dashboardWidgetTitleConfirmedCases,
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
   },
-} = dashboardWidgetsBase;
+} = dashboardWidgetsBase
 
 module.exports = {
   stat: [
     {
       ...resultsTitle,
       jobFunctions: ['admin', 'clinician', 'resultViewerYes', 'ntp'],
-    },
-    {
-      ...dashboardWidgetTitleTotalDeaths,
-      partnerNames: ['Wakanda'],
     },
     geneXpertDevices,
     gxPositiveResultsNotified,
@@ -74,19 +66,7 @@ module.exports = {
     personTitle,
     devicesTitle,
     sitesTitle,
-    {
-      ...dashboardWidgetTitleConfirmedCases,
-      partnerNames: ['Wakanda'],
-    },
-    {
-      ...dashboardWidgetTitleTotalActiveCases,
-      partnerNames: ['Wakanda'],
-    },
-    {
-      ...dashboardWidgetTitleTotalRecoveredCases,
-      partnerNames: ['Wakanda'],
-    },
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
   ],
-};
+}
