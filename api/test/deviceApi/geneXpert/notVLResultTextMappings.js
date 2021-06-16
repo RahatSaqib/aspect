@@ -300,6 +300,7 @@ const gxMtbRif = [
     null
   ),
   getAssertionItem('GxMtbRif', 'ERROR||', 'Error', null),
+  getAssertionItem('GxMtbRif', '@label_result_error||', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERRO|', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERRO|ERRO|', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERRO|NEGAT.|', 'Error', null),
@@ -785,6 +786,12 @@ const gxMtbRif = [
     null
   ),
   getAssertionItem('GxMtbRif', 'MTB NOT DETECTED||', 'NotDetected', null),
+  getAssertionItem(
+    'GxMtbRif',
+    'MTB @label_result_not_detected||',
+    'NotDetected',
+    null
+  ),
   getAssertionItem('GxMtbRif', 'MTB НЕ ОБНАРУЖЕН', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB НЕ ОБНАРУЖЕН||', 'NotDetected', null),
   getAssertionItem(
@@ -964,6 +971,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'PAS DE RÉSULTAT', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SEM RESULTADO', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SEM RESULTADO|NEGAT.|', 'NoResult', null),
+  getAssertionItem('GxMtbRif', '@label_result_no_result||', 'NoResult', null),
   getAssertionItem(
     'GxMtbRif',
     'SEM RESULTADO|SEM RESULTADO|',
@@ -978,6 +986,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'ОШИБКА', 'Error', null),
   getAssertionItem('GxMtbRif', 'MTB NOT DETECTED|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'INVALID|', 'Invalid', null),
+  getAssertionItem('GxMtbRif', '@label_result_invalid|', 'Invalid', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SEM RESULTADO|', 'NoResult', null),
   getAssertionItem(
@@ -1067,6 +1076,55 @@ const gxMtbRifUltra = [
     'DETECTED HIGH|DETECTED|',
     'Detected',
     'Detected'
+  ),
+
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high||RIF Resistance @label_result_not_detected',
+    'Detected',
+    'NotDetected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low||RIF Resistance @label_result_not_detected',
+    'Detected',
+    'NotDetected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium||RIF Resistance @label_result_not_detected',
+    'Detected',
+    'NotDetected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low||RIF Resistance @label_result_not_detected',
+    'Detected',
+    'NotDetected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low||RIF Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high||RIF Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium||RIF Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbRifUltra',
+    'MTB Trace @label_result_detected|RIF Resistance @label_result_indeterminate',
+    'Detected',
+    'Indeterminate'
   ),
   getAssertionItem(
     'GxMtbRifUltra',
