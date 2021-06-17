@@ -102,6 +102,7 @@ const result1CategoryMapping = {
   'trace detected': 'Trace Detected',
   'trace detectado': 'Trace Detected',
   'trace обнаружен': 'Trace Detected',
+  'trace @label_result_detected': 'Trace Detected',
 }
 
 const result2CategoryMapping = {
@@ -126,6 +127,7 @@ const result2CategoryMapping = {
   обнаружен: 'Detected',
   détecté: 'Detected',
   indeterminate: 'Indeterminate',
+  '@label_result_indeterminate': 'Indeterminate',
   indeterminado: 'Indeterminate',
   неопределенный: 'Indeterminate',
   indéterminé: 'Indeterminate',

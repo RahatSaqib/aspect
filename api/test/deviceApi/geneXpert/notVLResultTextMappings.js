@@ -1123,7 +1123,7 @@ const gxMtbRifUltra = [
   getAssertionItem(
     'GxMtbRifUltra',
     'MTB Trace @label_result_detected|RIF Resistance @label_result_indeterminate',
-    'Detected',
+    'Trace Detected',
     'Indeterminate'
   ),
   getAssertionItem(

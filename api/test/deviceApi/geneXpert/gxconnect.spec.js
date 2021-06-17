@@ -50,7 +50,7 @@ const server = require('../../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe.only('Device API routes for GxConnect Devices', () => {
+describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -893,7 +893,7 @@ describe.only('Device API routes for GxConnect Devices', () => {
       'should append a new GxHiv1Qual result with the correct result categories',
       getResultCategoriesTestCallback(gxHiv1QualMappings)
     )
-    it.only(
+    it(
       'should append a new GxMtbRifUltra result with the correct result categories',
       getResultCategoriesTestCallback(gxMtbRifUltraMappings)
     )
@@ -901,7 +901,7 @@ describe.only('Device API routes for GxConnect Devices', () => {
       'should append a new assayGxCovid19 result with the correct result categories',
       getResultCategoriesTestCallback(assayGxCovid19Mappings)
     )
-    it.only(
+    it(
       'should append a new GxMtbRif result with the correct result categories',
       getResultCategoriesTestCallback(gxMtbRifMappings)
     ).timeout(120000)
