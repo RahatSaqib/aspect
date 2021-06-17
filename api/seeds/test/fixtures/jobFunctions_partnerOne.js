@@ -39,6 +39,17 @@ module.exports = [
         activity: 'edit',
       },
     ],
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed',
+      'device_calibration_report',
+      'device_activity',
+      'device_utilization',
+      'device_activity_percent',
+      'module_swaps',
+    ],
   },
   technician,
 ]

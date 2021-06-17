@@ -96,6 +96,9 @@
 .clinic__day--inactiveNoStaff {
   background-color: var('--aspect-device-inactiveNoStaff');
 }
+.clinic__day--inactiveNoSamples {
+  background-color: var('--aspect-device-inactiveNoSamples');
+}
 .clinic__day--inactiveNoPower {
   background-color: var('--aspect-device-inactiveNoPower');
 }
@@ -136,6 +139,9 @@
 }
 .status__checkbox--inactiveNoStaff {
   color: var('--aspect-device-inactiveNoStaff') !important;
+}
+.status__checkbox--inactiveNoSamples {
+  color: var('--aspect-device-inactiveNoSamples') !important;
 }
 .status__checkbox--inactiveNoPower {
   color: var('--aspect-device-inactiveNoPower') !important;

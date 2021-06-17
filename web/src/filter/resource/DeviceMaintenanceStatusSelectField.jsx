@@ -57,6 +57,11 @@ const messages = defineMessages({
       'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff',
     defaultMessage: 'No Staff',
   },
+  inactiveNoSamples: {
+    id:
+      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoSamples',
+    defaultMessage: 'No Samples',
+  },
   inactiveNoPower: {
     id:
       'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower',

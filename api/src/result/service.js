@@ -171,8 +171,13 @@ function getResultTreatmentStatus(response) {
 }
 
 async function getResultsForExport(query, auth) {
-  const selectFields = _.clone(SELECT_COMMON_FIELDS)
-  const sortableFields = _.clone(SORT_FIELDS)
+  const selectFields = [
+    ...SELECT_COMMON_FIELDS,
+    knex.raw(
+      `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
+    ),
+  ]
+  const sortableFields = [...SORT_FIELDS]
 
   const assayColumns = []
   if (query.assayId) {

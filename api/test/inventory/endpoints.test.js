@@ -63,7 +63,7 @@ describe('inventory endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/add/{inventoryItemId}', {
+        endpoint = setupRoute('PUT', '/inventory/add', {
           async addInventory() {
             return expectedResponse
           },
@@ -80,12 +80,12 @@ describe('inventory endpoints', () => {
       })
     })
 
-    describe('/inventory/remove/{inventoryItemId}', () => {
+    describe('/inventory/remove', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/remove/{inventoryItemId}', {
+        endpoint = setupRoute('PUT', '/inventory/remove', {
           async removeInventory() {
             return expectedResponse
           },
@@ -102,12 +102,12 @@ describe('inventory endpoints', () => {
       })
     })
 
-    describe('/inventory/transfer/{inventoryItemId}', () => {
+    describe('/inventory/transfer', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/transfer/{inventoryItemId}', {
+        endpoint = setupRoute('PUT', '/inventory/transfer', {
           async transferInventory() {
             return expectedResponse
           },

@@ -738,6 +738,11 @@ const routes = [
               maintenanceStatusManuallySet: Joi.number()
                 .allow(null)
                 .description('Whether the device status was manually set'),
+              maintenanceStatusManuallySetBy: Joi.object()
+                .allow(null)
+                .description(
+                  'Member responsible for manually setting the status'
+                ),
             }),
         }),
       },
@@ -815,6 +820,11 @@ const routes = [
               maintenanceStatusManuallySet: Joi.number()
                 .allow(null)
                 .description('Whether the device status was manually set'),
+              maintenanceStatusManuallySetBy: Joi.object()
+                .allow(null)
+                .description(
+                  'Member responsible for manually setting the status'
+                ),
             }),
         }),
       },
