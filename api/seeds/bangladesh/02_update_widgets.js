@@ -10,7 +10,6 @@ async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
     .where({ name: partnerName })
     .first('id')
-  console.log('dashboardWed', dashboardWidgets)
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgets)
 
   await Promise.each(geography.countries, async country => {
