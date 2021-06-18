@@ -24,7 +24,9 @@ import messages from './messages'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 export function validate({ name, email, email2, countryId }, { intl }) {
   const errors = {}
@@ -34,18 +36,10 @@ export function validate({ name, email, email2, countryId }, { intl }) {
   if (!countryId) {
     errors.countryId = intl.formatMessage(messages.countryRequired)
   }
-  if (
-    !validateEmailAddress(email)
-      .optional()
-      .isValid()
-  ) {
+  if (!validateEmailAddress(email).optional().isValid()) {
     errors.email = intl.formatMessage(messages.invalidEmailAddress)
   }
-  if (
-    !validateEmailAddress(email2)
-      .optional()
-      .isValid()
-  ) {
+  if (!validateEmailAddress(email2).optional().isValid()) {
     errors.email2 = intl.formatMessage(messages.invalidEmailAddress)
   }
   return errors
@@ -118,14 +112,15 @@ const enhance = compose(
 
       const countries = state.geography.countriesForLocationSelector
 
-      const partnerList = state.jobs.partnersAndJobFunctionsForSelectList.partners
-        // Filter out empty items if props.emptyText is an empty string
-        .filter(item => (props.emptyText ? true : item.get('id')))
-        .map(item => ({
-          value: item.get('id') || props.emptyId,
-          text: item.get('name') || props.emptyText,
-        }))
-        .toJS()
+      const partnerList =
+        state.jobs.partnersAndJobFunctionsForSelectList.partners
+          // Filter out empty items if props.emptyText is an empty string
+          .filter(item => (props.emptyText ? true : item.get('id')))
+          .map(item => ({
+            value: item.get('id') || props.emptyId,
+            text: item.get('name') || props.emptyText,
+          }))
+          .toJS()
 
       return {
         personTags,
@@ -141,20 +136,18 @@ const enhance = compose(
     }
   ),
   withHandlers({
-    onLoadTags: ({ contactDetails, fetchTags }) => () => {
-      if (contactDetails.get('id')) {
-        fetchTags(contactDetails.get('id'), 'person')
-      }
-    },
+    onLoadTags:
+      ({ contactDetails, fetchTags }) =>
+      () => {
+        if (contactDetails.get('id')) {
+          fetchTags(contactDetails.get('id'), 'person')
+        }
+      },
   }),
   lifecycle({
     componentWillMount() {
-      const {
-        partnerList,
-        countries,
-        contactDetails,
-        userPreferences,
-      } = this.props
+      const { partnerList, countries, contactDetails, userPreferences } =
+        this.props
 
       const onChange = values => this.setState({ values })
       this.setState({
@@ -173,12 +166,8 @@ const enhance = compose(
     },
 
     componentDidUpdate(prevProps) {
-      const {
-        contactDetails,
-        partnerList,
-        countries,
-        userPreferences,
-      } = this.props
+      const { contactDetails, partnerList, countries, userPreferences } =
+        this.props
       if (
         prevProps.contactDetails !== contactDetails ||
         prevProps.partnerList.length !== partnerList.length ||
@@ -229,29 +218,35 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onEmailBlur: ({ onEmailBlur }) => event => {
-      if (event.target.value !== '') onEmailBlur(event.target.value)
-    },
-    onCountryIdChange: ({
-      onCountryIdChange,
-      onStateIdChange,
-      onLgaIdChange,
-    }) => countryId => {
-      onLgaIdChange(undefined)
-      onStateIdChange(undefined)
-      onCountryIdChange(countryId)
-    },
-    onStateIdChange: ({ onStateIdChange, onLgaIdChange }) => stateId => {
-      onLgaIdChange(undefined)
-      onStateIdChange(stateId)
-    },
-    onUserCanLogInChange: ({ isUserChange, onCanLogInChange }) => event => {
-      onCanLogInChange(event)
-      isUserChange(event.target.checked)
-    },
-    onPersonTagsChange: ({ updateTags }) => (qryId, qryType, tags) => {
-      updateTags(qryId, qryType, tags.join(','))
-    },
+    onEmailBlur:
+      ({ onEmailBlur }) =>
+      event => {
+        if (event.target.value !== '') onEmailBlur(event.target.value)
+      },
+    onCountryIdChange:
+      ({ onCountryIdChange, onStateIdChange, onLgaIdChange }) =>
+      countryId => {
+        onLgaIdChange(undefined)
+        onStateIdChange(undefined)
+        onCountryIdChange(countryId)
+      },
+    onStateIdChange:
+      ({ onStateIdChange, onLgaIdChange }) =>
+      stateId => {
+        onLgaIdChange(undefined)
+        onStateIdChange(stateId)
+      },
+    onUserCanLogInChange:
+      ({ isUserChange, onCanLogInChange }) =>
+      event => {
+        onCanLogInChange(event)
+        isUserChange(event.target.checked)
+      },
+    onPersonTagsChange:
+      ({ updateTags }) =>
+      (qryId, qryType, tags) => {
+        updateTags(qryId, qryType, tags.join(','))
+      },
   })
 )
 

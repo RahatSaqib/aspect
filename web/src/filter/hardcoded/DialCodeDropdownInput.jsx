@@ -7,7 +7,9 @@ import TextField from '@material-ui/core/TextField'
 import DialCodeDropdown from './DialCodeDropdown'
 import dialCodes from './dialCodes'
 
-const cssClasses = classnames.bind(require('./DialCodeDropdownInput.css'))
+import styles from './DialCodeDropdownInput.css'
+
+const cssClasses = classnames.bind(styles)
 
 const dialCodeBy = keyBy(dialCodes, 'dialCode')
 
@@ -49,24 +51,26 @@ const enhance = compose(
     }
   }),
   withHandlers({
-    onDialCodeChange: ({ onChange, numberPart }) => ({ dialCode }) => {
-      onChange(`${dialCode} ${numberPart}`.trim())
-    },
+    onDialCodeChange:
+      ({ onChange, numberPart }) =>
+      ({ dialCode }) => {
+        onChange(`${dialCode} ${numberPart}`.trim())
+      },
 
-    onRawNumberChange: ({ onChange, dialCode }) => ({
-      target: { value: rawNumber },
-    }) => {
-      if (rawNumber) {
-        const { numberPart, nextDialCode } = parseRawNumber(rawNumber)
-        if (nextDialCode in dialCodeBy) {
-          onChange(`${nextDialCode} ${numberPart}`.trim())
+    onRawNumberChange:
+      ({ onChange, dialCode }) =>
+      ({ target: { value: rawNumber } }) => {
+        if (rawNumber) {
+          const { numberPart, nextDialCode } = parseRawNumber(rawNumber)
+          if (nextDialCode in dialCodeBy) {
+            onChange(`${nextDialCode} ${numberPart}`.trim())
+          } else {
+            onChange(`${dialCode} ${numberPart}`.trim())
+          }
         } else {
-          onChange(`${dialCode} ${numberPart}`.trim())
+          onChange(rawNumber)
         }
-      } else {
-        onChange(rawNumber)
-      }
-    },
+      },
   })
 )
 

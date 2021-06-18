@@ -195,7 +195,11 @@ export class ResetPassword extends PureComponent {
             <Unit xs="11-12" md="5-6" xl="1-2">
               <Paper>
                 <Hidden xs sm className={styles.LargeConten}>
-                  <Stepper activeStep={stepIndex} orientation="horizontal">
+                  <Stepper
+                    activeStep={stepIndex}
+                    orientation="horizontal"
+                    style={{ padding: 24 }}
+                  >
                     <Step>
                       <StepLabel>
                         {formatMessage(messages.enterEmailAddress)}
@@ -276,7 +280,11 @@ export class ResetPassword extends PureComponent {
                 </Hidden>
                 <Hidden md lg xl>
                   {resettingPassword && <LinearProgress />}
-                  <Stepper activeStep={stepIndex} orientation="vertical">
+                  <Stepper
+                    activeStep={stepIndex}
+                    orientation="vertical"
+                    style={{ padding: 24 }}
+                  >
                     <Step>
                       <StepLabel>
                         {formatMessage(messages.enterEmailAddress)}

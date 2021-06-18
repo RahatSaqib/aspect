@@ -3,7 +3,9 @@ import classnames from 'classnames/bind'
 
 import packageWeb from '../../../package.json'
 
-const cssClasses = classnames.bind(require('./PageFooter.css'))
+import styles from './PageFooter.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Footer = () => {
   const { version } = packageWeb

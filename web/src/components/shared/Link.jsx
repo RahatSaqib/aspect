@@ -41,7 +41,7 @@ Link.propTypes = {
   label: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   onLinkClick: PropTypes.func.isRequired,
-  theme: PropTypes.oneOf([PropTypes.object]).isRequired,
+  theme: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default Link

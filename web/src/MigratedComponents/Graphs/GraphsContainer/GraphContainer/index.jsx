@@ -11,8 +11,9 @@ import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
+import styles from '../GraphsContainer.css'
 
-const cssClasses = classnames.bind(require('../GraphsContainer.css'))
+const cssClasses = classnames.bind(styles)
 
 const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
   const { title, id, selectorModifiers = false } = config

@@ -38,7 +38,9 @@ import {
   updateDeviceMaintenance,
 } from '../../../device/DeviceRedux'
 
-const cssClasses = classnames.bind(require('./DeviceDetail.css'))
+import styles from './DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   profile: {
@@ -69,19 +71,17 @@ export const DeviceDetail = ({ match }) => {
   const { deviceId } = useParams()
   const intl = useIntl()
 
-  const {
-    data: { device = {}, devicePerformance = {} } = {},
-    isLoading,
-  } = useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
-    const { data: device = false } = await fetchWrapperForQueries({
-      endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
+  const { data: { device = {}, devicePerformance = {} } = {}, isLoading } =
+    useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
+      const { data: device = false } = await fetchWrapperForQueries({
+        endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
+      })
+      const devicePerformance = await fetchWrapperForQueries({
+        endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
+        params: searchParams,
+      })
+      return { device, devicePerformance }
     })
-    const devicePerformance = await fetchWrapperForQueries({
-      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-      params: searchParams,
-    })
-    return { device, devicePerformance }
-  })
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
@@ -255,7 +255,7 @@ export const DeviceDetail = ({ match }) => {
 }
 
 DeviceDetail.propTypes = {
-  match: PropTypes.oneOf([PropTypes.object]).isRequired,
+  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default DeviceDetail

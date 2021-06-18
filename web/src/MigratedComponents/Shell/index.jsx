@@ -4,7 +4,9 @@ import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 
-const cssClasses = classnames.bind(require('./Shell.css'))
+import styles from './Shell.css'
+
+const cssClasses = classnames.bind(styles)
 
 const CasesShell = ({ children }) => {
   return (

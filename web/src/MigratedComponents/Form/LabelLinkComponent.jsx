@@ -5,7 +5,9 @@ import classnames from 'classnames/bind'
 import IconProvider from '../IconProvider'
 import AspectLink from '../AspectLink'
 
-const cssClasses = classnames.bind(require('./LabelLinkComponent.css'))
+import styles from './LabelLinkComponent.css'
+
+const cssClasses = classnames.bind(styles)
 
 const LabelLinkComponent = ({ link }) => {
   const { url, target } = link || false

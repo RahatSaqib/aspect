@@ -18,7 +18,9 @@ import {
   acceptLicenseStart,
 } from '../AuthRedux'
 
-const cssClasses = classnames.bind(require('./License.css'))
+import styles from './License.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   title: {
@@ -49,29 +51,30 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({ hasToAcceptLicenseId, fetchLicense }) => () => {
-      fetchLicense(hasToAcceptLicenseId)
-    },
-    onAcceptClick: ({
-      history,
-      location,
-      acceptLicenseStart,
-      hasToAcceptLicenseId,
-    }) => () => {
-      acceptLicenseStart(hasToAcceptLicenseId).then(() => {
-        const referrer = flowRight(
-          x => omit(x, 'search'),
-          x =>
-            get(x, 'state.referrer', {
-              pathname: '/',
-            })
-        )(location)
-        history.push(referrer)
-      })
-    },
-    onDoNotAcceptClick: ({ userRequestedLogout }) => () => {
-      userRequestedLogout()
-    },
+    onInitialLoad:
+      ({ hasToAcceptLicenseId, fetchLicense }) =>
+      () => {
+        fetchLicense(hasToAcceptLicenseId)
+      },
+    onAcceptClick:
+      ({ history, location, acceptLicenseStart, hasToAcceptLicenseId }) =>
+      () => {
+        acceptLicenseStart(hasToAcceptLicenseId).then(() => {
+          const referrer = flowRight(
+            x => omit(x, 'search'),
+            x =>
+              get(x, 'state.referrer', {
+                pathname: '/',
+              })
+          )(location)
+          history.push(referrer)
+        })
+      },
+    onDoNotAcceptClick:
+      ({ userRequestedLogout }) =>
+      () => {
+        userRequestedLogout()
+      },
   }),
   lifecycle({
     componentDidMount() {

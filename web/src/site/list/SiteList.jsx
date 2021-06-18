@@ -48,7 +48,9 @@ import ExportListButton from '../../globals/components/ExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
 
-const cssClasses = classnames.bind(require('./SiteList.css'))
+import styles from './SiteList.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const messages = {
   ...commonDefinitions,
@@ -173,54 +175,53 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onAlertClick: ({ history }) => event => {
-      event.stopPropagation()
-      const {
+    onAlertClick:
+      ({ history }) =>
+      event => {
+        event.stopPropagation()
+        const {
+          currentTarget: {
+            dataset: { siteId },
+          },
+        } = event
+        history.push(`/browse/site/${siteId}/alerts`)
+      },
+
+    onExcelClick:
+      ({ location, exportSites, sortCol, sortDir, pageAt, table }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportSites(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            table.get('total') > 0 ? table.get('total') : 1,
+            format,
+            'sites'
+          )
+        }
+      },
+
+    onRowClick:
+      ({ history }) =>
+      ({
         currentTarget: {
           dataset: { siteId },
         },
-      } = event
-      history.push(`/browse/site/${siteId}/alerts`)
-    },
-
-    onExcelClick: ({
-      location,
-      exportSites,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSites(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'sites'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { siteId },
-      },
-    }) => history.push(`/browse/site/${siteId}`),
+      }) =>
+        history.push(`/browse/site/${siteId}`),
   }),
   lifecycle({
     componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 

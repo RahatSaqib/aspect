@@ -10,7 +10,9 @@ import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
 import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getInitialValues = userPreferences => ({
   timezone: userPreferences.get('timezone'),

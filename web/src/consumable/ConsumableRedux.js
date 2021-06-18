@@ -108,8 +108,7 @@ export function fetchConsumableReasons(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchConsumableReasons.GET.default.title',
+              id: 'errorResponseMessages.fetchConsumableReasons.GET.default.title',
               defaultMessage: 'Loading Consumable Reasons Failed',
             },
           })

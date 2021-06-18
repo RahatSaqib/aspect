@@ -6,7 +6,9 @@ import CloseIcon from '@material-ui/icons/RemoveCircle'
 import { mergeToFiltersParams } from '../../filter/utils'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
   if (!assignment) {

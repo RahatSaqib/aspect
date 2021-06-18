@@ -45,7 +45,9 @@ import AspectExportListButton from '../../MigratedComponents/AspectExportListBut
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./ReporterList.css'))
+import styles from './ReporterList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getBaseColumns = formatMessage => {
   return Immutable.List([
@@ -271,10 +273,8 @@ const ReporterList = () => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)

@@ -27,7 +27,9 @@ import {
 } from '../list/TaskDataTable'
 import { getTasksByAlertTemplateAndDate } from '../TaskRedux'
 
-const cssClasses = classnames.bind(require('./TaskAggre.css'))
+import styles from './TaskAggre.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   taskAggreTitle: {
@@ -76,49 +78,55 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      getTasksByAlertTemplateAndDate,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      const taskDetails = queryString.parse(location.search)
-      if (!sanitized) {
-        getTasksByAlertTemplateAndDate(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          taskDetails.date,
-          taskDetails.categoryId,
-          taskDetails.alertTemplateId
-        )
-      }
-    },
-
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { taskId },
+    onInitialLoad:
+      ({
+        location,
+        getTasksByAlertTemplateAndDate,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        const taskDetails = queryString.parse(location.search)
+        if (!sanitized) {
+          getTasksByAlertTemplateAndDate(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize,
+            taskDetails.date,
+            taskDetails.categoryId,
+            taskDetails.alertTemplateId
+          )
+        }
       },
-    }) => history.push(`/task-list/${taskId}`),
+
+    onBackClick:
+      ({ history }) =>
+      () => {
+        history.goBack()
+      },
+
+    onRowClick:
+      ({ history }) =>
+      ({
+        currentTarget: {
+          dataset: { taskId },
+        },
+      }) =>
+        history.push(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 

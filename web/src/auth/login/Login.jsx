@@ -20,7 +20,9 @@ import { loginStart } from '../AuthRedux'
 import Reason from './Reason'
 import { reasonTypes } from '../loggedOutReasons'
 
-const cssClasses = classnames.bind(require('./Login.css'))
+import styles from './Login.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   title: {
@@ -63,27 +65,26 @@ const enhance = compose(
       },
     },
     {
-      onSubmit: (
-        state,
-        { history, location, loginStart, loggedOutReason }
-      ) => data => {
-        loginStart(data).then(() => {
-          const referrer = flowRight(
-            x => omit(x, 'search'),
-            x =>
-              get(x, 'state.referrer', {
-                pathname: '/',
-              })
-          )(location)
-          if (loggedOutReason === reasonTypes.idle) {
-            history.replace(referrer)
-          } else if (loggedOutReason === reasonTypes.userRequested) {
-            history.replace('/')
-          } else {
-            history.push(referrer)
-          }
-        })
-      },
+      onSubmit:
+        (state, { history, location, loginStart, loggedOutReason }) =>
+        data => {
+          loginStart(data).then(() => {
+            const referrer = flowRight(
+              x => omit(x, 'search'),
+              x =>
+                get(x, 'state.referrer', {
+                  pathname: '/',
+                })
+            )(location)
+            if (loggedOutReason === reasonTypes.idle) {
+              history.replace(referrer)
+            } else if (loggedOutReason === reasonTypes.userRequested) {
+              history.replace('/')
+            } else {
+              history.push(referrer)
+            }
+          })
+        },
 
       onChange: () => nextValues => ({ values: nextValues }),
 

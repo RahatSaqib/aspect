@@ -7,7 +7,9 @@ import Grid from '@material-ui/core/Grid'
 import FormSection from './FormSection'
 import FormSectionHeader from './FormSectionHeader'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectForm = ({ config: { sections, classNames, messages } }) => {
   classNames = classNames || {}

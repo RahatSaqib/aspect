@@ -8,7 +8,7 @@ describe('Summary Status component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     allSummaryItems: Immutable.fromJS({
-      '13': {
+      13: {
         id: 13,
         icon: 'MdAssignment',
         title: 'Tests',
@@ -36,7 +36,7 @@ describe('Summary Status component', () => {
           },
         },
       },
-      '14': {
+      14: {
         id: 14,
         icon: 'MdAssignment',
         title: 'MTB+ Rate',
@@ -64,7 +64,7 @@ describe('Summary Status component', () => {
           },
         },
       },
-      '15': {
+      15: {
         id: 15,
         icon: 'MdAssignment',
         title: 'RR Rate',
@@ -92,7 +92,7 @@ describe('Summary Status component', () => {
           },
         },
       },
-      '16': {
+      16: {
         id: 16,
         icon: 'MdAssignment',
         title: 'TI Rate',

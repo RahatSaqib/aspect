@@ -1,5 +1,5 @@
 const path = require('path')
-const assign = require('lodash/assign')
+// const assign = require('lodash/assign')
 const webpack = require('webpack')
 const pxToRem = require('postcss-pxtorem')
 const cssImport = require('postcss-import')
@@ -7,8 +7,12 @@ const cssNext = require('postcss-cssnext')
 const DelWebpackPlugin = require('del-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
+// const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const WebpackPwaManifest = require('webpack-pwa-manifest')
+// const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
+// const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const postcssPresetEnv = require('postcss-preset-env')
 
 const {
   definePluginVariables,
@@ -17,12 +21,20 @@ const {
 
 const postcssPlugins = () => [
   pxToRem({
-    // See available options: https://github.com/cuth/postcss-pxtorem#options
+    /* see options: https://github.com/cuth/postcss-pxtorem#options */
     rootValue: 16,
   }),
   cssImport(),
-  cssNext({
+  postcssPresetEnv({
+    /* see https://www.npmjs.com/package/postcss-preset-env */
     browsers: ['> 1%', 'last 2 versions'],
+    // importFrom: {
+    //   customProperties: customPropertiesVariables,
+    // },
+    // exportTo: 'custom-properties.css',
+  }),
+  cssNext({
+    // browsers: ['> 1%', 'last 2 versions'],
     features: {
       customProperties: {
         variables: customPropertiesVariables,
@@ -52,11 +64,15 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
+          process.env.NODE_ENV === 'development'
+            ? 'style-loader'
+            : MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
               modules: {
                 localIdentName: '[name]--[local]--[hash:base64:8]',
+                exportLocalsConvention: 'camelCase',
               },
               importLoaders: 1,
             },
@@ -64,55 +80,27 @@ module.exports = {
           {
             loader: 'postcss-loader',
             options: {
-              ident: 'postcss',
-              sourceMap: 'inline',
-              plugins: postcssPlugins,
+              postcssOptions: {
+                plugins: postcssPlugins(),
+              },
             },
           },
         ],
       },
       {
-        test: /\.(png|jpg|gif|woff|woff2)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 8192,
-              esModule: false,
-            },
-          },
-        ],
+        // images
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset',
       },
       {
-        test: /\.svg$/,
-        include: path.resolve(__dirname, '../src'),
-        use: [
-          {
-            loader: 'svg-sprite-loader',
-            options: {
-              extract: true,
-            },
-          },
-        ],
+        // fonts
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset',
       },
       {
-        test: /\.(mp4|ogg|svg)$/,
-        exclude: path.resolve(__dirname, '../src'),
-        use: ['file-loader'],
-      },
-      {
-        test: /\.html$/,
-        use: [
-          {
-            loader: 'html-loader',
-            options: {
-              interpolate: true,
-              minimize: false,
-              removeComments: false,
-              collapseWhitespace: false,
-            },
-          },
-        ],
+        // video
+        test: /\.(mp4|ogg)$/i,
+        type: 'asset',
       },
     ],
   },
@@ -120,15 +108,23 @@ module.exports = {
     new DelWebpackPlugin({
       info: false,
     }),
-    new webpack.DefinePlugin(assign({}, definePluginVariables)),
+    new webpack.DefinePlugin(definePluginVariables),
+    new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
-      inject: true,
+      /*
+       * this prop is added by 'html-webpack-harddisk-plugin'
+       * see see https://github.com/jantimon/html-webpack-harddisk-plugin
+       */
       alwaysWriteToDisk: true,
+      /*
+       * see options - https://github.com/jantimon/html-webpack-plugin#options
+       */
+      inject: true,
       template: 'src/template/index.html',
       filename: 'index.html',
       favicon: path.join(__dirname, '../src/template/favicon.png'),
     }),
-    new SpriteLoaderPlugin(),
+    // new SpriteLoaderPlugin(),
     new WebpackPwaManifest({
       icons: [
         {

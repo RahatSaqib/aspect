@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Unit } from '../../components/pureGrids'
 
-const cssClasses = classnames.bind(require('./Summary.css'))
+import styles from './Summary.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

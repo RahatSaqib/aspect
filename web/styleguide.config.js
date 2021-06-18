@@ -21,7 +21,7 @@ module.exports = {
     ),
     ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
     ...glob.sync(
-      'src/components/shared/@(expansionPanel|data-table)/!(index).{js,jsx}'
+      'src/components/shared/@(accordion|data-table)/!(index).{js,jsx}'
     ),
   ],
   styleguideComponents: {

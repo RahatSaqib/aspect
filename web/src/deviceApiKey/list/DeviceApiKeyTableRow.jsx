@@ -8,7 +8,9 @@ import {
 } from '../../components/shared/tableBody'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
-const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
+import styles from './DeviceApiKeyTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

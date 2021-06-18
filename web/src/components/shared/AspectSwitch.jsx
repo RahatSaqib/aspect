@@ -2,7 +2,7 @@ import React from 'react'
 import Switch from '@material-ui/core/Switch'
 import Typography from '@material-ui/core/Typography'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 
 const styles = theme => ({
   colorBar: {},
@@ -69,6 +69,7 @@ const AspectSwitch = ({ labelText, classes, ...restProps }) => (
     }
     control={
       <Switch
+        color="secondary"
         {...restProps}
         classes={{
           switchBase: classes.iOSSwitchBase,

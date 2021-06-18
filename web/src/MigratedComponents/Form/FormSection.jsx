@@ -6,7 +6,9 @@ import Grid from '@material-ui/core/Grid'
 import { useFormikState } from './Formik/Context'
 import FormItem from './FormItem'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getVisibleRows = (rows, formik) => {
   return rows.map(row => {

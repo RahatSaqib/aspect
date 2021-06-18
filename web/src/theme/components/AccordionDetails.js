@@ -1,5 +1,5 @@
 export default () => ({
-  MuiExpansionPanelDetails: {
+  MuiAccordionDetails: {
     root: {
       padding: '8px 16px 16px',
     },

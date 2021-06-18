@@ -8,7 +8,9 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./ResetPassword.css'))
+import styles from './ResetPassword.css'
+
+const cssClasses = classnames.bind(styles)
 
 export function validate({ newPassword, confirmNewPassword }, { intl }) {
   const errors = {}

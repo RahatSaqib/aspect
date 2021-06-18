@@ -2,7 +2,9 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./ColoredNumber.css'))
+import styles from './ColoredNumber.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ColoredNumber = ({ number, intl, formatNumberStyle, error, success }) => (
   <span

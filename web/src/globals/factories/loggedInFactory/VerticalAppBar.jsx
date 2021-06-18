@@ -11,11 +11,16 @@ import MenuIcon from '@material-ui/icons/Menu'
 import ConfluenceIcon from './ConfluenceIcon'
 import { toggleDrawer } from '../../../auth/AuthRedux'
 
-const cssClasses = classnames.bind(require('./index.css'))
+import styles from './index.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   withHandlers({
-    navigateRoot: ({ history }) => () => history.push('/'),
+    navigateRoot:
+      ({ history }) =>
+      () =>
+        history.push('/'),
   }),
   connect(
     null,

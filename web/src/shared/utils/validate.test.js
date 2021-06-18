@@ -77,11 +77,7 @@ describe('validate', () => {
 
     each(['', null, undefined], address => {
       it(`should return true for blank email address (${address}) when is optional was called`, () => {
-        expect(
-          emailAddress(address)
-            .optional()
-            .isValid()
-        ).toBe(true)
+        expect(emailAddress(address).optional().isValid()).toBe(true)
       })
     })
   })

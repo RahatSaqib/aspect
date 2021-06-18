@@ -169,8 +169,7 @@ export function fetchReportsForSelectList(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchReportsForSelectList.GET.default.title',
+              id: 'errorResponseMessages.fetchReportsForSelectList.GET.default.title',
               defaultMessage: 'Loading Reports Failed',
             },
           })

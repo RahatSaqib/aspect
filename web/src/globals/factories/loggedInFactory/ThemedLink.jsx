@@ -5,7 +5,9 @@ import classnames from 'classnames/bind'
 import PermissionsProvider from '../../../Providers/PermissionsProvider'
 import Link from '../../../components/shared/Link'
 
-const cssClasses = classnames.bind(require('./index.css'))
+import styles from './index.css'
+
+const cssClasses = classnames.bind(styles)
 
 const themes = {
   Link: {

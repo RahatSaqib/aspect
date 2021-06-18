@@ -9,7 +9,9 @@ import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs'
 import messagesBase from './messages'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FormItem = ({
   classNames,

@@ -8,7 +8,9 @@ import AspectTooltip from '../../../components/shared/AspectTooltip'
 import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./PieRowGraph.css'))
+import styles from './PieRowGraph.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectResponsiveRow = ({ data, componentClasses }) => {
   const { formatMessage: intlFormatMessage } = useIntl()

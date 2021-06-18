@@ -6,7 +6,9 @@ import classnames from 'classnames/bind'
 import messages from '../messages'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page counts and navigation

@@ -17,7 +17,9 @@ import {
 } from '../../filter/FilterRedux'
 import { getAspectDisplayPreferences } from '../sideEffects/LocalStorage'
 
-const cssClasses = classnames.bind(require('./BrowseFilters.css'))
+import styles from './BrowseFilters.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   pure,
@@ -31,53 +33,57 @@ const enhance = compose(
     }
   }),
   withHandlers({
-    onChangeFilters: ({ history, location }) => nextFilters => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = mergeToFiltersParams(
-        nextFilters,
-        new URLSearchParams(searchParams.get('filters') || '')
-      )
-      searchParams.set('filters', filtersParams)
-      searchParams.delete('pageAt')
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+    onChangeFilters:
+      ({ history, location }) =>
+      nextFilters => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = mergeToFiltersParams(
+          nextFilters,
+          new URLSearchParams(searchParams.get('filters') || '')
+        )
+        searchParams.set('filters', filtersParams)
+        searchParams.delete('pageAt')
+        history.replace({
+          ...location,
+          search: searchParams.toString(),
+        })
+      },
 
-    onRemoveFilterItem: ({ history, location }) => filterKey => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
+    onRemoveFilterItem:
+      ({ history, location }) =>
+      filterKey => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = new URLSearchParams(
+          searchParams.get('filters') || ''
+        )
 
-      switch (filterKey) {
-        case 'countryId':
-          filtersParams.delete(filterKey)
-          filtersParams.delete('stateId')
-          filtersParams.delete('lgaId')
-          break
-        case 'stateId':
-          filtersParams.delete(filterKey)
-          filtersParams.delete('lgaId')
-          break
-        case 'reportableSiteName':
-          filtersParams.delete(filterKey)
-          filtersParams.delete('reportableSiteId')
-          break
-        default:
-          filtersParams.delete(filterKey)
-          break
-      }
+        switch (filterKey) {
+          case 'countryId':
+            filtersParams.delete(filterKey)
+            filtersParams.delete('stateId')
+            filtersParams.delete('lgaId')
+            break
+          case 'stateId':
+            filtersParams.delete(filterKey)
+            filtersParams.delete('lgaId')
+            break
+          case 'reportableSiteName':
+            filtersParams.delete(filterKey)
+            filtersParams.delete('reportableSiteId')
+            break
+          default:
+            filtersParams.delete(filterKey)
+            break
+        }
 
-      searchParams.set('filters', filtersParams)
-      searchParams.delete('sortCol')
+        searchParams.set('filters', filtersParams)
+        searchParams.delete('sortCol')
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+        history.replace({
+          ...location,
+          search: searchParams.toString(),
+        })
+      },
   }),
   connect(
     state => ({

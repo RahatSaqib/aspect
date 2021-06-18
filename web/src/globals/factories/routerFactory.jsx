@@ -49,8 +49,11 @@ import CaseDetails from '../../case/details/CaseDetails'
 
 function useHashAndScroll() {
   const location = useLocation()
+  // if (location.location) {
+  //   location = location.location
+  // }
   useEffect(() => {
-    const { hash } = location
+    const { hash = '' } = location
     setTimeout(() => {
       const nodeList = document.querySelectorAll(
         `[name="${hash.replace('#', '')}"]`
@@ -69,62 +72,78 @@ const notImplementedLoggedInFactory = compose(loggedInFactory, name => () => (
 ))
 
 const makeRenderRedirectToLoginWithReason = memoize(
-  reason => ({ location }) => (
-    <Redirect
-      to={{
-        pathname: '/login',
-        state: { referrer: location, reason },
-      }}
-    />
-  )
+  reason =>
+    ({ location }) => {
+      return (
+        <Redirect
+          to={{
+            pathname: '/login',
+            state: { referrer: location, reason },
+          }}
+        />
+      )
+    }
 )
 
-const renderRedirectToLoginOr = props =>
-  props.isLoggedOut &&
-  makeRenderRedirectToLoginWithReason(props.loggedOutReason)
+const renderRedirectToLoginOr = props => {
+  return (
+    (props.isLoggedOut || props.loggedOutReason === 'idle') &&
+    makeRenderRedirectToLoginWithReason(props.loggedOutReason)
+  )
+}
 
-const makeRenderRedirectToLicense = memoize(licenseId => ({ location }) => (
-  <Redirect
-    to={{
-      pathname: '/license',
-      state: { referrer: location, licenseId },
-    }}
-  />
-))
-
-const renderRedirectToLicenseOr = props =>
-  props.hasToAcceptLicenseId &&
-  makeRenderRedirectToLicense(props.hasToAcceptLicenseId)
-
-const renderRedirectToDashboard = ({ permissions }) => ({ location }) => {
-  let pathname = ''
-  if (isPermittedUser(permissions, { required: ['dashboard:summary'] })) {
-    pathname = '/dashboard'
-  } else if (isPermittedUser(permissions, { required: ['operationalData'] })) {
-    pathname = '/operational-data'
-  } else {
-    pathname = '/browse'
-  }
-
+const makeRenderRedirectToLicense = memoize(licenseId => ({ location }) => {
   return (
     <Redirect
       to={{
-        pathname,
-        state: { referrer: location },
+        pathname: '/license',
+        state: { referrer: location, licenseId },
       }}
     />
   )
+})
+
+const renderRedirectToLicenseOr = props => {
+  return (
+    props.hasToAcceptLicenseId &&
+    makeRenderRedirectToLicense(props.hasToAcceptLicenseId)
+  )
 }
+
+const renderRedirectToDashboard =
+  ({ permissions }) =>
+  ({ location }) => {
+    let pathname = ''
+    if (isPermittedUser(permissions, { required: ['dashboard:summary'] })) {
+      pathname = '/dashboard'
+    } else if (
+      isPermittedUser(permissions, { required: ['operationalData'] })
+    ) {
+      pathname = '/operational-data'
+    } else {
+      pathname = '/browse'
+    }
+    return (
+      <Redirect
+        to={{
+          pathname,
+          state: { referrer: location },
+        }}
+      />
+    )
+  }
 
 const renderRedirectToNotFound = (props, requiredPermission) => {
   if (!isPermittedUser(props.permissions, { required: requiredPermission }))
     return renderNotFound
 }
 
-const renderRedirectToBrowse = ({ permissions }) => () => {
-  const reducedNav = reduceNavLinks(navigations, permissions)
-  return <Redirect to={head(reducedNav).value || '/browse/device'} />
-}
+const renderRedirectToBrowse =
+  ({ permissions }) =>
+  () => {
+    const reducedNav = reduceNavLinks(navigations, permissions)
+    return <Redirect to={head(reducedNav).value || '/browse/device'} />
+  }
 
 const renderLoadableLogin = signedOutFactory(LoadableLogin)
 const renderResetPassword = signedOutFactory(ResetPassword)
@@ -175,10 +194,16 @@ const renderRedirectToHomePage = () => {
   )
 }
 
-const isLoggedInAndOnLogin = ({ isLoggedOut }, { location }) => {
+const isLoggedInAndOnLogin = (
+  { isLoggedOut, loggedOutReason },
+  { location }
+) => {
   const { pathname } = location
   const pathsToCheck = ['/login']
-  return !isLoggedOut && pathsToCheck.includes(pathname)
+  return (
+    !(isLoggedOut || loggedOutReason === 'idle') &&
+    pathsToCheck.includes(pathname)
+  )
 }
 
 const renderCaseDetails = loggedInFactory(CaseDetails)
@@ -560,10 +585,11 @@ const AppRoutes = ({ props }) => {
   )
 }
 
-export const routerFactory = () => props => (
-  <Router history={history}>
-    <AppRoutes props={props} />
-  </Router>
-)
+export const routerFactory = () => props =>
+  (
+    <Router history={history}>
+      <AppRoutes props={props} />
+    </Router>
+  )
 
 export default routerFactory

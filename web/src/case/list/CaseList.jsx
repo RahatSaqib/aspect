@@ -32,7 +32,9 @@ import { fetchCases } from '../CaseRedux'
 import DataTableHead from '../../components/shared/tableHead'
 import CaseTableRow from './CaseTableRow'
 
-const cssClasses = classnames.bind(require('./CaseList.css'))
+import styles from './CaseList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   createdOn: {
@@ -127,36 +129,32 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchCases,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { caseId },
+    onInitialLoad:
+      ({ location, fetchCases, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        }
       },
-    }) => {
-      history.push(`/browse/case/${caseId}`)
-    },
+    onRowClick:
+      ({ history }) =>
+      ({
+        currentTarget: {
+          dataset: { caseId },
+        },
+      }) => {
+        history.push(`/browse/case/${caseId}`)
+      },
   }),
   lifecycle({
     componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 

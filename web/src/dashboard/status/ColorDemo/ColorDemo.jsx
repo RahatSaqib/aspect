@@ -1,7 +1,9 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./colordemo.css'))
+import styles from './colordemo.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ColorBlock = ({ itemVal, itemKey }) => (
   <div

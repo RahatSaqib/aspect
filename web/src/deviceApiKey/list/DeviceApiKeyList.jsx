@@ -52,7 +52,9 @@ import {
 import ExportListButton from '../../globals/components/ExportListButton'
 import AspectButton from '../../components/shared/AspectButton'
 
-const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
+import styles from './DeviceApiKeyList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   title: {
@@ -172,52 +174,42 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchDeviceApiKeys,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchDeviceApiKeys(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
+    onInitialLoad:
+      ({ location, fetchDeviceApiKeys, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchDeviceApiKeys(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        }
+      },
 
-    onExportClick: ({
-      location,
-      exportDeviceApiKeys,
-      sortCol,
-      sortDir,
-      table,
-      pageAt,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportDeviceApiKeys(
-          filtersParams,
-          format,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          'deviceApiKey'
-        )
-      }
-    },
+    onExportClick:
+      ({ location, exportDeviceApiKeys, sortCol, sortDir, table, pageAt }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportDeviceApiKeys(
+            filtersParams,
+            format,
+            sortCol,
+            sortDir,
+            pageAt,
+            table.get('total') > 0 ? table.get('total') : 1,
+            'deviceApiKey'
+          )
+        }
+      },
   }),
   lifecycle({
     componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -257,123 +249,135 @@ const enhance = compose(
       .sort(),
   })),
   withHandlers({
-    onOpenGeneratorDialog: ({ dialogState, onChangeDialogState }) => () =>
-      onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: true }),
-    onCloseGeneratorDialog: ({ dialogState, onChangeDialogState }) => () =>
-      onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false }),
-    onOpenAssignerDialog: ({ dialogState, onChangeDialogState }) => () =>
-      onChangeDialogState({ ...dialogState, isAssignerDialogOpen: true }),
-    onCloseAssignerDialog: ({ dialogState, onChangeDialogState }) => () =>
-      onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false }),
-    onGeneratorFormChange: ({
-      dialogState,
-      onChangeDialogState,
-    }) => generatorValues =>
-      onChangeDialogState({ ...dialogState, generatorValues }),
-    onGenerate: ({
-      generateDeviceApiKeys,
-      onInitialLoad,
-      dialogState,
-      onChangeDialogState,
-    }) => generatorValues => {
-      generateDeviceApiKeys(generatorValues).then(() => {
-        onChangeDialogState({
-          ...dialogState,
-          isGeneratorDialogOpen: false,
-          generatorValues: DEFAULT_GENERATOR_VALUES,
+    onOpenGeneratorDialog:
+      ({ dialogState, onChangeDialogState }) =>
+      () =>
+        onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: true }),
+    onCloseGeneratorDialog:
+      ({ dialogState, onChangeDialogState }) =>
+      () =>
+        onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false }),
+    onOpenAssignerDialog:
+      ({ dialogState, onChangeDialogState }) =>
+      () =>
+        onChangeDialogState({ ...dialogState, isAssignerDialogOpen: true }),
+    onCloseAssignerDialog:
+      ({ dialogState, onChangeDialogState }) =>
+      () =>
+        onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false }),
+    onGeneratorFormChange:
+      ({ dialogState, onChangeDialogState }) =>
+      generatorValues =>
+        onChangeDialogState({ ...dialogState, generatorValues }),
+    onGenerate:
+      ({
+        generateDeviceApiKeys,
+        onInitialLoad,
+        dialogState,
+        onChangeDialogState,
+      }) =>
+      generatorValues => {
+        generateDeviceApiKeys(generatorValues).then(() => {
+          onChangeDialogState({
+            ...dialogState,
+            isGeneratorDialogOpen: false,
+            generatorValues: DEFAULT_GENERATOR_VALUES,
+          })
+          onInitialLoad()
         })
-        onInitialLoad()
-      })
-    },
-    onAssignerFormChange: ({
-      dialogState,
-      onChangeDialogState,
-    }) => assignerValues =>
-      onChangeDialogState({ ...dialogState, assignerValues }),
-    onAssign: ({
-      assignDeviceApiKeys,
-      onInitialLoad,
-      dialogState,
-      onChangeDialogState,
-    }) => assignerValues => {
-      assignDeviceApiKeys(assignerValues).then(() => {
-        onChangeDialogState({
-          ...dialogState,
-          isAssignerDialogOpen: false,
-          assignerValues: DEFAULT_ASSIGNER_VALUES,
-        })
-        onInitialLoad()
-      })
-    },
-    onSelectAllChange: ({
-      selectableIds,
-      dialogState,
-      onChangeDialogState,
-    }) => isInputChecked => {
-      const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
-      onChangeDialogState({
-        ...dialogState,
-        assignerValues: {
-          ...dialogState.assignerValues,
-          deviceApiKeyIds: nextDeviceApiKeyIds,
-        },
-      })
-    },
-
-    onSelectedChange: ({ dialogState, onChangeDialogState, items }) => (
-      {
-        target: {
-          dataset: { deviceApiKeyId },
-        },
       },
-      isInputChecked
-    ) => {
-      const { assignerValues } = dialogState
-      const nextDeviceApiKeyIds = isInputChecked
-        ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
-        : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
-      let selectedDDL = {}
-      if (nextDeviceApiKeyIds.length === 1) {
-        const [firstElementId] = nextDeviceApiKeyIds
-        const { siteId, countryId, partnerId } = items.byId
-          .get(firstElementId)
-          .toJS()
-        selectedDDL = {
-          siteId,
-          countryId,
-          partnerId,
-        }
-      } else if (nextDeviceApiKeyIds.length > 1) {
-        const selection = []
-        nextDeviceApiKeyIds.forEach(id => {
-          const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
-          selection.push({ partnerId, siteId, countryId })
+    onAssignerFormChange:
+      ({ dialogState, onChangeDialogState }) =>
+      assignerValues =>
+        onChangeDialogState({ ...dialogState, assignerValues }),
+    onAssign:
+      ({
+        assignDeviceApiKeys,
+        onInitialLoad,
+        dialogState,
+        onChangeDialogState,
+      }) =>
+      assignerValues => {
+        assignDeviceApiKeys(assignerValues).then(() => {
+          onChangeDialogState({
+            ...dialogState,
+            isAssignerDialogOpen: false,
+            assignerValues: DEFAULT_ASSIGNER_VALUES,
+          })
+          onInitialLoad()
         })
-        const [{ countryId, siteId, partnerId }] = intersectionWith(
-          selection,
-          isEqual
-        )
-        selectedDDL = { countryId, siteId, partnerId }
-      }
-      onChangeDialogState({
-        ...dialogState,
-        assignerValues: {
-          deviceApiKeyIds: nextDeviceApiKeyIds,
-          ...selectedDDL,
-        },
-      })
-    },
+      },
+    onSelectAllChange:
+      ({ selectableIds, dialogState, onChangeDialogState }) =>
+      isInputChecked => {
+        const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
+        onChangeDialogState({
+          ...dialogState,
+          assignerValues: {
+            ...dialogState.assignerValues,
+            deviceApiKeyIds: nextDeviceApiKeyIds,
+          },
+        })
+      },
 
-    onRevokedChange: ({ updateSingleDeviceApiKey }) => (event, revoked) => {
-      const {
-        target: {
-          dataset: { deviceApiKeyId },
+    onSelectedChange:
+      ({ dialogState, onChangeDialogState, items }) =>
+      (
+        {
+          target: {
+            dataset: { deviceApiKeyId },
+          },
         },
-      } = event
-      updateSingleDeviceApiKey(deviceApiKeyId, {
-        revoked,
-      })
-    },
+        isInputChecked
+      ) => {
+        const { assignerValues } = dialogState
+        const nextDeviceApiKeyIds = isInputChecked
+          ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
+          : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
+        let selectedDDL = {}
+        if (nextDeviceApiKeyIds.length === 1) {
+          const [firstElementId] = nextDeviceApiKeyIds
+          const { siteId, countryId, partnerId } = items.byId
+            .get(firstElementId)
+            .toJS()
+          selectedDDL = {
+            siteId,
+            countryId,
+            partnerId,
+          }
+        } else if (nextDeviceApiKeyIds.length > 1) {
+          const selection = []
+          nextDeviceApiKeyIds.forEach(id => {
+            const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
+            selection.push({ partnerId, siteId, countryId })
+          })
+          const [{ countryId, siteId, partnerId }] = intersectionWith(
+            selection,
+            isEqual
+          )
+          selectedDDL = { countryId, siteId, partnerId }
+        }
+        onChangeDialogState({
+          ...dialogState,
+          assignerValues: {
+            deviceApiKeyIds: nextDeviceApiKeyIds,
+            ...selectedDDL,
+          },
+        })
+      },
+
+    onRevokedChange:
+      ({ updateSingleDeviceApiKey }) =>
+      (event, revoked) => {
+        const {
+          target: {
+            dataset: { deviceApiKeyId },
+          },
+        } = event
+        updateSingleDeviceApiKey(deviceApiKeyId, {
+          revoked,
+        })
+      },
   })
 )
 

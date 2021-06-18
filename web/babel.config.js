@@ -1,4 +1,6 @@
 const plugins = [
+  '@babel/plugin-transform-runtime',
+
   ['babel-plugin-lodash', {}],
   // Stage 3
   '@babel/plugin-syntax-dynamic-import',
@@ -33,21 +35,22 @@ const plugins = [
 module.exports = {
   env: {
     webpack: {
+      // presets: ['@babel/preset-env', '@babel/preset-react'],
       presets: [
-        [
-          '@babel/preset-env',
-          {
-            modules: false,
-            corejs: { version: 3, proposals: true },
-            useBuiltIns: 'usage',
-            targets: {
-              browsers: ['last 2 versions'],
-            },
-          },
-        ],
+        '@babel/preset-env',
+        // [
+        //   '@babel/preset-env',
+        //   {
+        //     // modules: false,
+        //     // corejs: { version: 3, proposals: true },
+        //     // useBuiltIns: 'usage',
+        //     // targets: {
+        //     //   browsers: ['last 2 versions'],
+        //   },
+        // ],
         '@babel/preset-react',
       ],
-      plugins,
+      plugins: ['@babel/transform-runtime'],
     },
     test: {
       presets: [

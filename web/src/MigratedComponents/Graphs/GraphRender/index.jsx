@@ -19,8 +19,9 @@ import {
 
 import EmptyGraph from '../EmptyData'
 import { useAuthState } from '../../../Providers/AuthProvider'
+import styles from './GraphRender.css'
 
-const cssClasses = classnames.bind(require('./GraphRender.css'))
+const cssClasses = classnames.bind(styles)
 
 const Loading = () => (
   <div className={cssClasses('graphrender__spinner')}>

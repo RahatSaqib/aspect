@@ -3,7 +3,7 @@ import omit from 'lodash/omit'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Input from '@material-ui/core/Input'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 const styles = theme => ({

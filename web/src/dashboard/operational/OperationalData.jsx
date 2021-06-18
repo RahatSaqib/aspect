@@ -11,7 +11,9 @@ import { defineMessages, useIntl } from 'react-intl'
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
 
-const cssClasses = classnames.bind(require('./OperationalData.css'))
+import styles from './OperationalData.css'
+
+const cssClasses = classnames.bind(styles)
 
 const currentTabStyle = (currentTab, index) =>
   currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'

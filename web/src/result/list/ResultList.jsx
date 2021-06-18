@@ -46,7 +46,9 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { RESULT_LIST } from '../../MigratedComponents/QueryFetch/Result'
 
-const cssClasses = classnames.bind(require('./ResultList.css'))
+import styles from './ResultList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   {
@@ -104,11 +106,14 @@ const AddNewButton = requirePermissions({
 
 const onAddNewButtonClick = history => () => history.push('/browse/result/add')
 
-const onRowClick = history => ({
-  currentTarget: {
-    dataset: { resultId },
-  },
-}) => history.push(`/browse/result/${resultId}`)
+const onRowClick =
+  history =>
+  ({
+    currentTarget: {
+      dataset: { resultId },
+    },
+  }) =>
+    history.push(`/browse/result/${resultId}`)
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -350,10 +355,8 @@ const ResultList = () => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)

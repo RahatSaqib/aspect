@@ -46,10 +46,7 @@ describe('UserPreferencesForm module', () => {
         />
       )
       expect(
-        wrapper
-          .find(Button)
-          .filter({ type: 'submit' })
-          .prop('disabled')
+        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
       ).toBeFalsy()
     })
   })

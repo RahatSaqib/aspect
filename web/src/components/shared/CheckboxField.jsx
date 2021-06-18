@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AspectCheckbox from './AspectCheckbox'
 

@@ -48,18 +48,12 @@ describe('ResetPassword module', () => {
         xl: true,
       })
 
-      expect(
-        largeScreenDiv
-          .find(Stepper)
-          .dive()
-          .props().orientation
-      ).toEqual('horizontal')
-      expect(
-        smallScreenDiv
-          .find(Stepper)
-          .dive()
-          .props().orientation
-      ).toEqual('vertical')
+      expect(largeScreenDiv.find(Stepper).dive().props().orientation).toEqual(
+        'horizontal'
+      )
+      expect(smallScreenDiv.find(Stepper).dive().props().orientation).toEqual(
+        'vertical'
+      )
     })
 
     it('should contain the same steps for both large and small screens', () => {
@@ -144,16 +138,8 @@ describe('ResetPassword module', () => {
         smallScreenStep3ResetPasswordEnterPassword.props()
       )
       for (let i = 0; i < largeScreenStep4Finish.children().length; i++) {
-        expect(
-          largeScreenStep4Finish
-            .children()
-            .at(i)
-            .props()
-        ).toEqual(
-          smallScreenStep4Finish
-            .children()
-            .at(i)
-            .props()
+        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(
+          smallScreenStep4Finish.children().at(i).props()
         )
       }
     })

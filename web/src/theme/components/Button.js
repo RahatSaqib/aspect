@@ -1,4 +1,4 @@
-import { fade } from '@material-ui/core/styles'
+import { alpha } from '@material-ui/core/styles'
 
 export default ({ theme, themedColors }) => ({
   MuiButton: {
@@ -64,10 +64,10 @@ export default ({ theme, themedColors }) => ({
     /* Styles applied to the root element if `variant="outlined"` and `color="primary"`. */
     outlinedPrimary: {
       color: themedColors.primary,
-      border: `1px solid ${fade(themedColors.primary, 0.5)}`,
+      border: `1px solid ${alpha(themedColors.primary, 0.5)}`,
       '&:hover': {
         border: `1px solid ${themedColors.primary}`,
-        backgroundColor: fade(
+        backgroundColor: alpha(
           themedColors.primary,
           theme.palette.action.hoverOpacity
         ),

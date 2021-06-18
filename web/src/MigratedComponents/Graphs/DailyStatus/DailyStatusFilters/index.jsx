@@ -5,7 +5,9 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DailyStatusFilters = ({
   toggleAll: { checked, key, label },

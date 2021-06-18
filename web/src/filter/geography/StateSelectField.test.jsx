@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
-import { createMuiTheme } from '@material-ui/core/styles'
+import { createTheme as createMuiTheme } from '@material-ui/core/styles'
 
 import {
   LazyLoadItems,

@@ -18,7 +18,9 @@ import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorN
 import { SitesAllErrors } from './errors'
 import messages from '../messages'
 
-const cssClasses = classnames.bind(require('../Detail.css'))
+import styles from '../Detail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ResultTransferModal = ({
   intl: { formatMessage },
@@ -202,7 +204,7 @@ const ResultTransferModal = ({
         <TextField
           fullWidth
           multiline
-          rowsMax="5"
+          maxRows="5"
           placeholder={formatMessage(messages.enterComment)}
           onChange={event => setComment(event.target.value)}
           margin="normal"

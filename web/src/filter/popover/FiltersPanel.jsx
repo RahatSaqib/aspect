@@ -36,7 +36,9 @@ import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceSta
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 
-const cssClasses = classnames.bind(require('./FiltersPanel.css'))
+import styles from './FiltersPanel.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   connect(({ user, assay }) => ({
@@ -45,163 +47,210 @@ const enhance = compose(
   })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
-    onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
-    onAssayChange: ({ onChangeFilters }) => assayId =>
-      onChangeFilters({
-        assayId,
-        resultCategoryId: null,
-        resultCategoryGroupId: null,
-      }),
-    onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
-      onChangeFilters({ diseaseId }),
-    onDateChange: ({ onChangeFilters }) => dateValues =>
-      onChangeFilters(dateValues),
+    onToggleShown:
+      ({ setIsShown }) =>
+      () =>
+        setIsShown(isShown => !isShown),
+    onAssayChange:
+      ({ onChangeFilters }) =>
+      assayId =>
+        onChangeFilters({
+          assayId,
+          resultCategoryId: null,
+          resultCategoryGroupId: null,
+        }),
+    onDiseaseChange:
+      ({ onChangeFilters }) =>
+      diseaseId =>
+        onChangeFilters({ diseaseId }),
+    onDateChange:
+      ({ onChangeFilters }) =>
+      dateValues =>
+        onChangeFilters(dateValues),
 
-    onCountryIdChange: ({ onChangeFilters }) => countryId =>
-      onChangeFilters({
-        countryId,
-        stateId: undefined,
-        lgaId: undefined,
-      }),
+    onCountryIdChange:
+      ({ onChangeFilters }) =>
+      countryId =>
+        onChangeFilters({
+          countryId,
+          stateId: undefined,
+          lgaId: undefined,
+        }),
 
-    onStateIdChange: ({ onChangeFilters }) => stateId =>
-      onChangeFilters({
-        stateId,
-        lgaId: undefined,
-      }),
+    onStateIdChange:
+      ({ onChangeFilters }) =>
+      stateId =>
+        onChangeFilters({
+          stateId,
+          lgaId: undefined,
+        }),
 
-    onLgaIdChange: ({ onChangeFilters }) => lgaId =>
-      onChangeFilters({
-        lgaId,
-      }),
+    onLgaIdChange:
+      ({ onChangeFilters }) =>
+      lgaId =>
+        onChangeFilters({
+          lgaId,
+        }),
 
-    onResultCategoryChange: ({ onChangeFilters }) => resultCategoryId =>
-      onChangeFilters({
-        resultCategoryId,
-      }),
+    onResultCategoryChange:
+      ({ onChangeFilters }) =>
+      resultCategoryId =>
+        onChangeFilters({
+          resultCategoryId,
+        }),
 
-    onResultCategoryGroupChange: ({
-      onChangeFilters,
-    }) => resultCategoryGroupId =>
-      onChangeFilters({
-        resultCategoryGroupId,
-      }),
+    onResultCategoryGroupChange:
+      ({ onChangeFilters }) =>
+      resultCategoryGroupId =>
+        onChangeFilters({
+          resultCategoryGroupId,
+        }),
 
-    onTextFieldCommitValue: ({ onChangeFilters }) => ({
-      target: { name, value },
-    }) =>
-      onChangeFilters({
-        [name]: value,
-      }),
+    onTextFieldCommitValue:
+      ({ onChangeFilters }) =>
+      ({ target: { name, value } }) =>
+        onChangeFilters({
+          [name]: value,
+        }),
 
-    onConsumableIdChange: ({ onChangeFilters }) => consumableId =>
-      onChangeFilters({
-        consumableId,
-      }),
+    onConsumableIdChange:
+      ({ onChangeFilters }) =>
+      consumableId =>
+        onChangeFilters({
+          consumableId,
+        }),
 
-    onPartnerIdChange: ({ onChangeFilters }) => partnerId =>
-      onChangeFilters({
-        partnerId,
-      }),
+    onPartnerIdChange:
+      ({ onChangeFilters }) =>
+      partnerId =>
+        onChangeFilters({
+          partnerId,
+        }),
 
-    onSampleOriginSiteChange: ({ onChangeFilters }) => sampleOriginSite =>
-      onChangeFilters({
-        sampleOriginSite,
-      }),
+    onSampleOriginSiteChange:
+      ({ onChangeFilters }) =>
+      sampleOriginSite =>
+        onChangeFilters({
+          sampleOriginSite,
+        }),
 
-    onSiteNameChange: ({ onChangeFilters }) => siteName =>
-      onChangeFilters({
-        siteName,
-      }),
+    onSiteNameChange:
+      ({ onChangeFilters }) =>
+      siteName =>
+        onChangeFilters({
+          siteName,
+        }),
 
-    onReportableSiteChange: ({ onChangeFilters }) => ({ id, name }) => {
-      onChangeFilters({
-        reportableSiteName: name,
-        reportableSiteId: id,
-      })
-    },
+    onReportableSiteChange:
+      ({ onChangeFilters }) =>
+      ({ id, name }) => {
+        onChangeFilters({
+          reportableSiteName: name,
+          reportableSiteId: id,
+        })
+      },
 
-    onSiteIdChange: ({ onChangeFilters }) => siteId =>
-      onChangeFilters({
-        siteId,
-      }),
+    onSiteIdChange:
+      ({ onChangeFilters }) =>
+      siteId =>
+        onChangeFilters({
+          siteId,
+        }),
 
-    onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
-      onChangeFilters({
-        workflowStatusId,
-      }),
+    onWorkflowStatusIdChange:
+      ({ onChangeFilters }) =>
+      workflowStatusId =>
+        onChangeFilters({
+          workflowStatusId,
+        }),
 
-    onTreatmentStatusChange: ({ onChangeFilters }) => treatmentStatus =>
-      onChangeFilters({
-        treatmentStatus,
-      }),
+    onTreatmentStatusChange:
+      ({ onChangeFilters }) =>
+      treatmentStatus =>
+        onChangeFilters({
+          treatmentStatus,
+        }),
 
-    onDeviceApprovalIdChange: ({ onChangeFilters }) => deviceApprovalId =>
-      onChangeFilters({
-        deviceApprovalId,
-      }),
-    onDeviceTypeChange: ({ onChangeFilters }) => deviceType =>
-      onChangeFilters({
-        deviceType,
-      }),
-    onDeviceMaintenanceStatusIdChange: ({
-      onChangeFilters,
-    }) => deviceMaintenanceStatusId =>
-      onChangeFilters({ deviceMaintenanceStatusId }),
-    onRevokedChange: ({ onChangeFilters }) => revoked =>
-      onChangeFilters({
-        revoked,
-      }),
+    onDeviceApprovalIdChange:
+      ({ onChangeFilters }) =>
+      deviceApprovalId =>
+        onChangeFilters({
+          deviceApprovalId,
+        }),
+    onDeviceTypeChange:
+      ({ onChangeFilters }) =>
+      deviceType =>
+        onChangeFilters({
+          deviceType,
+        }),
+    onDeviceMaintenanceStatusIdChange:
+      ({ onChangeFilters }) =>
+      deviceMaintenanceStatusId =>
+        onChangeFilters({ deviceMaintenanceStatusId }),
+    onRevokedChange:
+      ({ onChangeFilters }) =>
+      revoked =>
+        onChangeFilters({
+          revoked,
+        }),
 
     onExcelExport: props => () =>
       clickExport(props, props.exportFormatTypes.EXCEL),
     onCsvExport: props => () => clickExport(props, props.exportFormatTypes.CSV),
 
-    onDisagreedConfirmation: ({ closeExportConfirmation }) => () =>
-      closeExportConfirmation(),
-    onAgreedConfirmation: ({
-      listExport,
-      beginListExportProcessing,
-      onClickExport,
-      closeExportConfirmation,
-    }) => () => {
-      beginListExportProcessing(listExport.currentFormatType)
-      onClickExport(listExport.currentFormatType)
-      closeExportConfirmation()
-    },
-    onOnlyReportableResultsBoolChange: ({
-      onChangeFilters,
-    }) => onlyReportableResults =>
-      onChangeFilters({
-        onlyReportableResults,
-      }),
-    onOnlyDownloadedByReporterBoolChange: ({
-      onChangeFilters,
-    }) => onlyDownloadedByReporter =>
-      onChangeFilters({
-        onlyDownloadedByReporter,
-      }),
-    onOnlyEverTransferredBoolChange: ({
-      onChangeFilters,
-    }) => onlyEverTransferred =>
-      onChangeFilters({
-        onlyEverTransferred,
-      }),
-    onOnlyTreatmentRequiredBoolChange: ({
-      onChangeFilters,
-    }) => onlyTreatmentRequired =>
-      onChangeFilters({
-        onlyTreatmentRequired,
-      }),
-    onStockLeftChange: ({ onChangeFilters }) => stockLeft =>
-      onChangeFilters({
-        stockLeft,
-      }),
+    onDisagreedConfirmation:
+      ({ closeExportConfirmation }) =>
+      () =>
+        closeExportConfirmation(),
+    onAgreedConfirmation:
+      ({
+        listExport,
+        beginListExportProcessing,
+        onClickExport,
+        closeExportConfirmation,
+      }) =>
+      () => {
+        beginListExportProcessing(listExport.currentFormatType)
+        onClickExport(listExport.currentFormatType)
+        closeExportConfirmation()
+      },
+    onOnlyReportableResultsBoolChange:
+      ({ onChangeFilters }) =>
+      onlyReportableResults =>
+        onChangeFilters({
+          onlyReportableResults,
+        }),
+    onOnlyDownloadedByReporterBoolChange:
+      ({ onChangeFilters }) =>
+      onlyDownloadedByReporter =>
+        onChangeFilters({
+          onlyDownloadedByReporter,
+        }),
+    onOnlyEverTransferredBoolChange:
+      ({ onChangeFilters }) =>
+      onlyEverTransferred =>
+        onChangeFilters({
+          onlyEverTransferred,
+        }),
+    onOnlyTreatmentRequiredBoolChange:
+      ({ onChangeFilters }) =>
+      onlyTreatmentRequired =>
+        onChangeFilters({
+          onlyTreatmentRequired,
+        }),
+    onStockLeftChange:
+      ({ onChangeFilters }) =>
+      stockLeft =>
+        onChangeFilters({
+          stockLeft,
+        }),
 
-    onReportNameChange: ({ onChangeFilters }) => reportName =>
-      onChangeFilters({
-        reportName,
-      }),
+    onReportNameChange:
+      ({ onChangeFilters }) =>
+      reportName =>
+        onChangeFilters({
+          reportName,
+        }),
   })
 )
 

@@ -4,7 +4,9 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
 
-const cssClasses = classnames.bind(require('./DetailBackBar.css'))
+import styles from './DetailBackBar.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

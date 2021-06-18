@@ -159,15 +159,8 @@ export class AccountDetails extends PureComponent {
   }
 
   render() {
-    const {
-      intl,
-      loading,
-      saving,
-      accountDetails,
-      history,
-      location,
-      match,
-    } = this.props
+    const { intl, loading, saving, accountDetails, history, location, match } =
+      this.props
     const { formatMessage } = intl
 
     return (

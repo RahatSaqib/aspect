@@ -11,7 +11,9 @@ import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../MigratedComponents/Query
 import { types } from './ResultCategoryGroupSelectFieldRedux'
 import useI18n from '../../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('../../popover/FiltersPanel.css'))
+import styles from '../../popover/FiltersPanel.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ResultCategoryGroupSelectField = ({
   onResultCategoryGroupChange,

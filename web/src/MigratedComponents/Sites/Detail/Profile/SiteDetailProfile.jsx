@@ -8,7 +8,9 @@ import messages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
 import Summary from '../../../../globals/components/Summary'
 
-const cssClasses = classnames.bind(require('../SiteDetail.css'))
+import styles from '../SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const SiteDetailProfile = ({
   site,

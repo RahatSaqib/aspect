@@ -7,7 +7,9 @@ import { Helmet } from 'react-helmet'
 
 import TaskList from '../../../../task/list/TaskList'
 
-const cssClasses = classnames.bind(require('../DeviceDetail.css'))
+import styles from '../DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

@@ -62,7 +62,9 @@ import {
 } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
+import styles from './InventoryItemsList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -365,10 +367,13 @@ export const InventoryItemsList = () => {
     ? INVENTORY_LIST_GROUP_BY_SITE
     : INVENTORY_LIST
   const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
-  const { isError, isLoading, data = false, error } = useQuery(
-    [endpointConfig.KEY, params, filters],
-    async () =>
-      fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
+  const {
+    isError,
+    isLoading,
+    data = false,
+    error,
+  } = useQuery([endpointConfig.KEY, params, filters], async () =>
+    fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
   )
 
   // >>>>>> Defining mutations <<<<<<
@@ -436,10 +441,8 @@ export const InventoryItemsList = () => {
   }, [data, groupBySite, dispatch])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 

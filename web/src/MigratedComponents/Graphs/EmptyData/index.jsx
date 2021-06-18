@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useIntl, defineMessages } from 'react-intl'
 
-const cssClasses = classnames.bind(require('./GraphPlaceholders.css'))
+import styles from './GraphPlaceholders.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const messages = defineMessages({
   emptyGraphPlaceholderTitle: {
@@ -20,6 +22,7 @@ const EmptyBarGraph = ({ title }) => {
         {[30, 50, 60, 40, 80, 20].map(item => (
           <div
             className={cssClasses('placeholder__graphItem')}
+            key={item}
             style={{ height: `${item}%` }}
           />
         ))}
@@ -44,11 +47,17 @@ const EmptyRowPieGraph = ({ title }) => {
     <div className={cssClasses('placeholder__container')}>
       <div className={cssClasses('placeholder__text')}>{title}</div>
       <div className={cssClasses('placeholder__graphRowPie')}>
-        {[0, 1].map(() => (
-          <div className={cssClasses('placeholder__pieRowItemSolid')} />
+        {[0, 1].map(key => (
+          <div
+            className={cssClasses('placeholder__pieRowItemSolid')}
+            key={key}
+          />
         ))}
-        {[0, 1, 2, 3, 4].map(() => (
-          <div className={cssClasses('placeholder__pieRowItemDoughNut')} />
+        {[0, 1, 2, 3, 4].map(key => (
+          <div
+            className={cssClasses('placeholder__pieRowItemDoughNut')}
+            key={key}
+          />
         ))}
       </div>
     </div>

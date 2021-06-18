@@ -25,7 +25,9 @@ import ReportCard from './ReportCard'
 import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./ReportIndex.css'))
+import styles from './ReportIndex.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -83,10 +85,8 @@ const ReportIndex = () => {
   }
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
@@ -118,7 +118,17 @@ const ReportIndex = () => {
           showBrowseDropdown={false}
         />
       )}
-      <Grid container spacing={16}>
+      <Grid
+        container
+        spacing={16}
+        // classes={{
+        //   root: cssClasses('Container'),
+        // }}
+        sx={{
+          width: 'auto',
+          margin: 0,
+        }}
+      >
         {items?.map(
           ({ externalId, name, description, i18nKey, i18nKeyDescription }) => (
             <ReportCard
@@ -126,6 +136,7 @@ const ReportIndex = () => {
               description={description}
               i18nKey={i18nKey}
               i18nKeyDescription={i18nKeyDescription}
+              key={externalId}
               onClick={fileExtension =>
                 onClickDownload(externalId, fileExtension)
               }

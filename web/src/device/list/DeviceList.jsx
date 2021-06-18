@@ -41,7 +41,9 @@ import messages from './messages'
 
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 
-const cssClasses = classnames.bind(require('./DeviceList.css'))
+import styles from './DeviceList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   {
@@ -266,13 +268,16 @@ export const DeviceList = () => {
   }
 
   // >>>>>> Queries <<<<<<
-  const { data = false, isError, error, isLoading } = useQuery(
-    [DEVICE_LIST.KEY, { params }],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: DEVICE_LIST.ENDPOINT,
-        params: { ...params, hasResults: 1 },
-      })
+  const {
+    data = false,
+    isError,
+    error,
+    isLoading,
+  } = useQuery([DEVICE_LIST.KEY, { params }], async () =>
+    fetchWrapperForQueries({
+      endpoint: DEVICE_LIST.ENDPOINT,
+      params: { ...params, hasResults: 1 },
+    })
   )
 
   // >>>>>> Lifecycles <<<<<<
@@ -287,10 +292,8 @@ export const DeviceList = () => {
   }, [data])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
       history.replace({

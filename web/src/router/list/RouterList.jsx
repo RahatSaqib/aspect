@@ -32,7 +32,9 @@ import {
 } from './RouterDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
 
-const cssClasses = classnames.bind(require('./RouterList.css'))
+import styles from './RouterList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   routersTitle: {
@@ -115,65 +117,58 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchRouters,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchRouters(
-          filtersParams,
-          { hasResults: 0, hasConnectivity: 1 },
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
-
-    onExcelClick: ({
-      location,
-      exportRouters,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportRouters(
-          filtersParams,
-          { hasResults: 0, hasConnectivity: 1 },
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'routers'
-        )
-      }
-    },
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { routerId },
+    onInitialLoad:
+      ({ location, fetchRouters, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchRouters(
+            filtersParams,
+            { hasResults: 0, hasConnectivity: 1 },
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
       },
-    }) => history.push(`/browse/router/${routerId}`),
+
+    onExcelClick:
+      ({ location, exportRouters, sortCol, sortDir, pageAt, table }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportRouters(
+            filtersParams,
+            { hasResults: 0, hasConnectivity: 1 },
+            sortCol,
+            sortDir,
+            pageAt,
+            table.get('total') > 0 ? table.get('total') : 1,
+            format,
+            'routers'
+          )
+        }
+      },
+    onRowClick:
+      ({ history }) =>
+      ({
+        currentTarget: {
+          dataset: { routerId },
+        },
+      }) =>
+        history.push(`/browse/router/${routerId}`),
   }),
   lifecycle({
     componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 

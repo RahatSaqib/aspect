@@ -175,10 +175,7 @@ export function isPermittedUser(
 // An HOC that can protect underlying resource with pre-config permissions list.
 // The permissions can be overridden/added by
 // props (overriddenPermissions, extraPermissions) as well.
-export const requirePermissions = ({
-  permissions: permissionsInConfig = [],
-  ForbiddenComponent = constant(false),
-}) => WrappedComponent =>
+export const requirePermissions = outerProps => WrappedComponent =>
   class RequirePermissions extends PureComponent {
     static displayName = `requirePermissions(${getDisplayName(
       WrappedComponent
@@ -189,13 +186,13 @@ export const requirePermissions = ({
       extraPermissions: PropTypes.arrayOf(PropTypes.string),
     }
 
-    static contextTypes = {
-      store: PropTypes.shape({
-        subscribe: PropTypes.func.isRequired,
-        dispatch: PropTypes.func.isRequired,
-        getState: PropTypes.func.isRequired,
-      }).isRequired,
-    }
+    // static contextTypes = {
+    //   store: PropTypes.shape({
+    //     subscribe: PropTypes.func.isRequired,
+    //     dispatch: PropTypes.func.isRequired,
+    //     getState: PropTypes.func.isRequired,
+    //   }).isRequired,
+    // }
 
     static defaultProps = {
       overriddenPermissions: [],
@@ -237,6 +234,10 @@ export const requirePermissions = ({
     }
 
     render() {
+      const {
+        permissions: permissionsInConfig = [],
+        ForbiddenComponent = constant(false),
+      } = outerProps
       const {
         overriddenPermissions = [],
         extraPermissions = [],

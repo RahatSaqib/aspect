@@ -1,21 +1,27 @@
-import { createMuiTheme } from '@material-ui/core/styles'
-import { orange, lightGreen } from '@material-ui/core/colors'
+import { createTheme } from '@material-ui/core/styles'
+import { orange, lightGreen, cyan } from '@material-ui/core/colors'
 import { customPropertiesVariables } from '../../cfg/variables'
 
-const theme = createMuiTheme({
+const theme = createTheme({
   typography: {
     useNextVariants: true,
     fontWeightBold: 700,
     fontWeightBlack: 900,
+    body1: {
+      fontSize: '0.875rem',
+    },
   },
   palette: {
     action: {
       hoverOpacity: 0.2,
     },
     primary: {
-      light: lightGreen[500],
-      main: lightGreen[600],
-      dark: lightGreen[700],
+      // light: lightGreen[500],
+      // main: lightGreen[600],
+      // dark: lightGreen[700],
+      light: cyan[700],
+      main: customPropertiesVariables['--ming'],
+      dark: cyan[900],
       contrastText: customPropertiesVariables['--aspect-color-white'],
     },
     secondary: {
@@ -29,6 +35,21 @@ const theme = createMuiTheme({
     borderRadius: 2,
   },
   customPropertiesVariables,
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        variant: 'standard',
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          fontSize: '.875rem',
+          textTransform: 'inherit',
+        },
+      },
+    },
+  },
 })
 
 const themedColors = {

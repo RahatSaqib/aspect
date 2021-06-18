@@ -13,7 +13,9 @@ import AspectTable from '../../../AspectTable'
 import { NOTIFICATION_HISTORY } from '../../../QueryFetch/Notification'
 import baseConfig from './config'
 
-const cssClasses = classnames.bind(require('../../Notifications.css'))
+import styles from '../../Notifications.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   notificationsTitle: {

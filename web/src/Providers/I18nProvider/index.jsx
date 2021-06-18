@@ -71,9 +71,7 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
     formats,
     formatDate: (dateIn, options = {}) => formatDate(dateIn, options),
     formatWithOffset: dateIn =>
-      DateTime.fromJSDate(dateIn)
-        .setZone(validTimeZone)
-        .toISO(),
+      DateTime.fromJSDate(dateIn).setZone(validTimeZone).toISO(),
     formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
       formatDistance(firstDateIn, secondDateIn, {
         locale: dateFNSLocale,

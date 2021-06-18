@@ -18,53 +18,43 @@ const messages = defineMessages({
     defaultMessage: 'Active',
   },
   reportedActive: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive',
     defaultMessage: 'Reported Active',
   },
   inactiveUnknown: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown',
     defaultMessage: 'Unknown',
   },
   inactiveNoTestsPerformed: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoTestsPerformed',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoTestsPerformed',
     defaultMessage: 'No Tests Performed',
   },
   inactiveOutOfInventory: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory',
     defaultMessage: 'Out Of Inventory',
   },
   inactiveDownForRepair: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair',
     defaultMessage: 'Down For Repair',
   },
   inactiveConnectivity: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity',
     defaultMessage: 'Connectivity',
   },
   inactiveDecommissioned: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned',
     defaultMessage: 'Decommissioned',
   },
   inactiveNoStaff: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff',
     defaultMessage: 'No Staff',
   },
   inactiveNoPower: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower',
     defaultMessage: 'No Power',
   },
   inactiveOther: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther',
     defaultMessage: 'Other',
   },
 })

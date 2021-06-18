@@ -13,11 +13,11 @@ import {
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
 
-const styles = require('../../components/shared/DataTableRow.css')
+const cssClasses = classnames.bind(styles)
+
+// const styles = require('../../components/shared/DataTableRow.css')
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { formatMessage, formatNumber } = useI18n()
@@ -53,7 +53,10 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       </TableCell>
       <TableCell hiddenOn="md">
         {result.get('treatmentStatusInfo') && (
-          <Tooltip title={result.get('resultTreatmentStatusName')}>
+          <Tooltip
+            title={result.get('resultTreatmentStatusName')}
+            disableInteractive
+          >
             <PermIdentity
               className={styles[`${result.get('treatmentStatusInfo')}`]}
             />

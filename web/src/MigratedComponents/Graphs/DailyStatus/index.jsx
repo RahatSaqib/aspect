@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
+
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
@@ -18,7 +19,9 @@ import AspectCard from '../../AspectCard'
 import CardSelectors from '../CardSelectors'
 import useDailyStatus from './Helpers/useDailyStatus'
 
-const cssClasses = classnames.bind(require('./DailyStatus.css'))
+import styles from './DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 const selectorModifiers = [
@@ -37,11 +40,15 @@ const selectorModifiers = [
 
 const DailyStatus = () => {
   const [dialogState, setDialogState] = useState({ isOpen: false })
-  const minDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    .start
-  const maxDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    .end
-  const { formatMessage } = useIntl()
+  const minDate = getPreviousPeriod(
+    'months',
+    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+  ).start
+  const maxDate = getPreviousPeriod(
+    'months',
+    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+  ).end
+  const { formatMessage } = useI18n()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: {

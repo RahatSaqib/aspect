@@ -1,7 +1,9 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 
-const cssClasses = classnames.bind(require('./Icon.css'))
+import styles from './Icon.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const Icon = ({ type, className, size = 'md', ...restProps }) => (
   <svg

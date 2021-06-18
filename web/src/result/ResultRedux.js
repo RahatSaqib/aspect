@@ -301,8 +301,7 @@ export function updateResultWorkflowStatus(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
+              id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
               defaultMessage:
                 'An Error Occurred When Trying to Save the Workflow Status',
             },
@@ -344,8 +343,7 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
       default: errorPleaseTryAgainInAFewMinutes(
         defineMessages({
           title: {
-            id:
-              'errorResponseMessages.saveResultFormDataValue.PUT.default.title',
+            id: 'errorResponseMessages.saveResultFormDataValue.PUT.default.title',
             defaultMessage:
               'An error occurred when trying to update the result.',
           },

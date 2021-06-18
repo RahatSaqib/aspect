@@ -8,14 +8,15 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import Popper from '@material-ui/core/Popper'
 import Paper from '@material-ui/core/Paper'
-import RootRef from '@material-ui/core/RootRef'
 import { List as VirtualList } from 'react-virtualized'
 
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
 import countries from './countries'
 import dialCodes from './dialCodes'
 
-const cssClasses = classnames.bind(require('./DialCodeDropdown.css'))
+import styles from './DialCodeDropdown.css'
+
+const cssClasses = classnames.bind(styles)
 
 const countryBy = keyBy(countries, 'isoAlpha2Code')
 
@@ -100,14 +101,12 @@ export const DialCodeDropdown = ({ ...props }) => {
         selectedItem,
       }) => (
         <div>
-          <RootRef rootRef={popperNode}>
-            {renderInput({
-              ref: popperNode,
-              selectedItem,
-              inputProps: getInputProps({}),
-              toggleButtonProps: getToggleButtonProps({}),
-            })}
-          </RootRef>
+          {renderInput({
+            ref: popperNode,
+            selectedItem,
+            inputProps: getInputProps({}),
+            toggleButtonProps: getToggleButtonProps({}),
+          })}
           <Popper
             open={isOpen}
             anchorEl={popperNode.current}

@@ -10,7 +10,9 @@ import startCase from 'lodash/startCase'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
 
-const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
+import styles from './FiltersBtnGroup.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
@@ -252,18 +254,19 @@ const filtersOrdering = {
   reportName: 32,
 }
 
-const makeButton = labelFn => (props, filterKey) => (
-  <Button
-    key={filterKey}
-    className={cssClasses('Button')}
-    color="secondary"
-    variant="contained"
-    onClick={() => props.onRemoveFilterItem(filterKey)}
-  >
-    {labelFn(props, props.filters[filterKey])}
-    <MdClose className={cssClasses('Button__icon')} />
-  </Button>
-)
+const makeButton = labelFn => (props, filterKey) =>
+  (
+    <Button
+      key={filterKey}
+      className={cssClasses('Button')}
+      color="secondary"
+      variant="contained"
+      onClick={() => props.onRemoveFilterItem(filterKey)}
+    >
+      {labelFn(props, props.filters[filterKey])}
+      <MdClose className={cssClasses('Button__icon')} />
+    </Button>
+  )
 
 const buttonBy = {
   assayId: makeButton(({ assayItems }, assayId) =>

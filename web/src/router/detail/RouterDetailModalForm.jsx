@@ -17,7 +17,9 @@ import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceApproval/DeviceApprovalRedux'
 import AspectDialog from '../../components/shared/AspectDialog'
 
-const cssClasses = classnames.bind(require('./RouterDetailModalForm.css'))
+import styles from './RouterDetailModalForm.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   pure,

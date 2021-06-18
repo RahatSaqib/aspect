@@ -11,7 +11,9 @@ import {
   FaAngleRight,
 } from 'react-icons/fa'
 
-const cssClasses = classnames.bind(require('./TablePaginator.css'))
+import styles from './TablePaginator.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const ALL_KEY = 'All'
 
@@ -58,43 +60,61 @@ const enhance = compose(
     hasLastPage: total > pageSize * (1 + pageAt),
   })),
   withHandlers({
-    onFirstClick: ({ onPageChange }) => () => {
-      onPageChange(0)
-    },
+    onFirstClick:
+      ({ onPageChange }) =>
+      () => {
+        onPageChange(0)
+      },
 
-    onPreviousClick: ({ pageAt, onPageChange }) => () => {
-      onPageChange(pageAt - 1)
-    },
+    onPreviousClick:
+      ({ pageAt, onPageChange }) =>
+      () => {
+        onPageChange(pageAt - 1)
+      },
 
-    onNextClick: ({ pageAt, onPageChange }) => () => {
-      onPageChange(pageAt + 1)
-    },
+    onNextClick:
+      ({ pageAt, onPageChange }) =>
+      () => {
+        onPageChange(pageAt + 1)
+      },
 
-    onLastClick: ({ total, pageSize, onPageChange }) => () => {
-      const lastPage =
-        total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
-      onPageChange(Math.floor(lastPage))
-    },
+    onLastClick:
+      ({ total, pageSize, onPageChange }) =>
+      () => {
+        const lastPage =
+          total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
+        onPageChange(Math.floor(lastPage))
+      },
 
-    onPageSizeChange10: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(10)
-    },
+    onPageSizeChange10:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(10)
+      },
 
-    onPageSizeChange25: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(25)
-    },
+    onPageSizeChange25:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(25)
+      },
 
-    onPageSizeChange50: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(50)
-    },
+    onPageSizeChange50:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(50)
+      },
 
-    onPageSizeChange100: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(100)
-    },
+    onPageSizeChange100:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(100)
+      },
 
-    onPageSizeChangeAll: ({ onPageSizeChange, total }) => () => {
-      onPageSizeChange(total)
-    },
+    onPageSizeChangeAll:
+      ({ onPageSizeChange, total }) =>
+      () => {
+        onPageSizeChange(total)
+      },
   }),
   pure
 )

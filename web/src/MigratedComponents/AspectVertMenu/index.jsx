@@ -10,7 +10,9 @@ import classnames from 'classnames/bind'
 import IconProvider from '../IconProvider'
 import IconMenu from '../../components/shared/IconMenu'
 
-const cssClasses = classnames.bind(require('./AspectVertMenu.css'))
+import styles from './AspectVertMenu.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectVertMenuItem = ({
   icon,
@@ -59,13 +61,13 @@ AspectVertMenuItem.propTypes = {
   disabled: PropTypes.bool,
   text: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
-  params: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  params: PropTypes.oneOfType([PropTypes.object]).isRequired,
   separator: PropTypes.bool,
 }
 
 AspectVertMenu.propTypes = {
   actions: PropTypes.instanceOf(Immutable.Record).isRequired,
-  params: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  params: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectVertMenu

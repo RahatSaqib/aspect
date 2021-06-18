@@ -18,9 +18,9 @@ import {
 } from '../InventoryRedux'
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const InventoryTableRow = ({ inventoryItem, key }) => {
   const { formatMessage, formatNumber } = useI18n()

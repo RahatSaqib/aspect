@@ -5,7 +5,9 @@ import { defineMessages, useIntl } from 'react-intl'
 
 import { groupDateRanges } from '../Helpers'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   totalTests: {

@@ -17,7 +17,7 @@ import isNil from 'lodash/isNil'
 import Downshift from 'downshift'
 
 import FormControl from '@material-ui/core/FormControl'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
@@ -64,11 +64,11 @@ const styles = theme => ({
   separator: {
     display: 'flex',
     alignItems: 'center',
-    margin: `0 ${theme.spacing(1)}px`,
+    margin: `0 ${theme.spacing(1)}`,
   },
   formControl: {
     width: '100%',
-    margin: `${theme.spacing(1)}px 0`,
+    margin: `${theme.spacing(1)} 0`,
   },
   popper: {
     zIndex: theme.zIndex.tooltip,
@@ -77,7 +77,7 @@ const styles = theme => ({
     margin: theme.spacing(1),
   },
   options: {
-    maxHeight: (OPTION_HEIGHT + theme.spacing(1)) * 5.75,
+    maxHeight: `calc((${OPTION_HEIGHT}px + ${theme.spacing(1)}) * 5.75)`,
     overflowY: 'scroll',
   },
   option: {
@@ -449,10 +449,8 @@ export const DateTimeSelect = props => {
         } = downshiftProps
         const growId = `${baseKey}-grow`
         const suggestions = getSuggestionOptions(inputValue, options)
-        const {
-          InputProps: baseInputProps,
-          ...restTextFieldProps
-        } = TextFieldProps
+        const { InputProps: baseInputProps, ...restTextFieldProps } =
+          TextFieldProps
 
         const handleBlur = () => {
           const optionFromInput = findOptionByLabel(inputValue, options)
@@ -623,15 +621,17 @@ const DateTimeInput = props => {
     }
   }
 
-  const handleChange = set => ({ value: nextValue }) => {
-    const changedDate = set(optionsDate, nextValue)
-    setOptionsDate(changedDate)
-    setDateTime(changedDate)
+  const handleChange =
+    set =>
+    ({ value: nextValue }) => {
+      const changedDate = set(optionsDate, nextValue)
+      setOptionsDate(changedDate)
+      setDateTime(changedDate)
 
-    if (isControlled()) {
-      onChange(changedDate)
+      if (isControlled()) {
+        onChange(changedDate)
+      }
     }
-  }
 
   const handleKeyPress = nextFieldKey => event => {
     if (event.key === 'Enter') {
@@ -640,14 +640,16 @@ const DateTimeInput = props => {
     }
   }
 
-  const invokeAll = (refs, handlerName) => (...args) =>
-    _fp.pipe(
-      _fp.values,
-      _fp.filter(
-        ref => ref && ref.current && isFunction(ref.current[handlerName])
-      ),
-      _fp.map(ref => ref.current[handlerName](...args))
-    )(refs)
+  const invokeAll =
+    (refs, handlerName) =>
+    (...args) =>
+      _fp.pipe(
+        _fp.values,
+        _fp.filter(
+          ref => ref && ref.current && isFunction(ref.current[handlerName])
+        ),
+        _fp.map(ref => ref.current[handlerName](...args))
+      )(refs)
 
   const handleBlur = event => {
     const { currentTarget } = event

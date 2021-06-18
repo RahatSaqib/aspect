@@ -45,32 +45,32 @@ const enhance = compose(
     onSiteNameChange: props.onSiteNameChange || _fp.noop,
   })),
   withHandlers({
-    onSelect: ({
-      onChange,
-      onSiteIdChange,
-      onSiteNameChange,
-    }) => chosenRequest => {
-      if (chosenRequest) {
+    onSelect:
+      ({ onChange, onSiteIdChange, onSiteNameChange }) =>
+      chosenRequest => {
+        if (chosenRequest) {
+          if (onChange) {
+            onChange({
+              id: chosenRequest.value,
+              name: chosenRequest.text,
+            })
+            return
+          }
+
+          onSiteNameChange(chosenRequest.text)
+          onSiteIdChange(chosenRequest.value)
+        }
+      },
+    onUpdateInput:
+      ({ onChange, onSiteNameChange }) =>
+      text => {
         if (onChange) {
-          onChange({
-            id: chosenRequest.value,
-            name: chosenRequest.text,
-          })
+          onChange({ name: text })
           return
         }
 
-        onSiteNameChange(chosenRequest.text)
-        onSiteIdChange(chosenRequest.value)
-      }
-    },
-    onUpdateInput: ({ onChange, onSiteNameChange }) => text => {
-      if (onChange) {
-        onChange({ name: text })
-        return
-      }
-
-      onSiteNameChange(text)
-    },
+        onSiteNameChange(text)
+      },
   }),
   mapProps(props => {
     const dataSource = props.sitesSelectList.items.map(item => ({

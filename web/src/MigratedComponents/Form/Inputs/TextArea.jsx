@@ -13,7 +13,7 @@ const AspectTextArea = props => {
 
   const mergedProps = {
     ...rest,
-    ...omitBy({ rowsMax, rows }, v => isNil(v)),
+    ...omitBy({ maxRows: rowsMax, minRows: rows }, v => isNil(v)),
   }
 
   const onChangeLocal = event => {

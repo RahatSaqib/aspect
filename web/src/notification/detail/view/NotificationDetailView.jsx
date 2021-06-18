@@ -18,15 +18,17 @@ import {
 } from './NotificationDeliveryDataTable'
 import AspectButton from '../../../components/shared/AspectButton'
 
-const cssClasses = classnames.bind(
-  require('../../../MigratedComponents/Notifications/Detail/NotificationDetail.css')
-)
+import styles from '../../../MigratedComponents/Notifications/Detail/NotificationDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 // TODO: Switch back to just using Button directly. This is demo only
 const MockTogglBtn = withStateHandlers(
   props => ({ inverse: !!props.inverse }),
   {
-    onClick: ({ inverse }) => () => ({ inverse: !inverse }),
+    onClick:
+      ({ inverse }) =>
+      () => ({ inverse: !inverse }),
   }
 )(AspectButton)
 

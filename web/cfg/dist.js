@@ -1,12 +1,12 @@
 const webpack = require('webpack')
 const path = require('path')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
+// const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const base = require('./base')
 
@@ -47,7 +47,7 @@ const config = () => {
       }),
       new FaviconsWebpackPlugin({
         logo: path.join(__dirname, '../src/template/favicon.png'),
-        prefix: 'icons-[hash]-',
+        prefix: 'icons-[contenthash]-',
         persistentCache: false,
         inject: true,
         background: '#fff',
@@ -65,8 +65,8 @@ const config = () => {
           windows: false,
         },
       }),
-      new webpack.NamedChunksPlugin(),
-      new webpack.HashedModuleIdsPlugin(),
+      // new webpack.NamedChunksPlugin(),
+      // new webpack.HashedModuleIdsPlugin(),
       new CompressionPlugin({
         filename: '[path].gz[query]',
         algorithm: 'gzip',
@@ -81,6 +81,9 @@ const config = () => {
       }),
     ],
     optimization: {
+      moduleIds: 'deterministic',
+      chunkIds: 'named',
+
       minimize: true,
       runtimeChunk: 'single',
       splitChunks: {
@@ -105,7 +108,7 @@ const config = () => {
         },
       },
       minimizer: [
-        new TerserPlugin(),
+        // new TerserPlugin(),
         new OptimizeCSSAssetsPlugin({
           assetNameRegExp: /\.css$/g,
           cssProcessorOptions: {

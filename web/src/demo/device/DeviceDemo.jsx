@@ -68,9 +68,11 @@ export class DeviceDemo extends PureComponent {
     this.props.fetchDemoDevice(this.props.match.params.deviceId)
   }
 
-  handleSelectFieldChange = field => ({ target: { value } }) => {
-    this.setState({ [field]: value })
-  }
+  handleSelectFieldChange =
+    field =>
+    ({ target: { value } }) => {
+      this.setState({ [field]: value })
+    }
 
   handlePostResult = () => {
     this.setPosting(true)

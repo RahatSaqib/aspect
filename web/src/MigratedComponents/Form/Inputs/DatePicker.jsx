@@ -20,7 +20,9 @@ import {
 import { useAuthState } from '../../../Providers/AuthProvider'
 import { useFormikState } from '../Formik/Context'
 
-const cssClasses = classnames.bind(require('./DatePicker.css'))
+import styles from './DatePicker.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getDisplayValue = (value, showTimeSelect) => {
   return value

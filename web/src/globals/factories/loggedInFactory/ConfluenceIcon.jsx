@@ -2,7 +2,9 @@ import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 
-const cssClasses = classnames.bind(require('./index.css'))
+import styles from './index.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

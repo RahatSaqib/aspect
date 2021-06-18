@@ -10,7 +10,9 @@ import recomposeForm from '../../../components/recomposeForm'
 
 import AspectDialog from '../../../components/shared/AspectDialog'
 
-const cssClasses = classnames.bind(require('./BaseDialog.css'))
+import styles from './BaseDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   dialogTitle: {

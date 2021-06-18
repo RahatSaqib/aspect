@@ -5,7 +5,9 @@ import Tooltip from '@material-ui/core/Tooltip'
 
 import IconProvider from '../../MigratedComponents/IconProvider'
 
-const cssClasses = classnames.bind(require('./AspectTooltip.css'))
+import styles from './AspectTooltip.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectTooltip = ({
   title,
@@ -20,6 +22,7 @@ const AspectTooltip = ({
   <Tooltip
     classes={{ tooltip: cssClasses(toolTipClass) }}
     title={title}
+    disableInteractive
     {...rest}
   >
     <div className={cssClasses(toolTipContainerClass)}>

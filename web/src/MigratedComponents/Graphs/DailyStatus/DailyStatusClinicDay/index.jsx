@@ -8,7 +8,9 @@ import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {

@@ -5,7 +5,9 @@ import times from 'lodash/times'
 
 import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DailyStatusClinic = ({
   name,

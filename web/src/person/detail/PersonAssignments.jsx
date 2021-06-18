@@ -7,8 +7,9 @@ import AspectDialog from '../../components/shared/AspectDialog'
 
 import messages from './messages'
 import PersonAssignment from './PersonAssignmentItem'
+import styles from './PersonDetail.css'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+const cssClasses = classnames.bind(styles)
 
 export default ({
   intl,

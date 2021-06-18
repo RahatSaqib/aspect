@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { createIntl } from 'react-intl'
+// import { createIntl } from 'react-intl'
 
 export class ScrollToTopOnUpdate extends PureComponent {
   static propTypes = {
@@ -8,9 +8,9 @@ export class ScrollToTopOnUpdate extends PureComponent {
     delegate: PropTypes.object.isRequired, // eslint-disable-line
   }
 
-  static contextTypes = {
-    intl: createIntl({ locale: 'en' }),
-  }
+  // static contextTypes = {
+  //   intl: createIntl({ locale: 'en' }),
+  // }
 
   componentDidUpdate({ delegate: { location: prevLocation } }) {
     const { location } = this.props.delegate
@@ -22,13 +22,12 @@ export class ScrollToTopOnUpdate extends PureComponent {
   render() {
     return this.props.render({
       ...this.props.delegate,
-      intl: this.context.intl,
+      // intl: this.context.intl,
     })
   }
 }
 
-export const intlScrollToTopOnUpdateFactory = render => delegate => (
+export const intlScrollToTopOnUpdateFactory = render => delegate =>
   <ScrollToTopOnUpdate render={render} delegate={delegate} />
-)
 
 export default intlScrollToTopOnUpdateFactory

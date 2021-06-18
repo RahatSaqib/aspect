@@ -12,7 +12,9 @@ import { buildWidgetToLinkParams, translate } from './Helpers'
 import WidgetAlert from './Alerts'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./Widgets.css'))
+import styles from './Widgets.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EmptyWidget = () => (
   <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>

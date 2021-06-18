@@ -11,7 +11,9 @@ import { getDateString } from '../../../../shared/utils/dateFormat'
 import { setClassNames, setInitialValue } from '../Helpers'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./DailyStatusDialog.css'))
+import styles from './DailyStatusDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getFormConfig = (formConfig, statuses, data) => {
   setClassNames(formConfig, cssClasses)

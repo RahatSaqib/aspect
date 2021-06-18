@@ -31,7 +31,9 @@ import ShellHeader from '../../Shell/Header'
 import ShellContent from '../../Shell/Content'
 import AspectButton from '../../../components/shared/AspectButton'
 
-const cssClasses = classnames.bind(require('./SiteDetail.css'))
+import styles from './SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const titleMessages = defineMessages({
   profile: {

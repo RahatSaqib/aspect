@@ -7,7 +7,9 @@ import isFunction from 'lodash/isFunction'
 import { useFormikState } from './Formik/Context'
 import { useAuthState } from '../../Providers/AuthProvider'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FormActionButton = ({ formik, action, onClick, isVisible }) => {
   return formik ? (

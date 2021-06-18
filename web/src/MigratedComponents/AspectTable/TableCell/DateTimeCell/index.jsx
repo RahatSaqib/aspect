@@ -5,7 +5,9 @@ import { useIntl } from 'react-intl'
 
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
   const { locale } = useIntl()

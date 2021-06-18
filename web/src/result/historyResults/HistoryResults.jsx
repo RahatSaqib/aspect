@@ -18,7 +18,9 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 
-const cssClasses = classnames.bind(require('./HistoryResults.css'))
+import cssStyles from './HistoryResults.css'
+
+const cssClasses = classnames.bind(cssStyles)
 const styles = require('../../components/shared/DataTableRow.css')
 
 export const Results = ({
@@ -76,7 +78,10 @@ export const Results = ({
                       map(columns, elem => (
                         <TableCell hiddenOn={elem.hiddenOn || 'sm'}>
                           {elem.tooltip && result.get(elem.key) && (
-                            <Tooltip title={result.get(elem.tooltip)}>
+                            <Tooltip
+                              title={result.get(elem.tooltip)}
+                              disableInteractive
+                            >
                               <PermIdentity
                                 className={styles[`${result.get(elem.key)}`]}
                               />

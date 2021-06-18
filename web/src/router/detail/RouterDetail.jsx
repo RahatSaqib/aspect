@@ -16,9 +16,9 @@ import CardContent from '@material-ui/core/CardContent'
 import IconButton from '@material-ui/core/IconButton'
 import ModeEdit from '@material-ui/icons/Edit'
 import Tooltip from '@material-ui/core/Tooltip'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
 
@@ -261,7 +261,11 @@ export class RouterDetail extends PureComponent {
 
     return (
       <div>
-        <Tooltip title={formatMessage(messages.editTooltip)} placement="bottom">
+        <Tooltip
+          title={formatMessage(messages.editTooltip)}
+          placement="bottom"
+          disableInteractive
+        >
           <IconButton
             aria-label={formatMessage(messages.editTooltip)}
             onClick={this.handleToggleEditDialog}
@@ -354,8 +358,8 @@ export class RouterDetail extends PureComponent {
           </CardContent>
         </Card>
         {/* Graphs */}
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Unit sm="1-1" md="1-2">
               <Typography variant="subtitle1">
                 Utilization Rate Over Time
@@ -364,8 +368,8 @@ export class RouterDetail extends PureComponent {
             <Unit sm="1-1" md="1-2">
               <Typography variant="subtitle1">Error Rates Over Time</Typography>
             </Unit>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Unit sm="1-1" md="1-2">
               <ReadOnlyField
                 label=""
@@ -392,8 +396,8 @@ export class RouterDetail extends PureComponent {
                 )}
               />
             </Unit>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Dialog for demo purpose */}
         <AspectDialog
           modal={false}
@@ -403,44 +407,46 @@ export class RouterDetail extends PureComponent {
           Not yet implemented
         </AspectDialog>
         {/* Contacts */}
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Contacts</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography variant="body2">
-              {// temp fix to get router details to display
-              contacts &&
-                contacts.map(c => (
-                  <Link
-                    key={c.get('id')}
-                    to={`/browse/person/${c.get('id')}`}
-                    className={styles.Contact}
-                  >
-                    {c.get('name')}
-                  </Link>
-                ))}
+              {
+                // temp fix to get router details to display
+                contacts &&
+                  contacts.map(c => (
+                    <Link
+                      key={c.get('id')}
+                      to={`/browse/person/${c.get('id')}`}
+                      className={styles.Contact}
+                    >
+                      {c.get('name')}
+                    </Link>
+                  ))
+              }
             </Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Calibration */}
-        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion expanded onClick={this.handleToggleDialog}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Calibration</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography variant="body2">Last calibrated 12/1/2016</Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Warranty */}
-        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion expanded onClick={this.handleToggleDialog}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Warranty</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography variant="body2">Expires 12/31/2018</Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Configuration */}
         <JSONSchemaCard
           title={formatMessage(messages.fieldConfiguration)}
@@ -451,11 +457,11 @@ export class RouterDetail extends PureComponent {
           data={router.get('configurationData')}
         />
         {/* Technical information */}
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Technical information</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography
               variant="body2"
               component="div"
@@ -486,8 +492,8 @@ export class RouterDetail extends PureComponent {
                 />
               </Unit>
             </Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </div>
     )
   }

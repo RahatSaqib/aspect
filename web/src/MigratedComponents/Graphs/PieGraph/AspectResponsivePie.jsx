@@ -17,7 +17,9 @@ import {
 
 import { GraphToolTip } from '../GraphToolTip'
 
-const cssClasses = classnames.bind(require('./PieGraph.css'))
+import styles from './PieGraph.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectResponsivePie = ({
   assaysFromState,

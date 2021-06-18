@@ -9,7 +9,9 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const hasError = field => field.touched && field.error
 
@@ -116,19 +118,23 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onSubmit: ({ openCurrentPasswordInputDialog, handleSubmit }) => event => {
-      if (openCurrentPasswordInputDialog) {
-        event.preventDefault()
-        return openCurrentPasswordInputDialog()
-      }
-      return handleSubmit(event)
-    },
-
-    onCurrentPasswordKeyPress: ({ handleSubmit }) => event => {
-      if (event.key === 'Enter') {
+    onSubmit:
+      ({ openCurrentPasswordInputDialog, handleSubmit }) =>
+      event => {
+        if (openCurrentPasswordInputDialog) {
+          event.preventDefault()
+          return openCurrentPasswordInputDialog()
+        }
         return handleSubmit(event)
-      }
-    },
+      },
+
+    onCurrentPasswordKeyPress:
+      ({ handleSubmit }) =>
+      event => {
+        if (event.key === 'Enter') {
+          return handleSubmit(event)
+        }
+      },
   })
 )
 

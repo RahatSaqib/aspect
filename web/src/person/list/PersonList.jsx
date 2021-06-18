@@ -39,7 +39,9 @@ import {
 
 import ExportListButton from '../../globals/components/ExportListButton'
 
-const cssClasses = classnames.bind(require('./PersonList.css'))
+import styles from './PersonList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = {
   ...commonDefinitions,
@@ -125,63 +127,58 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchPersons,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-
-    onExcelClick: ({
-      location,
-      exportContacts,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportContacts(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'contacts'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { personId },
+    onInitialLoad:
+      ({ location, fetchPersons, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        }
       },
-    }) => history.push(`/browse/person/${personId}`),
 
-    showNewContactPage: ({ history }) => event => {
-      event.stopPropagation()
-      history.push('/browse/person/add')
-    },
+    onExcelClick:
+      ({ location, exportContacts, sortCol, sortDir, pageAt, table }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportContacts(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            table.get('total') > 0 ? table.get('total') : 1,
+            format,
+            'contacts'
+          )
+        }
+      },
+
+    onRowClick:
+      ({ history }) =>
+      ({
+        currentTarget: {
+          dataset: { personId },
+        },
+      }) =>
+        history.push(`/browse/person/${personId}`),
+
+    showNewContactPage:
+      ({ history }) =>
+      event => {
+        event.stopPropagation()
+        history.push('/browse/person/add')
+      },
   }),
   lifecycle({
     componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
         this.props.history.replace({

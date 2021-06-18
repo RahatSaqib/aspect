@@ -35,8 +35,9 @@ import {
   TaskDataTableRow,
 } from './TaskDataTable'
 import messages from './messages'
+import styles from './TaskList.css'
 
-const cssClasses = classnames.bind(require('./TaskList.css'))
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = {
   contactNameOrEmail: true,
@@ -92,81 +93,87 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchTasks,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-      filterOptions,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchTasks(
-          mergeFilterOptions(filtersParams, filterOptions),
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
+    onInitialLoad:
+      ({
+        location,
+        fetchTasks,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+        filterOptions,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchTasks(
+            mergeFilterOptions(filtersParams, filterOptions),
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
+      },
+
+    onAlertTypeClick:
+      ({ history, location, filterOptions }) =>
+      ({
+        currentTarget: {
+          dataset: { alertType },
+        },
+      }) => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = new URLSearchParams(
+          searchParams.get('filters') || ''
         )
-      }
-    },
+        filtersParams.set('alertType', alertType)
+        searchParams.set(
+          'filters',
+          mergeFilterOptions(filtersParams, filterOptions)
+        )
 
-    onAlertTypeClick: ({ history, location, filterOptions }) => ({
-      currentTarget: {
-        dataset: { alertType },
+        history.replace({
+          ...location,
+          search: searchParams.toString(),
+        })
       },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-      filtersParams.set('alertType', alertType)
-      searchParams.set(
-        'filters',
-        mergeFilterOptions(filtersParams, filterOptions)
-      )
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+    onIssueCategoryChange:
+      ({ history, location, filterOptions }) =>
+      ({ target: { value: issueCategory } }) => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = new URLSearchParams(
+          searchParams.get('filters') || ''
+        )
+        filtersParams.set('issueCategory', issueCategory)
+        searchParams.set(
+          'filters',
+          mergeFilterOptions(filtersParams, filterOptions)
+        )
 
-    onIssueCategoryChange: ({ history, location, filterOptions }) => ({
-      target: { value: issueCategory },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-      filtersParams.set('issueCategory', issueCategory)
-      searchParams.set(
-        'filters',
-        mergeFilterOptions(filtersParams, filterOptions)
-      )
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { taskId },
+        history.replace({
+          ...location,
+          search: searchParams.toString(),
+        })
       },
-    }) => history.push(`/task-list/${taskId}`),
+
+    onRowClick:
+      ({ history }) =>
+      ({
+        currentTarget: {
+          dataset: { taskId },
+        },
+      }) =>
+        history.push(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {
       const { location, history, filterOptions } = this.props
       const { sanitized, value: searchParams } = searchSanitizer(location)
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized || filterOptions) {
         searchParams.set(
           'filters',

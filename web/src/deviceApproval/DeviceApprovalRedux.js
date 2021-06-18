@@ -64,8 +64,7 @@ export function fetchDeviceApprovals(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchDeviceApprovals.GET.default.title',
+              id: 'errorResponseMessages.fetchDeviceApprovals.GET.default.title',
               defaultMessage: 'Loading Device Approval Statuses Failed',
             },
           })

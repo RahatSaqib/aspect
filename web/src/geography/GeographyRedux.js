@@ -94,8 +94,7 @@ export const fetchCountriesForLocationSelector = countriesState => dispatch => {
       default: errorPleaseTryAgainInAFewMinutes(
         defineMessages({
           title: {
-            id:
-              'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
+            id: 'errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title',
             defaultMessage: 'Error Loading Countries',
           },
         })
@@ -121,8 +120,7 @@ export const fetchStatesForLocationSelector = selectedCountry => dispatch => {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
+              id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
               defaultMessage: 'Error Loading States for {countryName}',
             },
           }),
@@ -140,45 +138,45 @@ export const fetchStatesForLocationSelector = selectedCountry => dispatch => {
   )
 }
 
-export const fetchLgasForLocationSelector = (
-  selectedCountry,
-  selectedState
-) => dispatch => {
-  if (
-    selectedState.getIn(['children', 'loading']) ||
-    !isExpired(selectedState.getIn(['children', 'lastRefreshed']))
-  ) {
-    return
-  }
-  dispatch(
-    createRequestLgasForLocationSelector(
-      selectedCountry.get('id'),
-      selectedState.get('id')
-    )
-  )
-  return aspectFetch(`/geography/lga-select-list/${selectedState.get('id')}`, {
-    errorNotifications: {
-      default: errorPleaseTryAgainInAFewMinutes(
-        defineMessages({
-          title: {
-            id:
-              'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
-            defaultMessage: 'Error Loading Areas for {stateName}',
-          },
-        }),
-        { stateName: selectedCountry.get('selectedState') }
-      ),
-    },
-  }).then(json =>
+export const fetchLgasForLocationSelector =
+  (selectedCountry, selectedState) => dispatch => {
+    if (
+      selectedState.getIn(['children', 'loading']) ||
+      !isExpired(selectedState.getIn(['children', 'lastRefreshed']))
+    ) {
+      return
+    }
     dispatch(
-      createReceiveLgasForLocationSelector(
-        json.data,
+      createRequestLgasForLocationSelector(
         selectedCountry.get('id'),
         selectedState.get('id')
       )
     )
-  )
-}
+    return aspectFetch(
+      `/geography/lga-select-list/${selectedState.get('id')}`,
+      {
+        errorNotifications: {
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
+                defaultMessage: 'Error Loading Areas for {stateName}',
+              },
+            }),
+            { stateName: selectedCountry.get('selectedState') }
+          ),
+        },
+      }
+    ).then(json =>
+      dispatch(
+        createReceiveLgasForLocationSelector(
+          json.data,
+          selectedCountry.get('id'),
+          selectedState.get('id')
+        )
+      )
+    )
+  }
 
 /*
  * ---------------- Reducers -----------------

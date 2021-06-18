@@ -12,7 +12,9 @@ import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { mergeToFiltersParams } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
 
-const cssClasses = classnames.bind(require('./BrowseSiteDropdown.css'))
+import styles from './BrowseSiteDropdown.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   allSites: {
@@ -39,18 +41,20 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: ({ history, location }) => ({ target: { value } }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = mergeToFiltersParams(
-        { siteId: value },
-        new URLSearchParams(searchParams.get('filters') || '')
-      )
-      searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+    onChange:
+      ({ history, location }) =>
+      ({ target: { value } }) => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = mergeToFiltersParams(
+          { siteId: value },
+          new URLSearchParams(searchParams.get('filters') || '')
+        )
+        searchParams.set('filters', filtersParams)
+        history.replace({
+          ...location,
+          search: searchParams.toString(),
+        })
+      },
   }),
   withProps(({ location, sitesSelectList, theme }) => {
     const { formatMessage } = useI18n()

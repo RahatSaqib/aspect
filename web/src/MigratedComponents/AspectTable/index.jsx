@@ -22,7 +22,9 @@ import {
 } from './Helpers'
 import { replaceRouteParams } from '../QueryFetch/Helpers'
 
-const cssClasses = classnames.bind(require('./Table.css'))
+import styles from './Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Loading = () => (
   <div className={cssClasses('table__spinner')}>
@@ -57,7 +59,13 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     removeNullFromCollection({ size, sortCol, sortDir, page, filters })
   )
 
-  const { error, isError, isLoading, isFetching, data = false } = useQuery(
+  const {
+    error,
+    isError,
+    isLoading,
+    isFetching,
+    data = false,
+  } = useQuery(
     [CONSTS.KEY, { params }],
     async ({ queryKey: [, { params }] }) => {
       return fetchWrapperForQueries({

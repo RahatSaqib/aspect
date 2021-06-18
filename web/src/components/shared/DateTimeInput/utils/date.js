@@ -95,8 +95,10 @@ export const isDateEqual = field => (date1, date2) => {
   return get(date1) === get(date2)
 }
 
-export const isAllSameDateFields = (fields = []) => (date1, date2) =>
-  every(fields, field => isDateEqual(field)(date1, date2))
+export const isAllSameDateFields =
+  (fields = []) =>
+  (date1, date2) =>
+    every(fields, field => isDateEqual(field)(date1, date2))
 
 export const normalizeDate = ({ date, minDate = since, maxDate = until }) => {
   if (!isValid(date)) {

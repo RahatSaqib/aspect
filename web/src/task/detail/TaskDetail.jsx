@@ -18,7 +18,9 @@ import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./TaskDetail.css'))
+import styles from './TaskDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   taskDetailTitle: {
@@ -44,12 +46,16 @@ const enhance = compose(
     bindActionCreators.bind(null, { fetchTask })
   ),
   withHandlers({
-    onInitialLoad: ({ match, fetchTask }) => () => {
-      fetchTask(match.params.taskId)
-    },
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
+    onInitialLoad:
+      ({ match, fetchTask }) =>
+      () => {
+        fetchTask(match.params.taskId)
+      },
+    onBackClick:
+      ({ history }) =>
+      () => {
+        history.goBack()
+      },
   }),
   lifecycle({
     componentDidMount() {

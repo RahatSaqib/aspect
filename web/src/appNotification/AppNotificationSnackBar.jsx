@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button'
 import Snackbar from '@material-ui/core/Snackbar'
 import green from '@material-ui/core/colors/green'
 import amber from '@material-ui/core/colors/amber'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 
 // Our own imports
 import {

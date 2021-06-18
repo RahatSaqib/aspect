@@ -219,7 +219,7 @@ const groupForPieRow = (data, mergedParams) => {
       }
     }
     return pieRows.push(
-      Object.keys(pieRow).reduce(function(r, k) {
+      Object.keys(pieRow).reduce(function (r, k) {
         return r.concat(pieRow[k])
       }, [])
     )
@@ -336,12 +336,8 @@ const groupForDeviceStatusAPI = (
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
-    const {
-      isWeekendOrHoliday,
-      devicesActive,
-      devicesTotal,
-      devicesInactive,
-    } = curr
+    const { isWeekendOrHoliday, devicesActive, devicesTotal, devicesInactive } =
+      curr
 
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)

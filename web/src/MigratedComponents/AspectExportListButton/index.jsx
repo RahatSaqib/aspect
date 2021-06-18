@@ -8,7 +8,9 @@ import PropTypes from 'prop-types'
 
 import { downloadFile } from '../../shared/utils/files'
 
-const cssClasses = classnames.bind(require('./AspectExportListButton.css'))
+import styles from './AspectExportListButton.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const AspectExportListButtonWithProps = ({
   onExport,

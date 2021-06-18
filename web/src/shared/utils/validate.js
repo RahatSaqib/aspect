@@ -1,6 +1,6 @@
 import { validate as validateEmail } from 'email-validator'
 
-const emailAddress = function(value) {
+const emailAddress = function (value) {
   const validateChain = {
     email: value,
     optional: () => {

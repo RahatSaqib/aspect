@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import isEmpty from 'lodash/isEmpty'
 import { defineMessages } from 'react-intl'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
@@ -63,8 +63,7 @@ const messages = defineMessages({
     defaultMessage: 'Has a mix of UPPER and lower case characters',
   },
   passwordStrengthMeterContainsSpecialCharacter: {
-    id:
-      'pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter',
+    id: 'pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter',
     defaultMessage: 'Has a special character (%!$*...)',
   },
 })

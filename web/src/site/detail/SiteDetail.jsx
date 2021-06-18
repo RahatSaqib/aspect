@@ -27,7 +27,9 @@ import SiteDetailProfile from './profile/SiteDetailProfile'
 import SiteForm from './edit/SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 
-const cssClasses = classnames.bind(require('./SiteDetail.css'))
+import styles from './SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const SiteDetail = props => {
   const intl = useIntl()

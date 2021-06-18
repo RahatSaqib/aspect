@@ -92,11 +92,13 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
 })
 
 export const appFactory = compose(
-  render => ({ store }) => (
-    <Provider store={store}>
-      <AuthProvider>{render()}</AuthProvider>
-    </Provider>
-  ),
+  render =>
+    ({ store }) =>
+      (
+        <Provider store={store}>
+          <AuthProvider>{render()}</AuthProvider>
+        </Provider>
+      ),
   uiProvidersFactory,
   render => {
     const App = ({

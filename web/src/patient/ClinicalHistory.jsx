@@ -17,7 +17,9 @@ import { fetchResultsByPatient } from './PatientRedux'
 import Milestones from './timeline/Milestones'
 import { formatDate, formatDateTime } from '../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
+import styles from './ClinicalHistory.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   clinicalHistory: {

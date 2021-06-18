@@ -5,7 +5,9 @@ import { useIntl } from 'react-intl'
 
 import TaskList from '../../../../task/list/TaskList'
 
-const cssClasses = classnames.bind(require('../SiteDetail.css'))
+import styles from '../SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const SiteDetailAlert = ({ history, location, match }) => {
   const intl = useIntl()

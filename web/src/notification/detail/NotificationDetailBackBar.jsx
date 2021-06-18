@@ -24,14 +24,21 @@ const messages = defineMessages({
 const enhance = compose(
   injectIntl,
   withHandlers({
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
-    onPathClick: ({ history, match }) => path => {
-      history.push({
-        pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
-      })
-    },
+    onBackClick:
+      ({ history }) =>
+      () => {
+        history.goBack()
+      },
+    onPathClick:
+      ({ history, match }) =>
+      path => {
+        history.push({
+          pathname: path.replace(
+            /:([A-Za-z]+)/g,
+            ($, key) => match.params[key]
+          ),
+        })
+      },
   })
 )
 
@@ -94,10 +101,10 @@ export const NotificationDetailBackBar = ({
 )
 
 NotificationDetailBackBar.propTypes = {
-  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  match: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
   onBackClick: PropTypes.func.isRequired,
   onPathClick: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,

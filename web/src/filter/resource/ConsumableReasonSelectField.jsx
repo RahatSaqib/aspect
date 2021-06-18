@@ -26,8 +26,7 @@ const messages = defineMessages({
     defaultMessage: 'Stolen',
   },
   ConsumableReason_AssertedZeroInventory: {
-    id:
-      'filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory',
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory',
     defaultMessage: 'Asserted zero inventory',
   },
 

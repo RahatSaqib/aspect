@@ -1,5 +1,6 @@
 import React from 'react'
-import { MuiThemeProvider, jssPreset } from '@material-ui/core/styles'
+import { ThemeProvider } from '@material-ui/core/styles'
+import { jssPreset } from '@material-ui/styles'
 import { create } from 'jss'
 import { JssProvider } from 'react-jss'
 
@@ -11,10 +12,11 @@ const jss = create({
 })
 // const generateId = createGenerateId()
 
-export const uiProvidersFactory = render => props => (
-  <JssProvider jss={jss}>
-    <MuiThemeProvider theme={theme}>{render(props)}</MuiThemeProvider>
-  </JssProvider>
-)
+export const uiProvidersFactory = render => props =>
+  (
+    <JssProvider jss={jss}>
+      <ThemeProvider theme={theme}>{render(props)}</ThemeProvider>
+    </JssProvider>
+  )
 
 export default uiProvidersFactory

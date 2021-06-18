@@ -2,7 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./Title.css'))
+import styles from './Title.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const Title = ({ icon, title }) => (
   <div className={cssClasses('title__container')}>

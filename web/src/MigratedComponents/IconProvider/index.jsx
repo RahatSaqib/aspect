@@ -4,7 +4,9 @@ import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
 
-const cssClasses = classnames.bind(require('./Icons.css'))
+import styles from './Icons.css'
+
+const cssClasses = classnames.bind(styles)
 
 async function loadIconModule(icon) {
   const iconFamily = icon.substring(0, 2).toLowerCase()

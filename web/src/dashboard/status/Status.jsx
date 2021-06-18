@@ -24,7 +24,9 @@ import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigur
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
 
-const cssClasses = classnames.bind(require('./Status.css'))
+import styles from './Status.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Status = ({ history, location }) => {
   const intl = useIntl()

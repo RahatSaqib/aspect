@@ -141,95 +141,94 @@ const createFieldListHandlers = _fp.reduce(
        validate
      })
  */
-const recomposeForm = ({
-  fields: fieldNameLikeList,
-  validate,
-}) => BaseComponent => {
-  const fieldNameList = mapFieldNames(fieldNameLikeList)
-  const factory = React.createFactory(BaseComponent)
+const recomposeForm =
+  ({ fields: fieldNameLikeList, validate }) =>
+  BaseComponent => {
+    const fieldNameList = mapFieldNames(fieldNameLikeList)
+    const factory = React.createFactory(BaseComponent)
 
-  return class extends React.PureComponent {
-    static displayName = wrapDisplayName(BaseComponent, 'recomposeForm')
+    return class extends React.PureComponent {
+      static displayName = wrapDisplayName(BaseComponent, 'recomposeForm')
 
-    constructor(...args) {
-      super(...args)
+      constructor(...args) {
+        super(...args)
 
-      const { state, handlers } = createFieldListHandlers(fieldNameList)
-      this.state = state
-      this.handlers = _fp.mapValues(_fp.bind(_fp.placeholder, this), handlers)
-    }
+        const { state, handlers } = createFieldListHandlers(fieldNameList)
+        this.state = state
+        this.handlers = _fp.mapValues(_fp.bind(_fp.placeholder, this), handlers)
+      }
 
-    componentWillUnmount() {
-      this.handleFormStateChange = _fp.noop
-    }
+      componentWillUnmount() {
+        this.handleFormStateChange = _fp.noop
+      }
 
-    validateFields = (values = this.props.values) => {
-      const errors = validate(values, this.props)
+      validateFields = (values = this.props.values) => {
+        const errors = validate(values, this.props)
 
-      const meta = _fp.reduce(
-        (acc, { fieldName }) => {
-          const error = errors[fieldName]
-          if (error) {
+        const meta = _fp.reduce(
+          (acc, { fieldName }) => {
+            const error = errors[fieldName]
+            if (error) {
+              return {
+                ...acc,
+                [fieldName]: {
+                  error,
+                },
+              }
+            }
             return {
               ...acc,
               [fieldName]: {
-                error,
+                error: null,
               },
             }
-          }
-          return {
-            ...acc,
-            [fieldName]: {
-              error: null,
-            },
-          }
-        },
-        {},
-        fieldNameList
-      )
+          },
+          {},
+          fieldNameList
+        )
 
-      return {
-        meta,
-        form: {
-          pristine: false,
-          valid: _fp.isEmpty(errors),
-        },
+        return {
+          meta,
+          form: {
+            pristine: false,
+            valid: _fp.isEmpty(errors),
+          },
+        }
+      }
+
+      handleFormStateChange = form =>
+        this.setState(state => _fp.mergeAll([state, { form }]))
+
+      handleSubmitting = () => {
+        this.handleFormStateChange({
+          submitting: true,
+        })
+      }
+
+      handleSubmitSucceed = () => {
+        this.handleFormStateChange({
+          pristine: true,
+          submitting: false,
+          submitSucceed: true,
+        })
+      }
+
+      handleSubmitFailed = () => {
+        this.handleFormStateChange({
+          valid: false,
+          submitting: false,
+          submitSucceed: false,
+        })
+      }
+
+      render() {
+        return factory({
+          ...this.props,
+          ...this.state,
+          ...this.handlers,
+        })
       }
     }
-
-    handleFormStateChange = form =>
-      this.setState(state => _fp.mergeAll([state, { form }]))
-
-    handleSubmitting = () => {
-      this.handleFormStateChange({
-        submitting: true,
-      })
-    }
-
-    handleSubmitSucceed = () => {
-      this.handleFormStateChange({
-        pristine: true,
-        submitting: false,
-        submitSucceed: true,
-      })
-    }
-
-    handleSubmitFailed = () => {
-      this.handleFormStateChange({
-        valid: false,
-        submitting: false,
-        submitSucceed: false,
-      })
-    }
-
-    render() {
-      return factory({
-        ...this.props,
-        ...this.state,
-        ...this.handlers,
-      })
-    }
   }
-}
 
 export default recomposeForm

@@ -3,7 +3,9 @@ import React from 'react'
 import { compose, withStateHandlers } from 'recompose'
 import Card from '@material-ui/core/Card'
 
-const cssClasses = classnames.bind(require('./ExpansionPanel.css'))
+import styles from './Accordion.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   withStateHandlers(
@@ -11,14 +13,16 @@ const enhance = compose(
       expanded,
     }),
     {
-      handleExpandToggle: ({ expanded }) => () => ({
-        expanded: !expanded,
-      }),
+      handleExpandToggle:
+        ({ expanded }) =>
+        () => ({
+          expanded: !expanded,
+        }),
     }
   )
 )
 
-export const ExpansionPanel = ({
+export const Accordion = ({
   children,
   className,
   disabled,
@@ -32,7 +36,7 @@ export const ExpansionPanel = ({
       return null
     }
 
-    if (child.type.displayName === 'ExpansionPanelHeader') {
+    if (child.type.displayName === 'AccordionHeader') {
       header = React.cloneElement(child, {
         disabled,
         expanded,
@@ -51,4 +55,4 @@ export const ExpansionPanel = ({
   )
 }
 
-export default enhance(ExpansionPanel)
+export default enhance(Accordion)

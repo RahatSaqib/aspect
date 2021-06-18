@@ -29,7 +29,9 @@ import {
   DeviceOperationDataTableRow,
 } from './DeviceOperationDataTable'
 
-const cssClasses = classnames.bind(require('../DeviceDetail.css'))
+import styles from '../DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_DATE = new Date()
 
@@ -107,42 +109,47 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      match,
-      location,
-      fetchDeviceOperations,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        fetchDeviceOperations(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
+    onInitialLoad:
+      ({
+        match,
+        location,
+        fetchDeviceOperations,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          filtersParams.set('deviceId', match.params.deviceId)
+          fetchDeviceOperations(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
+      },
 
-    onExportClick: ({
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportResults(
-          filtersParams,
-          formatType,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
+    onExportClick:
+      ({ location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
+      formatType => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportResults(
+            filtersParams,
+            formatType,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
+      },
   }),
   lifecycle({
     componentDidMount() {
@@ -291,11 +298,11 @@ export const DeviceDetailOperation = ({
 }
 
 DeviceDetailOperation.propTypes = {
-  history: PropTypes.oneOf([PropTypes.object]).isRequired,
-  location: PropTypes.oneOf([PropTypes.object]).isRequired,
-  device: PropTypes.oneOf([PropTypes.object]).isRequired,
-  table: PropTypes.oneOf([PropTypes.object]).isRequired,
-  items: PropTypes.oneOf([PropTypes.object]).isRequired,
+  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  device: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  table: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  items: PropTypes.oneOfType([PropTypes.object]).isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
   pageAt: PropTypes.number.isRequired,

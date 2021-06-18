@@ -19,8 +19,9 @@ import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 import AspectButton from '../../../../components/shared/AspectButton'
 
 import messages from '../messages'
+import styles from './EditableFieldsForm.css'
 
-const cssClasses = classnames.bind(require('./EditableFieldsForm.css'))
+const cssClasses = classnames.bind(styles)
 
 const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
@@ -64,9 +65,11 @@ const enhance = compose(
     enableReinitialize: true,
   }),
   withHandlers({
-    onSetBasedAddressClick: ({ updateLatLongFromFormAddress }) => () => {
-      updateLatLongFromFormAddress()
-    },
+    onSetBasedAddressClick:
+      ({ updateLatLongFromFormAddress }) =>
+      () => {
+        updateLatLongFromFormAddress()
+      },
   }),
   setPropTypes({
     initialValues: PropTypes.object.isRequired,

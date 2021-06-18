@@ -42,9 +42,11 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: props => ({ target: { value } }) => {
-      props.onTreatmentStatusChange(value === 'all' ? undefined : value)
-    },
+    onChange:
+      props =>
+      ({ target: { value } }) => {
+        props.onTreatmentStatusChange(value === 'all' ? undefined : value)
+      },
   }),
   mapProps(props => {
     return {

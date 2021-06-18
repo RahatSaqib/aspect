@@ -17,6 +17,8 @@ import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import IconMenu from '../../../components/shared/IconMenu'
 
+import styles from './index.css'
+
 const messages = defineMessages({
   accountDetails: {
     id: 'pages.HorizontalAppBar.accountDetails',
@@ -28,15 +30,20 @@ const messages = defineMessages({
   },
 })
 
-const cssClasses = classnames.bind(require('./index.css'))
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   injectIntl,
   withHandlers({
-    navigateRoot: ({ history }) => () => history.push('/'),
+    navigateRoot:
+      ({ history }) =>
+      () =>
+        history.push('/'),
 
-    navigateCurrentAccountDetails: ({ history }) => () =>
-      history.push('/account-details/current'),
+    navigateCurrentAccountDetails:
+      ({ history }) =>
+      () =>
+        history.push('/account-details/current'),
   }),
   connect(
     null,
