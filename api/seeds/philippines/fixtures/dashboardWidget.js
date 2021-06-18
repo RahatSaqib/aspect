@@ -1,15 +1,14 @@
-const pick = require('lodash/pick')
-const values = require('lodash/values')
+const _ = require('lodash')
 const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
 
+const { stat } = dashboardWidgetsBase
+
 module.exports = {
-  stat: values(
-    pick(dashboardWidgetsBase.stat, [
-      'sitesTitle',
-      'devicesTitle',
-      'resultsTitle',
-      'personTitle',
-      'activeDevices',
-    ])
-  ),
+  stat: _.omit(stat, [
+    'serverUptimeTitle',
+    'dashboardWidgetTitleTotalDeaths',
+    'dashboardWidgetTitleConfirmedCases',
+    'dashboardWidgetTitleTotalActiveCases',
+    'dashboardWidgetTitleTotalRecoveredCases',
+  ]),
 }
