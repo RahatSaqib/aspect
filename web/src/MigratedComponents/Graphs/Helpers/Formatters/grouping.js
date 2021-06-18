@@ -390,6 +390,11 @@ const groupForDeviceStatusAPI = (
         devicesTotal,
         isWeekendOrHoliday
       ),
+      inactiveNoSamples: weekendOrHolidayInactive(
+        curr.inactiveNoSamples,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
       inactiveNoPower: weekendOrHolidayInactive(
         curr.inactiveNoPower,
         devicesTotal,

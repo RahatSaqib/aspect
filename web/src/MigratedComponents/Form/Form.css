@@ -24,7 +24,8 @@
   flex-direction: column;
 }
 
-.form__sectionItemsContainer.form__flex-dir-column > .form__sectionItemContainer{
+.form__sectionItemsContainer.form__flex-dir-column
+  > .form__sectionItemContainer {
   max-width: none;
   flex-basis: 100%;
 }
@@ -37,7 +38,7 @@
 .form__sectionItemInput > label {
   color: var('--aspect-color-chill-blue-1') !important;
   font-size: 1rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left;
   margin-bottom: -4px;
@@ -90,7 +91,7 @@
   width: 100%;
 }
 
-.form__button{
+.form__button {
   margin-left: 10px;
   visibility: visible;
   opacity: 1;

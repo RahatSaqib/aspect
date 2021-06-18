@@ -3,6 +3,7 @@ const orderBy = require('lodash/orderBy')
 const omit = require('lodash/omit')
 const min = require('lodash/min')
 const uniq = require('lodash/uniq')
+const isNil = require('lodash/isNil')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -40,6 +41,7 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'dmsl.deviceMaintenanceStatusId',
         'dms.id'
       )
+      .leftJoin('Person as pe', 'dmsl.createdBy', 'pe.userId')
       .leftOuterJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', qb => {
         qb.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
           .andOn('newerDmslOnSameDay.day', 'dmsl.day')
@@ -73,6 +75,9 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'dms.name as maintenanceStatusName',
         'dms.externalId as maintenanceStatusExternalId',
         'dms.active as maintenanceStatusIsActive',
+        'pe.id as maintenanceStatusManuallySetById',
+        'pe.name as maintenanceStatusManuallySetByName',
+        'dmsl.createdOn as maintenanceStatusManuallySetByDate',
         knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes")
       )
   )
@@ -178,6 +183,9 @@ async function deviceStatusOverTime(request) {
       'deviceStatusByDay.maintenanceStatusI18nKey',
       'deviceStatusByDay.maintenanceStatusName',
       'deviceStatusByDay.maintenanceStatusExternalId',
+      'deviceStatusByDay.maintenanceStatusManuallySetById',
+      'deviceStatusByDay.maintenanceStatusManuallySetByName',
+      'deviceStatusByDay.maintenanceStatusManuallySetByDate',
       'deviceStatusByDay.maintenanceStatusNotes'
     )
   statusData = groupListBy(statusData, 'deviceId', 'day')
@@ -190,13 +198,36 @@ async function deviceStatusOverTime(request) {
       const isoDay = `${getDateSubstring(
         day.toISOString()
       )}T00:00:00.000${offset}`
+
       const groupName = getGroupName(device.id, isoDay)
 
       const [{ totalResults = 0 }] = devicesByDay[groupName] || [{}]
 
       let [status] = statusData[groupName] || [{}]
       if (status) {
-        status = omit(status, 'deviceId')
+        if (
+          !isNil(status.maintenanceStatusManuallySetById) &&
+          !isNil(status.maintenanceStatusManuallySetByDate)
+        ) {
+          try {
+            status.maintenanceStatusManuallySetBy = {
+              id: status.maintenanceStatusManuallySetById,
+              name: status.maintenanceStatusManuallySetByName,
+              updatedDate: status.maintenanceStatusManuallySetByDate,
+            }
+          } catch (error) {
+            throw new Error(error)
+          }
+        } else {
+          status.maintenanceStatusManuallySetBy = {}
+        }
+
+        status = omit(status, [
+          'deviceId',
+          'maintenanceStatusManuallySetById',
+          'maintenanceStatusManuallySetByName',
+          'maintenanceStatusManuallySetByDate',
+        ])
 
         if (
           // when device has no tests on this day ...

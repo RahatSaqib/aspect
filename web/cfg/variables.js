@@ -188,6 +188,7 @@ exports.customPropertiesVariables = {
   '--aspect-device-inactiveNoTestsPerformed': '#6d6f7d',
   '--aspect-device-inactiveOutOfInventory': '#0088aa',
   '--aspect-device-inactiveNoStaff': '#F7B500',
+  '--aspect-device-inactiveNoSamples': '#F7B500',
   '--aspect-device-inactiveNoPower': '#ffbe7d',
   '--aspect-device-inactiveOther': '#bf01c5',
 

@@ -49,6 +49,7 @@ const deviceStatusGraphs = () => ({
           inactiveDecommissioned: 'inactiveDecommissioned',
           weekendOrHoliday: 'weekendOrHoliday',
           inactiveNoStaff: 'inactiveNoStaff',
+          inactiveNoSamples: 'inactiveNoSamples',
           inactiveNoPower: 'inactiveNoPower',
           inactiveOther: 'inactiveOther',
         },

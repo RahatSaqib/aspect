@@ -38,6 +38,7 @@ const DailyStatusClinic = ({
             maintenanceStatusI18nKey,
             maintenanceStatusExternalId,
             maintenanceStatusName,
+            maintenanceStatusManuallySetBy,
             totalResults,
           }) => (
             <DailyStatusClinicDay
@@ -46,6 +47,7 @@ const DailyStatusClinic = ({
               isWeekend={isWeekend}
               maintenanceStatusI18nKey={maintenanceStatusI18nKey}
               maintenanceStatusName={maintenanceStatusName}
+              maintenanceStatusManuallySetBy={maintenanceStatusManuallySetBy}
               maintenanceStatusExternalId={maintenanceStatusExternalId}
               totalResults={totalResults}
               statuses={statuses}

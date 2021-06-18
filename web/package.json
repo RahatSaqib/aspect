@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "description": "The web client for the aspect API",
   "main": "",
+  "engines": {
+    "node": "14"
+  },
   "scripts": {
     "styleguide": "styleguidist server",
     "start": "webpack serve --config cfg/dev.js --open --hot",

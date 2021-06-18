@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
+
+import useI18n from '../../../../Hooks/i18n/useI18n'
 import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'
@@ -43,17 +45,18 @@ const DailyStatusClinicDay = ({
   daysInSameStatus,
   isWeekend,
   maintenanceStatusName,
+  maintenanceStatusManuallySetBy,
   maintenanceStatusI18nKey,
   maintenanceStatusExternalId,
   statuses,
   totalResults,
   onClickDay,
 }) => {
+  const { formatDate, formatMessage } = useI18n()
   const isActive =
     maintenanceStatusI18nKey === 'active' ||
     maintenanceStatusI18nKey === 'reportedActive'
   const isEditable = maintenanceStatusExternalId !== 'active'
-  const { formatMessage } = useIntl()
   const { weekend } = consts
   const { checked } =
     filter(statuses, {
@@ -69,7 +72,7 @@ const DailyStatusClinicDay = ({
       : maintenanceStatusI18nKey
   }
 
-  let title = getDayTitle({
+  const title = getDayTitle({
     checked,
     daysInSameStatus,
     formatMessage,
@@ -80,14 +83,23 @@ const DailyStatusClinicDay = ({
     maintenanceStatusI18nKey,
   })
 
-  if (!isEditable) {
-    title = `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}`
-  }
+  const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
+    ? formatMessage(messages.toolTipLastUpdatedBy, {
+        username: maintenanceStatusManuallySetBy.name,
+        updatedDate: formatDate(
+          new Date(maintenanceStatusManuallySetBy.updatedDate)
+        ),
+      })
+    : ''
 
   return (
     <AspectTooltip
       showPointerCursor={isEditable}
-      title={title}
+      title={
+        !isEditable
+          ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}`
+          : `${title}${manuallySet}`
+      }
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
@@ -102,6 +114,7 @@ const DailyStatusClinicDay = ({
 
 DailyStatusClinicDay.defaultProps = {
   maintenanceStatusName: false,
+  maintenanceStatusManuallySetBy: {},
   totalResults: 0,
 }
 
@@ -112,6 +125,11 @@ DailyStatusClinicDay.propTypes = {
     PropTypes.string,
     PropTypes.bool,
   ]),
+  maintenanceStatusManuallySetBy: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    updatedDate: PropTypes.string,
+  }),
   maintenanceStatusExternalId: PropTypes.string.isRequired,
   daysInSameStatus: PropTypes.string.isRequired,
   statuses: PropTypes.string.isRequired,

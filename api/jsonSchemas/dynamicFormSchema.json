@@ -102,6 +102,7 @@
             "description": "This allow multiples files to be attached",
             "default": false,
             "dependencies": {
+              "type": ["object"],
               "typeOfOptionSource": {
                 "required": ["filePicker"]
               }

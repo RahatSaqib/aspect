@@ -232,6 +232,24 @@ async function seed(knex) {
     }
     let deviceMaintenanceStatusLogId = null
     await Promise.each(dayAndStatus, async ({ dayDate, statusId }) => {
+      const isWeekend = dayDate.getUTCDay() === 0 || dayDate.getUTCDay() === 6
+      await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
+
+      if (_.random(0, 9) === 5 && statusId !== 1 && !isWeekend) {
+        await setDeviceMaintenanceStatusLog(
+          knex,
+          deviceId,
+          dayDate,
+          statusId,
+          userId,
+          {
+            notes: '',
+            dateTo: dayDate,
+            dateFrom: dayDate,
+            externalId: statusId,
+          }
+        )
+      }
       deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatusLog(
         knex,
         deviceId,
@@ -256,16 +274,19 @@ async function setDeviceMaintenanceStatusLog(
   knex,
   deviceId,
   dayDate,
-  deviceMaintenanceStatusId
+  deviceMaintenanceStatusId,
+  createdBy = false,
+  data = false
 ) {
   const [deviceMaintenanceStatusLogId] = await knex(
     'DeviceMaintenanceStatusLog'
   ).insert({
     deviceId,
     deviceMaintenanceStatusId,
-    data: '{}',
+    data: data ? JSON.stringify(data) : '{}',
     day: dayDate,
     createdOn: now,
+    createdBy: createdBy || null,
   })
   return deviceMaintenanceStatusLogId
 }
