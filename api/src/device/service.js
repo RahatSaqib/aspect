@@ -161,6 +161,7 @@ async function getListDevices(query, auth) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
     })
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .modify(queryBuilder => {
       if (query.onlyOpenIssues || query.issueTypeId) {
         queryBuilder.innerJoin(
@@ -550,6 +551,7 @@ async function listDevicesForSelectList(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const devices = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
@@ -557,6 +559,7 @@ async function listDevicesForSelectList(request) {
       partnerId: 'd.partnerId',
       siteId: 'd.siteId',
     })
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .orderBy(['d.name'], 'asc')
     .select('d.id', 'd.name')
 

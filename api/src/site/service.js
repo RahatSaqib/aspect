@@ -100,6 +100,7 @@ async function listSites(request) {
 
       this.whereIn('s.id', deviceQuery)
     })
+    .whereNotIn('s.externalId', ['GxAlert', 'Aspect'])
     .groupBy(['s.id'])
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(filterParams, query, {
@@ -220,6 +221,7 @@ async function listSitesForSelectList(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .whereNotIn('s.externalId', ['GxAlert', 'Aspect'])
 
   if (query && query.tags && query.tags.length > 0)
     sitesQuery = sitesQuery
