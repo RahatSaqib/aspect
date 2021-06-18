@@ -9,6 +9,11 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.deviceLogs',
     defaultMessage: 'Device logs',
   },
+  deviceLogsTooltip: {
+    id: 'pages.DeviceDetailProfile.deviceLogsTooltip',
+    defaultMessage:
+      'Download all the entries that the GeneXpert device has generated in its log. In this report you can see the calibration dates, hardware/software failures and other errors, failures or information records that the device generated',
+  },
   approval: {
     id: 'pages.DeviceDetailProfile.approval',
     defaultMessage: 'Approval',
