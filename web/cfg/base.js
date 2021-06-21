@@ -7,12 +7,12 @@ const cssNext = require('postcss-cssnext')
 const DelWebpackPlugin = require('del-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const WebpackPwaManifest = require('webpack-pwa-manifest')
 // const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const postcssPresetEnv = require('postcss-preset-env')
+// const postcssPresetEnv = require('postcss-preset-env')
 
 const {
   definePluginVariables,
@@ -25,16 +25,16 @@ const postcssPlugins = () => [
     rootValue: 16,
   }),
   cssImport(),
-  postcssPresetEnv({
-    /* see https://www.npmjs.com/package/postcss-preset-env */
-    browsers: ['> 1%', 'last 2 versions'],
-    // importFrom: {
-    //   customProperties: customPropertiesVariables,
-    // },
-    // exportTo: 'custom-properties.css',
-  }),
+  // postcssPresetEnv({
+  //   /* see https://www.npmjs.com/package/postcss-preset-env */
+  //   browsers: ['> 1%', 'last 2 versions'],
+  //   // importFrom: {
+  //   //   customProperties: customPropertiesVariables,
+  //   // },
+  //   // exportTo: 'custom-properties.css',
+  // }),
   cssNext({
-    // browsers: ['> 1%', 'last 2 versions'],
+    browsers: ['> 1%', 'last 2 versions'],
     features: {
       customProperties: {
         variables: customPropertiesVariables,
@@ -53,6 +53,69 @@ module.exports = {
   },
   resolve: {
     extensions: ['.json', '.js', '.jsx'],
+  },
+  optimization: {
+    // moduleIds: 'named',
+    moduleIds: 'deterministic',
+    minimize: process.env.NODE_ENV === 'development',
+    runtimeChunk: 'single',
+    usedExports: true,
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // defaultVendors: {},
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|react-helmet)[\\/]/,
+          name: 'vendor-react',
+          chunks: 'all',
+        },
+        react_table: {
+          test: /[\\/]node_modules[\\/](react-table)[\\/]/,
+          name: 'vendor-react-table',
+          chunks: 'all',
+        },
+        react_intl: {
+          test: /[\\/]node_modules[\\/](intl|react-intl)[\\/]/,
+          name: 'vendor-intl',
+          chunks: 'all',
+        },
+        redux: {
+          test: /[\\/]node_modules[\\/](react-redux|redux|redux-thunk|redux-idle-monitor|redux-immutable)[\\/]/,
+          name: 'vendor-redux',
+          chunks: 'all',
+        },
+        rq: {
+          test: /[\\/]node_modules[\\/](react-query)[\\/]/,
+          name: 'vendor-react-query',
+          chunks: 'all',
+        },
+        lodash: {
+          test: /[\\/]node_modules[\\/](lodash)[\\/]/,
+          name: 'vendor-lodash',
+          chunks: 'all',
+        },
+        nivo: {
+          test: /[\\/]node_modules[\\/]@nivo/,
+          name: 'vendor-nivo',
+          chunks: 'all',
+        },
+        mui: {
+          test: /[\\/]node_modules[\\/]@material-ui/,
+          name: 'vendor-material-ui',
+          chunks: 'all',
+        },
+        dates: {
+          test: /[\\/]node_modules[\\/](date-fns|date-fns-timezone)[\\/]/,
+          name: 'vendor-date-fns',
+          chunks: 'all',
+        },
+        formik: {
+          test: /[\\/]node_modules[\\/](formik)[\\/]/,
+          name: 'vendor-formik',
+          chunks: 'all',
+        },
+      },
+    },
   },
   module: {
     rules: [
@@ -87,20 +150,65 @@ module.exports = {
           },
         ],
       },
+      // {
+      //   // images
+      //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
+      //   type: 'asset/resource',
+      // },
+      // {
+      //   // fonts
+      //   test: /\.(woff|woff2|eot|ttf|otf)$/i,
+      //   type: 'asset/resource',
+      // },
+      // {
+      //   // video
+      //   test: /\.(mp4|ogg)$/i,
+      //   type: 'asset/resource',
+      // },
+
       {
-        // images
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset',
+        test: /\.(png|jpg|gif|woff|woff2)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+              esModule: false,
+            },
+          },
+        ],
+        type: 'javascript/auto',
       },
       {
-        // fonts
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset',
+        test: /\.svg$/,
+        include: path.resolve(__dirname, '../src'),
+        use: [
+          {
+            loader: 'svg-sprite-loader',
+            options: {
+              extract: true,
+            },
+          },
+        ],
+        type: 'javascript/auto',
       },
       {
-        // video
-        test: /\.(mp4|ogg)$/i,
-        type: 'asset',
+        test: /\.(mp4|ogg|svg)$/,
+        exclude: path.resolve(__dirname, '../src'),
+        use: ['file-loader'],
+        type: 'javascript/auto',
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: {
+              minimize: false,
+            },
+          },
+        ],
+        type: 'javascript/auto',
       },
     ],
   },
@@ -124,7 +232,7 @@ module.exports = {
       filename: 'index.html',
       favicon: path.join(__dirname, '../src/template/favicon.png'),
     }),
-    // new SpriteLoaderPlugin(),
+    new SpriteLoaderPlugin(),
     new WebpackPwaManifest({
       icons: [
         {

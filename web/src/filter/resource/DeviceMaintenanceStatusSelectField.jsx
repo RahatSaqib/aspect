@@ -50,8 +50,7 @@ const messages = defineMessages({
     defaultMessage: 'No Staff',
   },
   inactiveNoSamples: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoSamples',
+    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoSamples',
     defaultMessage: 'No Samples',
   },
   inactiveNoPower: {
@@ -97,7 +96,7 @@ export default ({ onDeviceMaintenanceStatusChange, value, ...restProps }) => {
       }}
     >
       {maintenanceStatuses
-        ? maintenanceStatuses.map(ms => (
+        ? maintenanceStatuses.map((ms) => (
             <MenuItem key={ms.externalId} value={ms.externalId}>
               {intl.formatMessage(messages[ms.i18nKey])}
             </MenuItem>
