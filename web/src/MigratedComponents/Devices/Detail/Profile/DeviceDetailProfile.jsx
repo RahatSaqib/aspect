@@ -577,6 +577,22 @@ const DeviceDetailProfile = ({
                 'deviceType',
                 'id',
               ])}`}
+              action={
+                <Fragment>
+                  <Tooltip
+                    title={intl.formatMessage(messages.deviceLogsTooltip)}
+                    placement="right"
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={onExportDeviceLogsClick}
+                      disabled={disabled}
+                    >
+                      {intl.formatMessage(messages.deviceLogs)}
+                    </Button>
+                  </Tooltip>
+                </Fragment>
+              }
             />
             <Summary
               title={intl.formatMessage(messages.maintenance)}
@@ -721,15 +737,6 @@ const DeviceDetailProfile = ({
                 >
                   {intl.formatMessage(messages.errorRate)}
                 </AspectTooltip>
-              }
-              action={
-                <Button
-                  variant="contained"
-                  onClick={onExportDeviceLogsClick}
-                  disabled={disabled}
-                >
-                  {intl.formatMessage(messages.deviceLogs)}
-                </Button>
               }
               description={
                 errorRateThisMonth !== null ? (
