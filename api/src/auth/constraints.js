@@ -216,7 +216,8 @@ function addPartnerConstraints(
   constraints,
   { resultAlias, partner }
 ) {
-  const aliases = [`${partner}.id`]
+  const aliases = []
+  if (partner) aliases.push(`${partner}.id`)
   if (resultAlias) aliases.push(`${resultAlias}.partnerId`)
   if (_.get(constraints, 'partner.id')) {
     _.each(aliases, alias =>
@@ -270,16 +271,6 @@ function addGeographyConstraints(
   constraints,
   { site, partner, geography, country, resultAlias }
 ) {
-  if (!geography) {
-    geography = alias('Geography')
-  }
-  if (resultAlias)
-    queryBuilder.leftOuterJoin(
-      `Geography as ${geography}`,
-      `${resultAlias}.geographyId`,
-      `${geography}.id`
-    )
-
   if (site) {
     if (!partner) {
       partner = alias('Partner')
@@ -289,8 +280,17 @@ function addGeographyConstraints(
         `${partner}.id`
       )
     }
-
-    if (!country) {
+  }
+  if (!geography) {
+    if (resultAlias) {
+      geography = alias('Geography')
+      queryBuilder.leftOuterJoin(
+        `Geography as ${geography}`,
+        `${resultAlias}.geographyId`,
+        `${geography}.id`
+      )
+    } else if (!country && site) {
+      geography = alias('Geography')
       queryBuilder.leftOuterJoin(
         `Geography as ${geography}`,
         `${site}.geographyId`,
@@ -302,7 +302,7 @@ function addGeographyConstraints(
   if (_.get(constraints, 'country.id')) {
     if (country) {
       queryBuilder.where(`${country}.id`, constraints.country.id)
-    } else {
+    } else if (geography) {
       queryBuilder.where({
         [`${geography}.countryId`]: constraints.country.id,
       })
@@ -321,15 +321,16 @@ function addDevicesAndSitesConstraints(
     showDecommissionedDevices = false,
   }
 ) {
-  if (!site) site = alias('Site')
-  if (device) {
-    queryBuilder.leftOuterJoin(
-      `Site as ${site}`,
-      `${device}.siteId`,
-      `${site}.id`
-    )
+  if (!site) {
+    site = alias('Site')
+    if (device) {
+      queryBuilder.leftOuterJoin(
+        `Site as ${site}`,
+        `${device}.siteId`,
+        `${site}.id`
+      )
+    }
   }
-
   if (_.get(constraints, 'deviceType.id')) {
     if (device) {
       queryBuilder.where(qb =>
