@@ -3,6 +3,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import PropTypes from 'prop-types'
 
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
@@ -63,14 +64,22 @@ const messages = defineMessages({
   },
 })
 
-export default ({ onDeviceMaintenanceStatusChange, value, ...restProps }) => {
+const DeviceMaintenanceStatusSelectField = ({
+  onDeviceMaintenanceStatusChange,
+  value,
+  onlyManuallySetableStatuses,
+  ...restProps
+}) => {
   const intl = useIntl()
-  const { data, isError } = useQuery(DEVICE_STATUS.KEY, async () => {
-    return fetchWrapperForQueries({
-      endpoint: DEVICE_STATUS.ENDPOINT,
-      params: { onlyManuallySet: true },
-    })
-  })
+  const { data, isError } = useQuery(
+    [DEVICE_STATUS.KEY, onlyManuallySetableStatuses],
+    async () => {
+      return fetchWrapperForQueries({
+        endpoint: DEVICE_STATUS.ENDPOINT,
+        params: { onlyManuallySet: onlyManuallySetableStatuses },
+      })
+    }
+  )
 
   const [maintenanceStatuses, setMaintenanceStatuses] = useState(false)
   const dispatch = useDispatch()
@@ -105,3 +114,17 @@ export default ({ onDeviceMaintenanceStatusChange, value, ...restProps }) => {
     </SelectField>
   )
 }
+
+DeviceMaintenanceStatusSelectField.defaultProps = {
+  value: null,
+  onlyManuallySetableStatuses: false,
+}
+
+DeviceMaintenanceStatusSelectField.propTypes = {
+  onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func])
+    .isRequired,
+  value: PropTypes.oneOfType([PropTypes.string]),
+  onlyManuallySetableStatuses: PropTypes.oneOfType([PropTypes.bool]),
+}
+
+export default DeviceMaintenanceStatusSelectField

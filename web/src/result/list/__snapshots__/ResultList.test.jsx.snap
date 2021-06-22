@@ -60,19 +60,7 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "",
       }
     }
-  >
-    <requirePermissions(AspectButton)
-      browseButton={true}
-      color="primary"
-      extraPermissions={Array []}
-      onClick={[Function]}
-      overriddenPermissions={Array []}
-      type="button"
-      variant="contained"
-    >
-      New Result
-    </requirePermissions(AspectButton)>
-  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
+  />
   <DataTableCard
     key="DataTableCard--table-undefined"
   >

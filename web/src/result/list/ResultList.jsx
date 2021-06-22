@@ -100,10 +100,12 @@ const FILTERS_CONFIG = [
   { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
 
+// eslint-disable-next-line no-unused-vars
 const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
+// eslint-disable-next-line no-unused-vars
 const onAddNewButtonClick = (history) => () =>
   history.push('/browse/result/add')
 
@@ -242,6 +244,7 @@ export const ResultListWithProps = ({
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
     >
+      {/** ? 
       <AddNewButton
         type="button"
         color="primary"
@@ -251,6 +254,7 @@ export const ResultListWithProps = ({
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
+    */}
     </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
