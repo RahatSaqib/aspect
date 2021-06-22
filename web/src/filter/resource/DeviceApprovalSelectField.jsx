@@ -5,6 +5,7 @@ import flowRight from 'lodash/flowRight'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
+import Immutable from 'immutable'
 import messages from './i18n/deviceApprovalMessages'
 
 import SelectField from '../../components/shared/SelectField'
@@ -15,12 +16,7 @@ export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchDeviceApprovals: PropTypes.func.isRequired,
-    deviceApprovalItems: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-      })
-    ).isRequired,
+    deviceApprovalItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onDeviceApprovalChange: PropTypes.func.isRequired,
     value: PropTypes.string,
     intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
@@ -52,7 +48,7 @@ export class DeviceApprovalSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {deviceApprovalItems.map(a => (
+        {deviceApprovalItems.map((a) => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {formatI18nMessage(
               messages,

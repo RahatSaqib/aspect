@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 
-const styles = theme => ({
+const styles = (theme) => ({
   label: {
     '&$labelFocused': {
       color: theme.palette.text.secondary,
@@ -26,6 +26,7 @@ const styles = theme => ({
 })
 
 const SelectField = ({
+  autoWidth,
   classes: classesMap,
   className,
   errorText,
@@ -51,7 +52,7 @@ const SelectField = ({
       style: errorStyle,
     }}
     SelectProps={{
-      autoWidth: true,
+      autoWidth,
       displayEmpty: true,
       value,
     }}
@@ -90,7 +91,7 @@ SelectField.propTypes = {
     PropTypes.bool,
     PropTypes.object,
   ]), // eslint-disable-line
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   onChange: PropTypes.func.isRequired,
 }
 
@@ -104,6 +105,7 @@ SelectField.defaultProps = {
   fullWidth: false,
   hintText: '',
   value: '',
+  children: null,
 }
 
 export default withStyles(styles)(SelectField)

@@ -15,8 +15,7 @@ const styles = {
     lineHeight: '24px',
   },
   checkbox: {
-    marginRight: 12,
-    padding: '10px 0',
+    marginRight: 1,
   },
   icon: {
     fontSize: 24,

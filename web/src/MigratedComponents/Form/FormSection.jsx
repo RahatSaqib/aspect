@@ -11,13 +11,13 @@ import styles from './Form.css'
 const cssClasses = classnames.bind(styles)
 
 const getVisibleRows = (rows, formik) => {
-  return rows.map(row => {
+  return rows.map((row) => {
     if (row.visibleIf && !row.visibleIf(formik.values)) {
       // row is hidden explicitly
       return false
     }
     // row is visible if at least one item is visible
-    const itemsVisible = row.items.map(item =>
+    const itemsVisible = row.items.map((item) =>
       item.visibleIf ? item.visibleIf(formik.values) : true
     )
     return itemsVisible.includes(true)
@@ -41,16 +41,23 @@ const FormSection = ({
   return isSectionVisible ? (
     <Grid item xs={fullWidth ? 12 : 10}>
       {rows &&
-        rows.map(({ items }, rowIndex) =>
+        rows.map((row, rowIndex) =>
           visibleRows[rowIndex] === true ? (
             <Grid
+              key={`row-${rowIndex.toString()}`}
               container
               className={cssClasses('form__sectionItemsContainer', {
                 [classNames.container]: !!classNames.container,
               })}
             >
-              {items &&
-                items.map(item => <FormItem {...item} messages={messages} />)}
+              {row.items &&
+                row.items.map((item, itemIndex) => (
+                  <FormItem
+                    key={`row-${rowIndex.toString()}-item-${itemIndex.toString()}`}
+                    {...item}
+                    messages={messages}
+                  />
+                ))}
             </Grid>
           ) : null
         )}

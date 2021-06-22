@@ -49,7 +49,7 @@ import styles from './ReporterList.css'
 
 const cssClasses = classnames.bind(styles)
 
-const getBaseColumns = formatMessage => {
+const getBaseColumns = (formatMessage) => {
   return Immutable.List([
     {
       key: 'siteName',
@@ -122,18 +122,18 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
+    (searchParams) => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
-const getCurrentFilters = locationSearch => {
+const getCurrentFilters = (locationSearch) => {
   const urlSearchParams = new URLSearchParams(locationSearch)
   const { value: filtersParams } = filtersSanitizer(
     urlSearchParams.get('filters') || ''
   )
   return fromPairs([...filtersParams.entries()])
 }
-const getCurrentPagination = location => {
+const getCurrentPagination = (location) => {
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
     sortDir: 'asc',
@@ -149,7 +149,7 @@ export const ReporterListWithProps = ({
   table,
   columns,
   items,
-  onRevokedItem,
+  // onRevokedItem,
   isLoading,
   sortCol,
   sortDir,
@@ -179,10 +179,7 @@ export const ReporterListWithProps = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <ReporterDataTable
-          selectable={false}
-          className={cssClasses('ReporterDataTable')}
-        >
+        <ReporterDataTable className={cssClasses('ReporterDataTable')}>
           <ReporterDataTableHead
             history={history}
             location={location}
@@ -192,13 +189,13 @@ export const ReporterListWithProps = ({
           />
           <TableBody>
             {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(reporter => (
+              .map((id) => items.byId.get(id))
+              .map((reporter) => (
                 <ReporterDataTableRow
                   key={reporter.get('siteId')}
                   intl={intl}
                   reporter={reporter}
-                  onRevokedItem={onRevokedItem}
+                  // onRevokedItem={onRevokedItem}
                 />
               ))}
           </TableBody>
@@ -242,7 +239,7 @@ const ReporterList = () => {
   const [total, setTotal] = useState()
   const [filters, setFilters] = useState(getCurrentFilters(location.search))
   const [pagination, setPagination] = useState(getCurrentPagination(location))
-  const [columns, setColumns] = useState([])
+  const [columns, setColumns] = useState(Immutable.List([]))
 
   const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
@@ -302,7 +299,7 @@ const ReporterList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  const onExportClick = formatType => {
+  const onExportClick = (formatType) => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       return getExportableFile(
@@ -351,10 +348,10 @@ ReporterListWithProps.propTypes = {
   pageAt: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   onExportClick: PropTypes.func.isRequired,
-  onRevokedItem: PropTypes.func.isRequired,
+  // onRevokedItem: PropTypes.func.isRequired,
   columns: PropTypes.instanceOf(Immutable.List).isRequired,
   isLoading: PropTypes.bool.isRequired,
-  reducedFilters: PropTypes.arrayOf(PropTypes.string).isRequired,
+  reducedFilters: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default ReporterList

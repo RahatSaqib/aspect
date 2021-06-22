@@ -75,11 +75,11 @@ const enhance = compose(
         ),
     onPageChange:
       ({ onFetch, table }) =>
-      nextPage =>
+      (nextPage) =>
         onFetch(table.sortCol, table.sortDir, nextPage, table.pageSize),
     onPageSizeChange:
       ({ onFetch, table }) =>
-      nextPageSize =>
+      (nextPageSize) =>
         onFetch(table.sortCol, table.sortDir, 0, nextPageSize),
   }),
   lifecycle({
@@ -113,10 +113,7 @@ export const ResultWorkflowStatusLog = ({
       {!items.currentIdList.isEmpty() && (
         <Typography>
           <DataTableProgressBar disabled={!table.loading} />
-          <WorkflowLogDataTable
-            selectable={false}
-            className={cssClasses('WorkflowLogDataTable')}
-          >
+          <WorkflowLogDataTable className={cssClasses('WorkflowLogDataTable')}>
             <WorkflowLogDataTableHead
               sortColumnKey={table.sortCol}
               sortColumnDir={table.sortDir}
@@ -140,8 +137,8 @@ export const ResultWorkflowStatusLog = ({
             />
             <TableBody>
               {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(workflowLog => (
+                .map((id) => items.byId.get(id))
+                .map((workflowLog) => (
                   <WorkflowLogDataTableRow
                     key={workflowLog.get('id')}
                     intl={intl}

@@ -10,7 +10,7 @@ const NotificationsContextualMenu = ({ item: { id } }) => {
   const history = useHistory()
   const { formatMessage } = useIntl()
 
-  const getItemActions = history => [
+  const getItemActions = (history) => [
     {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
@@ -47,7 +47,7 @@ const NotificationsContextualMenu = ({ item: { id } }) => {
 
 NotificationsContextualMenu.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
 }
 

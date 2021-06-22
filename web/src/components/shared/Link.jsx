@@ -4,11 +4,11 @@ import classNames from 'classnames'
 import MUILink from '@material-ui/core/Link'
 import { useHistory, useLocation } from 'react-router-dom'
 
-const Link = ({ label, theme, disabled, ...restProps }) => {
+const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
   const history = useHistory()
   const location = useLocation()
 
-  const onLinkClick = event => {
+  const onLinkClick = (event) => {
     event.preventDefault()
     const { currentTarget } = event
     const { pathname } = currentTarget
@@ -21,7 +21,7 @@ const Link = ({ label, theme, disabled, ...restProps }) => {
       location={location}
       disabled={disabled}
       {...restProps}
-      onClick={onLinkClick}
+      onClick={onClick || onLinkClick}
       className={classNames(theme.link, {
         [theme.active]: new RegExp(`^${restProps.href}`).test(
           location.pathname
@@ -35,12 +35,13 @@ const Link = ({ label, theme, disabled, ...restProps }) => {
 
 Link.defaultProps = {
   disabled: false,
+  onClick: null,
 }
 
 Link.propTypes = {
   label: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
-  onLinkClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
   theme: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

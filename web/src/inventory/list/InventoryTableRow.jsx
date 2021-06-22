@@ -22,11 +22,11 @@ import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({ inventoryItem, key }) => {
+const InventoryTableRow = ({ inventoryItem }) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
-  const getActions = isInTransit => [
+  const getActions = (isInTransit) => [
     {
       icon: 'FaCheck',
       text: formatMessage(messages.receiveInventory),
@@ -58,15 +58,16 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
   ]
 
   // helper funcs
-  const hasProp = name => inventoryItem.get('visibleProperties').includes(name)
-  const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
-  const hasQtyOnHand = qty =>
+  const hasProp = (name) =>
+    inventoryItem.get('visibleProperties').includes(name)
+  const rowSpan = (name) => inventoryItem.getIn(['rowSpans', name])
+  const hasQtyOnHand = (qty) =>
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
-  const hasDailyConsumption = qty =>
+  const hasDailyConsumption = (qty) =>
     isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(qty)
 
   return (
-    <TableRow key={key} className={cssClasses('TableRow')}>
+    <TableRow className={cssClasses('TableRow')}>
       {hasProp('siteName') ? (
         <TableCell
           className={cssClasses('TableCell')}

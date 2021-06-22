@@ -5,6 +5,7 @@ import flowRight from 'lodash/flowRight'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
+import Immutable from 'immutable'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
@@ -15,12 +16,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchWorkflowStatuses: PropTypes.func.isRequired,
-    workflowStatusItems: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-      })
-    ).isRequired,
+    workflowStatusItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
     intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
@@ -51,7 +47,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {workflowStatusItems.map(a => (
+        {workflowStatusItems.map((a) => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {formatI18nMessage(
               messages,

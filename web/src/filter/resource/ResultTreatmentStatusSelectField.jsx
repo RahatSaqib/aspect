@@ -8,7 +8,6 @@ import {
   lifecycle,
   withHandlers,
 } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { useIntl } from 'react-intl'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -20,22 +19,19 @@ import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const enhance = compose(
   pure,
-  setPropTypes({
-    fetchTreatmentStatuses: PropTypes.func.isRequired,
-    value: PropTypes.string,
-  }),
   connect(
-    state => ({
+    (state) => ({
       resultTreatmentStatusList: state.resultTreatmentStatus,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchTreatmentStatuses,
-        },
-        dispatch
-      )
+    {
+      fetchTreatmentStatuses,
+    }
   ),
+  setPropTypes({
+    fetchTreatmentStatuses: PropTypes.func.isRequired,
+    onTreatmentStatusChange: PropTypes.func.isRequired,
+    value: PropTypes.string,
+  }),
   lifecycle({
     componentDidMount() {
       this.props.fetchTreatmentStatuses()
@@ -43,16 +39,16 @@ const enhance = compose(
   }),
   withHandlers({
     onChange:
-      props =>
+      (props) =>
       ({ target: { value } }) => {
         props.onTreatmentStatusChange(value === 'all' ? undefined : value)
       },
   }),
-  mapProps(props => {
+  mapProps((props) => {
     return {
       ...props,
       treatmentSelectList: props.resultTreatmentStatusList.items
-        .map(item => ({
+        .map((item) => ({
           value: item.get('externalId'),
           text: item.get('name'),
           i18nKey: item.get('i18nKey'),
@@ -65,13 +61,16 @@ const enhance = compose(
 export function TreatmentSelectField({
   treatmentSelectList,
   allItemText,
+  fetchTreatmentStatuses, // eslint-disable-line no-unused-vars
+  onTreatmentStatusChange, // eslint-disable-line no-unused-vars
+  resultTreatmentStatusList, // eslint-disable-line no-unused-vars
   ...restProps
 }) {
   const { formatMessage } = useIntl()
   return (
     <SelectField {...restProps} value={restProps.value}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-      {treatmentSelectList.map(s => (
+      {treatmentSelectList.map((s) => (
         <MenuItem key={s.value} value={s.value}>
           {formatI18nMessage(messages, formatMessage, s.i18nKey, s.name)}
         </MenuItem>

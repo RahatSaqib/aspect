@@ -11,7 +11,6 @@ import {
   setPropTypes,
 } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -132,20 +131,13 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
+    (searchParams) => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    intl: PropTypeOf.intl.isRequired,
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-    table: PropTypes.instanceOf(Immutable.Record).isRequired,
-    items: PropTypes.instanceOf(Immutable.Record).isRequired,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -161,7 +153,7 @@ const enhance = compose(
     }
   ),
   connect(
-    state => {
+    (state) => {
       return {
         items: state.site.items,
         table: state.site.table,
@@ -169,15 +161,22 @@ const enhance = compose(
         user: state.user,
       }
     },
-    bindActionCreators.bind(null, {
+    {
       fetchSites,
       exportSites,
-    })
+    }
   ),
+  setPropTypes({
+    intl: PropTypeOf.intl.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    table: PropTypes.instanceOf(Immutable.Record).isRequired,
+    items: PropTypes.instanceOf(Immutable.Record).isRequired,
+  }),
   withHandlers({
     onAlertClick:
       ({ history }) =>
-      event => {
+      (event) => {
         event.stopPropagation()
         const {
           currentTarget: {
@@ -189,7 +188,7 @@ const enhance = compose(
 
     onExcelClick:
       ({ location, exportSites, sortCol, sortDir, pageAt, table }) =>
-      formatType => {
+      (formatType) => {
         const format = formatType.id
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
@@ -305,10 +304,7 @@ export const SiteList = ({
         />
 
         {siteList && (
-          <SiteDataTable
-            selectable={false}
-            className={cssClasses('SiteDataTable')}
-          >
+          <SiteDataTable className={cssClasses('SiteDataTable')}>
             <SiteDataTableHead
               history={history}
               location={location}
@@ -353,7 +349,7 @@ export const SiteList = ({
             />
             <TableBody>
               {siteList &&
-                siteList?.map(site => (
+                siteList?.map((site) => (
                   <SiteDataTableRow
                     key={site.id}
                     intl={intl}

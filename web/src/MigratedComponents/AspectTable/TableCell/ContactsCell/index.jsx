@@ -1,7 +1,8 @@
 import React from 'react'
-import { array, oneOfType } from 'prop-types'
+import { array, oneOfType, string } from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
+import isString from 'lodash/isString'
 
 import messages from '../messages'
 
@@ -19,9 +20,9 @@ const CONTACTS = {
 
 const ContactsCell = ({ value }) => {
   const { formatMessage } = useIntl()
-  const valToArray = value ? value.split(',') : []
+  const valToArray = isString(value) ? value.split(',') : []
   if (valToArray.length > CONTACTS.MAX_VISIBLE_COUNT) {
-    const tempContacts = [...value]
+    const tempContacts = [...valToArray]
     tempContacts.length = CONTACTS.MAX_VISIBLE_COUNT
     return (
       <div>
@@ -52,7 +53,7 @@ ContactsCell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([array]),
+  value: oneOfType([array, string]),
 }
 
 export default ContactsCell

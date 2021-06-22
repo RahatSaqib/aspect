@@ -11,9 +11,7 @@ import Button from '@material-ui/core/Button'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 import InfoIcon from '@material-ui/icons/Info'
-import lightBlue from '@material-ui/core/colors/lightBlue'
-import orange from '@material-ui/core/colors/orange'
-import red from '@material-ui/core/colors/red'
+import { lightBlue, orange, red } from '@material-ui/core/colors'
 
 // Our own imports
 import AspectDialog from '../components/shared/AspectDialog'

@@ -27,8 +27,9 @@ const AspectForm = ({ config: { sections, classNames, messages } }) => {
       >
         {sections &&
           sections.map(
-            ({ label, labelI18nKey, rows, hideHeader, classNames = {} }) => (
+            ({ label, labelI18nKey, rows, hideHeader, classNames = {} }, j) => (
               <Grid
+                key={`${label}-${labelI18nKey}-${j.toString()}`}
                 item
                 xs={12}
                 className={cssClasses('form__sectionContainer')}

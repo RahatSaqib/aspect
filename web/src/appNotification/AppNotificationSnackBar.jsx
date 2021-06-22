@@ -8,8 +8,7 @@ import classNames from 'classnames'
 import { defineMessages, injectIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import Snackbar from '@material-ui/core/Snackbar'
-import green from '@material-ui/core/colors/green'
-import amber from '@material-ui/core/colors/amber'
+import { green, amber } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/styles'
 
 // Our own imports

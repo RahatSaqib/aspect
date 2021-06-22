@@ -5,16 +5,18 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 
 const AspectCheckbox = ({
+  autoWidth, // eslint-disable-line no-unused-vars
   className,
-  size = 'large',
+  size = 'medium',
   color = 'primary',
   ...restProps
 }) => (
   <Checkbox
     className={classNames(className)}
     color={color}
-    icon={<CheckBoxOutlineBlankIcon fontSize={size} />}
-    checkedIcon={<CheckBoxIcon fontSize={size} />}
+    icon={<CheckBoxOutlineBlankIcon />}
+    checkedIcon={<CheckBoxIcon />}
+    size={size}
     {...restProps}
   />
 )

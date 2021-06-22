@@ -30,13 +30,14 @@ const PermissionsProvider = ({
 PermissionsProvider.defaultProps = {
   override: [],
   extra: [],
+  children: null,
 }
 
 PermissionsProvider.propTypes = {
   permissions: PropTypes.oneOfType([PropTypes.array]).isRequired,
   override: PropTypes.oneOfType([PropTypes.array]),
   extra: PropTypes.oneOfType([PropTypes.array]),
-  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default memo(PermissionsProvider)

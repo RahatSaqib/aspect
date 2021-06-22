@@ -28,7 +28,7 @@ describe('ResetPassword module', () => {
         showAcknowledgement: () => {},
         showError: () => {},
         intl: {
-          formatMessage: message => message.defaultMessage,
+          formatMessage: (message) => message.defaultMessage,
         },
         searchParams: new URLSearchParams(),
       }
@@ -47,13 +47,12 @@ describe('ResetPassword module', () => {
       const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xl: true,
       })
-
-      expect(largeScreenDiv.find(Stepper).dive().props().orientation).toEqual(
-        'horizontal'
-      )
-      expect(smallScreenDiv.find(Stepper).dive().props().orientation).toEqual(
-        'vertical'
-      )
+      expect(
+        largeScreenDiv.find(Stepper).dive().props().value.orientation
+      ).toEqual('horizontal')
+      expect(
+        smallScreenDiv.find(Stepper).dive().props().value.orientation
+      ).toEqual('vertical')
     })
 
     it('should contain the same steps for both large and small screens', () => {

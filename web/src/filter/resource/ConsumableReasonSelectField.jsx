@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import React from 'react'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import MenuItem from '@material-ui/core/MenuItem'
@@ -62,12 +61,12 @@ const enhance = compose(
     value: PropTypes.string,
   }),
   connect(
-    state => ({
+    (state) => ({
       consumableReasons: state.consumable.consumableReasons,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchConsumableReasons,
-    })
+    }
   ),
   lifecycle({
     componentWillMount() {
@@ -103,7 +102,7 @@ export const ConsumableReasonSelectField = ({
     }
   >
     {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-    {consumableReasons.items.map(c => (
+    {consumableReasons.items.map((c) => (
       <MenuItem key={c.get('id')} value={c.get('id')}>
         {messages[c.get('i18nKey')]
           ? intl.formatMessage(messages[c.get('i18nKey')])

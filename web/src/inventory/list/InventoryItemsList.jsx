@@ -95,7 +95,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
+    (searchParams) => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -216,8 +216,8 @@ export const InventoryItemsListWithProps = ({
             />
             <TableBody>
               {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(inventoryItem => (
+                .map((id) => items.byId.get(id))
+                .map((inventoryItem) => (
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
                     inventoryItem={inventoryItem}
@@ -315,9 +315,9 @@ export const InventoryItemsList = () => {
   } = useAuthState()
 
   // >>>>>> Defining selectors <<<<<<
-  const inventory = useSelector(state => state.inventory)
+  const inventory = useSelector((state) => state.inventory)
   const consumableReasons = useSelector(
-    state => state.consumable.consumableReasons
+    (state) => state.consumable.consumableReasons
   )
 
   // >>>>>> Structuring data <<<<<<
@@ -334,7 +334,7 @@ export const InventoryItemsList = () => {
 
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
-    formatType => {
+    (formatType) => {
       const format = formatType.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
@@ -358,8 +358,8 @@ export const InventoryItemsList = () => {
       title: messages.inventoryAdjustedSuccessfully,
     })
   }
-  const onGroupBySiteChange = (_, isInputChecked) => {
-    dispatch(toggleGroupBySite(isInputChecked))
+  const onGroupBySiteChange = (event) => {
+    dispatch(toggleGroupBySite(event.target.checked))
   }
 
   // >>>>>> Defining queries <<<<<<
@@ -384,9 +384,9 @@ export const InventoryItemsList = () => {
   }
   // Remove
   const { mutate: onRemoveInventorySubmit } = useMutation(
-    values => {
+    (values) => {
       const selectedAdjustmentReason = consumableReasons.items.find(
-        reason => reason.get('id') === values.reasonId
+        (reason) => reason.get('id') === values.reasonId
       )
       if (
         selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey
@@ -407,7 +407,7 @@ export const InventoryItemsList = () => {
   )
   // Add
   const { mutate: onAddInventorySubmit } = useMutation(
-    values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
+    (values) => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess: () => {
         queryCache.invalidateQueries(endpointConfig.KEY)
@@ -417,7 +417,7 @@ export const InventoryItemsList = () => {
   )
   // Transfer
   const { mutate: onTransferInventorySubmit } = useMutation(
-    values =>
+    (values) =>
       transferInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess,
@@ -425,7 +425,7 @@ export const InventoryItemsList = () => {
   )
   // Receive
   const { mutate: onReceiveInventorySubmit } = useMutation(
-    values =>
+    (values) =>
       receiveInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess,

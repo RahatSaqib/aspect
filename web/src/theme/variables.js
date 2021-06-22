@@ -36,6 +36,11 @@ const theme = createTheme({
   },
   customPropertiesVariables,
   components: {
+    MuiCheckbox: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
     MuiTextField: {
       defaultProps: {
         variant: 'standard',

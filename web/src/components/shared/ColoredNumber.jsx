@@ -26,7 +26,7 @@ const ColoredNumber = ({ number, intl, formatNumberStyle, error, success }) => (
 
 ColoredNumber.propTypes = {
   number: PropTypes.number.isRequired,
-  intl: PropTypes.func.isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired,
   formatNumberStyle: PropTypes.string,
   error: PropTypes.bool,
   success: PropTypes.bool,

@@ -7,6 +7,7 @@ import useI18n from '../../Hooks/i18n/useI18n'
 import { useFormikState } from './Formik/Context'
 import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs'
+import AspectTextField from './Inputs/TextField'
 import messagesBase from './messages'
 
 import styles from './Form.css'
@@ -84,6 +85,9 @@ const FormItem = ({
 }
 
 FormItem.defaultProps = {
+  controlType: {
+    component: AspectTextField,
+  },
   classNames: {},
   fullWidth: false,
   hideIfNull: false,
@@ -91,13 +95,14 @@ FormItem.defaultProps = {
   labelI18nKey: null,
   link: false,
   placeholder: null,
+  type: 'text',
   validate: () => '',
   visibleIf: () => true,
 }
 
 FormItem.propTypes = {
   classNames: PropTypes.objectOf(PropTypes.shape),
-  controlType: PropTypes.objectOf(PropTypes.shape).isRequired,
+  controlType: PropTypes.objectOf(PropTypes.shape),
   fullWidth: PropTypes.bool,
   hideIfNull: PropTypes.bool,
   id: PropTypes.string.isRequired,
@@ -107,7 +112,7 @@ FormItem.propTypes = {
   link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   messages: PropTypes.oneOfType([PropTypes.object]).isRequired,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  type: PropTypes.string.isRequired,
+  type: PropTypes.string,
   validate: PropTypes.oneOfType([PropTypes.func]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
 }

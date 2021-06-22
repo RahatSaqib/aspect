@@ -4,7 +4,7 @@ exports[`ExportListButton should not render the button 1`] = `""`;
 
 exports[`ExportListButton should shallow render export list correctly 1`] = `
 <div>
-  <WithStyles(ForwardRef(IconButton))
+  <ForwardRef(IconButton)
     className="DownloadButton"
     onClick={[Function]}
     variant="contained"
@@ -16,8 +16,8 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
         }
       }
     />
-  </WithStyles(ForwardRef(IconButton))>
-  <WithStyles(ForwardRef(Popover))
+  </ForwardRef(IconButton)>
+  <ForwardRef(Popover)
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -67,6 +67,6 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
         </button>
       </li>
     </ol>
-  </WithStyles(ForwardRef(Popover))>
+  </ForwardRef(Popover)>
 </div>
 `;

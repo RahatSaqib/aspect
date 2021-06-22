@@ -104,10 +104,11 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-const onAddNewButtonClick = history => () => history.push('/browse/result/add')
+const onAddNewButtonClick = (history) => () =>
+  history.push('/browse/result/add')
 
 const onRowClick =
-  history =>
+  (history) =>
   ({
     currentTarget: {
       dataset: { resultId },
@@ -138,7 +139,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
+    (searchParams) => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -155,7 +156,7 @@ const messageByI18nKey = partial(
   }
 )
 
-const getBaseColumns = intl => {
+const getBaseColumns = (intl) => {
   return Immutable.List([
     {
       key: 'endedOn',
@@ -263,10 +264,7 @@ export const ResultListWithProps = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <ResultDataTable
-          selectable={false}
-          className={cssClasses('ResultDataTable')}
-        >
+        <ResultDataTable className={cssClasses('ResultDataTable')}>
           <ResultDataTableHead
             history={history}
             location={location}
@@ -276,8 +274,8 @@ export const ResultListWithProps = ({
           />
           <TableBody>
             {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(result => (
+              .map((id) => items.byId.get(id))
+              .map((result) => (
                 <ResultDataTableRow
                   key={result.get('id')}
                   intl={intl}
@@ -389,7 +387,7 @@ const ResultList = () => {
       setTable(receiveTableItems(table, totalItems))
       setColumns(
         getBaseColumns(intl).concat(
-          table.extraColumns.map(column => ({
+          table.extraColumns.map((column) => ({
             key: column.get('db'),
             label: messageByI18nKey(column.get('i18nKey'))(
               column.get('title'),
@@ -405,7 +403,7 @@ const ResultList = () => {
   }, [data])
 
   // >>>>>> Callbacks <<<<<<
-  const onExportClick = formatType => {
+  const onExportClick = (formatType) => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       return getExportableFile(

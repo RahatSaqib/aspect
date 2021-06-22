@@ -96,12 +96,12 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
+    (searchParams) => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
-const getColumns = intl => [
+const getColumns = (intl) => [
   {
     key: 'name',
     label: intl.formatMessage(messages.device),
@@ -185,10 +185,7 @@ export const DeviceListWithProps = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <DeviceDataTable
-          selectable={false}
-          className={cssClasses('DeviceDataTable')}
-        >
+        <DeviceDataTable className={cssClasses('DeviceDataTable')}>
           <DeviceDataTableHead
             history={history}
             location={location}
@@ -199,8 +196,8 @@ export const DeviceListWithProps = ({
           <TableBody>
             {!items.currentIdList.isEmpty() &&
               items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(device => (
+                .map((id) => items.byId.get(id))
+                .map((device) => (
                   <DeviceDataTableRow
                     key={device.get('id')}
                     intl={intl}
@@ -257,7 +254,7 @@ export const DeviceList = () => {
     },
   }) => history.push(`/browse/device/${deviceId}`)
 
-  const onAlertClick = event => {
+  const onAlertClick = (event) => {
     event.stopPropagation()
     const {
       currentTarget: {
@@ -316,7 +313,7 @@ export const DeviceList = () => {
   }, [location])
 
   // >>>>>> Callbacks <<<<<<
-  const onExportClick = formatType => {
+  const onExportClick = (formatType) => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       return getExportableFile(

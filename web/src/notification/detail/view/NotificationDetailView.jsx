@@ -24,7 +24,7 @@ const cssClasses = classnames.bind(styles)
 
 // TODO: Switch back to just using Button directly. This is demo only
 const MockTogglBtn = withStateHandlers(
-  props => ({ inverse: !!props.inverse }),
+  (props) => ({ inverse: !!props.inverse }),
   {
     onClick:
       ({ inverse }) =>
@@ -78,7 +78,7 @@ export const NotificationDetailView = ({
         <h2 className={cssClasses('Card__Title')}>Alert type</h2>
         <div>
           {['Result', 'Calibration', 'Error', 'Reporting', 'Inventory'].map(
-            label => (
+            (label) => (
               <MockTogglBtn
                 key={label}
                 className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -98,7 +98,7 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Disease</h2>
         <div>
-          {['TB', 'HIV', 'HCV', 'Any disease'].map(label => (
+          {['TB', 'HIV', 'HCV', 'Any disease'].map((label) => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -126,7 +126,7 @@ export const NotificationDetailView = ({
             'Invalid',
             'Error',
             'No result',
-          ].map(label => (
+          ].map((label) => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -150,7 +150,7 @@ export const NotificationDetailView = ({
             'Choose by state',
             'Choose by county',
             'Choose by individual devices',
-          ].map(label => (
+          ].map((label) => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -179,7 +179,7 @@ export const NotificationDetailView = ({
             'State name 1 (3 devices)',
             'State name 2 (0 devices)',
             'State name 3 (2 devices)',
-          ].map(label => (
+          ].map((label) => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -206,7 +206,7 @@ export const NotificationDetailView = ({
               'Users with same tag as result',
               'Patient',
               'Individual users',
-            ].map(label => (
+            ].map((label) => (
               <MockTogglBtn
                 key={label}
                 className={cssClasses('Card__Button', 'Card__Button--block')}
@@ -267,7 +267,7 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Delivery</h2>
         <div>
-          {['Web', 'Email', 'SMS', 'Web hook'].map(label => (
+          {['Web', 'Email', 'SMS', 'Web hook'].map((label) => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -321,7 +321,7 @@ export const NotificationDetailView = ({
             'State name 1 (3 devices)',
             'State name 2 (0 devices)',
             'State name 3 (2 devices)',
-          ].map(label => (
+          ].map((label) => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -398,7 +398,6 @@ export const NotificationDetailView = ({
           </div>
         </h2>
         <NotificationDeliveryDataTable
-          selectable={false}
           className={cssClasses('NotificationDeliveryDataTable')}
         >
           <TableBody>
@@ -438,7 +437,7 @@ export const NotificationDetailView = ({
                 site: 'Fort Portal Lab',
                 time: subDays(now, 7),
               },
-            ].map(delivery => (
+            ].map((delivery) => (
               <NotificationDeliveryDataTableRow
                 key={delivery.id}
                 intl={intl}

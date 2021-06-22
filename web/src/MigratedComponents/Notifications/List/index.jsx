@@ -59,6 +59,7 @@ const NotificationList = () => {
               state: 'createNotification',
               isClearable: false,
               placeholder: 'Create...',
+              selectedValue: '',
             }}
             action={({ selectedOption }) => {
               const { id } = selectedOption
