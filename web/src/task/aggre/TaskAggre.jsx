@@ -66,7 +66,7 @@ const enhance = compose(
     })
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.task.items,
       table: state.task.table,
       sites: state.task.sites,
@@ -182,7 +182,7 @@ export const TaskAggre = ({
         <div>
           {sites &&
             !sites.isEmpty() &&
-            sites.toArray().map((element) => (
+            sites.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.site}
                 <Link
@@ -202,7 +202,7 @@ export const TaskAggre = ({
         <div>
           {devices &&
             !devices.isEmpty() &&
-            devices.toArray().map((element) => (
+            devices.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.device}
                 <Link
@@ -251,8 +251,8 @@ export const TaskAggre = ({
               ]}
             />
             {items.currentIdList
-              .map((id) => items.byId.get(id))
-              .map((task) => (
+              .map(id => items.byId.get(id))
+              .map(task => (
                 <TaskDataTableRow
                   key={task.get('id')}
                   intl={intl}

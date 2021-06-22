@@ -103,7 +103,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -119,7 +119,7 @@ const enhance = compose(
     })
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.case.items,
       table: state.case.table,
       userPermissions: state.user.jwt.permissions,
@@ -261,8 +261,8 @@ export const CaseList = ({
             />
             <TableBody>
               {items.currentIdList
-                .map((id) => items.byId.get(id))
-                .map((_case) => (
+                .map(id => items.byId.get(id))
+                .map(_case => (
                   <CaseTableRow
                     key={_case.get('id')}
                     intl={intl}

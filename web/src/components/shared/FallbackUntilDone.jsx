@@ -52,7 +52,7 @@ class FallbackUntilDone extends PureComponent {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  handleRefMount = (node) => {
+  handleRefMount = node => {
     if (this.node) {
       this.erd.removeAllListeners(ReactDOM.findDOMNode(this.node))
     }

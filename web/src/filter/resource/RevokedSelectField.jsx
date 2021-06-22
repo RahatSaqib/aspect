@@ -18,7 +18,7 @@ const messages = defineMessages({
     defaultMessage: 'True',
   },
 })
-const RevokedSelectField = (props) => {
+const RevokedSelectField = props => {
   const handleChange = ({ target: { value } }) => {
     props.onRevokedChange(value === 'all' ? undefined : value)
   }

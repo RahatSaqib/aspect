@@ -43,7 +43,7 @@ const AspectVertMenuItem = ({
 const AspectVertMenu = ({ actions, params }) =>
   actions ? (
     <IconMenu icon={<MoreVertIcon />} className={cssClasses('menu')}>
-      {actions.map((item) => (
+      {actions.map(item => (
         <AspectVertMenuItem
           key={`${item.icon}-${item.text}`}
           {...item}

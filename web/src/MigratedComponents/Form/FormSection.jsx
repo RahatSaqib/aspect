@@ -11,13 +11,13 @@ import styles from './Form.css'
 const cssClasses = classnames.bind(styles)
 
 const getVisibleRows = (rows, formik) => {
-  return rows.map((row) => {
+  return rows.map(row => {
     if (row.visibleIf && !row.visibleIf(formik.values)) {
       // row is hidden explicitly
       return false
     }
     // row is visible if at least one item is visible
-    const itemsVisible = row.items.map((item) =>
+    const itemsVisible = row.items.map(item =>
       item.visibleIf ? item.visibleIf(formik.values) : true
     )
     return itemsVisible.includes(true)

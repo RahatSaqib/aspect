@@ -61,7 +61,7 @@ const enhance = compose(
     value: PropTypes.string,
   }),
   connect(
-    (state) => ({
+    state => ({
       consumableReasons: state.consumable.consumableReasons,
     }),
     {
@@ -102,7 +102,7 @@ export const ConsumableReasonSelectField = ({
     }
   >
     {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-    {consumableReasons.items.map((c) => (
+    {consumableReasons.items.map(c => (
       <MenuItem key={c.get('id')} value={c.get('id')}>
         {messages[c.get('i18nKey')]
           ? intl.formatMessage(messages[c.get('i18nKey')])

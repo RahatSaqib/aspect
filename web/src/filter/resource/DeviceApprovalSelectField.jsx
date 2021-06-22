@@ -48,7 +48,7 @@ export class DeviceApprovalSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {deviceApprovalItems.map((a) => (
+        {deviceApprovalItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {formatI18nMessage(
               messages,

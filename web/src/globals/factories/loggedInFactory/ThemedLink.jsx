@@ -18,7 +18,7 @@ const themes = {
   },
 }
 
-const ThemedLink = (props) => {
+const ThemedLink = props => {
   const { href, label, requiredPermissions } = props
   const restProps = omit(props, ['requiredPermissions'])
   return (

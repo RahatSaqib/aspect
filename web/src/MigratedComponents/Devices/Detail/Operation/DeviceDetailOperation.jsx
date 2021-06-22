@@ -100,7 +100,7 @@ const enhance = compose(
     })
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.deviceOperation.items,
       table: state.deviceOperation.table,
     }),
@@ -136,7 +136,7 @@ const enhance = compose(
 
     onExportClick:
       ({ location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
-      (formatType) => {
+      formatType => {
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
         if (!sanitized) {
@@ -263,8 +263,8 @@ export const DeviceDetailOperation = ({
                 />
                 <TableBody>
                   {items.currentIdList
-                    .map((id) => items.byId.get(id))
-                    .map((deviceOperation) => (
+                    .map(id => items.byId.get(id))
+                    .map(deviceOperation => (
                       <DeviceOperationDataTableRow
                         key={deviceOperation.get('id')}
                         intl={intl}

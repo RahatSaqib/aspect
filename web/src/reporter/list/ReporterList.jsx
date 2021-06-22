@@ -49,7 +49,7 @@ import styles from './ReporterList.css'
 
 const cssClasses = classnames.bind(styles)
 
-const getBaseColumns = (formatMessage) => {
+const getBaseColumns = formatMessage => {
   return Immutable.List([
     {
       key: 'siteName',
@@ -122,18 +122,18 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
-const getCurrentFilters = (locationSearch) => {
+const getCurrentFilters = locationSearch => {
   const urlSearchParams = new URLSearchParams(locationSearch)
   const { value: filtersParams } = filtersSanitizer(
     urlSearchParams.get('filters') || ''
   )
   return fromPairs([...filtersParams.entries()])
 }
-const getCurrentPagination = (location) => {
+const getCurrentPagination = location => {
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
     sortDir: 'asc',
@@ -189,8 +189,8 @@ export const ReporterListWithProps = ({
           />
           <TableBody>
             {items.currentIdList
-              .map((id) => items.byId.get(id))
-              .map((reporter) => (
+              .map(id => items.byId.get(id))
+              .map(reporter => (
                 <ReporterDataTableRow
                   key={reporter.get('siteId')}
                   intl={intl}
@@ -299,7 +299,7 @@ const ReporterList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  const onExportClick = (formatType) => {
+  const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       return getExportableFile(

@@ -30,7 +30,7 @@ const FormActionButton = ({ formik, action, onClick, isVisible }) => {
   ) : null
 }
 
-const getDefaultDisplayState = (defaultAction) => {
+const getDefaultDisplayState = defaultAction => {
   const keys = ['edit', 'cancel', 'save']
   return keys.reduce((acc, curr) => {
     acc[curr] = curr === defaultAction || false

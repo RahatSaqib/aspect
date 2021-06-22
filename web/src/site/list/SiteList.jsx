@@ -131,7 +131,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -153,7 +153,7 @@ const enhance = compose(
     }
   ),
   connect(
-    (state) => {
+    state => {
       return {
         items: state.site.items,
         table: state.site.table,
@@ -176,7 +176,7 @@ const enhance = compose(
   withHandlers({
     onAlertClick:
       ({ history }) =>
-      (event) => {
+      event => {
         event.stopPropagation()
         const {
           currentTarget: {
@@ -188,7 +188,7 @@ const enhance = compose(
 
     onExcelClick:
       ({ location, exportSites, sortCol, sortDir, pageAt, table }) =>
-      (formatType) => {
+      formatType => {
         const format = formatType.id
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
@@ -349,7 +349,7 @@ export const SiteList = ({
             />
             <TableBody>
               {siteList &&
-                siteList?.map((site) => (
+                siteList?.map(site => (
                   <SiteDataTableRow
                     key={site.id}
                     intl={intl}

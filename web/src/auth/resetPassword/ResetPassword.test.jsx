@@ -28,7 +28,7 @@ describe('ResetPassword module', () => {
         showAcknowledgement: () => {},
         showError: () => {},
         intl: {
-          formatMessage: (message) => message.defaultMessage,
+          formatMessage: message => message.defaultMessage,
         },
         searchParams: new URLSearchParams(),
       }

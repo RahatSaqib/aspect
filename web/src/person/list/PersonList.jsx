@@ -93,7 +93,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -115,7 +115,7 @@ const enhance = compose(
     }
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.person.items,
       table: state.person.table,
       userPermissions: state.user.jwt.permissions,
@@ -139,7 +139,7 @@ const enhance = compose(
 
     onExcelClick:
       ({ location, exportContacts, sortCol, sortDir, pageAt, table }) =>
-      (formatType) => {
+      formatType => {
         const format = formatType.id
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
@@ -167,7 +167,7 @@ const enhance = compose(
 
     showNewContactPage:
       ({ history }) =>
-      (event) => {
+      event => {
         event.stopPropagation()
         history.push('/browse/person/add')
       },
@@ -296,8 +296,8 @@ export const PersonList = ({
             />
             <TableBody>
               {items.currentIdList
-                .map((id) => items.byId.get(id))
-                .map((person) => (
+                .map(id => items.byId.get(id))
+                .map(person => (
                   <PersonDataTableRow
                     key={person.get('id')}
                     intl={intl}

@@ -26,7 +26,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
-  const getActions = (isInTransit) => [
+  const getActions = isInTransit => [
     {
       icon: 'FaCheck',
       text: formatMessage(messages.receiveInventory),
@@ -58,12 +58,11 @@ const InventoryTableRow = ({ inventoryItem }) => {
   ]
 
   // helper funcs
-  const hasProp = (name) =>
-    inventoryItem.get('visibleProperties').includes(name)
-  const rowSpan = (name) => inventoryItem.getIn(['rowSpans', name])
-  const hasQtyOnHand = (qty) =>
+  const hasProp = name => inventoryItem.get('visibleProperties').includes(name)
+  const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
+  const hasQtyOnHand = qty =>
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
-  const hasDailyConsumption = (qty) =>
+  const hasDailyConsumption = qty =>
     isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(qty)
 
   return (

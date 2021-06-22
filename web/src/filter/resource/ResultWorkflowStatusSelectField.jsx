@@ -47,7 +47,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {workflowStatusItems.map((a) => (
+        {workflowStatusItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {formatI18nMessage(
               messages,

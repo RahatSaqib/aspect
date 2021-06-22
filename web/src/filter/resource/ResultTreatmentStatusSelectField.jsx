@@ -20,7 +20,7 @@ import formatI18nMessage from '../../shared/i18n/formatterWeb'
 const enhance = compose(
   pure,
   connect(
-    (state) => ({
+    state => ({
       resultTreatmentStatusList: state.resultTreatmentStatus,
     }),
     {
@@ -39,16 +39,16 @@ const enhance = compose(
   }),
   withHandlers({
     onChange:
-      (props) =>
+      props =>
       ({ target: { value } }) => {
         props.onTreatmentStatusChange(value === 'all' ? undefined : value)
       },
   }),
-  mapProps((props) => {
+  mapProps(props => {
     return {
       ...props,
       treatmentSelectList: props.resultTreatmentStatusList.items
-        .map((item) => ({
+        .map(item => ({
           value: item.get('externalId'),
           text: item.get('name'),
           i18nKey: item.get('i18nKey'),
@@ -70,7 +70,7 @@ export function TreatmentSelectField({
   return (
     <SelectField {...restProps} value={restProps.value}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-      {treatmentSelectList.map((s) => (
+      {treatmentSelectList.map(s => (
         <MenuItem key={s.value} value={s.value}>
           {formatI18nMessage(messages, formatMessage, s.i18nKey, s.name)}
         </MenuItem>

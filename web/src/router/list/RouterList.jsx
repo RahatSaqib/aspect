@@ -84,7 +84,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -106,7 +106,7 @@ const enhance = compose(
     }
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.router.items,
       table: state.router.table,
       userPermissions: state.user.jwt.permissions,
@@ -136,7 +136,7 @@ const enhance = compose(
 
     onExcelClick:
       ({ location, exportRouters, sortCol, sortDir, pageAt, table }) =>
-      (formatType) => {
+      formatType => {
         const format = formatType.id
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
@@ -266,8 +266,8 @@ export const RouterList = ({
           />
           <TableBody>
             {items.currentIdList
-              .map((id) => items.byId.get(id))
-              .map((router) => (
+              .map(id => items.byId.get(id))
+              .map(router => (
                 <RouterDataTableRow
                   key={router.get('id')}
                   intl={intl}

@@ -67,15 +67,15 @@ export const Results = ({
             />
             <TableBody>
               {items.currentIdList
-                .map((id) => items.byId.get(id))
-                .map((result) => (
+                .map(id => items.byId.get(id))
+                .map(result => (
                   <TableRow
                     key={result.get('id')}
                     onClick={onRowClick}
                     data-result-id={result.get('id')}
                   >
                     {columns &&
-                      map(columns, (elem) => (
+                      map(columns, elem => (
                         <TableCell hiddenOn={elem.hiddenOn || 'sm'}>
                           {elem.tooltip && result.get(elem.key) && (
                             <Tooltip

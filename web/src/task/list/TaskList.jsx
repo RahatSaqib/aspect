@@ -50,14 +50,14 @@ export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
 
 function mergeFilterOptions(searchParams, filterOptions = {}) {
   const options = pickBy(filterOptions, identity)
-  Object.keys(options).forEach((key) => {
+  Object.keys(options).forEach(key => {
     const param = searchParams.get(key)
     const option = options[key]
     if (param && isEqual(param, option)) {
@@ -83,7 +83,7 @@ const enhance = compose(
     })
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.task.items,
       table: state.task.table,
       countByAlert: state.task.countByAlert,
@@ -297,8 +297,8 @@ export const TaskList = ({
             ]}
           />
           {items.currentIdList
-            .map((id) => items.byId.get(id))
-            .map((task) => {
+            .map(id => items.byId.get(id))
+            .map(task => {
               const filtersParams = new URLSearchParams(filterOptions)
               const aggreListQuerystring = new URLSearchParams({
                 filters: filtersParams.toString(),

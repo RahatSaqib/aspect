@@ -48,7 +48,7 @@ export class DeviceTypeSelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {deviceTypeItems.map((a) => (
+        {deviceTypeItems.map(a => (
           <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
             {formatI18nMessage(
               messages,

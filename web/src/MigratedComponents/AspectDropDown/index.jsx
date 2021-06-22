@@ -67,9 +67,7 @@ function getSelectedOptions(data, someValue, idKey) {
     return false
   }
   if (isArray(someValue)) {
-    const options = someValue.map((value) =>
-      getOptionByValue(data, value, idKey)
-    )
+    const options = someValue.map(value => getOptionByValue(data, value, idKey))
     return options
   }
 
@@ -98,7 +96,7 @@ const getAspectTheme = () => {
           (isSelected && aspectChillBlue3) || (isFocused && lilac2),
       }
     },
-    control: (provided) => ({
+    control: provided => ({
       ...provided,
       width: '100%',
       backgroundColor: aspectChillBlue1,
@@ -111,26 +109,26 @@ const getAspectTheme = () => {
         color: aspectWhite,
       },
     }),
-    placeholder: (provided) => ({
+    placeholder: provided => ({
       ...provided,
       color: aspectWhite,
     }),
-    clearIndicator: (provided) => ({
+    clearIndicator: provided => ({
       ...provided,
       ':hover': aspectWhite,
       color: aspectWhite,
     }),
-    dropdownIndicator: (provided) => ({
+    dropdownIndicator: provided => ({
       ...provided,
       ':hover': aspectWhite,
       color: aspectWhite,
       padding: '8px 0 8px 8px',
     }),
-    input: (provided) => ({
+    input: provided => ({
       ...provided,
       color: aspectWhite,
     }),
-    singleValue: (provided) => ({
+    singleValue: provided => ({
       ...provided,
       color: aspectWhite,
     }),
@@ -138,11 +136,11 @@ const getAspectTheme = () => {
 }
 const getMuiTheme = () => {
   return {
-    option: (provided) => ({
+    option: provided => ({
       ...provided,
       ...styleOptionBase,
     }),
-    control: (provided) => ({
+    control: provided => ({
       ...provided,
       display: 'flex',
       alignItems: 'center',
@@ -178,27 +176,27 @@ const getMuiTheme = () => {
         pointerEvents: 'none',
       },
     }),
-    menu: (provided) => ({
+    menu: provided => ({
       ...provided,
       backgroundColor: aspectWhite,
       width: '100%',
     }),
-    menuList: (provided) => ({
+    menuList: provided => ({
       ...provided,
       overflowY: 'auto',
     }),
-    valueContainer: (provided) => ({
+    valueContainer: provided => ({
       ...provided,
       paddingLeft: 0,
     }),
-    indicatorSeparator: (provided) => ({
+    indicatorSeparator: provided => ({
       ...provided,
       display: 'none',
     }),
   }
 }
 
-const buildCustomStyles = (theme) => {
+const buildCustomStyles = theme => {
   if (theme === UI_CONSTS.themeName.mui) {
     return getMuiTheme()
   }
@@ -260,10 +258,10 @@ const SelectComponent = ({
         components={components}
         name={identifier}
         id={identifier}
-        getOptionLabel={(val) =>
+        getOptionLabel={val =>
           formatMessage(messages[val[nameKey]], {}, val[nameKey])
         }
-        getOptionValue={(val) => val[idKey]}
+        getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         isLoading={isLoading}
         isMulti={isMulti}
@@ -336,7 +334,7 @@ const groupStyles = {
   // opacity: 0.8,
   textTransform: 'none',
 }
-const GroupHeading = (props) => (
+const GroupHeading = props => (
   <components.GroupHeading {...props} style={groupStyles} />
 )
 

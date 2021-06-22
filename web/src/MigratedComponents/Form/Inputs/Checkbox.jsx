@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import CheckboxField from '../../../components/shared/CheckboxField'
 import { useFormikState } from '../Formik/Context'
 
-const Checkbox = (props) => {
+const Checkbox = props => {
   const { className, classNames, formik, id, label } = props
   const { updateField } = useFormikState()
 
@@ -15,7 +15,7 @@ const Checkbox = (props) => {
       classNames={classNames}
       label={label}
       name={id}
-      onChange={(event) => {
+      onChange={event => {
         updateField(id, event.target.checked, formik)
       }}
     />

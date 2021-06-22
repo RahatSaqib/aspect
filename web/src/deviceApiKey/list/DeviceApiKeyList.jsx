@@ -137,7 +137,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    (searchParams) => searchParams.get('filters') || ''
+    searchParams => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -160,7 +160,7 @@ const enhance = compose(
     }
   ),
   connect(
-    (state) => ({
+    state => ({
       items: state.deviceApiKey.items,
       table: state.deviceApiKey.table,
       userPermissions: state.user.jwt.permissions,
@@ -186,7 +186,7 @@ const enhance = compose(
 
     onExportClick:
       ({ location, exportDeviceApiKeys, sortCol, sortDir, table, pageAt }) =>
-      (formatType) => {
+      formatType => {
         const format = formatType.id
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
@@ -245,7 +245,7 @@ const enhance = compose(
   }),
   withProps(({ items }) => ({
     selectableIds: items.currentIdList
-      .filter((id) => !items.byId.getIn([id, 'device']))
+      .filter(id => !items.byId.getIn([id, 'device']))
       .sort(),
   })),
   withHandlers({
@@ -267,7 +267,7 @@ const enhance = compose(
         onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false }),
     onGeneratorFormChange:
       ({ dialogState, onChangeDialogState }) =>
-      (generatorValues) =>
+      generatorValues =>
         onChangeDialogState({ ...dialogState, generatorValues }),
     onGenerate:
       ({
@@ -276,7 +276,7 @@ const enhance = compose(
         dialogState,
         onChangeDialogState,
       }) =>
-      (generatorValues) => {
+      generatorValues => {
         generateDeviceApiKeys(generatorValues).then(() => {
           onChangeDialogState({
             ...dialogState,
@@ -288,7 +288,7 @@ const enhance = compose(
       },
     onAssignerFormChange:
       ({ dialogState, onChangeDialogState }) =>
-      (assignerValues) =>
+      assignerValues =>
         onChangeDialogState({ ...dialogState, assignerValues }),
     onAssign:
       ({
@@ -297,7 +297,7 @@ const enhance = compose(
         dialogState,
         onChangeDialogState,
       }) =>
-      (assignerValues) => {
+      assignerValues => {
         assignDeviceApiKeys(assignerValues).then(() => {
           onChangeDialogState({
             ...dialogState,
@@ -309,7 +309,7 @@ const enhance = compose(
       },
     onSelectAllChange:
       ({ selectableIds, dialogState, onChangeDialogState }) =>
-      (isInputChecked) => {
+      isInputChecked => {
         const nextDeviceApiKeyIds = isInputChecked ? selectableIds.toJS() : []
         onChangeDialogState({
           ...dialogState,
@@ -333,7 +333,7 @@ const enhance = compose(
         const { assignerValues } = dialogState
         const nextDeviceApiKeyIds = isInputChecked
           ? [...assignerValues.deviceApiKeyIds, deviceApiKeyId]
-          : assignerValues.deviceApiKeyIds.filter((id) => id !== deviceApiKeyId)
+          : assignerValues.deviceApiKeyIds.filter(id => id !== deviceApiKeyId)
         let selectedDDL = {}
         if (nextDeviceApiKeyIds.length === 1) {
           const [firstElementId] = nextDeviceApiKeyIds
@@ -347,7 +347,7 @@ const enhance = compose(
           }
         } else if (nextDeviceApiKeyIds.length > 1) {
           const selection = []
-          nextDeviceApiKeyIds.forEach((id) => {
+          nextDeviceApiKeyIds.forEach(id => {
             const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
             selection.push({ partnerId, siteId, countryId })
           })
@@ -533,8 +533,8 @@ export const DeviceApiKeyList = ({
           />
           <TableBody>
             {items.currentIdList
-              .map((id) => items.byId.get(id))
-              .map((deviceApiKey) => (
+              .map(id => items.byId.get(id))
+              .map(deviceApiKey => (
                 <DeviceApiKeyDataTableRow
                   key={deviceApiKey.get('id')}
                   intl={intl}

@@ -105,7 +105,7 @@ const DeviceMaintenanceStatusSelectField = ({
       }}
     >
       {maintenanceStatuses
-        ? maintenanceStatuses.map((ms) => (
+        ? maintenanceStatuses.map(ms => (
             <MenuItem key={ms.externalId} value={ms.externalId}>
               {intl.formatMessage(messages[ms.i18nKey])}
             </MenuItem>

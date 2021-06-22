@@ -8,7 +8,7 @@ const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
   const history = useHistory()
   const location = useLocation()
 
-  const onLinkClick = (event) => {
+  const onLinkClick = event => {
     event.preventDefault()
     const { currentTarget } = event
     const { pathname } = currentTarget
