@@ -2,6 +2,7 @@ import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { mount, shallow } from 'enzyme'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { createTheme, ThemeProvider } from '@material-ui/core/styles'
 
 import translation from '../shared/i18n/translation'
 
@@ -44,6 +45,16 @@ const mountWithQuery = children => {
   )
 }
 
+const mountWithTheme = children => {
+  const theme = createTheme()
+  return mount(<ThemeProvider theme={theme}>{children}</ThemeProvider>)
+}
+
+const shallowWithTheme = children => {
+  const theme = createTheme()
+  return shallow(<ThemeProvider theme={theme}>{children}</ThemeProvider>)
+}
+
 export {
   // with intl
   shallowWithIntl,
@@ -51,4 +62,7 @@ export {
   // with query
   mountWithQuery,
   shallowWithQuery,
+  // with theme
+  mountWithTheme,
+  shallowWithTheme,
 }

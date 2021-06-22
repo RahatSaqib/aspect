@@ -186,13 +186,13 @@ export const requirePermissions = outerProps => WrappedComponent =>
       extraPermissions: PropTypes.arrayOf(PropTypes.string),
     }
 
-    // static contextTypes = {
-    //   store: PropTypes.shape({
-    //     subscribe: PropTypes.func.isRequired,
-    //     dispatch: PropTypes.func.isRequired,
-    //     getState: PropTypes.func.isRequired,
-    //   }).isRequired,
-    // }
+    static contextTypes = {
+      store: PropTypes.shape({
+        subscribe: PropTypes.func.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        getState: PropTypes.func.isRequired,
+      }).isRequired,
+    }
 
     static defaultProps = {
       overriddenPermissions: [],

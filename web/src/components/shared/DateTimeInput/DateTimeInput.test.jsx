@@ -1,8 +1,9 @@
 import React from 'react'
-import { shallow, mount } from 'enzyme'
 import isDateEqual from 'date-fns/isEqual'
 import Downshift from 'downshift'
 import { act } from 'react-dom/test-utils'
+
+import { mountWithTheme, shallowWithTheme } from '../../../test/common'
 import DateTimeInput from './DateTimeInput'
 
 describe('DateTimeInput component', () => {
@@ -17,12 +18,20 @@ describe('DateTimeInput component', () => {
 
   describe('common', () => {
     it('should determine the order of dropdowns by `dateFormat` and `timeFormat` props', () => {
-      const wrapper = mount(<DateTimeInput {...commonProps} />)
+      const wrapper = mountWithTheme(<DateTimeInput {...commonProps} />)
       expect(
         wrapper.find(selectRootSelector).map(node => node.prop('name'))
       ).toEqual(['Year', 'Month', 'Date', 'Hours', 'Minutes'])
 
-      wrapper.setProps({ dateFormat: 'd/M/y', timeFormat: 's:m:H' })
+      wrapper.setProps({
+        children: (
+          <DateTimeInput
+            {...commonProps}
+            dateFormat="d/M/y"
+            timeFormat="s:m:H"
+          />
+        ),
+      })
       expect(
         wrapper.find(selectRootSelector).map(node => node.prop('name'))
       ).toEqual(['Date', 'Month', 'Year', 'Minutes', 'Hours'])
@@ -45,13 +54,16 @@ describe('DateTimeInput component', () => {
     })
 
     it('should render without crash', () => {
-      shallow(<DateTimeInput {...props} />)
+      shallowWithTheme(<DateTimeInput {...props} />)
     })
 
     it('should invoke `onChange` when a option has been selected', () => {
-      const wrapper = mount(<DateTimeInput {...props} />)
       let onChange = getMockOnChange(new Date(2006, 2, 18))
-      wrapper.setProps({ onChange })
+      const wrapper = mountWithTheme(<DateTimeInput {...props} />)
+      wrapper.setProps({
+        children: <DateTimeInput {...props} onChange={onChange} />,
+      })
+
       act(() => {
         const yearSelect = wrapper
           .find(Downshift)
@@ -65,8 +77,10 @@ describe('DateTimeInput component', () => {
       expect(onChange).toHaveReturnedWith(true)
 
       onChange = getMockOnChange(new Date(2006, 3, 18))
+      wrapper.setProps({
+        children: <DateTimeInput {...props} onChange={onChange} />,
+      })
 
-      wrapper.setProps({ onChange })
       act(() => {
         const monthSelect = wrapper
           .find(Downshift)
@@ -95,7 +109,7 @@ describe('DateTimeInput component', () => {
     })
 
     it('should render without crash', () => {
-      shallow(<DateTimeInput {...props} />)
+      shallowWithTheme(<DateTimeInput {...props} />)
     })
   })
 })
