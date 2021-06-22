@@ -10,6 +10,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
+const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
 const totalDevicesQuery = knex('Device as d')
   .whereRaw('d.siteId = s.id')
@@ -100,7 +101,7 @@ async function listSites(request) {
 
       this.whereIn('s.id', deviceQuery)
     })
-    .whereNotIn('s.externalId', ['GxAlert', 'Aspect'])
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
     .groupBy(['s.id'])
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(filterParams, query, {
@@ -221,7 +222,7 @@ async function listSitesForSelectList(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .whereNotIn('s.externalId', ['GxAlert', 'Aspect'])
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
   if (query && query.tags && query.tags.length > 0)
     sitesQuery = sitesQuery
