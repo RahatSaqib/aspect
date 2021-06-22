@@ -339,6 +339,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       assay: 'a',
       assayType: 'at',
       device: 'd',
+      disease: 'dis',
       deviceType: 'dt',
       sample: 'sp',
       geography: 'g',
@@ -2261,6 +2262,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
       assayType: 'at',
+      site: 'si',
       device: 'd',
       deviceType: 'dt',
       sample: 'sp',

@@ -302,7 +302,7 @@ function addGeographyConstraints(
       )
     }
   }
-
+  console.log('constraints', constraints)
   if (_.get(constraints, 'country.id')) {
     if (country) {
       queryBuilder.where(`${country}.id`, constraints.country.id)
@@ -393,6 +393,27 @@ function addPersonConstraints(
   }
 }
 
+function isTableInQuery(queryBuilder, tableName) {
+  const regex = /`/g
+
+  const toCompare = queryBuilder.toString().replace(regex, '').toLowerCase()
+  return (
+    toCompare.indexOf(`join ${tableName.toLowerCase()} as `) >= 0 ||
+    toCompare.indexOf(`from ${tableName.toLowerCase()} as `) >= 0
+  )
+}
+
+function getTableAlias(queryBuilder, tableName) {
+  if (isTableInQuery(queryBuilder, tableName)) {
+    const removeQuotes = /`/g
+    const toCompare = queryBuilder.toString().replace(removeQuotes, '')
+    const obtainAliasLine = `(JOIN|FROM) ${tableName} AS \\S+`
+    const re = new RegExp(obtainAliasLine, 'g')
+    return re.exec(toCompare).split('AS')[1]
+  }
+  return ''
+}
+
 function addOrConstraints(
   queryBuilder,
   constraints,
@@ -415,12 +436,14 @@ function addOrConstraints(
   if (!_.isEmpty(_.get(constraints, '$or'))) {
     for (const constraint of constraints.$or) {
       if (constraint.disease && assay && !disease && !assayType) {
-        const assayType = alias('AssayType')
-        queryBuilder.leftOuterJoin(
-          `AssayType as ${assayType}`,
-          `${assay}.assayTypeId`,
-          `${assayType}.id`
-        )
+        if (!isTableInQuery(queryBuilder, 'AssayType')) {
+          assayType = alias('AssayType')
+          queryBuilder.leftOuterJoin(
+            `AssayType as ${assayType}`,
+            `${assay}.assayTypeId`,
+            `${assayType}.id`
+          )
+        }
       }
     }
     const getBaseProps = (queryBuilder, constraint) => ({
@@ -503,7 +526,6 @@ function addConstraints(queryBuilder, constraints, aliases) {
   addDevicesAndSitesConstraints(queryBuilder, constraints, aliases)
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
-
   addOrConstraints(queryBuilder, constraints, aliases)
 }
 
