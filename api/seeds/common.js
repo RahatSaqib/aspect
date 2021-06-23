@@ -35,7 +35,6 @@ const {
   partnerTypeToId,
 } = require('../src/shared/dictionary')
 const getConsumables = require('./fixtures/Consumable')
-const logger = require('../src/shared/logger')
 
 /**
  *
@@ -283,13 +282,15 @@ async function upsertJobFunction(
       partnerId,
     })
   }
-  await upsertJobFunctionReport(knex, jobFunctionId, reports)
-  await upsertJobFunctionPermission(
-    knex,
-    jobFunctionId,
-    _.uniq(permissions),
-    removeMissingPermissions
-  )
+  if (!_.isEmpty(reports))
+    await upsertJobFunctionReport(knex, jobFunctionId, reports)
+  if (!_.isEmpty(permissions))
+    await upsertJobFunctionPermission(
+      knex,
+      jobFunctionId,
+      _.uniq(permissions),
+      removeMissingPermissions
+    )
   return jobFunctionId
 }
 
@@ -424,11 +425,8 @@ async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
       reportId,
     })
   )
-  if (!_.isEmpty(JobFunctionReport)) {
+  if (!_.isEmpty(JobFunctionReport))
     await knex('JobFunctionReport').insert(JobFunctionReport)
-  } else {
-    logger.error('Attempt to insert empty data to table JobFunctionReport')
-  }
 }
 
 async function upsertJobFunctionPermission(
@@ -457,11 +455,8 @@ async function upsertJobFunctionPermission(
       permissionId,
     })
   )
-  if (!_.isEmpty(JobFunctionPermission)) {
+  if (!_.isEmpty(JobFunctionPermission))
     await knex('JobFunctionPermission').insert(JobFunctionPermission)
-  } else {
-    logger.error('Attempt to insert empty data to table JobFunctionPermission')
-  }
 }
 
 async function upsertGxAlertDevice(
