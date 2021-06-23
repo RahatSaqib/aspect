@@ -34,6 +34,7 @@ const {
   '--aspect-device-inactiveNoTestsPerformed': odNotReported,
   '--aspect-device-inactiveOutOfInventory': odOutOfInventory,
   '--aspect-device-inactiveNoStaff': odNoStaff,
+  '--aspect-device-inactiveNoSamples': odNoSamples,
   '--aspect-device-inactiveNoPower': odNoPower,
   '--aspect-device-inactiveOther': odOther,
 
@@ -114,6 +115,7 @@ const graphColorMap = [
   { id: 44, externalId: 'inactiveNoTestsPerformed', color: odNotReported },
   { id: 45, externalId: 'inactiveOutOfInventory', color: odOutOfInventory },
   { id: 46, externalId: 'inactiveNoStaff', color: odNoStaff },
+  { id: 46, externalId: 'inactiveNoSamples', color: odNoSamples },
   { id: 46, externalId: 'inactiveNoPower', color: odNoPower },
   { id: 46, externalId: 'inactiveOther', color: odOther },
 

@@ -57,6 +57,13 @@
       "manuallySet": true
     },
     {
+      "name": "No Samples",
+      "i18nKey": "inactiveNoSamples",
+      "externalId": "inactiveNoSamples",
+      "active": false,
+      "manuallySet": true
+    },
+    {
       "name": "No Power",
       "i18nKey": "inactiveNoPower",
       "externalId": "inactiveNoPower",
