@@ -307,8 +307,8 @@ SelectComponent.propTypes = {
 }
 
 const getActualData = ({ data, reduxStateId, sortByKeys }) => {
-  if (get(data, reduxStateId)) {
-    const actualData = get(data, reduxStateId)
+  const actualData = get(data, reduxStateId)
+  if (actualData) {
     return sortByKeys ? sortBy(actualData, sortByKeys) : actualData
   }
   return data
