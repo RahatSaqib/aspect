@@ -1622,10 +1622,7 @@ async function baseGxAlertMigration(
         _.find(timezone.data, tz => tz.id === person.timezone),
         'id'
       ) || countries[0].timezone
-
-    let canLogIn = false
-    if (person.username) canLogIn = true
-
+const canLogIn = !_.isEmpty(person.username)
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
