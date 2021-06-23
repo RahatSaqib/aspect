@@ -38,6 +38,7 @@ const {
   getArrayOfDaysInRange,
 } = require('../shared/date')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
+const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -161,6 +162,7 @@ async function getListDevices(query, auth) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
     })
+    .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .modify(queryBuilder => {
       if (query.onlyOpenIssues || query.issueTypeId) {
         queryBuilder.innerJoin(
@@ -550,6 +552,7 @@ async function listDevicesForSelectList(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const devices = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
@@ -557,6 +560,7 @@ async function listDevicesForSelectList(request) {
       partnerId: 'd.partnerId',
       siteId: 'd.siteId',
     })
+    .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .orderBy(['d.name'], 'asc')
     .select('d.id', 'd.name')
 
