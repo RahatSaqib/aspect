@@ -403,6 +403,7 @@ async function copyDashboardWidgetsFromJobFunction(
 }
 
 async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
+  if (_.isEmpty(reports)) throw new Error('Attemp to insert empty reports')
   const reportsIds = await knex('Report')
     .whereIn('externalId', reports)
     .pluck('id')
@@ -435,6 +436,8 @@ async function upsertJobFunctionPermission(
   jobPermissions,
   removeMissing = false
 ) {
+  if (_.isEmpty(jobPermissions))
+    throw new Error('Attemp to upsert empty permissions')
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
