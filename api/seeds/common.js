@@ -1622,6 +1622,7 @@ async function baseGxAlertMigration(
         _.find(timezone.data, tz => tz.id === person.timezone),
         'id'
       ) || countries[0].timezone
+    const canLogIn = !_.isEmpty(person.username)
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
@@ -1653,6 +1654,7 @@ async function baseGxAlertMigration(
             hideNotes: person.hideNotes,
             updatedOn: now,
             updatedBy: adminId,
+            canLogIn,
           })
       }
       personId = existingPerson.id
@@ -1673,6 +1675,7 @@ async function baseGxAlertMigration(
         hideSampleId: person.hideSampleId,
         hideNotes: person.hideNotes,
         culture: 'en',
+        canLogIn,
         ...auditFields,
       })
     }
