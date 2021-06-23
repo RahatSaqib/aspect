@@ -853,7 +853,7 @@ async function seedIssueEscalationTriggersForPartner(
 
 // ***********************************************************************
 // 'whereKeys' is a string with single field name or array with field names
-async function upsertItems(knex, tableName, whereKeys, items) {
+async function upsertItems(knex, tableName, whereKeys, items, allowInserts = true) {
   if (typeof whereKeys === 'string') {
     whereKeys = [whereKeys]
   }
@@ -886,13 +886,16 @@ async function upsertItems(knex, tableName, whereKeys, items) {
       })
     })
     .select(...whereKeys)
-  // ---------------------
-  // insert missing items
-  const itemsToInsert = items.filter(
-    item => !findItem(existingItems, item, whereKeys)
-  )
-  if (itemsToInsert.length) {
-    await knex(tableName).insert(itemsToInsert)
+
+  if (allowInserts) {
+    // ---------------------
+    // insert missing items
+    const itemsToInsert = items.filter(
+      item => !findItem(existingItems, item, whereKeys)
+    )
+    if (itemsToInsert.length) {
+      await knex(tableName).insert(itemsToInsert)
+    }
   }
   // ---------------------
   // update existing items

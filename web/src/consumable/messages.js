@@ -33,7 +33,7 @@ export default defineMessages({
     id: 'consumable.gxHiv1VlCartridge',
     defaultMessage: 'Xpert HIV-1 Viral Load Cartridge',
   },
-  gxHcvCartridge: {
+  gxHCVCartridge: {
     id: 'consumable.gxHcvCartridge',
     defaultMessage: 'Xpert HCV Viral Load Cartridge',
   },
@@ -48,5 +48,9 @@ export default defineMessages({
   alereHivVlPlasmaCartridge: {
     id: 'consumable.alereHivVlPlasmaCartridge',
     defaultMessage: 'Alere Q HIV-1/2 VL Plasma Cartridge',
+  },
+  assayGXCovid19Cartridge: {
+    id: 'consumable.assayGXCovid19Cartridge',
+    defaultMessage: 'GeneXpert COVID-19 Cartridge',
   },
 })
