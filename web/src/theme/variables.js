@@ -36,6 +36,20 @@ const theme = createTheme({
   },
   customPropertiesVariables,
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          /**
+           * may reset to `position: 'static'` as was before
+           * (and remove `margin-top: var(--aspect-app-bar-height);` from `.Page-Content` in
+           * file web/src/globals/factories/loggedInFactory/index.css),
+           * but need 1st to change @media
+           * for showing either VerticalAppBar or HorizontalAppBar which now are both displayed.
+           */
+          position: 'fixed !important',
+        },
+      },
+    },
     MuiCheckbox: {
       defaultProps: {
         size: 'small',

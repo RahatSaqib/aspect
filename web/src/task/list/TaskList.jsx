@@ -296,31 +296,33 @@ export const TaskList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(task => {
-              const filtersParams = new URLSearchParams(filterOptions)
-              const aggreListQuerystring = new URLSearchParams({
-                filters: filtersParams.toString(),
-                categoryId: task.get('issueCategoryId'),
-                date: task.get('time'),
-                alertTemplateId: task.get('alertTemplateId'),
-              })
-              return (
-                <TaskDataTableRow
-                  key={task.get('id')}
-                  intl={intl}
-                  messages={messages}
-                  task={task}
-                  onClick={onRowClick}
-                  data-task-id={
-                    task.get('issueCount') > 1
-                      ? `aggre-list?${aggreListQuerystring.toString()}`
-                      : `${task.get('id')}`
-                  }
-                />
-              )
-            })}
+          <tbody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(task => {
+                const filtersParams = new URLSearchParams(filterOptions)
+                const aggreListQuerystring = new URLSearchParams({
+                  filters: filtersParams.toString(),
+                  categoryId: task.get('issueCategoryId'),
+                  date: task.get('time'),
+                  alertTemplateId: task.get('alertTemplateId'),
+                })
+                return (
+                  <TaskDataTableRow
+                    key={task.get('id')}
+                    intl={intl}
+                    messages={messages}
+                    task={task}
+                    onClick={onRowClick}
+                    data-task-id={
+                      task.get('issueCount') > 1
+                        ? `aggre-list?${aggreListQuerystring.toString()}`
+                        : `${task.get('id')}`
+                    }
+                  />
+                )
+              })}
+          </tbody>
         </TaskDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

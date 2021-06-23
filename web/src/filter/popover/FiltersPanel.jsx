@@ -598,6 +598,7 @@ export const FiltersPanel = ({
       <AspectButton
         className={cssClasses('Button')}
         color="primary"
+        variant="outlined"
         inverse
         disabled={disabled}
         onClick={onToggleShown}

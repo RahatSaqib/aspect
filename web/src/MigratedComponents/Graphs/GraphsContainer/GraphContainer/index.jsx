@@ -54,6 +54,7 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
                     <GraphRender
                       assays={{ whiteListed, assaysFromState }}
                       config={graph}
+                      key={graph.id}
                       updatedParams={graphParams}
                       formatMessage={intlFormatMessage}
                     />

@@ -49,6 +49,14 @@ export default ({ theme, themedColors }) => ({
           backgroundColor: themedColors.primary,
         },
       },
+      '&.inverse': {
+        backgroundColor: theme.palette.common.white,
+        color: themedColors.primary,
+        '&:hover': {
+          backgroundColor: theme.palette.common.white,
+          color: themedColors.primary,
+        },
+      },
     },
     /* Styles applied to the root element if `variant="[contained | fab]"` and `color="secondary"`. */
     containedSecondary: {

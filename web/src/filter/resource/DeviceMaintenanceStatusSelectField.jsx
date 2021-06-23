@@ -116,7 +116,7 @@ const DeviceMaintenanceStatusSelectField = ({
 }
 
 DeviceMaintenanceStatusSelectField.defaultProps = {
-  value: null,
+  value: '',
   onlyManuallySetableStatuses: false,
 }
 

@@ -11,6 +11,9 @@ const styles = theme => ({
     color: 'black',
     minWidth: 180,
   },
+  icon: {
+    color: theme.customPropertiesVariables['--aspect-color-white'],
+  },
   select: {
     outlineStyle: 'none',
     border: 'none',
@@ -61,6 +64,7 @@ export const Dropdown = ({ classes, source, ...props }) => {
       input={<Input disableUnderline />}
       classes={{ ...omit(classes, 'menu') }}
       MenuProps={{ classes: { paper: classes.menu } }}
+      variant="standard"
       {...props}
     >
       {source &&
