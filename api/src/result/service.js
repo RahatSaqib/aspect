@@ -581,7 +581,6 @@ async function showResult(request) {
     params: { resultId },
     auth,
   } = request
-
   const result = await getResultByResultId(auth, resultId)
   return result.ok ? result : Boom.notFound()
 }

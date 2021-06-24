@@ -674,11 +674,10 @@ function getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
     })
     .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-    .modify(
-      addConstraints,
-      dataConstraints,
-      INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-    )
+    .modify(addConstraints, dataConstraints, {
+      ...INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
+      device: 'DistTable',
+    })
     .select(
       'c.id as consumableId',
       'c.name as consumableName',
@@ -736,11 +735,11 @@ function getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
         .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
         .whereNull('ii.id') // means site doesn't have inventory items
         .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
-        .modify(
-          addConstraints,
-          dataConstraints,
-          INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-        )
+        .modify(addConstraints, dataConstraints, {
+          ...INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
+          assay: 'asa',
+          device: 'DistTable',
+        })
         .select(
           'c.id as consumableId',
           'c.name as consumableName',
