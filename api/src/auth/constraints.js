@@ -507,11 +507,12 @@ function addOrConstraints(
   }
 }
 
-function addConstraints(queryBuilder, constraints, aliases) {
+function addConstraints(queryBuilder, constraints, receivedAliases) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
     return
   }
+  const aliases = _.cloneDeep(receivedAliases)
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
   addPartnerConstraints(queryBuilder, constraints, aliases)
