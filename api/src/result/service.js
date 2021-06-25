@@ -736,7 +736,7 @@ async function getResultByResultId(
       device: 'd',
       result: 'r',
     })
-    .distinct(fields)
+    .select(fields)
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful
