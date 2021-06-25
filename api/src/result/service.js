@@ -339,7 +339,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       assay: 'a',
       assayType: 'at',
       device: 'd',
-      disease: 'dis',
       deviceType: 'dt',
       sample: 'sp',
       geography: 'g',
@@ -737,10 +736,8 @@ async function getResultByResultId(
       device: 'd',
       result: 'r',
     })
-    .select(fields)
-
+    .distinct(fields)
   let data = null
-
   // translate result data back to an object and get assay details
   // if selecting the result was successful
   if (results.length === 1) {
@@ -2261,7 +2258,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
       assayType: 'at',
-      site: 'si',
       device: 'd',
       deviceType: 'dt',
       sample: 'sp',
