@@ -32,27 +32,7 @@ async function getConstraints(credentials) {
     },
   }
 
-  const jobContexts = await knex('JobContext as jc')
-    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'ps.userId': user.id,
-      'jf.partnerId': user.partnerId,
-    })
-    .distinct(
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      'jc.siteId',
-      'jc.diseaseId',
-      'jc.assayTypeId',
-      'jc.assayId',
-      'jc.deviceTypeId',
-      'j.jobFunctionId',
-      knex.raw('0 AS isAdmin')
-    )
+  const jobContexts = await getContext(user)
 
   const filterConstraints = jobContexts.map(getJobContextConstraint)
   if (filterConstraints.length) {
@@ -82,6 +62,33 @@ async function getConstraints(credentials) {
   }
 
   return constraints
+}
+
+async function getContext({ userId, partnerId, jobFunctionId }) {
+  const filter = {
+    'ps.userId': userId,
+    'jf.partnerId': partnerId,
+    'jf.jobFunctionId': jobFunctionId,
+  }
+
+  return knex('JobContext as jc')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where(_.omitBy(filter, _.isNil))
+    .distinct(
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      'jc.siteId',
+      'jc.diseaseId',
+      'jc.assayTypeId',
+      'jc.assayId',
+      'jc.deviceTypeId',
+      'j.jobFunctionId',
+      knex.raw('0 AS isAdmin')
+    )
 }
 
 function setConstraints(constraints, filterConstraints, getPath, setPaths) {
@@ -335,13 +342,13 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
         `${aliases.geography}.id`
       )
     }
-    if (partner && _.get(constraints, 'partner.id')) {
-      queryBuilder.where(qb =>
-        qb.whereNull(`${partner}.id`).orWhere({
-          [`${partner}.id`]: constraints.partner.id,
-        })
-      )
-    }
+    // if (partner && _.get(constraints, 'partner.id')) {
+    //   queryBuilder.where(qb =>
+    //     qb.whereNull(`${partner}.id`).orWhere({
+    //       [`${partner}.id`]: constraints.partner.id,
+    //     })
+    //   )
+    // }
 
     if (_.get(constraints, 'country.id')) {
       if (country) {
@@ -381,15 +388,6 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
           `${aliases.partner}.id`
         )
       }
-
-      // if (!aliases.geography && !country) {
-      //   aliases.geography = alias('Geography')
-      //   queryBuilder.leftOuterJoin(
-      //     `Geography as ${aliases.geography}`,
-      //     `${aliases.site}.geographyId`,
-      //     `${aliases.geography}.id`
-      //   )
-      // }
     }
     if (_.get(constraints, 'deviceType.id')) {
       _.each(_.compact([device, assay]), item =>
@@ -483,6 +481,7 @@ function addOrConstraints(
     result: resultAlias,
     sample,
     deviceType,
+    issue,
   }
 ) {
   // data filter constraints are ORed
@@ -513,6 +512,12 @@ function addOrConstraints(
             alias: geography,
             constraint: constraint.geography,
           })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: issue,
+            constraint: constraint.issue,
+          })
+
           addConstraintWithJobFunction({
             ...getBaseProps(qb, constraint),
             alias: site,
@@ -995,4 +1000,5 @@ module.exports = {
   canEdit,
   canEditInventories,
   addPartnerQueryConstraints,
+  getContext,
 }
