@@ -387,6 +387,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'ptr.name as transferredBy'
     )
 
+  console.log(getItems.toString())
+
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
