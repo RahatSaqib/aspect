@@ -7,5 +7,7 @@ async function seed(knex) {
     .where({ name: partnerName })
     .first('id')
 
-  await knex('Person').whereNull('lastPartnerId').update({ lastPartnerId: partnerId })
+  await knex('Person')
+    .whereNull('lastPartnerId')
+    .update({ lastPartnerId: partnerId })
 }
