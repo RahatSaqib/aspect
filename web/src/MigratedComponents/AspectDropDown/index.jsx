@@ -239,7 +239,7 @@ const SelectComponent = ({
   defaultSelectedOption =
     defaultSelectedOption === true && data.length > 0
       ? getOption(data[0])
-      : null
+      : defaultSelectedOption
 
   useEffect(() => {
     // if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
