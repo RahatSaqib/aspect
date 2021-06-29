@@ -61,9 +61,9 @@ const enhance = compose(
 export function TreatmentSelectField({
   treatmentSelectList,
   allItemText,
-  fetchTreatmentStatuses, // eslint-disable-line no-unused-vars
-  onTreatmentStatusChange, // eslint-disable-line no-unused-vars
-  resultTreatmentStatusList, // eslint-disable-line no-unused-vars
+  fetchTreatmentStatuses,
+  onTreatmentStatusChange,
+  resultTreatmentStatusList,
   ...restProps
 }) {
   const { formatMessage } = useIntl()
