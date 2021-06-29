@@ -1,12 +1,11 @@
 const chai = require('chai')
+const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
-const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert } = chai
 
 describe('Result Follow Up', () => {
   describe('GET', () => {
@@ -62,76 +61,35 @@ describe('Result Follow Up', () => {
       assert.property(res.body.data[0], 'assays')
       assert.typeOf(res.body.data[0].assays, 'array')
     })
+    it('should return a list of possible result follow ups filtered by assay', async () => {
+      const res = await server
+        .get(`${path}?assayId=3`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.property(res.body, 'total')
+      assert.isAtLeast(res.body.data.length, 5)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'name')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'i18nKey')
+      assert.property(res.body.data[0], 'type')
+      assert.property(res.body.data[0].type, 'id')
+      assert.property(res.body.data[0].type, 'name')
+      assert.property(res.body.data[0].type, 'externalId')
+      assert.property(res.body.data[0].type, 'i18nKey')
+      assert.property(res.body.data[0], 'assays')
+      assert.typeOf(res.body.data[0].assays, 'array')
 
-    describe('with job constraints', () => {
-      const hivUserUsername = 'hiv_reporter_user'
-      const hivUserPassword = 'hiv_reporter_password'
-      let hivUserId
-      let hivUserAuthAccessToken
-      before(async () => {
-        hivUserId = await createUser(
-          'Partner One',
-          'US',
-          hivUserUsername,
-          hivUserPassword,
-          [
-            {
-              jobFunctionExternalId: 'clinician',
-              diseaseExternalId: 'hiv',
-            },
-          ]
-        )
-        hivUserAuthAccessToken = await getAccessToken(
-          hivUserUsername,
-          hivUserPassword
-        )
-      })
-
-      after(async () => removeUser(hivUserId))
-
-      it("should return the list of follow-ups that are applicable to the user's disease job constraints as well as the follow-ups that are not applicable to specific diseases", async () => {
-        const res = await server
-          .get(`${path}`)
-          .set('Authorization', `Bearer ${hivUserAuthAccessToken}`)
-        const hivFollowUps = await knex('Disease as dis')
-          .join('AssayType as at', 'dis.id', 'at.diseaseId')
-          .join('Assay as a', 'at.id', 'a.assayTypeId')
-          .join('FollowUpAssay as fua', 'a.id', 'fua.assayId')
-          .join('FollowUp as fu', 'fua.followUpId', 'fu.id')
-          .where('dis.externalId', 'hiv')
-          .select('fu.externalId')
-          .distinct()
-        const nonHivFollowUps = await knex('Disease as dis')
-          .join('AssayType as at', 'dis.id', 'at.diseaseId')
-          .join('Assay as a', 'at.id', 'a.assayTypeId')
-          .join('FollowUpAssay as fua', 'a.id', 'fua.assayId')
-          .join('FollowUp as fu', 'fua.followUpId', 'fu.id')
-          .where('dis.externalId', '<>', 'hiv')
-          .select('fu.externalId')
-          .distinct()
-        const diseaseAgnosticFollowUps = await knex('FollowUpAssay as fua')
-          .join('FollowUp as fu', 'fua.followUpId', 'fu.id')
-          .whereNull('fua.assayId')
-          .select('fu.externalId')
-          .distinct()
-        expect(
-          res.body.data.map(followUp => followUp.externalId)
-        ).to.include.members(
-          hivFollowUps.map(hivFollowUp => hivFollowUp.externalId)
-        )
-        expect(
-          res.body.data.map(followUp => followUp.externalId)
-        ).to.include.members(
-          diseaseAgnosticFollowUps.map(
-            diseaseAgnosticFollowUp => diseaseAgnosticFollowUp.externalId
-          )
-        )
-        expect(
-          res.body.data.map(followUp => followUp.externalId)
-        ).to.not.include.members(
-          nonHivFollowUps.map(nonHivFollowUp => nonHivFollowUp.externalId)
-        )
-      })
+      assert.isAtLeast(
+        _.intersection(
+          _.map(res.body.data, elem => elem.externalId),
+          ['rrvl', 'iaac', 'st2o3lr', 'mcr', 'cured', 'died']
+        ).length,
+        6
+      )
     })
   })
 

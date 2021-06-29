@@ -8,7 +8,7 @@ const {
   issueStatusToId,
 } = require('../../src/shared/dictionary')
 
-const { assert, expect } = chai
+const { assert } = chai
 const issueToDeleteId = []
 async function getPersonByName(personName) {
   return knex('Person as p')
@@ -81,32 +81,47 @@ const beforeEachForPerson = async (
   issueToDeleteId.push(issueId)
   return person
 }
-describe.only('Issue Escalation', () => {
-  // afterEach(async () => {
-  //   await knex('Issue').whereIn('id', issueToDeleteId).delete()
-  // })
+describe('Issue Notification', () => {
+  after(async () => {
+    await knex('Issue').whereIn('id', issueToDeleteId).delete()
+  })
 
   describe('Clinician Job Function', () => {
     let clinician
+    let clinicianInDifferentSiteResult
 
-    beforeEach(async () => {
+    before(async () => {
       clinician = await beforeEachForPerson('Clinician')
+      clinicianInDifferentSiteResult = await beforeEachForPerson(
+        'Clinician',
+        false,
+        true
+      )
     })
-    it('should should send notification to the clinician jobFunction', async () => {
+    it('Should send notification to the clinician jobFunction', async () => {
       const issue = await shouldNotifyIssue(
         knex,
-        _.last(issueToDeleteId),
+        issueToDeleteId[issueToDeleteId.length - 2],
         clinician.personId,
         clinician.jobFunctionId
       )
       assert.isFalse(_.isNil(issue))
+    })
+    it('Should NOT send notification to the clinician jobFunction', async () => {
+      const issue = await shouldNotifyIssue(
+        knex,
+        _.last(issueToDeleteId),
+        clinicianInDifferentSiteResult.personId,
+        clinicianInDifferentSiteResult.jobFunctionId
+      )
+      assert.isTrue(_.isNil(issue))
     })
   })
   describe('Regional Manager Job Function', () => {
     let rm
     let rmInDifferentStateResult
 
-    beforeEach(async () => {
+    before(async () => {
       rm = await beforeEachForPerson('Regional Manager')
       rmInDifferentStateResult = await beforeEachForPerson(
         'Regional Manager',
@@ -123,14 +138,14 @@ describe.only('Issue Escalation', () => {
       )
       assert.isFalse(_.isNil(issue))
     })
-    it('should not send notification to the Regional Manager jobFunction', async () => {
+    it('should NOT send notification to the Regional Manager jobFunction', async () => {
       const issue = await shouldNotifyIssue(
         knex,
         _.last(issueToDeleteId),
         rmInDifferentStateResult.personId,
         rmInDifferentStateResult.jobFunctionId
       )
-      console.log(issue)
+
       assert.isTrue(_.isNil(issue))
     })
   })
