@@ -1554,10 +1554,28 @@ async function listFollowUps(request) {
     .where(queryBuilder => {
       queryBuilder.where('fua.partnerId', dataConstraints.partner.id)
       if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
-    })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      disease: 'dis',
+
+      if (query.typeId) {
+        queryBuilder.where('fu.followUpTypeId', query.typeId)
+      }
+
+      if (query.assayId) {
+        queryBuilder.where(function () {
+          this.where('fua.assayId', query.assayId).orWhereNull('fua.assayId')
+        })
+      }
+
+      if (query.resultCategory1) {
+        queryBuilder.where(function () {
+          this.where('fua.resultCategory1', query.resultCategory1)
+        })
+      }
+
+      if (query.resultCategory2) {
+        queryBuilder.where(function () {
+          this.where('fua.resultCategory2', query.resultCategory2)
+        })
+      }
     })
     .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
     .select(
@@ -1582,28 +1600,6 @@ async function listFollowUps(request) {
       'rc2.externalId as resultCategory2ExternalId',
       'rc2.i18nKey as resultCategory2I18nKey'
     )
-
-  if (query.typeId) {
-    queryBuilder.where('fu.followUpTypeId', query.typeId)
-  }
-
-  if (query.assayId) {
-    queryBuilder.where(function () {
-      this.where('fua.assayId', query.assayId).orWhereNull('fua.assayId')
-    })
-  }
-
-  if (query.resultCategory1) {
-    queryBuilder.where(function () {
-      this.where('fua.resultCategory1', query.resultCategory1)
-    })
-  }
-
-  if (query.resultCategory2) {
-    queryBuilder.where(function () {
-      this.where('fua.resultCategory2', query.resultCategory2)
-    })
-  }
 
   const data = await queryBuilder
 
