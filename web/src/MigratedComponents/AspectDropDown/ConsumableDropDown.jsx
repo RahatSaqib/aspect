@@ -4,7 +4,6 @@ import AspectDropDown from '.'
 import messages from '../../consumable/messages'
 
 const config = {
-  selectedValue: 'Consumable',
   endpoint: '/dashboard/inventory-item',
   state: 'data.inventoryConsumableSummaryList',
   component: AspectDropDown,
@@ -15,10 +14,7 @@ const config = {
     idKey: 'consumableExternalId',
   },
   isClearable: false,
-  defaultSelectedOption: {
-    key: 'consumableExternalId',
-    value: 'GxMtbRifCartridge',
-  },
+  defaultSelectedOption: true,
   messages,
 }
 

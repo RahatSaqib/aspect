@@ -33,9 +33,6 @@ const inventoryGraphs = {
         componentClasses: ['BARCLASS'],
         api: {
           endpoint: '/inventory/days-by-location',
-          params: {
-            consumableExternalId: 'GxMtbRifCartridge',
-          },
         },
         indexBy: 'increment',
         keyToConsume: 'count',

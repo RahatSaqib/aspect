@@ -46,18 +46,23 @@ const {
 } = process.env
 
 function getOptionByValue(data, requestedValue, idKey) {
+  let foundOption = null
+
   if (isPlainObject(requestedValue)) {
     const { key, value } = requestedValue
-    const foundOption = find(data, { [key]: value })
-    return foundOption
+
+    if (isPlainObject(data)) {
+      foundOption = find(data, { [key]: value })
+    } else if (isArray(data)) {
+      foundOption = data.filter(options => options[idKey] === value)
+    }
+  } else if (isString(requestedValue)) {
+    foundOption = find(data, { [idKey]: requestedValue })
+  } else if (isNumber(requestedValue)) {
+    foundOption = data[requestedValue]
   }
-  if (isString(requestedValue)) {
-    const foundOption = find(data, { [idKey]: requestedValue })
-    return foundOption
-  }
-  if (isNumber(requestedValue)) {
-    return data[requestedValue]
-  }
+
+  return foundOption
 }
 
 function getSelectedOptions(data, someValue, idKey) {
@@ -228,6 +233,13 @@ const SelectComponent = ({
   const [, setInputValue] = useState(false)
   // const [currentValue, setCurrentValue] = useState(false)
   const [options, setOptions] = useState(false)
+  const getOption = val => ({ key: val[idKey], value: val[nameKey] })
+
+  // if defaultSelectedOption is true, then the default selection is set to the first element
+  defaultSelectedOption =
+    defaultSelectedOption === true && data.length > 0
+      ? getOption(data[0])
+      : null
 
   useEffect(() => {
     // if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
