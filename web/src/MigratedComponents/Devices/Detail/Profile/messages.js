@@ -14,6 +14,10 @@ const messages = defineMessages({
     defaultMessage:
       'Download all the entries that the GeneXpert device has generated in its log. In this report you can see the calibration dates, hardware/software failures and other errors, failures or information records that the device generated',
   },
+  deviceStatusChangeDisabledTooltip: {
+    id: 'pages.DeviceDetailProfile.deviceStatusChangeDisabledTooltip',
+    defaultMessage: 'You cannot change the status of an active device',
+  },
   approval: {
     id: 'pages.DeviceDetailProfile.approval',
     defaultMessage: 'Approval',

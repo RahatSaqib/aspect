@@ -565,6 +565,10 @@ const DeviceDetailProfile = ({
     ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
     : intl.formatMessage(messages.undefinedValue)
 
+  const isMaintenanceStatusChangeDisabled =
+    device.get('maintenanceStatusActive') &&
+    !device.get('maintenanceStatusManuallySet')
+
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
@@ -595,7 +599,22 @@ const DeviceDetailProfile = ({
               }
             />
             <Summary
-              title={intl.formatMessage(messages.maintenance)}
+              title={
+                isMaintenanceStatusChangeDisabled ? (
+                  <AspectTooltip
+                    className={cssClasses('deviceSummary__container')}
+                    iconClass="deviceSummary__helpIcon"
+                    showHelpIcon
+                    title={intl.formatMessage(
+                      messages.deviceStatusChangeDisabledTooltip
+                    )}
+                  >
+                    {intl.formatMessage(messages.maintenance)}
+                  </AspectTooltip>
+                ) : (
+                  intl.formatMessage(messages.maintenance)
+                )
+              }
               description={
                 <Fragment>
                   {maintenanceStatusText}
@@ -614,7 +633,7 @@ const DeviceDetailProfile = ({
                 <Button
                   variant="contained"
                   onClick={onShowMaintenanceDialog}
-                  disabled={disabled}
+                  disabled={isMaintenanceStatusChangeDisabled}
                 >
                   {intl.formatMessage(messages.buttonChange)}
                 </Button>
