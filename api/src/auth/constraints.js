@@ -342,13 +342,6 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
         `${aliases.geography}.id`
       )
     }
-    // if (partner && _.get(constraints, 'partner.id')) {
-    //   queryBuilder.where(qb =>
-    //     qb.whereNull(`${partner}.id`).orWhere({
-    //       [`${partner}.id`]: constraints.partner.id,
-    //     })
-    //   )
-    // }
 
     if (_.get(constraints, 'country.id')) {
       if (country) {
@@ -442,28 +435,6 @@ function addPersonConstraints(
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
 }
-
-// function isTableInQuery(queryBuilder, tableName) {
-//   const regex = /`/g
-
-//   const toCompare = queryBuilder.toString().replace(regex, '').toLowerCase()
-//   return (
-//     toCompare.indexOf(`join ${tableName.toLowerCase()} as `) >= 0 ||
-//     toCompare.indexOf(`from ${tableName.toLowerCase()} as `) >= 0
-//   )
-// }
-
-// function getTableAlias(queryBuilder, tableName, regexExtension = '') {
-//   if (isTableInQuery(queryBuilder, tableName)) {
-//     const removeQuotes = /`/g
-//     const toCompare = queryBuilder.toString().replace(removeQuotes, '')
-//     const obtainAliasLine = `(JOIN|FROM) ${tableName} AS \\S+`
-//     const re = new RegExp(obtainAliasLine, 'gi')
-//     const [match] = re.exec(toCompare)
-//     if (!_.isEmpty(match)) return _.split(match, / as /i)[1].trim()
-//   }
-//   return null
-// }
 
 function addOrConstraints(
   queryBuilder,

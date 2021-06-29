@@ -231,7 +231,6 @@ async function shouldNotifyIssue(txKnex, issueId, personId, jobFunctionId) {
     })
     .where({ 'i.id': issueId })
     .first('i.id')
-  console.log('SQL', issue.toString())
   return issue
 }
 
