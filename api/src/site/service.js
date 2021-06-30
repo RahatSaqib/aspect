@@ -171,25 +171,29 @@ async function updateSite(request) {
   // TODO: check permission
   const changedSiteFields = await transformGeographyFromUpdates(payload)
   // update item
+  const site = Object.assign(
+    _.pick(changedSiteFields, [
+      'name',
+      'shortName',
+      'externalId',
+      'street1',
+      'street2',
+      'geographyId',
+      'city',
+      'zip',
+      'latitude',
+      'longitude',
+    ]),
+    {
+      timezoneId: _.isEmpty(changedSiteFields.timezone)
+        ? null
+        : changedSiteFields.timezone,
+    }
+  )
+
   const updatedCount = await knex('Site')
     .where('id', params.siteId)
-    .update(
-      Object.assign(
-        _.pick(changedSiteFields, [
-          'name',
-          'shortName',
-          'externalId',
-          'street1',
-          'street2',
-          'geographyId',
-          'city',
-          'zip',
-          'latitude',
-          'longitude',
-        ]),
-        { timezoneId: changedSiteFields.timezone } // TODO standardize timezone name
-      )
-    )
+    .update(site)
 
   if (updatedCount !== 1) {
     throw new Error('Unknown error')
