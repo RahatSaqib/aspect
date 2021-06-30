@@ -82,20 +82,7 @@
         "arrowParens": "avoid"
       }
     ],
-    // "function-call-argument-newline": ["error", "consistent"],
-    // "function-paren-newline": ["error", "multiline"],
-    // "function-paren-newline": ["error", "multiline-arguments"],
     "object-curly-newline": ["error", { "consistent": true }],
-    // "object-curly-newline": ["error", {
-    //   "ObjectExpression": { "multiline": true, "minProperties": 2 },
-    //   "ImportDeclaration": { "consistent": true },
-    //   // "ObjectExpression": "always",
-    //   // "ImportDeclaration": "never",
-    //   "ExportDeclaration": { "multiline": true, "minProperties": 1 },
-    //   "ObjectPattern": { "multiline": true }
-    // }],
-    // "implicit-arrow-linebreak": ["error", "beside"],
-    // "brace-style": [],
 
     "react/no-multi-comp": "off",
     "react/no-unescaped-entities": "off",

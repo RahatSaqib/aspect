@@ -35,21 +35,7 @@ const plugins = [
 module.exports = {
   env: {
     webpack: {
-      // presets: ['@babel/preset-env', '@babel/preset-react'],
-      presets: [
-        '@babel/preset-env',
-        // [
-        //   '@babel/preset-env',
-        //   {
-        //     // modules: false,
-        //     // corejs: { version: 3, proposals: true },
-        //     // useBuiltIns: 'usage',
-        //     // targets: {
-        //     //   browsers: ['last 2 versions'],
-        //   },
-        // ],
-        '@babel/preset-react',
-      ],
+      presets: ['@babel/preset-env', '@babel/preset-react'],
       plugins: ['@babel/transform-runtime'],
     },
     test: {

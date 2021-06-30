@@ -1,5 +1,4 @@
 const path = require('path')
-// const assign = require('lodash/assign')
 const webpack = require('webpack')
 const pxToRem = require('postcss-pxtorem')
 const cssImport = require('postcss-import')
@@ -9,10 +8,7 @@ const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const WebpackPwaManifest = require('webpack-pwa-manifest')
-// const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
-// const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-// const postcssPresetEnv = require('postcss-preset-env')
 
 const {
   definePluginVariables,
@@ -25,14 +21,6 @@ const postcssPlugins = () => [
     rootValue: 16,
   }),
   cssImport(),
-  // postcssPresetEnv({
-  //   /* see https://www.npmjs.com/package/postcss-preset-env */
-  //   browsers: ['> 1%', 'last 2 versions'],
-  //   // importFrom: {
-  //   //   customProperties: customPropertiesVariables,
-  //   // },
-  //   // exportTo: 'custom-properties.css',
-  // }),
   cssNext({
     browsers: ['> 1%', 'last 2 versions'],
     features: {
@@ -55,7 +43,6 @@ module.exports = {
     extensions: ['.json', '.js', '.jsx'],
   },
   optimization: {
-    // moduleIds: 'named',
     moduleIds: 'deterministic',
     minimize: process.env.NODE_ENV === 'development',
     runtimeChunk: 'single',
@@ -63,7 +50,6 @@ module.exports = {
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
-        // defaultVendors: {},
         react: {
           test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|react-helmet)[\\/]/,
           name: 'vendor-react',
@@ -150,22 +136,29 @@ module.exports = {
           },
         ],
       },
-      // {
-      //   // images
-      //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
-      //   type: 'asset/resource',
-      // },
-      // {
-      //   // fonts
-      //   test: /\.(woff|woff2|eot|ttf|otf)$/i,
-      //   type: 'asset/resource',
-      // },
-      // {
-      //   // video
-      //   test: /\.(mp4|ogg)$/i,
-      //   type: 'asset/resource',
-      // },
-
+      /*
+       * Webpack-5 introduced new types 'asset' for different resources.
+       * Images worked well except image in web/src/template/index.html which
+       * was not replaced with correct hashed name.
+       * So, for now commented all `assets` and below used old `url-loader`,
+       * 'file-loader' to handle resources.
+       *
+      {
+        // images
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        // fonts
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+      },
+      {
+        // video
+        test: /\.(mp4|ogg)$/i,
+        type: 'asset/resource',
+      },
+      */
       {
         test: /\.(png|jpg|gif|woff|woff2)$/,
         use: [
