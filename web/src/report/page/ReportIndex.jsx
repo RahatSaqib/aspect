@@ -121,9 +121,6 @@ const ReportIndex = () => {
       <Grid
         container
         spacing={16}
-        // classes={{
-        //   root: cssClasses('Container'),
-        // }}
         sx={{
           width: 'auto',
           margin: 0,
