@@ -77,11 +77,12 @@ const ResultTransferModal = ({
     }
   }, [isOpen])
 
-  const onRequestClose = () => {
+  const onRequestClose = useCallback(() => {
     if (!isProcessing && onClose) {
       onClose()
     }
-  }
+  }, [isProcessing, onClose])
+
   const onSubmit = () => {
     setIsProcessing(true)
 
@@ -118,7 +119,7 @@ const ResultTransferModal = ({
     () => (
       <div className={cssClasses('processing')}>
         <div className={cssClasses('processing-spinner')}>
-          <CircularProgress size="100%" thickness="1" disableShrink />
+          <CircularProgress size="100%" thickness={1} disableShrink />
         </div>
         <div className={cssClasses('processing-label')}>
           {formatMessage(messages.processing)}
@@ -143,9 +144,13 @@ const ResultTransferModal = ({
           </Button>,
         ]}
         maxWidth="xs"
+        onClose={(event, reason) => {
+          if (reason !== 'backdropClick') {
+            onRequestClose()
+          }
+        }}
         open
         title={formatMessage(messages.successHeader)}
-        disableBackdropClick
         disableEscapeKeyDown
       >
         <div>
@@ -161,7 +166,14 @@ const ResultTransferModal = ({
         </div>
       </AspectDialog>
     )
-  }, [history, patientId, formatMessage, sourceSite?.name, selectedSite?.text])
+  }, [
+    formatMessage,
+    patientId,
+    sourceSite?.name,
+    selectedSite?.text,
+    history,
+    onRequestClose,
+  ])
 
   return (
     <AspectDialog
@@ -183,11 +195,15 @@ const ResultTransferModal = ({
         </Button>,
       ]}
       maxWidth="sm"
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          onRequestClose()
+        }
+      }}
       open={isOpen}
       onRequestClose={onRequestClose}
       showCrossIcon
       title={`${formatMessage(messages.header)}: ${patientId}`}
-      disableBackdropClick
       disableEscapeKeyDown
     >
       <div>
