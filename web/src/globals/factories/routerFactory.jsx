@@ -49,9 +49,6 @@ import CaseDetails from '../../case/details/CaseDetails'
 
 function useHashAndScroll() {
   const location = useLocation()
-  // if (location.location) {
-  //   location = location.location
-  // }
   useEffect(() => {
     const { hash = '' } = location
     setTimeout(() => {
