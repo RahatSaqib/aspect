@@ -16,7 +16,7 @@ const messages = defineMessages({
   },
   deviceStatusChangeDisabledTooltip: {
     id: 'pages.DeviceDetailProfile.deviceStatusChangeDisabledTooltip',
-    defaultMessage: 'You cannot change the status of an active device',
+    defaultMessage: "Active status can't be edited",
   },
   approval: {
     id: 'pages.DeviceDetailProfile.approval',
