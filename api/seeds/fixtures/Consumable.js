@@ -91,7 +91,7 @@ const getConsumables = async () => {
     {
       name: 'Alere Q HIV-1/2 Detect Cartridge',
       externalId: 'AlereHivDetectCartridge',
-      i18nKey: 'glereHivDetectCartridge',
+      i18nKey: 'alereHivDetectCartridge',
       unit: piece,
       canExpire: 1,
       manufacturer: 'Alere',
@@ -99,7 +99,7 @@ const getConsumables = async () => {
     {
       name: 'Alere Q HIV-1/2 VL Plasma Cartridge',
       externalId: 'AlereHivVLPlasmaCartridge',
-      i18nKey: 'glereHivVLPlasmaCartridge',
+      i18nKey: 'alereHivVLPlasmaCartridge',
       unit: piece,
       canExpire: 1,
       manufacturer: 'Alere',

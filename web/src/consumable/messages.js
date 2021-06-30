@@ -1,20 +1,20 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
-  genoTypeMtbcStrip: {
-    id: 'consumable.genoTypeMtbcStrip',
+  genoTypeMTBCStrip: {
+    id: 'consumable.genoTypeMTBCStrip',
     defaultMessage: 'GenoType MTBC VER 1.X Test Strip',
   },
-  genoTypeMtbdRplusStrip: {
-    id: 'consumable.genoTypeMtbdRplusStrip',
+  genoTypeMTBDRplusStrip: {
+    id: 'consumable.genoTypeMTBDRplusStrip',
     defaultMessage: 'GenoType MTBDRplus VER 2.0 Test Strip',
   },
-  genoTypeMtbdRslStrip: {
-    id: 'consumable.genoTypeMtbdRslStrip',
+  genoTypeMTBDRslStrip: {
+    id: 'consumable.genoTypeMTBDRslStrip',
     defaultMessage: 'GenoType MTBDRsl VER 1.0 Test Strip',
   },
-  genoTypeMtbdRslV2Strip: {
-    id: 'consumable.genoTypeMtbdRslV2Strip',
+  genoTypeMTBDRslV2Strip: {
+    id: 'consumable.genoTypeMTBDRslV2Strip',
     defaultMessage: 'GenoType MTBDRsl VER 2.0 Test Strip',
   },
   gxMtbRifCartridge: {
@@ -45,8 +45,8 @@ export default defineMessages({
     id: 'consumable.alereHivDetectCartridge',
     defaultMessage: 'Alere Q HIV-1/2 Detect Cartridge',
   },
-  alereHivVlPlasmaCartridge: {
-    id: 'consumable.alereHivVlPlasmaCartridge',
+  alereHivVLPlasmaCartridge: {
+    id: 'consumable.alereHivVLPlasmaCartridge',
     defaultMessage: 'Alere Q HIV-1/2 VL Plasma Cartridge',
   },
   assayGXCovid19Cartridge: {
