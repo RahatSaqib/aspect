@@ -239,7 +239,7 @@ const SelectComponent = ({
 
   // if defaultSelectedOption is true, then the default selection is set to the first element
   defaultSelectedOption =
-    defaultSelectedOption === true && data.length > 0
+    defaultSelectedOption && data?.length > 0
       ? data[0][idKey]
       : defaultSelectedOption
 
