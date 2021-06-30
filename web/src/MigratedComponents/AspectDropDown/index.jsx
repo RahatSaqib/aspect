@@ -46,21 +46,26 @@ const {
 } = process.env
 
 function getOptionByValue(data, requestedValue, idKey) {
-  let foundOption = null
-
+  // When the requested value is an object including key and value props
   if (isPlainObject(requestedValue)) {
     const { key, value } = requestedValue
-    foundOption = find(data, { [key]: value })
-  } else if (isString(requestedValue)) {
-    if (isPlainObject(data))
-      foundOption = find(data, { [idKey]: requestedValue })
-    else if (isArray(data))
-      foundOption = data.find(option => option[idKey] === requestedValue)
-  } else if (isNumber(requestedValue)) {
-    foundOption = data[requestedValue]
+    return find(data, { [key]: value })
   }
 
-  return foundOption
+  // When the requested value is a string key
+  if (isString(requestedValue)) {
+    // Take the option in different ways, depending on the data format
+    if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
+
+    if (isArray(data))
+      return data.find(option => option[idKey] === requestedValue)
+
+    if (isNumber(requestedValue))
+      return data.find(option => option[idKey] === requestedValue)
+  }
+
+  // When the requested value is a position in the array
+  if (isNumber(requestedValue)) return data[requestedValue]
 }
 
 function getSelectedOptions(data, someValue, idKey) {
