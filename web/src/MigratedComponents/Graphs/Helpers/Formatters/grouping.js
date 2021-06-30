@@ -219,7 +219,7 @@ const groupForPieRow = (data, mergedParams) => {
       }
     }
     return pieRows.push(
-      Object.keys(pieRow).reduce(function (r, k) {
+      Object.keys(pieRow).reduce((r, k) => {
         return r.concat(pieRow[k])
       }, [])
     )
