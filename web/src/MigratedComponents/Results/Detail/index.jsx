@@ -23,7 +23,7 @@ const AspectResultDetail = ({ match }) => {
     <Fragment>
       {resultId === 'add' ? <Create formSchema={schema} /> : null}
       {resultId !== 'add' && schema ? (
-        <Update formSchema={schema} resultId={resultId} />
+        <Update formSchema={schema} resultId={+resultId} />
       ) : null}
     </Fragment>
   ) : null

@@ -46,10 +46,11 @@ AspectTooltip.defaultProps = {
   toolTipContainerClass: null,
   iconClass: 'HelpIcon',
   showPointerCursor: true,
+  title: '',
 }
 
 AspectTooltip.propTypes = {
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  title: PropTypes.string,
   children: PropTypes.node.isRequired,
   showHelpIcon: PropTypes.bool,
   toolTipClass: PropTypes.string,

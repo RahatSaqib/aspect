@@ -2,13 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
+import isNil from 'lodash/isNil'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import { useFormikState } from './Formik/Context'
 import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs'
 import AspectTextField from './Inputs/TextField'
-import messagesBase from './messages'
 
 import styles from './Form.css'
 
@@ -20,11 +20,10 @@ const FormItem = ({
   fullWidth,
   hideIfNull,
   id,
-  initialValue,
   label,
   labelI18nKey,
   link,
-  messages = messagesBase,
+  messages,
   placeholder,
   type,
   validate,
@@ -32,8 +31,9 @@ const FormItem = ({
 }) => {
   const { formatMessage } = useI18n()
   const { formik, toggleEdit } = useFormikState()
-  const { getFieldProps } = formik
-  let isVisible = !hideIfNull || initialValue
+  const { getFieldProps, values } = formik
+  const value = values[id]
+  let isVisible = !(hideIfNull && isNil(value))
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values)
   }
@@ -91,6 +91,7 @@ FormItem.defaultProps = {
   classNames: {},
   fullWidth: false,
   hideIfNull: false,
+  initialValue: null,
   label: null,
   labelI18nKey: null,
   link: false,
@@ -106,7 +107,7 @@ FormItem.propTypes = {
   fullWidth: PropTypes.bool,
   hideIfNull: PropTypes.bool,
   id: PropTypes.string.isRequired,
-  initialValue: PropTypes.string.isRequired,
+  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   labelI18nKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),

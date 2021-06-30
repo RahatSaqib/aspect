@@ -29,7 +29,7 @@ async function loadIconModule(icon) {
 
 const IconProvider = memo(({ icon, className, title }) => {
   const IconShell = ({ children }) => (
-    <div className={cssClasses([className])}>{children}</div>
+    <div className={cssClasses({ [className]: !!className })}>{children}</div>
   )
 
   const IconComponent = lazy(() =>
@@ -61,6 +61,7 @@ const IconProvider = memo(({ icon, className, title }) => {
 })
 
 IconProvider.defaultProps = {
+  className: null,
   title: true,
 }
 
@@ -72,7 +73,7 @@ IconProvider.propTypes = {
   /**
     Class name for icon to be displayed
   */
-  className: string.isRequired,
+  className: string,
   /**
     Class name for icon to be displayed
   */
