@@ -853,7 +853,13 @@ async function seedIssueEscalationTriggersForPartner(
 
 // ***********************************************************************
 // 'whereKeys' is a string with single field name or array with field names
-async function upsertItems(knex, tableName, whereKeys, items, allowInserts = true) {
+async function upsertItems(
+  knex,
+  tableName,
+  whereKeys,
+  items,
+  allowInserts = true
+) {
   if (typeof whereKeys === 'string') {
     whereKeys = [whereKeys]
   }
