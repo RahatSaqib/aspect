@@ -17,8 +17,6 @@ import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
-// const styles = require('../../components/shared/DataTableRow.css')
-
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { formatMessage, formatNumber } = useI18n()
   const formatterByType = partial(

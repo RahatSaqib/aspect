@@ -149,7 +149,6 @@ export const ReporterListWithProps = ({
   table,
   columns,
   items,
-  // onRevokedItem,
   isLoading,
   sortCol,
   sortDir,
@@ -195,7 +194,6 @@ export const ReporterListWithProps = ({
                   key={reporter.get('siteId')}
                   intl={intl}
                   reporter={reporter}
-                  // onRevokedItem={onRevokedItem}
                 />
               ))}
           </TableBody>
@@ -348,7 +346,6 @@ ReporterListWithProps.propTypes = {
   pageAt: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   onExportClick: PropTypes.func.isRequired,
-  // onRevokedItem: PropTypes.func.isRequired,
   columns: PropTypes.instanceOf(Immutable.List).isRequired,
   isLoading: PropTypes.bool.isRequired,
   reducedFilters: PropTypes.oneOfType([PropTypes.object]).isRequired,

@@ -16,9 +16,6 @@ const theme = createTheme({
       hoverOpacity: 0.2,
     },
     primary: {
-      // light: lightGreen[500],
-      // main: lightGreen[600],
-      // dark: lightGreen[700],
       light: cyan[700],
       main: customPropertiesVariables['--ming'],
       dark: cyan[900],
