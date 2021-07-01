@@ -9,7 +9,16 @@ import { useFormikState } from '../Formik/Context'
 
 const AspectTextArea = props => {
   const { updateField } = useFormikState()
-  const { formik, controlType: { rowsMax, rows } = {}, ...rest } = props
+  const {
+    formik,
+    controlType: { rowsMax, rows } = {},
+    /**
+     * below props are not used - need then to free `rest`
+     */
+    classNames,
+    validate,
+    ...rest
+  } = props
 
   const mergedProps = {
     ...rest,

@@ -289,13 +289,14 @@ SelectComponent.defaultProps = {
   },
   messages: null,
   placeholder: 'Select...',
+  selectedValue: '',
 }
 
 SelectComponent.propTypes = {
   action: PropTypes.func.isRequired,
   classNames: PropTypes.oneOfType([PropTypes.object]),
   components: PropTypes.oneOfType([PropTypes.object]),
-  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   defaultSelectedOption: defaultSelectedOptionPropType,
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
@@ -304,7 +305,7 @@ SelectComponent.propTypes = {
   keyMapping: PropTypes.oneOfType([PropTypes.object]),
   messages: PropTypes.oneOfType([PropTypes.object]),
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  selectedValue: PropTypes.string.isRequired,
+  selectedValue: PropTypes.string,
   theme: PropTypes.string.isRequired,
 }
 
@@ -443,11 +444,15 @@ AspectDropDown.propTypes = {
   props: PropTypes.shape({
     classNames: PropTypes.oneOfType([PropTypes.object]),
     components: PropTypes.oneOfType([PropTypes.object]),
-    data: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    data: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+      PropTypes.bool,
+    ]),
     defaultSelectedOption: defaultSelectedOptionPropType,
-    dependencies: PropTypes.arrayOf([PropTypes.string]),
+    dependencies: PropTypes.arrayOf(PropTypes.string),
     endpoint: PropTypes.string,
-    formik: PropTypes.oneOfType([PropTypes.shape]),
+    formik: PropTypes.oneOfType([PropTypes.shape, PropTypes.object]),
     hideIfNoOptions: PropTypes.bool,
     identifier: PropTypes.string.isRequired,
     isClearable: PropTypes.bool,
@@ -459,7 +464,7 @@ AspectDropDown.propTypes = {
     messages: PropTypes.oneOfType([PropTypes.object]),
     normalizeLoadedData: PropTypes.func,
     placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-    selectedValue: PropTypes.string.isRequired,
+    selectedValue: PropTypes.string,
     sortByKeys: PropTypes.oneOfType([PropTypes.array]),
     state: PropTypes.string.isRequired,
   }).isRequired,
