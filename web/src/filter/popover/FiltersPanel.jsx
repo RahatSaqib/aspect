@@ -35,6 +35,7 @@ import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
+import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -612,539 +613,559 @@ export const FiltersPanel = ({
             return aboutToFillHorizontally || canFillInVertically
           }}
         >
-          {config.geography && (
-            <div className={cssClasses('Control')}>
-              <CountrySelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onCountryIdChange={onCountryIdChange}
-                countryId={filters.countryId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectCountry)}
-                floatingLabelText={intl.formatMessage(messages.country)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-          {config.geography && config.state && (
-            <div className={cssClasses('Control')}>
-              <StateSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onStateIdChange={onStateIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                floatingLabelFixed
-                hintText={getCustomMessage(
-                  intl,
-                  messages,
-                  'selectPlaceholder',
-                  user,
-                  { entity: 'state' }
-                )}
-                floatingLabelText={getCustomMessage(
-                  intl,
-                  messages,
-                  'state',
-                  user
-                )}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-          {config.geography && config.state && config.lga && (
-            <div className={cssClasses('Control')}>
-              <LgaSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onLgaIdChange={onLgaIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                lgaId={filters.lgaId}
-                floatingLabelFixed
-                hintText={getCustomMessage(
-                  intl,
-                  messages,
-                  'selectPlaceholder',
-                  user,
-                  { entity: 'lga' }
-                )}
-                floatingLabelText={getCustomMessage(
-                  intl,
-                  messages,
-                  'lga',
-                  user
-                )}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-          {config.disease && (
-            <div className={cssClasses('Control')}>
-              <DiseaseSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.diseaseId}
-                onDiseaseIdChange={onDiseaseChange}
-                onlyWithResults
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectDisease)}
-                floatingLabelText={intl.formatMessage(messages.disease)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-
-          {config.assayId && !config.onlyDisease && (
-            <div className={cssClasses('Control')}>
-              <AssaySelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.assayId}
-                onAssayChange={onAssayChange}
-                diseaseId={filters.diseaseId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectAssay)}
-                floatingLabelText={intl.formatMessage(messages.assay)}
-                intl={intl}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-
-          {!assayResultCategory2Label &&
-            config.resultCategory &&
-            !config.onlyDisease && (
+          <ErrorBoundary>
+            {config.geography && (
               <div className={cssClasses('Control')}>
-                <ResultCategorySelectField
+                <CountrySelectField
                   allItemText={intl.formatMessage(messages.all)}
-                  disabled={!filters.assayId}
-                  assayId={filters.assayId}
-                  value={filters.resultCategoryId}
-                  onResultCategoryChange={onResultCategoryChange}
+                  onCountryIdChange={onCountryIdChange}
+                  countryId={filters.countryId}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectResult)}
-                  floatingLabelText={intl.formatMessage(messages.result)}
+                  hintText={intl.formatMessage(messages.selectCountry)}
+                  floatingLabelText={intl.formatMessage(messages.country)}
                   style={{ verticalAlign: 'bottom' }}
-                  intl={intl}
+                />
+              </div>
+            )}
+            {config.geography && config.state && (
+              <div className={cssClasses('Control')}>
+                <StateSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  onStateIdChange={onStateIdChange}
+                  countryId={filters.countryId}
+                  stateId={filters.stateId}
+                  floatingLabelFixed
+                  hintText={getCustomMessage(
+                    intl,
+                    messages,
+                    'selectPlaceholder',
+                    user,
+                    { entity: 'state' }
+                  )}
+                  floatingLabelText={getCustomMessage(
+                    intl,
+                    messages,
+                    'state',
+                    user
+                  )}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+            {config.geography && config.state && config.lga && (
+              <div className={cssClasses('Control')}>
+                <LgaSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  onLgaIdChange={onLgaIdChange}
+                  countryId={filters.countryId}
+                  stateId={filters.stateId}
+                  lgaId={filters.lgaId}
+                  floatingLabelFixed
+                  hintText={getCustomMessage(
+                    intl,
+                    messages,
+                    'selectPlaceholder',
+                    user,
+                    { entity: 'lga' }
+                  )}
+                  floatingLabelText={getCustomMessage(
+                    intl,
+                    messages,
+                    'lga',
+                    user
+                  )}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+            {config.disease && (
+              <div className={cssClasses('Control')}>
+                <DiseaseSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.diseaseId}
+                  onDiseaseIdChange={onDiseaseChange}
+                  onlyWithResults
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectDisease)}
+                  floatingLabelText={intl.formatMessage(messages.disease)}
+                  style={{ verticalAlign: 'bottom' }}
                 />
               </div>
             )}
 
-          {assayResultCategory2Label &&
-            config.resultCategoryGroup &&
-            !config.onlyDisease && (
-              <div className={cssClasses('Control', 'Control--wide')}>
-                <ResultCategoryGroupSelectField
+            {config.assayId && !config.onlyDisease && (
+              <div className={cssClasses('Control')}>
+                <AssaySelectField
                   allItemText={intl.formatMessage(messages.all)}
-                  disabled={!filters.assayId}
-                  assayId={filters.assayId}
-                  value={filters.resultCategoryGroupId}
-                  onResultCategoryGroupChange={onResultCategoryGroupChange}
+                  value={filters.assayId}
+                  onAssayChange={onAssayChange}
+                  diseaseId={filters.diseaseId}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectResult)}
-                  floatingLabelText={intl.formatMessage(messages.result)}
-                  style={{ verticalAlign: 'bottom' }}
+                  hintText={intl.formatMessage(messages.selectAssay)}
+                  floatingLabelText={intl.formatMessage(messages.assay)}
                   intl={intl}
+                  style={{ verticalAlign: 'bottom' }}
                 />
               </div>
             )}
 
-          {config.errorCode && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="errorCode"
-                value={filters.errorCode || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(messages.enterErrorCode)}
-                label={intl.formatMessage(messages.errorCode)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.consumable && (
-            <div className={cssClasses('Control')}>
-              <ConsumableSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.consumableId}
-                onConsumableChange={onConsumableIdChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectConsumable)}
-                floatingLabelText={intl.formatMessage(messages.consumable)}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-              />
-            </div>
-          )}
-          {config.partnerId && (
-            <div className={cssClasses('Control')}>
-              <PartnerSelectField
-                emptyId="-1"
-                emptyText={intl.formatMessage(messages.none)}
-                partnerId={filters.partnerId}
-                onChangePartner={onPartnerIdChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectPartner)}
-                floatingLabelText={intl.formatMessage(messages.partner)}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-              />
-            </div>
-          )}
-          {config.patientOrResearchId && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="patientOrResearchId"
-                value={filters.patientOrResearchId || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(
-                  messages.enterPatientOrResearchId
-                )}
-                label={intl.formatMessage(messages.patientOrResearchId)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.patientOrCaseId && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="patientOrCaseId"
-                value={filters.patientOrCaseId || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(messages.enterPatientOrCaseId)}
-                label={intl.formatMessage(messages.patientOrCaseId)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.sampleId && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="sampleId"
-                value={filters.sampleId || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(messages.enterSampleId)}
-                label={intl.formatMessage(messages.sampleId)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.deviceName && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="deviceName"
-                value={filters.deviceName || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(messages.enterDeviceName)}
-                label={intl.formatMessage(messages.deviceName)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.siteName && (
-            <div className={cssClasses('Control')}>
-              <SiteAutoCompleteField
-                name="siteName"
-                value={filters.siteName || ''}
-                onSiteNameChange={onSiteNameChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.enterSiteName)}
-                floatingLabelText={intl.formatMessage(messages.site)}
-              />
-            </div>
-          )}
-          {config.reportableSiteName && (
-            <div className={cssClasses('Control')}>
-              <SiteAutoCompleteField
-                name="reportableSiteName"
-                value={filters.reportableSiteName || ''}
-                onChange={onReportableSiteChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.enterReportableSiteName)}
-                floatingLabelText={intl.formatMessage(messages.reportableSite)}
-              />
-            </div>
-          )}
-          {config.sampleOriginSite && (
-            <div className={cssClasses('Control')}>
-              <SiteAutoCompleteField
-                name="sampleOriginSite"
-                value={filters.sampleOriginSite || ''}
-                onSiteNameChange={onSampleOriginSiteChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.enterSampleOriginSite)}
-                floatingLabelText={intl.formatMessage(
-                  messages.sampleOriginSite
-                )}
-              />
-            </div>
-          )}
-          {config.contactNameOrEmail && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="contactNameOrEmail"
-                value={filters.contactNameOrEmail || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(messages.setContactNameEmail)}
-                label={intl.formatMessage(messages.contactNameEmail)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.externalId && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="externalId"
-                value={filters.externalId || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(messages.enterExternalId)}
-                label={intl.formatMessage(messages.externalId)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.workflowStatus && (
-            <div className={cssClasses('Control')}>
-              <ResultWorkflowStatusSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.workflowStatusId}
-                onWorkflowStatusChange={onWorkflowStatusIdChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectWorkflowStatus)}
-                floatingLabelText={intl.formatMessage(messages.workflowStatus)}
-                style={{ verticalAlign: 'bottom' }}
-                intl={intl}
-                autoWidth
-              />
-            </div>
-          )}
-          {config.deviceApproval && (
-            <div className={cssClasses('Control')}>
-              <DeviceApprovalSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.deviceApprovalId}
-                onDeviceApprovalChange={onDeviceApprovalIdChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectDeviceApproval)}
-                floatingLabelText={intl.formatMessage(messages.deviceApproval)}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-                intl={intl}
-              />
-            </div>
-          )}
-          {config.deviceType && (
-            <div className={cssClasses('Control')}>
-              <DeviceTypeSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.deviceType}
-                onDeviceTypeChange={onDeviceTypeChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectDeviceType)}
-                floatingLabelText={intl.formatMessage(messages.deviceType)}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-                intl={intl}
-              />
-            </div>
-          )}
-          {config.deviceMaintenanceStatus && (
-            <div className={cssClasses('Control')}>
-              <DeviceMaintenanceStatusSelectField
-                value={filters.deviceMaintenanceStatusId}
-                onDeviceMaintenanceStatusChange={
-                  onDeviceMaintenanceStatusIdChange
-                }
-                floatingLabelFixed
-                hintText={intl.formatMessage(
-                  messages.selectDeviceMaintenanceStatus
-                )}
-                floatingLabelText={intl.formatMessage(
-                  messages.deviceMaintenanceStatus
-                )}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-              />
-            </div>
-          )}
-          {config.notificationName && (
-            <div className={cssClasses('Control')}>
-              <FocusBlurTextField
-                name="notificationName"
-                value={filters.notificationName || ''}
-                onCommitValue={onTextFieldCommitValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={intl.formatMessage(
-                  messages.selectNotificationName
-                )}
-                label={intl.formatMessage(messages.notificationName)}
-                margin="normal"
-              />
-            </div>
-          )}
-          {config.date && (
-            <DateRangeSelector
-              floatingLabelText={
-                dateFilterLabel || intl.formatMessage(messages.date)
-              }
-              onChangeDate={onDateChange}
-              controlClassName={cssClasses('Control')}
-              minDate={filters.minDate}
-              maxDate={filters.maxDate}
-              dateFormat={dateFormat}
-              autoOk
-            />
-          )}
+            {!assayResultCategory2Label &&
+              config.resultCategory &&
+              !config.onlyDisease && (
+                <div className={cssClasses('Control')}>
+                  <ResultCategorySelectField
+                    allItemText={intl.formatMessage(messages.all)}
+                    disabled={!filters.assayId}
+                    assayId={filters.assayId}
+                    value={filters.resultCategoryId}
+                    onResultCategoryChange={onResultCategoryChange}
+                    floatingLabelFixed
+                    hintText={intl.formatMessage(messages.selectResult)}
+                    floatingLabelText={intl.formatMessage(messages.result)}
+                    style={{ verticalAlign: 'bottom' }}
+                    intl={intl}
+                  />
+                </div>
+              )}
 
-          {config.revoked && (
-            <div className={cssClasses('Control')}>
-              <RevokedSelectField
-                floatingLabelText={intl.formatMessage(messages.revoked)}
-                onRevokedChange={onRevokedChange}
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.revoked}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectRevoked)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-          {config.treatmentStatus && (
-            <div className={cssClasses('Control')}>
-              <ResultTreatmentStatusSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                value={filters.treatmentStatus}
-                onTreatmentStatusChange={onTreatmentStatusChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectTreatmentStatus)}
-                floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
-                style={{ verticalAlign: 'bottom' }}
-                autoWidth
-              />
-            </div>
-          )}
-          {config.siteId && (
-            <div className={cssClasses('Control')}>
-              <SiteAutoCompleteField
-                name="siteId"
-                value={filters.siteId || ''}
-                onSiteNameChange={onSiteIdChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.enterSiteId)}
-                floatingLabelText={intl.formatMessage(messages.siteId)}
-              />
-            </div>
-          )}
-          {config.onlyReportableResults && (
-            <div className={cssClasses('Control')}>
-              <CheckboxField
-                classNames={{
-                  controlContainer: cssClasses('checkbox-wrapper'),
-                }}
-                checked={[true, 'true'].includes(filters.onlyReportableResults)}
-                onChange={(event, isChecked) =>
-                  onOnlyReportableResultsBoolChange(isChecked || null)
+            {assayResultCategory2Label &&
+              config.resultCategoryGroup &&
+              !config.onlyDisease && (
+                <div className={cssClasses('Control', 'Control--wide')}>
+                  <ResultCategoryGroupSelectField
+                    allItemText={intl.formatMessage(messages.all)}
+                    disabled={!filters.assayId}
+                    assayId={filters.assayId}
+                    value={filters.resultCategoryGroupId}
+                    onResultCategoryGroupChange={onResultCategoryGroupChange}
+                    floatingLabelFixed
+                    hintText={intl.formatMessage(messages.selectResult)}
+                    floatingLabelText={intl.formatMessage(messages.result)}
+                    style={{ verticalAlign: 'bottom' }}
+                    intl={intl}
+                  />
+                </div>
+              )}
+
+            {config.errorCode && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="errorCode"
+                  value={filters.errorCode || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(messages.enterErrorCode)}
+                  label={intl.formatMessage(messages.errorCode)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.consumable && (
+              <div className={cssClasses('Control')}>
+                <ConsumableSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.consumableId}
+                  onConsumableChange={onConsumableIdChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectConsumable)}
+                  floatingLabelText={intl.formatMessage(messages.consumable)}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.partnerId && (
+              <div className={cssClasses('Control')}>
+                <PartnerSelectField
+                  emptyId="-1"
+                  emptyText={intl.formatMessage(messages.none)}
+                  partnerId={filters.partnerId}
+                  onChangePartner={onPartnerIdChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectPartner)}
+                  floatingLabelText={intl.formatMessage(messages.partner)}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.patientOrResearchId && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="patientOrResearchId"
+                  value={filters.patientOrResearchId || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(
+                    messages.enterPatientOrResearchId
+                  )}
+                  label={intl.formatMessage(messages.patientOrResearchId)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.patientOrCaseId && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="patientOrCaseId"
+                  value={filters.patientOrCaseId || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(
+                    messages.enterPatientOrCaseId
+                  )}
+                  label={intl.formatMessage(messages.patientOrCaseId)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.sampleId && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="sampleId"
+                  value={filters.sampleId || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(messages.enterSampleId)}
+                  label={intl.formatMessage(messages.sampleId)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.deviceName && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="deviceName"
+                  value={filters.deviceName || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(messages.enterDeviceName)}
+                  label={intl.formatMessage(messages.deviceName)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.siteName && (
+              <div className={cssClasses('Control')}>
+                <SiteAutoCompleteField
+                  name="siteName"
+                  value={filters.siteName || ''}
+                  onSiteNameChange={onSiteNameChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.enterSiteName)}
+                  floatingLabelText={intl.formatMessage(messages.site)}
+                />
+              </div>
+            )}
+            {config.reportableSiteName && (
+              <div className={cssClasses('Control')}>
+                <SiteAutoCompleteField
+                  name="reportableSiteName"
+                  value={filters.reportableSiteName || ''}
+                  onChange={onReportableSiteChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(
+                    messages.enterReportableSiteName
+                  )}
+                  floatingLabelText={intl.formatMessage(
+                    messages.reportableSite
+                  )}
+                />
+              </div>
+            )}
+            {config.sampleOriginSite && (
+              <div className={cssClasses('Control')}>
+                <SiteAutoCompleteField
+                  name="sampleOriginSite"
+                  value={filters.sampleOriginSite || ''}
+                  onSiteNameChange={onSampleOriginSiteChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.enterSampleOriginSite)}
+                  floatingLabelText={intl.formatMessage(
+                    messages.sampleOriginSite
+                  )}
+                />
+              </div>
+            )}
+            {config.contactNameOrEmail && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="contactNameOrEmail"
+                  value={filters.contactNameOrEmail || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(messages.setContactNameEmail)}
+                  label={intl.formatMessage(messages.contactNameEmail)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.externalId && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="externalId"
+                  value={filters.externalId || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(messages.enterExternalId)}
+                  label={intl.formatMessage(messages.externalId)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.workflowStatus && (
+              <div className={cssClasses('Control')}>
+                <ResultWorkflowStatusSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.workflowStatusId}
+                  onWorkflowStatusChange={onWorkflowStatusIdChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectWorkflowStatus)}
+                  floatingLabelText={intl.formatMessage(
+                    messages.workflowStatus
+                  )}
+                  style={{ verticalAlign: 'bottom' }}
+                  intl={intl}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.deviceApproval && (
+              <div className={cssClasses('Control')}>
+                <DeviceApprovalSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.deviceApprovalId}
+                  onDeviceApprovalChange={onDeviceApprovalIdChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectDeviceApproval)}
+                  floatingLabelText={intl.formatMessage(
+                    messages.deviceApproval
+                  )}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                  intl={intl}
+                />
+              </div>
+            )}
+            {config.deviceType && (
+              <div className={cssClasses('Control')}>
+                <DeviceTypeSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.deviceType}
+                  onDeviceTypeChange={onDeviceTypeChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectDeviceType)}
+                  floatingLabelText={intl.formatMessage(messages.deviceType)}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                  intl={intl}
+                />
+              </div>
+            )}
+            {config.deviceMaintenanceStatus && (
+              <div className={cssClasses('Control')}>
+                <DeviceMaintenanceStatusSelectField
+                  value={filters.deviceMaintenanceStatusId}
+                  onDeviceMaintenanceStatusChange={
+                    onDeviceMaintenanceStatusIdChange
+                  }
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(
+                    messages.selectDeviceMaintenanceStatus
+                  )}
+                  floatingLabelText={intl.formatMessage(
+                    messages.deviceMaintenanceStatus
+                  )}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.notificationName && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="notificationName"
+                  value={filters.notificationName || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={intl.formatMessage(
+                    messages.selectNotificationName
+                  )}
+                  label={intl.formatMessage(messages.notificationName)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.date && (
+              <DateRangeSelector
+                floatingLabelText={
+                  dateFilterLabel || intl.formatMessage(messages.date)
                 }
-                label={intl.formatMessage(messages.onlyReportableResults)}
-                name="onlyReportableResults"
-                autoWidth
+                onChangeDate={onDateChange}
+                controlClassName={cssClasses('Control')}
+                minDate={filters.minDate}
+                maxDate={filters.maxDate}
+                dateFormat={dateFormat}
+                autoOk
               />
-            </div>
-          )}
-          {config.onlyDownloadedByReporter && (
-            <div className={cssClasses('Control')}>
-              <CheckboxField
-                classNames={{
-                  controlContainer: cssClasses('checkbox-wrapper'),
-                }}
-                checked={[true, 'true'].includes(
-                  filters.onlyDownloadedByReporter
-                )}
-                onChange={(event, isChecked) =>
-                  onOnlyDownloadedByReporterBoolChange(isChecked || null)
-                }
-                label={intl.formatMessage(messages.onlyDownloadedByReporter)}
-                name="onlyDownloadedByReporter"
-                autoWidth
-              />
-            </div>
-          )}
-          {(reportableSiteName || reportableSiteId) &&
-            config.onlyEverTransferred && (
+            )}
+
+            {config.revoked && (
+              <div className={cssClasses('Control')}>
+                <RevokedSelectField
+                  floatingLabelText={intl.formatMessage(messages.revoked)}
+                  onRevokedChange={onRevokedChange}
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.revoked}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectRevoked)}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+            {config.treatmentStatus && (
+              <div className={cssClasses('Control')}>
+                <ResultTreatmentStatusSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  value={filters.treatmentStatus}
+                  onTreatmentStatusChange={onTreatmentStatusChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectTreatmentStatus)}
+                  floatingLabelText={intl.formatMessage(
+                    messages.treatmentStatus
+                  )}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.siteId && (
+              <div className={cssClasses('Control')}>
+                <SiteAutoCompleteField
+                  name="siteId"
+                  value={filters.siteId || ''}
+                  onSiteNameChange={onSiteIdChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.enterSiteId)}
+                  floatingLabelText={intl.formatMessage(messages.siteId)}
+                />
+              </div>
+            )}
+            {config.onlyReportableResults && (
               <div className={cssClasses('Control')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
                   }}
-                  checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                  checked={[true, 'true'].includes(
+                    filters.onlyReportableResults
+                  )}
                   onChange={(event, isChecked) =>
-                    onOnlyEverTransferredBoolChange(isChecked || null)
+                    onOnlyReportableResultsBoolChange(isChecked || null)
                   }
-                  label={intl.formatMessage(messages.onlyEverTransferred)}
-                  name="onlyEverTransferred"
+                  label={intl.formatMessage(messages.onlyReportableResults)}
+                  name="onlyReportableResults"
                   autoWidth
                 />
               </div>
             )}
-          {config.onlyTreatmentRequired && (
-            <div className={cssClasses('Control')}>
-              <CheckboxField
-                classNames={{
-                  controlContainer: cssClasses('checkbox-wrapper'),
-                }}
-                checked={[true, 'true'].includes(filters.onlyTreatmentRequired)}
-                onChange={(event, isChecked) =>
-                  onOnlyTreatmentRequiredBoolChange(isChecked || null)
-                }
-                label={intl.formatMessage(messages.onlyTreatmentRequired)}
-                name="onlyTreatmentRequired"
-                autoWidth
-              />
-            </div>
-          )}
-          {config.stockLeft && (
-            <div className={cssClasses('Control')}>
-              <StockLeftSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onChange={onStockLeftChange}
-                value={filters.stockLeft}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectStockLeft)}
-                floatingLabelText={intl.formatMessage(messages.stockLeft)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-          {config.reportName && (
-            <div className={cssClasses('Control')}>
-              <ReportAutoCompleteField
-                name="reportName"
-                value={filters.reportName || ''}
-                onReportNameChange={onReportNameChange}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.enterReportName)}
-                floatingLabelText={intl.formatMessage(messages.reportName)}
-              />
-            </div>
-          )}
+            {config.onlyDownloadedByReporter && (
+              <div className={cssClasses('Control')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(
+                    filters.onlyDownloadedByReporter
+                  )}
+                  onChange={(event, isChecked) =>
+                    onOnlyDownloadedByReporterBoolChange(isChecked || null)
+                  }
+                  label={intl.formatMessage(messages.onlyDownloadedByReporter)}
+                  name="onlyDownloadedByReporter"
+                  autoWidth
+                />
+              </div>
+            )}
+            {(reportableSiteName || reportableSiteId) &&
+              config.onlyEverTransferred && (
+                <div className={cssClasses('Control')}>
+                  <CheckboxField
+                    classNames={{
+                      controlContainer: cssClasses('checkbox-wrapper'),
+                    }}
+                    checked={[true, 'true'].includes(
+                      filters.onlyEverTransferred
+                    )}
+                    onChange={(event, isChecked) =>
+                      onOnlyEverTransferredBoolChange(isChecked || null)
+                    }
+                    label={intl.formatMessage(messages.onlyEverTransferred)}
+                    name="onlyEverTransferred"
+                    autoWidth
+                  />
+                </div>
+              )}
+            {config.onlyTreatmentRequired && (
+              <div className={cssClasses('Control')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(
+                    filters.onlyTreatmentRequired
+                  )}
+                  onChange={(event, isChecked) =>
+                    onOnlyTreatmentRequiredBoolChange(isChecked || null)
+                  }
+                  label={intl.formatMessage(messages.onlyTreatmentRequired)}
+                  name="onlyTreatmentRequired"
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.stockLeft && (
+              <div className={cssClasses('Control')}>
+                <StockLeftSelectField
+                  allItemText={intl.formatMessage(messages.all)}
+                  onChange={onStockLeftChange}
+                  value={filters.stockLeft}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.selectStockLeft)}
+                  floatingLabelText={intl.formatMessage(messages.stockLeft)}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+            {config.reportName && (
+              <div className={cssClasses('Control')}>
+                <ReportAutoCompleteField
+                  name="reportName"
+                  value={filters.reportName || ''}
+                  onReportNameChange={onReportNameChange}
+                  floatingLabelFixed
+                  hintText={intl.formatMessage(messages.enterReportName)}
+                  floatingLabelText={intl.formatMessage(messages.reportName)}
+                />
+              </div>
+            )}
+          </ErrorBoundary>
         </FallbackUntilDone>
       </div>
     </div>
