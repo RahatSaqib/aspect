@@ -31,8 +31,8 @@ const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
 
 AspectWidgets.propTypes = {
   data: PropTypes.shape({
-    widgetGroups: PropTypes.oneOfType([PropTypes.object]),
-    nonGroupedWidgets: PropTypes.oneOfType([PropTypes.object]),
+    widgetGroups: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+    nonGroupedWidgets: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   }).isRequired,
 }
 
