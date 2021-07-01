@@ -27,7 +27,7 @@ module.exports = require('../utils').seed(async knex => {
     .whereNull('g.lgaId')
     .first('g.id', 'c.id as countryId', 'timezone', 'culture')
 
-  // create clinician user
+  // create regional manager
   const [RegionalManagerUserId] = await knex('User').insert({
     name: 'Regional Manager',
     password: bcrypt.hashSync('test07', saltRounds),
