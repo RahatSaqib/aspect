@@ -333,7 +333,6 @@ async function getConsumablesList(auth, dataConstraints) {
         "sum(it.externalId = 'InventoryStockExpiring' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntExpiring"
       )
     )
-
   return consumables
 }
 
