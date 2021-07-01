@@ -54,6 +54,7 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
   const intl = createIntl({
     locale: userLocale,
     messages: messages || translation[userLocale],
+    onError: () => {}, // to not show console.error with MISSING_TRANSLATION
   })
 
   const timezone =

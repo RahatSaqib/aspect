@@ -122,6 +122,7 @@ export const appFactory = compose(
         locale={culture === 'en-US' ? 'en' : culture}
         messages={translation[culture]}
         formats={formatsByTimezoneId(timezoneId)}
+        onError={() => {}} // to not show console.error with MISSING_TRANSLATION
       >
         <I18nProvider>
           <div id="I-am-reactroot">
