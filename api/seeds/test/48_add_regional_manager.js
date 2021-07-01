@@ -45,7 +45,7 @@ module.exports = require('../utils').seed(async knex => {
   }
 
   const [regionalManagerPersonId] = await knex('Person').insert({
-    userId: RegionalManagerUserId,
+    userId: regionalManagerUserId,
     name: 'Regional Manager',
     lastPartnerId: partnerOneId,
     lastCountryId: countryId,
@@ -59,7 +59,7 @@ module.exports = require('../utils').seed(async knex => {
     .where({ externalId: 'regionalOfficer', partnerId: partnerOneId })
     .first()
   const [jobId] = await knex('Job').insert({
-    personId: RegionalManagerPersonId,
+    personId: regionalManagerPersonId,
     jobFunctionId: jobFunctionIdRegionalManager,
   })
   await knex('JobContext').insert({ jobId, geographyId })

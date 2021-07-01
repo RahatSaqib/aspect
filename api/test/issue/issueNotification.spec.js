@@ -99,18 +99,21 @@ describe('Issue Notification', () => {
       )
     })
     it('Should send notification to the clinician jobFunction', async () => {
+      const clinicianIssueInItsSiteId =
+        issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
       const issue = await shouldNotifyIssue(
         knex,
-        issueToDeleteId[issueToDeleteId.length - 2],
+        clinicianIssueInItsSiteId,
         clinician.personId,
         clinician.jobFunctionId
       )
       assert.isFalse(_.isNil(issue))
     })
-    it('Should NOT send notification to the clinician jobFunction if the clinician doesn't have access to the site that the result belongs to.', async () => {
+    it('Should NOT send notification to the clinician jobFunction', async () => {
+      const clicnicianNotItsSiteIssueId = _.last(issueToDeleteId) // the last issue inserted in before each
       const issue = await shouldNotifyIssue(
         knex,
-        _.last(issueToDeleteId),
+        clicnicianNotItsSiteIssueId,
         clinicianInDifferentSiteResult.personId,
         clinicianInDifferentSiteResult.jobFunctionId
       )
@@ -130,18 +133,21 @@ describe('Issue Notification', () => {
       )
     })
     it('should send notification to the Regional Manager jobFunction', async () => {
+      const rmIssueInItsSiteId = issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
       const issue = await shouldNotifyIssue(
         knex,
-        issueToDeleteId[issueToDeleteId.length - 2],
+        rmIssueInItsSiteId,
         rm.personId,
         rm.jobFunctionId
       )
       assert.isFalse(_.isNil(issue))
     })
-    it('Should NOT send notification to the Regional manager jobFunction if the Regional manager doesn't have access to the site that the result belongs to.', async () => {
+    it('should NOT send notification to the Regional Manager jobFunction', async () => {
+      const rmNotItsSiteIssueId = _.last(issueToDeleteId) // the last issue inserted in before each
+
       const issue = await shouldNotifyIssue(
         knex,
-        _.last(issueToDeleteId),
+        rmNotItsSiteIssueId,
         rmInDifferentStateResult.personId,
         rmInDifferentStateResult.jobFunctionId
       )

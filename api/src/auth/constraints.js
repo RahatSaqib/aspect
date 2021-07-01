@@ -256,7 +256,6 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
         `${aliases.assay}.id`
       )
     }
-
     if (constraints.disease && !aliases.assayType) {
       aliases.assayType = alias('AssayType')
       queryBuilder.leftOuterJoin(
@@ -265,7 +264,6 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
         `${aliases.assayType}.id`
       )
     }
-
     if (_.get(constraints, 'disease.id')) {
       queryBuilder.where(qb =>
         isNullInOrEqual(
