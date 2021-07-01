@@ -107,7 +107,7 @@ describe('Issue Notification', () => {
       )
       assert.isFalse(_.isNil(issue))
     })
-    it('Should NOT send notification to the clinician jobFunction', async () => {
+    it('Should NOT send notification to the clinician jobFunction if the clinician doesn't have access to the site that the result belongs to.', async () => {
       const issue = await shouldNotifyIssue(
         knex,
         _.last(issueToDeleteId),
@@ -138,7 +138,7 @@ describe('Issue Notification', () => {
       )
       assert.isFalse(_.isNil(issue))
     })
-    it('should NOT send notification to the Regional Manager jobFunction', async () => {
+    it('Should NOT send notification to the Regional manager jobFunction if the Regional manager doesn't have access to the site that the result belongs to.', async () => {
       const issue = await shouldNotifyIssue(
         knex,
         _.last(issueToDeleteId),

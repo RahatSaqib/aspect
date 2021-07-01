@@ -549,7 +549,7 @@ function addConstraints(queryBuilder, constraints, receivedAliases) {
   const aliases = _.cloneDeep(receivedAliases)
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  addPartnerConstraints(queryBuilder, constraints, aliases) // ok
+  addPartnerConstraints(queryBuilder, constraints, aliases)
   addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases)
   addDevicesAndSitesConstraints(queryBuilder, constraints, aliases)
   addPersonConstraints(queryBuilder, constraints, aliases)

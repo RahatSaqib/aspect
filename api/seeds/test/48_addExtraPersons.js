@@ -28,7 +28,7 @@ module.exports = require('../utils').seed(async knex => {
     .first('g.id', 'c.id as countryId', 'timezone', 'culture')
 
   // create regional manager
-  const [RegionalManagerUserId] = await knex('User').insert({
+  const [regionalManagerUserId] = await knex('User').insert({
     name: 'Regional Manager',
     password: bcrypt.hashSync('test07', saltRounds),
     approved: 1,
@@ -44,7 +44,7 @@ module.exports = require('../utils').seed(async knex => {
     updatedBy: adminId,
   }
 
-  const [RegionalManagerPersonId] = await knex('Person').insert({
+  const [regionalManagerPersonId] = await knex('Person').insert({
     userId: RegionalManagerUserId,
     name: 'Regional Manager',
     lastPartnerId: partnerOneId,
