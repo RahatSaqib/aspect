@@ -244,7 +244,6 @@ const SelectComponent = ({
       : defaultSelectedOption
 
   useEffect(() => {
-    // if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
     if (!isEqual(options, data)) {
       setDefaultOptionValue(
         getSelectedOptions(data, defaultSelectedOption, idKey)
