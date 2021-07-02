@@ -2,7 +2,6 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import { injectIntl, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
@@ -18,7 +17,6 @@ import {
   composeSanitizer,
 } from '../../../../shared/selectors/searchParams'
 import { useAuthState } from '../../../../Providers/AuthProvider'
-import { formatDate, formatRelative } from '../../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../../filter/utils'
 import Results from '../../../../result/historyResults/HistoryResults'
 import ColoredNumber from '../../../../components/shared/ColoredNumber'
@@ -38,6 +36,7 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import messages from './messages'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -72,15 +71,14 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
-const formatMaintenanceDate = (intl, date) => {
+const formatMaintenanceDate = (formatMessage, formatDate, date) => {
   if (!date) {
-    return intl.formatMessage(messages.undefinedValue)
+    return formatMessage(messages.undefinedValue)
   }
   return formatDate(date)
 }
 
 const enhance = compose(
-  injectIntl,
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
@@ -322,7 +320,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
@@ -498,7 +496,7 @@ const DeviceDetailProfile = ({
   onExportClick,
   onExportDeviceLogsClick,
 }) => {
-  const intl = useIntl()
+  const { formatMessage, formatNumber, formatDate, dateFNSLocale } = useI18n()
   const {
     culture,
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
@@ -520,39 +518,39 @@ const DeviceDetailProfile = ({
   const resultColumns = [
     {
       key: 'endedOn',
-      label: intl.formatMessage(messages.endedOn),
+      label: formatMessage(messages.endedOn),
       formatter: value => formatDate(value),
       sortable: true,
     },
     {
       key: 'sampleOriginSiteName',
-      label: intl.formatMessage(messages.sampleOriginSiteName),
+      label: formatMessage(messages.sampleOriginSiteName),
       sortable: true,
     },
     {
       key: 'sampleId',
-      label: intl.formatMessage(messages.sampleId),
+      label: formatMessage(messages.sampleId),
       sortable: true,
     },
     {
       key: 'resultText',
-      label: intl.formatMessage(messages.resultText),
+      label: formatMessage(messages.resultText),
       sortable: true,
     },
     {
       key: 'errorCode',
-      label: intl.formatMessage(messages.errorCode),
+      label: formatMessage(messages.errorCode),
       sortable: true,
     },
     {
       key: 'resultWorkflowStatusI18nkey',
-      formatter: value => intl.formatMessage(resultMessages[value]),
-      label: intl.formatMessage(messages.resultWorkflowStatus),
+      formatter: value => formatMessage(resultMessages[value]),
+      label: formatMessage(messages.resultWorkflowStatus),
       sortable: true,
     },
     {
       key: 'patientId',
-      label: intl.formatMessage(messages.patientId),
+      label: formatMessage(messages.patientId),
       sortable: true,
     },
   ]
@@ -562,8 +560,8 @@ const DeviceDetailProfile = ({
   })(Results)
 
   const maintenanceStatusText = device.get('maintenanceStatusI18nKey')
-    ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
-    : intl.formatMessage(messages.undefinedValue)
+    ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
+    : formatMessage(messages.undefinedValue)
 
   const isMaintenanceStatusChangeDisabled =
     device.get('maintenanceStatusActive') &&
@@ -575,7 +573,7 @@ const DeviceDetailProfile = ({
         <Card className={cssClasses('Section__Content')}>
           <div>
             <Summary
-              title={intl.formatMessage(messages.deviceType)}
+              title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
               to={`/browse/device?filters=deviceTypeId%3D${device.getIn([
                 'deviceType',
@@ -584,7 +582,7 @@ const DeviceDetailProfile = ({
               action={
                 <Fragment>
                   <Tooltip
-                    title={intl.formatMessage(messages.deviceLogsTooltip)}
+                    title={formatMessage(messages.deviceLogsTooltip)}
                     placement="right"
                   >
                     <Button
@@ -592,7 +590,7 @@ const DeviceDetailProfile = ({
                       onClick={onExportDeviceLogsClick}
                       disabled={disabled}
                     >
-                      {intl.formatMessage(messages.deviceLogs)}
+                      {formatMessage(messages.deviceLogs)}
                     </Button>
                   </Tooltip>
                 </Fragment>
@@ -605,14 +603,14 @@ const DeviceDetailProfile = ({
                     className={cssClasses('deviceSummary__container')}
                     iconClass="deviceSummary__helpIcon"
                     showHelpIcon
-                    title={intl.formatMessage(
+                    title={formatMessage(
                       messages.deviceStatusChangeDisabledTooltip
                     )}
                   >
-                    {intl.formatMessage(messages.maintenance)}
+                    {formatMessage(messages.maintenance)}
                   </AspectTooltip>
                 ) : (
-                  intl.formatMessage(messages.maintenance)
+                  formatMessage(messages.maintenance)
                 )
               }
               description={
@@ -620,9 +618,7 @@ const DeviceDetailProfile = ({
                   {maintenanceStatusText}
                   {maintenanceStatusNotes && (
                     <Tooltip title={maintenanceStatusNotes} placement="top">
-                      <IconButton
-                        aria-label={intl.formatMessage(messages.notes)}
-                      >
+                      <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
                     </Tooltip>
@@ -635,21 +631,23 @@ const DeviceDetailProfile = ({
                   onClick={onShowMaintenanceDialog}
                   disabled={isMaintenanceStatusChangeDisabled}
                 >
-                  {intl.formatMessage(messages.buttonChange)}
+                  {formatMessage(messages.buttonChange)}
                 </Button>
               }
             />
 
             <Summary
-              title={intl.formatMessage(messages.calibration)}
+              title={formatMessage(messages.calibration)}
               description={
                 <Fragment>
-                  {formatMaintenanceDate(intl, device.get('calibrationDate'))}
+                  {formatMaintenanceDate(
+                    formatMessage,
+                    formatDate,
+                    device.get('calibrationDate')
+                  )}
                   {calibrationNotes && (
                     <Tooltip title={calibrationNotes} placement="top">
-                      <IconButton
-                        aria-label={intl.formatMessage(messages.notes)}
-                      >
+                      <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
                     </Tooltip>
@@ -662,31 +660,33 @@ const DeviceDetailProfile = ({
                   onClick={onShowCalibrationDialog}
                   disabled={disabled}
                 >
-                  {intl.formatMessage(messages.buttonAddRecord)}
+                  {formatMessage(messages.buttonAddRecord)}
                 </Button>
               }
             />
             <Summary
-              title={intl.formatMessage(messages.site)}
+              title={formatMessage(messages.site)}
               description={device.get('siteName')}
               to={`/browse/site/${device.get('siteId')}`}
             />
             <Summary
-              title={intl.formatMessage(messages.connectivity)}
-              description={intl.formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(intl, device.get('lastSeen')),
+              title={formatMessage(messages.connectivity)}
+              description={formatMessage(messages.lastSeen, {
+                lastSeen: dateFNSLocale.formatRelative(device.get('lastSeen')),
               })}
             />
             <Summary
-              title={intl.formatMessage(messages.warranty)}
+              title={formatMessage(messages.warranty)}
               description={
                 <Fragment>
-                  {formatMaintenanceDate(intl, device.get('warrantyDueDate'))}
+                  {formatMaintenanceDate(
+                    formatMessage,
+                    formatDate,
+                    device.get('warrantyDueDate')
+                  )}
                   {warrantyNotes && (
                     <Tooltip title={warrantyNotes} placement="bottom">
-                      <IconButton
-                        aria-label={intl.formatMessage(messages.notes)}
-                      >
+                      <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
                     </Tooltip>
@@ -699,7 +699,7 @@ const DeviceDetailProfile = ({
                   onClick={onShowWarrantyDialog}
                   disabled={disabled}
                 >
-                  {intl.formatMessage(messages.buttonUpdate)}
+                  {formatMessage(messages.buttonUpdate)}
                 </Button>
               }
             />
@@ -712,10 +712,10 @@ const DeviceDetailProfile = ({
                     showHelpIcon
                     title={
                       <React.Fragment>
-                        {intl.formatMessage(messages.utilizationRateExplain)}
+                        {formatMessage(messages.utilizationRateExplain)}
                         {resultCountThisMonth !== null && (
                           <React.Fragment>
-                            {`: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${intl.formatNumber(
+                            {`: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${formatNumber(
                               utilizationRateThisMonth
                             )}`}
                           </React.Fragment>
@@ -723,13 +723,12 @@ const DeviceDetailProfile = ({
                       </React.Fragment>
                     }
                   >
-                    {intl.formatMessage(messages.utilizationRate)}
+                    {formatMessage(messages.utilizationRate)}
                   </AspectTooltip>
                 }
                 description={
                   <ColoredNumber
                     number={utilizationRateThisMonth}
-                    intl={intl}
                     formatNumberStyle="percent"
                     error={utilizationRateThisMonth < utilizationRateThreshold}
                   />
@@ -744,36 +743,35 @@ const DeviceDetailProfile = ({
                   showHelpIcon
                   title={
                     <React.Fragment>
-                      {intl.formatMessage(messages.errorRateExplain)}
+                      {formatMessage(messages.errorRateExplain)}
                       {errorRateThisMonth !== null && (
                         <React.Fragment>
                           {`: ${errorCountThisMonth} / ${resultCountThisMonth} =
-                          ${intl.formatNumber(errorRateThisMonth)}`}
+                          ${formatNumber(errorRateThisMonth)}`}
                         </React.Fragment>
                       )}
                     </React.Fragment>
                   }
                 >
-                  {intl.formatMessage(messages.errorRate)}
+                  {formatMessage(messages.errorRate)}
                 </AspectTooltip>
               }
               description={
                 errorRateThisMonth !== null ? (
                   <ColoredNumber
                     number={errorRateThisMonth}
-                    intl={intl}
                     formatNumberStyle="percent"
                     error={errorRateThisMonth > errorRateThreshold}
                   />
                 ) : (
-                  intl.formatMessage(messages.undefinedValue)
+                  formatMessage(messages.undefinedValue)
                 )
               }
             />
             {/* Approval Status Summary */}
             <Summary
-              title={intl.formatMessage(messages.approval)}
-              description={intl.formatMessage(
+              title={formatMessage(messages.approval)}
+              description={formatMessage(
                 messages[device.get('approvalStatusI18nKey')]
               )}
               action={
@@ -782,28 +780,25 @@ const DeviceDetailProfile = ({
                   onClick={onToggleDeviceApproval}
                   disabled={disabled}
                 >
-                  {intl.formatMessage(messages.buttonChange)}
+                  {formatMessage(messages.buttonChange)}
                 </Button>
               }
             />
           </div>
         </Card>
         <CalibrationDialog
-          intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'calibration'}
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
         />
         <DeviceMaintenanceStatusDialog
-          intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'maintenance'}
           onCancel={onHideDialog}
           onSubmit={onMaintenanceSubmit}
         />
         <WarrantyDialog
-          intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'warranty'}
           onCancel={onHideDialog}
@@ -824,7 +819,6 @@ const DeviceDetailProfile = ({
         location={location}
         sortDir={sortDir}
         sortCol={sortCol}
-        intl={intl}
         pageAt={pageAt}
         pageSize={pageSize}
         columns={resultColumns}
@@ -832,7 +826,7 @@ const DeviceDetailProfile = ({
         items={items}
         onRowClick={onRowClick}
         onExportClick={onExportClick}
-        title={intl.formatMessage(messages.testHistory)}
+        title={formatMessage(messages.testHistory)}
       />
     </div>
   )
