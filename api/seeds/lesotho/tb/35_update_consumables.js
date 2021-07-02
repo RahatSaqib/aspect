@@ -1,7 +1,7 @@
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = require('../../utils').seed(seed, __filename)
 
-const { upsertItems } = require('../utils')
-const getConsumables = require('../fixtures/Consumable')
+const { upsertItems } = require('../../utils')
+const getConsumables = require('../../fixtures/Consumable')
 
 async function seed(knex) {
   const fixture = await getConsumables()
