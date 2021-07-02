@@ -16,7 +16,6 @@ const deviceStatusGraphs = () => ({
     componentSize: 'full',
     group: 'assaysNotNeeded',
     assays: [],
-
     selectorModifiers: [
       {
         selectedValue: 'Date Range',
