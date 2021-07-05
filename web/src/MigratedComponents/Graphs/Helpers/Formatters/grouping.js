@@ -324,8 +324,8 @@ const groupForPieOldTreatmentAPI = (data, keyToConsume) => {
   return [...groupedConfirmed, ...groupedNotConfirmed]
 }
 
-const weekendOrHolidayInactive = (inactive, total, isWeekendOrHoliday) =>
-  isWeekendOrHoliday ? 0 : calcPercentageForGraphs(inactive, total)
+const weekendOrHolidayInactive = (inactive = 0, total, isWeekendOrHoliday) =>
+  isWeekendOrHoliday ? 0 : +calcPercentageForGraphs(inactive, total)
 
 const groupForDeviceStatusAPI = (
   data,
@@ -349,11 +349,11 @@ const groupForDeviceStatusAPI = (
       date: dateFormatted,
       devicesTotal,
       devicesActiveRaw: devicesActive,
-      devicesActive: calcPercentageForGraphs(devicesActive, devicesTotal),
+      devicesActive: +calcPercentageForGraphs(devicesActive, devicesTotal),
       weekendOrHoliday: isWeekendOrHoliday
         ? shouldBeZero
           ? 0
-          : calcPercentageForGraphs(devicesInactive, devicesTotal)
+          : +calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
       inactiveUnknown: weekendOrHolidayInactive(
         curr.inactiveUnknown,
