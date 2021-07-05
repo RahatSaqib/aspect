@@ -36,7 +36,7 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import messages from './messages'
-import useI18n from '../../../../Hooks/i18n/useI18n'
+import i18nWrapper from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -71,7 +71,8 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
-const formatMaintenanceDate = (formatMessage, formatDate, date) => {
+const formatMaintenanceDate = date => {
+  const { formatMessage, formatDate } = i18nWrapper()
   if (!date) {
     return formatMessage(messages.undefinedValue)
   }
@@ -320,7 +321,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
-  const { formatMessage } = useI18n()
+  const { formatMessage } = i18nWrapper()
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
@@ -496,7 +497,12 @@ const DeviceDetailProfile = ({
   onExportClick,
   onExportDeviceLogsClick,
 }) => {
-  const { formatMessage, formatNumber, formatDate, dateFNSLocale } = useI18n()
+  const {
+    formatMessage,
+    formatNumber,
+    formatDate,
+    dateFNSLocale,
+  } = i18nWrapper()
   const {
     culture,
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
@@ -640,11 +646,7 @@ const DeviceDetailProfile = ({
               title={formatMessage(messages.calibration)}
               description={
                 <Fragment>
-                  {formatMaintenanceDate(
-                    formatMessage,
-                    formatDate,
-                    device.get('calibrationDate')
-                  )}
+                  {formatMaintenanceDate(device.get('calibrationDate'))}
                   {calibrationNotes && (
                     <Tooltip title={calibrationNotes} placement="top">
                       <IconButton aria-label={formatMessage(messages.notes)}>
@@ -679,11 +681,7 @@ const DeviceDetailProfile = ({
               title={formatMessage(messages.warranty)}
               description={
                 <Fragment>
-                  {formatMaintenanceDate(
-                    formatMessage,
-                    formatDate,
-                    device.get('warrantyDueDate')
-                  )}
+                  {formatMaintenanceDate(device.get('warrantyDueDate'))}
                   {warrantyNotes && (
                     <Tooltip title={warrantyNotes} placement="bottom">
                       <IconButton aria-label={formatMessage(messages.notes)}>
