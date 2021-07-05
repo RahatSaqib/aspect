@@ -51,7 +51,7 @@ AspectTooltip.defaultProps = {
 }
 
 AspectTooltip.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   children: PropTypes.node,
   showHelpIcon: PropTypes.bool,
   toolTipClass: PropTypes.string,
