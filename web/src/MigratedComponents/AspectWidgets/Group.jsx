@@ -15,7 +15,7 @@ const cssClasses = classnames.bind(styles)
 
 const OrderedAspectWidget = ({ items }) =>
   orderBy(items, item => item?.alert?.display || '', ['desc']).map(widget => (
-    <AspectWidget data={widget} />
+    <AspectWidget data={widget} key={widget.id} />
   ))
 
 const AspectWidgetGroup = ({ data }) => {
@@ -44,7 +44,7 @@ const AspectWidgetGroup = ({ data }) => {
 }
 
 AspectWidgetGroup.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
 export default AspectWidgetGroup
