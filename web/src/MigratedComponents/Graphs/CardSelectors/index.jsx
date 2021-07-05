@@ -25,7 +25,10 @@ const CardSelectors = ({ props: { actionComponentProps, action } }) =>
 
 CardSelectors.propTypes = {
   props: PropTypes.shape({
-    actionComponentProps: PropTypes.arrayOf(PropTypes.object).isRequired,
+    actionComponentProps: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.object).isRequired,
+      PropTypes.bool,
+    ]),
     action: PropTypes.func.isRequired,
   }).isRequired,
 }
