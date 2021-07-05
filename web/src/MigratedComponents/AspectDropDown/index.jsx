@@ -451,7 +451,7 @@ AspectDropDown.propTypes = {
     ]),
     defaultSelectedOption: defaultSelectedOptionPropType,
     dependencies: PropTypes.arrayOf(PropTypes.string),
-    endpoint: PropTypes.string,
+    endpoint: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
     formik: PropTypes.oneOfType([PropTypes.shape, PropTypes.object]),
     hideIfNoOptions: PropTypes.bool,
     identifier: PropTypes.string.isRequired,
