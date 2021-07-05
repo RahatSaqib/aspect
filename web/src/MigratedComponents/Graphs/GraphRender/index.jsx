@@ -138,10 +138,10 @@ GraphRender.defaultProps = {
 }
 
 GraphRender.propTypes = {
-  assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  assays: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   id: PropTypes.string.isRequired,
-  updatedParams: PropTypes.oneOfType([PropTypes.object]),
+  updatedParams: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   formatMessage: PropTypes.func.isRequired,
 }
 

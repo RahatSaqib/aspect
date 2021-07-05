@@ -16,6 +16,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
 
   const headings = graphData => map(graphData[0], 'heading')
+  const getRowKey = rowIndex => `row-${rowIndex}`
 
   return (
     <div className={cssClasses('piegraph__container')}>
@@ -25,7 +26,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
             className={cssClasses(['piegraphs__row', 'piegraphs__row--header'])}
           >
             {headings(data).map(heading => (
-              <div className={cssClasses('piegraphs__column')}>
+              <div key={heading} className={cssClasses('piegraphs__column')}>
                 <div className={cssClasses('piegraphs__columnTitle')}>
                   {messages[`${heading}Description`] ? (
                     <AspectTooltip
@@ -43,12 +44,18 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
               </div>
             ))}
           </div>
-          {data.map(row => (
-            <div className={cssClasses('piegraphs__row')}>
+          {data.map((row, rowIndex) => (
+            <div
+              key={getRowKey(rowIndex)}
+              className={cssClasses('piegraphs__row')}
+            >
               {row.map(pie => {
-                const { value, type, link } = pie
+                const { value, type, link, heading } = pie
                 return (
-                  <div className={cssClasses('piegraphs__column')}>
+                  <div
+                    key={`${heading}-${type}`}
+                    className={cssClasses('piegraphs__column')}
+                  >
                     <div className={cssClasses('piegraphs__columnGraph')}>
                       {type === 'string' ? (
                         <div className={cssClasses('piegraphs__rowTitle')}>

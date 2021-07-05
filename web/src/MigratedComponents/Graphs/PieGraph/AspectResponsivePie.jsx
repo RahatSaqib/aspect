@@ -123,18 +123,19 @@ const AspectResponsivePie = ({
 AspectResponsivePie.defaultProps = {
   type: false,
   link: false,
+  i18nKeys: {},
 }
 
 AspectResponsivePie.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  averages: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  averages: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-  i18nKeys: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  i18nKeys: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default AspectResponsivePie

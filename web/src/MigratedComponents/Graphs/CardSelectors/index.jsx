@@ -10,19 +10,24 @@ const cssClasses = classnames.bind(styles)
 const CardSelectors = ({ props: { actionComponentProps, action } }) =>
   actionComponentProps ? (
     <Grid container className={cssClasses('selectors__container')}>
-      {actionComponentProps.map(props => {
-        const { component: Component } = props
-        return <Component props={props} action={action} />
+      {actionComponentProps.map(acProps => {
+        const { component: Component, identifier, state } = acProps
+        return (
+          <Component
+            props={acProps}
+            action={action}
+            key={`${identifier}-${state}`}
+          />
+        )
       })}
     </Grid>
   ) : null
 
 CardSelectors.propTypes = {
   props: PropTypes.shape({
-    actionComponentProps: PropTypes.oneOfType([PropTypes.object]).isRequired,
+    actionComponentProps: PropTypes.arrayOf(PropTypes.object).isRequired,
     action: PropTypes.func.isRequired,
   }).isRequired,
-  component: PropTypes.func.isRequired,
 }
 
 export default CardSelectors
