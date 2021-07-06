@@ -83,7 +83,7 @@ const enhance = compose(
       })
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { inventoryItem, today } = nextProps
       if (this.props.inventoryItem === inventoryItem) {
         return

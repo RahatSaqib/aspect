@@ -23,7 +23,7 @@ const enhance = compose(
       this.props.setNavTitle(this.props.title)
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.title !== nextProps.title) {
         this.props.setNavTitle(nextProps.title)
       }

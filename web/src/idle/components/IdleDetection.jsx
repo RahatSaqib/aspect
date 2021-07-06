@@ -8,7 +8,7 @@ const enhance = compose(
       }
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       // Will start the idle monitoring when the user logs in, and stop it if the user is signed out.
       if (!this.props.isLoggedOut && nextProps.isLoggedOut) {
         this.props.idleStop()

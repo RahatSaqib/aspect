@@ -31,7 +31,7 @@ const enhance = compose(
       })
     },
     // TODO: extract state out to outer components
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { userPreferences } = nextProps
       if (this.props.userPreferences !== userPreferences) {
         // Re-initialize

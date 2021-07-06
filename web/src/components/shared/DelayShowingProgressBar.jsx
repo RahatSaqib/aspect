@@ -20,7 +20,7 @@ const enhance = compose(
       }
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (nextProps.disabled) {
         this.clearFutureShowing()
         this.setState({

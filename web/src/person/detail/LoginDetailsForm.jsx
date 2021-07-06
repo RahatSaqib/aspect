@@ -84,7 +84,7 @@ const enhance = compose(
       })
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { loginDetails, shouldPrefill, emailValue } = nextProps
 
       if (this.props.loginDetails !== loginDetails) {

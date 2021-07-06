@@ -61,7 +61,7 @@ const enhance = compose(
     componentDidMount() {
       this.props.onInitialLoad()
     },
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }

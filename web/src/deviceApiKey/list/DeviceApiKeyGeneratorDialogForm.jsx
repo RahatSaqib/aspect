@@ -93,7 +93,7 @@ const enhance = compose(
     })
   ),
   lifecycle({
-    componentWillReceiveProps() {
+    UNSAFE_componentWillReceiveProps() {
       const { partnerList, countries } = this.props
 
       const onChange = values => this.setState({ values })
