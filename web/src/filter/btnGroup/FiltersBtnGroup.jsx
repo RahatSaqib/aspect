@@ -9,6 +9,7 @@ import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -252,7 +253,7 @@ const filtersOrdering = {
   reportName: 32,
 }
 
-const makeButton = labelFn => (props, filterKey) => (
+const makeButton = labelFn => (filterKey, props) => (
   <Button
     key={filterKey}
     className={cssClasses('Button')}
@@ -260,35 +261,35 @@ const makeButton = labelFn => (props, filterKey) => (
     variant="contained"
     onClick={() => props.onRemoveFilterItem(filterKey)}
   >
-    {labelFn(props, props.filters[filterKey])}
+    {labelFn(props.filters[filterKey], props)}
     <MdClose className={cssClasses('Button__icon')} />
   </Button>
 )
-
+const { formatMessage } = i18nWrapper()
 const buttonBy = {
-  assayId: makeButton(({ assayItems }, assayId) =>
+  assayId: makeButton((assayId, { assayItems }) =>
     assayItems
       .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  diseaseId: makeButton(({ diseaseItems }, diseaseId) =>
+  diseaseId: makeButton((diseaseId, { diseaseItems }) =>
     diseaseItems
       .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  countryId: makeButton(({ countryItems }, countryId) =>
+  countryId: makeButton((countryId, { countryItems }) =>
     countryItems
       .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  stateId: makeButton(({ countryItems, filters }, stateId) =>
+  stateId: makeButton((stateId, { countryItems, filters }) =>
     countryItems
       .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
       .getIn(['children', 'items'], EMPTY_MAP)
       .find(it => it.id === stateId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  lgaId: makeButton(({ countryItems, filters }, lgaId) =>
+  lgaId: makeButton((lgaId, { countryItems, filters }) =>
     countryItems
       .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
       .getIn(['children', 'items'], EMPTY_MAP)
@@ -297,70 +298,69 @@ const buttonBy = {
       .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  minDate: makeButton(({ intl }, date) => {
-    return intl.formatMessage(messages.dateFrom, {
-      date: forceBaseFormatDate(date),
-    })
-  }),
-  maxDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateTo, {
+  minDate: makeButton(date =>
+    formatMessage(messages.dateFrom, {
       date: forceBaseFormatDate(date),
     })
   ),
-  partnerId: makeButton(({ intl, partnerItems }, partnerId) =>
-    intl.formatMessage(messages.partnerId, {
+  maxDate: makeButton(date =>
+    formatMessage(messages.dateTo, {
+      date: forceBaseFormatDate(date),
+    })
+  ),
+  partnerId: makeButton((partnerId, { partnerItems }) =>
+    formatMessage(messages.partnerId, {
       partnerName: partnerItems
         .find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name'),
     })
   ),
-  patientOrResearchId: makeButton(({ intl }, patientOrResearchId) =>
-    intl.formatMessage(messages.patientOrResearchId, { patientOrResearchId })
+  patientOrResearchId: makeButton(patientOrResearchId =>
+    formatMessage(messages.patientOrResearchId, { patientOrResearchId })
   ),
-  patientOrCaseId: makeButton(({ intl }, patientOrCaseId) =>
-    intl.formatMessage(messages.patientOrCaseId, { patientOrCaseId })
+  patientOrCaseId: makeButton(patientOrCaseId =>
+    formatMessage(messages.patientOrCaseId, { patientOrCaseId })
   ),
-  sampleId: makeButton(({ intl }, sampleId) =>
-    intl.formatMessage(messages.sampleId, { sampleId })
+  sampleId: makeButton(sampleId =>
+    formatMessage(messages.sampleId, { sampleId })
   ),
-  deviceName: makeButton(({ intl }, deviceName) =>
-    intl.formatMessage(messages.whereDeviceNameIncludes, {
+  deviceName: makeButton(deviceName =>
+    formatMessage(messages.whereDeviceNameIncludes, {
       deviceName,
     })
   ),
-  siteId: makeButton(({ intl }, siteId) =>
-    intl.formatMessage(messages.whereSiteIdIncludes, {
+  siteId: makeButton(siteId =>
+    formatMessage(messages.whereSiteIdIncludes, {
       siteId,
     })
   ),
-  resultCategoryId: makeButton(
-    ({ intl, filters, assayItems }, resultCategoryId) =>
-      intl.formatMessage(
-        messages.withResultCategory,
-        filters.assayOverride
-          ? {
-              resultCategoryName: `"${startCase(filters.assayOverride)}"`,
-            }
-          : {
-              resultCategoryName: assayItems
-                .find(
-                  it => it.get('id') === filters.assayId,
-                  EMPTY_CONTEXT,
-                  EMPTY_MAP
-                )
-                .get('resultCategories', EMPTY_MAP)
-                .find(
-                  it => it.get('id') === resultCategoryId,
-                  EMPTY_CONTEXT,
-                  EMPTY_MAP
-                )
-                .get('name', ''),
-            }
-      )
+  resultCategoryId: makeButton((resultCategoryId, { filters, assayItems }) =>
+    formatMessage(
+      messages.withResultCategory,
+      filters.assayOverride
+        ? {
+            resultCategoryName: `"${startCase(filters.assayOverride)}"`,
+          }
+        : {
+            resultCategoryName: assayItems
+              .find(
+                it => it.get('id') === filters.assayId,
+                EMPTY_CONTEXT,
+                EMPTY_MAP
+              )
+              .get('resultCategories', EMPTY_MAP)
+              .find(
+                it => it.get('id') === resultCategoryId,
+                EMPTY_CONTEXT,
+                EMPTY_MAP
+              )
+              .get('name', ''),
+          }
+    )
   ),
   resultCategoryGroupId: makeButton(
-    ({ intl, filters, resultCategoryGroupItems }, resultCategoryGroupId) => {
-      return intl.formatMessage(
+    (resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
+      return formatMessage(
         messages.withResultCategoryGroup,
         filters.assayOverride
           ? {
@@ -378,19 +378,19 @@ const buttonBy = {
       )
     }
   ),
-  errorCode: makeButton(({ intl }, errorCode) =>
-    intl.formatMessage(messages.errorCode, { errorCode })
+  errorCode: makeButton(errorCode =>
+    formatMessage(messages.errorCode, { errorCode })
   ),
-  siteName: makeButton(({ intl }, siteName) =>
-    intl.formatMessage(messages.whereSiteNameIncludes, {
+  siteName: makeButton(siteName =>
+    formatMessage(messages.whereSiteNameIncludes, {
       siteName,
     })
   ),
-  reportableSiteName: makeButton(({ intl, filters }, reportableSiteName) => {
+  reportableSiteName: makeButton((reportableSiteName, { filters }) => {
     const message = filters.reportableSiteId
       ? messages.whereReportableSiteName
       : messages.whereReportableSiteNameIncludes
-    return intl.formatMessage(message, { reportableSiteName })
+    return formatMessage(message, { reportableSiteName })
   }),
   reportableSiteId: (props, filterKey) => {
     /**
@@ -404,14 +404,14 @@ const buttonBy = {
      * if filters.reportableSiteName is missing then treat filters.reportableSiteId
      * as separate (visible) filter button
      */
-    return makeButton(({ intl }, reportableSiteId) =>
-      intl.formatMessage(messages.whereReportableSiteIdIncludes, {
+    return makeButton(reportableSiteId =>
+      formatMessage(messages.whereReportableSiteIdIncludes, {
         reportableSiteId,
       })(props, filterKey)
     )
   },
-  sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>
-    intl.formatMessage(messages.sampleOriginSite, {
+  sampleOriginSite: makeButton((sampleOriginSiteId, { siteItemsById }) =>
+    formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
         .find(
           it => it.get('name') === sampleOriginSiteId,
@@ -421,55 +421,44 @@ const buttonBy = {
         .get('name'),
     })
   ),
-  contactNameOrEmail: makeButton(({ intl }, contactNameOrEmail) =>
-    intl.formatMessage(messages.whoseNameOrEmailIncludes, {
+  contactNameOrEmail: makeButton(contactNameOrEmail =>
+    formatMessage(messages.whoseNameOrEmailIncludes, {
       contactNameOrEmail,
     })
   ),
-  consumableId: makeButton(({ consumableItems }, consumableId) =>
+  consumableId: makeButton((consumableId, { consumableItems }) =>
     consumableItems
       .find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP)
       .get('name')
   ),
-  workflowStatusId: makeButton(
-    ({ intl, workflowStatusItems }, workflowStatusId) =>
-      intl.formatMessage(messages.withWorkflowStatus, {
-        workflowStatusName: workflowStatusItems
-          .find(
-            it => it.get('id') === workflowStatusId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name'),
-      })
+  workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
+    formatMessage(messages.withWorkflowStatus, {
+      workflowStatusName: workflowStatusItems
+        .find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
   ),
-  treatmentStatus: makeButton(
-    ({ intl, treatmentStatusItems }, treatmentStatus) =>
-      intl.formatMessage(messages.withTreatmentStatus, {
-        treatmentStatusName: treatmentStatusItems
-          .find(
-            it => it.get('externalId') === treatmentStatus,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name'),
-      })
+  treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
+    formatMessage(messages.withTreatmentStatus, {
+      treatmentStatusName: treatmentStatusItems
+        .find(
+          it => it.get('externalId') === treatmentStatus,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        )
+        .get('name'),
+    })
   ),
-  deviceApprovalId: makeButton(
-    ({ intl, deviceApprovalItems }, deviceApprovalId) =>
-      intl.formatMessage(messages.withDeviceApproval, {
-        deviceApprovalName: deviceApprovalItems
-          .find(
-            it => it.get('id') === deviceApprovalId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name'),
-      })
+  deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
+    formatMessage(messages.withDeviceApproval, {
+      deviceApprovalName: deviceApprovalItems
+        .find(it => it.get('id') === deviceApprovalId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
   ),
   deviceMaintenanceStatusId: makeButton(
-    ({ intl, deviceMaintenanceStatusItems }, deviceMaintenanceStatusId) =>
-      intl.formatMessage(messages.withDeviceMaintenanceStatus, {
+    (deviceMaintenanceStatusId, { deviceMaintenanceStatusItems }) =>
+      formatMessage(messages.withDeviceMaintenanceStatus, {
         deviceMaintenanceStatusName: deviceMaintenanceStatusItems
           .find(
             it => it.get('externalId') === deviceMaintenanceStatusId,
@@ -479,15 +468,15 @@ const buttonBy = {
           .get('name'),
       })
   ),
-  deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
-    intl.formatMessage(messages.withDeviceType, {
+  deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
+    formatMessage(messages.withDeviceType, {
       deviceTypeName: deviceTypeItems
         .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name'),
     })
   ),
-  deviceType: makeButton(({ intl, deviceTypeItems }, deviceType) =>
-    intl.formatMessage(messages.withDeviceType, {
+  deviceType: makeButton((deviceType, { deviceTypeItems }) =>
+    formatMessage(messages.withDeviceType, {
       deviceTypeName: deviceTypeItems
         .find(
           it => it.get('externalId') === deviceType,
@@ -497,19 +486,19 @@ const buttonBy = {
         .get('name'),
     })
   ),
-  externalId: makeButton(({ intl }, externalId) =>
-    intl.formatMessage(messages.whereExternalIdIncludes, {
+  externalId: makeButton(externalId =>
+    formatMessage(messages.whereExternalIdIncludes, {
       externalId,
     })
   ),
-  notificationName: makeButton(({ intl }, notificationName) =>
-    intl.formatMessage(messages.whereNotificationNameIncludes, {
+  notificationName: makeButton(notificationName =>
+    formatMessage(messages.whereNotificationNameIncludes, {
       notificationName,
     })
   ),
 
-  revoked: makeButton(({ intl }, revoked) =>
-    intl.formatMessage(messages.withRevoked, {
+  revoked: makeButton(revoked =>
+    formatMessage(messages.withRevoked, {
       revokedStatus: revokedOptions.find(
         it => it.id === revoked,
         EMPTY_CONTEXT,
@@ -518,39 +507,37 @@ const buttonBy = {
     })
   ),
   // Special keys
-  deviceIds: makeButton(({ intl }, deviceIds) =>
-    intl.formatMessage(messages.whereDeviceIdIsIn, {
+  deviceIds: makeButton(deviceIds =>
+    formatMessage(messages.whereDeviceIdIsIn, {
       joinedIds: deviceIds,
     })
   ),
-  siteIds: makeButton(({ intl }, siteIds) =>
-    intl.formatMessage(messages.whereSiteIdIsIn, {
+  siteIds: makeButton(siteIds =>
+    formatMessage(messages.whereSiteIdIsIn, {
       joinedIds: siteIds,
     })
   ),
-  onlyReportableResults: makeButton(({ intl }) =>
-    intl.formatMessage(messages.onlyReportableResults)
+  onlyReportableResults: makeButton(() =>
+    formatMessage(messages.onlyReportableResults)
   ),
-  onlyDownloadedByReporter: makeButton(({ intl }) =>
-    intl.formatMessage(messages.onlyDownloadedByReporter)
+  onlyDownloadedByReporter: makeButton(() =>
+    formatMessage(messages.onlyDownloadedByReporter)
   ),
-  onlyEverTransferred: makeButton(({ intl }) =>
-    intl.formatMessage(messages.onlyEverTransferred)
+  onlyEverTransferred: makeButton(() =>
+    formatMessage(messages.onlyEverTransferred)
   ),
-  onlyTreatmentRequired: makeButton(({ intl }) =>
-    intl.formatMessage(messages.onlyTreatmentRequired)
+  onlyTreatmentRequired: makeButton(() =>
+    formatMessage(messages.onlyTreatmentRequired)
   ),
-  issueTypeId: makeButton(({ intl }, issueTypeId) =>
-    intl.formatMessage(messages.deviceIssueType, {
+  issueTypeId: makeButton(issueTypeId =>
+    formatMessage(messages.deviceIssueType, {
       issueTypeId: startCase(issueTypeId),
     })
   ),
   assayOverride: () => false,
-  stockLeft: makeButton(({ intl }, stockLeft) =>
-    intl.formatMessage(messages[stockLeft])
-  ),
-  reportName: makeButton(({ intl }, reportName) =>
-    intl.formatMessage(messages.whereReportNameIncludes, {
+  stockLeft: makeButton(stockLeft => formatMessage(messages[stockLeft])),
+  reportName: makeButton(reportName =>
+    formatMessage(messages.whereReportNameIncludes, {
       reportName,
     })
   ),
@@ -568,7 +555,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       {Immutable.Map(restProps.filters)
         .keySeq()
         .sortBy(filterKey => filtersOrdering[filterKey])
-        .map(filterKey => buttonBy[filterKey](restProps, filterKey))}
+        .map(filterKey => buttonBy[filterKey](filterKey, restProps))}
     </div>
   )
 }

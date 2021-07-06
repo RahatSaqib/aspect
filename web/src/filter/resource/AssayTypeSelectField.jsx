@@ -9,6 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssayTypes } from '../../assay/AssayTypeRedux'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 const messages = defineMessages({
   assayTypeCD4: {
@@ -85,7 +86,6 @@ const enhance = compose(
   pure,
   setPropTypes({
     allItemText: PropTypes.string,
-    intl: PropTypes.object.isRequired,
     onAssayTypeIdChange: PropTypes.func.isRequired,
     diseaseId: PropTypes.string,
     value: PropTypes.string,
@@ -123,33 +123,35 @@ const textForAssayTypeItem = (assayTypeItem, formatMessage) => {
 
 export const AssayTypeSelectField = ({
   allItemText,
-  intl,
   assayTypes,
   onChange,
   diseaseId,
   ...restProps
-}) => (
-  <SelectField
-    {...restProps}
-    onChange={onChange}
-    disabled={
-      restProps.disabled || assayTypes.loading || assayTypes.items.isEmpty()
-    }
-  >
-    {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-    {assayTypes.items
-      .filter(
-        at =>
-          !diseaseId ||
-          !at.get('diseaseId') ||
-          at.get('diseaseId').toString() === diseaseId.toString()
-      )
-      .map(at => (
-        <MenuItem key={at.get('id')} value={at.get('id')}>
-          {textForAssayTypeItem(at, intl.formatMessage)}
-        </MenuItem>
-      ))}
-  </SelectField>
-)
+}) => {
+  const { formatMessage } = i18nWrapper()
+  return (
+    <SelectField
+      {...restProps}
+      onChange={onChange}
+      disabled={
+        restProps.disabled || assayTypes.loading || assayTypes.items.isEmpty()
+      }
+    >
+      {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+      {assayTypes.items
+        .filter(
+          at =>
+            !diseaseId ||
+            !at.get('diseaseId') ||
+            at.get('diseaseId').toString() === diseaseId.toString()
+        )
+        .map(at => (
+          <MenuItem key={at.get('id')} value={at.get('id')}>
+            {textForAssayTypeItem(at, formatMessage)}
+          </MenuItem>
+        ))}
+    </SelectField>
+  )
+}
 
 export default enhance(AssayTypeSelectField)

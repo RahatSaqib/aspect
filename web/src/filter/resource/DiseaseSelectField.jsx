@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -10,12 +9,12 @@ import messages from './i18n/diseaseMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDiseases } from '../../disease/DiseaseRedux'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 const enhance = compose(
   pure,
   setPropTypes({
     allItemText: PropTypes.string,
-    intl: PropTypes.object.isRequired,
     onDiseaseIdChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }),
@@ -52,7 +51,7 @@ export const DiseaseSelectField = ({
   const validDisease = onlyWithResults
     ? diseases.items.filter(a => a.get('hasResults'))
     : diseases.items
-  const { formatMessage } = useIntl()
+  const { formatMessage } = i18nWrapper()
   return (
     <SelectField
       {...restProps}

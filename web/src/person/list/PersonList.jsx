@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import {
   getCustomMessage,
@@ -211,7 +212,6 @@ const enhance = compose(
 )
 
 export const PersonList = ({
-  intl,
   history,
   location,
   table,
@@ -230,14 +230,14 @@ export const PersonList = ({
   const AddNewButton = requirePermissions({
     permissions: ['person:edit'],
   })(AspectButton)
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.contactsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
+      <Helmet title={formatMessage(messages.contactsTitle)} />
+      <NavTitle title={formatMessage(messages.contactsTitle)} />
       <BrowseFilters
         history={history}
         location={location}
-        intl={intl}
         config={reducedFilters}
       >
         <AddNewButton
@@ -247,13 +247,13 @@ export const PersonList = ({
           browseButton
           onClick={showNewContactPage}
         >
-          {intl.formatMessage(messages.addContact)}
+          {formatMessage(messages.addContact)}
         </AddNewButton>
       </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList history={history} location={location} />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}
@@ -275,27 +275,27 @@ export const PersonList = ({
               columns={[
                 {
                   key: 'name',
-                  label: intl.formatMessage(messages.personName),
+                  label: formatMessage(messages.personName),
                   sortable: true,
                 },
                 {
                   key: 'level',
-                  label: intl.formatMessage(messages.level),
+                  label: formatMessage(messages.level),
                   sortable: true,
                 },
                 {
                   key: 'state',
-                  label: getCustomMessage(intl, messages, 'state', user),
+                  label: getCustomMessage(messages, 'state', user),
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: getCustomMessage(intl, messages, 'lga', user),
+                  label: getCustomMessage(messages, 'lga', user),
                   sortable: true,
                 },
                 {
                   key: 'tags',
-                  label: intl.formatMessage(messages.tags),
+                  label: formatMessage(messages.tags),
                   sortable: true,
                 },
               ]}
@@ -306,7 +306,6 @@ export const PersonList = ({
                 .map(person => (
                   <PersonDataTableRow
                     key={person.get('id')}
-                    intl={intl}
                     person={person}
                     onClick={onRowClick}
                     data-person-id={person.get('id')}
@@ -319,7 +318,6 @@ export const PersonList = ({
           <BrowseTablePaginator
             history={history}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}
             pageAt={pageAt}
