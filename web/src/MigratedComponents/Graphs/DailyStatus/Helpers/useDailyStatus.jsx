@@ -210,7 +210,9 @@ const useDailyStatus = (
     devices: {
       devicesIsLoading,
       devicesIsError,
-      devicesDaily,
+      devicesDaily: devicesDaily
+        ? devicesDaily.map(item => ({ ...item, id: +item.id }))
+        : devicesDaily,
       devicesError,
     },
     statuses: {
