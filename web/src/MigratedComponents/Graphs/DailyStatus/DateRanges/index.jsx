@@ -31,6 +31,7 @@ const DateRanges = ({ data, consts }) => {
         {days.map(({ min, max, week, size }) => {
           return week.includes('we') ? (
             <div
+              key={week}
               className={cssClasses('dates__dayBlock')}
               style={{
                 width: `${(blockWidth + marginWidth) * size}px`,
@@ -38,6 +39,7 @@ const DateRanges = ({ data, consts }) => {
             />
           ) : (
             <div
+              key={week}
               className={cssClasses('dates__dayBlock')}
               style={{
                 width: `${(blockWidth + marginWidth) * size}px`,
@@ -62,7 +64,7 @@ const DateRanges = ({ data, consts }) => {
 }
 
 DateRanges.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  data: PropTypes.oneOfType([PropTypes.object]).isRequired,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),

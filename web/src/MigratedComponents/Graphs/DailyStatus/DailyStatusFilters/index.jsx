@@ -43,6 +43,7 @@ const DailyStatusFilters = ({
             {statuses
               ? statuses.map(({ externalId, name, checked }) => (
                   <FormControlLabel
+                    key={externalId}
                     classes={{
                       root: cssClasses('statuses__statusroot'),
                       label: cssClasses('statuses__statuslabel'),
@@ -77,7 +78,7 @@ DailyStatusFilters.propTypes = {
     label: PropTypes.string,
     key: PropTypes.string,
   }).isRequired,
-  statuses: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  statuses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]).isRequired,
   action: PropTypes.func.isRequired,
 }
 

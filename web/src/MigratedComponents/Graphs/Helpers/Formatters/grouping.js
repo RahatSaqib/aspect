@@ -279,14 +279,14 @@ const groupForOldTreatmentAPI = (
       monthTested: dateFormatted,
       Confirmed:
         displayMethod === 'percentage'
-          ? Number(curr[keyToConsume]).toFixed(1)
+          ? +Number(curr[keyToConsume]).toFixed(1)
           : curr[keyToConsume],
       NotConfirmed:
         curr[keyToConsume] < 1
           ? displayMethod === 'percentage'
-            ? '100.0'
+            ? 100
             : curr.total
-          : Number(100 - curr[keyToConsume]).toFixed(1),
+          : +Number(100 - curr[keyToConsume]).toFixed(1),
       totalCnt: curr.total,
     }
     return acc

@@ -111,7 +111,7 @@ const Status = ({ history, location }) => {
 
       {graphs
         ? graphs.map(graph => (
-            <ErrorBoundary>
+            <ErrorBoundary key={graph.id}>
               <PermissionsProvider permissions={graph.graphRenderPermissions}>
                 {assays?.length ? (
                   <GraphsContainer assaysFromState={assays} config={graph} />

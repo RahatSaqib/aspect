@@ -42,6 +42,7 @@ const DailyStatusClinic = ({
             totalResults,
           }) => (
             <DailyStatusClinicDay
+              key={`${deviceId}-${day}`}
               consts={consts}
               daysInSameStatus={daysInSameStatus}
               isWeekend={isWeekend}
@@ -75,10 +76,10 @@ const DailyStatusClinic = ({
 
 DailyStatusClinic.propTypes = {
   name: PropTypes.string.isRequired,
-  data: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
   deviceId: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
-  statuses: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  statuses: PropTypes.arrayOf(PropTypes.object).isRequired,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),
