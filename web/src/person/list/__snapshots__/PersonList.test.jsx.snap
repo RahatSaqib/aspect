@@ -18,38 +18,6 @@ exports[`Person List module PersonList component should shallow render correctly
         "push": [Function],
       }
     }
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "formatDate": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
     location={
       Object {
         "search": "",
@@ -77,38 +45,6 @@ exports[`Person List module PersonList component should shallow render correctly
       history={
         Object {
           "push": [Function],
-        }
-      }
-      intl={
-        Object {
-          "defaultFormats": Object {},
-          "defaultLocale": "en",
-          "formatDate": [Function],
-          "formatDateToParts": [Function],
-          "formatDisplayName": [Function],
-          "formatList": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatNumberToParts": [Function],
-          "formatPlural": [Function],
-          "formatRelativeTime": [Function],
-          "formatTime": [Function],
-          "formatTimeToParts": [Function],
-          "formats": Object {},
-          "formatters": Object {
-            "getDateTimeFormat": [Function],
-            "getDisplayNames": [Function],
-            "getListFormat": [Function],
-            "getMessageFormat": [Function],
-            "getNumberFormat": [Function],
-            "getPluralRules": [Function],
-            "getRelativeTimeFormat": [Function],
-          },
-          "locale": "en",
-          "messages": Object {},
-          "onError": [Function],
-          "textComponent": Symbol(react.fragment),
-          "timeZone": undefined,
         }
       }
       location={

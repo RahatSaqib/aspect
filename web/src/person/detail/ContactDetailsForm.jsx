@@ -23,7 +23,7 @@ import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
-import useI18n from '../../Hooks/i18n/useI18n'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -287,7 +287,7 @@ export const ContactDetailsForm = ({
   isNew,
   user,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = i18nWrapper()
   return (
     <form onSubmit={handleSubmit} className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
