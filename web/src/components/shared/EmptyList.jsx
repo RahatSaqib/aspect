@@ -2,7 +2,7 @@ import identity from 'lodash/identity'
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import { defineMessages } from 'react-intl'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const messages = defineMessages({
   noResultsTitle: {
@@ -18,7 +18,7 @@ const messages = defineMessages({
 const enhance = identity
 
 export const EmptyList = ({ onClearFilters }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div style={{ textAlign: 'center' }}>
       <p>{formatMessage(messages.noResultsTitle)}</p>
