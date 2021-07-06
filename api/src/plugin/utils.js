@@ -146,7 +146,7 @@ async function shouldTriggerModuleDisabled(
    */
   const moduleReplacedIssue = await knex('Issue')
     .where({
-      issueTypeId: await issueTypeToId('ModuleReplaced'),
+      issueTypeId: moduleReplacedIssueTypeId,
       deviceId: device.id,
     })
     .andWhere(
