@@ -8,7 +8,7 @@ import {
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import { messages } from './SiteList'
 import { formatRelative } from '../../shared/utils/dateFormat'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -17,7 +17,7 @@ const cssClasses = classnames.bind(
 const enhance = identity
 
 const SiteTableRow = ({ site, onAlertClick, ...restProps }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{site.name}</TableCell>

@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import {
   getCustomMessage,
@@ -230,7 +230,7 @@ export const PersonList = ({
   const AddNewButton = requirePermissions({
     permissions: ['person:edit'],
   })(AspectButton)
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.contactsTitle)} />

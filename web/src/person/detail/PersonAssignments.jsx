@@ -7,7 +7,7 @@ import AspectDialog from '../../components/shared/AspectDialog'
 
 import messages from './messages'
 import PersonAssignment from './PersonAssignmentItem'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -21,7 +21,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
   const askConfirmation = (assignment, index) => {
     setConfirmation({ isActive: true, assignment, index })
   }
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   return (
     <section className={cssClasses('Assignments')}>

@@ -9,7 +9,7 @@ import messages from './i18n/diseaseMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDiseases } from '../../disease/DiseaseRedux'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const enhance = compose(
   pure,
@@ -51,7 +51,7 @@ export const DiseaseSelectField = ({
   const validDisease = onlyWithResults
     ? diseases.items.filter(a => a.get('hasResults'))
     : diseases.items
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <SelectField
       {...restProps}

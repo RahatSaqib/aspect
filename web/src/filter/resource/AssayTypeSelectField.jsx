@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssayTypes } from '../../assay/AssayTypeRedux'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const messages = defineMessages({
   assayTypeCD4: {
@@ -128,7 +128,7 @@ export const AssayTypeSelectField = ({
   diseaseId,
   ...restProps
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <SelectField
       {...restProps}

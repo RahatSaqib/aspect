@@ -10,7 +10,7 @@ import {
   FaAngleLeft,
   FaAngleRight,
 } from 'react-icons/fa'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./TablePaginator.css'))
 
@@ -119,7 +119,7 @@ const TablePaginator = ({
   pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
   ...restProps
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses(className, 'Container')}>
       <div className={cssClasses('Left')}>

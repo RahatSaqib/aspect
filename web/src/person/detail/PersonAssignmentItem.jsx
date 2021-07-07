@@ -5,7 +5,7 @@ import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import CloseIcon from '@material-ui/icons/RemoveCircle'
 import { mergeToFiltersParams } from '../../filter/utils'
 import messages from './messages'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -26,7 +26,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
   const searchCountryParams = getSearch({ countryId })
   const searchStateParams = getSearch({ countryId, stateId })
   const searchLgaParams = getSearch({ countryId, stateId, lgaId })
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   const textForAssignmentItem = (i18nKey, name) => {
     return (messages[i18nKey] ? formatMessage(messages[i18nKey]) : name) || name

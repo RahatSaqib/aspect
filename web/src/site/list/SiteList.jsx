@@ -15,7 +15,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import Immutable from 'immutable'
 import { useQuery } from 'react-query'
 
 import {
@@ -140,8 +139,6 @@ const enhance = compose(
   setPropTypes({
     location: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
-    table: PropTypes.instanceOf(Immutable.Record).isRequired,
-    items: PropTypes.instanceOf(Immutable.Record).isRequired,
   }),
   withProps(
     makeSortPageSelector({
@@ -188,7 +185,7 @@ const enhance = compose(
       sortCol,
       sortDir,
       pageAt,
-      table,
+      pageSize,
     }) => formatType => {
       const format = formatType.id
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
@@ -198,7 +195,7 @@ const enhance = compose(
           sortCol,
           sortDir,
           pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
+          pageSize,
           format,
           'sites'
         )
@@ -242,8 +239,6 @@ const enhance = compose(
 export const SiteList = ({
   history,
   location,
-  table,
-  items,
   // --- injected by recompose ---
   onExcelClick,
   sortCol,
@@ -279,7 +274,6 @@ export const SiteList = ({
   useEffect(() => {
     setSiteList(data)
   }, [data])
-
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.sitesTitle)} />
@@ -290,12 +284,12 @@ export const SiteList = ({
         config={reducedFilters}
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
+        <DataTableProgressBar disabled={siteList} />
         {!siteList && <BrowseEmptyList history={history} location={location} />}
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
+          visible={siteList && siteList.length}
           reportName="Sites"
         />
 

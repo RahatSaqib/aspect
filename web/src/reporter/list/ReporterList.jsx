@@ -43,7 +43,7 @@ import { receiveList, Items } from '../../shared/metaReducers/items'
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import messages from './messages'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./ReporterList.css'))
 
@@ -155,7 +155,7 @@ export const ReporterListWithProps = ({
   pageSize,
   reducedFilters,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />
@@ -239,7 +239,7 @@ const ReporterList = () => {
   const [filters, setFilters] = useState(getCurrentFilters(location.search))
   const [pagination, setPagination] = useState(getCurrentPagination(location))
   const [columns, setColumns] = useState([])
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
