@@ -5,6 +5,7 @@ const {
   clinician,
   remoteHealthWorker,
   mergeJobFunctions,
+  technician,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -260,4 +261,5 @@ module.exports = [
       },
     ],
   }),
+  technician,
 ]

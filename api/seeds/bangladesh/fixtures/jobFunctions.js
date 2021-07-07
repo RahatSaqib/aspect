@@ -4,6 +4,7 @@ const {
   labUser,
   clinician,
   remoteHealthWorker,
+  technician,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -12,4 +13,5 @@ module.exports = [
   labUser,
   clinician,
   remoteHealthWorker,
+  technician,
 ]
