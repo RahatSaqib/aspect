@@ -53,7 +53,12 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       </TableCell>
       <TableCell hiddenOn="md">
         {result.get('treatmentStatusInfo') && (
-          <Tooltip title={result.get('resultTreatmentStatusName')}>
+          <Tooltip
+            title={formatMessage(
+              messages[result.get('resultTreatmentStatusI18nKey')],
+              result.get('resultTreatmentStatus')
+            )}
+          >
             <PermIdentity
               className={styles[`${result.get('treatmentStatusInfo')}`]}
             />

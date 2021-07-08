@@ -64,9 +64,21 @@ const messages = defineMessages({
         other {# results}
       }`,
   },
+  ResultTreatmentStatusAwaitingTreatment: {
+    id: 'pages.ResultList.ResultTreatmentStatusAwaitingTreatment',
+    defaultMessage: 'Awaiting Treatment',
+  },
+  ResultTreatmentStatusOnTreatment: {
+    id: 'pages.ResultList.ResultTreatmentStatusOnTreatment',
+    defaultMessage: 'On Treatment',
+  },
+  ResultTreatmentStatusNotPossible: {
+    id: 'pages.ResultList.ResultTreatmentStatusNotPossible',
+    defaultMessage: 'On Treatment',
+  },
   ResultWorkflowStatusOK: {
     id: 'pages.ResultList.ResultWorkflowStatusOK',
-    defaultMessage: 'OK',
+    defaultMessage: 'Not Possible',
   },
   ResultWorkflowStatusError: {
     id: 'pages.ResultList.ResultWorkflowStatusError',
