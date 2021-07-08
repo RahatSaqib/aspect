@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
@@ -36,7 +36,7 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import messages from './messages'
-import i18nWrapper from '../../../../Hooks/i18n/useI18n'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -71,13 +71,6 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
-const formatMaintenanceDate = date => {
-  const { formatMessage, formatDate } = i18nWrapper()
-  if (!date) {
-    return formatMessage(messages.undefinedValue)
-  }
-  return formatDate(date)
-}
 
 const enhance = compose(
   connect(
@@ -321,7 +314,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   if (payload.data) {
     payload.data.forEach(item => {
       const date = new Date(item.monthTested)
@@ -497,12 +490,7 @@ const DeviceDetailProfile = ({
   onExportClick,
   onExportDeviceLogsClick,
 }) => {
-  const {
-    formatMessage,
-    formatNumber,
-    formatDate,
-    dateFNSLocale,
-  } = i18nWrapper()
+  const { formatMessage, formatNumber, formatDate, dateFNSLocale } = useI18n()
   const {
     culture,
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
@@ -572,6 +560,16 @@ const DeviceDetailProfile = ({
   const isMaintenanceStatusChangeDisabled =
     device.get('maintenanceStatusActive') &&
     !device.get('maintenanceStatusManuallySet')
+
+  const formatMaintenanceDate = useCallback(
+    date => {
+      if (!date) {
+        return formatMessage(messages.undefinedValue)
+      }
+      return formatDate(date)
+    },
+    [formatMessage, formatDate]
+  )
 
   return (
     <div>

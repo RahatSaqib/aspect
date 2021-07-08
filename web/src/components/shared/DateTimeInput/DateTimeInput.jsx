@@ -27,7 +27,7 @@ import Popper from '@material-ui/core/Popper'
 import { formatWithLocale } from '../../../shared/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'
-import { i18nWrapper } from '../../../Providers/I18nProvider'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 import {
   since,
@@ -573,7 +573,7 @@ const DateTimeInput = props => {
 
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
-  const { formatMessage, culture } = i18nWrapper()
+  const { formatMessage, culture } = useI18n()
   const FieldProps = originFieldProps || getDefaultFieldsProps(formatMessage)
   const TextFieldsProps = _fp.merge(
     getDefaultFieldsProps(formatMessage),
