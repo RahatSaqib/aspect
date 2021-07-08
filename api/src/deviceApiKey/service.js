@@ -81,7 +81,7 @@ async function createDeviceApiKey(request) {
   const user = await knex('Person as p')
     .join('User as u', 'u.id', 'p.userId')
     .where('u.name', auth.credentials.name)
-    .first('u.id', 'p.lastPartnerId as partnerId')
+    .first('u.id', 'p.lastPartnerId as partnerId', 'p.geographyId')
   if (user == null || user.partnerId == null) {
     return Boom.badRequest('Cannot find partner for user')
   }
@@ -90,6 +90,7 @@ async function createDeviceApiKey(request) {
   await knex('DeviceApiKey').insert({
     token: apiKey.token,
     revoked: 0,
+    geographyId: user.geographyId,
     partnerId: user.partnerId,
     createdOn: now,
     createdBy: user.id,
