@@ -2113,7 +2113,7 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices } = query
+  const { showUnapprovedDevices = false } = query
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryGroup as rcg', function () {
       this.on('r.assayId', 'rcg.assayId')
