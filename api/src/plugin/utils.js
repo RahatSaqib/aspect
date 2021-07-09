@@ -137,12 +137,16 @@ async function shouldTriggerModuleDisabled(
   device,
   deviceModule
 ) {
+  // only makes sense if the issue type is defined for the country
+  const moduleReplacedIssueTypeId = await issueTypeToId('ModuleReplaced')
+  if (!moduleReplacedIssueTypeId) return
+
   /**
    * Check if the module was already replaced
    */
   const moduleReplacedIssue = await knex('Issue')
     .where({
-      issueTypeId: await issueTypeToId('ModuleReplaced'),
+      issueTypeId: moduleReplacedIssueTypeId,
       deviceId: device.id,
     })
     .andWhere(
