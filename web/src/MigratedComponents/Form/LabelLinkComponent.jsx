@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
+import IconProvider from '../IconProvider'
 import AspectLink from '../AspectLink'
 
 const cssClasses = classnames.bind(require('./LabelLinkComponent.css'))
@@ -14,7 +14,7 @@ const LabelLinkComponent = ({ link }) => {
       target={target || '_self'}
       className={cssClasses('formItem__link')}
     >
-      <FaExternalLink />
+      <IconProvider icon="FaExternalLinkAlt" className="link__icon" />
     </AspectLink>
   ) : null
 }
