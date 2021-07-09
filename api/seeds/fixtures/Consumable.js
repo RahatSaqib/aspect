@@ -45,12 +45,6 @@ const getConsumables = async () => {
       ...commonProps,
     },
     {
-      name: 'GeneXpert Ebola Cartridge',
-      externalId: 'GxEbolaCartridge',
-      i18nKey: 'gxEbolaCartridge',
-      ...commonProps,
-    },
-    {
       name: 'GeneXpert COVID-19 Cartridge',
       externalId: 'assayGXCovid19Cartridge',
       i18nKey: 'assayGXCovid19Cartridge',
