@@ -324,7 +324,7 @@ async function listSitesWithReporters(request) {
     /**
      * take only clinics
      */
-    .where('tag.title', "Reportable Site")
+    .where('tag.title', 'Reportable Site')
     .where(function () {
       if (!query.siteIds) {
         return
