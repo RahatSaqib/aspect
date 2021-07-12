@@ -14,7 +14,9 @@ const LIST_FIELDS = [
   'rs.name as resultWorkflowStatus',
   'rs.i18nkey as resultWorkflowStatusI18nkey',
   'rts.externalId as resultTreatmentStatus',
-  'rts.i18nKey as resultTreatmentStatusI18nKey',
+  knex.raw(
+    "CASE WHEN rts.i18nKey IS NOT NULL THEN rts.i18nKey ELSE 'ResultTreatmentStatusNotAvailable' END AS resultTreatmentStatusI18nKey"
+  ),
   knex.raw(
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),

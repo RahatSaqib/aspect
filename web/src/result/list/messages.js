@@ -64,6 +64,10 @@ const messages = defineMessages({
         other {# results}
       }`,
   },
+  ResultTreatmentStatusNotAvailable: {
+    id: 'pages.ResultList.ResultTreatmentStatusNotAvailable',
+    defaultMessage: 'Not Available',
+  },
   ResultTreatmentStatusAwaitingTreatment: {
     id: 'pages.ResultList.ResultTreatmentStatusAwaitingTreatment',
     defaultMessage: 'Awaiting Treatment',
