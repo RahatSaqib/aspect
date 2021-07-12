@@ -42,7 +42,7 @@ async function seed(knex) {
     .join('Country as c', 'g.countryId', 'c.id')
     .where('partnerId', partner.partnerId)
     .where('c.A3', 'USA')
-    .select()
+    .select('s.*')
 
   await createDevicesForAllMissingTypes(knex, siteData, partner.partnerId, {
     createdOn: new Date(),

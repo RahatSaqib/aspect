@@ -62,6 +62,11 @@ const messages = defineMessages({
     id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther',
     defaultMessage: 'Other',
   },
+  inactiveNoResultsReported: {
+    id:
+      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported',
+    defaultMessage: 'No Results Reported',
+  },
 })
 
 const DeviceMaintenanceStatusSelectField = ({

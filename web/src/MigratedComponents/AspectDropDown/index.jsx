@@ -48,18 +48,26 @@ const {
 } = process.env
 
 function getOptionByValue(data, requestedValue, idKey) {
+  // When the requested value is an object including key and value props
   if (isPlainObject(requestedValue)) {
     const { key, value } = requestedValue
-    const foundOption = find(data, { [key]: value })
-    return foundOption
+    return find(data, { [key]: value })
   }
+
+  // When the requested value is a string key
   if (isString(requestedValue)) {
-    const foundOption = find(data, { [idKey]: requestedValue })
-    return foundOption
+    // Take the option in different ways, depending on the data format
+    if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
+
+    if (isArray(data))
+      return data.find(option => option[idKey] === requestedValue)
+
+    if (isNumber(requestedValue))
+      return data.find(option => option[idKey] === requestedValue)
   }
-  if (isNumber(requestedValue)) {
-    return data[requestedValue]
-  }
+
+  // When the requested value is a position in the array
+  if (isNumber(requestedValue)) return data[requestedValue]
 }
 
 function getSelectedOptions(data, someValue, idKey) {
@@ -231,8 +239,13 @@ const SelectComponent = ({
   // const [currentValue, setCurrentValue] = useState(false)
   const [options, setOptions] = useState(false)
 
+  // if defaultSelectedOption is true, then the default selection is set to the first element
+  defaultSelectedOption =
+    defaultSelectedOption && data?.length > 0
+      ? data[0][idKey]
+      : defaultSelectedOption
+
   useEffect(() => {
-    // if (options !== false && (!isEqual(options, data) || !defaultOptionValue)) {
     if (!isEqual(options, data)) {
       setDefaultOptionValue(
         getSelectedOptions(data, defaultSelectedOption, idKey)
@@ -310,8 +323,8 @@ SelectComponent.propTypes = {
 }
 
 const getActualData = ({ data, reduxStateId, sortByKeys }) => {
-  if (data[reduxStateId]) {
-    const actualData = get(data, reduxStateId)
+  const actualData = get(data, reduxStateId)
+  if (actualData) {
     return sortByKeys ? sortBy(actualData, sortByKeys) : actualData
   }
   return data

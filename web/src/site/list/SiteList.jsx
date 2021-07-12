@@ -14,7 +14,6 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import Immutable from 'immutable'
 import { useQuery } from 'react-query'
 import PropTypeOf from '../../shared/types'
 
@@ -186,24 +185,28 @@ const enhance = compose(
         navigate(`/browse/site/${siteId}/alerts`)
       },
 
-    onExcelClick:
-      ({ location, exportSites, sortCol, sortDir, pageAt, table }) =>
-      formatType => {
-        const format = formatType.id
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
-        if (!sanitized) {
-          exportSites(
-            filtersParams,
-            sortCol,
-            sortDir,
-            pageAt,
-            table.get('total') > 0 ? table.get('total') : 1,
-            format,
-            'sites'
-          )
-        }
-      },
+    onExcelClick: ({
+      location,
+      exportSites,
+      sortCol,
+      sortDir,
+      pageAt,
+      pageSize,
+    }) => formatType => {
+      const format = formatType.id
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        exportSites(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize,
+          format,
+          'sites'
+        )
+      }
+    },
 
     onRowClick:
       ({ navigate }) =>
@@ -247,8 +250,6 @@ export const SiteList = ({
   intl,
   navigate,
   location,
-  table,
-  items,
   // --- injected by recompose ---
   onExcelClick,
   sortCol,
@@ -283,7 +284,6 @@ export const SiteList = ({
   useEffect(() => {
     setSiteList(data)
   }, [data])
-
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.sitesTitle)} />
@@ -295,7 +295,7 @@ export const SiteList = ({
         config={reducedFilters}
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
+        <DataTableProgressBar disabled={siteList} />
         {!siteList && (
           <BrowseEmptyList
             navigate={navigate}
@@ -306,7 +306,7 @@ export const SiteList = ({
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
+          visible={siteList && siteList.length}
           reportName="Sites"
         />
 

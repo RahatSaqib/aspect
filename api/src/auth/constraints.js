@@ -32,27 +32,7 @@ async function getConstraints(credentials) {
     },
   }
 
-  const jobContexts = await knex('JobContext as jc')
-    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'ps.userId': user.id,
-      'jf.partnerId': user.partnerId,
-    })
-    .distinct(
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      'jc.siteId',
-      'jc.diseaseId',
-      'jc.assayTypeId',
-      'jc.assayId',
-      'jc.deviceTypeId',
-      'j.jobFunctionId',
-      knex.raw('0 AS isAdmin')
-    )
+  const jobContexts = await getContext(user)
 
   const filterConstraints = jobContexts.map(getJobContextConstraint)
   if (filterConstraints.length) {
@@ -82,6 +62,33 @@ async function getConstraints(credentials) {
   }
 
   return constraints
+}
+
+async function getContext({ userId, partnerId, jobFunctionId }) {
+  const filter = {
+    'ps.userId': userId,
+    'jf.partnerId': partnerId,
+    'jf.jobFunctionId': jobFunctionId,
+  }
+
+  return knex('JobContext as jc')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where(_.omitBy(filter, _.isNil))
+    .distinct(
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      'jc.siteId',
+      'jc.diseaseId',
+      'jc.assayTypeId',
+      'jc.assayId',
+      'jc.deviceTypeId',
+      'j.jobFunctionId',
+      knex.raw('0 AS isAdmin')
+    )
 }
 
 function setConstraints(constraints, filterConstraints, getPath, setPaths) {
@@ -211,173 +218,174 @@ function getJobContextConstraint(context) {
   return constraint
 }
 
-function addConstraints(queryBuilder, constraints, aliases) {
-  let { assay, assayType, geography, partner, site } = aliases
-  const {
-    allowAdminThrough = false,
-    disease,
-    country,
-    device,
-    deviceType,
-    jobFunction,
-    person,
-    sample,
-    showUnapprovedDevices = false,
-    showDecommissionedDevices = false,
-    result: resultAlias,
-  } = aliases
-
-  if (_.isEmpty(constraints)) {
-    queryBuilder.whereRaw('0 = 1')
-    return
-  }
-
-  // TODO generalize constraint building
-  // TODO only join queries if needed within constraints or required by unspecified aliases
+function addPartnerConstraints(queryBuilder, constraints, { result, partner }) {
+  const aliases = []
   if (_.get(constraints, 'partner.id')) {
-    if (resultAlias) {
+    if (partner) aliases.push(`${partner}.id`)
+    if (result) aliases.push(`${result}.partnerId`)
+
+    _.each(aliases, alias =>
       queryBuilder.where(qb =>
-        qb
-          .whereNull(`${resultAlias}.partnerId`)
-          .orWhere(`${resultAlias}.partnerId`, constraints.partner.id)
+        qb.whereNull(`${alias}`).orWhere(`${alias}`, constraints.partner.id)
       )
-    }
-    if (partner) {
-      queryBuilder.where(qb =>
-        qb.whereNull(`${partner}.id`).orWhere({
-          [`${partner}.id`]: constraints.partner.id,
-        })
-      )
-    }
+    )
   }
+}
+
+function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
+  const { result: resultAlias } = aliases
   if (resultAlias) {
     if (_.get(constraints, 'assay.id')) {
       queryBuilder.where(qb =>
         isNullInOrEqual(qb, `${resultAlias}.assayId`, constraints.assay.id)
       )
     }
-    if (!geography) {
-      geography = alias('Geography')
+    if (!aliases.geography) {
+      aliases.geography = alias('Geography')
       queryBuilder.leftOuterJoin(
-        `Geography as ${geography}`,
+        `Geography as ${aliases.geography}`,
         `${resultAlias}.geographyId`,
-        `${geography}.id`
+        `${aliases.geography}.id`
       )
     }
-    if ((constraints.disease || constraints.assayType) && !assay) {
-      assay = alias('Assay')
+    if ((constraints.disease || constraints.assayType) && !aliases.assay) {
+      aliases.assay = alias('Assay')
       queryBuilder.leftOuterJoin(
-        `Assay as ${assay}`,
+        `Assay as ${aliases.assay}`,
         `${resultAlias}.assayId`,
-        `${assay}.id`
+        `${aliases.assay}.id`
       )
     }
-    if (constraints.disease && !assayType) {
-      assayType = alias('AssayType')
+    if (constraints.disease && !aliases.assayType) {
+      aliases.assayType = alias('AssayType')
       queryBuilder.leftOuterJoin(
-        `AssayType as ${assayType}`,
-        `${assay}.assayTypeId`,
-        `${assayType}.id`
+        `AssayType as ${aliases.assayType}`,
+        `${aliases.assay}.assayTypeId`,
+        `${aliases.assayType}.id`
       )
     }
     if (_.get(constraints, 'disease.id')) {
       queryBuilder.where(qb =>
-        isNullInOrEqual(qb, `${assayType}.diseaseId`, constraints.disease.id)
+        isNullInOrEqual(
+          qb,
+          `${aliases.assayType}.diseaseId`,
+          constraints.disease.id
+        )
       )
     }
     if (_.get(constraints, 'assayType.id')) {
       queryBuilder.where(qb =>
-        isNullInOrEqual(qb, `${assay}.assayTypeId`, constraints.assayType.id)
+        isNullInOrEqual(
+          qb,
+          `${aliases.assay}.assayTypeId`,
+          constraints.assayType.id
+        )
       )
     }
   } else {
-    if (device && !site) {
-      site = alias('Site')
-      queryBuilder.leftOuterJoin(
-        `Site as ${site}`,
-        `${device}.siteId`,
-        `${site}.id`
+    if (aliases.assay && _.get(constraints, 'assayType.id')) {
+      queryBuilder.where(qb =>
+        isNullInOrEqual(
+          qb,
+          `${aliases.assay}.assayTypeId`,
+          constraints.assayType.id
+        )
       )
     }
-
-    if (site) {
-      if (!partner) {
-        partner = alias('Partner')
-        queryBuilder.leftOuterJoin(
-          `Partner as ${partner}`,
-          `${site}.partnerId`,
-          `${partner}.id`
+    if (_.get(constraints, 'disease.id')) {
+      if (aliases.assayType) {
+        queryBuilder.where(qb =>
+          isNullInOrEqual(
+            qb,
+            `${aliases.assayType}.diseaseId`,
+            constraints.disease.id
+          )
         )
-      }
-
-      if (!geography && !country) {
-        geography = alias('Geography')
+      } else if (aliases.assay) {
+        aliases.assayType = alias('AssayType')
         queryBuilder.leftOuterJoin(
-          `Geography as ${geography}`,
-          `${site}.geographyId`,
-          `${geography}.id`
+          `AssayType as ${aliases.assayType}`,
+          `${aliases.assay}.assayTypeId`,
+          `${aliases.assayType}.id`
+        )
+        queryBuilder.where(qb =>
+          isNullInOrEqual(
+            qb,
+            `${aliases.assayType}.diseaseId`,
+            constraints.disease.id
+          )
         )
       }
     }
-    // Partner, country, and constraints are ANDed
-    if (partner && _.get(constraints, 'partner.id')) {
-      queryBuilder.where(qb =>
-        qb.whereNull(`${partner}.id`).orWhere({
-          [`${partner}.id`]: constraints.partner.id,
-        })
+  }
+}
+
+function addGeographyConstraints(queryBuilder, constraints, aliases) {
+  const { site, country, result } = aliases
+  if (result) {
+    if (!aliases.geography) {
+      aliases.geography = alias('Geography')
+      queryBuilder.leftOuterJoin(
+        `Geography as ${aliases.geography}`,
+        `${result}.geographyId`,
+        `${aliases.geography}.id`
+      )
+    }
+  } else {
+    if (site && !aliases.geography && !country) {
+      aliases.geography = alias('Geography')
+      queryBuilder.leftOuterJoin(
+        `Geography as ${aliases.geography}`,
+        `${site}.geographyId`,
+        `${aliases.geography}.id`
       )
     }
 
     if (_.get(constraints, 'country.id')) {
       if (country) {
         queryBuilder.where(`${country}.id`, constraints.country.id)
-      } else if (geography) {
+      } else if (aliases.geography) {
         queryBuilder.where({
-          [`${geography}.countryId`]: constraints.country.id,
+          [`${aliases.geography}.countryId`]: constraints.country.id,
         })
       }
     }
-    if (_.get(constraints, 'deviceType.id')) {
-      if (device) {
-        queryBuilder.where(qb =>
-          isNullInOrEqual(
-            qb,
-            `${device}.deviceTypeId`,
-            constraints.deviceType.id
-          )
-        )
-      }
-      if (assay) {
-        queryBuilder.where(qb =>
-          isNullInOrEqual(
-            qb,
-            `${assay}.deviceTypeId`,
-            constraints.deviceType.id
-          )
-        )
-      }
-    }
-    if (assay && _.get(constraints, 'assayType.id')) {
-      queryBuilder.where(qb =>
-        isNullInOrEqual(qb, `${assay}.assayTypeId`, constraints.assayType.id)
+  }
+}
+
+function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
+  const {
+    device,
+    assay,
+    result,
+    showUnapprovedDevices = false,
+    showDecommissionedDevices = false,
+  } = aliases
+  if (!result) {
+    if (!aliases.site && device) {
+      aliases.site = alias('Site')
+      queryBuilder.leftOuterJoin(
+        `Site as ${aliases.site}`,
+        `${device}.siteId`,
+        `${aliases.site}.id`
       )
     }
-    if (_.get(constraints, 'disease.id')) {
-      if (assayType) {
-        queryBuilder.where(qb =>
-          isNullInOrEqual(qb, `${assayType}.diseaseId`, constraints.disease.id)
-        )
-      } else if (assay) {
-        assayType = alias('AssayType')
+    if (aliases.site) {
+      if (!aliases.partner) {
+        aliases.partner = alias('Partner')
         queryBuilder.leftOuterJoin(
-          `AssayType as ${assayType}`,
-          `${assay}.assayTypeId`,
-          `${assayType}.id`
-        )
-        queryBuilder.where(qb =>
-          isNullInOrEqual(qb, `${assayType}.diseaseId`, constraints.disease.id)
+          `Partner as ${aliases.partner}`,
+          `${aliases.site}.partnerId`,
+          `${aliases.partner}.id`
         )
       }
+    }
+    if (_.get(constraints, 'deviceType.id')) {
+      _.each(_.compact([device, assay]), item =>
+        queryBuilder.where(qb =>
+          isNullInOrEqual(qb, `${item}.deviceTypeId`, constraints.deviceType.id)
+        )
+      )
     }
   }
   if (device && !showUnapprovedDevices) {
@@ -414,11 +422,37 @@ function addConstraints(queryBuilder, constraints, aliases) {
         )
     )
   }
+}
 
+function addPersonConstraints(
+  queryBuilder,
+  constraints,
+  { allowAdminThrough = false, person }
+) {
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
+}
 
+function addOrConstraints(
+  queryBuilder,
+  constraints,
+  {
+    assay,
+    disease,
+    assayType,
+    jobFunction,
+    person,
+    allowAdminThrough,
+    geography,
+    site,
+    device,
+    result: resultAlias,
+    sample,
+    deviceType,
+    issue,
+  }
+) {
   // data filter constraints are ORed
   if (!_.isEmpty(_.get(constraints, '$or'))) {
     for (const constraint of constraints.$or) {
@@ -447,6 +481,12 @@ function addConstraints(queryBuilder, constraints, aliases) {
             alias: geography,
             constraint: constraint.geography,
           })
+          addConstraintWithJobFunction({
+            ...getBaseProps(qb, constraint),
+            alias: issue,
+            constraint: constraint.issue,
+          })
+
           addConstraintWithJobFunction({
             ...getBaseProps(qb, constraint),
             alias: site,
@@ -498,6 +538,23 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
 }
 
+function addConstraints(queryBuilder, constraints, receivedAliases) {
+  if (_.isEmpty(constraints)) {
+    queryBuilder.whereRaw('0 = 1')
+    return
+  }
+
+  const aliases = _.cloneDeep(receivedAliases)
+  // TODO generalize constraint building
+  // TODO only join queries if needed within constraints or required by unspecified aliases
+  addPartnerConstraints(queryBuilder, constraints, aliases)
+  addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases)
+  addDevicesAndSitesConstraints(queryBuilder, constraints, aliases)
+  addPersonConstraints(queryBuilder, constraints, aliases)
+  addGeographyConstraints(queryBuilder, constraints, aliases)
+  addOrConstraints(queryBuilder, constraints, aliases)
+}
+
 function isNullInOrEqual(queryBuilder, columnName, value) {
   return queryBuilder.andWhere(qb => {
     qb.whereNull(columnName)
@@ -530,27 +587,21 @@ function addConstraintWithJobFunction({
   allowAdminThrough = false,
 }) {
   if (alias && constraint) {
-    queryBuilder.where(qb => {
-      Object.keys(constraint).forEach(k => {
-        qb.orWhere(qb => qb.whereNull(`${alias}.${k}`))
-      })
-      qb.orWhere(qb => {
-        qb.orWhere(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
-        if (
-          jobFunctionAlias &&
-          jobFunctionConstraint &&
-          (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
-        ) {
-          qb.andWhere(
-            _.mapKeys(
-              _.omit(jobFunctionConstraint, 'isAdmin'),
-              (v, k) => `${jobFunctionAlias}.${k}`
-            )
-          )
-        }
-      })
-    })
     queryBuilder.andWhere(qb => {
+      if (
+        jobFunctionAlias &&
+        jobFunctionConstraint &&
+        (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
+      ) {
+        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
+          _.mapKeys(
+            _.omit(jobFunctionConstraint, 'isAdmin'),
+            (v, k) => `${jobFunctionAlias}.${k}`
+          )
+        )
+      } else {
+        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
+      }
       if (personAlias && personConstraint) {
         qb.andWhere(
           _.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`)
@@ -605,7 +656,7 @@ const addPartnerQueryConstraints = (
   if (caseAlias && partner)
     queryBuilder.where(`${caseAlias}.partnerId`, partner.id)
   if (partner && !caseAlias) queryBuilder.where('r.partnerId', partner.id)
-  if (site) queryBuilder.where('r.siteId', partner.id)
+  if (site) queryBuilder.where(`r.partnerId`, partner.id)
   else if (geography) {
     if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
     else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
@@ -624,4 +675,5 @@ module.exports = {
   canEdit,
   canEditInventories,
   addPartnerQueryConstraints,
+  getContext,
 }

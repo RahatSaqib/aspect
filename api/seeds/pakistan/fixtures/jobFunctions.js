@@ -3,6 +3,7 @@ const {
   clinician,
   labUser,
   regionalOfficer,
+  technician,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
@@ -307,4 +308,5 @@ module.exports = [
       },
     ],
   }),
+  technician,
 ]

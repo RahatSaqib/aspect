@@ -36,36 +36,7 @@ const {
 } = require('../src/shared/dictionary')
 const getConsumables = require('./fixtures/Consumable')
 
-/**
- *
- * @param {*} knex Knex object
- * @param {*} partnerId The ID of the partner that will get the upsers applied
- * @param {*} adminId The ID of the admin user
- * @param {*} geography The geography definitions
- * @param {*} countryAbbreviation The country's two letters code
- * @param {*} deviceApiToken The API token for GxAlert device
- * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
- */
-async function commonUpserts(
-  knex,
-  partnerId,
-  adminId,
-  geography,
-  countryAbbreviation,
-  deviceApiToken = null,
-  usersInsertConfig = null,
-  partnerData = {}
-) {
-  const now = new Date()
-  utils.hasSeededStaticData = true
-  const auditFields = {
-    createdOn: now,
-    createdBy: adminId,
-    updatedOn: now,
-    updatedBy: adminId,
-  }
-
-  // Reuse previously seeded "static" data
+async function upsertGeography(knex, geography) {
   const countries = {}
   await Promise.each(geography.countries, async country => {
     const countryData = _.pick(country, [
@@ -107,6 +78,40 @@ async function commonUpserts(
 
     await upsertStatesAndLgas(knex, countryId, country.states)
   })
+
+  return countries
+}
+
+/**
+ *
+ * @param {*} knex Knex object
+ * @param {*} partnerId The ID of the partner that will get the upsers applied
+ * @param {*} adminId The ID of the admin user
+ * @param {*} geography The geography definitions
+ * @param {*} countryAbbreviation The country's two letters code
+ * @param {*} deviceApiToken The API token for GxAlert device
+ * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
+ */
+async function commonUpserts(
+  knex,
+  partnerId,
+  adminId,
+  geography,
+  countryAbbreviation,
+  deviceApiToken = null,
+  usersInsertConfig = null,
+  partnerData = {}
+) {
+  const now = new Date()
+  utils.hasSeededStaticData = true
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  const countries = await upsertGeography(knex, geography)
 
   const {
     culture,
@@ -1622,6 +1627,7 @@ async function baseGxAlertMigration(
         _.find(timezone.data, tz => tz.id === person.timezone),
         'id'
       ) || countries[0].timezone
+    const canLogIn = !_.isEmpty(person.username)
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
@@ -1653,6 +1659,7 @@ async function baseGxAlertMigration(
             hideNotes: person.hideNotes,
             updatedOn: now,
             updatedBy: adminId,
+            canLogIn,
           })
       }
       personId = existingPerson.id
@@ -1673,6 +1680,7 @@ async function baseGxAlertMigration(
         hideSampleId: person.hideSampleId,
         hideNotes: person.hideNotes,
         culture: 'en',
+        canLogIn,
         ...auditFields,
       })
     }
@@ -2219,4 +2227,5 @@ module.exports = {
   upsertJobFunctionFixture,
   upsertPermissionFixture,
   getStatesByName,
+  upsertGeography,
 }

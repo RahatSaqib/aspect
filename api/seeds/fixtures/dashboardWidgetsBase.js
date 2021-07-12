@@ -1,3 +1,5 @@
+const { INTERNAL_DEVICE_IDS } = require('../../src/shared/constants')
+
 // helper funcs and vars
 const partialValidResults = `SELECT
 CASE
@@ -90,7 +92,9 @@ const devicesTitle = {
   titleI18nKey: 'devicesTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1`,
+  sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
+    "','"
+  )}')`,
   link: '/browse/device',
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
@@ -133,7 +137,8 @@ const sitesTitle = {
   titleI18nKey: 'sitesTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id`,
+  sqlForIndicator: `select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id
+  where s.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')`,
   link: '/browse/site',
   sortOrder: 0,
   externalId: 'sitesTitle',
