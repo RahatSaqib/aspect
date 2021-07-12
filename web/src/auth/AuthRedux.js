@@ -236,6 +236,7 @@ export function loginStart({ user, password }) {
             countryAbbreviation: json.countryAbbreviation,
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
+            loggedOutReason: '',
           })
         )
       )

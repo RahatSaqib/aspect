@@ -522,17 +522,20 @@ export const ContactDetailsForm = ({
           ))}
         </TextField>
       </section>
-      <section className={cssClasses('TagLabel')}>
-        <p>{intl.formatMessage(messages.tags)}</p>
-        <ConnectedTagInput
-          allowCreate
-          label={intl.formatMessage(messages.chooseTags)}
-          onTagChange={onPersonTagsChange}
-          qryId={contactDetails.get('id')}
-          qryType="person"
-          value={personTags.toJS()}
-        />
-      </section>
+      {contactDetails.get('id') ? (
+        <section className={cssClasses('TagLabel')}>
+          <p>{intl.formatMessage(messages.tags)}</p>
+          <ConnectedTagInput
+            allowCreate
+            label={intl.formatMessage(messages.chooseTags)}
+            onTagChange={onPersonTagsChange}
+            qryId={contactDetails.get('id')}
+            qryType="person"
+            value={personTags.toJS()}
+            noMatch=""
+          />
+        </section>
+      ) : null}
       {showNotesField && (
         <section>
           <TextField

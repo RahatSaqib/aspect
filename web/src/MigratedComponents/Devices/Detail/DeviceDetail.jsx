@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
 import {
-  Switch,
-  Redirect,
+  Routes,
+  Navigate,
   Route,
-  useHistory,
+  useNavigate,
   useParams,
   useLocation,
 } from 'react-router-dom'
@@ -61,13 +61,13 @@ const messages = defineMessages({
   },
 })
 
-export const DeviceDetail = ({ match }) => {
+export const DeviceDetail = props => {
   const dispatch = useDispatch()
   const user = useAuthState()
   const editable = isEditable(user, 'device')
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
-  const history = useHistory()
+  const navigate = useNavigate()
   const { deviceId } = useParams()
   const intl = useIntl()
 
@@ -139,10 +139,13 @@ export const DeviceDetail = ({ match }) => {
     const searchParams = new URLSearchParams(location.search)
     searchParams.set('dateRange', dateRange)
 
-    history.replace({
-      ...location,
-      search: searchParams.toString(),
-    })
+    navigate(
+      {
+        ...location,
+        search: `?${searchParams.toString()}`,
+      },
+      { replace: true }
+    )
   }
 
   return (
@@ -168,12 +171,12 @@ export const DeviceDetail = ({ match }) => {
               currentTarget: {
                 dataset: { path },
               },
-            }) => history.push(path)}
+            }) => navigate(path)}
             disabled={disabled}
             data-path={path}
             color="primary"
             variant="contained"
-            inverse={path !== history?.location?.pathname}
+            inverse={path !== location?.pathname}
           >
             {label}
           </AspectButton>
@@ -181,66 +184,50 @@ export const DeviceDetail = ({ match }) => {
       </ShellHeader>
       <ShellContent>
         {device.id && (
-          <Switch>
-            <Route
-              exact
-              path={match.path}
-              render={props => (
-                <DeviceDetailProfile
+          <Routes>
+            <Route path="">
+              <DeviceDetailProfile
+                {...props}
+                dateRange={dateRange}
+                onDateRangeChange={onDateRangeChange}
+                device={Immutable.fromJS(device)}
+                devicePerformance={Immutable.fromJS(devicePerformance)}
+                disabled={!editable}
+                updateSingleDevice={updateDevice}
+                onMaintenanceSubmit={onMaintenanceSubmit}
+                onCalibrationSubmit={onCalibrationSubmit}
+                onWarrantySubmit={onWarrantySubmit}
+              />
+            </Route>
+            <Route path="operation">
+              <DeviceDetailOperation
+                intl={intl}
+                {...props}
+                device={Immutable.fromJS(device)}
+                disabled={!editable}
+              />
+            </Route>
+            <Route path="alerts">
+              <DeviceDetailAlerts
+                intl={intl}
+                {...props}
+                device={Immutable.fromJS(device)}
+                disabled={!editable}
+              />
+            </Route>
+            <Route path="edit">
+              {editable ? (
+                <DeviceDetailEdit
                   {...props}
-                  dateRange={dateRange}
-                  onDateRangeChange={onDateRangeChange}
                   device={Immutable.fromJS(device)}
-                  devicePerformance={Immutable.fromJS(devicePerformance)}
-                  disabled={!editable}
+                  editable={editable}
                   updateSingleDevice={updateDevice}
-                  onMaintenanceSubmit={onMaintenanceSubmit}
-                  onCalibrationSubmit={onCalibrationSubmit}
-                  onWarrantySubmit={onWarrantySubmit}
                 />
+              ) : (
+                <Navigate replace to="." />
               )}
-            />
-            <Route
-              exact
-              path={`${match.path}/operation`}
-              render={props => (
-                <DeviceDetailOperation
-                  intl={intl}
-                  {...props}
-                  device={Immutable.fromJS(device)}
-                  disabled={!editable}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={`${match.path}/alerts`}
-              render={props => (
-                <DeviceDetailAlerts
-                  intl={intl}
-                  {...props}
-                  device={Immutable.fromJS(device)}
-                  disabled={!editable}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={`${match.path}/edit`}
-              render={props =>
-                editable ? (
-                  <DeviceDetailEdit
-                    {...props}
-                    device={Immutable.fromJS(device)}
-                    editable={editable}
-                    updateSingleDevice={updateDevice}
-                  />
-                ) : (
-                  <Redirect to={match.url} />
-                )
-              }
-            />
-          </Switch>
+            </Route>
+          </Routes>
         )}
         {isLoading && (
           <DelayShowingProgressCircular
@@ -254,8 +241,8 @@ export const DeviceDetail = ({ match }) => {
   )
 }
 
-DeviceDetail.propTypes = {
-  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
-}
+// DeviceDetail.propTypes = {
+//   match: PropTypes.oneOfType([PropTypes.object]).isRequired,
+// }
 
 export default DeviceDetail

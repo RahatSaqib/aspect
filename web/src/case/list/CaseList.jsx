@@ -139,13 +139,13 @@ const enhance = compose(
         }
       },
     onRowClick:
-      ({ history }) =>
+      ({ navigate }) =>
       ({
         currentTarget: {
           dataset: { caseId },
         },
       }) => {
-        history.push(`/browse/case/${caseId}`)
+        navigate(`/browse/case/${caseId}`)
       },
   }),
   lifecycle({
@@ -158,10 +158,13 @@ const enhance = compose(
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -186,7 +189,7 @@ const enhance = compose(
 
 export const CaseList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -239,7 +242,7 @@ export const CaseList = ({
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
       <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         intl={intl}
         config={reducedFilters}
@@ -248,12 +251,16 @@ export const CaseList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList
+            navigate={navigate}
+            location={location}
+            intl={intl}
+          />
         )}
         {!items.currentIdList.isEmpty() && (
           <Table className={cssClasses('CaseDataTable')}>
             <DataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -276,7 +283,7 @@ export const CaseList = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             timedMessageUsed={sortCol === 'endedOn'}

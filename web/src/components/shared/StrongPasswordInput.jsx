@@ -71,7 +71,7 @@ const messages = defineMessages({
 const StrongPasswordInput = ({
   classes: classesMap,
   input,
-  meta: { touched, dirty, error },
+  // meta: { touched, dirty, error },
   textFieldProps,
   popOverProps,
   intl,
@@ -153,12 +153,12 @@ const StrongPasswordInput = ({
     <div>
       <TextField
         {...input}
-        errorStyle={{
-          float: 'left',
-          whiteSpace: 'nowrap',
-          textOverflow: 'visible',
-        }}
-        errorText={(touched || dirty) && error}
+        // errorStyle={{
+        //   float: 'left',
+        //   whiteSpace: 'nowrap',
+        //   textOverflow: 'visible',
+        // }}
+        // errorText={(touched || dirty) && error}
         {...textFieldProps}
         className={classNames({
           [styles.Form__Field]: textFieldProps.fullWidth,

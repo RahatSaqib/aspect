@@ -1,7 +1,7 @@
 import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
 import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
@@ -43,16 +43,13 @@ import styles from './PersonDetail.css'
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        personId: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }),
+  WrapperComponent => props => {
+    const { personId } = useParams()
+    return <WrapperComponent {...props} personId={personId} />
+  },
   connect(
     (state, props) => {
-      let { personId } = props.match.params
+      let { personId } = props
       if (personId === 'add') {
         personId = undefined
       }
@@ -126,20 +123,20 @@ export class PersonDetail extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.match.params.personId !== prevProps.match.params.personId) {
+    if (this.props.personId !== prevProps.personId) {
       this.handleFetchPerson(this.props)
     }
   }
 
   handleFetchPerson = ({
-    match,
+    personId,
     fetchSinglePerson,
     fetchPersonAssignments,
     isNew,
   }) => {
     if (isNew) return
-    fetchSinglePerson(match.params.personId, () => {
-      fetchPersonAssignments(match.params.personId)
+    fetchSinglePerson(personId, () => {
+      fetchPersonAssignments(personId)
     })
   }
 
@@ -171,7 +168,7 @@ export class PersonDetail extends PureComponent {
           message: messages.contactDetailsCreatedMessage,
         })
         // replace current url to show just added contact for editing other tabs
-        this.props.history.replace(`/browse/person/${person.id}`)
+        this.props.navigate(`/browse/person/${person.id}`, { replace: true })
       })
     }
     const contactDetails = new ContactDetails(person)
@@ -248,8 +245,8 @@ export class PersonDetail extends PureComponent {
       editable,
       isNew,
       jobFunctions,
-      match,
-      history,
+      // match,
+      // navigate,
       location,
     } = this.props
     const { formatMessage } = intl
@@ -267,120 +264,106 @@ export class PersonDetail extends PureComponent {
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
-        <Switch>
-          <Route
-            exact
-            path={match.path}
-            render={props =>
-              editable ? (
-                <div>
-                  {!isNew && !person && <LinearProgress />}
-                  {loading && <LinearProgress />}
-                  <PermissionsProvider permissions={['person:edit']}>
-                    <PersonDetailBackBar
-                      formatMessage={formatMessage}
-                      history={history}
-                      location={location}
-                      match={match}
-                      {...props}
-                      isNew={isNew}
-                      title={
-                        isNew ? 'Add Contact' : person && person.get('name')
-                      }
-                      canUserLoggedIn={!isNew && canLogIn}
+        <Routes>
+          <Route exact path=".">
+            {editable ? (
+              <div>
+                {!isNew && !person && <LinearProgress />}
+                {loading && <LinearProgress />}
+                <PermissionsProvider permissions={['person:edit']}>
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    // history={history}
+                    // location={location}
+                    // match={match}
+                    {...this.props}
+                    isNew={isNew}
+                    title={isNew ? 'Add Contact' : person && person.get('name')}
+                    canUserLoggedIn={!isNew && canLogIn}
+                  />
+                  <Paper className={styles.ContactDetailsForm}>
+                    <ContactDetailsForm
+                      intl={intl}
+                      loading={loading}
+                      onEmailBlur={this.handleEmailBlur}
+                      contactDetails={contactDetails}
+                      showNotesField
+                      isUserChange={this.handlePersonCanLogIn}
+                      onSubmit={this.saveContactDetails}
+                      userPreferences={userPreferences}
+                      saveUserPreferences={this.saveUserPreferences}
                     />
-                    <Paper className={styles.ContactDetailsForm}>
-                      <ContactDetailsForm
-                        intl={intl}
-                        loading={loading}
-                        onEmailBlur={this.handleEmailBlur}
-                        contactDetails={contactDetails}
-                        showNotesField
-                        isUserChange={this.handlePersonCanLogIn}
-                        onSubmit={this.saveContactDetails}
-                        userPreferences={userPreferences}
-                        saveUserPreferences={this.saveUserPreferences}
-                      />
-                    </Paper>
-                  </PermissionsProvider>
-                </div>
-              ) : (
-                <Redirect to={match.url} />
-              )
-            }
-          />
-          <Route
-            exact
-            path={`${match.path}/system-access-control`}
-            render={props => (
-              <div>
-                {loading && <LinearProgress />}
-
-                <PermissionsProvider permissions={['person:edit']}>
-                  <PersonDetailBackBar
-                    formatMessage={formatMessage}
-                    history={history}
-                    location={location}
-                    match={match}
-                    {...props}
-                    isNew={isNew}
-                    title={person && person.get('name')}
-                    canUserLoggedIn={!isNew && canLogIn}
-                  />
+                  </Paper>
                 </PermissionsProvider>
-
-                <Paper className={styles.ContactDetailsForm}>
-                  <LoginDetailsForm
-                    intl={intl}
-                    loading={loading}
-                    shouldPrefill={shouldPrefill}
-                    emailValue={emailValue}
-                    loginDetails={loginDetails}
-                    onSubmit={this.saveLoginDetails}
-                  />
-                </Paper>
               </div>
+            ) : (
+              <Navigate replace to={location.pathname} />
             )}
-          />
-          <Route
-            exact
-            path={`${match.path}/job-assignment`}
-            render={props => (
-              <div>
-                {loading && <LinearProgress />}
+          </Route>
+          <Route exact path="system-access-control">
+            <div>
+              {loading && <LinearProgress />}
 
-                <PermissionsProvider permissions={['person:edit']}>
-                  <PersonDetailBackBar
-                    formatMessage={formatMessage}
-                    history={history}
-                    location={location}
-                    match={match}
-                    {...props}
-                    isNew={isNew}
-                    title={person && person.get('name')}
-                    canUserLoggedIn={!isNew && canLogIn}
-                  />
-                </PermissionsProvider>
+              <PermissionsProvider permissions={['person:edit']}>
+                <PersonDetailBackBar
+                  formatMessage={formatMessage}
+                  // history={history}
+                  // location={location}
+                  // match={match}
+                  {...this.props}
+                  isNew={isNew}
+                  title={person && person.get('name')}
+                  canUserLoggedIn={!isNew && canLogIn}
+                />
+              </PermissionsProvider>
 
-                <Paper className={styles.ContactDetailsForm}>
-                  <JobAssignmentForm
-                    intl={intl}
-                    loading={loading}
-                    contactDetails={contactDetails}
-                    shouldPrefill={shouldPrefill}
-                    emailValue={emailValue}
-                    countryId={user.get('countryId')}
-                    onSubmit={this.addAssignment}
-                    onDeleteAssignment={this.deleteAssignment}
-                    jobFunctions={jobFunctions}
-                    assignments={assignments}
-                    loadedAssignments={loadedAssignments}
-                  />
-                </Paper>
-              </div>
-            )}
-          />
-        </Switch>
+              <Paper className={styles.ContactDetailsForm}>
+                <LoginDetailsForm
+                  intl={intl}
+                  loading={loading}
+                  shouldPrefill={shouldPrefill}
+                  emailValue={emailValue}
+                  loginDetails={loginDetails}
+                  onSubmit={this.saveLoginDetails}
+                />
+              </Paper>
+            </div>
+          </Route>
+          <Route exact path="job-assignment">
+            <div>
+              {loading && <LinearProgress />}
+
+              <PermissionsProvider permissions={['person:edit']}>
+                <PersonDetailBackBar
+                  formatMessage={formatMessage}
+                  // history={history}
+                  // location={location}
+                  // match={match}
+                  {...this.props}
+                  isNew={isNew}
+                  title={person && person.get('name')}
+                  canUserLoggedIn={!isNew && canLogIn}
+                />
+              </PermissionsProvider>
+
+              <Paper className={styles.ContactDetailsForm}>
+                <JobAssignmentForm
+                  intl={intl}
+                  loading={loading}
+                  contactDetails={contactDetails}
+                  shouldPrefill={shouldPrefill}
+                  emailValue={emailValue}
+                  countryId={user.get('countryId')}
+                  onSubmit={this.addAssignment}
+                  onDeleteAssignment={this.deleteAssignment}
+                  jobFunctions={jobFunctions}
+                  assignments={assignments}
+                  loadedAssignments={loadedAssignments}
+                />
+              </Paper>
+            </div>
+          </Route>
+        </Routes>
       </div>
     )
   }

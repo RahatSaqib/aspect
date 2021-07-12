@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
 import _fp from 'lodash/fp'
+import pick from 'lodash/pick'
 import Immutable from 'immutable'
 import { connect } from 'react-redux'
 
@@ -67,7 +68,7 @@ const ConnectedTagInput = ({
       tagName="title"
       onAdd={onAdd}
       onDelete={onDelete}
-      {...restProps}
+      {...pick(restProps, ['classes', 'disabled', 'fullWidth', 'noMatch'])}
     />
   )
 }
@@ -86,9 +87,7 @@ ConnectedTagInput.propTypes = {
   qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
   value: PropTypes.arrayOf(PropTypes.string).isRequired,
   onTagChange: PropTypes.func.isRequired,
-  onAdd: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
-  tags: PropTypes.instanceOf(Immutable.List).isRequired,
+  tags: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired,
   maxTags: PropTypes.number,
 }
 

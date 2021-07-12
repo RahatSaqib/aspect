@@ -76,7 +76,7 @@ const SelectField = ({
 
 SelectField.propTypes = {
   autoWidth: PropTypes.bool,
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.oneOfType([PropTypes.object]).isRequired,
   className: PropTypes.string,
   errorText: PropTypes.node,
   errorStyle: PropTypes.object, // eslint-disable-line

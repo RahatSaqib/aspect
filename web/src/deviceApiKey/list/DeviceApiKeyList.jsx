@@ -213,10 +213,13 @@ const enhance = compose(
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -383,7 +386,7 @@ const enhance = compose(
 
 export const DeviceApiKeyList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -417,7 +420,7 @@ export const DeviceApiKeyList = ({
     <Helmet title={intl.formatMessage(messages.title)} />
     <NavTitle title={intl.formatMessage(messages.title)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -471,12 +474,12 @@ export const DeviceApiKeyList = ({
         reportName="DeviceApiKey"
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
         <DeviceApiKeyDataTable className={cssClasses('DeviceApiKeyDataTable')}>
           <DeviceApiKeyDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -554,7 +557,7 @@ export const DeviceApiKeyList = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}

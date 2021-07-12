@@ -31,7 +31,11 @@ ShellHeader.defaultProps = {
 }
 
 ShellHeader.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.bool,
+  ]),
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   icon: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 }

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 
 import AspectDropDown from '../../AspectDropDown'
@@ -30,7 +30,7 @@ const messages = defineMessages({
 
 const NotificationList = () => {
   const intl = useIntl()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
@@ -44,7 +44,7 @@ const NotificationList = () => {
       <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
       <div className={cssClasses('filters__container')}>
         <BrowseFilters
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           config={reducedFilters}
@@ -63,7 +63,7 @@ const NotificationList = () => {
             }}
             action={({ selectedOption }) => {
               const { id } = selectedOption
-              history.push(`/browse/notification/${id}`)
+              navigate(`/browse/notification/${id}`)
             }}
             theme={UI_CONSTS.themeName.aspect}
           />

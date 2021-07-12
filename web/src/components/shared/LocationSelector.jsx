@@ -37,6 +37,8 @@ const styles = {
   },
   field: {
     verticalAlign: 'bottom',
+    minWidth: 256,
+    marginRight: 20,
   },
   loadingProgress: {
     position: 'absolute',

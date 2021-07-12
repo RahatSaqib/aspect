@@ -21,9 +21,9 @@ describe('AccountDetails module', () => {
       saveContactDetails: noop,
       saveLoginDetails: noop,
       saveUserPreferences: noop,
-      history: {},
+      navigate: () => {},
       location: {},
-      match: {},
+      params: {},
     }
 
     it('should shallow render correctly', () => {

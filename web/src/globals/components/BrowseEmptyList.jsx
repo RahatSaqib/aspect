@@ -6,16 +6,19 @@ const enhance = compose(
   pure,
   withHandlers({
     onClearFilters:
-      ({ history, location }) =>
+      ({ navigate, location }) =>
       () => {
         const searchParams = new URLSearchParams(location.search)
         for (const key of searchParams.keys()) {
           searchParams.delete(key)
         }
-        history.replace({
-          ...location,
-          search: searchParams.toString(),
-        })
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       },
   })
 )

@@ -145,7 +145,7 @@ const recomposeForm =
   ({ fields: fieldNameLikeList, validate }) =>
   BaseComponent => {
     const fieldNameList = mapFieldNames(fieldNameLikeList)
-    const factory = React.createFactory(BaseComponent)
+    // const factory = React.createFactory(BaseComponent)
 
     return class extends React.PureComponent {
       static displayName = wrapDisplayName(BaseComponent, 'recomposeForm')
@@ -222,11 +222,13 @@ const recomposeForm =
       }
 
       render() {
-        return factory({
+        const props = {
           ...this.props,
           ...this.state,
           ...this.handlers,
-        })
+        }
+
+        return <BaseComponent {...props}>{this.props.children}</BaseComponent>
       }
     }
   }

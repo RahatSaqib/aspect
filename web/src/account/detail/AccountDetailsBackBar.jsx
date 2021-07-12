@@ -1,32 +1,25 @@
 import React from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+
 import messages from './messages'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
 
-const AccountDetailsBackBar = ({
-  formatMessage,
-  history,
-  location,
-  match,
-  title,
-}) => {
+const AccountDetailsBackBar = ({ formatMessage, title }) => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const params = useParams()
   const onBackClick = () => {
     // go to home page - routerFactory will redirect to either /dashboard, /operational-data or /browse
-    history.push('/')
+    navigate('/')
   }
   const onPathClick = path => {
-    history.push({
-      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
+    navigate({
+      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => params[key]),
     })
   }
   return (
-    <DetailBackBar
-      history={history}
-      location={location}
-      match={match}
-      onBackClick={onBackClick}
-      title={title}
-    >
+    <DetailBackBar onBackClick={onBackClick} title={title}>
       {[
         {
           label: formatMessage(messages.title),
@@ -48,7 +41,7 @@ const AccountDetailsBackBar = ({
           data-path={path}
           color="primary"
           variant="contained"
-          inverse={match.path !== path && !disabled}
+          inverse={location.pathname !== path && !disabled}
         >
           {label}
         </AspectButton>

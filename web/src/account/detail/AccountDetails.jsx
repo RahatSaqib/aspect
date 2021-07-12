@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { injectIntl } from 'react-intl'
 import Paper from '@material-ui/core/Paper'
@@ -35,27 +34,23 @@ import {
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    location: PropTypes.object.isRequired, // eslint-disable-line
-    history: PropTypes.object.isRequired, // eslint-disable-line
-  }),
+  // setPropTypes({
+  //   location: PropTypes.object.isRequired, // eslint-disable-line
+  //   // history: PropTypes.object.isRequired, // eslint-disable-line
+  // }),
   connect(
     state => ({
       loading: state.accountDetails.get('loading'),
       saving: state.accountDetails.get('saving'),
       accountDetails: state.accountDetails.get('data'),
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          showAcknowledgement,
-          fetchAccountDetails,
-          saveContactDetails,
-          saveLoginDetails,
-          saveUserPreferences,
-        },
-        dispatch
-      )
+    {
+      showAcknowledgement,
+      fetchAccountDetails,
+      saveContactDetails,
+      saveLoginDetails,
+      saveUserPreferences,
+    }
   ),
   setPropTypes({
     loading: PropTypes.bool.isRequired,
@@ -159,8 +154,7 @@ export class AccountDetails extends PureComponent {
   }
 
   render() {
-    const { intl, loading, saving, accountDetails, history, location, match } =
-      this.props
+    const { intl, loading, saving, accountDetails } = this.props
     const { formatMessage } = intl
 
     return (
@@ -168,77 +162,63 @@ export class AccountDetails extends PureComponent {
         <Helmet title={formatMessage(accountDetailsMessages.title)} />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
 
-        <Switch>
-          <Route
-            exact
-            path={match.path}
-            render={props => (
-              <div>
-                {(loading || saving) && <LinearProgress />}
-                <AccountDetailsBackBar
-                  formatMessage={formatMessage}
-                  history={history}
-                  location={location}
-                  match={match}
-                  title={
-                    accountDetails &&
-                    accountDetails.get('contactDetails').get('name')
-                  }
-                  {...props}
+        <Routes>
+          <Route path="">
+            <div>
+              {(loading || saving) && <LinearProgress />}
+              <AccountDetailsBackBar
+                formatMessage={formatMessage}
+                title={
+                  accountDetails &&
+                  accountDetails.get('contactDetails').get('name')
+                }
+                {...this.props}
+              />
+              <Paper className={styles.AddMargin}>
+                <ContactDetailsForm
+                  intl={intl}
+                  canModify={false}
+                  loading={loading || saving}
+                  contactDetails={accountDetails.get('contactDetails')}
+                  onSubmit={this.handleSaveContactDetails}
+                  userPreferences={accountDetails.get('userPreferences')}
+                  saveUserPreferences={this.handleSaveUserPreferences}
                 />
-                <Paper className={styles.AddMargin}>
-                  <ContactDetailsForm
-                    intl={intl}
-                    canModify={false}
-                    loading={loading || saving}
-                    contactDetails={accountDetails.get('contactDetails')}
-                    onSubmit={this.handleSaveContactDetails}
-                    userPreferences={accountDetails.get('userPreferences')}
-                    saveUserPreferences={this.handleSaveUserPreferences}
-                  />
-                </Paper>
-              </div>
-            )}
-          />
-          <Route
-            exact
-            path={`${match.path}/system-access-control`}
-            render={props => (
-              <div>
-                {(loading || saving) && <LinearProgress />}
-                <AccountDetailsBackBar
-                  formatMessage={formatMessage}
-                  history={history}
-                  location={location}
-                  match={match}
-                  title={
-                    accountDetails &&
-                    accountDetails.get('contactDetails').get('name')
+              </Paper>
+            </div>
+          </Route>
+          <Route path="system-access-control">
+            <div>
+              {(loading || saving) && <LinearProgress />}
+              <AccountDetailsBackBar
+                formatMessage={formatMessage}
+                title={
+                  accountDetails &&
+                  accountDetails.get('contactDetails').get('name')
+                }
+                {...this.props}
+              />
+              <Paper className={styles.AddMargin}>
+                <LoginDetailsForm
+                  intl={intl}
+                  loading={loading || saving}
+                  canModify={false}
+                  loginDetails={accountDetails.get('loginDetails')}
+                  currentPasswordInputDialogOpen={
+                    this.state.currentPasswordInputDialogOpen
                   }
-                  {...props}
+                  openCurrentPasswordInputDialog={
+                    this.openCurrentPasswordInputDialog
+                  }
+                  closeCurrentPasswordInputDialog={
+                    this.closeCurrentPasswordInputDialog
+                  }
+                  onSubmit={this.handleSaveLoginDetails}
                 />
-                <Paper className={styles.AddMargin}>
-                  <LoginDetailsForm
-                    intl={intl}
-                    loading={loading || saving}
-                    canModify={false}
-                    loginDetails={accountDetails.get('loginDetails')}
-                    currentPasswordInputDialogOpen={
-                      this.state.currentPasswordInputDialogOpen
-                    }
-                    openCurrentPasswordInputDialog={
-                      this.openCurrentPasswordInputDialog
-                    }
-                    closeCurrentPasswordInputDialog={
-                      this.closeCurrentPasswordInputDialog
-                    }
-                    onSubmit={this.handleSaveLoginDetails}
-                  />
-                </Paper>
-              </div>
-            )}
-          />
-        </Switch>
+              </Paper>
+            </div>
+          </Route>
+        </Routes>
       </div>
     )
   }

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles'
 
 import translation from '../shared/i18n/translation'
+import { I18nProvider } from '../Providers/I18nProvider'
 
 const queryClient = new QueryClient()
 
@@ -31,6 +32,14 @@ const shallowWithIntl = node => {
       messages,
     },
   })
+}
+
+const mountWithI18n = children => {
+  return mount(<I18nProvider>{children}</I18nProvider>)
+}
+
+const shallowWithI18n = children => {
+  return shallow(<I18nProvider>{children}</I18nProvider>)
 }
 
 const shallowWithQuery = children => {
@@ -65,4 +74,7 @@ export {
   // with theme
   mountWithTheme,
   shallowWithTheme,
+  // with i18n provider
+  mountWithI18n,
+  shallowWithI18n,
 }

@@ -9,16 +9,16 @@ import styles from '../SiteDetail.css'
 
 const cssClasses = classnames.bind(styles)
 
-const SiteDetailAlert = ({ history, location, match }) => {
+const SiteDetailAlert = ({ navigate, location, siteId }) => {
   const intl = useIntl()
-  const { siteId } = match.params
+  // const { siteId } = params
 
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
         <TaskList
           intl={intl}
-          history={history}
+          navigate={navigate}
           location={location}
           filterOptions={{
             siteId,
@@ -30,9 +30,10 @@ const SiteDetailAlert = ({ history, location, match }) => {
 }
 
 SiteDetailAlert.propTypes = {
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  siteId: PropTypes.number.isRequired,
+  // params: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default SiteDetailAlert

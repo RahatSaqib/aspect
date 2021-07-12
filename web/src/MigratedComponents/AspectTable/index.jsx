@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { func, object, oneOfType } from 'prop-types'
 import { useQuery } from 'react-query'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
@@ -35,7 +35,7 @@ const Loading = () => (
 const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const intl = useIntl()
   const config = baseConfig(intl)
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const { ...routeParams } = useParams()
   const { pathname, search } = useLocation()
   const query = useUrlQuery(search)
@@ -87,7 +87,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
       const newUrlParams = new URLSearchParams(params).toString()
       const urlParams = getParamsFromUrl(query, search)
       if (!isEqual(urlParams, params)) {
-        push(`${pathname}?${newUrlParams}`)
+        navigate(`${pathname}?${newUrlParams}`)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

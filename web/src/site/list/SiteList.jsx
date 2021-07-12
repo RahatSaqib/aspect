@@ -169,13 +169,13 @@ const enhance = compose(
   setPropTypes({
     intl: PropTypeOf.intl.isRequired,
     location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
+    navigate: PropTypes.func.isRequired,
     table: PropTypes.instanceOf(Immutable.Record).isRequired,
     items: PropTypes.instanceOf(Immutable.Record).isRequired,
   }),
   withHandlers({
     onAlertClick:
-      ({ history }) =>
+      ({ navigate }) =>
       event => {
         event.stopPropagation()
         const {
@@ -183,7 +183,7 @@ const enhance = compose(
             dataset: { siteId },
           },
         } = event
-        history.push(`/browse/site/${siteId}/alerts`)
+        navigate(`/browse/site/${siteId}/alerts`)
       },
 
     onExcelClick:
@@ -206,13 +206,13 @@ const enhance = compose(
       },
 
     onRowClick:
-      ({ history }) =>
+      ({ navigate }) =>
       ({
         currentTarget: {
           dataset: { siteId },
         },
       }) =>
-        history.push(`/browse/site/${siteId}`),
+        navigate(`/browse/site/${siteId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -224,10 +224,13 @@ const enhance = compose(
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -242,7 +245,7 @@ const enhance = compose(
 
 export const SiteList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -286,7 +289,7 @@ export const SiteList = ({
       <Helmet title={intl.formatMessage(messages.sitesTitle)} />
       <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         intl={intl}
         config={reducedFilters}
@@ -294,7 +297,11 @@ export const SiteList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {!siteList && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList
+            navigate={navigate}
+            location={location}
+            intl={intl}
+          />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}
@@ -306,7 +313,7 @@ export const SiteList = ({
         {siteList && (
           <SiteDataTable className={cssClasses('SiteDataTable')}>
             <SiteDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -364,7 +371,7 @@ export const SiteList = ({
         )}
         {siteList && siteList.length < total && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}

@@ -23,8 +23,8 @@ export const loggedInFactory = compose(
       <div classnames={cssClasses('Layout')}>
         <ConnectedNavDrawer history={props.history} location={props.location} />
         <div className={cssClasses('Panel')}>
-          <VerticalAppBar history={props.history} location={props.location} />
-          <HorizontalAppBar history={props.history} location={props.location} />
+          <VerticalAppBar />
+          <HorizontalAppBar />
           <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
           <div className={cssClasses('Page-Content')}>{render(props)}</div>
           <IdleDialog intl={props.intl} />

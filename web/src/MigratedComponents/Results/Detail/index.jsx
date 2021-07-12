@@ -1,14 +1,13 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import { useParams } from 'react-router-dom'
 
 import useI18n from '../../../Hooks/i18n/useI18n'
 import Create from './Create'
 import Update from './Update'
 import editActions from '../Forms/editConfig'
 
-const AspectResultDetail = ({ match }) => {
-  const { params } = match
-  const { resultId } = params
+const AspectResultDetail = () => {
+  const { resultId } = useParams()
   const { formatMessage } = useI18n()
   const [schema, setSchema] = useState(false)
 
@@ -27,10 +26,6 @@ const AspectResultDetail = ({ match }) => {
       ) : null}
     </Fragment>
   ) : null
-}
-
-AspectResultDetail.propTypes = {
-  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default AspectResultDetail

@@ -4,13 +4,13 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { defineMessages, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import IconButton from '@material-ui/core/IconButton'
 import Card from '@material-ui/core/Card'
 import { MdFileDownload } from 'react-icons/md'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import { useParams } from 'react-router-dom'
 
 import {
   makeSortPageSelector,
@@ -104,14 +104,18 @@ const enhance = compose(
       items: state.deviceOperation.items,
       table: state.deviceOperation.table,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchDeviceOperations,
-    })
+    }
   ),
+  WrapperComponent => props => {
+    const { deviceId } = useParams()
+    return <WrapperComponent {...props} deviceId={deviceId} />
+  },
   withHandlers({
     onInitialLoad:
       ({
-        match,
+        deviceId,
         location,
         fetchDeviceOperations,
         sortCol,
@@ -123,7 +127,7 @@ const enhance = compose(
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
         if (!sanitized) {
-          filtersParams.set('deviceId', match.params.deviceId)
+          filtersParams.set('deviceId', deviceId)
           fetchDeviceOperations(
             filtersParams,
             sortCol,

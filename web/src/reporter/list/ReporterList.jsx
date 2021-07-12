@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
 import Immutable from 'immutable'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery, useMutation, queryCache } from 'react-query'
 import PropTypeOf from '../../shared/types'
@@ -144,7 +144,7 @@ const getCurrentPagination = location => {
 
 export const ReporterListWithProps = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   columns,
@@ -161,7 +161,7 @@ export const ReporterListWithProps = ({
     <Helmet title={intl.formatMessage(messages.reportersTitle)} />
     <NavTitle title={intl.formatMessage(messages.reportersTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -175,12 +175,12 @@ export const ReporterListWithProps = ({
         reportName="Reporters"
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
         <ReporterDataTable className={cssClasses('ReporterDataTable')}>
           <ReporterDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -201,7 +201,7 @@ export const ReporterListWithProps = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           className={cssClasses('BrowseTablePaginator')}
@@ -217,7 +217,7 @@ export const ReporterListWithProps = ({
 
 const ReporterList = () => {
   const intl = useIntl()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
@@ -273,10 +273,13 @@ const ReporterList = () => {
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
       return
     }
 
@@ -314,7 +317,7 @@ const ReporterList = () => {
 
   const baseProps = {
     intl,
-    history,
+    navigate,
     location,
     isLoading: isLoading || isLoadingRevoke,
     items,
@@ -337,8 +340,8 @@ const ReporterList = () => {
 
 ReporterListWithProps.propTypes = {
   intl: PropTypeOf.intl.isRequired,
-  history: PropTypeOf.history.isRequired,
-  location: PropTypeOf.location.isRequired,
+  navigate: PropTypes.func.isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   table: PropTypes.instanceOf(Immutable.Record).isRequired,
   items: PropTypes.instanceOf(Immutable.Record).isRequired,
   sortCol: PropTypes.string.isRequired,

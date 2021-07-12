@@ -25,18 +25,15 @@ const enhance = compose(
   injectIntl,
   withHandlers({
     onBackClick:
-      ({ history }) =>
+      ({ navigate }) =>
       () => {
-        history.goBack()
+        navigate(-1)
       },
     onPathClick:
-      ({ history, match }) =>
+      ({ navigate, params }) =>
       path => {
-        history.push({
-          pathname: path.replace(
-            /:([A-Za-z]+)/g,
-            ($, key) => match.params[key]
-          ),
+        navigate({
+          pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => params[key]),
         })
       },
   })
@@ -44,22 +41,14 @@ const enhance = compose(
 
 export const NotificationDetailBackBar = ({
   intl,
-  history,
   location,
-  match,
   title,
   // --- injected by recompose ---
   onBackClick,
   onPathClick,
   disabled = true,
 }) => (
-  <DetailBackBar
-    history={history}
-    location={location}
-    match={match}
-    onBackClick={onBackClick}
-    title={title}
-  >
+  <DetailBackBar onBackClick={onBackClick} title={title}>
     {[
       {
         label: intl.formatMessage(messages.view),
@@ -90,7 +79,7 @@ export const NotificationDetailBackBar = ({
             data-path={path}
             color="primary"
             variant="contained"
-            inverse={match.path !== path}
+            inverse={location.pathname !== path}
             disabled={disabled}
           >
             {label}
@@ -103,8 +92,8 @@ export const NotificationDetailBackBar = ({
 NotificationDetailBackBar.propTypes = {
   intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // match: PropTypes.oneOfType([PropTypes.object]).isRequired,
   onBackClick: PropTypes.func.isRequired,
   onPathClick: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,

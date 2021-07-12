@@ -89,7 +89,7 @@ const setFiltersForLast30Days = searchParams => {
 }
 
 const enhance = compose(
-  mapProps(({ history, location, ...restProps }) => ({
+  mapProps(({ navigate, location, ...restProps }) => ({
     ...restProps,
     onChange: ({ target: { value } }) => {
       const searchParams = new URLSearchParams()
@@ -109,9 +109,9 @@ const enhance = compose(
         setFiltersForLast30Days(searchParams)
       }
 
-      history.push({
+      navigate({
         pathname: value,
-        search: searchParams.toString(),
+        search: `?${searchParams.toString()}`,
       })
     },
     value: location.pathname,

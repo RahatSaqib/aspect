@@ -186,13 +186,13 @@ export const requirePermissions = outerProps => WrappedComponent =>
       extraPermissions: PropTypes.arrayOf(PropTypes.string),
     }
 
-    static contextTypes = {
-      store: PropTypes.shape({
-        subscribe: PropTypes.func.isRequired,
-        dispatch: PropTypes.func.isRequired,
-        getState: PropTypes.func.isRequired,
-      }).isRequired,
-    }
+    // static contextTypes = {
+    //   store: PropTypes.shape({
+    //     subscribe: PropTypes.func.isRequired,
+    //     dispatch: PropTypes.func.isRequired,
+    //     getState: PropTypes.func.isRequired,
+    //   }).isRequired,
+    // }
 
     static defaultProps = {
       overriddenPermissions: [],
@@ -200,6 +200,16 @@ export const requirePermissions = outerProps => WrappedComponent =>
     }
 
     static contextType = ReactReduxContext
+
+    // static getDerivedStateFromProps(props, state) {
+    //   // if (props.saveLabelFetchError !== state.prevSaveLabelFetchError) {
+    //   //   this.toggleAlertFailure(props.saveLabelFetchError)
+    //   //   return {
+    //   //     prevSaveLabelFetchError: props.saveLabelFetchError
+    //   //   }
+    //   // }
+    //   return null
+    // }
 
     unsubscribe = noop // eslint-disable-line react/sort-comp
 

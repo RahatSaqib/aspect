@@ -32,8 +32,11 @@ const DayBlock = ({ consts, dayModifier, onClick }) => {
   )
 }
 
+DayBlock.defaultProps = {
+  dayModifier: null,
+}
 DayBlock.propTypes = {
-  dayModifier: PropTypes.string.isRequired,
+  dayModifier: PropTypes.string,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
@@ -117,11 +120,13 @@ DailyStatusClinicDay.defaultProps = {
   maintenanceStatusManuallySetBy: {},
   totalResults: 0,
   daysInSameStatus: 1,
+  maintenanceStatusI18nKey: '',
+  maintenanceStatusExternalId: '',
 }
 
 DailyStatusClinicDay.propTypes = {
   isWeekend: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
-  maintenanceStatusI18nKey: PropTypes.string.isRequired,
+  maintenanceStatusI18nKey: PropTypes.string,
   maintenanceStatusName: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool,
@@ -131,9 +136,12 @@ DailyStatusClinicDay.propTypes = {
     name: PropTypes.string,
     updatedDate: PropTypes.string,
   }),
-  maintenanceStatusExternalId: PropTypes.string.isRequired,
+  maintenanceStatusExternalId: PropTypes.string,
   daysInSameStatus: PropTypes.number,
-  statuses: PropTypes.arrayOf(PropTypes.object).isRequired,
+  statuses: PropTypes.oneOfType(
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.object)
+  ).isRequired,
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,

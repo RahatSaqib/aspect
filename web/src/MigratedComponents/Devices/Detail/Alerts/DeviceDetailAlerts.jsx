@@ -4,6 +4,7 @@ import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router-dom'
 
 import TaskList from '../../../../task/list/TaskList'
 
@@ -13,12 +14,8 @@ const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 
-export const DeviceDetailAlerts = ({
-  history,
-  location,
-  match: { params: { deviceId = false } = false },
-  device,
-}) => {
+export const DeviceDetailAlerts = ({ navigate, location, device }) => {
+  const { deviceId = false } = useParams()
   const intl = useIntl()
   const deviceName = device.get('name')
   return (
@@ -27,7 +24,7 @@ export const DeviceDetailAlerts = ({
       <section className={cssClasses('Section', 'Section--first')}>
         <TaskList
           intl={intl}
-          history={history}
+          navigate={navigate}
           location={location}
           filterOptions={{
             deviceId,
@@ -39,16 +36,8 @@ export const DeviceDetailAlerts = ({
 }
 
 DeviceDetailAlerts.propTypes = {
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.shape({
-        deviceId: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
-      }),
-    ]),
-  }).isRequired,
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

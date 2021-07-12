@@ -3,7 +3,7 @@ import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -150,7 +150,7 @@ const getColumns = intl => [
 
 export const DeviceListWithProps = ({
   intl,
-  history,
+  navigate,
   location,
   isLoading,
   items,
@@ -170,7 +170,7 @@ export const DeviceListWithProps = ({
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -182,12 +182,12 @@ export const DeviceListWithProps = ({
         visible={!items.currentIdList.isEmpty()}
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable className={cssClasses('DeviceDataTable')}>
           <DeviceDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -213,7 +213,7 @@ export const DeviceListWithProps = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
@@ -229,7 +229,7 @@ export const DeviceListWithProps = ({
 export const DeviceList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
-  const history = useHistory()
+  const navigate = useNavigate()
   const {
     jwt: { permissions: userPermissions },
     displayPreferences,
@@ -252,7 +252,7 @@ export const DeviceList = () => {
     currentTarget: {
       dataset: { deviceId },
     },
-  }) => history.push(`/browse/device/${deviceId}`)
+  }) => navigate(`/browse/device/${deviceId}`)
 
   const onAlertClick = event => {
     event.stopPropagation()
@@ -261,7 +261,7 @@ export const DeviceList = () => {
         dataset: { deviceId },
       },
     } = event
-    history.push(`/browse/device/${deviceId}/alerts`)
+    navigate(`/browse/device/${deviceId}/alerts`)
   }
 
   // >>>>>> Queries <<<<<<
@@ -293,10 +293,13 @@ export const DeviceList = () => {
       filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
 
     const sortPage = makeSortPageSelector({
@@ -334,7 +337,7 @@ export const DeviceList = () => {
 
   const baseProps = {
     intl,
-    history,
+    navigate,
     location,
     isLoading,
     items,

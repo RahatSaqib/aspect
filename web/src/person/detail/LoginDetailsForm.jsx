@@ -169,7 +169,7 @@ export const LoginDetailsForm = ({
         value={values.username}
         onChange={onUsernameChange}
         disabled={loading}
-        error={hasError(username)}
+        error={!!hasError(username)}
         helperText={hasError(username)}
         inputProps={{ maxLength: 255 }}
         margin="normal"
@@ -186,7 +186,6 @@ export const LoginDetailsForm = ({
         disabled={loading}
         meta={newPassword}
         textFieldProps={{
-          floatingLabelText: intl.formatMessage(messages.newPassword),
           type: 'password',
           name: 'newPassword',
           maxLength: 100,
@@ -194,7 +193,7 @@ export const LoginDetailsForm = ({
           fullWidth: true,
           label: intl.formatMessage(messages.newPassword),
           helperText: hasError(newPassword),
-          error: hasError(newPassword),
+          error: !!hasError(newPassword),
         }}
         popOverProps={{}}
       />
@@ -208,7 +207,7 @@ export const LoginDetailsForm = ({
         value={values.confirmNewPassword}
         onChange={onConfirmNewPasswordChange}
         disabled={loading}
-        error={hasError(confirmNewPassword)}
+        error={!!hasError(confirmNewPassword)}
         helperText={hasError(confirmNewPassword)}
         inputProps={{ maxLength: 100 }}
       />
@@ -263,7 +262,7 @@ export const LoginDetailsForm = ({
         onChange={onCurrentPasswordChange}
         onKeyPress={onCurrentPasswordKeyPress}
         disabled={loading}
-        error={hasError(currentPassword)}
+        error={!!hasError(currentPassword)}
         helperText={hasError(currentPassword)}
         inputProps={{ maxLength: 100 }}
         margin="normal"

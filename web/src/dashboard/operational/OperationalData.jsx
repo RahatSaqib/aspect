@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-import { useHistory } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
@@ -31,10 +31,8 @@ const messages = defineMessages({
 
 export const OperationalData = () => {
   const { formatMessage } = useIntl()
-  const {
-    location: { pathname },
-    push,
-  } = useHistory()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   const tabsConfig = {
     dashboard: {
@@ -48,15 +46,7 @@ export const OperationalData = () => {
   }
 
   const { path } = find(tabsConfig, { path: pathname }) || false
-  const [currentTab, setCurrentTab] = useState(
-    path || tabsConfig.dashboard.path
-  )
-
-  useEffect(() => {
-    if (currentTab) {
-      push(currentTab)
-    }
-  }, [currentTab])
+  const [currentTab] = useState(path || tabsConfig.dashboard.path)
 
   return (
     <div className={cssClasses('Container')}>
@@ -66,7 +56,7 @@ export const OperationalData = () => {
           indicatorColor="primary"
           textColor="inherit"
           value={currentTab}
-          onChange={(e, v) => setCurrentTab(v)}
+          onChange={(e, v) => navigate(v)}
           TabIndicatorProps={{ style: { height: '0px' } }}
         >
           <Tab

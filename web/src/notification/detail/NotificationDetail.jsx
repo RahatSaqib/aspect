@@ -2,7 +2,7 @@ import React from 'react'
 import { compose, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import NotificationDetailView from './view/NotificationDetailView'
 import NotificationDetailHistory from './history/NotificationDetailHistory'
 
@@ -30,24 +30,16 @@ const enhance = compose(
   })
 )
 
-export const NotificationDetail = ({
-  intl,
-  match,
-  // --- injected by recompose ---
-}) => (
+export const NotificationDetail = props => (
   <div>
-    <Switch>
-      <Route
-        exact
-        path={match.path}
-        render={props => <NotificationDetailView intl={intl} {...props} />}
-      />
-      <Route
-        exact
-        path={`${match.path}/history`}
-        render={props => <NotificationDetailHistory intl={intl} {...props} />}
-      />
-    </Switch>
+    <Routes>
+      <Route exact path=".">
+        <NotificationDetailView {...props} />
+      </Route>
+      <Route exact path="history">
+        <NotificationDetailHistory {...props} />
+      </Route>
+    </Routes>
   </div>
 )
 

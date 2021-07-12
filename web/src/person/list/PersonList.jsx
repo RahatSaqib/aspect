@@ -157,19 +157,19 @@ const enhance = compose(
       },
 
     onRowClick:
-      ({ history }) =>
+      ({ navigate }) =>
       ({
         currentTarget: {
           dataset: { personId },
         },
       }) =>
-        history.push(`/browse/person/${personId}`),
+        navigate(`/browse/person/${personId}`),
 
     showNewContactPage:
-      ({ history }) =>
+      ({ navigate }) =>
       event => {
         event.stopPropagation()
-        history.push('/browse/person/add')
+        navigate('/browse/person/add')
       },
   }),
   lifecycle({
@@ -181,10 +181,13 @@ const enhance = compose(
         filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -209,7 +212,7 @@ const enhance = compose(
 
 export const PersonList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -232,7 +235,7 @@ export const PersonList = ({
       <Helmet title={intl.formatMessage(messages.contactsTitle)} />
       <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         intl={intl}
         config={reducedFilters}
@@ -250,7 +253,11 @@ export const PersonList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList
+            navigate={navigate}
+            location={location}
+            intl={intl}
+          />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}
@@ -262,7 +269,7 @@ export const PersonList = ({
         {!items.currentIdList.isEmpty() && (
           <PersonDataTable className={cssClasses('PersonDataTable')}>
             <PersonDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -311,7 +318,7 @@ export const PersonList = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}

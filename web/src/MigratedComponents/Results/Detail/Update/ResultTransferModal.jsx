@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import { defineMessages, injectIntl } from 'react-intl'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import AutoComplete from '../../../../components/shared/AutoComplete'
@@ -36,7 +36,7 @@ const ResultTransferModal = ({
   const [isProcessing, setIsProcessing] = useState(false)
   const [transferError, setTransferError] = useState(null)
   const [isSuccessAlert, setSuccessAlert] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   useQuery(
     [SITE_ALL.KEY],
@@ -137,7 +137,7 @@ const ResultTransferModal = ({
             color="primary"
             variant="contained"
             onClick={() => {
-              history.push('/browse/result')
+              navigate('/browse/result')
             }}
           >
             {formatMessage(messages.successOk)}
@@ -171,7 +171,7 @@ const ResultTransferModal = ({
     patientId,
     sourceSite?.name,
     selectedSite?.text,
-    history,
+    navigate,
     onRequestClose,
   ])
 

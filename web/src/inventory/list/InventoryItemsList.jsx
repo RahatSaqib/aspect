@@ -5,7 +5,6 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useHistory, useLocation } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { useQuery, useMutation, queryCache } from 'react-query'
 import { Helmet } from 'react-helmet'
@@ -106,7 +105,7 @@ const AddNewButton = requirePermissions({
 
 export const InventoryItemsListWithProps = ({
   intl,
-  history,
+  navigate,
   location,
   reducedFilters,
   dispatch,
@@ -131,7 +130,7 @@ export const InventoryItemsListWithProps = ({
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         intl={intl}
         config={reducedFilters}
@@ -169,12 +168,16 @@ export const InventoryItemsListWithProps = ({
           reportName="Supplies"
         />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList
+            navigate={navigate}
+            location={location}
+            intl={intl}
+          />
         )}
         {!items.currentIdList.isEmpty() && (
           <InventoryDataTable className={cssClasses('InventoryDataTable')}>
             <InventoryDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -228,7 +231,7 @@ export const InventoryItemsListWithProps = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}
@@ -304,11 +307,11 @@ export const InventoryItemsListWithProps = ({
   )
 }
 
-export const InventoryItemsList = () => {
+export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
-  const history = useHistory()
-  const location = useLocation()
+  // const navigate = useNavigate()
+  // const location = useLocation()
   const intl = useIntl()
   const {
     jwt: { permissions: userPermissions },
@@ -446,18 +449,21 @@ export const InventoryItemsList = () => {
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
-  }, [location, history, dispatch])
+  }, [location, navigate, dispatch])
 
   if (isError) throw new Error(error)
 
   const props = {
     intl,
-    history,
+    navigate,
     location,
     reducedFilters,
     dispatch,

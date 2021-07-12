@@ -1,5 +1,5 @@
 import { createTheme } from '@material-ui/core/styles'
-import { orange, lightGreen, cyan } from '@material-ui/core/colors'
+import { grey, orange, lightGreen, cyan } from '@material-ui/core/colors'
 import { customPropertiesVariables } from '../../cfg/variables'
 
 const theme = createTheme({
@@ -62,6 +62,22 @@ const theme = createTheme({
         root: {
           fontSize: '.875rem',
           textTransform: 'inherit',
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          minWidth: 256,
+        },
+        select: {
+          '&:focus': {
+            background: 'none',
+          },
+        },
+        icon: {
+          color: grey[300],
+          fontSize: 24,
         },
       },
     },

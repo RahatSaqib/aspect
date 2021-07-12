@@ -57,7 +57,7 @@ const enhance = compose(
         fetchLicense(hasToAcceptLicenseId)
       },
     onAcceptClick:
-      ({ history, location, acceptLicenseStart, hasToAcceptLicenseId }) =>
+      ({ navigate, location, acceptLicenseStart, hasToAcceptLicenseId }) =>
       () => {
         acceptLicenseStart(hasToAcceptLicenseId).then(() => {
           const referrer = flowRight(
@@ -67,7 +67,7 @@ const enhance = compose(
                 pathname: '/',
               })
           )(location)
-          history.push(referrer)
+          navigate(referrer)
         })
       },
     onDoNotAcceptClick:

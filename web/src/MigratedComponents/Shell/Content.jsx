@@ -16,7 +16,11 @@ ShellContent.defaultProps = {
 }
 
 ShellContent.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+    PropTypes.array,
+  ]),
 }
 
 export default ShellContent

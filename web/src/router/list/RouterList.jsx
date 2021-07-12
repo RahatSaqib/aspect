@@ -154,13 +154,13 @@ const enhance = compose(
         }
       },
     onRowClick:
-      ({ history }) =>
+      ({ navigate }) =>
       ({
         currentTarget: {
           dataset: { routerId },
         },
       }) =>
-        history.push(`/browse/router/${routerId}`),
+        navigate(`/browse/router/${routerId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -172,10 +172,13 @@ const enhance = compose(
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -200,7 +203,7 @@ const enhance = compose(
 
 export const RouterList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -217,7 +220,7 @@ export const RouterList = ({
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -232,12 +235,12 @@ export const RouterList = ({
       />
 
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
         <RouterDataTable className={cssClasses('RouterDataTable')}>
           <RouterDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -281,7 +284,7 @@ export const RouterList = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           className={cssClasses('BrowseTablePaginator')}

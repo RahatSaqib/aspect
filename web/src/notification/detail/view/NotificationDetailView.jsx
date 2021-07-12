@@ -44,18 +44,18 @@ const now = new Date()
 
 export const NotificationDetailView = ({
   intl,
-  history,
+  navigate,
   location,
-  match,
+  // match,
   // --- injected by recompose ---
 }) => (
   <div>
     <Helmet title="TB MTB+ Rif+ in Western Region" />
     <NotificationDetailBackBar
       intl={intl}
-      history={history}
+      navigate={navigate}
       location={location}
-      match={match}
+      // match={match}
       title="TB MTB+ Rif+ in Western Region"
     />
     <section className={cssClasses('Section', 'Section--first')}>

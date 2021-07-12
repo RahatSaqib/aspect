@@ -192,8 +192,7 @@
 
 .statuses__row {
   display: flex;
-  height: 120px;
-  margin-bottom: 20px;
+  min-height: 120px;
 }
 
 .statuses__container {
@@ -201,7 +200,7 @@
 }
 
 .statuses__status {
-  width: 70%;
+  width: 80%;
 }
 
 .statuses__statusroot {

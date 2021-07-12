@@ -79,7 +79,10 @@ DailyStatusClinic.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   deviceId: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
-  statuses: PropTypes.arrayOf(PropTypes.object).isRequired,
+  statuses: PropTypes.oneOfType(
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.object)
+  ).isRequired,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),

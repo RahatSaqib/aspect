@@ -6,7 +6,12 @@ const enhance = compose(
   pure,
   withHandlers({
     onSortColumn:
-      ({ history, location, sortColumnKey: sortCol, sortColumnDir: sortDir }) =>
+      ({
+        navigate,
+        location,
+        sortColumnKey: sortCol,
+        sortColumnDir: sortDir,
+      }) =>
       nextSortCol => {
         const searchParams = new URLSearchParams(location.search)
 
@@ -17,10 +22,13 @@ const enhance = compose(
         }
         searchParams.set('pageAt', 0)
 
-        history.replace({
-          ...location,
-          search: searchParams.toString(),
-        })
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       },
   })
 )

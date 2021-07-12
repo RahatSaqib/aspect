@@ -1,20 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
 
 const NotificationsContextualMenu = ({ item: { id } }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
-  const getItemActions = history => [
+  const getItemActions = navigate => [
     {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
-      action: () => history.push(`/browse/notification/${id}`),
+      action: () => navigate(`/browse/notification/${id}`),
       disabled: true,
     },
     {
@@ -32,7 +32,7 @@ const NotificationsContextualMenu = ({ item: { id } }) => {
     {
       icon: 'FaFileAlt',
       text: formatMessage(messages.viewLogTitle),
-      action: () => history.push(`/browse/notification/${id}/history`),
+      action: () => navigate(`/browse/notification/${id}/history`),
       separator: true,
     },
     {
@@ -42,7 +42,7 @@ const NotificationsContextualMenu = ({ item: { id } }) => {
       disabled: true,
     },
   ]
-  return <AspectVertMenu actions={getItemActions(history)} />
+  return <AspectVertMenu actions={getItemActions(navigate)} />
 }
 
 NotificationsContextualMenu.propTypes = {

@@ -3,7 +3,6 @@ import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { defineMessages } from 'react-intl'
 
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -31,9 +30,9 @@ const enhance = compose(
     state => ({
       sitesSelectList: state.site.selectList,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchSitesForSelectList,
-    })
+    }
   ),
   lifecycle({
     componentDidMount() {
@@ -42,7 +41,7 @@ const enhance = compose(
   }),
   withHandlers({
     onChange:
-      ({ history, location }) =>
+      ({ navigate, location }) =>
       ({ target: { value } }) => {
         const searchParams = new URLSearchParams(location.search)
         const filtersParams = mergeToFiltersParams(
@@ -50,10 +49,13 @@ const enhance = compose(
           new URLSearchParams(searchParams.get('filters') || '')
         )
         searchParams.set('filters', filtersParams)
-        history.replace({
-          ...location,
-          search: searchParams.toString(),
-        })
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       },
   }),
   withProps(({ location, sitesSelectList, theme }) => {

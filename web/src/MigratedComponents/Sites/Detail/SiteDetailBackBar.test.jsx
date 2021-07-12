@@ -6,7 +6,7 @@ import AspectButton from '../../../components/shared/AspectButton'
 describe('SiteDetailBackBar component', () => {
   const props = {
     formatMessage: message => message.defaultMessage,
-    history: {},
+    navigate: jest.fn(),
     location: {},
     match: {
       params: {

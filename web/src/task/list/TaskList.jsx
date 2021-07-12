@@ -14,7 +14,6 @@ import {
   defaultProps,
 } from 'recompose'
 import { injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import {
@@ -88,9 +87,9 @@ const enhance = compose(
       table: state.task.table,
       countByAlert: state.task.countByAlert,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchTasks,
-    })
+    }
   ),
   withHandlers({
     onInitialLoad:
@@ -118,7 +117,7 @@ const enhance = compose(
       },
 
     onAlertTypeClick:
-      ({ history, location, filterOptions }) =>
+      ({ navigate, location, filterOptions }) =>
       ({
         currentTarget: {
           dataset: { alertType },
@@ -134,14 +133,17 @@ const enhance = compose(
           mergeFilterOptions(filtersParams, filterOptions)
         )
 
-        history.replace({
-          ...location,
-          search: searchParams.toString(),
-        })
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       },
 
     onIssueCategoryChange:
-      ({ history, location, filterOptions }) =>
+      ({ navigate, location, filterOptions }) =>
       ({ target: { value: issueCategory } }) => {
         const searchParams = new URLSearchParams(location.search)
         const filtersParams = new URLSearchParams(
@@ -153,37 +155,43 @@ const enhance = compose(
           mergeFilterOptions(filtersParams, filterOptions)
         )
 
-        history.replace({
-          ...location,
-          search: searchParams.toString(),
-        })
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       },
 
     onRowClick:
-      ({ history }) =>
+      ({ navigate }) =>
       ({
         currentTarget: {
           dataset: { taskId },
         },
       }) =>
-        history.push(`/task-list/${taskId}`),
+        navigate(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {
-      const { location, history, filterOptions } = this.props
+      const { location, navigate, filterOptions } = this.props
       const { sanitized, value: searchParams } = searchSanitizer(location)
       const { sanitized: filtersSanitized, value: filtersParams } =
         filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized || filterOptions) {
+
+      if (sanitized || filtersSanitized) {
         searchParams.set(
           'filters',
           mergeFilterOptions(filtersParams, filterOptions)
         )
-
-        history.replace({
-          ...location,
-          search: searchParams.toString(),
-        })
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
     },
 
@@ -211,7 +219,7 @@ const enhance = compose(
 
 export const TaskList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -266,12 +274,12 @@ export const TaskList = ({
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
         <TaskDataTable className={cssClasses('TaskDataTable')}>
           <TaskDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -327,7 +335,7 @@ export const TaskList = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}

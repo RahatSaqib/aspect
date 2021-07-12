@@ -23,7 +23,7 @@ describe('SiteDetail component', () => {
       path: '/browse/site/:siteId/alerts',
       url: '/browe/site',
     },
-    history: {},
+    navigate: jest.fn(),
     location: {},
     editable: true,
     site: new Site(),

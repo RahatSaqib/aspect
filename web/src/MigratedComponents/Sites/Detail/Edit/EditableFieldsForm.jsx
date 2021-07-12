@@ -29,11 +29,11 @@ const renderTextField = ({ input, meta, ...restProps }) => (
     {...input}
     margin="normal"
     fullWidth
-    errorStyle={{
-      float: 'left',
-      whiteSpace: 'nowrap',
-      textOverflow: 'visible',
-    }}
+    // errorStyle={{
+    //   float: 'left',
+    //   whiteSpace: 'nowrap',
+    //   textOverflow: 'visible',
+    // }}
     error={!!(meta.touched && meta.error)}
     helperText={meta.touched && meta.error}
   />
@@ -76,7 +76,7 @@ const enhance = compose(
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
-    onChangeSiteTag: PropTypes.func.isRequired,
+    // onChangeSiteTag: PropTypes.func.isRequired,
     onSetBasedAddressClick: PropTypes.func.isRequired,
   })
 )

@@ -3,9 +3,8 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 
 // Material-UI
@@ -115,30 +114,22 @@ const messages = defineMessages({
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        routerId: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }),
+  WrapperComponent => props => {
+    const { routerId } = useParams()
+    return <WrapperComponent {...props} routerId={routerId} />
+  },
   connect(
-    (state, props) => {
-      const router = state.router.items.byId.get(props.match.params.routerId)
-
+    (state, { routerId }) => {
+      const router = state.router.items.byId.get(routerId)
       return {
         editable: isEditable(state.user, 'device'),
         router,
       }
     },
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchSingleRouter,
-          updateSingleRouter,
-        },
-        dispatch
-      )
+    {
+      fetchSingleRouter,
+      updateSingleRouter,
+    }
   ),
   setPropTypes({
     editable: PropTypes.bool.isRequired,
@@ -186,7 +177,7 @@ export class RouterDetail extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.match.params.routerId !== prevProps.match.params.routerId) {
+    if (this.props.routerId !== prevProps.routerId) {
       this.handleFetchRouter()
     }
   }
@@ -204,7 +195,7 @@ export class RouterDetail extends PureComponent {
   }
 
   handleFetchRouter = () => {
-    this.props.fetchSingleRouter(this.props.match.params.routerId).then(() => {
+    this.props.fetchSingleRouter(this.props.routerId).then(() => {
       const { router } = this.props
 
       this.handleFormChange({
@@ -501,7 +492,7 @@ export class RouterDetail extends PureComponent {
   renderDemoButton() {
     return (
       <DeviceDemoLink
-        to={`/demo/device/${this.props.match.params.routerId}`}
+        to={`/demo/device/${this.props.routerId}`}
         className={styles.DemoLink}
         target="_blank"
       >

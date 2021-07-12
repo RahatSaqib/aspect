@@ -42,7 +42,7 @@ const Summary = ({ title, description, to, action, cols }) => (
 )
 
 Summary.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   description: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.instanceOf(Element),
@@ -51,12 +51,12 @@ Summary.propTypes = {
       PropTypes.shape({
         description: PropTypes.string,
         to: PropTypes.string,
-        action: PropTypes.string,
+        action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       })
     ),
   ]).isRequired,
   to: PropTypes.string,
-  action: PropTypes.string,
+  action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   cols: PropTypes.string,
 }
 

@@ -35,6 +35,7 @@ const AspectDialog = ({
             aria-label="close"
             className={cssClasses('button-close')}
             onClick={onRequestClose}
+            size="medium"
           >
             <IconProvider icon="MdClose" />
           </IconButton>

@@ -19,7 +19,7 @@ const CasesShell = ({ children }) => {
 }
 
 CasesShell.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
 }
 
 export default CasesShell

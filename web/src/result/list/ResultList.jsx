@@ -6,7 +6,7 @@ import partial from 'lodash/partial'
 import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import fromPairs from 'lodash/fromPairs'
@@ -106,16 +106,16 @@ const AddNewButton = requirePermissions({
 })(AspectButton)
 
 // eslint-disable-next-line no-unused-vars
-const onAddNewButtonClick = history => () => history.push('/browse/result/add')
+const onAddNewButtonClick = navigate => () => navigate('/browse/result/add')
 
 const onRowClick =
-  history =>
+  navigate =>
   ({
     currentTarget: {
       dataset: { resultId },
     },
   }) =>
-    history.push(`/browse/result/${resultId}`)
+    navigate(`/browse/result/${resultId}`)
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -219,7 +219,8 @@ const getBaseColumns = intl => {
 }
 export const ResultListWithProps = ({
   intl,
-  history,
+  // history,
+  navigate,
   location,
   isLoading,
   items,
@@ -237,7 +238,7 @@ export const ResultListWithProps = ({
     <Helmet title={intl.formatMessage(messages.resultsTitle)} />
     <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -249,7 +250,7 @@ export const ResultListWithProps = ({
         color="primary"
         variant="contained"
         browseButton
-        onClick={onAddNewButtonClick(history)}
+        onClick={onAddNewButtonClick(navigate)}
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
@@ -264,12 +265,12 @@ export const ResultListWithProps = ({
         reportName="Results"
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
         <ResultDataTable className={cssClasses('ResultDataTable')}>
           <ResultDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -284,7 +285,7 @@ export const ResultListWithProps = ({
                   intl={intl}
                   extraColumns={table.extraColumns}
                   result={result}
-                  onClick={onRowClick(history)}
+                  onClick={onRowClick(navigate)}
                   data-result-id={result.get('id')}
                   messages={messages}
                 />
@@ -294,7 +295,7 @@ export const ResultListWithProps = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           timedMessageUsed={sortCol === 'endedOn'}
@@ -312,7 +313,7 @@ export const ResultListWithProps = ({
 const ResultList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
@@ -361,10 +362,13 @@ const ResultList = () => {
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
 
     const sortPage = makeSortPageSelector({
@@ -423,7 +427,8 @@ const ResultList = () => {
 
   const baseProps = {
     intl,
-    history,
+    // history,
+    navigate,
     location,
     isLoading,
     items,

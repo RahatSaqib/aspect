@@ -2,13 +2,12 @@ import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
 import get from 'lodash/get'
 import classnames from 'classnames/bind'
-import React from 'react'
-import { compose, withStateHandlers } from 'recompose'
-import { bindActionCreators } from 'redux'
+import React, { useState } from 'react'
+import { compose } from 'recompose'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { defineMessages, injectIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import TextField from '@material-ui/core/TextField'
@@ -53,48 +52,60 @@ const enhance = compose(
     state => ({
       loggedOutReason: state.user.loggedOutReason,
     }),
-    bindActionCreators.bind(null, {
-      loginStart,
-    })
-  ),
-  withStateHandlers(
     {
+      loginStart,
+    }
+  ),
+  WrappedComponent => props => {
+    const navigate = useNavigate()
+    const location = useLocation()
+    const [state, setState] = useState({
       values: {
         user: '',
         password: '',
       },
-    },
-    {
-      onSubmit:
-        (state, { history, location, loginStart, loggedOutReason }) =>
-        data => {
-          loginStart(data).then(() => {
-            const referrer = flowRight(
-              x => omit(x, 'search'),
-              x =>
-                get(x, 'state.referrer', {
-                  pathname: '/',
-                })
-            )(location)
-            if (loggedOutReason === reasonTypes.idle) {
-              history.replace(referrer)
-            } else if (loggedOutReason === reasonTypes.userRequested) {
-              history.replace('/')
-            } else {
-              history.push(referrer)
-            }
-          })
-        },
+    })
 
-      onChange: () => nextValues => ({ values: nextValues }),
-
-      onUsernameMount: () => ref => {
-        if (ref) {
-          ref.focus()
+    const onSubmit = data => {
+      const { loginStart, loggedOutReason } = props
+      loginStart(data).then(() => {
+        const referrer = flowRight(
+          x => omit(x, 'search'),
+          x =>
+            get(x, 'state.referrer', {
+              pathname: '/',
+            })
+        )(location)
+        if (loggedOutReason === reasonTypes.idle) {
+          navigate(referrer, { replace: true })
+        } else if (loggedOutReason === reasonTypes.userRequested) {
+          navigate('/', { replace: true })
+        } else {
+          navigate(referrer)
         }
-      },
+      })
     }
-  ),
+
+    const onChange = nextValues => {
+      setState({ values: nextValues })
+    }
+
+    const onUsernameMount = ref => {
+      if (ref) {
+        ref.focus()
+      }
+    }
+
+    return (
+      <WrappedComponent
+        {...props}
+        {...state}
+        onSubmit={onSubmit}
+        onChange={onChange}
+        onUsernameMount={onUsernameMount}
+      />
+    )
+  },
   recomposeForm({
     fields: [
       {
@@ -193,7 +204,7 @@ export const Login = ({
               >
                 {intl.formatMessage(messages.login)}
               </Button>
-              <Link className={cssClasses('Right_Align')} to="reset-password">
+              <Link className={cssClasses('Right_Align')} to="/reset-password">
                 {intl.formatMessage(messages.resetPasswordLink)}
               </Link>
             </div>

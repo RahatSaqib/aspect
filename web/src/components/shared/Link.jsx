@@ -2,23 +2,22 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import MUILink from '@material-ui/core/Link'
-import { useHistory, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
 
 const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const onLinkClick = event => {
     event.preventDefault()
     const { currentTarget } = event
     const { pathname } = currentTarget
-    history.push(pathname)
+    navigate(pathname)
   }
 
   return (
     <MUILink
-      history={history}
-      location={location}
+      component={RouterLink}
       disabled={disabled}
       {...restProps}
       onClick={onClick || onLinkClick}
@@ -27,6 +26,7 @@ const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
           location.pathname
         ),
       })}
+      to={restProps.href}
     >
       <abbr>{label}</abbr>
     </MUILink>

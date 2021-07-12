@@ -118,19 +118,27 @@ const enhance = compose(
   ),
   withHandlers({
     onInitialLoad:
-      ({ match, location, fetchResults, sortCol, sortDir, pageAt, pageSize }) =>
+      ({
+        device,
+        location,
+        fetchResults,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
       () => {
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
 
         if (!sanitized) {
-          filtersParams.set('deviceId', match.params.deviceId)
+          filtersParams.set('deviceId', device.get('id'))
           fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
         }
       },
     onExportClick:
       ({
-        match,
+        device,
         location,
         exportResults,
         sortCol,
@@ -142,7 +150,7 @@ const enhance = compose(
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
         if (!sanitized) {
-          filtersParams.set('deviceId', match.params.deviceId)
+          filtersParams.set('deviceId', device.get('id'))
           exportResults(
             filtersParams,
             'xlsx',
@@ -156,24 +164,24 @@ const enhance = compose(
         }
       },
     onExportDeviceLogsClick:
-      ({ match, location, exportDeviceLogs }) =>
+      ({ device, location, exportDeviceLogs }) =>
       () => {
         const { sanitized, value: filtersParams } =
           filtersFromLocation(location)
         if (!sanitized) {
-          filtersParams.set('deviceId', match.params.deviceId)
+          filtersParams.set('deviceId', device.get('id'))
           exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
         }
       },
     onRowClick:
-      ({ history }) =>
+      ({ navigate }) =>
       ({
         currentTarget: {
           dataset: { resultId },
         },
         // TODO: correct path?
       }) =>
-        history.push(`/browse/result/${resultId}`),
+        navigate(`/browse/result/${resultId}`),
     onToggleDeviceApproval:
       ({ device, updateSingleDevice }) =>
       () =>
@@ -216,10 +224,13 @@ const enhance = compose(
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
     },
 
@@ -326,8 +337,8 @@ const PerformanceBarChart = ({
 )
 
 PerformanceBarChart.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  series: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  series: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   color: PropTypes.string.isRequired,
   avgValue: PropTypes.number.isRequired,
   maxValue: PropTypes.number.isRequired,
@@ -488,9 +499,9 @@ PerformanceReport.propTypes = {
 }
 
 const DeviceDetailProfile = ({
-  history,
+  navigate,
   location,
-  match,
+  // m-tch,
   device,
   disabled,
   devicePerformance,
@@ -640,7 +651,6 @@ const DeviceDetailProfile = ({
                 </Button>
               }
             />
-
             <Summary
               title={intl.formatMessage(messages.calibration)}
               description={
@@ -822,14 +832,14 @@ const DeviceDetailProfile = ({
 
       <PerformanceReport
         performanceReport={devicePerformance}
-        match={match}
+        // ma-tch={m-atch}
         location={location}
         culture={culture}
       />
 
       <AuthenticatedResults
-        match={match}
-        history={history}
+        // ma-tch={m-atch}
+        navigate={navigate}
         location={location}
         sortDir={sortDir}
         sortCol={sortCol}
@@ -848,9 +858,9 @@ const DeviceDetailProfile = ({
 }
 
 DeviceDetailProfile.propTypes = {
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  match: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // ma-tch: PropTypes.oneOfType([PropTypes.object]).isRequired,
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
@@ -869,7 +879,7 @@ DeviceDetailProfile.propTypes = {
   onWarrantySubmit: PropTypes.func.isRequired,
   table: PropTypes.oneOfType([PropTypes.object]).isRequired,
   items: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  onRowClick: PropTypes.string.isRequired,
+  onRowClick: PropTypes.func.isRequired,
   onExportClick: PropTypes.func.isRequired,
   onExportDeviceLogsClick: PropTypes.func.isRequired,
 }

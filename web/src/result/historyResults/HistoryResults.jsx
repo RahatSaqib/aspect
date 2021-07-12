@@ -1,4 +1,5 @@
 import map from 'lodash/map'
+import omit from 'lodash/omit'
 import classnames from 'classnames/bind'
 import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
@@ -63,7 +64,7 @@ export const Results = ({
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
-              columns={columns}
+              columns={columns.map(column => omit(column, ['formatter']))}
             />
             <TableBody>
               {items.currentIdList
@@ -76,7 +77,10 @@ export const Results = ({
                   >
                     {columns &&
                       map(columns, elem => (
-                        <TableCell hiddenOn={elem.hiddenOn || 'sm'}>
+                        <TableCell
+                          key={`${result.get('id')}-${elem.key}`}
+                          hiddenOn={elem.hiddenOn || 'sm'}
+                        >
                           {elem.tooltip && result.get(elem.key) && (
                             <Tooltip
                               title={result.get(elem.tooltip)}

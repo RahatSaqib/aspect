@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { safeDownloadFile } from '../../shared/utils/files'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import REPORT_LIST from '../../MigratedComponents/QueryFetch/Report/index'
@@ -52,7 +52,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const ReportIndex = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const intl = useIntl()
   const {
@@ -90,14 +90,17 @@ const ReportIndex = () => {
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
     const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
     setFilters(fromPairs([...Object.entries(reducedFilters)]))
-  }, [history, location, userPermissions])
+  }, [location, navigate, userPermissions])
 
   useEffect(() => {
     if (data) {
@@ -111,7 +114,7 @@ const ReportIndex = () => {
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       {filters && (
         <BrowseFilters
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           config={filters}
@@ -137,7 +140,8 @@ const ReportIndex = () => {
               onClick={fileExtension =>
                 onClickDownload(externalId, fileExtension)
               }
-              history={history}
+              // history={history}
+              navigate={navigate}
             />
           )
         )}

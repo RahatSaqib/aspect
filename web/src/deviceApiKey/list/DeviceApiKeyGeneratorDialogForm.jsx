@@ -3,7 +3,6 @@ import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, pure, setPropTypes, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { defineMessages, injectIntl } from 'react-intl'
 
@@ -87,10 +86,10 @@ const enhance = compose(
         countries,
       }
     },
-    bindActionCreators.bind(null, {
+    {
       fetchCountriesForLocationSelector,
       fetchPartnersAndJobFunctionsForSelectList,
-    })
+    }
   ),
   lifecycle({
     UNSAFE_componentWillReceiveProps() {
@@ -208,7 +207,6 @@ export function DeviceApiKeyGeneratorDialogForm({
           InputLabelProps={{
             shrink: undefined,
           }}
-          errorStyle={errorStyle}
           {...errorProps(meta.count)}
           value={values.count}
           onChange={onCountChange}
