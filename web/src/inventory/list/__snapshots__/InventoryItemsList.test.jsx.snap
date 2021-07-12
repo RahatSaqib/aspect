@@ -15,11 +15,6 @@ exports[`InventoryItemList module InventoryItemList component should render corr
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     config={null}
     dateFilterLabel="Expires On"
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "defaultFormats": Object {},
@@ -60,6 +55,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
         "search": "",
       }
     }
+    navigate={[Function]}
   >
     <requirePermissions(AspectButton)
       browseButton={true}
@@ -98,11 +94,6 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       visible={false}
     />
     <pure(withHandlers(EmptyList))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
       intl={
         Object {
           "defaultFormats": Object {},
@@ -143,6 +134,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
           "search": "",
         }
       }
+      navigate={[Function]}
     />
   </DataTableCard>
   <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(lifecycle(InventoryAdjustmentDialogForm))))))))

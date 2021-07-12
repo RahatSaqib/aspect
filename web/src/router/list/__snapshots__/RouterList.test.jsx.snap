@@ -14,7 +14,6 @@ exports[`RouterList should render RouterList correctly without export button 1`]
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     config={Array []}
-    history={[MockFunction]}
     intl={
       Object {
         "defaultFormats": Object {},
@@ -67,7 +66,6 @@ exports[`RouterList should render RouterList correctly without export button 1`]
       visible={false}
     />
     <pure(withHandlers(EmptyList))
-      history={[MockFunction]}
       intl={
         Object {
           "defaultFormats": Object {},

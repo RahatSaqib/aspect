@@ -15,11 +15,6 @@ exports[`Result List component should shallow render correctly when filter for a
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     askConfirmationForExport={false}
     config={[MockFunction]}
-    history={
-      Object {
-        "push": [MockFunction],
-      }
-    }
     intl={
       Object {
         "defaultFormats": Object {},
@@ -60,6 +55,7 @@ exports[`Result List component should shallow render correctly when filter for a
         "search": "",
       }
     }
+    navigate={[MockFunction]}
   />
   <DataTableCard
     key="DataTableCard--table-undefined"
@@ -73,11 +69,6 @@ exports[`Result List component should shallow render correctly when filter for a
       visible={false}
     />
     <pure(withHandlers(EmptyList))
-      history={
-        Object {
-          "push": [MockFunction],
-        }
-      }
       intl={
         Object {
           "defaultFormats": Object {},
@@ -118,6 +109,7 @@ exports[`Result List component should shallow render correctly when filter for a
           "search": "",
         }
       }
+      navigate={[MockFunction]}
     />
   </DataTableCard>
 </div>

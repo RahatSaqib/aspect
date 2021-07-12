@@ -13,11 +13,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "formatDate": [Function],
@@ -35,6 +30,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         "search": "",
       }
     }
+    navigate={[Function]}
     onClickExport={[Function]}
   >
     <AspectButton
@@ -119,11 +115,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       visible={false}
     />
     <pure(withHandlers(EmptyList))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
       intl={
         Object {
           "formatDate": [Function],
@@ -141,6 +132,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           "search": "",
         }
       }
+      navigate={[Function]}
     />
   </DataTableCard>
 </div>
@@ -159,11 +151,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "formatDate": [Function],
@@ -181,6 +168,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         "search": "",
       }
     }
+    navigate={[Function]}
     onClickExport={[Function]}
   >
     <AspectButton
@@ -316,16 +304,12 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
             },
           ]
         }
-        history={
-          Object {
-            "push": [Function],
-          }
-        }
         location={
           Object {
             "search": "",
           }
         }
+        navigate={[Function]}
         sortColumnDir="asc"
         sortColumnKey="createdOn"
       />
@@ -364,11 +348,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       </ForwardRef(TableBody)>
     </ForwardRef(Table)>
     <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
       intl={
         Object {
           "formatDate": [Function],
@@ -386,6 +365,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           "search": "",
         }
       }
+      navigate={[Function]}
       pageAt={0}
       pageSize={10}
       paginatorStatus={

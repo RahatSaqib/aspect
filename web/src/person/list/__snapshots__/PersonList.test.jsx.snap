@@ -13,11 +13,6 @@ exports[`Person List module PersonList component should shallow render correctly
     title="Contacts"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "defaultFormats": Object {},
@@ -58,6 +53,7 @@ exports[`Person List module PersonList component should shallow render correctly
         "search": "",
       }
     }
+    navigate={[MockFunction]}
   >
     <requirePermissions(AspectButton)
       browseButton={true}
@@ -77,11 +73,6 @@ exports[`Person List module PersonList component should shallow render correctly
       disabled={true}
     />
     <pure(withHandlers(EmptyList))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
       intl={
         Object {
           "defaultFormats": Object {},
@@ -122,6 +113,7 @@ exports[`Person List module PersonList component should shallow render correctly
           "search": "",
         }
       }
+      navigate={[MockFunction]}
     />
     <Connect(withState(withHandlers(ExportListButton)))
       onCsvClick={[Function]}

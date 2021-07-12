@@ -16,6 +16,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       }
       autoFocus={true}
       disabled={true}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -76,8 +77,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -91,6 +91,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
     <ForwardRef(TextField)
       autoFocus={true}
       disabled={true}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -156,6 +157,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       }
       autoFocus={true}
       disabled={true}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -188,6 +190,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -248,8 +251,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -263,6 +265,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -328,6 +331,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -360,6 +364,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -420,8 +425,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -435,6 +439,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -500,6 +505,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -532,6 +538,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -592,8 +599,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -607,6 +613,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -672,6 +679,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -704,6 +712,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -764,8 +773,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -779,6 +787,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
     <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -844,6 +853,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -876,6 +886,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -936,8 +947,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -951,6 +961,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
     <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -1016,6 +1027,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {

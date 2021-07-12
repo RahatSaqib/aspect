@@ -972,20 +972,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
     </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
-    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -1973,20 +1959,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
-    </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
     </section>
   </div>
   <div
@@ -2976,20 +2948,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
     </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
-    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -3977,20 +3935,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
-    </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
     </section>
   </div>
   <div
@@ -4980,20 +4924,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
     </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
-    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -5980,20 +5910,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
     </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
-    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -6965,20 +6881,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
-    </section>
-    <section
-      className="TagLabel"
-    >
-      <p>
-        Tags
-      </p>
-      <Connect(ConnectedTagInput)
-        allowCreate={true}
-        label="Choose tags"
-        onTagChange={[Function]}
-        qryType="person"
-        value={Array []}
-      />
     </section>
   </div>
   <div

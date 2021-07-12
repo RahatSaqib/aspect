@@ -7,13 +7,7 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
     encodeSpecialCharacters={true}
     title="Task"
   />
-  <DetailBackBar
-    location={
-      Object {
-        "search": "",
-      }
-    }
-  />
+  <DetailBackBar />
   <section
     className="Section"
   >
