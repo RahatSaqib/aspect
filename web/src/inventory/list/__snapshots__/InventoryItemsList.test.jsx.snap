@@ -57,17 +57,15 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     }
     navigate={[Function]}
   >
-    <requirePermissions(AspectButton)
+    <Memo(requirePermissions(AspectButton))
       browseButton={true}
       color="primary"
-      extraPermissions={Array []}
       onClick={[Function]}
-      overriddenPermissions={Array []}
       type="button"
       variant="contained"
     >
       Add Inventory
-    </requirePermissions(AspectButton)>
+    </Memo(requirePermissions(AspectButton))>
   </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     className="DataTableCard--action"

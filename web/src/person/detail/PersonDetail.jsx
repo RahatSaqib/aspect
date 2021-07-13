@@ -4,7 +4,6 @@ import React, { PureComponent } from 'react'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
 import { injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 
@@ -79,24 +78,20 @@ const enhance = compose(
         jobFunctions,
       }
     },
-    dispatch =>
-      bindActionCreators(
-        {
-          showAcknowledgement,
-          fetchSinglePerson,
-          createPerson,
-          updateSinglePerson,
-          updateSinglePersonLoginDetails,
-          updateSinglePersonUserPreferences,
-          fetchPartnersAndJobFunctionsForSelectList,
-          personCanLogIn,
-          emailValueBlur,
-          addPersonAssignment,
-          fetchPersonAssignments,
-          deletePersonAssignment,
-        },
-        dispatch
-      )
+    {
+      showAcknowledgement,
+      fetchSinglePerson,
+      createPerson,
+      updateSinglePerson,
+      updateSinglePersonLoginDetails,
+      updateSinglePersonUserPreferences,
+      fetchPartnersAndJobFunctionsForSelectList,
+      personCanLogIn,
+      emailValueBlur,
+      addPersonAssignment,
+      fetchPersonAssignments,
+      deletePersonAssignment,
+    }
   ),
   setPropTypes({
     intl: PropTypeOf.intl.isRequired,
@@ -238,17 +233,8 @@ export class PersonDetail extends PureComponent {
   }
 
   render() {
-    const {
-      intl,
-      person,
-      user,
-      editable,
-      isNew,
-      jobFunctions,
-      // match,
-      // navigate,
-      location,
-    } = this.props
+    const { intl, person, user, editable, isNew, jobFunctions, location } =
+      this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
@@ -265,7 +251,7 @@ export class PersonDetail extends PureComponent {
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Routes>
-          <Route exact path=".">
+          <Route exact path="">
             {editable ? (
               <div>
                 {!isNew && !person && <LinearProgress />}
@@ -273,9 +259,6 @@ export class PersonDetail extends PureComponent {
                 <PermissionsProvider permissions={['person:edit']}>
                   <PersonDetailBackBar
                     formatMessage={formatMessage}
-                    // history={history}
-                    // location={location}
-                    // match={match}
                     {...this.props}
                     isNew={isNew}
                     title={isNew ? 'Add Contact' : person && person.get('name')}
@@ -307,9 +290,6 @@ export class PersonDetail extends PureComponent {
               <PermissionsProvider permissions={['person:edit']}>
                 <PersonDetailBackBar
                   formatMessage={formatMessage}
-                  // history={history}
-                  // location={location}
-                  // match={match}
                   {...this.props}
                   isNew={isNew}
                   title={person && person.get('name')}
@@ -336,9 +316,6 @@ export class PersonDetail extends PureComponent {
               <PermissionsProvider permissions={['person:edit']}>
                 <PersonDetailBackBar
                   formatMessage={formatMessage}
-                  // history={history}
-                  // location={location}
-                  // match={match}
                   {...this.props}
                   isNew={isNew}
                   title={person && person.get('name')}

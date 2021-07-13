@@ -3,6 +3,7 @@ import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import Immutable from 'immutable'
 import {
   compose,
   withProps,
@@ -185,28 +186,25 @@ const enhance = compose(
         navigate(`/browse/site/${siteId}/alerts`)
       },
 
-    onExcelClick: ({
-      location,
-      exportSites,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSites(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          format,
-          'sites'
-        )
-      }
-    },
+    onExcelClick:
+      ({ location, exportSites, sortCol, sortDir, pageAt, pageSize }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+
+        if (!sanitized) {
+          exportSites(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize,
+            format,
+            'sites'
+          )
+        }
+      },
 
     onRowClick:
       ({ navigate }) =>

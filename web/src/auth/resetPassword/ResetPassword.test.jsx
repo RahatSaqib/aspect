@@ -251,7 +251,7 @@ describe('ResetPassword module', () => {
         const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)
 
-        expect(adminHelpDialog.props().actions[1].props.to).toEqual('login')
+        expect(adminHelpDialog.props().actions[1].props.to).toEqual('/login')
       })
     })
   })

@@ -26,7 +26,7 @@ const styles = require('../../components/shared/DataTableRow.css')
 
 export const Results = ({
   intl,
-  history,
+  navigate,
   location,
   sortDir,
   sortCol,
@@ -55,12 +55,16 @@ export const Results = ({
       <div>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList
+            navigate={navigate}
+            location={location}
+            intl={intl}
+          />
         )}
         {!items.currentIdList.isEmpty() && (
           <Table className={cssClasses('ResultDataTable')}>
             <DataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -104,7 +108,7 @@ export const Results = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}

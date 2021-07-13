@@ -169,7 +169,7 @@ const enhance = compose(
 )
 
 export const DeviceDetailOperation = ({
-  history,
+  navigate,
   location,
   device,
   // --- injected by recompose ---
@@ -227,7 +227,7 @@ export const DeviceDetailOperation = ({
             <DataTableProgressBar disabled={!table.loading} />
             {items.currentIdList.isEmpty() && (
               <BrowseEmptyList
-                history={history}
+                navigate={navigate}
                 location={location}
                 intl={intl}
               />
@@ -237,7 +237,7 @@ export const DeviceDetailOperation = ({
                 className={cssClasses('DeviceOperationDataTable')}
               >
                 <DeviceOperationDataTableHead
-                  history={history}
+                  navigate={navigate}
                   location={location}
                   sortColumnKey={sortCol}
                   sortColumnDir={sortDir}
@@ -284,7 +284,7 @@ export const DeviceDetailOperation = ({
             )}
             {!items.currentIdList.isEmpty() && (
               <BrowseTablePaginator
-                history={history}
+                navigate={navigate}
                 location={location}
                 intl={intl}
                 paginatorStatus={messages.paginatorStatus}
@@ -301,7 +301,7 @@ export const DeviceDetailOperation = ({
 }
 
 DeviceDetailOperation.propTypes = {
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   table: PropTypes.oneOfType([PropTypes.object]).isRequired,

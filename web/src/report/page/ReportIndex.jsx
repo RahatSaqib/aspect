@@ -140,7 +140,6 @@ const ReportIndex = () => {
               onClick={fileExtension =>
                 onClickDownload(externalId, fileExtension)
               }
-              // history={history}
               navigate={navigate}
             />
           )

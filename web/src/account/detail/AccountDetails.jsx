@@ -34,10 +34,6 @@ import {
 
 const enhance = compose(
   injectIntl,
-  // setPropTypes({
-  //   location: PropTypes.object.isRequired, // eslint-disable-line
-  //   // history: PropTypes.object.isRequired, // eslint-disable-line
-  // }),
   connect(
     state => ({
       loading: state.accountDetails.get('loading'),

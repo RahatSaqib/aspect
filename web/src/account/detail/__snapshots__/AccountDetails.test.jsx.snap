@@ -62,7 +62,11 @@ exports[`AccountDetails module AccountDetails component should shallow render co
             }
           }
           loading={false}
-          location={Object {}}
+          location={
+            Object {
+              "pathname": "",
+            }
+          }
           navigate={[Function]}
           params={Object {}}
           saveContactDetails={[Function]}
@@ -163,7 +167,11 @@ exports[`AccountDetails module AccountDetails component should shallow render co
             }
           }
           loading={false}
-          location={Object {}}
+          location={
+            Object {
+              "pathname": "",
+            }
+          }
           navigate={[Function]}
           params={Object {}}
           saveContactDetails={[Function]}
