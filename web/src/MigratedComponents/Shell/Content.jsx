@@ -20,6 +20,7 @@ ShellContent.propTypes = {
     PropTypes.object,
     PropTypes.bool,
     PropTypes.array,
+    PropTypes.string,
   ]),
 }
 
