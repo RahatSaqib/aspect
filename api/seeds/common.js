@@ -632,6 +632,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   const {
     'MTB/Rif': assayTypeMTBRifId,
+    'MTB/XDR': assayTypeMtbXDRId,
     Ebola: assayTypeEbolaId,
     'HIV VL': assayTypeHivVlId,
     'HIV Qual': assayTypeHivQualId,
@@ -714,6 +715,38 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       knex,
       'GeneXpert TB Cartridge',
       'GxMtbRif',
+      commonProps
+    )
+  }
+  if (_.includes(assayExternalIds, 'GxMtbXDR')) {
+    await createAssay(
+      knex,
+      'GeneXpert MTB/XDR',
+      'assayGeneXpertMtbXDR',
+      'GxMtbXDR',
+      assayTypeMtbXDRId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX MTB/XDR',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBRif,
+      [
+        'Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'XDR',
+      'resultCategoryXDR'
+    )
+    await upsertConsumables(
+      knex,
+      'GeneXpert MTB/XDR Cartridge',
+      'GxMtbXDR',
       commonProps
     )
   }

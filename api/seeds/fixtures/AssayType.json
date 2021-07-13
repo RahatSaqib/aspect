@@ -7,6 +7,12 @@
       "abbreviation":"TB"
     },
     {
+      "name": "MTB/XDR",
+      "i18nKey": "assayTypeMtbXDR",
+      "externalId": "assayTypeMtbXDR",
+      "abbreviation":"MTB/XDR"
+    },
+    {
       "name": "Ebola",
       "i18nKey": "assayTypeEbola",
       "externalId": "assayTypeEbola",
