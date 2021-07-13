@@ -17,6 +17,7 @@ const AspectTextArea = props => {
      */
     classNames,
     validate,
+    link,
     ...rest
   } = props
 

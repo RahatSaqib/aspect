@@ -114,7 +114,6 @@ export const DailyStatusDialog = ({
         }}
         maxWidth="xs"
         open={isOpen}
-        onEscapeKeyDown={onCancel}
         onClose={onCancel}
         title={title || formatMessage(messages.title)}
       >

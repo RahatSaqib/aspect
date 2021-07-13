@@ -37,7 +37,7 @@ PermissionsProvider.propTypes = {
   permissions: PropTypes.oneOfType([PropTypes.array]).isRequired,
   override: PropTypes.oneOfType([PropTypes.array]),
   extra: PropTypes.oneOfType([PropTypes.array]),
-  children: PropTypes.oneOfType([PropTypes.object]),
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 }
 
 export default memo(PermissionsProvider)

@@ -14,7 +14,6 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
   />
   <Routes>
     <Route
-      exact={true}
       path=""
     >
       <Navigate
@@ -23,7 +22,6 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
       />
     </Route>
     <Route
-      exact={true}
       path="system-access-control"
     >
       <div>
@@ -171,7 +169,6 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
       </div>
     </Route>
     <Route
-      exact={true}
       path="job-assignment"
     >
       <div>

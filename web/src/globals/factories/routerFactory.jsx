@@ -353,7 +353,7 @@ const AppRoutes = ({ props: outerProps }) => {
           render={renderResultList}
         />
         <Route
-          path="/browse/result/:resultId"
+          path="/browse/result/:resultId/*"
           permissions={['browse', 'result:edit']}
           render={renderResultDetail}
         />
@@ -373,7 +373,7 @@ const AppRoutes = ({ props: outerProps }) => {
           render={renderPersonList}
         />
         <Route
-          path="/browse/person/:personId"
+          path="/browse/person/:personId/*"
           permissions={['browse', 'person:edit']}
           render={renderPersonDetail}
         />

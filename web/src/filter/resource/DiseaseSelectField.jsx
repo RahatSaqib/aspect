@@ -47,6 +47,9 @@ export const DiseaseSelectField = ({
   onlyWithResults,
   diseases,
   onChange,
+  // to remove from restProps
+  onDiseaseIdChange,
+  fetchDiseases,
   ...restProps
 }) => {
   const validDisease = onlyWithResults

@@ -171,7 +171,7 @@ const useDailyStatus = (
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
     const { maintenanceStatusHistory, shortName } = devicesDaily.find(
-      ({ id }) => id === deviceId
+      ({ id }) => +id === +deviceId
     )
     const { maintenanceStatusExternalId, maintenanceStatusNotes: note } =
       maintenanceStatusHistory.find(it => it.day === day)

@@ -80,6 +80,13 @@ const AspectDatePickerBase = props => {
             'dateFormat',
             'showTimeSelect',
             'validate',
+            'selectsStart',
+            'selectsEnd',
+            'startDate',
+            'endDate',
+            'minDate',
+            'maxDate',
+            'link',
           ])}
         />
       }

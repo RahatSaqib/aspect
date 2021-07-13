@@ -106,7 +106,6 @@ const FormDialog = ({
     ]}
     maxWidth="sm"
     open={isDialogActive}
-    onEscapeKeyDown={onCancel}
     onClose={onCancel}
     title={labels.dialogTitle}
   >

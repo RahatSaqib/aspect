@@ -127,6 +127,9 @@ export const AssayTypeSelectField = ({
   assayTypes,
   onChange,
   diseaseId,
+  // to remove from restProps
+  onAssayTypeIdChange,
+  fetchAssayTypes,
   ...restProps
 }) => (
   <SelectField

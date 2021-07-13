@@ -74,6 +74,10 @@ const DailyStatusClinic = ({
   )
 }
 
+DailyStatusClinic.defaultProps = {
+  statuses: [],
+}
+
 DailyStatusClinic.propTypes = {
   name: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -82,7 +86,7 @@ DailyStatusClinic.propTypes = {
   statuses: PropTypes.oneOfType(
     PropTypes.bool,
     PropTypes.arrayOf(PropTypes.object)
-  ).isRequired,
+  ),
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),

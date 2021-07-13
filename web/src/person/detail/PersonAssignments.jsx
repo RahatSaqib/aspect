@@ -34,6 +34,7 @@ export default ({
       {assignments.length === 0 && <h4>Not specified</h4>}
       {assignments.map(assignment => (
         <PersonAssignment
+          key={`${assignment.jobFunctionId}-${assignment.jobId}`}
           assignment={assignment}
           showLinks
           onAskConfirmation={askConfirmation}
@@ -52,7 +53,6 @@ export default ({
         ]}
         maxWidth="sm"
         open={confirmation.isActive}
-        onEscapeKeyDown={onCancelConfirmation}
         onClose={onCancelConfirmation}
       >
         <h3>Do you want to remove below assignment?</h3>

@@ -122,6 +122,7 @@ DailyStatusClinicDay.defaultProps = {
   daysInSameStatus: 1,
   maintenanceStatusI18nKey: '',
   maintenanceStatusExternalId: '',
+  statuses: [],
 }
 
 DailyStatusClinicDay.propTypes = {
@@ -132,7 +133,7 @@ DailyStatusClinicDay.propTypes = {
     PropTypes.bool,
   ]),
   maintenanceStatusManuallySetBy: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     name: PropTypes.string,
     updatedDate: PropTypes.string,
   }),
@@ -141,7 +142,7 @@ DailyStatusClinicDay.propTypes = {
   statuses: PropTypes.oneOfType(
     PropTypes.bool,
     PropTypes.arrayOf(PropTypes.object)
-  ).isRequired,
+  ),
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,

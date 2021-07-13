@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import messages from './messages'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
@@ -8,11 +9,11 @@ const PersonDetailBackBar = ({
   canUserLoggedIn = true,
   navigate,
   location,
-  params,
   title,
   isNew,
   disabled,
 }) => {
+  const params = useParams()
   const onBackClick = () => {
     navigate(`/browse/person`)
   }

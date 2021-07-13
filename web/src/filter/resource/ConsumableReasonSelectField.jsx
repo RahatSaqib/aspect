@@ -90,6 +90,9 @@ export const ConsumableReasonSelectField = ({
   intl,
   consumableReasons,
   onChange,
+  // to remove from restProps
+  onConsumableReasonIdChange,
+  fetchConsumableReasons,
   ...restProps
 }) => (
   <SelectField

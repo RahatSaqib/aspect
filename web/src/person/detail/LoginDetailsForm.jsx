@@ -248,7 +248,6 @@ export const LoginDetailsForm = ({
         </Button>,
       ]}
       open={currentPasswordInputDialogOpen || false}
-      onEscapeKeyDown={closeCurrentPasswordInputDialog}
       onClose={closeCurrentPasswordInputDialog}
       title={intl.formatMessage(messages.currentPasswordDialogHeader)}
     >

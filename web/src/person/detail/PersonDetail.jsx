@@ -55,7 +55,7 @@ const enhance = compose(
       const isNew = !personId
       const { personNew, items } = state.person
       const person = isNew ? personNew : items.byId.get(personId)
-      const prefillUser = person && person.get('userId') > 0
+      const prefillUser = person ? person.get('userId') > 0 : false
 
       const partnersAndJobFunctionsForSelectList = state.jobs.get(
         'partnersAndJobFunctionsForSelectList'
@@ -69,7 +69,7 @@ const enhance = compose(
       return {
         editable: isEditable(state.user, 'person'),
         isNew,
-        person,
+        person: person || personNew,
         canLogIn: person && !!person.get('canLogIn'),
         user: state.user,
         emailValue: person && person.get('email'),
@@ -251,7 +251,7 @@ export class PersonDetail extends PureComponent {
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Routes>
-          <Route exact path="">
+          <Route path="">
             {editable ? (
               <div>
                 {!isNew && !person && <LinearProgress />}
@@ -283,7 +283,7 @@ export class PersonDetail extends PureComponent {
               <Navigate replace to={location.pathname} />
             )}
           </Route>
-          <Route exact path="system-access-control">
+          <Route path="system-access-control">
             <div>
               {loading && <LinearProgress />}
 
@@ -309,7 +309,7 @@ export class PersonDetail extends PureComponent {
               </Paper>
             </div>
           </Route>
-          <Route exact path="job-assignment">
+          <Route path="job-assignment">
             <div>
               {loading && <LinearProgress />}
 

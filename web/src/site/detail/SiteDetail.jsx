@@ -75,7 +75,7 @@ export const SiteDetail = props => {
       {!hasSiteWithLocation() ? <LinearProgress /> : null}
       {hasSiteWithLocation() ? (
         <Routes>
-          <Route exact path=".">
+          <Route path="">
             <SiteDetailProfile
               formatMessage={intl.formatMessage}
               disabled={!editable}
@@ -86,10 +86,10 @@ export const SiteDetail = props => {
               siteContacts={siteContacts.toJS()}
             />
           </Route>
-          <Route exact path="alerts">
+          <Route path="alerts">
             <SiteDetailAlert {...props} disabled={!editable} site={site} />
           </Route>
-          <Route exact path="edit">
+          <Route path="edit">
             {editable ? (
               <SiteForm
                 formatMessage={intl.formatMessage}
