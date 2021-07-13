@@ -574,6 +574,11 @@ function listResultsBaseConfig() {
           .description(
             'It filters only results with no "Invalid", "No result" or "Error" categories'
           ),
+        showUnapprovedDevices: Joi.boolean()
+          .default(false)
+          .description(
+            'If true, will include all the results of unapproved devices'
+          ),
       },
     },
   }

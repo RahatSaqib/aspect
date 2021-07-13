@@ -2113,6 +2113,7 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
+  const { showUnapprovedDevices = false } = query
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryGroup as rcg', function () {
       this.on('r.assayId', 'rcg.assayId')
@@ -2261,6 +2262,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       result: 'r',
       country: 'c',
       disease: 'dis',
+      showUnapprovedDevices,
     })
   return resultQuery
 }
