@@ -82,7 +82,7 @@ const messages = defineMessages({
   },
   ResultWorkflowStatusOK: {
     id: 'pages.ResultList.ResultWorkflowStatusOK',
-    defaultMessage: 'Not Possible',
+    defaultMessage: 'Ok',
   },
   ResultWorkflowStatusError: {
     id: 'pages.ResultList.ResultWorkflowStatusError',
