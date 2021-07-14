@@ -1,14 +1,14 @@
 const Promise = require('bluebird')
 const partnerData = require('./fixtures/partnerVariables')
-const upsertTags = require('../common/20210712_tag_reportable_sites')
+const upsertTags = require('../common/upsert_tags')
 
 module.exports = require('../utils').seed(async knex => {
   const { partnerName } = partnerData
   await upsertTags(knex, partnerName)
 
   const siteIds = await knex('Site as s')
-    .innerJoin('SiteTag as st', 's.id', 'st.siteId')
-    .innerJoin('Tag as t', 'st.tagId', 't.id')
+    .leftJoin('SiteTag as st', 's.id', 'st.siteId')
+    .leftJoin('Tag as t', 'st.tagId', 't.id')
     .whereRaw(
       `(
         t.title     LIKE ? or

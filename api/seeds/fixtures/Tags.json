@@ -1,5 +1,6 @@
 [
     {
-        "title": "Reportable Site"
+        "title": "Reportable Site",
+        "defaultIn": ["site"]
     }
 ]
