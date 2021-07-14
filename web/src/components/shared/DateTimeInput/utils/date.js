@@ -242,7 +242,7 @@ const getTimePeriod = (cnt, period, dateFormat) => {
       timePeriod = subDays(dateNow, cnt)
       break
     case period === 'months':
-      timePeriod = startOfMonth(subMonths(dateNow, cnt))
+      timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
       break
 
     default:
@@ -251,7 +251,18 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   }
   return format(timePeriod, dateFormat)
 }
+const startOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
 
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
+      .toISOString()
+      .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
+  )
+}
 const getAllDaysInCurrentMonth = (
   upToToday = false,
   dateFormat = 'yyyy-MM-dd'
