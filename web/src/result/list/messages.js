@@ -78,7 +78,7 @@ const messages = defineMessages({
   },
   ResultTreatmentStatusNotPossible: {
     id: 'pages.ResultList.ResultTreatmentStatusNotPossible',
-    defaultMessage: 'On Treatment',
+    defaultMessage: 'Not Possible',
   },
   ResultWorkflowStatusOK: {
     id: 'pages.ResultList.ResultWorkflowStatusOK',
