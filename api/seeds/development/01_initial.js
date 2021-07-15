@@ -57,7 +57,7 @@ const deviceNumber = 50
 const routerNumber = 20
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultMtbNumber = resultMultiplier * 0.7
-// const resultMtbXDRNumber = resultMultiplier * 0.3
+const resultMtbXDRNumber = resultMultiplier * 0.3
 const resultMtbUltraNumber = resultMultiplier
 const resultHivVlNumber = 0.8 * resultMultiplier
 const resultEbolaNumber = 0
@@ -3220,7 +3220,7 @@ async function seed(knex) {
 
   const {
     GxMtbRif: assayGeneXpertMtbRifId,
-    // GxMtbXDR: assayGeneXpertMtbXDRId,
+    GxMtbXDR: assayGeneXpertMtbXDRId,
     GxMtbRifUltra: assayGeneXpertMtbRifUltraId,
     GxHiv1Vl: assayGeneXpertHiv1VlId,
     GxHiv1Qual: assayGeneXpertHiv1QualId,
@@ -4220,6 +4220,267 @@ async function seed(knex) {
                   sampleId: sample.id,
                   sampleRunNumber: `${(i % 2) + 1}`,
                   sampleGroup: `GRP-HIV-${i % 5}`,
+                  resultCategory1: result.category1,
+                  resultCategory2: result.category2,
+                  resultData,
+                  assayVersion: '4',
+                  startedOn: randomDate,
+                  endedOn: addMinutes(randomDate, 100),
+                  consumableSerial: `${i}12`,
+                  consumableExpirationDate: new Date(
+                    +now + 200 * i * millisInHour
+                  ),
+                  consumableLot: `Lot ${i % 5}`,
+                  instrumentSerial: `S-1234-${i % 3}`,
+                  moduleName: `Module ${modules[rndModule]}`,
+                  moduleSerial: `M-1234-${i % 4}`,
+                  researchId: `R-ID-${i}`,
+                  patientData: JSON.stringify(
+                    getRandomTBPatientData(patientNumber, patients)
+                  ),
+                  senderVersion: '4.6b',
+                  senderOperator: 'Marsha',
+                  notes: 'This is a test... result',
+                  errorCode:
+                    result.category1 === resultCategoryErrorId
+                      ? errorCodes[_.random(errorCodes.length)]
+                      : null,
+                  errorNotes:
+                    result.category1 === resultCategoryErrorId
+                      ? 'Exceeded cycle threshold'
+                      : null,
+                },
+              },
+            },
+          }),
+          deviceConfigurationUpdated: 0,
+          resultId,
+        })
+      })
+
+      // some TB XDR samples:
+      await Promise.each(_.range(resultMtbXDRNumber / 2), async i => {
+        const siteData = siteDatas[i % siteDatas.length]
+        const sample = {
+          externalId: `SMP-TBXDR-${i}`,
+          collectedOn: calculateDateForResult(
+            i,
+            resultMtbXDRNumber,
+            millisInMinute
+          ),
+          sampleTypeId: sampleTypeDBSId,
+          originSiteId: siteData.id,
+        }
+
+        ;[sample.id] = await knex('Sample').insert(sample)
+
+        samples.push(sample)
+      })
+
+      // TB XDR results:
+      possibleResults = [
+        {
+          resultText:
+            '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+          category1: resultCategoryDetectedId,
+          category2: resultCategoryNotDetectedId,
+          minLikelihood: 0,
+          maxLikelihood: 50,
+        },
+        {
+          resultText:
+            '|MTB @label_result_detected||INH Resistance @label_result_detected|Low FLQ Resistance @label_result_detected||AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
+          category1: resultCategoryDetectedId,
+          category2: resultCategoryDetectedId,
+          minLikelihood: 51,
+          maxLikelihood: 60,
+        },
+        {
+          resultText:
+            '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+          category1: resultCategoryDetectedId,
+          category2: resultCategoryDetectedId,
+          minLikelihood: 61,
+          maxLikelihood: 70,
+        },
+        {
+          resultText:
+            '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+          category1: resultCategoryDetectedId,
+          category2: resultCategoryDetectedId,
+          minLikelihood: 71,
+          maxLikelihood: 80,
+        },
+        {
+          resultText:
+            '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
+          category1: resultCategoryDetectedId,
+          category2: resultCategoryDetectedId,
+          minLikelihood: 81,
+          maxLikelihood: 90,
+        },
+        {
+          resultText:
+            '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+          category1: resultCategoryDetectedId,
+          category2: resultCategoryDetectedId,
+          minLikelihood: 81,
+          maxLikelihood: 95,
+        },
+        {
+          resultText:
+            '|MTB @label_result_error|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+          category1: resultCategoryErrorId,
+          category2: null,
+          minLikelihood: 96,
+          maxLikelihood: 100,
+        },
+      ]
+
+      resultData = {
+        probes: {
+          probeA: 'NEG',
+          probeB: 'POS',
+          probeC: 'NO RESULT',
+          probeD: 'NEG',
+          probeE: 'POS',
+          probeSpc: 'NO RESULT',
+          qc1: 'YES',
+          qc2: 'No',
+          probeACt: 12.32,
+          probeBCt: 11.2,
+          probeCCt: 12.5,
+          probeDCt: 0.5,
+          probeECt: 1.2,
+          probeSpcCt: 5.78,
+          qc1Ct: 1,
+          qc2Ct: 0.007,
+          probeAEndpt: 1.6,
+          probeBEndpt: 2.33,
+          probeCEndpt: 457,
+          probeDEndpt: 12.43,
+          probeEEndpt: 3.14,
+          probeSpcEndpt: 8.9018,
+          qc1Endpt: 0.1234,
+          qc2Endpt: 1.22,
+        },
+      }
+
+      await Promise.each(_.range(resultMtbXDRNumber), async i => {
+        const device = devicesGeneXpert[i % devicesGeneXpert.length]
+        const siteData = siteDatas.find(site => site.id === device.siteId)
+        const sample = samples[i % samples.length]
+        const randomDate = calculateDateForResult(i, resultMtbXDRNumber, 6000)
+
+        const rnd = _.random(0, 100)
+        const rndModule = _.random(0, 3)
+        const result = _.find(
+          possibleResults,
+          r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+        )
+        resultData.resultText = result.resultText
+        const [resultId] = await knex('Result').insert({
+          ...auditFields,
+          externalId: `UQTBXDR-${i}`,
+          assayId: assayGeneXpertMtbXDRId,
+          partnerId: partnerOneId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          reportableSiteId: sample.siteOriginId || siteData.id,
+          deviceId: device.id,
+          longitude: -81.581222,
+          latitude: 28.419348,
+          resultSourceId: resultSourceDiagnosticId,
+          resultTypeId: resultTypePatientId,
+          sampleId: sample.id,
+          sampleRunNumber: `${(i % 2) + 1}`,
+          sampleGroup: `GRP-TBXDR-${i % 5}`,
+          resultCategory1: result.category1,
+          resultCategory2: result.category2,
+          resultData: JSON.stringify(resultData),
+          assayVersion: '4',
+          startedOn: randomDate,
+          endedOn: addMinutes(randomDate, 100),
+          createdOn: addMinutes(randomDate, 120),
+          updatedOn: addMinutes(randomDate, 180),
+          consumableSerial: `${i}12`,
+          consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+          consumableLot: `Lot ${i % 5}`,
+          instrumentSerial: `S-1234-${i % 3}`,
+          moduleName: `Module ${modules[rndModule]}`,
+          moduleSerial: `M-1234-${i % 4}`,
+          researchId: `R-ID-${i}`,
+          patientData: JSON.stringify(
+            getRandomTBPatientData(patientNumber, patients)
+          ),
+          senderVersion: '4.6b',
+          senderOperator: 'Marsha',
+          notes: 'This is a test... result',
+          errorCode:
+            result.category1 === resultCategoryErrorId
+              ? errorCodes[_.random(errorCodes.length)]
+              : null,
+          errorNotes:
+            result.category1 === resultCategoryErrorId
+              ? 'Exceeded cycle threshold'
+              : null,
+        })
+
+        await knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: ordered,
+          operator: 'Marsha',
+          changedOn: subHours(randomDate, 25),
+          createdOn: subHours(randomDate, 26),
+          createdBy: adminId,
+        })
+
+        const [lastLogId] = await knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId:
+            _.random(0, 100) < 90 ? deliverable : acknowledged,
+          operator: 'John',
+          changedOn: addHours(randomDate, 2),
+          createdOn: addHours(randomDate, 1),
+          createdBy: adminId,
+        })
+
+        await knex('Result')
+          .where('id', resultId)
+          .update({ resultWorkflowStatusLogId: lastLogId })
+
+        await knex('DeviceLog').insert({
+          deviceId: device.id,
+          createdOn: addHours(randomDate, 1),
+          senderIp: '0.0.0.0',
+          source: 'seed data',
+          rawMessage: JSON.stringify({
+            type: {
+              id: _.sample([
+                deviceTypeGeneXpertId.name,
+                deviceTypeQId.name,
+                deviceTypeIdRouter.name,
+              ]),
+              site: {
+                id: siteData.externalId,
+              },
+              result: {
+                data: {
+                  ...auditFields,
+                  externalId: `UQTB-${i}`,
+                  assayId: assayGeneXpertMtbXDRId,
+                  partnerId: partnerOneId,
+                  geographyId: siteData.geographyId,
+                  siteId: siteData.id,
+                  reportableSiteId: sample.siteOriginId || siteData.id,
+                  deviceId: device.id,
+                  longitude: -81.581222,
+                  latitude: 28.419348,
+                  resultSourceId: resultSourceDiagnosticId,
+                  resultTypeId: resultTypePatientId,
+                  sampleId: sample.id,
+                  sampleRunNumber: `${(i % 2) + 1}`,
+                  sampleGroup: `GRP-TBXDR-${i % 5}`,
                   resultCategory1: result.category1,
                   resultCategory2: result.category2,
                   resultData,

@@ -125,6 +125,13 @@
       }
     },
     {
+      "externalId": "assayTypeMtbXDR",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
       "externalId": "assayTypeEbola",
       "diseaseId": {
         "table": "Disease",
