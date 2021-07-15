@@ -899,7 +899,7 @@ describe('Device API routes for GxConnect Devices', () => {
       getResultCategoriesTestCallback(gxMtbRifUltraMappings)
     )
     it(
-      'should append a new GxMtbXDR result with the correct result categories',
+      'should append a new GxMtbXdr result with the correct result categories',
       getResultCategoriesTestCallback(gxMtbXDRMappings)
     )
     it(

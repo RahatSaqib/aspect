@@ -106,7 +106,7 @@ async function seed(knex) {
   })
 
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
-    'GxMtbXDR',
+    'GxMtbXdr',
     'GxMtbRif',
     'GxMtbRifUltra',
     'GxHiv1Vl',

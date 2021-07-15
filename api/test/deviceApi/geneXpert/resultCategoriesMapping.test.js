@@ -17,24 +17,24 @@ describe('Result Category Mapping', () => {
       )
     })
 
-    describe('GxMtbXDR', () => {
+    describe('GxMtbXdr', () => {
       it('no results provided, map result category 2 null', () => {
         const resultTextValues = splitResultTextValues('')
-        assert.isNull(mapResultCategory2('GxMtbXDR', resultTextValues))
+        assert.isNull(mapResultCategory2('GxMtbXdr', resultTextValues))
       })
 
       it('result category 1 not detected, no resistance specified, map result category 2 null', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_not_detected||'
         )
-        assert.isNull(mapResultCategory2('GxMtbXDR', resultTextValues))
+        assert.isNull(mapResultCategory2('GxMtbXdr', resultTextValues))
       })
 
       it('result category 1 not detected, resistance specified, map result category 2 null', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_not_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
         )
-        assert.isNull(mapResultCategory2('GxMtbXDR', resultTextValues))
+        assert.isNull(mapResultCategory2('GxMtbXdr', resultTextValues))
       })
 
       it('result category 1 detected, no resistance detected, map result category 2 NotDetected', () => {
@@ -42,7 +42,7 @@ describe('Result Category Mapping', () => {
           '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
         )
         assert.equal(
-          mapResultCategory2('GxMtbXDR', resultTextValues),
+          mapResultCategory2('GxMtbXdr', resultTextValues),
           'NotDetected'
         )
       })
@@ -52,7 +52,7 @@ describe('Result Category Mapping', () => {
           '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected'
         )
         assert.equal(
-          mapResultCategory2('GxMtbXDR', resultTextValues),
+          mapResultCategory2('GxMtbXdr', resultTextValues),
           'Detected'
         )
       })
@@ -62,7 +62,7 @@ describe('Result Category Mapping', () => {
           '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected'
         )
         assert.equal(
-          mapResultCategory2('GxMtbXDR', resultTextValues),
+          mapResultCategory2('GxMtbXdr', resultTextValues),
           'Detected'
         )
       })
@@ -71,21 +71,21 @@ describe('Result Category Mapping', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_error||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXDR', resultTextValues), null)
+        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), null)
       })
 
       it('result category 1 invalid, map null', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_invalid||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXDR', resultTextValues), null)
+        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), null)
       })
 
       it('result category 1 no result, map null', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_no_result||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXDR', resultTextValues), null)
+        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), null)
       })
     })
 

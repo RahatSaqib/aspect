@@ -130,7 +130,7 @@ async function seed(knex) {
   })
 
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
-    'GxMtbXDR',
+    'GxMtbXdr',
     'GxMtbRif',
     'GxMtbRifUltra',
     'GxHiv1Vl',
@@ -3220,7 +3220,7 @@ async function seed(knex) {
 
   const {
     GxMtbRif: assayGeneXpertMtbRifId,
-    GxMtbXDR: assayGeneXpertMtbXDRId,
+    GxMtbXdr: assayGeneXpertMtbXDRId,
     GxMtbRifUltra: assayGeneXpertMtbRifUltraId,
     GxHiv1Vl: assayGeneXpertHiv1VlId,
     GxHiv1Qual: assayGeneXpertHiv1QualId,

@@ -191,7 +191,7 @@ const defaultResultCategory2Map = resultTextValues => {
 }
 
 const allowedResultCategory2Mappings = {
-  GxMtbXDR: {
+  GxMtbXdr: {
     isAllowed: isMtbPositiveOrError,
     map: resultTextValues => {
       const result1 =

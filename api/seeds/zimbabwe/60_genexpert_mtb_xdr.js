@@ -3,6 +3,6 @@ const {
 } = require('../common')
 
 module.exports = require('../utils').seed(
-  async knex => upsertGeneXpertDeviceTypeAndAssays(knex, ['GxMtbXDR']),
+  async knex => upsertGeneXpertDeviceTypeAndAssays(knex, ['GxMtbXdr']),
   __filename
 )
