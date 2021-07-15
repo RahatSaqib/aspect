@@ -10,7 +10,7 @@ import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
 import messages from './i18n/generalMessages'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -31,6 +31,8 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     value: '',
   }
 
+  static contextType = I18nContext
+
   componentDidMount() {
     this.props.fetchWorkflowStatuses(false)
   }
@@ -48,7 +50,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
       'onWorkflowStatusChange',
       'value',
     ])
-    const { formatMessage } = i18nWrapper()
+    const { formatMessage } = this.context
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}

@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceTypesForSelectList as fetchDeviceTypes } from '../../deviceType/DeviceTypeRedux'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 const messages = defineMessages({})
 export class DeviceTypeSelectField extends PureComponent {
@@ -33,6 +33,8 @@ export class DeviceTypeSelectField extends PureComponent {
     value: '',
   }
 
+  static contextType = I18nContext
+
   componentDidMount() {
     this.props.fetchDeviceTypes(false)
   }
@@ -50,7 +52,7 @@ export class DeviceTypeSelectField extends PureComponent {
       'onDeviceTypeChange',
       'value',
     ])
-    const { formatMessage } = i18nWrapper()
+    const { formatMessage } = this.context
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}

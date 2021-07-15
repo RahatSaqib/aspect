@@ -12,7 +12,7 @@ import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 import messages from '../../shared/messages/assay'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class AssaySelectField extends PureComponent {
   static propTypes = {
@@ -34,6 +34,8 @@ export class AssaySelectField extends PureComponent {
     deviceTypeId: '',
     value: '',
   }
+
+  static contextType = I18nContext
 
   constructor(props) {
     super()
@@ -62,7 +64,7 @@ export class AssaySelectField extends PureComponent {
       'value',
     ])
     const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
-    const { formatMessage } = i18nWrapper()
+    const { formatMessage } = this.context
 
     if (
       assayItemsLoading === false &&

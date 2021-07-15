@@ -10,7 +10,7 @@ import messages from './i18n/deviceApprovalMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {
@@ -31,6 +31,8 @@ export class DeviceApprovalSelectField extends PureComponent {
     value: '',
   }
 
+  static contextType = I18nContext
+
   componentDidMount() {
     this.props.fetchDeviceApprovals(false)
   }
@@ -48,7 +50,7 @@ export class DeviceApprovalSelectField extends PureComponent {
       'onDeviceApprovalChange',
       'value',
     ])
-    const { formatMessage } = i18nWrapper()
+    const { formatMessage } = this.context
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>

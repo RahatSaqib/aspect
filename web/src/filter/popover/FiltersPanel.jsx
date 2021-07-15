@@ -36,7 +36,7 @@ import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceSta
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -533,7 +533,7 @@ export const FiltersPanel = ({
 }) => {
   const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   let assayResultCategory2Label
   if (assayItems && assayId) {
     const selectedAssay = assayItems

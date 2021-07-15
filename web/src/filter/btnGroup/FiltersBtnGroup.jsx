@@ -9,7 +9,7 @@ import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
-import { i18nWrapper } from '../../Providers/I18nProvider'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -265,285 +265,295 @@ const makeButton = labelFn => (filterKey, props) => (
     <MdClose className={cssClasses('Button__icon')} />
   </Button>
 )
-const { formatMessage } = i18nWrapper()
-const buttonBy = {
-  assayId: makeButton((assayId, { assayItems }) =>
-    assayItems
-      .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
-      .get('name')
-  ),
-  diseaseId: makeButton((diseaseId, { diseaseItems }) =>
-    diseaseItems
-      .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
-      .get('name')
-  ),
-  countryId: makeButton((countryId, { countryItems }) =>
-    countryItems
-      .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
-      .get('name')
-  ),
-  stateId: makeButton((stateId, { countryItems, filters }) =>
-    countryItems
-      .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
-      .getIn(['children', 'items'], EMPTY_MAP)
-      .find(it => it.id === stateId, EMPTY_CONTEXT, EMPTY_MAP)
-      .get('name')
-  ),
-  lgaId: makeButton((lgaId, { countryItems, filters }) =>
-    countryItems
-      .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
-      .getIn(['children', 'items'], EMPTY_MAP)
-      .find(it => it.id === filters.stateId, EMPTY_CONTEXT, EMPTY_MAP)
-      .getIn(['children', 'items'], EMPTY_MAP)
-      .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
-      .get('name')
-  ),
-  minDate: makeButton(date =>
-    formatMessage(messages.dateFrom, {
-      date: forceBaseFormatDate(date),
-    })
-  ),
-  maxDate: makeButton(date =>
-    formatMessage(messages.dateTo, {
-      date: forceBaseFormatDate(date),
-    })
-  ),
-  partnerId: makeButton((partnerId, { partnerItems }) =>
-    formatMessage(messages.partnerId, {
-      partnerName: partnerItems
-        .find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name'),
-    })
-  ),
-  patientOrResearchId: makeButton(patientOrResearchId =>
-    formatMessage(messages.patientOrResearchId, { patientOrResearchId })
-  ),
-  patientOrCaseId: makeButton(patientOrCaseId =>
-    formatMessage(messages.patientOrCaseId, { patientOrCaseId })
-  ),
-  sampleId: makeButton(sampleId =>
-    formatMessage(messages.sampleId, { sampleId })
-  ),
-  deviceName: makeButton(deviceName =>
-    formatMessage(messages.whereDeviceNameIncludes, {
-      deviceName,
-    })
-  ),
-  siteId: makeButton(siteId =>
-    formatMessage(messages.whereSiteIdIncludes, {
-      siteId,
-    })
-  ),
-  resultCategoryId: makeButton((resultCategoryId, { filters, assayItems }) =>
-    formatMessage(
-      messages.withResultCategory,
-      filters.assayOverride
-        ? {
-            resultCategoryName: `"${startCase(filters.assayOverride)}"`,
-          }
-        : {
-            resultCategoryName: assayItems
-              .find(
-                it => it.get('id') === filters.assayId,
-                EMPTY_CONTEXT,
-                EMPTY_MAP
-              )
-              .get('resultCategories', EMPTY_MAP)
-              .find(
-                it => it.get('id') === resultCategoryId,
-                EMPTY_CONTEXT,
-                EMPTY_MAP
-              )
-              .get('name', ''),
-          }
-    )
-  ),
-  resultCategoryGroupId: makeButton(
-    (resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
-      return formatMessage(
-        messages.withResultCategoryGroup,
+
+const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+  const buttonBy = {
+    assayId: makeButton((assayId, { assayItems }) =>
+      assayItems
+        .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name')
+    ),
+    diseaseId: makeButton((diseaseId, { diseaseItems }) =>
+      diseaseItems
+        .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name')
+    ),
+    countryId: makeButton((countryId, { countryItems }) =>
+      countryItems
+        .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name')
+    ),
+    stateId: makeButton((stateId, { countryItems, filters }) =>
+      countryItems
+        .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
+        .getIn(['children', 'items'], EMPTY_MAP)
+        .find(it => it.id === stateId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name')
+    ),
+    lgaId: makeButton((lgaId, { countryItems, filters }) =>
+      countryItems
+        .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
+        .getIn(['children', 'items'], EMPTY_MAP)
+        .find(it => it.id === filters.stateId, EMPTY_CONTEXT, EMPTY_MAP)
+        .getIn(['children', 'items'], EMPTY_MAP)
+        .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name')
+    ),
+    minDate: makeButton(date =>
+      formatMessage(messages.dateFrom, {
+        date: forceBaseFormatDate(date),
+      })
+    ),
+    maxDate: makeButton(date =>
+      formatMessage(messages.dateTo, {
+        date: forceBaseFormatDate(date),
+      })
+    ),
+    partnerId: makeButton((partnerId, { partnerItems }) =>
+      formatMessage(messages.partnerId, {
+        partnerName: partnerItems
+          .find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP)
+          .get('name'),
+      })
+    ),
+    patientOrResearchId: makeButton(patientOrResearchId =>
+      formatMessage(messages.patientOrResearchId, { patientOrResearchId })
+    ),
+    patientOrCaseId: makeButton(patientOrCaseId =>
+      formatMessage(messages.patientOrCaseId, { patientOrCaseId })
+    ),
+    sampleId: makeButton(sampleId =>
+      formatMessage(messages.sampleId, { sampleId })
+    ),
+    deviceName: makeButton(deviceName =>
+      formatMessage(messages.whereDeviceNameIncludes, {
+        deviceName,
+      })
+    ),
+    siteId: makeButton(siteId =>
+      formatMessage(messages.whereSiteIdIncludes, {
+        siteId,
+      })
+    ),
+    resultCategoryId: makeButton((resultCategoryId, { filters, assayItems }) =>
+      formatMessage(
+        messages.withResultCategory,
         filters.assayOverride
           ? {
-              resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
+              resultCategoryName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryGroupName: resultCategoryGroupItems
+              resultCategoryName: assayItems
                 .find(
-                  it => it.get('externalId') === resultCategoryGroupId,
+                  it => it.get('id') === filters.assayId,
                   EMPTY_CONTEXT,
                   EMPTY_MAP
                 )
-                .get('name'),
+                .get('resultCategories', EMPTY_MAP)
+                .find(
+                  it => it.get('id') === resultCategoryId,
+                  EMPTY_CONTEXT,
+                  EMPTY_MAP
+                )
+                .get('name', ''),
             }
       )
-    }
-  ),
-  errorCode: makeButton(errorCode =>
-    formatMessage(messages.errorCode, { errorCode })
-  ),
-  siteName: makeButton(siteName =>
-    formatMessage(messages.whereSiteNameIncludes, {
-      siteName,
-    })
-  ),
-  reportableSiteName: makeButton((reportableSiteName, { filters }) => {
-    const message = filters.reportableSiteId
-      ? messages.whereReportableSiteName
-      : messages.whereReportableSiteNameIncludes
-    return formatMessage(message, { reportableSiteName })
-  }),
-  reportableSiteId: (props, filterKey) => {
-    /**
-     * if filters.reportableSiteName is defined then skip processing of filters.reportableSiteId
-     * because this value will be used when showing button for filters.reportableSiteName
-     */
-    if (props.filters.reportableSiteName) {
-      return null
-    }
-    /**
-     * if filters.reportableSiteName is missing then treat filters.reportableSiteId
-     * as separate (visible) filter button
-     */
-    return makeButton(reportableSiteId =>
-      formatMessage(messages.whereReportableSiteIdIncludes, {
-        reportableSiteId,
-      })(props, filterKey)
-    )
-  },
-  sampleOriginSite: makeButton((sampleOriginSiteId, { siteItemsById }) =>
-    formatMessage(messages.sampleOriginSite, {
-      sampleOriginSiteName: siteItemsById
-        .find(
-          it => it.get('name') === sampleOriginSiteId,
-          EMPTY_CONTEXT,
-          EMPTY_MAP
+    ),
+    resultCategoryGroupId: makeButton(
+      (resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
+        return formatMessage(
+          messages.withResultCategoryGroup,
+          filters.assayOverride
+            ? {
+                resultCategoryGroupName: `"${startCase(
+                  filters.assayOverride
+                )}"`,
+              }
+            : {
+                resultCategoryGroupName: resultCategoryGroupItems
+                  .find(
+                    it => it.get('externalId') === resultCategoryGroupId,
+                    EMPTY_CONTEXT,
+                    EMPTY_MAP
+                  )
+                  .get('name'),
+              }
         )
-        .get('name'),
-    })
-  ),
-  contactNameOrEmail: makeButton(contactNameOrEmail =>
-    formatMessage(messages.whoseNameOrEmailIncludes, {
-      contactNameOrEmail,
-    })
-  ),
-  consumableId: makeButton((consumableId, { consumableItems }) =>
-    consumableItems
-      .find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP)
-      .get('name')
-  ),
-  workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
-    formatMessage(messages.withWorkflowStatus, {
-      workflowStatusName: workflowStatusItems
-        .find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name'),
-    })
-  ),
-  treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
-    formatMessage(messages.withTreatmentStatus, {
-      treatmentStatusName: treatmentStatusItems
-        .find(
-          it => it.get('externalId') === treatmentStatus,
-          EMPTY_CONTEXT,
-          EMPTY_MAP
-        )
-        .get('name'),
-    })
-  ),
-  deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
-    formatMessage(messages.withDeviceApproval, {
-      deviceApprovalName: deviceApprovalItems
-        .find(it => it.get('id') === deviceApprovalId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name'),
-    })
-  ),
-  deviceMaintenanceStatusId: makeButton(
-    (deviceMaintenanceStatusId, { deviceMaintenanceStatusItems }) =>
-      formatMessage(messages.withDeviceMaintenanceStatus, {
-        deviceMaintenanceStatusName: deviceMaintenanceStatusItems
+      }
+    ),
+    errorCode: makeButton(errorCode =>
+      formatMessage(messages.errorCode, { errorCode })
+    ),
+    siteName: makeButton(siteName =>
+      formatMessage(messages.whereSiteNameIncludes, {
+        siteName,
+      })
+    ),
+    reportableSiteName: makeButton((reportableSiteName, { filters }) => {
+      const message = filters.reportableSiteId
+        ? messages.whereReportableSiteName
+        : messages.whereReportableSiteNameIncludes
+      return formatMessage(message, { reportableSiteName })
+    }),
+    reportableSiteId: (props, filterKey) => {
+      /**
+       * if filters.reportableSiteName is defined then skip processing of filters.reportableSiteId
+       * because this value will be used when showing button for filters.reportableSiteName
+       */
+      if (props.filters.reportableSiteName) {
+        return null
+      }
+      /**
+       * if filters.reportableSiteName is missing then treat filters.reportableSiteId
+       * as separate (visible) filter button
+       */
+      return makeButton(reportableSiteId =>
+        formatMessage(messages.whereReportableSiteIdIncludes, {
+          reportableSiteId,
+        })(props, filterKey)
+      )
+    },
+    sampleOriginSite: makeButton((sampleOriginSiteId, { siteItemsById }) =>
+      formatMessage(messages.sampleOriginSite, {
+        sampleOriginSiteName: siteItemsById
           .find(
-            it => it.get('externalId') === deviceMaintenanceStatusId,
+            it => it.get('name') === sampleOriginSiteId,
             EMPTY_CONTEXT,
             EMPTY_MAP
           )
           .get('name'),
       })
-  ),
-  deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
-    formatMessage(messages.withDeviceType, {
-      deviceTypeName: deviceTypeItems
-        .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name'),
-    })
-  ),
-  deviceType: makeButton((deviceType, { deviceTypeItems }) =>
-    formatMessage(messages.withDeviceType, {
-      deviceTypeName: deviceTypeItems
-        .find(
-          it => it.get('externalId') === deviceType,
+    ),
+    contactNameOrEmail: makeButton(contactNameOrEmail =>
+      formatMessage(messages.whoseNameOrEmailIncludes, {
+        contactNameOrEmail,
+      })
+    ),
+    consumableId: makeButton((consumableId, { consumableItems }) =>
+      consumableItems
+        .find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name')
+    ),
+    workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
+      formatMessage(messages.withWorkflowStatus, {
+        workflowStatusName: workflowStatusItems
+          .find(
+            it => it.get('id') === workflowStatusId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+    ),
+    treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
+      formatMessage(messages.withTreatmentStatus, {
+        treatmentStatusName: treatmentStatusItems
+          .find(
+            it => it.get('externalId') === treatmentStatus,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+    ),
+    deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
+      formatMessage(messages.withDeviceApproval, {
+        deviceApprovalName: deviceApprovalItems
+          .find(
+            it => it.get('id') === deviceApprovalId,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+    ),
+    deviceMaintenanceStatusId: makeButton(
+      (deviceMaintenanceStatusId, { deviceMaintenanceStatusItems }) =>
+        formatMessage(messages.withDeviceMaintenanceStatus, {
+          deviceMaintenanceStatusName: deviceMaintenanceStatusItems
+            .find(
+              it => it.get('externalId') === deviceMaintenanceStatusId,
+              EMPTY_CONTEXT,
+              EMPTY_MAP
+            )
+            .get('name'),
+        })
+    ),
+    deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
+      formatMessage(messages.withDeviceType, {
+        deviceTypeName: deviceTypeItems
+          .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
+          .get('name'),
+      })
+    ),
+    deviceType: makeButton((deviceType, { deviceTypeItems }) =>
+      formatMessage(messages.withDeviceType, {
+        deviceTypeName: deviceTypeItems
+          .find(
+            it => it.get('externalId') === deviceType,
+            EMPTY_CONTEXT,
+            EMPTY_MAP
+          )
+          .get('name'),
+      })
+    ),
+    externalId: makeButton(externalId =>
+      formatMessage(messages.whereExternalIdIncludes, {
+        externalId,
+      })
+    ),
+    notificationName: makeButton(notificationName =>
+      formatMessage(messages.whereNotificationNameIncludes, {
+        notificationName,
+      })
+    ),
+    revoked: makeButton(revoked =>
+      formatMessage(messages.withRevoked, {
+        revokedStatus: revokedOptions.find(
+          it => it.id === revoked,
           EMPTY_CONTEXT,
           EMPTY_MAP
-        )
-        .get('name'),
-    })
-  ),
-  externalId: makeButton(externalId =>
-    formatMessage(messages.whereExternalIdIncludes, {
-      externalId,
-    })
-  ),
-  notificationName: makeButton(notificationName =>
-    formatMessage(messages.whereNotificationNameIncludes, {
-      notificationName,
-    })
-  ),
+        ).name,
+      })
+    ),
+    // Special keys
+    deviceIds: makeButton(deviceIds =>
+      formatMessage(messages.whereDeviceIdIsIn, {
+        joinedIds: deviceIds,
+      })
+    ),
+    siteIds: makeButton(siteIds =>
+      formatMessage(messages.whereSiteIdIsIn, {
+        joinedIds: siteIds,
+      })
+    ),
+    onlyReportableResults: makeButton(() =>
+      formatMessage(messages.onlyReportableResults)
+    ),
+    onlyDownloadedByReporter: makeButton(() =>
+      formatMessage(messages.onlyDownloadedByReporter)
+    ),
+    onlyEverTransferred: makeButton(() =>
+      formatMessage(messages.onlyEverTransferred)
+    ),
+    onlyTreatmentRequired: makeButton(() =>
+      formatMessage(messages.onlyTreatmentRequired)
+    ),
+    issueTypeId: makeButton(issueTypeId =>
+      formatMessage(messages.deviceIssueType, {
+        issueTypeId: startCase(issueTypeId),
+      })
+    ),
+    assayOverride: () => false,
+    stockLeft: makeButton(stockLeft => formatMessage(messages[stockLeft])),
+    reportName: makeButton(reportName =>
+      formatMessage(messages.whereReportNameIncludes, {
+        reportName,
+      })
+    ),
+  }
 
-  revoked: makeButton(revoked =>
-    formatMessage(messages.withRevoked, {
-      revokedStatus: revokedOptions.find(
-        it => it.id === revoked,
-        EMPTY_CONTEXT,
-        EMPTY_MAP
-      ).name,
-    })
-  ),
-  // Special keys
-  deviceIds: makeButton(deviceIds =>
-    formatMessage(messages.whereDeviceIdIsIn, {
-      joinedIds: deviceIds,
-    })
-  ),
-  siteIds: makeButton(siteIds =>
-    formatMessage(messages.whereSiteIdIsIn, {
-      joinedIds: siteIds,
-    })
-  ),
-  onlyReportableResults: makeButton(() =>
-    formatMessage(messages.onlyReportableResults)
-  ),
-  onlyDownloadedByReporter: makeButton(() =>
-    formatMessage(messages.onlyDownloadedByReporter)
-  ),
-  onlyEverTransferred: makeButton(() =>
-    formatMessage(messages.onlyEverTransferred)
-  ),
-  onlyTreatmentRequired: makeButton(() =>
-    formatMessage(messages.onlyTreatmentRequired)
-  ),
-  issueTypeId: makeButton(issueTypeId =>
-    formatMessage(messages.deviceIssueType, {
-      issueTypeId: startCase(issueTypeId),
-    })
-  ),
-  assayOverride: () => false,
-  stockLeft: makeButton(stockLeft => formatMessage(messages[stockLeft])),
-  reportName: makeButton(reportName =>
-    formatMessage(messages.whereReportNameIncludes, {
-      reportName,
-    })
-  ),
-}
-
-const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses(className, 'FiltersBtnGroup')}>
       {children &&
