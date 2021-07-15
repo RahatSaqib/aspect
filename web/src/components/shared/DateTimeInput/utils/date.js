@@ -273,7 +273,10 @@ const getAllDaysInCurrentMonth = (
   return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
-const getPreviousPeriod = (period = 'month', dateFormat) => {
+const getPreviousPeriod = (
+  period = 'month',
+  dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+) => {
   // currently only works for month
   const previousPeriodStart = getTimePeriod(1, period, dateFormat)
   const previousPeriodEnd = format(
