@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback } from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
@@ -563,15 +563,8 @@ const DeviceDetailProfile = ({
     device.get('maintenanceStatusActive') &&
     !device.get('maintenanceStatusManuallySet')
 
-  const formatMaintenanceDate = useCallback(
-    date => {
-      if (!date) {
-        return formatMessage(messages.undefinedValue)
-      }
-      return formatDate(date)
-    },
-    [formatMessage, formatDate]
-  )
+  const formatMaintenanceDate = date =>
+    date ? formatDate(date) : formatMessage(messages.undefinedValue)
 
   return (
     <div>
