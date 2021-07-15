@@ -898,10 +898,11 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
 
+  const existingAssayExternalIds = await knex('Assay').whereIn('externalId', assayExternalIds).pluck('externalId')
   await upsertResultCategoryGroup(
     knex,
     gxResultCategoryGroups,
-    assayExternalIds
+    existingAssayExternalIds
   )
 }
 
@@ -1332,6 +1333,7 @@ async function baseGxAlertMigration(
       order: cf.order,
     }
   })
+
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
     geneXpertAssayExternalIds,

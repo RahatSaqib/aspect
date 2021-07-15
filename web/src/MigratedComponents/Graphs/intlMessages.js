@@ -65,6 +65,10 @@ export const messages = defineMessages({
     id: 'legends.Unknown.assayGeneXpertMtbRif',
     defaultMessage: 'GeneXpert MTB/Rif',
   },
+  assayGeneXpertMtbXDR: {
+    id: 'legends.Unknown.assayGeneXpertMtbXDR',
+    defaultMessage: 'GeneXpert MTB/XDR',
+  },
   assayGeneXpertMtbRifUltra: {
     id: 'legends.Unknown.assayGeneXpertMtbRifUltra',
     defaultMessage: 'GeneXpert MTB/Rif Ultra',

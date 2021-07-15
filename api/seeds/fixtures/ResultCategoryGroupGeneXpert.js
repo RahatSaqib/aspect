@@ -4,4 +4,5 @@ module.exports = [
   ...groupsByAssay.gxEbola,
   ...groupsByAssay.gxMtbRif,
   ...groupsByAssay.gxMtbRifUltra,
+  ...groupsByAssay.gxMtbXDR,
 ]

@@ -109,6 +109,10 @@ export default defineMessages({
     id: 'filter.AssaySelectField.assayGeneXpertMtbRif',
     defaultMessage: 'GeneXpert MTB/Rif',
   },
+  assayGeneXpertMtbXDR: {
+    id: 'filter.AssaySelectField.assayGeneXpertMtbXDR',
+    defaultMessage: 'GeneXpert MTB/XDR',
+  },
   assayGeneXpertMtbRifUltra: {
     id: 'filter.AssaySelectField.assayGeneXpertMtbRifUltra',
     defaultMessage: 'GeneXpert MTB/Rif Ultra',
