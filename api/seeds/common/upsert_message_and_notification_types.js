@@ -28,20 +28,15 @@ async function upsertMessageAndNotificationTypes(
   }
   const issues = await getBaseIssues(auditFields)
   const notificationTypes = await getBaseNotificationTypes()
-  const issueTypesInDb = await knex('IssueType').select(
-    'id',
-    'externalId',
-    'name'
-  )
+  const issueTypesInDb = await knex('IssueType')
+    .whereIn('externalId', issueTypeExternalIds)
+    .select('id', 'externalId', 'name')
   const jobFunctions = await knex('JobFunction').select('id', 'name')
 
   // iterate over the issue types so we can create message and notification types as needed
-  await Promise.each(issueTypeExternalIds, async issueTypeExternalId => {
-    const issueTypeInDb = issueTypesInDb.find(
-      it => it.externalId === issueTypeExternalId
-    )
-    const issue = issues[issueTypeExternalId]
-    const notificationType = notificationTypes[issueTypeExternalId]
+  await Promise.each(issueTypesInDb, async issueTypeInDb => {
+    const issue = issues[issueTypeInDb.externalId]
+    const notificationType = notificationTypes[issueTypeInDb.externalId]
 
     if (issueTypeInDb && issue && notificationType) {
       const { id: alertTemplateId } = issue.AlertTemplate
