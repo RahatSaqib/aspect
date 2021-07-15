@@ -23,7 +23,6 @@ const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
 const {
   result1CategoryMapping,
-  result2CategoryMapping,
   mapResultCategory2,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const {
@@ -877,13 +876,10 @@ function getResultCategories(payload) {
           if (externalId) payloadCategory = [{ id: externalId }]
         }
       }
-      
+
       const resultCategory2 = mapResultCategory2(assayId, resultTextValues)
       if (resultCategory2)
-        payloadCategory = [
-          ...payloadCategory,
-          { id: result2CategoryMapping[result2Text] },
-        ]
+        payloadCategory = [...payloadCategory, { id: resultCategory2 }]
     } else {
       const assayId = _.get(payload, 'assay.id')
       if (assayId === 'GxHiv1Vl') {

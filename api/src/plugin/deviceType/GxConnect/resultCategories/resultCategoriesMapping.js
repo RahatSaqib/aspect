@@ -177,28 +177,13 @@ const mtbPositiveResultCategories = [
 const errorResultCategories = [
   result1CategoryMapping.error,
   result1CategoryMapping.invalid,
-  result1CategoryMapping['no result']
+  result1CategoryMapping['no result'],
 ]
 
 const isMtbPositiveOrError = resultTextValues =>
   mtbPositiveResultCategories.includes(
     result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
-  ) ||
-  errorResultCategories.includes(
-    result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
   )
-
-const mtbRifResultCategory2Map = resultTextValues => {
-  let result2
-
-  const result1 = result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
-  if (errorResultCategories.includes(result1))
-    result2 = result1
-  else
-    result2 = result2CategoryMapping[sanitizeResultTextValue(resultTextValues[1])]
-
-  return result2
-}
 
 const defaultResultCategory2Map = resultTextValues => {
   const result2Text = sanitizeResultTextValue(resultTextValues[1])
@@ -209,9 +194,9 @@ const allowedResultCategory2Mappings = {
   GxMtbXDR: {
     isAllowed: isMtbPositiveOrError,
     map: resultTextValues => {
-      const result1 = result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
-      if (errorResultCategories.includes(result1))
-        return result1
+      const result1 =
+        result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
+      if (errorResultCategories.includes(result1)) return result1
 
       // Get the first positive result present in the results chain...
       const resultCategory2Values = resultTextValues.slice(1)
@@ -222,20 +207,18 @@ const allowedResultCategory2Mappings = {
           mappedResult && mtbPositiveResultCategories.includes(mappedResult)
         )
       })
-      
+
       // ...then return DETECTED if at least one resistance result is positive
       if (positiveResult) return result2CategoryMapping.detected
-      
+
       const errorResult = resultCategory2Values.find(resultTextValue => {
         const mappedResult =
           result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
-        return (
-          mappedResult && errorResultCategories.includes(mappedResult)
-        )
+        return mappedResult && errorResultCategories.includes(mappedResult)
       })
-      // ...or return error if at least one resistance result is error 
+      // ...or return error if at least one resistance result is error
       if (errorResult)
-        return result2CategoryMapping.error
+        return result2CategoryMapping[sanitizeResultTextValue(errorResult)]
 
       // ...or not detected as default
       return result2CategoryMapping['not detected']
@@ -243,16 +226,16 @@ const allowedResultCategory2Mappings = {
   },
   GxMtbRifUltra: {
     isAllowed: isMtbPositiveOrError,
-    map: mtbRifResultCategory2Map
+    map: defaultResultCategory2Map,
   },
   GxMtbRif: {
     isAllowed: isMtbPositiveOrError,
-    map: mtbRifResultCategory2Map
+    map: defaultResultCategory2Map,
   },
   GxEbola: {
     isAllowed: () => true,
-    map: defaultResultCategory2Map
-  }
+    map: defaultResultCategory2Map,
+  },
 }
 
 /**
@@ -262,7 +245,9 @@ const allowedResultCategory2Mappings = {
  * @returns The result category 2 external id (Ex.: 'NotDetected', 'Detected', etc). Returns null if the result category 2 does not apply.
  */
 const mapResultCategory2 = (assayExternalId, resultTextValues) => {
-  const mapping = resultTextValues.length > 1 && allowedResultCategory2Mappings[assayExternalId]
+  const mapping =
+    resultTextValues.length > 1 &&
+    allowedResultCategory2Mappings[assayExternalId]
   if (mapping && mapping.isAllowed(resultTextValues)) {
     const { map } = mapping
     return map(resultTextValues)
