@@ -31,6 +31,8 @@ const sanitizeResultTextValue = resultTextValue =>
     .replace(/eth resistance/, '')
     // Result Category 2 - Ebola
     .replace(/ebola np/, '')
+    // Needed for cases like 'Low INH Resistance @label_result_detected'
+    .replace('  ', ' ')
     .toLowerCase()
     .trim()
 

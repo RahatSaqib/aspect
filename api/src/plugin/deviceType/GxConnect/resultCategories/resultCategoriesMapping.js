@@ -8,6 +8,10 @@ const result1CategoryMapping = {
   'no detectado': 'NotDetected',
   '@label_result_not_detected': 'NotDetected',
   detected: 'Detected',
+  'very low @label_result_detected': 'Detected',
+  'low @label_result_detected': 'Detected',
+  'medium @label_result_detected': 'Detected',
+  'high @label_result_detected': 'Detected',
   '@label_result_detected': 'Detected',
   '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low':
     'Detected',
@@ -115,6 +119,10 @@ const result2CategoryMapping = {
   'no detectado': 'NotDetected',
   '@label_result_not_detected': 'NotDetected',
   detected: 'Detected',
+  'very low @label_result_detected': 'Detected',
+  'low @label_result_detected': 'Detected',
+  'medium @label_result_detected': 'Detected',
+  'high @label_result_detected': 'Detected',
   '@label_result_detected': 'Detected',
   '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low':
     'Detected',
@@ -201,6 +209,7 @@ const allowedResultCategory2Mappings = {
       // Get the first positive result present in the results chain...
       const resultCategory2Values = resultTextValues.slice(1)
       const positiveResult = resultCategory2Values.find(resultTextValue => {
+        console.log(resultTextValue, sanitizeResultTextValue(resultTextValue), result2CategoryMapping[sanitizeResultTextValue(resultTextValue)])
         const mappedResult =
           result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
         return (
