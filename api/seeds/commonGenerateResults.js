@@ -192,7 +192,8 @@ async function generateResults(
       elem.externalId === 'assayBdMgitAst' ||
       elem.externalId === 'assayBdMgitGnd' ||
       elem.externalId === 'GxMtbRif' ||
-      elem.externalId === 'GxMtbRifUltra'
+      elem.externalId === 'GxMtbRifUltra' ||
+      elem.externalId === 'GxMtbXdr'
   )
   const tbResults = await addTBResults(
     knex,

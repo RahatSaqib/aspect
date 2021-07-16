@@ -209,7 +209,6 @@ const allowedResultCategory2Mappings = {
       // Get the first positive result present in the results chain...
       const resultCategory2Values = resultTextValues.slice(1)
       const positiveResult = resultCategory2Values.find(resultTextValue => {
-        console.log(resultTextValue, sanitizeResultTextValue(resultTextValue), result2CategoryMapping[sanitizeResultTextValue(resultTextValue)])
         const mappedResult =
           result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
         return (

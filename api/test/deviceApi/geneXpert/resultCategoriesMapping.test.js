@@ -92,28 +92,40 @@ describe('Result Category Mapping', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), 'Detected')
+        assert.equal(
+          mapResultCategory2('GxMtbXdr', resultTextValues),
+          'Detected'
+        )
       })
 
       it('mtb detected, 1 very low detected resistance, map Detected', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_detected|Very Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), 'Detected')
+        assert.equal(
+          mapResultCategory2('GxMtbXdr', resultTextValues),
+          'Detected'
+        )
       })
 
       it('mtb detected, 1 medium detected resistance, map Detected', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), 'Detected')
+        assert.equal(
+          mapResultCategory2('GxMtbXdr', resultTextValues),
+          'Detected'
+        )
       })
 
       it('mtb detected, 1 high detected resistance, map Detected', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_detected|High INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
         )
-        assert.equal(mapResultCategory2('GxMtbXdr', resultTextValues), 'Detected')
+        assert.equal(
+          mapResultCategory2('GxMtbXdr', resultTextValues),
+          'Detected'
+        )
       })
     })
 
