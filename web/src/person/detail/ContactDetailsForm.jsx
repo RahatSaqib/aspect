@@ -532,7 +532,6 @@ export const ContactDetailsForm = ({
             qryId={contactDetails.get('id')}
             qryType="person"
             value={personTags.toJS()}
-            noMatch=""
           />
         </section>
       ) : null}

@@ -27,10 +27,7 @@ const DailyStatusFilters = ({
                   onChange={() => action(key)}
                   value={key}
                   classes={{
-                    root: cssClasses(
-                      'status__checkbox',
-                      `status__checkbox--${key}`
-                    ),
+                    root: cssClasses(`status__checkbox--${key}`),
                   }}
                 />
               }
@@ -54,10 +51,7 @@ const DailyStatusFilters = ({
                         onChange={() => action(externalId)}
                         value={externalId}
                         classes={{
-                          root: cssClasses(
-                            'status__checkbox',
-                            `status__checkbox--${externalId}`
-                          ),
+                          root: cssClasses(`status__checkbox--${externalId}`),
                         }}
                       />
                     }

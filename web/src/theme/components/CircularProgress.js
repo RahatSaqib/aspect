@@ -1,7 +1,9 @@
 export default ({ themedColors }) => ({
   MuiCircularProgress: {
-    colorPrimary: {
-      color: themedColors.primary,
+    styleOverrides: {
+      colorPrimary: {
+        color: themedColors.primary,
+      },
     },
   },
 })

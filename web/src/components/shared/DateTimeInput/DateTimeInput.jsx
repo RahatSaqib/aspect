@@ -753,7 +753,7 @@ DateTimeInput.propTypes = {
   intl: PropTypes.shape({
     formatMessage: PropTypes.func,
   }),
-  value: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/require-default-props
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // eslint-disable-line react/require-default-props
   defaultValue: DateType, // eslint-disable-line react/forbid-prop-types,
   minDate: DateType,
   maxDate: DateType,

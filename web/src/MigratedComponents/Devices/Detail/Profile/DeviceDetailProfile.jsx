@@ -618,6 +618,7 @@ const DeviceDetailProfile = ({
                   >
                     <Button
                       variant="contained"
+                      color="success"
                       onClick={onExportDeviceLogsClick}
                       disabled={disabled}
                     >
@@ -665,6 +666,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onShowMaintenanceDialog}
                   disabled={isMaintenanceStatusChangeDisabled}
                 >
@@ -695,6 +697,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onShowCalibrationDialog}
                   disabled={disabled}
                 >
@@ -736,6 +739,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onShowWarrantyDialog}
                   disabled={disabled}
                 >
@@ -819,6 +823,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onToggleDeviceApproval}
                   disabled={disabled}
                 >

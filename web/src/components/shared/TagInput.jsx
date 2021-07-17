@@ -232,9 +232,9 @@ const TagInput = ({
   )
 }
 
-// TagInput.defaultProps = {
-//   noMatch: '',
-// }
+TagInput.defaultProps = {
+  noMatch: '',
+}
 TagInput.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool,
@@ -244,7 +244,7 @@ TagInput.propTypes = {
   onDelete: PropTypes.func.isRequired,
   source: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.arrayOf(PropTypes.object),
-  noMatch: PropTypes.string.isRequired,
+  noMatch: PropTypes.string,
 }
 
 TagInput.defaultProps = {

@@ -7,9 +7,7 @@ export default () => ({
         minWidth: 256,
       },
       select: {
-        '&:focus': {
-          background: 'none',
-        },
+        '&:focus': {},
       },
       icon: {
         color: grey[300],
