@@ -80,6 +80,11 @@ export default ({ theme, themedColors }) => ({
         '&$disabled': {
           border: 'none',
         },
+        '&.inverse': {
+          backgroundColor: theme.palette.common.white,
+          color: themedColors.primary,
+          border: `1px solid ${themedColors.primary}`,
+        },
       },
       text: {
         '&.inverse': {
