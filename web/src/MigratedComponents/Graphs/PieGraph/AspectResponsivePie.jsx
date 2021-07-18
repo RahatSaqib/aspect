@@ -95,6 +95,8 @@ const AspectResponsivePie = ({
         motionDamping={15}
         tooltip={v => (
           <GraphToolTip
+            clickThrough={false}
+            displayMethod={displayMethod}
             values={generateToolTip(
               v,
               displayMethod,
