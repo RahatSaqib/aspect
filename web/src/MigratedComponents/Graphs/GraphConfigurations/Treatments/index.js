@@ -3,7 +3,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 
 import BarGraph from '../../BarGraph'
-// import PieGraph from '../../PieGraph'
+import PieGraph from '../../PieGraph'
 import AspectDropDown from '../../../AspectDropDown'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
@@ -76,35 +76,35 @@ const treatmentStatusGraphs = {
           keys: ['treatmentStatus', 'indexBy'],
         },
       },
-      // {
-      //   id: 'treatmentStatusMonthlyPie',
-      //   component: PieGraph,
-      //   type: 'pieLegacyTreatment',
-      //   size: 4,
-      //   componentClasses: ['piegraph__container'],
-      //   i18nKey: {
-      //     Confirmed: 'Confirmed',
-      //     NotConfirmed: 'NotConfirmed',
-      //   },
-      //   api: {
-      //     method: 'GET',
-      //     endpoint: '/result/confirmed-treatment-tracking',
-      //     params: {
-      //       [MIN_DATE]: startOfMonth(subMonths(new Date(), 12)),
-      //       [MAX_DATE]: endOfMonth(subMonths(new Date(), 1)),
-      //     },
-      //   },
-      //   indexBy: 'monthTested',
-      //   keyToConsume: 'onTreatment',
-      //   displayMethod: 'percentage',
-      //   formatDate: 'MMM yy',
-      //   averages: {
-      //     showTotal: false,
-      //     title: 'treatmentStatusTotalTitle',
-      //     key: ['Confirmed'],
-      //     subTitle: 'treatmentStatusTotalValidTitle',
-      //   },
-      // },
+      {
+        id: 'treatmentStatusMonthlyPie',
+        component: PieGraph,
+        type: 'pieLegacyTreatment',
+        size: 4,
+        componentClasses: ['piegraph__container'],
+        i18nKey: {
+          Confirmed: 'Confirmed',
+          NotConfirmed: 'NotConfirmed',
+        },
+        api: {
+          method: 'GET',
+          endpoint: '/result/confirmed-treatment-tracking',
+          params: {
+            [MIN_DATE]: startOfMonth(subMonths(new Date(), 12)),
+            [MAX_DATE]: endOfMonth(subMonths(new Date(), 1)),
+          },
+        },
+        indexBy: 'monthTested',
+        keyToConsume: 'onTreatment',
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        averages: {
+          showTotal: false,
+          title: 'treatmentStatusTotalTitle',
+          key: ['Confirmed'],
+          subTitle: 'treatmentStatusTotalValidTitle',
+        },
+      },
     ],
   },
 }
