@@ -6,7 +6,7 @@ import classnames from 'classnames/bind'
 import React, { useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
-import { useQuery, useMutation, queryCache } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -308,6 +308,7 @@ export const InventoryItemsListWithProps = ({
 }
 
 export const InventoryItemsList = ({ navigate, location }) => {
+  const queryClient = useQueryClient()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
   // const navigate = useNavigate()
@@ -382,7 +383,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
-    queryCache.invalidateQueries(endpointConfig.KEY)
+    queryClient.invalidateQueries(endpointConfig.KEY)
     onAdjustInventorySucceeded()
   }
   // Remove
@@ -413,7 +414,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess: () => {
-        queryCache.invalidateQueries(endpointConfig.KEY)
+        queryClient.invalidateQueries(endpointConfig.KEY)
         onAdjustInventorySucceeded()
       },
     }

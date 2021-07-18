@@ -13,7 +13,7 @@ import {
   useParams,
   useLocation,
 } from 'react-router-dom'
-import { useQuery, useMutation, queryCache } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 
 import { useAuthState } from '../../../Providers/AuthProvider'
 import isEditable from '../../../shared/selectors/isEditable'
@@ -70,6 +70,7 @@ export const DeviceDetail = props => {
   const navigate = useNavigate()
   const { deviceId } = useParams()
   const intl = useIntl()
+  const queryClient = useQueryClient()
 
   const { data: { device = {}, devicePerformance = {} } = {}, isLoading } =
     useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
@@ -85,8 +86,8 @@ export const DeviceDetail = props => {
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
-    queryCache.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
-  }, [deviceId])
+    queryClient.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
+  }, [deviceId, queryClient])
 
   const { mutate: updateDevice } = useMutation(
     ({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)),

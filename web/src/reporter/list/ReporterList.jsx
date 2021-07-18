@@ -9,7 +9,7 @@ import TableBody from '@material-ui/core/TableBody'
 import Immutable from 'immutable'
 import { useNavigate, useLocation } from 'react-router-dom'
 import fromPairs from 'lodash/fromPairs'
-import { useQuery, useMutation, queryCache } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import PropTypeOf from '../../shared/types'
 import {
   makeSortPageSelector,
@@ -222,6 +222,7 @@ const ReporterList = () => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
+  const queryClient = useQueryClient()
 
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(
@@ -252,7 +253,7 @@ const ReporterList = () => {
       }),
     {
       onSuccess: () => {
-        queryCache.invalidateQueries([REPORTERS_LIST.KEY, { params }])
+        queryClient.invalidateQueries([REPORTERS_LIST.KEY, { params }])
       },
     }
   )

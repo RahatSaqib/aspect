@@ -133,7 +133,7 @@ const FormDialog = ({
             name="notes"
             label={intl.formatMessage(messages.notes)}
             disabled={form.submitting}
-            value={values.notes}
+            value={values.notes || ''}
             onChange={onNotesChange}
             multiline
             rows={2}

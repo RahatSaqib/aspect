@@ -83,7 +83,7 @@ SelectField.propTypes = {
   floatingLabelFixed: PropTypes.bool,
   floatingLabelText: PropTypes.string,
   fullWidth: PropTypes.bool,
-  helperText: PropTypes.string,
+  helperText: PropTypes.node,
   hintText: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,

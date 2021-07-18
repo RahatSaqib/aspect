@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { queryCache, useMutation, useQuery } from 'react-query'
+import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { useIntl } from 'react-intl'
 import cloneDeep from 'lodash/cloneDeep'
 import findIndex from 'lodash/findIndex'
@@ -24,6 +24,7 @@ const useDailyStatus = (
   endpoint = DAILY_STATUS.ENDPOINT,
   extraParams = {}
 ) => {
+  const queryClient = useQueryClient()
   const { formatMessage } = useIntl()
   const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
@@ -79,7 +80,7 @@ const useDailyStatus = (
         const selectedStatus = statuses.find(
           ({ externalId }) => externalId === values.reason
         )
-        queryCache.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
+        queryClient.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
           const { data: devicesDailyOld } = oldData
           const devicesDailyNew = cloneDeep(devicesDailyOld)
           const { maintenanceStatusHistory } = devicesDailyNew.find(
