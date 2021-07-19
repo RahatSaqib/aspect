@@ -90,19 +90,12 @@ const enhance = compose(
       setState({ values: nextValues })
     }
 
-    const onUsernameMount = ref => {
-      if (ref) {
-        ref.focus()
-      }
-    }
-
     return (
       <WrappedComponent
         {...props}
         {...state}
         onSubmit={onSubmit}
         onChange={onChange}
-        onUsernameMount={onUsernameMount}
       />
     )
   },
@@ -143,7 +136,6 @@ const AspectLogo = () => (
 export const Login = ({
   intl,
   location,
-  onUsernameMount,
   form,
   meta,
   values,
@@ -167,7 +159,6 @@ export const Login = ({
               className={cssClasses('Form__Info')}
             />
             <TextField
-              inputRef={onUsernameMount}
               autoFocus
               fullWidth
               name="user"
@@ -181,7 +172,6 @@ export const Login = ({
               }}
             />
             <TextField
-              autoFocus
               fullWidth
               type="password"
               name="password"
