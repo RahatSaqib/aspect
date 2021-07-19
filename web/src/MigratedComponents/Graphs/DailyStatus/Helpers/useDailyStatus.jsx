@@ -84,7 +84,7 @@ const useDailyStatus = (
           const { data: devicesDailyOld } = oldData
           const devicesDailyNew = cloneDeep(devicesDailyOld)
           const { maintenanceStatusHistory } = devicesDailyNew.find(
-            ({ id }) => id === deviceId
+            ({ id }) => +id === +deviceId
           )
           maintenanceStatusHistory
             .filter(
