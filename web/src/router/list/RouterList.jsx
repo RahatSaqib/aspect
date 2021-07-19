@@ -163,7 +163,7 @@ const enhance = compose(
         navigate(`/browse/router/${routerId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )

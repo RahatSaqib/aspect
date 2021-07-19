@@ -7,7 +7,7 @@ const DELAY = 500
 
 const enhance = compose(
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         disabled: this.props.disabled,
       })

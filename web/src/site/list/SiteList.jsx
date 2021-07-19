@@ -216,7 +216,7 @@ const enhance = compose(
         navigate(`/browse/site/${siteId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )

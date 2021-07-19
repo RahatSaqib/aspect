@@ -121,7 +121,7 @@ const enhance = compose(
         navigate(`/task-list/${taskId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )

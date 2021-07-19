@@ -145,7 +145,7 @@ const enhance = compose(
       },
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { partnerList, countries, contactDetails, userPreferences } =
         this.props
 

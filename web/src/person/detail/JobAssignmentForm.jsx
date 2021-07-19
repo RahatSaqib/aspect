@@ -52,7 +52,7 @@ const enhance = compose(
   })),
   pure,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,

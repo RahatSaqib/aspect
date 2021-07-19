@@ -88,7 +88,7 @@ const enhance = compose(
   withTodayProps,
   withDateFormatProps,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
 
       this.setState({

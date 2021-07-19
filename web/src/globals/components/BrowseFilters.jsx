@@ -175,7 +175,7 @@ const enhance = compose(
     }
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const reducedNav = reduceNavLinks(navigations, this.props.userPermissions)
       this.setState({
         reducedSource: reducedNav,

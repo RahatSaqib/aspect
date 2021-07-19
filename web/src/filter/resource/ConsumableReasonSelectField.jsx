@@ -69,7 +69,7 @@ const enhance = compose(
     }
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
           this.props.onConsumableReasonIdChange(

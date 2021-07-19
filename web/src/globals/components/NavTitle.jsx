@@ -19,7 +19,7 @@ const enhance = compose(
     )
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.props.setNavTitle(this.props.title)
     },
 
