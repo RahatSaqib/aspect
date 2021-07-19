@@ -139,10 +139,10 @@ DailyStatusClinicDay.propTypes = {
   }),
   maintenanceStatusExternalId: PropTypes.string,
   daysInSameStatus: PropTypes.number,
-  statuses: PropTypes.oneOfType(
+  statuses: PropTypes.oneOfType([
     PropTypes.bool,
-    PropTypes.arrayOf(PropTypes.object)
-  ),
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,

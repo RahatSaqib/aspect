@@ -139,7 +139,7 @@ CustomBarGraphLegend.propTypes = {
     PropTypes.oneOfType([PropTypes.object, PropTypes.string])
   ).isRequired,
   legendsToPopover: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.object, PropTypes.boolean])
+    PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
   ).isRequired,
   i18nKeys: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 }

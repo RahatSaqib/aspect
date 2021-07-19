@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  boolean,
+  bool,
   func,
   number,
   object,
@@ -141,7 +141,7 @@ AspectWidget.propTypes = {
     statUnitI18nKey: string,
     alert: shape({
       config: oneOfType([object]).isRequired,
-      display: oneOfType([boolean, func]).isRequired,
+      display: oneOfType([bool, func]).isRequired,
     }),
   }).isRequired,
 }
