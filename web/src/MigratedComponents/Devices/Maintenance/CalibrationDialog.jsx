@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import pick from 'lodash/pick'
 import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
@@ -33,18 +33,12 @@ export function validate({ contextDate }, { intl }) {
 const DEFAULT_VALUES = pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
 const calibrationDialog = WrappedComponent => props => {
-  const [values, setValues] = useState({})
   const { device, intl } = props
-
-  useEffect(
-    () =>
-      setValues({
-        ...DEFAULT_VALUES,
-        contextDate: device.get('calibrationDate') || null,
-        notes: device.get('calibrationNotes'),
-      }),
-    [device]
-  )
+  const [values, setValues] = useState({
+    ...DEFAULT_VALUES,
+    contextDate: device.get('calibrationDate') || null,
+    notes: device.get('calibrationNotes') || '',
+  })
 
   const allProps = {
     ...props,
