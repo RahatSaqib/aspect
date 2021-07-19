@@ -243,7 +243,7 @@ const AppRoutes = ({ props: outerProps }) => {
             : renderLoadableLogin(props)}
         </Route>
 
-        <Route path="/reset-password" element={renderResetPassword(props)} />
+        <Route path="/reset-password">{renderResetPassword(props)}</Route>
 
         <Route path="/license">
           {renderRedirectToLoginOr(props) || renderLicense(props)}
