@@ -42,7 +42,7 @@ const {
   gxHiv1Qual: gxHiv1QualMappings,
   gxMtbRif: gxMtbRifMappings,
   gxMtbRifUltra: gxMtbRifUltraMappings,
-  gxMtbXDR: gxMtbXDRMappings,
+  gxMtbXdr: gxMtbXdrMappings,
   assayGxCovid19: assayGxCovid19Mappings,
 } = require('./notVLResultTextMappings')
 const { knex } = require('../../../src/db')
@@ -900,7 +900,7 @@ describe('Device API routes for GxConnect Devices', () => {
     )
     it(
       'should append a new GxMtbXdr result with the correct result categories',
-      getResultCategoriesTestCallback(gxMtbXDRMappings)
+      getResultCategoriesTestCallback(gxMtbXdrMappings)
     )
     it(
       'should append a new assayGxCovid19 result with the correct result categories',

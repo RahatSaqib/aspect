@@ -57,7 +57,7 @@ const deviceNumber = 50
 const routerNumber = 20
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultMtbNumber = resultMultiplier * 0.7
-const resultMtbXDRNumber = resultMultiplier * 0.3
+const resultMtbXdrNumber = resultMultiplier * 0.3
 const resultMtbUltraNumber = resultMultiplier
 const resultHivVlNumber = 0.8 * resultMultiplier
 const resultEbolaNumber = 0
@@ -4259,13 +4259,13 @@ async function seed(knex) {
       })
 
       // some TB XDR samples:
-      await Promise.each(_.range(resultMtbXDRNumber / 2), async i => {
+      await Promise.each(_.range(resultMtbXdrNumber / 2), async i => {
         const siteData = siteDatas[i % siteDatas.length]
         const sample = {
           externalId: `SMP-TBXDR-${i}`,
           collectedOn: calculateDateForResult(
             i,
-            resultMtbXDRNumber,
+            resultMtbXdrNumber,
             millisInMinute
           ),
           sampleTypeId: sampleTypeDBSId,
@@ -4366,11 +4366,11 @@ async function seed(knex) {
         },
       }
 
-      await Promise.each(_.range(resultMtbXDRNumber), async i => {
+      await Promise.each(_.range(resultMtbXdrNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
         const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
-        const randomDate = calculateDateForResult(i, resultMtbXDRNumber, 6000)
+        const randomDate = calculateDateForResult(i, resultMtbXdrNumber, 6000)
 
         const rnd = _.random(0, 100)
         const rndModule = _.random(0, 3)

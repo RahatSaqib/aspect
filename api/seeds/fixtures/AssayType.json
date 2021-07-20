@@ -8,8 +8,8 @@
     },
     {
       "name": "MTB/XDR",
-      "i18nKey": "assayTypeMtbXDR",
-      "externalId": "assayTypeMtbXDR",
+      "i18nKey": "assayTypeMtbXdr",
+      "externalId": "assayTypeMtbXdr",
       "abbreviation":"MTB/XDR"
     },
     {
@@ -125,7 +125,7 @@
       }
     },
     {
-      "externalId": "assayTypeMtbXDR",
+      "externalId": "assayTypeMtbXdr",
       "diseaseId": {
         "table": "Disease",
         "externalId": "tb"

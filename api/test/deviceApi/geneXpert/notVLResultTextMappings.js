@@ -1413,7 +1413,7 @@ const gxMtbRifUltra = [
   ),
 ]
 
-const gxMtbXDR = [
+const gxMtbXdr = [
   getAssertionItem(
     'GxMtbXdr',
     '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
@@ -1530,5 +1530,5 @@ module.exports = {
   gxMtbRif,
   gxMtbRifUltra,
   assayGxCovid19,
-  gxMtbXDR,
+  gxMtbXdr,
 }
