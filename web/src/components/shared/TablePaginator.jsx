@@ -142,7 +142,9 @@ const TablePaginator = ({
   <div className={cssClasses(className, 'Container')}>
     <div className={cssClasses('Left')}>
       <Button
-        className={cssClasses('Left__Button')}
+        classes={{
+          root: cssClasses('Left__Button'),
+        }}
         disabled={!hasFirstPage}
         color="primary"
         variant="outlined"
@@ -152,7 +154,9 @@ const TablePaginator = ({
         {intl.formatMessage(messages.first)}
       </Button>
       <Button
-        className={cssClasses('Left__Button')}
+        classes={{
+          root: cssClasses('Left__Button'),
+        }}
         disabled={!hasPreviousPage}
         color="primary"
         variant="outlined"
@@ -171,7 +175,9 @@ const TablePaginator = ({
         })}
       </div>
       <Button
-        className={cssClasses('Left__Button', 'Left__Button--next')}
+        classes={{
+          root: cssClasses('Left__Button', 'Left__Button--next'),
+        }}
         disabled={!hasNextPage}
         color="primary"
         variant="outlined"
@@ -181,7 +187,9 @@ const TablePaginator = ({
         <FaAngleRight />
       </Button>
       <Button
-        className={cssClasses('Left__Button', 'Left__Button--next')}
+        classes={{
+          root: cssClasses('Left__Button', 'Left__Button--next'),
+        }}
         disabled={!hasLastPage}
         color="primary"
         variant="outlined"
@@ -195,7 +203,10 @@ const TablePaginator = ({
       {pageSizeButtonKeys.map(key => (
         <Button
           key={key}
-          className={cssClasses('Right__Button', {
+          classes={{
+            root: cssClasses('Right__Button'),
+          }}
+          className={cssClasses({
             selected: key !== ALL_KEY ? key === pageSize : pageSize === total,
           })}
           onClick={restProps[`onPageSizeChange${key}`]}
