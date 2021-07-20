@@ -28,6 +28,10 @@ module.exports = async function upsertResultCategoryGroups(
   const resultCategoryIds = {}
 
   const assays = await knex('Assay').select('id', 'externalId')
+
+  if (assayWhitelist.length === 0)
+    assayWhitelist = assays.map(a => a.externalId)
+
   const resultCategories = await knex('ResultCategory').select(
     'id',
     'externalId'

@@ -2,9 +2,5 @@ const upsertResultCategoryGroups = require('../common/upsert_result_category_gro
 const fixture = require('../fixtures/ResultCategoryGroupGeneXpert')
 
 module.exports = require('../utils').seed(async knex => {
-  await upsertResultCategoryGroups(knex, fixture, [
-    'GxMtbRif',
-    'GxMtbRifUltra',
-    'GxUnknown',
-  ])
+  await upsertResultCategoryGroups(knex, fixture)
 }, __filename)
