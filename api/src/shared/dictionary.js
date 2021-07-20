@@ -9,6 +9,7 @@ const cacheConfig = {
   AssayType: {
     keyColumn: 'name',
   },
+  Consumable: {},
   ConsumableReason: {
     keyColumn: 'name',
   },
@@ -47,7 +48,6 @@ const cacheConfig = {
   ResultTreatmentStatus: {},
   ResultType: {},
   ResultWorkflowStatus: {},
-  Consumable: {},
   Report: {},
   SampleType: {},
   TimeZone: {
