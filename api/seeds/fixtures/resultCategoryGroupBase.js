@@ -235,7 +235,7 @@ const GxMtbXdrMtbDetected = {
 const GxMtbXdrMtbDetectedXdrNotDetected = {
   externalId: 'GxMtbXdrMtbDetectedXdrNotDetected',
   i18nKey: 'gxMtbXdrMtbDetectedXdrNotDetected',
-  name: 'MTB Detected Xdr Not Detected',
+  name: 'MTB Detected XDR Not Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbXdr',
