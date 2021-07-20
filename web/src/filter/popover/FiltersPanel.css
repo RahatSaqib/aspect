@@ -100,8 +100,14 @@
   padding-right: 8px;
 }
 
-.Control .MuiFormControl-root {
+/* .Control > label[class*='CheckboxField-root'],  */
+.Control > div[class*='MuiFormControl-root'] {
   width: 256px;
+}
+
+.Control-checkbox {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
 }
 
 .Control .Control__inner {

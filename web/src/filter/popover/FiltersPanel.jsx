@@ -1118,7 +1118,7 @@ export const FiltersPanel = ({
               </div>
             )}
             {config.onlyReportableResults && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
@@ -1136,7 +1136,7 @@ export const FiltersPanel = ({
               </div>
             )}
             {config.onlyDownloadedByReporter && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
@@ -1155,7 +1155,7 @@ export const FiltersPanel = ({
             )}
             {(reportableSiteName || reportableSiteId) &&
               config.onlyEverTransferred && (
-                <div className={cssClasses('Control')}>
+                <div className={cssClasses('Control', 'Control-checkbox')}>
                   <CheckboxField
                     classNames={{
                       controlContainer: cssClasses('checkbox-wrapper'),
@@ -1173,7 +1173,7 @@ export const FiltersPanel = ({
                 </div>
               )}
             {config.onlyTreatmentRequired && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
