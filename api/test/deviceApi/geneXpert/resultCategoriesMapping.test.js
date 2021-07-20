@@ -11,7 +11,7 @@ describe('Result Category Mapping', () => {
     it('provide a not allowed assay, map null', () => {
       assert.isNull(
         mapResultCategory2(
-          'This assay has not a mapper for resultCategory2',
+          'This assay does not have a mapper for resultCategory2',
           'MTB Detected|Rif Resistance DETECTED'
         )
       )
