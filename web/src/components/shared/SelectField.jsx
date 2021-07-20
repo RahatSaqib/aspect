@@ -16,6 +16,7 @@ const styles = theme => ({
   emptyMenuItem: {
     height: 0,
     padding: 0,
+    overflow: 'hidden',
   },
   placeholder: {
     color: theme.palette.text.disabled,
