@@ -632,7 +632,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   const {
     'MTB/Rif': assayTypeMTBRifId,
-    'MTB/XDR': assayTypeMtbXDRId,
+    'MTB/XDR': assayTypeMtbXdrId,
     Ebola: assayTypeEbolaId,
     'HIV VL': assayTypeHivVlId,
     'HIV Qual': assayTypeHivQualId,
@@ -722,9 +722,9 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     await createAssay(
       knex,
       'GeneXpert MTB/XDR',
-      'assayGeneXpertMtbXDR',
+      'assayGeneXpertMtbXdr',
       'GxMtbXdr',
-      assayTypeMtbXDRId,
+      assayTypeMtbXdrId,
       deviceTypeGeneXpertId,
       resultSourceDiagnosticId,
       'GX MTB/XDR',

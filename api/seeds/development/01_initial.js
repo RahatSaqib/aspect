@@ -3220,7 +3220,7 @@ async function seed(knex) {
 
   const {
     GxMtbRif: assayGeneXpertMtbRifId,
-    GxMtbXdr: assayGeneXpertMtbXDRId,
+    GxMtbXdr: assayGeneXpertMtbXdrId,
     GxMtbRifUltra: assayGeneXpertMtbRifUltraId,
     GxHiv1Vl: assayGeneXpertHiv1VlId,
     GxHiv1Qual: assayGeneXpertHiv1QualId,
@@ -4382,7 +4382,7 @@ async function seed(knex) {
         const [resultId] = await knex('Result').insert({
           ...auditFields,
           externalId: `UQTBXDR-${i}`,
-          assayId: assayGeneXpertMtbXDRId,
+          assayId: assayGeneXpertMtbXdrId,
           partnerId: partnerOneId,
           geographyId: siteData.geographyId,
           siteId: siteData.id,
@@ -4468,7 +4468,7 @@ async function seed(knex) {
                 data: {
                   ...auditFields,
                   externalId: `UQTB-${i}`,
-                  assayId: assayGeneXpertMtbXDRId,
+                  assayId: assayGeneXpertMtbXdrId,
                   partnerId: partnerOneId,
                   geographyId: siteData.geographyId,
                   siteId: siteData.id,
