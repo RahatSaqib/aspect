@@ -19,7 +19,7 @@ const {
   allResultCategoryToId,
   allResultStatusToId,
   allResultSourceToId,
-  allConsumableToId,
+  consumableToId,
   deviceApprovalToId,
   sampleTypeToId,
   resultTypeToId,
@@ -1279,8 +1279,7 @@ async function seed(knex) {
     'DaktariCD4',
     'DaktariHivVL',
   ])
-  const { GxMtbRifCartridge: consumableGxTbCartridgeId } =
-    await allConsumableToId()
+  const consumableGxTbCartridgeId = consumableToId('GxMtbRifCartridge')
 
   // Result Workflow Status
   const deliverable = await resultWorkflowStatusToId('Deliverable')
