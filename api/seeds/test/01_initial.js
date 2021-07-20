@@ -19,6 +19,7 @@ const {
   allResultCategoryToId,
   allResultStatusToId,
   allResultSourceToId,
+  allConsumableToId,
   deviceApprovalToId,
   sampleTypeToId,
   resultTypeToId,
@@ -1268,11 +1269,19 @@ async function seed(knex) {
   })
 
   // Units
-  await upsertConsumables(knex, ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola', 'GxHiv1Vl', 'GxHcv', 'GxHiv1Qual', 'DaktariCD4', 'DaktariHivVL'])
-  const {
-    GxMtbRifCartridge: consumableGxTbCartridgeId,
-  } = await allConsumableToId()
-  
+  await upsertConsumables(knex, [
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxEbola',
+    'GxHiv1Vl',
+    'GxHcv',
+    'GxHiv1Qual',
+    'DaktariCD4',
+    'DaktariHivVL',
+  ])
+  const { GxMtbRifCartridge: consumableGxTbCartridgeId } =
+    await allConsumableToId()
+
   // Result Workflow Status
   const deliverable = await resultWorkflowStatusToId('Deliverable')
 

@@ -1,5 +1,4 @@
 module.exports = require('../utils').seed(seed, __filename)
-const _ = require('lodash')
 const { rowsAsObject } = require('../utils')
 const {
   deviceTypeCategoryToId,
@@ -30,7 +29,7 @@ async function seed(knex) {
   // Reuse previously seeded "static" data
   const deviceTypes = await rowsAsObject(knex, 'DeviceType', 'externalId')
 
-  const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
+  await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
     abbreviation: 'Q HIV detect',
     i18nKey: 'assayAlereQHiv12Detect',
@@ -162,7 +161,7 @@ async function seed(knex) {
       },
     }),
   })
-  const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
+  await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
     abbreviation: 'Q HIV Plasma',
     i18nKey: 'assayAlereQHiv12VLPlasma',
@@ -307,5 +306,8 @@ async function seed(knex) {
     }),
   })
 
-  await upsertConsumables(knex, true, ['assayAlereQHiv12Detect', 'assayAlereQHiv12VLPlasma'])
+  await upsertConsumables(knex, true, [
+    'assayAlereQHiv12Detect',
+    'assayAlereQHiv12VLPlasma',
+  ])
 }

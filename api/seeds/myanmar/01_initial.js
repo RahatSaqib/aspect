@@ -745,7 +745,14 @@ async function seed(knex) {
     assayId: assayGeneXpertHcvId,
   })
 
-  await upsertConsumables(knex, ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola', 'GxHiv1Vl', 'GxHcv', 'GxHiv1Qual'])
+  await upsertConsumables(knex, [
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxEbola',
+    'GxHiv1Vl',
+    'GxHcv',
+    'GxHiv1Qual',
+  ])
 
   // Create geographic hierarchy
   const countries = {}

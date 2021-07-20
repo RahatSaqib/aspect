@@ -3872,13 +3872,20 @@ async function seed(knex) {
   })
 
   // Consumable types
-  await upsertConsumables(knex, true, ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola', 'GxHiv1Vl', 'GxHcv', 'GxHiv1Qual'])
+  await upsertConsumables(knex, true, [
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxEbola',
+    'GxHiv1Vl',
+    'GxHcv',
+    'GxHiv1Qual',
+  ])
   const {
     GxMtbRifCartridge: consumableGxTbCartridgeId,
     GxEbolaCartridge: consumableGxEbolaCartridgeId,
-    GxHiv1VlCartridge: consumableGxHiv1VlCartridgeId
+    GxHiv1VlCartridge: consumableGxHiv1VlCartridgeId,
   } = await allConsumableToId()
-  
+
   // Result Workflow Status
   const {
     Ordered: ordered,

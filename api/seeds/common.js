@@ -31,7 +31,6 @@ const {
   allAssayTypeToId,
   allResultSourceToId,
   resultCategoryToId,
-  unitToId,
   partnerTypeToId,
 } = require('../src/shared/dictionary')
 const upsertConsumables = require('./common/upsert_consumables')
@@ -640,13 +639,6 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
-  const piece = await unitToId('Piece')
-  const commonProps = {
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-    quantity: 1,
-  }
   if (_.includes(assayExternalIds, 'GxUnknown')) {
     await createAssay(
       knex,
@@ -678,11 +670,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       null,
       null
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['GxHcv']
-    )
+    await upsertConsumables(knex, true, ['GxHcv'])
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
     await createAssay(
@@ -709,11 +697,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['GxMtbRif']
-    )
+    await upsertConsumables(knex, true, ['GxMtbRif'])
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
     await createAssay(
@@ -741,11 +725,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['GxMtbRifUltra']
-    )
+    await upsertConsumables(knex, true, ['GxMtbRifUltra'])
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
     await createAssay(
@@ -771,11 +751,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['GxHiv1Vl']
-    )
+    await upsertConsumables(knex, true, ['GxHiv1Vl'])
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
     await createAssay(
@@ -793,11 +769,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['GxHiv1Qual']
-    )
+    await upsertConsumables(knex, true, ['GxHiv1Qual'])
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
     await createAssay(
@@ -815,11 +787,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GP',
       'resultCategoryEbolaGp'
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['GxEbola']
-    )
+    await upsertConsumables(knex, true, ['GxEbola'])
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
     await createAssay(
@@ -846,11 +814,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'COVID-19',
       'resultCategoryCovid19'
     )
-    await upsertConsumables(
-      knex,
-      true,
-      ['assayGXCovid19']
-    )
+    await upsertConsumables(knex, true, ['assayGXCovid19'])
   }
 
   await utils.updateAssayResultCategoryTreatmentEmphasize(knex)

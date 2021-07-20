@@ -550,8 +550,11 @@ async function seed(knex) {
     patientDataSchema,
   })
 
-  await upsertConsumables(knex, true, ['assayAlereQHiv12Detect', 'assayAlereQHiv12VLPlasma'])
-  
+  await upsertConsumables(knex, true, [
+    'assayAlereQHiv12Detect',
+    'assayAlereQHiv12VLPlasma',
+  ])
+
   const geneXpertHiv1VlFormSchema = {
     fields: {
       patientId: {

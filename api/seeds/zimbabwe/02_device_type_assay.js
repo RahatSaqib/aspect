@@ -1,5 +1,4 @@
 module.exports = require('../utils').seed(seed, __filename)
-const _ = require('lodash')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 const {
   deviceTypeCategoryToId,
@@ -602,7 +601,7 @@ async function seed(knex) {
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  
+
   let { id: assayGenoTypeMTBCV1Id } =
     (await knex('Assay')
       .where('externalId', 'assayGenoTypeMTBCV1')
