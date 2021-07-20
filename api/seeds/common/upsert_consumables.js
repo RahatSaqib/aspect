@@ -52,7 +52,7 @@ const upsertConsumableAssay = async (knex, whitelistedConsumablesFixture) => {
  * Upserts data in Consumable and ConsumableAssay tables
  * @param {object} knex
  * @param {boolean} allowInserts If false, only updates will be executed
- * @param {array} whitelist The array of assays external ids which consumables will be upserted
+ * @param {array} assayWhitelist The array of assays external ids which consumables will be upserted
  */
 module.exports = async (knex, allowInserts = true, assayWhitelist = []) => {
   const consumablesFixture = await getConsumables()
