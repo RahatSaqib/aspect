@@ -3,9 +3,11 @@
 exports[`ExportListButton should not render the button 1`] = `""`;
 
 exports[`ExportListButton should shallow render export list correctly 1`] = `
-<div>
+<div
+  className="export-button-wrapper"
+>
   <ForwardRef(IconButton)
-    className="DownloadButton"
+    className="export-icon-button"
     onClick={[Function]}
     variant="contained"
   >
@@ -17,7 +19,7 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
       }
     />
   </ForwardRef(IconButton)>
-  <ForwardRef(Popover)
+  <ForwardRef(Menu)
     anchorEl={null}
     anchorOrigin={
       Object {
@@ -25,48 +27,30 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
         "vertical": "bottom",
       }
     }
-    id="simple-popover"
+    classes={
+      Object {
+        "root": "export-menu-root",
+      }
+    }
     onClose={[Function]}
     open={false}
     transformOrigin={
       Object {
-        "horizontal": "left",
+        "horizontal": "center",
         "vertical": "top",
       }
     }
   >
-    <ol
-      style={
-        Object {
-          "listStyleType": "none",
-          "margin": "5px 30px 5px 30px",
-          "padding": "5px",
-        }
-      }
+    <ForwardRef(MenuItem)
+      onClick={[Function]}
     >
-      <li>
-        <button
-          className="Reports_Button"
-          id="xlsx"
-          inverse={true}
-          onClick={[Function]}
-          type="button"
-        >
-          Excel
-        </button>
-      </li>
-      <li>
-        <button
-          className="Reports_Button"
-          id="csv"
-          inverse={true}
-          onClick={[Function]}
-          type="button"
-        >
-          CSV
-        </button>
-      </li>
-    </ol>
-  </ForwardRef(Popover)>
+      Excel
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
+      onClick={[Function]}
+    >
+      CSV
+    </ForwardRef(MenuItem)>
+  </ForwardRef(Menu)>
 </div>
 `;
