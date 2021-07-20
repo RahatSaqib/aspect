@@ -1476,6 +1476,12 @@ const gxMtbXdr = [
   ),
   getAssertionItem(
     'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_invalid',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
     '|MTB @label_result_error||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_invalid',
     'Error',
     null
