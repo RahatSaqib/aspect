@@ -105,6 +105,38 @@ const messages = defineMessages({
     id: 'pages.filters.gxMtbRifUltraMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
+  gxMtbXdrMtbNotDetected: {
+    id: 'pages.filters.gxMtbXdrMtbNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  gxMtbXdrMtbDetected: {
+    id: 'pages.filters.gxMtbXdrMtbDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  gxMtbXdrMtbDetectedXdrDetected: {
+    id: 'pages.filters.gxMtbXdrMtbDetectedXdrDetected',
+    defaultMessage: 'MTB Detected XDR Detected',
+  },
+  gxMtbXdrMtbDetectedXdrNotDetected: {
+    id: 'pages.filters.gxMtbXdrMtbDetectedXdrNotDetected',
+    defaultMessage: 'MTB Detected XDR Not Detected',
+  },
+  gxMtbXdrMtbDetectedXdrIndeterminate: {
+    id: 'pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate',
+    defaultMessage: 'MTB Detected XDR Indeterminate',
+  },
+  gxMtbXdrMtbInvalid: {
+    id: 'pages.filters.gxMtbXdrMtbInvalid',
+    defaultMessage: 'MTB Invalid',
+  },
+  gxMtbXdrMtbError: {
+    id: 'pages.filters.gxMtbXdrMtbError',
+    defaultMessage: 'MTB Error',
+  },
+  gxMtbXdrMtbNoResult: {
+    id: 'pages.filters.gxMtbXdrMtbNoResult',
+    defaultMessage: 'MTB No Result',
+  },
 })
 
 export default messages

@@ -494,8 +494,8 @@ export default {
       id: 'filter.AssaySelectField.assayGeneXpertMtbRif',
       defaultMessage: 'GeneXpert MTB/Rif',
     },
-    assayGeneXpertMtbXDR: {
-      id: 'filter.AssaySelectField.assayGeneXpertMtbXDR',
+    assayGeneXpertMtbXdr: {
+      id: 'filter.AssaySelectField.assayGeneXpertMtbXdr',
       defaultMessage: 'GeneXpert MTB/XDR',
     },
     assayGeneXpertMtbRifUltra: {
