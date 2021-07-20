@@ -3,10 +3,7 @@ import replace from 'lodash/replace'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
-// withHandlers,
-// import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-// import { useNavigate, useLocation } from 'react-router-dov'
 import BrowseNavDropdown from './BrowseNavDropdown'
 import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
@@ -34,75 +31,6 @@ const enhance = compose(
       dateFormat: replace(prefs.get('dateFormat'), /-/g, '/'),
     }
   }),
-  // WrappedComponent => props => {
-  //   const { navigate, location } = props
-  //   // const navigate = useNavigate()
-  //   // const location = useLocation()
-
-  //   const onChangeFilters = nextFilters => {
-  //     const searchParams = new URLSearchParams(location.search)
-  //     const filtersParams = mergeToFiltersParams(
-  //       nextFilters,
-  //       new URLSearchParams(searchParams.get('filters') || '')
-  //     )
-  //     searchParams.set('filters', filtersParams)
-  //     searchParams.delete('pageAt')
-  //     navigate(
-  //       {
-  //         ...location,
-  //         search: searchParams.toString(),
-  //       },
-  //       { replace: true }
-  //     )
-  //   }
-
-  //   const onRemoveFilterItem = filterKey => {
-  //     const searchParams = new URLSearchParams(location.search)
-  //     const filtersParams = new URLSearchParams(
-  //       searchParams.get('filters') || ''
-  //     )
-
-  //     switch (filterKey) {
-  //       case 'countryId':
-  //         filtersParams.delete(filterKey)
-  //         filtersParams.delete('stateId')
-  //         filtersParams.delete('lgaId')
-  //         break
-  //       case 'stateId':
-  //         filtersParams.delete(filterKey)
-  //         filtersParams.delete('lgaId')
-  //         break
-  //       case 'reportableSiteName':
-  //         filtersParams.delete(filterKey)
-  //         filtersParams.delete('reportableSiteId')
-  //         break
-  //       default:
-  //         filtersParams.delete(filterKey)
-  //         break
-  //     }
-
-  //     searchParams.set('filters', filtersParams)
-  //     searchParams.delete('sortCol')
-
-  //     navigate(
-  //       {
-  //         ...location,
-  //         search: searchParams.toString(),
-  //       },
-  //       { replace: true }
-  //     )
-  //   }
-
-  //   return (
-  //     <WrappedComponent
-  //       {...props}
-  //       onChangeFilters={onChangeFilters}
-  //       onRemoveFilterItem={onRemoveFilterItem}
-  //     >
-  //       {props.children}
-  //     </WrappedComponent>
-  //   )
-  // },
   withHandlers({
     onChangeFilters:
       ({ navigate, location }) =>
