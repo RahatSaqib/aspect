@@ -57,7 +57,7 @@ describe('Result Category Mapping', () => {
         )
       })
 
-      it('mtb detected, at least 1 resistance detected, map result category 2 Detected', () => {
+      it('mtb detected, at least 1 resistance detected and another indeterminate, map result category 2 Detected', () => {
         const resultTextValues = splitResultTextValues(
           '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected'
         )
