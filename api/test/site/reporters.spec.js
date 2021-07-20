@@ -151,10 +151,10 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     } = device
 
     // -----------------------------
-    // add site tag 'clinic'
+    // add site tag 'Reportable Site'
     // -----------------------------
     const [tagId] = await knex('Tag').insert({
-      title: 'clinic',
+      title: 'Reportable Site',
     })
     initialState.tagId = tagId
     await knex('SiteTag').insert({ siteId, tagId })

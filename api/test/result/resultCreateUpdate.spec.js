@@ -72,6 +72,8 @@ describe('Result create and update routes', () => {
         )
         .del()
 
+      await knex('ResultTag').whereIn('resultId', resultIds).del()
+
       await knex('Result').whereIn('id', resultIds).del()
 
       await knex('Sample').whereIn('id', resultIds).del()
