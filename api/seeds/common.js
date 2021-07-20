@@ -34,7 +34,7 @@ const {
   unitToId,
   partnerTypeToId,
 } = require('../src/shared/dictionary')
-const getConsumables = require('./fixtures/Consumable')
+const upsertConsumables = require('./common/upsert_consumables')
 
 async function upsertGeography(knex, geography) {
   const countries = {}
@@ -680,9 +680,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'Xpert HCV Viral Load Cartridge',
-      'GxHcv',
-      commonProps
+      true,
+      ['GxHcv']
     )
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
@@ -712,9 +711,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'GeneXpert TB Cartridge',
-      'GxMtbRif',
-      commonProps
+      true,
+      ['GxMtbRif']
     )
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
@@ -745,9 +743,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'GeneXpert TB Ultra Cartridge',
-      'GxMtbRifUltra',
-      commonProps
+      true,
+      ['GxMtbRifUltra']
     )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
@@ -776,9 +773,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'Xpert HIV-1 Viral Load Cartridge',
-      'GxHiv1Vl',
-      commonProps
+      true,
+      ['GxHiv1Vl']
     )
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
@@ -799,9 +795,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'Xpert HIV-1 Qual Cartridge',
-      'GxHiv1Qual',
-      commonProps
+      true,
+      ['GxHiv1Qual']
     )
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
@@ -822,9 +817,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'GeneXpert Ebola Cartridge',
-      'GxEbola',
-      commonProps
+      true,
+      ['GxEbola']
     )
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
@@ -854,9 +848,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     )
     await upsertConsumables(
       knex,
-      'GeneXpert COVID-19 Cartridge',
-      'assayGXCovid19',
-      commonProps
+      true,
+      ['assayGXCovid19']
     )
   }
 
@@ -2133,48 +2126,6 @@ async function upsertDashboardWidgets(
   )
 }
 
-async function upsertConsumables(
-  knex,
-  consumableName,
-  assayExternalId,
-  { unit, canExpire = 1, manufacturer, quantity = 1 }
-) {
-  if (!unit) {
-    unit = await unitToId('Piece')
-  }
-  const [assayId] = await knex('Assay')
-    .where('externalId', assayExternalId)
-    .pluck('id')
-  const consumableFromFixture = _.find(
-    await getConsumables(),
-    ({ name }) => name === consumableName
-  )
-  const propsConsumables = {
-    name: consumableName,
-    unit,
-    canExpire,
-    manufacturer,
-    externalId: consumableFromFixture.externalId,
-    i18nKey: consumableFromFixture.i18nKey,
-  }
-  let { id: consumableId } =
-    (await knex('Consumable').where(propsConsumables).first()) || {}
-  if (!consumableId) {
-    ;[consumableId] = await knex('Consumable').insert(propsConsumables)
-  }
-  const propsConsumableAssay = {
-    consumableId,
-    assayId,
-    quantity,
-  }
-  const consumableAssay = await knex('ConsumableAssay')
-    .where(propsConsumableAssay)
-    .first()
-  if (!consumableAssay) {
-    await knex('ConsumableAssay').insert(propsConsumableAssay)
-  }
-}
-
 async function upsertPermissionFixture(knex) {
   const currentPermissions = await knex('Permission').select()
 
@@ -2223,7 +2174,6 @@ module.exports = {
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,
   upsertDashboardWidgets,
-  upsertConsumables,
   upsertJobFunctionFixture,
   upsertPermissionFixture,
   getStatesByName,

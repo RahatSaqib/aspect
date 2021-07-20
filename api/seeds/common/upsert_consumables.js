@@ -15,7 +15,7 @@ const getEntityByExternalId = async (knex, table) => {
   return byExternalId
 }
 
-module.exports = async (knex, whitelist = []) => {
+module.exports = async (knex, allowInserts = true, whitelist = []) => {
   const consumablesFixture = await getConsumables()
 
   if (whitelist.length === 0)
@@ -30,7 +30,7 @@ module.exports = async (knex, whitelist = []) => {
     }
     return omit(c, 'assay') 
   })
-  await upsertItems(knex, 'Consumable', ['externalId'], consumablesToUpsert)
+  await upsertItems(knex, 'Consumable', ['externalId'], consumablesToUpsert, allowInserts)
   
   const consumablesAssaysToUpsert = []
   const assayIdByExternalId = await getEntityByExternalId(knex, 'Assay')

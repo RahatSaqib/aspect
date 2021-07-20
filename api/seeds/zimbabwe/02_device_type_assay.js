@@ -9,7 +9,7 @@ const {
 const patientDataSchema = require('../fixtures/MGITPatientDataSchema')
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
-const getConsumables = require('../fixtures/Consumable')
+const upsertConsumables = require('../common/upsert_consumables')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
@@ -602,7 +602,7 @@ async function seed(knex) {
     }),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  const consumables = await getConsumables()
+  
   let { id: assayGenoTypeMTBCV1Id } =
     (await knex('Assay')
       .where('externalId', 'assayGenoTypeMTBCV1')
@@ -613,16 +613,7 @@ async function seed(knex) {
       externalId: 'assayGenoTypeMTBCV1',
     })
 
-    const [genoTypeMTBCV1TestSripId] = await knex('Consumable').insert(
-      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBCStrip')
-    )
-    await knex('ConsumableAssay').insert([
-      {
-        assayId: assayGenoTypeMTBCV1Id,
-        consumableId: genoTypeMTBCV1TestSripId,
-        quantity: 1,
-      },
-    ])
+    await upsertConsumables(knex, true, ['assayGenoTypeMTBCV1'])
   } else {
     await knex('Assay')
       .where('id', assayGenoTypeMTBCV1Id)
@@ -1507,16 +1498,7 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRplusV2,
       externalId: 'assayGenoTypeMTBDRplusV2',
     })
-    const [genoTypeMTBDRplusV2TestSripId] = await knex('Consumable').insert(
-      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRplusStrip')
-    )
-    await knex('ConsumableAssay').insert([
-      {
-        assayId: assayGenoTypeMTBDRplusV2Id,
-        consumableId: genoTypeMTBDRplusV2TestSripId,
-        quantity: 1,
-      },
-    ])
+    await upsertConsumables(knex, true, ['assayGenoTypeMTBDRplusV2'])
   } else {
     await knex('Assay')
       .where('id', assayGenoTypeMTBDRplusV2Id)
@@ -2269,16 +2251,7 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRslV1,
       externalId: 'assayGenoTypeMTBDRslV1',
     })
-    const [genoTypeMTBDRslV1TestSripId] = await knex('Consumable').insert(
-      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRslStrip')
-    )
-    await knex('ConsumableAssay').insert([
-      {
-        assayId: assayGenoTypeMTBDRslV1Id,
-        consumableId: genoTypeMTBDRslV1TestSripId,
-        quantity: 1,
-      },
-    ])
+    await upsertConsumables(knex, true, ['assayGenoTypeMTBDRslV1'])
   } else {
     await knex('Assay')
       .where('id', assayGenoTypeMTBDRslV1Id)
@@ -3152,16 +3125,7 @@ async function seed(knex) {
       ...assayGenoTypeMTBDRslV2,
       externalId: 'assayGenoTypeMTBDRslV2',
     })
-    const [genoTypeMTBDRslV2TestSripId] = await knex('Consumable').insert(
-      _.find(consumables, cons => cons.externalId === 'GenoTypeMTBDRslV2Strip')
-    )
-    await knex('ConsumableAssay').insert([
-      {
-        assayId: assayGenoTypeMTBDRslV2Id,
-        consumableId: genoTypeMTBDRslV2TestSripId,
-        quantity: 1,
-      },
-    ])
+    await upsertConsumables(knex, true, ['assayGenoTypeMTBDRslV2'])
   } else {
     await knex('Assay')
       .where('id', assayGenoTypeMTBDRslV2Id)
