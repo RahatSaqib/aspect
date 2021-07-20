@@ -1,4 +1,5 @@
+const upsertConsumables = require('../common/upsert_consumables')
 module.exports = require('../utils').seed(
-  require('../common/upsert_consumables'),
+  async knex => upsertConsumables(knex, true),
   __filename
 )

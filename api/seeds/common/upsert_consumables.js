@@ -16,6 +16,38 @@ const getEntityByExternalId = async (knex, table) => {
   return byExternalId
 }
 
+const upsertConsumableAssay = async (knex, whitelistedConsumablesFixture) => {
+  const consumablesAssaysToUpsert = []
+  const assayIdByExternalId = await getEntityByExternalId(knex, 'Assay')
+  const consumableIdByExternalId = await getEntityByExternalId(
+    knex,
+    'Consumable'
+  )
+
+  // Upsert ConsumableAssay table, ignoring the unexistiant assays and consumables
+  whitelistedConsumablesFixture.forEach(
+    ({ externalId: consumableExternalId, assays }) => {
+      assays.forEach(({ externalId: assayExternalId, quantity }) => {
+        if (
+          assayIdByExternalId[assayExternalId] &&
+          consumableIdByExternalId[consumableExternalId]
+        )
+          consumablesAssaysToUpsert.push({
+            consumableId: consumableIdByExternalId[consumableExternalId],
+            assayId: assayIdByExternalId[assayExternalId],
+            quantity,
+          })
+      })
+    }
+  )
+  await upsertItems(
+    knex,
+    'ConsumableAssay',
+    ['consumableId', 'assayId'],
+    consumablesAssaysToUpsert
+  )
+}
+
 /**
  * Upserts data in Consumable and ConsumableAssay tables
  * @param {object} knex
@@ -28,6 +60,7 @@ module.exports = async (knex, allowInserts = true, whitelist = []) => {
   if (whitelist.length === 0)
     whitelist = await knex('Assay').pluck('externalId')
 
+  // Upsert Consumable table, only whitelisted
   const whitelistedConsumablesFixture = consumablesFixture.filter(
     ({ assays }) =>
       assays.filter(a => includes(whitelist, a.externalId)).length > 0
@@ -49,27 +82,5 @@ module.exports = async (knex, allowInserts = true, whitelist = []) => {
     allowInserts
   )
 
-  const consumablesAssaysToUpsert = []
-  const assayIdByExternalId = await getEntityByExternalId(knex, 'Assay')
-  const consumableIdByExternalId = await getEntityByExternalId(
-    knex,
-    'Consumable'
-  )
-  whitelistedConsumablesFixture.forEach(
-    ({ externalId: consumableExternalId, assays }) => {
-      assays.forEach(({ externalId: assayExternalId, quantity }) => {
-        consumablesAssaysToUpsert.push({
-          consumableId: consumableIdByExternalId[consumableExternalId],
-          assayId: assayIdByExternalId[assayExternalId],
-          quantity,
-        })
-      })
-    }
-  )
-  await upsertItems(
-    knex,
-    'ConsumableAssay',
-    ['consumableId', 'assayId'],
-    consumablesAssaysToUpsert
-  )
+  await upsertConsumableAssay(knex, whitelistedConsumablesFixture)
 }
