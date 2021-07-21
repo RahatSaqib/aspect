@@ -1091,8 +1091,10 @@ export const FiltersPanel = ({
                   checked={[true, 'true'].includes(
                     filters.onlyReportableResults
                   )}
-                  onChange={(event, isChecked) =>
-                    onOnlyReportableResultsBoolChange(isChecked || null)
+                  onChange={event =>
+                    onOnlyReportableResultsBoolChange(
+                      event.target.checked || null
+                    )
                   }
                   label={formatMessage(messages.onlyReportableResults)}
                   name="onlyReportableResults"
@@ -1109,8 +1111,10 @@ export const FiltersPanel = ({
                   checked={[true, 'true'].includes(
                     filters.onlyDownloadedByReporter
                   )}
-                  onChange={(event, isChecked) =>
-                    onOnlyDownloadedByReporterBoolChange(isChecked || null)
+                  onChange={event =>
+                    onOnlyDownloadedByReporterBoolChange(
+                      event.target.checked || null
+                    )
                   }
                   label={formatMessage(messages.onlyDownloadedByReporter)}
                   name="onlyDownloadedByReporter"
@@ -1128,8 +1132,10 @@ export const FiltersPanel = ({
                     checked={[true, 'true'].includes(
                       filters.onlyEverTransferred
                     )}
-                    onChange={(event, isChecked) =>
-                      onOnlyEverTransferredBoolChange(isChecked || null)
+                    onChange={event =>
+                      onOnlyEverTransferredBoolChange(
+                        event.target.checked || null
+                      )
                     }
                     label={formatMessage(messages.onlyEverTransferred)}
                     name="onlyEverTransferred"
@@ -1146,8 +1152,10 @@ export const FiltersPanel = ({
                   checked={[true, 'true'].includes(
                     filters.onlyTreatmentRequired
                   )}
-                  onChange={(event, isChecked) =>
-                    onOnlyTreatmentRequiredBoolChange(isChecked || null)
+                  onChange={event =>
+                    onOnlyTreatmentRequiredBoolChange(
+                      event.target.checked || null
+                    )
                   }
                   label={formatMessage(messages.onlyTreatmentRequired)}
                   name="onlyTreatmentRequired"

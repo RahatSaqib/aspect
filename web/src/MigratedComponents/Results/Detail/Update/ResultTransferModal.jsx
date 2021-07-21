@@ -232,7 +232,7 @@ const ResultTransferModal = ({
       <CheckboxField
         checked={includeAllResults}
         label={formatMessage(messages.includeAllResults)}
-        onChange={(event, isChecked) => setIncludeAllResults(isChecked)}
+        onChange={event => setIncludeAllResults(event.target.checked)}
       />
       <div className={cssClasses('NoteWrapper')}>
         {formatMessage(messages.note)}

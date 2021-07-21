@@ -19,6 +19,7 @@ const ResultCategoryGroupSelectField = ({
   onResultCategoryGroupChange,
   value,
   assayId,
+  allItemText,
   ...restProps
 }) => {
   const { formatMessage } = useI18n()
