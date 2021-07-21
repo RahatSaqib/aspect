@@ -887,7 +887,7 @@ async function addTBResults(
   const resultsid = []
   // Results section
   // TB results:
-  let possibleResults = [
+  let gxMtbRifPossibleResults = [
     {
       resultText: 'MTB Detected, Rif Resistance Not Detected',
       category1: resultCategories.resultCategoryDetectedId,
@@ -931,6 +931,68 @@ async function addTBResults(
       maxLikelihood: 100,
     },
   ]
+  const possibleResults = {
+    GxMtbRif: gxMtbRifPossibleResults,
+    GxMtbRifUltra: gxMtbRifPossibleResults,
+    GxMtbXdr: [
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryNotDetectedId,
+        minLikelihood: 0,
+        maxLikelihood: 50,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected|Low FLQ Resistance @label_result_detected||AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 51,
+        maxLikelihood: 60,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 61,
+        maxLikelihood: 70,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 71,
+        maxLikelihood: 80,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 81,
+        maxLikelihood: 90,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 81,
+        maxLikelihood: 95,
+      },
+      {
+        resultText:
+          '|MTB @label_result_error|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryErrorId,
+        category2: null,
+        minLikelihood: 96,
+        maxLikelihood: 100,
+      },
+    ]
+  }
 
   const resultData = {
     probes: {
@@ -984,9 +1046,17 @@ async function addTBResults(
     const selectionConditionWithErros = r =>
       r.category1 === resultCategories.resultCategoryErrorId
 
+    const gxAssay = _.sample(
+      _.filter(
+        assays,
+        elem =>
+          elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra' || elem.externalId === 'GxMtbXdr'
+      )
+    )
+
     // we make sure to have at least one error result if error codes are passed
     const result = _.find(
-      possibleResults,
+      possibleResults[gxAssay.externalId],
       errorCodes.length > 0 && i === 0 && resultMtbNumber > 20
         ? selectionConditionWithErros
         : selectionConditionNoErrors
@@ -995,13 +1065,6 @@ async function addTBResults(
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
 
-    const assayGeneXpertMtbRifId = _.sample(
-      _.filter(
-        assays,
-        elem =>
-          elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra'
-      )
-    ).id
     const resultStatus =
       ensureResultIds.shift() || _.random(1) < 0.3
         ? deliverable
@@ -1012,7 +1075,7 @@ async function addTBResults(
     const resultElement = {
       ...auditFields,
       externalId: `UQTB-${i}-${uid}-D`,
-      assayId: assayGeneXpertMtbRifId,
+      assayId: gxAssay.id,
       partnerId: partnerOneId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -1099,171 +1162,10 @@ async function addTBResults(
       .update({ resultWorkflowStatusLogId: lastLogId })
   })
 
-  // XDR
-  possibleResults = [
-    {
-      resultText:
-        '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryNotDetectedId,
-      minLikelihood: 0,
-      maxLikelihood: 50,
-    },
-    {
-      resultText:
-        '|MTB @label_result_detected||INH Resistance @label_result_detected|Low FLQ Resistance @label_result_detected||AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryDetectedId,
-      minLikelihood: 51,
-      maxLikelihood: 60,
-    },
-    {
-      resultText:
-        '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryDetectedId,
-      minLikelihood: 61,
-      maxLikelihood: 70,
-    },
-    {
-      resultText:
-        '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryDetectedId,
-      minLikelihood: 71,
-      maxLikelihood: 80,
-    },
-    {
-      resultText:
-        '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryDetectedId,
-      minLikelihood: 81,
-      maxLikelihood: 90,
-    },
-    {
-      resultText:
-        '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryDetectedId,
-      minLikelihood: 81,
-      maxLikelihood: 95,
-    },
-    {
-      resultText:
-        '|MTB @label_result_error|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
-      category1: resultCategories.resultCategoryErrorId,
-      category2: null,
-      minLikelihood: 96,
-      maxLikelihood: 100,
-    },
-  ]
-  await Promise.each(_.range(resultMtbNumber), async i => {
-    if (devicesGeneXpert.length === 0) return
-    const device = devicesGeneXpert[i % devicesGeneXpert.length]
-    const siteData = siteDatas.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = date || subDays(new Date(), _.random(5))
-    const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
-
-    const rnd = _.random(0, 100)
-
-    const selectionConditionNoErrors = r =>
-      rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    const selectionConditionWithErros = r =>
-      r.category1 === resultCategories.resultCategoryErrorId
-
-    // we make sure to have at least one error result if error codes are passed
-    const result = _.find(
-      possibleResults,
-      errorCodes.length > 0 && i === 0 && resultMtbNumber > 20
-        ? selectionConditionWithErros
-        : selectionConditionNoErrors
-    )
-
-    const patientNumber = patients.length - 1
-    resultData.resultText = result.resultText
-
-    const assayGeneXpertMtbXdrId = _.sample(
-      _.filter(assays, elem => elem.externalId === 'GxMtbXdr')
-    ).id
-    const resultStatus =
-      ensureResultIds.shift() || _.random(1) < 0.3
-        ? deliverable
-        : _.random(1) < 0.5
-        ? validated
-        : acknowledged
-
-    const resultElement = {
-      ...auditFields,
-      externalId: `UQTB-${i}-${uid}-D`,
-      assayId: assayGeneXpertMtbXdrId,
-      partnerId: partnerOneId,
-      geographyId: siteData.geographyId,
-      siteId: siteData.id,
-      reportableSiteId: sample.originSiteId || siteData.id,
-      deviceId: device.id,
-      longitude: -81.581222,
-      latitude: 28.419348,
-      resultSourceId: resultSourceDiagnosticId,
-      resultTypeId: resultTypePatientId,
-      sampleId: sample.id,
-      sampleRunNumber: `${(i % 2) + 1}`,
-      sampleGroup: `GRP-TB-${i % 5}`,
-      resultCategory1: result.category1,
-      resultCategory2: result.category2,
-      resultData: JSON.stringify(resultData),
-      assayVersion: '4',
-      startedOn: randomDate,
-      endedOn: addMinutes(randomDate, 100),
-      createdOn: addMinutes(randomDate, 120),
-      updatedOn: addMinutes(randomDate, 180),
-      consumableSerial: `${i}12`,
-      consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-      consumableLot: `Lot ${i % 5}`,
-      instrumentSerial: `S-1234-${i % 3}`,
-      moduleName: 'Module A',
-      moduleSerial: `M-1234-${i % 4}`,
-      researchId: `R-ID-${i}`,
-      patientData: JSON.stringify(
-        getRandomTBPatientData(patientNumber, patients)
-      ),
-      senderVersion: '4.6b',
-      senderOperator: 'Marsha',
-      notes: 'This is a test... result',
-      errorCode:
-        result.category1 === resultCategories.resultCategoryErrorId
-          ? _.sample(errorCodes)
-          : null,
-      errorNotes:
-        result.category1 === resultCategories.resultCategoryErrorId
-          ? 'Exceeded cycle threshold'
-          : null,
-    }
-    const [resultId] = await knex('Result').insert(resultElement)
-
-    resultsid.push({
-      id: resultId,
-      createdOn: now,
-      assayId: resultElement.assayId,
-      ...auditFields,
-    })
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: resultStatus,
-      operator: 'Marsha',
-      changedOn: subHours(randomDate, 25),
-      createdOn: subHours(randomDate, 26),
-      createdBy: auditFields.createdBy,
-    })
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
-  })
-
   // insert 80% of mgit results when tb is positive on mgit.
   if (positiveMTBResults.length > 0)
     await knex('Result').insert(positiveMTBResults)
+
   return resultsid
 }
 

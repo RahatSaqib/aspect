@@ -260,7 +260,7 @@ describe('Result download routes', () => {
        */
       res = await server
         .get(
-          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra`
+          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
         )
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
