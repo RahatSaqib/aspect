@@ -36,6 +36,7 @@ import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceSta
 import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersPanel.css'
 
@@ -539,7 +540,6 @@ const messages = {
 }
 
 export const FiltersPanel = ({
-  intl,
   className,
   disabled,
   contentClassName,
@@ -582,6 +582,7 @@ export const FiltersPanel = ({
 }) => {
   const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
+  const { formatMessage } = useI18n()
   let assayResultCategory2Label
   if (assayItems && assayId) {
     const selectedAssay = assayItems
@@ -610,14 +611,14 @@ export const FiltersPanel = ({
               'Button__label--shown': isShown,
             })}
           >
-            {intl.formatMessage(messages.close)}
+            {formatMessage(messages.close)}
           </span>
           <span
             className={cssClasses('Button__label__more', {
               'Button__label--shown': !isShown,
             })}
           >
-            {intl.formatMessage(messages.moreFilters)}
+            {formatMessage(messages.moreFilters)}
           </span>
         </span>
         <MdKeyboardArrowDown
@@ -667,12 +668,12 @@ export const FiltersPanel = ({
             {config.geography && (
               <div className={cssClasses('Control')}>
                 <CountrySelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   onCountryIdChange={onCountryIdChange}
                   countryId={filters.countryId}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectCountry)}
-                  floatingLabelText={intl.formatMessage(messages.country)}
+                  hintText={formatMessage(messages.selectCountry)}
+                  floatingLabelText={formatMessage(messages.country)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -680,24 +681,18 @@ export const FiltersPanel = ({
             {config.geography && config.state && (
               <div className={cssClasses('Control')}>
                 <StateSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   onStateIdChange={onStateIdChange}
                   countryId={filters.countryId}
                   stateId={filters.stateId}
                   floatingLabelFixed
                   hintText={getCustomMessage(
-                    intl,
                     messages,
                     'selectPlaceholder',
                     user,
                     { entity: 'state' }
                   )}
-                  floatingLabelText={getCustomMessage(
-                    intl,
-                    messages,
-                    'state',
-                    user
-                  )}
+                  floatingLabelText={getCustomMessage(messages, 'state', user)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -705,25 +700,19 @@ export const FiltersPanel = ({
             {config.geography && config.state && config.lga && (
               <div className={cssClasses('Control')}>
                 <LgaSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   onLgaIdChange={onLgaIdChange}
                   countryId={filters.countryId}
                   stateId={filters.stateId}
                   lgaId={filters.lgaId}
                   floatingLabelFixed
                   hintText={getCustomMessage(
-                    intl,
                     messages,
                     'selectPlaceholder',
                     user,
                     { entity: 'lga' }
                   )}
-                  floatingLabelText={getCustomMessage(
-                    intl,
-                    messages,
-                    'lga',
-                    user
-                  )}
+                  floatingLabelText={getCustomMessage(messages, 'lga', user)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -731,13 +720,13 @@ export const FiltersPanel = ({
             {config.disease && (
               <div className={cssClasses('Control')}>
                 <DiseaseSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.diseaseId}
                   onDiseaseIdChange={onDiseaseChange}
                   onlyWithResults
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectDisease)}
-                  floatingLabelText={intl.formatMessage(messages.disease)}
+                  hintText={formatMessage(messages.selectDisease)}
+                  floatingLabelText={formatMessage(messages.disease)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -746,14 +735,13 @@ export const FiltersPanel = ({
             {config.assayId && !config.onlyDisease && (
               <div className={cssClasses('Control')}>
                 <AssaySelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.assayId}
                   onAssayChange={onAssayChange}
                   diseaseId={filters.diseaseId}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectAssay)}
-                  floatingLabelText={intl.formatMessage(messages.assay)}
-                  intl={intl}
+                  hintText={formatMessage(messages.selectAssay)}
+                  floatingLabelText={formatMessage(messages.assay)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -764,16 +752,15 @@ export const FiltersPanel = ({
               !config.onlyDisease && (
                 <div className={cssClasses('Control')}>
                   <ResultCategorySelectField
-                    allItemText={intl.formatMessage(messages.all)}
+                    allItemText={formatMessage(messages.all)}
                     disabled={!filters.assayId}
                     assayId={filters.assayId}
                     value={filters.resultCategoryId}
                     onResultCategoryChange={onResultCategoryChange}
                     floatingLabelFixed
-                    hintText={intl.formatMessage(messages.selectResult)}
-                    floatingLabelText={intl.formatMessage(messages.result)}
+                    hintText={formatMessage(messages.selectResult)}
+                    floatingLabelText={formatMessage(messages.result)}
                     style={{ verticalAlign: 'bottom' }}
-                    intl={intl}
                   />
                 </div>
               )}
@@ -783,16 +770,15 @@ export const FiltersPanel = ({
               !config.onlyDisease && (
                 <div className={cssClasses('Control', 'Control--wide')}>
                   <ResultCategoryGroupSelectField
-                    allItemText={intl.formatMessage(messages.all)}
+                    allItemText={formatMessage(messages.all)}
                     disabled={!filters.assayId}
                     assayId={filters.assayId}
                     value={filters.resultCategoryGroupId}
                     onResultCategoryGroupChange={onResultCategoryGroupChange}
                     floatingLabelFixed
-                    hintText={intl.formatMessage(messages.selectResult)}
-                    floatingLabelText={intl.formatMessage(messages.result)}
+                    hintText={formatMessage(messages.selectResult)}
+                    floatingLabelText={formatMessage(messages.result)}
                     style={{ verticalAlign: 'bottom' }}
-                    intl={intl}
                   />
                 </div>
               )}
@@ -806,8 +792,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(messages.enterErrorCode)}
-                  label={intl.formatMessage(messages.errorCode)}
+                  placeholder={formatMessage(messages.enterErrorCode)}
+                  label={formatMessage(messages.errorCode)}
                   margin="normal"
                 />
               </div>
@@ -815,12 +801,12 @@ export const FiltersPanel = ({
             {config.consumable && (
               <div className={cssClasses('Control')}>
                 <ConsumableSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.consumableId}
                   onConsumableChange={onConsumableIdChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectConsumable)}
-                  floatingLabelText={intl.formatMessage(messages.consumable)}
+                  hintText={formatMessage(messages.selectConsumable)}
+                  floatingLabelText={formatMessage(messages.consumable)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
                 />
@@ -830,12 +816,12 @@ export const FiltersPanel = ({
               <div className={cssClasses('Control')}>
                 <PartnerSelectField
                   emptyId="-1"
-                  emptyText={intl.formatMessage(messages.none)}
+                  emptyText={formatMessage(messages.none)}
                   partnerId={filters.partnerId}
                   onChangePartner={onPartnerIdChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectPartner)}
-                  floatingLabelText={intl.formatMessage(messages.partner)}
+                  hintText={formatMessage(messages.selectPartner)}
+                  floatingLabelText={formatMessage(messages.partner)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
                 />
@@ -850,10 +836,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(
-                    messages.enterPatientOrResearchId
-                  )}
-                  label={intl.formatMessage(messages.patientOrResearchId)}
+                  placeholder={formatMessage(messages.enterPatientOrResearchId)}
+                  label={formatMessage(messages.patientOrResearchId)}
                   margin="normal"
                 />
               </div>
@@ -867,10 +851,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(
-                    messages.enterPatientOrCaseId
-                  )}
-                  label={intl.formatMessage(messages.patientOrCaseId)}
+                  placeholder={formatMessage(messages.enterPatientOrCaseId)}
+                  label={formatMessage(messages.patientOrCaseId)}
                   margin="normal"
                 />
               </div>
@@ -884,8 +866,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(messages.enterSampleId)}
-                  label={intl.formatMessage(messages.sampleId)}
+                  placeholder={formatMessage(messages.enterSampleId)}
+                  label={formatMessage(messages.sampleId)}
                   margin="normal"
                 />
               </div>
@@ -899,8 +881,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(messages.enterDeviceName)}
-                  label={intl.formatMessage(messages.deviceName)}
+                  placeholder={formatMessage(messages.enterDeviceName)}
+                  label={formatMessage(messages.deviceName)}
                   margin="normal"
                 />
               </div>
@@ -912,8 +894,8 @@ export const FiltersPanel = ({
                   value={filters.siteName || ''}
                   onSiteNameChange={onSiteNameChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.enterSiteName)}
-                  floatingLabelText={intl.formatMessage(messages.site)}
+                  hintText={formatMessage(messages.enterSiteName)}
+                  floatingLabelText={formatMessage(messages.site)}
                 />
               </div>
             )}
@@ -924,12 +906,8 @@ export const FiltersPanel = ({
                   value={filters.reportableSiteName || ''}
                   onChange={onReportableSiteChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(
-                    messages.enterReportableSiteName
-                  )}
-                  floatingLabelText={intl.formatMessage(
-                    messages.reportableSite
-                  )}
+                  hintText={formatMessage(messages.enterReportableSiteName)}
+                  floatingLabelText={formatMessage(messages.reportableSite)}
                 />
               </div>
             )}
@@ -940,10 +918,8 @@ export const FiltersPanel = ({
                   value={filters.sampleOriginSite || ''}
                   onSiteNameChange={onSampleOriginSiteChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.enterSampleOriginSite)}
-                  floatingLabelText={intl.formatMessage(
-                    messages.sampleOriginSite
-                  )}
+                  hintText={formatMessage(messages.enterSampleOriginSite)}
+                  floatingLabelText={formatMessage(messages.sampleOriginSite)}
                 />
               </div>
             )}
@@ -956,8 +932,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(messages.setContactNameEmail)}
-                  label={intl.formatMessage(messages.contactNameEmail)}
+                  placeholder={formatMessage(messages.setContactNameEmail)}
+                  label={formatMessage(messages.contactNameEmail)}
                   margin="normal"
                 />
               </div>
@@ -971,8 +947,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(messages.enterExternalId)}
-                  label={intl.formatMessage(messages.externalId)}
+                  placeholder={formatMessage(messages.enterExternalId)}
+                  label={formatMessage(messages.externalId)}
                   margin="normal"
                 />
               </div>
@@ -980,16 +956,13 @@ export const FiltersPanel = ({
             {config.workflowStatus && (
               <div className={cssClasses('Control')}>
                 <ResultWorkflowStatusSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.workflowStatusId}
                   onWorkflowStatusChange={onWorkflowStatusIdChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectWorkflowStatus)}
-                  floatingLabelText={intl.formatMessage(
-                    messages.workflowStatus
-                  )}
+                  hintText={formatMessage(messages.selectWorkflowStatus)}
+                  floatingLabelText={formatMessage(messages.workflowStatus)}
                   style={{ verticalAlign: 'bottom' }}
-                  intl={intl}
                   autoWidth
                 />
               </div>
@@ -997,32 +970,28 @@ export const FiltersPanel = ({
             {config.deviceApproval && (
               <div className={cssClasses('Control')}>
                 <DeviceApprovalSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.deviceApprovalId}
                   onDeviceApprovalChange={onDeviceApprovalIdChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectDeviceApproval)}
-                  floatingLabelText={intl.formatMessage(
-                    messages.deviceApproval
-                  )}
+                  hintText={formatMessage(messages.selectDeviceApproval)}
+                  floatingLabelText={formatMessage(messages.deviceApproval)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
-                  intl={intl}
                 />
               </div>
             )}
             {config.deviceType && (
               <div className={cssClasses('Control')}>
                 <DeviceTypeSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.deviceType}
                   onDeviceTypeChange={onDeviceTypeChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectDeviceType)}
-                  floatingLabelText={intl.formatMessage(messages.deviceType)}
+                  hintText={formatMessage(messages.selectDeviceType)}
+                  floatingLabelText={formatMessage(messages.deviceType)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
-                  intl={intl}
                 />
               </div>
             )}
@@ -1034,10 +1003,10 @@ export const FiltersPanel = ({
                     onDeviceMaintenanceStatusIdChange
                   }
                   floatingLabelFixed
-                  hintText={intl.formatMessage(
+                  hintText={formatMessage(
                     messages.selectDeviceMaintenanceStatus
                   )}
-                  floatingLabelText={intl.formatMessage(
+                  floatingLabelText={formatMessage(
                     messages.deviceMaintenanceStatus
                   )}
                   style={{ verticalAlign: 'bottom' }}
@@ -1054,10 +1023,8 @@ export const FiltersPanel = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder={intl.formatMessage(
-                    messages.selectNotificationName
-                  )}
-                  label={intl.formatMessage(messages.notificationName)}
+                  placeholder={formatMessage(messages.selectNotificationName)}
+                  label={formatMessage(messages.notificationName)}
                   margin="normal"
                 />
               </div>
@@ -1065,7 +1032,7 @@ export const FiltersPanel = ({
             {config.date && (
               <DateRangeSelector
                 floatingLabelText={
-                  dateFilterLabel || intl.formatMessage(messages.date)
+                  dateFilterLabel || formatMessage(messages.date)
                 }
                 onChangeDate={onDateChange}
                 controlClassName={cssClasses('Control')}
@@ -1079,12 +1046,12 @@ export const FiltersPanel = ({
             {config.revoked && (
               <div className={cssClasses('Control')}>
                 <RevokedSelectField
-                  floatingLabelText={intl.formatMessage(messages.revoked)}
+                  floatingLabelText={formatMessage(messages.revoked)}
                   onRevokedChange={onRevokedChange}
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.revoked}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectRevoked)}
+                  hintText={formatMessage(messages.selectRevoked)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -1092,14 +1059,12 @@ export const FiltersPanel = ({
             {config.treatmentStatus && (
               <div className={cssClasses('Control')}>
                 <ResultTreatmentStatusSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   value={filters.treatmentStatus}
                   onTreatmentStatusChange={onTreatmentStatusChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectTreatmentStatus)}
-                  floatingLabelText={intl.formatMessage(
-                    messages.treatmentStatus
-                  )}
+                  hintText={formatMessage(messages.selectTreatmentStatus)}
+                  floatingLabelText={formatMessage(messages.treatmentStatus)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
                 />
@@ -1112,8 +1077,8 @@ export const FiltersPanel = ({
                   value={filters.siteId || ''}
                   onSiteNameChange={onSiteIdChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.enterSiteId)}
-                  floatingLabelText={intl.formatMessage(messages.siteId)}
+                  hintText={formatMessage(messages.enterSiteId)}
+                  floatingLabelText={formatMessage(messages.siteId)}
                 />
               </div>
             )}
@@ -1129,7 +1094,7 @@ export const FiltersPanel = ({
                   onChange={(event, isChecked) =>
                     onOnlyReportableResultsBoolChange(isChecked || null)
                   }
-                  label={intl.formatMessage(messages.onlyReportableResults)}
+                  label={formatMessage(messages.onlyReportableResults)}
                   name="onlyReportableResults"
                   autoWidth
                 />
@@ -1147,7 +1112,7 @@ export const FiltersPanel = ({
                   onChange={(event, isChecked) =>
                     onOnlyDownloadedByReporterBoolChange(isChecked || null)
                   }
-                  label={intl.formatMessage(messages.onlyDownloadedByReporter)}
+                  label={formatMessage(messages.onlyDownloadedByReporter)}
                   name="onlyDownloadedByReporter"
                   autoWidth
                 />
@@ -1166,7 +1131,7 @@ export const FiltersPanel = ({
                     onChange={(event, isChecked) =>
                       onOnlyEverTransferredBoolChange(isChecked || null)
                     }
-                    label={intl.formatMessage(messages.onlyEverTransferred)}
+                    label={formatMessage(messages.onlyEverTransferred)}
                     name="onlyEverTransferred"
                     autoWidth
                   />
@@ -1184,7 +1149,7 @@ export const FiltersPanel = ({
                   onChange={(event, isChecked) =>
                     onOnlyTreatmentRequiredBoolChange(isChecked || null)
                   }
-                  label={intl.formatMessage(messages.onlyTreatmentRequired)}
+                  label={formatMessage(messages.onlyTreatmentRequired)}
                   name="onlyTreatmentRequired"
                   autoWidth
                 />
@@ -1193,12 +1158,12 @@ export const FiltersPanel = ({
             {config.stockLeft && (
               <div className={cssClasses('Control')}>
                 <StockLeftSelectField
-                  allItemText={intl.formatMessage(messages.all)}
+                  allItemText={formatMessage(messages.all)}
                   onChange={onStockLeftChange}
                   value={filters.stockLeft}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.selectStockLeft)}
-                  floatingLabelText={intl.formatMessage(messages.stockLeft)}
+                  hintText={formatMessage(messages.selectStockLeft)}
+                  floatingLabelText={formatMessage(messages.stockLeft)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
@@ -1210,8 +1175,8 @@ export const FiltersPanel = ({
                   value={filters.reportName || ''}
                   onReportNameChange={onReportNameChange}
                   floatingLabelFixed
-                  hintText={intl.formatMessage(messages.enterReportName)}
-                  floatingLabelText={intl.formatMessage(messages.reportName)}
+                  hintText={formatMessage(messages.enterReportName)}
+                  floatingLabelText={formatMessage(messages.reportName)}
                 />
               </div>
             )}

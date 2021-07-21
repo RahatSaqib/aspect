@@ -172,14 +172,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>
@@ -1160,14 +1160,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>
@@ -2148,14 +2148,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>
@@ -3136,14 +3136,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>
@@ -4124,14 +4124,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>
@@ -5112,14 +5112,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>
@@ -6084,14 +6084,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="State"
+          floatingLabelText=""
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText="LGA"
+          floatingLabelText=""
           onLgaIdChange={[Function]}
         />
       </div>

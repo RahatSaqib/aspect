@@ -7,16 +7,12 @@ import AspectDialog from '../../components/shared/AspectDialog'
 
 import messages from './messages'
 import PersonAssignment from './PersonAssignmentItem'
+import useI18n from '../../Hooks/i18n/useI18n'
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)
 
-export default ({
-  intl,
-  assignments,
-  loadedAssignments,
-  onDeleteAssignment,
-}) => {
+export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
   const [confirmation, setConfirmation] = useState({ isActive: false })
   const onCancelConfirmation = () => setConfirmation({ isActive: false })
   const onConfirmRemove = () => {
@@ -26,10 +22,11 @@ export default ({
   const askConfirmation = (assignment, index) => {
     setConfirmation({ isActive: true, assignment, index })
   }
+  const { formatMessage } = useI18n()
 
   return (
     <section className={cssClasses('Assignments')}>
-      <h1>{intl.formatMessage(messages.assignments)}</h1>
+      <h1>{formatMessage(messages.assignments)}</h1>
       {!loadedAssignments && <LinearProgress />}
       {assignments.length === 0 && <h4>Not specified</h4>}
       {assignments.map(assignment => (
@@ -38,17 +35,16 @@ export default ({
           assignment={assignment}
           showLinks
           onAskConfirmation={askConfirmation}
-          intl={intl}
         />
       ))}
 
       <AspectDialog
         actions={[
           <Button color="primary" onClick={onCancelConfirmation}>
-            {intl.formatMessage(messages.cancel)}
+            {formatMessage(messages.cancel)}
           </Button>,
           <Button color="primary" variant="contained" onClick={onConfirmRemove}>
-            {intl.formatMessage(messages.yesDelete)}
+            {formatMessage(messages.yesDelete)}
           </Button>,
         ]}
         maxWidth="sm"
@@ -56,7 +52,7 @@ export default ({
         onClose={onCancelConfirmation}
       >
         <h3>Do you want to remove below assignment?</h3>
-        <PersonAssignment assignment={confirmation.assignment} intl={intl} />
+        <PersonAssignment assignment={confirmation.assignment} />
       </AspectDialog>
     </section>
   )

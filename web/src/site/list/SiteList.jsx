@@ -46,6 +46,7 @@ import {
 import ExportListButton from '../../globals/components/ExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './SiteList.css'
 
@@ -167,7 +168,7 @@ const enhance = compose(
     }
   ),
   setPropTypes({
-    intl: PropTypeOf.intl.isRequired,
+    intl: PropTypeOf.isRequired,
     location: PropTypes.object.isRequired,
     navigate: PropTypes.func.isRequired,
     table: PropTypes.instanceOf(Immutable.Record).isRequired,
@@ -245,7 +246,6 @@ const enhance = compose(
 )
 
 export const SiteList = ({
-  intl,
   navigate,
   location,
   // --- injected by recompose ---
@@ -262,6 +262,7 @@ export const SiteList = ({
   const { value: filtersParams } = filtersFromLocation(location)
   const filters = fromPairs([...filtersParams.entries()])
   const [siteList, setSiteList] = useState(false)
+  const { formatMessage } = useI18n()
 
   const { data: { data, total } = false } = useQuery(
     [SITE_LIST.KEY, { sortCol, sortDir, pageAt, pageSize, filters }],
@@ -284,12 +285,11 @@ export const SiteList = ({
   }, [data])
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-      <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
+      <Helmet title={formatMessage(messages.sitesTitle)} />
+      <NavTitle title={formatMessage(messages.sitesTitle)} />
       <BrowseFilters
         navigate={navigate}
         location={location}
-        intl={intl}
         config={reducedFilters}
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
@@ -314,37 +314,37 @@ export const SiteList = ({
               columns={[
                 {
                   key: 'name',
-                  label: intl.formatMessage(messages.siteName),
+                  label: formatMessage(messages.siteName),
                   sortable: true,
                 },
                 {
                   key: 'state',
-                  label: getCustomMessage(intl, messages, 'state', user),
+                  label: getCustomMessage(messages, 'state', user),
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: getCustomMessage(intl, messages, 'lga', user),
+                  label: getCustomMessage(messages, 'lga', user),
                   sortable: true,
                 },
                 {
                   key: 'siteId',
-                  label: intl.formatMessage(messages.externalId),
+                  label: formatMessage(messages.externalId),
                   sortable: true,
                 },
                 {
                   key: 'totalDevices',
-                  label: intl.formatMessage(messages.totalDevices),
+                  label: formatMessage(messages.totalDevices),
                   sortable: true,
                 },
                 {
                   key: 'inventoryUpdatedOn',
-                  label: intl.formatMessage(messages.latestInventoryUpdate),
+                  label: formatMessage(messages.latestInventoryUpdate),
                   sortable: true,
                 },
                 {
                   key: 'siteIssues',
-                  label: intl.formatMessage(messages.siteIssues),
+                  label: formatMessage(messages.siteIssues),
                 },
               ]}
             />
@@ -353,7 +353,6 @@ export const SiteList = ({
                 siteList?.map(site => (
                   <SiteDataTableRow
                     key={site.id}
-                    intl={intl}
                     site={site}
                     onClick={onRowClick}
                     onAlertClick={onAlertClick}
@@ -367,7 +366,6 @@ export const SiteList = ({
           <BrowseTablePaginator
             navigate={navigate}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={total}
             pageAt={pageAt}

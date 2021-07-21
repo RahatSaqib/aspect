@@ -39,17 +39,6 @@ exports[`Person List module CaseList component should shallow render correctly 1
       disabled={true}
     />
     <pure(withHandlers(EmptyList))
-      intl={
-        Object {
-          "formatDate": [Function],
-          "formatHTMLMessage": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatPlural": [Function],
-          "formatRelative": [Function],
-          "formatTime": [Function],
-        }
-      }
       location={
         Object {
           "search": "",

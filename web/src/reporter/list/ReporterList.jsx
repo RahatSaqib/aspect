@@ -2,7 +2,6 @@ import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -10,7 +9,6 @@ import Immutable from 'immutable'
 import { useNavigate, useLocation } from 'react-router-dom'
 import fromPairs from 'lodash/fromPairs'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import PropTypeOf from '../../shared/types'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -44,6 +42,8 @@ import { receiveList, Items } from '../../shared/metaReducers/items'
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import messages from './messages'
+import useI18n from '../../Hooks/i18n/useI18n'
+import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 import styles from './ReporterList.css'
 
@@ -143,7 +143,6 @@ const getCurrentPagination = location => {
 }
 
 export const ReporterListWithProps = ({
-  intl,
   navigate,
   location,
   table,
@@ -156,67 +155,66 @@ export const ReporterListWithProps = ({
   onExportClick,
   pageSize,
   reducedFilters,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.reportersTitle)} />
-    <NavTitle title={intl.formatMessage(messages.reportersTitle)} />
-    <BrowseFilters
-      navigate={navigate}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-    />
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!isLoading} />
-
-      <AspectExportListButton
-        onExport={onExportClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Reporters"
+}) => {
+  const { formatMessage } = i18nWrapper()
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={formatMessage(messages.reportersTitle)} />
+      <NavTitle title={formatMessage(messages.reportersTitle)} />
+      <BrowseFilters
+        navigate={navigate}
+        location={location}
+        config={reducedFilters}
       />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <ReporterDataTable className={cssClasses('ReporterDataTable')}>
-          <ReporterDataTableHead
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!isLoading} />
+
+        <AspectExportListButton
+          onExport={onExportClick}
+          visible={!items.currentIdList.isEmpty()}
+          reportName="Reporters"
+        />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList navigate={navigate} location={location} />
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <ReporterDataTable className={cssClasses('ReporterDataTable')}>
+            <ReporterDataTableHead
+              navigate={navigate}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={columns}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(reporter => (
+                  <ReporterDataTableRow
+                    key={reporter.get('siteId')}
+                    reporter={reporter}
+                  />
+                ))}
+            </TableBody>
+          </ReporterDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             navigate={navigate}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={columns}
+            className={cssClasses('BrowseTablePaginator')}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(reporter => (
-                <ReporterDataTableRow
-                  key={reporter.get('siteId')}
-                  intl={intl}
-                  reporter={reporter}
-                />
-              ))}
-          </TableBody>
-        </ReporterDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          className={cssClasses('BrowseTablePaginator')}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
-    </DataTableCard>
-  </div>
-)
+        )}
+      </DataTableCard>
+    </div>
+  )
+}
 
 const ReporterList = () => {
-  const intl = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
   const {
@@ -239,6 +237,7 @@ const ReporterList = () => {
   const [filters, setFilters] = useState(getCurrentFilters(location.search))
   const [pagination, setPagination] = useState(getCurrentPagination(location))
   const [columns, setColumns] = useState(Immutable.List([]))
+  const { formatMessage } = useI18n()
 
   const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
@@ -296,7 +295,7 @@ const ReporterList = () => {
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       setTable(receiveTableItems(table, totalItems))
-      setColumns(getBaseColumns(intl.formatMessage))
+      setColumns(getBaseColumns(formatMessage))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
@@ -317,7 +316,6 @@ const ReporterList = () => {
   }
 
   const baseProps = {
-    intl,
     navigate,
     location,
     isLoading: isLoading || isLoadingRevoke,
@@ -340,7 +338,6 @@ const ReporterList = () => {
 }
 
 ReporterListWithProps.propTypes = {
-  intl: PropTypeOf.intl.isRequired,
   navigate: PropTypes.func.isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   table: PropTypes.instanceOf(Immutable.Record).isRequired,

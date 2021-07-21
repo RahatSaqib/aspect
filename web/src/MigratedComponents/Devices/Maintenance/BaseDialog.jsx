@@ -9,6 +9,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 
 import AspectDialog from '../../../components/shared/AspectDialog'
 import DateTimeInput from '../../../components/shared/DateTimeInput'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 import styles from './BaseDialog.css'
 
@@ -49,7 +50,6 @@ export const messages = defineMessages({
 })
 
 export const BaseDialog = ({
-  intl,
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
@@ -61,72 +61,74 @@ export const BaseDialog = ({
   onContextDateChange,
   onNotesChange,
   handleSubmit,
-}) => (
-  <AspectDialog
-    actions={[
-      <Button color="primary" onClick={onCancel}>
-        {intl.formatMessage(messages.cancel)}
-      </Button>,
-      <Button
-        color="primary"
-        variant="contained"
-        disabled={form.pristine || !form.valid || form.submitting}
-        onClick={handleSubmit}
-      >
-        {intl.formatMessage(messages.submit)}
-      </Button>,
-    ]}
-    maxWidth="sm"
-    open={isDialogActive}
-    onClose={onCancel}
-    title={labels.dialogTitle}
-  >
-    <form className={cssClasses('Form')}>
-      <div className={cssClasses('Form__Content')}>
-        <section>
-          {has(values, 'contextDate') && (
-            <div>
-              <InputLabel shrink htmlFor="age-label-placeholder">
-                {labels.contextDate}
-              </InputLabel>
-              <DateTimeInput
-                fullWidth
-                margin="normal"
-                className={cssClasses('DateTime')}
-                dateFormat={dateFormat}
-                intl={intl}
-                disabled={form.submitting}
-                value={values.contextDate}
-                onChange={onContextDateChange}
-                RootProps={{
-                  name: 'contextDate',
-                }}
-                // autoOk
-              />
-            </div>
-          )}
-        </section>
-        <section>
-          <TextField
-            fullWidth
-            type="notes"
-            name="notes"
-            label={intl.formatMessage(sharedMessages.notes)}
-            disabled={form.submitting}
-            value={values.notes}
-            onChange={onNotesChange}
-            multiline
-            rows={2}
-            error={meta.notes.touched && meta.notes.error}
-            helperText={meta.notes.touched && meta.notes.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 2000 }}
-          />
-        </section>
-      </div>
-    </form>
-  </AspectDialog>
-)
+}) => {
+  const { formatMessage } = useI18n()
+  return (
+    <AspectDialog
+      actions={[
+        <Button color="primary" onClick={onCancel}>
+          {formatMessage(messages.cancel)}
+        </Button>,
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={form.pristine || !form.valid || form.submitting}
+          onClick={handleSubmit}
+        >
+          {formatMessage(messages.submit)}
+        </Button>,
+      ]}
+      maxWidth="sm"
+      open={isDialogActive}
+      onClose={onCancel}
+      title={labels.dialogTitle}
+    >
+      <form className={cssClasses('Form')}>
+        <div className={cssClasses('Form__Content')}>
+          <section>
+            {has(values, 'contextDate') && (
+              <div>
+                <InputLabel shrink htmlFor="age-label-placeholder">
+                  {labels.contextDate}
+                </InputLabel>
+                <DateTimeInput
+                  fullWidth
+                  margin="normal"
+                  className={cssClasses('DateTime')}
+                  dateFormat={dateFormat}
+                  disabled={form.submitting}
+                  value={values.contextDate}
+                  onChange={onContextDateChange}
+                  RootProps={{
+                    name: 'contextDate',
+                  }}
+                  // autoOk
+                />
+              </div>
+            )}
+          </section>
+          <section>
+            <TextField
+              fullWidth
+              type="notes"
+              name="notes"
+              label={formatMessage(sharedMessages.notes)}
+              disabled={form.submitting}
+              value={values.notes}
+              onChange={onNotesChange}
+              multiline
+              rows={2}
+              error={meta.notes.touched && meta.notes.error}
+              helperText={meta.notes.touched && meta.notes.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 2000 }}
+            />
+          </section>
+        </div>
+      </form>
+    </AspectDialog>
+  )
+}
