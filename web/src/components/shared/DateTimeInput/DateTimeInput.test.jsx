@@ -7,6 +7,12 @@ import { mountWithTheme, shallowWithTheme } from '../../../test/common'
 import DateTimeInput from './DateTimeInput'
 import { I18nProvider } from '../../../Providers/I18nProvider'
 
+const DateTimeInputI18n = props => (
+  <I18nProvider>
+    <DateTimeInput {...props} />
+  </I18nProvider>
+)
+
 describe('DateTimeInput component', () => {
   const commonProps = {
     dateFormat: 'yyyy/MM/dd',
@@ -19,14 +25,14 @@ describe('DateTimeInput component', () => {
 
   describe('common', () => {
     it('should determine the order of dropdowns by `dateFormat` and `timeFormat` props', () => {
-      const wrapper = mountWithTheme(<DateTimeInput {...commonProps} />)
+      const wrapper = mountWithTheme(<DateTimeInputI18n {...commonProps} />)
       expect(
         wrapper.find(selectRootSelector).map(node => node.prop('name'))
       ).toEqual(['Year', 'Month', 'Date', 'Hours', 'Minutes'])
 
       wrapper.setProps({
         children: (
-          <DateTimeInput
+          <DateTimeInputI18n
             {...commonProps}
             dateFormat="d/M/y"
             timeFormat="s:m:H"
@@ -55,14 +61,14 @@ describe('DateTimeInput component', () => {
     })
 
     it('should render without crash', () => {
-      shallowWithTheme(<DateTimeInput {...props} />)
+      shallowWithTheme(<DateTimeInputI18n {...props} />)
     })
 
     it('should invoke `onChange` when a option has been selected', () => {
       let onChange = getMockOnChange(new Date(2006, 2, 18))
-      const wrapper = mountWithTheme(<DateTimeInput {...props} />)
+      const wrapper = mountWithTheme(<DateTimeInputI18n {...props} />)
       wrapper.setProps({
-        children: <DateTimeInput {...props} onChange={onChange} />,
+        children: <DateTimeInputI18n {...props} onChange={onChange} />,
       })
 
       act(() => {
@@ -79,7 +85,7 @@ describe('DateTimeInput component', () => {
 
       onChange = getMockOnChange(new Date(2006, 3, 18))
       wrapper.setProps({
-        children: <DateTimeInput {...props} onChange={onChange} />,
+        children: <DateTimeInputI18n {...props} onChange={onChange} />,
       })
 
       act(() => {
@@ -110,7 +116,7 @@ describe('DateTimeInput component', () => {
     })
 
     it('should render without crash', () => {
-      shallowWithTheme(<DateTimeInput {...props} />)
+      shallowWithTheme(<DateTimeInputI18n {...props} />)
     })
   })
 })

@@ -172,14 +172,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -972,6 +972,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
     </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
+    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -1160,14 +1175,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -1959,6 +1974,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
+    </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
     </section>
   </div>
   <div
@@ -2148,14 +2178,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -2947,6 +2977,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
+    </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
     </section>
   </div>
   <div
@@ -3136,14 +3181,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -3935,6 +3980,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
+    </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
     </section>
   </div>
   <div
@@ -4124,14 +4184,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -4923,6 +4983,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
+    </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
     </section>
   </div>
   <div
@@ -5112,14 +5187,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -5909,6 +5984,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
+    </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
     </section>
   </div>
   <div
@@ -6084,14 +6174,14 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
-          floatingLabelText=""
+          floatingLabelText="LGA"
           onLgaIdChange={[Function]}
         />
       </div>
@@ -6881,6 +6971,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
+    </section>
+    <section
+      className="TagLabel"
+    >
+      <p>
+        Tags
+      </p>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        noMatch="Press enter to add tag"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
     </section>
   </div>
   <div
