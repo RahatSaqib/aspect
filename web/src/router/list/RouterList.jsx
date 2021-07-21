@@ -235,7 +235,7 @@ export const RouterList = ({
       />
 
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} />
       )}
       {!items.currentIdList.isEmpty() && (
         <RouterDataTable className={cssClasses('RouterDataTable')}>

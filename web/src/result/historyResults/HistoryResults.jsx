@@ -55,11 +55,7 @@ export const Results = ({
       <div>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList
-            navigate={navigate}
-            location={location}
-            intl={intl}
-          />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
           <Table className={cssClasses('ResultDataTable')}>

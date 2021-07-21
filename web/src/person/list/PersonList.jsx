@@ -253,11 +253,7 @@ export const PersonList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList
-            navigate={navigate}
-            location={location}
-            intl={intl}
-          />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}

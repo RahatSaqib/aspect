@@ -295,11 +295,7 @@ export const SiteList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={siteList} />
         {!siteList && (
-          <BrowseEmptyList
-            navigate={navigate}
-            location={location}
-            intl={intl}
-          />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}

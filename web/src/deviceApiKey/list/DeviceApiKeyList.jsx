@@ -474,7 +474,7 @@ export const DeviceApiKeyList = ({
         reportName="DeviceApiKey"
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} />
       )}
       {!items.currentIdList.isEmpty() && (
         <DeviceApiKeyDataTable className={cssClasses('DeviceApiKeyDataTable')}>

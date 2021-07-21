@@ -226,11 +226,7 @@ export const DeviceDetailOperation = ({
           <div>
             <DataTableProgressBar disabled={!table.loading} />
             {items.currentIdList.isEmpty() && (
-              <BrowseEmptyList
-                navigate={navigate}
-                location={location}
-                intl={intl}
-              />
+              <BrowseEmptyList navigate={navigate} location={location} />
             )}
             {!items.currentIdList.isEmpty() && (
               <DeviceOperationDataTable
