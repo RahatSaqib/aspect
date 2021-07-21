@@ -15,5 +15,5 @@ async function seed(knex) {
     await removeFollowUps(knex, [partnerId], externalId)
   })
 
-  await addFollowUps(knex, [partnerId], followUp)
+  await addFollowUps(knex, followUp, [partnerId])
 }

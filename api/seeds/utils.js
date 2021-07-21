@@ -630,8 +630,25 @@ async function seedStaticDataPermission(knex, { modules }) {
   }
 }
 
-async function addFollowUps(knex, partnerIds, { data }) {
-  const assaysDb = await knex('Assay').select('id', 'externalId')
+async function addFollowUps(knex, fixture, partnerIds = [], assaysWhitelist = []) {
+  let { data } = fixture
+
+  if (!partnerIds || partnerIds.length === 0)
+    partnerIds = await knex('Partner').pluck('id')
+
+  const assaysDb = await knex('Assay')
+    .modify(queryBuilder => {
+      if (!assaysWhitelist || assaysWhitelist.length > 0)
+        queryBuilder.whereIn('externalId', assaysWhitelist)
+    })
+    .select('id', 'externalId')
+
+  if (assaysWhitelist.length === 0)
+    assaysWhitelist = assaysDb.map(a => a.externalId)
+
+  // Re-set as data all the follow ups that contains any whitelisted assays
+  data = data.filter(followUp => followUp.assays.filter(assayExternalId => assaysDb.map(a => a.externalId).includes(assayExternalId).length > 0))
+
   const typesDb = await knex('FollowUpType').select('id', 'externalId')
   for (const { type, name, externalId, i18nKey, assays } of data) {
     const { id: followUpTypeId } = _.find(typesDb, { externalId: type })

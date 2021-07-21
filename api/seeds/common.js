@@ -9,6 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const followUpFixture = require('./fixtures/FollowUp.json')
 const timezone = require('./fixtures/TimeZone.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
 const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
@@ -849,6 +850,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
+  await utils.addFollowUps(knex, followUpFixture, null, assayExternalIds)
 
   const existingAssayExternalIds = await knex('Assay')
     .whereIn('externalId', assayExternalIds)
