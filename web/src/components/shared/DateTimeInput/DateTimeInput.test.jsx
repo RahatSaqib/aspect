@@ -4,6 +4,13 @@ import isDateEqual from 'date-fns/isEqual'
 import Downshift from 'downshift'
 import { act } from 'react-dom/test-utils'
 import DateTimeInput from './DateTimeInput'
+import { I18nProvider } from '../../../Providers/I18nProvider'
+
+const DateTimeInputI18n = props => (
+  <I18nProvider>
+    <DateTimeInput {...props} />
+  </I18nProvider>
+)
 
 describe('DateTimeInput component', () => {
   const commonProps = {
@@ -17,7 +24,7 @@ describe('DateTimeInput component', () => {
 
   describe('common', () => {
     it('should determine the order of dropdowns by `dateFormat` and `timeFormat` props', () => {
-      const wrapper = mount(<DateTimeInput {...commonProps} />)
+      const wrapper = mount(<DateTimeInputI18n {...commonProps} />)
       expect(
         wrapper.find(selectRootSelector).map(node => node.prop('name'))
       ).toEqual(['Year', 'Month', 'Date', 'Hours', 'Minutes'])
@@ -49,7 +56,7 @@ describe('DateTimeInput component', () => {
     })
 
     it('should invoke `onChange` when a option has been selected', () => {
-      const wrapper = mount(<DateTimeInput {...props} />)
+      const wrapper = mount(<DateTimeInputI18n {...props} />)
       let onChange = getMockOnChange(new Date(2006, 2, 18))
       wrapper.setProps({ onChange })
       act(() => {

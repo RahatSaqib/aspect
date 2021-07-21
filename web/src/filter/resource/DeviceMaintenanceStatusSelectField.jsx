@@ -1,5 +1,5 @@
 // Imports from packages
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { useQuery } from 'react-query'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -12,6 +12,7 @@ import SelectField from '../../components/shared/SelectField'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { DEVICE_STATUS } from '../../MigratedComponents/QueryFetch/Device/index'
 import { types } from '../../MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const messages = defineMessages({
   active: {
@@ -86,7 +87,7 @@ const DeviceMaintenanceStatusSelectField = ({
   onlyManuallySetableStatuses,
   ...restProps
 }) => {
-  const intl = useIntl()
+  const { formatMessage } = useI18n()
   const { data, isError } = useQuery(
     [DEVICE_STATUS.KEY, onlyManuallySetableStatuses],
     async () => {
@@ -123,7 +124,7 @@ const DeviceMaintenanceStatusSelectField = ({
       {maintenanceStatuses
         ? maintenanceStatuses.map(ms => (
             <MenuItem key={ms.externalId} value={ms.externalId}>
-              {intl.formatMessage(messages[ms.i18nKey])}
+              {formatMessage(messages[ms.i18nKey])}
             </MenuItem>
           ))
         : null}
