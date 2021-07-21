@@ -54,7 +54,9 @@ const enhance = compose(
     onInitialLoad:
       ({ hasToAcceptLicenseId, fetchLicense }) =>
       () => {
-        fetchLicense(hasToAcceptLicenseId)
+        if (hasToAcceptLicenseId) {
+          fetchLicense(hasToAcceptLicenseId)
+        }
       },
     onAcceptClick:
       ({ navigate, location, acceptLicenseStart, hasToAcceptLicenseId }) =>
