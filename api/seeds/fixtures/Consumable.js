@@ -33,6 +33,18 @@ const getConsumables = async () => {
       ],
     },
     {
+      name: 'GeneXpert MTB/XDR Cartridge',
+      externalId: 'GxMtbXdrCartridge',
+      i18nKey: 'gxMtbXdrCartridge',
+      ...commonProps,
+      assays: [
+        {
+          externalId: 'GxMtbXdr',
+          quantity: 1,
+        },
+      ],
+    },
+    {
       name: 'GeneXpert TB Ultra Cartridge',
       externalId: 'GxMtbRifUltraCartridge',
       i18nKey: 'gxMtbRifUltraCartridge',

@@ -9,6 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const followUpFixture = require('./fixtures/FollowUp.json')
 const timezone = require('./fixtures/TimeZone.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
 const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
@@ -631,6 +632,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   const {
     'MTB/Rif': assayTypeMTBRifId,
+    'MTB/XDR': assayTypeMtbXdrId,
     Ebola: assayTypeEbolaId,
     'HIV VL': assayTypeHivVlId,
     'HIV Qual': assayTypeHivQualId,
@@ -698,6 +700,33 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'resultCategoryRif'
     )
     await upsertConsumables(knex, true, ['GxMtbRif'])
+  }
+  if (_.includes(assayExternalIds, 'GxMtbXdr')) {
+    await createAssay(
+      knex,
+      'GeneXpert MTB/XDR',
+      'assayGeneXpertMtbXdr',
+      'GxMtbXdr',
+      assayTypeMtbXdrId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'GX MTB/XDR',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBRif,
+      [
+        'Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'XDR',
+      'resultCategoryXDR'
+    )
+    await upsertConsumables(knex, true, ['GxMtbXdr'])
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
     await createAssay(
@@ -821,11 +850,15 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
+  await utils.addFollowUps(knex, followUpFixture, null, assayExternalIds)
 
+  const existingAssayExternalIds = await knex('Assay')
+    .whereIn('externalId', assayExternalIds)
+    .pluck('externalId')
   await upsertResultCategoryGroup(
     knex,
     gxResultCategoryGroups,
-    assayExternalIds
+    existingAssayExternalIds
   )
 }
 
@@ -1256,6 +1289,7 @@ async function baseGxAlertMigration(
       order: cf.order,
     }
   })
+
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
     geneXpertAssayExternalIds,

@@ -216,6 +216,73 @@ const GxMtbRifUltraMtbNoResult = {
   assayExternalId: 'GxMtbRifUltra',
 }
 
+const GxMtbXdrMtbNotDetected = {
+  externalId: 'GxMtbXdrMtbNotDetected',
+  i18nKey: 'gxMtbXdrMtbNotDetected',
+  name: 'MTB Not Detected',
+  resultCategory1ExternalId: 'NotDetected',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbDetected = {
+  externalId: 'GxMtbXdrMtbDetected',
+  i18nKey: 'gxMtbXdrMtbDetected',
+  name: 'MTB Detected',
+  resultCategory1ExternalId: 'Detected',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbDetectedXdrNotDetected = {
+  externalId: 'GxMtbXdrMtbDetectedXdrNotDetected',
+  i18nKey: 'gxMtbXdrMtbDetectedXdrNotDetected',
+  name: 'MTB Detected XDR Not Detected',
+  resultCategory1ExternalId: 'Detected',
+  resultCategory2ExternalId: 'NotDetected',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbDetectedXdrDetected = {
+  externalId: 'GxMtbXdrMtbDetectedXdrDetected',
+  i18nKey: 'gxMtbXdrMtbDetectedXdrDetected',
+  name: 'MTB Detected XDR Detected',
+  resultCategory1ExternalId: 'Detected',
+  resultCategory2ExternalId: 'Detected',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbDetectedXdrIndeterminate = {
+  externalId: 'GxMtbXdrMtbDetectedXdrIndeterminate',
+  i18nKey: 'gxMtbXdrMtbDetectedXdrIndeterminate',
+  name: 'MTB Detected XDR Indeterminate',
+  resultCategory1ExternalId: 'Detected',
+  resultCategory2ExternalId: 'Indeterminate',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbInvalid = {
+  externalId: 'GxMtbXdrMtbInvalid',
+  i18nKey: 'gxMtbXdrMtbInvalid',
+  name: 'MTB Invalid',
+  resultCategory1ExternalId: 'Invalid',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbError = {
+  externalId: 'GxMtbXdrMtbError',
+  i18nKey: 'gxMtbXdrMtbError',
+  name: 'MTB Error',
+  resultCategory1ExternalId: 'Error',
+  assayExternalId: 'GxMtbXdr',
+}
+
+const GxMtbXdrMtbNoResult = {
+  externalId: 'GxMtbXdrMtbNoResult',
+  i18nKey: 'gxMtbXdrMtbNoResult',
+  name: 'MTB No Result',
+  resultCategory1ExternalId: 'NoResult',
+  assayExternalId: 'GxMtbXdr',
+}
+
 module.exports = {
   byAssay: {
     gxEbola: [
@@ -238,6 +305,16 @@ module.exports = {
       GxMtbRifMtbInvalid,
       GxMtbRifMtbError,
       GxMtbRifMtbNoResult,
+    ],
+    gxMtbXdr: [
+      GxMtbXdrMtbNotDetected,
+      GxMtbXdrMtbDetected,
+      GxMtbXdrMtbDetectedXdrDetected,
+      GxMtbXdrMtbDetectedXdrNotDetected,
+      GxMtbXdrMtbDetectedXdrIndeterminate,
+      GxMtbXdrMtbInvalid,
+      GxMtbXdrMtbError,
+      GxMtbXdrMtbNoResult,
     ],
     gxMtbRifUltra: [
       GxMtbRifUltraMtbNotDetected,

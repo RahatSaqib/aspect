@@ -1413,6 +1413,81 @@ const gxMtbRifUltra = [
   ),
 ]
 
+const gxMtbXdr = [
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected|Low FLQ Resistance @label_result_detected||AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+    'Detected',
+    'NotDetected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_invalid',
+    'Detected',
+    'Invalid'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_invalid',
+    'Detected',
+    'Detected'
+  ),
+  getAssertionItem(
+    'GxMtbXdr',
+    '|MTB @label_result_error||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_invalid',
+    'Error',
+    null
+  ),
+]
+
 const assayGxCovid19 = [
   getAssertionItem('assayGXCovid19', 'ERROR', 'Error', null),
   getAssertionItem('assayGXCovid19', 'ERROR|', 'Error', null),
@@ -1461,4 +1536,5 @@ module.exports = {
   gxMtbRif,
   gxMtbRifUltra,
   assayGxCovid19,
+  gxMtbXdr,
 }

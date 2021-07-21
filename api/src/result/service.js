@@ -748,6 +748,7 @@ async function getResultByResultId(
     if (data.formSchema) {
       data.formSchema = JSON.parse(data.formSchema)
     }
+
     if (data.formData) {
       data.formData = JSON.parse(data.formData)
     }
