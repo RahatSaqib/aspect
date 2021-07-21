@@ -74,7 +74,7 @@ IconProvider.propTypes = {
   /**
     Class name for icon to be displayed
   */
-  title: oneOfType(bool, string),
+  title: oneOfType([bool, string]),
 }
 
 export default IconProvider

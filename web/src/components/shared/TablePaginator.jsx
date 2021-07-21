@@ -10,6 +10,7 @@ import {
   FaAngleLeft,
   FaAngleRight,
 } from 'react-icons/fa'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./TablePaginator.css'))
 
@@ -100,7 +101,6 @@ const enhance = compose(
 )
 
 const TablePaginator = ({
-  intl,
   timedMessageUsed = false,
   paginatorStatus,
   className,
@@ -118,75 +118,76 @@ const TablePaginator = ({
   pageSize,
   pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
   ...restProps
-}) => (
-  <div className={cssClasses(className, 'Container')}>
-    <div className={cssClasses('Left')}>
-      <Button
-        className={cssClasses('Left__Button')}
-        disabled={!hasFirstPage}
-        color="primary"
-        variant="outlined"
-        onClick={onFirstClick}
-      >
-        <FaAngleDoubleLeft />
-        {intl.formatMessage(messages.first)}
-      </Button>
-      <Button
-        className={cssClasses('Left__Button')}
-        disabled={!hasPreviousPage}
-        color="primary"
-        variant="outlined"
-        onClick={onPreviousClick}
-      >
-        <FaAngleLeft />
-        {intl.formatMessage(
-          timedMessageUsed ? messages.newer : messages.previous
-        )}
-      </Button>
-      <div className={cssClasses('Left__Status')}>
-        {intl.formatMessage(paginatorStatus, {
-          firstItemIndex,
-          lastItemIndex,
-          itemCount: total,
-        })}
-      </div>
-      <Button
-        className={cssClasses('Left__Button', 'Left__Button--next')}
-        disabled={!hasNextPage}
-        color="primary"
-        variant="outlined"
-        onClick={onNextClick}
-      >
-        {intl.formatMessage(timedMessageUsed ? messages.older : messages.next)}
-        <FaAngleRight />
-      </Button>
-      <Button
-        className={cssClasses('Left__Button', 'Left__Button--next')}
-        disabled={!hasLastPage}
-        color="primary"
-        variant="outlined"
-        onClick={onLastClick}
-      >
-        {intl.formatMessage(messages.last)}
-        <FaAngleDoubleRight />
-      </Button>
-    </div>
-    <div className={cssClasses('Right')}>
-      {pageSizeButtonKeys.map(key => (
+}) => {
+  const { formatMessage } = useI18n()
+  return (
+    <div className={cssClasses(className, 'Container')}>
+      <div className={cssClasses('Left')}>
         <Button
-          key={key}
-          className={cssClasses('Right__Button', {
-            selected: key !== ALL_KEY ? key === pageSize : pageSize === total,
-          })}
-          onClick={restProps[`onPageSizeChange${key}`]}
-          variant="contained"
+          className={cssClasses('Left__Button')}
+          disabled={!hasFirstPage}
           color="primary"
+          variant="outlined"
+          onClick={onFirstClick}
         >
-          {key !== ALL_KEY ? `${key}` : intl.formatMessage(messages.all)}
+          <FaAngleDoubleLeft />
+          {formatMessage(messages.first)}
         </Button>
-      ))}
+        <Button
+          className={cssClasses('Left__Button')}
+          disabled={!hasPreviousPage}
+          color="primary"
+          variant="outlined"
+          onClick={onPreviousClick}
+        >
+          <FaAngleLeft />
+          {formatMessage(timedMessageUsed ? messages.newer : messages.previous)}
+        </Button>
+        <div className={cssClasses('Left__Status')}>
+          {formatMessage(paginatorStatus, {
+            firstItemIndex,
+            lastItemIndex,
+            itemCount: total,
+          })}
+        </div>
+        <Button
+          className={cssClasses('Left__Button', 'Left__Button--next')}
+          disabled={!hasNextPage}
+          color="primary"
+          variant="outlined"
+          onClick={onNextClick}
+        >
+          {formatMessage(timedMessageUsed ? messages.older : messages.next)}
+          <FaAngleRight />
+        </Button>
+        <Button
+          className={cssClasses('Left__Button', 'Left__Button--next')}
+          disabled={!hasLastPage}
+          color="primary"
+          variant="outlined"
+          onClick={onLastClick}
+        >
+          {formatMessage(messages.last)}
+          <FaAngleDoubleRight />
+        </Button>
+      </div>
+      <div className={cssClasses('Right')}>
+        {pageSizeButtonKeys.map(key => (
+          <Button
+            key={key}
+            className={cssClasses('Right__Button', {
+              selected: key !== ALL_KEY ? key === pageSize : pageSize === total,
+            })}
+            onClick={restProps[`onPageSizeChange${key}`]}
+            variant="contained"
+            color="primary"
+          >
+            {key !== ALL_KEY ? `${key}` : formatMessage(messages.all)}
+          </Button>
+        ))}
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default enhance(TablePaginator)

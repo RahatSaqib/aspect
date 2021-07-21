@@ -175,9 +175,9 @@ const getCreateAssignPerson = async (
     timezone = existingTimeZone || defaultTimeZone
     ;[personId] = await knex('Person').insert({
       geographyId,
-      name,
-      email,
-      cell,
+      name: name || null,
+      email: email || null,
+      cell: cell || null,
       lastPartnerId: partnerId,
       lastCountryId: countryId,
       timezone,

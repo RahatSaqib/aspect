@@ -22,6 +22,7 @@ import AssayTypeSelectField from '../../filter/resource/AssayTypeSelectField'
 import AssaySelectField from '../../filter/resource/AssaySelectField'
 
 import PersonAssignments from './PersonAssignments'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -101,7 +102,6 @@ const enhance = compose(
 )
 
 export const JobAssignmentForm = ({
-  intl,
   loading,
   form,
   meta,
@@ -121,7 +121,7 @@ export const JobAssignmentForm = ({
   onDeleteAssignment,
   user,
 }) => {
-  const { formatMessage } = intl
+  const { formatMessage } = useI18n()
   const baseProps = {
     allItemText: formatMessage(messages.all),
     disabled: form.submitting,
@@ -172,12 +172,7 @@ export const JobAssignmentForm = ({
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={getCustomMessage(
-                intl,
-                messages,
-                'state',
-                user
-              )}
+              floatingLabelText={getCustomMessage(messages, 'state', user)}
             />
             <LgaSelectField
               {...baseProps}
@@ -185,7 +180,7 @@ export const JobAssignmentForm = ({
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
+              floatingLabelText={getCustomMessage(messages, 'lga', user)}
             />
             <SiteSelectField
               {...baseProps}
@@ -198,21 +193,18 @@ export const JobAssignmentForm = ({
             />
             <DiseaseSelectField
               {...baseProps}
-              intl={intl}
               floatingLabelText={formatMessage(messages.disease)}
               value={values.diseaseId}
               onDiseaseIdChange={onDiseaseIdChange}
             />
             <DeviceTypeSelectField
               {...baseProps}
-              intl={intl}
               floatingLabelText={formatMessage(messages.deviceType)}
               value={values.deviceTypeId}
               onDeviceTypeChange={onDeviceTypeIdChange}
             />
             <AssayTypeSelectField
               {...baseProps}
-              intl={intl}
               floatingLabelText={formatMessage(messages.assayType)}
               value={values.assayTypeId}
               diseaseId={values.diseaseId}
@@ -221,7 +213,6 @@ export const JobAssignmentForm = ({
             <AssaySelectField
               {...baseProps}
               floatingLabelText={formatMessage(messages.assay)}
-              intl={intl}
               diseaseId={values.diseaseId}
               assayTypeId={values.assayTypeId}
               value={values.assayId}
@@ -244,7 +235,6 @@ export const JobAssignmentForm = ({
       </Unit>
       <Unit sm="1-2" className={cssClasses('Section__Content')}>
         <PersonAssignments
-          intl={intl}
           assignments={assignments}
           loadedAssignments={loadedAssignments}
           onDeleteAssignment={onDeleteAssignment}
