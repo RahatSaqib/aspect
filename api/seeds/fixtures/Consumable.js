@@ -37,6 +37,12 @@ const getConsumables = async () => {
       externalId: 'GxMtbXdrCartridge',
       i18nKey: 'gxMtbXdrCartridge',
       ...commonProps,
+      assays: [
+        {
+          externalId: 'GxMtbXdr',
+          quantity: 1,
+        },
+      ],
     },
     {
       name: 'GeneXpert TB Ultra Cartridge',

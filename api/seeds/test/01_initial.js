@@ -828,16 +828,7 @@ async function seed(knex) {
     assayId: assayCommCareHiv,
   })
 
-  await upsertConsumables(knex, [
-    'GxMtbRif',
-    'GxMtbRifUltra',
-    'GxEbola',
-    'GxHiv1Vl',
-    'GxHcv',
-    'GxHiv1Qual',
-    'DaktariCD4',
-    'DaktariHivVL',
-  ])
+  await upsertConsumables(knex, ['DaktariCD4', 'DaktariHivVL'])
   const consumableGxTbCartridgeId = await consumableToId('GxMtbRifCartridge')
 
   // Result Workflow Status

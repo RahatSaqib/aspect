@@ -3221,14 +3221,6 @@ async function seed(knex) {
     LessThan40: resultCategoryLessThan40,
   } = await allResultCategoryToId()
 
-  await upsertConsumables(knex, true, [
-    'GxMtbRif',
-    'GxMtbRifUltra',
-    'GxEbola',
-    'GxHiv1Vl',
-    'GxHcv',
-    'GxHiv1Qual',
-  ])
   const {
     GxMtbRifCartridge: consumableGxTbCartridgeId,
     GxEbolaCartridge: consumableGxEbolaCartridgeId,
@@ -4349,7 +4341,7 @@ async function seed(knex) {
         const [resultId] = await knex('Result').insert({
           ...auditFields,
           externalId: `UQTBXDR-${i}`,
-          assayId: assayGeneXpertMtbId,
+          assayId: assayGeneXpertMtbXdrId,
           partnerId: partnerOneId,
           geographyId: siteData.geographyId,
           siteId: siteData.id,

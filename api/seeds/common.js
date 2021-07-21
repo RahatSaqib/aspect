@@ -725,12 +725,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'XDR',
       'resultCategoryXDR'
     )
-    await upsertConsumables(
-      knex,
-      'GeneXpert MTB/XDR Cartridge',
-      'GxMtbXdr',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['GxMtbXdr'])
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
     await createAssay(
