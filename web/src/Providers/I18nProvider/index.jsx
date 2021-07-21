@@ -50,7 +50,7 @@ function timeZoneFallBack(timezone) {
 }
 
 function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
-  const userLocale = passedCulture || getCurrentCulture()
+  const userLocale = passedCulture || getCurrentCulture() || 'en'
   const intl = createIntl({
     locale: userLocale,
     messages: messages || translation[userLocale],

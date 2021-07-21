@@ -1,30 +1,34 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import classnames from 'classnames/bind'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(require('./ColoredNumber.css'))
 
-const ColoredNumber = ({ number, intl, formatNumberStyle, error, success }) => (
-  <span
-    className={cssClasses('ColoredNumber', {
-      'ColoredNumber--Error': error,
-      'ColoredNumber--Success': success,
-    })}
-  >
-    {intl.formatNumber(
-      number,
-      formatNumberStyle
-        ? {
-            style: formatNumberStyle,
-          }
-        : {}
-    )}
-  </span>
-)
+const ColoredNumber = ({ number, formatNumberStyle, error, success }) => {
+  const { formatNumber } = useI18n()
+
+  return (
+    <span
+      className={cssClasses('ColoredNumber', {
+        'ColoredNumber--Error': error,
+        'ColoredNumber--Success': success,
+      })}
+    >
+      {formatNumber(
+        number,
+        formatNumberStyle
+          ? {
+              style: formatNumberStyle,
+            }
+          : {}
+      )}
+    </span>
+  )
+}
 
 ColoredNumber.propTypes = {
   number: PropTypes.number.isRequired,
-  intl: PropTypes.func.isRequired,
   formatNumberStyle: PropTypes.string,
   error: PropTypes.bool,
   success: PropTypes.bool,

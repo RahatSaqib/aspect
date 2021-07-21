@@ -22,7 +22,6 @@ const cssClasses = classnames.bind(require('./HistoryResults.css'))
 const styles = require('../../components/shared/DataTableRow.css')
 
 export const Results = ({
-  intl,
   history,
   location,
   sortDir,
@@ -52,7 +51,7 @@ export const Results = ({
       <div>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList history={history} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
           <Table selectable={false} className={cssClasses('ResultDataTable')}>
@@ -97,7 +96,6 @@ export const Results = ({
           <BrowseTablePaginator
             history={history}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}
             pageAt={pageAt}
