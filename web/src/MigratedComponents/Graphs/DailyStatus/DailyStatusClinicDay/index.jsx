@@ -87,12 +87,12 @@ const DailyStatusClinicDay = ({
   })
 
   const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
-    ? formatMessage(messages.toolTipLastUpdatedBy, {
+    ? `; ${formatMessage(messages.toolTipLastUpdatedBy, {
         username: maintenanceStatusManuallySetBy.name,
         updatedDate: formatDate(
           new Date(maintenanceStatusManuallySetBy.updatedDate)
         ),
-      })
+      })}`
     : ''
 
   return (
