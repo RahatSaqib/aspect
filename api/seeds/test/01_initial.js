@@ -19,6 +19,7 @@ const {
   allResultCategoryToId,
   allResultStatusToId,
   allResultSourceToId,
+  consumableToId,
   deviceApprovalToId,
   sampleTypeToId,
   resultTypeToId,
@@ -29,7 +30,7 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const getConsumables = require('../fixtures/Consumable')
+const upsertConsumables = require('../common/upsert_consumables')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -1268,84 +1269,17 @@ async function seed(knex) {
   })
 
   // Units
-  const consumables = await getConsumables()
-
-  // Consumable types
-  // Consumable types
-  const [consumableGxTbCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxMtbRifCartridge')
-  )
-
-  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxMtbRifUltraCartridge')
-  )
-
-  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxEbolaCartridge')
-  )
-
-  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHiv1VlCartridge')
-  )
-
-  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHCVCartridge')
-  )
-
-  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHiv1QualCartridge')
-  )
-
-  await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'DaktariCD4Cartridge')
-  )
-
-  const [consumableDaktariHivVlCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'DaktariHivVLCartridge')
-  )
-
-  // Assay Consumables
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxTbCartridgeId,
-    assayId: assayGeneXpertMtbRifId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxTbUltraCartridgeId,
-    assayId: assayGeneXpertMtbRifUltraId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxEbolaCartridgeId,
-    assayId: assayGeneXpertEbolaId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHcvVlCartridgeId,
-    assayId: assayGeneXpertHcvId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHiv1VlCartridgeId,
-    assayId: assayGeneXpertHiv1VlId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHiv1QualCartridgeId,
-    assayId: assayGeneXpertHiv1QualId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableDaktariHivVlCartridgeId,
-    assayId: assayDaktariHivVlId,
-    quantity: 1,
-  })
+  await upsertConsumables(knex, [
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxEbola',
+    'GxHiv1Vl',
+    'GxHcv',
+    'GxHiv1Qual',
+    'DaktariCD4',
+    'DaktariHivVL',
+  ])
+  const consumableGxTbCartridgeId = await consumableToId('GxMtbRifCartridge')
 
   // Result Workflow Status
   const deliverable = await resultWorkflowStatusToId('Deliverable')

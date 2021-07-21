@@ -10,6 +10,7 @@ import get from 'lodash/get'
 import find from 'lodash/find'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
@@ -71,7 +72,7 @@ function getOptionByValue(data, requestedValue, idKey) {
 }
 
 function getSelectedOptions(data, someValue, idKey) {
-  if (!data || data.length === 0 || !someValue) {
+  if (!data || data.length === 0 || isNil(someValue)) {
     return false
   }
   if (isArray(someValue)) {

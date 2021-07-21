@@ -16,7 +16,6 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
-import PropTypeOf from '../../shared/types'
 
 import {
   getCustomMessage,
@@ -168,7 +167,6 @@ const enhance = compose(
     }
   ),
   setPropTypes({
-    intl: PropTypeOf.isRequired,
     location: PropTypes.object.isRequired,
     navigate: PropTypes.func.isRequired,
     table: PropTypes.instanceOf(Immutable.Record).isRequired,

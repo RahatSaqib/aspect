@@ -27,6 +27,7 @@ import Popper from '@material-ui/core/Popper'
 import { formatWithLocale } from '../../../shared/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 import {
   since,
@@ -121,9 +122,8 @@ const dateTimeReverseKeyMap = {
   [displayKeys[4]]: ['m'],
 }
 
-const displayOptions = intl => {
-  const locale = _fp.prop(['locale'], intl)
-  const dateFnFormat = formatWithLocale(locale)
+const displayOptions = culture => {
+  const dateFnFormat = formatWithLocale(culture)
 
   return {
     [displayKeys[0]]: {
@@ -231,8 +231,7 @@ const getDefaultFieldsPropsWithI18n = formatMessage =>
     },
   })
 
-const getDefaultFieldsProps = intl => {
-  const formatMessage = _fp.prop(['formatMessage'], intl)
+const getDefaultFieldsProps = formatMessage => {
   if (isFunction(formatMessage)) {
     return getDefaultFieldsPropsWithI18n(formatMessage)
   }
@@ -544,7 +543,6 @@ const DateTimeInput = props => {
     className,
     onChange,
     onBlur,
-    intl,
     value: valueRaw,
     defaultValue,
     dateFormat,
@@ -573,9 +571,12 @@ const DateTimeInput = props => {
 
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
-  const FieldProps = originFieldProps || getDefaultFieldsProps(intl)
-  const TextFieldsProps = _fp.merge(getDefaultFieldsProps(intl), FieldProps)
-  const formatMessage = _fp.prop(['formatMessage'], intl)
+  const { formatMessage, culture } = useI18n()
+  const FieldProps = originFieldProps || getDefaultFieldsProps(formatMessage)
+  const TextFieldsProps = _fp.merge(
+    getDefaultFieldsProps(formatMessage),
+    FieldProps
+  )
   const minDate = getDateObject(min)
   const maxDate = getDateObject(max)
   const orderList = getOrderList(displayFormat)
@@ -680,7 +681,7 @@ const DateTimeInput = props => {
     >
       {map(normalizeFormat(displayFormat), (display, i) => {
         const baseKey = `${display}-${i}`
-        const displayOption = displayOptions(intl)[dateTimeKeyMap[display]]
+        const displayOption = displayOptions(culture)[dateTimeKeyMap[display]]
 
         if (displayOption) {
           const TextFieldProps = TextFieldsProps[display]
@@ -749,10 +750,6 @@ DateTimeInput.propTypes = {
   timeFormat: PropTypes.string, // eslint-disable-line react/require-default-props
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
-  intl: PropTypes.shape({
-    formatMessage: PropTypes.func,
-  }),
   value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // eslint-disable-line react/require-default-props
   defaultValue: DateType, // eslint-disable-line react/forbid-prop-types,
   minDate: DateType,

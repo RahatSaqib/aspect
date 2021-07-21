@@ -36,6 +36,7 @@ exports[`Person List module PersonList component should shallow render correctly
       disabled={true}
     />
     <pure(withHandlers(EmptyList))
+
       location={
         Object {
           "search": "",

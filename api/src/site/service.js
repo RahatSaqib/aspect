@@ -324,15 +324,7 @@ async function listSitesWithReporters(request) {
     /**
      * take only clinics
      */
-    .whereRaw(
-      `(
-        tag.title     LIKE ? or
-        tag.title     LIKE ? or
-        s.name        LIKE ? or
-        s.externalId  LIKE ?
-      )`,
-      ['%clinic%', '%dots%', '%clinic%', '%clinic%']
-    )
+    .where('tag.title', 'Reportable Site')
     .where(function () {
       if (!query.siteIds) {
         return

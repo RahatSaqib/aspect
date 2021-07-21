@@ -56,8 +56,14 @@ const deviceStatusGraphs = () => ({
           method: 'GET',
           endpoint: '/dashboard/operational-data/activity-over-time',
           params: {
-            [MIN_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').start,
-            [MAX_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').end,
+            [MIN_DATE]: getPreviousPeriod(
+              'months',
+              "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+            ).start,
+            [MAX_DATE]: getPreviousPeriod(
+              'months',
+              "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+            ).end,
           },
         },
         indexBy: 'date',

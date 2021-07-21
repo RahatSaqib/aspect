@@ -14,6 +14,7 @@ import {
 } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 export function getDateObject(date, defaultValue) {
   let formatedDate = defaultValue || null
@@ -100,7 +101,7 @@ export const withTodayProps = withProps(() => ({
   today: startOfDay(new Date()),
 }))
 
-export const formatRelative = (intl, date, defaultMessage = '') => {
+export const formatRelative = (date, defaultMessage = '') => {
   const dateInMilliseconds = new Date(date).getTime()
   if (isNil(date) || isNaN(dateInMilliseconds)) return defaultMessage
 
@@ -132,11 +133,10 @@ export const formatRelative = (intl, date, defaultMessage = '') => {
 
   const timeDiffInMilliseconds = dateInMilliseconds - Date.now()
   const { denom, unit } = getParams(timeDiffInMilliseconds)
+  const { formatRelativeTime } = i18nWrapper()
 
   // see details - https://formatjs.io/docs/react-intl/api#formatrelativetime
-  return intl.formatRelativeTime(
-    Math.round(timeDiffInMilliseconds / denom),
-    unit,
-    { number: 'auto' }
-  )
+  return formatRelativeTime(Math.round(timeDiffInMilliseconds / denom), unit, {
+    number: 'auto',
+  })
 }

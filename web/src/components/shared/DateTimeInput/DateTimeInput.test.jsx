@@ -5,6 +5,7 @@ import { act } from 'react-dom/test-utils'
 
 import { mountWithTheme, shallowWithTheme } from '../../../test/common'
 import DateTimeInput from './DateTimeInput'
+import { I18nProvider } from '../../../Providers/I18nProvider'
 
 describe('DateTimeInput component', () => {
   const commonProps = {

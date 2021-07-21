@@ -27,7 +27,6 @@ const Rate = ({ intl, it, messageId, threshold }) => (
     ) : (
       <ColoredNumber
         number={it.rate}
-        intl={intl}
         formatNumberStyle="percent"
         error={threshold && it.rate > threshold}
       />

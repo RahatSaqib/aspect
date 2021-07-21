@@ -209,6 +209,10 @@ export default {
       id: 'pages.UserPreferences.chooseTags',
       defaultMessage: 'Choose tags',
     },
+    fieldNoMatchTags: {
+      id: 'pages.UserPreferences.fieldNoMatchTags',
+      defaultMessage: 'Press enter to add tag',
+    },
     jobAssignment: {
       id: 'pages.UserPreferences.jobAssignment',
       defaultMessage: 'Job Assignment',

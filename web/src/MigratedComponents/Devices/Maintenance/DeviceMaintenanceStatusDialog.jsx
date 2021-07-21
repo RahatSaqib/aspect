@@ -42,19 +42,18 @@ const messages = defineMessages({
   },
 })
 
-export function validate({ maintenanceStatus }, { intl }) {
+export function validate({ maintenanceStatus }, { formatMessage }) {
   const errors = {}
   if (!maintenanceStatus) {
-    errors.contextDate = intl.formatMessage(
-      messages.maintenanceStatusIsRequired
-    )
+    errors.contextDate = formatMessage(messages.maintenanceStatusIsRequired)
   }
   return errors
 }
 
 const deviceMaintenanceStatusDialog = WrappedComponent => props => {
   const [values, setValues] = useState(false)
-  const { device, intl } = props
+  const { device } = props
+  const { formatMessage } = useI18n()
 
   useEffect(() => {
     if (!values) {
@@ -68,7 +67,7 @@ const deviceMaintenanceStatusDialog = WrappedComponent => props => {
   const allProps = {
     ...props,
     labels: {
-      dialogTitle: intl.formatMessage(messages.dialogTitle),
+      dialogTitle: formatMessage(messages.dialogTitle),
     },
     onChange: values => {
       setValues(values)

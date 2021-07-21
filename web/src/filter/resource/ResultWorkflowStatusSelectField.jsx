@@ -11,6 +11,7 @@ import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
 import messages from './i18n/generalMessages'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
@@ -19,13 +20,14 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     workflowStatusItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
-    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {
     allItemText: 'All',
     value: '',
   }
+
+  static contextType = I18nContext
 
   componentDidMount() {
     this.props.fetchWorkflowStatuses(false)
@@ -36,7 +38,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, workflowStatusItems, value, intl } = this.props
+    const { allItemText, workflowStatusItems, value } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchWorkflowStatuses',
@@ -44,6 +46,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
       'onWorkflowStatusChange',
       'value',
     ])
+    const { formatMessage } = this.context
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
@@ -51,7 +54,7 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {formatI18nMessage(
               messages,
-              intl.formatMessage,
+              formatMessage,
               a.get('i18nKey'),
               a.get('name')
             )}

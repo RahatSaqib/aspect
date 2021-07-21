@@ -23,6 +23,7 @@ import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
+import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 import styles from './PersonDetail.css'
 
@@ -251,7 +252,6 @@ const enhance = compose(
 )
 
 export const ContactDetailsForm = ({
-  intl,
   loading,
   showNotesField,
   onEmailBlur,
@@ -281,69 +281,34 @@ export const ContactDetailsForm = ({
   onPersonTagsChange,
   isNew,
   user,
-}) => (
-  <form onSubmit={handleSubmit} className={cssClasses('Form')}>
-    <div className={cssClasses('Form__Content')}>
-      {!isNew && canModify && (
-        <div style={{ marginBottom: 20 }}>
-          <AspectCheckbox
-            name="canLogIn"
-            margin="normal"
-            checked={values.canLogIn}
-            onChange={onUserCanLogInChange}
-            // disabled={isNew}
-          />{' '}
-          {intl.formatMessage(messages.userCanAlsoLogIn)}
-        </div>
-      )}
-      <section className={cssClasses('NameField')}>
-        <TextField
-          fullWidth
-          type="text"
-          name="name"
-          label={intl.formatMessage(messages.fullName)}
-          value={values.name}
-          onChange={onNameChange}
-          disabled={loading}
-          error={meta.name.touched && meta.name.error}
-          helperText={meta.name.touched && meta.name.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 500 }}
-        />
-        <TextField
-          fullWidth
-          type="text"
-          name="title"
-          label={intl.formatMessage(messages.jobTitle)}
-          value={values.title}
-          onChange={onTitleChange}
-          disabled={loading}
-          error={meta.title.touched && meta.title.error}
-          helperText={meta.title.touched && meta.title.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 255 }}
-        />
-      </section>
-      <section>
-        <h1>{intl.formatMessage(messages.emailHeader)}</h1>
-        <div className={cssClasses('Form__Content__Arrange-field')}>
+}) => {
+  const { formatMessage } = i18nWrapper()
+  return (
+    <form onSubmit={handleSubmit} className={cssClasses('Form')}>
+      <div className={cssClasses('Form__Content')}>
+        {!isNew && canModify && (
+          <div style={{ marginBottom: 20 }}>
+            <AspectCheckbox
+              name="canLogIn"
+              margin="normal"
+              checked={values.canLogIn}
+              onChange={onUserCanLogInChange}
+              // disabled={isNew}
+            />{' '}
+            {formatMessage(messages.userCanAlsoLogIn)}
+          </div>
+        )}
+        <section className={cssClasses('NameField')}>
           <TextField
             fullWidth
-            type="email"
-            name="email"
-            label={intl.formatMessage(messages.primaryEmail)}
-            value={values.email}
-            onChange={onEmailChange}
-            onBlur={onEmailBlur}
+            type="text"
+            name="name"
+            label={formatMessage(messages.fullName)}
+            value={values.name}
+            onChange={onNameChange}
             disabled={loading}
-            error={meta.email.touched && meta.email.error}
-            helperText={meta.email.touched && meta.email.error}
+            error={meta.name.touched && meta.name.error}
+            helperText={meta.name.touched && meta.name.error}
             margin="normal"
             FormHelperTextProps={{
               margin: 'dense',
@@ -352,223 +317,260 @@ export const ContactDetailsForm = ({
           />
           <TextField
             fullWidth
-            type="email"
-            name="email2"
-            label={intl.formatMessage(messages.secondaryEmail)}
-            value={values.email2}
-            onChange={onEmail2Change}
+            type="text"
+            name="title"
+            label={formatMessage(messages.jobTitle)}
+            value={values.title}
+            onChange={onTitleChange}
             disabled={loading}
-            error={meta.email2.touched && meta.email2.error}
-            helperText={meta.email2.touched && meta.email2.error}
+            error={meta.title.touched && meta.title.error}
+            helperText={meta.title.touched && meta.title.error}
             margin="normal"
             FormHelperTextProps={{
               margin: 'dense',
             }}
-            inputProps={{ maxLength: 500 }}
-          />
-        </div>
-      </section>
-      <section>
-        <h1>{intl.formatMessage(messages.phone)}</h1>
-        <div className={cssClasses('Form__Content__Arrange-field', '')}>
-          <DialCodeDropdownInput
-            name="phone"
-            label={intl.formatMessage(messages.telephone)}
-            value={values.phone}
-            onChange={onPhoneChange}
-            disabled={loading}
-            error={meta.phone.touched && meta.phone.error}
-            helperText={meta.phone.touched && meta.phone.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 40 }}
-          />
-          <DialCodeDropdownInput
-            name="cell"
-            label={intl.formatMessage(messages.mobile)}
-            value={values.cell}
-            onChange={onCellChange}
-            disabled={loading}
-            error={meta.cell.touched && meta.cell.error}
-            helperText={meta.cell.touched && meta.cell.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 40 }}
-          />
-        </div>
-      </section>
-
-      <section>
-        <h1>{intl.formatMessage(messages.location)}</h1>
-        <div className={cssClasses('GeographyDropdownGroup')}>
-          <CountrySelectField
-            className={cssClasses('GeographyDropdown')}
-            allItemText=""
-            onCountryIdChange={onCountryIdChange}
-            countryId={values.countryId}
-            floatingLabelFixed
-            floatingLabelText={intl.formatMessage(messages.country)}
-          />
-          <StateSelectField
-            className={cssClasses('GeographyDropdown')}
-            allItemText=""
-            onStateIdChange={onStateIdChange}
-            countryId={values.countryId}
-            stateId={values.stateId}
-            floatingLabelFixed
-            floatingLabelText={getCustomMessage(intl, messages, 'state', user)}
-          />
-          <LgaSelectField
-            className={cssClasses('GeographyDropdown')}
-            allItemText={intl.formatMessage(messages.all)}
-            onLgaIdChange={onLgaIdChange}
-            countryId={values.countryId}
-            stateId={values.stateId}
-            lgaId={values.lgaId}
-            floatingLabelFixed
-            floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
-          />
-        </div>
-        <TextField
-          fullWidth
-          type="text"
-          name="zip"
-          className={cssClasses('ZipCodeField')}
-          label={intl.formatMessage(messages.zip)}
-          value={values.zip}
-          onChange={onZipChange}
-          disabled={loading}
-          error={meta.zip.touched && meta.zip.error}
-          helperText={meta.zip.touched && meta.zip.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 45 }}
-        />
-      </section>
-      <PermissionsProvider permissions={['person:edit']}>
-        <section>
-          <h1>{intl.formatMessage(messages.partner)}</h1>
-          <PartnerSelectField
-            name="lastPartnerId"
-            floatingLabelText={intl.formatMessage(messages.partner)}
-            emptyId="-1"
-            emptyText=""
-            className={cssClasses('PartnerDropDown')}
-            partnerId={values.lastPartnerId}
-            onChangePartner={onLastPartnerIdChange}
-            disabled={loading}
-            errorStyle={{
-              float: 'left',
-              whiteSpace: 'nowrap',
-              textOverflow: 'visible',
-            }}
-            errorText={meta.lastPartnerId.touched && meta.lastPartnerId.error}
-            autoWidth
-            tabIndex="0"
-            aria-haspopup
+            inputProps={{ maxLength: 255 }}
           />
         </section>
-      </PermissionsProvider>
-      <section>
-        <TextField
-          select
-          fullWidth
-          id="timezone"
-          name="timezone"
-          className={cssClasses('TimezoneField')}
-          label={intl.formatMessage(messages.timezone)}
-          disabled={loading || form.submitting}
-          onChange={onTimezoneChange}
-          value={values.timezone}
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-        >
-          {timezones.map(item => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </TextField>
+        <section>
+          <h1>{formatMessage(messages.emailHeader)}</h1>
+          <div className={cssClasses('Form__Content__Arrange-field')}>
+            <TextField
+              fullWidth
+              type="email"
+              name="email"
+              label={formatMessage(messages.primaryEmail)}
+              value={values.email}
+              onChange={onEmailChange}
+              onBlur={onEmailBlur}
+              disabled={loading}
+              error={meta.email.touched && meta.email.error}
+              helperText={meta.email.touched && meta.email.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 500 }}
+            />
+            <TextField
+              fullWidth
+              type="email"
+              name="email2"
+              label={formatMessage(messages.secondaryEmail)}
+              value={values.email2}
+              onChange={onEmail2Change}
+              disabled={loading}
+              error={meta.email2.touched && meta.email2.error}
+              helperText={meta.email2.touched && meta.email2.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 500 }}
+            />
+          </div>
+        </section>
+        <section>
+          <h1>{formatMessage(messages.phone)}</h1>
+          <div className={cssClasses('Form__Content__Arrange-field', '')}>
+            <DialCodeDropdownInput
+              name="phone"
+              label={formatMessage(messages.telephone)}
+              value={values.phone}
+              onChange={onPhoneChange}
+              disabled={loading}
+              error={meta.phone.touched && meta.phone.error}
+              helperText={meta.phone.touched && meta.phone.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 40 }}
+            />
+            <DialCodeDropdownInput
+              name="cell"
+              label={formatMessage(messages.mobile)}
+              value={values.cell}
+              onChange={onCellChange}
+              disabled={loading}
+              error={meta.cell.touched && meta.cell.error}
+              helperText={meta.cell.touched && meta.cell.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 40 }}
+            />
+          </div>
+        </section>
 
-        <TextField
-          select
-          fullWidth
-          id="culture"
-          name="culture"
-          className={cssClasses('CultureField')}
-          label={intl.formatMessage(messages.language)}
-          disabled={loading || form.submitting}
-          onChange={onCultureChange}
-          value={values.culture}
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-        >
-          {languages.map(item => (
-            <MenuItem key={item.culture} value={item.culture}>
-              <span>
-                <FlagIcon
-                  withRightMargin
-                  countryIsoAlpha2Code={item.isoAlpha2Code}
-                />
-                {item.languageName}
-              </span>
-            </MenuItem>
-          ))}
-        </TextField>
-      </section>
-      {contactDetails.get('id') ? (
+        <section>
+          <h1>{formatMessage(messages.location)}</h1>
+          <div className={cssClasses('GeographyDropdownGroup')}>
+            <CountrySelectField
+              className={cssClasses('GeographyDropdown')}
+              allItemText=""
+              onCountryIdChange={onCountryIdChange}
+              countryId={values.countryId}
+              floatingLabelFixed
+              floatingLabelText={formatMessage(messages.country)}
+            />
+            <StateSelectField
+              className={cssClasses('GeographyDropdown')}
+              allItemText=""
+              onStateIdChange={onStateIdChange}
+              countryId={values.countryId}
+              stateId={values.stateId}
+              floatingLabelFixed
+              floatingLabelText={getCustomMessage(messages, 'state', user)}
+            />
+            <LgaSelectField
+              className={cssClasses('GeographyDropdown')}
+              allItemText={formatMessage(messages.all)}
+              onLgaIdChange={onLgaIdChange}
+              countryId={values.countryId}
+              stateId={values.stateId}
+              lgaId={values.lgaId}
+              floatingLabelFixed
+              floatingLabelText={getCustomMessage(messages, 'lga', user)}
+            />
+          </div>
+          <TextField
+            fullWidth
+            type="text"
+            name="zip"
+            className={cssClasses('ZipCodeField')}
+            label={formatMessage(messages.zip)}
+            value={values.zip}
+            onChange={onZipChange}
+            disabled={loading}
+            error={meta.zip.touched && meta.zip.error}
+            helperText={meta.zip.touched && meta.zip.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 45 }}
+          />
+        </section>
+        <PermissionsProvider permissions={['person:edit']}>
+          <section>
+            <h1>{formatMessage(messages.partner)}</h1>
+            <PartnerSelectField
+              name="lastPartnerId"
+              floatingLabelText={formatMessage(messages.partner)}
+              emptyId="-1"
+              emptyText=""
+              className={cssClasses('PartnerDropDown')}
+              partnerId={values.lastPartnerId}
+              onChangePartner={onLastPartnerIdChange}
+              disabled={loading}
+              errorStyle={{
+                float: 'left',
+                whiteSpace: 'nowrap',
+                textOverflow: 'visible',
+              }}
+              errorText={meta.lastPartnerId.touched && meta.lastPartnerId.error}
+              autoWidth
+              tabIndex="0"
+              aria-haspopup
+            />
+          </section>
+        </PermissionsProvider>
+        <section>
+          <TextField
+            select
+            fullWidth
+            id="timezone"
+            name="timezone"
+            className={cssClasses('TimezoneField')}
+            label={formatMessage(messages.timezone)}
+            disabled={loading || form.submitting}
+            onChange={onTimezoneChange}
+            value={values.timezone}
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+          >
+            {timezones.map(item => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            fullWidth
+            id="culture"
+            name="culture"
+            className={cssClasses('CultureField')}
+            label={formatMessage(messages.language)}
+            disabled={loading || form.submitting}
+            onChange={onCultureChange}
+            value={values.culture}
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+          >
+            {languages.map(item => (
+              <MenuItem key={item.culture} value={item.culture}>
+                <span>
+                  <FlagIcon
+                    withRightMargin
+                    countryIsoAlpha2Code={item.isoAlpha2Code}
+                  />
+                  {item.languageName}
+                </span>
+              </MenuItem>
+            ))}
+          </TextField>
+        </section>
         <section className={cssClasses('TagLabel')}>
-          <p>{intl.formatMessage(messages.tags)}</p>
+          <p>{formatMessage(messages.tags)}</p>
           <ConnectedTagInput
             allowCreate
-            label={intl.formatMessage(messages.chooseTags)}
+            label={formatMessage(messages.chooseTags)}
             onTagChange={onPersonTagsChange}
             qryId={contactDetails.get('id')}
             qryType="person"
             value={personTags.toJS()}
+            noMatch={formatMessage(messages.fieldNoMatchTags)}
           />
         </section>
-      ) : null}
-      {showNotesField && (
-        <section>
-          <TextField
-            fullWidth
-            type="text"
-            name="notes"
-            label={intl.formatMessage(messages.notes)}
-            value={values.notes}
-            onChange={onNotesChange}
-            disabled={loading}
-            error={meta.notes.touched && meta.notes.error}
-            helperText={meta.notes.touched && meta.notes.error}
-            multiline
-            rows={4}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 2000 }}
-          />
-        </section>
-      )}
-    </div>
-    <div className={cssClasses('Form__ActionRow')}>
-      <Button
-        type="submit"
-        color="primary"
-        variant="contained"
-        disabled={loading || form.pristine || !form.valid || form.submitting}
-      >
-        {intl.formatMessage(isNew ? messages.create : messages.save)}
-      </Button>
-    </div>
-  </form>
-)
+        {showNotesField && (
+          <section>
+            <TextField
+              fullWidth
+              type="text"
+              name="notes"
+              label={formatMessage(messages.notes)}
+              value={values.notes}
+              onChange={onNotesChange}
+              disabled={loading}
+              error={meta.notes.touched && meta.notes.error}
+              helperText={meta.notes.touched && meta.notes.error}
+              multiline
+              rows={4}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 2000 }}
+            />
+          </section>
+        )}
+      </div>
+      <div className={cssClasses('Form__ActionRow')}>
+        <Button
+          type="submit"
+          color="primary"
+          variant="contained"
+          disabled={loading || form.pristine || !form.valid || form.submitting}
+        >
+          {formatMessage(isNew ? messages.create : messages.save)}
+        </Button>
+      </div>
+    </form>
+  )
+}
 
 export default enhance(ContactDetailsForm)

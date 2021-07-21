@@ -25,7 +25,6 @@ const cssClasses = classnames.bind(cssStyles)
 const styles = require('../../components/shared/DataTableRow.css')
 
 export const Results = ({
-  intl,
   navigate,
   location,
   sortDir,
@@ -106,7 +105,6 @@ export const Results = ({
           <BrowseTablePaginator
             navigate={navigate}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}
             pageAt={pageAt}

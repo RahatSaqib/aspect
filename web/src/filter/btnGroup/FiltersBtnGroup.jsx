@@ -302,11 +302,11 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         .find(it => it.id === lgaId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name')
     ),
-    minDate: makeButton(date => {
-      return formatMessage(messages.dateFrom, {
+    minDate: makeButton(date =>
+      formatMessage(messages.dateFrom, {
         date: forceBaseFormatDate(date),
       })
-    }),
+    ),
     maxDate: makeButton(date =>
       formatMessage(messages.dateTo, {
         date: forceBaseFormatDate(date),
@@ -510,7 +510,6 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         notificationName,
       })
     ),
-
     revoked: makeButton(revoked =>
       formatMessage(messages.withRevoked, {
         revokedStatus: revokedOptions.find(
