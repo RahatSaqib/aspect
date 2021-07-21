@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react'
+import React from 'react'
 import classnames from 'classnames/bind'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
@@ -45,8 +45,8 @@ export const OperationalData = () => {
     },
   }
 
-  const { path } = find(tabsConfig, { path: pathname }) || false
-  const [currentTab] = useState(path || tabsConfig.dashboard.path)
+  const { path: currentTab } =
+    find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
 
   return (
     <div className={cssClasses('Container')}>
@@ -77,12 +77,14 @@ export const OperationalData = () => {
           />
         </Tabs>
       </div>
-      {currentTab === tabsConfig.dashboard.path ? (
-        <OperationalDashBoard />
-      ) : null}
-      {currentTab === tabsConfig.dailyStatus.path ? (
-        <OperationalDailyStatus />
-      ) : null}
+      <Routes>
+        <Route path="">
+          <OperationalDashBoard />
+        </Route>
+        <Route path="daily-status">
+          <OperationalDailyStatus />
+        </Route>
+      </Routes>
     </div>
   )
 }

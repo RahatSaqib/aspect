@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {
   BrowserRouter as Router,
-  Route as RouteOriginal,
+  Route,
   Routes,
   Navigate,
   useLocation,
@@ -184,17 +184,17 @@ const isLoggedInAndOnLogin = ({ isLoggedOut, loggedOutReason, location }) => {
 
 const renderCaseDetails = loggedInFactory(CaseDetails)
 
-const RenderTo = ({ props, permissions, render, checkLicense = true }) => {
+const RenderTo = ({ props, permissions, render }) => {
   const RedirectToLogin = renderRedirectToLoginOr(props)
   if (RedirectToLogin) {
     return RedirectToLogin
   }
-  if (checkLicense) {
-    const RedirectToLicense = renderRedirectToLicenseOr(props)
-    if (RedirectToLicense) {
-      return RedirectToLicense
-    }
+
+  const RedirectToLicense = renderRedirectToLicenseOr(props)
+  if (RedirectToLicense) {
+    return RedirectToLicense
   }
+
   if (permissions) {
     const RedirectToNotFound = renderRedirectToNotFound(props, permissions)
     if (RedirectToNotFound) {
@@ -214,28 +214,18 @@ const AppRoutes = ({ props: outerProps }) => {
     location,
     navigate,
   }
-  const Route = ({ path, children, render, ...rest }) => {
-    let routeProps = {}
-    if (path) {
-      routeProps = {
-        ...routeProps,
-        path,
-      }
-    }
-    if (render) {
-      routeProps = {
-        ...routeProps,
-        element: <RenderTo {...rest} render={render} props={props} />,
-      }
-    }
-    return <RouteOriginal {...routeProps}>{children}</RouteOriginal>
+  const getElement = (props, permissions, render) => {
+    return <RenderTo render={render} props={props} permissions={permissions} />
   }
 
   useHashAndScroll()
   return (
     <RoutesPermissionProvider>
       <Routes>
-        <Route path="/" render={renderRedirectToDashboard} />
+        <Route
+          path="/"
+          element={getElement(props, null, renderRedirectToDashboard)}
+        />
 
         <Route path="/login">
           {isLoggedInAndOnLogin(props)
@@ -250,157 +240,183 @@ const AppRoutes = ({ props: outerProps }) => {
         </Route>
         <Route
           path="/dashboard"
-          permissions={['dashboard:summary']}
-          render={renderLoadableStatus}
+          element={getElement(
+            props,
+            ['dashboard:summary'],
+            renderLoadableStatus
+          )}
         />
         <Route
           path="/task-list"
-          permissions={['task']}
-          render={renderTaskList}
+          element={getElement(props, ['task'], renderTaskList)}
         />
         <Route
           path="/task-list/aggre-list"
-          permissions={['task']}
-          render={renderTaskAggre}
+          element={getElement(props, ['task'], renderTaskAggre)}
         />
         <Route
           path="/task-list/:taskId"
-          permissions={['task']}
-          render={renderTaskDetail}
+          element={getElement(props, ['task'], renderTaskDetail)}
         />
         <Route
           path="/operational-data/*"
-          permissions={['operationalData']}
-          render={renderOperationalData}
+          element={getElement(
+            props,
+            ['operationalData'],
+            renderOperationalData
+          )}
         />
         <Route
           path="/account-details/current/*"
-          permissions={['account']}
-          render={renderAccountDetails}
+          element={getElement(props, ['account'], renderAccountDetails)}
         />
 
         <Route
           path="/demo/device/:deviceId"
-          permissions={['deviceDemo']}
-          render={renderDeviceDemo}
+          element={getElement(props, ['deviceDemo'], renderDeviceDemo)}
         />
         <Route
           path="/clinical-indicators"
-          permissions={['clinicalIndicators:view']}
-          render={renderClinicalIndicators}
+          element={getElement(
+            props,
+            ['clinicalIndicators:view'],
+            renderClinicalIndicators
+          )}
         />
         <Route
           path="/reports"
-          permissions={['report']}
-          render={renderReports}
+          element={getElement(props, ['report'], renderReports)}
         />
 
-        <Route path="/manage" permissions={['manage']} render={renderManage} />
+        <Route
+          path="/manage"
+          element={getElement(props, ['manage'], renderManage)}
+        />
 
         <Route
           path="/browse"
-          permissions={['browse']}
-          render={renderRedirectToBrowse}
+          element={getElement(props, ['browse'], renderRedirectToBrowse)}
         />
         <Route
           path="/browse/device"
-          permissions={['browse', 'device']}
-          render={renderDeviceList}
+          element={getElement(props, ['browse', 'device'], renderDeviceList)}
         />
+
         <Route
           path="/browse/device/:deviceId/*"
-          permissions={['browse', 'device']}
-          render={renderDeviceDetail}
+          element={getElement(props, ['browse', 'device'], renderDeviceDetail)}
         />
         <Route
           path="/browse/case/:caseId"
-          permissions={['browse', 'case:edit']}
-          render={renderCaseDetails}
+          element={getElement(
+            props,
+            ['browse', 'case:edit'],
+            renderCaseDetails
+          )}
         />
         <Route
           path="/browse/patient/:patientId"
-          permissions={['browse', 'patient:edit']}
-          render={renderClinicalHistory}
+          element={getElement(
+            props,
+            ['browse', 'patient:edit'],
+            renderClinicalHistory
+          )}
         />
         <Route
           path="/browse/deviceApiKey"
-          permissions={['browse', 'deviceApiKey']}
-          render={renderDeviceApiKeyList}
+          element={getElement(
+            props,
+            ['browse', 'deviceApiKey'],
+            renderDeviceApiKeyList
+          )}
         />
         <Route
           path="/browse/case"
-          permissions={['browse', 'case']}
-          render={renderCaseList}
+          element={getElement(props, ['browse', 'case'], renderCaseList)}
         />
         <Route
           path="/browse/router"
-          permissions={['browse', 'router']}
-          render={renderRouterList}
+          element={getElement(props, ['browse', 'router'], renderRouterList)}
         />
         <Route
           path="/browse/router/:routerId"
-          permissions={['browse', 'router']}
-          render={renderRouterDetail}
+          element={getElement(props, ['browse', 'router'], renderRouterDetail)}
         />
         <Route
           path="/browse/reporter"
-          permissions={['browse', 'reporter']}
-          render={renderReporterList}
+          element={getElement(
+            props,
+            ['browse', 'reporter'],
+            renderReporterList
+          )}
         />
         <Route
           path="/browse/result"
-          permissions={['browse', 'result']}
-          render={renderResultList}
+          element={getElement(props, ['browse', 'result'], renderResultList)}
         />
         <Route
           path="/browse/result/:resultId/*"
-          permissions={['browse', 'result:edit']}
-          render={renderResultDetail}
+          element={getElement(
+            props,
+            ['browse', 'result:edit'],
+            renderResultDetail
+          )}
         />
         <Route
           path="/browse/site"
-          permissions={['browse', 'site']}
-          render={renderSiteList}
+          element={getElement(props, ['browse', 'site'], renderSiteList)}
         />
         <Route
           path="/browse/site/:siteId/*"
-          permissions={['browse', 'site']}
-          render={renderSiteDetail}
+          element={getElement(props, ['browse', 'site'], renderSiteDetail)}
         />
         <Route
           path="/browse/person"
-          permissions={['browse', 'person']}
-          render={renderPersonList}
+          element={getElement(props, ['browse', 'person'], renderPersonList)}
         />
         <Route
           path="/browse/person/:personId/*"
-          permissions={['browse', 'person:edit']}
-          render={renderPersonDetail}
+          element={getElement(
+            props,
+            ['browse', 'person:edit'],
+            renderPersonDetail
+          )}
         />
         <Route
           path="/browse/inventory"
-          permissions={['browse', 'inventory']}
-          render={renderInventoryItemsList}
+          element={getElement(
+            props,
+            ['browse', 'inventory'],
+            renderInventoryItemsList
+          )}
         />
         <Route
           path="/browse/notification"
-          permissions={['browse', 'notification']}
-          render={renderNotificationList}
+          element={getElement(
+            props,
+            ['browse', 'notification'],
+            renderNotificationList
+          )}
         />
         <Route
           path="/browse/notification/:notificationId"
-          permissions={['browse', 'notification:edit']}
-          render={renderNotificationDetail}
+          element={getElement(
+            props,
+            ['browse', 'notification:edit'],
+            renderNotificationDetail
+          )}
         />
         <Route
           path="/browse/notification/:notificationId/history"
-          permissions={['browse', 'notification']}
-          render={renderNotificationDetailHistory}
+          element={getElement(
+            props,
+            ['browse', 'notification'],
+            renderNotificationDetailHistory
+          )}
         />
         <Route
           path="/browse/report"
-          permissions={['browse', 'report']}
-          render={renderRedirectToNotFound}
+          element={getElement(props, ['browse', 'report'], renderNotFound)}
         />
         <Route>{renderNotFound(props)}</Route>
       </Routes>
