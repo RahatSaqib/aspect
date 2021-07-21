@@ -2,6 +2,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const { assayToId, diseaseToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
 
@@ -39,8 +40,9 @@ describe('Result Follow Up', () => {
     })
 
     it('should return a list of possible result follow ups filtered by disease', async () => {
+      const diseaseId = await diseaseToId('hiv')
       const res = await server
-        .get(`${path}?diseaseId=3`)
+        .get(`${path}?diseaseId=${diseaseId}`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
@@ -62,8 +64,9 @@ describe('Result Follow Up', () => {
       assert.typeOf(res.body.data[0].assays, 'array')
     })
     it('should return a list of possible result follow ups filtered by assay', async () => {
+      const assayId = await assayToId('abbottM2000DBSHivVL')
       const res = await server
-        .get(`${path}?assayId=3`)
+        .get(`${path}?assayId=${assayId}`)
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
