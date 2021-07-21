@@ -44,6 +44,7 @@ import AspectExportListButton from '../../MigratedComponents/AspectExportListBut
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import messages from './messages'
 import useI18n from '../../Hooks/i18n/useI18n'
+import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 const cssClasses = classnames.bind(require('./ReporterList.css'))
 
@@ -155,7 +156,7 @@ export const ReporterListWithProps = ({
   pageSize,
   reducedFilters,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = i18nWrapper()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />
