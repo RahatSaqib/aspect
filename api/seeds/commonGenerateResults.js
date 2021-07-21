@@ -887,7 +887,7 @@ async function addTBResults(
   const resultsid = []
   // Results section
   // TB results:
-  let gxMtbRifPossibleResults = [
+  const gxMtbRifPossibleResults = [
     {
       resultText: 'MTB Detected, Rif Resistance Not Detected',
       category1: resultCategories.resultCategoryDetectedId,
@@ -991,7 +991,7 @@ async function addTBResults(
         minLikelihood: 96,
         maxLikelihood: 100,
       },
-    ]
+    ],
   }
 
   const resultData = {
@@ -1050,7 +1050,9 @@ async function addTBResults(
       _.filter(
         assays,
         elem =>
-          elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra' || elem.externalId === 'GxMtbXdr'
+          elem.externalId === 'GxMtbRif' ||
+          elem.externalId === 'GxMtbRifUltra' ||
+          elem.externalId === 'GxMtbXdr'
       )
     )
 
