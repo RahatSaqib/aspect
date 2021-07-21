@@ -10,6 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceTypesForSelectList as fetchDeviceTypes } from '../../deviceType/DeviceTypeRedux'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 const messages = defineMessages({})
 export class DeviceTypeSelectField extends PureComponent {
@@ -24,7 +25,6 @@ export class DeviceTypeSelectField extends PureComponent {
       })
     ).isRequired,
     onDeviceTypeChange: PropTypes.func.isRequired,
-    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
     value: PropTypes.string,
   }
 
@@ -32,6 +32,8 @@ export class DeviceTypeSelectField extends PureComponent {
     allItemText: 'All',
     value: '',
   }
+
+  static contextType = I18nContext
 
   componentDidMount() {
     this.props.fetchDeviceTypes(false)
@@ -42,7 +44,7 @@ export class DeviceTypeSelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, deviceTypeItems, value, intl } = this.props
+    const { allItemText, deviceTypeItems, value } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchDeviceTypes',
@@ -50,6 +52,7 @@ export class DeviceTypeSelectField extends PureComponent {
       'onDeviceTypeChange',
       'value',
     ])
+    const { formatMessage } = this.context
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
@@ -57,7 +60,7 @@ export class DeviceTypeSelectField extends PureComponent {
           <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
             {formatI18nMessage(
               messages,
-              intl.formatMessage,
+              formatMessage,
               a.get('i18nKey'),
               a.get('name')
             )}

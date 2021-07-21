@@ -19,7 +19,6 @@ const enhance = identity
 
 export const EmptyList = ({ onClearFilters }) => {
   const { formatMessage } = useI18n()
-
   return (
     <div style={{ textAlign: 'center' }}>
       <p>{formatMessage(messages.noResultsTitle)}</p>
