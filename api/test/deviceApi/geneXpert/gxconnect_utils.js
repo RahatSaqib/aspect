@@ -119,8 +119,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
-
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
@@ -129,6 +127,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('ResultTag').delete()
   await knex('SiteTag').delete()
   await knex('Tag').delete()
+
+  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   const sitesAndDevices = await knex('Result')
     .whereIn('id', resultIds)

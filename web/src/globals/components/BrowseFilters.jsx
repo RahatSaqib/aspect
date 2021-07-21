@@ -105,7 +105,6 @@ export const BrowseFilters = ({
   children,
   history,
   location,
-  intl,
   onRemoveFilterItem,
   reducedSource,
   dateFormat,
@@ -114,7 +113,6 @@ export const BrowseFilters = ({
 }) => (
   <div className={cssClasses('Container')}>
     <FiltersBtnGroup
-      intl={intl}
       filters={restProps.filters}
       onRemoveFilterItem={onRemoveFilterItem}
       className={cssClasses('FiltersBtnGroup')}
@@ -130,7 +128,6 @@ export const BrowseFilters = ({
     {children}
 
     <FiltersPanel
-      intl={intl}
       className={cssClasses('FiltersPanel')}
       dateFormat={dateFormat}
       {...restProps}

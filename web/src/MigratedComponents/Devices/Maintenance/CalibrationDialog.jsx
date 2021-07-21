@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import recomposeForm from '../../../components/recomposeForm'
 import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
 import { withDateFormatProps } from '../../../shared/utils/dateFormat'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const messages = defineMessages({
   dialogTitle: {
@@ -22,10 +23,10 @@ const messages = defineMessages({
   },
 })
 
-export function validate({ contextDate }, { intl }) {
+export function validate({ contextDate }, { formatMessage }) {
   const errors = {}
   if (!contextDate) {
-    errors.contextDate = intl.formatMessage(messages.calibrationDateIsRequired)
+    errors.contextDate = formatMessage(messages.calibrationDateIsRequired)
   }
   return errors
 }
@@ -34,7 +35,8 @@ const DEFAULT_VALUES = pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
 const calibrationDialog = WrappedComponent => props => {
   const [values, setValues] = useState({})
-  const { device, intl } = props
+  const { device } = props
+  const { formatMessage } = useI18n()
 
   useEffect(
     () =>
@@ -49,8 +51,8 @@ const calibrationDialog = WrappedComponent => props => {
   const allProps = {
     ...props,
     labels: {
-      dialogTitle: intl.formatMessage(messages.dialogTitle),
-      contextDate: intl.formatMessage(messages.calibrationDate),
+      dialogTitle: formatMessage(messages.dialogTitle),
+      contextDate: formatMessage(messages.calibrationDate),
     },
     onChange: values => setValues(values),
     values,
