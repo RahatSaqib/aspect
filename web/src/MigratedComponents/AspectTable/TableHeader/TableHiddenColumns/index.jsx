@@ -6,7 +6,9 @@ import classnames from 'classnames/bind'
 
 import messages from '../messages'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getProperColumnLabelFromKey = (key, columns) => {
   const columnArray = columns.filter(({ accessor }) => accessor === key)

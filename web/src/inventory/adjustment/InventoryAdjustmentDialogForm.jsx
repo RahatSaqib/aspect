@@ -18,9 +18,9 @@ import ConsumableReasonSelectField, {
 } from '../../filter/resource/ConsumableReasonSelectField'
 import messages from './messages'
 
-const cssClasses = classnames.bind(
-  require('./InventoryAdjustmentDialogForm.css')
-)
+import styles from './InventoryAdjustmentDialogForm.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -159,7 +159,6 @@ export const InventoryAdjustmentDialogForm = ({
     ]}
     maxWidth="sm"
     open={isDialogActive}
-    onEscapeKeyDown={onCancel}
     onClose={onCancel}
     title={labels.dialogTitle}
   >

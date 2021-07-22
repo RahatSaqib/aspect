@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import deburr from 'lodash/deburr'
 import some from 'lodash/some'
 import Downshift from 'downshift'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import Chip from '@material-ui/core/Chip'
 import ClearIcon from '@material-ui/icons/Clear'
 import Grid from '@material-ui/core/Grid'
@@ -11,7 +11,6 @@ import Input from '@material-ui/core/Input'
 import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
-import RootRef from '@material-ui/core/RootRef'
 
 const styles = theme => ({
   container: {
@@ -26,7 +25,7 @@ const styles = theme => ({
   },
   paper: {
     zIndex: 1,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
     overflowY: 'auto',
@@ -39,8 +38,8 @@ const styles = theme => ({
     borderRadius:
       theme.customPropertiesVariables['--aspect-button-border-radius'],
     color: theme.palette.common.white,
-    padding: `0 ${theme.spacing.unit}px`,
-    marginRight: theme.spacing.unit / 2,
+    padding: `0 ${theme.spacing(1)}`,
+    marginRight: theme.spacing(0.5),
   },
   deleteIcon: {
     color: theme.palette.common.white,
@@ -189,15 +188,14 @@ const TagInput = ({
                 </Grid>
               )}
               <Grid item className={classNameValues.inputContainer}>
-                <RootRef rootRef={popperNode}>
-                  <Input
-                    fullWidth={fullWidth}
-                    {...getInputProps({
-                      onChange: handleInputChange,
-                      onKeyDown: handleInputKeyDown,
-                    })}
-                  />
-                </RootRef>
+                <Input
+                  fullWidth={fullWidth}
+                  ref={popperNode}
+                  {...getInputProps({
+                    onChange: handleInputChange,
+                    onKeyDown: handleInputKeyDown,
+                  })}
+                />
               </Grid>
             </Grid>
             <Popper
@@ -234,6 +232,9 @@ const TagInput = ({
   )
 }
 
+TagInput.defaultProps = {
+  noMatch: '',
+}
 TagInput.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool,
@@ -243,7 +244,7 @@ TagInput.propTypes = {
   onDelete: PropTypes.func.isRequired,
   source: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.arrayOf(PropTypes.object),
-  noMatch: PropTypes.string.isRequired,
+  noMatch: PropTypes.string,
 }
 
 TagInput.defaultProps = {

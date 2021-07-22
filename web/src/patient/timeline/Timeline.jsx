@@ -4,7 +4,9 @@ import parseISO from 'date-fns/parseISO'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./Timeline.css'))
+import styles from './Timeline.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectTimelineItem = ({ data }) => (
   <Grid container spacing={2} style={{ display: 'table' }}>

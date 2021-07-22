@@ -16,7 +16,9 @@ import {
   WorkflowLogDataTableRow,
 } from './WorkflowLogDataTable'
 
-const cssClasses = classnames.bind(require('./WorkflowLog.css'))
+import styles from './WorkflowLog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   totalWorkflowStatusLog: {
@@ -54,25 +56,31 @@ const messages = defineMessages({
 const enhance = compose(
   pure,
   withHandlers({
-    onHeadColumnClick: ({ onFetch, table }) => ({
-      currentTarget: {
-        dataset: { column: nextSortCol },
-      },
-    }) =>
-      onFetch(
-        nextSortCol,
-        table.sortCol === nextSortCol
-          ? table.sortDir === 'asc'
-            ? 'desc'
-            : 'asc'
-          : table.sortDir,
-        0,
-        table.pageSize
-      ),
-    onPageChange: ({ onFetch, table }) => nextPage =>
-      onFetch(table.sortCol, table.sortDir, nextPage, table.pageSize),
-    onPageSizeChange: ({ onFetch, table }) => nextPageSize =>
-      onFetch(table.sortCol, table.sortDir, 0, nextPageSize),
+    onHeadColumnClick:
+      ({ onFetch, table }) =>
+      ({
+        currentTarget: {
+          dataset: { column: nextSortCol },
+        },
+      }) =>
+        onFetch(
+          nextSortCol,
+          table.sortCol === nextSortCol
+            ? table.sortDir === 'asc'
+              ? 'desc'
+              : 'asc'
+            : table.sortDir,
+          0,
+          table.pageSize
+        ),
+    onPageChange:
+      ({ onFetch, table }) =>
+      nextPage =>
+        onFetch(table.sortCol, table.sortDir, nextPage, table.pageSize),
+    onPageSizeChange:
+      ({ onFetch, table }) =>
+      nextPageSize =>
+        onFetch(table.sortCol, table.sortDir, 0, nextPageSize),
   }),
   lifecycle({
     componentDidMount() {
@@ -105,10 +113,7 @@ export const ResultWorkflowStatusLog = ({
       {!items.currentIdList.isEmpty() && (
         <Typography>
           <DataTableProgressBar disabled={!table.loading} />
-          <WorkflowLogDataTable
-            selectable={false}
-            className={cssClasses('WorkflowLogDataTable')}
-          >
+          <WorkflowLogDataTable className={cssClasses('WorkflowLogDataTable')}>
             <WorkflowLogDataTableHead
               sortColumnKey={table.sortCol}
               sortColumnDir={table.sortDir}

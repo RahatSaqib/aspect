@@ -34,13 +34,11 @@ export const messages = defineMessages({
     defaultMessage: 'All device calibrations up to date',
   },
   numberOfDevicesExperiencingServiceInterruptionTitle: {
-    id:
-      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
+    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle',
     defaultMessage: 'Devices Experiencing Service Interruption',
   },
   numberOfDevicesExperiencingServiceInterruptionDescription: {
-    id:
-      'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
+    id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
     defaultMessage:
       'The number of devices experiencing service interruption on this and the previous month.',
   },
@@ -116,8 +114,7 @@ export const messages = defineMessages({
     defaultMessage: 'Percentage of Days with Service Interruption',
   },
   percentageOfDaysWithServiceInterruptionDescription: {
-    id:
-      'pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription',
+    id: 'pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription',
     defaultMessage:
       'The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%',
   },

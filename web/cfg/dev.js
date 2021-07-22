@@ -1,42 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
-const merge = require('webpack-merge')
-const AutoDllPlugin = require('autodll-webpack-plugin')
+const { merge } = require('webpack-merge')
 const base = require('./base')
-
-// vendor packages so we can create a separate bundle
-const vendor = [
-  'classnames',
-  'core-js',
-  'email-validator',
-  'global',
-  'history',
-  'http-client',
-  'immutable',
-  'intl',
-  'invariant',
-  'jwt-decode',
-  'keycode',
-  'piwik-react-router',
-  'raven-js',
-  'react',
-  'react-display-name',
-  'react-dom',
-  'react-google-maps',
-  'react-helmet',
-  'react-intl',
-  'react-loadable',
-  'react-redux',
-  'react-router',
-  'react-router-dom',
-  'recompose',
-  'redux',
-  'redux-form/immutable',
-  'redux-idle-monitor',
-  'redux-immutable',
-  'redux-thunk',
-  'whatwg-fetch',
-]
 
 const config = () => {
   process.env.ASPECT_TARGET = 'local'
@@ -45,26 +10,7 @@ const config = () => {
 
   return {
     mode: 'development',
-    entry: [],
-    devtool: 'cheap-module-eval-source-map',
-    module: {
-      rules: [
-        {
-          test: /\.css$/,
-          use: [
-            {
-              loader: 'style-loader',
-            },
-            {
-              loader: 'css-loader',
-              options: {
-                sourceMap: false,
-              },
-            },
-          ],
-        },
-      ],
-    },
+    devtool: 'eval-cheap-module-source-map',
     devServer: {
       contentBase: path.join(__dirname, '../dist'),
       historyApiFallback: true,
@@ -73,20 +19,8 @@ const config = () => {
       publicPath: '/assets/',
       noInfo: false,
     },
-    plugins: [
-      new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
-      new AutoDllPlugin({
-        inject: true,
-        debug: true,
-        filename: '[name]_dll.js',
-        path: './',
-        entry: {
-          vendor,
-        },
-      }),
-      new webpack.NamedModulesPlugin(),
-    ],
+    plugins: [new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET'])],
   }
 }
 
-module.exports = merge.smart(base, config())
+module.exports = merge(base, config())

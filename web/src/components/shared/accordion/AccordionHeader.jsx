@@ -5,11 +5,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import IconButton from '@material-ui/core/IconButton'
 
-const cssClasses = classnames.bind(require('./ExpansionPanel.css'))
+import styles from './Accordion.css'
 
-const enhance = compose(setDisplayName('ExpansionPanelHeader'))
+const cssClasses = classnames.bind(styles)
 
-export const ExpansionPanelHeader = ({
+const enhance = compose(setDisplayName('AccordionHeader'))
+
+export const AccordionHeader = ({
   label,
   expandedLabel,
   className,
@@ -50,4 +52,4 @@ export const ExpansionPanelHeader = ({
   </div>
 )
 
-export default enhance(ExpansionPanelHeader)
+export default enhance(AccordionHeader)

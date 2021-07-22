@@ -1,4 +1,5 @@
 import map from 'lodash/map'
+import omit from 'lodash/omit'
 import classnames from 'classnames/bind'
 import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
@@ -18,11 +19,13 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 
-const cssClasses = classnames.bind(require('./HistoryResults.css'))
+import cssStyles from './HistoryResults.css'
+
+const cssClasses = classnames.bind(cssStyles)
 const styles = require('../../components/shared/DataTableRow.css')
 
 export const Results = ({
-  history,
+  navigate,
   location,
   sortDir,
   sortCol,
@@ -51,16 +54,16 @@ export const Results = ({
       <div>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
-          <Table selectable={false} className={cssClasses('ResultDataTable')}>
+          <Table className={cssClasses('ResultDataTable')}>
             <DataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
-              columns={columns}
+              columns={columns.map(column => omit(column, ['formatter']))}
             />
             <TableBody>
               {items.currentIdList
@@ -73,9 +76,15 @@ export const Results = ({
                   >
                     {columns &&
                       map(columns, elem => (
-                        <TableCell hiddenOn={elem.hiddenOn || 'md'}>
+                        <TableCell
+                          key={`${result.get('id')}-${elem.key}`}
+                          hiddenOn={elem.hiddenOn || 'sm'}
+                        >
                           {elem.tooltip && result.get(elem.key) && (
-                            <Tooltip title={result.get(elem.tooltip)}>
+                            <Tooltip
+                              title={result.get(elem.tooltip)}
+                              disableInteractive
+                            >
                               <PermIdentity
                                 className={styles[`${result.get(elem.key)}`]}
                               />
@@ -94,7 +103,7 @@ export const Results = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}

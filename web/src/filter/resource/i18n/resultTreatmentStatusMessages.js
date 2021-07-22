@@ -2,8 +2,7 @@ import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
   ResultTreatmentStatusAwaitingTreatment: {
-    id:
-      'pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment',
+    id: 'pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment',
     defaultMessage: 'Awaiting Treatment',
   },
   ResultTreatmentStatusOnTreatment: {

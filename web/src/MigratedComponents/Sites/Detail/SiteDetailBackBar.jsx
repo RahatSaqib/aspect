@@ -20,28 +20,22 @@ const messages = defineMessages({
 
 export const SiteDetailBackBar = ({
   formatMessage,
-  history,
+  navigate,
   location,
-  match,
+  params,
   title,
   disabled,
 }) => {
   const onBackClick = () => {
-    history.goBack()
+    navigate(-1)
   }
   const onPathClick = path => {
-    history.push({
-      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
+    navigate({
+      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => params[key]),
     })
   }
   return (
-    <DetailBackBar
-      history={history}
-      location={location}
-      match={match}
-      onBackClick={onBackClick}
-      title={title}
-    >
+    <DetailBackBar onBackClick={onBackClick} title={title}>
       {[
         {
           label: formatMessage(messages.profile),
@@ -68,7 +62,7 @@ export const SiteDetailBackBar = ({
           data-path={path}
           color="primary"
           variant="contained"
-          inverse={match.path !== path && !disabled}
+          inverse={location.pathname !== path && !disabled}
         >
           {label}
         </AspectButton>

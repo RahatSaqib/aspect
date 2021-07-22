@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import classNames from 'classnames'
 
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 
@@ -16,6 +16,7 @@ const styles = theme => ({
   emptyMenuItem: {
     height: 0,
     padding: 0,
+    overflow: 'hidden',
   },
   placeholder: {
     color: theme.palette.text.disabled,
@@ -26,6 +27,7 @@ const styles = theme => ({
 })
 
 const SelectField = ({
+  autoWidth,
   classes: classesMap,
   className,
   errorText,
@@ -51,7 +53,7 @@ const SelectField = ({
       style: errorStyle,
     }}
     SelectProps={{
-      autoWidth: true,
+      autoWidth,
       displayEmpty: true,
       value,
     }}
@@ -75,14 +77,14 @@ const SelectField = ({
 
 SelectField.propTypes = {
   autoWidth: PropTypes.bool,
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.oneOfType([PropTypes.object]).isRequired,
   className: PropTypes.string,
   errorText: PropTypes.node,
   errorStyle: PropTypes.object, // eslint-disable-line
   floatingLabelFixed: PropTypes.bool,
   floatingLabelText: PropTypes.string,
   fullWidth: PropTypes.bool,
-  helperText: PropTypes.string,
+  helperText: PropTypes.node,
   hintText: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,
@@ -90,7 +92,7 @@ SelectField.propTypes = {
     PropTypes.bool,
     PropTypes.object,
   ]), // eslint-disable-line
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   onChange: PropTypes.func.isRequired,
 }
 
@@ -104,6 +106,7 @@ SelectField.defaultProps = {
   fullWidth: false,
   hintText: '',
   value: '',
+  children: null,
 }
 
 export default withStyles(styles)(SelectField)

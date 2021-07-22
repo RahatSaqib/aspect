@@ -2,9 +2,9 @@ import PropTypes from 'prop-types'
 // Imports from packages
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
 
@@ -21,11 +21,11 @@ export const PropertiesSchemaCard = compose(
     data: PropTypes.object.isRequired,
   })
 )(({ initiallyExpanded, title, renderField, dataSchema, data }) => (
-  <ExpansionPanel expanded={initiallyExpanded}>
-    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+  <Accordion expanded={initiallyExpanded}>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
       <Typography variant="subtitle1">{title}</Typography>
-    </ExpansionPanelSummary>
-    <ExpansionPanelDetails>
+    </AccordionSummary>
+    <AccordionDetails>
       <Typography variant="body2">
         {dataSchema
           .keySeq()
@@ -44,8 +44,8 @@ export const PropertiesSchemaCard = compose(
             </Unit>
           ))}
       </Typography>
-    </ExpansionPanelDetails>
-  </ExpansionPanel>
+    </AccordionDetails>
+  </Accordion>
 ))
 
 const enhance = compose(

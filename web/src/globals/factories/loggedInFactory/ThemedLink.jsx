@@ -1,11 +1,14 @@
 import React from 'react'
+import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
 import PermissionsProvider from '../../../Providers/PermissionsProvider'
 import Link from '../../../components/shared/Link'
 
-const cssClasses = classnames.bind(require('./index.css'))
+import styles from './index.css'
+
+const cssClasses = classnames.bind(styles)
 
 const themes = {
   Link: {
@@ -16,30 +19,23 @@ const themes = {
 }
 
 const ThemedLink = props => {
-  const { href, label, requiredPermissions, icon } = props
+  const { href, label, requiredPermissions } = props
+  const restProps = omit(props, ['requiredPermissions'])
   return (
     <PermissionsProvider permissions={requiredPermissions}>
-      <Link
-        key={href}
-        theme={themes.Link}
-        title={label}
-        icon={icon}
-        {...props}
-      />
+      <Link key={href} theme={themes.Link} title={label} {...restProps} />
     </PermissionsProvider>
   )
 }
 
 ThemedLink.defaultProps = {
   requiredPermissions: [],
-  icon: false,
 }
 
 ThemedLink.propTypes = {
   href: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   requiredPermissions: PropTypes.oneOfType([PropTypes.array]),
-  icon: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
 }
 
 export default ThemedLink

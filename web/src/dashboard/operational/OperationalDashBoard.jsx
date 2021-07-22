@@ -15,7 +15,9 @@ import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigur
 
 import ASSAY_LIST from '../../MigratedComponents/QueryFetch/Assay/index'
 
-const cssClasses = classnames.bind(require('./OperationalData.css'))
+import styles from './OperationalData.css'
+
+const cssClasses = classnames.bind(styles)
 
 const OperationalDashBoard = () => {
   const { deviceStatus } = deviceStatusGraphs()

@@ -3,7 +3,9 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { FaRegCircle as FaCircleO, FaCircle } from 'react-icons/fa'
 
-const cssClasses = classnames.bind(require('./AlertType.css'))
+import styles from './AlertType.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

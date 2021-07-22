@@ -2,14 +2,17 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
+import isNil from 'lodash/isNil'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import { useFormikState } from './Formik/Context'
 import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs'
-import messagesBase from './messages'
+import AspectTextField from './Inputs/TextField'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FormItem = ({
   classNames,
@@ -17,11 +20,10 @@ const FormItem = ({
   fullWidth,
   hideIfNull,
   id,
-  initialValue,
   label,
   labelI18nKey,
   link,
-  messages = messagesBase,
+  messages,
   placeholder,
   type,
   validate,
@@ -29,8 +31,9 @@ const FormItem = ({
 }) => {
   const { formatMessage } = useI18n()
   const { formik, toggleEdit } = useFormikState()
-  const { getFieldProps } = formik
-  let isVisible = !hideIfNull || initialValue
+  const { getFieldProps, values } = formik
+  const value = values[id]
+  let isVisible = !(hideIfNull && isNil(value))
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values)
   }
@@ -82,30 +85,35 @@ const FormItem = ({
 }
 
 FormItem.defaultProps = {
+  controlType: {
+    component: AspectTextField,
+  },
   classNames: {},
   fullWidth: false,
   hideIfNull: false,
+  initialValue: null,
   label: null,
   labelI18nKey: null,
   link: false,
   placeholder: null,
+  type: 'text',
   validate: () => '',
   visibleIf: () => true,
 }
 
 FormItem.propTypes = {
   classNames: PropTypes.objectOf(PropTypes.shape),
-  controlType: PropTypes.objectOf(PropTypes.shape).isRequired,
+  controlType: PropTypes.objectOf(PropTypes.shape),
   fullWidth: PropTypes.bool,
   hideIfNull: PropTypes.bool,
   id: PropTypes.string.isRequired,
-  initialValue: PropTypes.string.isRequired,
+  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   labelI18nKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  link: PropTypes.oneOf([PropTypes.object, PropTypes.bool]),
+  link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   messages: PropTypes.oneOfType([PropTypes.object]).isRequired,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  type: PropTypes.string.isRequired,
+  type: PropTypes.string,
   validate: PropTypes.oneOfType([PropTypes.func]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
 }

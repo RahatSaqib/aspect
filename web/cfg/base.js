@@ -1,5 +1,4 @@
 const path = require('path')
-const assign = require('lodash/assign')
 const webpack = require('webpack')
 const pxToRem = require('postcss-pxtorem')
 const cssImport = require('postcss-import')
@@ -9,6 +8,7 @@ const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const WebpackPwaManifest = require('webpack-pwa-manifest')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const {
   definePluginVariables,
@@ -17,7 +17,7 @@ const {
 
 const postcssPlugins = () => [
   pxToRem({
-    // See available options: https://github.com/cuth/postcss-pxtorem#options
+    /* see options: https://github.com/cuth/postcss-pxtorem#options */
     rootValue: 16,
   }),
   cssImport(),
@@ -42,6 +42,67 @@ module.exports = {
   resolve: {
     extensions: ['.json', '.js', '.jsx'],
   },
+  optimization: {
+    moduleIds: 'deterministic',
+    minimize: process.env.NODE_ENV === 'development',
+    runtimeChunk: 'single',
+    usedExports: true,
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|react-helmet)[\\/]/,
+          name: 'vendor-react',
+          chunks: 'all',
+        },
+        react_table: {
+          test: /[\\/]node_modules[\\/](react-table)[\\/]/,
+          name: 'vendor-react-table',
+          chunks: 'all',
+        },
+        react_intl: {
+          test: /[\\/]node_modules[\\/](intl|react-intl)[\\/]/,
+          name: 'vendor-intl',
+          chunks: 'all',
+        },
+        redux: {
+          test: /[\\/]node_modules[\\/](react-redux|redux|redux-thunk|redux-idle-monitor|redux-immutable)[\\/]/,
+          name: 'vendor-redux',
+          chunks: 'all',
+        },
+        rq: {
+          test: /[\\/]node_modules[\\/](react-query)[\\/]/,
+          name: 'vendor-react-query',
+          chunks: 'all',
+        },
+        lodash: {
+          test: /[\\/]node_modules[\\/](lodash)[\\/]/,
+          name: 'vendor-lodash',
+          chunks: 'all',
+        },
+        nivo: {
+          test: /[\\/]node_modules[\\/]@nivo/,
+          name: 'vendor-nivo',
+          chunks: 'all',
+        },
+        mui: {
+          test: /[\\/]node_modules[\\/]@material-ui/,
+          name: 'vendor-material-ui',
+          chunks: 'all',
+        },
+        dates: {
+          test: /[\\/]node_modules[\\/](date-fns|date-fns-timezone)[\\/]/,
+          name: 'vendor-date-fns',
+          chunks: 'all',
+        },
+        formik: {
+          test: /[\\/]node_modules[\\/](formik)[\\/]/,
+          name: 'vendor-formik',
+          chunks: 'all',
+        },
+      },
+    },
+  },
   module: {
     rules: [
       {
@@ -52,11 +113,15 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
+          process.env.NODE_ENV === 'development'
+            ? 'style-loader'
+            : MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
               modules: {
                 localIdentName: '[name]--[local]--[hash:base64:8]',
+                exportLocalsConvention: 'camelCase',
               },
               importLoaders: 1,
             },
@@ -64,13 +129,36 @@ module.exports = {
           {
             loader: 'postcss-loader',
             options: {
-              ident: 'postcss',
-              sourceMap: 'inline',
-              plugins: postcssPlugins,
+              postcssOptions: {
+                plugins: postcssPlugins(),
+              },
             },
           },
         ],
       },
+      /*
+       * Webpack-5 introduced new types 'asset' for different resources.
+       * Images worked well except image in web/src/template/index.html which
+       * was not replaced with correct hashed name.
+       * So, for now commented all `assets` and below used old `url-loader`,
+       * 'file-loader' to handle resources.
+       *
+      {
+        // images
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        // fonts
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+      },
+      {
+        // video
+        test: /\.(mp4|ogg)$/i,
+        type: 'asset/resource',
+      },
+      */
       {
         test: /\.(png|jpg|gif|woff|woff2)$/,
         use: [
@@ -82,6 +170,7 @@ module.exports = {
             },
           },
         ],
+        type: 'javascript/auto',
       },
       {
         test: /\.svg$/,
@@ -94,11 +183,13 @@ module.exports = {
             },
           },
         ],
+        type: 'javascript/auto',
       },
       {
         test: /\.(mp4|ogg|svg)$/,
         exclude: path.resolve(__dirname, '../src'),
         use: ['file-loader'],
+        type: 'javascript/auto',
       },
       {
         test: /\.html$/,
@@ -106,13 +197,11 @@ module.exports = {
           {
             loader: 'html-loader',
             options: {
-              interpolate: true,
               minimize: false,
-              removeComments: false,
-              collapseWhitespace: false,
             },
           },
         ],
+        type: 'javascript/auto',
       },
     ],
   },
@@ -120,10 +209,18 @@ module.exports = {
     new DelWebpackPlugin({
       info: false,
     }),
-    new webpack.DefinePlugin(assign({}, definePluginVariables)),
+    new webpack.DefinePlugin(definePluginVariables),
+    new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
-      inject: true,
+      /*
+       * this prop is added by 'html-webpack-harddisk-plugin'
+       * see see https://github.com/jantimon/html-webpack-harddisk-plugin
+       */
       alwaysWriteToDisk: true,
+      /*
+       * see options - https://github.com/jantimon/html-webpack-plugin#options
+       */
+      inject: true,
       template: 'src/template/index.html',
       filename: 'index.html',
       favicon: path.join(__dirname, '../src/template/favicon.png'),

@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 import { renderHook } from '@testing-library/react-hooks'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { MemoryRouter, Route, Switch } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import AspectLink from '../../AspectLink'
 import { buildWidgetToLinkParams } from '../Helpers'
@@ -35,18 +35,10 @@ describe('buildWidgetToLinkParams', () => {
       <Provider store={store}>
         <MemoryRouter>
           <RoutesPermissionProvider>
-            <Switch>
-              <Route
-                exact
-                path="/dashboard"
-                permissions={['dashboard:summary']}
-              />
-              <Route exact path="/task-list" permissions={['task']} />
-              <Route
-                exact
-                path="/task-list/aggre-list"
-                permissions={['task']}
-              />
+            <Routes>
+              <Route path="/dashboard" permissions={['dashboard:summary']} />
+              <Route path="/task-list" permissions={['task']} />
+              <Route path="/task-list/aggre-list" permissions={['task']} />
               <Route path="/task-list/:taskId" permissions={['task']} />
               <Route
                 path="/operational-data"
@@ -66,7 +58,7 @@ describe('buildWidgetToLinkParams', () => {
               />
               <Route path="/reports" permissions={['report']} />
               <Route path="/manage" permissions={['manage']} />
-              <Route exact path="/browse" permissions={['browse']} />
+              <Route path="/browse" permissions={['browse']} />
               <Route
                 exact
                 path="/browse/device"
@@ -149,18 +141,14 @@ describe('buildWidgetToLinkParams', () => {
                 path="/browse/notification/:notificationId"
                 permissions={['browse', 'notification:edit']}
               />
-              <Route
-                exact
-                path="/browse/report"
-                permissions={['browse', 'report']}
-              />
+              <Route path="/browse/report" permissions={['browse', 'report']} />
               <AspectLink
                 to={widgetToLink}
                 testId="SummaryStatus--Summary_Link"
               >
                 {children}
               </AspectLink>
-            </Switch>
+            </Routes>
           </RoutesPermissionProvider>
         </MemoryRouter>
       </Provider>

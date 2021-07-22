@@ -7,7 +7,9 @@ import messages from '../messages'
 import IndexButton from './IndexButton'
 import NowShowing from './NowShowing'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page navigation options

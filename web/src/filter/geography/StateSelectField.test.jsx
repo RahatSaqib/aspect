@@ -1,9 +1,7 @@
 import Immutable from 'immutable'
-import PropTypes from 'prop-types'
 import React from 'react'
 import sinon from 'sinon'
-import { shallow, mount } from 'enzyme'
-import { createMuiTheme } from '@material-ui/core/styles'
+import { shallow } from 'enzyme'
 
 import {
   LazyLoadItems,
@@ -11,23 +9,10 @@ import {
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
 import SelectField from '../../components/shared/SelectField'
+import { mountWithTheme } from '../../test/common'
 
 describe('StateSelectField module', () => {
   const { StateSelectField } = require('./StateSelectField')
-
-  const mountWithMuiTheme = node =>
-    mount(node, {
-      context: {
-        muiTheme: createMuiTheme({
-          typography: {
-            useNextVariants: true,
-          },
-        }),
-      },
-      childContextTypes: {
-        muiTheme: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-      },
-    })
 
   const now = new Date()
   const countriesForLocationSelector = new LazyLoadItems({
@@ -95,7 +80,7 @@ describe('StateSelectField module', () => {
         onStateIdChange: sinon.spy(),
         countryId: '1',
       }
-      mountWithMuiTheme(<StateSelectField {...props} />)
+      mountWithTheme(<StateSelectField {...props} />)
 
       expect(props.fetchStatesForLocationSelector.calledOnce).toBe(true)
     })
@@ -107,12 +92,14 @@ describe('StateSelectField module', () => {
         onStateIdChange: sinon.spy(),
         countryId: '2',
       }
-      const StateSelectFieldWrapper = mountWithMuiTheme(
+      const StateSelectFieldWrapper = mountWithTheme(
         <StateSelectField {...props} />
       )
       expect(props.fetchStatesForLocationSelector.calledOnce).toBe(true)
 
-      StateSelectFieldWrapper.setProps({ countryId: '1' })
+      StateSelectFieldWrapper.setProps({
+        children: <StateSelectField {...props} countryId={1} />,
+      })
       expect(props.fetchStatesForLocationSelector.calledTwice).toBe(true)
     })
 

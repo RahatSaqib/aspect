@@ -16,7 +16,9 @@ import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
 import { requirePermissions } from '../../components/shared/requirePermissions'
 
-const cssClasses = classnames.bind(require('./Status.css'))
+import styles from './Status.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   pure,

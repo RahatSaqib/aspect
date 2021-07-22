@@ -279,8 +279,7 @@ export const messages = defineMessages({
     defaultMessage: 'Devices With Service Interruption',
   },
   numberOfDevicesExperiencingServiceInterruptionDescription: {
-    id:
-      'component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription',
+    id: 'component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription',
     defaultMessage:
       'The number of devices experiencing service interruption on this and the previous month.',
   },

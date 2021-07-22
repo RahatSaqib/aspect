@@ -2,31 +2,31 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import MUILink from '@material-ui/core/Link'
-import { useHistory, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
 
-const Link = ({ label, theme, disabled, ...restProps }) => {
-  const history = useHistory()
+const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
+  const navigate = useNavigate()
   const location = useLocation()
 
   const onLinkClick = event => {
     event.preventDefault()
     const { currentTarget } = event
     const { pathname } = currentTarget
-    history.push(pathname)
+    navigate(pathname)
   }
 
   return (
     <MUILink
-      history={history}
-      location={location}
+      component={RouterLink}
       disabled={disabled}
       {...restProps}
-      onClick={onLinkClick}
+      onClick={onClick || onLinkClick}
       className={classNames(theme.link, {
         [theme.active]: new RegExp(`^${restProps.href}`).test(
           location.pathname
         ),
       })}
+      to={restProps.href}
     >
       <abbr>{label}</abbr>
     </MUILink>
@@ -35,13 +35,14 @@ const Link = ({ label, theme, disabled, ...restProps }) => {
 
 Link.defaultProps = {
   disabled: false,
+  onClick: null,
 }
 
 Link.propTypes = {
   label: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
-  onLinkClick: PropTypes.func.isRequired,
-  theme: PropTypes.oneOf([PropTypes.object]).isRequired,
+  onClick: PropTypes.func,
+  theme: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default Link

@@ -74,8 +74,7 @@ export function fetchDeviceOperations(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.fetchDeviceOperations.GET.default.title',
+                id: 'errorResponseMessages.fetchDeviceOperations.GET.default.title',
                 defaultMessage: 'Loading DeviceOperations Failed',
               },
             })

@@ -43,16 +43,20 @@ export class SiteLocationFormMap extends PureComponent {
 
   static propTypes = {
     change: PropTypes.func.isRequired, // redux-form
-    fullAddressInForm: PropTypes.shape({
-      country: PropTypes.string.isRequired,
-      state: PropTypes.string.isRequired,
-      lga: PropTypes.string,
-      city: PropTypes.string,
-      address: PropTypes.string.isRequired,
-      address2: PropTypes.string,
-    }).isRequired, // connect
-    editable: PropTypes.bool.isRequired,
+    // fullAddressInForm: PropTypes.shape({
+    //   country: PropTypes.string.isRequired,
+    //   state: PropTypes.string.isRequired,
+    //   lga: PropTypes.string,
+    //   city: PropTypes.string,
+    //   address: PropTypes.string.isRequired,
+    //   address2: PropTypes.string,
+    // }).isRequired, // connect
+    editable: PropTypes.bool,
     intl: PropTypeOf.intl.isRequired,
+  }
+
+  static defaultProps = {
+    editable: false,
   }
 
   constructor(props) {
@@ -77,6 +81,7 @@ export class SiteLocationFormMap extends PureComponent {
   }
 
   // read lat, lng from form state first, otherwise use the site values from API
+  // eslint-disable-next-line react/sort-comp
   getValidLatLng({ latLngInForm, latLngInSite }) {
     if (isValidLatLng(latLngInForm)) {
       return latLngInForm

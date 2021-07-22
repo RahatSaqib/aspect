@@ -11,7 +11,9 @@ import {
 } from '../../components/shared/tableBody'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./TaskTableRow.css'))
+import styles from './TaskTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 
@@ -37,28 +39,20 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
           <ColoredButton
             className={cssClasses('ColoredButton')}
             shipCove={
-              task
-                .get('issueCategoryExternalId')
-                .toString()
-                .toLowerCase() === 'devicehealth'
+              task.get('issueCategoryExternalId').toString().toLowerCase() ===
+              'devicehealth'
             }
             shakespeare={
-              task
-                .get('issueCategoryExternalId')
-                .toString()
-                .toLowerCase() === 'reagenthealth'
+              task.get('issueCategoryExternalId').toString().toLowerCase() ===
+              'reagenthealth'
             }
             mountain={
-              task
-                .get('issueCategoryExternalId')
-                .toString()
-                .toLowerCase() === 'datahealth'
+              task.get('issueCategoryExternalId').toString().toLowerCase() ===
+              'datahealth'
             }
             brink={
-              task
-                .get('issueCategoryExternalId')
-                .toString()
-                .toLowerCase() === 'connectivityhealth'
+              task.get('issueCategoryExternalId').toString().toLowerCase() ===
+              'connectivityhealth'
             }
             label={formatMessage(messages[task.get('issueCategoryI18nKey')])}
           />

@@ -8,8 +8,9 @@ import AspectDialog from '../../components/shared/AspectDialog'
 import messages from './messages'
 import PersonAssignment from './PersonAssignmentItem'
 import useI18n from '../../Hooks/i18n/useI18n'
+import styles from './PersonDetail.css'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+const cssClasses = classnames.bind(styles)
 
 export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
   const [confirmation, setConfirmation] = useState({ isActive: false })
@@ -30,6 +31,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
       {assignments.length === 0 && <h4>Not specified</h4>}
       {assignments.map(assignment => (
         <PersonAssignment
+          key={`${assignment.jobFunctionId}-${assignment.jobId}`}
           assignment={assignment}
           showLinks
           onAskConfirmation={askConfirmation}
@@ -47,7 +49,6 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
         ]}
         maxWidth="sm"
         open={confirmation.isActive}
-        onEscapeKeyDown={onCancelConfirmation}
         onClose={onCancelConfirmation}
       >
         <h3>Do you want to remove below assignment?</h3>

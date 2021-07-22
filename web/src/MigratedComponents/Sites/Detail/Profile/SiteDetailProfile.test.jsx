@@ -25,7 +25,7 @@ describe('SiteDetailProfile Component', () => {
     siteTags: [{ title: 'tag1' }],
     siteContacts: [{ id: 1, name: 'Joe Doe' }],
     formatMessage: message => message.defaultMessage,
-    history: {},
+    navigate: jest.fn(),
     location: {},
     match: {},
     disabled: true,

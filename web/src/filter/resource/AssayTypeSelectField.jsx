@@ -99,7 +99,7 @@ const enhance = compose(
     })
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
           this.props.onAssayTypeIdChange(value === 'all' ? undefined : value)
@@ -126,6 +126,9 @@ export const AssayTypeSelectField = ({
   assayTypes,
   onChange,
   diseaseId,
+  // to remove from restProps
+  onAssayTypeIdChange,
+  fetchAssayTypes,
   ...restProps
 }) => {
   const { formatMessage } = useI18n()

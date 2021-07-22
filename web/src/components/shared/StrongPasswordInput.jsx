@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import isEmpty from 'lodash/isEmpty'
 import { defineMessages } from 'react-intl'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
 import Popper from '@material-ui/core/Popper'
@@ -63,8 +63,7 @@ const messages = defineMessages({
     defaultMessage: 'Has a mix of UPPER and lower case characters',
   },
   passwordStrengthMeterContainsSpecialCharacter: {
-    id:
-      'pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter',
+    id: 'pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter',
     defaultMessage: 'Has a special character (%!$*...)',
   },
 })
@@ -72,7 +71,7 @@ const messages = defineMessages({
 const StrongPasswordInput = ({
   classes: classesMap,
   input,
-  meta: { touched, dirty, error },
+  // meta: { touched, dirty, error },
   textFieldProps,
   popOverProps,
   intl,
@@ -154,12 +153,12 @@ const StrongPasswordInput = ({
     <div>
       <TextField
         {...input}
-        errorStyle={{
-          float: 'left',
-          whiteSpace: 'nowrap',
-          textOverflow: 'visible',
-        }}
-        errorText={(touched || dirty) && error}
+        // errorStyle={{
+        //   float: 'left',
+        //   whiteSpace: 'nowrap',
+        //   textOverflow: 'visible',
+        // }}
+        // errorText={(touched || dirty) && error}
         {...textFieldProps}
         className={classNames({
           [styles.Form__Field]: textFieldProps.fullWidth,

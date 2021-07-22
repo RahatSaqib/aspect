@@ -41,18 +41,19 @@ const enhance = compose(
     onReportNameChange: props.onReportNameChange || _fp.noop,
   })),
   withHandlers({
-    onSelect: ({
-      onReportExternalIdChange,
-      onReportNameChange,
-    }) => chosenRequest => {
-      if (chosenRequest) {
-        onReportNameChange(chosenRequest.text)
-        onReportExternalIdChange(chosenRequest.value)
-      }
-    },
-    onUpdateInput: ({ onReportNameChange }) => text => {
-      onReportNameChange(text)
-    },
+    onSelect:
+      ({ onReportExternalIdChange, onReportNameChange }) =>
+      chosenRequest => {
+        if (chosenRequest) {
+          onReportNameChange(chosenRequest.text)
+          onReportExternalIdChange(chosenRequest.value)
+        }
+      },
+    onUpdateInput:
+      ({ onReportNameChange }) =>
+      text => {
+        onReportNameChange(text)
+      },
   }),
   mapProps(props => {
     const dataSource = props.reportsSelectList.selectList.items.map(item => ({

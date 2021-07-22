@@ -3,6 +3,7 @@ import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import Immutable from 'immutable'
 import {
   compose,
   withProps,
@@ -11,7 +12,6 @@ import {
   setPropTypes,
 } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -47,7 +47,9 @@ import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./SiteList.css'))
+import styles from './SiteList.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const messages = {
   ...commonDefinitions,
@@ -136,10 +138,6 @@ const filtersFromLocation = composeSanitizer(
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -163,67 +161,76 @@ const enhance = compose(
         user: state.user,
       }
     },
-    bindActionCreators.bind(null, {
+    {
       fetchSites,
       exportSites,
-    })
+    }
   ),
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    navigate: PropTypes.func.isRequired,
+    table: PropTypes.instanceOf(Immutable.Record).isRequired,
+    items: PropTypes.instanceOf(Immutable.Record).isRequired,
+  }),
   withHandlers({
-    onAlertClick: ({ history }) => event => {
-      event.stopPropagation()
-      const {
+    onAlertClick:
+      ({ navigate }) =>
+      event => {
+        event.stopPropagation()
+        const {
+          currentTarget: {
+            dataset: { siteId },
+          },
+        } = event
+        navigate(`/browse/site/${siteId}/alerts`)
+      },
+
+    onExcelClick:
+      ({ location, exportSites, sortCol, sortDir, pageAt, pageSize }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+
+        if (!sanitized) {
+          exportSites(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize,
+            format,
+            'sites'
+          )
+        }
+      },
+
+    onRowClick:
+      ({ navigate }) =>
+      ({
         currentTarget: {
           dataset: { siteId },
         },
-      } = event
-      history.push(`/browse/site/${siteId}/alerts`)
-    },
-
-    onExcelClick: ({
-      location,
-      exportSites,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSites(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          format,
-          'sites'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { siteId },
-      },
-    }) => history.push(`/browse/site/${siteId}`),
+      }) =>
+        navigate(`/browse/site/${siteId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -237,7 +244,7 @@ const enhance = compose(
 )
 
 export const SiteList = ({
-  history,
+  navigate,
   location,
   // --- injected by recompose ---
   onExcelClick,
@@ -257,7 +264,7 @@ export const SiteList = ({
 
   const { data: { data, total } = false } = useQuery(
     [SITE_LIST.KEY, { sortCol, sortDir, pageAt, pageSize, filters }],
-    async (key, { sortCol, sortDir, pageAt, pageSize, filters }) =>
+    async ({ queryKey: [, { sortCol, sortDir, pageAt, pageSize, filters }] }) =>
       fetchWrapperForQueries({
         endpoint: SITE_LIST.ENDPOINT,
         method: 'GET',
@@ -279,13 +286,15 @@ export const SiteList = ({
       <Helmet title={formatMessage(messages.sitesTitle)} />
       <NavTitle title={formatMessage(messages.sitesTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         config={reducedFilters}
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={siteList} />
-        {!siteList && <BrowseEmptyList history={history} location={location} />}
+        {!siteList && (
+          <BrowseEmptyList navigate={navigate} location={location} />
+        )}
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
@@ -294,12 +303,9 @@ export const SiteList = ({
         />
 
         {siteList && (
-          <SiteDataTable
-            selectable={false}
-            className={cssClasses('SiteDataTable')}
-          >
+          <SiteDataTable className={cssClasses('SiteDataTable')}>
             <SiteDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -356,7 +362,7 @@ export const SiteList = ({
         )}
         {siteList && siteList.length < total && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             paginatorStatus={messages.paginatorStatus}
             total={total}

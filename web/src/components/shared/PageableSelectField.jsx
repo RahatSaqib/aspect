@@ -36,7 +36,7 @@ export default class PageableSelectField extends PureComponent {
   render() {
     const {
       children,
-      onLoadMoreClick, // eslint-disable-line no-unused-vars
+      onLoadMoreClick,
       isLoadingMore,
       loadMoreText,
       loadingMoreText,

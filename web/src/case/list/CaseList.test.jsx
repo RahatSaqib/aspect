@@ -20,9 +20,7 @@ describe('Person List module', () => {
           formatPlural: value => JSON.stringify(value),
           formatHTMLMessage: value => JSON.stringify(value),
         },
-        history: {
-          push: () => {},
-        },
+        navigate: () => {},
         location: {
           search: '',
         },

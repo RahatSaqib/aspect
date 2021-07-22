@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { queryCache, useMutation, useQuery } from 'react-query'
+import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { useIntl } from 'react-intl'
 import cloneDeep from 'lodash/cloneDeep'
 import findIndex from 'lodash/findIndex'
@@ -24,6 +24,7 @@ const useDailyStatus = (
   endpoint = DAILY_STATUS.ENDPOINT,
   extraParams = {}
 ) => {
+  const queryClient = useQueryClient()
   const { formatMessage } = useIntl()
   const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
@@ -45,7 +46,7 @@ const useDailyStatus = (
     error: devicesError,
   } = useQuery(
     [DAILY_STATUS.KEY, { params, ...extraParams }],
-    async (key, { params }) =>
+    async ({ queryKey: [, { params }] }) =>
       fetchWrapperForQueries({
         endpoint,
         params:
@@ -57,7 +58,7 @@ const useDailyStatus = (
       })
   )
 
-  const [changeDeviceStatus] = useMutation(
+  const { mutate: changeDeviceStatus } = useMutation(
     ({ deviceId, values }) =>
       fetchWrapperForQueries({
         endpoint: replaceRouteParams(
@@ -79,11 +80,11 @@ const useDailyStatus = (
         const selectedStatus = statuses.find(
           ({ externalId }) => externalId === values.reason
         )
-        queryCache.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
+        queryClient.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
           const { data: devicesDailyOld } = oldData
           const devicesDailyNew = cloneDeep(devicesDailyOld)
           const { maintenanceStatusHistory } = devicesDailyNew.find(
-            ({ id }) => id === deviceId
+            ({ id }) => +id === +deviceId
           )
           maintenanceStatusHistory
             .filter(
@@ -171,12 +172,10 @@ const useDailyStatus = (
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
     const { maintenanceStatusHistory, shortName } = devicesDaily.find(
-      ({ id }) => id === deviceId
+      ({ id }) => +id === +deviceId
     )
-    const {
-      maintenanceStatusExternalId,
-      maintenanceStatusNotes: note,
-    } = maintenanceStatusHistory.find(it => it.day === day)
+    const { maintenanceStatusExternalId, maintenanceStatusNotes: note } =
+      maintenanceStatusHistory.find(it => it.day === day)
     const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
     // helper to get forward or backward index of first day with another status
     const getIndex = findFn =>
@@ -212,7 +211,9 @@ const useDailyStatus = (
     devices: {
       devicesIsLoading,
       devicesIsError,
-      devicesDaily,
+      devicesDaily: devicesDaily
+        ? devicesDaily.map(item => ({ ...item, id: +item.id }))
+        : devicesDaily,
       devicesError,
     },
     statuses: {

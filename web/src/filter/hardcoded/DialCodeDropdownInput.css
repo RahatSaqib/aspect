@@ -1,5 +1,6 @@
 .Container {
   display: flex;
+  align-items: flex-end;
 }
 
 .DialCodeDropdown__dropdown {

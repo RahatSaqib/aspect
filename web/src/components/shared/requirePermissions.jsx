@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import getDisplayName from 'react-display-name'
-import { ReactReduxContext } from 'react-redux'
+import { useStore } from 'react-redux'
 import constant from 'lodash/constant'
 import flowRight from 'lodash/flowRight'
 import isArray from 'lodash/isArray'
@@ -175,86 +175,66 @@ export function isPermittedUser(
 // An HOC that can protect underlying resource with pre-config permissions list.
 // The permissions can be overridden/added by
 // props (overriddenPermissions, extraPermissions) as well.
-export const requirePermissions = ({
-  permissions: permissionsInConfig = [],
-  ForbiddenComponent = constant(false),
-}) => WrappedComponent =>
-  class RequirePermissions extends PureComponent {
-    static displayName = `requirePermissions(${getDisplayName(
-      WrappedComponent
-    )})`
+export const requirePermissions = outerProps => WrappedComponent => {
+  const PermissionResolver = props => {
+    const store = useStore()
+    const [userPermissions, setUserPermissions] = useState(
+      store.getState().user.jwt.permissions
+    )
 
-    static propTypes = {
-      overriddenPermissions: PropTypes.arrayOf(PropTypes.string),
-      extraPermissions: PropTypes.arrayOf(PropTypes.string),
-    }
+    let unsubscribe = noop
 
-    static contextTypes = {
-      store: PropTypes.shape({
-        subscribe: PropTypes.func.isRequired,
-        dispatch: PropTypes.func.isRequired,
-        getState: PropTypes.func.isRequired,
-      }).isRequired,
-    }
+    useEffect(() => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      unsubscribe = store.subscribe(handleStoreChange)
+      return () => {
+        unsubscribe()
+        unsubscribe = noop
+      }
+    }, [])
 
-    static defaultProps = {
-      overriddenPermissions: [],
-      extraPermissions: [],
-    }
-
-    static contextType = ReactReduxContext
-
-    unsubscribe = noop // eslint-disable-line react/sort-comp
-
-    constructor(props, context) {
-      super(props)
-
-      this.context = context
-      this.state = this.createState()
-    }
-
-    componentDidMount() {
-      this.unsubscribe = this.context.store.subscribe(this.handleStoreChange)
-    }
-
-    componentWillUnmount() {
-      this.unsubscribe()
-      this.unsubscribe = noop
-    }
-
-    handleStoreChange = () => {
-      if (this.unsubscribe === noop) {
+    const handleStoreChange = () => {
+      if (unsubscribe === noop) {
         return
       }
-      this.setState(this.createState())
+      setUserPermissions(store.getState().user.jwt.permissions)
     }
 
-    createState() {
-      const { store } = this.context
-      return {
-        userPermissions: store.getState().user.jwt.permissions,
-      }
-    }
+    const {
+      permissions: permissionsInConfig = [],
+      ForbiddenComponent = constant(false),
+    } = outerProps
+    const {
+      overriddenPermissions = [],
+      extraPermissions = [],
+      ...restProps
+    } = props
+    const permissionsByTypes = flowRight([
+      groupByPermissionTypes,
+      getPermissions,
+    ])(permissionsInConfig, overriddenPermissions, extraPermissions)
+    const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
 
-    render() {
-      const {
-        overriddenPermissions = [],
-        extraPermissions = [],
-        ...restProps
-      } = this.props
-      const { userPermissions } = this.state
-      const permissionsByTypes = flowRight([
-        groupByPermissionTypes,
-        getPermissions,
-      ])(permissionsInConfig, overriddenPermissions, extraPermissions)
-      const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
-
-      return isPermitted ? (
-        <WrappedComponent {...restProps} />
-      ) : (
-        <ForbiddenComponent {...restProps} />
-      )
-    }
+    return isPermitted ? (
+      <WrappedComponent {...restProps} />
+    ) : (
+      <ForbiddenComponent {...restProps} />
+    )
   }
+
+  PermissionResolver.displayName = `requirePermissions(${getDisplayName(
+    WrappedComponent
+  )})`
+  PermissionResolver.propTypes = {
+    overriddenPermissions: PropTypes.arrayOf(PropTypes.string),
+    extraPermissions: PropTypes.arrayOf(PropTypes.string),
+  }
+  PermissionResolver.defaultProps = {
+    overriddenPermissions: [],
+    extraPermissions: [],
+  }
+
+  return memo(PermissionResolver) // <--- TODO: check with David regarding `memo`
+}
 
 export default requirePermissions

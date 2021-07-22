@@ -3,7 +3,9 @@ import { bool, func, string } from 'prop-types'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render column

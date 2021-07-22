@@ -11,9 +11,9 @@ import messages from '../messages'
 import { Unit } from '../../../../components/pureGrids'
 import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 
-const cssClasses = classnames.bind(
-  require('../../../../globals/components/Summary.css')
-)
+import styles from '../../../../globals/components/Summary.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
   const [edit, setEdit] = useState(false)

@@ -4,7 +4,9 @@ import classnames from 'classnames/bind'
 import IconProvider from '../IconProvider'
 import AspectLink from '../AspectLink'
 
-const cssClasses = classnames.bind(require('./LabelLinkComponent.css'))
+import styles from './LabelLinkComponent.css'
+
+const cssClasses = classnames.bind(styles)
 
 const LabelLinkComponent = ({ link }) => {
   const { url, target } = link || false
@@ -12,9 +14,11 @@ const LabelLinkComponent = ({ link }) => {
     <AspectLink
       to={url}
       target={target || '_self'}
-      className={cssClasses('formItem__link')}
+      className={{
+        active: cssClasses('formItem__link'),
+      }}
     >
-      <IconProvider icon="FaExternalLinkAlt" className="link__icon" />
+      <IconProvider icon="FaExternalLinkAlt" />
     </AspectLink>
   ) : null
 }

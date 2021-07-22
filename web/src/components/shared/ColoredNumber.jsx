@@ -3,7 +3,9 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./ColoredNumber.css'))
+import styles from './ColoredNumber.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ColoredNumber = ({ number, formatNumberStyle, error, success }) => {
   const { formatNumber } = useI18n()

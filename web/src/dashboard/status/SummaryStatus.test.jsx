@@ -1,14 +1,14 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import { SummaryStatus } from './SummaryStatus'
+import { shallowWithQuery } from '../../test/common'
 
 describe('Summary Status component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     allSummaryItems: Immutable.fromJS({
-      '13': {
+      13: {
         id: 13,
         icon: 'MdAssignment',
         title: 'Tests',
@@ -36,7 +36,7 @@ describe('Summary Status component', () => {
           },
         },
       },
-      '14': {
+      14: {
         id: 14,
         icon: 'MdAssignment',
         title: 'MTB+ Rate',
@@ -64,7 +64,7 @@ describe('Summary Status component', () => {
           },
         },
       },
-      '15': {
+      15: {
         id: 15,
         icon: 'MdAssignment',
         title: 'RR Rate',
@@ -92,7 +92,7 @@ describe('Summary Status component', () => {
           },
         },
       },
-      '16': {
+      16: {
         id: 16,
         icon: 'MdAssignment',
         title: 'TI Rate',
@@ -132,6 +132,6 @@ describe('Summary Status component', () => {
   }
 
   it('should shallow render correctly', () => {
-    shallow(<SummaryStatus {...props} />)
+    shallowWithQuery(<SummaryStatus {...props} />)
   })
 })

@@ -69,14 +69,18 @@ const defaultSanitizer = ({ a, k, config }) => {
   return a
 }
 
-const makeArraySanitizer = keys => ({ a, config }) =>
-  // Removes from the filters only the keys that weren't configured independently
-  keys
-    .filter(k => !findFilterConfigByKey(config, k))
-    .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
+const makeArraySanitizer =
+  keys =>
+  ({ a, config }) =>
+    // Removes from the filters only the keys that weren't configured independently
+    keys
+      .filter(k => !findFilterConfigByKey(config, k))
+      .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
 
-const makeKeySanitizer = k => ({ a, config }) =>
-  defaultSanitizer({ a, k, config })
+const makeKeySanitizer =
+  k =>
+  ({ a, config }) =>
+    defaultSanitizer({ a, k, config })
 
 const sanitizerByConfigKey = {
   assayId: defaultSanitizer,

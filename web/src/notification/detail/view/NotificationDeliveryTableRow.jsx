@@ -12,9 +12,9 @@ import {
 } from '../../../components/shared/tableBody'
 import { formatRelative } from '../../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(
-  require('./NotificationDeliveryTableRow.css')
-)
+import styles from './NotificationDeliveryTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity(injectIntl)
 

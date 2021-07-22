@@ -49,8 +49,7 @@ export function fetchResultCategoryGroup(forceRefresh) {
         400: filterFieldsRejectedError(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchResultCategoryGroup.GET.400.title',
+              id: 'errorResponseMessages.fetchResultCategoryGroup.GET.400.title',
               defaultMessage: 'Searching Device Maintenance status Failed',
             },
           })
@@ -58,8 +57,7 @@ export function fetchResultCategoryGroup(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchResultCategoryGroup.GET.default.title',
+              id: 'errorResponseMessages.fetchResultCategoryGroup.GET.default.title',
               defaultMessage: 'Loading Device Maintenance Status Failed',
             },
           })

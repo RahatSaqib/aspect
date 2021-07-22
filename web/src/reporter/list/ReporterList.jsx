@@ -6,10 +6,9 @@ import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
 import Immutable from 'immutable'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import fromPairs from 'lodash/fromPairs'
-import { useQuery, useMutation, queryCache } from 'react-query'
-import PropTypeOf from '../../shared/types'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -46,7 +45,9 @@ import messages from './messages'
 import useI18n from '../../Hooks/i18n/useI18n'
 import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
-const cssClasses = classnames.bind(require('./ReporterList.css'))
+import styles from './ReporterList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getBaseColumns = formatMessage => {
   return Immutable.List([
@@ -142,12 +143,11 @@ const getCurrentPagination = location => {
 }
 
 export const ReporterListWithProps = ({
-  history,
+  navigate,
   location,
   table,
   columns,
   items,
-  onRevokedItem,
   isLoading,
   sortCol,
   sortDir,
@@ -162,7 +162,7 @@ export const ReporterListWithProps = ({
       <Helmet title={formatMessage(messages.reportersTitle)} />
       <NavTitle title={formatMessage(messages.reportersTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         config={reducedFilters}
       />
@@ -175,15 +175,12 @@ export const ReporterListWithProps = ({
           reportName="Reporters"
         />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
-          <ReporterDataTable
-            selectable={false}
-            className={cssClasses('ReporterDataTable')}
-          >
+          <ReporterDataTable className={cssClasses('ReporterDataTable')}>
             <ReporterDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -196,7 +193,6 @@ export const ReporterListWithProps = ({
                   <ReporterDataTableRow
                     key={reporter.get('siteId')}
                     reporter={reporter}
-                    onRevokedItem={onRevokedItem}
                   />
                 ))}
             </TableBody>
@@ -204,7 +200,7 @@ export const ReporterListWithProps = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             className={cssClasses('BrowseTablePaginator')}
             paginatorStatus={messages.paginatorStatus}
@@ -219,11 +215,12 @@ export const ReporterListWithProps = ({
 }
 
 const ReporterList = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
+  const queryClient = useQueryClient()
 
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(
@@ -239,14 +236,14 @@ const ReporterList = () => {
   const [total, setTotal] = useState()
   const [filters, setFilters] = useState(getCurrentFilters(location.search))
   const [pagination, setPagination] = useState(getCurrentPagination(location))
-  const [columns, setColumns] = useState([])
+  const [columns, setColumns] = useState(Immutable.List([]))
   const { formatMessage } = useI18n()
 
   const { sortCol, sortDir, page, size } = pagination
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
-  const [onRevokedItem, { isLoading: isLoadingRevoke }] = useMutation(
+  const { mutate: onRevokedItem, isLoading: isLoadingRevoke } = useMutation(
     async ({ id, revoked }) =>
       fetchWrapperForQueries({
         endpoint: `${REPORTERS_LIST_REVOKE_ONE.ENDPOINT}/${id}`,
@@ -255,7 +252,7 @@ const ReporterList = () => {
       }),
     {
       onSuccess: () => {
-        queryCache.invalidateQueries([REPORTERS_LIST.KEY, { params }])
+        queryClient.invalidateQueries([REPORTERS_LIST.KEY, { params }])
       },
     }
   )
@@ -271,17 +268,18 @@ const ReporterList = () => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
       return
     }
 
@@ -318,7 +316,7 @@ const ReporterList = () => {
   }
 
   const baseProps = {
-    history,
+    navigate,
     location,
     isLoading: isLoading || isLoadingRevoke,
     items,
@@ -340,8 +338,8 @@ const ReporterList = () => {
 }
 
 ReporterListWithProps.propTypes = {
-  history: PropTypeOf.history.isRequired,
-  location: PropTypeOf.location.isRequired,
+  navigate: PropTypes.func.isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
   table: PropTypes.instanceOf(Immutable.Record).isRequired,
   items: PropTypes.instanceOf(Immutable.Record).isRequired,
   sortCol: PropTypes.string.isRequired,
@@ -349,10 +347,9 @@ ReporterListWithProps.propTypes = {
   pageAt: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   onExportClick: PropTypes.func.isRequired,
-  onRevokedItem: PropTypes.func.isRequired,
   columns: PropTypes.instanceOf(Immutable.List).isRequired,
   isLoading: PropTypes.bool.isRequired,
-  reducedFilters: PropTypes.arrayOf(PropTypes.string).isRequired,
+  reducedFilters: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default ReporterList

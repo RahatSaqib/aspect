@@ -17,7 +17,9 @@ import { fetchResultsByPatient } from './PatientRedux'
 import Milestones from './timeline/Milestones'
 import { formatDate, formatDateTime } from '../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./ClinicalHistory.css'))
+import styles from './ClinicalHistory.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   clinicalHistory: {
@@ -36,15 +38,16 @@ const messages = defineMessages({
 export const ClinicalHistory = props => {
   const {
     intl,
-    history,
+    navigate,
     location,
+    params,
     patientDataSchema,
     items,
     fetchResultsByPatient,
   } = props
 
   const onBackClick = () => {
-    history.goBack()
+    navigate(-1)
   }
 
   const once = useRef(false)
@@ -55,8 +58,8 @@ export const ClinicalHistory = props => {
     // everything with this if clause will only run once
     if (once.current === false) {
       once.current = true
-      setPatientId(props.match.params.patientId)
-      fetchResultsByPatient(props.match.params.patientId)
+      setPatientId(params.patientId)
+      fetchResultsByPatient(params.patientId)
       // clean up after componentDidMount
       return () => {}
     }
@@ -86,8 +89,8 @@ export const ClinicalHistory = props => {
     items,
     location,
     patientId,
-    props,
-    props.match.params.patientId,
+    // props,
+    params.patientId,
   ])
 
   return (
@@ -97,8 +100,6 @@ export const ClinicalHistory = props => {
         title={`${intl.formatMessage(messages.patient)} ${patientId}`}
       />
       <DetailBackBar
-        history={history}
-        location={location}
         onBackClick={onBackClick}
         title={`${intl.formatMessage(messages.patient)} ${patientId}`}
       />

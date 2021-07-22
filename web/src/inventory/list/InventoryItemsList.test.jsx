@@ -10,9 +10,7 @@ import ExportListButton from '../../globals/components/ExportListButton'
 describe('InventoryItemList module', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
-    history: {
-      push: () => {},
-    },
+    navigate: () => {},
     location: {
       search: '',
     },

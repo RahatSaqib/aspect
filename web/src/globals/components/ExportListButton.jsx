@@ -8,7 +8,9 @@ import classnames from 'classnames/bind'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { onStartDownloading } from '../GlobalsRedux'
 
-const cssClasses = classnames.bind(require('./ExportListButton.css'))
+import styles from './ExportListButton.css'
+
+const cssClasses = classnames.bind(styles)
 
 const mapStateToProps = state => ({
   downloadStarted: state.getIn(['globals', 'downloadStarted']),
@@ -21,26 +23,27 @@ const enhance = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withState('anchorEl', 'setAnchorEl', null),
   withHandlers({
-    onPopoverClick: ({ setAnchorEl }) => event => {
-      setAnchorEl(event.currentTarget)
-    },
-    onPopoverClose: ({ setAnchorEl }) => () => {
-      setAnchorEl(null)
-    },
-    onMyExport: ({
-      setAnchorEl,
-      onExcelClick,
-      onCsvClick,
-      startDownloading,
-    }) => e => {
-      e.preventDefault()
-      setAnchorEl(null)
-      startDownloading()
-      if (e.currentTarget.id === 'csv') onCsvClick(e.currentTarget)
-      else onExcelClick(e.currentTarget)
+    onPopoverClick:
+      ({ setAnchorEl }) =>
+      event => {
+        setAnchorEl(event.currentTarget)
+      },
+    onPopoverClose:
+      ({ setAnchorEl }) =>
+      () => {
+        setAnchorEl(null)
+      },
+    onMyExport:
+      ({ setAnchorEl, onExcelClick, onCsvClick, startDownloading }) =>
+      e => {
+        e.preventDefault()
+        setAnchorEl(null)
+        startDownloading()
+        if (e.currentTarget.id === 'csv') onCsvClick(e.currentTarget)
+        else onExcelClick(e.currentTarget)
 
-      return true
-    },
+        return true
+      },
   })
 )
 

@@ -11,7 +11,9 @@ import recomposeForm from '../../../components/recomposeForm'
 import AspectDialog from '../../../components/shared/AspectDialog'
 import useI18n from '../../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./BaseDialog.css'))
+import styles from './BaseDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   dialogTitle: {
@@ -105,7 +107,6 @@ const FormDialog = ({
       ]}
       maxWidth="sm"
       open={isDialogActive}
-      onEscapeKeyDown={onCancel}
       onClose={onCancel}
       title={labels.dialogTitle}
     >
@@ -132,7 +133,7 @@ const FormDialog = ({
               name="notes"
               label={formatMessage(messages.notes)}
               disabled={form.submitting}
-              value={values.notes}
+              value={values.notes || ''}
               onChange={onNotesChange}
               multiline
               rows={2}

@@ -84,13 +84,13 @@ AspectMap.defaultProps = {
 }
 
 AspectMap.propTypes = {
-  config: {
+  config: shape({
     containerStyle: shape(containerStyle),
     fitMarkers: bool,
     markers: shape(markers),
     options: oneOfType([object]),
     zoom: number,
-  },
+  }),
 }
 
 export default React.memo(AspectMap)

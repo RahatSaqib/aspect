@@ -11,7 +11,9 @@ import startCase from 'lodash/startCase'
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
+import styles from './FiltersBtnGroup.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
@@ -253,18 +255,19 @@ const filtersOrdering = {
   reportName: 32,
 }
 
-const makeButton = labelFn => (filterKey, props) => (
-  <Button
-    key={filterKey}
-    className={cssClasses('Button')}
-    color="secondary"
-    variant="contained"
-    onClick={() => props.onRemoveFilterItem(filterKey)}
-  >
-    {labelFn(props.filters[filterKey], props)}
-    <MdClose className={cssClasses('Button__icon')} />
-  </Button>
-)
+const makeButton = labelFn => (filterKey, props) =>
+  (
+    <Button
+      key={filterKey}
+      className={cssClasses('Button')}
+      color="secondary"
+      variant="contained"
+      onClick={() => props.onRemoveFilterItem(filterKey)}
+    >
+      {labelFn(props.filters[filterKey], props)}
+      <MdClose className={cssClasses('Button__icon')} />
+    </Button>
+  )
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   const buttonBy = {
@@ -395,7 +398,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         : messages.whereReportableSiteNameIncludes
       return formatMessage(message, { reportableSiteName })
     }),
-    reportableSiteId: (props, filterKey) => {
+    reportableSiteId: (filterKey, props) => {
       /**
        * if filters.reportableSiteName is defined then skip processing of filters.reportableSiteId
        * because this value will be used when showing button for filters.reportableSiteName
@@ -410,7 +413,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       return makeButton(reportableSiteId =>
         formatMessage(messages.whereReportableSiteIdIncludes, {
           reportableSiteId,
-        })(props, filterKey)
+        })(filterKey, props)
       )
     },
     sampleOriginSite: makeButton((sampleOriginSiteId, { siteItemsById }) =>

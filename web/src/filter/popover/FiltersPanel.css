@@ -45,7 +45,7 @@
 }
 
 .Modal {
-  z-index: var(--z-index-overlay);
+  z-index: var(--z-index-overlay) !important;
 }
 
 .Popover {
@@ -98,6 +98,16 @@
 
 .Control--wide div:focus {
   padding-right: 8px;
+}
+
+/* .Control > label[class*='CheckboxField-root'],  */
+.Control > div[class*='MuiFormControl-root'] {
+  width: 256px;
+}
+
+.Control-checkbox {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
 }
 
 .Control .Control__inner {
