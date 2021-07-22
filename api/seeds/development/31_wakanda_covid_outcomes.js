@@ -59,7 +59,13 @@ async function seed(knex) {
     const newOutcome = await randomOutcomeResult(r)
     const { id, externalId } = newOutcome[0] || false
     if ((id, externalId)) {
-      if (!knex('ResultFollowUp').first({ resultId: r.resultId, externalId })) {
+      const item = await knex('ResultFollowUp')
+        .where({
+          resultId: r.resultId,
+          externalId,
+        })
+        .first()
+      if (!item) {
         return knex('ResultFollowUp').where({ resultId: r.resultId }).update({
           externalId,
           followUpId: id,
