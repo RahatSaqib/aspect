@@ -240,7 +240,7 @@ const AutoComplete = ({
                     square
                     className={classesMap.paper}
                     style={{
-                      minWidth: popperNode
+                      minWidth: popperNode.current
                         ? popperNode.current.clientWidth + 32
                         : null,
                     }}

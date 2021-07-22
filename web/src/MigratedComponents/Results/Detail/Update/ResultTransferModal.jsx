@@ -229,11 +229,13 @@ const ResultTransferModal = ({
         />
       </div>
 
-      <CheckboxField
-        checked={includeAllResults}
-        label={formatMessage(messages.includeAllResults)}
-        onChange={event => setIncludeAllResults(event.target.checked)}
-      />
+      <div style={{ marginTop: 20, marginBottom: 10 }}>
+        <CheckboxField
+          checked={includeAllResults}
+          label={formatMessage(messages.includeAllResults)}
+          onChange={event => setIncludeAllResults(event.target.checked)}
+        />
+      </div>
       <div className={cssClasses('NoteWrapper')}>
         {formatMessage(messages.note)}
       </div>

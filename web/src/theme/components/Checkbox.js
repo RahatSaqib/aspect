@@ -5,9 +5,9 @@ export default ({ themedColors }) => ({
     },
     styleOverrides: {
       root: {
-        padding: 0,
+        padding: '0 !important',
         transform: 'scale(1.5) !important',
-        margin: '0 10px 0 !important',
+        margin: '0 12px 0 0 !important',
       },
       colorPrimary: {
         '&$checked': {

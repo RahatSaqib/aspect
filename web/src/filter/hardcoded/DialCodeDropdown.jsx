@@ -30,6 +30,7 @@ const renderInput = ({
   selectedItem,
   inputProps,
   toggleButtonProps: { onClick },
+  ref,
 }) => (
   <Input
     readOnly
@@ -37,6 +38,7 @@ const renderInput = ({
     inputProps={{
       className: cssClasses('Dropdown__Input'),
     }}
+    inputRef={ref}
     {...inputProps}
     onClick={onClick}
     startAdornment={
@@ -120,13 +122,15 @@ export const DialCodeDropdown = ({ ...props }) => {
                 <Paper
                   square
                   style={{
-                    minWidth: popperNode
-                      ? popperNode.current.clientWidth
-                      : null,
+                    minWidth: popperNode.current?.clientWidth,
                   }}
                 >
                   <VirtualList
-                    width={popperNode ? popperNode.current.clientWidth : 256}
+                    width={
+                      popperNode.current?.clientWidth < 256
+                        ? 256
+                        : popperNode.current?.clientWidth
+                    }
                     height={
                       dialCodesWithCountry.length < 10
                         ? 32 * dialCodesWithCountry.length

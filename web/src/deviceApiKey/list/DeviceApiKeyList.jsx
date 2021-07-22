@@ -371,14 +371,14 @@ const enhance = compose(
 
     onRevokedChange:
       ({ updateSingleDeviceApiKey }) =>
-      (event, revoked) => {
+      event => {
         const {
           target: {
             dataset: { deviceApiKeyId },
           },
         } = event
         updateSingleDeviceApiKey(deviceApiKeyId, {
-          revoked,
+          revoked: event.target.checked,
         })
       },
   })

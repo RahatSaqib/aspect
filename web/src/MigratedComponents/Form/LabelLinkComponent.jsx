@@ -14,9 +14,11 @@ const LabelLinkComponent = ({ link }) => {
     <AspectLink
       to={url}
       target={target || '_self'}
-      className={cssClasses('formItem__link')}
+      className={{
+        active: cssClasses('formItem__link'),
+      }}
     >
-      <IconProvider icon="FaExternalLinkAlt" className="link__icon" />
+      <IconProvider icon="FaExternalLinkAlt" />
     </AspectLink>
   ) : null
 }

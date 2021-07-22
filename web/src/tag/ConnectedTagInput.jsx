@@ -79,11 +79,12 @@ const mapStateToProps = state => ({
 
 ConnectedTagInput.defaultProps = {
   maxTags: 10,
+  qryId: '',
 }
 
 ConnectedTagInput.propTypes = {
   fetchPossibleTags: PropTypes.func.isRequired,
-  qryId: PropTypes.string.isRequired,
+  qryId: PropTypes.string,
   qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
   value: PropTypes.arrayOf(PropTypes.string).isRequired,
   onTagChange: PropTypes.func.isRequired,
