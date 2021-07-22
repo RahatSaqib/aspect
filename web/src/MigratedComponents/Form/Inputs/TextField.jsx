@@ -11,16 +11,12 @@ const AspectTextField = ({ formik, label, link, ...rest }) => {
     updateField(rest.id, event.target.value, formik)
   }
 
-  const numOfRows = formik.values[rest.id].split('|').length
-
   return (
     <TextField
       {...rest}
       label={<FormHTMLLabel label={label} link={link} />}
       onChange={onChangeLocal}
       {...getFieldErrorProps(formik, rest.id)}
-      multiline={numOfRows > 1}
-      rows={numOfRows}
     />
   )
 }

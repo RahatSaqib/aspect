@@ -151,7 +151,7 @@ const getConfig = formatMessage => {
               {
                 id: 'resultText',
                 controlType: {
-                  component: 'textField',
+                  component: 'textArea',
                 },
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
