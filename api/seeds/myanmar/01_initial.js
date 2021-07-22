@@ -11,7 +11,7 @@ const {
   allResultCategoryToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
-const getConsumables = require('../fixtures/Consumable')
+const upsertConsumables = require('../common/upsert_consumables')
 
 const now = new Date()
 
@@ -745,70 +745,14 @@ async function seed(knex) {
     assayId: assayGeneXpertHcvId,
   })
 
-  // Units
-  const consumables = await getConsumables()
-
-  // Consumable types
-  const [consumableGxTbCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxMtbRifCartridge')
-  )
-
-  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxMtbRifUltraCartridge')
-  )
-
-  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxEbolaCartridge')
-  )
-
-  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHiv1VlCartridge')
-  )
-
-  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHCVCartridge')
-  )
-
-  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert(
-    _.find(consumables, cons => cons.externalId === 'GxHiv1QualCartridge')
-  )
-
-  // Assay Consumables
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxTbCartridgeId,
-    assayId: assayGeneXpertMtbRifId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxTbUltraCartridgeId,
-    assayId: assayGeneXpertMtbRifUltraId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxEbolaCartridgeId,
-    assayId: assayGeneXpertEbolaId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHcvVlCartridgeId,
-    assayId: assayGeneXpertHcvId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHiv1VlCartridgeId,
-    assayId: assayGeneXpertHiv1VlId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHiv1QualCartridgeId,
-    assayId: assayGeneXpertHiv1QualId,
-    quantity: 1,
-  })
+  await upsertConsumables(knex, [
+    'GxMtbRif',
+    'GxMtbRifUltra',
+    'GxEbola',
+    'GxHiv1Vl',
+    'GxHcv',
+    'GxHiv1Qual',
+  ])
 
   // Create geographic hierarchy
   const countries = {}

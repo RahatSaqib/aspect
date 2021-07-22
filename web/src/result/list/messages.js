@@ -176,6 +176,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayGeneXpertMtbRif',
     defaultMessage: 'GeneXpert MTB/Rif',
   },
+  assayGeneXpertMtbXdr: {
+    id: 'pages.ResultList.assayGeneXpertMtbXdr',
+    defaultMessage: 'GeneXpert MTB/XDR',
+  },
   assayGeneXpertMtbRifUltra: {
     id: 'pages.ResultList.assayGeneXpertMtbRifUltra',
     defaultMessage: 'GeneXpert MTB/Rif Ultra',

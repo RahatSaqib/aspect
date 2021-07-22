@@ -12,17 +12,14 @@ import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 import messages from '../../shared/messages/assay'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class AssaySelectField extends PureComponent {
   static propTypes = {
-    // eslint-disable-next-line react/require-default-props
-    intl: PropTypes.shape({
-      formatMessage: PropTypes.func,
-    }),
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
-    assayItemsLoading: PropTypes.oneOfType(['bool']).isRequired,
+    assayItemsLoading: PropTypes.bool.isRequired,
     onAssayChange: PropTypes.func.isRequired,
     diseaseId: PropTypes.string,
     assayTypeId: PropTypes.string,
@@ -38,6 +35,8 @@ export class AssaySelectField extends PureComponent {
     value: '',
   }
 
+  static contextType = I18nContext
+
   constructor(props) {
     super()
     props.fetchAssays(false)
@@ -50,7 +49,6 @@ export class AssaySelectField extends PureComponent {
   render() {
     const {
       allItemText,
-      intl: { formatMessage },
       assayItems,
       assayItemsLoading,
       onAssayChange,
@@ -66,6 +64,7 @@ export class AssaySelectField extends PureComponent {
       'value',
     ])
     const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
+    const { formatMessage } = this.context
 
     if (
       assayItemsLoading === false &&

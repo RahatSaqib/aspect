@@ -1000,6 +1000,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}
@@ -2021,6 +2022,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}
@@ -3042,6 +3044,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}
@@ -4063,6 +4066,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}
@@ -5084,6 +5088,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}
@@ -6103,6 +6108,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}
@@ -7108,6 +7114,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
+        noMatch="Press enter to add tag"
         onTagChange={[Function]}
         qryType="person"
         value={Array []}

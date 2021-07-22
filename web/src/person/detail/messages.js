@@ -210,6 +210,10 @@ export default {
       id: 'pages.UserPreferences.chooseTags',
       defaultMessage: 'Choose tags',
     },
+    fieldNoMatchTags: {
+      id: 'pages.UserPreferences.fieldNoMatchTags',
+      defaultMessage: 'Press enter to add tag',
+    },
     jobAssignment: {
       id: 'pages.UserPreferences.jobAssignment',
       defaultMessage: 'Job Assignment',
@@ -493,6 +497,10 @@ export default {
     assayGeneXpertMtbRif: {
       id: 'filter.AssaySelectField.assayGeneXpertMtbRif',
       defaultMessage: 'GeneXpert MTB/Rif',
+    },
+    assayGeneXpertMtbXdr: {
+      id: 'filter.AssaySelectField.assayGeneXpertMtbXdr',
+      defaultMessage: 'GeneXpert MTB/XDR',
     },
     assayGeneXpertMtbRifUltra: {
       id: 'filter.AssaySelectField.assayGeneXpertMtbRifUltra',

@@ -192,7 +192,8 @@ async function generateResults(
       elem.externalId === 'assayBdMgitAst' ||
       elem.externalId === 'assayBdMgitGnd' ||
       elem.externalId === 'GxMtbRif' ||
-      elem.externalId === 'GxMtbRifUltra'
+      elem.externalId === 'GxMtbRifUltra' ||
+      elem.externalId === 'GxMtbXdr'
   )
   const tbResults = await addTBResults(
     knex,
@@ -882,10 +883,11 @@ async function addTBResults(
   // make sure we have at least one result with these status
   const ensureResultIds = [acknowledged, validated, deliverable]
 
+  const positiveMTBResults = []
   const resultsid = []
   // Results section
   // TB results:
-  const possibleResults = [
+  const gxMtbRifPossibleResults = [
     {
       resultText: 'MTB Detected, Rif Resistance Not Detected',
       category1: resultCategories.resultCategoryDetectedId,
@@ -929,6 +931,68 @@ async function addTBResults(
       maxLikelihood: 100,
     },
   ]
+  const possibleResults = {
+    GxMtbRif: gxMtbRifPossibleResults,
+    GxMtbRifUltra: gxMtbRifPossibleResults,
+    GxMtbXdr: [
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryNotDetectedId,
+        minLikelihood: 0,
+        maxLikelihood: 50,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected|Low FLQ Resistance @label_result_detected||AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 51,
+        maxLikelihood: 60,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 61,
+        maxLikelihood: 70,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 71,
+        maxLikelihood: 80,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 81,
+        maxLikelihood: 90,
+      },
+      {
+        resultText:
+          '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryDetectedId,
+        category2: resultCategories.resultCategoryDetectedId,
+        minLikelihood: 81,
+        maxLikelihood: 95,
+      },
+      {
+        resultText:
+          '|MTB @label_result_error|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
+        category1: resultCategories.resultCategoryErrorId,
+        category2: null,
+        minLikelihood: 96,
+        maxLikelihood: 100,
+      },
+    ],
+  }
 
   const resultData = {
     probes: {
@@ -958,7 +1022,6 @@ async function addTBResults(
       qc2Endpt: 1.22,
     },
   }
-  const positiveMTBResults = []
   const deviceTypeBDMGIT = _.find(
     deviceTypes,
     elem => elem.externalId === 'BDMGIT'
@@ -983,9 +1046,19 @@ async function addTBResults(
     const selectionConditionWithErros = r =>
       r.category1 === resultCategories.resultCategoryErrorId
 
+    const gxAssay = _.sample(
+      _.filter(
+        assays,
+        elem =>
+          elem.externalId === 'GxMtbRif' ||
+          elem.externalId === 'GxMtbRifUltra' ||
+          elem.externalId === 'GxMtbXdr'
+      )
+    )
+
     // we make sure to have at least one error result if error codes are passed
     const result = _.find(
-      possibleResults,
+      possibleResults[gxAssay.externalId],
       errorCodes.length > 0 && i === 0 && resultMtbNumber > 20
         ? selectionConditionWithErros
         : selectionConditionNoErrors
@@ -994,13 +1067,6 @@ async function addTBResults(
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
 
-    const assayGeneXpertMtbRifId = _.sample(
-      _.filter(
-        assays,
-        elem =>
-          elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra'
-      )
-    ).id
     const resultStatus =
       ensureResultIds.shift() || _.random(1) < 0.3
         ? deliverable
@@ -1011,7 +1077,7 @@ async function addTBResults(
     const resultElement = {
       ...auditFields,
       externalId: `UQTB-${i}-${uid}-D`,
-      assayId: assayGeneXpertMtbRifId,
+      assayId: gxAssay.id,
       partnerId: partnerOneId,
       geographyId: siteData.geographyId,
       siteId: siteData.id,
@@ -1097,9 +1163,11 @@ async function addTBResults(
       .where('id', resultId)
       .update({ resultWorkflowStatusLogId: lastLogId })
   })
+
   // insert 80% of mgit results when tb is positive on mgit.
   if (positiveMTBResults.length > 0)
     await knex('Result').insert(positiveMTBResults)
+
   return resultsid
 }
 
