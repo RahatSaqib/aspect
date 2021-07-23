@@ -50,6 +50,7 @@
   color: var('--aspect-color-grey-1');
 }
 
+.form__sectionItemInput--disabled > div > textarea,
 .form__sectionItemInput--disabled > div > input {
   color: var('--aspect-color-grey-1');
   -webkit-text-fill-color: var('--aspect-color-grey-1') !important;
