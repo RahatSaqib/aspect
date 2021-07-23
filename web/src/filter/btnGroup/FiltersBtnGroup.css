@@ -10,13 +10,13 @@
 }
 
 .FiltersBtnGroup__Child {
-  margin: var(--margin);
+  margin: var(--margin) !important;
 }
 
 .Button {
   composes: FiltersBtnGroup__Child;
-  font-weight: var(--lato-font-weight-bold);
-  text-transform: none;
+  font-weight: var(--lato-font-weight-bold) !important;
+  text-transform: none !important;
 }
 
 .Button::first-letter {

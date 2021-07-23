@@ -2,7 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./Shell.css'))
+import styles from './Shell.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ShellHeader = ({ children, icon: Icon, title }) => (
   <div className={cssClasses('shell__header')}>
@@ -29,7 +31,11 @@ ShellHeader.defaultProps = {
 }
 
 ShellHeader.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  children: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.bool,
+  ]),
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   icon: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 }

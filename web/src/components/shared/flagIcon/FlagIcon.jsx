@@ -1,7 +1,9 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 
-const cssClasses = classnames.bind(require('./FlagIcon.css'))
+import styles from './FlagIcon.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const FlagIcon = ({ className, style, countryIsoAlpha2Code }) => {
   if (countryIsoAlpha2Code) {

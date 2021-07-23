@@ -20,7 +20,9 @@ import {
 import { useAuthState } from '../../../Providers/AuthProvider'
 import { useFormikState } from '../Formik/Context'
 
-const cssClasses = classnames.bind(require('./DatePicker.css'))
+import styles from './DatePicker.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getDisplayValue = (value, showTimeSelect) => {
   return value
@@ -71,7 +73,23 @@ const AspectDatePickerBase = props => {
       selected={selectedDate}
       dateFormat={dateFormat}
       onChange={date => updateSelectDate(date)}
-      customInput={<TextField {...props} />}
+      customInput={
+        <TextField
+          {...omit(props, [
+            'classNames',
+            'dateFormat',
+            'showTimeSelect',
+            'validate',
+            'selectsStart',
+            'selectsEnd',
+            'startDate',
+            'endDate',
+            'minDate',
+            'maxDate',
+            'link',
+          ])}
+        />
+      }
       disabled={InputProps.disabled}
       placeholderText={placeholder}
       value={getDisplayValue(selectedDate, showTimeSelect)}
@@ -83,10 +101,8 @@ const AspectDatePickerBase = props => {
 const AspectDatePicker = props => {
   const { updateField } = useFormikState()
   const { displayPreferences, culture } = useAuthState()
-  const {
-    controlType,
-    formik: { values },
-  } = props
+  const { formik, classNames, controlType, ...rest } = props
+  const { values } = formik
   const {
     format,
     showTimeSelect,
@@ -115,7 +131,7 @@ const AspectDatePicker = props => {
 
   // effective props for pure component
   const mergedProps = {
-    ...omit(props, ['controlType', 'formik']),
+    ...rest,
     ...optionalProps,
     culture,
     onChange: value => {
@@ -134,17 +150,19 @@ AspectDatePicker.defaultProps = {
   showTimeSelect: false,
   placeholder: '',
   className: '',
+  classNames: null,
 }
 
 AspectDatePicker.propTypes = {
   id: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   InputProps: PropTypes.oneOfType([PropTypes.object]).isRequired,
   controlType: PropTypes.oneOfType([PropTypes.object]).isRequired,
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
   showTimeSelect: PropTypes.bool,
   placeholder: PropTypes.string,
   className: PropTypes.string,
+  classNames: PropTypes.oneOfType([PropTypes.object]),
 }
 
 const AspectDateTimePicker = props => {

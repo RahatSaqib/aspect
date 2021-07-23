@@ -18,15 +18,17 @@ import {
 } from './NotificationDeliveryDataTable'
 import AspectButton from '../../../components/shared/AspectButton'
 
-const cssClasses = classnames.bind(
-  require('../../../MigratedComponents/Notifications/Detail/NotificationDetail.css')
-)
+import styles from '../../../MigratedComponents/Notifications/Detail/NotificationDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 // TODO: Switch back to just using Button directly. This is demo only
 const MockTogglBtn = withStateHandlers(
   props => ({ inverse: !!props.inverse }),
   {
-    onClick: ({ inverse }) => () => ({ inverse: !inverse }),
+    onClick:
+      ({ inverse }) =>
+      () => ({ inverse: !inverse }),
   }
 )(AspectButton)
 
@@ -42,18 +44,18 @@ const now = new Date()
 
 export const NotificationDetailView = ({
   intl,
-  history,
+  navigate,
   location,
-  match,
+  // match,
   // --- injected by recompose ---
 }) => (
   <div>
     <Helmet title="TB MTB+ Rif+ in Western Region" />
     <NotificationDetailBackBar
       intl={intl}
-      history={history}
+      navigate={navigate}
       location={location}
-      match={match}
+      // match={match}
       title="TB MTB+ Rif+ in Western Region"
     />
     <section className={cssClasses('Section', 'Section--first')}>
@@ -396,7 +398,6 @@ export const NotificationDetailView = ({
           </div>
         </h2>
         <NotificationDeliveryDataTable
-          selectable={false}
           className={cssClasses('NotificationDeliveryDataTable')}
         >
           <TableBody>

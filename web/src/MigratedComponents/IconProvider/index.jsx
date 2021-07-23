@@ -4,7 +4,9 @@ import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
 
-const cssClasses = classnames.bind(require('./Icons.css'))
+import styles from './Icons.css'
+
+const cssClasses = classnames.bind(styles)
 
 async function loadIconModule(icon) {
   const iconFamily = icon.substring(0, 2).toLowerCase()
@@ -27,7 +29,7 @@ async function loadIconModule(icon) {
 
 const IconProvider = memo(({ icon, className, title }) => {
   const IconShell = ({ children }) => (
-    <div className={cssClasses([className])}>{children}</div>
+    <div className={cssClasses({ [className]: !!className })}>{children}</div>
   )
 
   const IconComponent = lazy(() =>
@@ -59,6 +61,7 @@ const IconProvider = memo(({ icon, className, title }) => {
 })
 
 IconProvider.defaultProps = {
+  className: null,
   title: true,
 }
 
@@ -70,7 +73,7 @@ IconProvider.propTypes = {
   /**
     Class name for icon to be displayed
   */
-  className: string.isRequired,
+  className: string,
   /**
     Class name for icon to be displayed
   */

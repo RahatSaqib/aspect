@@ -7,6 +7,12 @@
       "abbreviation":"TB"
     },
     {
+      "name": "MTB/XDR",
+      "i18nKey": "assayTypeMtbXdr",
+      "externalId": "assayTypeMtbXdr",
+      "abbreviation":"MTB/XDR"
+    },
+    {
       "name": "Ebola",
       "i18nKey": "assayTypeEbola",
       "externalId": "assayTypeEbola",
@@ -113,6 +119,13 @@
   "relationships": [
     {
       "externalId": "assayTypeMtbRif",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeMtbXdr",
       "diseaseId": {
         "table": "Disease",
         "externalId": "tb"

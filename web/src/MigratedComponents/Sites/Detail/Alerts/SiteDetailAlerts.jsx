@@ -5,18 +5,20 @@ import { useIntl } from 'react-intl'
 
 import TaskList from '../../../../task/list/TaskList'
 
-const cssClasses = classnames.bind(require('../SiteDetail.css'))
+import styles from '../SiteDetail.css'
 
-const SiteDetailAlert = ({ history, location, match }) => {
+const cssClasses = classnames.bind(styles)
+
+const SiteDetailAlert = ({ navigate, location, siteId }) => {
   const intl = useIntl()
-  const { siteId } = match.params
+  // const { siteId } = params
 
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
         <TaskList
           intl={intl}
-          history={history}
+          navigate={navigate}
           location={location}
           filterOptions={{
             siteId,
@@ -28,9 +30,10 @@ const SiteDetailAlert = ({ history, location, match }) => {
 }
 
 SiteDetailAlert.propTypes = {
-  history: PropTypes.oneOf([PropTypes.object]).isRequired,
-  location: PropTypes.oneOf([PropTypes.object]).isRequired,
-  match: PropTypes.oneOf([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  siteId: PropTypes.number.isRequired,
+  // params: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default SiteDetailAlert

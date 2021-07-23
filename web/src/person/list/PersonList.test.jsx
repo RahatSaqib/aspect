@@ -14,9 +14,7 @@ describe('Person List module', () => {
     beforeEach(() => {
       props = {
         intl: createIntl({ locale: 'en' }),
-        history: {
-          push: () => {},
-        },
+        navigate: jest.fn(),
         location: {
           search: '',
         },

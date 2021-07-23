@@ -158,8 +158,7 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
+              id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
               defaultMessage: 'Loading Devices Failed',
             },
           })
@@ -377,8 +376,7 @@ export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
   const i18nErrorTitleDescriptor = () =>
     defineMessages({
       title: {
-        id:
-          'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
+        id: 'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
         defaultMessage: 'Setting Maintenance Status Failed',
       },
     })
@@ -423,15 +421,13 @@ export function updateDeviceMaintenance({
     externalId === 'calibration'
       ? defineMessages({
           title: {
-            id:
-              'errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title',
+            id: 'errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title',
             defaultMessage: 'Setting Device Calibration Date Failed',
           },
         })
       : defineMessages({
           title: {
-            id:
-              'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
+            id: 'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
             defaultMessage: 'Setting Device Warranty Due Date Failed',
           },
         })
@@ -468,8 +464,7 @@ export function fetchPerformanceReport(deviceId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchPerformanceReport.GET.default.title',
+              id: 'errorResponseMessages.fetchPerformanceReport.GET.default.title',
               defaultMessage: 'Error Loading Device profile performance report',
             },
           })

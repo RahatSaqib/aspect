@@ -95,8 +95,10 @@ export const isDateEqual = field => (date1, date2) => {
   return get(date1) === get(date2)
 }
 
-export const isAllSameDateFields = (fields = []) => (date1, date2) =>
-  every(fields, field => isDateEqual(field)(date1, date2))
+export const isAllSameDateFields =
+  (fields = []) =>
+  (date1, date2) =>
+    every(fields, field => isDateEqual(field)(date1, date2))
 
 export const normalizeDate = ({ date, minDate = since, maxDate = until }) => {
   if (!isValid(date)) {
@@ -242,7 +244,7 @@ const getTimePeriod = (cnt, period, dateFormat) => {
       timePeriod = subDays(dateNow, cnt)
       break
     case period === 'months':
-      timePeriod = startOfMonth(subMonths(dateNow, cnt))
+      timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
       break
 
     default:
@@ -251,7 +253,18 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   }
   return format(timePeriod, dateFormat)
 }
+const startOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
 
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
+      .toISOString()
+      .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
+  )
+}
 const getAllDaysInCurrentMonth = (
   upToToday = false,
   dateFormat = 'yyyy-MM-dd'
@@ -262,7 +275,10 @@ const getAllDaysInCurrentMonth = (
   return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
-const getPreviousPeriod = (period = 'month', dateFormat) => {
+const getPreviousPeriod = (
+  period = 'month',
+  dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+) => {
   // currently only works for month
   const previousPeriodStart = getTimePeriod(1, period, dateFormat)
   const previousPeriodEnd = format(

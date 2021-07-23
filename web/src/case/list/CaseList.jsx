@@ -32,7 +32,9 @@ import { fetchCases } from '../CaseRedux'
 import DataTableHead from '../../components/shared/tableHead'
 import CaseTableRow from './CaseTableRow'
 
-const cssClasses = classnames.bind(require('./CaseList.css'))
+import styles from './CaseList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   createdOn: {
@@ -127,43 +129,42 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchCases,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { caseId },
+    onInitialLoad:
+      ({ location, fetchCases, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        }
       },
-    }) => {
-      history.push(`/browse/case/${caseId}`)
-    },
+    onRowClick:
+      ({ navigate }) =>
+      ({
+        currentTarget: {
+          dataset: { caseId },
+        },
+      }) => {
+        navigate(`/browse/case/${caseId}`)
+      },
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -178,7 +179,7 @@ const enhance = compose(
       this.props.onInitialLoad()
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -188,7 +189,7 @@ const enhance = compose(
 
 export const CaseList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -241,7 +242,7 @@ export const CaseList = ({
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
       <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         intl={intl}
         config={reducedFilters}
@@ -250,12 +251,12 @@ export const CaseList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
-          <Table selectable={false} className={cssClasses('CaseDataTable')}>
+          <Table className={cssClasses('CaseDataTable')}>
             <DataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -278,7 +279,7 @@ export const CaseList = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             timedMessageUsed={sortCol === 'endedOn'}

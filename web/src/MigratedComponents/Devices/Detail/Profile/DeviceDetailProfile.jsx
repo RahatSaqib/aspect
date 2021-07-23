@@ -38,7 +38,9 @@ import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceSt
 import messages from './messages'
 import useI18n from '../../../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('../DeviceDetail.css'))
+import styles from '../DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = {
   geography: true,
@@ -107,97 +109,120 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      match,
-      location,
-      fetchResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        filtersParams.set('showUnapprovedDevices', true)
-        fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-    onExportClick: ({
-      match,
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        filtersParams.set('showUnapprovedDevices', true)
-        exportResults(
-          filtersParams,
-          'xlsx',
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          'xlsx',
-          'deviceResults'
-        )
-      }
-    },
-    onExportDeviceLogsClick: ({ match, location, exportDeviceLogs }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
-      }
-    },
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { resultId },
+    onInitialLoad:
+      ({
+        device,
+        location,
+        fetchResults,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+
+        if (!sanitized) {
+          filtersParams.set('deviceId', device.get('id'))
+          fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        }
       },
-      // TODO: correct path?
-    }) => history.push(`/browse/result/${resultId}`),
-    onToggleDeviceApproval: ({ device, updateSingleDevice }) => () =>
-      updateSingleDevice({
-        deviceId: device.get('id'),
-        data: {
-          approvalToken:
-            device.get('approvalToken') !== tokens.APPROVED
-              ? tokens.APPROVED
-              : tokens.ASSIGNED,
+    onExportClick:
+      ({
+        device,
+        location,
+        exportResults,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          filtersParams.set('deviceId', device.get('id'))
+          exportResults(
+            filtersParams,
+            'xlsx',
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize,
+            'xlsx',
+            'deviceResults'
+          )
+        }
+      },
+    onExportDeviceLogsClick:
+      ({ device, location, exportDeviceLogs }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          filtersParams.set('deviceId', device.get('id'))
+          exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
+        }
+      },
+    onRowClick:
+      ({ navigate }) =>
+      ({
+        currentTarget: {
+          dataset: { resultId },
         },
-      }),
-    onShowCalibrationDialog: ({ showDialog, device }) => () => {
-      showDialog('calibration', device)
-    },
-    onShowMaintenanceDialog: ({ showDialog, device }) => () => {
-      showDialog('maintenance', device)
-    },
-    onShowWarrantyDialog: ({ showDialog, device }) => () => {
-      showDialog('warranty', device)
-    },
-    onHideDialog: ({ hideDialog }) => () => hideDialog(),
+        // TODO: correct path?
+      }) =>
+        navigate(`/browse/result/${resultId}`),
+    onToggleDeviceApproval:
+      ({ device, updateSingleDevice }) =>
+      () =>
+        updateSingleDevice({
+          deviceId: device.get('id'),
+          data: {
+            approvalToken:
+              device.get('approvalToken') !== tokens.APPROVED
+                ? tokens.APPROVED
+                : tokens.ASSIGNED,
+          },
+        }),
+    onShowCalibrationDialog:
+      ({ showDialog, device }) =>
+      () => {
+        showDialog('calibration', device)
+      },
+    onShowMaintenanceDialog:
+      ({ showDialog, device }) =>
+      () => {
+        showDialog('maintenance', device)
+      },
+    onShowWarrantyDialog:
+      ({ showDialog, device }) =>
+      () => {
+        showDialog('warranty', device)
+      },
+    onHideDialog:
+      ({ hideDialog }) =>
+      () =>
+        hideDialog(),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
     },
 
@@ -205,7 +230,7 @@ const enhance = compose(
       this.props.onInitialLoad()
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -304,8 +329,8 @@ const PerformanceBarChart = ({
 )
 
 PerformanceBarChart.propTypes = {
-  data: PropTypes.oneOf([PropTypes.object]).isRequired,
-  series: PropTypes.oneOf([PropTypes.object]).isRequired,
+  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  series: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   color: PropTypes.string.isRequired,
   avgValue: PropTypes.number.isRequired,
   maxValue: PropTypes.number.isRequired,
@@ -461,14 +486,14 @@ const PerformanceReport = ({ performanceReport, culture }) => {
 }
 
 PerformanceReport.propTypes = {
-  performanceReport: PropTypes.oneOf([PropTypes.object]).isRequired,
+  performanceReport: PropTypes.oneOfType([PropTypes.object]).isRequired,
   culture: PropTypes.string.isRequired,
 }
 
 const DeviceDetailProfile = ({
-  history,
+  navigate,
   location,
-  match,
+  // m-tch,
   device,
   disabled,
   devicePerformance,
@@ -559,9 +584,11 @@ const DeviceDetailProfile = ({
     ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
     : formatMessage(messages.undefinedValue)
 
-  const isMaintenanceStatusChangeDisabled =
+  // convert 0/1 numbers of maintenanceStatusActive and maintenanceStatusManuallySet to bool
+  const isMaintenanceStatusChangeDisabled = !!(
     device.get('maintenanceStatusActive') &&
     !device.get('maintenanceStatusManuallySet')
+  )
 
   const formatMaintenanceDate = date =>
     date ? formatDate(date) : formatMessage(messages.undefinedValue)
@@ -586,6 +613,7 @@ const DeviceDetailProfile = ({
                   >
                     <Button
                       variant="contained"
+                      color="success"
                       onClick={onExportDeviceLogsClick}
                       disabled={disabled}
                     >
@@ -616,7 +644,11 @@ const DeviceDetailProfile = ({
                 <Fragment>
                   {maintenanceStatusText}
                   {maintenanceStatusNotes && (
-                    <Tooltip title={maintenanceStatusNotes} placement="top">
+                    <Tooltip
+                      title={maintenanceStatusNotes}
+                      placement="top"
+                      disableInteractive
+                    >
                       <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
@@ -627,6 +659,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onShowMaintenanceDialog}
                   disabled={isMaintenanceStatusChangeDisabled}
                 >
@@ -634,14 +667,17 @@ const DeviceDetailProfile = ({
                 </Button>
               }
             />
-
             <Summary
               title={formatMessage(messages.calibration)}
               description={
                 <Fragment>
                   {formatMaintenanceDate(device.get('calibrationDate'))}
                   {calibrationNotes && (
-                    <Tooltip title={calibrationNotes} placement="top">
+                    <Tooltip
+                      title={calibrationNotes}
+                      placement="top"
+                      disableInteractive
+                    >
                       <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
@@ -652,6 +688,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onShowCalibrationDialog}
                   disabled={disabled}
                 >
@@ -676,7 +713,11 @@ const DeviceDetailProfile = ({
                 <Fragment>
                   {formatMaintenanceDate(device.get('warrantyDueDate'))}
                   {warrantyNotes && (
-                    <Tooltip title={warrantyNotes} placement="bottom">
+                    <Tooltip
+                      title={warrantyNotes}
+                      placement="bottom"
+                      disableInteractive
+                    >
                       <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
@@ -687,6 +728,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onShowWarrantyDialog}
                   disabled={disabled}
                 >
@@ -768,6 +810,7 @@ const DeviceDetailProfile = ({
               action={
                 <Button
                   variant="contained"
+                  color="success"
                   onClick={onToggleDeviceApproval}
                   disabled={disabled}
                 >
@@ -799,14 +842,14 @@ const DeviceDetailProfile = ({
 
       <PerformanceReport
         performanceReport={devicePerformance}
-        match={match}
+        // ma-tch={m-atch}
         location={location}
         culture={culture}
       />
 
       <AuthenticatedResults
-        match={match}
-        history={history}
+        // ma-tch={m-atch}
+        navigate={navigate}
         location={location}
         sortDir={sortDir}
         sortCol={sortCol}
@@ -824,18 +867,18 @@ const DeviceDetailProfile = ({
 }
 
 DeviceDetailProfile.propTypes = {
-  history: PropTypes.oneOf([PropTypes.object]).isRequired,
-  location: PropTypes.oneOf([PropTypes.object]).isRequired,
-  match: PropTypes.oneOf([PropTypes.object]).isRequired,
-  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // ma-tch: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
-  devicePerformance: PropTypes.oneOf([PropTypes.object]).isRequired,
+  devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,
   onToggleDeviceApproval: PropTypes.func.isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
   pageAt: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
-  activeDialog: PropTypes.oneOf([PropTypes.object]).isRequired,
+  activeDialog: PropTypes.oneOfType([PropTypes.object]).isRequired,
   onShowMaintenanceDialog: PropTypes.func.isRequired,
   onShowCalibrationDialog: PropTypes.func.isRequired,
   onShowWarrantyDialog: PropTypes.func.isRequired,
@@ -843,9 +886,9 @@ DeviceDetailProfile.propTypes = {
   onMaintenanceSubmit: PropTypes.func.isRequired,
   onCalibrationSubmit: PropTypes.func.isRequired,
   onWarrantySubmit: PropTypes.func.isRequired,
-  table: PropTypes.oneOf([PropTypes.object]).isRequired,
-  items: PropTypes.oneOf([PropTypes.object]).isRequired,
-  onRowClick: PropTypes.string.isRequired,
+  table: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  items: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  onRowClick: PropTypes.func.isRequired,
   onExportClick: PropTypes.func.isRequired,
   onExportDeviceLogsClick: PropTypes.func.isRequired,
 }

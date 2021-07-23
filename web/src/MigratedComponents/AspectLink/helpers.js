@@ -50,7 +50,7 @@ export const getParamsFromQuery = query =>
   query
     ? JSON.parse(
         `{"${query.replace(/&/g, '","').replace(/=/g, '":"')}"}`,
-        function(key, value) {
+        function (key, value) {
           return key === '' ? value : decodeURIComponent(value)
         }
       )

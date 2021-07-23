@@ -3,7 +3,9 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import Card from '@material-ui/core/Card'
 
-const cssClasses = classnames.bind(require('./DataTableCard.css'))
+import styles from './DataTableCard.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

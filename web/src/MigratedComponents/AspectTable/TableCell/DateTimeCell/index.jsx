@@ -1,11 +1,13 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import { bool, number, oneOfType } from 'prop-types'
+import { bool, string, oneOfType } from 'prop-types'
 import { useIntl } from 'react-intl'
 
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
   const { locale } = useIntl()
@@ -28,7 +30,7 @@ DateTimeCellBase.defaultProps = {
 }
 
 DateTimeCellBase.propTypes = {
-  value: number.isRequired,
+  value: string.isRequired,
   flagged: bool,
   since: bool,
 }
@@ -47,7 +49,7 @@ DateTimeCell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([number, bool]),
+  value: oneOfType([string, bool]),
 }
 
 /**
@@ -66,7 +68,7 @@ DateTimeCellSince.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([number, bool]),
+  value: oneOfType([string, bool]),
 }
 
 /**
@@ -86,7 +88,7 @@ DateTimeCell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([bool, number]),
+  value: oneOfType([bool, string]),
 }
 
 export { DateTimeCell, DateTimeCellSince, DateTimeCellFlagged }

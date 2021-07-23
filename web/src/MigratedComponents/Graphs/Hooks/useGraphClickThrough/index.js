@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 
 import startOfMonth from 'date-fns/startOfMonth'
@@ -54,7 +54,7 @@ const diseaseIdFromKey = async ({ data }, id) => {
 }
 
 const useGraphClickThrough = () => {
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const [link, setLink] = useState(false)
   const [config, setConfig] = useState(false)
   const [linkData, setLinkData] = useState(false)
@@ -163,13 +163,13 @@ const useGraphClickThrough = () => {
         )
       }
     }
-  }, [config, linkData, isLoading, push])
+  }, [config, linkData, isLoading])
 
   useEffect(() => {
     if (link) {
-      push(link)
+      navigate(link)
     }
-  }, [link, push])
+  }, [link, navigate])
 
   return { setConfig }
 }

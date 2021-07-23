@@ -15,7 +15,7 @@
 }
 
 .Checkbox {
-  padding: 0;
+  padding: inherit;
 }
 
 .InventoryDataTable {

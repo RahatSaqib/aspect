@@ -8,5 +8,5 @@ async function seed(knex) {
     .where({ name: 'Philippines' })
     .first('id')
 
-  await addFollowUps(knex, [partnerId], followUp)
+  await addFollowUps(knex, followUp, [partnerId])
 }

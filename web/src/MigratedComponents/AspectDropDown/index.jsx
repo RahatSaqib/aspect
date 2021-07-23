@@ -10,6 +10,7 @@ import get from 'lodash/get'
 import find from 'lodash/find'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
@@ -21,6 +22,8 @@ import useI18n from '../../Hooks/i18n/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
 import UI_CONSTS from '../../globals/consts/UI'
 
+import styles from './Dropdown.css'
+
 const messagesBase = defineMessages({
   noOptionsMessage: {
     id: 'base.noOptionsMessage',
@@ -28,9 +31,9 @@ const messagesBase = defineMessages({
   },
 })
 
-const cssClasses = classnames.bind(require('./Dropdown.css'))
+const cssClasses = classnames.bind(styles)
 
-const defaultSelectedOptionPropType = PropTypes.oneOf([
+const defaultSelectedOptionPropType = PropTypes.oneOfType([
   PropTypes.bool,
   PropTypes.number,
   PropTypes.string,
@@ -69,7 +72,7 @@ function getOptionByValue(data, requestedValue, idKey) {
 }
 
 function getSelectedOptions(data, someValue, idKey) {
-  if (!data || data.length === 0 || !someValue) {
+  if (!data || data.length === 0 || isNil(someValue)) {
     return false
   }
   if (isArray(someValue)) {
@@ -300,22 +303,23 @@ SelectComponent.defaultProps = {
   },
   messages: null,
   placeholder: 'Select...',
+  selectedValue: '',
 }
 
 SelectComponent.propTypes = {
   action: PropTypes.func.isRequired,
-  classNames: PropTypes.oneOf([PropTypes.object]),
-  components: PropTypes.oneOf([PropTypes.object]),
-  data: PropTypes.oneOf([PropTypes.object]).isRequired,
+  classNames: PropTypes.oneOfType([PropTypes.object]),
+  components: PropTypes.oneOfType([PropTypes.object]),
+  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   defaultSelectedOption: defaultSelectedOptionPropType,
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
   isLoading: PropTypes.bool,
   isMulti: PropTypes.bool,
-  keyMapping: PropTypes.oneOf([PropTypes.object]),
-  messages: PropTypes.oneOf([PropTypes.object]),
-  placeholder: PropTypes.oneOf([PropTypes.string, PropTypes.object]),
-  selectedValue: PropTypes.string.isRequired,
+  keyMapping: PropTypes.oneOfType([PropTypes.object]),
+  messages: PropTypes.oneOfType([PropTypes.object]),
+  placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  selectedValue: PropTypes.string,
   theme: PropTypes.string.isRequired,
 }
 
@@ -374,7 +378,11 @@ const AspectDropDown = ({
   theme,
 }) => {
   const [selectOptions, setSelectOptions] = useState(false)
-  const { isError, data = false, error: queryErrorMessage } = useQuery(
+  const {
+    isError,
+    data = false,
+    error: queryErrorMessage,
+  } = useQuery(
     reduxStateId,
     async () => (endpoint ? fetchWrapperForQueries({ endpoint }) : passedData),
     {
@@ -448,13 +456,17 @@ AspectDropDown.defaultProps = {
 AspectDropDown.propTypes = {
   action: PropTypes.func.isRequired,
   props: PropTypes.shape({
-    classNames: PropTypes.oneOf([PropTypes.object]),
-    components: PropTypes.oneOf([PropTypes.object]),
-    data: PropTypes.bool,
+    classNames: PropTypes.oneOfType([PropTypes.object]),
+    components: PropTypes.oneOfType([PropTypes.object]),
+    data: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+      PropTypes.bool,
+    ]),
     defaultSelectedOption: defaultSelectedOptionPropType,
-    dependencies: PropTypes.arrayOf([PropTypes.string]),
-    endpoint: PropTypes.string,
-    formik: PropTypes.oneOf([PropTypes.shape]),
+    dependencies: PropTypes.arrayOf(PropTypes.string),
+    endpoint: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+    formik: PropTypes.oneOfType([PropTypes.shape, PropTypes.object]),
     hideIfNoOptions: PropTypes.bool,
     identifier: PropTypes.string.isRequired,
     isClearable: PropTypes.bool,
@@ -463,11 +475,11 @@ AspectDropDown.propTypes = {
       idKey: PropTypes.string,
       nameKey: PropTypes.string,
     }),
-    messages: PropTypes.oneOf([PropTypes.object]),
+    messages: PropTypes.oneOfType([PropTypes.object]),
     normalizeLoadedData: PropTypes.func,
-    placeholder: PropTypes.oneOf([PropTypes.string, PropTypes.object]),
-    selectedValue: PropTypes.string.isRequired,
-    sortByKeys: PropTypes.oneOf([PropTypes.array]),
+    placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    selectedValue: PropTypes.string,
+    sortByKeys: PropTypes.oneOfType([PropTypes.array]),
     state: PropTypes.string.isRequired,
   }).isRequired,
   theme: PropTypes.string,

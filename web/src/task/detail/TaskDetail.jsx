@@ -1,12 +1,10 @@
-import PropTypes from 'prop-types'
 import map from 'lodash/map'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, setPropTypes } from 'recompose'
+import { compose, lifecycle } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import { FaArrowUp } from 'react-icons/fa'
@@ -18,7 +16,9 @@ import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./TaskDetail.css'))
+import styles from './TaskDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   taskDetailTitle: {
@@ -29,33 +29,31 @@ const messages = defineMessages({
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        taskId: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }),
   connect(
     state => ({
       task: state.task.taskDetails,
       jobPersons: state.task.jobPersons,
     }),
-    bindActionCreators.bind(null, { fetchTask })
+    {
+      fetchTask,
+    }
   ),
-  withHandlers({
-    onInitialLoad: ({ match, fetchTask }) => () => {
-      fetchTask(match.params.taskId)
-    },
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
-  }),
+  WrapperComponent => props => {
+    const { fetchTask, navigate } = props
+    const { taskId } = useParams()
+    return (
+      <WrapperComponent
+        {...props}
+        onInitialLoad={() => fetchTask(+taskId)}
+        onBackClick={() => navigate(-1)}
+      />
+    )
+  },
   lifecycle({
     componentDidMount() {
       this.props.onInitialLoad()
     },
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -65,9 +63,6 @@ const enhance = compose(
 
 export const TaskDetail = ({
   intl,
-  history,
-  location,
-  match,
   task,
   jobPersons,
   // --- injected by recompose ---
@@ -77,9 +72,6 @@ export const TaskDetail = ({
     <div>
       <Helmet title={intl.formatMessage(messages.taskDetailTitle)} />
       <DetailBackBar
-        history={history}
-        location={location}
-        match={match}
         onBackClick={onBackClick}
         title={task ? task.get('title') : ''}
       />
@@ -98,7 +90,7 @@ export const TaskDetail = ({
                 <span className={cssClasses('Summary__Item')}>
                   {task.get('device')}
                   <Link
-                    to={`/browse/device/{task.get('device')}`}
+                    to={`/browse/device/${task.get('deviceId')}`}
                     className={cssClasses('Summary__Item__Link')}
                   >
                     <FaArrowUp
@@ -112,7 +104,7 @@ export const TaskDetail = ({
               <span className={cssClasses('Summary__Item')}>
                 {task.get('site')}
                 <Link
-                  to={`/browse/site${task.get('site')}`}
+                  to={`/browse/site/${task.get('siteId')}`}
                   className={cssClasses('Summary__Item__Link')}
                 >
                   <FaArrowUp

@@ -1,13 +1,13 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
-import { compose, withHandlers } from 'recompose'
-import { bindActionCreators } from 'redux'
+import { compose } from 'recompose'
 import { connect } from 'react-redux'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import MenuItem from '@material-ui/core/MenuItem'
+import { useNavigate } from 'react-router-dom'
 
 import { FaUser } from 'react-icons/fa'
 
@@ -16,6 +16,8 @@ import LinkNavigation from './LinkNavigation'
 import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import IconMenu from '../../../components/shared/IconMenu'
+
+import styles from './index.css'
 
 const messages = defineMessages({
   accountDetails: {
@@ -28,34 +30,22 @@ const messages = defineMessages({
   },
 })
 
-const cssClasses = classnames.bind(require('./index.css'))
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   injectIntl,
-  withHandlers({
-    navigateRoot: ({ history }) => () => history.push('/'),
-
-    navigateCurrentAccountDetails: ({ history }) => () =>
-      history.push('/account-details/current'),
-  }),
-  connect(
-    null,
-    bindActionCreators.bind(null, {
-      closeDrawer,
-      userRequestedLogout,
-    })
-  )
+  connect(null, {
+    closeDrawer,
+    userRequestedLogout,
+  })
 )
 
-const HorizontalAppBar = ({
-  history,
-  location,
-  navigateRoot,
-  closeDrawer,
-  navigateCurrentAccountDetails,
-  userRequestedLogout,
-  intl,
-}) => {
+const HorizontalAppBar = ({ closeDrawer, userRequestedLogout, intl }) => {
+  const navigate = useNavigate()
+  const navigateRoot = () => navigate('/')
+  const navigateCurrentAccountDetails = () =>
+    navigate('/account-details/current')
+
   const Account = requirePermissions({
     permissions: ['account:edit'],
   })(() => (
@@ -64,7 +54,10 @@ const HorizontalAppBar = ({
     </MenuItem>
   ))
   return (
-    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}>
+    <AppBar
+      className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}
+      color="inherit"
+    >
       <Toolbar>
         <IconButton
           className={cssClasses('AppBar__leftIcon')}
@@ -74,12 +67,7 @@ const HorizontalAppBar = ({
           <ConfluenceIcon />
         </IconButton>
 
-        <LinkNavigation
-          history={history}
-          location={location}
-          type="horizontal"
-          onClick={closeDrawer}
-        />
+        <LinkNavigation type="horizontal" onClick={closeDrawer} />
         <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
           <Account />
           <MenuItem onClick={userRequestedLogout}>

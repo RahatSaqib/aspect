@@ -15,8 +15,8 @@ const Checkbox = props => {
       classNames={classNames}
       label={label}
       name={id}
-      onChange={(event, isChecked) => {
-        updateField(id, isChecked, formik)
+      onChange={event => {
+        updateField(id, event.target.checked, formik)
       }}
     />
   )

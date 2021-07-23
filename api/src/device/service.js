@@ -580,11 +580,13 @@ async function updateDeviceMaintenance(request) {
   } = request
   const dataConstraints = await getConstraints(credentials)
 
-  let device = await knex('Device as d')
-    .where('d.id', +params.deviceId)
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-    .first('d.id')
-
+  let device = await getDeviceByIdBaseQuery(
+    dataConstraints,
+    params.deviceId,
+    'd.id',
+    true,
+    true
+  )
   if (!device) {
     return Boom.notFound()
   }

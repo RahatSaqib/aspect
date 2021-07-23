@@ -17,7 +17,7 @@ import isNil from 'lodash/isNil'
 import Downshift from 'downshift'
 
 import FormControl from '@material-ui/core/FormControl'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
@@ -65,28 +65,28 @@ const styles = theme => ({
   separator: {
     display: 'flex',
     alignItems: 'center',
-    margin: `0 ${theme.spacing.unit}px`,
+    margin: `0 ${theme.spacing(1)}`,
   },
   formControl: {
     width: '100%',
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)} 0`,
   },
   popper: {
     zIndex: theme.zIndex.tooltip,
   },
   paper: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   options: {
-    maxHeight: (OPTION_HEIGHT + theme.spacing.unit) * 5.75,
+    maxHeight: `calc((${OPTION_HEIGHT}px + ${theme.spacing(1)}) * 5.75)`,
     overflowY: 'scroll',
   },
   option: {
     minWidth: 'auto',
   },
   button: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     alignSelf: 'flex-start',
   },
 })
@@ -448,10 +448,8 @@ export const DateTimeSelect = props => {
         } = downshiftProps
         const growId = `${baseKey}-grow`
         const suggestions = getSuggestionOptions(inputValue, options)
-        const {
-          InputProps: baseInputProps,
-          ...restTextFieldProps
-        } = TextFieldProps
+        const { InputProps: baseInputProps, ...restTextFieldProps } =
+          TextFieldProps
 
         const handleBlur = () => {
           const optionFromInput = findOptionByLabel(inputValue, options)
@@ -624,15 +622,17 @@ const DateTimeInput = props => {
     }
   }
 
-  const handleChange = set => ({ value: nextValue }) => {
-    const changedDate = set(optionsDate, nextValue)
-    setOptionsDate(changedDate)
-    setDateTime(changedDate)
+  const handleChange =
+    set =>
+    ({ value: nextValue }) => {
+      const changedDate = set(optionsDate, nextValue)
+      setOptionsDate(changedDate)
+      setDateTime(changedDate)
 
-    if (isControlled()) {
-      onChange(changedDate)
+      if (isControlled()) {
+        onChange(changedDate)
+      }
     }
-  }
 
   const handleKeyPress = nextFieldKey => event => {
     if (event.key === 'Enter') {
@@ -641,14 +641,16 @@ const DateTimeInput = props => {
     }
   }
 
-  const invokeAll = (refs, handlerName) => (...args) =>
-    _fp.pipe(
-      _fp.values,
-      _fp.filter(
-        ref => ref && ref.current && isFunction(ref.current[handlerName])
-      ),
-      _fp.map(ref => ref.current[handlerName](...args))
-    )(refs)
+  const invokeAll =
+    (refs, handlerName) =>
+    (...args) =>
+      _fp.pipe(
+        _fp.values,
+        _fp.filter(
+          ref => ref && ref.current && isFunction(ref.current[handlerName])
+        ),
+        _fp.map(ref => ref.current[handlerName](...args))
+      )(refs)
 
   const handleBlur = event => {
     const { currentTarget } = event
@@ -748,7 +750,7 @@ DateTimeInput.propTypes = {
   timeFormat: PropTypes.string, // eslint-disable-line react/require-default-props
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
-  value: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/require-default-props
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // eslint-disable-line react/require-default-props
   defaultValue: DateType, // eslint-disable-line react/forbid-prop-types,
   minDate: DateType,
   maxDate: DateType,

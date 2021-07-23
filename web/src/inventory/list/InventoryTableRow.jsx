@@ -18,11 +18,11 @@ import {
 } from '../InventoryRedux'
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
 
-const InventoryTableRow = ({ inventoryItem, key }) => {
+const cssClasses = classnames.bind(styles)
+
+const InventoryTableRow = ({ inventoryItem }) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
@@ -66,7 +66,7 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
     isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(qty)
 
   return (
-    <TableRow key={key} className={cssClasses('TableRow')}>
+    <TableRow className={cssClasses('TableRow')}>
       {hasProp('siteName') ? (
         <TableCell
           className={cssClasses('TableCell')}

@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router-dom'
 
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
@@ -23,11 +23,15 @@ import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigur
 import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
+import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./Status.css'))
+import styles from './Status.css'
 
-const Status = ({ history, location }) => {
-  const intl = useIntl()
+const cssClasses = classnames.bind(styles)
+
+const Status = () => {
+  const location = useLocation()
+  const { formatMessage } = useI18n()
   const [graphs, setGraphs] = useState(false)
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
@@ -93,14 +97,11 @@ const Status = ({ history, location }) => {
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
       <div className={cssClasses('FiltersGroup')}>
-        <BrowseSiteDropdown intl={intl} history={history} location={location} />
+        <BrowseSiteDropdown />
       </div>
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           <SummaryStatus
-            intl={intl}
-            history={history}
-            location={location}
             className={cssClasses('Section--summary')}
             dashboard="home"
           />
@@ -109,7 +110,7 @@ const Status = ({ history, location }) => {
 
       {graphs
         ? graphs.map(graph => (
-            <ErrorBoundary>
+            <ErrorBoundary key={graph.id}>
               <PermissionsProvider permissions={graph.graphRenderPermissions}>
                 {assays?.length ? (
                   <GraphsContainer assaysFromState={assays} config={graph} />
@@ -120,18 +121,11 @@ const Status = ({ history, location }) => {
         : null}
 
       <Reports
-        intl={intl}
-        location={location}
         className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.reportsTitle)}
+        title={formatMessage(messages.reportsTitle)}
       />
     </div>
   )
-}
-
-Status.propTypes = {
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default Status

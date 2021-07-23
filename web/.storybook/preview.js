@@ -1,6 +1,6 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
-import { MuiThemeProvider } from '@material-ui/core/styles'
+import { ThemeProvider } from '@material-ui/core/styles'
 
 import aspectTheme from '../src/theme/variables'
 
@@ -9,11 +9,11 @@ export const decorators = [
     const locale = 'en'
     const { theme } = aspectTheme
     return (
-      <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <IntlProvider locale={locale}>
           <Story />
         </IntlProvider>
-      </MuiThemeProvider>
+      </ThemeProvider>
     )
   },
 ]

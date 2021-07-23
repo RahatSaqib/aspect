@@ -1,9 +1,7 @@
 import Immutable from 'immutable'
-import PropTypes from 'prop-types'
 import React from 'react'
 import sinon from 'sinon'
-import { shallow, mount } from 'enzyme'
-import { createMuiTheme } from '@material-ui/core/styles'
+import { shallow } from 'enzyme'
 
 import {
   LazyLoadItems,
@@ -11,23 +9,10 @@ import {
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
 import SelectField from '../../components/shared/SelectField'
+import { mountWithTheme } from '../../test/common'
 
 describe('LgaSelectField module', () => {
   const { LgaSelectField } = require('./LgaSelectField')
-
-  const mountWithMuiTheme = node =>
-    mount(node, {
-      context: {
-        muiTheme: createMuiTheme({
-          typography: {
-            useNextVariants: true,
-          },
-        }),
-      },
-      childContextTypes: {
-        muiTheme: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-      },
-    })
 
   const now = new Date()
   const countriesForLocationSelector = new LazyLoadItems({
@@ -96,7 +81,7 @@ describe('LgaSelectField module', () => {
         countryId: '1',
         stateId: '2',
       }
-      mountWithMuiTheme(<LgaSelectField {...props} />)
+      mountWithTheme(<LgaSelectField {...props} />)
 
       expect(props.fetchLgasForLocationSelector.calledOnce).toBe(true)
     })
@@ -109,12 +94,14 @@ describe('LgaSelectField module', () => {
         countryId: '1',
         stateId: '2',
       }
-      const LgaSelectFieldWrapper = mountWithMuiTheme(
+      const LgaSelectFieldWrapper = mountWithTheme(
         <LgaSelectField {...props} />
       )
       expect(props.fetchLgasForLocationSelector.calledOnce).toBe(true)
 
-      LgaSelectFieldWrapper.setProps({ stateId: '1' })
+      LgaSelectFieldWrapper.setProps({
+        children: <LgaSelectField {...props} stateId={1} />,
+      })
       expect(props.fetchLgasForLocationSelector.calledTwice).toBe(true)
     })
 

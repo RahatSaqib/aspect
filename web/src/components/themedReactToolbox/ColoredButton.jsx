@@ -3,7 +3,9 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import AspectButton from '../shared/AspectButton'
 
-const cssClasses = classnames.bind(require('./ColoredButton.css'))
+import styles from './ColoredButton.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

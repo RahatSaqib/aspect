@@ -11,6 +11,7 @@ import messages from './i18n/generalMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
@@ -20,7 +21,6 @@ export class ResultCategorySelectField extends PureComponent {
     assayId: PropTypes.string,
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
-    intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
   }
 
   static defaultProps = {
@@ -28,6 +28,8 @@ export class ResultCategorySelectField extends PureComponent {
     assayId: '',
     value: '',
   }
+
+  static contextType = I18nContext
 
   componentDidMount() {
     this.props.fetchAssays(false)
@@ -38,7 +40,7 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, assayItems, assayId, value, intl } = this.props
+    const { allItemText, assayItems, assayId, value } = this.props
     const restProps = omit(this.props, [
       'allItemText',
       'fetchAssays',
@@ -51,6 +53,7 @@ export class ResultCategorySelectField extends PureComponent {
     const resultCategories = possibleAssay
       ? possibleAssay.get('resultCategories')
       : []
+    const { formatMessage } = this.context
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
@@ -59,7 +62,7 @@ export class ResultCategorySelectField extends PureComponent {
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {formatI18nMessage(
               messages,
-              intl.formatMessage,
+              formatMessage,
               a.get('i18nKey'),
               a.get('name')
             )}

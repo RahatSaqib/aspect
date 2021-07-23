@@ -66,8 +66,7 @@ export const messages = defineMessages({
     defaultMessage: 'Tests',
   },
   covidGraphDailyMortalityAndRecoveryByGenderAndGender: {
-    id:
-      'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
+    id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
     defaultMessage: 'Age and Gender',
   },
   treatmentGraphStatusMonthly: {

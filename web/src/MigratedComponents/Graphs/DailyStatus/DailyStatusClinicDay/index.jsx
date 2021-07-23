@@ -10,7 +10,9 @@ import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
@@ -30,8 +32,11 @@ const DayBlock = ({ consts, dayModifier, onClick }) => {
   )
 }
 
+DayBlock.defaultProps = {
+  dayModifier: null,
+}
 DayBlock.propTypes = {
-  dayModifier: PropTypes.string.isRequired,
+  dayModifier: PropTypes.string,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
@@ -82,12 +87,12 @@ const DailyStatusClinicDay = ({
   })
 
   const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
-    ? formatMessage(messages.toolTipLastUpdatedBy, {
+    ? `; ${formatMessage(messages.toolTipLastUpdatedBy, {
         username: maintenanceStatusManuallySetBy.name,
         updatedDate: formatDate(
           new Date(maintenanceStatusManuallySetBy.updatedDate)
         ),
-      })
+      })}`
     : ''
 
   return (
@@ -114,23 +119,30 @@ DailyStatusClinicDay.defaultProps = {
   maintenanceStatusName: false,
   maintenanceStatusManuallySetBy: {},
   totalResults: 0,
+  daysInSameStatus: 1,
+  maintenanceStatusI18nKey: '',
+  maintenanceStatusExternalId: '',
+  statuses: [],
 }
 
 DailyStatusClinicDay.propTypes = {
-  isWeekend: PropTypes.string.isRequired,
-  maintenanceStatusI18nKey: PropTypes.string.isRequired,
+  isWeekend: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+  maintenanceStatusI18nKey: PropTypes.string,
   maintenanceStatusName: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool,
   ]),
   maintenanceStatusManuallySetBy: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     name: PropTypes.string,
     updatedDate: PropTypes.string,
   }),
-  maintenanceStatusExternalId: PropTypes.string.isRequired,
-  daysInSameStatus: PropTypes.string.isRequired,
-  statuses: PropTypes.string.isRequired,
+  maintenanceStatusExternalId: PropTypes.string,
+  daysInSameStatus: PropTypes.number,
+  statuses: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,

@@ -5,7 +5,9 @@ import classnames from 'classnames/bind'
 
 import IconProvider from '../../../IconProvider'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page navigation button

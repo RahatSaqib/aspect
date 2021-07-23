@@ -21,7 +21,7 @@ const enhance = compose(
 )
 
 const ConnectedNavDrawer = ({
-  history,
+  navigate,
   location,
   drawerOpen,
   toggleDrawer,
@@ -29,7 +29,7 @@ const ConnectedNavDrawer = ({
 }) => (
   <Drawer open={drawerOpen} onClose={toggleDrawer}>
     <LinkNavigation
-      history={history}
+      navigate={navigate}
       location={location}
       type="vertical"
       onClick={closeDrawer}
@@ -37,7 +37,7 @@ const ConnectedNavDrawer = ({
       <ThemedLink
         href="/account-details/current"
         label="Account"
-        history={history}
+        navigate={navigate}
         location={location}
       />
     </LinkNavigation>

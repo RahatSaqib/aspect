@@ -459,19 +459,16 @@ export function updateSinglePersonLoginDetails(personId, data) {
         409: inlineWarning(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
               defaultMessage: 'This Username is Unavailable',
             },
             message: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
               defaultMessage:
                 'The username that you have entered is already in use by another user on the system',
             },
             resolution: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
               defaultMessage: 'Please try another username',
             },
           })
@@ -479,8 +476,7 @@ export function updateSinglePersonLoginDetails(personId, data) {
         404: errorNotFound(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
               defaultMessage: "Could Not Find User's Details",
             },
           })
@@ -488,8 +484,7 @@ export function updateSinglePersonLoginDetails(personId, data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
               defaultMessage: 'Saving Login Details Failed',
             },
           })
@@ -597,8 +592,7 @@ export function deletePersonAssignment(data) {
           403: errorForbidden(
             defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
+                id: 'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
                 defaultMessage: 'Not Found',
               },
             })

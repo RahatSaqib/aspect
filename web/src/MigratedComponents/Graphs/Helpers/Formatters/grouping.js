@@ -219,7 +219,7 @@ const groupForPieRow = (data, mergedParams) => {
       }
     }
     return pieRows.push(
-      Object.keys(pieRow).reduce(function(r, k) {
+      Object.keys(pieRow).reduce((r, k) => {
         return r.concat(pieRow[k])
       }, [])
     )
@@ -279,14 +279,14 @@ const groupForOldTreatmentAPI = (
       monthTested: dateFormatted,
       Confirmed:
         displayMethod === 'percentage'
-          ? Number(curr[keyToConsume]).toFixed(1)
+          ? +Number(curr[keyToConsume]).toFixed(1)
           : curr[keyToConsume],
       NotConfirmed:
         curr[keyToConsume] < 1
           ? displayMethod === 'percentage'
-            ? '100.0'
+            ? 100
             : curr.total
-          : Number(100 - curr[keyToConsume]).toFixed(1),
+          : +Number(100 - curr[keyToConsume]).toFixed(1),
       totalCnt: curr.total,
     }
     return acc
@@ -324,8 +324,8 @@ const groupForPieOldTreatmentAPI = (data, keyToConsume) => {
   return [...groupedConfirmed, ...groupedNotConfirmed]
 }
 
-const weekendOrHolidayInactive = (inactive, total, isWeekendOrHoliday) =>
-  isWeekendOrHoliday ? 0 : calcPercentageForGraphs(inactive, total)
+const weekendOrHolidayInactive = (inactive = 0, total, isWeekendOrHoliday) =>
+  isWeekendOrHoliday ? 0 : +calcPercentageForGraphs(inactive, total)
 
 const groupForDeviceStatusAPI = (
   data,
@@ -336,12 +336,8 @@ const groupForDeviceStatusAPI = (
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
-    const {
-      isWeekendOrHoliday,
-      devicesActive,
-      devicesTotal,
-      devicesInactive,
-    } = curr
+    const { isWeekendOrHoliday, devicesActive, devicesTotal, devicesInactive } =
+      curr
 
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
@@ -353,11 +349,11 @@ const groupForDeviceStatusAPI = (
       date: dateFormatted,
       devicesTotal,
       devicesActiveRaw: devicesActive,
-      devicesActive: calcPercentageForGraphs(devicesActive, devicesTotal),
+      devicesActive: +calcPercentageForGraphs(devicesActive, devicesTotal),
       weekendOrHoliday: isWeekendOrHoliday
         ? shouldBeZero
           ? 0
-          : calcPercentageForGraphs(devicesInactive, devicesTotal)
+          : +calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
       inactiveUnknown: weekendOrHolidayInactive(
         curr.inactiveUnknown,

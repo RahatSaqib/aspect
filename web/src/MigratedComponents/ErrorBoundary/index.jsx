@@ -48,7 +48,7 @@ ErrorBoundary.defaultProps = {
 }
 
 ErrorBoundary.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   fallbackComponent: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
 }
 

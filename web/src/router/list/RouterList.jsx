@@ -32,7 +32,9 @@ import {
 } from './RouterDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
 
-const cssClasses = classnames.bind(require('./RouterList.css'))
+import styles from './RouterList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   routersTitle: {
@@ -115,72 +117,68 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchRouters,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchRouters(
-          filtersParams,
-          { hasResults: 0, hasConnectivity: 1 },
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
-
-    onExcelClick: ({
-      location,
-      exportRouters,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportRouters(
-          filtersParams,
-          { hasResults: 0, hasConnectivity: 1 },
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'routers'
-        )
-      }
-    },
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { routerId },
+    onInitialLoad:
+      ({ location, fetchRouters, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchRouters(
+            filtersParams,
+            { hasResults: 0, hasConnectivity: 1 },
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
       },
-    }) => history.push(`/browse/router/${routerId}`),
+
+    onExcelClick:
+      ({ location, exportRouters, sortCol, sortDir, pageAt, table }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportRouters(
+            filtersParams,
+            { hasResults: 0, hasConnectivity: 1 },
+            sortCol,
+            sortDir,
+            pageAt,
+            table.get('total') > 0 ? table.get('total') : 1,
+            format,
+            'routers'
+          )
+        }
+      },
+    onRowClick:
+      ({ navigate }) =>
+      ({
+        currentTarget: {
+          dataset: { routerId },
+        },
+      }) =>
+        navigate(`/browse/router/${routerId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -195,7 +193,7 @@ const enhance = compose(
       this.props.onInitialLoad()
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -205,7 +203,7 @@ const enhance = compose(
 
 export const RouterList = ({
   intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -222,7 +220,7 @@ export const RouterList = ({
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -237,15 +235,12 @@ export const RouterList = ({
       />
 
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <RouterDataTable
-          selectable={false}
-          className={cssClasses('RouterDataTable')}
-        >
+        <RouterDataTable className={cssClasses('RouterDataTable')}>
           <RouterDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -289,7 +284,7 @@ export const RouterList = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           className={cssClasses('BrowseTablePaginator')}

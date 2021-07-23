@@ -52,9 +52,8 @@ describe('test headers and sortable states', () => {
     const nameOrderLeftButton = within(nameColumn).getByTestId('order_left_0')
     const contactsHeader = columns.getByText(/contacts/i)
     const contactsColumn = contactsHeader.closest('th')
-    const contactsOrderRightButton = within(contactsColumn).getByTestId(
-      'order_right_3'
-    )
+    const contactsOrderRightButton =
+      within(contactsColumn).getByTestId('order_right_3')
     expect(nameOrderLeftButton).toBeDisabled()
     expect(contactsOrderRightButton).toBeDisabled()
   })

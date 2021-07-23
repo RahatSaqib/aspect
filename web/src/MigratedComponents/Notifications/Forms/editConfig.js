@@ -11,7 +11,9 @@ import PERSON_LIST from '../../QueryFetch/Person'
 import { SITE_ALL } from '../../QueryFetch/Site'
 import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
 
-const cssClasses = classnames.bind(require('../Detail/Detail.css'))
+import styles from '../Detail/Detail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const checkboxClassNames = {
   itemContainer: cssClasses('checkbox-item-container'),

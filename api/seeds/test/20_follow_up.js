@@ -9,7 +9,7 @@ async function seed(knex) {
   const now = new Date()
 
   const partnerIds = await knex('Partner').pluck('id')
-  await addFollowUps(knex, partnerIds, followUp)
+  await addFollowUps(knex, followUp, partnerIds)
 
   const { id: userId } = await knex('User').where('name', 'admin').first('id')
 

@@ -1,9 +1,3 @@
-const { upsertItems } = require('../utils')
-const getConsumables = require('../fixtures/Consumable')
+const upsertConsumables = require('./upsert_consumables')
 
-module.exports = async knex => {
-  const fixture = await getConsumables()
-  // allowInserts = false --> prevent inserting unused consumables for specific countries
-  // upsertItems for syncing only existing consumables
-  await upsertItems(knex, 'Consumable', 'externalId', fixture, false)
-}
+module.exports = async knex => upsertConsumables(knex, false)

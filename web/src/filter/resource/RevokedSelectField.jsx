@@ -24,7 +24,7 @@ const RevokedSelectField = props => {
   }
 
   const { allItemText, value } = props
-  const restProps = omit(props, ['allItemText', 'value'])
+  const restProps = omit(props, ['allItemText', 'value', 'onRevokedChange'])
 
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>

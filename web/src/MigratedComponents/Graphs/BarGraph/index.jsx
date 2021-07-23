@@ -39,7 +39,7 @@ BarGraph.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  i18nKeys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  i18nKeys: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 }
 
 export default BarGraph

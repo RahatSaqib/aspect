@@ -27,7 +27,7 @@ const enhance = compose(
     })
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
           this.props.onDiseaseIdChange(value === 'all' ? undefined : value)
@@ -46,6 +46,9 @@ export const DiseaseSelectField = ({
   onlyWithResults,
   diseases,
   onChange,
+  // to remove from restProps
+  onDiseaseIdChange,
+  fetchDiseases,
   ...restProps
 }) => {
   const validDisease = onlyWithResults

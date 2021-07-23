@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import classNames from 'classnames'
 
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
 
@@ -96,6 +96,8 @@ class AspectTabs extends Component {
       <div>
         <AppBar position="static">
           <Tabs
+            indicatorColor="primary"
+            textColor="inherit"
             value={selectedIndex}
             {...restProps}
             onChange={this.handleChange}

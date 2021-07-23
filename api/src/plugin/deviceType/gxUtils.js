@@ -23,12 +23,11 @@ const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
 const {
   result1CategoryMapping,
-  result2CategoryMapping,
+  mapResultCategory2,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
   sanitizeResultTextValue,
-  isResultCategory2Allowed,
 } = require('./GxConnect/resultCategories/utils')
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -877,28 +876,10 @@ function getResultCategories(payload) {
           if (externalId) payloadCategory = [{ id: externalId }]
         }
       }
-      const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
-      const canHaveSecondResult = isResultCategory2Allowed(
-        assayId,
-        resultTextValues
-      )
 
-      if (resultTextValues.length > 1) {
-        const result2Text = sanitizeResultTextValue(resultTextValues[1])
-        if (canHaveSecondResult) {
-          if (result2CategoryMapping[result2Text]) {
-            payloadCategory = [
-              ...payloadCategory,
-              { id: result2CategoryMapping[result2Text] },
-            ]
-          }
-        }
-      } else if (
-        canHaveSecondResult &&
-        ['Error', 'Invalid', 'NoResult'].includes(result1)
-      ) {
-        payloadCategory = [...payloadCategory, { id: result1 }]
-      }
+      const resultCategory2 = mapResultCategory2(assayId, resultTextValues)
+      if (resultCategory2)
+        payloadCategory = [...payloadCategory, { id: resultCategory2 }]
     } else {
       const assayId = _.get(payload, 'assay.id')
       if (assayId === 'GxHiv1Vl') {

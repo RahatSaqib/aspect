@@ -8,7 +8,9 @@ import { defineMessages, useIntl } from 'react-intl'
 
 import IconProvider from '../../IconProvider'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+import styles from '../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   resetTableMessage: {
@@ -25,6 +27,7 @@ const AspectTableReset = ({ isFetching, action }) => {
         placement="left"
         title={formatMessage(messages.resetTableMessage)}
         disableHoverListener={isFetching}
+        disableInteractive
       >
         <Button size="small" disabled={isFetching} onClick={action}>
           {isFetching ? (

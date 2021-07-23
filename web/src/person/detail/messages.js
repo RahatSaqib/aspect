@@ -156,8 +156,7 @@ export default {
       defaultMessage: 'The password needs to be at least 8 characters long',
     },
     newPasswordMustContainANumberOrSpecialCharacter: {
-      id:
-        'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
+      id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
       defaultMessage:
         'The password needs to contain at least one number or special character (%!$*...)',
     },
@@ -497,6 +496,10 @@ export default {
     assayGeneXpertMtbRif: {
       id: 'filter.AssaySelectField.assayGeneXpertMtbRif',
       defaultMessage: 'GeneXpert MTB/Rif',
+    },
+    assayGeneXpertMtbXdr: {
+      id: 'filter.AssaySelectField.assayGeneXpertMtbXdr',
+      defaultMessage: 'GeneXpert MTB/XDR',
     },
     assayGeneXpertMtbRifUltra: {
       id: 'filter.AssaySelectField.assayGeneXpertMtbRifUltra',

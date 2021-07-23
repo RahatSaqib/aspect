@@ -27,7 +27,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
 
   const { isLoading, isError, error } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
-    async (key, { resultId }) =>
+    async ({ queryKey: [, { resultId }] }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
         customErrorNotifications: ResultDetailsErrors,

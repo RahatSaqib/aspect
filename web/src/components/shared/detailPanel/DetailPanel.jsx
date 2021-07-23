@@ -9,13 +9,11 @@ import { MdAssignment } from 'react-icons/md'
 import { formatDate, formatDateTime } from '../../../shared/utils/dateFormat'
 import CardTitle from '../CardTitle'
 import ReadOnlyFields from '../ReadOnlyFields'
-import {
-  ExpansionPanel,
-  ExpansionPanelHeader,
-  ExpansionPanelDetail,
-} from '../expansionPanel'
+import { Accordion, AccordionHeader, AccordionDetail } from '../accordion'
 
-const cssClasses = classnames.bind(require('./DetailPanel.css'))
+import styles from './DetailPanel.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -72,8 +70,8 @@ export const DetailGroup = compose(
     }
   })
 )(({ intl, key, data, rawData, groupSchema }) => (
-  <ExpansionPanel expanded={false} key={key}>
-    <ExpansionPanelHeader
+  <Accordion expanded={false} key={key}>
+    <AccordionHeader
       label={groupSchema.getIn(['summary', 'title'])}
       expandedLabel={groupSchema.getIn(['detail', 'title'])}
       collapsedChildren={
@@ -124,11 +122,11 @@ export const DetailGroup = compose(
           }))
           .toJSON()}
       />
-    </ExpansionPanelHeader>
+    </AccordionHeader>
     {groupSchema
       .getIn(['detail', 'rows'], EMPTY_MAP)
       .filter(it => it.get('row') > 0).size > 0 && (
-      <ExpansionPanelDetail>
+      <AccordionDetail>
         {groupSchema
           .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') > 0)
@@ -157,9 +155,9 @@ export const DetailGroup = compose(
             />
           ))
           .toJSON()}
-      </ExpansionPanelDetail>
+      </AccordionDetail>
     )}
-  </ExpansionPanel>
+  </Accordion>
 ))
 export const DetailPanel = ({
   intl,

@@ -1,20 +1,12 @@
-.DownloadButton {
-  margin-left: 93% !important;
+.export-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  position: relative;
+}
+.export-icon-button {
   font-size: 1.25rem !important;
 }
-.Reports_Button {
-  background-color: transparent;
-  color: var(--aspect-color-black);
-  font-size: 15px;
-  border: 0px;
-  padding: 0px;
-  white-space: normal;
-  border: none;
-  height: auto;
-  width: 100%;
-}
-
-.Reports_Button:hover {
-  text-decoration: underline;
-  cursor: pointer;
+.export-menu-root {
+  width: 150px;
 }

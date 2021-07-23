@@ -5,7 +5,9 @@ import classnames from 'classnames/bind'
 import PageSizeSelectors from './PageSizeSelectors'
 import PageIndexSelectors from './PageIndexSelectors'
 
-const cssClasses = classnames.bind(require('../Table.css'))
+import styles from '../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render pagination

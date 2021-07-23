@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import React from 'react'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import MenuItem from '@material-ui/core/MenuItem'
@@ -26,8 +25,7 @@ const messages = defineMessages({
     defaultMessage: 'Stolen',
   },
   ConsumableReason_AssertedZeroInventory: {
-    id:
-      'filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory',
+    id: 'filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory',
     defaultMessage: 'Asserted zero inventory',
   },
 
@@ -66,12 +64,12 @@ const enhance = compose(
     state => ({
       consumableReasons: state.consumable.consumableReasons,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchConsumableReasons,
-    })
+    }
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
           this.props.onConsumableReasonIdChange(
@@ -92,6 +90,9 @@ export const ConsumableReasonSelectField = ({
   intl,
   consumableReasons,
   onChange,
+  // to remove from restProps
+  onConsumableReasonIdChange,
+  fetchConsumableReasons,
   ...restProps
 }) => (
   <SelectField

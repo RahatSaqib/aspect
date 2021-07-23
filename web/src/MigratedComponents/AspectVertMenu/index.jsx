@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React, { Fragment } from 'react'
-import Immutable from 'immutable'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -10,7 +9,9 @@ import classnames from 'classnames/bind'
 import IconProvider from '../IconProvider'
 import IconMenu from '../../components/shared/IconMenu'
 
-const cssClasses = classnames.bind(require('./AspectVertMenu.css'))
+import styles from './AspectVertMenu.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectVertMenuItem = ({
   icon,
@@ -42,8 +43,12 @@ const AspectVertMenuItem = ({
 const AspectVertMenu = ({ actions, params }) =>
   actions ? (
     <IconMenu icon={<MoreVertIcon />} className={cssClasses('menu')}>
-      {actions.map(props => (
-        <AspectVertMenuItem {...props} params={params} />
+      {actions.map(item => (
+        <AspectVertMenuItem
+          key={`${item.icon}-${item.text}`}
+          {...item}
+          params={params}
+        />
       ))}
     </IconMenu>
   ) : null
@@ -52,6 +57,7 @@ AspectVertMenuItem.defaultProps = {
   icon: null,
   disabled: false,
   separator: false,
+  params: null,
 }
 
 AspectVertMenuItem.propTypes = {
@@ -59,13 +65,17 @@ AspectVertMenuItem.propTypes = {
   disabled: PropTypes.bool,
   text: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
-  params: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  params: PropTypes.oneOfType([PropTypes.object]),
   separator: PropTypes.bool,
 }
 
+AspectVertMenu.defaultProps = {
+  params: null,
+}
+
 AspectVertMenu.propTypes = {
-  actions: PropTypes.instanceOf(Immutable.Record).isRequired,
-  params: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  actions: PropTypes.arrayOf(AspectVertMenuItem).isRequired,
+  params: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default AspectVertMenu

@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { safeDownloadFile } from '../../shared/utils/files'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import REPORT_LIST from '../../MigratedComponents/QueryFetch/Report/index'
@@ -25,7 +25,9 @@ import ReportCard from './ReportCard'
 import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./ReportIndex.css'))
+import styles from './ReportIndex.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -50,7 +52,7 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const ReportIndex = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const intl = useIntl()
   const {
@@ -83,21 +85,22 @@ const ReportIndex = () => {
   }
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
     const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
     setFilters(fromPairs([...Object.entries(reducedFilters)]))
-  }, [history, location, userPermissions])
+  }, [location, navigate, userPermissions])
 
   useEffect(() => {
     if (data) {
@@ -111,14 +114,21 @@ const ReportIndex = () => {
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       {filters && (
         <BrowseFilters
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           config={filters}
           showBrowseDropdown={false}
         />
       )}
-      <Grid container spacing={16}>
+      <Grid
+        container
+        spacing={16}
+        sx={{
+          width: 'auto',
+          margin: 0,
+        }}
+      >
         {items?.map(
           ({ externalId, name, description, i18nKey, i18nKeyDescription }) => (
             <ReportCard
@@ -126,10 +136,11 @@ const ReportIndex = () => {
               description={description}
               i18nKey={i18nKey}
               i18nKeyDescription={i18nKeyDescription}
+              key={externalId}
               onClick={fileExtension =>
                 onClickDownload(externalId, fileExtension)
               }
-              history={history}
+              navigate={navigate}
             />
           )
         )}

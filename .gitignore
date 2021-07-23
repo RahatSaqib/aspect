@@ -36,6 +36,7 @@ e2e/**/reports/
 # packages/web
 **/dist/assets/
 **/dist/index.html
+web/dist
 
 #nyc output
 .nyc_output/

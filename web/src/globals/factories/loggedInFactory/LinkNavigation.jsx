@@ -6,7 +6,9 @@ import classnames from 'classnames/bind'
 import ThemedLink from './ThemedLink'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./index.css'))
+import styles from './index.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const LinkNavigation = ({ type, onClick, children }) => {
   const { formatMessage } = useIntl()

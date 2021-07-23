@@ -4,12 +4,13 @@ import { defineMessages, useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import startCase from 'lodash/startCase'
 
-const cssClasses = classnames.bind(require('./GraphTooltip.css'))
+import styles from './GraphTooltip.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   toolTipTitleWithPercentageSplit: {
-    id:
-      'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit',
+    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit',
     defaultMessage: `{value} ({records}/{total, plural,
       one {# result}
       other {# results}

@@ -341,8 +341,7 @@ describe('AccountRedux module', () => {
               errorNotifications: {
                 default: errorPleaseTryAgainInAFewMinutes({
                   title: {
-                    id:
-                      'errorResponseMessages.fetchAccountDetails.GET.default.title',
+                    id: 'errorResponseMessages.fetchAccountDetails.GET.default.title',
                     defaultMessage: 'Loading Account Details Failed',
                   },
                 }),
@@ -421,8 +420,7 @@ describe('AccountRedux module', () => {
               errorNotifications: {
                 default: errorPleaseTryAgainInAFewMinutes({
                   title: {
-                    id:
-                      'errorResponseMessages.saveContactDetails.PUT.default.title',
+                    id: 'errorResponseMessages.saveContactDetails.PUT.default.title',
                     defaultMessage: 'Saving Contact Details Failed',
                   },
                 }),
@@ -520,14 +518,12 @@ describe('AccountRedux module', () => {
                     defaultMessage: 'This Username is Unavailable',
                   },
                   message: {
-                    id:
-                      'errorResponseMessages.saveLoginDetails.PUT.409.message',
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
                     defaultMessage:
                       'The username that you have entered is already in use by another user on the system',
                   },
                   resolution: {
-                    id:
-                      'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
                     defaultMessage: 'Please try another username',
                   },
                 }),
@@ -537,22 +533,19 @@ describe('AccountRedux module', () => {
                     defaultMessage: 'Invalid Password',
                   },
                   message: {
-                    id:
-                      'errorResponseMessages.saveLoginDetails.PUT.403.message',
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
                     defaultMessage:
                       'The current password that you have entered is incorrect.',
                   },
                   resolution: {
-                    id:
-                      'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
                     defaultMessage:
                       'Please try re-entering your password or contact us to reset your login details',
                   },
                 }),
                 default: errorPleaseTryAgainInAFewMinutes({
                   title: {
-                    id:
-                      'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.default.title',
                     defaultMessage: 'Saving Login Details Failed',
                   },
                 }),
@@ -625,8 +618,7 @@ describe('AccountRedux module', () => {
               errorNotifications: {
                 default: errorPleaseTryAgainInAFewMinutes({
                   title: {
-                    id:
-                      'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                    id: 'errorResponseMessages.saveUserPreferences.PUT.default.title',
                     defaultMessage: 'Saving User Preferences Failed',
                   },
                 }),
