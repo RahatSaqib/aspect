@@ -250,9 +250,6 @@
         "stateName": "Azad Jammu & Kashmir"
       },
       {
-        "stateName": "Federally Administered TA"
-      },
-      {
         "stateName": "Gilgit-Baltistan"
       },
       {
@@ -1944,26 +1941,6 @@
     ]
   },
   {
-    "personName": "Sidra Azmat",
-    "personTitle": "Sidra Azmat",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "sazmat@mercycorps.org",
-    "personPhone": "+92 3008567859",
-    "username": "sazmat@mercycorps.org",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
     "personName": "Adil Masih",
     "personTitle": "Lab Contact",
     "jobFunctions": [
@@ -2241,24 +2218,6 @@
     ]
   },
   {
-    "personName": "Dr. Jaffer Ilyas",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "jilyas@mercycorps.org",
-    "username": "jilyas@mercycorps.org",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": true,
-    "hideSampleId": true,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
     "personName": "Mr. Munawar Irshad",
     "personTitle": "GeneXpert Focal Point ICT",
     "jobFunctions": [
@@ -2310,112 +2269,6 @@
       },
       {
         "stateName": "Khyber Pakhtunkhwa"
-      }
-    ]
-  },
-  {
-    "personName": "Dr. Farkhanda Ather",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "father@mercycorps.org",
-    "personPhone": "+92 3018550882",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
-    "personName": "Dr. Irum Fatima",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "ifatima@mercycorps.org",
-    "personPhone": "+92 3085551404",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
-    "personName": "Dr. Adeel Tahir",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "adtahir@mercycorps.org",
-    "personPhone": "+92 3008565857",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
-    "personName": "Haider",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "grhaider@mercycorps.org",
-    "personPhone": "+92 3005016927",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": true,
-    "hideSampleId": true,
-    "hideNotes": true,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
-    "personName": "lhrmc1",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "fahad.waseem@ihsinformatics.com",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
-  },
-  {
-    "personName": "lhrmercy",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "jahanzaib.sarwar@ihsinformatics.com",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
       }
     ]
   },
@@ -7467,27 +7320,6 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true
-  },
-  {
-    "personName": "Dr. Muhammad Tariq",
-    "personTitle": "PPM Adviser (TB) Mercy Corps",
-    "jobFunctions": [
-      "Regional Officer"
-    ],
-    "personEmailAddress": "mutariq@mercycorps.org",
-    "personPhone": "+92 3145133796",
-    "personCell": "+92 3145133796",
-    "username": "mutariq@mercycorps.org",
-    "timezone": "Pakistan Standard Time",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": true,
-    "geographies": [
-      {
-        "stateName": "Mercy Corps Sites"
-      }
-    ]
   },
   {
     "personName": "Imran Hussain *",

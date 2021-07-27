@@ -48,6 +48,8 @@ async function upsertGeography(knex, geography) {
       'countryCode',
       'timezone',
       'portNumber',
+      'stateName',
+      'lgaName',
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
@@ -65,6 +67,8 @@ async function upsertGeography(knex, geography) {
         .first('c.id as countryId', 'g.id as countryGeographyId')) || {}
     if (!countryId) {
       ;[countryId] = await knex('Country').insert(countryData)
+    } else {
+      await knex('Country').update(countryData).where({ id: countryId })
     }
     if (!countryGeographyId) {
       ;[countryGeographyId] = await knex('Geography').insert({

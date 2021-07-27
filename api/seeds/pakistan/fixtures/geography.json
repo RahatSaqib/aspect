@@ -8,6 +8,8 @@
       "countryCode": "92",
       "timezone": "Pakistan Standard Time",
       "portNumber": null,
+      "stateName": "Province/Region",
+      "lgaName": "District",
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
@@ -331,30 +333,6 @@
           ]
         },
         {
-          "name": "Federally Administered TA",
-          "abbreviation": "FATA",
-          "lgas": [
-            {
-              "name": "Khyber Agency"
-            },
-            {
-              "name": "Bajaur Agency"
-            },
-            {
-              "name": "Mohmand Agency"
-            },
-            {
-              "name": "Kurrum Agency"
-            },
-            {
-              "name": "South Waziristan Agency"
-            },
-            {
-              "name": "North Waziristan"
-            }
-          ]
-        },
-        {
           "name": "Gilgit-Baltistan",
           "abbreviation": "GB",
           "lgas": [
@@ -477,42 +455,6 @@
           "lgas": [
             {
               "name": "Islamabad"
-            }
-          ]
-        },
-        {
-          "name": "Mercy Corps Sites",
-          "abbreviation": "Mercy",
-          "lgas": [
-            {
-              "name": "Gujranwala"
-            },
-            {
-              "name": "Hafizabad"
-            },
-            {
-              "name": "Vehari"
-            },
-            {
-              "name": "Multan"
-            },
-            {
-              "name": "Khanewal"
-            },
-            {
-              "name": "Sanghar"
-            },
-            {
-              "name": "Khairpur"
-            },
-            {
-              "name": "Mandi Bahauddin"
-            },
-            {
-              "name": "Mardan"
-            },
-            {
-              "name": "Okara"
             }
           ]
         }
