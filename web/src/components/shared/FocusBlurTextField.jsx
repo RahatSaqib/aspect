@@ -9,8 +9,8 @@ import TextField from '@material-ui/core/TextField'
 
 const styles = () => ({
   root: {
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: 0,
+    marginBottom: 20,
     width: 256,
   },
 })
