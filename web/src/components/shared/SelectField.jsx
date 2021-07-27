@@ -55,7 +55,15 @@ const SelectField = ({
     SelectProps={{
       autoWidth,
       displayEmpty: true,
-      value,
+      value:
+        /** no 'children' defined yet */
+        React.Children.count(children) === 0 ||
+        /** list of MenuItem's doesn't contain 'value' */
+        !React.Children.toArray(children).find(
+          menuItem => menuItem.props.value === value
+        )
+          ? ''
+          : value,
     }}
     className={classNames(classesMap.root, className)}
     classes={{
