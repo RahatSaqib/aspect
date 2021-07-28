@@ -297,7 +297,7 @@ describe('Result Category Mapping', () => {
   })
 })
 
-describe.only('Result Text Parsing', () => {
+describe('Result Text Parsing', () => {
   it('Should parse MTB Rif/Ultra result', () => {
     assert.deepEqual(
       parseResultText(
@@ -370,34 +370,22 @@ describe.only('Result Text Parsing', () => {
 
   it('Should parse detected HIV results', () => {
     assert.deepEqual(
-      parseResultText(
-        'HIV-1 DETECTED < 40 copies/mL (log 1.60)'
-      ),
+      parseResultText('HIV-1 DETECTED < 40 copies/mL (log 1.60)'),
       {
-        'HIV-1': 'LessThan40'
+        'HIV-1': 'LessThan40',
       }
     )
   })
 
   it('Should parse not detected HIV results', () => {
-    assert.deepEqual(
-      parseResultText(
-        'HIV-1 NOT DETECTED'
-      ),
-      {
-        'HIV-1': 'NotDetected'
-      }
-    )
+    assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
+      'HIV-1': 'NotDetected',
+    })
   })
 
   it('Should include all the COVID results', () => {
-    assert.deepEqual(
-      parseResultText(
-        'SARS-CoV-2 POSITIVE'
-      ),
-      {
-        'SARS-COV-2': 'Positive'
-      }
-    )
+    assert.deepEqual(parseResultText('SARS-CoV-2 POSITIVE'), {
+      'SARS-COV-2': 'Positive',
+    })
   })
 })

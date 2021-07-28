@@ -189,7 +189,9 @@ const baseResultResponse = {
     .description('the external id of the disease'),
   collectionOfResults: Joi.object()
     .optional()
-    .description('the collection of category types and results (ex.: { MTB: "Detected", RIF: "NDetected" }')
+    .description(
+      'the collection of category types and results (ex.: { MTB: "Detected", RIF: "NDetected" }'
+    ),
 }
 
 function validateResultListResponse() {

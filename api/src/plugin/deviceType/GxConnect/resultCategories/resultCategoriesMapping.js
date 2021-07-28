@@ -321,13 +321,12 @@ const parseResultText = resultText => {
       const resultValue =
         result1CategoryMapping[sanitizeResultTextValue(val)] ||
         result2CategoryMapping[sanitizeResultTextValue(val)]
-  
+
       if (rawCategoryType && resultValue) {
         const resultType = sanitizeCategoryType(rawCategoryType)
         results[resultType] = resultValue
       }
     }
-
   })
   return results
 }
@@ -338,5 +337,5 @@ module.exports = {
   mapResultCategory2,
   parseResultText,
   getResultCategoriesHivVL,
-  getVLCopies
+  getVLCopies,
 }

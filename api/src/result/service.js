@@ -57,10 +57,12 @@ function getCollectionOfResults(resultText, resultCategories) {
   const collectionOfResults = parseResultText(resultText)
   Object.keys(collectionOfResults).forEach(categoryType => {
     const resultCategory = collectionOfResults[categoryType]
-    const resultCategoryI18nKey = resultCategories.find(rc => rc.externalId === resultCategory)?.i18nKey
+    const resultCategoryI18nKey = resultCategories.find(
+      rc => rc.externalId === resultCategory
+    )?.i18nKey
     collectionOfResults[categoryType] = {
       externalId: collectionOfResults[categoryType],
-      i18nKey: resultCategoryI18nKey
+      i18nKey: resultCategoryI18nKey,
     }
   })
   return collectionOfResults
@@ -140,7 +142,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  
   // Post processing results
   const resultCategories = await knex('ResultCategory')
   _.each(data, d => {
@@ -154,7 +155,10 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
       })
     }
     // Set the result collection
-    d.collectionOfResults = getCollectionOfResults(d.resultText, resultCategories)
+    d.collectionOfResults = getCollectionOfResults(
+      d.resultText,
+      resultCategories
+    )
   })
 
   const result = {
