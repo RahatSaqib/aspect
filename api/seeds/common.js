@@ -48,8 +48,6 @@ async function upsertGeography(knex, geography) {
       'countryCode',
       'timezone',
       'portNumber',
-      'stateName',
-      'lgaName',
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
