@@ -8,19 +8,34 @@ const config = () => {
   process.env.NODE_ENV = 'development'
   process.env.BABEL_ENV = 'webpack'
 
-  return {
+  const config = {
     mode: 'development',
     devtool: 'eval-cheap-module-source-map',
+    output: {
+      filename: '[name].js',
+    },
     devServer: {
       contentBase: path.join(__dirname, '../dist'),
       historyApiFallback: true,
       hot: true,
       port: 8000,
-      publicPath: '/assets/',
       noInfo: false,
+    },
+    optimization: {
+      /**
+       * see all Optimization options -
+       * https://webpack.js.org/configuration/optimization/
+       */
+      moduleIds: 'named',
+      chunkIds: 'named',
+      minimize: false,
+      runtimeChunk: 'single',
+      usedExports: true,
     },
     plugins: [new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET'])],
   }
+
+  return merge(base(process.env.NODE_ENV), config)
 }
 
-module.exports = merge(base, config())
+module.exports = config()
