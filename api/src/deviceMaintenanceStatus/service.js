@@ -252,6 +252,40 @@ async function deviceStatusOverTime(request) {
       })
     })
 
+    /**
+     * calculate number of days with same status
+     */
+    let prevExternalId
+    let indicesInSameStatus = []
+    // helper func
+    const setDaysInSameStatus = indices =>
+      indices.forEach(index => {
+        maintenanceStatusHistory[index].daysInSameStatus = indices.length
+      })
+    // process all days of current device
+    maintenanceStatusHistory.forEach(
+      ({ isWeekend, maintenanceStatusExternalId }, index) => {
+        if (isWeekend && maintenanceStatusExternalId !== 'active') {
+          return
+        }
+        /**
+         * process day that is either a working day OR is weekend but status is Active (see above condition)
+         */
+        if (prevExternalId !== maintenanceStatusExternalId) {
+          // status changed - process previous days with same status
+          setDaysInSameStatus(indicesInSameStatus)
+          // set new status and init array with indices
+          prevExternalId = maintenanceStatusExternalId
+          indicesInSameStatus = [index]
+        } else {
+          // same status - add index of current day
+          indicesInSameStatus = [...indicesInSameStatus, index]
+        }
+      }
+    )
+    // process remaining days with same status
+    setDaysInSameStatus(indicesInSameStatus)
+
     data.push({
       ...device,
       maintenanceStatusHistory,
