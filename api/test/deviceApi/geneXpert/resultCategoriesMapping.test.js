@@ -297,8 +297,8 @@ describe('Result Category Mapping', () => {
   })
 })
 
-describe('Result Text Parsing', () => {
-  it('Should include all the MTB Rif/Ultra category types', () => {
+describe.only('Result Text Parsing', () => {
+  it('Should parse MTB Rif/Ultra result', () => {
     assert.deepEqual(
       parseResultText(
         '|MTB @label_result_detected||Rif Resistance @label_result_not_detected'
@@ -310,7 +310,7 @@ describe('Result Text Parsing', () => {
     )
   })
 
-  it('Should include all the Ebola category types', () => {
+  it('Should parse Ebola result', () => {
     assert.deepEqual(
       parseResultText(
         '|EBOLA GP @label_result_not_detected|||EBOLA NP @label_result_not_detected||'
@@ -322,7 +322,7 @@ describe('Result Text Parsing', () => {
     )
   })
 
-  it('Should include all the XDR category types', () => {
+  it('Should parse MTB XDR result', () => {
     assert.deepEqual(
       parseResultText(
         '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
@@ -339,19 +339,7 @@ describe('Result Text Parsing', () => {
     )
   })
 
-  it('Should include mtb result and resistance when their category types and results are valid', () => {
-    assert.deepEqual(
-      parseResultText(
-        '|MTB @label_result_detected||Rif Resistance @label_result_detected'
-      ),
-      {
-        MTB: 'Detected',
-        RIF: 'Detected',
-      }
-    )
-  })
-
-  it('Should not include category types without values', () => {
+  it('Should not parse category types without values', () => {
     assert.deepEqual(
       parseResultText('|MTB @label_result_detected||Rif Resistance '),
       {
@@ -360,7 +348,7 @@ describe('Result Text Parsing', () => {
     )
   })
 
-  it('Should not include unexisting category types', () => {
+  it('Should not parse unexisting category types', () => {
     assert.deepEqual(
       parseResultText('|MTB @label_result_detected||ANY RESISTANCE '),
       {
@@ -369,13 +357,46 @@ describe('Result Text Parsing', () => {
     )
   })
 
-  it('Should not include unexisting results', () => {
+  it('Should not parse unexisting results', () => {
     assert.deepEqual(
       parseResultText(
         '|MTB @label_result_detected||Rif Resistance UNEXISTING RESULT '
       ),
       {
         MTB: 'Detected',
+      }
+    )
+  })
+
+  it('Should parse detected HIV results', () => {
+    assert.deepEqual(
+      parseResultText(
+        'HIV-1 DETECTED < 40 copies/mL (log 1.60)'
+      ),
+      {
+        'HIV-1': 'LessThan40'
+      }
+    )
+  })
+
+  it('Should parse not detected HIV results', () => {
+    assert.deepEqual(
+      parseResultText(
+        'HIV-1 NOT DETECTED'
+      ),
+      {
+        'HIV-1': 'NotDetected'
+      }
+    )
+  })
+
+  it('Should include all the COVID results', () => {
+    assert.deepEqual(
+      parseResultText(
+        'SARS-CoV-2 POSITIVE'
+      ),
+      {
+        'SARS-COV-2': 'Positive'
       }
     )
   })

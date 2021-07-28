@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl'
+import resultCategoryMessages from '../../shared/messages/resultCategory'
 
 const messages = defineMessages({
   resultsTitle: {
@@ -36,6 +37,10 @@ const messages = defineMessages({
   resultText: {
     id: 'pages.ResultList.resultText',
     defaultMessage: 'Result Text',
+  },
+  collectionOfResults: {
+    id: 'pages.ResultList.collectionOfResults',
+    defaultMessage: 'Collection of Results',
   },
   resultWorkflowStatus: {
     id: 'pages.ResultList.resultWorkflowStatus',
@@ -232,6 +237,7 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayTbLamp',
     defaultMessage: 'TB LAMP',
   },
+  ...resultCategoryMessages,
 })
 
 export default messages

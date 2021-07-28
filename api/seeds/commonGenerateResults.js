@@ -889,21 +889,21 @@ async function addTBResults(
   // TB results:
   const gxMtbRifPossibleResults = [
     {
-      resultText: 'MTB Detected, Rif Resistance Not Detected',
+      resultText: 'MTB Detected|Rif Resistance Not Detected',
       category1: resultCategories.resultCategoryDetectedId,
       category2: resultCategories.resultCategoryNotDetectedId,
       minLikelihood: 0,
       maxLikelihood: 20,
     },
     {
-      resultText: 'MTB Detected, Rif Resistance Detected',
+      resultText: 'MTB Detected|Rif Resistance Detected',
       category1: resultCategories.resultCategoryDetectedId,
       category2: resultCategories.resultCategoryDetectedId,
       minLikelihood: 21,
       maxLikelihood: 26,
     },
     {
-      resultText: 'MTB Detected, Rif Indeterminate',
+      resultText: 'MTB Detected|Rif Indeterminate',
       category1: resultCategories.resultCategoryDetectedId,
       category2: resultCategories.resultCategoryIndeterminateId,
       minLikelihood: 27,

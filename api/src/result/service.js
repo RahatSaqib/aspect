@@ -34,6 +34,9 @@ const {
   resultTypeToId,
   resultCategoryToId,
 } = require('../shared/dictionary')
+const {
+  parseResultText,
+} = require('../plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -49,6 +52,19 @@ const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
+
+function getCollectionOfResults(resultText, resultCategories) {
+  const collectionOfResults = parseResultText(resultText)
+  Object.keys(collectionOfResults).forEach(categoryType => {
+    const resultCategory = collectionOfResults[categoryType]
+    const resultCategoryI18nKey = resultCategories.find(rc => rc.externalId === resultCategory)?.i18nKey
+    collectionOfResults[categoryType] = {
+      externalId: collectionOfResults[categoryType],
+      i18nKey: resultCategoryI18nKey
+    }
+  })
+  return collectionOfResults
+}
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
@@ -123,17 +139,23 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  // if assay specified columns from the resultData field, parse them to valid JSON
-  if (assayColumns) {
-    _.each(data, d => {
+
+  
+  // Post processing results
+  const resultCategories = await knex('ResultCategory')
+  _.each(data, d => {
+    // if assay specified columns from the resultData field, parse them to valid JSON
+    if (assayColumns) {
       _.each(assayColumns, c => {
         if (c && c.db.indexOf('resultCategory') === -1) {
           const path = c.db.replace('.', '_')
           _.set(d, path, JSON.parse(d[path]))
         }
       })
-    })
-  }
+    }
+    // Set the result collection
+    d.collectionOfResults = getCollectionOfResults(d.resultText, resultCategories)
+  })
 
   const result = {
     ok: true,

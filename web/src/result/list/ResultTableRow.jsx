@@ -27,6 +27,19 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       default: identity,
     }
   )
+
+  const collectionOfResults = []
+  result
+    .get('collectionOfResults')
+    .entrySeq()
+    .forEach(rcItem => {
+      const categoryType = rcItem[0]
+      const categoryResultI18nKey = rcItem[1].get('i18nKey')
+      collectionOfResults.push(
+        `${categoryType}: ${formatMessage(messages[categoryResultI18nKey])}`
+      )
+    })
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
@@ -42,6 +55,16 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         )}
       </TableCell>
       <TableCell>{result.get('resultText')}</TableCell>
+      <TableCell>
+        {collectionOfResults.length > 0
+          ? collectionOfResults.map(rcItem => (
+              <div>
+                {rcItem}
+                <br />
+              </div>
+            ))
+          : 'N/A'}
+      </TableCell>
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
         {formatMessage(

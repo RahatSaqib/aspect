@@ -192,6 +192,12 @@ const getBaseColumns = intl => {
       sortable: true,
     },
     {
+      key: 'collectionOfResults',
+      label: intl.formatMessage(messages.collectionOfResults),
+      sortable: true,
+      style: { width: '15%' },
+    },
+    {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
       sortable: true,
