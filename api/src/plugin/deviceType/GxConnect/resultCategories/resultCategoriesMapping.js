@@ -1,4 +1,22 @@
-const { sanitizeResultTextValue } = require('./utils')
+const { sanitizeResultTextValue, splitResultTextValues } = require('./utils')
+
+const categoryTypes = [
+  'MTB',
+  'Ebola GP',
+  'HIV-1',
+  'SARS-COV-2',
+  'RIF RESISTANCE',
+  'INH RESISTANCE',
+  'FLQ RESISTANCE',
+  'AMK RESISTANCE',
+  'KAN RESISTANCE',
+  'CAP RESISTANCE',
+  'ETH RESISTANCE',
+  'EBOLA NP',
+]
+
+const sanitizeCategoryType = categoryType =>
+  categoryType.toLowerCase().replace('resistance', '').trim().toUpperCase()
 
 const result1CategoryMapping = {
   'not detected': 'NotDetected',
@@ -264,8 +282,28 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
   return null
 }
 
+const parseResultText = resultText => {
+  const results = {}
+  const resultTextValues = splitResultTextValues(resultText)
+  resultTextValues.forEach(val => {
+    const rawCategoryType = categoryTypes.find(ct =>
+      val.toLowerCase().includes(ct.toLowerCase())
+    )
+    const resultValue =
+      result1CategoryMapping[sanitizeResultTextValue(val)] ||
+      result2CategoryMapping[sanitizeResultTextValue(val)]
+
+    if (rawCategoryType && resultValue) {
+      const resultType = sanitizeCategoryType(rawCategoryType)
+      results[resultType] = resultValue
+    }
+  })
+  return results
+}
+
 module.exports = {
   result1CategoryMapping,
   result2CategoryMapping,
   mapResultCategory2,
+  parseResultText,
 }

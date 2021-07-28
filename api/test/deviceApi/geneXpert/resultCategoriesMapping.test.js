@@ -1,6 +1,7 @@
 const { assert } = require('chai')
 const {
   mapResultCategory2,
+  parseResultText,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
@@ -293,5 +294,89 @@ describe('Result Category Mapping', () => {
         )
       })
     })
+  })
+})
+
+describe('Result Text Parsing', () => {
+  it('Should include all the MTB Rif/Ultra category types', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected||Rif Resistance @label_result_not_detected'
+      ),
+      {
+        MTB: 'Detected',
+        RIF: 'NotDetected',
+      }
+    )
+  })
+
+  it('Should include all the Ebola category types', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|EBOLA GP @label_result_not_detected|||EBOLA NP @label_result_not_detected||'
+      ),
+      {
+        'EBOLA GP': 'NotDetected',
+        'EBOLA NP': 'NotDetected',
+      }
+    )
+  })
+
+  it('Should include all the XDR category types', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      ),
+      {
+        MTB: 'Detected',
+        INH: 'Detected',
+        FLQ: 'NotDetected',
+        AMK: 'Error',
+        KAN: 'NotDetected',
+        CAP: 'NotDetected',
+        ETH: 'NotDetected',
+      }
+    )
+  })
+
+  it('Should include mtb result and resistance when their category types and results are valid', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected||Rif Resistance @label_result_detected'
+      ),
+      {
+        MTB: 'Detected',
+        RIF: 'Detected',
+      }
+    )
+  })
+
+  it('Should not include category types without values', () => {
+    assert.deepEqual(
+      parseResultText('|MTB @label_result_detected||Rif Resistance '),
+      {
+        MTB: 'Detected',
+      }
+    )
+  })
+
+  it('Should not include unexisting category types', () => {
+    assert.deepEqual(
+      parseResultText('|MTB @label_result_detected||ANY RESISTANCE '),
+      {
+        MTB: 'Detected',
+      }
+    )
+  })
+
+  it('Should not include unexisting results', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected||Rif Resistance UNEXISTING RESULT '
+      ),
+      {
+        MTB: 'Detected',
+      }
+    )
   })
 })
