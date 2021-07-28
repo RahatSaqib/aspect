@@ -354,4 +354,25 @@ describe('Maintenance Reports', () => {
       })
     })
   })
+
+  describe('Daily Status graph', () => {
+    it('should have more than 1 day with same maintenance status', async () => {
+      await Promise.each(range(1, 2), async month =>
+        insertMaintenanceStatusLogs(subMonths(monthAgo, month))
+      )
+      const minDate = subMonths(new Date(), 2)
+      const maxDate = new Date()
+      const maintenanceStatusOverTime =
+        await getMaintenanceStatusOverTimeResponse('Z', minDate, maxDate)
+
+      const data = maintenanceStatusOverTime.body.data
+        .find(device => device.id === deviceId)
+        .maintenanceStatusHistory.filter(
+          x => !!x.maintenanceStatusExternalId && x.daysInSameStatus > 1
+        )
+
+      // more than 1 day is expected
+      expect(data).to.have.lengthOf.above(1)
+    })
+  })
 })
