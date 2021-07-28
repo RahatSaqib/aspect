@@ -1,8 +1,6 @@
 const { expect } = require('chai')
 
-const {
-  okResponseSuccessRegex,
-} = require('../../seeds/philippines/fixtures/webhookTemplate')
+const okResponseSuccessRegex = '(Add|Update)\\sTB\\sExam\\ssuccessfully'
 
 describe('Webhook Template', () => {
   describe('okResponseSuccessRegex', () => {
