@@ -55,18 +55,22 @@ const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
 function getCollectionOfResults(resultText, resultCategories) {
-  const collectionOfResults = parseResultText(resultText)
-  Object.keys(collectionOfResults).forEach(categoryType => {
-    const resultCategory = collectionOfResults[categoryType]
-    const resultCategoryI18nKey = resultCategories.find(
-      rc => rc.externalId === resultCategory
-    )?.i18nKey
-    collectionOfResults[categoryType] = {
-      resultCategoryExternalId: collectionOfResults[categoryType],
-      resultCategoryI18nKey,
-      categoryTypeI18nKey: categoryTypesI18nKeys[categoryType] || null,
-    }
-  })
+  let collectionOfResults = {}
+  if (resultText && resultCategories) {
+    collectionOfResults = parseResultText(resultText)
+    Object.keys(collectionOfResults).forEach(categoryType => {
+      const resultCategory = collectionOfResults[categoryType]
+      const resultCategoryI18nKey = resultCategories.find(
+        rc => rc.externalId === resultCategory
+      )?.i18nKey
+      collectionOfResults[categoryType] = {
+        resultCategoryExternalId: collectionOfResults[categoryType],
+        resultCategoryI18nKey,
+        categoryTypeI18nKey: categoryTypesI18nKeys[categoryType] || null,
+      }
+    })
+  }
+
   return collectionOfResults
 }
 
