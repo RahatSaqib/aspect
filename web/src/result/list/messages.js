@@ -1,5 +1,6 @@
 import { defineMessages } from 'react-intl'
 import resultCategoryMessages from '../../shared/messages/resultCategory'
+import resultCategoryTypeMessages from '../../shared/messages/resultCategoryType'
 
 const messages = defineMessages({
   resultsTitle: {
@@ -238,6 +239,7 @@ const messages = defineMessages({
     defaultMessage: 'TB LAMP',
   },
   ...resultCategoryMessages,
+  ...resultCategoryTypeMessages,
 })
 
 export default messages

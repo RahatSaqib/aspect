@@ -80,6 +80,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.resultText',
     defaultMessage: 'Result Text',
   },
+  collectionOfResults: {
+    id: 'pages.DeviceDetailProfile.collectionOfResults',
+    defaultMessage: 'Collection of Results',
+  },
   resultWorkflowStatus: {
     id: 'pages.DeviceDetailProfile.resultWorkflowStatus',
     defaultMessage: 'Result Workflow Status',

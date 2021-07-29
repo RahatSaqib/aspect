@@ -2,7 +2,7 @@ const { sanitizeResultTextValue, splitResultTextValues } = require('./utils')
 
 const categoryTypes = [
   'MTB',
-  'Ebola GP',
+  'EBOLA GP',
   'HIV-1',
   'SARS-COV-2',
   'RIF RESISTANCE',
@@ -15,8 +15,15 @@ const categoryTypes = [
   'EBOLA NP',
 ]
 
-const sanitizeCategoryType = categoryType =>
-  categoryType.toLowerCase().replace('resistance', '').trim().toUpperCase()
+const categoryTypesI18nKeys = {
+  'RIF RESISTANCE': 'categoryTypeRIFResistanceI18nKey',
+  'INH RESISTANCE': 'categoryTypeINHResistanceI18nKey',
+  'FLQ RESISTANCE': 'categoryTypeFLQResistanceI18nKey',
+  'AMK RESISTANCE': 'categoryTypeAMKResistanceI18nKey',
+  'KAN RESISTANCE': 'categoryTypeKANResistanceI18nKey',
+  'CAP RESISTANCE': 'categoryTypeCAPResistanceI18nKey',
+  'ETH RESISTANCE': 'categoryTypeETHResistanceI18nKey',
+}
 
 const result1CategoryMapping = {
   'not detected': 'NotDetected',
@@ -309,11 +316,11 @@ const parseResultText = resultText => {
 
   const resultTextValues = splitResultTextValues(resultText)
   resultTextValues.forEach(val => {
-    const rawCategoryType = categoryTypes.find(ct =>
+    const categoryType = categoryTypes.find(ct =>
       val.toLowerCase().includes(ct.toLowerCase())
     )
 
-    if (rawCategoryType === 'HIV-1') {
+    if (categoryType === 'HIV-1') {
       results['HIV-1'] =
         result1CategoryMapping[sanitizeResultTextValue(val)] ||
         getResultCategoriesHivVL(val)
@@ -322,8 +329,8 @@ const parseResultText = resultText => {
         result1CategoryMapping[sanitizeResultTextValue(val)] ||
         result2CategoryMapping[sanitizeResultTextValue(val)]
 
-      if (rawCategoryType && resultValue) {
-        const resultType = sanitizeCategoryType(rawCategoryType)
+      if (categoryType && resultValue) {
+        const resultType = categoryType
         results[resultType] = resultValue
       }
     }
@@ -338,4 +345,5 @@ module.exports = {
   parseResultText,
   getResultCategoriesHivVL,
   getVLCopies,
+  categoryTypesI18nKeys,
 }

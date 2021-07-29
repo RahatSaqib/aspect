@@ -36,6 +36,7 @@ const {
 } = require('../shared/dictionary')
 const {
   parseResultText,
+  categoryTypesI18nKeys,
 } = require('../plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
@@ -61,8 +62,9 @@ function getCollectionOfResults(resultText, resultCategories) {
       rc => rc.externalId === resultCategory
     )?.i18nKey
     collectionOfResults[categoryType] = {
-      externalId: collectionOfResults[categoryType],
-      i18nKey: resultCategoryI18nKey,
+      resultCategoryExternalId: collectionOfResults[categoryType],
+      resultCategoryI18nKey,
+      categoryTypeI18nKey: categoryTypesI18nKeys[categoryType] || null,
     }
   })
   return collectionOfResults
@@ -808,6 +810,11 @@ async function getResultByResultId(
     getResultTreatmentStatus(data)
     data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
+    const resultCategories = await knex('ResultCategory')
+    data.collectionOfResults = getCollectionOfResults(
+      data.resultText,
+      resultCategories
+    )
   }
 
   return { ok: results.length === 1, data }

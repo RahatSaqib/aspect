@@ -1,6 +1,8 @@
 import partial from 'lodash/partial'
 import isNumber from 'lodash/isNumber'
 import identity from 'lodash/identity'
+import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
@@ -12,6 +14,7 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
+import collectionOfResultsToString from '../formatters'
 
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -28,17 +31,10 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
     }
   )
 
-  const collectionOfResults = []
-  result
-    .get('collectionOfResults')
-    .entrySeq()
-    .forEach(rcItem => {
-      const categoryType = rcItem[0]
-      const categoryResultI18nKey = rcItem[1].get('i18nKey')
-      collectionOfResults.push(
-        `${categoryType}: ${formatMessage(messages[categoryResultI18nKey])}`
-      )
-    })
+  const collectionOfResults = collectionOfResultsToString(
+    result.toJS(),
+    formatMessage
+  )
 
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -56,13 +52,8 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       </TableCell>
       <TableCell>{result.get('resultText')}</TableCell>
       <TableCell>
-        {collectionOfResults.length > 0
-          ? collectionOfResults.map(rcItem => (
-              <div>
-                {rcItem}
-                <br />
-              </div>
-            ))
+        {!isNil(collectionOfResults) && !isEmpty(collectionOfResults)
+          ? collectionOfResults.split('\n').map(r => <p>{r}</p>)
           : 'N/A'}
       </TableCell>
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>

@@ -305,7 +305,7 @@ describe('Result Text Parsing', () => {
       ),
       {
         MTB: 'Detected',
-        RIF: 'NotDetected',
+        'RIF RESISTANCE': 'NotDetected',
       }
     )
   })
@@ -329,12 +329,12 @@ describe('Result Text Parsing', () => {
       ),
       {
         MTB: 'Detected',
-        INH: 'Detected',
-        FLQ: 'NotDetected',
-        AMK: 'Error',
-        KAN: 'NotDetected',
-        CAP: 'NotDetected',
-        ETH: 'NotDetected',
+        'INH RESISTANCE': 'Detected',
+        'FLQ RESISTANCE': 'NotDetected',
+        'AMK RESISTANCE': 'Error',
+        'KAN RESISTANCE': 'NotDetected',
+        'CAP RESISTANCE': 'NotDetected',
+        'ETH RESISTANCE': 'NotDetected',
       }
     )
   })

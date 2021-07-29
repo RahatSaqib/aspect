@@ -559,6 +559,11 @@ const DeviceDetailProfile = ({
       sortable: true,
     },
     {
+      key: 'collectionOfResults',
+      label: formatMessage(messages.collectionOfResults),
+      sortable: true,
+    },
+    {
       key: 'errorCode',
       label: formatMessage(messages.errorCode),
       sortable: true,

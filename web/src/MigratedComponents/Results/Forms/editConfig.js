@@ -157,6 +157,15 @@ const getConfig = formatMessage => {
                 labelI18nKey: 'resultText',
                 type: 'readOnly',
               },
+              {
+                id: 'collectionOfResults',
+                controlType: {
+                  component: 'textArea',
+                },
+                label: 'Collection of Results',
+                labelI18nKey: 'collectionOfResults',
+                type: 'readOnly',
+              },
             ],
           },
           {

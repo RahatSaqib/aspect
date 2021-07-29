@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'forms.formItem.resultText',
     defaultMessage: 'Result Text',
   },
+  collectionOfResults: {
+    id: 'forms.formItem.collectionOfResults',
+    defaultMessage: 'Collection of Results',
+  },
   reason: {
     id: 'forms.formItem.reason',
     defaultMessage: 'Reason',
