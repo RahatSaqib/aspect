@@ -399,7 +399,12 @@ const getConfig = formatMessage => {
             id: 2,
             items: [
               {
-                id: 'senderOperator',
+                /**
+                 * TODO: replace `senderOperator2` to another value of formik
+                 * field name to save change - see API endpoint for POST/PUT
+                 * of result form
+                 */
+                id: 'senderOperator2',
                 controlType: {
                   component: 'textField',
                 },

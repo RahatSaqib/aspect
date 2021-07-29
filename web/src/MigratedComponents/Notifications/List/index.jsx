@@ -74,7 +74,7 @@ const NotificationList = () => {
          * TODO:temp fix before all tables are placed with
          * the <Shell component />
          */
-        style={{ marginTop: '-22px' }}
+        style={{ marginTop: '-10px' }}
       >
         <Shell>
           <ShellContent>
