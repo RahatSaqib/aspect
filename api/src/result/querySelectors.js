@@ -27,7 +27,6 @@ const LIST_FIELDS = [
   'st.name as stateName',
   'si.name as siteName',
   'a.name as assayName',
-  'a.externalId as assayExternalId',
   'a.i18nkey as assayI18nKey',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
