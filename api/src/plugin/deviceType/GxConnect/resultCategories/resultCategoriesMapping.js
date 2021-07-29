@@ -1,5 +1,6 @@
 const { sanitizeResultTextValue, splitResultTextValues } = require('./utils')
 
+// The category types included in a result text
 const categoryTypes = [
   'MTB',
   'EBOLA GP',
@@ -311,6 +312,11 @@ function getResultCategoriesHivVL(result1Text) {
     return 'NoResult'
 }
 
+/**
+ * Parses a GeneXpert result text and returns an object containing the key value pairs.
+ * @param {string} resultText The result text of a GeneXpert result 
+ * @returns An object including all the parsed category types and their values. Ex.: { MTB: 'Detected', 'RIF RESISTANCE': 'NotDetected'  }
+ */
 const parseResultText = resultText => {
   const results = {}
 
