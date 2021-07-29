@@ -1,6 +1,7 @@
 .card__container {
   position: relative;
   padding: 20px 20px 45px;
+  margin-top: 10px;
 }
 
 .card_grid {

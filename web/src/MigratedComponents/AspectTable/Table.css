@@ -79,18 +79,18 @@
 }
 
 .pagesize__button {
-  margin: 0 10px;
-  padding: 0;
-  min-width: 40px;
-  min-height: 40px;
-  font-weight: var(--lato-font-weight-bold, 700);
-  text-align: center;
-  text-transform: capitalize;
+  margin: 0 10px !important;
+  padding: 0 !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  font-weight: var(--lato-font-weight-bold, 700) !important;
+  text-align: center !important;
+  text-transform: capitalize !important;
 }
 
 .pagesize__button:not(.selected) {
-  color: var(--aspect-color-chill-blue-1);
-  background-color: var(--aspect-color-grey-7);
+  color: var(--aspect-color-chill-blue-1) !important;
+  background-color: var(--aspect-color-grey-7) !important;
 }
 
 .nowShowing__container {
