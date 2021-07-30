@@ -53,6 +53,28 @@ const diseaseIdFromKey = async ({ data }, id) => {
   return filter(data, { externalId: id })[0] || false
 }
 
+// ------------------------------------
+const paramsForResultCategory2 = async (
+  params,
+  { baseAssay, id, linkData }
+) => {
+  // current assay id and it's categories and category groups
+  const { id: assayId } = await assayIdFromKey(linkData, baseAssay)
+  const { resultCategories, resultCategoryGroups } = linkData.data.find(
+    ({ id }) => +id === +assayId
+  )
+  // `id` contains value of clicked bar - get it's resultCategoryId
+  const { id: resultCategoryId } = await assayResultCategoryIdFromKey(
+    resultCategories,
+    id
+  )
+  const resultCategoryGroup = resultCategoryGroups.find(
+    x => +x.resultCategory2Id === +resultCategoryId
+  )
+  params.assayId = assayId
+  params.resultCategoryGroupId = resultCategoryGroup.externalId
+}
+
 const useGraphClickThrough = () => {
   const navigate = useNavigate()
   const [link, setLink] = useState(false)
@@ -97,6 +119,10 @@ const useGraphClickThrough = () => {
           )
           params.resultCategoryId = resultCategoryId
           params.assayOverride = id
+        }
+
+        if (key === 'resultCategory2') {
+          await paramsForResultCategory2(params, { baseAssay, id, linkData })
         }
 
         if (key === 'assay') {

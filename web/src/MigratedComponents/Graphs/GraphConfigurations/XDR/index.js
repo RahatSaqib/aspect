@@ -1,0 +1,85 @@
+import BarGraph from '../../BarGraph'
+import PieGraph from '../../PieGraph'
+import { getTimePeriod } from '../../Helpers/Formatters'
+
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
+const assays = ['GxMtbXdr']
+
+const xdrGraphs = {
+  xdrResults: {
+    id: 'xdrResults',
+    title: 'clinicalIndicatorsXdrTitle',
+    assays,
+    componentSize: 'full',
+    group: 'xdr',
+    graphRenderPermissions: ['dashboard'],
+    graphType: [
+      {
+        id: 'xdrByCategory1Monthly',
+        component: BarGraph,
+        type: 'bar',
+        size: 8,
+        componentClasses: ['BARCLASS'],
+        api: {
+          endpoint: '/result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['month', 'resultCategory2', 'resultCategory1'],
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+          },
+        },
+        i18nKey: 'resultCategory2I18nKey',
+        indexBy: 'month',
+        keyToConsume: 'resultCategory2',
+        filterBy: {
+          resultCategory1: { values: ['Detected'] },
+        },
+        tickValuesYShape: 'none',
+        tickValuesXShape: 'all',
+        displayMethod: 'percentage',
+        displayLegend: true,
+        formatDate: 'MMM',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/result?filters=',
+          baseAssay: assays[0],
+          keys: ['resultCategory2', 'indexBy'],
+        },
+      },
+      {
+        id: 'xdrByCategory1Aggregate',
+        component: PieGraph,
+        type: 'pie',
+        size: 4,
+        componentClasses: ['piegraph__container'],
+        api: {
+          endpoint: '/result/clinical-indicator-aggregations',
+          params: {
+            groupBy: ['resultCategory2', 'resultCategory1'],
+            [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+            [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+          },
+        },
+        indexBy: 'cnt',
+        i18nKey: 'resultCategory2I18nKey',
+        keyToConsume: 'resultCategory2',
+        displayMethod: 'percentage',
+        formatDate: 'MMM yy',
+        filterBy: {
+          resultCategory1: { values: ['Detected'] },
+        },
+        averages: {
+          showTotal: false,
+          title: 'clinicalIndicatorsXdrPieLegend',
+          key: ['Detected'],
+        },
+      },
+    ],
+  },
+}
+
+export default xdrGraphs

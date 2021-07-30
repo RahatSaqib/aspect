@@ -87,6 +87,11 @@ const routes = [
                 resultCategories: Joi.array()
                   .allow(null)
                   .description('The json for result Categories'),
+                resultCategoryGroups: Joi.array()
+                  .allow(null)
+                  .description(
+                    `The json for ResultCategoryGroup items of current assay`
+                  ),
                 hasResults: Joi.bool()
                   .allow(null)
                   .description('If assay is used by any result'),
