@@ -1320,6 +1320,26 @@
     ]
   },
   {
+    "externalId": "K-MDN-VAN-Mardan-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Mardan",
+    "name": "K-MDN-VAN-Mardan-(MC)",
+    "shortname": "K-MDN-VAN-MOBILE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "K-MDN-VAN-Mardan-(MC)",
+        "shortName": "K-MDN-VAN-MOBILE",
+        "macAddress": "MAC48BA4E8AC54E",
+        "hostId": "MOBILE-VAN-MARDAN-BASED",
+        "serial": "Cepheid-735380D",
+        "gxAlertDeviceId": 1565
+      }
+    ]
+  },
+  {
     "externalId": "K-MLK-DHQ-Batkhela",
     "latitude": 72.083000,
     "longitude": 34.472000,
@@ -2034,6 +2054,26 @@
     ]
   },
   {
+    "externalId": "P-GJN-PVT-Al-Ansaar-Hospital-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Gujranwala",
+    "name": "P-GJN-PVT-Al-Ansaar-Hospital-(MC)",
+    "shortname": "P-GJN-PVT-ANS-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-GJN-PVT-Al-Ansaar-Hospital-(MC)",
+        "shortName": "P-GJN-PVT-ANS-MC",
+        "macAddress": "MAC1C4D7066BE12",
+        "hostId": "AL-ANSAAR-HOSPITAL-GUJRANWALA",
+        "serial": "Cepheid-7352VWV",
+        "gxAlertDeviceId": 1593
+      }
+    ]
+  },
+  {
     "externalId": "P-GJN-PVT-PATA-Gujranwala",
     "latitude": 74.175003,
     "longitude": 32.155998,
@@ -2174,6 +2214,24 @@
     ]
   },
   {
+    "externalId": "P-HFZ-PVT-Yasin-Clinic-(MC)",
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Hafizabad",
+    "name": "P-HFZ-PVT-Yasin-Clinic-(MC)",
+    "shortname": "P-HFZ-PVT-CLY-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-HFZ-PVT-Yasin-Clinic-(MC)",
+        "shortName": "P-HFZ-PVT-CLY-MC",
+        "macAddress": "MAC",
+        "hostId": "DHQ - Hafizabad",
+        "serial": "Cepheid-6426283",
+        "gxAlertDeviceId": 1377
+      }
+    ]
+  },
+  {
     "externalId": "P-HFZ-THQ-Pindi-Bhattian",
     "latitude": 31.896721,
     "longitude": 73.270752,
@@ -2310,6 +2368,24 @@
         "hostId": "THQ Shorkot",
         "serial": "Cepheid-6360NY8",
         "gxAlertDeviceId": 1520
+      }
+    ]
+  },
+  {
+    "externalId": "P-KHN-DHQ-Khanewal (MC)",
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Khanewal",
+    "name": "P-KHN-DHQ-Khanewal (MC)",
+    "shortname": "P-KHN-DHQ-KHNWAL",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-KHN-DHQ-Khanewal (MC)",
+        "shortName": "P-KHN-DHQ-KHNWAL",
+        "macAddress": "MACF0D5BF158F6F",
+        "hostId": "DHQ-Khanewal",
+        "serial": "Cepheid-6426255",
+        "gxAlertDeviceId": 1380
       }
     ]
   },
@@ -2710,6 +2786,26 @@
     ]
   },
   {
+    "externalId": "P-MBD-PVT-Suleman-Chest-Care-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Mandi Bahauddin",
+    "name": "P-MBD-PVT-Suleman-Chest-Care-(MC)",
+    "shortname": "P-MBD-PVT-SMN-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MBD-PVT-Suleman-Chest-Care-(MC)",
+        "shortName": "P-MBD-PVT-SMN-MC",
+        "macAddress": "MAC34F64BC6AA2F",
+        "hostId": "SULEMAN-CHEST-CARE-HOSPITAL-MBDIN",
+        "serial": "Cepheid-72960F8",
+        "gxAlertDeviceId": 1583
+      }
+    ]
+  },
+  {
     "externalId": "P-MNW-DHQ-Mianwali",
     "latitude": 75.418999,
     "longitude": 30.837000,
@@ -2766,6 +2862,24 @@
         "hostId": "PRL-Multan 2",
         "serial": "CepheidJRHRGQ1",
         "gxAlertDeviceId": 1344
+      }
+    ]
+  },
+  {
+    "externalId": "P-MTN-PVT-Multan-South-Punjab-Hospital-(MC)",
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Multan",
+    "name": "P-MTN-PVT-Multan-South-Punjab-Hospital-(MC)",
+    "shortname": "P-MTN-PVT-SPH-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-MTN-PVT-Multan-South-Punjab-Hospital-(MC)",
+        "shortName": "P-MTN-PVT-SPH-MC",
+        "macAddress": "MAC98E7F452FCA6",
+        "hostId": "South Punjab Hospita",
+        "serial": "Cepheid-6426244",
+        "gxAlertDeviceId": 1381
       }
     ]
   },
@@ -2926,6 +3040,26 @@
         "hostId": "THQ HOSPITAL HAVELI LAKHA",
         "serial": "Cepheid-6426KQ3",
         "gxAlertDeviceId": 1445
+      }
+    ]
+  },
+  {
+    "externalId": "P-OKR-VAN-Okara-(MC)",
+    "latitude": 30.799669,
+    "longitude": 73.445084,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Okara",
+    "name": "P-OKR-VAN-Okara-(MC)",
+    "shortname": "MOBILE-VAN-OKARA",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-OKR-VAN-Okara-(MC)",
+        "shortName": "MOBILE-VAN-OKARA",
+        "macAddress": "MAC48BA4E8AA538",
+        "hostId": "MOBILE-VAN-OKARA-BASED",
+        "serial": "Cepheid-7352VVJ",
+        "gxAlertDeviceId": 1564
       }
     ]
   },
@@ -3602,6 +3736,26 @@
         "hostId": "P-VHR-DHQ-Vehari",
         "serial": "Cepheid-6290QT2",
         "gxAlertDeviceId": 1585
+      }
+    ]
+  },
+  {
+    "externalId": "P-VHR-PVT-Sughra-Memorial-Hospital-(MC)",
+    "latitude": 29.354200,
+    "longitude": 68.801826,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Vehari",
+    "name": "P-VHR-PVT-Sughra-Memorial-Hospital-(MC)",
+    "shortname": "P-VHR-PVT-SMH-MC",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "P-VHR-PVT-Sughra-Memorial-Hospital-(MC)",
+        "shortName": "P-VHR-PVT-SMH-MC",
+        "macAddress": "MAC",
+        "hostId": "DMC-Burewala",
+        "serial": "Cepheid-6426256",
+        "gxAlertDeviceId": 1379
       }
     ]
   },
@@ -4454,6 +4608,26 @@
     ]
   },
   {
+    "externalId": "S-KHR-VAN-KHAIRPUR-(MC)",
+    "latitude": 27.520590,
+    "longitude": 68.746529,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Khairpur",
+    "name": "S-KHR-VAN-KHAIRPUR-(MC)",
+    "shortname": "S-KHR-VAN-MOBILE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-KHR-VAN-KHAIRPUR-(MC)",
+        "shortName": "S-KHR-VAN-MOBILE",
+        "macAddress": "MACF430B9D26F38",
+        "hostId": "MOBILE-VAN-KHAIRPUR-BASED",
+        "serial": "Cepheid-7295ZSK",
+        "gxAlertDeviceId": 1570
+      }
+    ]
+  },
+  {
     "externalId": "S-KSM-RHC-Bakhshapur",
     "latitude": 26.034479,
     "longitude": 68.795662,
@@ -5100,6 +5274,26 @@
         "hostId": "THQ KHIPRO",
         "serial": "Cepheid-6360NZD",
         "gxAlertDeviceId": 1604
+      }
+    ]
+  },
+  {
+    "externalId": "S-SNG-VAN-SANGHAR-(MC)",
+    "latitude": 26.044180,
+    "longitude": 68.936897,
+    "stateName": "Mercy Corps Sites",
+    "lgaName": "Sanghar",
+    "name": "S-SNG-VAN-SANGHAR-(MC)",
+    "shortname": "S-SNG-VAN-MOBILE",
+    "timeZoneId": "Pakistan Standard Time",
+    "devices": [
+      {
+        "name": "S-SNG-VAN-SANGHAR-(MC)",
+        "shortName": "S-SNG-VAN-MOBILE",
+        "macAddress": "MAC48BA4E8CB294",
+        "hostId": "MOBILE-VAN-SANGHAR-BASED",
+        "serial": "Cepheid-7352VM9",
+        "gxAlertDeviceId": 1569
       }
     ]
   },
