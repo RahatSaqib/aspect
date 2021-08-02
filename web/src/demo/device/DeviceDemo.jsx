@@ -4,6 +4,7 @@ import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router-dom'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -20,12 +21,13 @@ import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './DeviceDemo.css'
 
 const enhance = compose(
-  setPropTypes({
-    match: PropTypes.object.isRequired,
-  }),
+  WrapperComponent => props => {
+    const { deviceId } = useParams()
+    return <WrapperComponent {...props} deviceId={deviceId} />
+  },
   connect(
     (state, props) => ({
-      device: state.demo.deviceItems.byId.get(props.match.params.deviceId),
+      device: state.demo.deviceItems.byId.get(props.deviceId),
     }),
     dispatch =>
       bindActionCreators(
@@ -55,7 +57,7 @@ export class DeviceDemo extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.match.params.deviceId !== prevProps.match.params.deviceId) {
+    if (this.props.deviceId !== prevProps.deviceId) {
       this.handleFetchDevice()
     }
   }
@@ -65,18 +67,20 @@ export class DeviceDemo extends PureComponent {
   }
 
   handleFetchDevice = () => {
-    this.props.fetchDemoDevice(this.props.match.params.deviceId)
+    this.props.fetchDemoDevice(this.props.deviceId)
   }
 
-  handleSelectFieldChange = field => ({ target: { value } }) => {
-    this.setState({ [field]: value })
-  }
+  handleSelectFieldChange =
+    field =>
+    ({ target: { value } }) => {
+      this.setState({ [field]: value })
+    }
 
   handlePostResult = () => {
     this.setPosting(true)
     const { resultId } = this.state
     this.props
-      .postDemoDeviceResult(this.props.match.params.deviceId, { resultId })
+      .postDemoDeviceResult(this.props.deviceId, { resultId })
       .then(() => this.setPosting(false))
       .catch(() => this.setPosting(false))
   }

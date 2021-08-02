@@ -33,10 +33,7 @@ describe('ResetPasswordEnterEmail module', () => {
         />
       )
       expect(
-        wrapper
-          .find(Button)
-          .filter({ type: 'submit' })
-          .prop('disabled')
+        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
       ).toBeTruthy()
 
       wrapper = shallow(
@@ -46,10 +43,7 @@ describe('ResetPasswordEnterEmail module', () => {
         />
       )
       expect(
-        wrapper
-          .find(Button)
-          .filter({ type: 'submit' })
-          .prop('disabled')
+        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
       ).toBeTruthy()
 
       wrapper = shallow(
@@ -59,10 +53,7 @@ describe('ResetPasswordEnterEmail module', () => {
         />
       )
       expect(
-        wrapper
-          .find(Button)
-          .filter({ type: 'submit' })
-          .prop('disabled')
+        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
       ).toBeTruthy()
     })
 
@@ -75,10 +66,7 @@ describe('ResetPasswordEnterEmail module', () => {
       )
 
       expect(
-        wrapper
-          .find(Button)
-          .filter({ type: 'submit' })
-          .prop('disabled')
+        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
       ).toBeFalsy()
     })
 

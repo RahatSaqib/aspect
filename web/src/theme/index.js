@@ -12,5 +12,8 @@ req.keys().forEach(filename => {
 
 export default {
   ...variables.theme,
-  overrides,
+  components: {
+    ...variables.theme.components,
+    ...overrides,
+  },
 }

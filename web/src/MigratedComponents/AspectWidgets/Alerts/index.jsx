@@ -7,7 +7,9 @@ import AspectTooltip from '../../../components/shared/AspectTooltip'
 import IconProvider from '../../IconProvider'
 import format from './messages'
 
-const cssClasses = classnames.bind(require('./alerts.css'))
+import styles from './alerts.css'
+
+const cssClasses = classnames.bind(styles)
 
 const WidgetAlert = ({ alert }) => {
   const { formatMessage } = useIntl()

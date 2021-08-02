@@ -23,7 +23,7 @@ describe('DelayShowingProgressBar module', () => {
         )
         expect(component).toMatchSnapshot()
 
-        jest.runTimersToTime(1000)
+        jest.advanceTimersByTime(1000)
         expect(component).toMatchSnapshot()
       })
 
@@ -33,7 +33,7 @@ describe('DelayShowingProgressBar module', () => {
         )
         expect(component).toMatchSnapshot()
 
-        jest.runTimersToTime(1000)
+        jest.advanceTimersByTime(1000)
         expect(component).toMatchSnapshot()
       })
     })
@@ -48,11 +48,11 @@ describe('DelayShowingProgressBar module', () => {
         component.update(<DelayShowingProgressBar disabled={false} />)
         expect(component).toMatchSnapshot()
 
-        jest.runTimersToTime(300)
+        jest.advanceTimersByTime(300)
         const json = component.toJSON()
         expect(json).toMatchSnapshot()
 
-        jest.runTimersToTime(1000)
+        jest.advanceTimersByTime(1000)
         expect(component).toMatchSnapshot()
         expect(component.toJSON()).not.toEqual(json)
       })
@@ -69,7 +69,7 @@ describe('DelayShowingProgressBar module', () => {
         const json = component.toJSON()
         expect(json).toMatchSnapshot()
 
-        jest.runTimersToTime(1000)
+        jest.advanceTimersByTime(1000)
         expect(component).toMatchSnapshot()
         expect(component.toJSON()).toEqual(json)
       })

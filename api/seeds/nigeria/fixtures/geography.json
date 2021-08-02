@@ -1096,6 +1096,9 @@
           "name": "Kaduna",
           "lgas": [
             {
+              "name": "Birnin Gwari"
+            },
+            {
               "name": "Chikun"
             },
             {
@@ -1166,6 +1169,9 @@
         {
           "name": "Kano",
           "lgas": [
+            {
+              "name": "Ajingi"
+            },
             {
               "name": "Albasu"
             },
@@ -2147,6 +2153,9 @@
           "name": "Rivers",
           "lgas": [
             {
+              "name": "Abua/Odual"
+            },
+            {
               "name": "Ahoada East"
             },
             {
@@ -2217,6 +2226,9 @@
         {
           "name": "Sokoto",
           "lgas": [
+            {
+              "name": "Binji"
+            },
             {
               "name": "Bodinga"
             },

@@ -37,13 +37,8 @@ const AspectTableCore = ({
   manualPagination = true,
   pageCount: controlledPageCount,
 }) => {
-  const {
-    handleClearParams,
-    setSize,
-    setSortCol,
-    setSortDir,
-    setPage,
-  } = setters
+  const { handleClearParams, setSize, setSortCol, setSortDir, setPage } =
+    setters
   const { total = 0, data = [] } = tableData || {}
   const { name } = config
   const {

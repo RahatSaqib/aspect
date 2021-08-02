@@ -57,9 +57,11 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: props => ({ target: { value } }) => {
-      props.onDeviceChange(value)
-    },
+    onChange:
+      props =>
+      ({ target: { value } }) => {
+        props.onDeviceChange(value)
+      },
   }),
   mapProps(props => ({
     ..._fp.omit(

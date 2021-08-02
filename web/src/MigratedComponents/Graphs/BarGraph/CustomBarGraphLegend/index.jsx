@@ -7,7 +7,9 @@ import find from 'lodash/find'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import messages from '../../intlMessages'
 
-const cssClasses = classnames.bind(require('./CustomLegend.css'))
+import styles from './CustomLegend.css'
+
+const cssClasses = classnames.bind(styles)
 
 const LegendKey = ({
   symbolShape,
@@ -58,7 +60,11 @@ const LegendKey = ({
 }
 
 LegendKey.defaultProps = {
-  tooltip: false,
+  tooltip: {
+    show: false,
+    placement: '',
+    message: '',
+  },
 }
 
 LegendKey.propTypes = {
@@ -94,7 +100,7 @@ const CustomBarGraphLegend = ({
         const { tooltip } =
           find(legendsToPopover, { externalId: k, tooltip: { show: true } }) ||
           false
-        const { label, color } = generateLegendIntl(
+        const { label = '?', color = '#999999' } = generateLegendIntl(
           formatMessage,
           messages,
           i18nKeys,
@@ -110,6 +116,7 @@ const CustomBarGraphLegend = ({
             color={color}
             label={label}
             tooltip={tooltip}
+            key={k}
           />
         )
       })}
@@ -118,19 +125,23 @@ const CustomBarGraphLegend = ({
 }
 
 CustomBarGraphLegend.defaultProps = {
-  assaysFromState: {},
+  assaysFromState: [],
   symbolShape: 'circle',
 }
 
 CustomBarGraphLegend.propTypes = {
-  keys: PropTypes.oneOf([PropTypes.object]).isRequired,
+  keys: PropTypes.arrayOf(PropTypes.string).isRequired,
   generateLegendIntl: PropTypes.func.isRequired,
-  assaysFromState: PropTypes.oneOf([PropTypes.object]),
+  assaysFromState: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   type: PropTypes.string.isRequired,
   symbolShape: PropTypes.string,
-  legendsNotToRender: PropTypes.oneOf([PropTypes.object]).isRequired,
-  legendsToPopover: PropTypes.oneOf([PropTypes.array]).isRequired,
-  i18nKeys: PropTypes.oneOf([PropTypes.array]).isRequired,
+  legendsNotToRender: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+  ).isRequired,
+  legendsToPopover: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
+  ).isRequired,
+  i18nKeys: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 }
 
 export default CustomBarGraphLegend

@@ -15,9 +15,7 @@ describe('Result List component', () => {
   beforeEach(() => {
     props = {
       intl: createIntl({ locale: 'en' }),
-      history: {
-        push: jest.fn(),
-      },
+      navigate: jest.fn(),
       location: {
         search: '',
       },

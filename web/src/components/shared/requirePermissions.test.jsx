@@ -1,6 +1,8 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
+import * as reactRedux from 'react-redux'
+
 import {
   groupByPermissionTypes,
   isPermittedUser,
@@ -168,9 +170,9 @@ describe('requirePermissions', () => {
   const ForbiddenComponent = () => {}
   const WrappedComponent = () => {}
 
-  function makeContext(userPermissions) {
-    return {
-      store: {
+  function mockContext(userPermissions) {
+    return [
+      jest.spyOn(reactRedux, 'useStore').mockReturnValue({
         subscribe() {},
         dispatch() {},
         getState() {
@@ -182,8 +184,12 @@ describe('requirePermissions', () => {
             },
           }
         },
-      },
-    }
+      }),
+    ]
+  }
+
+  function unmock(spies) {
+    spies.forEach(spy => spy.mockRestore())
   }
 
   describe('given right user permissions', () => {
@@ -193,21 +199,23 @@ describe('requirePermissions', () => {
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:edit']),
-      })
+      const spies = mockContext(['person:edit'])
+      const ComponentWrapper = shallow(<DecoratedComponent />)
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+
+      unmock(spies)
     })
 
     it('should render WrappedComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:edit', 'device:view']),
-      })
+      const spies = mockContext(['person:edit', 'device:view'])
+      const ComponentWrapper = shallow(<DecoratedComponent />)
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+
+      unmock(spies)
     })
   })
 
@@ -218,21 +226,23 @@ describe('requirePermissions', () => {
     })(WrappedComponent)
 
     it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['device:view']),
-      })
+      const spies = mockContext(['device:view'])
+      const ComponentWrapper = shallow(<DecoratedComponent />)
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+
+      unmock(spies)
     })
 
     it('should render ForbiddenComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:view', 'device:view']),
-      })
+      const spies = mockContext(['person:view', 'device:view'])
+      const ComponentWrapper = shallow(<DecoratedComponent />)
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+
+      unmock(spies)
     })
   })
 
@@ -243,21 +253,23 @@ describe('requirePermissions', () => {
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:edit'], ['person']),
-      })
+      const spies = mockContext(['person:edit'], ['person'])
+      const ComponentWrapper = shallow(<DecoratedComponent />)
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+
+      unmock(spies)
     })
 
     it('should render WrappedComponent', () => {
-      const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:edit'], ['task', 'person']),
-      })
+      const spies = mockContext(['person:edit'], ['task', 'person'])
+      const ComponentWrapper = shallow(<DecoratedComponent />)
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
       expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+
+      unmock(spies)
     })
   })
 })

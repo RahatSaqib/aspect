@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import DataTableHead from './DataTableHead'
 
 export const useSortFilter = ({
-  history,
+  navigate,
   location,
   sortColumnKey: sortCol,
   sortColumnDir: sortDir,
@@ -18,20 +18,23 @@ export const useSortFilter = ({
       }
       searchParams.set('pageAt', 0)
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     },
-    [history, location, sortCol, sortDir]
+    [navigate, location, sortCol, sortDir]
   )
   return { onSortColumn }
 }
 
-const BrowseDataTableHead = ({ history, location, ...restProps }) => {
+const BrowseDataTableHead = ({ navigate, location, ...restProps }) => {
   const { sortColumnKey, sortColumnDir } = restProps
   const { onSortColumn } = useSortFilter({
-    history,
+    navigate,
     location,
     sortColumnKey,
     sortColumnDir,

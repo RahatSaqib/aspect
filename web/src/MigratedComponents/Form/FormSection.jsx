@@ -5,8 +5,10 @@ import Grid from '@material-ui/core/Grid'
 
 import { useFormikState } from './Formik/Context'
 import FormItem from './FormItem'
+import messagesBase from './messages'
+import styles from './Form.css'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+const cssClasses = classnames.bind(styles)
 
 const getVisibleRows = (rows, formik) => {
   return rows.map(row => {
@@ -39,16 +41,23 @@ const FormSection = ({
   return isSectionVisible ? (
     <Grid item xs={fullWidth ? 12 : 10}>
       {rows &&
-        rows.map(({ items }, rowIndex) =>
+        rows.map((row, rowIndex) =>
           visibleRows[rowIndex] === true ? (
             <Grid
+              key={`row-${rowIndex.toString()}`}
               container
               className={cssClasses('form__sectionItemsContainer', {
                 [classNames.container]: !!classNames.container,
               })}
             >
-              {items &&
-                items.map(item => <FormItem {...item} messages={messages} />)}
+              {row.items &&
+                row.items.map((item, itemIndex) => (
+                  <FormItem
+                    key={`row-${rowIndex.toString()}-item-${itemIndex.toString()}`}
+                    {...item}
+                    messages={messages}
+                  />
+                ))}
             </Grid>
           ) : null
         )}
@@ -59,6 +68,7 @@ const FormSection = ({
 FormSection.defaultProps = {
   classNames: {},
   fullWidth: false,
+  messages: messagesBase,
   visibleIf: () => true,
 }
 
@@ -66,7 +76,7 @@ FormSection.propTypes = {
   classNames: PropTypes.objectOf(PropTypes.shape),
   fullWidth: PropTypes.bool,
   rows: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  messages: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  messages: PropTypes.oneOfType([PropTypes.object]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
 }
 

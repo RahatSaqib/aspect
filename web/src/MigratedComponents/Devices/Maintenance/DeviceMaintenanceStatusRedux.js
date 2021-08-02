@@ -50,8 +50,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
         400: filterFieldsRejectedError(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title',
+              id: 'errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title',
               defaultMessage: 'Searching Device Maintenance status Failed',
             },
           })
@@ -59,8 +58,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title',
+              id: 'errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title',
               defaultMessage: 'Loading Device Maintenance Status Failed',
             },
           })

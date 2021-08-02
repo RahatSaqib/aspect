@@ -9,11 +9,13 @@ import { Unit } from '../../components/pureGrids'
 import { AspectWidget } from './Widget'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./Widgets.css'))
+import styles from './Widgets.css'
+
+const cssClasses = classnames.bind(styles)
 
 const OrderedAspectWidget = ({ items }) =>
   orderBy(items, item => item?.alert?.display || '', ['desc']).map(widget => (
-    <AspectWidget data={widget} />
+    <AspectWidget data={widget} key={widget.id} />
   ))
 
 const AspectWidgetGroup = ({ data }) => {
@@ -42,7 +44,7 @@ const AspectWidgetGroup = ({ data }) => {
 }
 
 AspectWidgetGroup.propTypes = {
-  data: PropTypes.oneOf([PropTypes.object]).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
 export default AspectWidgetGroup

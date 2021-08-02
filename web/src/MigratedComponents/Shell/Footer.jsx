@@ -2,7 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./Shell.css'))
+import styles from './Shell.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ShellFooter = ({ children }) =>
   children ? (

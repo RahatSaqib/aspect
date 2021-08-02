@@ -29,7 +29,7 @@ const AspectNotificationDetail = ({ notificationId }) => {
 
   const { isLoading, isError, error } = useQuery(
     [NOTIFICATION_DETAIL.KEY, { notificationId }],
-    async (key, { notificationId }) =>
+    async ({ queryKey: [, { notificationId }] }) =>
       fetchWrapperForQueries({
         endpoint: `${NOTIFICATION_DETAIL.ENDPOINT}/${notificationId}`,
       }),

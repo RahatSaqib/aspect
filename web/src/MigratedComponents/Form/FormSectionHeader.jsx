@@ -4,7 +4,9 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messagesBase = {
   ...defineMessages({
@@ -43,12 +45,7 @@ const messagesBase = {
   }),
 }
 
-const FormSectionHeader = ({
-  classNames,
-  header,
-  headerI18nKey,
-  messages = messagesBase,
-}) => {
+const FormSectionHeader = ({ classNames, header, headerI18nKey, messages }) => {
   const intl = useIntl()
   return (
     <Grid
@@ -67,12 +64,13 @@ FormSectionHeader.propTypes = {
   classNames: PropTypes.objectOf(PropTypes.shape),
   header: PropTypes.string.isRequired,
   headerI18nKey: PropTypes.string,
-  messages: PropTypes.objectOf(PropTypes.shape).isRequired,
+  messages: PropTypes.objectOf(PropTypes.shape),
 }
 
 FormSectionHeader.defaultProps = {
   classNames: {},
   headerI18nKey: null,
+  messages: messagesBase,
 }
 
 export default FormSectionHeader

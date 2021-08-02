@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import { defineMessages, injectIntl } from 'react-intl'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import AutoComplete from '../../../../components/shared/AutoComplete'
@@ -18,7 +18,9 @@ import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorN
 import { SitesAllErrors } from './errors'
 import messages from '../messages'
 
-const cssClasses = classnames.bind(require('../Detail.css'))
+import styles from '../Detail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ResultTransferModal = ({
   intl: { formatMessage },
@@ -34,7 +36,7 @@ const ResultTransferModal = ({
   const [isProcessing, setIsProcessing] = useState(false)
   const [transferError, setTransferError] = useState(null)
   const [isSuccessAlert, setSuccessAlert] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   useQuery(
     [SITE_ALL.KEY],
@@ -75,11 +77,12 @@ const ResultTransferModal = ({
     }
   }, [isOpen])
 
-  const onRequestClose = () => {
+  const onRequestClose = useCallback(() => {
     if (!isProcessing && onClose) {
       onClose()
     }
-  }
+  }, [isProcessing, onClose])
+
   const onSubmit = () => {
     setIsProcessing(true)
 
@@ -116,7 +119,7 @@ const ResultTransferModal = ({
     () => (
       <div className={cssClasses('processing')}>
         <div className={cssClasses('processing-spinner')}>
-          <CircularProgress size="100%" thickness="1" disableShrink />
+          <CircularProgress size="100%" thickness={1} disableShrink />
         </div>
         <div className={cssClasses('processing-label')}>
           {formatMessage(messages.processing)}
@@ -134,16 +137,20 @@ const ResultTransferModal = ({
             color="primary"
             variant="contained"
             onClick={() => {
-              history.push('/browse/result')
+              navigate('/browse/result')
             }}
           >
             {formatMessage(messages.successOk)}
           </Button>,
         ]}
         maxWidth="xs"
+        onClose={(event, reason) => {
+          if (reason !== 'backdropClick') {
+            onRequestClose()
+          }
+        }}
         open
         title={formatMessage(messages.successHeader)}
-        disableBackdropClick
         disableEscapeKeyDown
       >
         <div>
@@ -159,7 +166,14 @@ const ResultTransferModal = ({
         </div>
       </AspectDialog>
     )
-  }, [history, patientId, formatMessage, sourceSite?.name, selectedSite?.text])
+  }, [
+    formatMessage,
+    patientId,
+    sourceSite?.name,
+    selectedSite?.text,
+    navigate,
+    onRequestClose,
+  ])
 
   return (
     <AspectDialog
@@ -181,11 +195,15 @@ const ResultTransferModal = ({
         </Button>,
       ]}
       maxWidth="sm"
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          onRequestClose()
+        }
+      }}
       open={isOpen}
       onRequestClose={onRequestClose}
       showCrossIcon
       title={`${formatMessage(messages.header)}: ${patientId}`}
-      disableBackdropClick
       disableEscapeKeyDown
     >
       <div>
@@ -202,7 +220,7 @@ const ResultTransferModal = ({
         <TextField
           fullWidth
           multiline
-          rowsMax="5"
+          maxRows="5"
           placeholder={formatMessage(messages.enterComment)}
           onChange={event => setComment(event.target.value)}
           margin="normal"
@@ -211,11 +229,13 @@ const ResultTransferModal = ({
         />
       </div>
 
-      <CheckboxField
-        checked={includeAllResults}
-        label={formatMessage(messages.includeAllResults)}
-        onChange={(event, isChecked) => setIncludeAllResults(isChecked)}
-      />
+      <div style={{ marginTop: 20, marginBottom: 10 }}>
+        <CheckboxField
+          checked={includeAllResults}
+          label={formatMessage(messages.includeAllResults)}
+          onChange={event => setIncludeAllResults(event.target.checked)}
+        />
+      </div>
       <div className={cssClasses('NoteWrapper')}>
         {formatMessage(messages.note)}
       </div>

@@ -1,4 +1,3 @@
-import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
@@ -17,13 +16,14 @@ export class CountrySelectField extends PureComponent {
     allItemText: PropTypes.string,
     countries: PropTypes.objectOf(LazyLoadItems).isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,
-    onCountryIdChange: PropTypes.func.isRequired,
+    onCountryIdChange: PropTypes.func,
     countryId: PropTypes.string,
   }
 
   static defaultProps = {
     allItemText: 'All',
     countryId: '',
+    onCountryIdChange: () => {},
   }
 
   componentDidMount() {
@@ -36,12 +36,16 @@ export class CountrySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, countries, countryId, ...others } = this.props
+    const {
+      allItemText,
+      countries,
+      countryId,
+      // to remove from restProps
+      onCountryIdChange,
+      fetchCountriesForLocationSelector,
+      ...restProps
+    } = this.props
 
-    const restProps = omit(others, [
-      'onCountryIdChange',
-      'fetchCountriesForLocationSelector',
-    ])
     return (
       <SelectField
         {...restProps}

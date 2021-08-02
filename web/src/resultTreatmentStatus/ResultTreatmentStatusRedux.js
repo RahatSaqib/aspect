@@ -59,8 +59,7 @@ export function fetchTreatmentStatuses() {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchTreatmentStatuses.GET.default.title',
+              id: 'errorResponseMessages.fetchTreatmentStatuses.GET.default.title',
               defaultMessage: 'Loading Result Treatment Statuses Failed',
             },
           })

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import classnames from 'classnames/bind'
-import { useHistory } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
@@ -11,7 +11,9 @@ import { defineMessages, useIntl } from 'react-intl'
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
 
-const cssClasses = classnames.bind(require('./OperationalData.css'))
+import styles from './OperationalData.css'
+
+const cssClasses = classnames.bind(styles)
 
 const currentTabStyle = (currentTab, index) =>
   currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
@@ -29,10 +31,8 @@ const messages = defineMessages({
 
 export const OperationalData = () => {
   const { formatMessage } = useIntl()
-  const {
-    location: { pathname },
-    push,
-  } = useHistory()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   const tabsConfig = {
     dashboard: {
@@ -45,16 +45,8 @@ export const OperationalData = () => {
     },
   }
 
-  const { path } = find(tabsConfig, { path: pathname }) || false
-  const [currentTab, setCurrentTab] = useState(
-    path || tabsConfig.dashboard.path
-  )
-
-  useEffect(() => {
-    if (currentTab) {
-      push(currentTab)
-    }
-  }, [currentTab])
+  const { path: currentTab } =
+    find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
 
   return (
     <div className={cssClasses('Container')}>
@@ -64,7 +56,7 @@ export const OperationalData = () => {
           indicatorColor="primary"
           textColor="inherit"
           value={currentTab}
-          onChange={(e, v) => setCurrentTab(v)}
+          onChange={(e, v) => navigate(v)}
           TabIndicatorProps={{ style: { height: '0px' } }}
         >
           <Tab
@@ -85,12 +77,14 @@ export const OperationalData = () => {
           />
         </Tabs>
       </div>
-      {currentTab === tabsConfig.dashboard.path ? (
-        <OperationalDashBoard />
-      ) : null}
-      {currentTab === tabsConfig.dailyStatus.path ? (
-        <OperationalDailyStatus />
-      ) : null}
+      <Routes>
+        <Route path="">
+          <OperationalDashBoard />
+        </Route>
+        <Route path="daily-status">
+          <OperationalDailyStatus />
+        </Route>
+      </Routes>
     </div>
   )
 }

@@ -42,14 +42,18 @@
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left;
   margin-bottom: -4px;
+  display: flex;
+  align-items: center;
 }
 
 .form__sectionItemInput--enabled > div > input {
   color: var('--aspect-color-grey-1');
 }
 
+.form__sectionItemInput--disabled > div > textarea,
 .form__sectionItemInput--disabled > div > input {
   color: var('--aspect-color-grey-1');
+  -webkit-text-fill-color: var('--aspect-color-grey-1') !important;
 }
 
 /* Pasted in */

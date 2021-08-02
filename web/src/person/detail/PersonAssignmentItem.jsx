@@ -7,7 +7,9 @@ import { mergeToFiltersParams } from '../../filter/utils'
 import messages from './messages'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 export default ({ assignment, showLinks, onAskConfirmation }) => {
   if (!assignment) {

@@ -17,7 +17,9 @@ import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 import Cell from '../Cell'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render a grouped cell

@@ -1,9 +1,8 @@
-import { createMuiTheme } from '@material-ui/core/styles'
-import orange from '@material-ui/core/colors/orange'
-import lightGreen from '@material-ui/core/colors/lightGreen'
+import { createTheme } from '@material-ui/core/styles'
+import { cyan, lightGreen, orange } from '@material-ui/core/colors'
 import { customPropertiesVariables } from '../../cfg/variables'
 
-const theme = createMuiTheme({
+const theme = createTheme({
   typography: {
     useNextVariants: true,
     fontWeightBold: 700,
@@ -14,9 +13,12 @@ const theme = createMuiTheme({
       hoverOpacity: 0.2,
     },
     primary: {
-      light: lightGreen[500],
-      main: lightGreen[600],
-      dark: lightGreen[700],
+      // light: lightGreen[500],
+      // main: lightGreen[600],
+      // dark: lightGreen[700],
+      light: cyan[700],
+      main: customPropertiesVariables['--ming'],
+      dark: cyan[900],
       contrastText: customPropertiesVariables['--aspect-color-white'],
     },
     secondary: {
@@ -30,6 +32,22 @@ const theme = createMuiTheme({
     borderRadius: 2,
   },
   customPropertiesVariables,
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          /**
+           * may reset to `position: 'static'` as was before
+           * (and remove `margin-top: var(--aspect-app-bar-height);` from `.Page-Content` in
+           * file web/src/globals/factories/loggedInFactory/index.css),
+           * but need 1st to change @media
+           * for showing either VerticalAppBar or HorizontalAppBar which now are both displayed.
+           */
+          position: 'fixed !important',
+        },
+      },
+    },
+  },
 })
 
 const themedColors = {

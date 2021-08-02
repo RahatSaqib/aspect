@@ -2,6 +2,7 @@
 import elementResizeDetectorMaker from 'element-resize-detector'
 import throttle from 'lodash/throttle'
 import noop from 'lodash/noop'
+import omit from 'lodash/omit'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
@@ -9,7 +10,11 @@ import ReactDOM from 'react-dom'
 
 class FallbackUntilDone extends PureComponent {
   static propTypes = {
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    component: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.func,
+      PropTypes.object,
+    ]),
     className: PropTypes.string,
     fallbacks: PropTypes.arrayOf(PropTypes.object).isRequired,
     isDone: PropTypes.func.isRequired,
@@ -85,8 +90,10 @@ class FallbackUntilDone extends PureComponent {
   }
 
   render() {
-    const { component, className, fallbacks, ...restProps } = this.props
+    const { component, className, fallbacks, ...rest } = this.props
     const fallback = fallbacks[this.state.fallbackIndex]
+
+    const restProps = omit(rest, ['isDone'])
 
     return React.createElement(component, {
       ...restProps,

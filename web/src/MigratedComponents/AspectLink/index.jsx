@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { string, object, oneOfType } from 'prop-types'
+import { string, object, number, oneOfType } from 'prop-types'
 import { Link } from 'react-router-dom'
 import isObject from 'lodash/isObject'
 
@@ -66,7 +66,7 @@ AspectLink.propTypes = {
   /**
   React children of the link
  */
-  children: oneOfType([object, string]).isRequired,
+  children: oneOfType([object, string, number]).isRequired,
   /**
   Proposed URL for link component
   */

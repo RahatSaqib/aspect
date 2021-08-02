@@ -12,7 +12,9 @@ import {
 } from 'react-icons/fa'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./TablePaginator.css'))
+import styles from './TablePaginator.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const ALL_KEY = 'All'
 
@@ -59,43 +61,61 @@ const enhance = compose(
     hasLastPage: total > pageSize * (1 + pageAt),
   })),
   withHandlers({
-    onFirstClick: ({ onPageChange }) => () => {
-      onPageChange(0)
-    },
+    onFirstClick:
+      ({ onPageChange }) =>
+      () => {
+        onPageChange(0)
+      },
 
-    onPreviousClick: ({ pageAt, onPageChange }) => () => {
-      onPageChange(pageAt - 1)
-    },
+    onPreviousClick:
+      ({ pageAt, onPageChange }) =>
+      () => {
+        onPageChange(pageAt - 1)
+      },
 
-    onNextClick: ({ pageAt, onPageChange }) => () => {
-      onPageChange(pageAt + 1)
-    },
+    onNextClick:
+      ({ pageAt, onPageChange }) =>
+      () => {
+        onPageChange(pageAt + 1)
+      },
 
-    onLastClick: ({ total, pageSize, onPageChange }) => () => {
-      const lastPage =
-        total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
-      onPageChange(Math.floor(lastPage))
-    },
+    onLastClick:
+      ({ total, pageSize, onPageChange }) =>
+      () => {
+        const lastPage =
+          total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
+        onPageChange(Math.floor(lastPage))
+      },
 
-    onPageSizeChange10: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(10)
-    },
+    onPageSizeChange10:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(10)
+      },
 
-    onPageSizeChange25: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(25)
-    },
+    onPageSizeChange25:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(25)
+      },
 
-    onPageSizeChange50: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(50)
-    },
+    onPageSizeChange50:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(50)
+      },
 
-    onPageSizeChange100: ({ onPageSizeChange }) => () => {
-      onPageSizeChange(100)
-    },
+    onPageSizeChange100:
+      ({ onPageSizeChange }) =>
+      () => {
+        onPageSizeChange(100)
+      },
 
-    onPageSizeChangeAll: ({ onPageSizeChange, total }) => () => {
-      onPageSizeChange(total)
-    },
+    onPageSizeChangeAll:
+      ({ onPageSizeChange, total }) =>
+      () => {
+        onPageSizeChange(total)
+      },
   }),
   pure
 )
@@ -124,7 +144,9 @@ const TablePaginator = ({
     <div className={cssClasses(className, 'Container')}>
       <div className={cssClasses('Left')}>
         <Button
-          className={cssClasses('Left__Button')}
+          classes={{
+            root: cssClasses('Left__Button'),
+          }}
           disabled={!hasFirstPage}
           color="primary"
           variant="outlined"
@@ -134,7 +156,9 @@ const TablePaginator = ({
           {formatMessage(messages.first)}
         </Button>
         <Button
-          className={cssClasses('Left__Button')}
+          classes={{
+            root: cssClasses('Left__Button'),
+          }}
           disabled={!hasPreviousPage}
           color="primary"
           variant="outlined"
@@ -151,7 +175,9 @@ const TablePaginator = ({
           })}
         </div>
         <Button
-          className={cssClasses('Left__Button', 'Left__Button--next')}
+          classes={{
+            root: cssClasses('Left__Button', 'Left__Button--next'),
+          }}
           disabled={!hasNextPage}
           color="primary"
           variant="outlined"
@@ -161,7 +187,9 @@ const TablePaginator = ({
           <FaAngleRight />
         </Button>
         <Button
-          className={cssClasses('Left__Button', 'Left__Button--next')}
+          classes={{
+            root: cssClasses('Left__Button', 'Left__Button--next'),
+          }}
           disabled={!hasLastPage}
           color="primary"
           variant="outlined"
@@ -175,7 +203,10 @@ const TablePaginator = ({
         {pageSizeButtonKeys.map(key => (
           <Button
             key={key}
-            className={cssClasses('Right__Button', {
+            classes={{
+              root: cssClasses('Right__Button'),
+            }}
+            className={cssClasses({
               selected: key !== ALL_KEY ? key === pageSize : pageSize === total,
             })}
             onClick={restProps[`onPageSizeChange${key}`]}

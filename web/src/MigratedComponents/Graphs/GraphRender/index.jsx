@@ -19,8 +19,9 @@ import {
 
 import EmptyGraph from '../EmptyData'
 import { useAuthState } from '../../../Providers/AuthProvider'
+import styles from './GraphRender.css'
 
-const cssClasses = classnames.bind(require('./GraphRender.css'))
+const cssClasses = classnames.bind(styles)
 
 const Loading = () => (
   <div className={cssClasses('graphrender__spinner')}>
@@ -59,7 +60,7 @@ const GraphRender = ({
   const [graphKeys, setGraphKeys] = useState(false)
   const { isLoading, isError, error } = useQuery(
     [id, { mergedParams }],
-    async (key, { mergedParams }) =>
+    async ({ queryKey: [, { mergedParams }] }) =>
       fetchWrapperForQueries({
         endpoint,
         method,
@@ -111,9 +112,11 @@ const GraphRender = ({
   return (
     <Grid item xs={12} md={size} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {isEmpty(graphData) && isLoading ? <Loading /> : null}
-        {isEmpty(graphData) && !isLoading ? <EmptyGraph type={type} /> : null}
-        {!isEmpty(graphData) ? (
+        {(!graphData || isEmpty(graphData)) && isLoading ? <Loading /> : null}
+        {(!graphData || isEmpty(graphData)) && !isLoading ? (
+          <EmptyGraph type={type} />
+        ) : null}
+        {graphData && !isEmpty(graphData) && !isLoading ? (
           <Component
             data={graphData}
             keys={graphKeys}
@@ -135,10 +138,10 @@ GraphRender.defaultProps = {
 }
 
 GraphRender.propTypes = {
-  assays: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  assays: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   id: PropTypes.string.isRequired,
-  updatedParams: PropTypes.oneOfType([PropTypes.object]),
+  updatedParams: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   formatMessage: PropTypes.func.isRequired,
 }
 

@@ -5,7 +5,9 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DailyStatusFilters = ({
   toggleAll: { checked, key, label },
@@ -25,10 +27,7 @@ const DailyStatusFilters = ({
                   onChange={() => action(key)}
                   value={key}
                   classes={{
-                    root: cssClasses(
-                      'status__checkbox',
-                      `status__checkbox--${key}`
-                    ),
+                    root: cssClasses(`status__checkbox--${key}`),
                   }}
                 />
               }
@@ -41,6 +40,7 @@ const DailyStatusFilters = ({
             {statuses
               ? statuses.map(({ externalId, name, checked }) => (
                   <FormControlLabel
+                    key={externalId}
                     classes={{
                       root: cssClasses('statuses__statusroot'),
                       label: cssClasses('statuses__statuslabel'),
@@ -51,10 +51,7 @@ const DailyStatusFilters = ({
                         onChange={() => action(externalId)}
                         value={externalId}
                         classes={{
-                          root: cssClasses(
-                            'status__checkbox',
-                            `status__checkbox--${externalId}`
-                          ),
+                          root: cssClasses(`status__checkbox--${externalId}`),
                         }}
                       />
                     }
@@ -75,7 +72,7 @@ DailyStatusFilters.propTypes = {
     label: PropTypes.string,
     key: PropTypes.string,
   }).isRequired,
-  statuses: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  statuses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]).isRequired,
   action: PropTypes.func.isRequired,
 }
 

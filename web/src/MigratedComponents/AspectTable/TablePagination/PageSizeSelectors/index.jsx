@@ -3,7 +3,9 @@ import { func, number } from 'prop-types'
 import Button from '@material-ui/core/Button'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page selectors for table component

@@ -6,14 +6,14 @@ import Grid from '@material-ui/core/Grid'
 
 import AspectTitle from '../AspectTitle'
 
-const cssClasses = classnames.bind(require('./Card.css'))
+import styles from './Card.css'
+
+const cssClasses = classnames.bind(styles)
 
 const CardHeader = ({ props }) => {
   const { title, actionComponent, action } = props
-  const {
-    component: ActionComponent,
-    props: actionComponentProps,
-  } = actionComponent
+  const { component: ActionComponent, props: actionComponentProps } =
+    actionComponent
 
   return title || actionComponent ? (
     <Grid item xs={12}>
@@ -48,7 +48,11 @@ const AspectCard = ({
 }) => {
   return (
     <Card className={cssClasses('card__container')} name={name}>
-      <Grid container justify={justify} className={cssClasses('card__grid')}>
+      <Grid
+        container
+        justifyContent={justify}
+        className={cssClasses('card__grid')}
+      >
         <CardHeader props={{ title, actionComponent, action }} />
         <Grid
           item

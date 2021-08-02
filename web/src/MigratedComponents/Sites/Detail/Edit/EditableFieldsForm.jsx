@@ -19,8 +19,9 @@ import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 import AspectButton from '../../../../components/shared/AspectButton'
 
 import messages from '../messages'
+import styles from './EditableFieldsForm.css'
 
-const cssClasses = classnames.bind(require('./EditableFieldsForm.css'))
+const cssClasses = classnames.bind(styles)
 
 const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
@@ -28,11 +29,11 @@ const renderTextField = ({ input, meta, ...restProps }) => (
     {...input}
     margin="normal"
     fullWidth
-    errorStyle={{
-      float: 'left',
-      whiteSpace: 'nowrap',
-      textOverflow: 'visible',
-    }}
+    // errorStyle={{
+    //   float: 'left',
+    //   whiteSpace: 'nowrap',
+    //   textOverflow: 'visible',
+    // }}
     error={!!(meta.touched && meta.error)}
     helperText={meta.touched && meta.error}
   />
@@ -64,16 +65,18 @@ const enhance = compose(
     enableReinitialize: true,
   }),
   withHandlers({
-    onSetBasedAddressClick: ({ updateLatLongFromFormAddress }) => () => {
-      updateLatLongFromFormAddress()
-    },
+    onSetBasedAddressClick:
+      ({ updateLatLongFromFormAddress }) =>
+      () => {
+        updateLatLongFromFormAddress()
+      },
   }),
   setPropTypes({
     initialValues: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
-    onChangeSiteTag: PropTypes.func.isRequired,
+    // onChangeSiteTag: PropTypes.func.isRequired,
     onSetBasedAddressClick: PropTypes.func.isRequired,
   })
 )

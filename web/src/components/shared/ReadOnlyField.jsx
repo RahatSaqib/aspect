@@ -6,7 +6,9 @@ import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router-dom'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 
-const cssClasses = classnames.bind(require('./ReadOnlyField.css'))
+import styles from './ReadOnlyField.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const readOnlyFieldPropTypes = {
   label: PropTypes.string.isRequired,

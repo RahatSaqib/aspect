@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import React from 'react'
 import FormLabel from '@material-ui/core/FormLabel'
 import FormControl from '@material-ui/core/FormControl'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 
 const styles = {
   root: {

@@ -6,22 +6,19 @@ import { createIntl } from 'react-intl'
 import { PersonDetail } from './PersonDetail'
 
 function makeContext(userPermissions) {
-  return {
+  return Immutable.fromJS({
     jwt: {
       permissions: Immutable.Set(userPermissions),
     },
-  }
+    countryId: 1,
+  })
 }
 describe('PersonDetail module', () => {
   const props = {
+    location: { pathname: '' },
     intl: createIntl({ locale: 'en' }),
     editable: false,
     user: makeContext(['person:edit']),
-    match: {
-      params: {
-        reporterId: '1',
-      },
-    },
     person: Immutable.fromJS({
       name: 'Admin',
       level: 'Admin',

@@ -5,7 +5,18 @@ import FormHTMLLabel from '../FormHTMLLabel'
 import { getFieldErrorProps } from '../Formik/Helpers'
 import { useFormikState } from '../Formik/Context'
 
-const AspectTextField = ({ formik, label, link, ...rest }) => {
+const AspectTextField = ({
+  formik,
+  label,
+  link,
+  /**
+   * below props are not used - need then to free `rest`
+   */
+  classNames,
+  controlType,
+  validate,
+  ...rest
+}) => {
   const { updateField } = useFormikState()
   const onChangeLocal = event => {
     updateField(rest.id, event.target.value, formik)
@@ -14,7 +25,7 @@ const AspectTextField = ({ formik, label, link, ...rest }) => {
   return (
     <TextField
       {...rest}
-      label={<FormHTMLLabel label={label} link={link} />}
+      label={link ? <FormHTMLLabel label={label} link={link} /> : label}
       onChange={onChangeLocal}
       {...getFieldErrorProps(formik, rest.id)}
     />

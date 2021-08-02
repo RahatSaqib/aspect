@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import deburr from 'lodash/deburr'
 import noop from 'lodash/noop'
 import Downshift from 'downshift'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import Popper from '@material-ui/core/Popper'
 import Paper from '@material-ui/core/Paper'
@@ -75,7 +75,7 @@ const styles = theme => ({
   },
   paper: {
     zIndex: 1,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
     overflowY: 'auto',
@@ -90,7 +90,7 @@ const styles = theme => ({
     flexGrow: 1,
   },
   divider: {
-    height: theme.spacing.unit * 2,
+    height: theme.spacing(2),
   },
 })
 
@@ -240,7 +240,7 @@ const AutoComplete = ({
                     square
                     className={classesMap.paper}
                     style={{
-                      minWidth: popperNode
+                      minWidth: popperNode.current
                         ? popperNode.current.clientWidth + 32
                         : null,
                     }}

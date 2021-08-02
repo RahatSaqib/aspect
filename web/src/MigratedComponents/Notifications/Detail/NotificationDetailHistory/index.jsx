@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
 import { defineMessages, useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 
@@ -13,7 +13,9 @@ import AspectTable from '../../../AspectTable'
 import { NOTIFICATION_HISTORY } from '../../../QueryFetch/Notification'
 import baseConfig from './config'
 
-const cssClasses = classnames.bind(require('../../Notifications.css'))
+import styles from '../../Notifications.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   notificationsTitle: {
@@ -28,7 +30,7 @@ const messages = defineMessages({
 
 const NotificationList = () => {
   const intl = useIntl()
-  const { push } = useHistory()
+  const navigate = useNavigate()
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -37,7 +39,7 @@ const NotificationList = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => push('/browse/notification')}
+          onClick={() => navigate('/browse/notification')}
         >
           {intl.formatMessage(messages.backButton)}
         </Button>

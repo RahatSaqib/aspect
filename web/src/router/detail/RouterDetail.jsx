@@ -3,9 +3,8 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 
 // Material-UI
@@ -16,9 +15,9 @@ import CardContent from '@material-ui/core/CardContent'
 import IconButton from '@material-ui/core/IconButton'
 import ModeEdit from '@material-ui/icons/Edit'
 import Tooltip from '@material-ui/core/Tooltip'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
 
@@ -115,30 +114,22 @@ const messages = defineMessages({
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        routerId: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }),
+  WrapperComponent => props => {
+    const { routerId } = useParams()
+    return <WrapperComponent {...props} routerId={routerId} />
+  },
   connect(
-    (state, props) => {
-      const router = state.router.items.byId.get(props.match.params.routerId)
-
+    (state, { routerId }) => {
+      const router = state.router.items.byId.get(routerId)
       return {
         editable: isEditable(state.user, 'device'),
         router,
       }
     },
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchSingleRouter,
-          updateSingleRouter,
-        },
-        dispatch
-      )
+    {
+      fetchSingleRouter,
+      updateSingleRouter,
+    }
   ),
   setPropTypes({
     editable: PropTypes.bool.isRequired,
@@ -186,7 +177,7 @@ export class RouterDetail extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.match.params.routerId !== prevProps.match.params.routerId) {
+    if (this.props.routerId !== prevProps.routerId) {
       this.handleFetchRouter()
     }
   }
@@ -204,7 +195,7 @@ export class RouterDetail extends PureComponent {
   }
 
   handleFetchRouter = () => {
-    this.props.fetchSingleRouter(this.props.match.params.routerId).then(() => {
+    this.props.fetchSingleRouter(this.props.routerId).then(() => {
       const { router } = this.props
 
       this.handleFormChange({
@@ -261,7 +252,11 @@ export class RouterDetail extends PureComponent {
 
     return (
       <div>
-        <Tooltip title={formatMessage(messages.editTooltip)} placement="bottom">
+        <Tooltip
+          title={formatMessage(messages.editTooltip)}
+          placement="bottom"
+          disableInteractive
+        >
           <IconButton
             aria-label={formatMessage(messages.editTooltip)}
             onClick={this.handleToggleEditDialog}
@@ -354,8 +349,8 @@ export class RouterDetail extends PureComponent {
           </CardContent>
         </Card>
         {/* Graphs */}
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Unit sm="1-1" md="1-2">
               <Typography variant="subtitle1">
                 Utilization Rate Over Time
@@ -364,8 +359,8 @@ export class RouterDetail extends PureComponent {
             <Unit sm="1-1" md="1-2">
               <Typography variant="subtitle1">Error Rates Over Time</Typography>
             </Unit>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Unit sm="1-1" md="1-2">
               <ReadOnlyField
                 label=""
@@ -392,8 +387,8 @@ export class RouterDetail extends PureComponent {
                 )}
               />
             </Unit>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Dialog for demo purpose */}
         <AspectDialog
           modal={false}
@@ -403,44 +398,46 @@ export class RouterDetail extends PureComponent {
           Not yet implemented
         </AspectDialog>
         {/* Contacts */}
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Contacts</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography variant="body2">
-              {// temp fix to get router details to display
-              contacts &&
-                contacts.map(c => (
-                  <Link
-                    key={c.get('id')}
-                    to={`/browse/person/${c.get('id')}`}
-                    className={styles.Contact}
-                  >
-                    {c.get('name')}
-                  </Link>
-                ))}
+              {
+                // temp fix to get router details to display
+                contacts &&
+                  contacts.map(c => (
+                    <Link
+                      key={c.get('id')}
+                      to={`/browse/person/${c.get('id')}`}
+                      className={styles.Contact}
+                    >
+                      {c.get('name')}
+                    </Link>
+                  ))
+              }
             </Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Calibration */}
-        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion expanded onClick={this.handleToggleDialog}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Calibration</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography variant="body2">Last calibrated 12/1/2016</Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Warranty */}
-        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion expanded onClick={this.handleToggleDialog}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Warranty</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography variant="body2">Expires 12/31/2018</Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
         {/* Configuration */}
         <JSONSchemaCard
           title={formatMessage(messages.fieldConfiguration)}
@@ -451,11 +448,11 @@ export class RouterDetail extends PureComponent {
           data={router.get('configurationData')}
         />
         {/* Technical information */}
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Technical information</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          </AccordionSummary>
+          <AccordionDetails>
             <Typography
               variant="body2"
               component="div"
@@ -486,8 +483,8 @@ export class RouterDetail extends PureComponent {
                 />
               </Unit>
             </Typography>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+          </AccordionDetails>
+        </Accordion>
       </div>
     )
   }
@@ -495,7 +492,7 @@ export class RouterDetail extends PureComponent {
   renderDemoButton() {
     return (
       <DeviceDemoLink
-        to={`/demo/device/${this.props.match.params.routerId}`}
+        to={`/demo/device/${this.props.routerId}`}
         className={styles.DemoLink}
         target="_blank"
       >

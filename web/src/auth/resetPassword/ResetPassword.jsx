@@ -181,7 +181,7 @@ export class ResetPassword extends PureComponent {
       <Button color="secondary" onClick={this.closeAdminHelpDialog}>
         {formatMessage(messages.adminHelpClose)}
       </Button>,
-      <Link to="login">
+      <Link to="/login">
         <Button color="primary">{formatMessage(messages.backToLogin)}</Button>
       </Link>,
     ]
@@ -195,7 +195,11 @@ export class ResetPassword extends PureComponent {
             <Unit xs="11-12" md="5-6" xl="1-2">
               <Paper>
                 <Hidden xs sm className={styles.LargeConten}>
-                  <Stepper activeStep={stepIndex}>
+                  <Stepper
+                    activeStep={stepIndex}
+                    orientation="horizontal"
+                    style={{ padding: 24 }}
+                  >
                     <Step>
                       <StepLabel>
                         {formatMessage(messages.enterEmailAddress)}
@@ -265,7 +269,7 @@ export class ResetPassword extends PureComponent {
                     <div className={styles.Form}>
                       <FormattedMessage {...messages.finishContent} />
                       <div className={styles.Form__ActionRow}>
-                        <Link to="login">
+                        <Link to="/login">
                           <Button color="primary">
                             {formatMessage(messages.loginWithMyNewPassword)}
                           </Button>
@@ -276,7 +280,11 @@ export class ResetPassword extends PureComponent {
                 </Hidden>
                 <Hidden md lg xl>
                   {resettingPassword && <LinearProgress />}
-                  <Stepper activeStep={stepIndex} orientation="vertical">
+                  <Stepper
+                    activeStep={stepIndex}
+                    orientation="vertical"
+                    style={{ padding: 24 }}
+                  >
                     <Step>
                       <StepLabel>
                         {formatMessage(messages.enterEmailAddress)}
@@ -339,7 +347,7 @@ export class ResetPassword extends PureComponent {
                         <div className={styles.Form}>
                           <FormattedMessage {...messages.finishContent} />
                           <div className={styles.Form__ActionRow}>
-                            <Link to="login">
+                            <Link to="/login">
                               <Button color="primary">
                                 {formatMessage(messages.loginWithMyNewPassword)}
                               </Button>

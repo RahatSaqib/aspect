@@ -1,4 +1,4 @@
-import makeLoadable from 'react-loadable'
+import makeLoadable from '@react-loadable/revised'
 
 export default makeLoadable({
   loader: () => import('./Status'),

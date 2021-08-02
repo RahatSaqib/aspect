@@ -13,11 +13,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "formatDate": [Function],
@@ -35,6 +30,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         "search": "",
       }
     }
+    navigate={[Function]}
     onClickExport={[Function]}
   >
     <AspectButton
@@ -119,28 +115,12 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       visible={false}
     />
     <pure(withHandlers(EmptyList))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
-      intl={
-        Object {
-          "formatDate": [Function],
-          "formatHTMLMessage": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatPlural": [Function],
-          "formatRelative": [Function],
-          "formatTime": [Function],
-          "now": [Function],
-        }
-      }
       location={
         Object {
           "search": "",
         }
       }
+      navigate={[Function]}
     />
   </DataTableCard>
 </div>
@@ -159,11 +139,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "formatDate": [Function],
@@ -181,6 +156,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
         "search": "",
       }
     }
+    navigate={[Function]}
     onClickExport={[Function]}
   >
     <AspectButton
@@ -264,9 +240,8 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       reportName="DeviceApiKey"
       visible={true}
     />
-    <WithStyles(Table)
+    <ForwardRef(Table)
       className="DeviceApiKeyDataTable"
-      selectable={false}
     >
       <BrowseDataTableHead
         columns={
@@ -317,20 +292,16 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
             },
           ]
         }
-        history={
-          Object {
-            "push": [Function],
-          }
-        }
         location={
           Object {
             "search": "",
           }
         }
+        navigate={[Function]}
         sortColumnDir="asc"
         sortColumnKey="createdOn"
       />
-      <WithStyles(TableBody)>
+      <ForwardRef(TableBody)>
         <DeviceApiKeyTableRow
           checked={false}
           deviceApiKey={
@@ -362,14 +333,9 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           onRevokedChange={[Function]}
           onSelectedChange={[Function]}
         />
-      </WithStyles(TableBody)>
-    </WithStyles(Table)>
+      </ForwardRef(TableBody)>
+    </ForwardRef(Table)>
     <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
       intl={
         Object {
           "formatDate": [Function],
@@ -387,6 +353,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           "search": "",
         }
       }
+      navigate={[Function]}
       pageAt={0}
       pageSize={10}
       paginatorStatus={

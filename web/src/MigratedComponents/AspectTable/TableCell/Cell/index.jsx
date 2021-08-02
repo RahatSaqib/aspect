@@ -11,6 +11,7 @@ const Cell = ({ render, format: FormatComp, value }) => {
 
 Cell.defaultProps = {
   format: false,
+  value: '',
 }
 
 Cell.propTypes = {
@@ -25,7 +26,7 @@ Cell.propTypes = {
   /**
     Data for the cell to render
   */
-  value: oneOfType([array, string, number]).isRequired,
+  value: oneOfType([array, string, number]),
 }
 
 export default Cell

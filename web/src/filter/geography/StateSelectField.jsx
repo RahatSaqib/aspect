@@ -22,7 +22,7 @@ export function getSelectedCountry({ countries, countryId }) {
 
 export function getSelectedCountryStates(props) {
   const selectedCountry = getSelectedCountry(props)
-  if (selectedCountry && selectedCountry.children.items) {
+  if (selectedCountry?.children?.items) {
     return selectedCountry.children.items
   }
   return Immutable.List()
@@ -85,7 +85,7 @@ export class StateSelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
         disabled={stateselected.size === 0}
       >
-        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
         {getSelectedCountryStates(this.props).map(s => (
           <MenuItem key={s.id} value={s.id}>
             {s.name}

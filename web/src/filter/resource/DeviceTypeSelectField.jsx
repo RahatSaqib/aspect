@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import MenuItem from '@material-ui/core/MenuItem'
+import Immutable from 'immutable'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceTypesForSelectList as fetchDeviceTypes } from '../../deviceType/DeviceTypeRedux'
@@ -17,13 +18,7 @@ export class DeviceTypeSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchDeviceTypes: PropTypes.func.isRequired,
-    deviceTypeItems: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        externalId: PropTypes.string,
-        name: PropTypes.string,
-      })
-    ).isRequired,
+    deviceTypeItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onDeviceTypeChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }

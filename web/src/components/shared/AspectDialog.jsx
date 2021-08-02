@@ -10,7 +10,9 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 import IconProvider from '../../MigratedComponents/IconProvider'
 
-const cssClasses = classnames.bind(require('./AspectDialog.css'))
+import styles from './AspectDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectDialog = ({
   actions,
@@ -33,6 +35,7 @@ const AspectDialog = ({
             aria-label="close"
             className={cssClasses('button-close')}
             onClick={onRequestClose}
+            size="medium"
           >
             <IconProvider icon="MdClose" />
           </IconButton>
