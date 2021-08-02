@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-13T18:15:22.953Z\n"
+"POT-Creation-Date: 2021-08-02T14:12:15.336Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -905,6 +905,9 @@ msgstr "Average number of tests per weekday conducted this month."
 msgid "Average time to replace disabled module"
 msgstr "Average time to replace disabled module"
 
+#. [pages.ResultList.ResultTreatmentStatusAwaitingTreatment]
+#. defaultMessage is:
+#. Awaiting Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
 #. Awaiting Treatment
@@ -3138,6 +3141,19 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [filter.AssaySelectField.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#: extracted_strings.json
+msgid "GeneXpert MTB/XDR"
+msgstr "GeneXpert MTB/XDR"
+
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Cartridge
@@ -4269,6 +4285,9 @@ msgstr "Low Inventory"
 #. [pages.filters.gxMtbRifUltraMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [pages.filters.gxMtbXdrMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #: extracted_strings.json
 msgid "MTB Detected"
 msgstr "MTB Detected"
@@ -4322,10 +4341,34 @@ msgstr "MTB Detected RIF Not Detected"
 msgid "MTB Detected RR Detected"
 msgstr "MTB Detected RR Detected"
 
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Detected"
+msgstr "MTB Detected XDR Detected"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected XDR Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected XDR Indeterminate"
+msgstr "MTB Detected XDR Indeterminate"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Not Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Not Detected"
+msgstr "MTB Detected XDR Not Detected"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
 #. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
 #: extracted_strings.json
@@ -4338,6 +4381,9 @@ msgstr "MTB Error"
 #. [pages.filters.gxMtbRifUltraMtbInvalid]
 #. defaultMessage is:
 #. MTB Invalid
+#. [pages.filters.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
 #: extracted_strings.json
 msgid "MTB Invalid"
 msgstr "MTB Invalid"
@@ -4348,6 +4394,9 @@ msgstr "MTB Invalid"
 #. [pages.filters.gxMtbRifUltraMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [pages.filters.gxMtbXdrMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #: extracted_strings.json
 msgid "MTB No Result"
 msgstr "MTB No Result"
@@ -4356,6 +4405,9 @@ msgstr "MTB No Result"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbXdrMtbNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #: extracted_strings.json
@@ -4848,6 +4900,13 @@ msgstr "No results match your selected filters"
 msgid "None"
 msgstr "None"
 
+#. [pages.ResultList.ResultTreatmentStatusNotAvailable]
+#. defaultMessage is:
+#. Not Available
+#: extracted_strings.json
+msgid "Not Available"
+msgstr "Not Available"
+
 #. [pages.TableCell.notConfigured]
 #. defaultMessage is:
 #. Not Configured
@@ -4895,6 +4954,9 @@ msgid "Not Found"
 msgstr "Not Found"
 
 #. [reporters.notPossible]
+#. defaultMessage is:
+#. Not Possible
+#. [pages.ResultList.ResultTreatmentStatusNotPossible]
 #. defaultMessage is:
 #. Not Possible
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
@@ -5051,9 +5113,6 @@ msgstr ""
 "Number of results in the last 30 days divided by the daily capacity of the "
 "instrument multiplied by 30 days"
 
-#. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -5074,6 +5133,13 @@ msgstr "OK"
 msgid "Offline"
 msgstr "Offline"
 
+#. [pages.ResultList.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. Ok
+#: extracted_strings.json
+msgid "Ok"
+msgstr "Ok"
+
 #. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
 #. defaultMessage is:
 #. Okay
@@ -5091,6 +5157,9 @@ msgstr "Okay"
 msgid "Older"
 msgstr "Older"
 
+#. [pages.ResultList.ResultTreatmentStatusOnTreatment]
+#. defaultMessage is:
+#. On Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -5760,6 +5829,9 @@ msgstr "Positive Test Results Transmitted"
 msgid "Positives"
 msgstr "Positives"
 
+#. [pages.UserPreferences.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
