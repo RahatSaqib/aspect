@@ -113,7 +113,8 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
-
+  selectFields.push('rc2.name as resultCategory2Name')
+  selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
   // get rows
   const getItems = resultQuery
     .clone()

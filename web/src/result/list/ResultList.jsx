@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
+import map from 'lodash/map'
 import without from 'lodash/without'
 import partial from 'lodash/partial'
 import identity from 'lodash/identity'
@@ -125,7 +126,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'sampleId',
     'errorCode',
     'patientId',
-    'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
     /* --- table.extraColumns BEGIN --- */
@@ -157,7 +157,7 @@ const messageByI18nKey = partial(
   }
 )
 
-const getBaseColumns = intl => {
+const getBaseColumns = (intl, extraColumns = []) => {
   return Immutable.List([
     {
       key: 'endedOn',
@@ -191,6 +191,12 @@ const getBaseColumns = intl => {
       label: intl.formatMessage(messages.resultText),
       sortable: true,
     },
+    ...map(extraColumns, column => ({
+      key: column.db,
+      label: messageByI18nKey(column.i18nKey)(column.title, intl),
+      sortable: true,
+      hiddenOn: 'md',
+    })),
     {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),
@@ -388,23 +394,13 @@ const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      const { data: list, total: totalItems } = data
+      const { data: list, total: totalItems, extraColumns } = data
       setItems(receiveList(items, Immutable.fromJS(list)))
       setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems))
-      setColumns(
-        getBaseColumns(intl).concat(
-          table.extraColumns.map(column => ({
-            key: column.get('db'),
-            label: messageByI18nKey(column.get('i18nKey'))(
-              column.get('title'),
-              intl
-            ),
-            sortable: true,
-            hiddenOn: 'md',
-          }))
-        )
-      )
+      const newTable = receiveTableItems(table, totalItems, extraColumns)
+      setTable(newTable)
+
+      setColumns(getBaseColumns(intl, extraColumns))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
@@ -424,7 +420,6 @@ const ResultList = () => {
       )
     }
   }
-
   const baseProps = {
     intl,
     // history,
@@ -442,7 +437,6 @@ const ResultList = () => {
     pageAt: page,
     pageSize: size,
   }
-
   if (isError) throw new Error(error)
 
   return <ResultListWithProps {...baseProps} />

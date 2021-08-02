@@ -202,6 +202,14 @@ function validateResultListResponse() {
       .description('The status of the result treatment')
       .optional()
       .allow(null, ''),
+    resultCategory2Name: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category 2'),
+    resultCategory2I18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category 2 i18n key'),
   }
 }
 
