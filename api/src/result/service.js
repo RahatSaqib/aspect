@@ -207,11 +207,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
         }
       })
     }
-    // // Set the result collection
-    // d.collectionOfResults = getCollectionOfResults(
-    //   d.resultText,
-    //   resultCategories
-    // )
   })
 
   // Clean extraColumns fields
