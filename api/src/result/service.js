@@ -122,7 +122,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
       })
     }
 
-    if (assay.externalId == 'GxMtbXdr') {
+    if (assay.externalId === 'GxMtbXdr') {
       const resultCategories = await knex('ResultCategory')
       assayColumns.push({
         db: 'resultText',
@@ -130,12 +130,10 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
         title: 'Collection of Results',
         i18nKey: 'collectionOfResults',
         fieldName: 'collectionOfResults',
-        postProcess: resultText => getCollectionOfResults(
-          resultText,
-          resultCategories
-        ),
+        postProcess: resultText =>
+          getCollectionOfResults(resultText, resultCategories),
         style: { width: '20%' },
-        formatter: 'collectionOfResultsToString'
+        formatter: 'collectionOfResultsToString',
       })
     }
 
@@ -156,7 +154,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
           type: value.type,
           title: value.title,
           i18nKey: value.i18nKey,
-          postProcess: resultData => JSON.parse(resultData)
+          postProcess: resultData => JSON.parse(resultData),
         })
       }
     })
@@ -192,17 +190,13 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
       _.each(assayColumns, c => {
         if (c && c.db.indexOf('resultCategory') === -1) {
           const path = c.db.replace('.', '_')
-          
+
           let value = d[path]
 
-          if (c.postProcess)
-            value = c.postProcess(value)
+          if (c.postProcess) value = c.postProcess(value)
 
-          console.log('value', value)
+          if (!c.fieldName) _.set(c, 'fieldName', path)
 
-          if (!c.fieldName)
-            _.set(c, 'fieldName', path)
-          
           _.set(d, c.fieldName, value)
         }
       })
