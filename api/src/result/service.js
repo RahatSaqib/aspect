@@ -181,7 +181,7 @@ async function getResultsForExport(query, auth) {
   const selectFields = [
     ...SELECT_COMMON_FIELDS,
     knex.raw(
-      `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
+      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
     ),
   ]
   const sortableFields = [...SORT_FIELDS]

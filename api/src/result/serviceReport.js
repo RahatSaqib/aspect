@@ -76,6 +76,8 @@ async function exportResults(request, reply) {
     ...columnsFromResultForms,
   ]
 
+  if (extraColumns.length === 0)
+    columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
   const sheetData = {
     dataRows: data,
     dynamicColumns: columns,
