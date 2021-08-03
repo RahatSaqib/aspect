@@ -60,7 +60,7 @@ const SelectField = ({
         React.Children.count(children) === 0 ||
         /** list of MenuItem's doesn't contain 'value' */
         !React.Children.toArray(children).find(
-          menuItem => menuItem.props.value === value
+          menuItem => menuItem.props?.value === value
         )
           ? ''
           : value,
