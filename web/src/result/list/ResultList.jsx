@@ -4,6 +4,7 @@ import flowRight from 'lodash/flowRight'
 import map from 'lodash/map'
 import without from 'lodash/without'
 import partial from 'lodash/partial'
+import filter from 'lodash/filter'
 import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
@@ -158,70 +159,77 @@ const messageByI18nKey = partial(
 )
 
 const getBaseColumns = (intl, extraColumns = []) => {
-  return Immutable.List([
-    {
-      key: 'endedOn',
-      label: intl.formatMessage(messages.endedOn),
-      sortable: true,
-    },
-    {
-      key: 'deviceName',
-      label: intl.formatMessage(messages.deviceName),
-      sortable: true,
-      hiddenOn: 'xs',
-    },
-    {
-      key: 'sampleOriginSiteName',
-      label: intl.formatMessage(messages.sampleOriginSiteName),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'sampleId',
-      label: intl.formatMessage(messages.sampleId),
-      sortable: true,
-    },
-    {
-      key: 'assayName',
-      label: intl.formatMessage(messages.assayName),
-      sortable: true,
-    },
-    {
-      key: 'resultText',
-      label: intl.formatMessage(messages.resultText),
-      sortable: true,
-    },
-    ...map(extraColumns, column => ({
-      key: column.db,
-      label: messageByI18nKey(column.i18nKey)(column.title, intl),
-      sortable: true,
-      hiddenOn: 'md',
-    })),
-    {
-      key: 'errorCode',
-      label: intl.formatMessage(messages.errorCode),
-      sortable: true,
-      hiddenOn: 'lg',
-    },
-    {
-      key: 'resultWorkflowStatus',
-      label: intl.formatMessage(messages.resultWorkflowStatus),
-      sortable: true,
-      hiddenOn: 'md',
-    },
-    {
-      key: 'treatmentStatusInfo',
-      label: intl.formatMessage(messages.resultTreatmentStatus),
-      sortable: true,
-      hiddenOn: 'md',
-    },
-    {
-      key: 'patientId',
-      label: intl.formatMessage(messages.patientId),
-      sortable: true,
-      hiddenOn: 'xs',
-    },
-  ])
+  return Immutable.List(
+    filter(
+      [
+        {
+          key: 'endedOn',
+          label: intl.formatMessage(messages.endedOn),
+          sortable: true,
+        },
+        {
+          key: 'deviceName',
+          label: intl.formatMessage(messages.deviceName),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+        {
+          key: 'sampleOriginSiteName',
+          label: intl.formatMessage(messages.sampleOriginSiteName),
+          sortable: true,
+          hiddenOn: 'sm',
+        },
+        {
+          key: 'sampleId',
+          label: intl.formatMessage(messages.sampleId),
+          sortable: true,
+        },
+        {
+          key: 'assayName',
+          label: intl.formatMessage(messages.assayName),
+          sortable: true,
+        },
+        {
+          key: 'resultText',
+          label: intl.formatMessage(messages.resultText),
+          sortable: true,
+        },
+        ...map(extraColumns, column => ({
+          key: column.db,
+          label: messageByI18nKey(column.i18nKey)(column.title, intl),
+          sortable: true,
+          hiddenOn: 'md',
+        })),
+        {
+          key: 'errorCode',
+          label: intl.formatMessage(messages.errorCode),
+          sortable: true,
+          hiddenOn: 'lg',
+        },
+        {
+          key: 'resultWorkflowStatus',
+          label: intl.formatMessage(messages.resultWorkflowStatus),
+          sortable: true,
+          hiddenOn: 'md',
+        },
+        {
+          key: 'treatmentStatusInfo',
+          label: intl.formatMessage(messages.resultTreatmentStatus),
+          sortable: true,
+          hiddenOn: 'md',
+        },
+        {
+          key: 'patientId',
+          label: intl.formatMessage(messages.patientId),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+      ],
+      elem =>
+        (extraColumns.length > 0 && elem.key !== 'resultText') ||
+        extraColumns.length === 0
+    )
+  )
 }
 export const ResultListWithProps = ({
   intl,

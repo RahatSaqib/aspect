@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
   resultText: {
     id: 'pages.ResultList.resultText',
-    defaultMessage: 'Result Text',
+    defaultMessage: 'Result',
   },
   resultWorkflowStatus: {
     id: 'pages.ResultList.resultWorkflowStatus',
@@ -53,9 +53,37 @@ const messages = defineMessages({
     id: 'pages.ResultList.patientId',
     defaultMessage: 'Patient ID',
   },
+  resultCategoryMtb: {
+    id: 'pages.ResultList.resultCategoryMtb',
+    defaultMessage: 'MTB',
+  },
+  resultCategoryRif: {
+    id: 'pages.ResultList.resultCategoryRif',
+    defaultMessage: 'Rif',
+  },
+  resultCategoryHcv: {
+    id: 'pages.ResultList.resultCategoryHcv',
+    defaultMessage: 'HCV',
+  },
+  resultCategoryEbolaGp: {
+    id: 'pages.ResultList.resultCategoryEbolaGp',
+    defaultMessage: 'GP',
+  },
+  resultCategoryEbolaNp: {
+    id: 'pages.ResultList.resultCategoryEbolaNp',
+    defaultMessage: 'NP',
+  },
+  resultCategoryCovid19: {
+    id: 'pages.ResultList.resultCategoryCovid19',
+    defaultMessage: 'Covid',
+  },
+  resultCategoryXDR: {
+    id: 'pages.ResultList.resultCategoryXDR',
+    defaultMessage: 'XDR',
+  },
   resultCategoryCopiesMl: {
     id: 'pages.ResultList.resultCategoryHiv',
-    defaultMessage: 'HIV',
+    defaultMessage: 'Copies/ML',
   },
   resultCategory1Name: {
     id: 'pages.ResultList.resultCategory1Name',
