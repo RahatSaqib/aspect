@@ -118,6 +118,9 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
   selectFields.push('a.resultCategory2i18nKey as resultCategory2Titlei18nKey')
   selectFields.push('a.resultCategory1i18nKey as resultCategory1Titlei18nKey')
+  selectFields.push('a.resultCategory1label as resultCategory1Title')
+  selectFields.push('a.resultCategory2label as resultCategory2Title')
+
   // get rows
   const getItems = resultQuery
     .clone()
@@ -201,6 +204,12 @@ async function getResultsForExport(query, auth) {
     if (assay.resultCategory2Label) {
       selectFields.push('rc2.name as resultCategory2Name')
       sortableFields.push('resultCategory2Name')
+      assayColumns.push({
+        db: 'resultCategory2Name',
+        type: 'string',
+        title: assay.resultCategory2Label,
+        i18nKey: assay.resultCategory2i18nKey,
+      })
     }
   }
 
@@ -221,6 +230,7 @@ async function getResultsForExport(query, auth) {
   const result = {
     ok: true,
     data,
+    extraColumns: assayColumns,
   }
 
   return result
