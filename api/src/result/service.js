@@ -54,6 +54,12 @@ const { getRemoteAddress } = require('../shared/request')
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
+/**
+ * Builds a collection of category types and results from parsing the resultText of a GeneXpert result.
+ * @param {string} resultText The GeneXpert result text
+ * @param {Array} resultCategories The list of result categories
+ * @returns The collection of category types and results. Ex.: { MTB: { resultCategoryExternalId: "Detected", resultCategoryI18nKey: "ResultCategoryDetected", categoryTypeI18nKey: null } }
+ */
 function getCollectionOfResults(resultText, resultCategories) {
   let collectionOfResults = {}
   if (resultText && resultCategories) {
