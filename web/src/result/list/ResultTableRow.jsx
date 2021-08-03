@@ -1,8 +1,6 @@
 import partial from 'lodash/partial'
 import isNumber from 'lodash/isNumber'
 import identity from 'lodash/identity'
-import isEmpty from 'lodash/isEmpty'
-import isNil from 'lodash/isNil'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
@@ -14,7 +12,7 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
-import collectionOfResultsToString from '../formatters'
+// import collectionOfResultsToString from '../formatters'
 
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -31,10 +29,13 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
     }
   )
 
-  const collectionOfResults = collectionOfResultsToString(
-    result.toJS(),
-    formatMessage
-  )
+  // const collectionOfResults = collectionOfResultsToString(
+  //   result.toJS(),
+  //   formatMessage
+  // )
+  // {!isNil(collectionOfResults) && !isEmpty(collectionOfResults)
+  //   ? collectionOfResults.split('\n').map(r => <p>{r}</p>)
+  //   : 'N/A'}
 
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -50,12 +51,17 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           result.get('assayName')
         )}
       </TableCell>
-      <TableCell>{result.get('resultText')}</TableCell>
       <TableCell>
-        {!isNil(collectionOfResults) && !isEmpty(collectionOfResults)
-          ? collectionOfResults.split('\n').map(r => <p>{r}</p>)
-          : 'N/A'}
+        {result.get('resultCategory1Name')}{' '}
+        {`| ${result.get('resultCategory2Name')}`}
       </TableCell>
+      {!extraColumns.isEmpty() &&
+        extraColumns.map(column => (
+          // TODO: refactor, see DeviceOperationTableRow
+          <TableCell key={column.get('db')} hiddenOn="nd">
+            {formatterByType(column.get('type'))(result.get(column.get('db')))}
+          </TableCell>
+        ))}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
         {formatMessage(
@@ -79,12 +85,6 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         )}
       </TableCell>
       <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
-      {extraColumns.map(column => (
-        // TODO: refactor, see DeviceOperationTableRow
-        <TableCell key={column.get('db')} hiddenOn="nd">
-          {formatterByType(column.get('type'))(result.get(column.get('db')))}
-        </TableCell>
-      ))}
     </TableRow>
   )
 }

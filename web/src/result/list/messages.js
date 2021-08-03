@@ -63,6 +63,14 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultCategoryHiv',
     defaultMessage: 'HIV',
   },
+  resultCategory1Name: {
+    id: 'pages.ResultList.resultCategory1Name',
+    defaultMessage: 'Category',
+  },
+  resultCategory2Name: {
+    id: 'pages.ResultList.resultCategory1Name',
+    defaultMessage: 'Category 2',
+  },
   paginatorStatus: {
     id: 'pages.ResultList.paginatorStatus',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
