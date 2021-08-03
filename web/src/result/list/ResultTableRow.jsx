@@ -12,7 +12,7 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
-// import collectionOfResultsToString from '../formatters'
+import getFormatterFactory from '../formatters'
 
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -20,22 +20,16 @@ const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { formatMessage, formatNumber } = useI18n()
+  const getFormatter = getFormatterFactory(formatMessage)
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
     {
       number: n => (isNumber(n) ? formatNumber(n) : false),
+      string: t => t && t.split('\n').map(r => <p>{r}</p>),
       default: identity,
     }
   )
-
-  // const collectionOfResults = collectionOfResultsToString(
-  //   result.toJS(),
-  //   formatMessage
-  // )
-  // {!isNil(collectionOfResults) && !isEmpty(collectionOfResults)
-  //   ? collectionOfResults.split('\n').map(r => <p>{r}</p>)
-  //   : 'N/A'}
 
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -59,7 +53,13 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         extraColumns.map(column => (
           // TODO: refactor, see DeviceOperationTableRow
           <TableCell key={column.get('db')} hiddenOn="nd">
-            {formatterByType(column.get('type'))(result.get(column.get('db')))}
+            {formatterByType(column.get('type'))(
+              column.get('formatter')
+                ? getFormatter(column.get('formatter'))(
+                    result.get(column.get('fieldName'))
+                  )
+                : result.get(column.get('fieldName'))
+            )}
           </TableCell>
         ))}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>

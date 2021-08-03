@@ -79,6 +79,22 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const sortableFields = _.clone(SORT_FIELDS)
 
   const assayColumns = []
+  /**
+   * assayColumns items shape:
+   * {
+        db: 'resultText', // Query column to process
+        type: 'string', // The type of the value shown in the UI. Depending what this value is, the formatting will be different. Possible values: string, number.
+        title: 'Collection of Results', // The default title of the extra column
+        i18nKey: 'collectionOfResults', // The i18nKey of the extra column title
+        fieldName: 'collectionOfResults', // The name of the result's field to set
+        postProcess: resultText => getCollectionOfResults( // The post processing function applied to the raw db value
+          resultText,
+          resultCategories
+        ),
+        formatter: 'collectionOfResultsToString' // The name of the custom formatter function defined in the UI
+      }
+   */
+
   if (query.assayId) {
     const assay = await knex('Assay as a').where('a.id', query.assayId).first()
 
@@ -87,6 +103,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
       sortableFields.push('resultCategory1Name')
       assayColumns.push({
         db: 'resultCategory1Name',
+        fieldName: 'resultCategory1Name',
         type: 'string',
         title: assay.resultCategory1Label,
         i18nKey: assay.resultCategory1i18nKey,
@@ -98,9 +115,27 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
       sortableFields.push('resultCategory2Name')
       assayColumns.push({
         db: 'resultCategory2Name',
+        fieldName: 'resultCategory2Name',
         type: 'string',
         title: assay.resultCategory2Label,
         i18nKey: assay.resultCategory2i18nKey,
+      })
+    }
+
+    if (assay.externalId == 'GxMtbXdr') {
+      const resultCategories = await knex('ResultCategory')
+      assayColumns.push({
+        db: 'resultText',
+        type: 'string',
+        title: 'Collection of Results',
+        i18nKey: 'collectionOfResults',
+        fieldName: 'collectionOfResults',
+        postProcess: resultText => getCollectionOfResults(
+          resultText,
+          resultCategories
+        ),
+        style: { width: '20%' },
+        formatter: 'collectionOfResultsToString'
       })
     }
 
@@ -121,6 +156,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
           type: value.type,
           title: value.title,
           i18nKey: value.i18nKey,
+          postProcess: resultData => JSON.parse(resultData)
         })
       }
     })
@@ -149,23 +185,38 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // Post processing results
-  const resultCategories = await knex('ResultCategory')
+  // Post processing results and extra columns adding
   _.each(data, d => {
     // if assay specified columns from the resultData field, parse them to valid JSON
     if (assayColumns) {
       _.each(assayColumns, c => {
         if (c && c.db.indexOf('resultCategory') === -1) {
           const path = c.db.replace('.', '_')
-          _.set(d, path, JSON.parse(d[path]))
+          
+          let value = d[path]
+
+          if (c.postProcess)
+            value = c.postProcess(value)
+
+          console.log('value', value)
+
+          if (!c.fieldName)
+            _.set(c, 'fieldName', path)
+          
+          _.set(d, c.fieldName, value)
         }
       })
     }
-    // Set the result collection
-    d.collectionOfResults = getCollectionOfResults(
-      d.resultText,
-      resultCategories
-    )
+    // // Set the result collection
+    // d.collectionOfResults = getCollectionOfResults(
+    //   d.resultText,
+    //   resultCategories
+    // )
+  })
+
+  // Clean extraColumns fields
+  assayColumns.forEach((columnValue, columnIndex) => {
+    assayColumns[columnIndex] = _.omit(columnValue, ['postProcess', 'db'])
   })
 
   const result = {

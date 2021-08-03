@@ -196,13 +196,8 @@ const getBaseColumns = (intl, extraColumns = []) => {
       label: messageByI18nKey(column.i18nKey)(column.title, intl),
       sortable: true,
       hiddenOn: 'md',
+      style: column.style || null,
     })),
-    {
-      key: 'collectionOfResults',
-      label: intl.formatMessage(messages.collectionOfResults),
-      sortable: true,
-      style: { width: '15%' },
-    },
     {
       key: 'errorCode',
       label: intl.formatMessage(messages.errorCode),

@@ -18,7 +18,7 @@ import { RESULT_DETAIL } from '../../../QueryFetch/Result'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
-import collectionOfResultsToString from '../../../../result/formatters'
+import getFormatterFactory from '../../../../result/formatters'
 
 const AspectResultDetail = ({ formSchema, resultId }) => {
   const [patienId, setPatientId] = useState()
@@ -26,6 +26,11 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
   const [formConfig, setFormConfig] = useState(false)
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
   const { formatMessage } = useI18n()
+
+  const getFormatter = getFormatterFactory(formatMessage)
+  const collectionOfResultsToString = getFormatter(
+    'collectionOfResultsToString'
+  )
 
   const { isLoading, isError, error } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
@@ -59,10 +64,8 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
       const { data } = formData
       setPatientId(data.patientId)
       data.collectionOfResults = collectionOfResultsToString(
-        data,
-        formatMessage
+        data.collectionOfResults
       )
-      // collectionOfResultsToString(data)
       setFormConfig(mergeFormConfigWithData(data, formSchema))
     }
   }, [formData])
