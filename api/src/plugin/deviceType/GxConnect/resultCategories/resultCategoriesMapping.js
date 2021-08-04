@@ -333,6 +333,11 @@ const parseResultText = resultText => {
   return results
 }
 
+/**
+ * Parses a result text and builds an array of detected resistances. Used specifically for GxMtbXdr assay.
+ * @param {string} resultText The result text of a GeneXpert result
+ * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
+ */
 const getDetectedResistanceCategoryTypes = resultText => {
   const detectedResistances = []
   const resultsCollection = parseResultText(resultText)
