@@ -319,3 +319,17 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
   )
   return reducedFilters
 }
+
+export const isCountryFilterHidden = countries =>
+  /**
+   * countries not loading now
+   */
+  countries.loading === false &&
+  /**
+   * already attempted to load countries
+   */
+  !!countries.lastRefreshed &&
+  /**
+   * only 1 country is loaded (accessible) for user
+   */
+  countries.items.size === 1
