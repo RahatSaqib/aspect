@@ -12,7 +12,7 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
-import getFormatterFactory from '../formatters'
+import formatters from '../formatters'
 
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -20,7 +20,6 @@ const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { formatMessage, formatNumber } = useI18n()
-  const getFormatter = getFormatterFactory(formatMessage)
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
@@ -55,7 +54,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           <TableCell key={column.get('db')} hiddenOn="nd">
             {formatterByType(column.get('type'))(
               column.get('formatter')
-                ? getFormatter(column.get('formatter'))(
+                ? formatters[column.get('formatter')](
                     result.get(column.get('fieldName'))
                   )
                 : result.get(column.get('fieldName'))

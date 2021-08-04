@@ -34,10 +34,6 @@ const {
   resultTypeToId,
   resultCategoryToId,
 } = require('../shared/dictionary')
-const {
-  parseResultText,
-  categoryTypesI18nKeys,
-} = require('../plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -53,32 +49,6 @@ const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
-
-/**
- * Builds a collection of category types and results from parsing the resultText of a GeneXpert result.
- * @param {string} resultText The GeneXpert result text
- * @param {Array} resultCategories The list of result categories
- * @returns The collection of category types and results. Ex.: { MTB: { resultCategoryExternalId: "Detected", resultCategoryI18nKey: "ResultCategoryDetected", categoryTypeI18nKey: null } }
- */
-function getCollectionOfResults(resultText, resultCategories) {
-  let collectionOfResults = {}
-  if (resultText && resultCategories) {
-    collectionOfResults = parseResultText(resultText)
-    Object.keys(collectionOfResults).forEach(categoryType => {
-      const resultCategory = collectionOfResults[categoryType]
-      const resultCategoryI18nKey = resultCategories.find(
-        rc => rc.externalId === resultCategory
-      )?.i18nKey
-      collectionOfResults[categoryType] = {
-        resultCategoryExternalId: collectionOfResults[categoryType],
-        resultCategoryI18nKey,
-        categoryTypeI18nKey: categoryTypesI18nKeys[categoryType] || null,
-      }
-    })
-  }
-
-  return collectionOfResults
-}
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
@@ -128,21 +98,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
       })
     }
 
-    if (assay.externalId === 'GxMtbXdr') {
-      const resultCategories = await knex('ResultCategory')
-      assayColumns.push({
-        db: 'resultText',
-        type: 'string',
-        title: 'Collection of Results',
-        i18nKey: 'collectionOfResults',
-        fieldName: 'collectionOfResults',
-        postProcess: resultText =>
-          getCollectionOfResults(resultText, resultCategories),
-        style: { width: '20%' },
-        formatter: 'collectionOfResultsToString',
-      })
-    }
-
     const resultDataSchema = JSON.parse(assay.resultDataSchema)
     _.each(resultDataSchema, (value, key) => {
       if (value.list) {
@@ -160,6 +115,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
           type: value.type,
           title: value.title,
           i18nKey: value.i18nKey,
+          formatter: value.formatter,
           postProcess: resultData => JSON.parse(resultData),
         })
       }
@@ -861,11 +817,6 @@ async function getResultByResultId(
     getResultTreatmentStatus(data)
     data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
-    const resultCategories = await knex('ResultCategory')
-    data.collectionOfResults = getCollectionOfResults(
-      data.resultText,
-      resultCategories
-    )
   }
 
   return { ok: results.length === 1, data }

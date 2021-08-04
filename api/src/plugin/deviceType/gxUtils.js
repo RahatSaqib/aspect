@@ -26,6 +26,7 @@ const {
   mapResultCategory2,
   getResultCategoriesHivVL,
   getVLCopies,
+  getDetectedResistanceCategoryTypes,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
@@ -187,6 +188,15 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (potentialAssayIds.includes('GxHiv1Vl')) {
     const copies = getVLCopies(_.get(payload, 'data.resultText'))
     if (copies) _.set(payload, 'data.copies', copies)
+  }
+
+  if (potentialAssayIds.includes('GxMtbXdr')) {
+    const resultCategories = await knex('ResultCategory')
+    const detectedResistanceCategoryTypes = getDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText'),
+      resultCategories
+    )
+    _.set(payload, 'data.detectedResistance', detectedResistanceCategoryTypes)
   }
   const existingResult = await findExistingResult(
     {

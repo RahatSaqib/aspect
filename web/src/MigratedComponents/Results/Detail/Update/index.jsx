@@ -5,7 +5,6 @@ import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import findIndex from 'lodash/findIndex'
-import useI18n from '../../../../Hooks/i18n/useI18n'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import { mergeFormConfigWithData } from '../../../Form/Formik/Helpers'
 import AspectForm from '../../../Form'
@@ -18,19 +17,12 @@ import { RESULT_DETAIL } from '../../../QueryFetch/Result'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
-import getFormatterFactory from '../../../../result/formatters'
 
 const AspectResultDetail = ({ formSchema, resultId }) => {
   const [patienId, setPatientId] = useState()
   const [formData, setFormData] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
-  const { formatMessage } = useI18n()
-
-  const getFormatter = getFormatterFactory(formatMessage)
-  const collectionOfResultsToString = getFormatter(
-    'collectionOfResultsToString'
-  )
 
   const { isLoading, isError, error } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
@@ -63,9 +55,6 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
     if (formData) {
       const { data } = formData
       setPatientId(data.patientId)
-      data.collectionOfResults = collectionOfResultsToString(
-        data.collectionOfResults
-      )
       setFormConfig(mergeFormConfigWithData(data, formSchema))
     }
   }, [formData])
