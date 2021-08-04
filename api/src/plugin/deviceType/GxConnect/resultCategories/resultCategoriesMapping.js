@@ -336,47 +336,20 @@ const parseResultText = resultText => {
         result2CategoryMapping[sanitizeResultTextValue(val)]
 
       if (categoryType && resultValue) {
-        const resultType = categoryType
-        results[resultType] = resultValue
+        results[categoryType] = resultValue
       }
     }
   })
   return results
 }
 
-/**
- * Builds a collection of category types and results from parsing the resultText of a GeneXpert result.
- * @param {string} resultText The GeneXpert result text
- * @param {Array} resultCategories The list of result categories
- * @returns The collection of category types and results. Ex.: { MTB: { resultCategoryExternalId: "Detected", resultCategoryI18nKey: "ResultCategoryDetected", categoryTypeI18nKey: null } }
- */
-function getCollectionOfResults(resultText, resultCategories) {
-  let collectionOfResults = {}
-  if (resultText && resultCategories) {
-    collectionOfResults = parseResultText(resultText)
-    Object.keys(collectionOfResults).forEach(categoryType => {
-      const resultCategory = collectionOfResults[categoryType]
-      const resultCategoryI18nKey = resultCategories.find(
-        rc => rc.externalId === resultCategory
-      )?.i18nKey
-      collectionOfResults[categoryType] = {
-        resultCategoryExternalId: collectionOfResults[categoryType],
-        resultCategoryI18nKey,
-        categoryTypeI18nKey: categoryTypesI18nKeys[categoryType] || null,
-      }
-    })
-  }
-
-  return collectionOfResults
-}
-
-function getDetectedResistanceCategoryTypes(resultText, resultCategories) {
+function getDetectedResistanceCategoryTypes(resultText) {
   const detectedResistances = []
-  const resultsCollection = getCollectionOfResults(resultText, resultCategories)
+  const resultsCollection = parseResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {
     if (
       categoryType !== 'MTB' &&
-      resultsCollection[categoryType].resultCategoryExternalId === 'Detected'
+      resultsCollection[categoryType] === 'Detected'
     )
       detectedResistances.push(categoryType.replace('RESISTANCE', '').trim())
   })

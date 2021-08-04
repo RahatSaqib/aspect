@@ -63,11 +63,8 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
         title: 'Collection of Results', // The default title of the extra column
         i18nKey: 'collectionOfResults', // The i18nKey of the extra column title
         fieldName: 'collectionOfResults', // The name of the result's field to set
-        postProcess: resultText => getCollectionOfResults( // The post processing function applied to the raw db value
-          resultText,
-          resultCategories
-        ),
-        formatter: 'collectionOfResultsToString' // The name of the custom formatter function defined in the UI
+        postProcess: resultText => doSomething(resultText) // A function that will receive the raw db value and return the new processed value
+        formatter: 'joinArrayWithCommas' // The name of the custom formatter function defined in the UI
       }
    */
 
