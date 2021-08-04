@@ -1065,7 +1065,6 @@ async function addTBResults(
         : selectionConditionNoErrors
     )
 
-    
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
     
