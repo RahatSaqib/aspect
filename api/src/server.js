@@ -4,6 +4,7 @@
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
+const Sentry = require('@sentry/node')
 
 const config = require('./config')
 const { version } = require('../package.json')
@@ -61,7 +62,16 @@ const ravenPlugins = raven
       },
     ]
   : []
-
+const sentryPlugins = [
+  {
+    plugin: require('hapi-sentry'),
+    options: {
+      client: {
+        dsn: 'https://162dadafa58c4881b98646e914bc483d@o944950.ingest.sentry.io/5893503',
+      },
+    },
+  },
+]
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
@@ -150,6 +160,8 @@ const plugins = [
 
   // Set message queue
   messageQueuePlugin,
+  // Set sentry hapi pugin
+  ...sentryPlugins,
 ]
 
 const start = async () => {
@@ -334,6 +346,7 @@ const start = async () => {
     logger.info(`Magic happens at http://localhost:${port}`)
   } catch (err) {
     logger.error(err)
+    Sentry.captureException(err)
   }
 }
 

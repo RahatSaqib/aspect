@@ -3,7 +3,8 @@ import 'whatwg-fetch'
 import 'url-search-params-polyfill'
 import noop from 'lodash/noop'
 import { render } from 'react-dom'
-
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
 import config from './config'
 import store from './store'
 import { hydrateFromLocalStorage, refreshStart } from './auth/AuthRedux'
@@ -11,11 +12,18 @@ import './index.css'
 import { getAspectHydrateData } from './globals/sideEffects/LocalStorage'
 import appFactory from './globals/factories/appFactory'
 
-if (config.sentry) {
-  // using require here since import only allowed at top-level
-  const Raven = require('raven-js')
-  Raven.config(config.sentry.dsn).install()
-}
+// if (config.sentry) {
+// using require here since import only allowed at top-level
+Sentry.init({
+  dsn: 'https://6fdaf6e504b6479782895c8703580006@o944950.ingest.sentry.io/5893495', // config.sentry.dsn
+  integrations: [new Integrations.BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+})
+// }
 
 // polyfill intl if necessary
 // http://formatjs.io/guides/runtime-environments/
