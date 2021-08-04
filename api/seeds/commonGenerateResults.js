@@ -32,6 +32,7 @@ const {
 const { addCase } = require('../src/case/service')
 const { getRandomTBPatientData } = require('./commonTbresults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
+const { getDetectedResistanceCategoryTypes } = require('../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 
 function calculateDateForResultForCovid(
   currentResult,
@@ -1064,8 +1065,12 @@ async function addTBResults(
         : selectionConditionNoErrors
     )
 
+    
     const patientNumber = patients.length - 1
     resultData.resultText = result.resultText
+    
+    const resultCategoryList = await knex('ResultCategory')
+    resultData.detectedResistance = getDetectedResistanceCategoryTypes(result.resultText, resultCategoryList)
 
     const resultStatus =
       ensureResultIds.shift() || _.random(1) < 0.3

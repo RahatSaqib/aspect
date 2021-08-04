@@ -49,6 +49,7 @@ const {
 const { upsertSingle } = require('../utils')
 const upsertReports = require('../common/upsert_reports')
 const upsertConsumables = require('../common/upsert_consumables')
+const { getDetectedResistanceCategoryTypes } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -4337,7 +4338,12 @@ async function seed(knex) {
           possibleResults,
           r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
+        
         resultData.resultText = result.resultText
+        
+        const resultCategories = await knex('ResultCategory')
+        resultData.detectedResistance = getDetectedResistanceCategoryTypes(result.resultText, resultCategories)
+        
         const [resultId] = await knex('Result').insert({
           ...auditFields,
           externalId: `UQTBXDR-${i}`,
