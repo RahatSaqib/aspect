@@ -2,6 +2,7 @@ const { assert } = require('chai')
 const {
   mapResultCategory2,
   parseResultText,
+  getDetectedResistanceCategoryTypes,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
@@ -387,5 +388,39 @@ describe('Result Text Parsing', () => {
     assert.deepEqual(parseResultText('SARS-CoV-2 POSITIVE'), {
       'SARS-COV-2': 'Positive',
     })
+  })
+})
+
+describe('Detected Resistancies Calculation', () => {
+  it('Should get all the category types of the resistancies that were detected', () => {
+    assert.deepEqual(
+      getDetectedResistanceCategoryTypes(
+        '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      ),
+      ['INH']
+    )
+  })
+
+  it('Should return an empty array if no resistances were detected', () => {
+    assert.isEmpty(
+      getDetectedResistanceCategoryTypes(
+        '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      )
+    )
+  })
+
+  it('Should not crash if invalid categories are present', () => {
+    assert.deepEqual(
+      getDetectedResistanceCategoryTypes(
+        '|MTB @label_result_detected|Medium A_RESISTANCE_ANYONE_KNOWS Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      ),
+      ['FLQ']
+    )
+  })
+
+  it('Should not crash if result text does not include resistancies', () => {
+    assert.isEmpty(
+      getDetectedResistanceCategoryTypes('|MTB @label_result_detected')
+    )
   })
 })
