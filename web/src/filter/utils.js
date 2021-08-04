@@ -319,3 +319,8 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
   )
   return reducedFilters
 }
+
+export const isCountryFilterHidden = countries =>
+  countries.loading === false &&
+  !!countries.lastRefreshed &&
+  countries.items.size === 1
