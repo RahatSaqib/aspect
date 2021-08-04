@@ -1,6 +1,8 @@
 const Promise = require('bluebird')
 const { getResultCategories } = require('../../src/plugin/deviceType/gxUtils')
-const { getDetectedResistanceCategoryTypes } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
+const {
+  getDetectedResistanceCategoryTypes,
+} = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
 
 const xdrExtId = 'GxMtbXdr'
@@ -16,8 +18,6 @@ exports.seed = async function (knex) {
     .select('id')
     .where('assayId', knex('Assay').select('id').where('externalId', uknwExtId))
     .andWhere('resultData', 'like', '%INH%')
-
-  const resultCategories = await knex('ResultCategory')
 
   await Promise.each(ids, async item => {
     const resData = JSON.parse(
@@ -36,16 +36,17 @@ exports.seed = async function (knex) {
     const rc2 = result && result[1] ? result[1].id : null
 
     if (rc2)
-      resData.detectedResistance = getDetectedResistanceCategoryTypes(resData.resultText, resultCategories)
-    else
-      resData.detectedResistance = null
+      resData.detectedResistance = getDetectedResistanceCategoryTypes(
+        resData.resultText
+      )
+    else resData.detectedResistance = null
 
     await knex('Result')
       .update({
         assayId: newAssayId,
         resultCategory1: rcMapping[rc1],
         resultCategory2: rcMapping[rc2],
-        resultData: JSON.stringify(resData)
+        resultData: JSON.stringify(resData),
       })
       .where('id', item.id)
   })

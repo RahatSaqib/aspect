@@ -333,7 +333,7 @@ const parseResultText = resultText => {
   return results
 }
 
-function getDetectedResistanceCategoryTypes(resultText) {
+const getDetectedResistanceCategoryTypes = resultText => {
   const detectedResistances = []
   const resultsCollection = parseResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {

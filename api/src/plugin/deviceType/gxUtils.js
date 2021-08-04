@@ -191,10 +191,8 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   }
 
   if (potentialAssayIds.includes('GxMtbXdr')) {
-    const resultCategories = await knex('ResultCategory')
     const detectedResistanceCategoryTypes = getDetectedResistanceCategoryTypes(
-      _.get(payload, 'data.resultText'),
-      resultCategories
+      _.get(payload, 'data.resultText')
     )
     _.set(payload, 'data.detectedResistance', detectedResistanceCategoryTypes)
   }
