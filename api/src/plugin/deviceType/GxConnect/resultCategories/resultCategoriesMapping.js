@@ -16,16 +16,6 @@ const categoryTypes = [
   'EBOLA NP',
 ]
 
-const categoryTypesI18nKeys = {
-  'RIF RESISTANCE': 'categoryTypeRIFResistanceI18nKey',
-  'INH RESISTANCE': 'categoryTypeINHResistanceI18nKey',
-  'FLQ RESISTANCE': 'categoryTypeFLQResistanceI18nKey',
-  'AMK RESISTANCE': 'categoryTypeAMKResistanceI18nKey',
-  'KAN RESISTANCE': 'categoryTypeKANResistanceI18nKey',
-  'CAP RESISTANCE': 'categoryTypeCAPResistanceI18nKey',
-  'ETH RESISTANCE': 'categoryTypeETHResistanceI18nKey',
-}
-
 const result1CategoryMapping = {
   'not detected': 'NotDetected',
   'não detectado': 'NotDetected',
@@ -364,5 +354,4 @@ module.exports = {
   parseResultText,
   getResultCategoriesHivVL,
   getVLCopies,
-  categoryTypesI18nKeys,
 }
