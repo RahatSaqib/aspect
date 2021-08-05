@@ -298,7 +298,7 @@ function receiveStatesForLocationSelector(
       .getIn(['countriesForLocationSelector', 'items'])
       .find(country => country.get('id') === selectedCountryId)
     if (selectedCountry) {
-      return state.mergeDeepIn(
+      return state.setIn(
         [
           'countriesForLocationSelector',
           'items',
@@ -387,7 +387,7 @@ function receiveLgasForLocationSelector(
         .getIn(['children', 'items'])
         .find(state => state.get('id') === selectedStateId)
       if (selectedState) {
-        return state.mergeDeepIn(
+        return state.setIn(
           [
             'countriesForLocationSelector',
             'items',

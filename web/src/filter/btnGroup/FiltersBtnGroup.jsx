@@ -9,6 +9,7 @@ import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
+import { isCountryFilterHidden } from '../utils'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersBtnGroup.css'
@@ -200,6 +201,7 @@ const enhance = compose(
     state => ({
       siteItemsById: state.site.selectList.items,
       countryItems: state.geography.countriesForLocationSelector.items,
+      countries: state.geography.countriesForLocationSelector,
       consumableItems: state.consumable.consumables.items,
       assayItems: state.assay.items,
       resultCategoryGroupItems: state.resultCategoryGroup.items,
@@ -281,11 +283,22 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name')
     ),
-    countryId: makeButton((countryId, { countryItems }) =>
-      countryItems
-        .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name')
-    ),
+    countryId: (filterKey, props) => {
+      const { countries } = props
+      /**
+       * do NOT show filter button if Country filter is hidden because only
+       * 1 country is allowed/displayed/accessible for user
+       */
+      if (isCountryFilterHidden(countries)) {
+        return null
+      }
+      // show button for selected Country
+      return makeButton((countryId, { countryItems }) =>
+        countryItems
+          .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
+          .get('name')
+      )(filterKey, props)
+    },
     stateId: makeButton((stateId, { countryItems, filters }) =>
       countryItems
         .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
