@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-13T17:29:40.983Z\n"
+"POT-Creation-Date: 2021-08-02T14:12:15.336Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -900,7 +900,7 @@ msgstr ""
 msgid "Average number of tests per weekday conducted this month."
 msgstr ""
 "Promedio de cantidad de pruebas realizadas por cada día de la semana durante "
-"el mes actual"
+"el mes actual."
 
 #. [component.Widget.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
@@ -912,6 +912,9 @@ msgstr ""
 msgid "Average time to replace disabled module"
 msgstr "Tiempo promedio transcurrido para el reemplazo de módulos inutilizados"
 
+#. [pages.ResultList.ResultTreatmentStatusAwaitingTreatment]
+#. defaultMessage is:
+#. Awaiting Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
 #. Awaiting Treatment
@@ -1187,14 +1190,14 @@ msgstr "Elija la opción de LGA..."
 #. Choose Labs ...
 #: extracted_strings.json
 msgid "Choose Labs ..."
-msgstr "Elegir laboratorios"
+msgstr "Elegir laboratorios ..."
 
 #. [pages.NotificationDetail.SelectStatePlaceholder]
 #. defaultMessage is:
 #. Choose States ...
 #: extracted_strings.json
 msgid "Choose States ..."
-msgstr "Elegir Estados"
+msgstr "Elegir Estados ..."
 
 #. [pages.UserPreferences.chooseTags]
 #. defaultMessage is:
@@ -3146,6 +3149,19 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [filter.AssaySelectField.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#: extracted_strings.json
+msgid "GeneXpert MTB/XDR"
+msgstr "GeneXpert MTB/XDR"
+
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Cartridge
@@ -4282,6 +4298,9 @@ msgstr "Bajo inventario"
 #. [pages.filters.gxMtbRifUltraMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [pages.filters.gxMtbXdrMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #: extracted_strings.json
 msgid "MTB Detected"
 msgstr "MTB detectado"
@@ -4335,10 +4354,34 @@ msgstr "MTB detectado RIF no detectado"
 msgid "MTB Detected RR Detected"
 msgstr "MTB detectado RIF detectado"
 
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Detected"
+msgstr "MTB detectado XDR detectado"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected XDR Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected XDR Indeterminate"
+msgstr "MTB Detectado XDR Indeterminado"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Not Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Not Detected"
+msgstr "MTB detectado XDR no detectado"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
 #. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
 #: extracted_strings.json
@@ -4351,6 +4394,9 @@ msgstr "Error de MTB"
 #. [pages.filters.gxMtbRifUltraMtbInvalid]
 #. defaultMessage is:
 #. MTB Invalid
+#. [pages.filters.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
 #: extracted_strings.json
 msgid "MTB Invalid"
 msgstr "MTB Inválido"
@@ -4361,6 +4407,9 @@ msgstr "MTB Inválido"
 #. [pages.filters.gxMtbRifUltraMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [pages.filters.gxMtbXdrMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #: extracted_strings.json
 msgid "MTB No Result"
 msgstr "MTB Sin resultado"
@@ -4369,6 +4418,9 @@ msgstr "MTB Sin resultado"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbXdrMtbNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #: extracted_strings.json
@@ -4861,6 +4913,13 @@ msgstr "No hay resultados que coincidan con los filtros seleccionados"
 msgid "None"
 msgstr "Ninguno"
 
+#. [pages.ResultList.ResultTreatmentStatusNotAvailable]
+#. defaultMessage is:
+#. Not Available
+#: extracted_strings.json
+msgid "Not Available"
+msgstr "No disponible"
+
 #. [pages.TableCell.notConfigured]
 #. defaultMessage is:
 #. Not Configured
@@ -4908,6 +4967,9 @@ msgid "Not Found"
 msgstr "No encontrado"
 
 #. [reporters.notPossible]
+#. defaultMessage is:
+#. Not Possible
+#. [pages.ResultList.ResultTreatmentStatusNotPossible]
 #. defaultMessage is:
 #. Not Possible
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
@@ -5065,9 +5127,6 @@ msgstr ""
 "Número de resultados en los últimos 30 días dividido por la capacidad diaria "
 "de los instrumentos, luego multiplicada por 30 días"
 
-#. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -5088,6 +5147,13 @@ msgstr "Aceptar"
 msgid "Offline"
 msgstr "Desconectado"
 
+#. [pages.ResultList.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. Ok
+#: extracted_strings.json
+msgid "Ok"
+msgstr "Ok"
+
 #. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
 #. defaultMessage is:
 #. Okay
@@ -5105,6 +5171,9 @@ msgstr "Aceptar"
 msgid "Older"
 msgstr "Mas antiguo"
 
+#. [pages.ResultList.ResultTreatmentStatusOnTreatment]
+#. defaultMessage is:
+#. On Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -5488,7 +5557,7 @@ msgstr "Introduzca su contraseña actual para actualizar sus datos de acceso"
 #. Please enter your new password?
 #: extracted_strings.json
 msgid "Please enter your new password?"
-msgstr "Por favor, introduzca su nueva contraseña"
+msgstr "Por favor, ¿Podría introducir su nueva contraseña?"
 
 #. [pages.transferResult.note]
 #. defaultMessage is:
@@ -5777,6 +5846,9 @@ msgstr "Resultados positivos transmitidos"
 msgid "Positives"
 msgstr "Positivos"
 
+#. [pages.UserPreferences.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -6745,7 +6817,7 @@ msgstr "Seleccione el trimestre..."
 #. Select Reason
 #: extracted_strings.json
 msgid "Select Reason"
-msgstr "Seleccione la razón..."
+msgstr "Seleccione la razón"
 
 #. [pages.NotificationDetail.resultPlaceholder]
 #. defaultMessage is:
@@ -9109,7 +9181,7 @@ msgstr "duración media de interrupción de servicio, en días"
 #. average hours to upload
 #: extracted_strings.json
 msgid "average hours to upload"
-msgstr "Promedio de horas de retraso para subir resultados"
+msgstr "promedio de horas de retraso para subir resultados"
 
 #. [widgetAlerts.averageLengthOfSMS]
 #. defaultMessage is:
