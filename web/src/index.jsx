@@ -14,14 +14,21 @@ import appFactory from './globals/factories/appFactory'
 
 // if (config.sentry) {
 // using require here since import only allowed at top-level
+// curl -v https://s1.sentry-cdn.com/_static/6fdaf6e504b6479782895c8703580006@o944950/sentry/dist/app.js 2>&1 | grep -i access-control
+
 Sentry.init({
   dsn: 'https://6fdaf6e504b6479782895c8703580006@o944950.ingest.sentry.io/5893495', // config.sentry.dsn
-  integrations: [new Integrations.BrowserTracing()],
+  integrations: [
+    new Integrations.BrowserTracing({
+      tracingOrigins: ['localhost:8000', '*.aspect.id'],
+    }),
+  ],
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 })
+
 // }
 
 // polyfill intl if necessary
