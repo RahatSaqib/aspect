@@ -17,7 +17,6 @@ import appFactory from './globals/factories/appFactory'
 Sentry.init({
   dsn: 'https://6fdaf6e504b6479782895c8703580006@o944950.ingest.sentry.io/5893495', // config.sentry.dsn
   integrations: [new Integrations.BrowserTracing()],
-
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production

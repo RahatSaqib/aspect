@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
+import * as Sentry from '@sentry/react'
 import IconProvider from '../IconProvider'
 
 const ErrorIcon = () => (
@@ -13,7 +14,7 @@ class ErrorBoundary extends React.Component {
     this.state = {
       hasError: false,
       FallBackComponent: this.props.fallbackComponent,
-      isDevelopment: process.env.NODE_ENV !== 'production',
+      isDevelopment: !process.env.NODE_ENV !== 'production',
     }
   }
 
@@ -30,7 +31,8 @@ class ErrorBoundary extends React.Component {
   render() {
     const { children } = this.props
     const { hasError, isDevelopment, FallBackComponent } = this.state
-    if (hasError) {
+
+    if (hasError && isDevelopment) {
       return (
         <Fragment>
           {isDevelopment && !FallBackComponent && <ErrorIcon />}
@@ -39,7 +41,14 @@ class ErrorBoundary extends React.Component {
         </Fragment>
       )
     }
-
+    if (!isDevelopment) {
+      return (
+        <Sentry.ErrorBoundary fallback={FallBackComponent}>
+          <asd />
+          {children}
+        </Sentry.ErrorBoundary>
+      )
+    }
     return children
   }
 }
