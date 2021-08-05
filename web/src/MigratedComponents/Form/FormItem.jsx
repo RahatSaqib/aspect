@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import isNil from 'lodash/isNil'
+import isEmpty from 'lodash/isEmpty'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import { useFormikState } from './Formik/Context'
@@ -33,7 +34,7 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && isNil(value))
+  let isVisible = !(hideIfNull && (isNil(value) || isEmpty(value)))
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values)
   }

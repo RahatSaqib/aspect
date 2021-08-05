@@ -814,6 +814,12 @@ async function getResultByResultId(
     getResultTreatmentStatus(data)
     data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
+
+    if (
+      data.resultData.detectedResistance &&
+      data.resultData.detectedResistance.length > 0
+    )
+      data.detectedResistance = data.resultData.detectedResistance.join(', ')
   }
 
   return { ok: results.length === 1, data }
