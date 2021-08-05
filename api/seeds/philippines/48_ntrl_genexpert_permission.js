@@ -8,7 +8,7 @@ async function seed(knex) {
 
   const jobIdsWithAccessToGeneXpert = await knex('JobContext')
     .where('deviceTypeId', deviceTypeIdGeneXpert)
-    .select('id')
+    .select('jobId')
 
   const jobContextsWithAccessToNtrlOnly = await knex('JobContext')
     .where('deviceTypeId', deviceTypeIdNtrl)
