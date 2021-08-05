@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-02T14:12:15.336Z\n"
+"POT-Creation-Date: 2021-08-05T21:09:49.534Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3157,7 +3157,7 @@ msgstr "GeneXpert MTB/Rif Ultra"
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
 msgid "GeneXpert MTB/XDR"
-msgstr "GeneXpert MTB/Rif"
+msgstr "GeneXpert MTB/XDR"
 
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
