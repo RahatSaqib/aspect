@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-13T18:15:22.953Z\n"
+"POT-Creation-Date: 2021-08-05T14:43:01.820Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -909,6 +909,9 @@ msgstr ""
 msgid "Average time to replace disabled module"
 msgstr "Durchschnittliche Zeit für den Austausch eines deaktivierten Moduls"
 
+#. [pages.ResultList.ResultTreatmentStatusAwaitingTreatment]
+#. defaultMessage is:
+#. Awaiting Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
 #. Awaiting Treatment
@@ -3143,6 +3146,19 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [filter.AssaySelectField.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#: extracted_strings.json
+msgid "GeneXpert MTB/XDR"
+msgstr "GeneXpert MTB/XDR"
+
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Cartridge
@@ -3572,10 +3588,10 @@ msgstr "Nicht schlüssig"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Ungültiges Passwort"
+msgid "Incorrect username or password"
+msgstr "Falscher Benutzername oder falsches Passwort"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -4276,6 +4292,9 @@ msgstr "Inventar"
 #. [pages.filters.gxMtbRifUltraMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [pages.filters.gxMtbXdrMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #: extracted_strings.json
 msgid "MTB Detected"
 msgstr "MTB erkannt"
@@ -4329,10 +4348,34 @@ msgstr "MTB erkannt RIF nicht erkannt"
 msgid "MTB Detected RR Detected"
 msgstr "MTB erkannt RIF erkannt"
 
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Detected"
+msgstr "MTB erkannt XDR erkannt"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected XDR Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected XDR Indeterminate"
+msgstr "MTB Erkannt XDR Unbestimmt"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Not Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Not Detected"
+msgstr "MTB erkannt XDR nicht erkannt"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
 #. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
 #: extracted_strings.json
@@ -4345,6 +4388,9 @@ msgstr "MTB-Fehler"
 #. [pages.filters.gxMtbRifUltraMtbInvalid]
 #. defaultMessage is:
 #. MTB Invalid
+#. [pages.filters.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
 #: extracted_strings.json
 msgid "MTB Invalid"
 msgstr "MTB ungültig"
@@ -4355,6 +4401,9 @@ msgstr "MTB ungültig"
 #. [pages.filters.gxMtbRifUltraMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [pages.filters.gxMtbXdrMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #: extracted_strings.json
 msgid "MTB No Result"
 msgstr "MTB Kein Ergebnis"
@@ -4363,6 +4412,9 @@ msgstr "MTB Kein Ergebnis"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbXdrMtbNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #: extracted_strings.json
@@ -4855,6 +4907,13 @@ msgstr "Keine Ergebnisse entsprechen Ihren ausgewählten Filtern"
 msgid "None"
 msgstr "Nichts"
 
+#. [pages.ResultList.ResultTreatmentStatusNotAvailable]
+#. defaultMessage is:
+#. Not Available
+#: extracted_strings.json
+msgid "Not Available"
+msgstr "Nicht verfügbar"
+
 #. [pages.TableCell.notConfigured]
 #. defaultMessage is:
 #. Not Configured
@@ -4902,6 +4961,9 @@ msgid "Not Found"
 msgstr "Nicht gefunden"
 
 #. [reporters.notPossible]
+#. defaultMessage is:
+#. Not Possible
+#. [pages.ResultList.ResultTreatmentStatusNotPossible]
 #. defaultMessage is:
 #. Not Possible
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
@@ -5060,9 +5122,6 @@ msgstr ""
 "Anzahl der Ergebnisse in den letzten 30 Tagen geteilt durch die "
 "Tageskapazität des Geräts multipliziert mit 30 Tagen"
 
-#. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -5083,6 +5142,13 @@ msgstr "OK"
 msgid "Offline"
 msgstr "Offline"
 
+#. [pages.ResultList.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. Ok
+#: extracted_strings.json
+msgid "Ok"
+msgstr "Ok"
+
 #. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
 #. defaultMessage is:
 #. Okay
@@ -5100,6 +5166,9 @@ msgstr "Okay"
 msgid "Older"
 msgstr "Älter"
 
+#. [pages.ResultList.ResultTreatmentStatusOnTreatment]
+#. defaultMessage is:
+#. On Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -5776,6 +5845,9 @@ msgstr "Übertragene positive Testergebnisse"
 msgid "Positives"
 msgstr "Positive"
 
+#. [pages.UserPreferences.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -9643,6 +9715,9 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Ungültiges Passwort"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "Bestätigt"
