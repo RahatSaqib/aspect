@@ -14,7 +14,7 @@ class ErrorBoundary extends React.Component {
     this.state = {
       hasError: false,
       FallBackComponent: this.props.fallbackComponent,
-      isDevelopment: !process.env.NODE_ENV !== 'production',
+      isDevelopment: process.env.NODE_ENV !== 'production',
     }
   }
 
@@ -44,7 +44,6 @@ class ErrorBoundary extends React.Component {
     if (!isDevelopment) {
       return (
         <Sentry.ErrorBoundary fallback={FallBackComponent}>
-          <asd />
           {children}
         </Sentry.ErrorBoundary>
       )

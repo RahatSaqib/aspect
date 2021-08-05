@@ -103,9 +103,9 @@ function configureOptional(config) {
     config.firebase = { serverKey: firebase }
   }
   // load sentry
-  const ravenDsn = process.env['raven.dsn']
-  if (ravenDsn) {
-    config.raven = { dsn: ravenDsn }
+  const sentryDsn = process.env['sentry.dsn']
+  if (sentryDsn) {
+    config.sentry = { dsn: sentryDsn }
   }
 
   // set knex seeds

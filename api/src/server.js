@@ -62,16 +62,19 @@ const ravenPlugins = raven
       },
     ]
   : []
-const sentryPlugins = [
-  {
-    plugin: require('hapi-sentry'),
-    options: {
-      client: {
-        dsn: 'https://162dadafa58c4881b98646e914bc483d@o944950.ingest.sentry.io/5893503',
+const sentryPlugins = config.sentry
+  ? [
+      {
+        plugin: require('hapi-sentry'),
+        options: {
+          client: {
+            dsn: config.sentry.dsn,
+          },
+        },
       },
-    },
-  },
-]
+    ]
+  : []
+
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
