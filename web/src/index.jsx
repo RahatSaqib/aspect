@@ -11,12 +11,8 @@ import { hydrateFromLocalStorage, refreshStart } from './auth/AuthRedux'
 import './index.css'
 import { getAspectHydrateData } from './globals/sideEffects/LocalStorage'
 import appFactory from './globals/factories/appFactory'
-
-// if (config.sentry) {
-// using require here since import only allowed at top-level
-// curl -v https://s1.sentry-cdn.com/_static/6fdaf6e504b6479782895c8703580006@o944950/sentry/dist/app.js 2>&1 | grep -i access-control
-
-if (config.sentry)
+// Sentry initiaization at the top level of application.
+if (config.sentry && process.env.NODE_ENV === 'production')
   Sentry.init({
     dsn: config.sentry.dsn,
     integrations: [
