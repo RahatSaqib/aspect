@@ -4,7 +4,7 @@ import { compose } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { Provider, connect } from 'react-redux'
 import { IntlProvider } from 'react-intl'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 import translation from '../../shared/i18n/translation'
@@ -142,11 +142,12 @@ export const appFactory = compose(
               drawerOpen={drawerOpen}
             />
             <QueryClientProvider client={queryClient}>
+              {process.env.NODE_ENV !== 'production' ? (
+                <ReactQueryDevtools initialIsOpen />
+              ) : null}
+
               {render(restProps)}
             </QueryClientProvider>
-            {process.env.NODE_ENV !== 'production' ? (
-              <ReactQueryDevtools initialIsOpen />
-            ) : null}
           </div>
         </I18nProvider>
       </IntlProvider>
