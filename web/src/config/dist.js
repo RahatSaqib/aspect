@@ -8,6 +8,7 @@ const config = {
   aspectApi,
   sentry: {
     dsn: 'https://6fdaf6e504b6479782895c8703580006@o944950.ingest.sentry.io/5893495',
+    tracingOrigins: ['localhost:8000', '*.aspect.id'],
   },
   piwik: {
     url: '//analytics.aspect.id',

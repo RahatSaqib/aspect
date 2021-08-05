@@ -21,7 +21,10 @@ if (config.sentry)
     dsn: config.sentry.dsn,
     integrations: [
       new Integrations.BrowserTracing({
-        tracingOrigins: ['localhost:8000', '*.aspect.id'],
+        tracingOrigins: config.sentry.tracingOrigins || [
+          'localhost:8000',
+          '*.aspect.id',
+        ],
       }),
     ],
     // Set tracesSampleRate to 1.0 to capture 100%
