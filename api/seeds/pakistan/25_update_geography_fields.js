@@ -93,26 +93,19 @@ exports.seed = async function (knex) {
   /* States have to removed from DB */
   const states4Delete = ['Federally Administered TA', 'Mercy Corps Sites']
 
-  const getOld = (state, lga) =>
+  const getGeoBaseQuery = state =>
     knex('Geography')
       .select('id')
-      .where('stateId', knex('State').select('id').where('name', state))
-      .andWhere('lgaId', 'in', knex('Lga').select('id').where('name', lga))
-      .first('id')
-
-  const getOldLgaNull = state =>
-    knex('Geography')
-      .select('id')
-      .whereNull('lgaId')
       .andWhere('stateId', knex('State').select('id').where('name', state))
       .first('id')
 
-  const getNew = (state, lga) =>
-    knex('Geography')
-      .select('id')
-      .where('stateId', knex('State').select('id').where('name', state))
+  const getGeo = (state, lga) =>
+    getGeoBaseQuery(state)
+      .clone()
       .andWhere('lgaId', 'in', knex('Lga').select('id').where('name', lga))
-      .first('id')
+
+  const getGeoLgaNull = state =>
+    getGeoBaseQuery(state).clone().whereNull('lgaId')
 
   const updateTbl = (table, oldId, newId) =>
     knex(table).where({ geographyId: oldId }).update({ geographyId: newId })
@@ -123,9 +116,9 @@ exports.seed = async function (knex) {
   /* Update tables, replace old geographyId with new one */
   await Promise.each(map, async item => {
     const oldGeo = item.oldLga
-      ? await getOld(item.oldState, item.oldLga)
-      : await getOldLgaNull(item.oldState)
-    const newGeo = await getNew(item.newState, item.newLga)
+      ? await getGeo(item.oldState, item.oldLga)
+      : await getGeoLgaNull(item.oldState)
+    const newGeo = await getGeo(item.newState, item.newLga)
     if (oldGeo && newGeo && oldGeo.id && newGeo.id) {
       await Promise.each(tables, async tbl => {
         await updateTbl(tbl, oldGeo.id, newGeo.id)
