@@ -7,7 +7,6 @@ import TableBody from '@material-ui/core/TableBody'
 
 import Immutable from 'immutable'
 import { useNavigate, useLocation } from 'react-router-dom'
-import fromPairs from 'lodash/fromPairs'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import {
   makeSortPageSelector,
@@ -15,6 +14,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -131,7 +131,7 @@ const getCurrentFilters = locationSearch => {
   const { value: filtersParams } = filtersSanitizer(
     urlSearchParams.get('filters') || ''
   )
-  return fromPairs([...filtersParams.entries()])
+  return getFilters(filtersParams)
 }
 const getCurrentPagination = location => {
   const sortPage = makeSortPageSelector({

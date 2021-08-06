@@ -1,4 +1,3 @@
-import fromPairs from 'lodash/fromPairs'
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
@@ -14,6 +13,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -98,7 +98,7 @@ function exportSupplies(
   reportName,
   dispatch
 ) {
-  const filters = fromPairs([...filtersParams.entries()])
+  const filters = getFilters(filtersParams)
   return fetchWrapperForQueries({
     endpoint: '/inventory/export',
     params: {

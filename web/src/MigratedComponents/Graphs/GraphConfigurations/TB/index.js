@@ -111,9 +111,10 @@ const tbGraphs = {
         formatDate: 'MMM',
         clickThrough: {
           allow: true,
+          assays,
           baseUrl: '/browse/result?filters=',
           baseAssay: assays[0],
-          keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
+          keys: ['resultCategoryId', 'indexBy'],
         },
       },
       {

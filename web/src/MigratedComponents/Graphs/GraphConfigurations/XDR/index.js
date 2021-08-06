@@ -45,9 +45,10 @@ const xdrGraphs = {
         formatDate: 'MMM',
         clickThrough: {
           allow: true,
+          assays,
           baseUrl: '/browse/result?filters=',
           baseAssay: assays[0],
-          keys: ['resultCategory2', 'indexBy'],
+          keys: ['resultCategoryId', 'indexBy'],
         },
       },
       {

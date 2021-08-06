@@ -1,5 +1,4 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
@@ -15,6 +14,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -101,7 +101,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: fromPairs([...filtersParams.entries()]),
+        filters: getFilters(filtersParams),
       }
     }
   ),

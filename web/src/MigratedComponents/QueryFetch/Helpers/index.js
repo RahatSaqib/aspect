@@ -6,12 +6,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import { checkIfParamsIsDate } from '../../../components/shared/DateTimeInput/utils/date'
 
 const buildEndpointAndQueryString = (endpoint, params) => {
-  if (!isEmpty(params) && isPlainObject(params)) {
-    return `${endpoint}?${new URLSearchParams(
-      checkIfParamsIsDate(params, false)
-    ).toString()}`
-  }
-  if (isArray(params)) {
+  if ((!isEmpty(params) && isPlainObject(params)) || isArray(params)) {
     return `${endpoint}?${checkIfParamsIsDate(params).join('&')}`
   }
   return endpoint
