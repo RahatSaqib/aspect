@@ -210,6 +210,22 @@ function validateResultListResponse() {
       .optional()
       .allow(null, '')
       .description('The name of the result category 2 i18n key'),
+    resultCategory1Titlei18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category title 1 i18n key'),
+    resultCategory2Titlei18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category title 2 i18n key'),
+    resultCategory1Title: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The default name of the result category 1'),
+    resultCategory2Title: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The default name of the result category 2'),
   }
 }
 

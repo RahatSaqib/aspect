@@ -44,10 +44,23 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           result.get('assayName')
         )}
       </TableCell>
-      <TableCell>
-        {result.get('resultCategory1Name')}{' '}
-        {`| ${result.get('resultCategory2Name')}`}
-      </TableCell>
+      {extraColumns.isEmpty() && (
+        <TableCell>
+          {`${formatMessage(
+            messages[result.get('resultCategory1Titlei18nKey')],
+            null,
+            result.get('resultCategory1Title')
+          )}:${formatMessage(messages[result.get('resultCategory1I18nKey')])}`}
+          {result.get('resultCategory2I18nKey') &&
+            ` | ${formatMessage(
+              messages[result.get('resultCategory2Titlei18nKey')],
+              null,
+              result.get('resultCategory2Title')
+            )}:${formatMessage(
+              messages[result.get('resultCategory2I18nKey')]
+            )}`}
+        </TableCell>
+      )}
       {!extraColumns.isEmpty() &&
         extraColumns.map(column => (
           // TODO: refactor, see DeviceOperationTableRow

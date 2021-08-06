@@ -37,7 +37,7 @@ const messages = defineMessages({
   },
   resultText: {
     id: 'pages.ResultList.resultText',
-    defaultMessage: 'Result Text',
+    defaultMessage: 'Result',
   },
   collectionOfResults: {
     id: 'pages.ResultList.collectionOfResults',
@@ -59,13 +59,65 @@ const messages = defineMessages({
     id: 'pages.ResultList.patientId',
     defaultMessage: 'Patient ID',
   },
+  resultCategoryMtb: {
+    id: 'pages.ResultList.resultCategoryMtb',
+    defaultMessage: 'MTB',
+  },
+  resultCategoryRif: {
+    id: 'pages.ResultList.resultCategoryRif',
+    defaultMessage: 'Rif',
+  },
+  resultCategoryHcv: {
+    id: 'pages.ResultList.resultCategoryHcv',
+    defaultMessage: 'HCV',
+  },
+  resultCategoryEbolaGp: {
+    id: 'pages.ResultList.resultCategoryEbolaGp',
+    defaultMessage: 'GP',
+  },
+  resultCategoryEbolaNp: {
+    id: 'pages.ResultList.resultCategoryEbolaNp',
+    defaultMessage: 'NP',
+  },
+  resultCategoryCovid19: {
+    id: 'pages.ResultList.resultCategoryCovid19',
+    defaultMessage: 'Covid',
+  },
+  resultCategoryCOVID19RegionN: {
+    id: 'pages.ResultList.resultCategoryCOVID19RegionN',
+    defaultMessage: 'Region n',
+  },
+  resultCategoryXDR: {
+    id: 'pages.ResultList.resultCategoryXDR',
+    defaultMessage: 'XDR',
+  },
+  resultCategoryHivVl: {
+    id: 'pages.ResultList.resultCategoryHivVl',
+    defaultMessage: 'HIV',
+  },
+  resultCategoryEid: {
+    id: 'pages.ResultList.resultCategoryEid',
+    defaultMessage: 'EID',
+  },
   resultCategoryCopiesMl: {
     id: 'pages.ResultList.resultCategoryHiv',
-    defaultMessage: 'HIV',
+    defaultMessage: 'Copies/ML',
+  },
+  resultCategoryCultureResult: {
+    id: 'pages.ResultList.resultCategoryCultureResult',
+    defaultMessage: 'Culture',
   },
   resultCategory1Name: {
     id: 'pages.ResultList.resultCategory1Name',
     defaultMessage: 'Category',
+  },
+  resultCategoryFinalResult: {
+    id: 'pages.ResultList.resultCategoryFinalResult',
+    defaultMessage: 'Final Result',
+  },
+  resultCategoryResistance: {
+    id: 'pages.ResultList.resultCategoryResistance',
+    defaultMessage: 'Resistance',
   },
   resultCategory2Name: {
     id: 'pages.ResultList.resultCategory1Name',
