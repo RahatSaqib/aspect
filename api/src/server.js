@@ -50,30 +50,21 @@ server.validator(Joi)
 
 const {
   swagger: { enabled: swaggerEnabled },
-  raven,
 } = config
 
-// Load Raven (Sentry) plugin if configured
-const ravenPlugins = raven
-  ? [
-      {
-        plugin: require('hapi-raven'),
-        options: { dsn: raven.dsn },
-      },
-    ]
-  : []
-const sentryPlugins = config.sentry
-  ? [
-      {
-        plugin: require('hapi-sentry'),
-        options: {
-          client: {
-            dsn: config.sentry.dsn,
+const sentryPlugins =
+  config.sentry && !config.isDevelopment
+    ? [
+        {
+          plugin: require('hapi-sentry'),
+          options: {
+            client: {
+              dsn: config.sentry.dsn,
+            },
           },
         },
-      },
-    ]
-  : []
+      ]
+    : []
 
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
@@ -146,7 +137,6 @@ const messageQueuePlugin = {
 }
 
 const plugins = [
-  ...ravenPlugins,
   // logging framework
   require('./shared/hapi-logger'),
   require('@hapi/inert'), // eslint-disable-line import/order

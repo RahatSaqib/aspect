@@ -34,7 +34,7 @@ module.exports = {
     format: process.env['log.console.format'] || 'text',
     labelsWhiteList: process.env['log.console.labelsWhiteList'] || null,
     labelsBlackList: process.env['log.console.labelsBlackList'] || null,
-
+    isDevelopment: process.env.NODE_ENV === 'development',
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
