@@ -12,6 +12,7 @@ module.exports = {
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
+  isDevelopment: process.env.NODE_ENV === 'development',
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
@@ -34,7 +35,6 @@ module.exports = {
     format: process.env['log.console.format'] || 'text',
     labelsWhiteList: process.env['log.console.labelsWhiteList'] || null,
     labelsBlackList: process.env['log.console.labelsBlackList'] || null,
-    isDevelopment: process.env.NODE_ENV === 'development',
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
@@ -105,7 +105,10 @@ function configureOptional(config) {
   // load sentry
   const sentryDsn = process.env['sentry.dsn']
   if (sentryDsn) {
-    config.sentry = { dsn: sentryDsn }
+    config.sentry = {
+      dsn: sentryDsn,
+      logLevel: process.env['sentry.logLevel'] || 'error',
+    }
   }
 
   // set knex seeds

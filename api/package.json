@@ -126,7 +126,8 @@
     "timezone-support": "^2.0.2",
     "twilio": "^3.63.1",
     "vision": "^5.4.4",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "winston-sentry-log": "^1.0.22"
   },
   "devDependencies": {
     "chai": "^4.3.4",
