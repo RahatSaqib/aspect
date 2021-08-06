@@ -34,7 +34,7 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikState()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && (isNil(value) || isEmpty(value)))
+  let isVisible = !(hideIfNull && isEmpty(value))
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values)
   }
