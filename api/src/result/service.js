@@ -50,6 +50,27 @@ const { getRemoteAddress } = require('../shared/request')
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
+const setExtraColumns = (results, assayColumns) => {
+  _.each(results, r => {
+    // if assay specified columns from the resultData field, parse them to valid JSON
+    if (assayColumns) {
+      _.each(assayColumns, c => {
+        if (c && c.db.indexOf('resultCategory') === -1) {
+          const path = c.db.replace('.', '_')
+
+          let value = r[path]
+
+          if (c.postProcess) value = c.postProcess(value)
+
+          if (!c.fieldName) _.set(c, 'fieldName', path)
+
+          _.set(r, c.fieldName, value)
+        }
+      })
+    }
+  })
+}
+
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -149,24 +170,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // Post processing results and extra columns adding
-  _.each(data, d => {
-    // if assay specified columns from the resultData field, parse them to valid JSON
-    if (assayColumns) {
-      _.each(assayColumns, c => {
-        if (c && c.db.indexOf('resultCategory') === -1) {
-          const path = c.db.replace('.', '_')
-
-          let value = d[path]
-
-          if (c.postProcess) value = c.postProcess(value)
-
-          if (!c.fieldName) _.set(c, 'fieldName', path)
-
-          _.set(d, c.fieldName, value)
-        }
-      })
-    }
-  })
+  setExtraColumns(data, assayColumns)
 
   // Clean extraColumns fields
   assayColumns.forEach((columnValue, columnIndex) => {
@@ -2922,4 +2926,5 @@ module.exports = {
   addPartnerQueryConstraints,
   getBaseQueryForResults,
   addResultDownloadLog,
+  setExtraColumns,
 }
