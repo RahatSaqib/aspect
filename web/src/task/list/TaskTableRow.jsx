@@ -78,7 +78,7 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
         {addEllipsis(task.get('site'))}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>
-        {formatRelative(intl, task.get('time'))}
+        {formatRelative(task.get('time'))}
       </TableCell>
     </TableRow>
   )
