@@ -107,7 +107,7 @@ function configureOptional(config) {
   if (sentryDsn) {
     config.sentry = {
       dsn: sentryDsn,
-      logLevel: process.env['sentry.logLevel'] || 'error',
+      logLevel: process.env['sentry.logLevel'],
     }
   }
 
