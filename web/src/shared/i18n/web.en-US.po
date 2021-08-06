@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-02T14:12:15.336Z\n"
+"POT-Creation-Date: 2021-08-05T21:09:49.534Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1183,14 +1183,14 @@ msgstr "Choose LGA's ..."
 #. Choose Labs ...
 #: extracted_strings.json
 msgid "Choose Labs ..."
-msgstr "Choose tags"
+msgstr "Choose Labs ..."
 
 #. [pages.NotificationDetail.SelectStatePlaceholder]
 #. defaultMessage is:
 #. Choose States ...
 #: extracted_strings.json
 msgid "Choose States ..."
-msgstr "Choose tags"
+msgstr "Choose States ..."
 
 #. [pages.UserPreferences.chooseTags]
 #. defaultMessage is:
@@ -3582,10 +3582,10 @@ msgstr "Inconclusive"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Incorrect password"
+msgid "Incorrect username or password"
+msgstr "Incorrect username or password"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -9660,6 +9660,9 @@ msgstr "{unit} total calibrations"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{total, plural, one {# result} other {# results} })"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Incorrect password"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "% Acknowledged"

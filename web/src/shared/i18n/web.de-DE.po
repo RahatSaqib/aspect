@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-02T14:12:15.336Z\n"
+"POT-Creation-Date: 2021-08-05T21:09:49.534Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3157,7 +3157,7 @@ msgstr "GeneXpert MTB/Rif Ultra"
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
 msgid "GeneXpert MTB/XDR"
-msgstr "GeneXpert MTB/Rif"
+msgstr "GeneXpert MTB/XDR"
 
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
@@ -3588,10 +3588,10 @@ msgstr "Nicht schlüssig"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Ungültiges Passwort"
+msgid "Incorrect username or password"
+msgstr "Falscher Benutzername oder falsches Passwort"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -9715,6 +9715,9 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Ungültiges Passwort"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "Bestätigt"

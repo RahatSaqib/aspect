@@ -3586,10 +3586,10 @@ msgstr "Inconclusivo"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Senha incorreta"
+msgid "Incorrect username or password"
+msgstr "Nome de utilizador ou palavra-passe incorrectos"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -9682,6 +9682,9 @@ msgstr "{unit} calibrações totais"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Senha incorreta"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "Reconhecido"

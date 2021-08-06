@@ -3582,10 +3582,10 @@ msgstr "Безрезультатно"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Невірний пароль"
+msgid "Incorrect username or password"
+msgstr "Неправильне ім'я користувача або пароль"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -9674,6 +9674,9 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# result} other {# results}})"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Невірний пароль"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "% A знані"
