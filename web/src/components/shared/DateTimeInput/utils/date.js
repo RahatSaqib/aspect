@@ -339,7 +339,7 @@ const dateRangeOptions = (key, showLast30Days = true) => {
     value: monthRangeByCount(today, 1, dateFormatValue),
   })
 
-  const monthsToGet = 11
+  const monthsToGet = 10
   times(monthsToGet, month => {
     const count = month + 2
     dateRange.push({
