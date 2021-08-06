@@ -41,6 +41,7 @@ const { getSiteByPartnerCountry, getSite } = require('../site/service')
 const { getDeviceByDeviceId } = require('../device/service')
 const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
+const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
 const {
   getAllAssaySchemas,
   getAssayResultCategories,
@@ -49,27 +50,6 @@ const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
-
-const setExtraColumns = (results, assayColumns) => {
-  _.each(results, r => {
-    // if assay specified columns from the resultData field, parse them to valid JSON
-    if (assayColumns) {
-      _.each(assayColumns, c => {
-        if (c && c.db.indexOf('resultCategory') === -1) {
-          const path = c.db.replace('.', '_')
-
-          let value = r[path]
-
-          if (c.postProcess) value = c.postProcess(value)
-
-          if (!c.fieldName) _.set(c, 'fieldName', path)
-
-          _.set(r, c.fieldName, value)
-        }
-      })
-    }
-  })
-}
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
@@ -169,13 +149,10 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // Post processing results and extra columns adding
-  setExtraColumns(data, assayColumns)
-
-  // Clean extraColumns fields
-  assayColumns.forEach((columnValue, columnIndex) => {
-    assayColumns[columnIndex] = _.omit(columnValue, ['postProcess', 'db'])
-  })
+  // Create extra columns based on the assay configuration
+  applyExtraColumns(data, assayColumns)
+  // Remove extraColumns fields that shouldn't be retrieved to UI
+  sanitizeExtraColumns(assayColumns)
 
   const result = {
     ok: true,
@@ -2926,5 +2903,4 @@ module.exports = {
   addPartnerQueryConstraints,
   getBaseQueryForResults,
   addResultDownloadLog,
-  setExtraColumns,
 }
