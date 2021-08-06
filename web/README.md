@@ -217,7 +217,7 @@ For configuring it we inserted in the top level component and its entry page the
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
     // We recommend adjusting this value in production
-    tracesSampleRate: 0.2,
+    tracesSampleRate: 1.0,
   })
 ```
 
