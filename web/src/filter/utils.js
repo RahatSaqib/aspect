@@ -43,6 +43,7 @@ const groups = {
   assayAndResultCategory: [
     'assayId',
     'resultCategoryId',
+    'resultCategory2Id',
     'resultCategoryGroupId',
     'diseaseId',
   ],
@@ -314,6 +315,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'reportName':
               result.reportName = true
+              break
+            case 'diseaseId':
+              result.disease = true
               break
             default:
           }

@@ -305,12 +305,8 @@ export const DeviceList = () => {
     const sortPage = makeSortPageSelector({
       sortCol: 'name',
     })
-    const urlSearchParams = new URLSearchParams(location.search)
-    const urlFilters = urlSearchParams.get('filters')
-      ? new URLSearchParams(urlSearchParams.get('filters'))
-      : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(getFilters(urlFilters))
+    setFilters(getFilters(filtersParams))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])

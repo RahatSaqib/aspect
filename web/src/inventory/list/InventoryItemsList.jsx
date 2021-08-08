@@ -328,8 +328,10 @@ export const InventoryItemsList = ({ navigate, location }) => {
   })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-  const searchParams = new URLSearchParams(location.search)
-  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+  const { value: searchParams } = searchSanitizer(location)
+  const { value: filtersParams } = filtersSanitizer(
+    searchParams.get('filters') || ''
+  )
   const filters = getFilters(filtersParams)
 
   // >>>>>> Defining callbacks <<<<<<

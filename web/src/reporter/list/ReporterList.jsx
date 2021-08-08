@@ -100,10 +100,7 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
   { revoked: true, requiredPermissions: [] },
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view'],
-  },
+  { assayId: true, requiredPermissions: ['assay:view'] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
