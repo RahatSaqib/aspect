@@ -75,7 +75,7 @@ if (config.log.file.path) {
   )
 }
 
-if (config.sentry?.dsn && !config.isDevelopment && config.sentry.logLevel)
+if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel)
   logger.add(
     new Sentry({
       config: {
