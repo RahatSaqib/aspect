@@ -96,7 +96,6 @@ function getQueryParameters(
           id
         )
         params.set('resultCategoryId', resultCategoryId)
-        params.set('assayOverride', id)
       }
     }
 
