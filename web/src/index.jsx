@@ -11,8 +11,9 @@ import { hydrateFromLocalStorage, refreshStart } from './auth/AuthRedux'
 import './index.css'
 import { getAspectHydrateData } from './globals/sideEffects/LocalStorage'
 import appFactory from './globals/factories/appFactory'
+
 // Sentry initiaization at the top level of application. I activated it only for production ENV
-if (config.sentry && process.env.NODE_ENV === 'production')
+if (config.sentry && process.env.NODE_ENV === 'production') {
   Sentry.init({
     dsn: config.sentry.dsn,
     integrations: [
@@ -28,7 +29,8 @@ if (config.sentry && process.env.NODE_ENV === 'production')
     // We recommend adjusting this value in production
     tracesSampleRate: config.sentry.tracesSampleRate,
   })
-
+  Sentry.setTag('Country', config.countryName || config.aspectApi)
+}
 // }
 
 // polyfill intl if necessary
