@@ -1,6 +1,5 @@
 import { stringify } from 'querystring'
 import pick from 'lodash/pick'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -19,6 +18,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
@@ -124,7 +124,7 @@ function prefillEmailValue(email, personId) {
 }
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestPersons(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -193,7 +193,7 @@ export function exportContacts(
   reportName
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
 
     return aspectFetch(
       `/person/export?${stringify({

@@ -1,3 +1,4 @@
+import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
 import isUndefined from 'lodash/isUndefined'
 import reduce from 'lodash/reduce'
@@ -23,7 +24,12 @@ export const mergeToFiltersParams = (filters, filtersParams) => {
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
-        filtersParams.set(k, v)
+        if (isArray(v)) {
+          filtersParams.delete(k)
+          v.forEach(value => filtersParams.append(k, value))
+        } else {
+          filtersParams.set(k, v)
+        }
       } else {
         filtersParams.delete(k)
       }
@@ -37,6 +43,7 @@ const groups = {
   assayAndResultCategory: [
     'assayId',
     'resultCategoryId',
+    'resultCategory2Id',
     'resultCategoryGroupId',
     'diseaseId',
   ],
@@ -309,6 +316,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'reportName':
               result.reportName = true
               break
+            case 'diseaseId':
+              result.disease = true
+              break
             default:
           }
         })
@@ -324,3 +334,17 @@ export const isCountryFilterHidden = countries =>
   countries.loading === false &&
   !!countries.lastRefreshed &&
   countries.items.size === 1
+
+export const getFilters = urlSearchParams => {
+  const filters = {}
+  urlSearchParams.forEach((value, key) => {
+    if (filters[key]) {
+      let filter = filters[key]
+      filter = isArray(filter) ? filter : [filter]
+      filters[key] = [...filter, value]
+    } else {
+      filters[key] = value
+    }
+  })
+  return filters
+}

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import isArray from 'lodash/isArray'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
 import { bindActionCreators } from 'redux'
@@ -18,7 +19,10 @@ export class ResultCategorySelectField extends PureComponent {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
-    assayId: PropTypes.string,
+    assayId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string),
+    ]),
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }
@@ -49,7 +53,8 @@ export class ResultCategorySelectField extends PureComponent {
       'onResultCategoryChange',
       'value',
     ])
-    const possibleAssay = assayItems.find(a => a.get('id') === assayId)
+    const assayIds = isArray(assayId) ? assayId : [assayId]
+    const possibleAssay = assayItems.find(a => assayIds.includes(a.get('id')))
     const resultCategories = possibleAssay
       ? possibleAssay.get('resultCategories')
       : []

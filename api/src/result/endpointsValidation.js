@@ -467,9 +467,10 @@ function listResultsBaseConfig() {
         deviceId: Joi.number()
           .allow(null, '')
           .description('Filter for device ID'),
-        assayId: Joi.number()
+        assayId: Joi.alternatives()
+          .try(Joi.array().items(Joi.number()), Joi.number())
           .allow(null, '')
-          .description('Filter for assay ID'),
+          .description('Filter for assay ID(s)'),
         diseaseId: Joi.number()
           .integer()
           .positive()

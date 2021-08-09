@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -17,6 +16,7 @@ import {
 } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
@@ -209,7 +209,7 @@ function rejectResults() {
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE COMPONENTS WHICH CALLS IT. WE SHOULD USE REACT QUERY INSTEAD OF THIS.
 export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestResults(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'endedOn'
     return aspectFetch(
@@ -484,7 +484,7 @@ export function exportResults(
   reportName
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     return aspectFetch(
       `/result/export?${stringify({
         sortCol,
