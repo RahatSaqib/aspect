@@ -81,6 +81,9 @@ if (config.sentry?.dsn && !config.isDevelopment && config.sentry.logLevel)
       config: {
         dsn: config.sentry.dsn,
       },
+      tags: {
+        country: config.countryName,
+      },
       level: config.sentry.logLevel,
     })
   )

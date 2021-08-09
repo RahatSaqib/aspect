@@ -61,6 +61,9 @@ const sentryPlugins =
             client: {
               dsn: config.sentry.dsn,
             },
+            scope: {
+              tags: [{ name: 'Country', value: config.countryName }],
+            },
           },
         },
       ]
