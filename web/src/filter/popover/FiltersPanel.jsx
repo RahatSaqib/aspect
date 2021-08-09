@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
 import { MdKeyboardArrowDown } from 'react-icons/md'
@@ -12,6 +12,7 @@ import {
   getCustomMessage,
   commonDefinitions,
 } from '../../shared/utils/customMessages'
+import { isCountryFilterHidden } from '../utils'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -43,9 +44,10 @@ import styles from './FiltersPanel.css'
 const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
-  connect(({ user, assay }) => ({
+  connect(({ user, assay, geography }) => ({
     user,
     assays: assay,
+    countries: geography.countriesForLocationSelector,
   })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
@@ -579,6 +581,7 @@ export const FiltersPanel = ({
   onReportNameChange,
   user,
   assays,
+  countries,
 }) => {
   const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
@@ -594,6 +597,31 @@ export const FiltersPanel = ({
       assayResultCategory2Label = resultCategory2Label
     }
   }
+
+  /**
+   * - when country filter is hidden because only 1 country is accessible for user
+   * - and this country is not selected yet in Filter Panel
+   * --> then explicitly select it for filter
+   */
+  useEffect(() => {
+    if (
+      isCountryFilterHidden(countries) &&
+      /**
+       * current filter does NOT have `countryId` defined
+       */
+      (!filters.countryId ||
+        !countries.items.find(it => it.id === filters.countryId))
+    ) {
+      // pre-select countryId
+      const { id } = countries.items.get(0)
+      onCountryIdChange(id)
+    }
+  }, [countries, filters, onCountryIdChange])
+
+  const showCountryFilter = React.useMemo(
+    () => !isCountryFilterHidden(countries),
+    [countries]
+  )
 
   return (
     <div className={cssClasses('Container', className)}>
@@ -665,7 +693,7 @@ export const FiltersPanel = ({
           }}
         >
           <ErrorBoundary>
-            {config.geography && (
+            {config.geography && showCountryFilter && (
               <div className={cssClasses('Control')}>
                 <CountrySelectField
                   allItemText={formatMessage(messages.all)}

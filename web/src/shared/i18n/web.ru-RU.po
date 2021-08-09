@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-13T18:15:22.953Z\n"
+"POT-Creation-Date: 2021-08-05T21:09:49.534Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -908,6 +908,9 @@ msgstr "Среднее количество тестов в день в теку
 msgid "Average time to replace disabled module"
 msgstr "Среднее время замены отключенного модуля"
 
+#. [pages.ResultList.ResultTreatmentStatusAwaitingTreatment]
+#. defaultMessage is:
+#. Awaiting Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
 #. Awaiting Treatment
@@ -2087,7 +2090,7 @@ msgstr "Калибровка устройства"
 #. Device Country
 #: extracted_strings.json
 msgid "Device Country"
-msgstr "Выберите страну..."
+msgstr "Выберите страну"
 
 #. [pages.TaskList.issueCategoryDeviceHealth]
 #. defaultMessage is:
@@ -3142,6 +3145,19 @@ msgstr "GeneXpert MTB/Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [filter.AssaySelectField.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#: extracted_strings.json
+msgid "GeneXpert MTB/XDR"
+msgstr "GeneXpert MTB/XDR"
+
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Cartridge
@@ -3571,10 +3587,10 @@ msgstr "Незавершенный"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Неверный пароль"
+msgid "Incorrect username or password"
+msgstr "Неверное имя пользователя или пароль"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -4275,6 +4291,9 @@ msgstr "Низкая инвентаризация"
 #. [pages.filters.gxMtbRifUltraMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [pages.filters.gxMtbXdrMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #: extracted_strings.json
 msgid "MTB Detected"
 msgstr "Обнаружен MTB"
@@ -4328,10 +4347,34 @@ msgstr "Обнаружен MTB Rif не обнаружен"
 msgid "MTB Detected RR Detected"
 msgstr "Обнаружен MTB Обнаружен Rif"
 
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Detected"
+msgstr "Обнаружен МТБ Обнаружен ХДР"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected XDR Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected XDR Indeterminate"
+msgstr "МТБ Обнаруженный ШЛУ Неопределенный"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Not Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Not Detected"
+msgstr "MTB Обнаружен XDR Не обнаружен"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
 #. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
 #: extracted_strings.json
@@ -4344,6 +4387,9 @@ msgstr "Ошибка MTB"
 #. [pages.filters.gxMtbRifUltraMtbInvalid]
 #. defaultMessage is:
 #. MTB Invalid
+#. [pages.filters.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
 #: extracted_strings.json
 msgid "MTB Invalid"
 msgstr "MTB недействительный"
@@ -4354,6 +4400,9 @@ msgstr "MTB недействительный"
 #. [pages.filters.gxMtbRifUltraMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [pages.filters.gxMtbXdrMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #: extracted_strings.json
 msgid "MTB No Result"
 msgstr "MTB Нет результата"
@@ -4362,6 +4411,9 @@ msgstr "MTB Нет результата"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbXdrMtbNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #: extracted_strings.json
@@ -4854,6 +4906,13 @@ msgstr "Нет результатов, соответствующих выбра
 msgid "None"
 msgstr "Нет"
 
+#. [pages.ResultList.ResultTreatmentStatusNotAvailable]
+#. defaultMessage is:
+#. Not Available
+#: extracted_strings.json
+msgid "Not Available"
+msgstr "Недоступно"
+
 #. [pages.TableCell.notConfigured]
 #. defaultMessage is:
 #. Not Configured
@@ -4901,6 +4960,9 @@ msgid "Not Found"
 msgstr "Не найдено"
 
 #. [reporters.notPossible]
+#. defaultMessage is:
+#. Not Possible
+#. [pages.ResultList.ResultTreatmentStatusNotPossible]
 #. defaultMessage is:
 #. Not Possible
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
@@ -5058,9 +5120,6 @@ msgstr ""
 "Количество результатов за последние 30 дней, деленное на суточную "
 "производительность прибора, умноженное на 30 дней"
 
-#. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -5081,6 +5140,13 @@ msgstr "ОК"
 msgid "Offline"
 msgstr "Не в сети"
 
+#. [pages.ResultList.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. Ok
+#: extracted_strings.json
+msgid "Ok"
+msgstr "Ок"
+
 #. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
 #. defaultMessage is:
 #. Okay
@@ -5098,6 +5164,9 @@ msgstr "Хорошо"
 msgid "Older"
 msgstr "Старее"
 
+#. [pages.ResultList.ResultTreatmentStatusOnTreatment]
+#. defaultMessage is:
+#. On Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -5771,6 +5840,9 @@ msgstr "Переданы положительные результаты тес�
 msgid "Positives"
 msgstr "Положительных"
 
+#. [pages.UserPreferences.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -9617,6 +9689,9 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{тотал, множественное число, один {# результат} другой {# "
 "результат}))"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Неверный пароль"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "% Aзаинтересованный"

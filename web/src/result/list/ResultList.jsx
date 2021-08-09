@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
 import getExportableFile from '../ResultQueries'
@@ -23,6 +22,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -394,7 +394,7 @@ const ResultList = () => {
       ? new URLSearchParams(urlSearchParams.get('filters'))
       : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(fromPairs([...urlFilters.entries()]))
+    setFilters(getFilters(urlFilters))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])

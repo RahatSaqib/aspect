@@ -7,8 +7,10 @@ import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
+import isArray from 'lodash/isArray'
 
 import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
+import { isCountryFilterHidden } from '../utils'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersBtnGroup.css'
@@ -200,6 +202,7 @@ const enhance = compose(
     state => ({
       siteItemsById: state.site.selectList.items,
       countryItems: state.geography.countriesForLocationSelector.items,
+      countries: state.geography.countriesForLocationSelector,
       consumableItems: state.consumable.consumables.items,
       assayItems: state.assay.items,
       resultCategoryGroupItems: state.resultCategoryGroup.items,
@@ -230,6 +233,7 @@ const filtersOrdering = {
   errorCode: 6,
   deviceName: 11,
   resultCategoryId: 5,
+  resultCategory2Id: 6,
   siteName: 12,
   reportableSiteName: 33,
   reportableSiteId: 33,
@@ -255,37 +259,71 @@ const filtersOrdering = {
   reportName: 32,
 }
 
-const makeButton = labelFn => (filterKey, props) =>
-  (
+const makeButton = labelFn => (filterKey, props, index) => {
+  let filterValue = props.filters[filterKey]
+  if (isArray(filterValue)) {
+    filterValue = filterValue[index || 0]
+  }
+  return (
     <Button
-      key={filterKey}
+      key={`${filterKey}-${index || ''}`}
       className={cssClasses('Button')}
       color="secondary"
       variant="contained"
-      onClick={() => props.onRemoveFilterItem(filterKey)}
+      onClick={() => props.onRemoveFilterItem(filterKey, index)}
     >
-      {labelFn(props.filters[filterKey], props)}
+      {labelFn(filterValue, props)}
       <MdClose className={cssClasses('Button__icon')} />
     </Button>
   )
+}
+
+const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
+  const assayIds = isArray(filterAssayId) ? filterAssayId : [filterAssayId]
+  return assayItems
+    .find(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
+    .get('resultCategories', EMPTY_MAP)
+    .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
+    .get('name', '')
+}
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   const buttonBy = {
-    assayId: makeButton((assayId, { assayItems }) =>
-      assayItems
-        .find(it => it.get('id') === assayId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name')
-    ),
+    assayId: (filterKey, props) => {
+      const {
+        assayItems,
+        filters: { assayId },
+      } = props
+      const assayIds = isArray(assayId) ? assayId : [assayId]
+      return assayIds.map((__, index) =>
+        makeButton(value =>
+          assayItems
+            .find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP)
+            .get('name')
+        )(filterKey, props, index)
+      )
+    },
     diseaseId: makeButton((diseaseId, { diseaseItems }) =>
       diseaseItems
         .find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name')
     ),
-    countryId: makeButton((countryId, { countryItems }) =>
-      countryItems
-        .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
-        .get('name')
-    ),
+    countryId: (filterKey, props) => {
+      const { countries } = props
+      /**
+       * do NOT show filter button if Country filter is hidden because only
+       * 1 country is allowed/displayed/accessible for user
+       */
+      if (isCountryFilterHidden(countries)) {
+        return null
+      }
+      // show button for selected Country
+      return makeButton((countryId, { countryItems }) =>
+        countryItems
+          .find(it => it.id === countryId, EMPTY_CONTEXT, EMPTY_MAP)
+          .get('name')
+      )(filterKey, props)
+    },
     stateId: makeButton((stateId, { countryItems, filters }) =>
       countryItems
         .find(it => it.id === filters.countryId, EMPTY_CONTEXT, EMPTY_MAP)
@@ -346,21 +384,23 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryName: assayItems
-                .find(
-                  it => it.get('id') === filters.assayId,
-                  EMPTY_CONTEXT,
-                  EMPTY_MAP
-                )
-                .get('resultCategories', EMPTY_MAP)
-                .find(
-                  it => it.get('id') === resultCategoryId,
-                  EMPTY_CONTEXT,
-                  EMPTY_MAP
-                )
-                .get('name', ''),
+              resultCategoryName: getResultCategoryName(
+                assayItems,
+                filters.assayId,
+                resultCategoryId
+              ),
             }
       )
+    ),
+    resultCategory2Id: makeButton(
+      (resultCategory2Id, { filters, assayItems }) =>
+        formatMessage(messages.withResultCategory, {
+          resultCategoryName: getResultCategoryName(
+            assayItems,
+            filters.assayId,
+            resultCategory2Id
+          ),
+        })
     ),
     resultCategoryGroupId: makeButton(
       (resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {

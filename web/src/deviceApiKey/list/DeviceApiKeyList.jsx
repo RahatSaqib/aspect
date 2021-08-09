@@ -1,5 +1,4 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import intersectionWith from 'lodash/intersectionWith'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
@@ -25,6 +24,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -155,7 +155,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: fromPairs([...filtersParams.entries()]),
+        filters: getFilters(filtersParams),
       }
     }
   ),

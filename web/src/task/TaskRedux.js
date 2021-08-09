@@ -1,7 +1,6 @@
 import { stringify } from 'querystring'
 import uniqBy from 'lodash/uniqBy'
 import map from 'lodash/map'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -16,6 +15,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_TASKS: 'REQUEST_TASKS',
@@ -117,7 +117,7 @@ export function getTasksByAlertTemplateAndDate(
   alertTemplateId
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(
       requestTasksByStatus(
         sortCol,
@@ -194,7 +194,7 @@ export function fetchTask(id) {
 
 export function fetchTasks(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestTasks(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(

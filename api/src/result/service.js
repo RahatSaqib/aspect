@@ -70,53 +70,63 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
    */
 
   if (query.assayId) {
-    const assay = await knex('Assay as a').where('a.id', query.assayId).first()
+    const { assayId } = query
+    const assayIds = _.isArray(assayId) ? assayId : [assayId]
+    const assays = await knex('Assay as a').whereIn('a.id', assayIds).select()
 
-    if (assay.resultCategory1Label) {
-      selectFields.push('rc1.name as resultCategory1Name')
-      sortableFields.push('resultCategory1Name')
-      assayColumns.push({
-        db: 'resultCategory1Name',
-        fieldName: 'resultCategory1Name',
-        type: 'string',
-        title: assay.resultCategory1Label,
-        i18nKey: assay.resultCategory1i18nKey,
-      })
-    }
-
-    if (assay.resultCategory2Label) {
-      selectFields.push('rc2.name as resultCategory2Name')
-      sortableFields.push('resultCategory2Name')
-      assayColumns.push({
-        db: 'resultCategory2Name',
-        fieldName: 'resultCategory2Name',
-        type: 'string',
-        title: assay.resultCategory2Label,
-        i18nKey: assay.resultCategory2i18nKey,
-      })
-    }
-
-    const resultDataSchema = JSON.parse(assay.resultDataSchema)
-    _.each(resultDataSchema, (value, key) => {
-      if (value.list) {
-        selectFields.push(
-          knex.raw('JSON_EXTRACT(resultData, ?) as ?', [
-            `$.${key}`,
-            key.replace('.', '_'),
-          ])
-        )
-
-        sortableFields.push(key.replace('.', '_'))
-
+    assays.forEach(assay => {
+      if (
+        assay.resultCategory1Label &&
+        !sortableFields.includes('resultCategory1Name')
+      ) {
+        selectFields.push('rc1.name as resultCategory1Name')
+        sortableFields.push('resultCategory1Name')
         assayColumns.push({
-          db: key.replace('.', '_'),
-          type: value.type,
-          title: value.title,
-          i18nKey: value.i18nKey,
-          formatter: value.formatter,
-          postProcess: resultData => JSON.parse(resultData),
+          db: 'resultCategory1Name',
+          fieldName: 'resultCategory1Name',
+          type: 'string',
+          title: assay.resultCategory1Label,
+          i18nKey: assay.resultCategory1i18nKey,
         })
       }
+
+      if (
+        assay.resultCategory2Label &&
+        !sortableFields.includes('resultCategory2Name')
+      ) {
+        selectFields.push('rc2.name as resultCategory2Name')
+        sortableFields.push('resultCategory2Name')
+        assayColumns.push({
+          db: 'resultCategory2Name',
+          fieldName: 'resultCategory2Name',
+          type: 'string',
+          title: assay.resultCategory2Label,
+          i18nKey: assay.resultCategory2i18nKey,
+        })
+      }
+
+      const resultDataSchema = JSON.parse(assay.resultDataSchema)
+      _.each(resultDataSchema, (value, key) => {
+        if (value.list) {
+          const alias = key.replace('.', '_')
+          if (!sortableFields.includes(alias)) {
+            selectFields.push(
+              knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, alias])
+            )
+
+            sortableFields.push(alias)
+
+            assayColumns.push({
+              db: alias,
+              type: value.type,
+              title: value.title,
+              i18nKey: value.i18nKey,
+              formatter: value.formatter,
+              postProcess: resultData => JSON.parse(resultData),
+            })
+          }
+        }
+      })
     })
   }
 

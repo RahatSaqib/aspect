@@ -11,6 +11,8 @@
   padding-left: 10px;
   color: var(--aspect-color-grey-4);
   opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .TableRow:hover .Rate__hover {

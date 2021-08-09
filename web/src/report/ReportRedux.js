@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { defineMessages } from 'react-intl'
@@ -12,6 +11,7 @@ import {
 } from '../error/CommonErrorNotifications'
 import { receivedFileResponse } from '../globals/GlobalsRedux'
 import fetchWrapperForQueries from '../MigratedComponents/QueryFetch/index'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_REPORTS: 'REQUEST_REPORTS',
@@ -47,7 +47,7 @@ function rejectReports() {
 
 export function fetchReports(filtersParams) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestReports(filters))
     return aspectFetch(
       `/reports?${stringify({
@@ -89,7 +89,7 @@ export function fetchReports(filtersParams) {
 
 export function getReportFile(externalId, filtersParams) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     if (!filters.maxDate) filters.maxDate = new Date()
     return fetchWrapperForQueries({
       endpoint: `/reports/${externalId}`,

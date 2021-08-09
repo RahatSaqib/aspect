@@ -97,6 +97,15 @@ export const messages = defineMessages({
     id: 'pages.Status.testsOverTimeAvgTitle.graph',
     defaultMessage: 'Average Monthly Tests Performed',
   },
+
+  clinicalIndicatorsXdrTitle: {
+    id: 'pages.Status.clinicalIndicatorsXdr.title',
+    defaultMessage: 'TB XDR',
+  },
+  clinicalIndicatorsXdrPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsXdr.pie',
+    defaultMessage: 'Average Monthly Resistance Rate',
+  },
 })
 
 export default messages

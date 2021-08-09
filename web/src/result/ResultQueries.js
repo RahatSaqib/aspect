@@ -1,5 +1,5 @@
-import fromPairs from 'lodash/fromPairs'
 import fetchWrapperForQueries from '../MigratedComponents/QueryFetch'
+import { getFilters } from '../filter/utils'
 
 async function getExportableFile(
   filtersParams,
@@ -11,7 +11,7 @@ async function getExportableFile(
   reportName,
   endpoint = '/result/export'
 ) {
-  const filters = fromPairs([...filtersParams.entries()])
+  const filters = getFilters(filtersParams)
   const elem = await fetchWrapperForQueries({
     endpoint,
     params: {

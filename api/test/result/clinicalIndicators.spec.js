@@ -17,6 +17,7 @@ describe('/result/clinical-indicator-aggregations', () => {
   let resultsForUser = null
   let reportableResultCategories = null
   let assays = null
+  let resultCategories
 
   const getResultsForUser = () =>
     server
@@ -33,6 +34,7 @@ describe('/result/clinical-indicator-aggregations', () => {
         .where('rca.reportable', true)
         .distinct('rc.externalId')
         .pluck('externalId')
+      resultCategories = await knex('ResultCategory as rc').select('*')
     })
   )
 
@@ -207,5 +209,66 @@ describe('/result/clinical-indicator-aggregations', () => {
           res.body.message.substring(0, 24),
           '"groupBy" must be one of'
         )
+      }))
+
+  it('for specified assay should return results grouped by month, resultCategory2, resultCategory1', async () =>
+    server
+      .get(
+        `${path}?assay=DaktariHivVL&groupBy=month&groupBy=resultCategory2&groupBy=resultCategory1`
+      )
+      .set('Authorization', `Bearer ${shared.token}`)
+      .then(res => {
+        assert.equal(res.status, 200)
+
+        // assayId for 'DaktariHivVL'
+        const { id: assayId } = assays.find(
+          assay => assay.externalId === 'DaktariHivVL'
+        )
+        // normalize/group raw data by month, resultCategory2, resultCategory1
+        const expectedResponse = _.chain(resultsForUser)
+          .filter(
+            x =>
+              +x.assayId === +assayId &&
+              ['Detected', 'Not Detected'].includes(x.resultCategory1Name)
+          )
+          .map(o => ({
+            groupingKey: `${
+              // month date
+              format(new Date(o.endedOn), 'yyyy-MM')
+            }_${
+              // resultCategory1
+              o.resultCategory1I18nKey
+                ? resultCategories.find(
+                    x => x.i18nKey === o.resultCategory1I18nKey
+                  ).externalId
+                : 'null'
+            }_${o.resultCategory1I18nKey ?? 'null'}_${
+              // resultCategory2
+              o.resultCategory2I18nKey
+                ? resultCategories.find(
+                    x => x.i18nKey === o.resultCategory2I18nKey
+                  ).externalId
+                : 'null'
+            }_${o.resultCategory2I18nKey ?? 'null'}`,
+          }))
+          .groupBy('groupingKey')
+          .map((value, key) => {
+            const getValue = val => (val === 'null' ? null : val)
+
+            return {
+              month: key.split('_')[0],
+
+              resultCategory1: getValue(key.split('_')[1]),
+              resultCategory1I18nKey: getValue(key.split('_')[2]),
+
+              resultCategory2: getValue(key.split('_')[3]),
+              resultCategory2I18nKey: getValue(key.split('_')[4]),
+
+              cnt: value.length,
+            }
+          })
+          .value()
+
+        assert.deepEqual(res.body.data, expectedResponse)
       }))
 })

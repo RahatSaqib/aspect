@@ -1,5 +1,4 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
@@ -27,6 +26,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -148,7 +148,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: fromPairs([...filtersParams.entries()]),
+        filters: getFilters(filtersParams),
       }
     }
   ),
@@ -258,7 +258,7 @@ export const SiteList = ({
   user,
 }) => {
   const { value: filtersParams } = filtersFromLocation(location)
-  const filters = fromPairs([...filtersParams.entries()])
+  const filters = getFilters(filtersParams)
   const [siteList, setSiteList] = useState(false)
   const { formatMessage } = useI18n()
 
