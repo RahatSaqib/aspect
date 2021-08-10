@@ -1,10 +1,11 @@
 const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
-
+const { Promise } = require('bluebird')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { knex } = require('../../src/db')
 
 const { assert } = chai
 const server = require('../utils/testUtils')
@@ -80,6 +81,59 @@ describe('Inventory Routes', () => {
 
       describe('GET', () => {
         shared.checkToken(server, path)
+        const deviceIds = []
+        const inventoryItemIds = []
+        const siteIds = []
+
+        // This before each ensures we have at least 2 devices with inventory items in each it()
+        beforeEach(async () => {
+          const { id: consumableId } = await knex('Consumable')
+            .where({ externalId: 'GxMtbRifCartridge' })
+            .first()
+          const { partner, country } = await getConstraints({ name: 'admin' })
+          const { id: geographyId } = await knex('Geography')
+            .where({ countryId: country.id })
+            .first()
+          const { id: gxDeviceTypeId } = await knex('DeviceType')
+            .where({ externalId: 'CepheidGeneXpert' })
+            .first()
+          const { id: deviceApprovedId } = await knex('DeviceApproval')
+            .where({ token: 'approved' })
+            .first()
+          const now = new Date()
+          await Promise.each(_.range(2), async n => {
+            const [siteId] = await knex('Site').insert({
+              partnerId: partner.id,
+              geographyId,
+              externalId: `Site ${n}`,
+              name: `Site ${n}`,
+              shortName: `Site ${n}`,
+            })
+            const [deviceId] = await knex('Device').insert({
+              name: `Device ${n}`,
+              shortName: `Device ${n}`,
+              deviceTypeId: gxDeviceTypeId,
+              deviceApprovalId: deviceApprovedId,
+              partnerId: partner.id,
+              geographyId,
+              siteId,
+              createdOn: now,
+              updatedOn: now,
+              lastPingOn: now,
+              lastSeenOn: now,
+            })
+            const [inventoryItemId] = await knex('InventoryItem').insert({
+              consumableId,
+              siteId,
+              lotNumber: '',
+              expiresOn: now,
+              quantityOnHand: 100,
+            })
+            siteIds.push(siteId)
+            deviceIds.push(deviceId)
+            inventoryItemIds.push(inventoryItemId)
+          })
+        })
 
         it('should return a list of sites, each with a list of inventory items, when using valid token', done => {
           server
@@ -139,6 +193,12 @@ describe('Inventory Routes', () => {
               })
               done()
             })
+        })
+
+        afterEach(async () => {
+          await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+          await knex('Device').whereIn('id', deviceIds).delete()
+          await knex('Site').whereIn('id', siteIds).delete()
         })
       })
     })

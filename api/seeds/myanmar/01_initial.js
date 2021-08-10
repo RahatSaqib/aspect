@@ -745,7 +745,7 @@ async function seed(knex) {
     assayId: assayGeneXpertHcvId,
   })
 
-  await upsertConsumables(knex, [
+  await upsertConsumables(knex, true, [
     'GxMtbRif',
     'GxMtbRifUltra',
     'GxEbola',
