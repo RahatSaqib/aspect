@@ -18,7 +18,8 @@ export function requestTable(table, action) {
 }
 
 export function receiveTableItems(table, total, extraColumns) {
-  return table.merge(
+  return Immutable.merge(
+    table,
     Immutable.fromJS({
       loading: false,
       total,
