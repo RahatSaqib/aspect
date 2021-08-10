@@ -33,6 +33,16 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.requirestreatment',
 ]
 
+const SELECT_LIST_RESULT_CATEGORY_GROUP_FIELDS = [
+  'rcg.id',
+  'rcg.externalId',
+  'rcg.name',
+  'rcg.i18nKey',
+  'rcg.resultCategory1Id',
+  'rcg.resultCategory2Id',
+  'rcg.assayId',
+]
+
 async function listAssaysResultSchema(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -127,17 +137,27 @@ async function listAssays(request) {
   // return result when both queries are finished
   const [{ count: total }, rawAssays] = await Promise.all([getCount, getItems])
 
+  // list of assayId's for using in next queries
+  const assayIds = _.map(rawAssays, 'id')
+
   // get resultCategories for all assays
   const rawResultCategories = await knex('ResultCategory as rc')
     .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
-    .whereIn('rca.assayId', _.map(rawAssays, 'id'))
+    .whereIn('rca.assayId', assayIds)
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
-
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
+
+  const rawResultCategoryGroups = await knex('ResultCategoryGroup as rcg')
+    .whereIn('rcg.assayId', assayIds)
+    .select(SELECT_LIST_RESULT_CATEGORY_GROUP_FIELDS)
+  const resultCategoryGroupsByAssayId = _.groupBy(
+    rawResultCategoryGroups,
+    'assayId'
+  )
 
   const rawPartnerAssays = await knex('PartnerAssay as pa')
     .innerJoin('Partner as p', 'pa.partnerId', 'p.id')
-    .whereIn('pa.assayId', _.map(rawAssays, 'id'))
+    .whereIn('pa.assayId', assayIds)
     .distinct(
       'pa.assayId',
       'pa.partnerId',
@@ -164,6 +184,7 @@ async function listAssays(request) {
       hasResults: usedAssayIds.includes(assay.id),
       resultDataSchema: JSON.parse(assay.resultDataSchema),
       resultCategories: resultCategoriesByAssayId[assay.id],
+      resultCategoryGroups: resultCategoryGroupsByAssayId[assay.id],
       abilities,
       patientDataSchema:
         assay.patientDataSchema && JSON.parse(assay.patientDataSchema),

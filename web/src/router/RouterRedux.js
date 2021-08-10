@@ -1,10 +1,9 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { mergeToFiltersParams } from '../filter/utils'
+import { getFilters, mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -69,7 +68,7 @@ export function fetchRouters(
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestRouters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -125,7 +124,7 @@ export function exportRouters(
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
 
     return aspectFetch(
       `/device/export?${stringify({

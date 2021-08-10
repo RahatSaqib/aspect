@@ -126,7 +126,8 @@ export function loginStart({ user, password }) {
               },
             }),
           },
-          'Authentication failed. Wrong password.': {
+          // eslint-disable-next-line no-dupe-keys
+          'Authentication failed. Wrong username or password.': {
             severity: 'warn',
             ...defineMessages({
               title: {
@@ -135,7 +136,7 @@ export function loginStart({ user, password }) {
               },
               message: {
                 id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.message',
-                defaultMessage: 'Incorrect password',
+                defaultMessage: 'Incorrect username or password',
               },
               resolution: {
                 id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution',

@@ -24,7 +24,10 @@ export class AssaySelectField extends PureComponent {
     diseaseId: PropTypes.string,
     assayTypeId: PropTypes.string,
     deviceTypeId: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string),
+    ]),
   }
 
   static defaultProps = {
@@ -100,6 +103,7 @@ export class AssaySelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
         disabled={isSingleAssay || validFilteredAssays(validAssays).size <= 1}
+        multiple
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {validFilteredAssays(validAssays).map(a => (

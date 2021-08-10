@@ -8,7 +8,7 @@ exports[`App Notification SnackBar component should shallow render correctly 1`]
       "notificationType": "error",
       "messageValues": Object {
         "error": "Unauthorized",
-        "message": "Authentication failed. Wrong password.",
+        "message": "Authentication failed. Wrong username or password.",
         "statusCode": 401,
       },
       "showDetails": true,

@@ -19,6 +19,7 @@ import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
 import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
 import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
+import xdrGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/XDR'
 import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
 import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
@@ -65,6 +66,7 @@ const Status = () => {
     if (culture) {
       const { hivResults } = hivGraphs
       const { tbDetected, tbResults } = tbGraphs
+      const { xdrResults } = xdrGraphs
       const {
         covidResults,
         covidDailyConfirmed,
@@ -81,6 +83,7 @@ const Status = () => {
         hivResults,
         tbDetected,
         tbResults,
+        xdrResults,
         covidResults,
         treatmentStatus,
         deviceStatus,

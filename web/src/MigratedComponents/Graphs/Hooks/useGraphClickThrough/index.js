@@ -33,7 +33,7 @@ const parseDate = (date, dateFormat) => {
   }
 }
 
-const flattenAssaysStructure = async ({ data }) => {
+const flattenAssaysStructure = ({ data }) => {
   const output = []
   map(data, ({ resultCategories }) =>
     map(resultCategories, category => output.push({ ...category }))
@@ -41,16 +41,108 @@ const flattenAssaysStructure = async ({ data }) => {
   return uniqBy(output, 'i18nKey')
 }
 
-const assayResultCategoryIdFromKey = async (data, id) => {
+const assayResultCategoryIdFromKey = (data, id) => {
   return filter(data, { externalId: id })[0] || false
 }
 
-const assayIdFromKey = async ({ data }, id) => {
+const assayIdFromKey = ({ data }, id) => {
   return filter(data, { externalId: id })[0] || false
 }
 
-const diseaseIdFromKey = async ({ data }, id) => {
+const diseaseIdFromKey = ({ data }, id) => {
   return filter(data, { externalId: id })[0] || false
+}
+
+function getQueryParameters(
+  linkData,
+  data,
+  formatDate,
+  id,
+  indexBy,
+  { assays, baseAssay, keys, filterBy, keyToConsume }
+) {
+  const params = new URLSearchParams()
+  const buildParamsFromKey = (key, params) => {
+    if (key === 'indexBy' && indexBy.includes('month')) {
+      const { [indexBy]: month } = data
+      const { minDate, maxDate } = parseDate(month, formatDate)
+      params.set(MIN_DATE, minDate)
+      params.set(MAX_DATE, maxDate)
+    }
+
+    if (key === 'resultCategoryId') {
+      const categories = flattenAssaysStructure(linkData)
+
+      if (filterBy?.resultCategory1) {
+        const { values } = filterBy.resultCategory1
+        values.forEach(externalId => {
+          const { id: resultCategoryId } = assayResultCategoryIdFromKey(
+            categories,
+            externalId
+          )
+          params.append('resultCategoryId', resultCategoryId)
+        })
+
+        if (keyToConsume === 'resultCategory2') {
+          const { id: resultCategoryId } = assayResultCategoryIdFromKey(
+            categories,
+            id
+          )
+          params.set('resultCategory2Id', resultCategoryId)
+        }
+      } else {
+        const { id: resultCategoryId } = assayResultCategoryIdFromKey(
+          categories,
+          id
+        )
+        params.set('resultCategoryId', resultCategoryId)
+      }
+    }
+
+    if (key === 'assay' && !params.has('assayId')) {
+      const { id: assayId } = assayIdFromKey(linkData, id)
+      params.set('assayId', assayId)
+    }
+
+    if (key === 'treatmentStatus') {
+      switch (id) {
+        case 'NotConfirmed':
+          params.set('treatmentStatus', treatmentStatus.NotConfirmed)
+          break
+
+        case 'Confirmed':
+          params.set('treatmentStatus', treatmentStatus.Confirmed)
+          break
+
+        default:
+          break
+      }
+    }
+
+    if (key === 'diseaseId') {
+      const { diseaseId } = diseaseIdFromKey(linkData, baseAssay)
+      params.set('diseaseId', diseaseId)
+    }
+
+    if (key === 'stockLeft') {
+      params.set('stockLeft', id)
+    }
+
+    if (key === 'consumableId') {
+      params.set('consumableId', data.consumableId)
+    }
+  }
+
+  // params from `assays`
+  if (assays) {
+    linkData.data
+      .filter(it => assays.includes(it.externalId))
+      .map(it => params.append('assayId', it.id))
+  }
+  // params from `keys`
+  keys.forEach(key => buildParamsFromKey(key, params))
+
+  return params
 }
 
 const useGraphClickThrough = () => {
@@ -70,97 +162,34 @@ const useGraphClickThrough = () => {
   }
 
   useEffect(() => {
-    async function buildLink(
-      linkData,
-      data,
-      formatDate,
-      id,
-      indexBy,
-      baseUrl,
-      baseAssay,
-      keys
-    ) {
-      const params = {}
-      const buildParamsFromKey = async (key, params) => {
-        if (key === 'indexBy' && indexBy.includes('month')) {
-          const { [indexBy]: month } = data
-          const { minDate, maxDate } = parseDate(month, formatDate)
-          params[MIN_DATE] = minDate
-          params[MAX_DATE] = maxDate
-        }
-
-        if (key === 'resultCategoryId') {
-          const categories = await flattenAssaysStructure(linkData)
-          const { id: resultCategoryId } = await assayResultCategoryIdFromKey(
-            categories,
-            id
-          )
-          params.resultCategoryId = resultCategoryId
-          params.assayOverride = id
-        }
-
-        if (key === 'assay') {
-          const { id: assayId } = await assayIdFromKey(linkData, id)
-          params.assayId = assayId
-        }
-
-        if (key === 'treatmentStatus') {
-          switch (id) {
-            case 'NotConfirmed':
-              params.treatmentStatus = treatmentStatus.NotConfirmed
-              break
-
-            case 'Confirmed':
-              params.treatmentStatus = treatmentStatus.Confirmed
-              break
-
-            default:
-              break
-          }
-        }
-
-        if (key === 'diseaseId') {
-          const { diseaseId } = await diseaseIdFromKey(linkData, baseAssay)
-          params.diseaseId = diseaseId
-        }
-
-        if (key === 'stockLeft') {
-          params.stockLeft = id
-        }
-
-        if (key === 'consumableId') {
-          params.consumableId = data.consumableId
-        }
-      }
-      await Promise.all(map(keys, key => buildParamsFromKey(key, params)))
-      setLink(
-        `${baseUrl}${encodeURIComponent(
-          new URLSearchParams(params).toString()
-        )}`
-      )
-    }
-
     if (!isLoading && config && linkData) {
       const {
         baseConfig: {
           indexBy,
           formatDate,
-          clickThrough: { allow, baseUrl, baseAssay, keys } = false,
+          clickThrough: { allow, assays, baseUrl, baseAssay, keys } = false,
+          filterBy,
+          keyToConsume,
         },
         value: { data, id },
       } = config
 
       if (allow) {
-        buildLink(
+        const params = getQueryParameters(
           linkData,
           data,
           formatDate,
           id,
           indexBy,
-          baseUrl,
-          baseAssay,
-          keys
+          {
+            assays,
+            baseAssay,
+            keys,
+            filterBy,
+            keyToConsume,
+          }
         )
+        setLink(`${baseUrl}${encodeURIComponent(params.toString())}`)
       }
     }
   }, [config, linkData, isLoading])

@@ -78,8 +78,8 @@ const AspectResponsiveBar = ({
 
       case type === 'barInventory':
         return {
-          legend: 'Number of Locations',
-          ylegend: 'Supply in Stock',
+          legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
+          ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
           yTickValues: generateTickValues(
             data,
             tickValuesYShape,

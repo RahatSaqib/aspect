@@ -1,5 +1,4 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
@@ -18,6 +17,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -328,9 +328,11 @@ export const InventoryItemsList = ({ navigate, location }) => {
   })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-  const searchParams = new URLSearchParams(location.search)
-  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-  const filters = fromPairs([...filtersParams.entries()])
+  const { value: searchParams } = searchSanitizer(location)
+  const { value: filtersParams } = filtersSanitizer(
+    searchParams.get('filters') || ''
+  )
+  const filters = getFilters(filtersParams)
 
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(

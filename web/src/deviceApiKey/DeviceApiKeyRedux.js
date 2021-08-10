@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -17,6 +16,7 @@ import {
   Table,
 } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_DEVICE_API_KEYS: 'REQUEST_DEVICE_API_KEYS',
@@ -64,7 +64,7 @@ export function fetchDeviceApiKeys(
   pageSize
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestDeviceApiKeys(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -119,7 +119,7 @@ export function exportDeviceApiKeys(
   reportName
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
 
     return aspectFetch(
       `/deviceApiKey/export?${stringify({
