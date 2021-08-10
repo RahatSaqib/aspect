@@ -403,6 +403,14 @@ export const messages = defineMessages({
     id: 'legends.Unknown.assayLPA',
     defaultMessage: 'LPA',
   },
+  inventoryGraphStatusXAxisLegend: {
+    id: 'legends.Unknown.inventoryGraphStatusXAxisLegend',
+    defaultMessage: 'Number of Locations',
+  },
+  inventoryGraphStatusYAxisLegend: {
+    id: 'legends.Unknown.inventoryGraphStatusYAxisLegend',
+    defaultMessage: 'Supply in Stock',
+  },
 })
 
 export default messages

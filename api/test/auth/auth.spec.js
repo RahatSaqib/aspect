@@ -296,7 +296,7 @@ describe('Authentication routes', () => {
             assert.equal(res.status, 401)
             assert.equal(
               res.body.message,
-              'Authentication failed. Wrong password.'
+              'Authentication failed. Wrong username or password.'
             )
           })
       })

@@ -66,7 +66,10 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           .max(1)
           .description('Filter for getting devices that can have connectivity'),
         deviceIds: Joi.string().allow('').description('Filter for device ids'),
-        assayId: Joi.number().allow('').description('Assay ID'),
+        assayId: Joi.alternatives()
+          .try(Joi.array().items(Joi.number()), Joi.number())
+          .allow(null, '')
+          .description('Filter for assay ID(s)'),
         diseaseId: Joi.number()
           .integer()
           .positive()

@@ -387,14 +387,15 @@ const checkIfParamsIsDate = (params, encode = true) => {
       : getISOFromString(value, startKeys.includes(key), endKeys.includes(key))
 
   if (isPlainObject(params)) {
-    const output = {}
-    map(
-      params,
-      (value, key) =>
-        (output[key] = dateStringMatches.includes(key)
-          ? iSOHelper(value, key)
-          : value)
-    )
+    const output = [] // {}
+    map(params, (value, key) => {
+      const values = isArray(value) ? value : [value]
+      return values.map(v =>
+        output.push(
+          `${key}=${dateStringMatches.includes(key) ? iSOHelper(v, key) : v}`
+        )
+      )
+    })
     return output
   }
 

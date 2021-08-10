@@ -80,10 +80,7 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   { patientOrCaseId: true, requiredPermissions: [] },
   { sampleOriginSite: true, requiredPermissions: [] },
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: [],
-  },
+  { diseaseId: true, requiredPermissions: [] },
   { onlyDisease: true, requiredPermissions: [] },
 ]
 

@@ -34,7 +34,7 @@ describe('App Notification SnackBar component', () => {
     messageValues: {
       statusCode: 401,
       error: 'Unauthorized',
-      message: 'Authentication failed. Wrong password.',
+      message: 'Authentication failed. Wrong username or password.',
     },
     showDetails: true,
     notificationOptions,

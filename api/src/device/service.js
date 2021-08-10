@@ -771,7 +771,11 @@ function getDeviceBaseQuery(
     .modify(queryBuilder => {
       if (query.assayId || query.assayExternalId)
         queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      if (query.assayId) queryBuilder.where('a.id', query.assayId)
+      if (query.assayId) {
+        const { assayId } = query
+        const assayIds = _.isArray(assayId) ? assayId : [assayId]
+        queryBuilder.whereIn('a.id', assayIds)
+      }
       if (query.assayExternalId)
         queryBuilder.where('a.externalId', query.assayExternalId)
       if (query.resultCategoryId)

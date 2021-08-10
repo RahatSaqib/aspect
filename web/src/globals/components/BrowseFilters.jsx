@@ -1,11 +1,14 @@
-import fromPairs from 'lodash/fromPairs'
 import replace from 'lodash/replace'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
 import BrowseNavDropdown from './BrowseNavDropdown'
-import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
+import {
+  getFilters,
+  mergeToFiltersParams,
+  reduceNavLinks,
+} from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
 import FiltersPanel from '../../filter/popover/FiltersPanel'
 import {
@@ -26,8 +29,9 @@ const enhance = compose(
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const prefs = getAspectDisplayPreferences()
+    const filters = getFilters(filtersParams)
     return {
-      filters: fromPairs([...filtersParams.entries()]),
+      filters,
       dateFormat: replace(prefs.get('dateFormat'), /-/g, '/'),
     }
   }),
@@ -53,7 +57,7 @@ const enhance = compose(
 
     onRemoveFilterItem:
       ({ navigate, location }) =>
-      filterKey => {
+      (filterKey, index) => {
         const searchParams = new URLSearchParams(location.search)
         const filtersParams = new URLSearchParams(
           searchParams.get('filters') || ''
@@ -73,6 +77,21 @@ const enhance = compose(
             filtersParams.delete(filterKey)
             filtersParams.delete('reportableSiteId')
             break
+          case 'assayId': {
+            const values = filtersParams.getAll(filterKey)
+            filtersParams.delete(filterKey)
+            if (values.length > 1) {
+              values.splice(index || 0, 1)
+              values.forEach(value => {
+                filtersParams.append(filterKey, value)
+              })
+            }
+            if (!filtersParams.has(filterKey)) {
+              filtersParams.delete('resultCategoryId')
+              filtersParams.delete('resultCategory2Id')
+            }
+            break
+          }
           default:
             filtersParams.delete(filterKey)
             break
