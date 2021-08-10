@@ -105,8 +105,7 @@ const rawPayloadPlugin = {
   register: async server => {
     server.ext('onPostAuth', (request, h) => {
       request.plugins.rawPayload = request.payload
-      if (request.payload)
-        request.sentryScope.setExtra('payload', request.payload)
+      if (request.payload) Sentry.setContext('payload', request.payload)
       return h.continue
     })
   },
