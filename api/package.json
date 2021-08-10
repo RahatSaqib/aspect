@@ -35,7 +35,8 @@
     "test:contract": "TZ=UTC npm-run-all -c start:background mocha:contract stop:background",
     "test:contract:quiet": "TZ=UTC npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
     "test:unit": "TZ=UTC npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
-    "test:reseed": "npm-run-all db:reseed test"
+    "test:reseed": "npm-run-all db:reseed test",
+    "prepare": "node ./prepare"
   },
   "nyc": {
     "check-coverage": true,

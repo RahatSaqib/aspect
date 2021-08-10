@@ -1,5 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd api && npx lint-staged && cd ..
-cd web && npx lint-staged && cd ..
+cd api
+npx lint-staged 
+
+cd ../web 
+npx lint-staged

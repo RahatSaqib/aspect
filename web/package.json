@@ -33,7 +33,8 @@
     "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json",
     "storybook": "start-storybook -p 8001",
     "build-storybook": "build-storybook",
-    "scaffold": "plop "
+    "scaffold": "plop ",
+    "prepare": "node ./prepare"
   },
   "lint-staged": {
     "./src/**/*.css": [
