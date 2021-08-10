@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
-import isNil from 'lodash/isNil'
 import isEmpty from 'lodash/isEmpty'
 
 import useI18n from '../../Hooks/i18n/useI18n'
