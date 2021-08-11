@@ -5,6 +5,7 @@ import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 import union from 'lodash/union'
 
+import map from 'lodash/map'
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import PERSON_LIST from '../../QueryFetch/Person'
@@ -366,129 +367,35 @@ const getSectionsBase = formatMessage => [
       },
     ],
   },
-  {
-    id: 'toAnyOfTheseContacts',
-    label: 'toAnyOfTheseContacts',
-    labelI18nKey: 'toAnyOfTheseContacts',
-    rows: [
-      {
-        id: 0,
-        items: [
-          {
-            id: 'toNationalContacts',
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-              itemContainer: cssClasses('max-width-100pcr'),
-              // container: cssClasses('item-in-group-container'),
-            },
-            initialValue: true,
-            label: 'National Contacts',
-            labelI18nKey: 'toNationalContacts',
-          },
-        ],
-      },
-      {
-        id: 0,
-        items: [
-          {
-            id: 'nationalTags',
-            controlType: {
-              component: 'select',
-              endpoint: PERSON_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: PERSON_LIST.KEY,
-              normalizeLoadedData: response => {
-                const { ok, data } = response
-                let options = []
-                if (ok === true) {
-                  let tags = union(
-                    ...data.map(person => {
-                      return (person.tags || '').split(';')
-                    })
-                  )
-                    .map(tag => tag.trim())
-                    .filter(tag => tag !== '')
-                  tags = [...new Set(tags)]
-                  options = tags.map(tag => ({ label: tag, value: tag }))
-                }
-                return options
-              },
-              isMulti: true,
-            },
-            classNames: {
-              // container: cssClasses('tags-container'),
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            label: 'Assay',
-            labelI18nKey: 'nationalTags',
-            visibleIf: values => values.toNationalContacts === true,
-          },
-        ],
-      },
-
-      // --------------------------------------------------------------
-      //
-      // --------------------------------------------------------------
-      {
-        id: 0,
-        items: [
-          {
-            id: 'toStateContacts',
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-            },
-            label: 'State Contacts',
-            labelI18nKey: 'toStateContacts',
-          },
-        ],
-      },
-
-      {
-        id: 0,
-        items: [
-          {
-            id: 'toLgaContacts',
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-            },
-            label: 'LGA Contacts',
-            labelI18nKey: 'toLgaContacts',
-          },
-        ],
-      },
-
-      {
-        id: 0,
-        items: [
-          {
-            id: 'toLaboratoryContacts',
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-            },
-            label: 'Laboratory Contacts',
-            labelI18nKey: 'toLaboratoryContacts',
-          },
-        ],
-      },
-    ],
-  },
 ]
 
-const getConfig = formatMessage => {
+const getConfig = (formatMessage, notificationType, jobFunctions) => {
+  const sections = [
+    ...getSectionsBase(formatMessage),
+    {
+      id: 'toAnyOfTheseContacts',
+      label: 'toAnyOfTheseContacts',
+      labelI18nKey: 'toAnyOfTheseContacts',
+      rows: [
+        ...map(jobFunctions, jf => ({
+          id: jf.id,
+          items: [
+            {
+              id: jf.id,
+              controlType: {
+                component: 'checkbox',
+              },
+              classNames: {
+                controlContainer: cssClasses('checkbox-container'),
+                itemContainer: cssClasses('max-width-100pcr'),
+              },
+              label: jf.name,
+            },
+          ],
+        })),
+      ],
+    },
+  ]
   return {
     title: formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',
@@ -497,16 +404,13 @@ const getConfig = formatMessage => {
       helpers: '',
       items: [
         {
-          // id: 'transfer',
-          // text: formatMessage(messages.transferResult),
-          // action: 'transferResult',
           id: 'save',
           text: formatMessage(messages.save),
           action: 'save',
         },
       ],
     },
-    sections: [...getSectionsBase(formatMessage)],
+    sections,
   }
 }
 

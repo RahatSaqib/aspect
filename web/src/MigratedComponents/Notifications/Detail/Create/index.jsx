@@ -20,13 +20,16 @@ import getFormConfig from '../../Forms/editConfig'
 import { getNotificationMeta } from '../../List/config'
 import messages from '../messages'
 
-const AspectNotificationDetail = ({ notificationType }) => {
+const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
-
   useEffect(() => {
     if (!formConfig) {
-      const formSchema = getFormConfig(intl.formatMessage, notificationType)
+      const formSchema = getFormConfig(
+        intl.formatMessage,
+        notificationType,
+        jobFunctions
+      )
       const { name, value } = getNotificationMeta(notificationType, intl)
       const initialValues = {
         ...getInitialValuesFromFormConfig(formSchema),
@@ -60,6 +63,7 @@ const AspectNotificationDetail = ({ notificationType }) => {
 
 AspectNotificationDetail.propTypes = {
   notificationType: PropTypes.string.isRequired,
+  jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
 export default AspectNotificationDetail
