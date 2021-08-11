@@ -28,10 +28,6 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
-    const hello = 'there'
-    // eslint-disable-next-line no-console
-    console.log(hello)
-
     const { children } = this.props
     const { hasError, isDevelopment, FallBackComponent } = this.state
     if (hasError) {
