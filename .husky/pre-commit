@@ -1,5 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-./node_modules/.bin/lint-staged -c ./web/.lintstagedrc --debug --verbose --allow-empty
-./node_modules/.bin/lint-staged -c ./api/.lintstagedrc --debug --verbose --allow-empty
+./node_modules/.bin/lint-staged -c ./web/.lintstagedrc --allow-empty
+./node_modules/.bin/lint-staged -c ./api/.lintstagedrc --allow-empty
