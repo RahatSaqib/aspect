@@ -739,6 +739,22 @@ async function removeFollowUps(knex, partnerIds, externalId = 'moved') {
   }
 }
 
+async function updateFollowUps(knex, { partnerId, partnerName, data }) {
+  if (!partnerId) {
+    ;[{ id: partnerId }] = [
+      await knex('Partner').where({ name: partnerName }).first('id'),
+    ]
+  }
+
+  const followUps = await knex('FollowUp').pluck('externalId')
+
+  await Promise.each(followUps, async externalId => {
+    await removeFollowUps(knex, [partnerId], externalId)
+  })
+
+  await addFollowUps(knex, data, [partnerId])
+}
+
 // Ensures all common triggers for the given partner are set based on notification
 // types triggered for that partner. This will only seed for triggers that do
 // not already exist for given partner, issue type, and issue event status, so
@@ -3351,6 +3367,7 @@ module.exports = {
 
   addFollowUps,
   removeFollowUps,
+  updateFollowUps,
 
   initDataFromFixture,
   updateReportableInResultCategoryAssay,

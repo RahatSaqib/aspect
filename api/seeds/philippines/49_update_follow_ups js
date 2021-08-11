@@ -1,0 +1,8 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const { updateFollowUps } = require('../utils')
+const data = require('./fixtures/FollowUp.json')
+
+async function seed(knex) {
+  await updateFollowUps(knex, { partnerName: 'Philippines', data })
+}
