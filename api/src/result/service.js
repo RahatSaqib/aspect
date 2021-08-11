@@ -819,6 +819,7 @@ async function getResultByResultId(
     data.resultTreatmentStatusCreatedBy = userName
 
     if (
+      data.resultData &&
       data.resultData.detectedResistance &&
       data.resultData.detectedResistance.length > 0
     )
