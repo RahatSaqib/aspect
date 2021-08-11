@@ -1,5 +1,5 @@
 const formatters = {
-  joinArrayWithCommas: array => array && array.join(', '),
+  joinArrayWithCommas: array => array?.join(', '),
 }
 
 export default formatters

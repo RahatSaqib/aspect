@@ -44,7 +44,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           result.get('assayName')
         )}
       </TableCell>
-      {extraColumns.isEmpty() && (
+      {extraColumns.isEmpty() ? (
         <TableCell>
           {`${formatMessage(
             messages[result.get('resultCategory1Titlei18nKey')],
@@ -60,8 +60,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
               messages[result.get('resultCategory2I18nKey')]
             )}`}
         </TableCell>
-      )}
-      {!extraColumns.isEmpty() &&
+      ) : (
         extraColumns.map(column => (
           // TODO: refactor, see DeviceOperationTableRow
           <TableCell key={column.get('db')} hiddenOn="nd">
@@ -73,7 +72,8 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
                 : result.get(column.get('fieldName'))
             )}
           </TableCell>
-        ))}
+        ))
+      )}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
         {formatMessage(
