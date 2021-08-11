@@ -40,6 +40,7 @@ const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
         mergeFormConfigWithData(initialValues, formSchema, messages)
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formConfig, intl, notificationType])
 
   return (

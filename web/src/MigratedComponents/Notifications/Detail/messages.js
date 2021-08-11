@@ -31,9 +31,9 @@ export default defineMessages({
     id: 'pages.NotificationDetail.send',
     defaultMessage: 'Send',
   },
-  toAnyOfTheseContacts: {
-    id: 'pages.NotificationDetail.toAnyOfTheseContacts',
-    defaultMessage: 'To any of these contacts',
+  toAnyOfTheseJobFunctions: {
+    id: 'pages.NotificationDetail.toAnyOfTheseJobFunctions',
+    defaultMessage: 'To any of these Job Functions',
   },
 
   // --------------------------------------------------------------

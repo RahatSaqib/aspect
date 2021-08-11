@@ -3,12 +3,10 @@ import capitalize from 'lodash/capitalize'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
-import union from 'lodash/union'
 
 import map from 'lodash/map'
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
-import PERSON_LIST from '../../QueryFetch/Person'
 import { SITE_ALL } from '../../QueryFetch/Site'
 import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
 
@@ -373,9 +371,9 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
   const sections = [
     ...getSectionsBase(formatMessage),
     {
-      id: 'toAnyOfTheseContacts',
-      label: 'toAnyOfTheseContacts',
-      labelI18nKey: 'toAnyOfTheseContacts',
+      id: 'toAnyOfTheseJobFunctions',
+      label: 'toAnyOfTheseJobFunctions',
+      labelI18nKey: 'toAnyOfTheseJobFunctions',
       rows: [
         ...map(jobFunctions, jf => ({
           id: jf.id,
