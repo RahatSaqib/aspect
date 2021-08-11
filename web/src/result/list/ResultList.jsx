@@ -47,6 +47,7 @@ import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { RESULT_LIST } from '../../MigratedComponents/QueryFetch/Result'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 import styles from './ResultList.css'
 
@@ -152,75 +153,79 @@ const messageByI18nKey = partial(
   // Explicit declare messageBy[i18nKey] so that the keys are searchable.
   (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
   {
-    resultCategoryCopiesMl: (title, intl) =>
-      intl.formatMessage(messages.resultCategoryCopiesMl),
+    resultCategoryCopiesMl: (title, formatMessage) =>
+      formatMessage(messages.resultCategoryCopiesMl),
     default: identity,
   }
 )
 
-const getBaseColumns = (intl, extraColumns = []) => {
+const getBaseColumns = (extraColumns = []) => {
+  const { formatMessage } = i18nWrapper()
   return Immutable.List(
     filter(
       [
         {
           key: 'endedOn',
-          label: intl.formatMessage(messages.endedOn),
+          label: formatMessage(messages.endedOn),
           sortable: true,
         },
         {
           key: 'deviceName',
-          label: intl.formatMessage(messages.deviceName),
+          label: formatMessage(messages.deviceName),
           sortable: true,
           hiddenOn: 'xs',
         },
         {
           key: 'sampleOriginSiteName',
-          label: intl.formatMessage(messages.sampleOriginSiteName),
+          label: formatMessage(messages.sampleOriginSiteName),
           sortable: true,
           hiddenOn: 'sm',
         },
         {
           key: 'sampleId',
-          label: intl.formatMessage(messages.sampleId),
+          label: formatMessage(messages.sampleId),
           sortable: true,
         },
         {
           key: 'assayName',
-          label: intl.formatMessage(messages.assayName),
+          label: formatMessage(messages.assayName),
           sortable: true,
         },
         {
           key: 'resultText',
-          label: intl.formatMessage(messages.resultText),
+          label: formatMessage(messages.resultText),
           sortable: true,
         },
         ...map(extraColumns, column => ({
-          key: column.db,
-          label: messageByI18nKey(column.i18nKey)(column.title, intl),
+          key: column?.db,
+          label: messageByI18nKey(column?.i18nKey)(
+            column?.title,
+            formatMessage
+          ),
           sortable: true,
           hiddenOn: 'md',
         })),
         {
           key: 'errorCode',
-          label: intl.formatMessage(messages.errorCode),
+          label: formatMessage(messages.errorCode),
           sortable: true,
           hiddenOn: 'lg',
         },
         {
           key: 'resultWorkflowStatus',
-          label: intl.formatMessage(messages.resultWorkflowStatus),
+          label: formatMessage(messages.resultWorkflowStatus),
           sortable: true,
           hiddenOn: 'md',
         },
         {
           key: 'treatmentStatusInfo',
-          label: intl.formatMessage(messages.resultTreatmentStatus),
+          label: formatMessage(messages.resultTreatmentStatus),
           sortable: true,
           hiddenOn: 'md',
         },
         {
           key: 'patientId',
-          label: intl.formatMessage(messages.patientId),
+          label: formatMessage(messages.patientId),
           sortable: true,
           hiddenOn: 'xs',
         },
@@ -408,7 +413,7 @@ const ResultList = () => {
       const newTable = receiveTableItems(table, totalItems, extraColumns)
       setTable(newTable)
 
-      setColumns(getBaseColumns(intl, extraColumns))
+      setColumns(getBaseColumns(extraColumns))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])

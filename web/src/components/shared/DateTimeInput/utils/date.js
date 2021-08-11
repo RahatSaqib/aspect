@@ -293,7 +293,7 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
   maxDate: format(endOfMonth(subMonths(date, offset)), dateFormat),
 })
 
-const dateRangeOptions = key => {
+const dateRangeOptions = (key, showLast30Days = true) => {
   const { formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
   const dateFormatRanges = {
@@ -301,11 +301,12 @@ const dateRangeOptions = key => {
     month: '2-digit',
   }
   const dateFormatMonths = { month: 'long', year: 'numeric' }
-  const monthsToGet = 12
   const today = negateTimeZoneOffset(new Date())
-  const dateRange = [
-    {
-      id: 0,
+  const dateRange = []
+
+  if (showLast30Days)
+    dateRange.push({
+      id: DATE_CONSTS.DATE_RANGE_OPTIONS.LAST_30_DAYS,
       name: formatMessage
         ? formatMessage(messages.last30Days)
         : messages.hoursPlaceholder.id,
@@ -313,52 +314,39 @@ const dateRangeOptions = key => {
         minDate: getTimePeriod(30, 'days', dateFormatValue),
         maxDate: format(today, dateFormatValue),
       },
+    })
+
+  dateRange.push({
+    id: DATE_CONSTS.DATE_RANGE_OPTIONS.CURRENT_MONTH,
+    name: formatMessage
+      ? formatMessage(messages.thisMonth, {
+          minDate: formatDate(startOfMonth(today), dateFormatRanges),
+          maxDate: formatDate(endOfMonth(today), dateFormatRanges),
+        })
+      : messages.thisMonth.id,
+    value: {
+      minDate: format(startOfMonth(today), dateFormatValue),
+      maxDate: format(endOfMonth(today), dateFormatValue),
     },
-  ]
+  })
+
+  dateRange.push({
+    id: DATE_CONSTS.DATE_RANGE_OPTIONS.LAST_MONTH,
+    name: formatMessage(messages.lastMonth, {
+      minDate: formatDate(startOfMonth(subMonths(today, 1)), dateFormatRanges),
+      maxDate: formatDate(endOfMonth(subMonths(today, 1)), dateFormatRanges),
+    }),
+    value: monthRangeByCount(today, 1, dateFormatValue),
+  })
+
+  const monthsToGet = 10
   times(monthsToGet, month => {
-    const count = month + 1
-    switch (count) {
-      case 1:
-        dateRange.push({
-          id: count,
-          name: formatMessage
-            ? formatMessage(messages.thisMonth, {
-                minDate: formatDate(startOfMonth(today), dateFormatRanges),
-                maxDate: formatDate(endOfMonth(today), dateFormatRanges),
-              })
-            : messages.thisMonth.id,
-          value: {
-            minDate: format(startOfMonth(today), dateFormatValue),
-            maxDate: format(endOfMonth(today), dateFormatValue),
-          },
-        })
-        break
-
-      case 2:
-        dateRange.push({
-          id: count,
-          name: formatMessage(messages.lastMonth, {
-            minDate: formatDate(
-              startOfMonth(subMonths(today, month)),
-              dateFormatRanges
-            ),
-            maxDate: formatDate(
-              endOfMonth(subMonths(today, month)),
-              dateFormatRanges
-            ),
-          }),
-          value: monthRangeByCount(today, month, dateFormatValue),
-        })
-        break
-
-      default:
-        dateRange.push({
-          id: count,
-          name: formatDate(subMonths(today, month), dateFormatMonths),
-          value: monthRangeByCount(today, month, dateFormatValue),
-        })
-        break
-    }
+    const count = month + 2
+    dateRange.push({
+      id: `MONTH-${count.toString().padStart(2, 0)}`,
+      name: formatDate(subMonths(today, count), dateFormatMonths),
+      value: monthRangeByCount(today, count, dateFormatValue),
+    })
   })
   return {
     [key]: [...dateRange],

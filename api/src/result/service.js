@@ -745,7 +745,6 @@ async function getResultByResultId(
 ) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -767,7 +766,12 @@ async function getResultByResultId(
       device: 'd',
       result: 'r',
     })
-    .select(fields)
+    .select([
+      ...fields,
+      knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+      ),
+    ])
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful
