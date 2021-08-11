@@ -127,18 +127,20 @@ amqp.url=amqp://localhost
 Optionally, configure the Raven DSN to ship errors to Sentry:
 
 ```env
-raven.dsn=https://...
+# Optional Sentry configuration
+sentry.dsn='https://sentrydsn ....'
+
 ```
 
 ### NVM Management
 
 - we have a `.nvmrc` file in the root that will allow us to initiate our developer environment to the correct node version on load.
 - you will be able to add a small snippet to your bash of choice to change the NVM version automatically, or
-- simply run `nvm use ` (space after 'use' is intentional) and it will change to the version specified within `.nvmrc`
+- simply run `nvm use` (space after 'use' is intentional) and it will change to the version specified within `.nvmrc`
 
 #### Using ZSH?
 
-- https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619
+- <https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619>
 
 ### Running Server
 
