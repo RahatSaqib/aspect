@@ -34,7 +34,7 @@ import {
 } from './TaskDataTable'
 import messages from './messages'
 import styles from './TaskList.css'
-import useI18n from '../../Hooks/i18n/useI18n'
+import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -233,7 +233,7 @@ export const TaskList = ({
   pageSize,
   onRowClick,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = i18nWrapper()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.tasksTitle)} />
