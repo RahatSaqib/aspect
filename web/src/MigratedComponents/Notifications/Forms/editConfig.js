@@ -5,11 +5,13 @@ import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 
 import map from 'lodash/map'
+import union from 'lodash/union'
+import filter from 'lodash/filter'
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import { SITE_ALL } from '../../QueryFetch/Site'
 import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
-
+import PERSON_LIST from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -368,32 +370,75 @@ const getSectionsBase = formatMessage => [
 ]
 
 const getConfig = (formatMessage, notificationType, jobFunctions) => {
-  const sections = [
-    ...getSectionsBase(formatMessage),
-    {
-      id: 'toAnyOfTheseJobFunctions',
-      label: 'toAnyOfTheseJobFunctions',
-      labelI18nKey: 'toAnyOfTheseJobFunctions',
-      rows: [
-        ...map(jobFunctions, jf => ({
-          id: jf.id,
-          items: [
-            {
-              id: jf.id,
-              controlType: {
-                component: 'checkbox',
-              },
-              classNames: {
-                controlContainer: cssClasses('checkbox-container'),
-                itemContainer: cssClasses('max-width-100pcr'),
-              },
-              label: jf.name,
+  const jobFunctionsRows = {
+    id: 'toAnyOfTheseJobFunctions',
+    label: 'toAnyOfTheseJobFunctions',
+    labelI18nKey: 'toAnyOfTheseJobFunctions',
+    rows: [
+      ...map(jobFunctions, jf => ({
+        id: `$jf${jf.id}`,
+        items: [
+          {
+            id: `jf${jf.id}`,
+            controlType: {
+              component: 'checkbox',
             },
-          ],
-        })),
-      ],
-    },
-  ]
+            classNames: {
+              controlContainer: cssClasses('checkbox-container'),
+              itemContainer: cssClasses('max-width-100pcr'),
+            },
+            label: jf.name,
+          },
+        ],
+      })),
+      {
+        id: 0,
+        items: [
+          {
+            id: 'jfTags',
+            controlType: {
+              component: 'select',
+              endpoint: PERSON_LIST.ENDPOINT,
+              hideIfNoOptions: false,
+              queryKey: PERSON_LIST.KEY,
+              normalizeLoadedData: response => {
+                const { ok, data } = response
+                let options = []
+                if (ok === true) {
+                  let tags = union(
+                    ...data.map(person => {
+                      return (person.tags || '').split(';')
+                    })
+                  )
+                    .map(tag => tag.trim())
+                    .filter(tag => tag !== '')
+                  tags = [...new Set(tags)]
+                  options = tags.map(tag => ({ label: tag, value: tag }))
+                }
+                return options
+              },
+              isMulti: true,
+            },
+            classNames: {
+              // container: cssClasses('tags-container'),
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            label: 'Tags',
+            labelI18nKey: 'jobFunctionTags',
+            visibleIf: values => {
+              const anySelection = filter(Object.keys(values), property => {
+                if (property.indexOf('jf') >= 0 && values[property]) return true
+              })
+              return anySelection.length > 0
+            },
+          },
+        ],
+      },
+    ],
+  }
+  const sections = [...getSectionsBase(formatMessage), jobFunctionsRows]
   return {
     title: formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',

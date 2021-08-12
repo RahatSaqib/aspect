@@ -168,9 +168,9 @@ export default defineMessages({
     id: 'pages.NotificationDetail.toNationalContacts',
     defaultMessage: 'National Contacts',
   },
-  nationalTags: {
-    id: 'pages.NotificationDetail.nationalTags',
-    defaultMessage: 'Select national contacts with any of the following tags',
+  jobFunctionTags: {
+    id: 'pages.NotificationDetail.jobFunctionTags',
+    defaultMessage: 'Select contacts with any of the following tags',
   },
   toStateContacts: {
     id: 'pages.NotificationDetail.toStateContacts',
