@@ -292,6 +292,7 @@ const getSectionsBase = formatMessage => [
             id: 'emailSubject',
             controlType: {
               component: 'textField',
+              enablePlaceholders: true,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -311,6 +312,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'textArea',
               rowsMax: 10,
+              enablePlaceholders: true,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -333,6 +335,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'textArea',
               rowsMax: 5,
+              enablePlaceholders: true,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -354,6 +357,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'textArea',
               rowsMax: 10,
+              enablePlaceholders: true,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),

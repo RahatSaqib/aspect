@@ -17,6 +17,9 @@ async function loadIconModule(icon) {
     case iconFamily === 'ai':
       return import('react-icons/ai')
 
+    case iconFamily === 'bs':
+      return import('react-icons/bs')
+
     default:
       return import('react-icons/md')
   }
@@ -53,7 +56,7 @@ const IconProvider = memo(({ icon, className, title }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent title={!title ? '' : icon} />
+          <IconComponent title={title || ''} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
