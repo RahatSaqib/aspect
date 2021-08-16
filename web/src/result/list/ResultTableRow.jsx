@@ -41,7 +41,33 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           result.get('assayName')
         )}
       </TableCell>
-      <TableCell>{result.get('resultText')}</TableCell>
+      {extraColumns.isEmpty() ? (
+        <TableCell>
+          {`${formatMessage(
+            messages[result.get('resultCategory1Titlei18nKey')],
+            null,
+            result.get('resultCategory1Title')
+          )}:${formatMessage(messages[result.get('resultCategory1I18nKey')])}`}
+          {result.get('resultCategory2I18nKey') &&
+            ` | ${formatMessage(
+              messages[result.get('resultCategory2Titlei18nKey')],
+              null,
+              result.get('resultCategory2Title')
+            )}:${formatMessage(
+              messages[result.get('resultCategory2I18nKey')]
+            )}`}
+        </TableCell>
+      ) : null}
+      {!extraColumns.isEmpty()
+        ? extraColumns.map(column => (
+            // TODO: refactor, see DeviceOperationTableRow
+            <TableCell key={column.get('db')} hiddenOn="nd">
+              {formatterByType(column.get('type'))(
+                result.get(column.get('db'))
+              )}
+            </TableCell>
+          ))
+        : null}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
         {formatMessage(
@@ -65,12 +91,6 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         )}
       </TableCell>
       <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
-      {extraColumns.map(column => (
-        // TODO: refactor, see DeviceOperationTableRow
-        <TableCell key={column.get('db')} hiddenOn="nd">
-          {formatterByType(column.get('type'))(result.get(column.get('db')))}
-        </TableCell>
-      ))}
     </TableRow>
   )
 }

@@ -124,6 +124,13 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
+  selectFields.push('rc2.name as resultCategory2Name')
+  selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
+  selectFields.push('a.resultCategory2i18nKey as resultCategory2Titlei18nKey')
+  selectFields.push('a.resultCategory1i18nKey as resultCategory1Titlei18nKey')
+  selectFields.push('a.resultCategory1label as resultCategory1Title')
+  selectFields.push('a.resultCategory2label as resultCategory2Title')
+
   // get rows
   const getItems = resultQuery
     .clone()
@@ -184,7 +191,7 @@ async function getResultsForExport(query, auth) {
   const selectFields = [
     ...SELECT_COMMON_FIELDS,
     knex.raw(
-      `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
+      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
     ),
   ]
   const sortableFields = [...SORT_FIELDS]
@@ -207,6 +214,12 @@ async function getResultsForExport(query, auth) {
     if (assay.resultCategory2Label) {
       selectFields.push('rc2.name as resultCategory2Name')
       sortableFields.push('resultCategory2Name')
+      assayColumns.push({
+        db: 'resultCategory2Name',
+        type: 'string',
+        title: assay.resultCategory2Label,
+        i18nKey: assay.resultCategory2i18nKey,
+      })
     }
   }
 
@@ -227,6 +240,7 @@ async function getResultsForExport(query, auth) {
   const result = {
     ok: true,
     data,
+    extraColumns: assayColumns,
   }
 
   return result
@@ -724,7 +738,6 @@ async function getResultByResultId(
 ) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -746,7 +759,12 @@ async function getResultByResultId(
       device: 'd',
       result: 'r',
     })
-    .select(fields)
+    .select([
+      ...fields,
+      knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+      ),
+    ])
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful

@@ -13,7 +13,6 @@ import {
   setPropTypes,
   defaultProps,
 } from 'recompose'
-import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import {
@@ -35,6 +34,7 @@ import {
 } from './TaskDataTable'
 import messages from './messages'
 import styles from './TaskList.css'
+import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -68,7 +68,6 @@ function mergeFilterOptions(searchParams, filterOptions = {}) {
 }
 
 const enhance = compose(
-  injectIntl,
   setPropTypes({
     baseFilterOptions: PropTypes.object,
   }),
@@ -233,119 +232,122 @@ export const TaskList = ({
   pageAt,
   pageSize,
   onRowClick,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.tasksTitle)} />
-    <div className={cssClasses('FiltersGroup')}>
-      <div
-        className={cssClasses(
-          'FiltersGroup__Child',
-          'FiltersGroup__Child--dropdown'
-        )}
-      >
-        <StyledDropdown
-          value={issueCategory}
-          source={[
-            {
-              value: 'all',
-              label: 'All topics',
-            },
-            {
-              value: 'device',
-              label: 'Device',
-            },
-            {
-              value: 'reagent',
-              label: 'Reagent',
-            },
-            {
-              value: 'data',
-              label: 'Data',
-            },
-            {
-              value: 'connectivity',
-              label: 'Connectivity',
-            },
-          ]}
-          onChange={onIssueCategoryChange}
-        />
-      </div>
-    </div>
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <TaskDataTable className={cssClasses('TaskDataTable')}>
-          <TaskDataTableHead
-            navigate={navigate}
-            location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
+}) => {
+  const { formatMessage } = i18nWrapper()
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={formatMessage(messages.tasksTitle)} />
+      <div className={cssClasses('FiltersGroup')}>
+        <div
+          className={cssClasses(
+            'FiltersGroup__Child',
+            'FiltersGroup__Child--dropdown'
+          )}
+        >
+          <StyledDropdown
+            value={issueCategory}
+            source={[
               {
-                key: 'icon',
+                value: 'all',
+                label: formatMessage(messages.taskListOptionsAllTopics),
               },
               {
-                key: 'issueCategory',
-                label: intl.formatMessage(messages.topic),
-                sortable: true,
+                value: 'device',
+                label: formatMessage(messages.taskListOptionsDevice),
               },
               {
-                key: 'site',
-                label: intl.formatMessage(messages.site),
-                sortable: true,
+                value: 'reagent',
+                label: formatMessage(messages.taskListOptionsReagent),
               },
               {
-                key: 'time',
-                label: intl.formatMessage(messages.time),
-                sortable: true,
+                value: 'data',
+                label: formatMessage(messages.taskListOptionsData),
+              },
+              {
+                value: 'connectivity',
+                label: formatMessage(messages.taskListOptionsConnectivity),
               },
             ]}
+            onChange={onIssueCategoryChange}
           />
-          <tbody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(task => {
-                const filtersParams = new URLSearchParams(filterOptions)
-                const aggreListQuerystring = new URLSearchParams({
-                  filters: filtersParams.toString(),
-                  categoryId: task.get('issueCategoryId'),
-                  date: task.get('time'),
-                  alertTemplateId: task.get('alertTemplateId'),
-                })
-                return (
-                  <TaskDataTableRow
-                    key={task.get('id')}
-                    intl={intl}
-                    messages={messages}
-                    task={task}
-                    onClick={onRowClick}
-                    data-task-id={
-                      task.get('issueCount') > 1
-                        ? `aggre-list?${aggreListQuerystring.toString()}`
-                        : `${task.get('id')}`
-                    }
-                  />
-                )
-              })}
-          </tbody>
-        </TaskDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
-    </DataTableCard>
-  </div>
-)
+        </div>
+      </div>
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!table.loading} />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList navigate={navigate} location={location} />
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <TaskDataTable className={cssClasses('TaskDataTable')}>
+            <TaskDataTableHead
+              navigate={navigate}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={[
+                {
+                  key: 'icon',
+                },
+                {
+                  key: 'issueCategory',
+                  label: formatMessage(messages.topic),
+                  sortable: true,
+                },
+                {
+                  key: 'site',
+                  label: formatMessage(messages.site),
+                  sortable: true,
+                },
+                {
+                  key: 'time',
+                  label: formatMessage(messages.time),
+                  sortable: true,
+                },
+              ]}
+            />
+            <tbody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(task => {
+                  const filtersParams = new URLSearchParams(filterOptions)
+                  const aggreListQuerystring = new URLSearchParams({
+                    filters: filtersParams.toString(),
+                    categoryId: task.get('issueCategoryId'),
+                    date: task.get('time'),
+                    alertTemplateId: task.get('alertTemplateId'),
+                  })
+                  return (
+                    <TaskDataTableRow
+                      key={task.get('id')}
+                      intl={intl}
+                      messages={messages}
+                      task={task}
+                      onClick={onRowClick}
+                      data-task-id={
+                        task.get('issueCount') > 1
+                          ? `aggre-list?${aggreListQuerystring.toString()}`
+                          : `${task.get('id')}`
+                      }
+                    />
+                  )
+                })}
+            </tbody>
+          </TaskDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
+            navigate={navigate}
+            location={location}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
+          />
+        )}
+      </DataTableCard>
+    </div>
+  )
+}
 
 export default enhance(TaskList)
