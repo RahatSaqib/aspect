@@ -1,9 +1,9 @@
 import React from 'react'
 
-import AspectTextField from './TextField'
+import PlaceholderTextField from './PlaceholderTextField'
 
 const PlaceholderTextArea = props => (
-  <AspectTextField {...props} enablePlaceholders multiline />
+  <PlaceholderTextField {...props} multiline />
 )
 
 export default PlaceholderTextArea

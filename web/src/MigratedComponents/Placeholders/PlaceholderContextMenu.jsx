@@ -21,11 +21,15 @@ const PlaceholderContextMenu = ({ onClose, onSelect, open, position }) => {
   )
 }
 
+PlaceholderContextMenu.defaultProps = {
+  position: null,
+}
+
 PlaceholderContextMenu.propTypes = {
   onSelect: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  position: PropTypes.string.isRequired,
+  position: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default PlaceholderContextMenu
