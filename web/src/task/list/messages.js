@@ -76,6 +76,26 @@ const messages = defineMessages({
     id: 'pages.TaskList.issueCategoryConnectivityHealth',
     defaultMessage: 'Connectivity Health',
   },
+  taskListOptionsAllTopics: {
+    id: 'pages.TaskList.taskListOptionsAllTopics',
+    defaultMessage: 'All topics',
+  },
+  taskListOptionsDevice: {
+    id: 'pages.TaskList.taskListOptionsDevice',
+    defaultMessage: 'Device',
+  },
+  taskListOptionsReagent: {
+    id: 'pages.TaskList.taskListOptionsReagent',
+    defaultMessage: 'Reagent',
+  },
+  taskListOptionsData: {
+    id: 'pages.TaskList.taskListOptionsData',
+    defaultMessage: 'Data',
+  },
+  taskListOptionsConnectivity: {
+    id: 'pages.TaskList.taskListOptionsConnectivity',
+    defaultMessage: 'Connectivity',
+  },
 })
 
 export default messages

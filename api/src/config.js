@@ -12,6 +12,8 @@ module.exports = {
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
+  isDevelopment: process.env.NODE_ENV === 'development',
+  countryName: process.env.countryName || 'DEV',
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
@@ -34,7 +36,6 @@ module.exports = {
     format: process.env['log.console.format'] || 'text',
     labelsWhiteList: process.env['log.console.labelsWhiteList'] || null,
     labelsBlackList: process.env['log.console.labelsBlackList'] || null,
-
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
@@ -103,9 +104,12 @@ function configureOptional(config) {
     config.firebase = { serverKey: firebase }
   }
   // load sentry
-  const ravenDsn = process.env['raven.dsn']
-  if (ravenDsn) {
-    config.raven = { dsn: ravenDsn }
+  const sentryDsn = process.env['sentry.dsn']
+  if (sentryDsn) {
+    config.sentry = {
+      dsn: sentryDsn,
+      logLevel: process.env['sentry.logLevel'],
+    }
   }
 
   // set knex seeds

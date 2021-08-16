@@ -71,7 +71,7 @@ Make sure to run the command in the root of the folder you want to create the co
 
 ### Using ZSH
 
-- https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619
+- <https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619>
 
 ## i18n
 
@@ -196,4 +196,44 @@ Run command `yarn run test:snapshot` which regenerates snapshot artifacts in `__
 
 Another possible way to update snapshots is running `jest --updateSnapshot` (make sure `jest` is globally installed)
 
-## Tables Placeholder
+## Sentry
+
+Sentry is an engine to track and analyze the performance of the website but mostly for handling and registering the unhandling bugs.
+For configuring it we inserted in the top level component and its entry page the next initialization:
+
+<https://github.com/SystemOneId/aspect/blob/15b05296956b3994e220488079506fb154595156/web/src/index.jsx#L15>
+
+```javascript
+   Sentry.init({
+    dsn: config.sentry.dsn,
+    integrations: [
+      new Integrations.BrowserTracing({
+        tracingOrigins: config.sentry.tracingOrigins || [
+          'localhost:8000',
+          '*.aspect.id',
+        ],
+      }),
+    ],
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+  })
+```
+
+The integration for browser tracing is the one responsable for tracking the performance of the application.
+
+And in the config folder define as part of the config
+
+```javascript
+
+const config = {
+  ...
+  sentry: {
+    dsn: 'https://6fdaf6e504b6479782895c8703580006@o944950.ingest.sentry.io/5893495',
+    tracingOrigins: ['localhost:8000', '*.aspect.id'],
+  },
+  ...
+}
+
+```
