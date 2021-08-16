@@ -12,9 +12,6 @@
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2"
   },
-  "lint-staged": {
-    "*.js": "eslint --cache --fix"
-  },
   "scripts": {
     "prepare": "husky install"
   }
