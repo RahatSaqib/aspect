@@ -33,8 +33,12 @@
     "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json",
     "storybook": "start-storybook -p 8001",
     "build-storybook": "build-storybook",
-    "scaffold": "plop ",
-    "prepare": "node ./prepare"
+    "scaffold": "plop "
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "./src/**/*.css": [
@@ -92,8 +96,8 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
-    "@babel/register": "^7.14.5",
-    "@formatjs/cli": "^4.2.30",
+    "@babel/register": "^7.15.3",
+    "@formatjs/cli": "^4.2.31",
     "@storybook/addon-actions": "^6.3.7",
     "@storybook/addon-essentials": "^6.3.7",
     "@storybook/addon-links": "^6.3.7",
@@ -126,7 +130,7 @@
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-lodash": "^7.2.0",
+    "eslint-plugin-lodash": "^7.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
@@ -140,13 +144,13 @@
     "html-loader": "^2.1.2",
     "html-webpack-harddisk-plugin": "^2.0.0",
     "html-webpack-plugin": "^5.3.2",
-    "husky": "^7.0.1",
+    "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.6",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^16.7.0",
-    "lint-staged": "^11.1.2",
+    "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "2.2.0",
     "mockdate": "^3.0.5",
     "npm-run-all": "^4.1.5",
