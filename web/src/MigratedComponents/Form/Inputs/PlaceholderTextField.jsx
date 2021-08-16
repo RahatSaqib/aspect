@@ -4,11 +4,8 @@ import classnames from 'classnames/bind'
 import FormControl from '@material-ui/core/FormControl'
 
 import { useFormikState } from '../Formik/Context'
-import {
-  insertPlaceholder,
-  PlaceholderSelector,
-  PlaceholderContextMenu,
-} from '../../Placeholders'
+import PlaceholderSelector from '../../Placeholders/PlaceholderSelector'
+import PlaceholderContextMenu from '../../Placeholders/PlaceholderContextMenu'
 import AspectTextField from './TextField'
 
 import styles from '../Form.css'
@@ -42,13 +39,22 @@ const PlaceholderTextField = props => {
   }
 
   const onSelectPlaceholder = placeholderId => {
-    insertPlaceholder({
-      fieldName,
-      formik,
-      inputRef,
-      onCloseContextMenu,
-      placeholderId,
-      updateField,
+    let value = formik.values[fieldName]
+    const placeholder = `{{${placeholderId}}}`
+    const { selectionStart, selectionEnd } = inputRef.current
+
+    const txtStart = value.substring(0, selectionStart)
+    const txtEnd = value.substring(selectionEnd, value.length)
+    value = `${txtStart}${placeholder}${txtEnd}`
+
+    updateField(fieldName, value, formik)
+
+    onCloseContextMenu()
+
+    setTimeout(() => {
+      inputRef.current.focus()
+      inputRef.current.selectionStart = selectionStart + placeholder.length
+      inputRef.current.selectionEnd = inputRef.current.selectionStart
     })
   }
 
