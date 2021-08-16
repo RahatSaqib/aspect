@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import IconProvider from '../IconProvider'
-import { getMenuItems } from './config'
+import { getMenuItems } from './utils'
 import messages from './messages'
 import styles from './Placeholders.css'
 
@@ -13,7 +14,7 @@ const cssClasses = classnames.bind(styles)
 
 const PlaceholderSelector = ({ onSelect, onClose }) => {
   const { formatMessage } = useI18n()
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
 
   const isOpen = Boolean(anchorEl)
   const handleClick = event => setAnchorEl(event.currentTarget)
@@ -30,7 +31,7 @@ const PlaceholderSelector = ({ onSelect, onClose }) => {
   return (
     <div className={cssClasses('container')}>
       <IconButton
-        aria-expanded={isOpen ? 'true' : undefined}
+        aria-expanded={isOpen.toString()}
         aria-haspopup="true"
         onClick={handleClick}
         title={formatMessage(messages.placeholdersTriggerButtonLabel)}
@@ -61,6 +62,11 @@ const PlaceholderSelector = ({ onSelect, onClose }) => {
       </Menu>
     </div>
   )
+}
+
+PlaceholderSelector.propTypes = {
+  onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 }
 
 export default PlaceholderSelector

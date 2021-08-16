@@ -1,7 +1,8 @@
 import React from 'react'
 import Menu from '@material-ui/core/Menu'
+import PropTypes from 'prop-types'
 
-import { getMenuItems } from './config'
+import { getMenuItems } from './utils'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 const PlaceholderContextMenu = ({ onClose, onSelect, open, position }) => {
@@ -18,6 +19,13 @@ const PlaceholderContextMenu = ({ onClose, onSelect, open, position }) => {
       {getMenuItems(intl, onSelect)}
     </Menu>
   )
+}
+
+PlaceholderContextMenu.propTypes = {
+  onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  position: PropTypes.string.isRequired,
 }
 
 export default PlaceholderContextMenu

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import AspectText from './Text'
+import AspectTextField from './TextField'
 
-const AspectTextArea = props => <AspectText {...props} multiline />
+const AspectTextArea = props => <AspectTextField {...props} multiline />
 
 export default AspectTextArea
