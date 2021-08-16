@@ -35,19 +35,6 @@
     "build-storybook": "build-storybook",
     "scaffold": "plop "
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "./src/**/*.css": [
-      "prettier --write"
-    ],
-    "./{cfg,src}/**/*.{js,jsx}": [
-      "eslint --fix --max-warnings 0"
-    ]
-  },
   "jest": {
     "setupFiles": [
       "<rootDir>/src/__setup__/polyfills.js",

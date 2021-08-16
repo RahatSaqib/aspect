@@ -56,22 +56,6 @@
     "all": true,
     "report-dir": "./coverage"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "./{src,test,migrations,seeds}/**/*.js": [
-      "eslint --fix --max-warnings 0"
-    ],
-    "./*.js": [
-      "eslint --fix --max-warnings 0"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
-  },
   "author": "SystemOne",
   "license": "ISC",
   "dependencies": {

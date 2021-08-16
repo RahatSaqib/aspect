@@ -1,3 +1,4 @@
 {
-    "*.js": ["eslint --fix --max-warnings 0", "prettier --write"]
+    "./{src,test,migrations,seeds}/**/*.js": ["eslint --fix --max-warnings 0", "prettier --write"],
+    "*.{json,md}": ["prettier --write"]
 }
