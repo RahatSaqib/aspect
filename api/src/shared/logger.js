@@ -1,3 +1,5 @@
+const Sentry = require('winston-sentry-log')
+
 const { createLogger, format, transports } = require('winston')
 const config = require('../config')
 
@@ -72,5 +74,18 @@ if (config.log.file.path) {
     })
   )
 }
+
+if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel)
+  logger.add(
+    new Sentry({
+      config: {
+        dsn: config.sentry.dsn,
+      },
+      tags: {
+        country: config.countryName,
+      },
+      level: config.sentry.logLevel,
+    })
+  )
 
 module.exports = logger
