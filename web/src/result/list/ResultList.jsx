@@ -15,7 +15,7 @@ import { useQuery } from 'react-query'
 
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
-import { receiveList, Items } from '../../shared/metaReducers/items'
+import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -408,12 +408,12 @@ const ResultList = () => {
   useEffect(() => {
     if (data) {
       const { data: list, total: totalItems, extraColumns } = data
-      setItems(receiveList(items, Immutable.fromJS(list)))
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       const newTable = receiveTableItems(table, totalItems, extraColumns)
       setTable(newTable)
 
-      setColumns(getBaseColumns(intl, extraColumns))
+      setColumns(getBaseColumns(extraColumns))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])

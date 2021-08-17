@@ -5,7 +5,6 @@ import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import findIndex from 'lodash/findIndex'
-
 import { FormikProvider } from '../../../Form/Formik/Context'
 import { mergeFormConfigWithData } from '../../../Form/Formik/Helpers'
 import AspectForm from '../../../Form'
