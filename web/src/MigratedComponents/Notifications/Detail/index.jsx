@@ -35,12 +35,7 @@ const AspectNotificationDetails = () => {
       : notificationId,
     jobFunctions,
   }
-  if (!jobFunctions)
-    return (
-      <Fragment>
-        <CircularProgress />
-      </Fragment>
-    )
+  if (!jobFunctions) return <CircularProgress />
   return (
     <Fragment>
       {isNaN(+notificationId) ? <Create {...props} /> : <Update {...props} />}
