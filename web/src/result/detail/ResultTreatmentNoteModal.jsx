@@ -27,7 +27,7 @@ const ResultTreatmentNoteModal = ({ restProps }) => (
       <TextField
         id="standard-multiline-flexible"
         multiline
-        rowsMax="5"
+        maxRows="5"
         placeholder="click and start adding notes"
         onChange={restProps.onNoteChange}
         margin="normal"

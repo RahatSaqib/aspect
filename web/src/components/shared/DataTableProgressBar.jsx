@@ -4,7 +4,9 @@ import React from 'react'
 
 import DelayShowingProgressBar from './DelayShowingProgressBar'
 
-const cssClasses = classnames.bind(require('./DataTableProgressBar.css'))
+import styles from './DataTableProgressBar.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

@@ -8,10 +8,10 @@ import { defineMessages } from 'react-intl'
 
 import requirePermission from '../../components/shared/requirePermissions'
 import {
-  ExpansionPanel,
-  ExpansionPanelHeader,
-  ExpansionPanelDetail,
-} from '../../components/shared/expansionPanel'
+  Accordion,
+  AccordionHeader,
+  AccordionDetail,
+} from '../../components/shared/accordion'
 import CheckboxField from '../../components/shared/CheckboxField'
 import AspectButton from '../../components/shared/AspectButton'
 import ResultTreatmentNoteModal from './ResultTreatmentNoteModal'
@@ -56,20 +56,27 @@ const enhance = compose(
     permissions: ['treatmentStatus:view'],
   }),
   withHandlers({
-    onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
-    onNoteChange: ({ setIsActive, setNote }) => event => {
-      const note = event.target.value.trim()
-      const checkNote = note !== ''
-      setNote(() => note)
-      return setIsActive(() => checkNote)
-    },
-    onNoteSubmit: ({ addResultNote, setIsShown, resultId, note }) => () => {
-      addResultNote(resultId, {
-        note,
-        resultNoteType: 'ResultFollowUp',
-      })
-      return setIsShown(isShown => !isShown)
-    },
+    onToggleShown:
+      ({ setIsShown }) =>
+      () =>
+        setIsShown(isShown => !isShown),
+    onNoteChange:
+      ({ setIsActive, setNote }) =>
+      event => {
+        const note = event.target.value.trim()
+        const checkNote = note !== ''
+        setNote(() => note)
+        return setIsActive(() => checkNote)
+      },
+    onNoteSubmit:
+      ({ addResultNote, setIsShown, resultId, note }) =>
+      () => {
+        addResultNote(resultId, {
+          note,
+          resultNoteType: 'ResultFollowUp',
+        })
+        return setIsShown(isShown => !isShown)
+      },
   })
 )
 const ResultTreatmentPanel = ({
@@ -97,11 +104,8 @@ const ResultTreatmentPanel = ({
 
   return (
     <div>
-      <ExpansionPanel
-        expanded
-        className={styles.TreatmentNoteExpansionPanelContainer}
-      >
-        <ExpansionPanelHeader
+      <Accordion expanded className={styles.TreatmentNoteAccordionContainer}>
+        <AccordionHeader
           label={
             <div className={styles.Treatment}>
               {data.get('treatmentStatusInfo') && (
@@ -182,9 +186,9 @@ const ResultTreatmentPanel = ({
               {formatMessage(messages.addNote)}
             </AspectButton>
           </div>
-        </ExpansionPanelHeader>
+        </AccordionHeader>
         {resultNotes.length > 0 && (
-          <ExpansionPanelDetail>
+          <AccordionDetail>
             <div className={styles.TreatmentNoteContainer}>
               <div className={styles.TreatmentNoteHeader}>
                 <p>{formatMessage(messages.note)}</p>
@@ -207,9 +211,9 @@ const ResultTreatmentPanel = ({
                 </div>
               ))}
             </div>
-          </ExpansionPanelDetail>
+          </AccordionDetail>
         )}
-      </ExpansionPanel>
+      </Accordion>
       <ResultTreatmentNoteModal data={data} restProps={restProps} />
     </div>
   )

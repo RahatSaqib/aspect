@@ -16,9 +16,13 @@ const PieRowGraph = ({ assaysFromState, averages, config, data, keys }) => {
   )
 }
 
+PieRowGraph.defaultProps = {
+  averages: false,
+}
+
 PieRowGraph.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  averages: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  averages: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,

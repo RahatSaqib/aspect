@@ -75,6 +75,7 @@ const {
   '--genex-blue5': genex5,
   '--genex-blue6': genex6,
   '--genex-blue7': genex7,
+  '--genex-blue8': genex8,
   '--san-marino': geneSanMarino,
 } = envSource
 
@@ -170,6 +171,7 @@ const graphColorMap = [
   { id: 118, externalId: 'GxEbola', color: genex5 },
   { id: 119, externalId: 'GxUnknown', color: genex6 },
   { id: 120, externalId: 'GxHcv', color: genex7 },
+  { id: 121, externalId: 'GxMtbXdr', color: genex8 },
 
   { id: 124, externalId: 'assayAlereQHiv12Detect', color: alere1 },
   { id: 125, externalId: 'assayAlereQHiv12VLPlasma', color: alere2 },

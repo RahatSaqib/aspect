@@ -14,11 +14,12 @@ function extractPermissionsFromRoutes(routes, path) {
     const foundRoute = filter(
       routes,
       ({ props: { path: routePath = false } }) =>
-        matchPath(path, {
-          path: routePath,
-          exact: true,
-          strict: false,
-        })
+        routePath && matchPath(path, routePath)
+      // return matchPath(path, {
+      //   path: routePath,
+      //   exact: true,
+      //   strict: false,
+      // })
     )
     if (foundRoute.length) {
       const permissions = get(foundRoute[0], 'props.permissions')
@@ -49,6 +50,7 @@ function RoutesPermissionProvider({ children }) {
 }
 
 function useUserIsPermitted(path) {
+  // const match = useRouteMatch()
   const context = useContext(RoutesPermissionContext)
   if (context === undefined) {
     throw new Error(

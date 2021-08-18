@@ -202,6 +202,30 @@ function validateResultListResponse() {
       .description('The status of the result treatment')
       .optional()
       .allow(null, ''),
+    resultCategory2Name: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category 2'),
+    resultCategory2I18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category 2 i18n key'),
+    resultCategory1Titlei18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category title 1 i18n key'),
+    resultCategory2Titlei18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category title 2 i18n key'),
+    resultCategory1Title: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The default name of the result category 1'),
+    resultCategory2Title: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The default name of the result category 2'),
   }
 }
 
@@ -467,9 +491,10 @@ function listResultsBaseConfig() {
         deviceId: Joi.number()
           .allow(null, '')
           .description('Filter for device ID'),
-        assayId: Joi.number()
+        assayId: Joi.alternatives()
+          .try(Joi.array().items(Joi.number()), Joi.number())
           .allow(null, '')
-          .description('Filter for assay ID'),
+          .description('Filter for assay ID(s)'),
         diseaseId: Joi.number()
           .integer()
           .positive()

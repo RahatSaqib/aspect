@@ -77,7 +77,7 @@ const treatmentStatusGraphs = {
         },
       },
       {
-        id: 'treatmentStatusMonthly',
+        id: 'treatmentStatusMonthlyPie',
         component: PieGraph,
         type: 'pieLegacyTreatment',
         size: 4,

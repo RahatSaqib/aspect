@@ -19,13 +19,9 @@ module.exports = {
     ...glob.sync(
       'src/components/shared/@(ReadOnlyField|ReadOnlyFields|FallbackUntilDone|FocusBlurTextField).{js,jsx}'
     ),
-    ...glob.sync('src/components/chart/@(ChartContainer|ChartAlert).{js,jsx}'),
-    ...glob.sync(
-      'src/components/graph/@(BarGraph|ColumnGraph|LineGraph|CountryMap).{js,jsx}'
-    ),
     ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
     ...glob.sync(
-      'src/components/shared/@(expansionPanel|data-table)/!(index).{js,jsx}'
+      'src/components/shared/@(accordion|data-table)/!(index).{js,jsx}'
     ),
   ],
   styleguideComponents: {

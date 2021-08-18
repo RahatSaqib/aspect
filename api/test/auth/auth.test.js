@@ -338,7 +338,7 @@ describe('auth endpoints', () => {
         dbSpy.query.for('Get basic user details').resolvesWith(basicUserDetails)
       })
 
-      it('Should increment the number of failed password attempts and respond with 401 and "Authentication failed. Wrong password."', done => {
+      it('Should increment the number of failed password attempts and respond with 401 and "Authentication failed. Wrong username or password."', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .with(requestData)
@@ -346,7 +346,7 @@ describe('auth endpoints', () => {
             assert.equal(responseData.output.statusCode, 401)
             assert.equal(
               responseData.output.payload.message,
-              'Authentication failed. Wrong password.'
+              'Authentication failed. Wrong username or password.'
             )
             const updateFieldsOnUser = dbSpy.query.withArgs(
               'Update failed password attempts and set locked out status on user'

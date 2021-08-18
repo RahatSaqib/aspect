@@ -1,8 +1,13 @@
 export default () => ({
   MuiFormControl: {
-    marginNormal: {
-      marginTop: 8,
-      marginBottom: 20,
+    defaultProps: {
+      margin: 'normal',
+    },
+    styleOverrides: {
+      marginNormal: {
+        marginTop: 0,
+        marginBottom: 20,
+      },
     },
   },
 })

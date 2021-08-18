@@ -66,8 +66,7 @@ export const messages = defineMessages({
     defaultMessage: 'Tests',
   },
   covidGraphDailyMortalityAndRecoveryByGenderAndGender: {
-    id:
-      'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
+    id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
     defaultMessage: 'Age and Gender',
   },
   treatmentGraphStatusMonthly: {
@@ -97,6 +96,15 @@ export const messages = defineMessages({
   testsOverTimeAvgTitle: {
     id: 'pages.Status.testsOverTimeAvgTitle.graph',
     defaultMessage: 'Average Monthly Tests Performed',
+  },
+
+  clinicalIndicatorsXdrTitle: {
+    id: 'pages.Status.clinicalIndicatorsXdr.title',
+    defaultMessage: 'TB XDR',
+  },
+  clinicalIndicatorsXdrPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsXdr.pie',
+    defaultMessage: 'Average Monthly Resistance Rate',
   },
 })
 

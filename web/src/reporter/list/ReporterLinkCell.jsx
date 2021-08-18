@@ -3,7 +3,9 @@ import classnames from 'classnames/bind'
 
 import AspectLink from '../../MigratedComponents/AspectLink'
 
-const cssClasses = classnames.bind(require('./ReporterList.css'))
+import styles from './ReporterList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const ReporterLinkCell = ({ data }) => (
   <AspectLink

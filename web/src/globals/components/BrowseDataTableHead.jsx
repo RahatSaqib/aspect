@@ -5,26 +5,31 @@ import DataTableHead from '../../components/shared/tableHead/DataTableHead'
 const enhance = compose(
   pure,
   withHandlers({
-    onSortColumn: ({
-      history,
-      location,
-      sortColumnKey: sortCol,
-      sortColumnDir: sortDir,
-    }) => nextSortCol => {
-      const searchParams = new URLSearchParams(location.search)
+    onSortColumn:
+      ({
+        navigate,
+        location,
+        sortColumnKey: sortCol,
+        sortColumnDir: sortDir,
+      }) =>
+      nextSortCol => {
+        const searchParams = new URLSearchParams(location.search)
 
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-      searchParams.set('pageAt', 0)
+        if (sortCol !== nextSortCol) {
+          searchParams.set('sortCol', nextSortCol)
+        } else {
+          searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
+        }
+        searchParams.set('pageAt', 0)
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
+      },
   })
 )
 

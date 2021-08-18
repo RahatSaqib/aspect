@@ -41,20 +41,22 @@ async function exportResults(request, reply) {
   query.page = 0
   // do not export more than 1.000.000 records
   query.size = 10e6
-  const { data } = await getResultsForExport(query, auth)
+  const { data, extraColumns = [] } = await getResultsForExport(query, auth)
 
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
   const columnsFromResultForms = await getColumnsFromResultForms(props)
   const columns = [
+    ..._.map(extraColumns, column => ({
+      key: column.db,
+      header: column.title,
+    })),
     // TODO: move below items to Excel template for better formatting and translations
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'sampleId', header: 'Sample Id' },
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
-    { key: 'resultCategory1Name', header: 'Result category 1' },
-    { key: 'resultCategory2Name', header: 'Result category 2' },
     { key: 'resultWorkflowStatus', header: 'Result Status' },
     { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
     { key: 'consumableSerial', header: 'Consumable Serial' },
@@ -74,15 +76,17 @@ async function exportResults(request, reply) {
     ...columnsFromResultForms,
   ]
 
+  if (extraColumns.length === 0)
+    columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
   const sheetData = {
     dataRows: data,
+    dynamicColumns: columns,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
 
   return exportData(request, reply, sheetData, 'results', {
     replacements: getBaseReplacements(),
-    columns,
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
     ) =>

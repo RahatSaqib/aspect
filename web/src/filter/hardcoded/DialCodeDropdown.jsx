@@ -8,14 +8,15 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import Popper from '@material-ui/core/Popper'
 import Paper from '@material-ui/core/Paper'
-import RootRef from '@material-ui/core/RootRef'
 import { List as VirtualList } from 'react-virtualized'
 
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
 import countries from './countries'
 import dialCodes from './dialCodes'
 
-const cssClasses = classnames.bind(require('./DialCodeDropdown.css'))
+import styles from './DialCodeDropdown.css'
+
+const cssClasses = classnames.bind(styles)
 
 const countryBy = keyBy(countries, 'isoAlpha2Code')
 
@@ -29,6 +30,7 @@ const renderInput = ({
   selectedItem,
   inputProps,
   toggleButtonProps: { onClick },
+  ref,
 }) => (
   <Input
     readOnly
@@ -36,6 +38,7 @@ const renderInput = ({
     inputProps={{
       className: cssClasses('Dropdown__Input'),
     }}
+    inputRef={ref}
     {...inputProps}
     onClick={onClick}
     startAdornment={
@@ -100,14 +103,12 @@ export const DialCodeDropdown = ({ ...props }) => {
         selectedItem,
       }) => (
         <div>
-          <RootRef rootRef={popperNode}>
-            {renderInput({
-              ref: popperNode,
-              selectedItem,
-              inputProps: getInputProps({}),
-              toggleButtonProps: getToggleButtonProps({}),
-            })}
-          </RootRef>
+          {renderInput({
+            ref: popperNode,
+            selectedItem,
+            inputProps: getInputProps({}),
+            toggleButtonProps: getToggleButtonProps({}),
+          })}
           <Popper
             open={isOpen}
             anchorEl={popperNode.current}
@@ -121,13 +122,15 @@ export const DialCodeDropdown = ({ ...props }) => {
                 <Paper
                   square
                   style={{
-                    minWidth: popperNode
-                      ? popperNode.current.clientWidth
-                      : null,
+                    minWidth: popperNode.current?.clientWidth,
                   }}
                 >
                   <VirtualList
-                    width={popperNode ? popperNode.current.clientWidth : 256}
+                    width={
+                      popperNode.current?.clientWidth < 256
+                        ? 256
+                        : popperNode.current?.clientWidth
+                    }
                     height={
                       dialCodesWithCountry.length < 10
                         ? 32 * dialCodesWithCountry.length

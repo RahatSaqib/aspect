@@ -5,7 +5,9 @@ import times from 'lodash/times'
 
 import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DailyStatusClinic = ({
   name,
@@ -40,6 +42,7 @@ const DailyStatusClinic = ({
             totalResults,
           }) => (
             <DailyStatusClinicDay
+              key={`${deviceId}-${day}`}
               consts={consts}
               daysInSameStatus={daysInSameStatus}
               isWeekend={isWeekend}
@@ -71,12 +74,19 @@ const DailyStatusClinic = ({
   )
 }
 
+DailyStatusClinic.defaultProps = {
+  statuses: [],
+}
+
 DailyStatusClinic.propTypes = {
   name: PropTypes.string.isRequired,
-  data: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
   deviceId: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
-  statuses: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  statuses: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),

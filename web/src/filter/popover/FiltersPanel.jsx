@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
 import { MdKeyboardArrowDown } from 'react-icons/md'
@@ -12,6 +12,7 @@ import {
   getCustomMessage,
   commonDefinitions,
 } from '../../shared/utils/customMessages'
+import { isCountryFilterHidden } from '../utils'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import CountrySelectField from '../geography/CountrySelectField'
@@ -38,172 +39,222 @@ import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./FiltersPanel.css'))
+import styles from './FiltersPanel.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
-  connect(({ user, assay }) => ({
+  connect(({ user, assay, geography }) => ({
     user,
     assays: assay,
+    countries: geography.countriesForLocationSelector,
   })),
   withState('isShown', 'setIsShown', false),
   withHandlers({
-    onToggleShown: ({ setIsShown }) => () => setIsShown(isShown => !isShown),
-    onAssayChange: ({ onChangeFilters }) => assayId =>
-      onChangeFilters({
-        assayId,
-        resultCategoryId: null,
-        resultCategoryGroupId: null,
-      }),
-    onDiseaseChange: ({ onChangeFilters }) => diseaseId =>
-      onChangeFilters({ diseaseId }),
-    onDateChange: ({ onChangeFilters }) => dateValues =>
-      onChangeFilters(dateValues),
+    onToggleShown:
+      ({ setIsShown }) =>
+      () =>
+        setIsShown(isShown => !isShown),
+    onAssayChange:
+      ({ onChangeFilters }) =>
+      assayId =>
+        onChangeFilters({
+          assayId,
+          resultCategoryId: null,
+          resultCategoryGroupId: null,
+        }),
+    onDiseaseChange:
+      ({ onChangeFilters }) =>
+      diseaseId =>
+        onChangeFilters({ diseaseId }),
+    onDateChange:
+      ({ onChangeFilters }) =>
+      dateValues =>
+        onChangeFilters(dateValues),
 
-    onCountryIdChange: ({ onChangeFilters }) => countryId =>
-      onChangeFilters({
-        countryId,
-        stateId: undefined,
-        lgaId: undefined,
-      }),
+    onCountryIdChange:
+      ({ onChangeFilters }) =>
+      countryId =>
+        onChangeFilters({
+          countryId,
+          stateId: undefined,
+          lgaId: undefined,
+        }),
 
-    onStateIdChange: ({ onChangeFilters }) => stateId =>
-      onChangeFilters({
-        stateId,
-        lgaId: undefined,
-      }),
+    onStateIdChange:
+      ({ onChangeFilters }) =>
+      stateId =>
+        onChangeFilters({
+          stateId,
+          lgaId: undefined,
+        }),
 
-    onLgaIdChange: ({ onChangeFilters }) => lgaId =>
-      onChangeFilters({
-        lgaId,
-      }),
+    onLgaIdChange:
+      ({ onChangeFilters }) =>
+      lgaId =>
+        onChangeFilters({
+          lgaId,
+        }),
 
-    onResultCategoryChange: ({ onChangeFilters }) => resultCategoryId =>
-      onChangeFilters({
-        resultCategoryId,
-      }),
+    onResultCategoryChange:
+      ({ onChangeFilters }) =>
+      resultCategoryId =>
+        onChangeFilters({
+          resultCategoryId,
+        }),
 
-    onResultCategoryGroupChange: ({
-      onChangeFilters,
-    }) => resultCategoryGroupId =>
-      onChangeFilters({
-        resultCategoryGroupId,
-      }),
+    onResultCategoryGroupChange:
+      ({ onChangeFilters }) =>
+      resultCategoryGroupId =>
+        onChangeFilters({
+          resultCategoryGroupId,
+        }),
 
-    onTextFieldCommitValue: ({ onChangeFilters }) => ({
-      target: { name, value },
-    }) =>
-      onChangeFilters({
-        [name]: value,
-      }),
+    onTextFieldCommitValue:
+      ({ onChangeFilters }) =>
+      ({ target: { name, value } }) =>
+        onChangeFilters({
+          [name]: value,
+        }),
 
-    onConsumableIdChange: ({ onChangeFilters }) => consumableId =>
-      onChangeFilters({
-        consumableId,
-      }),
+    onConsumableIdChange:
+      ({ onChangeFilters }) =>
+      consumableId =>
+        onChangeFilters({
+          consumableId,
+        }),
 
-    onPartnerIdChange: ({ onChangeFilters }) => partnerId =>
-      onChangeFilters({
-        partnerId,
-      }),
+    onPartnerIdChange:
+      ({ onChangeFilters }) =>
+      partnerId =>
+        onChangeFilters({
+          partnerId,
+        }),
 
-    onSampleOriginSiteChange: ({ onChangeFilters }) => sampleOriginSite =>
-      onChangeFilters({
-        sampleOriginSite,
-      }),
+    onSampleOriginSiteChange:
+      ({ onChangeFilters }) =>
+      sampleOriginSite =>
+        onChangeFilters({
+          sampleOriginSite,
+        }),
 
-    onSiteNameChange: ({ onChangeFilters }) => siteName =>
-      onChangeFilters({
-        siteName,
-      }),
+    onSiteNameChange:
+      ({ onChangeFilters }) =>
+      siteName =>
+        onChangeFilters({
+          siteName,
+        }),
 
-    onReportableSiteChange: ({ onChangeFilters }) => ({ id, name }) => {
-      onChangeFilters({
-        reportableSiteName: name,
-        reportableSiteId: id,
-      })
-    },
+    onReportableSiteChange:
+      ({ onChangeFilters }) =>
+      ({ id, name }) => {
+        onChangeFilters({
+          reportableSiteName: name,
+          reportableSiteId: id,
+        })
+      },
 
-    onSiteIdChange: ({ onChangeFilters }) => siteId =>
-      onChangeFilters({
-        siteId,
-      }),
+    onSiteIdChange:
+      ({ onChangeFilters }) =>
+      siteId =>
+        onChangeFilters({
+          siteId,
+        }),
 
-    onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
-      onChangeFilters({
-        workflowStatusId,
-      }),
+    onWorkflowStatusIdChange:
+      ({ onChangeFilters }) =>
+      workflowStatusId =>
+        onChangeFilters({
+          workflowStatusId,
+        }),
 
-    onTreatmentStatusChange: ({ onChangeFilters }) => treatmentStatus =>
-      onChangeFilters({
-        treatmentStatus,
-      }),
+    onTreatmentStatusChange:
+      ({ onChangeFilters }) =>
+      treatmentStatus =>
+        onChangeFilters({
+          treatmentStatus,
+        }),
 
-    onDeviceApprovalIdChange: ({ onChangeFilters }) => deviceApprovalId =>
-      onChangeFilters({
-        deviceApprovalId,
-      }),
-    onDeviceTypeChange: ({ onChangeFilters }) => deviceType =>
-      onChangeFilters({
-        deviceType,
-      }),
-    onDeviceMaintenanceStatusIdChange: ({
-      onChangeFilters,
-    }) => deviceMaintenanceStatusId =>
-      onChangeFilters({ deviceMaintenanceStatusId }),
-    onRevokedChange: ({ onChangeFilters }) => revoked =>
-      onChangeFilters({
-        revoked,
-      }),
+    onDeviceApprovalIdChange:
+      ({ onChangeFilters }) =>
+      deviceApprovalId =>
+        onChangeFilters({
+          deviceApprovalId,
+        }),
+    onDeviceTypeChange:
+      ({ onChangeFilters }) =>
+      deviceType =>
+        onChangeFilters({
+          deviceType,
+        }),
+    onDeviceMaintenanceStatusIdChange:
+      ({ onChangeFilters }) =>
+      deviceMaintenanceStatusId =>
+        onChangeFilters({ deviceMaintenanceStatusId }),
+    onRevokedChange:
+      ({ onChangeFilters }) =>
+      revoked =>
+        onChangeFilters({
+          revoked,
+        }),
 
     onExcelExport: props => () =>
       clickExport(props, props.exportFormatTypes.EXCEL),
     onCsvExport: props => () => clickExport(props, props.exportFormatTypes.CSV),
 
-    onDisagreedConfirmation: ({ closeExportConfirmation }) => () =>
-      closeExportConfirmation(),
-    onAgreedConfirmation: ({
-      listExport,
-      beginListExportProcessing,
-      onClickExport,
-      closeExportConfirmation,
-    }) => () => {
-      beginListExportProcessing(listExport.currentFormatType)
-      onClickExport(listExport.currentFormatType)
-      closeExportConfirmation()
-    },
-    onOnlyReportableResultsBoolChange: ({
-      onChangeFilters,
-    }) => onlyReportableResults =>
-      onChangeFilters({
-        onlyReportableResults,
-      }),
-    onOnlyDownloadedByReporterBoolChange: ({
-      onChangeFilters,
-    }) => onlyDownloadedByReporter =>
-      onChangeFilters({
-        onlyDownloadedByReporter,
-      }),
-    onOnlyEverTransferredBoolChange: ({
-      onChangeFilters,
-    }) => onlyEverTransferred =>
-      onChangeFilters({
-        onlyEverTransferred,
-      }),
-    onOnlyTreatmentRequiredBoolChange: ({
-      onChangeFilters,
-    }) => onlyTreatmentRequired =>
-      onChangeFilters({
-        onlyTreatmentRequired,
-      }),
-    onStockLeftChange: ({ onChangeFilters }) => stockLeft =>
-      onChangeFilters({
-        stockLeft,
-      }),
+    onDisagreedConfirmation:
+      ({ closeExportConfirmation }) =>
+      () =>
+        closeExportConfirmation(),
+    onAgreedConfirmation:
+      ({
+        listExport,
+        beginListExportProcessing,
+        onClickExport,
+        closeExportConfirmation,
+      }) =>
+      () => {
+        beginListExportProcessing(listExport.currentFormatType)
+        onClickExport(listExport.currentFormatType)
+        closeExportConfirmation()
+      },
+    onOnlyReportableResultsBoolChange:
+      ({ onChangeFilters }) =>
+      onlyReportableResults =>
+        onChangeFilters({
+          onlyReportableResults,
+        }),
+    onOnlyDownloadedByReporterBoolChange:
+      ({ onChangeFilters }) =>
+      onlyDownloadedByReporter =>
+        onChangeFilters({
+          onlyDownloadedByReporter,
+        }),
+    onOnlyEverTransferredBoolChange:
+      ({ onChangeFilters }) =>
+      onlyEverTransferred =>
+        onChangeFilters({
+          onlyEverTransferred,
+        }),
+    onOnlyTreatmentRequiredBoolChange:
+      ({ onChangeFilters }) =>
+      onlyTreatmentRequired =>
+        onChangeFilters({
+          onlyTreatmentRequired,
+        }),
+    onStockLeftChange:
+      ({ onChangeFilters }) =>
+      stockLeft =>
+        onChangeFilters({
+          stockLeft,
+        }),
 
-    onReportNameChange: ({ onChangeFilters }) => reportName =>
-      onChangeFilters({
-        reportName,
-      }),
+    onReportNameChange:
+      ({ onChangeFilters }) =>
+      reportName =>
+        onChangeFilters({
+          reportName,
+        }),
   })
 )
 
@@ -530,6 +581,7 @@ export const FiltersPanel = ({
   onReportNameChange,
   user,
   assays,
+  countries,
 }) => {
   const { assayId, reportableSiteName, reportableSiteId } = filters
   const assayItems = assays.get('items')
@@ -546,11 +598,37 @@ export const FiltersPanel = ({
     }
   }
 
+  /**
+   * - when country filter is hidden because only 1 country is accessible for user
+   * - and this country is not selected yet in Filter Panel
+   * --> then explicitly select it for filter
+   */
+  useEffect(() => {
+    if (
+      isCountryFilterHidden(countries) &&
+      /**
+       * current filter does NOT have `countryId` defined
+       */
+      (!filters.countryId ||
+        !countries.items.find(it => it.id === filters.countryId))
+    ) {
+      // pre-select countryId
+      const { id } = countries.items.get(0)
+      onCountryIdChange(id)
+    }
+  }, [countries, filters, onCountryIdChange])
+
+  const showCountryFilter = React.useMemo(
+    () => !isCountryFilterHidden(countries),
+    [countries]
+  )
+
   return (
     <div className={cssClasses('Container', className)}>
       <AspectButton
         className={cssClasses('Button')}
         color="primary"
+        variant="outlined"
         inverse
         disabled={disabled}
         onClick={onToggleShown}
@@ -615,7 +693,7 @@ export const FiltersPanel = ({
           }}
         >
           <ErrorBoundary>
-            {config.geography && (
+            {config.geography && showCountryFilter && (
               <div className={cssClasses('Control')}>
                 <CountrySelectField
                   allItemText={formatMessage(messages.all)}
@@ -710,6 +788,7 @@ export const FiltersPanel = ({
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectResult)}
                     floatingLabelText={formatMessage(messages.result)}
+                    style={{ verticalAlign: 'bottom' }}
                   />
                 </div>
               )}
@@ -1032,7 +1111,7 @@ export const FiltersPanel = ({
               </div>
             )}
             {config.onlyReportableResults && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
@@ -1040,8 +1119,10 @@ export const FiltersPanel = ({
                   checked={[true, 'true'].includes(
                     filters.onlyReportableResults
                   )}
-                  onChange={(event, isChecked) =>
-                    onOnlyReportableResultsBoolChange(isChecked || null)
+                  onChange={event =>
+                    onOnlyReportableResultsBoolChange(
+                      event.target.checked || null
+                    )
                   }
                   label={formatMessage(messages.onlyReportableResults)}
                   name="onlyReportableResults"
@@ -1050,7 +1131,7 @@ export const FiltersPanel = ({
               </div>
             )}
             {config.onlyDownloadedByReporter && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
@@ -1058,8 +1139,10 @@ export const FiltersPanel = ({
                   checked={[true, 'true'].includes(
                     filters.onlyDownloadedByReporter
                   )}
-                  onChange={(event, isChecked) =>
-                    onOnlyDownloadedByReporterBoolChange(isChecked || null)
+                  onChange={event =>
+                    onOnlyDownloadedByReporterBoolChange(
+                      event.target.checked || null
+                    )
                   }
                   label={formatMessage(messages.onlyDownloadedByReporter)}
                   name="onlyDownloadedByReporter"
@@ -1069,7 +1152,7 @@ export const FiltersPanel = ({
             )}
             {(reportableSiteName || reportableSiteId) &&
               config.onlyEverTransferred && (
-                <div className={cssClasses('Control')}>
+                <div className={cssClasses('Control', 'Control-checkbox')}>
                   <CheckboxField
                     classNames={{
                       controlContainer: cssClasses('checkbox-wrapper'),
@@ -1077,8 +1160,10 @@ export const FiltersPanel = ({
                     checked={[true, 'true'].includes(
                       filters.onlyEverTransferred
                     )}
-                    onChange={(event, isChecked) =>
-                      onOnlyEverTransferredBoolChange(isChecked || null)
+                    onChange={event =>
+                      onOnlyEverTransferredBoolChange(
+                        event.target.checked || null
+                      )
                     }
                     label={formatMessage(messages.onlyEverTransferred)}
                     name="onlyEverTransferred"
@@ -1087,7 +1172,7 @@ export const FiltersPanel = ({
                 </div>
               )}
             {config.onlyTreatmentRequired && (
-              <div className={cssClasses('Control')}>
+              <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
@@ -1095,8 +1180,10 @@ export const FiltersPanel = ({
                   checked={[true, 'true'].includes(
                     filters.onlyTreatmentRequired
                   )}
-                  onChange={(event, isChecked) =>
-                    onOnlyTreatmentRequiredBoolChange(isChecked || null)
+                  onChange={event =>
+                    onOnlyTreatmentRequiredBoolChange(
+                      event.target.checked || null
+                    )
                   }
                   label={formatMessage(messages.onlyTreatmentRequired)}
                   name="onlyTreatmentRequired"

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { func, object, oneOfType } from 'prop-types'
-import { usePaginatedQuery } from 'react-query'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
@@ -22,7 +22,9 @@ import {
 } from './Helpers'
 import { replaceRouteParams } from '../QueryFetch/Helpers'
 
-const cssClasses = classnames.bind(require('./Table.css'))
+import styles from './Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Loading = () => (
   <div className={cssClasses('table__spinner')}>
@@ -33,7 +35,7 @@ const Loading = () => (
 const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const intl = useIntl()
   const config = baseConfig(intl)
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const { ...routeParams } = useParams()
   const { pathname, search } = useLocation()
   const query = useUrlQuery(search)
@@ -62,10 +64,10 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     isError,
     isLoading,
     isFetching,
-    resolvedData: data = false,
-  } = usePaginatedQuery(
+    data = false,
+  } = useQuery(
     [CONSTS.KEY, { params }],
-    async (_queryId, { params }) => {
+    async ({ queryKey: [, { params }] }) => {
       return fetchWrapperForQueries({
         endpoint: replaceRouteParams(CONSTS.ENDPOINT, routeParams),
         params: allowOnlyAPIKeys(params),
@@ -85,7 +87,7 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
       const newUrlParams = new URLSearchParams(params).toString()
       const urlParams = getParamsFromUrl(query, search)
       if (!isEqual(urlParams, params)) {
-        push(`${pathname}?${newUrlParams}`)
+        navigate(`${pathname}?${newUrlParams}`)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -9,15 +9,16 @@ import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 
 export const loggedInFactory = compose(
   intlScrollToTopOnUpdateFactory,
-  render => props => (
-    <div>
-      <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-      {render(props)}
-      <IdleDialog intl={props.intl} />
-      <AppNotificationDialog intl={props.intl} />
-      <AppNotificationSnackBar intl={props.intl} />
-    </div>
-  ),
+  render => props =>
+    (
+      <div>
+        <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        {render(props)}
+        <IdleDialog intl={props.intl} />
+        <AppNotificationDialog intl={props.intl} />
+        <AppNotificationSnackBar intl={props.intl} />
+      </div>
+    ),
   React.createFactory,
   pure
 )

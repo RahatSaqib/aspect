@@ -1,4 +1,20 @@
-const { sanitizeResultTextValue } = require('./utils')
+const { sanitizeResultTextValue, splitResultTextValues } = require('./utils')
+
+// The category types included in a result text
+const categoryTypes = [
+  'MTB',
+  'EBOLA GP',
+  'HIV-1',
+  'SARS-COV-2',
+  'RIF RESISTANCE',
+  'INH RESISTANCE',
+  'FLQ RESISTANCE',
+  'AMK RESISTANCE',
+  'KAN RESISTANCE',
+  'CAP RESISTANCE',
+  'ETH RESISTANCE',
+  'EBOLA NP',
+]
 
 const result1CategoryMapping = {
   'not detected': 'NotDetected',
@@ -264,8 +280,83 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
   return null
 }
 
+function getVLCopies(result1Text) {
+  if (result1Text && !result1Text.includes('< 40')) {
+    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
+    const arr = regex.exec(result1Text.replace('HIV-1', ''))
+
+    return arr ? parseFloat(arr[0]) : null
+  }
+  return null
+}
+
+function getResultCategoriesHivVL(result1Text) {
+  const copies = getVLCopies(result1Text)
+  // Add HIV VL Categories
+  if (copies) {
+    if (copies < 1000 && copies >= 40) return 'LessThan1000'
+    if (copies >= 1000) return 'MoreThan1000'
+  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
+    return 'LessThan40'
+  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
+    return 'NoResult'
+}
+
+/**
+ * Parses a GeneXpert result text and returns an object containing the key value pairs.
+ * @param {string} resultText The result text of a GeneXpert result
+ * @returns An object including all the parsed category types and their values. Ex.: { MTB: 'Detected', 'RIF RESISTANCE': 'NotDetected'  }
+ */
+const parseResultText = resultText => {
+  const results = {}
+
+  const resultTextValues = splitResultTextValues(resultText)
+  resultTextValues.forEach(val => {
+    const categoryType = categoryTypes.find(ct =>
+      val.toLowerCase().includes(ct.toLowerCase())
+    )
+
+    if (categoryType === 'HIV-1') {
+      results['HIV-1'] =
+        result1CategoryMapping[sanitizeResultTextValue(val)] ||
+        getResultCategoriesHivVL(val)
+    } else {
+      const resultValue =
+        result1CategoryMapping[sanitizeResultTextValue(val)] ||
+        result2CategoryMapping[sanitizeResultTextValue(val)]
+
+      if (categoryType && resultValue) {
+        results[categoryType] = resultValue
+      }
+    }
+  })
+  return results
+}
+
+/**
+ * Parses a result text and builds an array of detected resistances. Used specifically for GxMtbXdr assay.
+ * @param {string} resultText The result text of a GeneXpert result
+ * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
+ */
+const getDetectedResistanceCategoryTypes = resultText => {
+  const detectedResistances = []
+  const resultsCollection = parseResultText(resultText)
+  Object.keys(resultsCollection).forEach(categoryType => {
+    if (
+      categoryType !== 'MTB' &&
+      resultsCollection[categoryType] === 'Detected'
+    )
+      detectedResistances.push(categoryType.replace('RESISTANCE', '').trim())
+  })
+  return detectedResistances
+}
+
 module.exports = {
+  getDetectedResistanceCategoryTypes,
   result1CategoryMapping,
   result2CategoryMapping,
   mapResultCategory2,
+  parseResultText,
+  getResultCategoriesHivVL,
+  getVLCopies,
 }

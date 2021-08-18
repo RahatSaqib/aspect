@@ -1,7 +1,9 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('../../Table.css'))
+import styles from '../../Table.css'
+
+const cssClasses = classnames.bind(styles)
 
 const PlaceholderCell = () => (
   <div className={cssClasses('placeholder__cell')} />

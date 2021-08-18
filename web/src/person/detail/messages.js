@@ -156,8 +156,7 @@ export default {
       defaultMessage: 'The password needs to be at least 8 characters long',
     },
     newPasswordMustContainANumberOrSpecialCharacter: {
-      id:
-        'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
+      id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
       defaultMessage:
         'The password needs to contain at least one number or special character (%!$*...)',
     },

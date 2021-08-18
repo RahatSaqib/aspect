@@ -19,16 +19,20 @@ export class AssaySelectField extends PureComponent {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
-    assayItemsLoading: PropTypes.bool.isRequired,
+    assayItemsLoading: PropTypes.bool,
     onAssayChange: PropTypes.func.isRequired,
     diseaseId: PropTypes.string,
     assayTypeId: PropTypes.string,
     deviceTypeId: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string),
+    ]),
   }
 
   static defaultProps = {
     allItemText: 'All',
+    assayItemsLoading: false,
     diseaseId: '',
     assayTypeId: '',
     deviceTypeId: '',
@@ -51,19 +55,17 @@ export class AssaySelectField extends PureComponent {
       allItemText,
       assayItems,
       assayItemsLoading,
+      assayTypeId,
+      deviceTypeId,
+      diseaseId,
       onAssayChange,
+      value,
+      ...rest
     } = this.props
 
     const validAssays = assayItems.filter(a => a.get('hasResults'))
     const isSingleAssay = validAssays.size === 1
-    const restProps = omit(this.props, [
-      'allItemText',
-      'fetchAssays',
-      'assayItems',
-      'onAssayChange',
-      'value',
-    ])
-    const { value, diseaseId, assayTypeId, deviceTypeId } = this.props
+    const restProps = omit(rest, ['fetchAssays'])
     const { formatMessage } = this.context
 
     if (
@@ -101,6 +103,7 @@ export class AssaySelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
         disabled={isSingleAssay || validFilteredAssays(validAssays).size <= 1}
+        multiple
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {validFilteredAssays(validAssays).map(a => (

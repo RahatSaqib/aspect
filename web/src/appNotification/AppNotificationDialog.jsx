@@ -11,9 +11,7 @@ import Button from '@material-ui/core/Button'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
 import InfoIcon from '@material-ui/icons/Info'
-import lightBlue from '@material-ui/core/colors/lightBlue'
-import orange from '@material-ui/core/colors/orange'
-import red from '@material-ui/core/colors/red'
+import { lightBlue, orange, red } from '@material-ui/core/colors'
 
 // Our own imports
 import AspectDialog from '../components/shared/AspectDialog'
@@ -172,13 +170,13 @@ export class AppNotificationDialog extends PureComponent {
             }
           >
             {notificationOptions.severity === 'info' && (
-              <InfoIcon style={iconStyle} nativeColor={lightBlue[600]} />
+              <InfoIcon style={{ ...iconStyle, color: lightBlue[600] }} />
             )}
             {notificationOptions.severity === 'warn' && (
-              <WarningIcon style={iconStyle} nativeColor={orange[500]} />
+              <WarningIcon style={{ ...iconStyle, color: orange[500] }} />
             )}
             {notificationOptions.severity === 'error' && (
-              <ErrorIcon style={iconStyle} nativeColor={red[800]} />
+              <ErrorIcon style={{ ...iconStyle, color: red[800] }} />
             )}
           </div>
         )}

@@ -21,6 +21,10 @@ import { negateTimeZoneOffset } from '../../../components/shared/DateTimeInput/u
 
 import { calcOverallRate } from '../Helpers/Formatters/calcs'
 
+import styles from './AspectResponsiveBar.css'
+
+const cssClasses = classnames.bind(styles)
+
 const AspectResponsiveBar = ({
   assaysFromState,
   config: baseConfig,
@@ -74,8 +78,8 @@ const AspectResponsiveBar = ({
 
       case type === 'barInventory':
         return {
-          legend: 'Number of Locations',
-          ylegend: 'Supply in Stock',
+          legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
+          ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
           yTickValues: generateTickValues(
             data,
             tickValuesYShape,
@@ -219,7 +223,6 @@ const AspectResponsiveBar = ({
       ? v.replace(/\D/g, '')
       : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
-  const cssClasses = classnames.bind(require('./AspectResponsiveBar.css'))
   return (
     <div className={cssClasses('aspectresponsivebar__container')}>
       <div className={cssClasses('aspectresponsivebar__chart__container')}>
@@ -317,7 +320,7 @@ AspectResponsiveBar.defaultProps = {
   tickValuesXShape: 'all',
   type: 'bar',
   formatDate: false,
-  legendsToPopover: false,
+  legendsToPopover: [],
   legendsNotToRender: [],
 }
 
@@ -337,8 +340,9 @@ AspectResponsiveBar.propTypes = {
     'clubsandwich',
     'all',
     'none',
+    'twos',
   ]),
-  tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none']),
+  tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none', 'twos']),
   type: PropTypes.oneOf([
     'bar',
     'stacked',
@@ -346,8 +350,9 @@ AspectResponsiveBar.propTypes = {
     'divergent',
     'barLegacyTreatment',
     'stackedDeviceActivity',
+    'barInventory',
   ]),
-  i18nKeys: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  i18nKeys: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 }
 
 export default AspectResponsiveBar

@@ -11,7 +11,9 @@ import AspectDialog from '../../../components/shared/AspectDialog'
 import DateTimeInput from '../../../components/shared/DateTimeInput'
 import useI18n from '../../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./BaseDialog.css'))
+import styles from './BaseDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const sharedMessages = defineMessages({
   notes: {
@@ -78,7 +80,6 @@ export const BaseDialog = ({
       ]}
       maxWidth="sm"
       open={isDialogActive}
-      onEscapeKeyDown={onCancel}
       onClose={onCancel}
       title={labels.dialogTitle}
     >

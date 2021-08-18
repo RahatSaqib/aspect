@@ -24,7 +24,9 @@ import AssaySelectField from '../../filter/resource/AssaySelectField'
 import PersonAssignments from './PersonAssignments'
 import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DEFAULT_VALUES = {
   jobFunctionId: undefined,
@@ -51,7 +53,7 @@ const enhance = compose(
   })),
   pure,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
@@ -74,30 +76,38 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onStateIdChange: ({ onStateIdChange, values }) => stateId => {
-      values.lgaId = undefined
-      values.siteId = undefined
-      onStateIdChange(stateId)
-    },
-    onLgaIdChange: ({ onLgaIdChange, values }) => lgaId => {
-      values.siteId = undefined
-      onLgaIdChange(lgaId)
-    },
-    onJobFunctionIdChange: ({ onJobFunctionIdChange }) => jobFunctionId => {
-      onJobFunctionIdChange(jobFunctionId)
-    },
-    handleSubmit: ({ handleSubmit, values, form }) => event => {
-      handleSubmit(event)
-      values.jobFunctionId = undefined
-      values.stateId = undefined
-      values.lgaId = undefined
-      values.siteId = undefined
-      values.diseaseId = undefined
-      values.deviceTypeId = undefined
-      values.assayTypeId = undefined
-      values.assayId = undefined
-      form.valid = false
-    },
+    onStateIdChange:
+      ({ onStateIdChange, values }) =>
+      stateId => {
+        values.lgaId = undefined
+        values.siteId = undefined
+        onStateIdChange(stateId)
+      },
+    onLgaIdChange:
+      ({ onLgaIdChange, values }) =>
+      lgaId => {
+        values.siteId = undefined
+        onLgaIdChange(lgaId)
+      },
+    onJobFunctionIdChange:
+      ({ onJobFunctionIdChange }) =>
+      jobFunctionId => {
+        onJobFunctionIdChange(jobFunctionId)
+      },
+    handleSubmit:
+      ({ handleSubmit, values, form }) =>
+      event => {
+        handleSubmit(event)
+        values.jobFunctionId = undefined
+        values.stateId = undefined
+        values.lgaId = undefined
+        values.siteId = undefined
+        values.diseaseId = undefined
+        values.deviceTypeId = undefined
+        values.assayTypeId = undefined
+        values.assayId = undefined
+        form.valid = false
+      },
   })
 )
 

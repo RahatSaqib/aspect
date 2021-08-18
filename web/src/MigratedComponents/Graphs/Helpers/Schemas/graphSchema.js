@@ -33,8 +33,8 @@ const graphItemsApiSchema = {
     },
     params: {
       $id: `${graphItemsApiSchemaId}/properties/params`,
-      type: 'object',
-      additionalItems: true,
+      type: ['array', 'object'],
+      anyOf: [{ type: 'array' }, { type: 'object' }],
       items: graphItemsApiParamsSchema,
     },
   },
@@ -78,6 +78,7 @@ const graphItemsSchema = {
         'calendar',
         'barLegacyTreatment',
         'stackedDeviceActivity',
+        'barInventory',
       ],
     },
     size: {
@@ -94,8 +95,8 @@ const graphItemsSchema = {
     },
     api: {
       $id: `${graphItemsSchemaId}/properties/api`,
-      type: 'object',
-      additionalItems: true,
+      type: ['array', 'object'],
+      anyOf: [{ type: 'array' }, { type: 'object' }],
       items: graphItemsApiSchema,
     },
     indexBy: {
@@ -109,7 +110,7 @@ const graphItemsSchema = {
     tickValuesYShape: {
       $id: `${graphItemsSchemaId}/properties/tickValuesYShape`,
       type: 'string',
-      enum: ['bookends', 'clubsandwich', 'all', 'none'],
+      enum: ['bookends', 'clubsandwich', 'all', 'none', 'twos'],
     },
     tickValuesXShape: {
       $id: `${graphItemsSchemaId}/properties/tickValuesXShape`,
@@ -119,10 +120,10 @@ const graphItemsSchema = {
     displayMethod: {
       $id: `${graphItemsSchemaId}/properties/displayMethod`,
       type: 'string',
-      emum: ['percentage', 'actual'],
+      enum: ['percentage', 'actual'],
     },
     displayLegend: {
-      $id: `${graphItemsSchemaId}/properties/displayMethod`,
+      $id: `${graphItemsSchemaId}/properties/displayLegend`,
       type: 'boolean',
     },
     formatDate: {
@@ -153,8 +154,8 @@ const graphSchema = {
     },
     graphType: {
       $id: '#/properties/graphType',
-      type: 'array',
-      additionalItems: true,
+      type: ['array', 'object'],
+      anyOf: [{ type: 'array' }, { type: 'object' }],
       items: graphItemsSchema,
     },
   },

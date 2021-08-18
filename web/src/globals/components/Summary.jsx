@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Unit } from '../../components/pureGrids'
 
-const cssClasses = classnames.bind(require('./Summary.css'))
+import styles from './Summary.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 
@@ -40,7 +42,7 @@ const Summary = ({ title, description, to, action, cols }) => (
 )
 
 Summary.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   description: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.instanceOf(Element),
@@ -49,12 +51,12 @@ Summary.propTypes = {
       PropTypes.shape({
         description: PropTypes.string,
         to: PropTypes.string,
-        action: PropTypes.string,
+        action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       })
     ),
   ]).isRequired,
   to: PropTypes.string,
-  action: PropTypes.string,
+  action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   cols: PropTypes.string,
 }
 

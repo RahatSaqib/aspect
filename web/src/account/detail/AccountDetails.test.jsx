@@ -2,6 +2,7 @@ import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Route } from 'react-router-dom'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 import { AccountDetailsData } from '../AccountRedux'
 
@@ -21,9 +22,9 @@ describe('AccountDetails module', () => {
       saveContactDetails: noop,
       saveLoginDetails: noop,
       saveUserPreferences: noop,
-      history: {},
-      location: {},
-      match: {},
+      navigate: () => {},
+      location: { pathname: '' },
+      params: {},
     }
 
     it('should shallow render correctly', () => {
@@ -38,7 +39,9 @@ describe('AccountDetails module', () => {
         const results = wrapper.find(Route)
 
         expect(results).toHaveLength(2)
-        results.forEach(route => expect(route.prop('render')).toHaveLength(1))
+        results.forEach(route => {
+          expect(route.find(LinearProgress)).toBeDefined()
+        })
       })
     })
 

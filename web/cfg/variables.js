@@ -107,6 +107,7 @@ exports.customPropertiesVariables = {
   '--genex-blue5': '#5f6d71',
   '--genex-blue6': '#243034',
   '--genex-blue7': '#e0e0e0',
+  '--genex-blue8': '#BFD7ED',
 
   // Assay hues COVID
   '--covid-green1': '#0f3328',

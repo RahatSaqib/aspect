@@ -1,9 +1,8 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -16,6 +15,7 @@ import {
 } from '../../shared/selectors/searchParams'
 
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -41,7 +41,9 @@ import messages from './messages'
 
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 
-const cssClasses = classnames.bind(require('./DeviceList.css'))
+import styles from './DeviceList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   {
@@ -148,7 +150,7 @@ const getColumns = intl => [
 
 export const DeviceListWithProps = ({
   intl,
-  history,
+  navigate,
   location,
   isLoading,
   items,
@@ -168,7 +170,7 @@ export const DeviceListWithProps = ({
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
@@ -180,15 +182,12 @@ export const DeviceListWithProps = ({
         visible={!items.currentIdList.isEmpty()}
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <DeviceDataTable
-          selectable={false}
-          className={cssClasses('DeviceDataTable')}
-        >
+        <DeviceDataTable className={cssClasses('DeviceDataTable')}>
           <DeviceDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -214,7 +213,7 @@ export const DeviceListWithProps = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           paginatorStatus={messages.paginatorStatus}
@@ -230,7 +229,7 @@ export const DeviceListWithProps = ({
 export const DeviceList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
-  const history = useHistory()
+  const navigate = useNavigate()
   const {
     jwt: { permissions: userPermissions },
     displayPreferences,
@@ -253,7 +252,7 @@ export const DeviceList = () => {
     currentTarget: {
       dataset: { deviceId },
     },
-  }) => history.push(`/browse/device/${deviceId}`)
+  }) => navigate(`/browse/device/${deviceId}`)
 
   const onAlertClick = event => {
     event.stopPropagation()
@@ -262,17 +261,20 @@ export const DeviceList = () => {
         dataset: { deviceId },
       },
     } = event
-    history.push(`/browse/device/${deviceId}/alerts`)
+    navigate(`/browse/device/${deviceId}/alerts`)
   }
 
   // >>>>>> Queries <<<<<<
-  const { data = false, isError, error, isLoading } = useQuery(
-    [DEVICE_LIST.KEY, { params }],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: DEVICE_LIST.ENDPOINT,
-        params: { ...params, hasResults: 1 },
-      })
+  const {
+    data = false,
+    isError,
+    error,
+    isLoading,
+  } = useQuery([DEVICE_LIST.KEY, { params }], async () =>
+    fetchWrapperForQueries({
+      endpoint: DEVICE_LIST.ENDPOINT,
+      params: { ...params, hasResults: 1 },
+    })
   )
 
   // >>>>>> Lifecycles <<<<<<
@@ -287,27 +289,24 @@ export const DeviceList = () => {
   }, [data])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
 
     const sortPage = makeSortPageSelector({
       sortCol: 'name',
     })
-    const urlSearchParams = new URLSearchParams(location.search)
-    const urlFilters = urlSearchParams.get('filters')
-      ? new URLSearchParams(urlSearchParams.get('filters'))
-      : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(fromPairs([...urlFilters.entries()]))
+    setFilters(getFilters(filtersParams))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
@@ -334,7 +333,7 @@ export const DeviceList = () => {
 
   const baseProps = {
     intl,
-    history,
+    navigate,
     location,
     isLoading,
     items,

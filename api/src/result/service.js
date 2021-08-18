@@ -41,6 +41,7 @@ const { getSiteByPartnerCountry, getSite } = require('../site/service')
 const { getDeviceByDeviceId } = require('../device/service')
 const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
+const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
 const {
   getAllAssaySchemas,
   getAssayResultCategories,
@@ -55,14 +56,31 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const sortableFields = _.clone(SORT_FIELDS)
 
   const assayColumns = []
-  if (query.assayId) {
-    const assay = await knex('Assay as a').where('a.id', query.assayId).first()
+  /**
+   * assayColumns items shape:
+   * {
+        db: 'resultText', // Query column to process
+        type: 'string', // The type of the value shown in the UI. Depending what this value is, the formatting will be different. Possible values: string, number.
+        title: 'Collection of Results', // The default title of the extra column
+        i18nKey: 'collectionOfResults', // The i18nKey of the extra column title
+        fieldName: 'collectionOfResults', // The name of the result's field to set
+        postProcess: resultText => doSomething(resultText) // A function that will receive the raw db value and return the new processed value
+        formatter: 'joinArrayWithCommas' // The name of the custom formatter function defined in the UI
+      }
+   */
+
+  if (query.assayId && !_.isArray(query.assayId)) {
+    const { assayId } = query
+    const assay = await knex('Assay as a').where('a.id', assayId).first()
 
     if (assay.resultCategory1Label) {
-      selectFields.push('rc1.name as resultCategory1Name')
-      sortableFields.push('resultCategory1Name')
+      if (!sortableFields.includes('resultCategory1Name')) {
+        selectFields.push('rc1.name as resultCategory1Name')
+        sortableFields.push('resultCategory1Name')
+      }
       assayColumns.push({
         db: 'resultCategory1Name',
+        fieldName: 'resultCategory1Name',
         type: 'string',
         title: assay.resultCategory1Label,
         i18nKey: assay.resultCategory1i18nKey,
@@ -70,36 +88,41 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     }
 
     if (assay.resultCategory2Label) {
-      selectFields.push('rc2.name as resultCategory2Name')
-      sortableFields.push('resultCategory2Name')
+      if (!sortableFields.includes('resultCategory2Name')) {
+        selectFields.push('rc2.name as resultCategory2Name')
+        sortableFields.push('resultCategory2Name')
+      }
       assayColumns.push({
         db: 'resultCategory2Name',
+        fieldName: 'resultCategory2Name',
         type: 'string',
         title: assay.resultCategory2Label,
         i18nKey: assay.resultCategory2i18nKey,
       })
     }
 
-    const resultDataSchema = JSON.parse(assay.resultDataSchema)
-    _.each(resultDataSchema, (value, key) => {
-      if (value.list) {
-        selectFields.push(
-          knex.raw('JSON_EXTRACT(resultData, ?) as ?', [
-            `$.${key}`,
-            key.replace('.', '_'),
-          ])
-        )
-
-        sortableFields.push(key.replace('.', '_'))
-
-        assayColumns.push({
-          db: key.replace('.', '_'),
-          type: value.type,
-          title: value.title,
-          i18nKey: value.i18nKey,
-        })
-      }
-    })
+    if (assay.resultDataSchema) {
+      const resultDataSchema = JSON.parse(assay.resultDataSchema)
+      _.each(resultDataSchema, (value, key) => {
+        if (value.list) {
+          const alias = key.replace('.', '_')
+          if (!sortableFields.includes(alias)) {
+            selectFields.push(
+              knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, alias])
+            )
+            sortableFields.push(alias)
+          }
+          assayColumns.push({
+            db: alias,
+            type: value.type,
+            title: value.title,
+            i18nKey: value.i18nKey,
+            formatter: value.formatter,
+            postProcess: resultData => JSON.parse(resultData),
+          })
+        }
+      })
+    }
   }
 
   // now we know if the sort that was passed is valid:
@@ -114,6 +137,13 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
+  selectFields.push('rc2.name as resultCategory2Name')
+  selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
+  selectFields.push('a.resultCategory2i18nKey as resultCategory2Titlei18nKey')
+  selectFields.push('a.resultCategory1i18nKey as resultCategory1Titlei18nKey')
+  selectFields.push('a.resultCategory1label as resultCategory1Title')
+  selectFields.push('a.resultCategory2label as resultCategory2Title')
+
   // get rows
   const getItems = resultQuery
     .clone()
@@ -123,17 +153,11 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  // if assay specified columns from the resultData field, parse them to valid JSON
-  if (assayColumns) {
-    _.each(data, d => {
-      _.each(assayColumns, c => {
-        if (c && c.db.indexOf('resultCategory') === -1) {
-          const path = c.db.replace('.', '_')
-          _.set(d, path, JSON.parse(d[path]))
-        }
-      })
-    })
-  }
+
+  // Create extra columns based on the assay configuration
+  applyExtraColumns(data, assayColumns)
+  // Remove extraColumns fields that shouldn't be retrieved to UI
+  sanitizeExtraColumns(assayColumns)
 
   const result = {
     ok: true,
@@ -174,7 +198,7 @@ async function getResultsForExport(query, auth) {
   const selectFields = [
     ...SELECT_COMMON_FIELDS,
     knex.raw(
-      `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
+      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
     ),
   ]
   const sortableFields = [...SORT_FIELDS]
@@ -197,6 +221,12 @@ async function getResultsForExport(query, auth) {
     if (assay.resultCategory2Label) {
       selectFields.push('rc2.name as resultCategory2Name')
       sortableFields.push('resultCategory2Name')
+      assayColumns.push({
+        db: 'resultCategory2Name',
+        type: 'string',
+        title: assay.resultCategory2Label,
+        i18nKey: assay.resultCategory2i18nKey,
+      })
     }
   }
 
@@ -217,6 +247,7 @@ async function getResultsForExport(query, auth) {
   const result = {
     ok: true,
     data,
+    extraColumns: assayColumns,
   }
 
   return result
@@ -714,7 +745,6 @@ async function getResultByResultId(
 ) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -736,7 +766,12 @@ async function getResultByResultId(
       device: 'd',
       result: 'r',
     })
-    .select(fields)
+    .select([
+      ...fields,
+      knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+      ),
+    ])
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful
@@ -782,6 +817,13 @@ async function getResultByResultId(
     getResultTreatmentStatus(data)
     data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
+
+    if (
+      data.resultData &&
+      data.resultData.detectedResistance &&
+      data.resultData.detectedResistance.length > 0
+    )
+      data.detectedResistance = data.resultData.detectedResistance.join(', ')
   }
 
   return { ok: results.length === 1, data }

@@ -18,9 +18,11 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({ fetchResultLog, match }) => () => {
-      fetchResultLog(match.params.resultId)
-    },
+    onInitialLoad:
+      ({ fetchResultLog, match }) =>
+      () => {
+        fetchResultLog(match.params.resultId)
+      },
   }),
   lifecycle({
     componentDidMount() {

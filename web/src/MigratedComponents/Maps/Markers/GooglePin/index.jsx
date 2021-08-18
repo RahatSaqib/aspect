@@ -6,7 +6,9 @@ import classnames from 'classnames/bind'
 import IconProvider from '../../../IconProvider'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 
-const cssClasses = classnames.bind(require('./GooglePin.css'))
+import styles from './GooglePin.css'
+
+const cssClasses = classnames.bind(styles)
 
 const GooglePin = ({
   position,

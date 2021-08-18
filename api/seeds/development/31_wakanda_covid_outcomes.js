@@ -58,13 +58,22 @@ async function seed(knex) {
   await Promise.each(resultsSample, async r => {
     const newOutcome = await randomOutcomeResult(r)
     const { id, externalId } = newOutcome[0] || false
-    if ((id, externalId))
-      return knex('ResultFollowUp').where({ resultId: r.resultId }).update({
-        externalId,
-        followUpId: id,
-        updatedOn: new Date(),
-        updatedBy: r.updatedBy,
-      })
+    if ((id, externalId)) {
+      const item = await knex('ResultFollowUp')
+        .where({
+          resultId: r.resultId,
+          externalId,
+        })
+        .first()
+      if (!item) {
+        return knex('ResultFollowUp').where({ resultId: r.resultId }).update({
+          externalId,
+          followUpId: id,
+          updatedOn: new Date(),
+          updatedBy: r.updatedBy,
+        })
+      }
+    }
   }).catch(rejection => {
     throw new Error(rejection)
   })

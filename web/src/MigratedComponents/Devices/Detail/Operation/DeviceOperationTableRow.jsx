@@ -9,9 +9,9 @@ import {
   DataTableCell as TableCell,
 } from '../../../../components/shared/tableBody'
 
-const cssClasses = classnames.bind(
-  require('../../../../components/shared/DataTableRow.css')
-)
+import styles from '../../../../components/shared/DataTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

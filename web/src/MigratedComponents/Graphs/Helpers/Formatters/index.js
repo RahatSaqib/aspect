@@ -338,7 +338,7 @@ const generateLegendIntl = (
   type = false,
   legendsNotToRender = false
 ) => {
-  if (!legendsNotToRender.includes(string)) {
+  if (!legendsNotToRender?.includes(string)) {
     return {
       label: translateLabel(
         string,

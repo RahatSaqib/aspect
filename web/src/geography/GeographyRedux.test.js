@@ -195,9 +195,10 @@ describe('geography reducer', () => {
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId,
           })
-          const selectedCountry = newState.countriesForLocationSelector.items.find(
-            val => val.id === selectedCountryId
-          )
+          const selectedCountry =
+            newState.countriesForLocationSelector.items.find(
+              val => val.id === selectedCountryId
+            )
 
           expect(selectedCountry.children.loading).toBe(true)
         })
@@ -239,12 +240,14 @@ describe('geography reducer', () => {
             countries,
             lastRefreshed: now,
           })
-          selectedCountry = initialState.countriesForLocationSelector.items.find(
-            country => country.id === selectedCountryId
-          )
-          indexOfSelectedCountry = initialState.countriesForLocationSelector.items.indexOf(
-            selectedCountry
-          )
+          selectedCountry =
+            initialState.countriesForLocationSelector.items.find(
+              country => country.id === selectedCountryId
+            )
+          indexOfSelectedCountry =
+            initialState.countriesForLocationSelector.items.indexOf(
+              selectedCountry
+            )
           initialState = geography(initialState, {
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId,
@@ -463,9 +466,10 @@ describe('geography reducer', () => {
             selectedCountryId,
             selectedStateId,
           })
-          const selectedCountry = newState.countriesForLocationSelector.items.find(
-            country => country.id === selectedCountryId
-          )
+          const selectedCountry =
+            newState.countriesForLocationSelector.items.find(
+              country => country.id === selectedCountryId
+            )
           const selectedState = selectedCountry.children.items.find(
             state => state.id === selectedStateId
           )
@@ -549,18 +553,19 @@ describe('geography reducer', () => {
             countries,
             lastRefreshed: now,
           })
-          selectedCountry = initialState.countriesForLocationSelector.items.find(
-            country => country.id === selectedCountryId
-          )
-          indexOfSelectedCountry = initialState.countriesForLocationSelector.items.indexOf(
-            selectedCountry
-          )
+          selectedCountry =
+            initialState.countriesForLocationSelector.items.find(
+              country => country.id === selectedCountryId
+            )
+          indexOfSelectedCountry =
+            initialState.countriesForLocationSelector.items.indexOf(
+              selectedCountry
+            )
           selectedState = selectedCountry.children.items.find(
             state => state.id === selectedStateId
           )
-          indexOfSelectedState = selectedCountry.children.items.indexOf(
-            selectedState
-          )
+          indexOfSelectedState =
+            selectedCountry.children.items.indexOf(selectedState)
           initialState = geography(initialState, {
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId,
@@ -799,9 +804,8 @@ describe('geography action creators', () => {
         })
 
         it('Should return a dispatch function that dispatches nothing', () => {
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            countriesState
-          )
+          const dispatchFunction =
+            geographyRedux.fetchCountriesForLocationSelector(countriesState)
           dispatchFunction(dispatch)
           expect(dispatch.notCalled).toBe(true)
         })
@@ -825,9 +829,8 @@ describe('geography action creators', () => {
           dispatch = sinon.spy()
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountries(expiredCacheTime)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            countriesState
-          )
+          const dispatchFunction =
+            geographyRedux.fetchCountriesForLocationSelector(countriesState)
           dispatchFunction(dispatch)
         })
 
@@ -881,9 +884,8 @@ describe('geography action creators', () => {
           dispatch = sinon.spy()
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountries(undefined)
-          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(
-            countriesState
-          )
+          const dispatchFunction =
+            geographyRedux.fetchCountriesForLocationSelector(countriesState)
           dispatchFunction(dispatch)
         })
 
@@ -939,9 +941,8 @@ describe('geography action creators', () => {
 
       it('Should return a dispatch function that dispatches nothing', () => {
         const selectedCountry = getCountryAt(0)
-        const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-          selectedCountry
-        )
+        const dispatchFunction =
+          geographyRedux.fetchStatesForLocationSelector(selectedCountry)
         dispatchFunction(dispatch)
         expect(dispatch.notCalled).toBe(true)
       })
@@ -968,9 +969,8 @@ describe('geography action creators', () => {
             expiredCacheTime
           )
           const selectedCountry = getCountryAt(0)
-          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            selectedCountry
-          )
+          const dispatchFunction =
+            geographyRedux.fetchStatesForLocationSelector(selectedCountry)
           dispatchFunction(dispatch)
         })
 
@@ -1027,9 +1027,8 @@ describe('geography action creators', () => {
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountryStates(0, undefined)
           const selectedCountry = getCountryAt(0)
-          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(
-            selectedCountry
-          )
+          const dispatchFunction =
+            geographyRedux.fetchStatesForLocationSelector(selectedCountry)
           dispatchFunction(dispatch)
         })
 

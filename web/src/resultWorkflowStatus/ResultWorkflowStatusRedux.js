@@ -62,8 +62,7 @@ export function fetchWorkflowStatuses(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchWorkflowStatuses.GET.default.title',
+              id: 'errorResponseMessages.fetchWorkflowStatuses.GET.default.title',
               defaultMessage: 'Loading Result Workflow Statuses Failed',
             },
           })

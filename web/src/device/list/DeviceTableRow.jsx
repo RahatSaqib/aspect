@@ -12,10 +12,11 @@ import ColoredNumber from '../../components/shared/ColoredNumber'
 import messages from './messages'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
-const sharedCssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from './DeviceTableRow.css'
+import stylesShared from '../../components/shared/DataTableRow.css'
+
+const cssClasses = classnames.bind(styles)
+const sharedCssClasses = classnames.bind(stylesShared)
 
 const enhance = identity(injectIntl)
 

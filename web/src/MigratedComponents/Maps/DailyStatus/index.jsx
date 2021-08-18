@@ -11,7 +11,9 @@ import AspectMap from '../index'
 import buildMarkersForDailyStatus from './Helpers'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./DailyStatusMap.css'))
+import styles from './DailyStatusMap.css'
+
+const cssClasses = classnames.bind(styles)
 
 const Loading = () => (
   <div className={cssClasses('dailystatusMap__spinner')}>

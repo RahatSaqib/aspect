@@ -1,14 +1,17 @@
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
-import Popover from '@material-ui/core/Popover'
 import IconButton from '@material-ui/core/IconButton'
-import React, { useState, useCallback } from 'react'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import PropTypes from 'prop-types'
 
 import { downloadFile } from '../../shared/utils/files'
 
-const cssClasses = classnames.bind(require('./AspectExportListButton.css'))
+import styles from './AspectExportListButton.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const AspectExportListButtonWithProps = ({
   onExport,
@@ -18,15 +21,12 @@ export const AspectExportListButtonWithProps = ({
   anchorEl,
   setAnchorEl,
 }) => {
-  // >>>>>> Events <<<<<<
-  // this needs fixing: https://github.com/SystemOneId/aspect/issues/1422
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onReportClicked = useCallback(e => {
-    e.preventDefault()
+  const onExportTo = format => event => {
+    event.preventDefault()
     setAnchorEl(null)
     setDownloadStarted(true)
 
-    const getExport = onExport(e.currentTarget.id)
+    const getExport = onExport(format)
 
     getExport
       .then(async ({ elem, fileFormat, reportName }) => {
@@ -38,69 +38,40 @@ export const AspectExportListButtonWithProps = ({
         setDownloadStarted(false)
         throw error
       })
+  }
 
-    return true
-  })
-
-  // >>>>>> Components <<<<<<
   if (!visible) return null
 
   return (
-    <div>
+    <div className={cssClasses('export-button-wrapper')}>
       {downloadStarted && <LinearProgress />}
       <IconButton
         variant="contained"
         onClick={event => setAnchorEl(event.currentTarget)}
-        className={cssClasses('DownloadButton')}
+        className={cssClasses('export-icon-button')}
       >
         <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
       </IconButton>
 
-      <Popover
-        id="simple-popover"
+      <Menu
+        anchorEl={anchorEl}
         open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
         }}
-        anchorEl={anchorEl}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'left',
+          horizontal: 'center',
         }}
-        onClose={() => setAnchorEl(null)}
+        classes={{
+          root: cssClasses('export-menu-root'),
+        }}
       >
-        <ol
-          style={{
-            listStyleType: 'none',
-            padding: '5px',
-            margin: '5px 30px 5px 30px',
-          }}
-        >
-          <li>
-            <button
-              type="button"
-              className={cssClasses('Reports_Button')}
-              inverse
-              onClick={onReportClicked}
-              id="xlsx"
-            >
-              Excel
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              className={cssClasses('Reports_Button')}
-              inverse
-              onClick={onReportClicked}
-              id="csv"
-            >
-              CSV
-            </button>
-          </li>
-        </ol>
-      </Popover>
+        <MenuItem onClick={onExportTo('xlsx')}>Excel</MenuItem>
+        <MenuItem onClick={onExportTo('csv')}>CSV</MenuItem>
+      </Menu>
     </div>
   )
 }

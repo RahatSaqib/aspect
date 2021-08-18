@@ -8,9 +8,9 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

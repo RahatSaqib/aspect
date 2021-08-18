@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-13T18:15:22.953Z\n"
+"POT-Creation-Date: 2021-08-02T14:12:15.336Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -905,6 +905,9 @@ msgstr "Середня кількість тестів на день, повід
 msgid "Average time to replace disabled module"
 msgstr "Середній час заміни відключеного модуля"
 
+#. [pages.ResultList.ResultTreatmentStatusAwaitingTreatment]
+#. defaultMessage is:
+#. Awaiting Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
 #. Awaiting Treatment
@@ -3138,6 +3141,19 @@ msgstr "GeneXpert MTB / Rif"
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB / Rif Ultra"
 
+#. [legends.Unknown.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [filter.AssaySelectField.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#: extracted_strings.json
+msgid "GeneXpert MTB/XDR"
+msgstr "GeneXpert MTB / Rif"
+
 #. [consumable.gxMtbRifCartridge]
 #. defaultMessage is:
 #. GeneXpert TB Cartridge
@@ -3566,10 +3582,10 @@ msgstr "Безрезультатно"
 
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.message]
 #. defaultMessage is:
-#. Incorrect password
+#. Incorrect username or password
 #: extracted_strings.json
-msgid "Incorrect password"
-msgstr "Невірний пароль"
+msgid "Incorrect username or password"
+msgstr "Неправильне ім'я користувача або пароль"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -4270,6 +4286,9 @@ msgstr "Низький запас"
 #. [pages.filters.gxMtbRifUltraMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [pages.filters.gxMtbXdrMtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #: extracted_strings.json
 msgid "MTB Detected"
 msgstr "Виявлено MTB"
@@ -4323,10 +4342,34 @@ msgstr "Виявлено MTB RIF не виявлено"
 msgid "MTB Detected RR Detected"
 msgstr "Виявлено MTB Виявлено RIF"
 
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Detected"
+msgstr "MTB виявлено XDR Виявлено"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected XDR Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected XDR Indeterminate"
+msgstr "MTB Виявлено XDR невизначений"
+
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected XDR Not Detected
+#: extracted_strings.json
+msgid "MTB Detected XDR Not Detected"
+msgstr "MTB виявлено XDR не виявлено"
+
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
 #. [pages.filters.gxMtbRifUltraMtbError]
+#. defaultMessage is:
+#. MTB Error
+#. [pages.filters.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
 #: extracted_strings.json
@@ -4339,6 +4382,9 @@ msgstr "Помилка MTB"
 #. [pages.filters.gxMtbRifUltraMtbInvalid]
 #. defaultMessage is:
 #. MTB Invalid
+#. [pages.filters.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
 #: extracted_strings.json
 msgid "MTB Invalid"
 msgstr "MTB недійсний"
@@ -4349,6 +4395,9 @@ msgstr "MTB недійсний"
 #. [pages.filters.gxMtbRifUltraMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [pages.filters.gxMtbXdrMtbNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #: extracted_strings.json
 msgid "MTB No Result"
 msgstr "MTB Без результату"
@@ -4357,6 +4406,9 @@ msgstr "MTB Без результату"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifUltraMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [pages.filters.gxMtbXdrMtbNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #: extracted_strings.json
@@ -4849,6 +4901,13 @@ msgstr "Жоден результат не відповідає вибраним
 msgid "None"
 msgstr "Немає"
 
+#. [pages.ResultList.ResultTreatmentStatusNotAvailable]
+#. defaultMessage is:
+#. Not Available
+#: extracted_strings.json
+msgid "Not Available"
+msgstr "Не доступно"
+
 #. [pages.TableCell.notConfigured]
 #. defaultMessage is:
 #. Not Configured
@@ -4896,6 +4955,9 @@ msgid "Not Found"
 msgstr "Не знайдено"
 
 #. [reporters.notPossible]
+#. defaultMessage is:
+#. Not Possible
+#. [pages.ResultList.ResultTreatmentStatusNotPossible]
 #. defaultMessage is:
 #. Not Possible
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
@@ -5053,9 +5115,6 @@ msgstr ""
 "Кількість результатів за останні 30 днів, поділена на добову потужність "
 "приладу, помножену на 30 днів"
 
-#. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -5076,6 +5135,13 @@ msgstr "ОК"
 msgid "Offline"
 msgstr "Офлайн"
 
+#. [pages.ResultList.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. Ok
+#: extracted_strings.json
+msgid "Ok"
+msgstr "Ok"
+
 #. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
 #. defaultMessage is:
 #. Okay
@@ -5093,6 +5159,9 @@ msgstr "Добре"
 msgid "Older"
 msgstr "Старіші"
 
+#. [pages.ResultList.ResultTreatmentStatusOnTreatment]
+#. defaultMessage is:
+#. On Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
@@ -5763,6 +5832,9 @@ msgstr "Передано позитивні результати тесту"
 msgid "Positives"
 msgstr "Позитиви"
 
+#. [pages.UserPreferences.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -9602,6 +9674,9 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# result} other {# results}})"
+
+#~ msgid "Incorrect password"
+#~ msgstr "Невірний пароль"
 
 #~ msgid "% Acknowledged"
 #~ msgstr "% A знані"

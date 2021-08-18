@@ -27,7 +27,9 @@ import {
 } from '../list/TaskDataTable'
 import { getTasksByAlertTemplateAndDate } from '../TaskRedux'
 
-const cssClasses = classnames.bind(require('./TaskAggre.css'))
+import styles from './TaskAggre.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   taskAggreTitle: {
@@ -76,56 +78,65 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      getTasksByAlertTemplateAndDate,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      const taskDetails = queryString.parse(location.search)
-      if (!sanitized) {
-        getTasksByAlertTemplateAndDate(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize,
-          taskDetails.date,
-          taskDetails.categoryId,
-          taskDetails.alertTemplateId
-        )
-      }
-    },
-
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { taskId },
+    onInitialLoad:
+      ({
+        location,
+        getTasksByAlertTemplateAndDate,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        const taskDetails = queryString.parse(location.search)
+        if (!sanitized) {
+          getTasksByAlertTemplateAndDate(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize,
+            taskDetails.date,
+            taskDetails.categoryId,
+            taskDetails.alertTemplateId
+          )
+        }
       },
-    }) => history.push(`/task-list/${taskId}`),
+
+    onBackClick:
+      ({ navigate }) =>
+      () => {
+        navigate(-1)
+      },
+
+    onRowClick:
+      ({ navigate }) =>
+      ({
+        currentTarget: {
+          dataset: { taskId },
+        },
+      }) =>
+        navigate(`/task-list/${taskId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
     },
 
@@ -133,7 +144,7 @@ const enhance = compose(
       this.props.onInitialLoad()
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -143,9 +154,8 @@ const enhance = compose(
 
 export const TaskAggre = ({
   intl,
-  history,
+  navigate,
   location,
-  match,
   table,
   items,
   sites,
@@ -161,13 +171,7 @@ export const TaskAggre = ({
 }) => (
   <div>
     <Helmet title={intl.formatMessage(messages.taskAggreTitle)} />
-    <DetailBackBar
-      history={history}
-      location={location}
-      match={match}
-      onBackClick={onBackClick}
-      title={title}
-    />
+    <DetailBackBar onBackClick={onBackClick} title={title} />
     <section className={cssClasses('Section')}>
       <Unit lg="1-4">
         <legend className={cssClasses('Summary__Legend')}>Sites</legend>
@@ -214,13 +218,10 @@ export const TaskAggre = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
-          <TaskDataTable
-            selectable={false}
-            className={cssClasses('TaskDataTable')}
-          >
+          <TaskDataTable className={cssClasses('TaskDataTable')}>
             <TaskDataTableHead
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -261,7 +262,7 @@ export const TaskAggre = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}

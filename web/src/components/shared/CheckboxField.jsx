@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AspectCheckbox from './AspectCheckbox'
 
@@ -15,8 +15,7 @@ const styles = {
     lineHeight: '24px',
   },
   checkbox: {
-    marginRight: 12,
-    padding: '10px 0',
+    marginRight: 1,
   },
   icon: {
     fontSize: 24,

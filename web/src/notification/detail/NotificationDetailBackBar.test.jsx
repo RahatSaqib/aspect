@@ -10,9 +10,7 @@ describe('NotificationDetailBackBar component', () => {
       formatMessage: message => message.defaultMessage,
     },
     onBackClick: jest.fn(),
-    history: {
-      push: jest.fn(),
-    },
+    navigate: jest.fn(),
     location: {},
     match: {
       params: {

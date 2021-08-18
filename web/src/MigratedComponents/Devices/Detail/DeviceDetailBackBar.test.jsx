@@ -9,10 +9,7 @@ describe('DeviceDetailBackBar component', () => {
     intl: {
       formatMessage: message => message.defaultMessage,
     },
-    history: {
-      push: jest.fn(),
-      goBack: jest.fn(),
-    },
+    navigate: jest.fn(),
     location: {},
     match: {
       params: {
@@ -48,9 +45,7 @@ describe('DeviceDetailBackBar component', () => {
   describe('DeviceDetailsBackBar redirection', () => {
     it('should click back arrow and navigate back to result list', () => {
       const wrapper = mount(<DeviceDetailBackBar {...props} />)
-      const {
-        history: { goBack },
-      } = props
+      const { navigate } = props
       wrapper
         .find(DeviceDetailBackBar)
         .find(DetailBackBar)
@@ -58,7 +53,7 @@ describe('DeviceDetailBackBar component', () => {
         .at(0)
         .simulate('click')
 
-      expect(goBack).toHaveBeenCalled()
+      expect(navigate).toHaveBeenCalled()
     })
   })
 })

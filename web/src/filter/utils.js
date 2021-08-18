@@ -1,3 +1,4 @@
+import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
 import isUndefined from 'lodash/isUndefined'
 import reduce from 'lodash/reduce'
@@ -23,7 +24,12 @@ export const mergeToFiltersParams = (filters, filtersParams) => {
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
-        filtersParams.set(k, v)
+        if (isArray(v)) {
+          filtersParams.delete(k)
+          v.forEach(value => filtersParams.append(k, value))
+        } else {
+          filtersParams.set(k, v)
+        }
       } else {
         filtersParams.delete(k)
       }
@@ -37,6 +43,7 @@ const groups = {
   assayAndResultCategory: [
     'assayId',
     'resultCategoryId',
+    'resultCategory2Id',
     'resultCategoryGroupId',
     'diseaseId',
   ],
@@ -69,14 +76,18 @@ const defaultSanitizer = ({ a, k, config }) => {
   return a
 }
 
-const makeArraySanitizer = keys => ({ a, config }) =>
-  // Removes from the filters only the keys that weren't configured independently
-  keys
-    .filter(k => !findFilterConfigByKey(config, k))
-    .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
+const makeArraySanitizer =
+  keys =>
+  ({ a, config }) =>
+    // Removes from the filters only the keys that weren't configured independently
+    keys
+      .filter(k => !findFilterConfigByKey(config, k))
+      .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
 
-const makeKeySanitizer = k => ({ a, config }) =>
-  defaultSanitizer({ a, k, config })
+const makeKeySanitizer =
+  k =>
+  ({ a, config }) =>
+    defaultSanitizer({ a, k, config })
 
 const sanitizerByConfigKey = {
   assayId: defaultSanitizer,
@@ -305,6 +316,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'reportName':
               result.reportName = true
               break
+            case 'diseaseId':
+              result.disease = true
+              break
             default:
           }
         })
@@ -314,4 +328,23 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
     {}
   )
   return reducedFilters
+}
+
+export const isCountryFilterHidden = countries =>
+  countries.loading === false &&
+  !!countries.lastRefreshed &&
+  countries.items.size === 1
+
+export const getFilters = urlSearchParams => {
+  const filters = {}
+  urlSearchParams.forEach((value, key) => {
+    if (filters[key]) {
+      let filter = filters[key]
+      filter = isArray(filter) ? filter : [filter]
+      filters[key] = [...filter, value]
+    } else {
+      filters[key] = value
+    }
+  })
+  return filters
 }

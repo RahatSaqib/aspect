@@ -1,12 +1,14 @@
-import fromPairs from 'lodash/fromPairs'
 import replace from 'lodash/replace'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import BrowseNavDropdown from './BrowseNavDropdown'
-import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
+import {
+  getFilters,
+  mergeToFiltersParams,
+  reduceNavLinks,
+} from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
 import FiltersPanel from '../../filter/popover/FiltersPanel'
 import {
@@ -17,7 +19,9 @@ import {
 } from '../../filter/FilterRedux'
 import { getAspectDisplayPreferences } from '../sideEffects/LocalStorage'
 
-const cssClasses = classnames.bind(require('./BrowseFilters.css'))
+import styles from './BrowseFilters.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   pure,
@@ -25,59 +29,85 @@ const enhance = compose(
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const prefs = getAspectDisplayPreferences()
+    const filters = getFilters(filtersParams)
     return {
-      filters: fromPairs([...filtersParams.entries()]),
+      filters,
       dateFormat: replace(prefs.get('dateFormat'), /-/g, '/'),
     }
   }),
   withHandlers({
-    onChangeFilters: ({ history, location }) => nextFilters => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = mergeToFiltersParams(
-        nextFilters,
-        new URLSearchParams(searchParams.get('filters') || '')
-      )
-      searchParams.set('filters', filtersParams)
-      searchParams.delete('pageAt')
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+    onChangeFilters:
+      ({ navigate, location }) =>
+      nextFilters => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = mergeToFiltersParams(
+          nextFilters,
+          new URLSearchParams(searchParams.get('filters') || '')
+        )
+        searchParams.set('filters', filtersParams)
+        searchParams.delete('pageAt')
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
+      },
 
-    onRemoveFilterItem: ({ history, location }) => filterKey => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
+    onRemoveFilterItem:
+      ({ navigate, location }) =>
+      (filterKey, index) => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = new URLSearchParams(
+          searchParams.get('filters') || ''
+        )
 
-      switch (filterKey) {
-        case 'countryId':
-          filtersParams.delete(filterKey)
-          filtersParams.delete('stateId')
-          filtersParams.delete('lgaId')
-          break
-        case 'stateId':
-          filtersParams.delete(filterKey)
-          filtersParams.delete('lgaId')
-          break
-        case 'reportableSiteName':
-          filtersParams.delete(filterKey)
-          filtersParams.delete('reportableSiteId')
-          break
-        default:
-          filtersParams.delete(filterKey)
-          break
-      }
+        switch (filterKey) {
+          case 'countryId':
+            filtersParams.delete(filterKey)
+            filtersParams.delete('stateId')
+            filtersParams.delete('lgaId')
+            break
+          case 'stateId':
+            filtersParams.delete(filterKey)
+            filtersParams.delete('lgaId')
+            break
+          case 'reportableSiteName':
+            filtersParams.delete(filterKey)
+            filtersParams.delete('reportableSiteId')
+            break
+          case 'assayId': {
+            const values = filtersParams.getAll(filterKey)
+            filtersParams.delete(filterKey)
+            if (values.length > 1) {
+              values.splice(index || 0, 1)
+              values.forEach(value => {
+                filtersParams.append(filterKey, value)
+              })
+            }
+            if (!filtersParams.has(filterKey)) {
+              filtersParams.delete('resultCategoryId')
+              filtersParams.delete('resultCategory2Id')
+            }
+            break
+          }
+          default:
+            filtersParams.delete(filterKey)
+            break
+        }
 
-      searchParams.set('filters', filtersParams)
-      searchParams.delete('sortCol')
+        searchParams.set('filters', filtersParams)
+        searchParams.delete('sortCol')
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
+      },
   }),
   connect(
     state => ({
@@ -85,14 +115,14 @@ const enhance = compose(
       exportFormatTypes,
       userPermissions: state.user.jwt.permissions,
     }),
-    bindActionCreators.bind(null, {
+    {
       askExportConfirmation,
       closeExportConfirmation,
       beginListExportProcessing,
-    })
+    }
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const reducedNav = reduceNavLinks(navigations, this.props.userPermissions)
       this.setState({
         reducedSource: reducedNav,
@@ -103,7 +133,7 @@ const enhance = compose(
 
 export const BrowseFilters = ({
   children,
-  history,
+  navigate,
   location,
   onRemoveFilterItem,
   reducedSource,
@@ -119,7 +149,7 @@ export const BrowseFilters = ({
     >
       {showBrowseDropdown && (
         <BrowseNavDropdown
-          history={history}
+          navigate={navigate}
           location={location}
           source={reducedSource}
         />

@@ -1,9 +1,7 @@
 import Immutable from 'immutable'
-import PropTypes from 'prop-types'
 import React from 'react'
 import sinon from 'sinon'
-import { shallow, mount } from 'enzyme'
-import { createMuiTheme } from '@material-ui/core/styles'
+import { shallow } from 'enzyme'
 
 import {
   LazyLoadItems,
@@ -11,23 +9,10 @@ import {
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
 import SelectField from '../../components/shared/SelectField'
+import { mountWithTheme } from '../../test/common'
 
 describe('CountrySelectField module', () => {
   const { CountrySelectField } = require('./CountrySelectField')
-
-  const mountWithMuiTheme = node =>
-    mount(node, {
-      context: {
-        muiTheme: createMuiTheme({
-          typography: {
-            useNextVariants: true,
-          },
-        }),
-      },
-      childContextTypes: {
-        muiTheme: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-      },
-    })
 
   const now = new Date()
   const countriesForLocationSelector = new LazyLoadItems({
@@ -95,7 +80,7 @@ describe('CountrySelectField module', () => {
         onCountryIdChange: sinon.spy(),
         countryId: '1',
       }
-      mountWithMuiTheme(<CountrySelectField {...props} />)
+      mountWithTheme(<CountrySelectField {...props} />)
 
       expect(props.fetchCountriesForLocationSelector.calledOnce).toBe(true)
     })

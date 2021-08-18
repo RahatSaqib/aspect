@@ -3,11 +3,12 @@ import graphSchema from '../Schemas/graphSchema'
 
 const validateGraphConfig = config => {
   return new Promise((res, rej) => {
-    const ajv = new Ajv()
+    const ajv = new Ajv({ allowUnionTypes: true })
     const { id } = config
     const CLASSES = { Function }
 
-    ajv.addKeyword('instanceof', {
+    ajv.addKeyword({
+      keyword: 'instanceof',
       compile: schema => data => data instanceof CLASSES[schema],
     })
 

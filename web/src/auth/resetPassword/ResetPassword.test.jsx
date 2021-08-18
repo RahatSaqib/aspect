@@ -47,18 +47,11 @@ describe('ResetPassword module', () => {
       const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xl: true,
       })
-
       expect(
-        largeScreenDiv
-          .find(Stepper)
-          .dive()
-          .props().orientation
+        largeScreenDiv.find(Stepper).dive().props().value.orientation
       ).toEqual('horizontal')
       expect(
-        smallScreenDiv
-          .find(Stepper)
-          .dive()
-          .props().orientation
+        smallScreenDiv.find(Stepper).dive().props().value.orientation
       ).toEqual('vertical')
     })
 
@@ -144,16 +137,8 @@ describe('ResetPassword module', () => {
         smallScreenStep3ResetPasswordEnterPassword.props()
       )
       for (let i = 0; i < largeScreenStep4Finish.children().length; i++) {
-        expect(
-          largeScreenStep4Finish
-            .children()
-            .at(i)
-            .props()
-        ).toEqual(
-          smallScreenStep4Finish
-            .children()
-            .at(i)
-            .props()
+        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(
+          smallScreenStep4Finish.children().at(i).props()
         )
       }
     })
@@ -266,7 +251,7 @@ describe('ResetPassword module', () => {
         const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)
 
-        expect(adminHelpDialog.props().actions[1].props.to).toEqual('login')
+        expect(adminHelpDialog.props().actions[1].props.to).toEqual('/login')
       })
     })
   })

@@ -12,12 +12,11 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
+import formatters from '../formatters'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
 
-const styles = require('../../components/shared/DataTableRow.css')
+const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { formatMessage, formatNumber } = useI18n()
@@ -26,9 +25,11 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
     {
       number: n => (isNumber(n) ? formatNumber(n) : false),
+      string: t => t && t.split('\n').map(r => <p>{r}</p>),
       default: identity,
     }
   )
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
@@ -43,7 +44,36 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           result.get('assayName')
         )}
       </TableCell>
-      <TableCell>{result.get('resultText')}</TableCell>
+      {extraColumns.isEmpty() ? (
+        <TableCell>
+          {`${formatMessage(
+            messages[result.get('resultCategory1Titlei18nKey')],
+            null,
+            result.get('resultCategory1Title')
+          )}:${formatMessage(messages[result.get('resultCategory1I18nKey')])}`}
+          {result.get('resultCategory2I18nKey') &&
+            ` | ${formatMessage(
+              messages[result.get('resultCategory2Titlei18nKey')],
+              null,
+              result.get('resultCategory2Title')
+            )}:${formatMessage(
+              messages[result.get('resultCategory2I18nKey')]
+            )}`}
+        </TableCell>
+      ) : (
+        extraColumns.map(column => (
+          // TODO: refactor, see DeviceOperationTableRow
+          <TableCell key={column.get('db')} hiddenOn="nd">
+            {formatterByType(column.get('type'))(
+              column.get('formatter')
+                ? formatters[column.get('formatter')](
+                    result.get(column.get('fieldName'))
+                  )
+                : result.get(column.get('fieldName'))
+            )}
+          </TableCell>
+        ))
+      )}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
         {formatMessage(
@@ -58,6 +88,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
               messages[result.get('resultTreatmentStatusI18nKey')],
               result.get('resultTreatmentStatus')
             )}
+            disableInteractive
           >
             <PermIdentity
               className={styles[`${result.get('treatmentStatusInfo')}`]}
@@ -66,12 +97,6 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         )}
       </TableCell>
       <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
-      {extraColumns.map(column => (
-        // TODO: refactor, see DeviceOperationTableRow
-        <TableCell key={column.get('db')} hiddenOn="nd">
-          {formatterByType(column.get('type'))(result.get(column.get('db')))}
-        </TableCell>
-      ))}
     </TableRow>
   )
 }

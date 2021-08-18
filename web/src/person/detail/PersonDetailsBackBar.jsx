@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import messages from './messages'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
@@ -6,29 +7,23 @@ import AspectButton from '../../components/shared/AspectButton'
 const PersonDetailBackBar = ({
   formatMessage,
   canUserLoggedIn = true,
-  history,
+  navigate,
   location,
-  match,
   title,
   isNew,
   disabled,
 }) => {
+  const params = useParams()
   const onBackClick = () => {
-    history.push(`/browse/person`)
+    navigate(`/browse/person`)
   }
   const onPathClick = path => {
-    history.push({
-      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
+    navigate({
+      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => params[key]),
     })
   }
   return (
-    <DetailBackBar
-      history={history}
-      location={location}
-      match={match}
-      onBackClick={onBackClick}
-      title={title}
-    >
+    <DetailBackBar onBackClick={onBackClick} title={title}>
       {[
         {
           label: formatMessage(messages.contactDetails),
@@ -67,7 +62,7 @@ const PersonDetailBackBar = ({
             data-path={path}
             color="primary"
             variant="contained"
-            inverse={match.path !== path && !disabled}
+            inverse={location.pathname !== path && !disabled}
           >
             {label}
           </AspectButton>

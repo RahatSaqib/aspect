@@ -1,13 +1,11 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useHistory, useLocation } from 'react-router-dom'
 import { useIntl } from 'react-intl'
-import { useQuery, useMutation, queryCache } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -19,6 +17,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -62,7 +61,9 @@ import {
 } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
+import styles from './InventoryItemsList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -104,7 +105,7 @@ const AddNewButton = requirePermissions({
 
 export const InventoryItemsListWithProps = ({
   intl,
-  history,
+  navigate,
   location,
   reducedFilters,
   dispatch,
@@ -129,7 +130,7 @@ export const InventoryItemsListWithProps = ({
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
         intl={intl}
         config={reducedFilters}
@@ -167,12 +168,12 @@ export const InventoryItemsListWithProps = ({
           reportName="Supplies"
         />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         {!items.currentIdList.isEmpty() && (
           <InventoryDataTable className={cssClasses('InventoryDataTable')}>
             <InventoryDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
@@ -226,7 +227,7 @@ export const InventoryItemsListWithProps = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}
@@ -302,11 +303,12 @@ export const InventoryItemsListWithProps = ({
   )
 }
 
-export const InventoryItemsList = () => {
+export const InventoryItemsList = ({ navigate, location }) => {
+  const queryClient = useQueryClient()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
-  const history = useHistory()
-  const location = useLocation()
+  // const navigate = useNavigate()
+  // const location = useLocation()
   const intl = useIntl()
   const {
     jwt: { permissions: userPermissions },
@@ -326,9 +328,11 @@ export const InventoryItemsList = () => {
   })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-  const searchParams = new URLSearchParams(location.search)
-  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-  const filters = fromPairs([...filtersParams.entries()])
+  const { value: searchParams } = searchSanitizer(location)
+  const { value: filtersParams } = filtersSanitizer(
+    searchParams.get('filters') || ''
+  )
+  const filters = getFilters(filtersParams)
 
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
@@ -356,8 +360,8 @@ export const InventoryItemsList = () => {
       title: messages.inventoryAdjustedSuccessfully,
     })
   }
-  const onGroupBySiteChange = (_, isInputChecked) => {
-    dispatch(toggleGroupBySite(isInputChecked))
+  const onGroupBySiteChange = event => {
+    dispatch(toggleGroupBySite(event.target.checked))
   }
 
   // >>>>>> Defining queries <<<<<<
@@ -365,20 +369,23 @@ export const InventoryItemsList = () => {
     ? INVENTORY_LIST_GROUP_BY_SITE
     : INVENTORY_LIST
   const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
-  const { isError, isLoading, data = false, error } = useQuery(
-    [endpointConfig.KEY, params, filters],
-    async () =>
-      fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
+  const {
+    isError,
+    isLoading,
+    data = false,
+    error,
+  } = useQuery([endpointConfig.KEY, params, filters], async () =>
+    fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
   )
 
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
-    queryCache.invalidateQueries(endpointConfig.KEY)
+    queryClient.invalidateQueries(endpointConfig.KEY)
     onAdjustInventorySucceeded()
   }
   // Remove
-  const [onRemoveInventorySubmit] = useMutation(
+  const { mutate: onRemoveInventorySubmit } = useMutation(
     values => {
       const selectedAdjustmentReason = consumableReasons.items.find(
         reason => reason.get('id') === values.reasonId
@@ -401,17 +408,17 @@ export const InventoryItemsList = () => {
     { onSuccess }
   )
   // Add
-  const [onAddInventorySubmit] = useMutation(
+  const { mutate: onAddInventorySubmit } = useMutation(
     values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess: () => {
-        queryCache.invalidateQueries(endpointConfig.KEY)
+        queryClient.invalidateQueries(endpointConfig.KEY)
         onAdjustInventorySucceeded()
       },
     }
   )
   // Transfer
-  const [onTransferInventorySubmit] = useMutation(
+  const { mutate: onTransferInventorySubmit } = useMutation(
     values =>
       transferInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
@@ -419,7 +426,7 @@ export const InventoryItemsList = () => {
     }
   )
   // Receive
-  const [onReceiveInventorySubmit] = useMutation(
+  const { mutate: onReceiveInventorySubmit } = useMutation(
     values =>
       receiveInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
@@ -436,25 +443,26 @@ export const InventoryItemsList = () => {
   }, [data, groupBySite, dispatch])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
-  }, [location, history, dispatch])
+  }, [location, navigate, dispatch])
 
   if (isError) throw new Error(error)
 
   const props = {
     intl,
-    history,
+    navigate,
     location,
     reducedFilters,
     dispatch,

@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -15,6 +14,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_CASES: 'REQUEST_CASES',
@@ -51,7 +51,7 @@ function rejectCases() {
 
 export function fetchCases(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestCases(sortCol, sortDir, page, pageSize, filters))
     sortCol = sortCol || 'createdOn'
     return aspectFetch(

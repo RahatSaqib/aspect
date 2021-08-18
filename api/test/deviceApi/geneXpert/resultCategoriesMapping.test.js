@@ -1,6 +1,8 @@
 const { assert } = require('chai')
 const {
   mapResultCategory2,
+  parseResultText,
+  getDetectedResistanceCategoryTypes,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
@@ -293,5 +295,132 @@ describe('Result Category Mapping', () => {
         )
       })
     })
+  })
+})
+
+describe('Result Text Parsing', () => {
+  it('Should parse MTB Rif/Ultra result', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected||Rif Resistance @label_result_not_detected'
+      ),
+      {
+        MTB: 'Detected',
+        'RIF RESISTANCE': 'NotDetected',
+      }
+    )
+  })
+
+  it('Should parse Ebola result', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|EBOLA GP @label_result_not_detected|||EBOLA NP @label_result_not_detected||'
+      ),
+      {
+        'EBOLA GP': 'NotDetected',
+        'EBOLA NP': 'NotDetected',
+      }
+    )
+  })
+
+  it('Should parse MTB XDR result', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      ),
+      {
+        MTB: 'Detected',
+        'INH RESISTANCE': 'Detected',
+        'FLQ RESISTANCE': 'NotDetected',
+        'AMK RESISTANCE': 'Error',
+        'KAN RESISTANCE': 'NotDetected',
+        'CAP RESISTANCE': 'NotDetected',
+        'ETH RESISTANCE': 'NotDetected',
+      }
+    )
+  })
+
+  it('Should not parse category types without values', () => {
+    assert.deepEqual(
+      parseResultText('|MTB @label_result_detected||Rif Resistance '),
+      {
+        MTB: 'Detected',
+      }
+    )
+  })
+
+  it('Should not parse unexisting category types', () => {
+    assert.deepEqual(
+      parseResultText('|MTB @label_result_detected||ANY RESISTANCE '),
+      {
+        MTB: 'Detected',
+      }
+    )
+  })
+
+  it('Should not parse unexisting results', () => {
+    assert.deepEqual(
+      parseResultText(
+        '|MTB @label_result_detected||Rif Resistance UNEXISTING RESULT '
+      ),
+      {
+        MTB: 'Detected',
+      }
+    )
+  })
+
+  it('Should parse detected HIV results', () => {
+    assert.deepEqual(
+      parseResultText('HIV-1 DETECTED < 40 copies/mL (log 1.60)'),
+      {
+        'HIV-1': 'LessThan40',
+      }
+    )
+  })
+
+  it('Should parse not detected HIV results', () => {
+    assert.deepEqual(parseResultText('HIV-1 NOT DETECTED'), {
+      'HIV-1': 'NotDetected',
+    })
+  })
+
+  it('Should include all the COVID results', () => {
+    assert.deepEqual(parseResultText('SARS-CoV-2 POSITIVE'), {
+      'SARS-COV-2': 'Positive',
+    })
+  })
+})
+
+describe('Detected Resistancies Calculation', () => {
+  it('Should get all the category types of the resistancies that were detected', () => {
+    assert.deepEqual(
+      getDetectedResistanceCategoryTypes(
+        '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      ),
+      ['INH']
+    )
+  })
+
+  it('Should return an empty array if no resistances were detected', () => {
+    assert.isEmpty(
+      getDetectedResistanceCategoryTypes(
+        '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      )
+    )
+  })
+
+  it('Should not crash if invalid categories are present', () => {
+    assert.deepEqual(
+      getDetectedResistanceCategoryTypes(
+        '|MTB @label_result_detected|Medium A_RESISTANCE_ANYONE_KNOWS Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+      ),
+      ['FLQ']
+    )
+  })
+
+  it('Should not crash if result text does not include resistancies', () => {
+    assert.isEmpty(
+      getDetectedResistanceCategoryTypes('|MTB @label_result_detected')
+    )
   })
 })

@@ -7,7 +7,9 @@ import { EditableFieldsFormContainer } from './EditableFieldsForm'
 import messages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
 
-const cssClasses = classnames.bind(require('../SiteDetail.css'))
+import styles from '../SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const SiteForm = props => {
   const handleSubmit = async data => {

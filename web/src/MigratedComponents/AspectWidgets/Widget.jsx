@@ -1,5 +1,13 @@
 import React from 'react'
-import { func, object, shape, string } from 'prop-types'
+import {
+  bool,
+  func,
+  number,
+  object,
+  oneOfType,
+  shape,
+  string,
+} from 'prop-types'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
@@ -12,7 +20,9 @@ import { buildWidgetToLinkParams, translate } from './Helpers'
 import WidgetAlert from './Alerts'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./Widgets.css'))
+import styles from './Widgets.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EmptyWidget = () => (
   <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
@@ -120,18 +130,18 @@ AspectWidget.propTypes = {
     linkParams: string,
     icon: string,
     description: string,
-    count: string,
-    extra: object,
+    count: oneOfType([string, number]),
+    extra: oneOfType([object]),
     title: string,
-    unit: string,
-    subTitle: object,
+    unit: oneOfType([string, number]),
+    subTitle: oneOfType([object, string]),
     statUnit: string,
-    statStatus: object,
-    extraLabel: object,
+    statStatus: oneOfType([object]),
+    extraLabel: oneOfType([object]),
     statUnitI18nKey: string,
     alert: shape({
-      config: object.isRequired,
-      display: func.isRequired,
+      config: oneOfType([object]).isRequired,
+      display: oneOfType([bool, func]).isRequired,
     }),
   }).isRequired,
 }

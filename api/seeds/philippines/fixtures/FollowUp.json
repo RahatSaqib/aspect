@@ -47,7 +47,7 @@
         "assayTbLamp"
       ],
       "type": "treatment",
-      "name": "Regimen 3: SSTR",
+      "name": "Regimen 3: SSOR",
       "externalId": "sst",
       "i18nKey": "sst"
     },

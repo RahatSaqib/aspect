@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -17,6 +16,7 @@ import {
   Table,
 } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_DEVICE_API_KEYS: 'REQUEST_DEVICE_API_KEYS',
@@ -64,7 +64,7 @@ export function fetchDeviceApiKeys(
   pageSize
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestDeviceApiKeys(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -96,8 +96,7 @@ export function fetchDeviceApiKeys(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.fetchDeviceApiKeys.GET.default.title',
+                id: 'errorResponseMessages.fetchDeviceApiKeys.GET.default.title',
                 defaultMessage: 'Loading DeviceApiKeys Failed',
               },
             })
@@ -120,7 +119,7 @@ export function exportDeviceApiKeys(
   reportName
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
 
     return aspectFetch(
       `/deviceApiKey/export?${stringify({
@@ -144,8 +143,7 @@ export function exportDeviceApiKeys(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.exportDeviceApiKeys.GET.default.title',
+                id: 'errorResponseMessages.exportDeviceApiKeys.GET.default.title',
                 defaultMessage: 'Exporting DeviceApiKeys Failed',
               },
             })
@@ -176,8 +174,7 @@ export function generateDeviceApiKeys(data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.generateDeviceApiKeys.POST.default.title',
+              id: 'errorResponseMessages.generateDeviceApiKeys.POST.default.title',
               defaultMessage: 'Generate DeviceApiKeys Failed',
             },
           })
@@ -203,8 +200,7 @@ export function assignDeviceApiKeys(data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.assignDeviceApiKeys.POST.default.title',
+              id: 'errorResponseMessages.assignDeviceApiKeys.POST.default.title',
               defaultMessage: 'Assign DeviceApiKeys Failed',
             },
           })
@@ -239,8 +235,7 @@ export function updateSingleDeviceApiKey(deviceApiKeyId, data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title',
+              id: 'errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title',
               defaultMessage:
                 'An Error Occurred When Trying to Save the DeviceApiKey',
             },

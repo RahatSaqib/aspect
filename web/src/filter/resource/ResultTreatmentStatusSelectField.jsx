@@ -8,7 +8,6 @@ import {
   lifecycle,
   withHandlers,
 } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { useIntl } from 'react-intl'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -20,31 +19,30 @@ import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
 const enhance = compose(
   pure,
-  setPropTypes({
-    fetchTreatmentStatuses: PropTypes.func.isRequired,
-    value: PropTypes.string,
-  }),
   connect(
     state => ({
       resultTreatmentStatusList: state.resultTreatmentStatus,
     }),
-    dispatch =>
-      bindActionCreators(
-        {
-          fetchTreatmentStatuses,
-        },
-        dispatch
-      )
+    {
+      fetchTreatmentStatuses,
+    }
   ),
+  setPropTypes({
+    fetchTreatmentStatuses: PropTypes.func.isRequired,
+    onTreatmentStatusChange: PropTypes.func.isRequired,
+    value: PropTypes.string,
+  }),
   lifecycle({
     componentDidMount() {
       this.props.fetchTreatmentStatuses()
     },
   }),
   withHandlers({
-    onChange: props => ({ target: { value } }) => {
-      props.onTreatmentStatusChange(value === 'all' ? undefined : value)
-    },
+    onChange:
+      props =>
+      ({ target: { value } }) => {
+        props.onTreatmentStatusChange(value === 'all' ? undefined : value)
+      },
   }),
   mapProps(props => {
     return {
@@ -63,6 +61,9 @@ const enhance = compose(
 export function TreatmentSelectField({
   treatmentSelectList,
   allItemText,
+  fetchTreatmentStatuses,
+  onTreatmentStatusChange,
+  resultTreatmentStatusList,
   ...restProps
 }) {
   const { formatMessage } = useIntl()

@@ -2,7 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 
-const cssClasses = classnames.bind(require('./TableXScrollWrapper.css'))
+import styles from './TableXScrollWrapper.css'
+
+const cssClasses = classnames.bind(styles)
 
 const TableXScrollWrapper = ({ children }) => {
   return (

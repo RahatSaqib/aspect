@@ -7,7 +7,9 @@ import Grid from '@material-ui/core/Grid'
 import FormSection from './FormSection'
 import FormSectionHeader from './FormSectionHeader'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectForm = ({ config: { sections, classNames, messages } }) => {
   classNames = classNames || {}
@@ -25,8 +27,9 @@ const AspectForm = ({ config: { sections, classNames, messages } }) => {
       >
         {sections &&
           sections.map(
-            ({ label, labelI18nKey, rows, hideHeader, classNames = {} }) => (
+            ({ label, labelI18nKey, rows, hideHeader, classNames = {} }, j) => (
               <Grid
+                key={`${label}-${labelI18nKey}-${j.toString()}`}
                 item
                 xs={12}
                 className={cssClasses('form__sectionContainer')}

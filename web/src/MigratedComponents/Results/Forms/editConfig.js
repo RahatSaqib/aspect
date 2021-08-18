@@ -149,9 +149,18 @@ const getConfig = formatMessage => {
                 hideIfNull: true,
               },
               {
-                id: 'resultText',
+                id: 'detectedResistance',
                 controlType: {
                   component: 'textField',
+                },
+                label: 'Detected Resistance',
+                type: 'readOnly',
+                hideIfNull: true,
+              },
+              {
+                id: 'resultText',
+                controlType: {
+                  component: 'textArea',
                 },
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
@@ -390,7 +399,12 @@ const getConfig = formatMessage => {
             id: 2,
             items: [
               {
-                id: 'senderOperator',
+                /**
+                 * TODO: replace `senderOperator2` to another value of formik
+                 * field name to save change - see API endpoint for POST/PUT
+                 * of result form
+                 */
+                id: 'senderOperator2',
                 controlType: {
                   component: 'textField',
                 },

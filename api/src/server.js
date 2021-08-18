@@ -4,6 +4,7 @@
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
+const Sentry = require('@sentry/node')
 
 const config = require('./config')
 const { version } = require('../package.json')
@@ -49,18 +50,24 @@ server.validator(Joi)
 
 const {
   swagger: { enabled: swaggerEnabled },
-  raven,
 } = config
 
-// Load Raven (Sentry) plugin if configured
-const ravenPlugins = raven
-  ? [
-      {
-        plugin: require('hapi-raven'),
-        options: { dsn: raven.dsn },
-      },
-    ]
-  : []
+const sentryPlugins =
+  config.sentry && !config.isDevelopment
+    ? [
+        {
+          plugin: require('hapi-sentry'),
+          options: {
+            client: {
+              dsn: config.sentry.dsn,
+            },
+            scope: {
+              tags: [{ name: 'Country', value: config.countryName }],
+            },
+          },
+        },
+      ]
+    : []
 
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
@@ -98,6 +105,7 @@ const rawPayloadPlugin = {
   register: async server => {
     server.ext('onPostAuth', (request, h) => {
       request.plugins.rawPayload = request.payload
+      if (request.payload) Sentry.setContext('payload', request.payload)
       return h.continue
     })
   },
@@ -131,7 +139,6 @@ const messageQueuePlugin = {
 }
 
 const plugins = [
-  ...ravenPlugins,
   // logging framework
   require('./shared/hapi-logger'),
   require('@hapi/inert'), // eslint-disable-line import/order
@@ -150,6 +157,8 @@ const plugins = [
 
   // Set message queue
   messageQueuePlugin,
+  // Set sentry hapi pugin
+  ...sentryPlugins,
 ]
 
 const start = async () => {
@@ -334,6 +343,7 @@ const start = async () => {
     logger.info(`Magic happens at http://localhost:${port}`)
   } catch (err) {
     logger.error(err)
+    Sentry.captureException(err)
   }
 }
 

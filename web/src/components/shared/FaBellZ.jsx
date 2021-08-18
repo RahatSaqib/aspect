@@ -3,7 +3,9 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { FaBell } from 'react-icons/fa'
 
-const cssClasses = classnames.bind(require('./FaBellZ.css'))
+import styles from './FaBellZ.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 

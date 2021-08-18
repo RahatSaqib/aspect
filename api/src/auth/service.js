@@ -105,10 +105,12 @@ async function authenticate(request) {
         message: err.message,
       }
       if (err.isConnectionError !== undefined) {
-        const boomMessage = err.isConnectionError
-          ? "Couldn't connect to GxAlert"
-          : 'There was a conflict with your credentials'
-        return Boom.conflict(boomMessage, data)
+        if (err.isConnectionError)
+          return Boom.conflict("Couldn't connect to GxAlert", data)
+        return Boom.unauthorized(
+          'There was a conflict with your GxAlert credentials',
+          data
+        )
       }
 
       return Boom.internal(
@@ -152,7 +154,9 @@ async function authenticate(request) {
 
       await updateFailedPass
 
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+      return Boom.unauthorized(
+        'Authentication failed. Wrong username or password.'
+      )
     }
   }
 

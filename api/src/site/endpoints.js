@@ -87,11 +87,10 @@ function reportersBaseConfig() {
           .positive()
           .optional()
           .description('Filter by Partner Id'),
-        assayId: Joi.number()
-          .integer()
-          .positive()
-          .optional()
-          .description('Filter by Assay Id'),
+        assayId: Joi.alternatives()
+          .try(Joi.array().items(Joi.number()), Joi.number())
+          .allow(null, '')
+          .description('Filter for assay ID(s)'),
         diseaseId: Joi.number()
           .integer()
           .positive()

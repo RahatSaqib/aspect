@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionActions from '@material-ui/core/AccordionActions'
 import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
-const cssClasses = classnames.bind(require('./Milestones.css'))
+import styles from './Milestones.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   sampleId: {
@@ -95,7 +97,7 @@ const TimelineGenericPatientMilestone = ({
 }) => {
   const [expanded, setExpanded] = useState(expand)
   return (
-    <ExpansionPanel
+    <Accordion
       onChange={(event, expandparam) => setExpanded(expandparam)}
       style={{
         width: '100%',
@@ -104,9 +106,7 @@ const TimelineGenericPatientMilestone = ({
       }}
       expanded={expanded}
     >
-      <ExpansionPanelSummary
-        expandIcon={expanded ? <span>-</span> : <span>+</span>}
-      >
+      <AccordionSummary expandIcon={expanded ? <span>-</span> : <span>+</span>}>
         <div style={{ width: '100%' }}>
           <div className={cssClasses('Summary__Title')}>{title.key}</div>
           <div
@@ -116,8 +116,8 @@ const TimelineGenericPatientMilestone = ({
             {title.value}
           </div>
         </div>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails style={{ display: 'table' }}>
+      </AccordionSummary>
+      <AccordionDetails style={{ display: 'table' }}>
         <div style={{ width: '100%' }}>
           <ul>
             {details &&
@@ -133,18 +133,18 @@ const TimelineGenericPatientMilestone = ({
               ))}
           </ul>
         </div>
-      </ExpansionPanelDetails>
+      </AccordionDetails>
       {link && (
-        <ExpansionPanelActions style={{ width: '100%', marginRight: 10 }}>
+        <AccordionActions style={{ width: '100%', marginRight: 10 }}>
           <Link
             to={link.to}
             className={cssClasses('Summary__Description__Link')}
           >
             {link.text}
           </Link>
-        </ExpansionPanelActions>
+        </AccordionActions>
       )}
-    </ExpansionPanel>
+    </Accordion>
   )
 }
 
