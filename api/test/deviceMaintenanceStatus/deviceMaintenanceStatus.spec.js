@@ -191,6 +191,20 @@ describe('Maintenance Reports', () => {
     ]
 
     it('should get the correct daily status for negative timezones', async () =>
+      /*
+      For negative timezones:
+      2019-01-01 - Active
+      2019-01-02 - Active
+      2019-01-03 - Unknown
+      2019-01-04 - Down for Repair (originally Active, but overrited)
+
+      For the day 2019-01-03 we don't find any results, so we take it as Unknown. Why? Considering a timezone -3, we can say that:
+      - The inserted result's endedOn date is 2019-01-03T00:00:00.000Z
+      - The device is Active for 2019-01-03 (we only save the date part)
+      - We try to match the date 2019-01-03 with the number of results, so, we apply the filter 'where endedOn >= 2019-01-03T03:00:00.000Z' (we apply the user's timezone offset)
+      - As the result's endedOn date is '2019-01-03T00:00:00.000Z' and we filter by >= 2019-01-03T03:00:00.000Z, we won't find any results
+      - If the device is marked as Active, but no results were found for the user's timezone, then we consider the status = Unknown
+      */
       evaluateCorrectDailyStatus(
         '2019-01-01T00:00:00.000-03:00',
         '2019-01-31T00:00:00.000-03:00',
@@ -222,6 +236,13 @@ describe('Maintenance Reports', () => {
         ]
       ))
 
+    /*
+    For Z and positive timezones:
+    2019-01-01 - Active
+    2019-01-02 - Active
+    2019-01-03 - Active
+    2019-01-04 - Down for Repair (originally Active, but overrited)
+    */
     it('should get the correct daily status for positive timezones', async () =>
       evaluateCorrectDailyStatus(
         '2019-01-01T00:00:00.000+03:00',
