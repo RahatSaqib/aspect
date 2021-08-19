@@ -23,7 +23,7 @@ import { NOTIFICATION_DETAIL } from '../../../QueryFetch/Notification'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import messages from '../messages'
 
-const AspectNotificationDetail = ({ notificationId }) => {
+const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
   const { formatMessage } = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
@@ -44,7 +44,11 @@ const AspectNotificationDetail = ({ notificationId }) => {
           notificationType, // to keep in formik.values as hidden field
         }
 
-        const formSchema = getFormConfig(formatMessage, notificationType)
+        const formSchema = getFormConfig(
+          formatMessage,
+          notificationType,
+          jobFunctions
+        )
         setFormConfig(
           mergeFormConfigWithData(initialValues, formSchema, messages)
         )
@@ -77,6 +81,7 @@ const AspectNotificationDetail = ({ notificationId }) => {
 
 AspectNotificationDetail.propTypes = {
   notificationId: PropTypes.number.isRequired,
+  jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
 export default AspectNotificationDetail
