@@ -15,7 +15,7 @@ import { useQuery } from 'react-query'
 
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
-import { receiveList, Items } from '../../shared/metaReducers/items'
+import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -109,10 +109,10 @@ const AddNewButton = requirePermissions({
 })(AspectButton)
 
 // eslint-disable-next-line no-unused-vars
-const onAddNewButtonClick = navigate => () => navigate('/browse/result/add')
+const onAddNewButtonClick = (navigate) => () => navigate('/browse/result/add')
 
 const onRowClick =
-  navigate =>
+  (navigate) =>
   ({
     currentTarget: {
       dataset: { resultId },
@@ -142,7 +142,7 @@ const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(
     filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
+    (searchParams) => searchParams.get('filters') || ''
   ),
   searchSanitizer
 )
@@ -196,7 +196,7 @@ const getBaseColumns = (extraColumns = []) => {
           label: formatMessage(messages.resultText),
           sortable: true,
         },
-        ...map(extraColumns, column => ({
+        ...map(extraColumns, (column) => ({
           key: column?.db,
           label: messageByI18nKey(column?.i18nKey)(
             column?.title,
@@ -230,7 +230,7 @@ const getBaseColumns = (extraColumns = []) => {
           hiddenOn: 'xs',
         },
       ],
-      elem =>
+      (elem) =>
         (extraColumns.length > 0 && elem.key !== 'resultText') ||
         extraColumns.length === 0
     )
@@ -297,8 +297,8 @@ export const ResultListWithProps = ({
           />
           <TableBody>
             {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(result => (
+              .map((id) => items.byId.get(id))
+              .map((result) => (
                 <ResultDataTableRow
                   key={result.get('id')}
                   intl={intl}
@@ -408,18 +408,18 @@ const ResultList = () => {
   useEffect(() => {
     if (data) {
       const { data: list, total: totalItems, extraColumns } = data
-      setItems(receiveList(items, Immutable.fromJS(list)))
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
       const newTable = receiveTableItems(table, totalItems, extraColumns)
       setTable(newTable)
 
-      setColumns(getBaseColumns(intl, extraColumns))
+      setColumns(getBaseColumns(extraColumns))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   // >>>>>> Callbacks <<<<<<
-  const onExportClick = formatType => {
+  const onExportClick = (formatType) => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       return getExportableFile(

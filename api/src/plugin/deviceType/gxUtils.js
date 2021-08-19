@@ -24,6 +24,9 @@ const { shouldTriggerModuleDisabled } = require('../utils')
 const {
   result1CategoryMapping,
   mapResultCategory2,
+  getResultCategoriesHivVL,
+  getVLCopies,
+  getDetectedResistanceCategoryTypes,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
@@ -64,7 +67,7 @@ async function preProcessAddDeviceData({
   // directly from GxConnect but also includes gxAlertDeviceId
   if (
     !_.isEmpty(configurationData) &&
-    _.every(Object.keys(configurationData), configurationDataKey =>
+    _.every(Object.keys(configurationData), (configurationDataKey) =>
       [
         'macAddress',
         'shortName',
@@ -83,7 +86,7 @@ async function preProcessAddDeviceData({
   }
   await knex.from('Device').where({ id: device.id }).update(deviceDetails)
   if (configurationData.disabledModules) {
-    await Promise.each(configurationData.disabledModules, modules =>
+    await Promise.each(configurationData.disabledModules, (modules) =>
       shouldTriggerModuleDisabled(knex, messageContext, device, modules)
     )
   }
@@ -186,6 +189,13 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     const copies = getVLCopies(_.get(payload, 'data.resultText'))
     if (copies) _.set(payload, 'data.copies', copies)
   }
+
+  if (potentialAssayIds.includes('GxMtbXdr')) {
+    const detectedResistanceCategoryTypes = getDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText')
+    )
+    _.set(payload, 'data.detectedResistance', detectedResistanceCategoryTypes)
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -275,11 +285,12 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
   let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
-    const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
-      parseDateOrDefault(inventoryChange.dateChanged)
+    const sortedInventoryChanges = _.sortBy(
+      inventoryChanges,
+      (inventoryChange) => parseDateOrDefault(inventoryChange.dateChanged)
     )
     inventoryItemIds = await Promise.all(
-      _.map(sortedInventoryChanges, async inventoryChange => {
+      _.map(sortedInventoryChanges, async (inventoryChange) => {
         const matchingConsumables = await findConsumables({
           name: inventoryChange.consumableName,
         })
@@ -332,7 +343,7 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
     )
   }
   return {
-    inventoryItemIds: _.filter(inventoryItemIds, id => id > 0),
+    inventoryItemIds: _.filter(inventoryItemIds, (id) => id > 0),
   }
 }
 
@@ -572,7 +583,7 @@ async function findExistingResult(availableResultDetails, knex) {
   } else if (matchingResults.length > 1 && geneXpertTestId) {
     matchingResults = _.filter(
       matchingResults,
-      result =>
+      (result) =>
         _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
         geneXpertTestId
     )
@@ -598,7 +609,7 @@ async function findExistingResult(availableResultDetails, knex) {
     } else if (matchingResults.length > 1) {
       matchingResults = _.filter(
         matchingResults,
-        result =>
+        (result) =>
           _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
           geneXpertTestId
       )
@@ -624,7 +635,7 @@ async function findExistingResult(availableResultDetails, knex) {
     } else if (matchingResults.length > 1) {
       matchingResults = _.filter(
         matchingResults,
-        result =>
+        (result) =>
           _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
           geneXpertTestId
       )
@@ -635,9 +646,9 @@ async function findExistingResult(availableResultDetails, knex) {
   }
   if (
     _.isEmpty(matchingResult) &&
-    !_.isEmpty(_.filter(potentialSampleIds, elem => elem)) &&
+    !_.isEmpty(_.filter(potentialSampleIds, (elem) => elem)) &&
     siteId &&
-    !_.isEmpty(_.filter(potentialAssayIds, elem => elem)) &&
+    !_.isEmpty(_.filter(potentialAssayIds, (elem) => elem)) &&
     startedOn
   ) {
     matchingResults = await queryStart
@@ -653,7 +664,7 @@ async function findExistingResult(availableResultDetails, knex) {
       if (geneXpertTestId) {
         matchingResults = _.filter(
           matchingResults,
-          result =>
+          (result) =>
             _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
             geneXpertTestId
         )
@@ -662,7 +673,7 @@ async function findExistingResult(availableResultDetails, knex) {
         if (geneXpertTestId) {
           matchingResults = _.filter(
             matchingResults,
-            result => result.externalId === geneXpertTestId
+            (result) => result.externalId === geneXpertTestId
           )
         }
       }
@@ -674,7 +685,7 @@ async function findExistingResult(availableResultDetails, knex) {
         ) {
           matchingResults = _.filter(
             matchingResults,
-            result =>
+            (result) =>
               potentialSampleIds.includes(result.sampleId) &&
               result.siteId === siteId &&
               potentialAssayIds.includes(result.assayId)
@@ -685,7 +696,7 @@ async function findExistingResult(availableResultDetails, knex) {
         if (cartridgeSerial && instrumentSerial) {
           matchingResults = _.filter(
             matchingResults,
-            result =>
+            (result) =>
               result.consumableSerial === cartridgeSerial &&
               result.instrumentSerial === instrumentSerial
           )
@@ -888,28 +899,6 @@ function getResultCategories(payload) {
     }
   }
   return payloadCategory
-}
-
-function getVLCopies(result1Text) {
-  if (result1Text && !result1Text.includes('< 40')) {
-    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-    const arr = regex.exec(result1Text.replace('HIV-1', ''))
-
-    return arr ? parseFloat(arr[0]) : null
-  }
-  return null
-}
-
-function getResultCategoriesHivVL(result1Text) {
-  const copies = getVLCopies(result1Text)
-  // Add HIV VL Categories
-  if (copies) {
-    if (copies < 1000 && copies >= 40) return 'LessThan1000'
-    if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
-    return 'LessThan40'
-  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
-    return 'NoResult'
 }
 
 function macAddressValid(macAddress) {

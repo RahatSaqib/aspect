@@ -1,4 +1,6 @@
 const Promise = require('bluebird')
+
+delete require.cache[require.resolve('../../src/shared/dictionary')]
 const { deviceTypeToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
@@ -16,7 +18,7 @@ async function seed(knex) {
     .select()
 
   // now, give all jobs that have access to NTRL also access to the GeneXpert device type:
-  await Promise.each(jobContextsWithAccessToNtrlOnly, async jc => {
+  await Promise.each(jobContextsWithAccessToNtrlOnly, async (jc) => {
     await knex('JobContext').insert({
       jobId: jc.jobId,
       geographyId: jc.geographyId,

@@ -12,6 +12,7 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
+import formatters from '../formatters'
 
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -23,10 +24,12 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
     {
-      number: n => (isNumber(n) ? formatNumber(n) : false),
+      number: (n) => (isNumber(n) ? formatNumber(n) : false),
+      string: (t) => t && t.split('\n').map((r) => <p>{r}</p>),
       default: identity,
     }
   )
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
@@ -57,17 +60,20 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
               messages[result.get('resultCategory2I18nKey')]
             )}`}
         </TableCell>
-      ) : null}
-      {!extraColumns.isEmpty()
-        ? extraColumns.map(column => (
-            // TODO: refactor, see DeviceOperationTableRow
-            <TableCell key={column.get('db')} hiddenOn="nd">
-              {formatterByType(column.get('type'))(
-                result.get(column.get('db'))
-              )}
-            </TableCell>
-          ))
-        : null}
+      ) : (
+        extraColumns.map((column) => (
+          // TODO: refactor, see DeviceOperationTableRow
+          <TableCell key={column.get('db')} hiddenOn="nd">
+            {formatterByType(column.get('type'))(
+              column.get('formatter')
+                ? formatters[column.get('formatter')](
+                    result.get(column.get('fieldName'))
+                  )
+                : result.get(column.get('fieldName'))
+            )}
+          </TableCell>
+        ))
+      )}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <TableCell hiddenOn="md">
         {formatMessage(

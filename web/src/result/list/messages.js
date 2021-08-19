@@ -1,4 +1,6 @@
 import { defineMessages } from 'react-intl'
+import resultCategoryMessages from '../../shared/messages/resultCategory'
+import resultCategoryTypeMessages from '../../shared/messages/resultCategoryType'
 
 const messages = defineMessages({
   resultsTitle: {
@@ -36,6 +38,10 @@ const messages = defineMessages({
   resultText: {
     id: 'pages.ResultList.resultText',
     defaultMessage: 'Result',
+  },
+  collectionOfResults: {
+    id: 'pages.ResultList.collectionOfResults',
+    defaultMessage: 'Collection of Results',
   },
   resultWorkflowStatus: {
     id: 'pages.ResultList.resultWorkflowStatus',
@@ -292,142 +298,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayTbLamp',
     defaultMessage: 'TB LAMP',
   },
-  ResultCategoryDetected: {
-    id: 'pages.ResultList.ResultCategoryDetected',
-    defaultMessage: 'Detected',
-  },
-  ResultCategoryTraceDetected: {
-    id: 'pages.ResultList.ResultCategoryTraceDetected',
-    defaultMessage: 'Trace Detected',
-  },
-  resultCategoryNotDetected: {
-    id: 'pages.ResultList.resultCategoryNotDetected',
-    defaultMessage: 'Not Detected',
-  },
-  resultCategoryIndeterminate: {
-    id: 'pages.ResultList.resultCategoryIndeterminate',
-    defaultMessage: 'Indeterminate',
-  },
-  resultCategoryInvalid: {
-    id: 'pages.ResultList.resultCategoryInvalid',
-    defaultMessage: 'Invalid',
-  },
-  resultCategoryNoResult: {
-    id: 'pages.ResultList.resultCategoryNoResult',
-    defaultMessage: 'No Result',
-  },
-  resultCategoryError: {
-    id: 'pages.ResultList.resultCategoryError',
-    defaultMessage: 'Error',
-  },
-  resultCategorySuccess: {
-    id: 'pages.ResultList.resultCategorySuccess',
-    defaultMessage: 'Success',
-  },
-  resultCategoryCollectNewSample: {
-    id: 'pages.ResultList.resultCategoryCollectNewSample',
-    defaultMessage: 'Collect New Sample',
-  },
-  resultCategoryDiscordant: {
-    id: 'pages.ResultList.resultCategoryDiscordant',
-    defaultMessage: 'Discordant',
-  },
-  resultCategoryLessThan40: {
-    id: 'pages.ResultList.resultCategoryLessThan40',
-    defaultMessage: '< 40 cp/mL',
-  },
-  resultCategoryMoreThan40: {
-    id: 'pages.ResultList.resultCategoryMoreThan40',
-    defaultMessage: '>= 40 cp/mL',
-  },
-  resultCategoryLessThan150: {
-    id: 'pages.ResultList.resultCategoryLessThan150',
-    defaultMessage: '< 150 cp/mL',
-  },
-  resultCategoryMoreThan150: {
-    id: 'pages.ResultList.resultCategoryMoreThan150',
-    defaultMessage: '>= 150 cp/mL',
-  },
-  resultCategoryLessThan550: {
-    id: 'pages.ResultList.resultCategoryLessThan550',
-    defaultMessage: '< 550 cp/mL',
-  },
-  resultCategoryMoreThan550: {
-    id: 'pages.ResultList.resultCategoryMoreThan550',
-    defaultMessage: '>= 550 cp/mL',
-  },
-  resultCategoryLessThan1000: {
-    id: 'pages.ResultList.resultCategoryLessThan1000',
-    defaultMessage: '< 1000 cp/mL',
-  },
-  resultCategoryMoreThan1000: {
-    id: 'pages.ResultList.resultCategoryMoreThan1000',
-    defaultMessage: '>= 1000 cp/mL',
-  },
-  resultCategoryRejected: {
-    id: 'pages.ResultList.resultCategoryRejected',
-    defaultMessage: 'Rejected',
-  },
-  resultCategoryMissing: {
-    id: 'pages.ResultList.resultCategoryMissing',
-    defaultMessage: 'Missing',
-  },
-  resultCategoryUnknown: {
-    id: 'pages.ResultList.resultCategoryUnknown',
-    defaultMessage: 'Unknown',
-  },
-  resultCategorySusceptible: {
-    id: 'pages.ResultList.resultCategorySusceptible',
-    defaultMessage: 'Susceptible',
-  },
-  resultCategoryResistant: {
-    id: 'pages.ResultList.resultCategoryResistant',
-    defaultMessage: 'Resistant',
-  },
-  resultCategoryNegative: {
-    id: 'pages.ResultList.resultCategoryNegative',
-    defaultMessage: 'Negative',
-  },
-  resultCategoryPositive1: {
-    id: 'pages.ResultList.resultCategoryPositive1',
-    defaultMessage: 'Positive (+)',
-  },
-  resultCategoryPositive2: {
-    id: 'pages.ResultList.resultCategoryPositive2',
-    defaultMessage: 'Positive (++)',
-  },
-  resultCategoryPositive3: {
-    id: 'pages.ResultList.resultCategoryPositive3',
-    defaultMessage: 'Positive (+++)',
-  },
-  resultCategoryScanty: {
-    id: 'pages.ResultList.resultCategoryScanty',
-    defaultMessage: 'Scanty (1-9/100)',
-  },
-  resultCategoryContaminated: {
-    id: 'pages.ResultList.resultCategoryContaminated',
-    defaultMessage: 'Contaminated',
-  },
-  resultCategoryPositiveMOTT: {
-    id: 'pages.ResultList.resultCategoryPositiveMOTT',
-    defaultMessage: 'Positive MOTT',
-  },
-  resultCategoryPositiveMTB: {
-    id: 'pages.ResultList.resultCategoryPositiveMTB',
-    defaultMessage: 'Positive MTB',
-  },
-  resultCategoryInconclusive: {
-    id: 'pages.ResultList.resultCategoryInconclusive',
-    defaultMessage: 'Inconclusive',
-  },
-  resultCategoryPositive: {
-    id: 'pages.ResultList.resultCategoryPositive',
-    defaultMessage: 'Positive',
-  },
-  resultCategoryPresumptivePositive: {
-    id: 'pages.ResultList.resultCategoryPresumptivePositive',
-    defaultMessage: 'Presumptive Positive',
-  },
+  ...resultCategoryMessages,
+  ...resultCategoryTypeMessages,
 })
 
 export default messages

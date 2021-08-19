@@ -1,6 +1,6 @@
 import messages from '../Detail/messages'
 
-const getConfig = formatMessage => {
+const getConfig = (formatMessage) => {
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',
@@ -145,6 +145,15 @@ const getConfig = formatMessage => {
                   component: 'textField',
                 },
                 label: 'resultCategory2Label',
+                type: 'readOnly',
+                hideIfNull: true,
+              },
+              {
+                id: 'detectedResistance',
+                controlType: {
+                  component: 'textField',
+                },
+                label: 'Detected Resistance',
                 type: 'readOnly',
                 hideIfNull: true,
               },

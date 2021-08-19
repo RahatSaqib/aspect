@@ -16,6 +16,7 @@ const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
 const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
+const geneXpertResultDataSchemaMTBXdr = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBXdr.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
 const geneXpertResultDataSchemaHivVl = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivVl.json')
 const geneXpertResultDataSchemaHivQual = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivQual.json')
@@ -38,7 +39,7 @@ const upsertConsumables = require('./common/upsert_consumables')
 
 async function upsertGeography(knex, geography) {
   const countries = {}
-  await Promise.each(geography.countries, async country => {
+  await Promise.each(geography.countries, async (country) => {
     const countryData = _.pick(country, [
       'id',
       'abbreviation',
@@ -240,7 +241,7 @@ async function upsertDemoUsersPerJobFunction(
       partnerId,
     })
 
-  const insertUsers = jobFunctions.map(async jf => {
+  const insertUsers = jobFunctions.map(async (jf) => {
     const { id: jobFunctionId, name: jobFunctionName } = jf
     const userName = jobFunctionName.toLowerCase().replace(' ', '-')
     const [userId] = await knex('User').insert({
@@ -375,7 +376,7 @@ async function copyPermissionsFromJobFunction(
       .where('jfp.jobFunctionId', jobFunctionIdFrom)
       .whereNotIn('p.module', modulesToExclude)
       .select('permissionId'),
-    permission => ({
+    (permission) => ({
       jobFunctionId: jobFunctionIdTo,
       permissionId: permission.permissionId,
     })
@@ -398,7 +399,7 @@ async function copyDashboardWidgetsFromJobFunction(
       .join('DashboardWidget as w', 'jfd.widgetId', 'w.id')
       .where('jfd.jobFunctionId', jobFunctionIdFrom)
       .select('widgetId'),
-    widget => ({
+    (widget) => ({
       jobFunctionId: jobFunctionIdTo,
       widgetId: widget.widgetId,
     })
@@ -424,9 +425,9 @@ async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
 
   const JobFunctionReport = _.map(
     reportsIds.filter(
-      reportId => !existingJobFunctionReports.includes(reportId)
+      (reportId) => !existingJobFunctionReports.includes(reportId)
     ),
-    reportId => ({
+    (reportId) => ({
       jobFunctionId,
       reportId,
     })
@@ -456,9 +457,9 @@ async function upsertJobFunctionPermission(
 
   const JobFunctionPermission = _.map(
     jobPermissions.filter(
-      permissionId => !existingJobFunctionPermissions.includes(permissionId)
+      (permissionId) => !existingJobFunctionPermissions.includes(permissionId)
     ),
-    permissionId => ({
+    (permissionId) => ({
       jobFunctionId,
       permissionId,
     })
@@ -712,7 +713,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       resultSourceDiagnosticId,
       'GX MTB/XDR',
       geneXpertPatientDataSchema,
-      overrideResultDataSchema || geneXpertResultDataSchemaMTBRif,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBXdr,
       [
         'Detected',
         'NotDetected',
@@ -913,7 +914,7 @@ async function upsertAssay(knex, assay) {
 
 async function upsertStatesAndLgas(knex, countryId, states) {
   await Promise.all(
-    _.map(states || [], async state => {
+    _.map(states || [], async (state) => {
       const stateData = _.pick(state, ['id', 'abbreviation', 'name'])
       let { stateId, stateGeographyId } =
         (await knex('State as s')
@@ -937,7 +938,7 @@ async function upsertStatesAndLgas(knex, countryId, states) {
       stateData.lgas = {}
       stateData.geographyId = stateGeographyId
       await Promise.all(
-        _.map(state.lgas || [], async lga => {
+        _.map(state.lgas || [], async (lga) => {
           const lgaData = _.pick(lga, ['id', 'name'])
 
           let { lgaId, lgaGeographyId } =
@@ -971,7 +972,7 @@ async function upsertStatesAndLgas(knex, countryId, states) {
 // safe to execute multiple times - will only add new entries
 async function upsertAssayResultCategories(knex, assayId, categories) {
   await Promise.all(
-    _.map(categories || [], async category => {
+    _.map(categories || [], async (category) => {
       const resultCategoryId = await resultCategoryToId(category)
 
       await query('Insert or update result categories for the assay').raw(
@@ -1140,7 +1141,7 @@ async function baseGxAlertMigration(
     customFieldsFromGxAlert,
   } = variablesWithDefaults
   const gxAlertAdmin =
-    contactsFromGxAlert.find(contact => contact.username === admin.name) || {}
+    contactsFromGxAlert.find((contact) => contact.username === admin.name) || {}
   if (gxAlertAdmin.getPasswordFromGxAlert) {
     admin.legacyPassword = 1
   }
@@ -1275,14 +1276,14 @@ async function baseGxAlertMigration(
   const patientDataCustomFields = _.sortBy(
     _.uniqBy(
       customFieldsFromGxAlert
-        .filter(cf => patientDbColumns.includes(cf.dbColumn))
-        .map(cf => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
+        .filter((cf) => patientDbColumns.includes(cf.dbColumn))
+        .map((cf) => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
       'dbColumn'
     ),
     'order'
   )
   const patientDataSchema = patientDataCustomFields.length > 0 ? {} : undefined
-  patientDataCustomFields.forEach(cf => {
+  patientDataCustomFields.forEach((cf) => {
     patientDataSchema[_.camelCase(cf.dbColumn)] = {
       title: cf.title,
       type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
@@ -1307,7 +1308,7 @@ async function baseGxAlertMigration(
   }
   await Promise.each(
     geneXpertAssayExternalIds,
-    async geneXpertAssayExternalId => {
+    async (geneXpertAssayExternalId) => {
       if (
         !gxAlertAssayDataMappings[geneXpertAssayExternalId] &&
         geneXpertAssayExternalId !== 'GxUnknown'
@@ -1318,14 +1319,14 @@ async function baseGxAlertMigration(
         _.uniqBy(
           customFieldsFromGxAlert
             .filter(
-              cf =>
+              (cf) =>
                 (geneXpertAssayExternalId === 'GxUnknown' ||
                   cf.testType ===
                     gxAlertAssayDataMappings[geneXpertAssayExternalId] ||
                   cf.testType === null) &&
                 !patientDbColumns.includes(cf.dbColumn)
             )
-            .map(cf => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
+            .map((cf) => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
           'dbColumn'
         ),
         'order'
@@ -1344,14 +1345,14 @@ async function baseGxAlertMigration(
           resultDataSchema.gxAlertCustomFields = {
             list: false,
             order:
-              (_.max(Object.values(resultDataSchema).map(val => val.order)) ||
+              (_.max(Object.values(resultDataSchema).map((val) => val.order)) ||
                 -1) + 1,
             type: 'object',
             title: 'GxAlert Custom Fields',
             properties: {},
           }
         }
-        resultDataCustomFieldsForAssay.forEach(cf => {
+        resultDataCustomFieldsForAssay.forEach((cf) => {
           const resultDataSchemaProperty = _.camelCase(cf.dbColumn || cf.title)
           const existingCustomFieldProperty =
             resultDataSchema.gxAlertCustomFields.properties[
@@ -1384,7 +1385,7 @@ async function baseGxAlertMigration(
     updatedOn: now,
     updatedBy: adminId,
   }
-  await Promise.each(sitesFromGxAlert, async site => {
+  await Promise.each(sitesFromGxAlert, async (site) => {
     const state = site.stateName
       ? statesByName[site.stateName.toLowerCase()] || {
           id: null,
@@ -1436,7 +1437,7 @@ async function baseGxAlertMigration(
 
     if (site.devices) {
       await Promise.all(
-        _.map(site.devices, async device => {
+        _.map(site.devices, async (device) => {
           const existingDevice = await knex('Device')
             .where({ partnerId, serial: device.serial })
             .first(
@@ -1524,7 +1525,7 @@ async function baseGxAlertMigration(
     .where('g.countryId', countryId)
     .select('s.id', 's.shortName')
     .distinct('s.id', 's.shortName')
-    .then(items =>
+    .then((items) =>
       items.reduce((siteMap, site) => {
         siteMap[site.shortName] = site.id
         return siteMap
@@ -1537,7 +1538,7 @@ async function baseGxAlertMigration(
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
     .select()
-    .then(items =>
+    .then((items) =>
       items.reduce((jobFunctionMap, jobFunction) => {
         jobFunctionMap[jobFunction.name] = jobFunction.id
         return jobFunctionMap
@@ -1547,7 +1548,7 @@ async function baseGxAlertMigration(
   // -------------------------------------
   // Contacts & User Accounts from GxAlert (filtering users without jobFunctions)
   // -------------------------------------
-  await Promise.each(contactsFromGxAlert, async person => {
+  await Promise.each(contactsFromGxAlert, async (person) => {
     let userId = null
     if (person.username) {
       const existingUser = await knex('User')
@@ -1615,7 +1616,7 @@ async function baseGxAlertMigration(
       .first()
     const personTimeZone =
       _.get(
-        _.find(timezone.data, tz => tz.id === person.timezone),
+        _.find(timezone.data, (tz) => tz.id === person.timezone),
         'id'
       ) || countries[0].timezone
     const canLogIn = !_.isEmpty(person.username)
@@ -1676,7 +1677,7 @@ async function baseGxAlertMigration(
       })
     }
     if (!_.isEmpty(person.jobFunctions)) {
-      await Promise.each(person.jobFunctions, async jobFunctionName => {
+      await Promise.each(person.jobFunctions, async (jobFunctionName) => {
         const existingJob = await knex('Job')
           .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
           .first()
@@ -1696,7 +1697,7 @@ async function baseGxAlertMigration(
               siteId: siteIds[person.sites[0].shortName],
             })
           } else if (!_.isEmpty(person.geographies)) {
-            await Promise.each(person.geographies, async geography => {
+            await Promise.each(person.geographies, async (geography) => {
               const jobState = geography.stateName
                 ? statesByName[geography.stateName.toLowerCase()] || {
                     id: null,
@@ -1761,18 +1762,18 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
 
-  const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
+  const externalIds = jobFunctionFixture.map((jf) => _.camelCase(jf.name))
   const jobFunctionsToDelete = await knex('JobFunction')
     .where({ partnerId })
     .whereNotIn('externalId', externalIds)
   await removeJobFunctions(knex, jobFunctionsToDelete, partnerId)
 
-  await Promise.each(jobFunctionFixture, async jf => {
+  await Promise.each(jobFunctionFixture, async (jf) => {
     const jobFunction = _.omit(jf, ['permissions', 'reports'])
 
     const permissionIds = await Promise.map(
       jf.permissions || [],
-      async permission => {
+      async (permission) => {
         const { id: permissionId } =
           (await getPermissonByModuleAndActivity(
             knex,
@@ -1835,7 +1836,7 @@ async function seedLabClinicFixture(
   const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
   await Promise.all(
-    _.map(labClinics.clinics || [], async clinic => {
+    _.map(labClinics.clinics || [], async (clinic) => {
       const state = clinic.stateName
         ? statesByName[clinic.stateName.toLowerCase()] || {
             id: null,
@@ -1889,7 +1890,7 @@ async function seedLabClinicFixture(
   )
 
   await Promise.all(
-    _.map(labClinics.labs || [], async lab => {
+    _.map(labClinics.labs || [], async (lab) => {
       const state = lab.stateName
         ? statesByName[lab.stateName.toLowerCase()] || {
             id: null,
@@ -1946,7 +1947,7 @@ async function seedLabClinicFixture(
 
       if (lab.devices) {
         await Promise.all(
-          _.map(lab.devices, async device => {
+          _.map(lab.devices, async (device) => {
             const deviceApiKeyToken = device.deviceApiKey
             const deviceData =
               (await knex('DeviceApiKey as dak')
@@ -2000,7 +2001,7 @@ async function ensureResultTreatmentStatuses(
   knex,
   treatmentStatuses = resultTreatmentStatuses
 ) {
-  await Promise.each(treatmentStatuses, async resultTreatmentStatus => {
+  await Promise.each(treatmentStatuses, async (resultTreatmentStatus) => {
     const existingResultTreatmentStatus = await knex('ResultTreatmentStatus')
       .where('externalId', resultTreatmentStatus.externalId)
       .first()
@@ -2023,11 +2024,11 @@ async function upsertDashboardWidgets(
   if (whitelist)
     widgets = _.filter(
       dashboardWidgetJson.stat,
-      widget => _.indexOf(whitelist, widget.externalId) > -1
+      (widget) => _.indexOf(whitelist, widget.externalId) > -1
     )
 
   await Promise.all(
-    _.map(widgets, async widget => {
+    _.map(widgets, async (widget) => {
       // insert or update the widget itself
       const widgetData = _.pick(widget, [
         'title',
@@ -2106,7 +2107,7 @@ async function upsertDashboardWidgets(
         })
         .select('id', 'name')
 
-      await Promise.each(jobFunctionsDb, async jf => {
+      await Promise.each(jobFunctionsDb, async (jf) => {
         const { jobFunctionId } =
           (await knex('JobFunctionDashboardWidget')
             .where('jobFunctionId', jf.id)
@@ -2131,7 +2132,7 @@ async function upsertPermissionFixture(knex) {
   await Promise.each(currentPermissions, async ({ module, activity, id }) => {
     const shouldRemovePermission =
       permissionsFixture.find(
-        p => p.module === module && p.activity === activity
+        (p) => p.module === module && p.activity === activity
       ) === null
     if (shouldRemovePermission) {
       await knex('JobFunctionPermission').where({ permissionId: id }).delete()
@@ -2144,7 +2145,7 @@ async function upsertPermissionFixture(knex) {
     permissionsFixture,
     async ({ module, activity, description }) => {
       const currentPermission = currentPermissions.find(
-        up => up.module === module && up.activity === activity
+        (up) => up.module === module && up.activity === activity
       )
       if (currentPermission) {
         await knex('Permission')
