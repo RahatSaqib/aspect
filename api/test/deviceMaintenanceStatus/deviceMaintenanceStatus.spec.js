@@ -6,8 +6,7 @@ const subMonths = require('date-fns/subMonths')
 const Promise = require('bluebird')
 const find = require('lodash/find')
 const range = require('lodash/range')
-const reduce = require('lodash/reduce')
-
+const { waitForIdle } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
 const {
   createGxConnectTestContext,
@@ -17,11 +16,13 @@ const {
 } = require('../../src/deviceMaintenanceStatus/serviceReports')
 const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
+const {
+  allDeviceMaintenanceStatusToId,
+} = require('../../src/shared/dictionary')
 
 describe('Maintenance Reports', () => {
   let context
   let deviceId
-  let deviceMaintenanceStatuses
   let activeDeviceMaintenanceStatusExternalIds
   let statuses
   let personId
@@ -31,13 +32,13 @@ describe('Maintenance Reports', () => {
       deviceId,
       deviceMaintenanceStatusId: statuses.active,
       data: JSON.stringify({}),
-      createdOn: new Date(),
       createdBy: personId,
     }
 
-    const activeDates = ['2019-01-01', '2019-01-02', '2019-01-03']
+    const activeDates = ['2018-12-31', '2019-01-01', '2019-01-02', '2019-01-03']
 
     await Promise.each(activeDates, async date => {
+      const createdOn = new Date()
       // Creating results generates active dates
       await context.createResultForThisDevice({
         resultDetails: {
@@ -47,26 +48,23 @@ describe('Maintenance Reports', () => {
           instrumentSerial: 'SER1-02349',
           startedOn: date,
           endedOn: date,
+          createdOn,
         },
       })
       await knex('DeviceMaintenanceStatusLog').insert({
         ...logEntryBase,
         deviceMaintenanceStatusId: statuses.active,
         day: date,
+        createdOn,
       })
     })
 
-    const [deviceMaintenanceStatusLogId] = await knex(
-      'DeviceMaintenanceStatusLog'
-    ).insert({
+    await knex('DeviceMaintenanceStatusLog').insert({
       ...logEntryBase,
       deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
       day: '2019-01-04',
+      createdOn: new Date(),
     })
-
-    await knex('Device')
-      .where({ id: deviceId })
-      .update({ deviceMaintenanceStatusLogId })
   }
 
   async function getMaintenanceStatusOverTimeResponse(minDate, maxDate) {
@@ -96,7 +94,6 @@ describe('Maintenance Reports', () => {
     assert.equal(tamagotchi.latitude, 1)
     assert.equal(tamagotchi.longitude, 5)
     assert.isAtLeast(tamagotchi.totalResults, 1)
-    // const tamagotchiLastStatus = last(tamagotchi.maintenanceStatusHistory)
 
     assertions.forEach(({ day, ...fields }) => {
       expect(
@@ -120,18 +117,12 @@ describe('Maintenance Reports', () => {
   const monthAgo = subDays(lastFriday, 30)
 
   before(async () => {
-    deviceMaintenanceStatuses = await knex('DeviceMaintenanceStatus').select()
-    activeDeviceMaintenanceStatusExternalIds = deviceMaintenanceStatuses
-      .filter(dms => dms.active)
-      .map(dms => dms.externalId)
-    statuses = reduce(
-      deviceMaintenanceStatuses,
-      (memo, deviceMaintenanceStatus) => {
-        memo[deviceMaintenanceStatus.externalId] = deviceMaintenanceStatus.id
-        return memo
-      },
-      {}
+    statuses = await allDeviceMaintenanceStatusToId()
+    activeDeviceMaintenanceStatusExternalIds = await knex(
+      'DeviceMaintenanceStatus'
     )
+      .where('active', true)
+      .pluck('externalId')
     ;({ id: personId } = await knex('Person').where({ name: 'Admin' }).first())
   })
 
@@ -147,6 +138,8 @@ describe('Maintenance Reports', () => {
     })
 
     await context.beforeRegisterAndSetDevice()
+
+    await waitForIdle()
 
     const { id, siteId } = context.device
     deviceId = id
