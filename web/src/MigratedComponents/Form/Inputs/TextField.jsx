@@ -2,9 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 
-import isNil from 'lodash/isNil'
-import omitBy from 'lodash/omitBy'
-
 import FormHTMLLabel from '../FormHTMLLabel'
 import { getFieldErrorProps } from '../Formik/Helpers'
 import { useFormikState } from '../Formik/Context'
@@ -24,27 +21,22 @@ const AspectTextField = ({
 }) => {
   const { updateField } = useFormikState()
 
-  const mergedProps = multiline
-    ? {
-        ...rest,
-        ...omitBy({ maxRows: rowsMax, minRows: rows }, v => isNil(v)),
-        label,
-        multiline,
-      }
-    : {
-        ...rest,
-        label: link ? <FormHTMLLabel label={label} link={link} /> : label,
-      }
-
   const onChangeLocal = event => {
     updateField(rest.id, event.target.value, formik)
   }
 
   return (
     <TextField
-      {...mergedProps}
+      {...rest}
+      label={
+        !multiline && link ? <FormHTMLLabel label={label} link={link} /> : label
+      }
+      multiline={multiline}
       onChange={onChangeLocal}
       {...getFieldErrorProps(formik, rest.id)}
+      // props which takes effect when `multiline` is `true`
+      maxRows={rowsMax}
+      minRows={rows}
     />
   )
 }
