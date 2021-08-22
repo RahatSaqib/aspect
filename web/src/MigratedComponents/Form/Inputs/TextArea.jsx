@@ -1,14 +1,13 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
-
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
+import { useFormikContext } from 'formik'
 
 import { getFieldErrorProps } from '../Formik/Helpers'
-import { useFormikState } from '../Formik/Context'
 
 const AspectTextArea = props => {
-  const { updateField } = useFormikState()
+  const { updateField } = useFormikContext()
   const {
     formik,
     controlType: { rowsMax, rows } = {},

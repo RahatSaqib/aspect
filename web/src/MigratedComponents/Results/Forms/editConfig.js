@@ -22,7 +22,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'site',
         rows: [
           {
-            id: 0,
+            id: 10,
             items: [
               {
                 id: 'siteName',
@@ -65,7 +65,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'device',
         rows: [
           {
-            id: 0,
+            id: 20,
             items: [
               {
                 id: 'deviceName',
@@ -108,7 +108,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'assay',
         rows: [
           {
-            id: 0,
+            id: 30,
             items: [
               {
                 id: 'assayName',
@@ -129,7 +129,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'result',
         rows: [
           {
-            id: 0,
+            id: 40,
             items: [
               {
                 id: 'resultCategory1Name',
@@ -160,7 +160,7 @@ const getConfig = formatMessage => {
             ],
           },
           {
-            id: 1,
+            id: 41,
             items: [
               {
                 id: 'errorCode',
@@ -190,7 +190,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'date',
         rows: [
           {
-            id: 0,
+            id: 50,
             items: [
               {
                 id: 'startedOn',
@@ -221,7 +221,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'sample',
         rows: [
           {
-            id: 0,
+            id: 60,
             items: [
               {
                 id: 'sampleId',
@@ -254,7 +254,7 @@ const getConfig = formatMessage => {
             ],
           },
           {
-            id: 1,
+            id: 61,
             items: [
               {
                 id: 'sampleOriginSiteName',
@@ -293,7 +293,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'patient',
         rows: [
           {
-            id: 0,
+            id: 70,
             items: [
               {
                 id: 'patientId',
@@ -323,7 +323,7 @@ const getConfig = formatMessage => {
         labelI18nKey: 'technicalDetails',
         rows: [
           {
-            id: 0,
+            id: 80,
             items: [
               {
                 id: 'instrumentSerial',
@@ -355,7 +355,7 @@ const getConfig = formatMessage => {
             ],
           },
           {
-            id: 1,
+            id: 81,
             items: [
               {
                 id: 'consumableExpirationDate',
@@ -387,7 +387,7 @@ const getConfig = formatMessage => {
             ],
           },
           {
-            id: 2,
+            id: 82,
             items: [
               {
                 /**

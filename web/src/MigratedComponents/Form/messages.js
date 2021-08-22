@@ -125,6 +125,14 @@ const messages = defineMessages({
     id: 'forms.formItem.senderOperator',
     defaultMessage: 'Sender Operator',
   },
+  addRow: {
+    id: 'forms.formItem.addRow',
+    defaultMessage: 'Add Row',
+  },
+  removeRow: {
+    id: 'forms.formItem.removeRow',
+    defaultMessage: 'Remove Row',
+  },
 })
 
 export default messages

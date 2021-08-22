@@ -2,10 +2,11 @@ import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
+import { useFormikContext } from 'formik'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import formConfig from './formConfig'
-import { FormikContext, FormikProvider } from '../../../Form/Formik/Context'
+import { FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
 import { getDateString } from '../../../../shared/utils/dateFormat'
 import { setClassNames, setInitialValue } from '../Helpers'
@@ -49,6 +50,21 @@ const MODE = {
   EDITING: 'EDITING',
   SAVING: 'SAVING',
 }
+
+const ButtonSave = ({ formatMessage, onClick, deviceId, mode }) => {
+  const { formik } = useFormikContext()
+  return (
+    <Button
+      color="primary"
+      disabled={mode === MODE.SAVING || !formik.isValid}
+      onClick={() => onClick(deviceId, formik.values)}
+      variant="contained"
+    >
+      {formatMessage(messages.submit)}
+    </Button>
+  )
+}
+
 export const DailyStatusDialog = ({
   data = {},
   isOpen,
@@ -93,18 +109,12 @@ export const DailyStatusDialog = ({
           >
             {formatMessage(messages.cancel)}
           </Button>,
-          <FormikContext.Consumer>
-            {({ formik }) => (
-              <Button
-                color="primary"
-                disabled={mode === MODE.SAVING || !formik.isValid}
-                onClick={() => onSaveChanges(data.deviceId, formik.values)}
-                variant="contained"
-              >
-                {formatMessage(messages.submit)}
-              </Button>
-            )}
-          </FormikContext.Consumer>,
+          <ButtonSave
+            deviceId={data.deviceId}
+            formatMessage={formatMessage}
+            onClick={onSaveChanges}
+            mode={MODE.SAVING}
+          />,
         ]}
         classes={{
           paper: cssClasses('reset-overflow'),

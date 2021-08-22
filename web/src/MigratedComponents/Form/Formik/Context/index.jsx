@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-
-import { useFormik } from 'formik'
-import omitBy from 'lodash/omitBy'
-import pick from 'lodash/pick'
+import cloneDeep from 'lodash/cloneDeep'
+import isArray from 'lodash/isArray'
+import isPlainObject from 'lodash/isPlainObject'
 import keys from 'lodash/keys'
+import omit from 'lodash/omit'
+
+import { FormikProvider as FormikProviderBase, useFormik } from 'formik'
 
 import DisplayFormikState from '../Helpers/debug'
 import useFormConfig from '../../Hooks/useFormConfig'
 
-const FormikContext = React.createContext()
-
-const FormikProvider = ({ config, children }) => {
+export const FormikProvider = ({ config, children }) => {
   const debug = false
   const { actions } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
@@ -21,15 +21,26 @@ const FormikProvider = ({ config, children }) => {
     enableReinitialize: true,
     initialValues,
     validateOnMount: false,
-    onSubmit: values =>
+    onSubmit: values => {
+      /**
+       * prepare payload, i.e.
+       * - remove props which are read only
+       * - remove prop `__guid__` from array of objects
+       */
+      const payload = cloneDeep(values)
+      keys(payload).forEach(key => {
+        if (fieldTypes[key] === 'readOnly') {
+          delete payload[key]
+        } else if (isArray(payload[key])) {
+          payload[key] = payload[key].map(it =>
+            isPlainObject(it) ? omit(it, ['__guid__']) : it
+          )
+        }
+      })
+
       // eslint-disable-next-line no-console
-      console.log(
-        JSON.stringify(
-          pick(values, keys(omitBy(fieldTypes, i => i === 'readOnly'))),
-          null,
-          2
-        )
-      ),
+      console.log(JSON.stringify(payload, null, 2))
+    },
   })
 
   useEffect(() => {
@@ -47,8 +58,9 @@ const FormikProvider = ({ config, children }) => {
   }, [])
 
   return (
-    <FormikContext.Provider
+    <FormikProviderBase
       value={{
+        ...formik, // provide formikProps in the root (i.e. FieldArray needs setFormikState)
         formik,
         setToggleEdit,
         toggleEdit,
@@ -57,16 +69,8 @@ const FormikProvider = ({ config, children }) => {
     >
       {children}
       {debug && <DisplayFormikState {...formik} />}
-    </FormikContext.Provider>
+    </FormikProviderBase>
   )
 }
 
-function useFormikState() {
-  const context = React.useContext(FormikContext)
-  if (context === undefined) {
-    throw new Error('useFormikState must be used within a FormikProvider')
-  }
-  return context
-}
-
-export { FormikContext, FormikProvider, useFormikState }
+export default FormikProvider
