@@ -45,11 +45,6 @@ const IconProvider = memo(({ icon, className, title }) => {
     })
   )
 
-  let titleText = title
-  if (isBoolean(title)) {
-    titleText = !title ? '' : icon
-  }
-
   return (
     <Suspense
       fallback={
@@ -62,7 +57,9 @@ const IconProvider = memo(({ icon, className, title }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent title={titleText} />
+          <IconComponent
+            title={isBoolean(title) ? (!title ? '' : icon) : title}
+          />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
