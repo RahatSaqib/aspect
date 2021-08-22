@@ -245,21 +245,21 @@ async function seed(knex) {
 
   const possibleResults = [
     {
-      resultText: 'MTB Detected, Rif Resistance Not Detected',
+      resultText: 'MTB Detected|Rif Resistance Not Detected',
       category1: resultCategoryDetectedId,
       category2: resultCategoryNotDetectedId,
       minLikelihood: 0,
       maxLikelihood: 20,
     },
     {
-      resultText: 'MTB Detected, Rif Resistance Detected',
+      resultText: 'MTB Detected|Rif Resistance Detected',
       category1: resultCategoryDetectedId,
       category2: resultCategoryDetectedId,
       minLikelihood: 21,
       maxLikelihood: 26,
     },
     {
-      resultText: 'MTB Detected, Rif Indeterminate',
+      resultText: 'MTB Detected|Rif Indeterminate',
       category1: resultCategoryDetectedId,
       category2: resultCategoryIndeterminateId,
       minLikelihood: 27,

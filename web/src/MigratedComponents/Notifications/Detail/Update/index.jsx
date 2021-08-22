@@ -18,7 +18,7 @@ import { NOTIFICATION_DETAIL } from '../../../QueryFetch/Notification'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { getFormConfigWithData } from '../utils'
 
-const AspectNotificationDetail = ({ notificationId }) => {
+const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
@@ -36,7 +36,12 @@ const AspectNotificationDetail = ({ notificationId }) => {
         const { data } = resp
         const { notificationTypeName, notificationType } = data
         setFormConfig(
-          getFormConfigWithData(intl, notificationType, notificationTypeName)
+          getFormConfigWithData(
+            intl,
+            jobFunctions,
+            notificationType,
+            notificationTypeName
+          )
         )
       },
     }
@@ -67,6 +72,7 @@ const AspectNotificationDetail = ({ notificationId }) => {
 
 AspectNotificationDetail.propTypes = {
   notificationId: PropTypes.number.isRequired,
+  jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
 export default AspectNotificationDetail

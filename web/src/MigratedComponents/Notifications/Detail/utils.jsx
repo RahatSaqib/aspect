@@ -9,10 +9,15 @@ import messages from './messages'
 
 export const getFormConfigWithData = (
   intl,
+  jobFunctions,
   notificationType,
   notificationTypeName
 ) => {
-  const formSchema = getFormConfig(intl.formatMessage, notificationType)
+  const formSchema = getFormConfig(
+    intl.formatMessage,
+    notificationType,
+    jobFunctions
+  )
   const { name } = getNotificationMeta(notificationType, intl)
   const initialValues = {
     ...getInitialValuesFromFormConfig(formSchema),

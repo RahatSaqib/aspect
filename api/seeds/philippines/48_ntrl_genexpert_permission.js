@@ -1,4 +1,6 @@
 const Promise = require('bluebird')
+
+delete require.cache[require.resolve('../../src/shared/dictionary')]
 const { deviceTypeToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {

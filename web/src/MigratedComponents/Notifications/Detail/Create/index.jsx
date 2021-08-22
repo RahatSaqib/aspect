@@ -14,9 +14,11 @@ import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
 import { getFormConfigWithData } from '../utils'
 
-const AspectNotificationDetail = ({ notificationType }) => {
+const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
   const intl = useI18n()
-  const [formConfig] = useState(getFormConfigWithData(intl, notificationType))
+  const [formConfig] = useState(
+    getFormConfigWithData(intl, jobFunctions, notificationType)
+  )
 
   return (
     <Shell>
@@ -39,6 +41,7 @@ const AspectNotificationDetail = ({ notificationType }) => {
 
 AspectNotificationDetail.propTypes = {
   notificationType: PropTypes.string.isRequired,
+  jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
 export default AspectNotificationDetail

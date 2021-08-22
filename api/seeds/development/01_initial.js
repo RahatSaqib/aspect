@@ -49,6 +49,9 @@ const {
 const { upsertSingle } = require('../utils')
 const upsertReports = require('../common/upsert_reports')
 const upsertConsumables = require('../common/upsert_consumables')
+const {
+  getDetectedResistanceCategoryTypes,
+} = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3688,21 +3691,21 @@ async function seed(knex) {
       // TB results:
       let possibleResults = [
         {
-          resultText: 'MTB Detected, Rif Resistance Not Detected',
+          resultText: 'MTB Detected|Rif Resistance Not Detected',
           category1: resultCategoryDetectedId,
           category2: resultCategoryNotDetectedId,
           minLikelihood: 0,
           maxLikelihood: 20,
         },
         {
-          resultText: 'MTB Detected, Rif Resistance Detected',
+          resultText: 'MTB Detected|Rif Resistance Detected',
           category1: resultCategoryDetectedId,
           category2: resultCategoryDetectedId,
           minLikelihood: 21,
           maxLikelihood: 26,
         },
         {
-          resultText: 'MTB Detected, Rif Indeterminate',
+          resultText: 'MTB Detected|Rif Indeterminate',
           category1: resultCategoryDetectedId,
           category2: resultCategoryIndeterminateId,
           minLikelihood: 27,
@@ -3985,28 +3988,28 @@ async function seed(knex) {
       // TB ULTRA results:
       possibleResults = [
         {
-          resultText: 'MTB Detected, Rif Resistance Not Detected',
+          resultText: 'MTB Detected|Rif Resistance Not Detected',
           category1: resultCategoryDetectedId,
           category2: resultCategoryNotDetectedId,
           minLikelihood: 0,
           maxLikelihood: 20,
         },
         {
-          resultText: 'MTB Detected, Rif Resistance Detected',
+          resultText: 'MTB Detected|Rif Resistance Detected',
           category1: resultCategoryDetectedId,
           category2: resultCategoryDetectedId,
           minLikelihood: 21,
           maxLikelihood: 25,
         },
         {
-          resultText: 'MTB Trace Detected, Rif Indeterminate',
+          resultText: 'MTB Trace Detected|Rif Indeterminate',
           category1: resultCategoryTraceDetectedId,
           category2: resultCategoryIndeterminateId,
           minLikelihood: 26,
           maxLikelihood: 30,
         },
         {
-          resultText: 'MTB Detected, Rif Indeterminate',
+          resultText: 'MTB Detected|Rif Indeterminate',
           category1: resultCategoryDetectedId,
           category2: resultCategoryIndeterminateId,
           minLikelihood: 31,
@@ -4337,7 +4340,13 @@ async function seed(knex) {
           possibleResults,
           r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
+
         resultData.resultText = result.resultText
+
+        resultData.detectedResistance = getDetectedResistanceCategoryTypes(
+          result.resultText
+        )
+
         const [resultId] = await knex('Result').insert({
           ...auditFields,
           externalId: `UQTBXDR-${i}`,

@@ -149,6 +149,15 @@ const getConfig = formatMessage => {
                 hideIfNull: true,
               },
               {
+                id: 'detectedResistance',
+                controlType: {
+                  component: 'textField',
+                },
+                label: 'Detected Resistance',
+                type: 'readOnly',
+                hideIfNull: true,
+              },
+              {
                 id: 'resultText',
                 controlType: {
                   component: 'textArea',

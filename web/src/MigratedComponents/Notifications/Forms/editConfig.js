@@ -5,14 +5,15 @@ import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
-import union from 'lodash/union'
 
+import map from 'lodash/map'
+import union from 'lodash/union'
+import filter from 'lodash/filter'
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
-import PERSON_LIST from '../../QueryFetch/Person'
 import { SITE_ALL } from '../../QueryFetch/Site'
 import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
-
+import PERSON_LIST from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -380,35 +381,35 @@ const getSectionsBase = formatMessage => [
       },
     ],
   },
-  {
-    id: 'toAnyOfTheseContacts',
-    label: 'toAnyOfTheseContacts',
-    labelI18nKey: 'toAnyOfTheseContacts',
+]
+
+const getConfig = (formatMessage, notificationType, jobFunctions) => {
+  const jobFunctionsRows = {
+    id: 'toAnyOfTheseJobFunctions',
+    label: 'toAnyOfTheseJobFunctions',
+    labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
-      {
-        id: 70,
+      ...map(jobFunctions, jf => ({
+        id: `$jf${jf.id}`,
         items: [
           {
-            id: 'toNationalContacts',
+            id: `jf${jf.id}`,
             controlType: {
               component: 'checkbox',
             },
             classNames: {
               controlContainer: cssClasses('checkbox-container'),
               itemContainer: cssClasses('max-width-100pcr'),
-              // container: cssClasses('item-in-group-container'),
             },
-            initialValue: true,
-            label: 'National Contacts',
-            labelI18nKey: 'toNationalContacts',
+            label: jf.name,
           },
         ],
-      },
+      })),
       {
         id: 80,
         items: [
           {
-            id: 'nationalTags',
+            id: 'jfTags',
             controlType: {
               component: 'select',
               endpoint: PERSON_LIST.ENDPOINT,
@@ -438,71 +439,20 @@ const getSectionsBase = formatMessage => [
               controlContainer: cssClasses('full-width-100pc'),
               item: cssClasses('full-width-100pc'),
             },
-            label: 'Assay',
-            labelI18nKey: 'nationalTags',
-            visibleIf: values => values.toNationalContacts === true,
-          },
-        ],
-      },
-
-      // --------------------------------------------------------------
-      //
-      // --------------------------------------------------------------
-      {
-        id: 90,
-        items: [
-          {
-            id: 'toStateContacts',
-            controlType: {
-              component: 'checkbox',
+            label: 'Tags',
+            labelI18nKey: 'jobFunctionTags',
+            visibleIf: values => {
+              const anySelection = filter(Object.keys(values), property => {
+                if (property.indexOf('jf') >= 0 && values[property]) return true
+              })
+              return anySelection.length > 0
             },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-            },
-            label: 'State Contacts',
-            labelI18nKey: 'toStateContacts',
-          },
-        ],
-      },
-
-      {
-        id: 100,
-        items: [
-          {
-            id: 'toLgaContacts',
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-            },
-            label: 'LGA Contacts',
-            labelI18nKey: 'toLgaContacts',
-          },
-        ],
-      },
-
-      {
-        id: 110,
-        items: [
-          {
-            id: 'toLaboratoryContacts',
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-            },
-            label: 'Laboratory Contacts',
-            labelI18nKey: 'toLaboratoryContacts',
           },
         ],
       },
     ],
-  },
-]
-
-const getConfig = formatMessage => {
+  }
+  const sections = [...getSectionsBase(formatMessage), jobFunctionsRows]
   return {
     title: formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',
@@ -511,16 +461,13 @@ const getConfig = formatMessage => {
       helpers: '',
       items: [
         {
-          // id: 'transfer',
-          // text: formatMessage(messages.transferResult),
-          // action: 'transferResult',
           id: 'save',
           text: formatMessage(messages.save),
           action: 'save',
         },
       ],
     },
-    sections: [...getSectionsBase(formatMessage)],
+    sections,
   }
 }
 

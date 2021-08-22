@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
-import isNil from 'lodash/isNil'
 import { useFormikContext } from 'formik'
+import isEmpty from 'lodash/isEmpty'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import { getFormattedString, getLabel } from './Formik/Helpers'
@@ -34,7 +34,7 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && isNil(value))
+  let isVisible = !(hideIfNull && isEmpty(value))
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values, subRowIndex)
   }

@@ -16,6 +16,7 @@ const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
 const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
+const geneXpertResultDataSchemaMTBXdr = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBXdr.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
 const geneXpertResultDataSchemaHivVl = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivVl.json')
 const geneXpertResultDataSchemaHivQual = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivQual.json')
@@ -712,7 +713,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       resultSourceDiagnosticId,
       'GX MTB/XDR',
       geneXpertPatientDataSchema,
-      overrideResultDataSchema || geneXpertResultDataSchemaMTBRif,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBXdr,
       [
         'Detected',
         'NotDetected',
