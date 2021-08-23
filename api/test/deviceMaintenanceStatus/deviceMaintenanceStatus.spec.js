@@ -35,7 +35,13 @@ describe('Maintenance Reports', () => {
       createdBy: personId,
     }
 
-    const activeDates = ['2018-12-31', '2019-01-01', '2019-01-02', '2019-01-03']
+    const activeDates = [
+      '2018-12-31',
+      '2019-01-01',
+      '2019-01-02',
+      '2019-01-03',
+      '2019-02-01',
+    ]
 
     await Promise.each(activeDates, async date => {
       const createdOn = new Date()
@@ -272,9 +278,7 @@ describe('Maintenance Reports', () => {
       assert.isNotNull(tamagotchi)
       assert.equal(tamagotchi.latitude, 1)
       assert.equal(tamagotchi.longitude, 5)
-      expect(tamagotchi.maintenanceStatusExternalId).equals(
-        'inactiveDownForRepair'
-      )
+      expect(tamagotchi.maintenanceStatusExternalId).equals('active')
     })
   })
 
