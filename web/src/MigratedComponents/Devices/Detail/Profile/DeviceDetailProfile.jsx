@@ -16,6 +16,7 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../../shared/selectors/searchParams'
+import { formatRelative } from '../../../../shared/utils/dateFormat'
 import { useAuthState } from '../../../../Providers/AuthProvider'
 import { sanitizeFiltersStringBy } from '../../../../filter/utils'
 import Results from '../../../../result/historyResults/HistoryResults'
@@ -517,7 +518,7 @@ const DeviceDetailProfile = ({
   onExportClick,
   onExportDeviceLogsClick,
 }) => {
-  const { formatMessage, formatNumber, formatDate, dateFNSLocale } = useI18n()
+  const { formatMessage, formatNumber, formatDate } = useI18n()
   const {
     culture,
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
@@ -704,7 +705,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.connectivity)}
               description={formatMessage(messages.lastSeen, {
-                lastSeen: dateFNSLocale.formatRelative(device.get('lastSeen')),
+                lastSeen: formatRelative(device.get('lastSeen')),
               })}
             />
             <Summary

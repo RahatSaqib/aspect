@@ -114,7 +114,7 @@ export const TaskDetail = ({
               </span>
             </Unit>
             <Unit lg="1-5" />
-            <Unit lg="1-5">{formatRelative(intl, task.get('time'))}</Unit>
+            <Unit lg="1-5">{formatRelative(task.get('time'))}</Unit>
             <Unit lg="1-5" />
             <br />
             <Unit lg="1-5">
