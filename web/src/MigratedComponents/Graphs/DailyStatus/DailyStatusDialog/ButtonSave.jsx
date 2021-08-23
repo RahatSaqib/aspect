@@ -1,11 +1,14 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import { useFormikContext } from 'formik'
 
+import useI18n from '../../../../Hooks/i18n/useI18n'
 import { MODE } from './utils'
 import messages from './messages'
 
-export const ButtonSave = ({ formatMessage, onClick, deviceId, mode }) => {
+export const ButtonSave = ({ onClick, deviceId, mode }) => {
+  const { formatMessage } = useI18n()
   const { formik } = useFormikContext()
   return (
     <Button
@@ -17,6 +20,16 @@ export const ButtonSave = ({ formatMessage, onClick, deviceId, mode }) => {
       {formatMessage(messages.submit)}
     </Button>
   )
+}
+
+ButtonSave.defaultProps = {
+  deviceId: 0,
+}
+
+ButtonSave.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  deviceId: PropTypes.number,
+  mode: PropTypes.string.isRequired,
 }
 
 export default ButtonSave

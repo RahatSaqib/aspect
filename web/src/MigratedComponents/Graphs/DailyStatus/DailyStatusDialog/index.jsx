@@ -61,7 +61,6 @@ export const DailyStatusDialog = ({
           </Button>,
           <ButtonSave
             deviceId={data.deviceId}
-            formatMessage={formatMessage}
             onClick={onSaveChanges}
             mode={MODE.SAVING}
           />,
