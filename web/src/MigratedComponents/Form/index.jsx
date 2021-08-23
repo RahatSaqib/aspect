@@ -28,17 +28,23 @@ const AspectForm = ({ config: { sections, classNames, messages } }) => {
       >
         {sections &&
           sections.map(
-            ({ label, labelI18nKey, rows, hideHeader, classNames = {} }, j) => {
-              const key = `${label}-${labelI18nKey}-${j.toString()}`
+            ({
+              id,
+              label,
+              labelI18nKey,
+              rows,
+              hideHeader,
+              classNames = {},
+            }) => {
               return (
                 <Grid
-                  key={key}
+                  key={id}
                   item
                   xs={12}
                   className={cssClasses('form__sectionContainer')}
                 >
                   <Grid container>
-                    {hideHeader === true ? null : (
+                    {hideHeader ? null : (
                       <FormSectionHeader
                         classNames={classNames}
                         header={label}
@@ -51,7 +57,7 @@ const AspectForm = ({ config: { sections, classNames, messages } }) => {
                       fullWidth={hideHeader === true}
                       messages={messages}
                       rows={rows}
-                      parentKey={key}
+                      parentKey={id}
                     />
                   </Grid>
                 </Grid>

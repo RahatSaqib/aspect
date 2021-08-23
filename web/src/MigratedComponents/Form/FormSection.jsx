@@ -93,7 +93,7 @@ FormSection.propTypes = {
   rows: PropTypes.oneOfType([PropTypes.array]).isRequired,
   messages: PropTypes.oneOfType([PropTypes.object]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
-  parentKey: PropTypes.string,
+  parentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default FormSection

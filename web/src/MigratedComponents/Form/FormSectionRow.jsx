@@ -21,7 +21,6 @@ const FormSectionRow = ({
   messages,
   parentKey,
   rowId,
-  rowIndex,
   showDeleteButton,
   subRowIndex,
 }) => {
@@ -45,7 +44,7 @@ const FormSectionRow = ({
             const { id, ...restItemProps } = item
             return (
               <FormItem
-                key={`row-${rowIndex}-${parentKey}-item-${itemIndex.toString()}`}
+                key={`${parentKey}-${itemIndex.toString()}`}
                 id={`${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`}
                 {...restItemProps}
                 messages={messages}
@@ -101,7 +100,7 @@ FormSectionRow.propTypes = {
   showDeleteButton: PropTypes.bool,
   isMulti: PropTypes.bool,
   subRowIndex: PropTypes.number,
-  parentKey: PropTypes.string,
+  parentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default FormSectionRow
