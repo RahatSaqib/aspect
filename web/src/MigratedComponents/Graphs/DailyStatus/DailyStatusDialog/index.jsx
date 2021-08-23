@@ -2,68 +2,18 @@ import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
-import { useFormikContext } from 'formik'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import formConfig from './formConfig'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
 import { getDateString } from '../../../../shared/utils/dateFormat'
-import { setClassNames, setInitialValue } from '../Helpers'
+import ButtonSave from './ButtonSave'
 import messages from './messages'
-
+import { MODE, getFormConfig } from './utils'
 import styles from './DailyStatusDialog.css'
 
 const cssClasses = classnames.bind(styles)
-
-const getFormConfig = (formConfig, statuses, data) => {
-  setClassNames(formConfig, cssClasses)
-  formConfig.sections.forEach(section => {
-    setClassNames(section, cssClasses)
-    section.rows.forEach(({ items }) => {
-      setInitialValue(items, 'startedOn', data.startedOn, cssClasses)
-      setInitialValue(items, 'endedOn', data.endedOn, cssClasses)
-      setInitialValue(
-        items,
-        'reason',
-        data.maintenanceStatusExternalId,
-        cssClasses,
-        item => {
-          // init dropdown options
-          item.controlType.options = statuses
-            // show only statuses with manuallySet flag
-            .filter(({ manuallySet }) => manuallySet === 1)
-            .map(({ externalId, name }) => ({
-              label: name,
-              value: externalId,
-            }))
-        }
-      )
-      setInitialValue(items, 'note', data.note, cssClasses)
-    })
-  })
-
-  return formConfig
-}
-
-const MODE = {
-  EDITING: 'EDITING',
-  SAVING: 'SAVING',
-}
-
-const ButtonSave = ({ formatMessage, onClick, deviceId, mode }) => {
-  const { formik } = useFormikContext()
-  return (
-    <Button
-      color="primary"
-      disabled={mode === MODE.SAVING || !formik.isValid}
-      onClick={() => onClick(deviceId, formik.values)}
-      variant="contained"
-    >
-      {formatMessage(messages.submit)}
-    </Button>
-  )
-}
 
 export const DailyStatusDialog = ({
   data = {},
