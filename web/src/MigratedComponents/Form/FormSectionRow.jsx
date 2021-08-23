@@ -39,19 +39,18 @@ const FormSectionRow = ({
           [classNames.container]: !!classNames.container,
         })}
       >
-        {items &&
-          items.map((item, itemIndex) => {
-            const { id, ...restItemProps } = item
-            return (
-              <FormItem
-                key={`${parentKey}-${itemIndex.toString()}`}
-                id={`${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`}
-                {...restItemProps}
-                messages={messages}
-                subRowIndex={subRowIndex}
-              />
-            )
-          })}
+        {items?.map((item, itemIndex) => {
+          const { id, ...restItemProps } = item
+          return (
+            <FormItem
+              key={`${parentKey}-${itemIndex.toString()}`}
+              id={`${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`}
+              {...restItemProps}
+              messages={messages}
+              subRowIndex={subRowIndex}
+            />
+          )
+        })}
       </Grid>
       {isMulti ? (
         <div className={cssClasses('form__row-buttons')}>
