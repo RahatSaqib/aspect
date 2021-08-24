@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
+import map from 'lodash/map'
 import without from 'lodash/without'
 import partial from 'lodash/partial'
+import filter from 'lodash/filter'
 import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
@@ -13,7 +15,7 @@ import { useQuery } from 'react-query'
 
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
-import { receiveList, Items } from '../../shared/metaReducers/items'
+import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -45,6 +47,7 @@ import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { RESULT_LIST } from '../../MigratedComponents/QueryFetch/Result'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
 import styles from './ResultList.css'
 
@@ -125,7 +128,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'sampleId',
     'errorCode',
     'patientId',
-    'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
     /* --- table.extraColumns BEGIN --- */
@@ -151,71 +153,88 @@ const messageByI18nKey = partial(
   // Explicit declare messageBy[i18nKey] so that the keys are searchable.
   (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
   {
-    resultCategoryCopiesMl: (title, intl) =>
-      intl.formatMessage(messages.resultCategoryCopiesMl),
+    resultCategoryCopiesMl: (title, formatMessage) =>
+      formatMessage(messages.resultCategoryCopiesMl),
     default: identity,
   }
 )
 
-const getBaseColumns = intl => {
-  return Immutable.List([
-    {
-      key: 'endedOn',
-      label: intl.formatMessage(messages.endedOn),
-      sortable: true,
-    },
-    {
-      key: 'deviceName',
-      label: intl.formatMessage(messages.deviceName),
-      sortable: true,
-      hiddenOn: 'xs',
-    },
-    {
-      key: 'sampleOriginSiteName',
-      label: intl.formatMessage(messages.sampleOriginSiteName),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'sampleId',
-      label: intl.formatMessage(messages.sampleId),
-      sortable: true,
-    },
-    {
-      key: 'assayName',
-      label: intl.formatMessage(messages.assayName),
-      sortable: true,
-    },
-    {
-      key: 'resultText',
-      label: intl.formatMessage(messages.resultText),
-      sortable: true,
-    },
-    {
-      key: 'errorCode',
-      label: intl.formatMessage(messages.errorCode),
-      sortable: true,
-      hiddenOn: 'lg',
-    },
-    {
-      key: 'resultWorkflowStatus',
-      label: intl.formatMessage(messages.resultWorkflowStatus),
-      sortable: true,
-      hiddenOn: 'md',
-    },
-    {
-      key: 'treatmentStatusInfo',
-      label: intl.formatMessage(messages.resultTreatmentStatus),
-      sortable: true,
-      hiddenOn: 'md',
-    },
-    {
-      key: 'patientId',
-      label: intl.formatMessage(messages.patientId),
-      sortable: true,
-      hiddenOn: 'xs',
-    },
-  ])
+const getBaseColumns = (extraColumns = []) => {
+  const { formatMessage } = i18nWrapper()
+  return Immutable.List(
+    filter(
+      [
+        {
+          key: 'endedOn',
+          label: formatMessage(messages.endedOn),
+          sortable: true,
+        },
+        {
+          key: 'deviceName',
+          label: formatMessage(messages.deviceName),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+        {
+          key: 'sampleOriginSiteName',
+          label: formatMessage(messages.sampleOriginSiteName),
+          sortable: true,
+          hiddenOn: 'sm',
+        },
+        {
+          key: 'sampleId',
+          label: formatMessage(messages.sampleId),
+          sortable: true,
+        },
+        {
+          key: 'assayName',
+          label: formatMessage(messages.assayName),
+          sortable: true,
+        },
+        {
+          key: 'resultText',
+          label: formatMessage(messages.resultText),
+          sortable: true,
+        },
+        ...map(extraColumns, column => ({
+          key: column?.db,
+          label: messageByI18nKey(column?.i18nKey)(
+            column?.title,
+            formatMessage
+          ),
+          sortable: true,
+          hiddenOn: 'md',
+        })),
+        {
+          key: 'errorCode',
+          label: formatMessage(messages.errorCode),
+          sortable: true,
+          hiddenOn: 'lg',
+        },
+        {
+          key: 'resultWorkflowStatus',
+          label: formatMessage(messages.resultWorkflowStatus),
+          sortable: true,
+          hiddenOn: 'md',
+        },
+        {
+          key: 'treatmentStatusInfo',
+          label: formatMessage(messages.resultTreatmentStatus),
+          sortable: true,
+          hiddenOn: 'md',
+        },
+        {
+          key: 'patientId',
+          label: formatMessage(messages.patientId),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+      ],
+      elem =>
+        (extraColumns.length > 0 && elem.key !== 'resultText') ||
+        extraColumns.length === 0
+    )
+  )
 }
 export const ResultListWithProps = ({
   intl,
@@ -388,23 +407,13 @@ const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      const { data: list, total: totalItems } = data
-      setItems(receiveList(items, Immutable.fromJS(list)))
+      const { data: list, total: totalItems, extraColumns } = data
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems))
-      setColumns(
-        getBaseColumns(intl).concat(
-          table.extraColumns.map(column => ({
-            key: column.get('db'),
-            label: messageByI18nKey(column.get('i18nKey'))(
-              column.get('title'),
-              intl
-            ),
-            sortable: true,
-            hiddenOn: 'md',
-          }))
-        )
-      )
+      const newTable = receiveTableItems(table, totalItems, extraColumns)
+      setTable(newTable)
+
+      setColumns(getBaseColumns(extraColumns))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
@@ -424,7 +433,6 @@ const ResultList = () => {
       )
     }
   }
-
   const baseProps = {
     intl,
     // history,
@@ -442,7 +450,6 @@ const ResultList = () => {
     pageAt: page,
     pageSize: size,
   }
-
   if (isError) throw new Error(error)
 
   return <ResultListWithProps {...baseProps} />

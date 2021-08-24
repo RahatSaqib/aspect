@@ -24,6 +24,9 @@ const { shouldTriggerModuleDisabled } = require('../utils')
 const {
   result1CategoryMapping,
   mapResultCategory2,
+  getResultCategoriesHivVL,
+  getVLCopies,
+  getDetectedResistanceCategoryTypes,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const {
   splitResultTextValues,
@@ -185,6 +188,13 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (potentialAssayIds.includes('GxHiv1Vl')) {
     const copies = getVLCopies(_.get(payload, 'data.resultText'))
     if (copies) _.set(payload, 'data.copies', copies)
+  }
+
+  if (potentialAssayIds.includes('GxMtbXdr')) {
+    const detectedResistanceCategoryTypes = getDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText')
+    )
+    _.set(payload, 'data.detectedResistance', detectedResistanceCategoryTypes)
   }
   const existingResult = await findExistingResult(
     {
@@ -888,28 +898,6 @@ function getResultCategories(payload) {
     }
   }
   return payloadCategory
-}
-
-function getVLCopies(result1Text) {
-  if (result1Text && !result1Text.includes('< 40')) {
-    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-    const arr = regex.exec(result1Text.replace('HIV-1', ''))
-
-    return arr ? parseFloat(arr[0]) : null
-  }
-  return null
-}
-
-function getResultCategoriesHivVL(result1Text) {
-  const copies = getVLCopies(result1Text)
-  // Add HIV VL Categories
-  if (copies) {
-    if (copies < 1000 && copies >= 40) return 'LessThan1000'
-    if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
-    return 'LessThan40'
-  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
-    return 'NoResult'
 }
 
 function macAddressValid(macAddress) {
