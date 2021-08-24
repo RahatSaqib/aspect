@@ -39,8 +39,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
       this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
     })
 
-  await knex('DeviceMaintenanceStatusLog').where('deviceId', deviceIds).delete()
-
   const inventoryItemIds = await knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
     .distinct('ii.id')
