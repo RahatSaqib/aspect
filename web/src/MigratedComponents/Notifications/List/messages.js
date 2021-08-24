@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  notificationsTableName: {
+    id: 'pages.Notifications.table.notificationsTableName',
+    defaultMessage: 'notification',
+  },
   notificationsTableHeaderName: {
     id: 'pages.Notifications.table.nameHeader',
     defaultMessage: 'Name',

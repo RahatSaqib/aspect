@@ -139,7 +139,7 @@ export const getCreateNotificationMenuProps = intl => ({
 })
 
 export const baseConfig = ({ formatMessage, formatNumber }) => ({
-  name: 'notification',
+  name: formatMessage(messages.notificationsTableName),
   columns: [
     {
       key: 'lastTriggeredOn',
