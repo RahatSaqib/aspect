@@ -140,7 +140,7 @@ const clubsandwich = (boundaries, rounded = false) => {
   const low = first(boundaries)
   const high = last(boundaries)
   const middle = high / 2
-  return [low, rounded ? roundIfNumber(middle) : middle, high]
+  return uniq([low, rounded ? roundIfNumber(middle) : middle, high])
 }
 
 const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
