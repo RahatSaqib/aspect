@@ -35,42 +35,49 @@ describe('Maintenance Reports', () => {
       createdBy: personId,
     }
 
-    const activeDates = [
-      '2018-12-31',
-      '2019-01-01',
-      '2019-01-02',
-      '2019-01-03',
-      '2019-02-01',
+    const statusByDay = [
+      ['2018-12-31', statuses.active],
+      ['2019-01-01', statuses.active],
+      ['2019-01-02', statuses.active],
+      ['2019-01-03', statuses.active],
+      ['2019-01-04', statuses.inactiveDownForRepair],
+      ['2019-02-01', statuses.active],
     ]
 
-    await Promise.each(activeDates, async date => {
-      const createdOn = new Date()
-      // Creating results generates active dates
-      await context.createResultForThisDevice({
-        resultDetails: {
-          consumableLot: 'Lot 0',
-          moduleName: 'Module A',
-          moduleSerial: 'MOD-SER12345',
-          instrumentSerial: 'SER1-02349',
-          startedOn: date,
-          endedOn: date,
-          createdOn,
-        },
-      })
-      await knex('DeviceMaintenanceStatusLog').insert({
-        ...logEntryBase,
-        deviceMaintenanceStatusId: statuses.active,
-        day: date,
-        createdOn,
-      })
-    })
+    await Promise.each(
+      statusByDay,
+      async ([day, deviceMaintenanceStatusId]) => {
+        const createdOn = new Date()
 
-    await knex('DeviceMaintenanceStatusLog').insert({
-      ...logEntryBase,
-      deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
-      day: '2019-01-04',
-      createdOn: new Date(),
-    })
+        if (deviceMaintenanceStatusId === statuses.active) {
+          // Creating results generates active dates
+          await context.createResultForThisDevice({
+            resultDetails: {
+              consumableLot: 'Lot 0',
+              moduleName: 'Module A',
+              moduleSerial: 'MOD-SER12345',
+              instrumentSerial: 'SER1-02349',
+              startedOn: day,
+              endedOn: day,
+              createdOn,
+            },
+          })
+        }
+        await knex('DeviceMaintenanceStatusLog').insert({
+          ...logEntryBase,
+          deviceMaintenanceStatusId,
+          day,
+          createdOn,
+        })
+      }
+    )
+
+    // await knex('DeviceMaintenanceStatusLog').insert({
+    //   ...logEntryBase,
+    //   deviceMaintenanceStatusId: statuses.inactiveDownForRepair,
+    //   day: '2019-01-04',
+    //   createdOn: new Date(),
+    // })
   }
 
   async function getMaintenanceStatusOverTimeResponse(minDate, maxDate) {
