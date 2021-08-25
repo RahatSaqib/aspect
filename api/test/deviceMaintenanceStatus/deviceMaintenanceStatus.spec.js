@@ -110,9 +110,7 @@ describe('Maintenance Reports', () => {
 
     assertions.forEach(({ day, ...fields }) => {
       expect(
-        device.maintenanceStatusHistory.find(status =>
-          status.day.includes(day)
-        )
+        device.maintenanceStatusHistory.find(status => status.day.includes(day))
       ).to.containSubset({
         ...fields,
       })

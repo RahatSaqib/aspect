@@ -170,7 +170,9 @@ describe('Inventory Routes', () => {
           assert.isAtLeast(res.body.data.length, 2)
           res.body.data.forEach(site => {
             assertSite(site)
-            site.inventoryItems.forEach(inventoryItem => assertInventoryItem(inventoryItem))
+            site.inventoryItems.forEach(inventoryItem =>
+              assertInventoryItem(inventoryItem)
+            )
           })
           assert.property(res.body, 'total')
         })
