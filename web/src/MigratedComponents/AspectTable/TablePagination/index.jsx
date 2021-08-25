@@ -20,6 +20,7 @@ const AspectPagination = ({
   gotoPage,
   handleChangeRowsPerPage,
   name,
+  namePlural,
   nextPage,
   pageCount,
   pageIndex,
@@ -36,6 +37,7 @@ const AspectPagination = ({
         gotoPage={gotoPage}
         nextPage={nextPage}
         name={name}
+        namePlural={namePlural}
         pageCount={pageCount}
         pageIndex={pageIndex}
         previousPage={previousPage}
@@ -83,6 +85,10 @@ AspectPagination.propTypes = {
     Name of the type of records
   */
   name: string.isRequired,
+  /**
+    Plural of the name
+  */
+  namePlural: string.isRequired,
   /**
     Function to move to immediate next page
   */

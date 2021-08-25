@@ -1,12 +1,12 @@
 import React from 'react'
 import { number, string } from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
 import messages from '../messages'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -14,19 +14,20 @@ const cssClasses = classnames.bind(styles)
  * Component to render page counts and navigation
  */
 
-const NowShowing = ({ dataLength, pageIndex, pageSize, name }) => {
-  const intl = useIntl()
+const NowShowing = ({ dataLength, pageIndex, pageSize, name, namePlural }) => {
+  const { formatMessage } = useI18n()
   const boundaries = getFirstAndLastVisibleRowNumbers(
     dataLength,
     pageIndex,
     pageSize
   )
   const countName = boundaries
-    ? intl.formatMessage(messages.nowShowing, {
+    ? formatMessage(messages.nowShowing, {
         firstItemIndex: boundaries[0],
         lastItemIndex: boundaries[1],
         itemCount: dataLength,
         name,
+        namePlural,
       })
     : null
   return (
@@ -56,6 +57,10 @@ NowShowing.propTypes = {
     Name of type of records
   */
   name: string.isRequired,
+  /**
+    Plural of the name
+  */
+  namePlural: string.isRequired,
 }
 
 export default NowShowing

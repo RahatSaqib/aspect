@@ -5,6 +5,10 @@ export const messages = defineMessages({
     id: 'pages.Notifications.table.notificationsTableName',
     defaultMessage: 'notification',
   },
+  notificationsTableNamePlural: {
+    id: 'pages.Notifications.table.notificationsTableNamePlural',
+    defaultMessage: 'notifications',
+  },
   notificationsTableHeaderName: {
     id: 'pages.Notifications.table.nameHeader',
     defaultMessage: 'Name',

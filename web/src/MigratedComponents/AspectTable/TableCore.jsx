@@ -40,7 +40,7 @@ const AspectTableCore = ({
   const { handleClearParams, setSize, setSortCol, setSortDir, setPage } =
     setters
   const { total = 0, data = [] } = tableData || {}
-  const { name } = config
+  const { name, namePlural } = config
   const {
     columns,
     initialSortBy,
@@ -213,6 +213,7 @@ const AspectTableCore = ({
         groupBy={groupBy}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         name={name}
+        namePlural={namePlural}
         nextPage={nextPage}
         pageCount={pageCount}
         pageIndex={pageIndex}

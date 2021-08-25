@@ -46,7 +46,7 @@ export default {
 }
 
 const Template = ({ config }) => {
-  const { name } = config
+  const { name, namePlural } = config
   const { columns } = useMemo(() => buildColumnsFromData(config), [config])
   const table = useTable({ columns, data }, useSortBy, usePagination)
   const {
@@ -85,6 +85,7 @@ const Template = ({ config }) => {
         previousPage={previousPage}
         page={mockedPage}
         name={name}
+        namePlural={namePlural}
       />
     </IntlProvider>
   )
