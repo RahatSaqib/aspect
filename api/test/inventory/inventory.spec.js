@@ -79,6 +79,30 @@ describe('Inventory Routes', () => {
     describe('/inventory/group-by-site', () => {
       const path = '/api/inventory/group-by-site'
 
+      const assertSite = site => {
+        assert.property(site, 'siteId')
+        assert.property(site, 'siteName')
+        assert.property(site, 'countryId')
+        assert.property(site, 'stateId')
+        assert.property(site, 'lgaId')
+        assert.property(site, 'countryName')
+        assert.property(site, 'stateName')
+        assert.property(site, 'lgaName')
+        assert.property(site, 'inventoryItems')
+      }
+
+      const assertInventoryItem = inventoryItem => {
+        assert.property(inventoryItem, 'id')
+        assert.property(inventoryItem, 'consumableId')
+        assert.property(inventoryItem, 'expiresOn')
+        assert.property(inventoryItem, 'canExpire')
+        assert.property(inventoryItem, 'lotNumber')
+        assert.property(inventoryItem, 'quantityOnHand')
+        assert.property(inventoryItem, 'consumableName')
+        assert.property(inventoryItem, 'manufacturer')
+        assert.property(inventoryItem, 'unitShortName')
+      }
+
       describe('GET', () => {
         shared.checkToken(server, path)
         const deviceIds = []
@@ -145,26 +169,8 @@ describe('Inventory Routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 2)
           res.body.data.forEach(site => {
-            assert.property(site, 'siteId')
-            assert.property(site, 'siteName')
-            assert.property(site, 'countryId')
-            assert.property(site, 'stateId')
-            assert.property(site, 'lgaId')
-            assert.property(site, 'countryName')
-            assert.property(site, 'stateName')
-            assert.property(site, 'lgaName')
-            assert.property(site, 'inventoryItems')
-            site.inventoryItems.forEach(inventoryItem => {
-              assert.property(inventoryItem, 'id')
-              assert.property(inventoryItem, 'consumableId')
-              assert.property(inventoryItem, 'expiresOn')
-              assert.property(inventoryItem, 'canExpire')
-              assert.property(inventoryItem, 'lotNumber')
-              assert.property(inventoryItem, 'quantityOnHand')
-              assert.property(inventoryItem, 'consumableName')
-              assert.property(inventoryItem, 'manufacturer')
-              assert.property(inventoryItem, 'unitShortName')
-            })
+            assertSite(site)
+            site.inventoryItems.forEach(inventoryItem => assertInventoryItem(inventoryItem))
           })
           assert.property(res.body, 'total')
         })

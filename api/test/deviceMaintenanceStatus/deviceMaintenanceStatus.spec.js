@@ -99,18 +99,18 @@ describe('Maintenance Reports', () => {
     assert.property(maintenanceStatusOverTime.body, 'data')
     assert.typeOf(maintenanceStatusOverTime.body.data, 'array')
 
-    const tamagotchi = find(
+    const device = find(
       maintenanceStatusOverTime.body.data,
       d => d.id === deviceId
     )
-    assert.isNotNull(tamagotchi)
-    assert.equal(tamagotchi.latitude, 1)
-    assert.equal(tamagotchi.longitude, 5)
-    assert.isAtLeast(tamagotchi.totalResults, 1)
+    assert.isNotNull(device)
+    assert.equal(device.latitude, 1)
+    assert.equal(device.longitude, 5)
+    assert.isAtLeast(device.totalResults, 1)
 
     assertions.forEach(({ day, ...fields }) => {
       expect(
-        tamagotchi.maintenanceStatusHistory.find(status =>
+        device.maintenanceStatusHistory.find(status =>
           status.day.includes(day)
         )
       ).to.containSubset({
