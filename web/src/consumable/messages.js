@@ -41,6 +41,10 @@ export default defineMessages({
     id: 'consumable.gxHiv1QualCartridge',
     defaultMessage: 'Xpert HIV-1 Qual Cartridge',
   },
+  gxMtbXdrCartridge: {
+    id: 'consumable.gxMtbXdrCartridge',
+    defaultMessage: 'GeneXpert MTB/XDR Cartridge',
+  },
   alereHivDetectCartridge: {
     id: 'consumable.alereHivDetectCartridge',
     defaultMessage: 'Alere Q HIV-1/2 Detect Cartridge',

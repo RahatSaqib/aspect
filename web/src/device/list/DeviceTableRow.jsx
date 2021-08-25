@@ -82,8 +82,8 @@ const DeviceTableRow = ({
         />
       ))}
     </TableCell>
-    <TableCell>{formatRelative(intl, device.get('createdOn'))}</TableCell>
-    <TableCell>{formatRelative(intl, device.get('lastSeen'))}</TableCell>
+    <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
+    <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
     <TableCell numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>
