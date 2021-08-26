@@ -1,12 +1,11 @@
 import React from 'react'
 import { number, string } from 'prop-types'
 import classnames from 'classnames/bind'
-
 import messages from '../messages'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 
 import styles from '../../Table.css'
-import useI18n from '../../../../Hooks/i18n/useI18n'
+import { i18nWrapper } from '../../../../Providers/I18nProvider/index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -15,7 +14,7 @@ const cssClasses = classnames.bind(styles)
  */
 
 const NowShowing = ({ dataLength, pageIndex, pageSize, name, namePlural }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = i18nWrapper()
   const boundaries = getFirstAndLastVisibleRowNumbers(
     dataLength,
     pageIndex,
