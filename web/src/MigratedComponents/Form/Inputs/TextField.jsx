@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
+import { useFormikContext } from 'formik'
 
 import FormHTMLLabel from '../FormHTMLLabel'
 import { getFieldErrorProps } from '../Formik/Helpers'
-import { useFormikState } from '../Formik/Context'
 
 const AspectTextField = ({
   controlType: { rowsMax, rows } = {},
@@ -19,8 +19,7 @@ const AspectTextField = ({
   validate,
   ...rest
 }) => {
-  const { updateField } = useFormikState()
-
+  const { updateField } = useFormikContext()
   const onChangeLocal = event => {
     updateField(rest.id, event.target.value, formik)
   }

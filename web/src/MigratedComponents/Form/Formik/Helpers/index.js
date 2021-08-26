@@ -5,6 +5,7 @@ import flatten from 'lodash/flatten'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
+import uniqueId from 'lodash/uniqueId'
 
 import messages from '../messages'
 
@@ -42,14 +43,24 @@ const getInitialValuesFromFormConfig = config => {
   const initialValues = {}
   const { sections } = config
   sections.forEach(({ rows }) => {
-    rows.forEach(({ items }) => {
-      items.forEach(({ controlType = {}, id, initialValue }) => {
+    rows.forEach(row => {
+      const { items, isMulti, id: rowId } = row
+      items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
         const { component } = controlType
-        let value = initialValue
+        let value = initialValue || ''
         if (component === 'checkbox') {
           value = initialValue === true
         }
-        initialValues[id] = value
+        if (isMulti) {
+          initialValues[rowId] = initialValues[rowId] || [
+            {
+              __guid__: uniqueId(rowId),
+            },
+          ]
+          initialValues[rowId][0][fieldName] = value
+        } else {
+          initialValues[fieldName] = value
+        }
       })
     })
   })
@@ -79,7 +90,19 @@ const pickItems = sections => {
   let items = []
   if (sections && sections.length) {
     items = flatten(
-      sections.map(({ rows }) => flatten(rows.map(row => row.items)))
+      sections.map(({ rows }) =>
+        flatten(
+          rows.map(row =>
+            row.items.map(item =>
+              /**
+               * add 'row' prop to 'item' to be able to handle
+               * items in multiplied rows
+               */
+              ({ ...item, row })
+            )
+          )
+        )
+      )
     )
   }
   return items
@@ -197,8 +220,8 @@ const getBaseData = (data, formatMessage, messages) => {
 }
 
 const getFieldErrorProps = (formik, id) => ({
-  error: formik.touched[id] && formik.errors[id]?.length > 0,
-  helperText: formik.touched[id] && formik.errors[id],
+  error: get(formik.touched, id) && get(formik.errors, id)?.length > 0,
+  helperText: get(formik.touched, id) && get(formik.errors, id),
 })
 
 const validationBase = {

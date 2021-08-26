@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import FormControl from '@material-ui/core/FormControl'
+import { useFormikContext } from 'formik'
 
-import { useFormikState } from '../Formik/Context'
 import PlaceholderSelector from '../../Placeholders/PlaceholderSelector'
 import PlaceholderContextMenu from '../../Placeholders/PlaceholderContextMenu'
 import AspectTextField from './TextField'
@@ -16,7 +16,7 @@ const PlaceholderTextField = props => {
   const { formik, id: fieldName } = props
   const [contextMenu, setContextMenu] = useState(null)
   const inputRef = useRef()
-  const { updateField } = useFormikState()
+  const { updateField } = useFormikContext()
 
   const onContextMenu = event => {
     event.preventDefault()

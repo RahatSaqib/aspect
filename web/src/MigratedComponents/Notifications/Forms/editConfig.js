@@ -1,5 +1,7 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
@@ -46,7 +48,7 @@ const getSectionsBase = formatMessage => [
         ],
       },
       {
-        id: 0,
+        id: 1,
         items: [
           {
             id: 'name',
@@ -67,7 +69,8 @@ const getSectionsBase = formatMessage => [
     labelI18nKey: 'whenResultIs',
     rows: [
       {
-        id: 0,
+        id: 'result',
+        isMulti: true,
         items: [
           {
             id: 'assayId',
@@ -93,27 +96,38 @@ const getSectionsBase = formatMessage => [
               component: 'select',
               endpoint: ASSAY_LIST.ENDPOINT,
               hideIfNoOptions: false,
+              isMulti: true,
               queryKey: ASSAY_LIST.KEY,
-              normalizeLoadedData: (response, formik) => {
+              normalizeLoadedData: (response, formik, subRowIndex) => {
                 let options = []
-                const { assayId: selectedAssayId } = formik.values
+                const { assayId: selectedAssayId } =
+                  formik.values.result[subRowIndex]
                 if (selectedAssayId) {
                   const { ok, data } = response
                   if (ok === true) {
                     const selectedAssay = data.find(
                       ({ externalId }) => externalId === selectedAssayId
                     )
-                    const { resultCategories = [] } = selectedAssay || {}
+                    const { resultCategories = [], resultCategoryGroups } =
+                      selectedAssay || {}
+                    const scope =
+                      isArray(resultCategoryGroups) &&
+                      !isEmpty(resultCategoryGroups)
+                        ? 'ResultCategoryGroups'
+                        : 'ResultCategories'
                     options = getBaseData(
-                      resultCategories,
+                      scope === 'ResultCategoryGroups'
+                        ? resultCategoryGroups
+                        : resultCategories,
                       formatMessage,
                       messages
                     )
+                    options = options.map(it => ({ ...it, scope }))
                   }
                 }
                 return options
               },
-              dependencies: ['assayId'],
+              dependencies: ['result[{{subRowIndex}}].assayId'],
               placeholder: formatMessage(messages.resultPlaceholder),
             },
             labelI18nKey: 'resultTitle',
@@ -129,7 +143,7 @@ const getSectionsBase = formatMessage => [
     labelI18nKey: 'fromThisDevice',
     rows: [
       {
-        id: 0,
+        id: 10,
         items: [
           {
             id: 'deviceLevelId',
@@ -251,7 +265,7 @@ const getSectionsBase = formatMessage => [
     labelI18nKey: 'send',
     rows: [
       {
-        id: 0,
+        id: 20,
         items: [
           {
             id: 'sendEmail',
@@ -287,7 +301,7 @@ const getSectionsBase = formatMessage => [
       // Email
       // -----------------------------------
       {
-        id: 1,
+        id: 30,
         items: [
           {
             id: 'emailSubject',
@@ -305,7 +319,7 @@ const getSectionsBase = formatMessage => [
         ],
       },
       {
-        id: 2,
+        id: 40,
         items: [
           {
             id: 'emailBody',
@@ -327,7 +341,7 @@ const getSectionsBase = formatMessage => [
       // SMS
       // -----------------------------------
       {
-        id: 3,
+        id: 50,
         items: [
           {
             id: 'smsBody',
@@ -348,7 +362,7 @@ const getSectionsBase = formatMessage => [
       // Web
       // -----------------------------------
       {
-        id: 4,
+        id: 60,
         items: [
           {
             id: 'webBody',
@@ -392,7 +406,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
         ],
       })),
       {
-        id: 0,
+        id: 80,
         items: [
           {
             id: 'jfTags',

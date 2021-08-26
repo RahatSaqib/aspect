@@ -1,16 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useFormikContext } from 'formik'
+import get from 'lodash/get'
 
 import CheckboxField from '../../../components/shared/CheckboxField'
-import { useFormikState } from '../Formik/Context'
 
 const Checkbox = props => {
   const { className, classNames, formik, id, label } = props
-  const { updateField } = useFormikState()
+  const { updateField } = useFormikContext()
 
   return (
     <CheckboxField
-      checked={formik.values[id]}
+      checked={get(formik.values, id)}
       className={className}
       classNames={classNames}
       label={label}
