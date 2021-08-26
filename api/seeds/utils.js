@@ -47,6 +47,7 @@ const tables = [
   ['Permission', seedStaticDataPermission],
   ['TimeZone', 'id'],
   'DeviceMaintenanceStatus',
+  'NotificationTypeCategory',
 ]
 
 const uniqueKeys = {
