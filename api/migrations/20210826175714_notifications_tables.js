@@ -16,7 +16,6 @@ async function up(knex) {
       .inTable('NotificationTypeCategory')
       .nullable()
     tbl.dropForeign('issueTypeId')
-    tbl.dropForeign('issueTypeId')
     tbl
       .integer('issueTypeId')
       .index()
