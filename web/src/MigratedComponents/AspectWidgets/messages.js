@@ -359,6 +359,18 @@ export const messages = defineMessages({
     defaultMessage:
       'The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.',
   },
+  unusedModulesTitle: {
+    id: 'component.Widget.unusedModulesTitle',
+    defaultMessage: 'Devices with Unused Modules',
+  },
+  unusedModulesDescription: {
+    id: 'component.Widget.unusedModulesDescription',
+    defaultMessage: `Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module`,
+  },
+  unusedModulesStats: {
+    id: 'component.Widget.unusedModulesStats',
+    defaultMessage: '{unit} last month',
+  },
 })
 
 export default messages

@@ -63,7 +63,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       ) : (
         extraColumns.map(column => (
           // TODO: refactor, see DeviceOperationTableRow
-          <TableCell key={column.get('db')} hiddenOn="nd">
+          <TableCell key={column.get('i18nKey')} hiddenOn="nd">
             {formatterByType(column.get('type'))(
               column.get('formatter')
                 ? formatters[column.get('formatter')](

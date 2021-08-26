@@ -129,3 +129,8 @@
   margin: 0;
   min-width: 0;
 }
+
+.form_FormControl {
+  position: relative;
+  width: 100%;
+}
