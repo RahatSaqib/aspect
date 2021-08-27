@@ -18,7 +18,7 @@ async function sendSms(cellNumber, message) {
       body: message,
     })
   } catch (e) {
-    logger.warn(e)
+    logger.error(e)
   }
   return clientCreated
 }

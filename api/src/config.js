@@ -39,6 +39,7 @@ module.exports = {
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
+    mail: { logLevel: process.env['log.mail.logLevel'] || 'error' },
   },
   file: {
     reference: {
@@ -58,6 +59,13 @@ module.exports = {
     host: process.env['swagger.host'] || '',
     pathPrefixSize: parseInt(process.env['swagger.pathPrefixSize'] || '1', 10),
     apiUrlSegment: process.env['swagger.apiUrlSegment'] || '',
+  },
+  email: {
+    host: process.env['email.host'] || 'smtp.sendgrid.net',
+    port: process.env['email.port'] || 2525,
+    user: process.env['email.user'],
+    password: process.env['email.password'],
+    fromEmail: process.env['email.fromEmail'],
   },
   sms: {
     twilio: {

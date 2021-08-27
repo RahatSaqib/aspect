@@ -688,7 +688,7 @@ function downloadFile(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      logger.warn(err)
+      logger.error(err)
       throw err
     })
 }
@@ -703,7 +703,7 @@ function downloadFirstImage(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      logger.warn(err)
+      logger.error(err)
       throw err
     })
 }

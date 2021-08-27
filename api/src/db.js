@@ -90,7 +90,7 @@ function filterDateRangeParams(queryBuilder, params, dateColumnName) {
 // helper function for run, transact and migration
 const makeBlockRunner = block => blockArg =>
   block(blockArg).catch(err => {
-    logger.warn(err)
+    logger.error(err)
     throw err
   })
 

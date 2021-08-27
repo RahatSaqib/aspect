@@ -40,7 +40,7 @@ const server = new Hapi.server({
     validate: {
       failAction: async (request, h, err) => {
         // log and respond with the full error
-        logger.warn(err)
+        logger.error(err)
         throw err
       },
     },
@@ -134,7 +134,7 @@ const messageQueuePlugin = {
         })
       })
       .catch(err => {
-        logger.warn(err)
+        logger.error(err)
       }),
 }
 
@@ -173,9 +173,9 @@ const start = async () => {
     server.events.on('log', (event, tags) => {
       if (tags.error) {
         const { error } = event
-        logger.warn('-------------------')
-        logger.warn(error || event)
-        logger.warn('-------------------')
+        logger.error('-------------------')
+        logger.error(error || event)
+        logger.error('-------------------')
       }
     })
     server.ext('onPreResponse', function (request, h) {
@@ -275,7 +275,7 @@ const start = async () => {
           addClientRoutes(server)
           resolve()
         }).catch(err => {
-          logger.warn(err)
+          logger.error(err)
           throw err
         }),
     },
@@ -297,7 +297,7 @@ const start = async () => {
           addDeviceRoutes(server)
           resolve()
         }).catch(err => {
-          logger.warn(err)
+          logger.error(err)
           throw err
         }),
     },
@@ -324,7 +324,7 @@ const start = async () => {
           // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
           resolve()
         }).catch(err => {
-          logger.warn(err)
+          logger.error(err)
           throw err
         }),
     },
@@ -342,7 +342,7 @@ const start = async () => {
     await server.start()
     logger.info(`Magic happens at http://localhost:${port}`)
   } catch (err) {
-    logger.warn(err)
+    logger.error(err)
     Sentry.captureException(err)
   }
 }

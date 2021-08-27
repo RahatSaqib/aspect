@@ -12,7 +12,7 @@ async function recreateDB() {
 recreateDB().then(
   () => process.exit(0),
   err => {
-    logger.warn(err)
+    logger.error(err)
     process.exit(1)
   }
 )
