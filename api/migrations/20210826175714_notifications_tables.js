@@ -1,12 +1,17 @@
+const { seedTable } = require('../seeds/utils')
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.createTable('NotificationTypeCategory', tbl => {
     tbl.increments('id')
     tbl.string('name', 150).notNullable()
-    tbl.string('externalId', 150).notNullable().index()
+    tbl.string('externalId', 150).notNullable().unique()
     tbl.json('triggerCondition').nullable()
   })
+  await seedTable(knex, 'NotificationTypeCategory')
+  const { id: issueBasedId } = await knex('NotificationTypeCategory')
+    .first()
+    .where({ externalId: 'issueBased' })
   await knex.schema.alterTable('NotificationType', tbl => {
     tbl
       .integer('notificationTypeCategoryId')
@@ -15,6 +20,7 @@ async function up(knex) {
       .references('id')
       .inTable('NotificationTypeCategory')
       .nullable()
+      .default(issueBasedId)
     tbl.dropForeign('issueTypeId')
     tbl
       .integer('issueTypeId')
@@ -39,6 +45,7 @@ async function up(knex) {
     tbl
       .integer('resultId')
       .unsigned()
+      .index()
       .references('id')
       .inTable('Result')
       .nullable()
@@ -51,6 +58,7 @@ async function down(knex) {
     tbl.dropForeign('notificationTypeCategoryId')
     tbl.dropColumn('notificationTypeCategoryId')
     tbl.dropForeign('issueTypeId')
+    tbl.dropIndex('issueTypeid')
     tbl
       .integer('issueTypeId')
       .unsigned()
@@ -65,9 +73,11 @@ async function down(knex) {
 
   await knex.schema.alterTable('Notification', tbl => {
     tbl.dropForeign('issueId')
+    tbl.dropIndex('issueId')
     tbl
       .integer('issueId')
       .unsigned()
+      .index()
       .references('id')
       .inTable('Issue')
       .notNullable()
