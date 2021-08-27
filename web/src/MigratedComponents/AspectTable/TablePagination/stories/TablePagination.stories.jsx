@@ -9,6 +9,7 @@ import { mockDatafetch, buildColumnsFromData } from '../../Helpers'
 const { data } = mockDatafetch(90)
 const config = {
   name: 'notification',
+  namePlural: 'notifications',
   columns: [
     {
       key: 'lastTriggeredOn',
