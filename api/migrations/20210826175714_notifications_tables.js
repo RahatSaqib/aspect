@@ -23,6 +23,7 @@ async function up(knex) {
       .inTable('NotificationTypeCategory')
       .notNullable()
       .default(notificationTypeCategoryId)
+      .after('id')
     tbl.dropForeign('issueTypeId')
     tbl
       .integer('issueTypeId')
@@ -32,7 +33,7 @@ async function up(knex) {
       .inTable('IssueType')
       .nullable()
       .alter()
-    tbl.json('filterCondition').nullable()
+    tbl.json('filterCondition').nullable().after('jobFunctionId')
   })
 
   await knex.schema.alterTable('Notification', tbl => {
@@ -52,6 +53,7 @@ async function up(knex) {
       .references('id')
       .inTable('Result')
       .nullable()
+      .after('issueId')
     tbl.json('data').nullable()
   })
 }
