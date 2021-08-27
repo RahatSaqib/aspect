@@ -9,7 +9,9 @@ async function up(knex) {
     tbl.json('triggerCondition').nullable()
   })
   await seedTable(knex, 'NotificationTypeCategory')
-  const { id: issueBasedId } = await knex('NotificationTypeCategory')
+  const { id: notificationTypeCategoryId } = await knex(
+    'NotificationTypeCategory'
+  )
     .first()
     .where({ externalId: 'issueBased' })
   await knex.schema.alterTable('NotificationType', tbl => {
@@ -20,7 +22,6 @@ async function up(knex) {
       .references('id')
       .inTable('NotificationTypeCategory')
       .nullable()
-      .default(issueBasedId)
     tbl.dropForeign('issueTypeId')
     tbl
       .integer('issueTypeId')
@@ -32,6 +33,7 @@ async function up(knex) {
       .alter()
     tbl.json('filterCondition').nullable()
   })
+  await knex('NotificationType').update({ notificationTypeCategoryId })
   await knex.schema.alterTable('Notification', tbl => {
     tbl.dropForeign('issueId')
     tbl
