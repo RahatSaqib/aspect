@@ -237,7 +237,7 @@ function proxyGxReport(request, reply) {
         )
     })
     .catch(err => {
-      logger.error(err)
+      logger.warn(err)
       throw err
     })
 }

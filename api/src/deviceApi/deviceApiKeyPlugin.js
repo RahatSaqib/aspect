@@ -30,7 +30,7 @@ function authenticate(request, h) {
   return authToken(token)
     .then(credentials => h.authenticated({ credentials }))
     .catch(err => {
-      logger.error(err)
+      logger.warn(err)
       throw err
     })
 }

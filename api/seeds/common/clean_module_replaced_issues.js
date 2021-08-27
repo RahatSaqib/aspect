@@ -61,7 +61,7 @@ module.exports = async function cleanModuleReplacedIssues(
     })
     cleanIssueTypes(knex, adminUserName, partnerName)
   } catch (error) {
-    logger.error(error, { reLabel: 'seed:cleanModuleReplacedIssues' })
+    logger.warn(error, { reLabel: 'seed:cleanModuleReplacedIssues' })
     throw error
   }
 }

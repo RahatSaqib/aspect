@@ -170,7 +170,7 @@ class MessageQueue {
                   this.channel.ack(message)
                 })
                 .catch(err => {
-                  logger.error(err, { reLabel: 'aspect:mq:error' })
+                  logger.warn(err, { reLabel: 'aspect:mq:error' })
                   // TODO nack/dead letter queue?
                   this.channel.ack(message)
                 })
@@ -378,7 +378,7 @@ class MessageContext {
     this.transaction = transact(async knex => task(knex))
       .then(this.commit)
       .then(null, err => {
-        logger.error(err, { reLabel: 'aspect:mq:transact' })
+        logger.warn(err, { reLabel: 'aspect:mq:transact' })
         this.rollback()
         throw err
       })

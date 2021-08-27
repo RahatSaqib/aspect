@@ -53,7 +53,7 @@ async function batchUpdate(knex, minValue, maxValue, queryBuilderFunction) {
       return Promise.all(queries)
     })
   } catch (e) {
-    logger.error(e)
+    logger.warn(e)
   }
 }
 

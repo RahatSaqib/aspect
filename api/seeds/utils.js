@@ -104,7 +104,7 @@ function seed(seed, fileName, overridedSeeds) {
   return {
     seed(knex) {
       return runSeed(seed, knex, fileName, overridedSeeds).catch(err => {
-        logger.error(err)
+        logger.warn(err)
         throw err
       })
     },

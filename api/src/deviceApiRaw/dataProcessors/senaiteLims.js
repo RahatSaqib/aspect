@@ -44,7 +44,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       try {
         payload = JSON.parse(payloadBody)
       } catch (error) {
-        logger.error(error)
+        logger.warn(error)
       }
     }
     const now = new Date()

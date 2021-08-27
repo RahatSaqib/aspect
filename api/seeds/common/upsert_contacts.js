@@ -241,7 +241,7 @@ module.exports = async (knex, partnerData, contacts) => {
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
           } else {
-            logger.error('Attempt to insert empty data to table JobContext')
+            logger.warn('Attempt to insert empty data to table JobContext')
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
@@ -328,7 +328,7 @@ module.exports = async (knex, partnerData, contacts) => {
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
           } else {
-            logger.error('Attempt to insert empty data to table JobContext')
+            logger.warn('Attempt to insert empty data to table JobContext')
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>

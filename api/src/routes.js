@@ -182,7 +182,7 @@ function asyncHandler(handler) {
       .then(reply)
       .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
-        logger.error(err)
+        logger.warn(err)
         throw err
       })
 }

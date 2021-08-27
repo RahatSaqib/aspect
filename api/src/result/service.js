@@ -688,7 +688,7 @@ function downloadFile(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      logger.error(err)
+      logger.warn(err)
       throw err
     })
 }
@@ -703,7 +703,7 @@ function downloadFirstImage(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      logger.error(err)
+      logger.warn(err)
       throw err
     })
 }
@@ -2204,8 +2204,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
           const siteOperationAndValue = query.reportableSiteId
             ? `= ${query.reportableSiteId}`
             : `IN (
-                SELECT s_transfer.id 
-                FROM Site s_transfer 
+                SELECT s_transfer.id
+                FROM Site s_transfer
                 WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
               )`
           b.whereRaw(
