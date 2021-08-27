@@ -39,7 +39,7 @@ module.exports = {
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
-    mail: { logLevel: process.env['log.mail.logLevel'] || 'error' },
+    mail: { logLevel: process.env['log.mail.logLevel'] || 'alert' },
   },
   file: {
     reference: {
