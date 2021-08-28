@@ -95,7 +95,7 @@ const getExpected = totalResults => {
     percentWithin2Hours,
   }
 }
-describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
+describe.only('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
   let initialState = {}
 
@@ -351,6 +351,9 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const reset = async (tableName, id = 0) =>
       knex(tableName).where('id', '>', id).delete()
     // reset all data tables affected in test
+    await knex('Notification')
+      .where('issueId', '>', initialState.issueId)
+      .delete()
     await reset('Issue', initialState.issueId)
     await reset('EmailMessage', initialState.emailMessageId)
     await reset('SmsMessage', initialState.smsMessageId)

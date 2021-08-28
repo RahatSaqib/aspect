@@ -42,7 +42,7 @@ const getClinicianAccessToken = async () => {
   })
   return res.body.access
 }
-describe('Result routes', () => {
+describe.only('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
