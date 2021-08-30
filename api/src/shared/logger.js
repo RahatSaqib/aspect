@@ -87,6 +87,7 @@ if (config.log.mail.logLevel) {
   logger.add(
     new Mail({
       to: config.admin.email,
+      from: config.email.fromEmail,
       host: config.email.host,
       port: config.email.port,
       username: config.email.user,
