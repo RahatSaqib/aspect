@@ -5,6 +5,7 @@ import flatten from 'lodash/flatten'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
+import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
 
 import messages from '../messages'
@@ -44,7 +45,10 @@ const getInitialValuesFromFormConfig = config => {
   const { sections } = config
   sections.forEach(({ rows }) => {
     rows.forEach(row => {
-      const { items, isMulti, id: rowId } = row
+      const { items, isMulti, id: rowId, presetInitialValues } = row
+      if (presetInitialValues) {
+        presetInitialValues(initialValues)
+      }
       items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
         const { component } = controlType
         let value = initialValue || ''
@@ -57,9 +61,9 @@ const getInitialValuesFromFormConfig = config => {
               __guid__: uniqueId(rowId),
             },
           ]
-          initialValues[rowId][0][fieldName] = value
+          set(initialValues[rowId][0], fieldName, value)
         } else {
-          initialValues[fieldName] = value
+          set(initialValues, fieldName, value)
         }
       })
     })

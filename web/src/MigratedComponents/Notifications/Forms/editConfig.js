@@ -1,14 +1,13 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
+import findIndex from 'lodash/findIndex'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
-
-import map from 'lodash/map'
 import union from 'lodash/union'
-import filter from 'lodash/filter'
+
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import { SITE_ALL } from '../../QueryFetch/Site'
@@ -274,7 +273,6 @@ const getSectionsBase = formatMessage => [
             },
             classNames: checkboxClassNames,
             initialValue: true,
-            // label: 'Email',
             labelI18nKey: 'email',
           },
           {
@@ -283,7 +281,6 @@ const getSectionsBase = formatMessage => [
               component: 'checkbox',
             },
             classNames: checkboxClassNames,
-            // label: 'SMS',
             labelI18nKey: 'sms',
           },
           {
@@ -292,7 +289,6 @@ const getSectionsBase = formatMessage => [
               component: 'checkbox',
             },
             classNames: checkboxClassNames,
-            // label: 'Web',
             labelI18nKey: 'web',
           },
         ],
@@ -389,67 +385,108 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
     label: 'toAnyOfTheseJobFunctions',
     labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
-      ...map(jobFunctions, jf => ({
-        id: `$jf${jf.id}`,
-        items: [
-          {
-            id: `jf${jf.id}`,
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-              itemContainer: cssClasses('max-width-100pcr'),
-            },
-            label: jf.name,
-          },
-        ],
-      })),
-      {
-        id: 80,
-        items: [
-          {
-            id: 'jfTags',
-            controlType: {
-              component: 'select',
-              endpoint: PERSON_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: PERSON_LIST.KEY,
-              normalizeLoadedData: response => {
-                const { ok, data } = response
-                let options = []
-                if (ok === true) {
-                  let tags = union(
-                    ...data.map(person => {
-                      return (person.tags || '').split(';')
-                    })
-                  )
-                    .map(tag => tag.trim())
-                    .filter(tag => tag !== '')
-                  tags = [...new Set(tags)]
-                  options = tags.map(tag => ({ label: tag, value: tag }))
+      ...reduce(
+        jobFunctions,
+        (acc, jf, index) => {
+          acc = [
+            ...acc,
+            {
+              id: `row-jf${jf.id}-name`,
+              presetInitialValues: initialValues => {
+                const jobFunctions = initialValues.jobFunctions || []
+                jobFunctions[index] = jobFunctions[index] || {
+                  jobFunctionId: jf.id,
                 }
-                return options
+                initialValues.jobFunctions = jobFunctions
               },
-              isMulti: true,
+              items: [
+                {
+                  id: `jobFunctions[${index}].checked`,
+                  controlType: {
+                    component: 'checkbox',
+                  },
+                  classNames: {
+                    controlContainer: cssClasses('checkbox-container'),
+                    itemContainer: cssClasses('max-width-100pcr'),
+                  },
+                  label: jf.name,
+                  validateIf: (values, formik, { touchedName }) => {
+                    const noOneChecked = !values.jobFunctions.find(
+                      it => it.checked
+                    )
+                    let firstTouchedIndex = findIndex(
+                      formik.touched.jobFunctions,
+                      it => !!it
+                    )
+                    if (
+                      firstTouchedIndex === -1 &&
+                      touchedName === `jobFunctions[${index}].checked`
+                    ) {
+                      firstTouchedIndex = index
+                    }
+                    /**
+                     * allow below func `validate` only for 1st touched checkbox
+                     * and when no-one checkbox Job Function is selected
+                     */
+                    return index === firstTouchedIndex && noOneChecked
+                  },
+                  /**
+                   * see above func `validateIf` when this validation applies
+                   */
+                  validate: checked =>
+                    checked ? '' : 'Please select at least one Job Function',
+                },
+              ],
             },
-            classNames: {
-              // container: cssClasses('tags-container'),
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+            {
+              id: `row-jf${jf.id}-tags`,
+              items: [
+                {
+                  id: `jobFunctions[${index}].tags`,
+                  initialValue: [],
+                  controlType: {
+                    component: 'select',
+                    endpoint: PERSON_LIST.ENDPOINT,
+                    hideIfNoOptions: false,
+                    queryKey: PERSON_LIST.KEY,
+                    normalizeLoadedData: response => {
+                      const { ok, data } = response
+                      let options = []
+                      if (ok === true) {
+                        let tags = union(
+                          ...data.map(person => {
+                            return (person.tags || '').split(';')
+                          })
+                        )
+                          .map(tag => tag.trim())
+                          .filter(tag => tag !== '')
+                        tags = [...new Set(tags)]
+                        options = tags.map(tag => ({ label: tag, value: tag }))
+                      }
+                      return options
+                    },
+                    isMulti: true,
+                  },
+                  classNames: {
+                    itemContainer: cssClasses(
+                      'max-width-100pc',
+                      'tags-container'
+                    ),
+                    controlContainer: cssClasses('full-width-100pc'),
+                    item: cssClasses('full-width-100pc'),
+                  },
+                  label: 'Tags',
+                  labelI18nKey: 'jobFunctionTags',
+                  visibleIf: values => values.jobFunctions[index].checked,
+                },
+              ],
             },
-            label: 'Tags',
-            labelI18nKey: 'jobFunctionTags',
-            visibleIf: values => {
-              const anySelection = filter(Object.keys(values), property => {
-                if (property.indexOf('jf') >= 0 && values[property]) return true
-              })
-              return anySelection.length > 0
-            },
-          },
-        ],
-      },
+          ]
+
+          return acc
+        },
+        []
+      ),
     ],
   }
   const sections = [...getSectionsBase(formatMessage), jobFunctionsRows]
