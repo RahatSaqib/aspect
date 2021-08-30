@@ -9,6 +9,7 @@ import { mockDatafetch, buildColumnsFromData } from '../../Helpers'
 const { data } = mockDatafetch(90)
 const config = {
   name: 'notification',
+  namePlural: 'notifications',
   columns: [
     {
       key: 'lastTriggeredOn',
@@ -46,7 +47,7 @@ export default {
 }
 
 const Template = ({ config }) => {
-  const { name } = config
+  const { name, namePlural } = config
   const { columns } = useMemo(() => buildColumnsFromData(config), [config])
   const table = useTable({ columns, data }, useSortBy, usePagination)
   const {
@@ -85,6 +86,7 @@ const Template = ({ config }) => {
         previousPage={previousPage}
         page={mockedPage}
         name={name}
+        namePlural={namePlural}
       />
     </IntlProvider>
   )

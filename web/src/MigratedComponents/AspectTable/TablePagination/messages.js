@@ -33,7 +33,7 @@ const messages = defineMessages({
     id: 'pages.TablePagination.nowShowing',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
       one {# {name}}
-      other {# {name}s}
+      other {# {namePlural}}
     }`,
   },
 })

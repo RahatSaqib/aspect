@@ -21,6 +21,7 @@ const PageIndexSelectors = ({
   dataLength,
   gotoPage,
   name,
+  namePlural,
   nextPage,
   pageCount,
   pageIndex,
@@ -49,6 +50,7 @@ const PageIndexSelectors = ({
         pageIndex={pageIndex}
         pageSize={pageSize}
         name={name}
+        namePlural={namePlural}
       />
       <IndexButton
         modifier="right"
@@ -89,6 +91,10 @@ PageIndexSelectors.propTypes = {
     Name of the type of records
   */
   name: string.isRequired,
+  /**
+    Plural of the name
+  */
+  namePlural: string.isRequired,
   /**
     Function to move to immediate next page
   */
