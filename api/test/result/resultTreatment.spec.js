@@ -8,7 +8,7 @@ const { assert } = chai
 
 const path = '/api/result/confirmed-treatment-tracking'
 
-describe.only('Result Treatment', () => {
+describe('Result Treatment', () => {
   describe('Status Tracking - POST', () => {
     before(() => shared.checkToken(server, path))
 

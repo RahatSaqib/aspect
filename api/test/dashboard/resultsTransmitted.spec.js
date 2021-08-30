@@ -95,7 +95,7 @@ const getExpected = totalResults => {
     percentWithin2Hours,
   }
 }
-describe.only('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
+describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
   const path = '/api/dashboard/results-transmitted'
   let initialState = {}
 
