@@ -1,6 +1,13 @@
 const Sentry = require('winston-sentry-log')
 
-const { createLogger, format, transports } = require('winston')
+const {
+  createLogger,
+  format,
+  transports,
+  config: winstonConfig,
+} = require('winston')
+const { Mail } = require('winston-mail')
+
 const config = require('../config')
 
 const { combine, timestamp, label, printf, errors } = format
@@ -57,6 +64,7 @@ const getBaseFormat = (extraFormater, { labelsBlackList, labelsWhiteList }) =>
 const consoleLogger =
   config.log.format === 'JSON' ? format.simple() : plainTextFormat
 const logger = createLogger({
+  levels: winstonConfig.syslog.levels,
   format: getBaseFormat(consoleLogger, config.log),
   level: config.log.logLevel,
   transports: [new transports.Console()],
@@ -71,6 +79,21 @@ if (config.log.file.path) {
       ),
       filename: config.log.file.path,
       level: config.log.file.logLevel,
+    })
+  )
+}
+
+if (config.log.mail.logLevel) {
+  logger.add(
+    new Mail({
+      to: config.admin.email,
+      from: config.email.fromEmail,
+      host: config.email.host,
+      port: config.email.port,
+      username: config.email.user,
+      password: config.email.password,
+      subject: `Aspect Error in ${config.countryName}: "{{msg}}"`,
+      level: config.log.mail.logLevel,
     })
   )
 }
