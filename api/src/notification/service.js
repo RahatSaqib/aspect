@@ -18,6 +18,53 @@ const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 
+async function getNotificationTriggerSubscriptions({ messageContext }) {
+  return messageContext.run(async knex => {
+    const actionParameters = await knex('NotificationType as nt')
+      .join(
+        'NotificationTypeCategory as ntc',
+        'nt.notificationTypeCategoryId',
+        'ntc.id'
+      )
+      .distinct(
+        'ntc.externalId as notificationTypeCategoryId',
+        'ntc.triggerCondition',
+        'nt.id as notificationTypeId',
+        'nt.partnerId',
+        'nt.name',
+        'nt.issueTypeId',
+        'nt.jobFunctionId',
+        'nt.filterCondition',
+        'nt.canAcknowledge',
+        'nt.messageTypeId',
+        'nt.level',
+        'nt.sendToContactsWithMatchingTags'
+      )
+      .then(items =>
+        items.reduce((memo, elem) => {
+          const { notificationTypeCategoryId, triggerCondition } = elem
+          const { action } = JSON.parse(triggerCondition)
+          if (action != null) {
+            if (notificationTypeCategoryId === 'issueBased') {
+              memo[action] = [
+                ...(memo[action] || []),
+                _.omit(elem, ['triggerCondition']),
+              ]
+            }
+          }
+          return memo
+        }, {})
+      )
+    const actions = {}
+    Object.keys(actionParameters).forEach(actionKey => {
+      actions[actionKey] = createNotificationIfNotCreatedAlready(
+        actionParameters[actionKey]
+      )
+    })
+    return { actions }
+  })
+}
+
 async function listNotifications(request) {
   const { query, auth } = request
 
@@ -356,4 +403,5 @@ module.exports = {
   onIssueEscalated,
   getNotifications,
   shouldNotifyIssue,
+  getNotificationTriggerSubscriptions,
 }

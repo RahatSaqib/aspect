@@ -530,7 +530,6 @@ async function seedTable(
 ) {
   const table = _.isArray(fixtureItem) ? fixtureItem[0] : fixtureItem
   const keyColumn = _.isArray(fixtureItem) ? fixtureItem[1] : 'externalId'
-
   const seedsFolder = await getSeedsFolder(table, overridedSeeds)
 
   const fixturePath = `./seeds/${
@@ -546,7 +545,17 @@ async function seedTable(
         .where(keyColumn, datum[keyColumn])
         .first('id')
       if (existingDatum == null) {
-        await knex(table).insert(datum)
+        const elementToInsert = _.reduce(
+          _.keys(datum),
+          (result, key) => {
+            result[key] = _.isObject(datum[key])
+              ? JSON.stringify(datum[key])
+              : datum[key]
+            return result
+          },
+          {}
+        )
+        await knex(table).insert(elementToInsert)
       }
     })
     await Promise.each(fixture.relationships || [], async relationship => {
