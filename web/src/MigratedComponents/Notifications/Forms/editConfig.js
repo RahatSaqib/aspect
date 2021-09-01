@@ -361,6 +361,24 @@ const getSectionsBase = formatMessage => [
         id: 60,
         items: [
           {
+            id: 'webUrl',
+            controlType: {
+              component: 'textField',
+            },
+            classNames: {
+              itemContainer: cssClasses('item-in-group-container'),
+            },
+            type: 'text',
+            labelI18nKey: 'webUrl',
+            validate: validationBase.required,
+            visibleIf: values => values.sendWeb === true,
+          },
+        ],
+      },
+      {
+        id: 61,
+        items: [
+          {
             id: 'webBody',
             controlType: {
               component: 'placeholderTextArea',

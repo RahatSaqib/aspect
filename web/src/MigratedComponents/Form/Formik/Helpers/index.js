@@ -3,8 +3,12 @@ import * as Yup from 'yup'
 import cloneDeep from 'lodash/cloneDeep'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+import keys from 'lodash/keys'
+import omit from 'lodash/omit'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
 
@@ -234,6 +238,29 @@ const validationBase = {
   },
 }
 
+const sanitizeFormValues = (
+  values,
+  { meta, removeReadOnly = true, removeGuids = true }
+) => {
+  const { fieldTypes } = meta
+  /**
+   * prepare payload, i.e.
+   * - conditionally remove read only props
+   * - remove props `__guid__` from array of objects
+   */
+  const payload = cloneDeep(values)
+  keys(payload).forEach(key => {
+    if (fieldTypes[key] === 'readOnly' && removeReadOnly) {
+      delete payload[key]
+    } else if (isArray(payload[key]) && removeGuids) {
+      payload[key] = payload[key].map(it =>
+        isPlainObject(it) ? omit(it, ['__guid__']) : it
+      )
+    }
+  })
+  return payload
+}
+
 export {
   buildErrorMessage,
   buildLabel,
@@ -247,4 +274,5 @@ export {
   pickItems,
   pickKeys,
   validationBase,
+  sanitizeFormValues,
 }

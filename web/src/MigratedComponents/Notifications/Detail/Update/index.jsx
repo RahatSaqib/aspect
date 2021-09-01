@@ -18,7 +18,11 @@ import { NOTIFICATION_DETAIL } from '../../../QueryFetch/Notification'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { getFormConfigWithData } from '../utils'
 
-const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
+const AspectNotificationDetail = ({
+  notificationId,
+  jobFunctions,
+  onSubmit,
+}) => {
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
@@ -56,7 +60,7 @@ const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
       {!isLoading && formConfig ? (
         <FormikProvider config={formConfig}>
           <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
-            <FormActions config={formConfig} />
+            <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>
             <AspectForm config={formConfig} />
@@ -73,6 +77,7 @@ const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
 AspectNotificationDetail.propTypes = {
   notificationId: PropTypes.number.isRequired,
   jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default AspectNotificationDetail

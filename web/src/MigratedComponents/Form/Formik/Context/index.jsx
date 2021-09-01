@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import cloneDeep from 'lodash/cloneDeep'
-import isArray from 'lodash/isArray'
-import isPlainObject from 'lodash/isPlainObject'
-import keys from 'lodash/keys'
-import omit from 'lodash/omit'
 
 import { FormikProvider as FormikProviderBase, useFormik } from 'formik'
 
 import DisplayFormikState from '../Helpers/debug'
+import { sanitizeFormValues } from '../Helpers'
 import useFormConfig from '../../Hooks/useFormConfig'
 
 export const FormikProvider = ({ config, children }) => {
@@ -15,31 +11,15 @@ export const FormikProvider = ({ config, children }) => {
   const { actions } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const { meta, registerVisibleFields, updateField } = useFormConfig(config)
-  const { fieldTypes, initialValues } = meta
+  const { initialValues } = meta
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues,
     validateOnMount: false,
     onSubmit: values => {
-      /**
-       * prepare payload, i.e.
-       * - remove props which are read only
-       * - remove prop `__guid__` from array of objects
-       */
-      const payload = cloneDeep(values)
-      keys(payload).forEach(key => {
-        if (fieldTypes[key] === 'readOnly') {
-          delete payload[key]
-        } else if (isArray(payload[key])) {
-          payload[key] = payload[key].map(it =>
-            isPlainObject(it) ? omit(it, ['__guid__']) : it
-          )
-        }
-      })
-
-      // eslint-disable-next-line no-console
-      console.log(JSON.stringify(payload, null, 2))
+      const payload = sanitizeFormValues(values, { meta })
+      console.log(JSON.stringify(payload, null, 2)) // eslint-disable-line no-console
     },
   })
 
@@ -65,6 +45,7 @@ export const FormikProvider = ({ config, children }) => {
         setToggleEdit,
         toggleEdit,
         updateField,
+        meta,
       }}
     >
       {children}

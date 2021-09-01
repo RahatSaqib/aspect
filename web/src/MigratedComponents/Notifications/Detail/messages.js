@@ -156,6 +156,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.web',
     defaultMessage: 'Web',
   },
+  webUrl: {
+    id: 'pages.NotificationDetail.webUrl',
+    defaultMessage: 'Web Url',
+  },
   webBody: {
     id: 'pages.NotificationDetail.webBody',
     defaultMessage: 'Web Body',
