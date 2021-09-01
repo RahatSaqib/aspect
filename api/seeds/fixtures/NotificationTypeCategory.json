@@ -4,14 +4,16 @@
       "name": "Issue-Based",
       "externalId": "issueBased",
       "triggerCondition": {
-        "action": "ISSUE_CREATED"
+        "action": "ISSUE_CREATED",
+        "method": "issueBased"
       }
     },
     {
       "name": "Result-Based",
       "externalId": "resultBased",
       "triggerCondition": {
-        "action": "RESULT_LOGGED"
+        "action": "RESULT_LOGGED",
+        "method": "issueBased"
       }
     }
   ]

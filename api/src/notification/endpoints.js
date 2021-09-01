@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi')
-const { getIssueEventTriggerSubscriptions } = require('../issue/service')
+const { getNotificationTriggerSubscriptions } = require('./service')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   listNotifications,
@@ -103,7 +103,7 @@ const routes = [
 ]
 
 const subscriptions = [
-  getIssueEventTriggerSubscriptions,
+  getNotificationTriggerSubscriptions,
   {
     actions: {
       ISSUE_ESCALATED: onIssueEscalated,

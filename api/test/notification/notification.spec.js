@@ -1,15 +1,27 @@
 const chai = require('chai')
+const mocha = require('mocha')
 const Promise = require('bluebird')
 
 const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
-const { run } = require('../../src/db')
+const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
+const {
+  getNotificationSubscriptions,
+} = require('../../src/notification/service')
+const { dispatchAndWaitForAction } = require('../utils/mqUtils')
+const { resultLogged } = require('../../src/result/actions')
+const { issueCreated } = require('../../src/issue/actions')
 
 const { assert } = chai
-
-describe('Notification routes', () => {
+describe.only('Notifications triggers', () => {
+  it('result based notification trigger', async () => {
+    await dispatchAndWaitForAction(issueCreated(3333))
+    assert.isTrue(true)
+  })
+})
+describe.only('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()
@@ -21,37 +33,33 @@ describe('Notification routes', () => {
 
   const ntArr = []
 
-  beforeEach(() =>
-    run(async knex => {
-      const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-      await Promise.each(sampleIssues, async issue => {
-        const issueType = issueTypes[issue]
-        const [ntId] = await knex('NotificationType').insert({
-          partnerId: 1,
-          issueTypeId: issueType.id,
-          name: issueType.name,
-          createdOn: now,
-          updatedOn: now,
-        })
+  beforeEach(async () => {
+    const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+    await Promise.each(sampleIssues, async issue => {
+      const issueType = issueTypes[issue]
+      const [ntId] = await knex('NotificationType').insert({
+        partnerId: 1,
+        issueTypeId: issueType.id,
+        name: issueType.name,
+        createdOn: now,
+        updatedOn: now,
+      })
 
-        ntArr.push(ntId)
+      ntArr.push(ntId)
 
-        await knex('Notification').insert({
-          notificationTypeId: ntId,
-          createdOn: now,
-        })
+      await knex('Notification').insert({
+        notificationTypeId: ntId,
+        createdOn: now,
       })
     })
-  )
+  })
 
-  afterEach(() =>
-    run(async knex => {
-      await Promise.each(ntArr, async ntId => {
-        await knex('Notification').where('notificationTypeId', ntId).del()
-        await knex('NotificationType').where('id', ntId).del()
-      })
+  afterEach(async () => {
+    return Promise.each(ntArr, async ntId => {
+      await knex('Notification').where('notificationTypeId', ntId).del()
+      await knex('NotificationType').where('id', ntId).del()
     })
-  )
+  })
 
   describe('GET /notification', () => {
     shared.checkToken(server, path)

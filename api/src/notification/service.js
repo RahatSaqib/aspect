@@ -17,52 +17,51 @@ const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
+const actionHandlers = require('./actionHandler')
+
+async function getNotificationSubscriptions(knex) {
+  const actionParameters = await knex('NotificationType as nt')
+    .join(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .distinct(
+      'ntc.externalId as notificationTypeCategoryId',
+      'ntc.triggerCondition'
+      // 'nt.id as notificationTypeId',
+      // 'nt.partnerId',
+      // 'nt.name',
+      // 'nt.issueTypeId',
+      // 'nt.jobFunctionId',
+      // 'nt.filterCondition',
+      // 'nt.canAcknowledge',
+      // 'nt.messageTypeId',
+      // 'nt.level',
+      // 'nt.sendToContactsWithMatchingTags'
+    )
+    .then(items =>
+      items.reduce((memo, { triggerCondition }) => {
+        const { action, method } = JSON.parse(triggerCondition)
+        if (action != null) {
+          memo[action] = { ...(memo[action] || {}), method }
+        }
+        return memo
+      }, {})
+    )
+  const actions = {}
+  console.log('actionParameters', actionParameters)
+  Object.keys(actionParameters).forEach(actionKey => {
+    const { method } = actionParameters[actionKey]
+    actions[actionKey] = actionHandlers[method](actionParameters[actionKey])
+  })
+  console.log('susbcribed')
+  console.log({ actions })
+  return { actions }
+}
 
 async function getNotificationTriggerSubscriptions({ messageContext }) {
-  return messageContext.run(async knex => {
-    const actionParameters = await knex('NotificationType as nt')
-      .join(
-        'NotificationTypeCategory as ntc',
-        'nt.notificationTypeCategoryId',
-        'ntc.id'
-      )
-      .distinct(
-        'ntc.externalId as notificationTypeCategoryId',
-        'ntc.triggerCondition',
-        'nt.id as notificationTypeId',
-        'nt.partnerId',
-        'nt.name',
-        'nt.issueTypeId',
-        'nt.jobFunctionId',
-        'nt.filterCondition',
-        'nt.canAcknowledge',
-        'nt.messageTypeId',
-        'nt.level',
-        'nt.sendToContactsWithMatchingTags'
-      )
-      .then(items =>
-        items.reduce((memo, elem) => {
-          const { notificationTypeCategoryId, triggerCondition } = elem
-          const { action } = JSON.parse(triggerCondition)
-          if (action != null) {
-            if (notificationTypeCategoryId === 'issueBased') {
-              memo[action] = [
-                ...(memo[action] || []),
-                _.omit(elem, ['triggerCondition']),
-              ]
-            }
-          }
-          return memo
-        }, {})
-      )
-    const actions = {}
-    Object.keys(actionParameters).forEach(actionKey => {
-      actions[actionKey] = createNotificationIfNotCreatedAlready(
-        actionParameters[actionKey]
-      )
-    })
-    return { actions }
-  })
+  return messageContext.run(getNotificationSubscriptions)
 }
 
 async function listNotifications(request) {
