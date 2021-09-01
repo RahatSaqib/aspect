@@ -48,26 +48,32 @@ const resultBasedNotificationPayload = {
   result: Joi.array()
     .items(
       Joi.object().keys({
-        assayId: Joi.string().description('ExternalId of selected assay'),
+        assayId: Joi.string()
+          .required()
+          .description('ExternalId of selected assay'),
         resultCategoryId: Joi.array()
           .items(
             Joi.object().keys({
               label: Joi.string().description(
                 'Name of resultCatehory or resultCategoryGroup'
               ),
-              value: Joi.string().description(
-                'ExternalId of resultCatehory or resultCategoryGroup'
-              ),
+              value: Joi.string()
+                .required()
+                .description(
+                  'ExternalId of resultCatehory or resultCategoryGroup'
+                ),
               scope: Joi.string()
-                .allow('ResultCategories', 'ResultCategoryGroups')
+                .valid('ResultCategories', 'ResultCategoryGroups')
                 .description('Item scope'),
             })
           )
+          .required()
           .description(
             'Selected items of ResultCategories or ResultCategoryGroups'
           ),
       })
     )
+    .required()
     .description(
       'Selected items of Assay and corresponding ResultCategories or ResultCategoryGroups'
     ),
@@ -81,13 +87,18 @@ const resultBasedNotificationPayload = {
         value: Joi.string().required().description('Id of geography item'),
       })
     )
+    .when('deviceLevelId', {
+      is: 'national',
+      then: Joi.optional().allow('', null),
+      otherwise: Joi.required(),
+    })
     .description('Selected items which are subset of selected deviceLevelId'),
   sendEmail: Joi.bool().description('To send over email'),
   sendSms: Joi.bool().description('To send over sms'),
   sendWeb: Joi.bool().description('To send over webhook'),
-  emailSubject: Joi.string().description(
-    'Email subject (if sendEmail is checked)'
-  ),
+  emailSubject: Joi.string()
+    .when('sendEmail', optionsForSendXXX)
+    .description('Email subject (if sendEmail is checked)'),
   emailBody: Joi.string()
     .when('sendEmail', optionsForSendXXX)
     .description('Email multi-line body (if sendEmail is checked)'),
@@ -112,6 +123,8 @@ const resultBasedNotificationPayload = {
           .description('Tags for selected Job Function'),
       })
     )
+    .required()
+    .min(1)
     .description('Checked job functions'),
 }
 const saveNotificationResponse = {
