@@ -5,16 +5,16 @@ const { issueConditionsMet } = require('./issueEvaluation')
 const { issueEventStatusToId } = require('../shared/dictionary')
 const { alertMessageUpdateAfterIssueDataChanged } = require('../alert/actions')
 
-async function onIssueCreated({ issueId }, { messageContext: context }) {
-  // Trigger escalation logic for level 1 as soon as issue is created,
-  // higher levels handled in escalateIssues in escalations.js
-  // escalation should be idempotent (as should response to other actions)
-  // so it's OK if this is "at least once"
-  // This also allows one message listener between created and escalated
-  // if logic is shared and avoids potential race condition.
-  context.bindActionCreators({ issueEscalated })
-  context.issueEscalated(issueId, 1)
-}
+// async function onIssueCreated({ issueId }, { messageContext: context }) {
+//   // Trigger escalation logic for level 1 as soon as issue is created,
+//   // higher levels handled in escalateIssues in escalations.js
+//   // escalation should be idempotent (as should response to other actions)
+//   // so it's OK if this is "at least once"
+//   // This also allows one message listener between created and escalated
+//   // if logic is shared and avoids potential race condition.
+//   context.bindActionCreators({ issueEscalated })
+//   context.issueEscalated(issueId, 1)
+// }
 
 async function onIssueTriggered({ issueId }, { messageContext: context }) {
   // Check issue escalation logic for specific issue when triggered so we
@@ -107,7 +107,6 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
 }
 
 module.exports = {
-  onIssueCreated,
   onIssueTriggered,
   onEscalateIssues,
 }
