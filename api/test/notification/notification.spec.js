@@ -191,6 +191,14 @@ describe('Notification routes', () => {
     })
 
     describe('should fail to save result-based notification when some fields are missing', async () => {
+      it('wrong notificationType', async () => {
+        const res = await postData({
+          ...resultBasedNotification,
+          notificationType: 'wrong',
+        })
+        assert.equal(res.status, 400)
+      })
+
       it('missing/wrong "result" or some inner prop', async () => {
         let res = await postData({
           ...resultBasedNotification,

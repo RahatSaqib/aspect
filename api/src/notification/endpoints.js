@@ -41,7 +41,7 @@ const optionsForSendXXX = {
 const resultBasedNotificationPayload = {
   notificationType: Joi.string()
     // see all values in getOptions() in `MigratedComponents/Notifications/List/config.jsx`
-    .allow('result-based')
+    .valid('result-based')
     .description('externalId of notification type')
     .required(),
   name: Joi.string().description('Name of new notification').required(),
