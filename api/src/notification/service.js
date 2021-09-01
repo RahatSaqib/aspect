@@ -421,7 +421,7 @@ async function saveResultBasedNotification({
         ...auditFields,
       })
     const insertWebHookTemplate = async externalId =>
-      knex('WebHookTemplate').insert({
+      knex('WebhookTemplate').insert({
         externalId,
         method: 'POST',
         url: webUrl,
@@ -537,13 +537,13 @@ async function saveResultBasedNotification({
         ;[smsTemplateId] = await insertSmsTemplate(externalId)
       }
       /**
-       * WebHookTemplate
+       * WebhookTemplate
        */
       if (webHookTemplateId) {
         whereClause = { id: webHookTemplateId, externalId }
         // update or delete
         if (sendWeb) {
-          await knex('WebHookTemplate')
+          await knex('WebhookTemplate')
             .update({
               payload: webBody,
               url: webUrl,
@@ -552,7 +552,7 @@ async function saveResultBasedNotification({
             })
             .where(whereClause)
         } else {
-          await knex('WebHookTemplate').where(whereClause).del()
+          await knex('WebhookTemplate').where(whereClause).del()
         }
       } else if (sendWeb) {
         ;[webHookTemplateId] = await insertWebHookTemplate(externalId)
