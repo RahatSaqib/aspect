@@ -20,25 +20,10 @@ const { messageStatusToId } = require('../shared/dictionary')
 const actionHandlers = require('./actionHandler')
 
 async function getNotificationSubscriptions(knex) {
-  const actionParameters = await knex('NotificationType as nt')
-    .join(
-      'NotificationTypeCategory as ntc',
-      'nt.notificationTypeCategoryId',
-      'ntc.id'
-    )
+  const actionParameters = await knex('NotificationTypeCategory as ntc')
     .distinct(
       'ntc.externalId as notificationTypeCategoryId',
       'ntc.triggerCondition'
-      // 'nt.id as notificationTypeId',
-      // 'nt.partnerId',
-      // 'nt.name',
-      // 'nt.issueTypeId',
-      // 'nt.jobFunctionId',
-      // 'nt.filterCondition',
-      // 'nt.canAcknowledge',
-      // 'nt.messageTypeId',
-      // 'nt.level',
-      // 'nt.sendToContactsWithMatchingTags'
     )
     .then(items =>
       items.reduce((memo, { triggerCondition }) => {
@@ -424,6 +409,7 @@ module.exports = {
   listNotifications,
   onIssueEscalated,
   getNotifications,
+  createNotifications,
   shouldNotify,
   getNotificationTriggerSubscriptions,
 }

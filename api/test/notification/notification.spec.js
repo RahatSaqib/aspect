@@ -7,17 +7,32 @@ const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
-const {
-  getNotificationSubscriptions,
-} = require('../../src/notification/service')
 const { dispatchAndWaitForAction } = require('../utils/mqUtils')
 const { resultLogged } = require('../../src/result/actions')
 const { issueCreated } = require('../../src/issue/actions')
+const { notificationTypeCategoryToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
-describe.only('Notifications triggers', () => {
-  it('result based notification trigger', async () => {
-    await dispatchAndWaitForAction(issueCreated(3333))
+describe('Result Notifications triggers', () => {
+  after(async () => {
+    const results = await knex('Result').where({ partnerId: 1 }).select()
+
+    const notificationTypeCategoryId = await notificationTypeCategoryToId(
+      'resultBased'
+    )
+
+    const [ntId] = await knex('NotificationType').insert({
+      partnerId: 1,
+      name: "Result based notification",
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      notificationTypeCategoryId,
+    })
+
+    ntArr.push(ntId)
+  })
+  it('should create a result based notification', async () => {
+    await dispatchAndWaitForAction(resultCreated(3333))
     assert.isTrue(true)
   })
 })
