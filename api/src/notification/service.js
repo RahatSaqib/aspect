@@ -17,37 +17,6 @@ const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
-const actionHandlers = require('./actionHandler')
-
-async function getNotificationSubscriptions(knex) {
-  const actionParameters = await knex('NotificationTypeCategory as ntc')
-    .distinct(
-      'ntc.externalId as notificationTypeCategoryId',
-      'ntc.triggerCondition'
-    )
-    .then(items =>
-      items.reduce((memo, { triggerCondition }) => {
-        const { action, method } = JSON.parse(triggerCondition)
-        if (action != null) {
-          memo[action] = { ...(memo[action] || {}), method }
-        }
-        return memo
-      }, {})
-    )
-  const actions = {}
-  console.log('actionParameters', actionParameters)
-  Object.keys(actionParameters).forEach(actionKey => {
-    const { method } = actionParameters[actionKey]
-    actions[actionKey] = actionHandlers[method](actionParameters[actionKey])
-  })
-  console.log('susbcribed')
-  console.log({ actions })
-  return { actions }
-}
-
-async function getNotificationTriggerSubscriptions({ messageContext }) {
-  return messageContext.run(getNotificationSubscriptions)
-}
 
 async function listNotifications(request) {
   const { query, auth } = request
@@ -185,8 +154,12 @@ async function getNotificationPolicy(txKnex, action) {
     'mt.webhookTemplateId',
   ]
   return txKnex('NotificationType as nt')
+    .join(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .leftJoin('Geography as g', 'i.geographyId', 'g.id')
     .modify((queryBuilder, { resultId, issueId }) => {
       if (!_.isNil(issueId)) {
         selectColums.push(['i.siteId', 'i.deviceId', 'i.resultId'])
@@ -199,12 +172,24 @@ async function getNotificationPolicy(txKnex, action) {
               .andOn('i.partnerId', 'nt.partnerId')
               .andOn('i.level', '>=', 'nt.level')
           )
+          .leftJoin('Geography as g', 'i.geographyId', 'g.id')
           .where({ 'i.id': issueId })
       } else if (!_.isNil(resultId)) {
-        selectColums.push(['r.siteId', 'r.deviceId', 'r.resultId'])
+        selectColums.push([
+          'result.siteId',
+          'result.deviceId',
+          'result.resultId',
+        ])
         queryBuilder
-          .join('Result as r', 'nt.resultId', 'r.id')
-          .where({ 'r.id': resultId })
+          .crossJoin(
+            knex('Result as r')
+              .where('r.id', resultId)
+              .select('r.siteId', 'r.deviceId', 'r.id as resultId')
+              .as('result')
+          )
+          .join('Device as d', 'result.deviceId', 'd.id')
+          .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+          .where('ntc.externalId', 'resultBased')
       }
     }, action)
     .orderBy('nt.jobFunctionId', 'DESC')
@@ -411,5 +396,4 @@ module.exports = {
   getNotifications,
   createNotifications,
   shouldNotify,
-  getNotificationTriggerSubscriptions,
 }

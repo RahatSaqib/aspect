@@ -19,7 +19,7 @@ const {
 } = require('../../src/sms/actions')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
-describe('Sending SMS via Message Queue', () => {
+describe.only('Sending SMS via Message Queue', () => {
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 

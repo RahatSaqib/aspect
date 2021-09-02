@@ -1,7 +1,6 @@
 const chai = require('chai')
-const mocha = require('mocha')
 const Promise = require('bluebird')
-
+const _ = require('lodash')
 const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
@@ -13,30 +12,99 @@ const { issueCreated } = require('../../src/issue/actions')
 const { notificationTypeCategoryToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
+// describe.only('Issue based Notifications triggers', () => {
+//   let issues = []
+//   before(async () => {
+//     issues = await knex('Issue as i')
+//       .where({ partnerId: 1 })
+//       .whereNotExists(
+//         knex('Notification as n').whereRaw('n.issueId = i.id').select()
+//       )
+//       .select()
+//     assert.isAtLeast(issues.length, 1)
+//     const messageTypes = await knex('MessageType')
+//       .whereNotNull('smsTemplateId')
+//       .select()
+
+//     const notificationTypeCategoryId = await notificationTypeCategoryToId(
+//       'issueBased'
+//     )
+
+//     await knex('NotificationType').insert({
+//       partnerId: 1,
+//       name: 'Random issue based notification',
+//       createdOn: new Date(),
+//       updatedOn: new Date(),
+//       notificationTypeCategoryId,
+//       messageTypeId: _.sample(messageTypes).id,
+//     })
+//   })
+//   after(async () => {
+//     await knex('Notification')
+//       .whereIn(
+//         'issueId',
+//         _.map(issues, r => r.id)
+//       )
+//       .delete()
+//     await knex('NotificationType')
+//       .where({ name: 'Random issue based notification' })
+//       .delete()
+//   })
+//   it('should create a issue based notification without special triggers conditions', async () => {
+//     const issueId = _.sample(issues).id
+//     await dispatchAndWaitForAction(issueCreated(issueId))
+//     const notifications = await knex('Notification').where({ issueId }).select()
+//     assert.equal(notifications.length, 1)
+//   })
+// })
 describe('Result Notifications triggers', () => {
-  after(async () => {
-    const results = await knex('Result').where({ partnerId: 1 }).select()
+  let results = []
+  let ntId
+  before(async () => {
+    results = await knex('Result as r')
+      .where({ partnerId: 1 })
+      .whereNotExists(
+        knex('Notification as n').whereRaw('n.resultId = r.id').select()
+      )
+      .select()
+
+    const messageTypes = await knex('MessageType')
+      .whereNotNull('smsTemplateId')
+      .select()
 
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'resultBased'
     )
 
-    const [ntId] = await knex('NotificationType').insert({
+    ;[ntId] = await knex('NotificationType').insert({
       partnerId: 1,
-      name: "Result based notification",
+      name: 'Result based notification',
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
+      messageTypeId: _.sample(messageTypes).id,
     })
-
-    ntArr.push(ntId)
   })
-  it('should create a result based notification', async () => {
-    await dispatchAndWaitForAction(resultCreated(3333))
-    assert.isTrue(true)
+  after(async () => {
+    await knex('Notification')
+      .whereIn(
+        'resultId',
+        _.map(results, r => r.id)
+      )
+      .delete()
+    await knex('NotificationType').where({ id: ntId }).delete()
+  })
+  it('should create a result based notification without trigger conditions', async () => {
+    const resultId = _.sample(results).id
+    await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+    const notifications = await knex('Notification')
+      .where({ resultId })
+      .select()
+    console.log(notifications)
+    assert.equal(notifications.length, 1)
   })
 })
-describe.only('Notification routes', () => {
+describe('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()

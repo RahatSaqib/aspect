@@ -13,7 +13,7 @@
       "externalId": "resultBased",
       "triggerCondition": {
         "action": "RESULT_LOGGED",
-        "method": "issueBased"
+        "method": "resultBased"
       }
     }
   ]
