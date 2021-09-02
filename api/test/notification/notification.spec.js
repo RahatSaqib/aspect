@@ -180,7 +180,12 @@ describe('Notification routes', () => {
     }
 
     it('should save new result-based notification when posted with all required fields', async () => {
-      const res = await postData(resultBasedNotification)
+      const res = await postData({
+        ...resultBasedNotification,
+        jobFunctions: resultBasedNotification.jobFunctions.filter(
+          ({ checked }) => checked
+        ),
+      })
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -271,6 +276,12 @@ describe('Notification routes', () => {
 
       it('missing/wrong jobFunctions', async () => {
         let res = await postData({
+          ...resultBasedNotification,
+        })
+        // failing because some jobFunctions have checked=false
+        assert.equal(res.status, 400)
+
+        res = await postData({
           ...resultBasedNotification,
           jobFunctions: null,
         })

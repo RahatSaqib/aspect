@@ -117,7 +117,10 @@ const resultBasedNotificationPayload = {
         jobFunctionId: Joi.string()
           .required()
           .description('Id of Job Function'),
-        checked: Joi.bool().required().description('Checked job functions'),
+        checked: Joi.bool()
+          .valid(true, null)
+          .optional()
+          .description('Checked job functions'),
         tags: Joi.alternatives()
           .try(Joi.array(), Joi.string().allow(null, ''))
           .description('Tags for selected Job Function'),

@@ -58,6 +58,8 @@ const AspectNotificationDetails = () => {
 
   const onSubmit = (formik, meta) => {
     const values = sanitizeFormValues(formik.values, { meta })
+    // save only checked Job Functions
+    values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
     const id = isNumber(notificationId) ? +notificationId : undefined
 
     submitNotification(values, id)
