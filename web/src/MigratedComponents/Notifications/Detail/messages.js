@@ -164,6 +164,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.webUrl',
     defaultMessage: 'Web Url',
   },
+  webUrlInvalid: {
+    id: 'pages.NotificationDetail.webUrlInvalid',
+    defaultMessage: 'Please enter a valid url',
+  },
   webBody: {
     id: 'pages.NotificationDetail.webBody',
     defaultMessage: 'Web Body',

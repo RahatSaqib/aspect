@@ -14,6 +14,7 @@ import { SITE_ALL } from '../../QueryFetch/Site'
 import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
 import PERSON_LIST from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
+import { isUrl } from '../../../shared/utils/validate'
 
 const cssClasses = classnames.bind(styles)
 
@@ -350,10 +351,10 @@ const getSectionsBase = formatMessage => [
             },
             labelI18nKey: 'smsBody',
             validate: value => {
-              if (value.length > 144) {
-                return formatMessage(messages.smsBodyLimit)
-              }
-              return value ? '' : formatMessage(messages.required)
+              if (!value) return formatMessage(messages.required)
+              return value.length > 144
+                ? formatMessage(messages.smsBodyLimit)
+                : ''
             },
             visibleIf: values => values.sendSms === true,
           },
@@ -375,7 +376,10 @@ const getSectionsBase = formatMessage => [
             },
             type: 'text',
             labelI18nKey: 'webUrl',
-            validate: validationBase.required,
+            validate: value => {
+              if (!value) return formatMessage(messages.required)
+              return isUrl(value) ? '' : formatMessage(messages.webUrlInvalid)
+            },
             visibleIf: values => values.sendWeb === true,
           },
         ],

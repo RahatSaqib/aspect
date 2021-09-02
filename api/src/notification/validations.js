@@ -113,6 +113,7 @@ const resultBasedNotificationPayload = {
     .description('Webhook multi-line text (if sendWeb is checked)'),
   webUrl: Joi.string()
     .when('sendWeb', optionsForSendXXX)
+    .pattern(/^(ftp|http|https):\/\/[^ "]+$/, 'Invalid webhook url')
     .description('Webhook url'),
   jobFunctions: Joi.array()
     .items(

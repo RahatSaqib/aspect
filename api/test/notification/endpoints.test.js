@@ -43,7 +43,7 @@ describe('notification endpoints', () => {
     let payload
     let validation
     const schema = Joi.object(resultBasedNotificationPayload)
-    const resultBasedNotification = {
+    const payloadRaw = {
       notificationType: 'resultBased',
       name: 'test name',
       result: [
@@ -135,14 +135,13 @@ describe('notification endpoints', () => {
         },
       ],
     }
+    const payloadGood = {
+      ...payloadRaw,
+      jobFunctions: payloadRaw.jobFunctions.filter(({ checked }) => checked),
+    }
 
     it('should save new result-based notification when posted with all required fields', async () => {
-      payload = {
-        ...resultBasedNotification,
-        jobFunctions: resultBasedNotification.jobFunctions.filter(
-          ({ checked }) => checked
-        ),
-      }
+      payload = payloadGood
       validation = schema.validate(payload)
       assert.isUndefined(validation.error)
       assert.equal(JSON.stringify(validation.value), JSON.stringify(payload))
@@ -151,7 +150,7 @@ describe('notification endpoints', () => {
     describe('should fail to save result-based notification when some fields are missing', async () => {
       it('wrong notificationType', async () => {
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           notificationType: 'wrong',
         }
         validation = schema.validate(payload)
@@ -160,17 +159,17 @@ describe('notification endpoints', () => {
 
       it('missing/wrong "result" or some inner prop', async () => {
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           result: undefined,
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
 
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           result: [
             {
-              ...resultBasedNotification.result[0],
+              ...payloadGood.result[0],
               assayId: null,
             },
           ],
@@ -179,10 +178,10 @@ describe('notification endpoints', () => {
         assert.isDefined(validation.error)
 
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           result: [
             {
-              ...resultBasedNotification.result[0],
+              ...payloadGood.result[0],
               resultCategoryId: null,
             },
           ],
@@ -191,13 +190,13 @@ describe('notification endpoints', () => {
         assert.isDefined(validation.error)
 
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           result: [
             {
-              ...resultBasedNotification.result[0],
+              ...payloadGood.result[0],
               resultCategoryId: [
                 {
-                  ...resultBasedNotification.result[0].resultCategoryId[0],
+                  ...payloadGood.result[0].resultCategoryId[0],
                   value: null,
                 },
               ],
@@ -208,13 +207,13 @@ describe('notification endpoints', () => {
         assert.isDefined(validation.error)
 
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           result: [
             {
-              ...resultBasedNotification.result[0],
+              ...payloadGood.result[0],
               resultCategoryId: [
                 {
-                  ...resultBasedNotification.result[0].resultCategoryId[0],
+                  ...payloadGood.result[0].resultCategoryId[0],
                   scope: 'Invalid value',
                 },
               ],
@@ -227,8 +226,24 @@ describe('notification endpoints', () => {
 
       it('missing areaItems', async () => {
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           areaItems: '', // deviceLevelId='state' and requires areaItems to be set
+        }
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
+
+      it('wrong webUrl', async () => {
+        payload = {
+          ...payloadGood,
+          webUrl: 'http:/some-domain',
+        }
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+
+        payload = {
+          ...payloadGood,
+          webUrl: 'badscheme://some.com',
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
@@ -236,21 +251,21 @@ describe('notification endpoints', () => {
 
       it('missing/wrong jobFunctions', async () => {
         payload = {
-          ...resultBasedNotification,
+          ...payloadRaw,
         }
         // failing because some jobFunctions have checked=false
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
 
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           jobFunctions: null,
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
 
         payload = {
-          ...resultBasedNotification,
+          ...payloadGood,
           jobFunctions: [],
         }
         validation = schema.validate(payload)
