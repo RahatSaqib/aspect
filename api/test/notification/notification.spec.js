@@ -87,7 +87,7 @@ describe('Notification routes', () => {
         .set('Authorization', `Bearer ${shared.token}`)
 
     const resultBasedNotification = {
-      notificationType: 'result-based',
+      notificationType: 'resultBased',
       name: 'test name',
       result: [
         {

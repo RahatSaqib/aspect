@@ -359,11 +359,12 @@ async function getNotifications(request) {
   return { ok: true, total, data }
 }
 
-async function saveResultBasedNotification({
+async function saveNotificationType({
   id: notificationTypeId,
   partnerId,
   userId,
   payload,
+  issueTypeId = null,
 }) {
   const isNew = !notificationTypeId
   const fileContentTypeId = await fileContentTypeToId('applicationJson')
@@ -396,16 +397,13 @@ async function saveResultBasedNotification({
     updatedOn: now,
     updatedBy: userId,
   }
-  const getExternalId = notificationTypeId =>
-    `result-based-notification-${notificationTypeId}`
 
   return transact(async knex => {
     /**
      * helpers
      */
-    const insertEmailTemplate = async externalId =>
+    const insertEmailTemplate = async () =>
       knex('EmailTemplate').insert({
-        externalId,
         subject: emailSubject,
         body: emailBody,
         htmlBody: emailBody
@@ -414,15 +412,13 @@ async function saveResultBasedNotification({
           .join(''),
         ...auditFields,
       })
-    const insertSmsTemplate = async externalId =>
+    const insertSmsTemplate = async () =>
       knex('SmsTemplate').insert({
-        externalId,
         message: smsBody,
         ...auditFields,
       })
-    const insertWebHookTemplate = async externalId =>
+    const insertWebHookTemplate = async () =>
       knex('WebhookTemplate').insert({
-        externalId,
         method: 'POST',
         url: webUrl,
         payload: webBody,
@@ -438,6 +434,7 @@ async function saveResultBasedNotification({
       ;[notificationTypeId] = await knex('NotificationType').insert({
         notificationTypeCategoryId,
         partnerId,
+        issueTypeId,
         level: 1,
         canAcknowledge: 0,
         name,
@@ -446,18 +443,17 @@ async function saveResultBasedNotification({
       /**
        * create *Template items
        */
-      const externalId = getExternalId(notificationTypeId)
       let emailTemplateId = null
       let smsTemplateId = null
       let webHookTemplateId = null
       if (sendEmail) {
-        ;[emailTemplateId] = await insertEmailTemplate(externalId)
+        ;[emailTemplateId] = await insertEmailTemplate()
       }
       if (sendSms) {
-        ;[smsTemplateId] = await insertSmsTemplate(externalId)
+        ;[smsTemplateId] = await insertSmsTemplate()
       }
       if (sendWeb) {
-        ;[webHookTemplateId] = await insertWebHookTemplate(externalId)
+        ;[webHookTemplateId] = await insertWebHookTemplate()
       }
       /**
        * create MessageType and then put it in NotificationType table with remaining props
@@ -468,12 +464,8 @@ async function saveResultBasedNotification({
         smsTemplateId,
         webHookTemplateId,
       })
-      // await knex('NotificationType')
-      //   .update({ messageTypeId })
-      //   .where({ id: notificationTypeId })
     } else {
       let whereClause
-      const externalId = getExternalId(notificationTypeId)
       await knex('NotificationType')
         .update({
           name,
@@ -494,7 +486,7 @@ async function saveResultBasedNotification({
        * EmailTemplate
        */
       if (emailTemplateId) {
-        whereClause = { id: emailTemplateId, externalId }
+        whereClause = { id: emailTemplateId }
         // update or delete
         if (sendEmail) {
           await knex('EmailTemplate')
@@ -514,13 +506,13 @@ async function saveResultBasedNotification({
         }
       } else if (sendEmail) {
         // insert
-        ;[emailTemplateId] = await insertEmailTemplate(externalId)
+        ;[emailTemplateId] = await insertEmailTemplate()
       }
       /**
        * SmsTemplate
        */
       if (smsTemplateId) {
-        whereClause = { id: smsTemplateId, externalId }
+        whereClause = { id: smsTemplateId }
         // update or delete
         if (sendSms) {
           await knex('SmsTemplate')
@@ -534,13 +526,13 @@ async function saveResultBasedNotification({
           await knex('SmsTemplate').where(whereClause).del()
         }
       } else if (sendSms) {
-        ;[smsTemplateId] = await insertSmsTemplate(externalId)
+        ;[smsTemplateId] = await insertSmsTemplate()
       }
       /**
        * WebhookTemplate
        */
       if (webHookTemplateId) {
-        whereClause = { id: webHookTemplateId, externalId }
+        whereClause = { id: webHookTemplateId }
         // update or delete
         if (sendWeb) {
           await knex('WebhookTemplate')
@@ -555,7 +547,7 @@ async function saveResultBasedNotification({
           await knex('WebhookTemplate').where(whereClause).del()
         }
       } else if (sendWeb) {
-        ;[webHookTemplateId] = await insertWebHookTemplate(externalId)
+        ;[webHookTemplateId] = await insertWebHookTemplate()
       }
       //
       await knex('MessageType')
@@ -601,15 +593,13 @@ async function saveNotification(request) {
   const { partnerId, id: userId } = user
   const { notificationType } = payload
 
-  if (notificationType === 'result-based') {
-    const { ok, notificationTypeId, error } = await saveResultBasedNotification(
-      {
-        id,
-        partnerId,
-        userId,
-        payload,
-      }
-    )
+  if (notificationType === 'resultBased') {
+    const { ok, notificationTypeId, error } = await saveNotificationType({
+      id,
+      partnerId,
+      userId,
+      payload,
+    })
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
     }

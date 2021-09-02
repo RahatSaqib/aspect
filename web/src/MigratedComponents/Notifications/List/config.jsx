@@ -35,7 +35,7 @@ const groupedOptions = ({ formatMessage }) => [
     label: formatMessage(messages.notificationCreateGroupForResults),
     options: [
       {
-        id: 'result-based',
+        id: 'resultBased', // externalId from table NotificationTypeCategory
         name: formatMessage(messages.notificationTypeResultBased),
         icon: 'AiOutlineSolution',
       },
