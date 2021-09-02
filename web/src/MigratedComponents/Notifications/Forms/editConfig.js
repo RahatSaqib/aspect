@@ -438,24 +438,38 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                   },
                   label: jf.name,
                   validateIf: (values, formik, { touchedName }) => {
+                    /**
+                     * noOneChecked - is `true` if no one of jobFunctions checked
+                     */
                     const noOneChecked = !values.jobFunctions.find(
                       it => it.checked
                     )
-                    let firstTouchedIndex = findIndex(
+                    /**
+                     * if no one checkbox selected, then
+                     * show validation message only for one checkbox -
+                     * - for first touched, or
+                     * - if `touchedName` is 1st touched one, or
+                     * - for index = 0
+                     */
+                    // define at what index to show message
+                    let displayAtIndex = findIndex(
                       formik.touched.jobFunctions,
                       it => !!it
                     )
                     if (
-                      firstTouchedIndex === -1 &&
+                      displayAtIndex === -1 &&
                       touchedName === `jobFunctions[${index}].checked`
                     ) {
-                      firstTouchedIndex = index
+                      displayAtIndex = index
+                    }
+                    if (displayAtIndex === -1) {
+                      displayAtIndex = 0
                     }
                     /**
                      * allow below func `validate` only for 1st touched checkbox
                      * and when no-one checkbox Job Function is selected
                      */
-                    return index === firstTouchedIndex && noOneChecked
+                    return index === displayAtIndex && noOneChecked
                   },
                   /**
                    * see above func `validateIf` when this validation applies
