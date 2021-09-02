@@ -138,6 +138,8 @@ describe.only('CommCare Result API routes', () => {
 
       let result = await getLastResult(knex, deviceId)
       let notification = await getLastNotification(knex, deviceId)
+      console.log('Notification', notification)
+      assert.isNotNull(notification)
       assert.equal(result.id, '123')
       assert.equal(result.data.resultText, 'negative')
       assert.equal(result.data.hcwConfirmatoryResult, 'negative')

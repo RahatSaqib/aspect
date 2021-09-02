@@ -82,6 +82,7 @@ async function createNotifications(knex, action, context) {
   const now = new Date()
   // Find escalation policy for the issue
   const policies = await getNotificationPolicy(knex, action)
+  console.log(action, policies)
   // for each job function, find all policies with maximum constrained level,
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
@@ -153,6 +154,7 @@ async function getNotificationPolicy(txKnex, action) {
     'mt.smsTemplateId',
     'mt.webhookTemplateId',
   ]
+  let extraFields = []
   return txKnex('NotificationType as nt')
     .join(
       'NotificationTypeCategory as ntc',
@@ -162,7 +164,7 @@ async function getNotificationPolicy(txKnex, action) {
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .modify((queryBuilder, { resultId, issueId }) => {
       if (!_.isNil(issueId)) {
-        selectColums.push(['i.siteId', 'i.deviceId', 'i.resultId'])
+        extraFields = ['i.siteId', 'i.deviceId', 'i.resultId']
         queryBuilder
           .join('Issue as i', joinBuilder =>
             // If issue is escalated past configured level, send again
@@ -175,11 +177,11 @@ async function getNotificationPolicy(txKnex, action) {
           .leftJoin('Geography as g', 'i.geographyId', 'g.id')
           .where({ 'i.id': issueId })
       } else if (!_.isNil(resultId)) {
-        selectColums.push([
-          'result.siteId',
-          'result.deviceId',
-          'result.resultId',
-        ])
+        extraFields = [
+          'result.siteId as siteId',
+          'result.deviceId as deviceId',
+          'result.resultId as resultId',
+        ]
         queryBuilder
           .crossJoin(
             knex('Result as r')
@@ -194,7 +196,7 @@ async function getNotificationPolicy(txKnex, action) {
     }, action)
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
-    .select(selectColums)
+    .select(selectColums.concat(extraFields))
 }
 
 async function getPeopleToNotify(txKnex, policy, tags) {
@@ -245,22 +247,25 @@ async function shouldNotify(
   personId,
   jobFunctionId
 ) {
+  const aliasMapping = {
+    device: 'd',
+    site: 's',
+    geography: 'g',
+    partner: 'p',
+    showUnapprovedDevices: true,
+    showDecommissionedDevices: true,
+  }
   // does person have job context that can see this issue/result?
   const constraints = await getJobConstraints(personId, jobFunctionId)
   const table = !_.isNil(issueId) ? 'Issue as i' : 'Result as i'
+  if (!_.isNil(issueId)) aliasMapping.issue = 'i'
+  else aliasMapping.result = 'i'
   const records = await txKnex(table)
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'i.siteId', 's.id')
     .leftJoin('Geography as g', 'i.geographyId', 'g.id')
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
-    .modify(addConstraints, constraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      partner: 'p',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
-    })
+    .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
     .first('i.id')
   return !_.isNil(records)
@@ -284,6 +289,7 @@ async function createNotificationIfNotCreatedAlready(
     notificationTypeId: policy.id,
     personId,
   }
+  console.log('notification', notification)
   const existingNotification = await knex('Notification')
     .where(notification)
     .first()

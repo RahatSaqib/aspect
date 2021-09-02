@@ -103,7 +103,7 @@ describe.only('Issue Notification', () => {
         issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
       const issue = await shouldNotify(
         knex,
-        clinicianIssueInItsSiteId,
+        { issueId: clinicianIssueInItsSiteId },
         clinician.personId,
         clinician.jobFunctionId
       )
@@ -113,7 +113,7 @@ describe.only('Issue Notification', () => {
       const clicnicianNotItsSiteIssueId = _.last(issueToDeleteId) // the last issue inserted in before each
       const issue = await shouldNotify(
         knex,
-        clicnicianNotItsSiteIssueId,
+        { issueId: clicnicianNotItsSiteIssueId },
         clinicianInDifferentSiteResult.personId,
         clinicianInDifferentSiteResult.jobFunctionId
       )
@@ -136,7 +136,7 @@ describe.only('Issue Notification', () => {
       const rmIssueInItsSiteId = issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
       const issue = await shouldNotify(
         knex,
-        rmIssueInItsSiteId,
+        { issueId: rmIssueInItsSiteId },
         rm.personId,
         rm.jobFunctionId
       )
@@ -147,7 +147,7 @@ describe.only('Issue Notification', () => {
 
       const issue = await shouldNotify(
         knex,
-        rmNotItsSiteIssueId,
+        { issueId: rmNotItsSiteIssueId },
         rmInDifferentStateResult.personId,
         rmInDifferentStateResult.jobFunctionId
       )

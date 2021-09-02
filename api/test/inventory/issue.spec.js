@@ -18,7 +18,7 @@ const {
   inventoryStockout,
   inventoryStockExpiring,
 } = require('../../src/inventory/actions')
-const { escalateIssues } = require('../../src/issue/actions')
+const { escalateIssues, issueCreated } = require('../../src/issue/actions')
 const { refreshConsumptionRates } = require('../../src/fact/service')
 const {
   getPartner,
@@ -229,7 +229,7 @@ describe.only('Inventory Stock Issues Endpoint', () => {
         .where({ siteId, consumableId })
 
       // escalate
-      const action = escalateIssues(issueId)
+      const action = issueCreated(issueId)
       await messageContext.escalateIssues(issueId)
       await waitForAction(action)
       await waitForIdle(1000)
