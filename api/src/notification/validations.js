@@ -78,6 +78,8 @@ const resultBasedNotificationPayload = {
       'Selected items of Assay and corresponding ResultCategories or ResultCategoryGroups'
     ),
   deviceLevelId: Joi.string()
+    // see options for id:'deviceLevelId' in `web/src/MigratedComponents/Notifications/Forms/editConfig.js`
+    .valid('national', 'state', 'lga', 'lab')
     .description('Device area level (National, State, Lga, Laboratory)')
     .required(),
   areaItems: Joi.array()
@@ -104,6 +106,7 @@ const resultBasedNotificationPayload = {
     .description('Email multi-line body (if sendEmail is checked)'),
   smsBody: Joi.string()
     .when('sendSms', optionsForSendXXX)
+    .max(144)
     .description('Sms multi-line text (if sendSms is checked)'),
   webBody: Joi.string()
     .when('sendWeb', optionsForSendXXX)

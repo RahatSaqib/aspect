@@ -152,6 +152,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.smsBody',
     defaultMessage: 'SMS Body',
   },
+  smsBodyLimit: {
+    id: 'pages.NotificationDetail.smsBodyLimit',
+    defaultMessage: 'Sms message should not be longer than 144 characters',
+  },
   web: {
     id: 'pages.NotificationDetail.web',
     defaultMessage: 'Web',
@@ -164,6 +168,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.webBody',
     defaultMessage: 'Web Body',
   },
+  required: {
+    id: 'forms.required',
+    defaultMessage: 'Required',
+  },
 
   // --------------------------------------------------------------
   // section "To any of these contacts"
@@ -175,6 +183,10 @@ export default defineMessages({
   jobFunctionTags: {
     id: 'pages.NotificationDetail.jobFunctionTags',
     defaultMessage: 'Select contacts with any of the following tags',
+  },
+  jobFunctionAtLeastOneNeeded: {
+    id: 'pages.NotificationDetail.jobFunctionAtLeastOneNeeded',
+    defaultMessage: 'Please select at least one Job Function',
   },
   toStateContacts: {
     id: 'pages.NotificationDetail.toStateContacts',

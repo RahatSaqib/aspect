@@ -349,7 +349,12 @@ const getSectionsBase = formatMessage => [
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'smsBody',
-            validate: validationBase.required,
+            validate: value => {
+              if (value.length > 144) {
+                return formatMessage(messages.smsBodyLimit)
+              }
+              return value ? '' : formatMessage(messages.required)
+            },
             visibleIf: values => values.sendSms === true,
           },
         ],
@@ -452,7 +457,9 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                    * see above func `validateIf` when this validation applies
                    */
                   validate: checked =>
-                    checked ? '' : 'Please select at least one Job Function',
+                    checked
+                      ? ''
+                      : formatMessage(messages.jobFunctionAtLeastOneNeeded),
                 },
               ],
             },
