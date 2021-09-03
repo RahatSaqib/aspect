@@ -323,6 +323,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'placeholderTextArea',
               rowsMax: 10,
+              rows: 4,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -345,6 +346,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'placeholderTextArea',
               rowsMax: 5,
+              rows: 2,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -392,6 +394,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'placeholderTextArea',
               rowsMax: 10,
+              rows: 3,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),

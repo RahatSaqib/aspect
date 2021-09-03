@@ -366,7 +366,6 @@ async function saveNotificationType({
   payload,
   issueTypeId = null,
 }) {
-  const isNew = !notificationTypeId
   const fileContentTypeId = await fileContentTypeToId('applicationJson')
   const messageSeverityId = await messageSeverityToId('Alert')
   const notificationTypeCategoryId = await notificationTypeCategoryToId(
@@ -427,7 +426,7 @@ async function saveNotificationType({
       })
     let messageTypeId
 
-    if (isNew) {
+    if (!notificationTypeId) {
       /**
        * insert base props in NotificationType (without messageTypeId yet)
        */

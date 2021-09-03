@@ -140,14 +140,14 @@ describe('notification endpoints', () => {
       jobFunctions: payloadRaw.jobFunctions.filter(({ checked }) => checked),
     }
 
-    it('should save new result-based notification when posted with all required fields', async () => {
+    it('should validate new result-based notification when posted with all required fields', async () => {
       payload = payloadGood
       validation = schema.validate(payload)
       assert.isUndefined(validation.error)
       assert.equal(JSON.stringify(validation.value), JSON.stringify(payload))
     })
 
-    describe('should fail to save result-based notification when some fields are missing', async () => {
+    describe('should not validate result-based notification when some fields are missing', async () => {
       it('wrong notificationType', async () => {
         payload = {
           ...payloadGood,
