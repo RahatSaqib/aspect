@@ -1,11 +1,7 @@
 const Joi = require('@hapi/joi')
 const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listNotifications,
-  onIssueEscalated,
-  getNotifications,
-} = require('./service')
+const { listNotifications, getNotifications } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 
 function listNotificationsBaseConfig() {
@@ -102,13 +98,6 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  getNotificationTriggerSubscriptions,
-  {
-    actions: {
-      ISSUE_ESCALATED: onIssueEscalated,
-    },
-  },
-]
+const subscriptions = [getNotificationTriggerSubscriptions]
 
 module.exports = { routes, subscriptions }

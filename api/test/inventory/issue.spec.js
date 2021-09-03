@@ -40,7 +40,7 @@ const {
 const USER_LU_NAME_PREFIX = 'myanmar_lab'
 const USER_RO_NAME_PREFIX = 'myanmar_ro'
 
-describe.only('Inventory Stock Issues Endpoint', () => {
+describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
 

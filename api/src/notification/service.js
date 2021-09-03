@@ -72,17 +72,11 @@ async function listNotifications(request) {
   return { ok: true, total, data, length: data.length }
 }
 
-async function onIssueEscalated({ issueId }, { messageContext: context }) {
-  await context.transact(async knex =>
-    createNotifications(knex, { issueId }, context)
-  )
-}
-
 async function createNotifications(knex, action, context) {
   const now = new Date()
   // Find escalation policy for the issue
   const policies = await getNotificationPolicy(knex, action)
-  console.log(action, policies)
+  console.log('policies', action, policies)
   // for each job function, find all policies with maximum constrained level,
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
@@ -268,7 +262,7 @@ async function shouldNotify(
     .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
     .first('i.id')
-  return !_.isNil(records)
+  return records
 }
 
 async function createNotificationIfNotCreatedAlready(
@@ -398,7 +392,6 @@ async function getNotifications(request) {
 
 module.exports = {
   listNotifications,
-  onIssueEscalated,
   getNotifications,
   createNotifications,
   shouldNotify,
