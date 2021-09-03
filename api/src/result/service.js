@@ -779,6 +779,14 @@ async function getResultByResultId(
     ;[data] = results
     if (data.resultData) {
       data.resultData = JSON.parse(data.resultData)
+      // formated full result text for the result details page
+      data.fullResultText = data.resultData.resultText
+      if (data.fullResultText) {
+        data.fullResultText = data.fullResultText
+          .replace(/^\|?|\|?$/g, '') // remove leading and ending pipe
+          .replace(/\|\|/g, '|') // replacing double pipe with pipe
+          .replace(/\|/g, '\n') // replacing pipe with new line
+      }
     }
     if (data.formSchema) {
       data.formSchema = JSON.parse(data.formSchema)
