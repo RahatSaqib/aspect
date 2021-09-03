@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-30T14:20:57.236Z\n"
+"POT-Creation-Date: 2021-09-03T14:24:08.311Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -6667,6 +6667,9 @@ msgstr "Решено"
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
+#. [pages.DeviceDetailProfile.resultText]
+#. defaultMessage is:
+#. Result
 #: extracted_strings.json
 msgid "Result"
 msgstr "Результат"
@@ -6703,9 +6706,6 @@ msgstr "Детали результата"
 #. defaultMessage is:
 #. Result Text
 #. [placeholder.result.text]
-#. defaultMessage is:
-#. Result Text
-#. [pages.DeviceDetailProfile.resultText]
 #. defaultMessage is:
 #. Result Text
 #: extracted_strings.json
