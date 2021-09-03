@@ -262,4 +262,5 @@ async function checkResultCategory(knex, issue, evaluationParameter) {
 
 module.exports = {
   issueConditionsMet,
+  evaluateArrayOfConditions,
 }

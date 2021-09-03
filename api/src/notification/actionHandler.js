@@ -1,6 +1,6 @@
 const { createNotifications } = require('./service')
 
-function issueBased(actionParametersList) {
+function issueBased({ filterCondition }) {
   return async (action, { messageContext: context }) => {
     return context.transact(async knex => {
       // Trigger escalation logic for level 1 as soon as issue is created,
@@ -9,15 +9,23 @@ function issueBased(actionParametersList) {
       // so it's OK if this is "at least once"
       // This also allows one message listener between created and escalated
       // if logic is shared and avoids potential race condition.
-      await createNotifications(knex, { issueId: action.issueId }, context)
+      await createNotifications(
+        knex,
+        { issueId: action.issueId, filterCondition },
+        context
+      )
     })
   }
 }
 
-function resultBased(actionParametersList) {
+function resultBased({ filterCondition }) {
   return async (action, { messageContext: context }) =>
     context.run(async knex => {
-      await createNotifications(knex, { resultId: action.resultId }, context)
+      await createNotifications(
+        knex,
+        { resultId: action.resultId, filterCondition },
+        context
+      )
     })
 }
 

@@ -104,7 +104,7 @@ describe('Result Notifications triggers', () => {
     assert.equal(notifications.length, 1)
   })
 })
-describe('Notification routes', () => {
+describe.only('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()

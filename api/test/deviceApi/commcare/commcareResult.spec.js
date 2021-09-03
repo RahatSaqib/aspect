@@ -15,7 +15,7 @@ const { knex } = require('../../../src/db')
 
 const pluginPath = '/device/plugin/commcare'
 
-describe.only('CommCare Result API routes', () => {
+describe('CommCare Result API routes', () => {
   describe('Check patient phone normalization malawi', () => {
     const context = createTestContext(server, {
       user: 'reporter_admin',
@@ -117,7 +117,7 @@ describe.only('CommCare Result API routes', () => {
     })
     afterEach(context.afterEach)
 
-    it.only('should add and return device results', async () => {
+    it('should add and return device results', async () => {
       const { apiKey } = context
 
       let payload = getCommCarePayload({

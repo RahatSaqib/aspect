@@ -17,6 +17,25 @@ const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
+const {
+  issueConditionsMet,
+  evaluateArrayOfConditions,
+} = require('../issue/issueEvaluation')
+
+const evaluationMethods = {
+  issueConditions: issueConditionsMet,
+  resultConditions: resultConditionsMet,
+}
+
+async function resultConditionsMet(knex, result, conditions) {
+  if (_.isEmpty(conditions)) {
+    return Promise.resolve(false)
+  }
+  if (Array.isArray(conditions)) {
+    return evaluateArrayOfConditions(knex, result, conditions)
+  }
+  return true
+}
 
 async function listNotifications(request) {
   const { query, auth } = request
@@ -74,9 +93,28 @@ async function listNotifications(request) {
 
 async function createNotifications(knex, action, context) {
   const now = new Date()
+  const {
+    filterCondition = null,
+    evaluationParameter,
+    evaluationFilterParameters,
+  } = action
+  let meetCondition = true
+  if (filterCondition) {
+    const { evaluationMethod } = filterCondition
+    if (!evaluationMethods[evaluationMethod]) {
+      throw new Error(
+        `Unrecognised evaluation method in condition ${evaluationMethod}`
+      )
+    }
+    meetCondition = evaluationMethods[evaluationMethod](
+      knex,
+      action.resultId,
+      evaluationParameter,
+      evaluationFilterParameters
+    )
+  }
   // Find escalation policy for the issue
   const policies = await getNotificationPolicy(knex, action)
-  console.log('policies', action, policies)
   // for each job function, find all policies with maximum constrained level,
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
@@ -99,7 +137,8 @@ async function createNotifications(knex, action, context) {
       }
       const tags = await getTagsByPolicy(knex, policy)
       const people = await getPeopleToNotify(knex, policy, tags)
-      await sendNotificationsToPeople(knex, context, people, policy, action)
+      if (meetCondition)
+        await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
 }
