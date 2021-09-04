@@ -11,10 +11,9 @@ import union from 'lodash/union'
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import { SITE_ALL } from '../../QueryFetch/Site'
-import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
+import { getBaseData, getBaseValidation } from '../../Form/Formik/Helpers'
 import PERSON_LIST from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
-import { isUrl } from '../../../shared/utils/validate'
 
 const cssClasses = classnames.bind(styles)
 
@@ -23,7 +22,7 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
-const getSectionsBase = formatMessage => [
+const getSectionsBase = (formatMessage, validationBase) => [
   {
     id: 'section_notificationType',
     label: 'Notification Type',
@@ -157,7 +156,10 @@ const getSectionsBase = formatMessage => [
                 },
                 { label: formatMessage(messages.AreaState), value: 'state' },
                 { label: formatMessage(messages.AreaLGA), value: 'lga' },
-                { label: formatMessage(messages.AreaLaboratory), value: 'lab' },
+                {
+                  label: formatMessage(messages.AreaLaboratory),
+                  value: 'lab',
+                },
               ],
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
             },
@@ -352,12 +354,8 @@ const getSectionsBase = formatMessage => [
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'smsBody',
-            validate: value => {
-              if (!value) return formatMessage(messages.required)
-              return value.length > 144
-                ? formatMessage(messages.smsBodyLimit)
-                : ''
-            },
+            validate: value =>
+              validationBase.requiredLimitLength(value, 144, 'smsBodyLimit'),
             visibleIf: values => values.sendSms === true,
           },
         ],
@@ -378,10 +376,7 @@ const getSectionsBase = formatMessage => [
             },
             type: 'text',
             labelI18nKey: 'webUrl',
-            validate: value => {
-              if (!value) return formatMessage(messages.required)
-              return isUrl(value) ? '' : formatMessage(messages.webUrlInvalid)
-            },
+            validate: validationBase.requiredValidUrl,
             visibleIf: values => values.sendWeb === true,
           },
         ],
@@ -410,6 +405,7 @@ const getSectionsBase = formatMessage => [
 ]
 
 const getConfig = (formatMessage, notificationType, jobFunctions) => {
+  const validationBase = getBaseValidation(formatMessage, messages)
   const jobFunctionsRows = {
     id: 'toAnyOfTheseJobFunctions',
     label: 'toAnyOfTheseJobFunctions',
@@ -475,12 +471,14 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                     return index === displayAtIndex && noOneChecked
                   },
                   /**
-                   * see above func `validateIf` when this validation applies
+                   * see above func `validateIf` when this validation applies.
+                   * Notice that for component='checkbox' value is `true` or `false`
                    */
-                  validate: checked =>
-                    checked
-                      ? ''
-                      : formatMessage(messages.jobFunctionAtLeastOneNeeded),
+                  validate: value =>
+                    validationBase.checked(
+                      value,
+                      'jobFunctionAtLeastOneNeeded'
+                    ),
                 },
               ],
             },
@@ -535,7 +533,10 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
       ),
     ],
   }
-  const sections = [...getSectionsBase(formatMessage), jobFunctionsRows]
+  const sections = [
+    ...getSectionsBase(formatMessage, validationBase),
+    jobFunctionsRows,
+  ]
   return {
     title: formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',

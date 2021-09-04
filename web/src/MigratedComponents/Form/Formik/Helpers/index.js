@@ -12,6 +12,7 @@ import omit from 'lodash/omit'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
 
+import { isUrl } from '../../../../shared/utils/validate'
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config, messages) => {
@@ -232,10 +233,24 @@ const getFieldErrorProps = (formik, id) => ({
   helperText: get(formik.touched, id) && get(formik.errors, id),
 })
 
-const validationBase = {
-  required: value => {
-    return !value ? 'Required' : ''
-  },
+const getBaseValidation = (formatMessage, messages) => {
+  const requiredBase = (value, i18nKey) =>
+    value ? '' : formatMessage(messages[i18nKey])
+
+  return {
+    required: value => requiredBase(value, 'required'),
+    checked: requiredBase,
+    requiredLimitLength: (value, maxLength, i18nLimitLength) => {
+      if (!value) return formatMessage(messages.required)
+      return value.length > maxLength
+        ? formatMessage(messages[i18nLimitLength])
+        : ''
+    },
+    requiredValidUrl: value => {
+      if (!value) return formatMessage(messages.required)
+      return isUrl(value) ? '' : formatMessage(messages.webUrlInvalid)
+    },
+  }
 }
 
 const sanitizeFormValues = (
@@ -273,6 +288,6 @@ export {
   mergeFormConfigWithData,
   pickItems,
   pickKeys,
-  validationBase,
+  getBaseValidation,
   sanitizeFormValues,
 }
