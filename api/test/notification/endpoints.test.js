@@ -157,14 +157,15 @@ describe('notification endpoints', () => {
         assert.isDefined(validation.error)
       })
 
-      it('missing/wrong "result" or some inner prop', async () => {
+      it('missing "result" or some inner prop', async () => {
         payload = {
           ...payloadGood,
           result: undefined,
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong result[].assayId', async () => {
         payload = {
           ...payloadGood,
           result: [
@@ -176,7 +177,8 @@ describe('notification endpoints', () => {
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong result[].resultCategoryId', async () => {
         payload = {
           ...payloadGood,
           result: [
@@ -188,7 +190,8 @@ describe('notification endpoints', () => {
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong result[].resultCategoryId[].value', async () => {
         payload = {
           ...payloadGood,
           result: [
@@ -205,7 +208,8 @@ describe('notification endpoints', () => {
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong result[].resultCategoryId[].scope', async () => {
         payload = {
           ...payloadGood,
           result: [
@@ -233,14 +237,15 @@ describe('notification endpoints', () => {
         assert.isDefined(validation.error)
       })
 
-      it('wrong webUrl', async () => {
+      it('wrong webUrl - pattern error', async () => {
         payload = {
           ...payloadGood,
           webUrl: 'http:/some-domain',
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong webUrl - bad scheme', async () => {
         payload = {
           ...payloadGood,
           webUrl: 'badscheme://some.com',
@@ -248,22 +253,32 @@ describe('notification endpoints', () => {
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
       })
+      it('wrong webUrl - missing domain', async () => {
+        payload = {
+          ...payloadGood,
+          webUrl: 'http://',
+        }
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
 
-      it('missing/wrong jobFunctions', async () => {
+      it('wrong jobFunctions - unchecked items', async () => {
         payload = {
           ...payloadRaw,
         }
         // failing because some jobFunctions have checked=false
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong jobFunctions - null', async () => {
         payload = {
           ...payloadGood,
           jobFunctions: null,
         }
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
-
+      })
+      it('wrong jobFunctions - []', async () => {
         payload = {
           ...payloadGood,
           jobFunctions: [],
