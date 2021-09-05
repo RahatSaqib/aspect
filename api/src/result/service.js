@@ -477,7 +477,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     resultCategory2ExternalId: d.resultCategory2ExternalId,
     patientData: d.patientData ? JSON.parse(d.patientData) : null,
     resultData: d.resultData
-      ? _.pick(JSON.parse(d.resultData), ['resultText', 'copies', 'log'])
+      ? _.pick(JSON.parse(d.resultData), [
+          'resultText',
+          'copies',
+          'log',
+          'detectedResistance',
+        ])
       : null,
     sample: {
       id: d.sampleId,
