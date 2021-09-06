@@ -133,7 +133,6 @@ async function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   const { result = 'r' } = aliases
   await resultCategoryFilters(queryBuilder, filterCondition, result)
   await geographyFilters(queryBuilder, filterCondition, aliases)
-  await jobFunctionFilters(queryBuilder, filterCondition, aliases)
 }
 
 async function listNotifications(request) {
@@ -236,9 +235,13 @@ async function createNotifications(knex, action, context) {
         return Promise.resolve()
       }
       const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(knex, policy, tags)
-      if (meetCondition)
-        await sendNotificationsToPeople(knex, context, people, policy, action)
+      const people = await getPeopleToNotify(
+        knex,
+        policy,
+        tags,
+        filterCondition
+      )
+      await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
 }
@@ -338,18 +341,41 @@ async function getNotificationPolicy(
     .select(selectColums.concat(extraFields))
 }
 
-async function getPeopleToNotify(txKnex, policy, tags) {
-  return txKnex('Job as j')
+async function getPeopleToNotify(
+  txKnex,
+  policy,
+  tags,
+  { jobFunctions = null }
+) {
+  let peopleTagIncluded = false
+  const people = await txKnex('Job as j')
     .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .modify(queryBuilder => {
       if (policy.sendToContactsWithMatchingTags) {
+        peopleTagIncluded = true
         queryBuilder
           .join('PersonTag as pt', 'j.personId', 'pt.personId')
           .whereIn('pt.tagId', _.uniq(tags))
       }
-      queryBuilder.where('jf.id', policy.jobFunctionId)
+      if (policy.jobFunctionId)
+        queryBuilder.where('jf.id', policy.jobFunctionId)
+      if (jobFunctions) {
+        _.each(jobFunctions, ({ jobFunctionId, tags }) => {
+          queryBuilder.orWhere(builder => {
+            builder.where('jf.id', jobFunctionId)
+            if (tags.length > 0) {
+              if (!peopleTagIncluded) {
+                builder.join('PersonTag as pt', 'j.personId', 'pt.personId')
+                peopleTagIncluded = true
+              }
+              builder.whereIn('pt.tagId', _.uniq(_.map(tags, tag => tag.value)))
+            }
+          })
+        })
+      }
     })
     .distinct('j.personId as id')
+  return people
 }
 
 async function sendNotificationsToPeople(
@@ -428,7 +454,6 @@ async function createNotificationIfNotCreatedAlready(
     notificationTypeId: policy.id,
     personId,
   }
-  console.log('notification', notification)
   const existingNotification = await knex('Notification')
     .where(notification)
     .first()
