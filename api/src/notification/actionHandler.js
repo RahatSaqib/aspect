@@ -1,6 +1,6 @@
 const { createNotifications } = require('./service')
 
-function issueBased({ filterCondition }) {
+function issueBased({ filterCondition, notificationTypeCategoryId }) {
   return async (action, { messageContext: context }) => {
     return context.transact(async knex => {
       // Trigger escalation logic for level 1 as soon as issue is created,
@@ -11,19 +11,27 @@ function issueBased({ filterCondition }) {
       // if logic is shared and avoids potential race condition.
       await createNotifications(
         knex,
-        { issueId: action.issueId, filterCondition },
+        {
+          issueId: action.issueId,
+          filterCondition,
+          notificationTypeCategoryId,
+        },
         context
       )
     })
   }
 }
 
-function resultBased({ filterCondition }) {
+function resultBased({ filterCondition, notificationTypeCategoryId }) {
   return async (action, { messageContext: context }) =>
     context.run(async knex => {
       await createNotifications(
         knex,
-        { resultId: action.resultId, filterCondition },
+        {
+          resultId: action.resultId,
+          filterCondition,
+          notificationTypeCategoryId,
+        },
         context
       )
     })

@@ -23,18 +23,117 @@ const {
 } = require('../issue/issueEvaluation')
 
 const evaluationMethods = {
-  issueConditions: issueConditionsMet,
-  resultConditions: resultConditionsMet,
+  issueBased: issueConditionsMet,
+  resultBased: resultConditionsMet,
+}
+async function resultCategoryFilters(queryBuilder, results, resultAlias) {
+  if (results.length > 0) {
+    queryBuilder
+      .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
+      .leftJoin('ResultCategoryAssay as rca', function () {
+        this.on('a.id', 'rca.assayId').andOn(
+          'r.resultCategory1',
+          'rca.resultCategoryId'
+        )
+      })
+      .leftJoin('ResultCategoryAssay as rca2', function () {
+        this.on(`a.Id`, 'rca2.assayId').andOn(
+          `${resultAlias}.resultCategory2`,
+          'rca2.resultCategoryId'
+        )
+      })
+      .leftJoin('ResultCategoryGroup as rcg', function () {
+        this.on(`a.id`, 'rcg.assayId')
+          .andOn(function () {
+            this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+              `${resultAlias}.resultCategory1`,
+              'rcg.resultCategory1Id'
+            )
+          })
+          .andOn(function () {
+            this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+              `${resultAlias}.resultCategory2`,
+              'rcg.resultCategory2Id'
+            )
+          })
+      })
+    _.each(results, elem => {
+      queryBuilder.orWhere(whereBuilder => {
+        whereBuilder.where('a.externalId', elem.assayId)
+        if (
+          _.find(
+            elem.resultCategoryId,
+            item => item.scope === 'ResultCategoryGroups'
+          )
+        )
+          whereBuilder.whereIn(
+            'rcg.externalId',
+            _.map(
+              _.filter(
+                elem.resultCategoryId,
+                item => item.scope === 'ResultCategoryGroups'
+              ),
+              obj => obj.value
+            )
+          )
+        if (
+          _.find(
+            elem.resultCategoryId,
+            item => item.scope === 'ResultCategories'
+          )
+        ) {
+          const itemsToFilter = _.map(
+            _.filter(
+              elem.resultCategoryId,
+              item => item.scope === 'ResultCategories'
+            ),
+            obj => obj.value
+          )
+          whereBuilder.andWhere(builder =>
+            builder
+              .whereIn('rca.externalId', itemsToFilter)
+              .orWhereIn('rca2.externalId', itemsToFilter)
+          )
+        }
+      })
+    })
+  }
 }
 
-async function resultConditionsMet(knex, result, conditions) {
-  if (_.isEmpty(conditions)) {
-    return Promise.resolve(false)
+async function geographyFilters(
+  queryBuilder,
+  { areaItems, deviceLevelId },
+  { device = 'd', geography = 'g' }
+) {
+  if (deviceLevelId === 'state') {
+    queryBuilder.whereIn(
+      `${geography}.stateId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
   }
-  if (Array.isArray(conditions)) {
-    return evaluateArrayOfConditions(knex, result, conditions)
+  if (deviceLevelId === 'lga') {
+    queryBuilder.whereIn(
+      `${geography}.lgaId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
   }
+  if (deviceLevelId === 'site') {
+    queryBuilder.whereIn(
+      `${device}.siteId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
+  }
+}
+
+async function jobFunctionFilters(queryBuilder, { jobFunctions = [] }) {
   return true
+}
+
+async function resultConditionsMet(queryBuilder, filterCondition, aliases) {
+  const { result = 'r' } = aliases
+  await resultCategoryFilters(queryBuilder, filterCondition, result)
+  await geographyFilters(queryBuilder, filterCondition, aliases)
+  await jobFunctionFilters(queryBuilder, filterCondition, aliases)
 }
 
 async function listNotifications(request) {
@@ -97,24 +196,25 @@ async function createNotifications(knex, action, context) {
     filterCondition = null,
     evaluationParameter,
     evaluationFilterParameters,
+    notificationTypeCategoryId,
   } = action
-  let meetCondition = true
-  if (filterCondition) {
-    const { evaluationMethod } = filterCondition
-    if (!evaluationMethods[evaluationMethod]) {
-      throw new Error(
-        `Unrecognised evaluation method in condition ${evaluationMethod}`
-      )
-    }
-    meetCondition = evaluationMethods[evaluationMethod](
-      knex,
-      action.resultId,
-      evaluationParameter,
-      evaluationFilterParameters
-    )
-  }
+  const meetCondition = true
+  // if (filterCondition) {
+  //   if (!evaluationMethods[notificationTypeCategoryId]) {
+  //     throw new Error(
+  //       `Unrecognised evaluation method in condition ${notificationTypeCategoryId}`
+  //     )
+  //   }
+  //   extraConditions =
+  //     (knex, action.resultId, evaluationParameter, evaluationFilterParameters)
+  // }
   // Find escalation policy for the issue
-  const policies = await getNotificationPolicy(knex, action)
+  const policies = await getNotificationPolicy(
+    knex,
+    action,
+    evaluationMethods[notificationTypeCategoryId],
+    filterCondition
+  )
   // for each job function, find all policies with maximum constrained level,
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
@@ -173,7 +273,12 @@ async function getTagsByPolicy(txKnex, policy) {
   ]
 }
 
-async function getNotificationPolicy(txKnex, action) {
+async function getNotificationPolicy(
+  txKnex,
+  action,
+  extraConditionsFunction,
+  extraConditions
+) {
   const selectColums = [
     'nt.id',
     'nt.jobFunctionId',
@@ -229,6 +334,7 @@ async function getNotificationPolicy(txKnex, action) {
     }, action)
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
+    .modify(extraConditionsFunction, extraConditions)
     .select(selectColums.concat(extraFields))
 }
 
@@ -434,4 +540,5 @@ module.exports = {
   getNotifications,
   createNotifications,
   shouldNotify,
+  resultConditionsMet,
 }
