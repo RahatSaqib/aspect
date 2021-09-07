@@ -158,7 +158,7 @@ const getConfig = formatMessage => {
                 hideIfNull: true,
               },
               {
-                id: 'resultText',
+                id: 'fullResultText',
                 controlType: {
                   component: 'textArea',
                 },
