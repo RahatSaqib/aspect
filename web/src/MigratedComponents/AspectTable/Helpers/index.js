@@ -215,6 +215,21 @@ function getColumnIdFromFilterKey(config, filters) {
   return output
 }
 
+function getReturnUrl(returnUrlRaw, defaultUrl) {
+  if (!returnUrlRaw) {
+    return defaultUrl
+  }
+  let path = returnUrlRaw
+  let returnUrl = ''
+  const index = returnUrlRaw.indexOf('?')
+  if (index !== -1) {
+    path = returnUrlRaw.substring(0, index)
+    returnUrl = returnUrlRaw.substring(index + 1)
+  }
+  const query = new URLSearchParams(returnUrl)
+  return `${path}?${query.toString()}`
+}
+
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
@@ -231,4 +246,5 @@ export {
   timeSinceFromUTC,
   totalItemCount,
   useUrlQuery,
+  getReturnUrl,
 }
