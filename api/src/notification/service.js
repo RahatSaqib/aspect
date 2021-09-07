@@ -17,16 +17,17 @@ const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
-const {
-  issueConditionsMet,
-  evaluateArrayOfConditions,
-} = require('../issue/issueEvaluation')
+const { issueConditionsMet } = require('../issue/issueEvaluation')
 
 const evaluationMethods = {
   issueBased: issueConditionsMet,
   resultBased: resultConditionsMet,
 }
-async function resultCategoryFilters(queryBuilder, results, resultAlias) {
+function resultCategoryFilters(
+  queryBuilder,
+  { result: results = [] },
+  resultAlias
+) {
   if (results.length > 0) {
     queryBuilder
       .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
@@ -100,16 +101,14 @@ async function resultCategoryFilters(queryBuilder, results, resultAlias) {
   }
 }
 
-async function geographyFilters(
+function geographyFilters(
   queryBuilder,
   { areaItems, deviceLevelId },
   { device = 'd', geography = 'g' }
 ) {
   if (deviceLevelId === 'state') {
-    queryBuilder.whereIn(
-      `${geography}.stateId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
+    const areaToFilters = _.map(areaItems, area => _.toInteger(area.value))
+    queryBuilder.whereIn(`${geography}.stateId`, areaToFilters)
   }
   if (deviceLevelId === 'lga') {
     queryBuilder.whereIn(
@@ -117,7 +116,7 @@ async function geographyFilters(
       _.map(areaItems, area => _.toInteger(area.value))
     )
   }
-  if (deviceLevelId === 'site') {
+  if (deviceLevelId === 'lab') {
     queryBuilder.whereIn(
       `${device}.siteId`,
       _.map(areaItems, area => _.toInteger(area.value))
@@ -125,14 +124,10 @@ async function geographyFilters(
   }
 }
 
-async function jobFunctionFilters(queryBuilder, { jobFunctions = [] }) {
-  return true
-}
-
-async function resultConditionsMet(queryBuilder, filterCondition, aliases) {
+function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   const { result = 'r' } = aliases
-  await resultCategoryFilters(queryBuilder, filterCondition, result)
-  await geographyFilters(queryBuilder, filterCondition, aliases)
+  resultCategoryFilters(queryBuilder, filterCondition, result)
+  geographyFilters(queryBuilder, filterCondition, aliases)
 }
 
 async function listNotifications(request) {
@@ -268,11 +263,23 @@ async function getTagsByPolicy(txKnex, policy) {
           .where({ resultId: policy.resultId })
           .pluck('tagId')
       : []
+  /* const personTagIds =
+    jobFunctions && jobFunctions.length > 0
+      ? await txKnex('PersontTag as pt')
+          .join('Person as p', 'pt.personId', 'p.id')
+          .join('Job as j', 'p.id', 'j.personId')
+          .whereIn(
+            'j.jobFunctionId',
+            _.map(jobFunctions, jf => jf.jobFunctionId)
+          )
+          .pluck('tagId')
+      : [] */
   return [
     ...notificationTypeTagIds,
     ...siteTagIds,
     ...deviceTagIds,
     ...resultTagIds,
+    // ...personTagIds,
   ]
 }
 
@@ -566,4 +573,5 @@ module.exports = {
   createNotifications,
   shouldNotify,
   resultConditionsMet,
+  getPeopleToNotify,
 }

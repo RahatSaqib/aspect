@@ -59,115 +59,7 @@ const { assert } = chai
 //   })
 // })
 
-describe.only('Query generator for filtering conditions', () => {
-  const filterConditionExample = {
-    result: [
-      {
-        assayId: 'abbottM2000DBSHivVL',
-        resultCategoryId: [
-          {
-            label: 'Indeterminate',
-            scope: 'ResultCategories',
-            value: 'Indeterminate',
-          },
-          {
-            label: 'Error',
-            scope: 'ResultCategories',
-            value: 'Error',
-          },
-        ],
-      },
-      {
-        assayId: 'GxMtbRif',
-        resultCategoryId: [
-          {
-            label: 'MTB Detected RIF Not Detected',
-            scope: 'ResultCategoryGroups',
-            value: 'GxMtbRifMtbDetectedRifNotDetected',
-          },
-          {
-            label: 'MTB Invalid',
-            scope: 'ResultCategoryGroups',
-            value: 'GxMtbRifMtbInvalid',
-          },
-        ],
-      },
-    ],
-    areaItems: '',
-    jobFunctions: [
-      {
-        tags: [],
-        checked: true,
-        jobFunctionId: '1',
-      },
-    ],
-    deviceLevelId: 'national',
-  }
-  const filterConditionExample2 = {
-    result: [
-      {
-        assayId: 'assayBdMgitGnd',
-        resultCategoryId: [
-          {
-            label: 'Success',
-            scope: 'ResultCategories',
-            value: 'Success',
-          },
-          {
-            label: 'Unknown',
-            scope: 'ResultCategories',
-            value: 'Unknown',
-          },
-        ],
-      },
-    ],
-    areaItems: [
-      {
-        label: 'Idaho',
-        value: '46',
-      },
-      {
-        label: 'Nebraska',
-        value: '62',
-      },
-    ],
-    jobFunctions: [
-      {
-        tags: [],
-        checked: true,
-        jobFunctionId: '1',
-      },
-    ],
-    deviceLevelId: 'state',
-  }
-  it('Should generate a proper query filter for ResultCategoryGroup', async () => {
-    const query = knex('Result as r').modify(
-      resultConditionsMet,
-      filterConditionExample,
-      { result: 'r' }
-    )
-    assert.isTrue(
-      _.includes(
-        query.toString(),
-        "where (`a`.`externalId` = 'abbottM2000DBSHivVL' and (`rca`.`externalId` in ('Indeterminate', 'Error') or `rca2`.`externalId` in ('Indeterminate', 'Error'))) or (`a`.`externalId` = 'GxMtbRif' and `rcg`.`externalId` in ('GxMtbRifMtbDetectedRifNotDetected', 'GxMtbRifMtbInvalid')"
-      )
-    )
-  })
-  it('Should generate a proper query filter for ResultCategory', async () => {
-    const query = knex('Result as r').modify(
-      resultConditionsMet,
-      filterConditionExample2,
-      { result: 'r' }
-    )
-    assert.isTrue(
-      _.includes(
-        query.toString(),
-        "(`a`.`externalId` = 'assayBdMgitGnd' and (`rca`.`externalId` in ('Success', 'Unknown') or `rca2`.`externalId` in ('Success', 'Unknown')))"
-      )
-    )
-  })
-})
-describe('Result Notifications triggers', () => {
+describe.only('Result Notifications triggers', () => {
   let results = []
   let ntId
   before(async () => {
@@ -214,7 +106,7 @@ describe('Result Notifications triggers', () => {
     assert.equal(notifications.length, 1)
   })
 })
-describe.only('Notification routes', () => {
+describe('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()
