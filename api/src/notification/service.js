@@ -32,10 +32,18 @@ async function listNotifications(request) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const notificationQuery = knex('Notification as n')
-    .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+  const notificationQuery = knex('NotificationType as nt')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .leftOuterJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
+    .where(builder => {
+      builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
+    })
     .modify(filterParams, query, {})
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
@@ -45,7 +53,7 @@ async function listNotifications(request) {
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
     .leftJoin('Person as per', 'j.personId', 'per.id')
     .select(
-      'n.notificationTypeId as id',
+      'nt.id as id',
       'nt.name',
       knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
