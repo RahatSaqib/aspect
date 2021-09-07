@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-09-06T11:46:05.744Z\n"
+"POT-Creation-Date: 2021-09-07T10:56:22.553Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5744,6 +5744,13 @@ msgstr "Patienten ID"
 msgid "Patient/Case ID"
 msgstr "Patienten-/Fall-ID"
 
+#. [pages.TaskDetail.peopleAlerted]
+#. defaultMessage is:
+#. People alerted
+#: extracted_strings.json
+msgid "People alerted"
+msgstr "Personen alarmiert"
+
 #. [pages.OperationalData.percentPositiveResults]
 #. defaultMessage is:
 #. Percent Positive
@@ -7762,6 +7769,13 @@ msgstr "Standort-ID"
 msgid "Site Name"
 msgstr "Standort Name"
 
+#. [pages.TaskDetail.siteContact]
+#. defaultMessage is:
+#. Site contact
+#: extracted_strings.json
+msgid "Site contact"
+msgstr "Standortkontakt"
+
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
@@ -7838,6 +7852,9 @@ msgstr "Bundesland/Region"
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json
