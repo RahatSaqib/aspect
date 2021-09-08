@@ -60,6 +60,9 @@ const sentryPlugins =
           options: {
             client: {
               dsn: config.sentry.dsn,
+              environment: config.isDevelopment ? 'development' : 'production',
+              ignoreErrors: ['A later version of this result already exists'],
+              sanitizeKeys: ['patientId', 'sampleId', 'patient'],
             },
             scope: {
               tags: [{ name: 'Country', value: config.countryName }],

@@ -118,6 +118,12 @@ function configureOptional(config) {
     config.sentry = {
       dsn: sentryDsn,
       logLevel: process.env['sentry.logLevel'],
+      ignoreErrors: getArrayFromString('sentry.ignoreErrors', []),
+      sanitizeKeys: getArrayFromString('sentry.sanitizeKeys', [
+        'patientId',
+        'sampleId',
+        'patient',
+      ]),
     }
   }
 
@@ -177,6 +183,14 @@ function getBooleanOrDefault(key, defaultValue) {
     return defaultValue
   }
   return value === 'true'
+}
+
+function getArrayFromString(key, defaultValue) {
+  const value = process.env[key]
+  if (value == null) {
+    return defaultValue
+  }
+  return value.split('|')
 }
 
 function getSwaggerSchemes(httpEnabled, httpsEnabled) {
