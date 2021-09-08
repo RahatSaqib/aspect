@@ -1248,9 +1248,11 @@ async function onResultLogged(action, { messageContext }) {
         )) || {}
 
     if (deviceId && (endedOn || startedOn)) {
+      const testDateToUse = endedOn || startedOn
+
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,
-        endedOn || startedOn,
+        testDateToUse,
         approvalToken === 'decommissioned'
           ? 'inactiveDecommissioned'
           : 'active',
@@ -1263,13 +1265,13 @@ async function onResultLogged(action, { messageContext }) {
        * The device is active for today, and results should be synced, so the inactiveUnknown statuses should actually be inactiveNoTestsPerformed
        */
       const { numberOfPreviousTestsInDay } = await knex('Result as r')
-        .where(knex.raw('DATE(endedOn)'), format(endedOn, 'yyyy-MM-dd'))
+        .where(knex.raw('DATE(endedOn)'), format(testDateToUse, 'yyyy-MM-dd'))
         .andWhere('id', '<', resultId)
         .andWhere({ deviceId })
         .count('r.id as numberOfPreviousTestsInDay')
         .first()
       if (numberOfPreviousTestsInDay === 0)
-        await updateStatusUnknownToNoTestsPerformed(deviceId, endedOn)
+        await updateStatusUnknownToNoTestsPerformed(deviceId, testDateToUse)
 
       await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
