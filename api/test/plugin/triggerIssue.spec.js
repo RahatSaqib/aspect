@@ -503,7 +503,7 @@ describe.only('This test suite is for testing different triggers conditions', as
     )
   })
 
-  describe('error 5017 issue', () => {
+  describe.only('error 5017 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes Check Failed',
       5017,

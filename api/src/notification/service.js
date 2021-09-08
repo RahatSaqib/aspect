@@ -186,23 +186,8 @@ async function listNotifications(request) {
 
 async function createNotifications(knex, action, context) {
   const now = new Date()
-  const {
-    filterCondition = null,
-    evaluationParameter,
-    evaluationFilterParameters,
-    notificationTypeCategoryId,
-  } = action
+  const { filterCondition = null, notificationTypeCategoryId } = action
   const meetCondition = true
-  // if (filterCondition) {
-  //   if (!evaluationMethods[notificationTypeCategoryId]) {
-  //     throw new Error(
-  //       `Unrecognised evaluation method in condition ${notificationTypeCategoryId}`
-  //     )
-  //   }
-  //   extraConditions =
-  //     (knex, action.resultId, evaluationParameter, evaluationFilterParameters)
-  // }
-  // Find escalation policy for the issue
   const policies = await getNotificationPolicy(
     knex,
     action,
@@ -234,7 +219,7 @@ async function createNotifications(knex, action, context) {
         knex,
         policy,
         tags,
-        filterCondition
+        filterCondition || {}
       )
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
@@ -303,7 +288,7 @@ async function getNotificationPolicy(
     'mt.webhookTemplateId',
   ]
   let extraFields = []
-  return txKnex('NotificationType as nt')
+  const query = txKnex('NotificationType as nt')
     .join(
       'NotificationTypeCategory as ntc',
       'nt.notificationTypeCategoryId',
@@ -346,6 +331,8 @@ async function getNotificationPolicy(
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions)
     .select(selectColums.concat(extraFields))
+  console.log(query.toString())
+  return query
 }
 
 async function getPeopleToNotify(
@@ -366,7 +353,7 @@ async function getPeopleToNotify(
       }
       if (policy.jobFunctionId)
         queryBuilder.where('jf.id', policy.jobFunctionId)
-      if (jobFunctions) {
+      if (!_.isNil(jobFunctions)) {
         _.each(jobFunctions, ({ jobFunctionId, tags }) => {
           queryBuilder.orWhere(builder => {
             builder.where('jf.id', jobFunctionId)

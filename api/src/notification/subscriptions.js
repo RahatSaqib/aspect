@@ -25,26 +25,28 @@ async function getNotificationSubscriptions(knex) {
         ) => {
           const { action, method } = JSON.parse(triggerCondition)
           if (action != null) {
-            memo[memoKey] = {
-              ...(memo[memoKey] || {}),
+            const elemToAdd = {
               method,
               action,
               notificationTypeCategoryId,
               filterCondition: JSON.parse(filterCondition),
+              memoKey,
             }
+            if (memo[action]) memo[action].push(elemToAdd)
+            else memo[action] = [elemToAdd]
           }
           return memo
         },
-        {}
+        []
       )
     )
   const actions = {}
+  console.log(actionParameters)
   Object.keys(actionParameters).forEach(actionKey => {
-    const { method } = actionParameters[actionKey]
-    actions[actionKey] = actionHandlers[method](
-      _.omit(actionParameters[actionKey], ['method', 'memoKey'])
-    )
+    const { method } = _.sample(actionParameters[actionKey])
+    actions[actionKey] = actionHandlers[method](actionParameters[actionKey])
   })
+  console.log('actions', actions)
   return { actions }
 }
 
