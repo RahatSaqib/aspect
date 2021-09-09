@@ -52,7 +52,7 @@ const context = createTestContext(server, {
   partner: 'Myanmar',
 })
 
-describe.only('Fact based issues', () => {
+describe('Fact based issues', () => {
   const devicePath = '/device'
   const issuePath = '/api/issue'
   let siteName

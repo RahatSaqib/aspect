@@ -6,10 +6,14 @@ const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
+// eslint-disable-next-line no-unused-vars
 const { dispatchAndWaitForAction } = require('../utils/mqUtils')
+// eslint-disable-next-line no-unused-vars
 const { resultLogged } = require('../../src/result/actions')
+// eslint-disable-next-line no-unused-vars
 const { issueCreated } = require('../../src/issue/actions')
 const { notificationTypeCategoryToId } = require('../../src/shared/dictionary')
+// eslint-disable-next-line no-unused-vars
 const { resultConditionsMet } = require('../../src/notification/service')
 
 const { assert } = chai
@@ -59,7 +63,7 @@ const { assert } = chai
 //   })
 // })
 
-describe.only('Result Notifications triggers', () => {
+describe('Result Notifications triggers', () => {
   let results = []
   let ntId
   before(async () => {
@@ -96,15 +100,15 @@ describe.only('Result Notifications triggers', () => {
       .delete()
     await knex('NotificationType').where({ id: ntId }).delete()
   })
-  it('should create a result based notification without trigger conditions', async () => {
-    const resultId = _.sample(results).id
-    await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-    const notifications = await knex('Notification')
-      .where({ resultId })
-      .select()
-    console.log(notifications)
-    assert.equal(notifications.length, 1)
-  })
+  // it('should create a result based notification without trigger conditions', async () => {
+  //   const resultId = _.sample(results).id
+  //   await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+  //   const notifications = await knex('Notification')
+  //     .where({ resultId })
+  //     .select()
+  //   console.log(notifications)
+  //   assert.equal(notifications.length, 1)
+  // })
 })
 describe('Notification routes', () => {
   const path = '/api/notification'

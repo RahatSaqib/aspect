@@ -39,7 +39,7 @@ const cacheConfig = {
   JobFunction: {},
   MessageSeverity: {},
   MessageStatus: {},
-  NotificationTypeCategory:{},
+  NotificationTypeCategory: {},
   PartnerType: {
     keyColumn: 'name',
   },

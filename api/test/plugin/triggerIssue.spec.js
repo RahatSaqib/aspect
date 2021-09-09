@@ -147,7 +147,7 @@ const evaluateIssues = async (response, issueTypeId) => {
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
 
-describe.only('This test suite is for testing different triggers conditions', async () => {
+describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const countryCode = 'US'
@@ -503,7 +503,7 @@ describe.only('This test suite is for testing different triggers conditions', as
     )
   })
 
-  describe.only('error 5017 issue', () => {
+  describe('error 5017 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes Check Failed',
       5017,

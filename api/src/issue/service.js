@@ -318,7 +318,7 @@ async function createNewIssue(knex, issueType, action) {
       'partnerId',
     ]),
   }
-  
+
   // Now that we know partnerId, check to see if we have a trigger
   const hasTrigger =
     issue != null &&

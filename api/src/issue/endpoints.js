@@ -5,7 +5,7 @@ const {
   triggerIssue,
   updateIssueStatus,
 } = require('./service')
-const { onEscalateIssues } = require('./escalations')
+const { onEscalateIssues, onIssueTriggered } = require('./escalations')
 const { onResolveIssues } = require('./resolutions')
 
 const routes = [
@@ -56,6 +56,7 @@ const subscriptions = [
   {
     actions: {
       ESCALATE_ISSUES: onEscalateIssues,
+      ISSUE_TRIGGERED: onIssueTriggered,
       RESOLVE_ISSUES: onResolveIssues,
     },
   },

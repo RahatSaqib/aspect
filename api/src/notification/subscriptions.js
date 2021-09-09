@@ -41,12 +41,10 @@ async function getNotificationSubscriptions(knex) {
       )
     )
   const actions = {}
-  console.log(actionParameters)
   Object.keys(actionParameters).forEach(actionKey => {
     const { method } = _.sample(actionParameters[actionKey])
     actions[actionKey] = actionHandlers[method](actionParameters[actionKey])
   })
-  console.log('actions', actions)
   return { actions }
 }
 

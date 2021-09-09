@@ -3,6 +3,7 @@ const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listNotifications, getNotifications } = require('./service')
 const { exportNotifications } = require('./serviceReports')
+const { onIssueEscalated } = require('./actionHandler')
 
 function listNotificationsBaseConfig() {
   return {
@@ -98,6 +99,13 @@ const routes = [
   },
 ]
 
-const subscriptions = [getNotificationTriggerSubscriptions]
+const subscriptions = [
+  getNotificationTriggerSubscriptions,
+  {
+    actions: {
+      ISSUE_ESCALATED: onIssueEscalated,
+    },
+  },
+]
 
 module.exports = { routes, subscriptions }

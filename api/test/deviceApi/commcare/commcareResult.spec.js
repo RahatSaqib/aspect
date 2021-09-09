@@ -110,12 +110,71 @@ describe('CommCare Result API routes', () => {
       partner: 'GatesRDT',
       site: 'commcare',
     })
-
     before(async () => {
       await context.createSites(['commcare'])
       await context.createDeviceApiKey()
+      // const { partnerId } = await knex('Partner').first('id as partnerId')
+      // const { id: notificationTypeCategoryId } = await knex(
+      //   'NotificationTypeCategory'
+      // )
+      //   .first('id')
+      //   .where({ externalId: 'resultBased' })
+      // const { id: messageTypeId } = await knex('MessageType as mt')
+      //   .join('SmsTemplate as sms', 'mt.smsTemplateId', 'sms.id')
+      //   .where(
+      //     'sms.message',
+      //     'like',
+      //     '%Dear participant ID%you re-test in 3 months%'
+      //   )
+      //   .first('mt.id as id')
+      //   console.log('messageTypeId', messageTypeId)
+      //   const filterCondition = {
+      //   /* result: [
+      //     {
+      //       assayId: 'CommCareGatesRDT',
+      //       resultCategoryId: [
+      //         { label: 'Negative', scope: 'ResultCategories', value: 'Success' },
+      //         { label: 'Unknown', scope: 'ResultCategories', value: 'Unknown' },
+      //       ],
+      //     },
+      //   ],
+      //   areaItems: [
+      //     { label: 'Idaho', value: '46' },
+      //     { label: 'Nebraska', value: '62' },
+      //   ],
+      //   jobFunctions: [{ tags: [], checked: true, jobFunctionId: '1' }],
+      //   deviceLevelId: 'state', */
+      // }
+      // const now = new Date()
+      // const { id: adminId } = await knex('User').where({ name: 'admin' })
+
+      // const auditFields = {
+      //   createdOn: now,
+      //   createdBy: adminId,
+      //   updatedOn: now,
+      //   updatedBy: adminId,
+      // }
+
+      // notificationTypeId = await knex('NotificationType').insert({
+      //   notificationTypeCategoryId,
+      //   partnerId,
+      //   jobFunctionId: null,
+      //   filterCondition: JSON.stringify(filterCondition),
+      //   level: 0,
+      //   canAcknowledge: 0,
+      //   messageTypeId,
+      //   name: 'Result based Notification Type',
+      //   sendToContactsWithMatchingTags: 0,
+      //   ...auditFields,
+      // })
     })
-    afterEach(context.afterEach)
+    after(async () => {
+      // await knex('Notification')
+      //   .where('notificationTypeId', notificationTypeId)
+      //   .del()
+      // await knex('NotificationType').where('id', notificationTypeId).del()
+      context.afterEach()
+    })
 
     it('should add and return device results', async () => {
       const { apiKey } = context
@@ -137,8 +196,13 @@ describe('CommCare Result API routes', () => {
       const { id: deviceId } = await getDeviceFromApiKey(knex, apiKey)
 
       let result = await getLastResult(knex, deviceId)
+      assert.equal(result.id, '123')
+      assert.equal(result.data.resultText, 'negative')
+      assert.equal(result.data.hcwConfirmatoryResult, 'negative')
+      assert.equal(result.patient.gender, 'male')
+      assert.equal(result.patient.age, 28)
       let notification = await getLastNotification(knex, deviceId)
-      console.log('Notification', notification)
+
       assert.isNotNull(notification)
       assert.equal(result.id, '123')
       assert.equal(result.data.resultText, 'negative')
@@ -147,6 +211,7 @@ describe('CommCare Result API routes', () => {
       assert.equal(result.patient.age, 28)
       assert.equal(notification.issueType, 'ResultReceived')
       assert.equal(notification.level, 2)
+
       assert.equal(
         notification.message,
         'Dear participant ID #study-123: An HIV self-test is a screening test. Please ensure you re-test in 3 months.'
@@ -217,10 +282,8 @@ describe('CommCare Result API routes', () => {
     })
   })
 })
-
 async function getLastNotification(knex, deviceId) {
   const resultId = await getLastResultId(knex, deviceId)
-  console.log('resultId', resultId)
   await waitForIdle()
   const notification = await knex('Notification as n')
     .join('Issue as i', 'i.id', 'n.issueId')
@@ -229,6 +292,5 @@ async function getLastNotification(knex, deviceId) {
     .where('i.resultId', resultId)
     .orderBy('i.id', 'desc')
     .first('it.externalId as issueType', 'i.level', 's.message')
-  console.log(notification)
   return notification
 }

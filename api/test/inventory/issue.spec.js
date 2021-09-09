@@ -18,7 +18,7 @@ const {
   inventoryStockout,
   inventoryStockExpiring,
 } = require('../../src/inventory/actions')
-const { escalateIssues, issueCreated } = require('../../src/issue/actions')
+const { escalateIssues } = require('../../src/issue/actions')
 const { refreshConsumptionRates } = require('../../src/fact/service')
 const {
   getPartner,
@@ -40,7 +40,7 @@ const {
 const USER_LU_NAME_PREFIX = 'myanmar_lab'
 const USER_RO_NAME_PREFIX = 'myanmar_ro'
 
-describe.only('Inventory Stock Issues Endpoint', () => {
+describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
 
@@ -106,6 +106,7 @@ describe.only('Inventory Stock Issues Endpoint', () => {
       const sampleIds = await knex('Result')
         .whereIn('id', resultIds)
         .pluck('sampleId')
+      await knex('Consumable').where({ name: 'Test Cartridge' })
       await knex('Result').whereIn('id', resultIds).delete()
       await knex('Sample').whereIn('id', sampleIds).delete()
       await knex('Device').whereIn('id', deviceIds).delete()
@@ -227,11 +228,8 @@ describe.only('Inventory Stock Issues Endpoint', () => {
           quantityOnHand,
         })
         .where({ siteId, consumableId })
-
       // escalate
-      const action = issueCreated(issueId)
       await messageContext.escalateIssues(issueId)
-      await waitForAction(action)
       await waitForIdle(1000)
 
       const issue = await getIssue(knex, issueId)

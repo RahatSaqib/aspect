@@ -17,10 +17,10 @@ const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
-const { issueConditionsMet } = require('../issue/issueEvaluation')
+// const { issueConditionsMet } = require('../issue/issueEvaluation')
 
 const evaluationMethods = {
-  issueBased: issueConditionsMet,
+  issueBased: () => true, // this will be developed once we move the issue based notification to the ui
   resultBased: resultConditionsMet,
 }
 function resultCategoryFilters(
@@ -186,8 +186,8 @@ async function listNotifications(request) {
 
 async function createNotifications(knex, action, context) {
   const now = new Date()
-  const { filterCondition = null, notificationTypeCategoryId } = action
-  const meetCondition = true
+  const { filterCondition = null, notificationTypeCategoryId = 'issueBased' } =
+    action
   const policies = await getNotificationPolicy(
     knex,
     action,
@@ -271,8 +271,8 @@ async function getTagsByPolicy(txKnex, policy) {
 async function getNotificationPolicy(
   txKnex,
   action,
-  extraConditionsFunction,
-  extraConditions
+  extraConditionsFunction = () => true,
+  extraConditions = {}
 ) {
   const selectColums = [
     'nt.id',
@@ -288,6 +288,7 @@ async function getNotificationPolicy(
     'mt.webhookTemplateId',
   ]
   let extraFields = []
+  const aliases = { geography: 'g' }
   const query = txKnex('NotificationType as nt')
     .join(
       'NotificationTypeCategory as ntc',
@@ -309,6 +310,7 @@ async function getNotificationPolicy(
           )
           .leftJoin('Geography as g', 'i.geographyId', 'g.id')
           .where({ 'i.id': issueId })
+        aliases.issue = 'i'
       } else if (!_.isNil(resultId)) {
         extraFields = [
           'result.siteId as siteId',
@@ -325,13 +327,14 @@ async function getNotificationPolicy(
           .join('Device as d', 'result.deviceId', 'd.id')
           .leftJoin('Geography as g', 'd.geographyId', 'g.id')
           .where('ntc.externalId', 'resultBased')
+        aliases.result = 'r'
+        aliases.device = 'd'
       }
     }, action)
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
-    .modify(extraConditionsFunction, extraConditions)
+    .modify(extraConditionsFunction, extraConditions, aliases)
     .select(selectColums.concat(extraFields))
-  console.log(query.toString())
   return query
 }
 
@@ -483,7 +486,6 @@ async function createNotificationIfNotCreatedAlready(
       notification.emailMessageId = emailMessageId
       context.emailMessageCreated(emailMessageId)
     }
-
     if (policy.smsTemplateId != null) {
       const [smsMessageId] = await knex('SmsMessage').insert({
         smsTemplateId: policy.smsTemplateId,
