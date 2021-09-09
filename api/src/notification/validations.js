@@ -18,7 +18,8 @@ function listNotificationsBaseConfig() {
           'alertCount',
           'totalTriggers',
           'contactsCount',
-          'contacts'
+          'contacts',
+          'typeCategory'
         ),
       },
     },

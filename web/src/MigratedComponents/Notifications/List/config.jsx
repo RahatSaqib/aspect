@@ -170,6 +170,14 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
         })}`,
     },
     {
+      key: 'typeCategory',
+      filterKey: 'typeCategory',
+      label: formatMessage(messages.notificationsTableHeaderCategory),
+      width: 20,
+      disableHide: true,
+      disableGroupBy: true,
+    },
+    {
       key: 'totalTriggers',
       label: formatMessage(messages.notificationsTableHeaderTotalTriggers),
       width: 20,
@@ -198,7 +206,13 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
   ],
   columnOrder: {
     allow: false,
-    initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
+    initialOrder: [
+      'name',
+      'typeCategory',
+      'lastTriggeredOn',
+      'totalTriggers',
+      'contacts',
+    ],
   },
   contextualMenu: NotificationsContextualMenu,
 })

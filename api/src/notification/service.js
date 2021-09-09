@@ -60,7 +60,8 @@ async function listNotifications(request) {
       knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
       knex.raw(
         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
-      )
+      ),
+      'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')

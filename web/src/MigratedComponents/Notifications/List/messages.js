@@ -20,6 +20,10 @@ export const messages = defineMessages({
       other {# Names}
     }`,
   },
+  notificationsTableHeaderCategory: {
+    id: 'pages.Notifications.table.categoryHeader',
+    defaultMessage: 'Category',
+  },
   notificationsTableHeaderLastTriggered: {
     id: 'pages.Notifications.table.lastTriggeredHeader',
     defaultMessage: 'Last Triggered',
