@@ -2,11 +2,13 @@ import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
 import findIndex from 'lodash/findIndex'
 import isArray from 'lodash/isArray'
+import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 import union from 'lodash/union'
+import uniqWith from 'lodash/uniqWith'
 
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
@@ -497,15 +499,14 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                       const { ok, data } = response
                       let options = []
                       if (ok === true) {
-                        let tags = union(
-                          ...data.map(person => {
-                            return (person.tags || '').split(';')
-                          })
+                        let personTags = union(
+                          ...data.map(({ tagDetails }) => tagDetails)
                         )
-                          .map(tag => tag.trim())
-                          .filter(tag => tag !== '')
-                        tags = [...new Set(tags)]
-                        options = tags.map(tag => ({ label: tag, value: tag }))
+                        personTags = uniqWith(personTags, isEqual)
+                        options = personTags.map(({ tagName, tagId }) => ({
+                          label: tagName,
+                          value: tagId,
+                        }))
                       }
                       return options
                     },
