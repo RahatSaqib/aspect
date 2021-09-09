@@ -123,6 +123,10 @@ function configureOptional(config) {
         'patientId',
         'sampleId',
         'patient',
+        'password',
+        'email',
+        'email2',
+        'cell',
       ]),
     }
   }

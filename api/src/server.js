@@ -62,7 +62,15 @@ const sentryPlugins =
               dsn: config.sentry.dsn,
               environment: config.isDevelopment ? 'development' : 'production',
               ignoreErrors: ['A later version of this result already exists'],
-              sanitizeKeys: ['patientId', 'sampleId', 'patient'],
+              sanitizeKeys: [
+                'patientId',
+                'sampleId',
+                'patient',
+                'password',
+                'email',
+                'email2',
+                'cell',
+              ],
             },
             scope: {
               tags: [{ name: 'Country', value: config.countryName }],
