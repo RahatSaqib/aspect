@@ -11,6 +11,7 @@ const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
   const { locale } = useIntl()
+  if (!value) return null
   const { isPast, timeSince } = timeSinceFromUTC(value, locale)
   const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')
   return (

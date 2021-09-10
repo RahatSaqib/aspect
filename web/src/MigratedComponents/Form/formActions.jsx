@@ -38,13 +38,13 @@ const getDefaultDisplayState = defaultAction => {
   }, {})
 }
 
-const FormActions = ({ config }) => {
+const FormActions = ({ config, onSubmit }) => {
   const {
     jwt: { permissions },
   } = useAuthState()
   const { actions } = config
   const { items: formActions, default: defaultAction } = actions
-  const { formik, toggleEdit, setToggleEdit } = useFormikContext()
+  const { formik, toggleEdit, setToggleEdit, meta } = useFormikContext()
   const [displayConfig, setDisplayConfig] = useState(
     getDefaultDisplayState(defaultAction)
   )
@@ -61,7 +61,11 @@ const FormActions = ({ config }) => {
           formik.resetForm()
           break
         case 'save':
-          formik.handleSubmit()
+          if (onSubmit) {
+            onSubmit(formik, meta)
+          } else {
+            formik.handleSubmit()
+          }
           setToggleEdit(false)
           break
 

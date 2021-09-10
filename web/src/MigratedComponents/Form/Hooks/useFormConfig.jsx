@@ -98,10 +98,10 @@ export const useFormConfig = formConfig => {
     }
   }, [formConfig, meta.initialValues])
 
-  const registerVisibleFields = useCallback((values, formik) => {
+  const registerVisibleFields = useCallback((values, formik, touchedName) => {
     const { items = [] } = meta
     const validators = {}
-    items.forEach(({ id, validate, visibleIf, row }) => {
+    items.forEach(({ id, validate, validateIf, visibleIf, row }) => {
       const { isMulti, id: rowId } = row
       range(isMulti ? values[rowId].length : 1).forEach(subRowIndex => {
         const itemId = `${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`
@@ -109,6 +109,13 @@ export const useFormConfig = formConfig => {
 
         const isVisible = !visibleIf || visibleIf(values, subRowIndex)
         if (isVisible) {
+          if (
+            validateIf &&
+            !validateIf(values, formik, { subRowIndex, touchedName })
+          ) {
+            validate = undefined
+          }
+
           if (validate) {
             validators[itemId] = validate
           }
@@ -141,7 +148,7 @@ export const useFormConfig = formConfig => {
       /**
        * 3. refresh visibility of all fields and register validators of only visible fields
        */
-      registerVisibleFields(values, formik)
+      registerVisibleFields(values, formik, fieldName)
       /**
        * 4. validate form for current set of `values` for all visible fields
        */

@@ -1,18 +1,19 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
+import findIndex from 'lodash/findIndex'
 import isArray from 'lodash/isArray'
+import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
-
-import map from 'lodash/map'
 import union from 'lodash/union'
-import filter from 'lodash/filter'
+import uniqWith from 'lodash/uniqWith'
+
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import { SITE_ALL } from '../../QueryFetch/Site'
-import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
+import { getBaseData, getBaseValidation } from '../../Form/Formik/Helpers'
 import PERSON_LIST from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
 
@@ -23,7 +24,7 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
-const getSectionsBase = formatMessage => [
+const getSectionsBase = (formatMessage, validationBase) => [
   {
     id: 'section_notificationType',
     label: 'Notification Type',
@@ -157,7 +158,10 @@ const getSectionsBase = formatMessage => [
                 },
                 { label: formatMessage(messages.AreaState), value: 'state' },
                 { label: formatMessage(messages.AreaLGA), value: 'lga' },
-                { label: formatMessage(messages.AreaLaboratory), value: 'lab' },
+                {
+                  label: formatMessage(messages.AreaLaboratory),
+                  value: 'lab',
+                },
               ],
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
             },
@@ -274,7 +278,6 @@ const getSectionsBase = formatMessage => [
             },
             classNames: checkboxClassNames,
             initialValue: true,
-            // label: 'Email',
             labelI18nKey: 'email',
           },
           {
@@ -283,7 +286,6 @@ const getSectionsBase = formatMessage => [
               component: 'checkbox',
             },
             classNames: checkboxClassNames,
-            // label: 'SMS',
             labelI18nKey: 'sms',
           },
           {
@@ -292,7 +294,6 @@ const getSectionsBase = formatMessage => [
               component: 'checkbox',
             },
             classNames: checkboxClassNames,
-            // label: 'Web',
             labelI18nKey: 'web',
           },
         ],
@@ -326,6 +327,7 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'placeholderTextArea',
               rowsMax: 10,
+              rows: 4,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -348,12 +350,14 @@ const getSectionsBase = formatMessage => [
             controlType: {
               component: 'placeholderTextArea',
               rowsMax: 5,
+              rows: 2,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'smsBody',
-            validate: validationBase.required,
+            validate: value =>
+              validationBase.requiredLimitLength(value, 144, 'smsBodyLimit'),
             visibleIf: values => values.sendSms === true,
           },
         ],
@@ -365,10 +369,29 @@ const getSectionsBase = formatMessage => [
         id: 60,
         items: [
           {
+            id: 'webUrl',
+            controlType: {
+              component: 'textField',
+            },
+            classNames: {
+              itemContainer: cssClasses('item-in-group-container'),
+            },
+            type: 'text',
+            labelI18nKey: 'webUrl',
+            validate: validationBase.requiredValidUrl,
+            visibleIf: values => values.sendWeb === true,
+          },
+        ],
+      },
+      {
+        id: 61,
+        items: [
+          {
             id: 'webBody',
             controlType: {
               component: 'placeholderTextArea',
               rowsMax: 10,
+              rows: 3,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
@@ -384,75 +407,137 @@ const getSectionsBase = formatMessage => [
 ]
 
 const getConfig = (formatMessage, notificationType, jobFunctions) => {
+  const validationBase = getBaseValidation(formatMessage, messages)
   const jobFunctionsRows = {
     id: 'toAnyOfTheseJobFunctions',
     label: 'toAnyOfTheseJobFunctions',
     labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
-      ...map(jobFunctions, jf => ({
-        id: `$jf${jf.id}`,
-        items: [
-          {
-            id: `jf${jf.id}`,
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-              itemContainer: cssClasses('max-width-100pcr'),
-            },
-            label: jf.name,
-          },
-        ],
-      })),
-      {
-        id: 80,
-        items: [
-          {
-            id: 'jfTags',
-            controlType: {
-              component: 'select',
-              endpoint: PERSON_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: PERSON_LIST.KEY,
-              normalizeLoadedData: response => {
-                const { ok, data } = response
-                let options = []
-                if (ok === true) {
-                  let tags = union(
-                    ...data.map(person => {
-                      return (person.tags || '').split(';')
-                    })
-                  )
-                    .map(tag => tag.trim())
-                    .filter(tag => tag !== '')
-                  tags = [...new Set(tags)]
-                  options = tags.map(tag => ({ label: tag, value: tag }))
+      ...reduce(
+        jobFunctions,
+        (acc, jf, index) => {
+          acc = [
+            ...acc,
+            {
+              id: `row-jf${jf.id}-name`,
+              presetInitialValues: initialValues => {
+                const jobFunctions = initialValues.jobFunctions || []
+                jobFunctions[index] = jobFunctions[index] || {
+                  jobFunctionId: jf.id,
                 }
-                return options
+                initialValues.jobFunctions = jobFunctions
               },
-              isMulti: true,
+              items: [
+                {
+                  id: `jobFunctions[${index}].checked`,
+                  controlType: {
+                    component: 'checkbox',
+                  },
+                  classNames: {
+                    controlContainer: cssClasses('checkbox-container'),
+                    itemContainer: cssClasses('max-width-100pcr'),
+                  },
+                  label: jf.name,
+                  validateIf: (values, formik, { touchedName }) => {
+                    /**
+                     * noOneChecked - is `true` if no one of jobFunctions checked
+                     */
+                    const noOneChecked = !values.jobFunctions.find(
+                      it => it.checked
+                    )
+                    /**
+                     * if no one checkbox selected, then
+                     * show validation message only for one checkbox -
+                     * - for first touched, or
+                     * - if `touchedName` is 1st touched one, or
+                     * - for index = 0
+                     */
+                    // define at what index to show message
+                    let displayAtIndex = findIndex(
+                      formik.touched.jobFunctions,
+                      it => !!it
+                    )
+                    if (
+                      displayAtIndex === -1 &&
+                      touchedName === `jobFunctions[${index}].checked`
+                    ) {
+                      displayAtIndex = index
+                    }
+                    if (displayAtIndex === -1) {
+                      displayAtIndex = 0
+                    }
+                    /**
+                     * allow below func `validate` only for 1st touched checkbox
+                     * and when no-one checkbox Job Function is selected
+                     */
+                    return index === displayAtIndex && noOneChecked
+                  },
+                  /**
+                   * see above func `validateIf` when this validation applies.
+                   * Notice that for component='checkbox' value is `true` or `false`
+                   */
+                  validate: value =>
+                    validationBase.checked(
+                      value,
+                      'jobFunctionAtLeastOneNeeded'
+                    ),
+                },
+              ],
             },
-            classNames: {
-              // container: cssClasses('tags-container'),
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+            {
+              id: `row-jf${jf.id}-tags`,
+              items: [
+                {
+                  id: `jobFunctions[${index}].tags`,
+                  initialValue: [],
+                  controlType: {
+                    component: 'select',
+                    endpoint: PERSON_LIST.ENDPOINT,
+                    hideIfNoOptions: false,
+                    queryKey: PERSON_LIST.KEY,
+                    normalizeLoadedData: response => {
+                      const { ok, data } = response
+                      let options = []
+                      if (ok === true) {
+                        let personTags = union(
+                          ...data.map(({ tagDetails }) => tagDetails)
+                        )
+                        personTags = uniqWith(personTags, isEqual)
+                        options = personTags.map(({ tagName, tagId }) => ({
+                          label: tagName,
+                          value: tagId,
+                        }))
+                      }
+                      return options
+                    },
+                    isMulti: true,
+                  },
+                  classNames: {
+                    itemContainer: cssClasses(
+                      'max-width-100pc',
+                      'tags-container'
+                    ),
+                    controlContainer: cssClasses('full-width-100pc'),
+                    item: cssClasses('full-width-100pc'),
+                  },
+                  label: 'Tags',
+                  labelI18nKey: 'jobFunctionTags',
+                  visibleIf: values => values.jobFunctions[index].checked,
+                },
+              ],
             },
-            label: 'Tags',
-            labelI18nKey: 'jobFunctionTags',
-            visibleIf: values => {
-              const anySelection = filter(Object.keys(values), property => {
-                if (property.indexOf('jf') >= 0 && values[property]) return true
-              })
-              return anySelection.length > 0
-            },
-          },
-        ],
-      },
+          ]
+
+          return acc
+        },
+        []
+      ),
     ],
   }
-  const sections = [...getSectionsBase(formatMessage), jobFunctionsRows]
+  const sections = [
+    ...getSectionsBase(formatMessage, validationBase),
+    jobFunctionsRows,
+  ]
   return {
     title: formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',

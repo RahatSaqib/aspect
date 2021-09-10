@@ -4,32 +4,14 @@ const {
   listNotifications,
   onIssueEscalated,
   getNotifications,
+  saveNotification,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
-
-function listNotificationsBaseConfig() {
-  return {
-    auth: { scope: ['notification:view', 'notification:edit'] },
-    validate: {
-      query: {
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        notificationName: Joi.string()
-          .allow('')
-          .description('Filter for notification name'),
-        ...validateSortPageParams(
-          'name',
-          'lastTriggeredOn',
-          'alertCount',
-          'totalTriggers',
-          'contactsCount',
-          'contacts'
-        ),
-      },
-    },
-  }
-}
+const {
+  listNotificationsBaseConfig,
+  resultBasedNotificationPayload,
+  saveNotificationResponse,
+} = require('./validations')
 
 const routes = [
   {
@@ -97,6 +79,39 @@ const routes = [
             ),
         }),
       },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/notification',
+    handler: asyncHandler(saveNotification),
+    config: {
+      description: 'Create New Notification',
+      notes: 'Details of a Notification',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        payload: resultBasedNotificationPayload,
+      },
+      response: saveNotificationResponse,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/notification/{id}',
+    handler: asyncHandler(saveNotification),
+    config: {
+      description: 'Update Notification',
+      notes: 'Details of a Notification',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        payload: resultBasedNotificationPayload,
+        params: {
+          id: Joi.string()
+            .description('Item id depending on payload.notificationType')
+            .required(),
+        },
+      },
+      response: saveNotificationResponse,
     },
   },
 ]

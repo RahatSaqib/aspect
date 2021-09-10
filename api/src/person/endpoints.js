@@ -42,6 +42,10 @@ function listContactBaseConfig() {
           .items(Joi.string())
           .single()
           .description('The tags assigned to persons'),
+        tagDetails: Joi.array()
+          .items(Joi.object())
+          .single()
+          .description('The array of {tagName,tagId} assigned to persons'),
         ...validateAllGeographyFilterParams(),
         ...validateSortPageParams('name', 'level', 'state', 'lga'),
       },

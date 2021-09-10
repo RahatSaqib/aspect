@@ -14,7 +14,11 @@ import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
 import { getFormConfigWithData } from '../utils'
 
-const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
+const AspectNotificationDetail = ({
+  notificationType,
+  jobFunctions,
+  onSubmit,
+}) => {
   const intl = useI18n()
   const [formConfig] = useState(
     getFormConfigWithData(intl, jobFunctions, notificationType)
@@ -25,7 +29,7 @@ const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
       {formConfig ? (
         <FormikProvider config={formConfig}>
           <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
-            <FormActions config={formConfig} />
+            <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>
             <AspectForm config={formConfig} />
@@ -42,6 +46,7 @@ const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
 AspectNotificationDetail.propTypes = {
   notificationType: PropTypes.string.isRequired,
   jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default AspectNotificationDetail

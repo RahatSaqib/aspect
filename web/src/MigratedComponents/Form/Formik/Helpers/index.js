@@ -3,10 +3,16 @@ import * as Yup from 'yup'
 import cloneDeep from 'lodash/cloneDeep'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+import keys from 'lodash/keys'
+import omit from 'lodash/omit'
+import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
 
+import { isUrl } from '../../../../shared/utils/validate'
 import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config, messages) => {
@@ -44,7 +50,10 @@ const getInitialValuesFromFormConfig = config => {
   const { sections } = config
   sections.forEach(({ rows }) => {
     rows.forEach(row => {
-      const { items, isMulti, id: rowId } = row
+      const { items, isMulti, id: rowId, presetInitialValues } = row
+      if (presetInitialValues) {
+        presetInitialValues(initialValues)
+      }
       items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
         const { component } = controlType
         let value = initialValue || ''
@@ -57,9 +66,9 @@ const getInitialValuesFromFormConfig = config => {
               __guid__: uniqueId(rowId),
             },
           ]
-          initialValues[rowId][0][fieldName] = value
+          set(initialValues[rowId][0], fieldName, value)
         } else {
-          initialValues[fieldName] = value
+          set(initialValues, fieldName, value)
         }
       })
     })
@@ -224,10 +233,47 @@ const getFieldErrorProps = (formik, id) => ({
   helperText: get(formik.touched, id) && get(formik.errors, id),
 })
 
-const validationBase = {
-  required: value => {
-    return !value ? 'Required' : ''
-  },
+const getBaseValidation = (formatMessage, messages) => {
+  const requiredBase = (value, i18nKey) =>
+    value ? '' : formatMessage(messages[i18nKey])
+
+  return {
+    required: value => requiredBase(value, 'required'),
+    checked: requiredBase,
+    requiredLimitLength: (value, maxLength, i18nLimitLength) => {
+      if (!value) return formatMessage(messages.required)
+      return value.length > maxLength
+        ? formatMessage(messages[i18nLimitLength])
+        : ''
+    },
+    requiredValidUrl: value => {
+      if (!value) return formatMessage(messages.required)
+      return isUrl(value) ? '' : formatMessage(messages.webUrlInvalid)
+    },
+  }
+}
+
+const sanitizeFormValues = (
+  values,
+  { meta, removeReadOnly = true, removeGuids = true }
+) => {
+  const { fieldTypes } = meta
+  /**
+   * prepare payload, i.e.
+   * - conditionally remove read only props
+   * - remove props `__guid__` from array of objects
+   */
+  const payload = cloneDeep(values)
+  keys(payload).forEach(key => {
+    if (fieldTypes[key] === 'readOnly' && removeReadOnly) {
+      delete payload[key]
+    } else if (isArray(payload[key]) && removeGuids) {
+      payload[key] = payload[key].map(it =>
+        isPlainObject(it) ? omit(it, ['__guid__']) : it
+      )
+    }
+  })
+  return payload
 }
 
 export {
@@ -242,5 +288,6 @@ export {
   mergeFormConfigWithData,
   pickItems,
   pickKeys,
-  validationBase,
+  getBaseValidation,
+  sanitizeFormValues,
 }
