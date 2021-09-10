@@ -3201,7 +3201,6 @@
       "stateName": "Oyo",
       "tags": ["Clinic", "Primary"]
     },
-
     {
       "externalId": "Aderemi PHC ",
       "lgaName": "Ife Central",
@@ -3290,7 +3289,6 @@
       "stateName": "Osun",
       "tags": ["Clinic", "Primary"]
     },
-
     {
       "externalId": "2644",
       "lgaName": "Abeokuta North",
@@ -3523,7 +3521,6 @@
       "stateName": "Ogun",
       "tags": ["Clinic", "Primary"]
     },
-
     {
       "externalId": "2605",
       "lgaName": "Lagos Mainland",
@@ -14885,7 +14882,6 @@
       "stateName": "Lagos",
       "tags": ["Clinic", "Primary"]
     },
-
     {
       "externalId": "4180",
       "lgaName": "Birnin Gwari",
@@ -38924,6 +38920,974 @@
       "name": "WCWC Yabo",
       "shortName": "WCWC Yabo",
       "stateName": "Sokoto",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "GENERAL  HOSPITL  SABON TSHA",
+      "lgaName": "Chikun",
+      "name": "GENERAL  HOSPITL  SABON TSHA",
+      "shortName": "GENERAL  HOSPITL  SABON TSHA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "RURAL  HOSPITAL  KUJAMA",
+      "lgaName": "Chikun",
+      "name": "RURAL  HOSPITAL  KUJAMA",
+      "shortName": "RURAL  HOSPITAL  KUJAMA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "TBL  NARAYI",
+      "lgaName": "Chikun",
+      "name": "TBL  NARAYI",
+      "shortName": "TBL  NARAYI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "JAKARANDA",
+      "lgaName": "Chikun",
+      "name": "JAKARANDA",
+      "shortName": "JAKARANDA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  NASARAWA",
+      "lgaName": "Chikun",
+      "name": "PHC  NASARAWA",
+      "shortName": "PHC  NASARAWA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  KUJAMA",
+      "lgaName": "Chikun",
+      "name": "PHC  KUJAMA",
+      "shortName": "PHC  KUJAMA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  ROMI",
+      "lgaName": "Chikun",
+      "name": "PHC  ROMI",
+      "shortName": "PHC  ROMI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC KUDANDAN",
+      "lgaName": "Chikun",
+      "name": "PHC KUDANDAN",
+      "shortName": "PHC KUDANDAN",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "WILLBASUN  HOSPITA",
+      "lgaName": "Chikun",
+      "name": "WILLBASUN  HOSPITA",
+      "shortName": "WILLBASUN  HOSPITA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  GONIGORA",
+      "lgaName": "Chikun",
+      "name": "PHC  GONIGORA",
+      "shortName": "PHC  GONIGORA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  BURKU",
+      "lgaName": "Chikun",
+      "name": "PHC  BURKU",
+      "shortName": "PHC  BURKU",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  SABON GAYAN",
+      "lgaName": "Chikun",
+      "name": "PHC  SABON GAYAN",
+      "shortName": "PHC  SABON GAYAN",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "TRINITY  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "TRINITY  HOSPITAL",
+      "shortName": "TRINITY  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ECWA  CLINIC  YELWA",
+      "lgaName": "Chikun",
+      "name": "ECWA  CLINIC  YELWA",
+      "shortName": "ECWA  CLINIC  YELWA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "COCCIN  CLINIC YELWA",
+      "lgaName": "Chikun",
+      "name": "COCCIN  CLINIC YELWA",
+      "shortName": "COCCIN  CLINIC YELWA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  YELWA",
+      "lgaName": "Chikun",
+      "name": "PHC  YELWA",
+      "shortName": "PHC  YELWA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  SABON GARI",
+      "lgaName": "Chikun",
+      "name": "PHC  SABON GARI",
+      "shortName": "PHC  SABON GARI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "VIRTUAL  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "VIRTUAL  HOSPITAL",
+      "shortName": "VIRTUAL  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  DUTSE",
+      "lgaName": "Chikun",
+      "name": "PHC  DUTSE",
+      "shortName": "PHC  DUTSE",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  BABBAN  SAURA",
+      "lgaName": "Chikun",
+      "name": "PHC  BABBAN  SAURA",
+      "shortName": "PHC  BABBAN  SAURA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  DOKA",
+      "lgaName": "Chikun",
+      "name": "PHC  DOKA",
+      "shortName": "PHC  DOKA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "MEGA  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "MEGA  HOSPITAL",
+      "shortName": "MEGA  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  KUJAMA  GARI",
+      "lgaName": "Chikun",
+      "name": "PHC  KUJAMA  GARI",
+      "shortName": "PHC  KUJAMA  GARI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  MARABAN  RIDO",
+      "lgaName": "Chikun",
+      "name": "PHC  MARABAN  RIDO",
+      "shortName": "PHC  MARABAN  RIDO",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  BAYAN  DUTSE",
+      "lgaName": "Chikun",
+      "name": "PHC  BAYAN  DUTSE",
+      "shortName": "PHC  BAYAN  DUTSE",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "DANGIWA  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "DANGIWA  HOSPITAL",
+      "shortName": "DANGIWA  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "AP SMART",
+      "lgaName": "Chikun",
+      "name": "AP SMART",
+      "shortName": "AP SMART",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "MOK  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "MOK  HOSPITAL",
+      "shortName": "MOK  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "FAMILY  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "FAMILY  HOSPITAL",
+      "shortName": "FAMILY  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "FRANEV  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "FRANEV  HOSPITAL",
+      "shortName": "FRANEV  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "SANASI  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "SANASI  HOSPITAL",
+      "shortName": "SANASI  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "GAYAN  NURSE HOME",
+      "lgaName": "Chikun",
+      "name": "GAYAN  NURSE HOME",
+      "shortName": "GAYAN  NURSE HOME",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "MUBARAK  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "MUBARAK  HOSPITAL",
+      "shortName": "MUBARAK  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ALRAMADAN  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "ALRAMADAN  HOSPITAL",
+      "shortName": "ALRAMADAN  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "TRISTAR  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "TRISTAR  HOSPITAL",
+      "shortName": "TRISTAR  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "FREEDOM  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "FREEDOM  HOSPITAL",
+      "shortName": "FREEDOM  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "BRIGHTWAY  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "BRIGHTWAY  HOSPITAL",
+      "shortName": "BRIGHTWAY  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "EUNICE  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "EUNICE  HOSPITAL",
+      "shortName": "EUNICE  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "MERCY  ANGEL",
+      "lgaName": "Chikun",
+      "name": "MERCY  ANGEL",
+      "shortName": "MERCY  ANGEL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ECWA  NARAYI CLINIC",
+      "lgaName": "Chikun",
+      "name": "ECWA  NARAYI CLINIC",
+      "shortName": "ECWA  NARAYI CLINIC",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  KURIGA",
+      "lgaName": "Chikun",
+      "name": "PHC  KURIGA",
+      "shortName": "PHC  KURIGA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  UDUWA",
+      "lgaName": "Chikun",
+      "name": "PHC  UDUWA",
+      "shortName": "PHC  UDUWA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "BRETHREN  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "BRETHREN  HOSPITAL",
+      "shortName": "BRETHREN  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "SALVATION  HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "SALVATION  HOSPITAL",
+      "shortName": "SALVATION  HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "COMMUNIY  NURSE HOME",
+      "lgaName": "Chikun",
+      "name": "COMMUNIY  NURSE HOME",
+      "shortName": "COMMUNIY  NURSE HOME",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  GWAGWADA",
+      "lgaName": "Chikun",
+      "name": "PHC  GWAGWADA",
+      "shortName": "PHC  GWAGWADA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "SUNSUNGYE",
+      "lgaName": "Chikun",
+      "name": "SUNSUNGYE",
+      "shortName": "SUNSUNGYE",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC   RIDO",
+      "lgaName": "Chikun",
+      "name": "PHC   RIDO",
+      "shortName": "PHC   RIDO",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ALFIJIR HOSPITAL",
+      "lgaName": "Chikun",
+      "name": "ALFIJIR HOSPITAL",
+      "shortName": "ALFIJIR HOSPITAL",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC KANKOMI",
+      "lgaName": "Chikun",
+      "name": "PHC KANKOMI",
+      "shortName": "PHC KANKOMI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC  TOKACHI",
+      "lgaName": "Chikun",
+      "name": "PHC  TOKACHI",
+      "shortName": "PHC  TOKACHI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "SALAMA  CLINIC",
+      "lgaName": "Chikun",
+      "name": "SALAMA  CLINIC",
+      "shortName": "SALAMA  CLINIC",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "GENERAL HOSPITAL MAKARFI ",
+      "lgaName": "Makarfi",
+      "name": "GENERAL HOSPITAL MAKARFI ",
+      "shortName": "GENERAL HOSPITAL MAKARFI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C GUBUCHI ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C GUBUCHI ",
+      "shortName": "P. H. C GUBUCHI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C NASARAWAN DOYA ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C NASARAWAN DOYA ",
+      "shortName": "P. H. C NASARAWAN DOYA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C MAKARFI ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C MAKARFI ",
+      "shortName": "P. H. C MAKARFI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C KASUWAR MATA ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C KASUWAR MATA ",
+      "shortName": "P. H. C KASUWAR MATA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C GAZARA ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C GAZARA ",
+      "shortName": "P. H. C GAZARA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C GWANKI ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C GWANKI ",
+      "shortName": "P. H. C GWANKI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C DANDAMISA ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C DANDAMISA ",
+      "shortName": "P. H. C DANDAMISA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C GIMI GARI ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C GIMI GARI ",
+      "shortName": "P. H. C GIMI GARI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C. DANGUZURI ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C. DANGUZURI ",
+      "shortName": "P. H. C. DANGUZURI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C MAYERE ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C MAYERE ",
+      "shortName": "P. H. C MAYERE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "P. H. C GANGARA ",
+      "lgaName": "Makarfi",
+      "name": "P. H. C GANGARA ",
+      "shortName": "P. H. C GANGARA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC DADIN KOWA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC DADIN KOWA ",
+      "shortName": "HEALTH CLINIC DADIN KOWA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC BAKUTAJE ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC BAKUTAJE ",
+      "shortName": "HEALTH CLINIC BAKUTAJE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC KUNKUMI ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC KUNKUMI ",
+      "shortName": "HEALTH CLINIC KUNKUMI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC DORAYI ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC DORAYI ",
+      "shortName": "HEALTH CLINIC DORAYI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC TAFIDA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC TAFIDA ",
+      "shortName": "HEALTH CLINIC TAFIDA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC SOKO ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC SOKO ",
+      "shortName": "HEALTH CLINIC SOKO ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC TASHAR YARI ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC TASHAR YARI ",
+      "shortName": "HEALTH CLINIC TASHAR YARI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC DANKWAIRE ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC DANKWAIRE ",
+      "shortName": "HEALTH CLINIC DANKWAIRE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC MAKAURATA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC MAKAURATA ",
+      "shortName": "HEALTH CLINIC MAKAURATA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC TUDUN WADA GUBUCHI ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC TUDUN WADA GUBUCHI ",
+      "shortName": "HEALTH CLINIC TUDUN WADA GUBUCHI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC KWATAKWARE ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC KWATAKWARE ",
+      "shortName": "HEALTH CLINIC KWATAKWARE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC DURUM ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC DURUM ",
+      "shortName": "HEALTH CLINIC DURUM ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC ANG KOLO ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC ANG KOLO ",
+      "shortName": "HEALTH CLINIC ANG KOLO ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC MARKE ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC MARKE ",
+      "shortName": "HEALTH CLINIC MARKE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC ANG GERI ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC ANG GERI ",
+      "shortName": "HEALTH CLINIC ANG GERI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC ANGUWAR JAJI ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC ANGUWAR JAJI ",
+      "shortName": "HEALTH CLINIC ANGUWAR JAJI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC DAN’AYAMAKA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC DAN’AYAMAKA ",
+      "shortName": "HEALTH CLINIC DAN’AYAMAKA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC RAHAMA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC RAHAMA ",
+      "shortName": "HEALTH CLINIC RAHAMA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC RUMA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC RUMA ",
+      "shortName": "HEALTH CLINIC RUMA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC ANG MAKERA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC ANG MAKERA ",
+      "shortName": "HEALTH CLINIC ANG MAKERA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC TASHAR TSAMIYA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC TASHAR TSAMIYA ",
+      "shortName": "HEALTH CLINIC TASHAR TSAMIYA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC S/GARIN GAZARA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC S/GARIN GAZARA ",
+      "shortName": "HEALTH CLINIC S/GARIN GAZARA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC GIWAYE ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC GIWAYE ",
+      "shortName": "HEALTH CLINIC GIWAYE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HABIBA NURSING HOME ",
+      "lgaName": "Makarfi",
+      "name": "HABIBA NURSING HOME ",
+      "shortName": "HABIBA NURSING HOME ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "YUNUSA NURSING HOME ",
+      "lgaName": "Makarfi",
+      "name": "YUNUSA NURSING HOME ",
+      "shortName": "YUNUSA NURSING HOME ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "Alfijir Nursing home ",
+      "lgaName": "Makarfi",
+      "name": "Alfijir Nursing home ",
+      "shortName": "Alfijir Nursing home ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "AUDI M NURSING HOME ",
+      "lgaName": "Makarfi",
+      "name": "AUDI M NURSING HOME ",
+      "shortName": "AUDI M NURSING HOME ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "TAUSAYI CONVALESCENT CENTRE ",
+      "lgaName": "Makarfi",
+      "name": "TAUSAYI CONVALESCENT CENTRE ",
+      "shortName": "TAUSAYI CONVALESCENT CENTRE ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "M. C. M. C MAKARFI ",
+      "lgaName": "Makarfi",
+      "name": "M. C. M. C MAKARFI ",
+      "shortName": "M. C. M. C MAKARFI ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HEALTH CLINIC MAKAURATA ",
+      "lgaName": "Makarfi",
+      "name": "HEALTH CLINIC MAKAURATA ",
+      "shortName": "HEALTH CLINIC MAKAURATA ",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "RURAL HOSPITAL MAIGANA",
+      "lgaName": "Soba",
+      "name": "RURAL HOSPITAL MAIGANA",
+      "shortName": "RURAL HOSPITAL MAIGANA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC KWASALLO",
+      "lgaName": "Soba",
+      "name": "PHC KWASALLO",
+      "shortName": "PHC KWASALLO",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "C H C.  SOBA",
+      "lgaName": "Soba",
+      "name": "C H C.  SOBA",
+      "shortName": "C H C.  SOBA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC GAMAGIRA",
+      "lgaName": "Soba",
+      "name": "PHC GAMAGIRA",
+      "shortName": "PHC GAMAGIRA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC DANWATA",
+      "lgaName": "Soba",
+      "name": "PHC DANWATA",
+      "shortName": "PHC DANWATA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC TURAWA",
+      "lgaName": "Soba",
+      "name": "PHC TURAWA",
+      "shortName": "PHC TURAWA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC YAKASAI",
+      "lgaName": "Soba",
+      "name": "PHC YAKASAI",
+      "shortName": "PHC YAKASAI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC RICHIFA",
+      "lgaName": "Soba",
+      "name": "PHC RICHIFA",
+      "shortName": "PHC RICHIFA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC DANJABA",
+      "lgaName": "Soba",
+      "name": "HC DANJABA",
+      "shortName": "HC DANJABA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "JAMAA NURSING HOME",
+      "lgaName": "Soba",
+      "name": "JAMAA NURSING HOME",
+      "shortName": "JAMAA NURSING HOME",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ZUMUNCI NURSING HOME",
+      "lgaName": "Soba",
+      "name": "ZUMUNCI NURSING HOME",
+      "shortName": "ZUMUNCI NURSING HOME",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ASIBITIN MURTALA",
+      "lgaName": "Soba",
+      "name": "ASIBITIN MURTALA",
+      "shortName": "ASIBITIN MURTALA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "BELE NURSING HOME",
+      "lgaName": "Soba",
+      "name": "BELE NURSING HOME",
+      "shortName": "BELE NURSING HOME",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "ASIBITIN DOGARA",
+      "lgaName": "Soba",
+      "name": "ASIBITIN DOGARA",
+      "shortName": "ASIBITIN DOGARA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "SOBA LAFIYA CLINIC",
+      "lgaName": "Soba",
+      "name": "SOBA LAFIYA CLINIC",
+      "shortName": "SOBA LAFIYA CLINIC",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "T/SAIBU MEDICAL CENTER",
+      "lgaName": "Soba",
+      "name": "T/SAIBU MEDICAL CENTER",
+      "shortName": "T/SAIBU MEDICAL CENTER",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC KINKIBA",
+      "lgaName": "Soba",
+      "name": "PHC KINKIBA",
+      "shortName": "PHC KINKIBA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC RAHAMA",
+      "lgaName": "Soba",
+      "name": "PHC RAHAMA",
+      "shortName": "PHC RAHAMA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC GIMBA",
+      "lgaName": "Soba",
+      "name": "HC GIMBA",
+      "shortName": "HC GIMBA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC LUNGU",
+      "lgaName": "Soba",
+      "name": "HC LUNGU",
+      "shortName": "HC LUNGU",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "KURUNGUFI",
+      "lgaName": "Soba",
+      "name": "KURUNGUFI",
+      "shortName": "KURUNGUFI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC MADARZAI",
+      "lgaName": "Soba",
+      "name": "HC MADARZAI",
+      "shortName": "HC MADARZAI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC BAKURA",
+      "lgaName": "Soba",
+      "name": "HC BAKURA",
+      "shortName": "HC BAKURA",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC SAMBIRNI",
+      "lgaName": "Soba",
+      "name": "HC SAMBIRNI",
+      "shortName": "HC SAMBIRNI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC GARU",
+      "lgaName": "Soba",
+      "name": "PHC GARU",
+      "shortName": "PHC GARU",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "PHC AWAI",
+      "lgaName": "Soba",
+      "name": "PHC AWAI",
+      "shortName": "PHC AWAI",
+      "stateName": "Kaduna",
+      "tags": ["Clinic", "Primary"]
+    },
+    {
+      "externalId": "HC TAKALFIYA ",
+      "lgaName": "Soba",
+      "name": "HC TAKALFIYA ",
+      "shortName": "HC TAKALFIYA ",
+      "stateName": "Kaduna",
       "tags": ["Clinic", "Primary"]
     }
   ]
