@@ -33,10 +33,11 @@ function resultCategoryFilters(
       .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
       .leftJoin('ResultCategoryAssay as rca', function () {
         this.on('a.id', 'rca.assayId').andOn(
-          'r.resultCategory1',
+          `${resultAlias}.resultCategory1`,
           'rca.resultCategoryId'
         )
       })
+      .leftJoin('ResultCategory as rc1', 'rca.resultCategoryId', 'rc1.id')
       .leftJoin('ResultCategoryAssay as rca2', function () {
         this.on(`a.Id`, 'rca2.assayId').andOn(
           `${resultAlias}.resultCategory2`,
@@ -58,6 +59,7 @@ function resultCategoryFilters(
             )
           })
       })
+      .leftJoin('ResultCategory as rc2', 'rca2.resultCategoryId', 'rc2.id')
     _.each(results, elem => {
       queryBuilder.orWhere(whereBuilder => {
         whereBuilder.where('a.externalId', elem.assayId)
@@ -92,8 +94,8 @@ function resultCategoryFilters(
           )
           whereBuilder.andWhere(builder =>
             builder
-              .whereIn('rca.externalId', itemsToFilter)
-              .orWhereIn('rca2.externalId', itemsToFilter)
+              .whereIn('rc1.externalId', itemsToFilter)
+              .orWhereIn('rc2.externalId', itemsToFilter)
           )
         }
       })
@@ -321,13 +323,20 @@ async function getNotificationPolicy(
           .crossJoin(
             knex('Result as r')
               .where('r.id', resultId)
-              .select('r.siteId', 'r.deviceId', 'r.id as resultId')
+              .select(
+                'r.siteId',
+                'r.assayId',
+                'r.deviceId',
+                'r.id as resultId',
+                'r.resultCategory1',
+                'r.resultCategory2'
+              )
               .as('result')
           )
           .join('Device as d', 'result.deviceId', 'd.id')
           .leftJoin('Geography as g', 'd.geographyId', 'g.id')
           .where('ntc.externalId', 'resultBased')
-        aliases.result = 'r'
+        aliases.result = 'result'
         aliases.device = 'd'
       }
     }, action)
