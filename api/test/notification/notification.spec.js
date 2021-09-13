@@ -14,7 +14,10 @@ const {
 } = require('../utils/mqUtils')
 const { resultLogged } = require('../../src/result/actions')
 const { issueCreated } = require('../../src/issue/actions')
-const { notificationTypeCategoryToId } = require('../../src/shared/dictionary')
+const {
+  notificationTypeCategoryToId,
+  resultCategoryToId,
+} = require('../../src/shared/dictionary')
 const { resultConditionsMet } = require('../../src/notification/service')
 
 const { assert } = chai
@@ -35,7 +38,6 @@ describe('Issue based Notifications triggers', () => {
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'issueBased'
     )
-
     await knex('NotificationType').insert({
       partnerId: 1,
       name: 'Random issue based notification',
@@ -82,12 +84,12 @@ describe.only('Result Notifications triggers', () => {
         ],
       },
     ],
-    // areaItems: [
-    //   {
-    //     label: 'Ohio',
-    //     value: '67',
-    //   },
-    // ],
+    areaItems: [
+      {
+        label: 'Wayne',
+        value: '12',
+      },
+    ],
     // jobFunctions: [
     //   {
     //     tags: [
@@ -104,15 +106,72 @@ describe.only('Result Notifications triggers', () => {
     //     jobFunctionId: '1',
     //   },
     // ],
-    // deviceLevelId: 'state',
+    deviceLevelId: 'lga',
   }
-  before(async () => {
+  let resultCategory1
+  const filterConditionWithJf = {
+    result: [
+      {
+        assayId: 'DaktariHivVL',
+        resultCategoryId: [
+          {
+            label: 'Detected',
+            scope: 'ResultCategories',
+            value: 'Detected',
+          },
+        ],
+      },
+    ],
+    areaItems: [
+      {
+        label: 'Wayne',
+        value: '12',
+      },
+    ],
+    jobFunctions: [
+      {
+        tags: [],
+        // tags: [
+        //   {
+        //     label: 'LALALA',
+        //     value: 18,
+        //   },
+        //   {
+        //     label: 'sorete',
+        //     value: 19,
+        //   },
+        // ],
+        // checked: 'TRUE',
+        jobFunctionId: '1',
+      },
+      {
+        tags: [{ label: 'oneTag', value: 1 }],
+        // tags: [
+        //   {
+        //     label: 'LALALA',
+        //     value: 18,
+        //   },
+        //   {
+        //     label: 'sorete',
+        //     value: 19,
+        //   },
+        // ],
+        // checked: 'TRUE',
+        jobFunctionId: '2',
+      },
+    ],
+    deviceLevelId: 'lga',
+  }
+  const createTestContext = async filterCondition => {
+    resultCategory1 = await resultCategoryToId('Detected')
     results = await knex('Result as r')
+      .join('Geography as g', 'r.geographyId', 'g.id')
+      .join('Lga as l', 'g.lgaId', 'l.id')
       .where({ partnerId: 1 })
       .whereNotExists(
         knex('Notification as n').whereRaw('n.resultId = r.id').select()
       )
-      .select()
+      .distinct('r.*', 'l.name as lgaName')
     assert.isAtLeast(results.length, 1)
     const messageTypes = await knex('MessageType')
       .whereNotNull('smsTemplateId')
@@ -128,14 +187,14 @@ describe.only('Result Notifications triggers', () => {
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
-      filterCondition: JSON.stringify(filterConditionWithAssay),
+      filterCondition: JSON.stringify(filterCondition),
       messageTypeId: _.sample(messageTypes).id,
     })
     messageContext = await createMessageContext()
 
     await updateSubscription('notification')
-  })
-  after(async () => {
+  }
+  const removeTestContext = async () => {
     await knex('Notification')
       .whereIn(
         'resultId',
@@ -143,17 +202,99 @@ describe.only('Result Notifications triggers', () => {
       )
       .delete()
     await knex('NotificationType').where({ id: ntNoFilterConditionId }).delete()
+    results = []
+  }
+  describe('Filter without JF', () => {
+    before(async () => createTestContext(filterConditionWithAssay))
+    after(removeTestContext)
+    it('should create a result based notification for particular lga', async () => {
+      const resultId = _.sample(
+        _.filter(
+          results,
+          elem =>
+            elem.lgaName === 'Wayne' && elem.resultCategory1 === resultCategory1
+        )
+      ).id
+      assert.isNotNull(resultId)
+      messageContext.dispatch(resultLogged(resultId, 1, 1))
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId })
+        .distinct()
+      assert.equal(notifications.length, 1)
+    })
+    it('should NOT create a result based notification for result category distinct to detected', async () => {
+      const resultId = _.sample(
+        _.filter(
+          results,
+          elem =>
+            elem.lgaName === 'Wayne' && elem.resultCategory1 !== resultCategory1
+        )
+      ).id
+      assert.isNotNull(resultId)
+      messageContext.dispatch(resultLogged(resultId, 1, 1))
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId })
+        .select()
+      assert.isEmpty(notifications)
+    })
+    it('should NOT create a result based notification for a different LGA than wayne', async () => {
+      const resultId = _.sample(
+        _.filter(results, elem => elem.lgaName !== 'Wayne')
+      ).id
+      assert.isNotNull(resultId)
+      messageContext.dispatch(resultLogged(resultId, 1, 1))
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId })
+        .select()
+      assert.isEmpty(notifications)
+    })
   })
-  it('should create a result based notification without filter conditions', async () => {
-    const resultId = _.sample(results).id
-    assert.isNotNull(resultId)
-    messageContext.dispatch(resultLogged(resultId, 1, 1))
-    await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-    await waitForIdle(1000)
-    const notifications = await knex('Notification')
-      .where({ resultId })
-      .select()
-    assert.equal(notifications.length, 1)
+  describe.only('Filter by JF', () => {
+    let inserted
+    before(async () => {
+      await createTestContext(filterConditionWithJf)
+      ;[inserted] = await knex('Tag').insert([
+        { partnerId: 1, title: 'oneTag' },
+        { partnerId: 1, title: 'secondTag' },
+        { partnerId: 1, title: 'thirdTag' },
+      ])
+      const personTags = await knex('Person as p')
+        .join('Job as j', 'j.personId', 'p.id')
+        .whereIn('j.jobFunctionId', [1])
+        .pluck('p.id')
+      const person = _.sample(personTags)
+      await knex('PersonTag').insert({ personId: person, tagId: inserted })
+    })
+    after(async () => {
+      await removeTestContext()
+      await knex('PersonTag').where('TagId', '>=', inserted).delete()
+      await knex('Tag')
+        .whereIn('title', ['oneTag', 'secondTag', 'thirdTag'])
+        .delete()
+    })
+    it('should create a result based notification for particular lga', async () => {
+      const resultId = _.sample(
+        _.filter(
+          results,
+          elem =>
+            elem.lgaName === 'Wayne' && elem.resultCategory1 === resultCategory1
+        )
+      ).id
+      assert.isNotNull(resultId)
+      messageContext.dispatch(resultLogged(resultId, 1, 1))
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId })
+        .distinct()
+      assert.equal(notifications.length, 1)
+    })
   })
 })
 describe('Notification routes', () => {

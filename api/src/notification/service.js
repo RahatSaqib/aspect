@@ -60,46 +60,48 @@ function resultCategoryFilters(
           })
       })
       .leftJoin('ResultCategory as rc2', 'rca2.resultCategoryId', 'rc2.id')
-    _.each(results, elem => {
-      queryBuilder.orWhere(whereBuilder => {
-        whereBuilder.where('a.externalId', elem.assayId)
-        if (
-          _.find(
-            elem.resultCategoryId,
-            item => item.scope === 'ResultCategoryGroups'
+    queryBuilder.where(resultBuilder =>
+      _.each(results, elem => {
+        resultBuilder.orWhere(whereBuilder => {
+          whereBuilder.where('a.externalId', elem.assayId)
+          if (
+            _.find(
+              elem.resultCategoryId,
+              item => item.scope === 'ResultCategoryGroups'
+            )
           )
-        )
-          whereBuilder.whereIn(
-            'rcg.externalId',
-            _.map(
+            whereBuilder.whereIn(
+              'rcg.externalId',
+              _.map(
+                _.filter(
+                  elem.resultCategoryId,
+                  item => item.scope === 'ResultCategoryGroups'
+                ),
+                obj => obj.value
+              )
+            )
+          if (
+            _.find(
+              elem.resultCategoryId,
+              item => item.scope === 'ResultCategories'
+            )
+          ) {
+            const itemsToFilter = _.map(
               _.filter(
                 elem.resultCategoryId,
-                item => item.scope === 'ResultCategoryGroups'
+                item => item.scope === 'ResultCategories'
               ),
               obj => obj.value
             )
-          )
-        if (
-          _.find(
-            elem.resultCategoryId,
-            item => item.scope === 'ResultCategories'
-          )
-        ) {
-          const itemsToFilter = _.map(
-            _.filter(
-              elem.resultCategoryId,
-              item => item.scope === 'ResultCategories'
-            ),
-            obj => obj.value
-          )
-          whereBuilder.andWhere(builder =>
-            builder
-              .whereIn('rc1.externalId', itemsToFilter)
-              .orWhereIn('rc2.externalId', itemsToFilter)
-          )
-        }
+            whereBuilder.andWhere(builder =>
+              builder
+                .whereIn('rc1.externalId', itemsToFilter)
+                .orWhereIn('rc2.externalId', itemsToFilter)
+            )
+          }
+        })
       })
-    })
+    )
   }
 }
 
@@ -200,29 +202,27 @@ async function createNotifications(knex, action, context) {
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
   let jobFunctionLevel = null
+  const { jobFunctions = [] } = filterCondition || {}
   await Promise.each(policies, async policy => {
-    if (_.isNil(policy.jobFunctionId)) {
+    if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions)) {
       await createNotificationIfNotCreatedAlready(
         action,
         { policy, now },
         { messageContext: context, knex }
       )
     } else {
-      if (policy.jobFunctionId !== jobFunctionId) {
-        ;({ jobFunctionId, level: jobFunctionLevel } = policy)
-      } else if (policy.level !== jobFunctionLevel) {
-        // This is a lower level for this particular job function
-        // continue until we get to end of list or new job function
-        /* eslint-disable no-continue */
-        return Promise.resolve()
-      }
+      if (_.isEmpty(jobFunctions) && policy.jobFunctionId)
+        if (policy.jobFunctionId !== jobFunctionId) {
+          ;({ jobFunctionId, level: jobFunctionLevel } = policy)
+        } else if (policy.level !== jobFunctionLevel) {
+          // This is a lower level for this particular job function
+          // continue until we get to end of list or new job function
+          /* eslint-disable no-continue */
+          return Promise.resolve()
+        }
       const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(
-        knex,
-        policy,
-        tags,
-        filterCondition || {}
-      )
+      const people = await getPeopleToNotify(knex, policy, tags, jobFunctions)
+      console.log('peopleToNotify', people)
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
@@ -291,7 +291,7 @@ async function getNotificationPolicy(
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
-  const query = txKnex('NotificationType as nt')
+  const records = await txKnex('NotificationType as nt')
     .join(
       'NotificationTypeCategory as ntc',
       'nt.notificationTypeCategoryId',
@@ -344,15 +344,11 @@ async function getNotificationPolicy(
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
     .select(selectColums.concat(extraFields))
-  return query
+
+  return records
 }
 
-async function getPeopleToNotify(
-  txKnex,
-  policy,
-  tags,
-  { jobFunctions = null }
-) {
+async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
   let peopleTagIncluded = false
   const people = await txKnex('Job as j')
     .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
@@ -365,22 +361,27 @@ async function getPeopleToNotify(
       }
       if (policy.jobFunctionId)
         queryBuilder.where('jf.id', policy.jobFunctionId)
-      if (!_.isNil(jobFunctions)) {
-        _.each(jobFunctions, ({ jobFunctionId, tags }) => {
-          queryBuilder.orWhere(builder => {
-            builder.where('jf.id', jobFunctionId)
-            if (tags.length > 0) {
-              if (!peopleTagIncluded) {
-                builder.join('PersonTag as pt', 'j.personId', 'pt.personId')
-                peopleTagIncluded = true
+      if (!_.isEmpty(jobFunctions)) {
+        queryBuilder.where(jfBuilder => {
+          _.each(jobFunctions, ({ jobFunctionId, tags = [] }) => {
+            jfBuilder.orWhere(builder => {
+              builder.where('jf.id', jobFunctionId)
+              if (tags.length > 0) {
+                if (!peopleTagIncluded) {
+                  builder.join('PersonTag as pt', 'j.personId', 'pt.personId')
+                  peopleTagIncluded = true
+                }
+                builder.whereIn(
+                  'pt.tagId',
+                  _.uniq(_.map(tags, tag => tag.value))
+                )
               }
-              builder.whereIn('pt.tagId', _.uniq(_.map(tags, tag => tag.value)))
-            }
+            })
           })
         })
       }
     })
-    .distinct('j.personId as id')
+    .distinct('j.personId as id', 'j.jobFunctionId')
   return people
 }
 
@@ -399,7 +400,7 @@ async function sendNotificationsToPeople(
         txKnex,
         action,
         person.id,
-        policy.jobFunctionId
+        person.jobFunctionId
       )
       if (shouldNotifyToPerson != null) {
         await createNotificationIfNotCreatedAlready(
@@ -475,7 +476,6 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-
     if (personId) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
