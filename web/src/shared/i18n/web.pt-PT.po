@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-30T14:20:57.236Z\n"
+"POT-Creation-Date: 2021-09-07T10:56:22.553Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5741,6 +5741,13 @@ msgstr "ID do paciente"
 msgid "Patient/Case ID"
 msgstr "Identificação do paciente/do caso"
 
+#. [pages.TaskDetail.peopleAlerted]
+#. defaultMessage is:
+#. People alerted
+#: extracted_strings.json
+msgid "People alerted"
+msgstr "Pessoas alertadas"
+
 #. [pages.OperationalData.percentPositiveResults]
 #. defaultMessage is:
 #. Percent Positive
@@ -6663,6 +6670,9 @@ msgstr "Resolvido"
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
+#. [pages.DeviceDetailProfile.resultText]
+#. defaultMessage is:
+#. Result
 #: extracted_strings.json
 msgid "Result"
 msgstr "Resultado"
@@ -6699,9 +6709,6 @@ msgstr "Detalhes do Resultado"
 #. defaultMessage is:
 #. Result Text
 #. [placeholder.result.text]
-#. defaultMessage is:
-#. Result Text
-#. [pages.DeviceDetailProfile.resultText]
 #. defaultMessage is:
 #. Result Text
 #: extracted_strings.json
@@ -7753,6 +7760,13 @@ msgstr "ID do Site"
 msgid "Site Name"
 msgstr "Nome do Site"
 
+#. [pages.TaskDetail.siteContact]
+#. defaultMessage is:
+#. Site contact
+#: extracted_strings.json
+msgid "Site contact"
+msgstr "Contato do site"
+
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
@@ -7829,6 +7843,9 @@ msgstr "Estado/Região"
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-30T14:20:57.236Z\n"
+"POT-Creation-Date: 2021-09-07T10:56:22.553Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5754,6 +5754,13 @@ msgstr "ID du patient"
 msgid "Patient/Case ID"
 msgstr "Identification du patient/cas"
 
+#. [pages.TaskDetail.peopleAlerted]
+#. defaultMessage is:
+#. People alerted
+#: extracted_strings.json
+msgid "People alerted"
+msgstr "Personnes alertées"
+
 #. [pages.OperationalData.percentPositiveResults]
 #. defaultMessage is:
 #. Percent Positive
@@ -6679,6 +6686,9 @@ msgstr "Résolu"
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
+#. [pages.DeviceDetailProfile.resultText]
+#. defaultMessage is:
+#. Result
 #: extracted_strings.json
 msgid "Result"
 msgstr "Résultat"
@@ -6715,9 +6725,6 @@ msgstr "Détails du résultat"
 #. defaultMessage is:
 #. Result Text
 #. [placeholder.result.text]
-#. defaultMessage is:
-#. Result Text
-#. [pages.DeviceDetailProfile.resultText]
 #. defaultMessage is:
 #. Result Text
 #: extracted_strings.json
@@ -7769,6 +7776,13 @@ msgstr "ID du site"
 msgid "Site Name"
 msgstr "Nom du site"
 
+#. [pages.TaskDetail.siteContact]
+#. defaultMessage is:
+#. Site contact
+#: extracted_strings.json
+msgid "Site contact"
+msgstr "Contacter le site"
+
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
@@ -7845,6 +7859,9 @@ msgstr "Région"
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json
@@ -10179,7 +10196,7 @@ msgstr "{unit} total des étalonnages"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
-"{value} ({records}/{total, plural, un {# résultat} autre {# résultats} })"
+"{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
 
 #~ msgid "Incorrect password"
 #~ msgstr "Mot de passe incorrect"

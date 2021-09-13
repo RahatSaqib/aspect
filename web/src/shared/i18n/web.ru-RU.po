@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-30T14:20:57.236Z\n"
+"POT-Creation-Date: 2021-09-07T10:56:22.553Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -5742,6 +5742,13 @@ msgstr "ID пациента"
 msgid "Patient/Case ID"
 msgstr "Идентификатор пациента/детектор болезни"
 
+#. [pages.TaskDetail.peopleAlerted]
+#. defaultMessage is:
+#. People alerted
+#: extracted_strings.json
+msgid "People alerted"
+msgstr "Люди предупреждены"
+
 #. [pages.OperationalData.percentPositiveResults]
 #. defaultMessage is:
 #. Percent Positive
@@ -6667,6 +6674,9 @@ msgstr "Решено"
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
+#. [pages.DeviceDetailProfile.resultText]
+#. defaultMessage is:
+#. Result
 #: extracted_strings.json
 msgid "Result"
 msgstr "Результат"
@@ -6703,9 +6713,6 @@ msgstr "Детали результата"
 #. defaultMessage is:
 #. Result Text
 #. [placeholder.result.text]
-#. defaultMessage is:
-#. Result Text
-#. [pages.DeviceDetailProfile.resultText]
 #. defaultMessage is:
 #. Result Text
 #: extracted_strings.json
@@ -7757,6 +7764,13 @@ msgstr "Идентификатор сайта"
 msgid "Site Name"
 msgstr "Название сайта"
 
+#. [pages.TaskDetail.siteContact]
+#. defaultMessage is:
+#. Site contact
+#: extracted_strings.json
+msgid "Site contact"
+msgstr "Контакт на сайте"
+
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
@@ -7833,6 +7847,9 @@ msgstr "Регион"
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json
@@ -10148,8 +10165,7 @@ msgstr "{unit} суммарные калибровки"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
-"{value} ({records}/{тотал, множественное число, один {# результат} другой {# "
-"результат}))"
+"{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
 
 #~ msgid "Incorrect password"
 #~ msgstr "Неверный пароль"
