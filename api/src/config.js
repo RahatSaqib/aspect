@@ -13,6 +13,7 @@ module.exports = {
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
   isDevelopment: process.env.NODE_ENV === 'development',
+  environment: process.env.NODE_ENV,
   countryName: process.env.countryName || 'DEV',
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,

@@ -60,17 +60,9 @@ const sentryPlugins =
           options: {
             client: {
               dsn: config.sentry.dsn,
-              environment: config.isDevelopment ? 'development' : 'production',
-              ignoreErrors: ['A later version of this result already exists'],
-              sanitizeKeys: [
-                'patientId',
-                'sampleId',
-                'patient',
-                'password',
-                'email',
-                'email2',
-                'cell',
-              ],
+              environment: config.environment,
+              ignoreErrors: config.sentry.ignoreErrors,
+              sanitizeKeys: config.sentry.sanitizeKeys,
             },
             scope: {
               tags: [{ name: 'Country', value: config.countryName }],
