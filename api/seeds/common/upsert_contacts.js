@@ -213,7 +213,9 @@ module.exports = async (knex, partnerData, contacts) => {
         .where({ partnerId })
         .whereIn('title', person.tags)
       await Promise.each(
-        person.tags.filter(t => !tags.includes(t)),
+        person.tags.filter(
+          tagTitle => !tags.map(t => t.title).includes(tagTitle)
+        ),
         async t => knex('Tag').insert({ title: t, partnerId })
       )
 
