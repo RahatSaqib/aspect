@@ -60,6 +60,9 @@ const sentryPlugins =
           options: {
             client: {
               dsn: config.sentry.dsn,
+              environment: config.environment,
+              ignoreErrors: config.sentry.ignoreErrors,
+              sanitizeKeys: config.sentry.sanitizeKeys,
             },
             scope: {
               tags: [{ name: 'Country', value: config.countryName }],

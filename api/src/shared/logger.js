@@ -103,6 +103,9 @@ if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel)
     new Sentry({
       config: {
         dsn: config.sentry.dsn,
+        environment: config.environment,
+        ignoreErrors: config.sentry.ignoreErrors,
+        sanitizeKeys: config.sentry.sanitizeKeys,
       },
       tags: {
         country: config.countryName,

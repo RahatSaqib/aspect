@@ -174,19 +174,21 @@ async function resolveEscalate({
 }) {
   // get all Active issues of this type for current siteId
   const issueTypeId = await issueTypeToId(issueType)
-  const issueStatusId = await issueStatusToId('Active')
-  const issues = await knex('Issue')
-    .where({ siteId, issueTypeId, issueStatusId })
-    .select('id')
+  if (issueTypeId) {
+    const issueStatusId = await issueStatusToId('Active')
+    const issues = await knex('Issue')
+      .where({ siteId, issueTypeId, issueStatusId })
+      .select('id')
 
-  // loop through all active issues and
-  _.each(issues, ({ id: issueId }) => {
-    // try to resolve issue (i.e. for Myanmar it runs function in /plugin/partner/Myanmar/issueResolutions.js)
-    if (resolver) resolver(issueId)
+    // loop through all active issues and
+    _.each(issues, ({ id: issueId }) => {
+      // try to resolve issue (i.e. for Myanmar it runs function in /plugin/partner/Myanmar/issueResolutions.js)
+      if (resolver) resolver(issueId)
 
-    // try to escalate issue
-    if (escalator) escalator(issueId)
-  })
+      // try to escalate issue
+      if (escalator) escalator(issueId)
+    })
+  }
 }
 
 // -----------------------------
