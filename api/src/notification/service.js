@@ -349,15 +349,13 @@ async function getNotificationPolicy(
 }
 
 async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
-  let peopleTagIncluded = false
+  const peopleTagIncluded = false
   const people = await txKnex('Job as j')
     .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
     .modify(queryBuilder => {
       if (policy.sendToContactsWithMatchingTags) {
-        peopleTagIncluded = true
-        queryBuilder
-          .join('PersonTag as pt', 'j.personId', 'pt.personId')
-          .whereIn('pt.tagId', _.uniq(tags))
+        queryBuilder.whereIn('pt.tagId', _.uniq(tags))
       }
       if (policy.jobFunctionId)
         queryBuilder.where('jf.id', policy.jobFunctionId)
@@ -367,10 +365,6 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
             jfBuilder.orWhere(builder => {
               builder.where('jf.id', jobFunctionId)
               if (tags.length > 0) {
-                if (!peopleTagIncluded) {
-                  builder.join('PersonTag as pt', 'j.personId', 'pt.personId')
-                  peopleTagIncluded = true
-                }
                 builder.whereIn(
                   'pt.tagId',
                   _.uniq(_.map(tags, tag => tag.value))

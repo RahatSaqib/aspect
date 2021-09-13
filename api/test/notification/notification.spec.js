@@ -90,22 +90,6 @@ describe.only('Result Notifications triggers', () => {
         value: '12',
       },
     ],
-    // jobFunctions: [
-    //   {
-    //     tags: [
-    //       {
-    //         label: 'LALALA',
-    //         value: 18,
-    //       },
-    //       {
-    //         label: 'sorete',
-    //         value: 19,
-    //       },
-    //     ],
-    //     checked: 'TRUE',
-    //     jobFunctionId: '1',
-    //   },
-    // ],
     deviceLevelId: 'lga',
   }
   let resultCategory1
@@ -131,32 +115,10 @@ describe.only('Result Notifications triggers', () => {
     jobFunctions: [
       {
         tags: [],
-        // tags: [
-        //   {
-        //     label: 'LALALA',
-        //     value: 18,
-        //   },
-        //   {
-        //     label: 'sorete',
-        //     value: 19,
-        //   },
-        // ],
-        // checked: 'TRUE',
         jobFunctionId: '1',
       },
       {
-        tags: [{ label: 'oneTag', value: 1 }],
-        // tags: [
-        //   {
-        //     label: 'LALALA',
-        //     value: 18,
-        //   },
-        //   {
-        //     label: 'sorete',
-        //     value: 19,
-        //   },
-        // ],
-        // checked: 'TRUE',
+        tags: [],
         jobFunctionId: '2',
       },
     ],
@@ -257,20 +219,7 @@ describe.only('Result Notifications triggers', () => {
   })
   describe.only('Filter by JF', () => {
     let inserted
-    before(async () => {
-      await createTestContext(filterConditionWithJf)
-      ;[inserted] = await knex('Tag').insert([
-        { partnerId: 1, title: 'oneTag' },
-        { partnerId: 1, title: 'secondTag' },
-        { partnerId: 1, title: 'thirdTag' },
-      ])
-      const personTags = await knex('Person as p')
-        .join('Job as j', 'j.personId', 'p.id')
-        .whereIn('j.jobFunctionId', [1])
-        .pluck('p.id')
-      const person = _.sample(personTags)
-      await knex('PersonTag').insert({ personId: person, tagId: inserted })
-    })
+    before(async () => createTestContext(filterConditionWithJf))
     after(async () => {
       await removeTestContext()
       await knex('PersonTag').where('TagId', '>=', inserted).delete()
@@ -278,7 +227,15 @@ describe.only('Result Notifications triggers', () => {
         .whereIn('title', ['oneTag', 'secondTag', 'thirdTag'])
         .delete()
     })
-    it('should create a result based notification for particular lga', async () => {
+    afterEach(async () =>
+      knex('Notification')
+        .whereIn(
+          'resultId',
+          _.map(results, r => r.id)
+        )
+        .delete()
+    )
+    it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = _.sample(
         _.filter(
           results,
@@ -294,6 +251,53 @@ describe.only('Result Notifications triggers', () => {
         .where({ resultId })
         .distinct()
       assert.equal(notifications.length, 1)
+    })
+    it('Should create or not  a result based notification filtering by  JobFunction and tags', async () => {
+      ;[inserted] = await knex('Tag').insert([
+        { partnerId: 1, title: 'oneTag' },
+        { partnerId: 1, title: 'secondTag' },
+        { partnerId: 1, title: 'thirdTag' },
+      ])
+
+      await knex('NotificationType')
+        .where({ id: ntNoFilterConditionId })
+        .update({
+          filterCondition: JSON.stringify({
+            ...filterConditionWithJf,
+            jobFunctions: [
+              {
+                tags: [{ label: 'oneTag', value: inserted }],
+                jobFunctionId: '1',
+              },
+              {
+                tags: [{ label: 'secondTag', value: inserted + 1 }],
+                jobFunctionId: '2',
+              },
+            ],
+          }),
+        })
+      await updateSubscription('notification')
+
+      const resultId = _.sample(
+        _.filter(
+          results,
+          elem =>
+            elem.lgaName === 'Wayne' && elem.resultCategory1 === resultCategory1
+        )
+      ).id
+      assert.isNotNull(resultId)
+      messageContext.dispatch(resultLogged(resultId, 1, 1))
+      // const personTags = await knex('Person as p')
+      //   .join('Job as j', 'j.personId', 'p.id')
+      //   .whereIn('j.jobFunctionId', [1])
+      //   .pluck('p.id')
+      // const person = _.sample(personTags)
+      // await knex('PersonTag').insert({ personId: person, tagId: inserted })
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId })
+        .distinct()
+      assert.equal(notifications.length, 0)
     })
   })
 })

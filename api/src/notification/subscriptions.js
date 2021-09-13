@@ -45,6 +45,7 @@ async function getNotificationSubscriptions(knex) {
     const { method } = _.sample(actionParameters[actionKey])
     actions[actionKey] = actionHandlers[method](actionParameters[actionKey])
   })
+  console.log(actionParameters['RESULT_LOGGED'], JSON.stringify(actionParameters['RESULT_LOGGED']))
   return { actions }
 }
 
