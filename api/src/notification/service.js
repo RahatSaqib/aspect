@@ -222,7 +222,6 @@ async function createNotifications(knex, action, context) {
         }
       const tags = await getTagsByPolicy(knex, policy)
       const people = await getPeopleToNotify(knex, policy, tags, jobFunctions)
-      console.log('peopleToNotify', people)
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
@@ -343,14 +342,13 @@ async function getNotificationPolicy(
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
-    .select(selectColums.concat(extraFields))
+    .distinct(selectColums.concat(extraFields))
 
   return records
 }
 
 async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
-  const peopleTagIncluded = false
-  const people = await txKnex('Job as j')
+  const people = txKnex('Job as j')
     .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
     .modify(queryBuilder => {
@@ -376,6 +374,7 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
       }
     })
     .distinct('j.personId as id', 'j.jobFunctionId')
+  console.log('------sql:', people.toString())
   return people
 }
 

@@ -116,12 +116,13 @@ const messageQueuePlugin = {
   version,
   register: async server =>
     createMessageQueue(config.amqp.name)
-      .then(queue => {
+      .then(async queue => {
         addLoggers(server, queue)
-        addSubscriptions(queue)
+        await addSubscriptions(queue)
         if (config.scheduler.enabled) {
           startScheduler(queue)
         }
+        console.log('ququ', queue.queues)
         return queue
       })
       .then(queue => {

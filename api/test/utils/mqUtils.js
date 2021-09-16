@@ -30,7 +30,8 @@ async function subscribe(subscriptionName, subscription) {
 
 async function updateSubscription(subscriptorKey) {
   const queue = await queueConnect()
-  updateHandlersSubscription(queue, subscriptorKey)
+  console.log('-------------------------Update notifications')
+  await updateHandlersSubscription(queue, subscriptorKey)
 }
 
 async function createMessageContext() {
