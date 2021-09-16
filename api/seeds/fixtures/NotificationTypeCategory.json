@@ -1,0 +1,12 @@
+{
+  "data": [
+    {
+      "name": "Issue-Based",
+      "externalId": "issueBased"
+    },
+    {
+      "name": "Result-Based",
+      "externalId": "resultBased"
+    }
+  ]
+}

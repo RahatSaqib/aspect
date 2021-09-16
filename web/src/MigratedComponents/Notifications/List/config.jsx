@@ -35,7 +35,7 @@ const groupedOptions = ({ formatMessage }) => [
     label: formatMessage(messages.notificationCreateGroupForResults),
     options: [
       {
-        id: 'result-based',
+        id: 'resultBased', // externalId from table NotificationTypeCategory
         name: formatMessage(messages.notificationTypeResultBased),
         icon: 'AiOutlineSolution',
       },
@@ -139,7 +139,8 @@ export const getCreateNotificationMenuProps = intl => ({
 })
 
 export const baseConfig = ({ formatMessage, formatNumber }) => ({
-  name: 'notification',
+  name: formatMessage(messages.notificationsTableName),
+  namePlural: formatMessage(messages.notificationsTableNamePlural),
   columns: [
     {
       key: 'lastTriggeredOn',
@@ -167,6 +168,14 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
         `${formatMessage(messages.notificationsTableHeaderNameCount, {
           itemCount: formatNumber(value),
         })}`,
+    },
+    {
+      key: 'typeCategory',
+      filterKey: 'typeCategory',
+      label: formatMessage(messages.notificationsTableHeaderCategory),
+      width: 20,
+      disableHide: true,
+      disableGroupBy: true,
     },
     {
       key: 'totalTriggers',
@@ -197,7 +206,13 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
   ],
   columnOrder: {
     allow: false,
-    initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
+    initialOrder: [
+      'name',
+      'typeCategory',
+      'lastTriggeredOn',
+      'totalTriggers',
+      'contacts',
+    ],
   },
   contextualMenu: NotificationsContextualMenu,
 })

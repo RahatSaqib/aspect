@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
 
 import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
+import { useFormikContext } from 'formik'
 
-import { useFormikState } from '../Formik/Context'
 import AspectDropDown from '../../AspectDropDown'
 import UI_CONSTS from '../../../globals/consts/UI'
 
@@ -36,7 +37,7 @@ const getValue = (selectedOption, formik, id) => {
 }
 
 const AspectSelect = props => {
-  const { updateField } = useFormikState()
+  const { updateField } = useFormikContext()
   const {
     className,
     classNames,
@@ -49,15 +50,16 @@ const AspectSelect = props => {
       options = [],
       placeholder,
       queryKey,
+      subRowIndex,
     },
     formik,
     id,
     label,
   } = props
 
-  const isTouched = formik.touched[id] === true
-  const error = isTouched && formik.errors[id]?.length > 0
-  const helperText = isTouched && formik.errors[id]
+  const isTouched = get(formik.touched, id) === true
+  const error = isTouched && get(formik.errors, id)?.length > 0
+  const helperText = isTouched && get(formik.errors, id)
 
   return (
     <FormControl className={className} error={error}>
@@ -71,7 +73,7 @@ const AspectSelect = props => {
           data: {
             [id]: options,
           },
-          defaultSelectedOption: formik.values[id],
+          defaultSelectedOption: get(formik.values, id),
           dependencies,
           endpoint: isFunction(endpoint) ? endpoint(formik) : endpoint,
           formik,
@@ -86,6 +88,8 @@ const AspectSelect = props => {
           normalizeLoadedData,
           placeholder: getPlaceholder(placeholder, formik),
           state: getState(queryKey, formik, id),
+          subRowIndex,
+          updateField,
         }}
         action={({ identifier, selectedOption }) => {
           const value = getValue(selectedOption, formik, id)

@@ -14,9 +14,9 @@ import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
-import pick from 'lodash/pick'
+import intersectionWith from 'lodash/intersectionWith'
+import keys from 'lodash/keys'
 import sortBy from 'lodash/sortBy'
-import values from 'lodash/values'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
@@ -51,8 +51,8 @@ const {
 function getOptionByValue(data, requestedValue, idKey) {
   // When the requested value is an object including key and value props
   if (isPlainObject(requestedValue)) {
-    const { key, value } = requestedValue
-    return find(data, { [key]: value })
+    const { value } = requestedValue
+    return find(data, { [idKey]: value })
   }
 
   // When the requested value is a string key
@@ -252,7 +252,17 @@ const SelectComponent = ({
         getSelectedOptions(data, defaultSelectedOption, idKey)
       )
       setOptions(data)
-      setBusy(false)
+      /**
+       * Because we do not explicitly set `value` for Select component - then
+       * to set new value on-the-fly (after changing `options`) we use prop
+       * `defaultValue` when Select is first rendered.
+       * So to make sure that prop `defaultValue={...}` takes effect when `options`
+       * changed we need to force it to re-render by
+       * 1) hiding it (busy=true) and then
+       * 2) rendering it back (busy=false)
+       */
+      setBusy(true)
+      setTimeout(() => setBusy(false))
     } else {
       setBusy(false)
     }
@@ -331,15 +341,53 @@ const getActualData = ({ data, reduxStateId, sortByKeys }) => {
   return data
 }
 
-const getQueryDependencies = (formik, initialValues, dependencies) => {
-  let queryDependencies = [...initialValues]
-  if (formik && dependencies && isArray(dependencies)) {
-    queryDependencies = [
-      ...queryDependencies,
-      ...values(pick(formik.values, dependencies)),
-    ]
+const replacePlaceholders = (originalString, values) => {
+  let processedString = originalString
+  keys(values).forEach(key => {
+    processedString = processedString.replace(`{{${key}}}`, values[key])
+  })
+  return processedString
+}
+const sanitizeDependencies = (dependenciesWithPlaceholders, values) => {
+  return dependenciesWithPlaceholders.map(fieldName =>
+    replacePlaceholders(fieldName, values)
+  )
+}
+
+const getQueryDependencies = (
+  formik,
+  initialQueryDependencies,
+  dependenciesWithPlaceholders,
+  subRowIndex
+) => {
+  let queryDependencies = [...initialQueryDependencies, subRowIndex]
+  if (
+    formik &&
+    dependenciesWithPlaceholders &&
+    isArray(dependenciesWithPlaceholders)
+  ) {
+    const dependencyNames = sanitizeDependencies(dependenciesWithPlaceholders, {
+      subRowIndex,
+    })
+    const dependencyValues = dependencyNames.map(
+      fieldName => get(formik.values, fieldName) || null
+    )
+
+    queryDependencies = [...queryDependencies, ...dependencyValues]
   }
   return queryDependencies
+}
+const getActualValue = (options, currentValue, defaultValue) => {
+  if (!isArray(options)) {
+    return defaultValue
+  }
+  if (isArray(currentValue)) {
+    const actualValue = intersectionWith(options, currentValue, isEqual)
+    return actualValue.length === 0 ? defaultValue : actualValue
+  }
+  return options.find(({ value }) => value === currentValue)
+    ? currentValue
+    : defaultValue
 }
 
 const groupStyles = {
@@ -373,6 +421,8 @@ const AspectDropDown = ({
     selectedValue,
     sortByKeys,
     state: reduxStateId,
+    subRowIndex,
+    updateField,
   },
   action,
   theme,
@@ -393,7 +443,8 @@ const AspectDropDown = ({
   const queryDependencies = getQueryDependencies(
     formik,
     [data, selectOptions],
-    dependencies
+    dependencies,
+    subRowIndex
   )
   useEffect(() => {
     if (data) {
@@ -402,23 +453,26 @@ const AspectDropDown = ({
         normalizeLoadedData &&
         !isEqual(passedData, data) // loaded data should differ from initial data
       const options = isLoadedFromApi
-        ? normalizeLoadedData(data, formik) || []
+        ? normalizeLoadedData(data, formik, subRowIndex) || []
         : getActualData({ data, reduxStateId, sortByKeys })
       if (options && !isEqual(options, selectOptions)) {
         setSelectOptions(options)
       }
-      // when `options` don't contain current value - reset field value in formik.values
+      /**
+       * when `options` doesn't contain current value - update field
+       * with `actualValue` which is either `initialValue` or intersection
+       * between `currentValue` and `options` for multi-select control
+       */
+      const initialValue = get(formik?.initialValues, identifier)
+      const currentValue = get(formik?.values, identifier)
+      const actualValue = getActualValue(options, currentValue, initialValue)
       if (
         formik &&
-        options.find &&
-        !options.find(({ value }) => value === formik.values[identifier])
+        currentValue !== initialValue &&
+        isArray(options) &&
+        !isEqual(currentValue, actualValue)
       ) {
-        formik.setFieldValue(
-          identifier,
-          formik.initialValues[identifier],
-          false
-        )
-        // TODO: after resetting value in formik.values - also reset input text control of the Select
+        updateField(identifier, actualValue, formik)
       }
     }
   }, queryDependencies)
@@ -481,6 +535,8 @@ AspectDropDown.propTypes = {
     selectedValue: PropTypes.string,
     sortByKeys: PropTypes.oneOfType([PropTypes.array]),
     state: PropTypes.string.isRequired,
+    subRowIndex: PropTypes.number,
+    updateField: PropTypes.func,
   }).isRequired,
   theme: PropTypes.string,
 }

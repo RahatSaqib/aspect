@@ -348,6 +348,9 @@ function validateResultDetailResponse() {
     resultText: Joi.string()
       .allow(null, '')
       .description('The result represented in text format'),
+    fullResultText: Joi.string()
+      .allow(null, '')
+      .description('The full result represented in text format'),
     resultCategory1Label: Joi.string()
       .allow(null, '')
       .description('The name of the test made for the first result category'),

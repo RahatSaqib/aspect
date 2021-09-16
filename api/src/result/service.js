@@ -477,7 +477,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     resultCategory2ExternalId: d.resultCategory2ExternalId,
     patientData: d.patientData ? JSON.parse(d.patientData) : null,
     resultData: d.resultData
-      ? _.pick(JSON.parse(d.resultData), ['resultText', 'copies', 'log'])
+      ? _.pick(JSON.parse(d.resultData), [
+          'resultText',
+          'copies',
+          'log',
+          'detectedResistance',
+        ])
       : null,
     sample: {
       id: d.sampleId,
@@ -779,6 +784,8 @@ async function getResultByResultId(
     ;[data] = results
     if (data.resultData) {
       data.resultData = JSON.parse(data.resultData)
+      // full result text for the result details page
+      data.fullResultText = data.resultData.resultText
     }
     if (data.formSchema) {
       data.formSchema = JSON.parse(data.formSchema)
@@ -2204,8 +2211,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
           const siteOperationAndValue = query.reportableSiteId
             ? `= ${query.reportableSiteId}`
             : `IN (
-                SELECT s_transfer.id 
-                FROM Site s_transfer 
+                SELECT s_transfer.id
+                FROM Site s_transfer
                 WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
               )`
           b.whereRaw(

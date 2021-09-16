@@ -2,10 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
+import { useFormikContext } from 'formik'
 import isEmpty from 'lodash/isEmpty'
 
 import useI18n from '../../Hooks/i18n/useI18n'
-import { useFormikState } from './Formik/Context'
 import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs'
 import AspectTextField from './Inputs/TextField'
@@ -28,14 +28,15 @@ const FormItem = ({
   type,
   validate,
   visibleIf,
+  subRowIndex,
 }) => {
   const { formatMessage } = useI18n()
-  const { formik, toggleEdit } = useFormikState()
+  const { formik, toggleEdit } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
   let isVisible = !(hideIfNull && isEmpty(value))
   if (isVisible && visibleIf) {
-    isVisible = visibleIf(formik.values)
+    isVisible = visibleIf(formik.values, subRowIndex)
   }
 
   const i18nTools = { messages, formatMessage, formik }
@@ -54,7 +55,7 @@ const FormItem = ({
         {...getFieldProps(id)}
         id={id}
         input={type}
-        controlType={controlType}
+        controlType={{ ...controlType, subRowIndex }}
         label={getLabel({
           ...i18nTools,
           labelI18nKey,
@@ -99,6 +100,7 @@ FormItem.defaultProps = {
   type: 'text',
   validate: () => '',
   visibleIf: () => true,
+  subRowIndex: 0,
 }
 
 FormItem.propTypes = {
@@ -107,7 +109,11 @@ FormItem.propTypes = {
   fullWidth: PropTypes.bool,
   hideIfNull: PropTypes.bool,
   id: PropTypes.string.isRequired,
-  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  initialValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+    PropTypes.array,
+  ]),
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   labelI18nKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
@@ -116,6 +122,7 @@ FormItem.propTypes = {
   type: PropTypes.string,
   validate: PropTypes.oneOfType([PropTypes.func]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
+  subRowIndex: PropTypes.number,
 }
 
 export default FormItem

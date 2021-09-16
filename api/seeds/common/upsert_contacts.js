@@ -184,6 +184,8 @@ module.exports = async (knex, partnerData, contacts) => {
           })
       }
       personId = existingPerson.id
+
+      await knex('PersonTag').where({ personId }).delete()
     } else {
       ;[personId] = await knex('Person').insert({
         name: person.personName,
@@ -204,6 +206,28 @@ module.exports = async (knex, partnerData, contacts) => {
         ...auditFields,
       })
     }
+
+    if (person.tags && person.tags.length > 0) {
+      // Insert missing Tag records
+      let tags = await knex('Tag')
+        .where({ partnerId })
+        .whereIn('title', person.tags)
+      await Promise.each(
+        person.tags.filter(
+          tagTitle => !tags.map(t => t.title).includes(tagTitle)
+        ),
+        async t => knex('Tag').insert({ title: t, partnerId })
+      )
+
+      // Insert all the PersonTag records
+      tags = await knex('Tag')
+        .where({ partnerId })
+        .whereIn('title', person.tags)
+      await Promise.each(tags, async t =>
+        knex('PersonTag').insert({ tagId: t.id, personId })
+      )
+    }
+
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
         let { id: jobId } =

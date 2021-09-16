@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
 const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
+const logger = require('../shared/logger')
 
 const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
@@ -140,19 +141,26 @@ async function authenticate(request) {
     const pwResult = await bcryptCompare(payload.password, user.password)
 
     if (!pwResult) {
-      const lock =
-        user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
+      const attempts = user.failedPasswordAttempts + 1
+      const lock = attempts >= config.passwordAttempts ? 1 : 0
       const updateFailedPass = query(
         'Update failed password attempts and set locked out status on user'
       )
         .from('User')
         .where({ id: user.id })
         .update({
-          failedPasswordAttempts: user.failedPasswordAttempts + 1,
+          failedPasswordAttempts: attempts,
           lockedOut: lock,
         })
 
       await updateFailedPass
+
+      if (lock) {
+        logger.alert(`User account locked due to too many invalid login attempts
+        Username: ${payload.name}
+        Attempts: ${attempts}
+        `)
+      }
 
       return Boom.unauthorized(
         'Authentication failed. Wrong username or password.'

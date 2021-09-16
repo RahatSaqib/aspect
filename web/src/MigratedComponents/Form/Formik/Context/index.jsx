@@ -1,35 +1,26 @@
 import React, { useEffect, useState } from 'react'
 
-import { useFormik } from 'formik'
-import omitBy from 'lodash/omitBy'
-import pick from 'lodash/pick'
-import keys from 'lodash/keys'
+import { FormikProvider as FormikProviderBase, useFormik } from 'formik'
 
 import DisplayFormikState from '../Helpers/debug'
+import { sanitizeFormValues } from '../Helpers'
 import useFormConfig from '../../Hooks/useFormConfig'
 
-const FormikContext = React.createContext()
-
-const FormikProvider = ({ config, children }) => {
+export const FormikProvider = ({ config, children }) => {
   const debug = false
   const { actions } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const { meta, registerVisibleFields, updateField } = useFormConfig(config)
-  const { fieldTypes, initialValues } = meta
+  const { initialValues } = meta
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues,
     validateOnMount: false,
-    onSubmit: values =>
-      // eslint-disable-next-line no-console
-      console.log(
-        JSON.stringify(
-          pick(values, keys(omitBy(fieldTypes, i => i === 'readOnly'))),
-          null,
-          2
-        )
-      ),
+    onSubmit: values => {
+      const payload = sanitizeFormValues(values, { meta })
+      console.log(JSON.stringify(payload, null, 2)) // eslint-disable-line no-console
+    },
   })
 
   useEffect(() => {
@@ -47,26 +38,20 @@ const FormikProvider = ({ config, children }) => {
   }, [])
 
   return (
-    <FormikContext.Provider
+    <FormikProviderBase
       value={{
+        ...formik, // provide formikProps in the root (i.e. FieldArray needs setFormikState)
         formik,
         setToggleEdit,
         toggleEdit,
         updateField,
+        meta,
       }}
     >
       {children}
       {debug && <DisplayFormikState {...formik} />}
-    </FormikContext.Provider>
+    </FormikProviderBase>
   )
 }
 
-function useFormikState() {
-  const context = React.useContext(FormikContext)
-  if (context === undefined) {
-    throw new Error('useFormikState must be used within a FormikProvider')
-  }
-  return context
-}
-
-export { FormikContext, FormikProvider, useFormikState }
+export default FormikProvider

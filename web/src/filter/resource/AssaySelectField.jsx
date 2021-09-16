@@ -47,7 +47,11 @@ export class AssaySelectField extends PureComponent {
   }
 
   handleChange = ({ target: { value } }) => {
-    this.props.onAssayChange(value === 'all' ? undefined : value)
+    /**
+     * Because SelectField goes with prop `multiple` - `value` is array
+     * of all selected values. When `All` selected - reset this filter.
+     */
+    this.props.onAssayChange(value.includes('all') ? undefined : value)
   }
 
   render() {

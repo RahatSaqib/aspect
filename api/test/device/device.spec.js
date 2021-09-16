@@ -201,6 +201,7 @@ describe('Device routes', () => {
       const { id } = await knex('Device')
         .where({ name: 'The greatest device I ever created' })
         .first()
+      await knex('Notification').whereIn('issueId', issuesToDelete).delete()
       await knex('Issue').whereIn('id', issuesToDelete).delete()
       await knex('DeviceApiKey').where({ deviceId: id }).delete()
       await knex('DeviceLog').where({ deviceId: id }).delete()

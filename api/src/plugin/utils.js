@@ -326,7 +326,7 @@ async function setDeviceCalibrationStatus(
   calibratedOn,
   { deviceMaintenanceTypeId, notes }
 ) {
-  logger.silly(
+  logger.debug(
     `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
       deviceId,
       calibratedOn,
@@ -393,7 +393,7 @@ async function setDeviceCalibrationStatus(
      * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
      * exists and by some reason is NOT set as 'current'
      */
-    logger.silly(
+    logger.debug(
       'shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true',
       { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
     )
@@ -401,7 +401,7 @@ async function setDeviceCalibrationStatus(
       id: itemToday.id,
     })
   } else if (!itemToday) {
-    logger.silly(
+    logger.debug(
       'shouldLogDeviceCalibration: insert item for today, because it is missing',
       { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
     )
