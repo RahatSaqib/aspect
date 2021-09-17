@@ -18,7 +18,6 @@ const {
   notificationTypeCategoryToId,
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
-const { resultConditionsMet } = require('../../src/notification/service')
 
 const { assert } = chai
 describe('Issue based Notifications triggers', () => {
@@ -216,24 +215,24 @@ describe('Result Notifications triggers', () => {
       assert.isEmpty(notifications)
     })
   })
-  describe.only('Filter by JF', () => {
+  describe('Filter by JF', () => {
     let inserted
     before(async () => createTestContext(filterConditionWithJf))
-    // after(async () => {
-    //   await removeTestContext()
-    //   await knex('PersonTag').where('TagId', '>=', inserted).delete()
-    //   await knex('Tag')
-    //     .whereIn('title', ['oneTag', 'secondTag', 'thirdTag'])
-    //     .delete()
-    // })
-    // afterEach(async () =>
-    //   knex('Notification')
-    //     .whereIn(
-    //       'resultId',
-    //       _.map(results, r => r.id)
-    //     )
-    //     .delete()
-    // )
+    after(async () => {
+      await removeTestContext()
+      await knex('PersonTag').where('TagId', '>=', inserted).delete()
+      await knex('Tag')
+        .whereIn('title', ['oneTag', 'secondTag', 'thirdTag'])
+        .delete()
+    })
+    afterEach(async () =>
+      knex('Notification')
+        .whereIn(
+          'resultId',
+          _.map(results, r => r.id)
+        )
+        .delete()
+    )
     it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = _.sample(
         _.filter(
@@ -251,7 +250,7 @@ describe('Result Notifications triggers', () => {
         .distinct()
       assert.equal(notifications.length, 1)
     })
-    it.only('Should create or not  a result based notification filtering by  JobFunction and tags', async () => {
+    it('Should create or not  a result based notification filtering by  JobFunction and tags', async () => {
       ;[inserted] = await knex('Tag').insert([
         { partnerId: 1, title: 'oneTag' },
         { partnerId: 1, title: 'secondTag' },
@@ -267,6 +266,7 @@ describe('Result Notifications triggers', () => {
             elem.lgaName === 'Wayne' && elem.resultCategory1 === resultCategory1
         )
       ).id
+      messageContext.dispatch(resultLogged(resultId, 1, 1))
       let notifications = await knex('Notification')
         .where({ resultId })
         .distinct()
@@ -288,6 +288,7 @@ describe('Result Notifications triggers', () => {
           }),
         })
         .where({ notificationTypeCategoryId })
+      messageContext = await createMessageContext()
       await updateSubscription('notification')
       await waitForIdle(1000)
       resultId = _.sample(
@@ -298,13 +299,13 @@ describe('Result Notifications triggers', () => {
         )
       ).id
       assert.isNotNull(resultId)
+      const personTags = await knex('Person as p')
+        .join('Job as j', 'j.personId', 'p.id')
+        .whereIn('j.jobFunctionId', [1])
+        .pluck('p.id')
+      const person = _.sample(personTags)
+      await knex('PersonTag').insert({ personId: person, tagId: inserted })
       messageContext.dispatch(resultLogged(resultId, 1, 1))
-      // const personTags = await knex('Person as p')
-      //   .join('Job as j', 'j.personId', 'p.id')
-      //   .whereIn('j.jobFunctionId', [1])
-      //   .pluck('p.id')
-      // const person = _.sample(personTags)
-      // await knex('PersonTag').insert({ personId: person, tagId: inserted })
       await waitForIdle(1000)
       notifications = await knex('Notification as n')
         .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
@@ -313,8 +314,7 @@ describe('Result Notifications triggers', () => {
           'nt.notificationTypeCategoryId': notificationTypeCategoryId,
         })
         .distinct()
-      console.log(notifications)
-      assert.equal(notifications.length, 0)
+      assert.equal(notifications.length, 1)
     })
   })
 })

@@ -122,7 +122,6 @@ const messageQueuePlugin = {
         if (config.scheduler.enabled) {
           startScheduler(queue)
         }
-        console.log('ququ', queue.queues)
         return queue
       })
       .then(queue => {

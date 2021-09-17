@@ -349,7 +349,6 @@ async function createNewIssue(knex, issueType, action) {
     createdOn: now,
     changedOn: now,
   })
-  console.log('issue', issue)
   return issue
 }
 

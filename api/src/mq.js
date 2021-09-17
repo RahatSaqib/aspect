@@ -22,6 +22,7 @@ class MessageQueue {
     this.queues = []
     this.queueEmitActions = null
     this.messageContextIdx = 0
+    this.channel = null
     this.unsubscribe = this.unsubscribe.bind(this)
   }
 
@@ -155,7 +156,6 @@ class MessageQueue {
       subscribeName,
       queueOptions
     )
-    console.log(queue, this.queues)
     this.queues.push(queue)
     await this.channel.bindQueue(queue, exchange, topic)
     if (purgeOnStart) {
@@ -164,6 +164,7 @@ class MessageQueue {
     await this.channel.consume(
       queue,
       async message => {
+        if (!message) return
         const content = message.content.toString()
         const messageContext = this.createMessageContext(subscribeName)
         const action = JSON.parse(content)
@@ -194,7 +195,16 @@ class MessageQueue {
     )
   }
 
-  async unsubscribe(queueName, topic, consumerTag) {}
+  async unsubscribe(queueName) {
+    const regex = `_${queueName.toLowerCase()}_.*_actions_`
+    const re = new RegExp(regex)
+    const selectedQueries = _.filter(this.queues, q => re.test(q))
+    await Promise.each(selectedQueries || [], async q => {
+      await this.channel.unbindQueue(q, exchange, 'aspect.actions.#')
+      await this.channel.deleteQueue(q)
+      _.remove(this.queues, q => re.test(q))
+    })
+  }
 
   async subscribeEmitActions() {
     if (this.queueEmitActions == null) {

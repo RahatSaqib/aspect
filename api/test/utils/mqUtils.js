@@ -10,9 +10,7 @@ const {
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue(
-      `${config.amqp.name}_test_device_api`
-    )
+    sharedQueue = await createMessageQueue(config.amqp.name)
   }
   return sharedQueue
 }
@@ -30,7 +28,7 @@ async function subscribe(subscriptionName, subscription) {
 
 async function updateSubscription(subscriptorKey) {
   const queue = await queueConnect()
-  console.log('-------------------------Update notifications')
+  await queue.unsubscribe(subscriptorKey)
   await updateHandlersSubscription(queue, subscriptorKey)
 }
 

@@ -374,7 +374,6 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
       }
     })
     .distinct('j.personId as id', 'j.jobFunctionId')
-  console.log('------sql:', people.toString())
   return people
 }
 
