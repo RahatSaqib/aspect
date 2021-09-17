@@ -318,6 +318,10 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'reporter',
+        activity: 'view',
+      },
+      {
         module: 'site',
         activity: 'view',
       },

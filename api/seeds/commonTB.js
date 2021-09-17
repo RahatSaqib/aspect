@@ -318,6 +318,10 @@ async function upsertCultureAssays(
     })
   )
 
+  await knex('ResultCategoryAssay')
+    .update({ requiresTreatment: 1 })
+    .where({ resultCategoryId: await resultCategoryToId('PositiveMTB') })
+
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
 }

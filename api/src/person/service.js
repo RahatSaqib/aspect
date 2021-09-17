@@ -97,6 +97,19 @@ async function listPeople(request) {
   // return result when both queries are finished
   const [{ total }, data] = await Promise.all([getCount, getItems])
 
+  const personIds = data.map(({ id }) => id)
+  const personTags = await knex('Tag as t')
+    .innerJoin('PersonTag as pt', 't.id', 'pt.tagId')
+    .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
+    .whereIn('pt.personId', personIds)
+    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .select('t.title as tagName', 't.id as tagId', 'pt.personId')
+  data.forEach(item => {
+    item.tagDetails = personTags
+      .filter(personTag => item.id === personTag.personId)
+      .map(({ tagName, tagId }) => ({ tagName, tagId }))
+  })
+
   return { ok: true, total, data, length: data.length }
 }
 

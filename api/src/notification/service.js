@@ -1,3 +1,4 @@
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
@@ -5,7 +6,9 @@ const {
   filterParams,
   filterDateRangeParams,
   sortPageParams,
+  transact,
 } = require('../db')
+const { getUser } = require('../auth/service')
 const {
   getJobConstraints,
   addConstraints,
@@ -16,8 +19,12 @@ const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
-const { messageStatusToId } = require('../shared/dictionary')
-// const { issueConditionsMet } = require('../issue/issueEvaluation')
+const {
+  fileContentTypeToId,
+  messageStatusToId,
+  messageSeverityToId,
+  notificationTypeCategoryToId,
+} = require('../shared/dictionary')
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -140,10 +147,18 @@ async function listNotifications(request) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const notificationQuery = knex('Notification as n')
-    .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+  const notificationQuery = knex('NotificationType as nt')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .leftOuterJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
+    .where(builder => {
+      builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
+    })
     .modify(filterParams, query, {})
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
@@ -153,14 +168,15 @@ async function listNotifications(request) {
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
     .leftJoin('Person as per', 'j.personId', 'per.id')
     .select(
-      'n.notificationTypeId as id',
+      'nt.id as id',
       'nt.name',
       knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
       knex.raw(
         "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
-      )
+      ),
+      'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')
@@ -557,6 +573,255 @@ async function getNotifications(request) {
   return { ok: true, total, data }
 }
 
+async function saveNotificationType({
+  id: notificationTypeId,
+  partnerId,
+  userId,
+  payload,
+  issueTypeId = null,
+}) {
+  const fileContentTypeId = await fileContentTypeToId('applicationJson')
+  const messageSeverityId = await messageSeverityToId('Alert')
+  const notificationTypeCategoryId = await notificationTypeCategoryToId(
+    'resultBased'
+  )
+  const {
+    areaItems,
+    deviceLevelId,
+    jobFunctions,
+    name,
+    result,
+    //
+    sendEmail,
+    emailBody,
+    emailSubject,
+    //
+    sendSms,
+    smsBody,
+    //
+    sendWeb,
+    webBody,
+    webUrl,
+  } = payload
+  const now = new Date()
+  const auditFields = {
+    createdOn: now,
+    createdBy: userId,
+    updatedOn: now,
+    updatedBy: userId,
+  }
+
+  return transact(async knex => {
+    /**
+     * helpers
+     */
+    const insertEmailTemplate = async () =>
+      knex('EmailTemplate').insert({
+        subject: emailSubject,
+        body: emailBody,
+        htmlBody: emailBody
+          .split('\n')
+          .map(line => `<div>${line}</div>`)
+          .join(''),
+        ...auditFields,
+      })
+    const insertSmsTemplate = async () =>
+      knex('SmsTemplate').insert({
+        message: smsBody,
+        ...auditFields,
+      })
+    const insertWebHookTemplate = async () =>
+      knex('WebhookTemplate').insert({
+        method: 'POST',
+        url: webUrl,
+        payload: webBody,
+        fileContentTypeId,
+        ...auditFields,
+      })
+    let messageTypeId
+
+    if (!notificationTypeId) {
+      /**
+       * insert base props in NotificationType (without messageTypeId yet)
+       */
+      ;[notificationTypeId] = await knex('NotificationType').insert({
+        notificationTypeCategoryId,
+        partnerId,
+        issueTypeId,
+        level: 1,
+        canAcknowledge: 0,
+        name,
+        ...auditFields,
+      })
+      /**
+       * create *Template items
+       */
+      let emailTemplateId = null
+      let smsTemplateId = null
+      let webHookTemplateId = null
+      if (sendEmail) {
+        ;[emailTemplateId] = await insertEmailTemplate()
+      }
+      if (sendSms) {
+        ;[smsTemplateId] = await insertSmsTemplate()
+      }
+      if (sendWeb) {
+        ;[webHookTemplateId] = await insertWebHookTemplate()
+      }
+      /**
+       * create MessageType and then put it in NotificationType table with remaining props
+       */
+      ;[messageTypeId] = await knex('MessageType').insert({
+        messageSeverityId,
+        emailTemplateId,
+        smsTemplateId,
+        webHookTemplateId,
+      })
+    } else {
+      let whereClause
+      await knex('NotificationType')
+        .update({
+          name,
+          updatedOn: now,
+          updatedBy: userId,
+        })
+        .where({ id: notificationTypeId })
+      ;({ messageTypeId } = await knex('NotificationType')
+        .select('messageTypeId')
+        .where({ id: notificationTypeId }))
+      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex(
+        'MessageType'
+      )
+        .where({ id: messageTypeId })
+        .select()
+
+      /**
+       * EmailTemplate
+       */
+      if (emailTemplateId) {
+        whereClause = { id: emailTemplateId }
+        // update or delete
+        if (sendEmail) {
+          await knex('EmailTemplate')
+            .where(whereClause)
+            .update({
+              subject: emailSubject,
+              body: emailBody,
+              htmlBody: emailBody
+                .split('\n')
+                .map(line => `<div>${line}</div>`)
+                .join(''),
+              updatedOn: now,
+              updatedBy: userId,
+            })
+        } else {
+          await knex('EmailTemplate').where(whereClause).del()
+        }
+      } else if (sendEmail) {
+        // insert
+        ;[emailTemplateId] = await insertEmailTemplate()
+      }
+      /**
+       * SmsTemplate
+       */
+      if (smsTemplateId) {
+        whereClause = { id: smsTemplateId }
+        // update or delete
+        if (sendSms) {
+          await knex('SmsTemplate')
+            .update({
+              message: smsBody,
+              updatedOn: now,
+              updatedBy: userId,
+            })
+            .where(whereClause)
+        } else {
+          await knex('SmsTemplate').where(whereClause).del()
+        }
+      } else if (sendSms) {
+        ;[smsTemplateId] = await insertSmsTemplate()
+      }
+      /**
+       * WebhookTemplate
+       */
+      if (webHookTemplateId) {
+        whereClause = { id: webHookTemplateId }
+        // update or delete
+        if (sendWeb) {
+          await knex('WebhookTemplate')
+            .update({
+              payload: webBody,
+              url: webUrl,
+              updatedOn: now,
+              updatedBy: userId,
+            })
+            .where(whereClause)
+        } else {
+          await knex('WebhookTemplate').where(whereClause).del()
+        }
+      } else if (sendWeb) {
+        ;[webHookTemplateId] = await insertWebHookTemplate()
+      }
+      //
+      await knex('MessageType')
+        .update({
+          emailTemplateId,
+          smsTemplateId,
+          webHookTemplateId,
+        })
+        .where({ id: messageTypeId })
+    }
+
+    /**
+     * update remaining fields in NotificationType
+     */
+    await knex('NotificationType')
+      .update({
+        messageTypeId,
+        filterCondition: JSON.stringify({
+          areaItems,
+          deviceLevelId,
+          jobFunctions,
+          result,
+        }),
+      })
+      .where({ id: notificationTypeId })
+
+    return {
+      ok: true,
+      notificationTypeId,
+    }
+  }).catch(err => {
+    return {
+      ok: false,
+      error: err.message,
+    }
+  })
+}
+
+async function saveNotification(request) {
+  const { auth, params, payload } = request
+  const { id } = params
+  const user = await getUser(auth.credentials.name)
+  const { partnerId, id: userId } = user
+  const { notificationType } = payload
+
+  if (notificationType === 'resultBased') {
+    const { ok, notificationTypeId, error } = await saveNotificationType({
+      id,
+      partnerId,
+      userId,
+      payload,
+    })
+    if (!ok) {
+      return Boom.internal(`Can not save notification: ${error}`)
+    }
+    return { ok: true, notificationTypeId }
+  }
+
+  return { ok: false, notificationTypeId: -1 }
+}
+
 module.exports = {
   listNotifications,
   getNotifications,
@@ -564,4 +829,5 @@ module.exports = {
   shouldNotify,
   resultConditionsMet,
   getPeopleToNotify,
+  saveNotification,
 }

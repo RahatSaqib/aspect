@@ -14,6 +14,7 @@ import { useAuthState } from '../../../Providers/AuthProvider'
 import Shell from '../../Shell'
 import ShellContent from '../../Shell/Content'
 import AspectTable from '../../AspectTable'
+import { useUrlQuery } from '../../AspectTable/Helpers'
 import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
 import { baseConfig, getCreateNotificationMenuProps } from './config'
 
@@ -32,6 +33,7 @@ const NotificationList = () => {
   const intl = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
+  const query = useUrlQuery(location.search)
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
@@ -63,7 +65,14 @@ const NotificationList = () => {
             }}
             action={({ selectedOption }) => {
               const { id } = selectedOption
-              navigate(`/browse/notification/${id}`)
+              /**
+               * redirect to Notification Edit page with param `returnUrl` in
+               * query string - to preserve current filters, page size, sorting, etc
+               */
+              const q = new URLSearchParams({
+                returnUrl: `${location.pathname}?${query.toString()}`,
+              })
+              navigate(`/browse/notification/${id}?${q.toString()}`)
             }}
             theme={UI_CONSTS.themeName.aspect}
           />

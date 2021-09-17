@@ -711,7 +711,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       assayTypeMtbXdrId,
       deviceTypeGeneXpertId,
       resultSourceDiagnosticId,
-      'GX MTB/XDR',
+      'XDR',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaMTBXdr,
       [

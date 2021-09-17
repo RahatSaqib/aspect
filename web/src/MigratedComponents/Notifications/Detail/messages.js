@@ -152,13 +152,29 @@ export default defineMessages({
     id: 'pages.NotificationDetail.smsBody',
     defaultMessage: 'SMS Body',
   },
+  smsBodyLimit: {
+    id: 'pages.NotificationDetail.smsBodyLimit',
+    defaultMessage: 'Sms message should not be longer than 144 characters',
+  },
   web: {
     id: 'pages.NotificationDetail.web',
     defaultMessage: 'Web',
   },
+  webUrl: {
+    id: 'pages.NotificationDetail.webUrl',
+    defaultMessage: 'Web Url',
+  },
+  webUrlInvalid: {
+    id: 'pages.NotificationDetail.webUrlInvalid',
+    defaultMessage: 'Please enter a valid url',
+  },
   webBody: {
     id: 'pages.NotificationDetail.webBody',
     defaultMessage: 'Web Body',
+  },
+  required: {
+    id: 'forms.required',
+    defaultMessage: 'Required',
   },
 
   // --------------------------------------------------------------
@@ -171,6 +187,10 @@ export default defineMessages({
   jobFunctionTags: {
     id: 'pages.NotificationDetail.jobFunctionTags',
     defaultMessage: 'Select contacts with any of the following tags',
+  },
+  jobFunctionAtLeastOneNeeded: {
+    id: 'pages.NotificationDetail.jobFunctionAtLeastOneNeeded',
+    defaultMessage: 'Please select at least one Job Function',
   },
   toStateContacts: {
     id: 'pages.NotificationDetail.toStateContacts',
