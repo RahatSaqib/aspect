@@ -21,15 +21,10 @@ const {
 
 const { assert } = chai
 describe('Issue based Notifications triggers', () => {
-  let selectedIssue = null
   let issues = []
+  let insertedIssueId = null
   before(async () => {
-    issues = await knex('Issue as i')
-      .where({ partnerId: 4 })
-      .whereNotExists(
-        knex('Notification as n').whereRaw('n.issueId = i.id').select()
-      )
-      .select()
+    issues = await knex('Issue as i').where({ partnerId: 1 }).select()
     assert.isAtLeast(issues.length, 1)
     const messageTypes = await knex('MessageType')
       .whereNotNull('smsTemplateId')
@@ -38,9 +33,9 @@ describe('Issue based Notifications triggers', () => {
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'issueBased'
     )
-    selectedIssue = _.sample(issues)
+    const selectedIssue = _.sample(issues)
     await knex('NotificationType').insert({
-      partnerId: 4,
+      partnerId: 1,
       name: 'Random issue based notification',
       createdOn: new Date(),
       updatedOn: new Date(),
@@ -48,24 +43,24 @@ describe('Issue based Notifications triggers', () => {
       issueTypeId: selectedIssue.issueTypeId,
       messageTypeId: _.sample(messageTypes).id,
     })
+    ;[insertedIssueId] = await knex('Issue').insert(
+      _.omit(selectedIssue, ['id'])
+    )
   })
   after(async () => {
-    await knex('Notification')
-      .whereIn(
-        'issueId',
-        _.map(issues, r => r.id)
-      )
-      .delete()
+    await knex('Notification').where('issueId', insertedIssueId).delete()
+    await knex('Issue').where({ id: insertedIssueId }).delete()
     await knex('NotificationType')
       .where({ name: 'Random issue based notification' })
       .delete()
   })
   it('should create a issue based notification without special filter conditions', async () => {
-    const issueId = selectedIssue.id
-    await dispatchAndWaitForAction(issueCreated(issueId))
-    await waitForIdle(1000)
-    const notifications = await knex('Notification').where({ issueId }).select()
-    assert.isAtLeast(notifications.length, 1)
+    await dispatchAndWaitForAction(issueCreated(insertedIssueId))
+    await waitForIdle(500)
+    const notifications = await knex('Notification')
+      .where({ issueId: insertedIssueId })
+      .select()
+    assert.equal(notifications.length, 1)
   })
 })
 

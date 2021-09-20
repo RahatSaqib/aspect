@@ -236,6 +236,7 @@ async function createNotifications(knex, action, context) {
           /* eslint-disable no-continue */
           return Promise.resolve()
         }
+
       const tags = await getTagsByPolicy(knex, policy)
       const people = await getPeopleToNotify(knex, policy, tags, jobFunctions)
       await sendNotificationsToPeople(knex, context, people, policy, action)
