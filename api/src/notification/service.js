@@ -306,7 +306,7 @@ async function getNotificationPolicy(
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
-  const records = await txKnex('NotificationType as nt')
+  const records = txKnex('NotificationType as nt')
     .join(
       'NotificationTypeCategory as ntc',
       'nt.notificationTypeCategoryId',
@@ -359,7 +359,6 @@ async function getNotificationPolicy(
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
     .distinct(selectColums.concat(extraFields))
-
   return records
 }
 

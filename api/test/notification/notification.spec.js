@@ -21,6 +21,7 @@ const {
 
 const { assert } = chai
 describe('Issue based Notifications triggers', () => {
+  let selectedIssue = null
   let issues = []
   before(async () => {
     issues = await knex('Issue as i')
@@ -37,12 +38,14 @@ describe('Issue based Notifications triggers', () => {
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'issueBased'
     )
+    selectedIssue = _.sample(issues)
     await knex('NotificationType').insert({
-      partnerId: 1,
+      partnerId: 4,
       name: 'Random issue based notification',
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
+      issueTypeId: selectedIssue.issueTypeId,
       messageTypeId: _.sample(messageTypes).id,
     })
   })
@@ -58,8 +61,9 @@ describe('Issue based Notifications triggers', () => {
       .delete()
   })
   it('should create a issue based notification without special filter conditions', async () => {
-    const issueId = _.sample(issues).id
+    const issueId = selectedIssue.id
     await dispatchAndWaitForAction(issueCreated(issueId))
+    await waitForIdle(1000)
     const notifications = await knex('Notification').where({ issueId }).select()
     assert.isAtLeast(notifications.length, 1)
   })

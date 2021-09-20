@@ -58,7 +58,7 @@ function resultBased(methodsToExecute) {
 }
 
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
-  await context.transact(async knex =>
+  return context.transact(async knex =>
     createNotifications(
       knex,
       {
