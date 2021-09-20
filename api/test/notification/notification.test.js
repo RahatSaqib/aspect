@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const chai = require('chai')
 const { knex } = require('../../src/db')
 const { resultConditionsMet } = require('../../src/notification/service')
@@ -102,11 +101,9 @@ describe('Query generator for filtering conditions', () => {
       filterConditionExample,
       { result: 'r' }
     )
-    assert.isTrue(
-      _.includes(
-        query.toString(),
-        "where (`a`.`externalId` = 'abbottM2000DBSHivVL' and (`rca`.`externalId` in ('Indeterminate', 'Error') or `rca2`.`externalId` in ('Indeterminate', 'Error'))) or (`a`.`externalId` = 'GxMtbRif' and `rcg`.`externalId` in ('GxMtbRifMtbDetectedRifNotDetected', 'GxMtbRifMtbInvalid')"
-      )
+    assert.include(
+      query.toString(),
+      "where ((`a`.`externalId` = 'abbottM2000DBSHivVL' and (`rc1`.`externalId` in ('Indeterminate', 'Error') or `rc2`.`externalId` in ('Indeterminate', 'Error'))) or (`a`.`externalId` = 'GxMtbRif' and `rcg`.`externalId` in ('GxMtbRifMtbDetectedRifNotDetected', 'GxMtbRifMtbInvalid'))"
     )
   })
   it('Should generate a proper query filter for ResultCategory', async () => {
@@ -115,11 +112,9 @@ describe('Query generator for filtering conditions', () => {
       filterConditionExample2,
       { result: 'r' }
     )
-    assert.isTrue(
-      _.includes(
-        query.toString(),
-        "(`a`.`externalId` = 'assayBdMgitGnd' and (`rca`.`externalId` in ('Success', 'Unknown') or `rca2`.`externalId` in ('Success', 'Unknown')))"
-      )
+    assert.include(
+      query.toString(),
+      "(`a`.`externalId` = 'assayBdMgitGnd' and (`rc1`.`externalId` in ('Success', 'Unknown') or `rc2`.`externalId` in ('Success', 'Unknown')))"
     )
   })
 
@@ -132,7 +127,7 @@ describe('Query generator for filtering conditions', () => {
         geography: 'g',
         device: 'd',
       })
-    assert.isTrue(_.includes(query.toString(), 'and `g`.`stateId` in (46, 62)'))
+    assert.include(query.toString(), 'and `g`.`stateId` in (46, 62)')
   })
   it('Should generate a proper query filter for lgas', async () => {
     const query = knex('Result as r')
@@ -143,7 +138,7 @@ describe('Query generator for filtering conditions', () => {
         geography: 'g',
         device: 'd',
       })
-    assert.isTrue(_.includes(query.toString(), 'and `g`.`lgaId` in (46, 62)'))
+    assert.include(query.toString(), 'and `g`.`lgaId` in (46, 62)')
   })
 
   it('Should generate a proper query filter for labs', async () => {
@@ -155,6 +150,6 @@ describe('Query generator for filtering conditions', () => {
         geography: 'g',
         device: 'd',
       })
-    assert.isTrue(_.includes(query.toString(), 'and `d`.`siteId` in (46, 62)'))
+    assert.include(query.toString(), 'and `d`.`siteId` in (46, 62)')
   })
 })
