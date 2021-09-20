@@ -56,7 +56,7 @@ describe('Issue based Notifications triggers', () => {
   })
   it('should create a issue based notification without special filter conditions', async () => {
     await dispatchAndWaitForAction(issueCreated(insertedIssueId))
-    await waitForIdle(500)
+    await waitForIdle(1000)
     const notifications = await knex('Notification')
       .where({ issueId: insertedIssueId })
       .select()
@@ -175,7 +175,6 @@ describe('Result Notifications triggers', () => {
         )
       ).id
       assert.isNotNull(resultId)
-      messageContext.dispatch(resultLogged(resultId, 1, 1))
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
       const notifications = await knex('Notification')
