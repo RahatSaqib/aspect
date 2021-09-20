@@ -266,23 +266,11 @@ async function getTagsByPolicy(txKnex, policy) {
           .where({ resultId: policy.resultId })
           .pluck('tagId')
       : []
-  /* const personTagIds =
-    jobFunctions && jobFunctions.length > 0
-      ? await txKnex('PersontTag as pt')
-          .join('Person as p', 'pt.personId', 'p.id')
-          .join('Job as j', 'p.id', 'j.personId')
-          .whereIn(
-            'j.jobFunctionId',
-            _.map(jobFunctions, jf => jf.jobFunctionId)
-          )
-          .pluck('tagId')
-      : [] */
   return [
     ...notificationTypeTagIds,
     ...siteTagIds,
     ...deviceTagIds,
     ...resultTagIds,
-    // ...personTagIds,
   ]
 }
 
