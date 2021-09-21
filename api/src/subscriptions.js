@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const subscribers = {
+  notificationType: require('./notificationType/subscriptions').subscriptions,
   logger: require('./logger/endpoints').subscriptions,
   device: require('./device/endpoints').subscriptions,
   deviceApi: require('./deviceApi/endpoints').subscriptions,
@@ -18,7 +19,7 @@ const subscribers = {
   patient: require('./patient/endpoints').subscriptions,
 }
 async function addSubscriptions(queue) {
-  return Promise.each(_.keys(subscribers), async key =>
+  await Promise.each(_.keys(subscribers), async key =>
     queue.subscribe(key, subscribers[key])
   )
 }

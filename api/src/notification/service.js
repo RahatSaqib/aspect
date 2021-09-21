@@ -15,6 +15,7 @@ const {
   getConstraints,
 } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
+const { notificationTypeCreated } = require('../notificationType/actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
@@ -25,9 +26,6 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
-const { createMessageQueue } = require('../mq')
-const config = require('../config')
-const { updateSubscription } = require('../subscriptions')
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -791,7 +789,12 @@ async function saveNotificationType({
 }
 
 async function saveNotification(request) {
-  const { auth, params, payload } = request
+  const {
+    auth,
+    params,
+    payload,
+    plugins: { messageContext },
+  } = request
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
@@ -807,8 +810,10 @@ async function saveNotification(request) {
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
     }
-    const queue = await createMessageQueue(config.amqp.name)
-    await updateSubscription(queue, 'notification')
+    if (!messageContext.notificationTypeCreated)
+      messageContext.bindActionCreators({ notificationTypeCreated })
+    messageContext.notificationTypeCreated(notificationTypeId)
+
     return { ok: true, notificationTypeId }
   }
 
