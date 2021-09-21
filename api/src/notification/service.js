@@ -25,6 +25,9 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
+const { createMessageQueue } = require('../mq')
+const config = require('../config')
+const { updateSubscription } = require('../subscriptions')
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -804,6 +807,8 @@ async function saveNotification(request) {
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
     }
+    const queue = await createMessageQueue(config.amqp.name)
+    await updateSubscription(queue, 'notification')
     return { ok: true, notificationTypeId }
   }
 
