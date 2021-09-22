@@ -1,7 +1,8 @@
 {
-  "plugins": ["prettier", "react", "react-hooks","small-import","lodash"],
+  "plugins": ["prettier", "react", "react-hooks", "small-import", "lodash"],
   "extends": [
-    "airbnb", 
+    "airbnb",
+    "eslint:recommended",
     "plugin:prettier/recommended",
     "plugin:lodash/canonical"
   ],
@@ -26,14 +27,7 @@
      */
     "consistent-return": "off",
     "class-methods-use-this": "off",
-    "no-console": [
-      "error",
-      { "allow": [
-          "warn",
-          "error"
-        ]
-      }
-    ],
+    "no-console": ["error", { "allow": ["warn", "error"] }],
     "func-names": "off",
     "global-require": "off",
     "import/extensions": "off",
@@ -78,8 +72,7 @@
         "singleQuote": true,
         "trailingComma": "es5",
         "eol": "lf",
-        "parser": "babel",
-        "arrowParens": "avoid"
+        "parser": "babel"
       }
     ],
     "object-curly-newline": ["error", { "consistent": true }],
@@ -120,10 +113,7 @@
       }
     ],
     "small-import/no-full-import": "warn",
-    "lodash/import-scope": [
-      2,
-      "method"
-    ],
+    "lodash/import-scope": [2, "method"],
     "lodash/collection-method-value": "off",
     "lodash/consistent-compose": "off",
     "lodash/identity-shorthand": "off",

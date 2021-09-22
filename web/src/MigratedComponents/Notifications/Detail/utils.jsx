@@ -11,7 +11,8 @@ export const getFormConfigWithData = (
   intl,
   jobFunctions,
   notificationType,
-  notificationTypeName
+  notificationTypeName,
+  validationSchema = null
 ) => {
   const formSchema = getFormConfig(
     intl.formatMessage,
@@ -24,7 +25,10 @@ export const getFormConfigWithData = (
     notificationTypeName: notificationTypeName || name, // to display as read-only field
     notificationType, // to keep in formik.values as hidden field
   }
-  return mergeFormConfigWithData(initialValues, formSchema, messages)
+  return {
+    ...mergeFormConfigWithData(initialValues, formSchema, messages),
+    validationSchema,
+  }
 }
 
 export default getFormConfigWithData

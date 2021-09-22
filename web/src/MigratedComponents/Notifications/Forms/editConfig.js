@@ -1,6 +1,5 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
-import findIndex from 'lodash/findIndex'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
@@ -24,7 +23,7 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
-const getSectionsBase = (formatMessage, validationBase) => [
+const getSectionsBase = (formatMessage) => [
   {
     id: 'section_notificationType',
     label: 'Notification Type',
@@ -58,7 +57,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
             },
             fullWidth: true,
             labelI18nKey: 'notificationTitle',
-            validate: validationBase.required,
+            // validate: validationBase.required,
           },
         ],
       },
@@ -80,7 +79,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
               endpoint: ASSAY_LIST.ENDPOINT,
               hideIfNoOptions: false,
               queryKey: ASSAY_LIST.KEY,
-              normalizeLoadedData: response => {
+              normalizeLoadedData: (response) => {
                 const { ok, data } = response
                 const options =
                   ok === true ? getBaseData(data, formatMessage, messages) : []
@@ -89,7 +88,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
               placeholder: formatMessage(messages.assayPlaceholder),
             },
             labelI18nKey: 'assayTitle',
-            validate: validationBase.required,
+            // validate: validationBase.required,
           },
           {
             id: 'resultCategoryId',
@@ -123,7 +122,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
                       formatMessage,
                       messages
                     )
-                    options = options.map(it => ({ ...it, scope }))
+                    options = options.map((it) => ({ ...it, scope }))
                   }
                 }
                 return options
@@ -132,7 +131,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
               placeholder: formatMessage(messages.resultPlaceholder),
             },
             labelI18nKey: 'resultTitle',
-            validate: validationBase.required,
+            // validate: validationBase.required,
           },
         ],
       },
@@ -166,7 +165,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
             },
             label: formatMessage(messages.SelectAreaTitle),
-            validate: validationBase.required,
+            // validate: validationBase.required,
           },
           {
             id: 'areaItems',
@@ -236,7 +235,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
               },
               isMulti: true,
               dependencies: ['deviceLevelId'],
-              placeholder: formik => {
+              placeholder: (formik) => {
                 const { deviceLevelId } = formik.values
                 return deviceLevelId
                   ? formatMessage(
@@ -245,7 +244,7 @@ const getSectionsBase = (formatMessage, validationBase) => [
                   : '-'
               },
             },
-            label: formik => {
+            label: (formik) => {
               const { deviceLevelId } = formik.values
               return deviceLevelId
                 ? formatMessage(
@@ -253,8 +252,8 @@ const getSectionsBase = (formatMessage, validationBase) => [
                   )
                 : '-'
             },
-            validate: validationBase.required,
-            visibleIf: values => {
+            // validate: validationBase.required,
+            visibleIf: (values) => {
               const { deviceLevelId } = values
               return deviceLevelId && deviceLevelId !== 'national'
             },
@@ -314,8 +313,8 @@ const getSectionsBase = (formatMessage, validationBase) => [
             },
             type: 'text',
             labelI18nKey: 'emailSubject',
-            validate: validationBase.required,
-            visibleIf: values => values.sendEmail === true,
+            // validate: validationBase.required,
+            visibleIf: (values) => values.sendEmail === true,
           },
         ],
       },
@@ -334,8 +333,8 @@ const getSectionsBase = (formatMessage, validationBase) => [
             },
             type: 'text',
             labelI18nKey: 'emailBody',
-            validate: validationBase.required,
-            visibleIf: values => values.sendEmail === true,
+            // validate: validationBase.required,
+            visibleIf: (values) => values.sendEmail === true,
           },
         ],
       },
@@ -356,9 +355,9 @@ const getSectionsBase = (formatMessage, validationBase) => [
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'smsBody',
-            validate: value =>
-              validationBase.requiredLimitLength(value, 144, 'smsBodyLimit'),
-            visibleIf: values => values.sendSms === true,
+            // validate: (value) =>
+            //   validationBase.requiredLimitLength(value, 144, 'smsBodyLimit'),
+            visibleIf: (values) => values.sendSms === true,
           },
         ],
       },
@@ -378,8 +377,8 @@ const getSectionsBase = (formatMessage, validationBase) => [
             },
             type: 'text',
             labelI18nKey: 'webUrl',
-            validate: validationBase.requiredValidUrl,
-            visibleIf: values => values.sendWeb === true,
+            // validate: validationBase.requiredValidUrl,
+            visibleIf: (values) => values.sendWeb === true,
           },
         ],
       },
@@ -397,8 +396,8 @@ const getSectionsBase = (formatMessage, validationBase) => [
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'webBody',
-            validate: validationBase.required,
-            visibleIf: values => values.sendWeb === true,
+            // validate: validationBase.required,
+            visibleIf: (values) => values.sendWeb === true,
           },
         ],
       },
@@ -420,7 +419,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
             ...acc,
             {
               id: `row-jf${jf.id}-name`,
-              presetInitialValues: initialValues => {
+              presetInitialValues: (initialValues) => {
                 const jobFunctions = initialValues.jobFunctions || []
                 jobFunctions[index] = jobFunctions[index] || {
                   jobFunctionId: jf.id,
@@ -438,49 +437,49 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                     itemContainer: cssClasses('max-width-100pcr'),
                   },
                   label: jf.name,
-                  validateIf: (values, formik, { touchedName }) => {
-                    /**
-                     * noOneChecked - is `true` if no one of jobFunctions checked
-                     */
-                    const noOneChecked = !values.jobFunctions.find(
-                      it => it.checked
-                    )
-                    /**
-                     * if no one checkbox selected, then
-                     * show validation message only for one checkbox -
-                     * - for first touched, or
-                     * - if `touchedName` is 1st touched one, or
-                     * - for index = 0
-                     */
-                    // define at what index to show message
-                    let displayAtIndex = findIndex(
-                      formik.touched.jobFunctions,
-                      it => !!it
-                    )
-                    if (
-                      displayAtIndex === -1 &&
-                      touchedName === `jobFunctions[${index}].checked`
-                    ) {
-                      displayAtIndex = index
-                    }
-                    if (displayAtIndex === -1) {
-                      displayAtIndex = 0
-                    }
-                    /**
-                     * allow below func `validate` only for 1st touched checkbox
-                     * and when no-one checkbox Job Function is selected
-                     */
-                    return index === displayAtIndex && noOneChecked
-                  },
-                  /**
-                   * see above func `validateIf` when this validation applies.
-                   * Notice that for component='checkbox' value is `true` or `false`
-                   */
-                  validate: value =>
-                    validationBase.checked(
-                      value,
-                      'jobFunctionAtLeastOneNeeded'
-                    ),
+                  // validateIf: (values, formik, { touchedName }) => {
+                  //   /**
+                  //    * noOneChecked - is `true` if no one of jobFunctions checked
+                  //    */
+                  //   const noOneChecked = !values.jobFunctions.find(
+                  //     (it) => it.checked
+                  //   )
+                  //   /**
+                  //    * if no one checkbox selected, then
+                  //    * show validation message only for one checkbox -
+                  //    * - for first touched, or
+                  //    * - if `touchedName` is 1st touched one, or
+                  //    * - for index = 0
+                  //    */
+                  //   // define at what index to show message
+                  //   let displayAtIndex = findIndex(
+                  //     formik.touched.jobFunctions,
+                  //     (it) => !!it
+                  //   )
+                  //   if (
+                  //     displayAtIndex === -1 &&
+                  //     touchedName === `jobFunctions[${index}].checked`
+                  //   ) {
+                  //     displayAtIndex = index
+                  //   }
+                  //   if (displayAtIndex === -1) {
+                  //     displayAtIndex = 0
+                  //   }
+                  //   /**
+                  //    * allow below func `validate` only for 1st touched checkbox
+                  //    * and when no-one checkbox Job Function is selected
+                  //    */
+                  //   return index === displayAtIndex && noOneChecked
+                  // },
+                  // /**
+                  //  * see above func `validateIf` when this validation applies.
+                  //  * Notice that for component='checkbox' value is `true` or `false`
+                  //  */
+                  // validate: (value) =>
+                  //   validationBase.checked(
+                  //     value,
+                  //     'jobFunctionAtLeastOneNeeded'
+                  //   ),
                 },
               ],
             },
@@ -495,7 +494,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                     endpoint: PERSON_LIST.ENDPOINT,
                     hideIfNoOptions: false,
                     queryKey: PERSON_LIST.KEY,
-                    normalizeLoadedData: response => {
+                    normalizeLoadedData: (response) => {
                       const { ok, data } = response
                       let options = []
                       if (ok === true) {
@@ -522,7 +521,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                   },
                   label: 'Tags',
                   labelI18nKey: 'jobFunctionTags',
-                  visibleIf: values => values.jobFunctions[index].checked,
+                  visibleIf: (values) => values.jobFunctions[index].checked,
                 },
               ],
             },

@@ -13,6 +13,7 @@ import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
 import { getFormConfigWithData } from '../utils'
+import validationSchema from '../../Forms/validation'
 
 const AspectNotificationDetail = ({
   notificationType,
@@ -21,9 +22,14 @@ const AspectNotificationDetail = ({
 }) => {
   const intl = useI18n()
   const [formConfig] = useState(
-    getFormConfigWithData(intl, jobFunctions, notificationType)
+    getFormConfigWithData(
+      intl,
+      jobFunctions,
+      notificationType,
+      '',
+      validationSchema
+    )
   )
-
   return (
     <Shell>
       {formConfig ? (
