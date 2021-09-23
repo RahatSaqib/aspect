@@ -39,19 +39,11 @@ function resultCategoryFilters(
   if (results.length > 0) {
     queryBuilder
       .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
-      .leftJoin('ResultCategoryAssay as rca', function () {
-        this.on('a.id', 'rca.assayId').andOn(
-          `${resultAlias}.resultCategory1`,
-          'rca.resultCategoryId'
-        )
-      })
-      .leftJoin('ResultCategory as rc1', 'rca.resultCategoryId', 'rc1.id')
-      .leftJoin('ResultCategoryAssay as rca2', function () {
-        this.on(`a.Id`, 'rca2.assayId').andOn(
-          `${resultAlias}.resultCategory2`,
-          'rca2.resultCategoryId'
-        )
-      })
+      .leftJoin(
+        'ResultCategory as rc1',
+        `${resultAlias}.resultCategory1`,
+        'rc1.id'
+      )
       .leftJoin('ResultCategoryGroup as rcg', function () {
         this.on(`a.id`, 'rcg.assayId')
           .andOn(function () {
@@ -67,7 +59,11 @@ function resultCategoryFilters(
             )
           })
       })
-      .leftJoin('ResultCategory as rc2', 'rca2.resultCategoryId', 'rc2.id')
+      .leftJoin(
+        'ResultCategory as rc2',
+        `${resultAlias}.resultCategory2`,
+        'rc2.id'
+      )
     queryBuilder.where(resultBuilder =>
       _.each(results, elem => {
         resultBuilder.orWhere(whereBuilder => {
@@ -119,8 +115,10 @@ function geographyFilters(
   { device = 'd', geography = 'g' }
 ) {
   if (deviceLevelId === 'state') {
-    const areaToFilters = _.map(areaItems, area => _.toInteger(area.value))
-    queryBuilder.whereIn(`${geography}.stateId`, areaToFilters)
+    queryBuilder.whereIn(
+      `${geography}.stateId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
   }
   if (deviceLevelId === 'lga') {
     queryBuilder.whereIn(
@@ -429,7 +427,7 @@ async function shouldNotify(
   const table = !_.isNil(issueId) ? 'Issue as i' : 'Result as i'
   if (!_.isNil(issueId)) aliasMapping.issue = 'i'
   else aliasMapping.result = 'i'
-  const records = await txKnex(table)
+  return txKnex(table)
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'i.siteId', 's.id')
     .leftJoin('Geography as g', 'i.geographyId', 'g.id')
@@ -437,7 +435,6 @@ async function shouldNotify(
     .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
     .first('i.id')
-  return records
 }
 
 async function createNotificationIfNotCreatedAlready(
