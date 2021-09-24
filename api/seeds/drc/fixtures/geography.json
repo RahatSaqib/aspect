@@ -1,0 +1,220 @@
+{
+  "countries": [
+    {
+      "abbreviation": "CD",
+      "name": "DR Congo",
+      "a3": "COD",
+      "culture": "fr-CG",
+      "countryCode": "243",
+      "timezone": "W. Central Africa Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|Assayname|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Bandundu",
+          "lgas": [
+            {
+              "name": "Bagata"
+            },
+            {
+              "name": "Bandundu"
+            },
+            {
+              "name": "Bolobo"
+            },
+            {
+              "name": "Bulungu"
+            },
+            {
+              "name": "Dibaya-Lubwe"
+            },
+            {
+              "name": "Feshi"
+            },
+            {
+              "name": "Gungu"
+            },
+            {
+              "name": "Idiofa"
+            },
+            {
+              "name": "Inongo"
+            },
+            {
+              "name": "Kahemba"
+            },
+            {
+              "name": "Kasongo-Lunda"
+            },
+            {
+              "name": "Kenge"
+            },
+            {
+              "name": "Kikwit"
+            },
+            {
+              "name": "Kiri"
+            },
+            {
+              "name": "Kutu"
+            },
+            {
+              "name": "Mangai"
+            },
+            {
+              "name": "Masi-Manimba"
+            },
+            {
+              "name": "Mushie"
+            },
+            {
+              "name": "Oshwe"
+            },
+            {
+              "name": "Popokabaka"
+            },
+            {
+              "name": "Vanga"
+            }
+          ]
+        },
+        {
+          "name": "Équateur",
+          "lgas": [
+            {
+              "name": "Basankusu"
+            },
+            {
+              "name": "Befale"
+            },
+            {
+              "name": "Bikoro"
+            },
+            {
+              "name": "Binga"
+            },
+            {
+              "name": "Boende"
+            },
+            {
+              "name": "Bokungu"
+            },
+            {
+              "name": "Bolomba"
+            },
+            {
+              "name": "Bomongo"
+            },
+            {
+              "name": "Bongandanga"
+            },
+            {
+              "name": "Bosobolo"
+            },
+            {
+              "name": "Budjala"
+            },
+            {
+              "name": "Bumba"
+            },
+            {
+              "name": "Businga"
+            },
+            {
+              "name": "Gbadolite"
+            },
+            {
+              "name": "Gemena"
+            },
+            {
+              "name": "Ikela"
+            },
+            {
+              "name": "Ingende"
+            },
+            {
+              "name": "Kungu"
+            },
+            {
+              "name": "Libenge"
+            },
+            {
+              "name": "Lisala"
+            },
+            {
+              "name": "Lukolela"
+            },
+            {
+              "name": "Mbandaka"
+            },
+            {
+              "name": "Mobayi-Mbongo"
+            },
+            {
+              "name": "Monkoto"
+            },
+            {
+              "name": "Yakoma"
+            },
+            {
+              "name": "Zongo"
+            }
+          ]
+        },
+        {
+          "name": "Kasaï-Occidental",
+          "lgas": [
+            {
+              "name": "Tshilenge"
+            },
+            {
+              "name": "Kabinda"
+            },
+            {
+              "name": "Sankuru"
+            }
+          ]
+        },
+        {
+          "name": "Katanga",
+          "lgas": [
+            {
+              "name": "Lualaba Province"
+            },
+            {
+              "name": "Lomami Province"
+            },
+            {
+              "name": "Haut-Lomami Province"
+            },
+            {
+              "name": "Haut-Katanga Province"
+            },
+            {
+              "name": "Tanganyika Province"
+            }
+          ]
+        },
+        {
+          "name": "Orientale",
+          "lgas": [
+            {
+              "name": "Bas-Uélé"
+            },
+            {
+              "name": "Haut-Uélé"
+            },
+            {
+              "name": "Ituri"
+            },
+            {
+              "name": "Tshopo"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
