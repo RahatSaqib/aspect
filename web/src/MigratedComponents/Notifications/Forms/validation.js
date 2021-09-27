@@ -46,7 +46,7 @@ const validationSchema = (formatMessage) =>
         is: 'national',
         then: Yup.array().min(0),
         otherwise: Yup.array()
-          .required()
+          .required(formatMessage(messages.geographyRequired))
           .min(1, formatMessage(messages.geographyRequired)),
       }),
     jobFunctions: Yup.array()
