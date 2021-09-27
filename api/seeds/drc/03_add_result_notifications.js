@@ -55,7 +55,7 @@ async function seed(knex) {
   const result1PositiveMessage =
     'Cher {{person.name}},\nCeci est une notification positive détectée par GeneXpert MTB pour {{ result.patient.id }} traitée le {{ result.endedOn }} à {{ device.name }}'
   const [result1PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
-    subject: 'MTB+ Result',
+    subject: 'MTB Détectée',
     body: result1PositiveMessage,
     htmlBody: result1PositiveMessage.replace('\n', '<br/>'),
     ...auditFields,
@@ -73,7 +73,7 @@ async function seed(knex) {
     level: 2,
     canAcknowledge: 0,
     messageTypeId: resul1PositiveMessageTypeId,
-    name: 'MTB+ Result',
+    name: 'MTB Détectée',
     ...auditFields,
     sendToContactsWithMatchingTags: 0,
   })
@@ -82,7 +82,7 @@ async function seed(knex) {
   const result2PositiveMessage =
     'Cher {{person.name}},\nCeci est une notification GeneXpert MTB positive détectée, résistance RIF détectée pour {{ result.patient.id }} traitée le {{ result.endedOn }} à {{ device.name }}'
   const [result2PositiveEmailTemplateId] = await knex('EmailTemplate').insert({
-    subject: 'MTB+ RIF+ Result',
+    subject: 'MTB Détectée, RIF Détectée',
     body: result2PositiveMessage,
     htmlBody: result2PositiveMessage.replace('\n', '<br/>'),
     ...auditFields,
@@ -105,7 +105,7 @@ async function seed(knex) {
     level: 3,
     canAcknowledge: 0,
     messageTypeId: resul2PositiveMessageTypeId,
-    name: 'MTB+ Rif+ Result',
+    name: 'MTB Détectée, RIF Détectée',
     ...auditFields,
     sendToContactsWithMatchingTags: 0,
   })
