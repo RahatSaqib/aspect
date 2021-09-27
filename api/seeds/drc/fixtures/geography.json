@@ -4,7 +4,7 @@
       "abbreviation": "CD",
       "name": "DR Congo",
       "a3": "COD",
-      "culture": "fr-CG",
+      "culture": "fr-FR",
       "countryCode": "243",
       "timezone": "W. Central Africa Standard Time",
       "portNumber": null,
@@ -13,7 +13,49 @@
       "monthStartsOnDay": 1,
       "states": [
         {
-          "name": "Bandundu",
+          "name": "Kinshasa",
+          "lgas": [
+            {
+              "name": "Kinshasa"
+            }
+          ]
+        },
+        {
+          "name": "Kongo Central",
+          "lgas": [
+            {
+              "name": "Bas-Fleuve"
+            },
+            {
+              "name": "Cataractes"
+            },
+            {
+              "name": "Lukaya"
+            }
+          ]
+        },
+        {
+          "name": "Kwango",
+          "lgas": [
+            {
+              "name": "Feshi"
+            },
+            {
+              "name": "Kahemba"
+            },
+            {
+              "name": "Kasongo Lunda"
+            },
+            {
+              "name": "Kenge"
+            },
+            {
+              "name": "Popokabaka"
+            }
+          ]
+        },
+        {
+          "name": "Kwilu",
           "lgas": [
             {
               "name": "Bagata"
@@ -22,37 +64,27 @@
               "name": "Bandundu"
             },
             {
-              "name": "Bolobo"
-            },
-            {
-              "name": "Bulungu"
-            },
-            {
-              "name": "Dibaya-Lubwe"
-            },
-            {
-              "name": "Feshi"
-            },
-            {
               "name": "Gungu"
             },
             {
               "name": "Idiofa"
             },
             {
+              "name": "Mangai"
+            },
+            {
+              "name": "Masi-Manimba"
+            }
+          ]
+        },
+        {
+          "name": "Mai-Ndombe",
+          "lgas": [
+            {
+              "name": "Bolobo"
+            },
+            {
               "name": "Inongo"
-            },
-            {
-              "name": "Kahemba"
-            },
-            {
-              "name": "Kasongo-Lunda"
-            },
-            {
-              "name": "Kenge"
-            },
-            {
-              "name": "Kikwit"
             },
             {
               "name": "Kiri"
@@ -61,10 +93,7 @@
               "name": "Kutu"
             },
             {
-              "name": "Mangai"
-            },
-            {
-              "name": "Masi-Manimba"
+              "name": "Kwamouth"
             },
             {
               "name": "Mushie"
@@ -73,10 +102,344 @@
               "name": "Oshwe"
             },
             {
-              "name": "Popokabaka"
+              "name": "Yumbi"
+            }
+          ]
+        },
+        {
+          "name": "Kasaï",
+          "lgas": [
+            {
+              "name": "Dekese"
             },
             {
-              "name": "Vanga"
+              "name": "Ilebo"
+            },
+            {
+              "name": "Kamonia"
+            },
+            {
+              "name": "Luebo"
+            },
+            {
+              "name": "Mweka"
+            }
+          ]
+        },
+        {
+          "name": "Kasaï-Central",
+          "lgas": [
+            {
+              "name": "Demba"
+            },
+            {
+              "name": "Dibaya"
+            },
+            {
+              "name": "Dimbelenge"
+            },
+            {
+              "name": "Kazumba"
+            },
+            {
+              "name": "Luiza"
+            }
+          ]
+        },
+        {
+          "name": "Kasaï-Oriental",
+          "lgas": [
+            {
+              "name": "Kabeya-Kamwanga"
+            },
+            {
+              "name": "Katanda"
+            },
+            {
+              "name": "Lupatapata"
+            },
+            {
+              "name": "Miabi"
+            },
+            {
+              "name": "Tshilenge"
+            }
+          ]
+        },
+        {
+          "name": "Lomami",
+          "lgas": [
+            {
+              "name": "Kabinda"
+            },
+            {
+              "name": "Mwene-Ditu"
+            }
+          ]
+        },
+        {
+          "name": "Lomami",
+          "lgas": [
+            {
+              "name": "Kabinda"
+            },
+            {
+              "name": "Mwene-Ditu"
+            }
+          ]
+        },
+        {
+          "name": "Sankuru",
+          "lgas": [
+            {
+              "name": "Katako Kombe"
+            },
+            {
+              "name": "Kole"
+            },
+            {
+              "name": "Lodja"
+            },
+            {
+              "name": "Lomela"
+            },
+            {
+              "name": "Lubefu"
+            },
+            {
+              "name": "Lusambo"
+            }
+          ]
+        },
+        {
+          "name": "Maniema",
+          "lgas": [
+            {
+              "name": "1. Kabambare"
+            },
+            {
+              "name": "2. Kailo"
+            },
+            {
+              "name": "3. Kasongo"
+            },
+            {
+              "name": "4. Kibombo"
+            },
+            {
+              "name": "5. Lubutu"
+            },
+            {
+              "name": "6. Pangi"
+            },
+            {
+              "name": "7. Punia"
+            }
+          ]
+        },
+        {
+          "name": "South-Kivu",
+          "lgas": [
+            {
+              "name": "Fizi "
+            },
+            {
+              "name": "Idjwi"
+            },
+            {
+              "name": "Kabare "
+            },
+            {
+              "name": "Kalehe "
+            },
+            {
+              "name": "Mwenga "
+            },
+            {
+              "name": "Shabunda"
+            },
+            {
+              "name": "Uvira"
+            },
+            {
+              "name": "Walungu"
+            }
+          ]
+        },
+        {
+          "name": "North-Kivu",
+          "lgas": [
+            {
+              "name": "Beni "
+            },
+            {
+              "name": "Lubero"
+            },
+            {
+              "name": "Masisi"
+            },
+            {
+              "name": "Rutshuru"
+            },
+            {
+              "name": "Nyiragongo"
+            },
+            {
+              "name": "Walikale"
+            }
+          ]
+        },
+        {
+          "name": "Ituri",
+          "lgas": [
+            {
+              "name": "Aru"
+            },
+            {
+              "name": "Djugu"
+            },
+            {
+              "name": "Irumu"
+            },
+            {
+              "name": "Mahagi"
+            },
+            {
+              "name": "Mambasa"
+            }
+          ]
+        },
+        {
+          "name": "Haut-Uélé",
+          "lgas": [
+            {
+              "name": "Dungu"
+            },
+            {
+              "name": "Faradje"
+            },
+            {
+              "name": "Niangara"
+            },
+            {
+              "name": "Rungu"
+            },
+            {
+              "name": "Wamba"
+            },
+            {
+              "name": "Watsa"
+            }
+          ]
+        },
+        {
+          "name": "Tshopo",
+          "lgas": [
+            {
+              "name": "Bafwasende"
+            },
+            {
+              "name": "Banalia"
+            },
+            {
+              "name": "Basoko"
+            },
+            {
+              "name": "Isangi"
+            },
+            {
+              "name": "Opala"
+            },
+            {
+              "name": "Ubundu"
+            },
+            {
+              "name": "Yahuma"
+            }
+          ]
+        },
+        {
+          "name": "Bas-Uélé",
+          "lgas": [
+            {
+              "name": "Aketi"
+            },
+            {
+              "name": "Ango"
+            },
+            {
+              "name": "Bambesa"
+            },
+            {
+              "name": "Bondo"
+            },
+            {
+              "name": "Buta"
+            },
+            {
+              "name": "Poko"
+            }
+          ]
+        },
+        {
+          "name": "Nord-Ubangi",
+          "lgas": [
+            {
+              "name": "Bosobolo"
+            },
+            {
+              "name": "Businga"
+            },
+            {
+              "name": "Mobayi-Mbongo"
+            },
+            {
+              "name": "Yakoma"
+            }
+          ]
+        },
+        {
+          "name": "Mongala",
+          "lgas": [
+            {
+              "name": "Bongandanga"
+            },
+            {
+              "name": "Bumba"
+            },
+            {
+              "name": "Lisala"
+            }
+          ]
+        },
+        {
+          "name": "Mongala",
+          "lgas": [
+            {
+              "name": "Bongandanga"
+            },
+            {
+              "name": "Bumba"
+            },
+            {
+              "name": "Lisala"
+            }
+          ]
+        },
+        {
+          "name": "Sud-Ubangi",
+          "lgas": [
+            {
+              "name": "Budjala"
+            },
+            {
+              "name": "Gemena"
+            },
+            {
+              "name": "Kungu"
+            },
+            {
+              "name": "Libenge"
             }
           ]
         },
@@ -84,22 +447,16 @@
           "name": "Équateur",
           "lgas": [
             {
-              "name": "Basankusu"
-            },
-            {
-              "name": "Befale"
-            },
-            {
               "name": "Bikoro"
             },
             {
-              "name": "Binga"
+              "name": "Lukolela"
             },
             {
-              "name": "Boende"
+              "name": "Basankusu"
             },
             {
-              "name": "Bokungu"
+              "name": "Makanza"
             },
             {
               "name": "Bolomba"
@@ -108,109 +465,107 @@
               "name": "Bomongo"
             },
             {
-              "name": "Bongandanga"
+              "name": "Ingende"
             },
             {
-              "name": "Bosobolo"
+              "name": "Walungu"
+            }
+          ]
+        },
+        {
+          "name": "Tshuapa",
+          "lgas": [
+            {
+              "name": "Befale"
             },
             {
-              "name": "Budjala"
+              "name": "Boende"
             },
             {
-              "name": "Bumba"
+              "name": "Bokungu"
             },
             {
-              "name": "Businga"
-            },
-            {
-              "name": "Gbadolite"
-            },
-            {
-              "name": "Gemena"
+              "name": "Djolu"
             },
             {
               "name": "Ikela"
             },
             {
-              "name": "Ingende"
-            },
-            {
-              "name": "Kungu"
-            },
-            {
-              "name": "Libenge"
-            },
-            {
-              "name": "Lisala"
-            },
-            {
-              "name": "Lukolela"
-            },
-            {
-              "name": "Mbandaka"
-            },
-            {
-              "name": "Mobayi-Mbongo"
-            },
-            {
               "name": "Monkoto"
-            },
-            {
-              "name": "Yakoma"
-            },
-            {
-              "name": "Zongo"
             }
           ]
         },
         {
-          "name": "Kasaï-Occidental",
+          "name": "Tanganyika",
           "lgas": [
             {
-              "name": "Tshilenge"
+              "name": "Kabalo"
             },
             {
-              "name": "Kabinda"
+              "name": "Kalemie"
             },
             {
-              "name": "Sankuru"
+              "name": "Kongolo"
+            },
+            {
+              "name": "Manono"
+            },
+            {
+              "name": "Moba"
+            },
+            {
+              "name": "Nyunzu"
             }
           ]
         },
         {
-          "name": "Katanga",
+          "name": "Haut-Lomami",
           "lgas": [
             {
-              "name": "Lualaba Province"
+              "name": "Bukama"
             },
             {
-              "name": "Lomami Province"
+              "name": "Kabongo"
             },
             {
-              "name": "Haut-Lomami Province"
+              "name": "Kamina"
             },
             {
-              "name": "Haut-Katanga Province"
+              "name": "Kaniama"
             },
             {
-              "name": "Tanganyika Province"
+              "name": "Malemba-Nkulu"
             }
           ]
         },
         {
-          "name": "Orientale",
+          "name": "Lualaba",
           "lgas": [
             {
-              "name": "Bas-Uélé"
+              "name": "Lualaba"
             },
             {
-              "name": "Haut-Uélé"
+              "name": "Kolwezi"
+            }
+          ]
+        },
+        {
+          "name": "Haut-Katanga",
+          "lgas": [
+            {
+              "name": "Kasenga"
             },
             {
-              "name": "Ituri"
+              "name": "Kipushi"
             },
             {
-              "name": "Tshopo"
+              "name": "Mitwaba"
+            },
+            {
+              "name": "Pweto"
+            },
+            {
+              "name": "Sakania"
             }
           ]
         }
