@@ -23,7 +23,7 @@ async function getNotificationSubscriptions(knex) {
             memoKey,
           }
         ) => {
-          const { action, method } = JSON.parse(triggerCondition || {})
+          const { action, method } = JSON.parse(triggerCondition || '{}')
           if (action) {
             const elemToAdd = {
               method,
