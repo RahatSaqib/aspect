@@ -24,7 +24,7 @@ async function getNotificationSubscriptions(knex) {
           }
         ) => {
           const { action, method } = JSON.parse(triggerCondition || {})
-          if (action != null) {
+          if (action) {
             const elemToAdd = {
               method,
               action,
