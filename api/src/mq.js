@@ -200,9 +200,13 @@ class MessageQueue {
     const re = new RegExp(regex)
     const selectedQueries = _.filter(this.queues, q => re.test(q))
     await Promise.each(selectedQueries || [], async q => {
-      await this.channel.unbindQueue(q, exchange, 'aspect.actions.#')
-      await this.channel.deleteQueue(q)
-      _.remove(this.queues, q => re.test(q))
+      const { queue } = await this.channel.assertQueue(q)
+      if (queue) {
+        await this.channel.unbindQueue(queue, exchange, 'aspect.actions.#')
+        await this.channel.deleteQueue(q)
+
+        _.remove(this.queues, q => re.test(q))
+      }
     })
   }
 
@@ -212,7 +216,7 @@ class MessageQueue {
         reLabel: 'aspect:mq:subscribeEmitActions',
       })
       const { channel } = this
-      const { queue } = await this.channel.assertQueue('', { exclusive: true })
+      const { queue } = await channel.assertQueue('', { exclusive: true })
       this.queueEmitActions = queue
       this.queues.push(queue)
       await channel.bindQueue(queue, exchange, 'aspect.actions.#')

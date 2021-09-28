@@ -23,7 +23,7 @@ async function getNotificationSubscriptions(knex) {
             memoKey,
           }
         ) => {
-          const { action, method } = JSON.parse(triggerCondition)
+          const { action, method } = JSON.parse(triggerCondition || {})
           if (action != null) {
             const elemToAdd = {
               method,
@@ -37,12 +37,12 @@ async function getNotificationSubscriptions(knex) {
           }
           return memo
         },
-        []
+        {}
       )
     )
   const actions = {}
   Object.keys(actionParameters).forEach(actionKey => {
-    const { method } = _.sample(actionParameters[actionKey])
+    const [{ method }] = actionParameters[actionKey]
     actions[actionKey] = actionHandlers[method](actionParameters[actionKey])
   })
   return { actions }
