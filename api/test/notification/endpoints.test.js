@@ -286,6 +286,40 @@ describe('notification endpoints', () => {
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
       })
+
+      it('missing all notification channels - false', async () => {
+        payload = {
+          ...payloadGood,
+          sendEmail: false,
+          sendSms: false,
+          sendWeb: false,
+        }
+        // failing because missing all sendEmail, sendSms, sendWeb
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
+      it('missing all notification channels - undefined', async () => {
+        payload = {
+          ...payloadGood,
+          sendEmail: undefined,
+          sendSms: undefined,
+          sendWeb: undefined,
+        }
+        // failing because missing all sendEmail, sendSms, sendWeb
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
+      it('set at least one notification channel', async () => {
+        payload = {
+          ...payloadGood,
+          sendEmail: false,
+          sendSms: true,
+          sendWeb: false,
+        }
+        // succeeding because we set sendSms
+        validation = schema.validate(payload)
+        assert.isUndefined(validation.error)
+      })
     })
   })
 })

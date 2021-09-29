@@ -46,7 +46,7 @@ const AspectNotificationDetail = ({
             jobFunctions,
             notificationType,
             notificationTypeName,
-            validationSchema(intl.formatMessage, { jobFunctions })
+            validationSchema(intl.formatMessage)
           )
         )
       },

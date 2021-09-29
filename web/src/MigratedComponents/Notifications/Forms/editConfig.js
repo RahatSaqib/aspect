@@ -1,6 +1,5 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
-import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
@@ -427,14 +426,8 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                     itemContainer: cssClasses('max-width-100pcr'),
                   },
                   label: jf.name,
-                  onAfterChange: (formik, touchedFields) => {
-                    const isTouchedFirst = get(
-                      touchedFields,
-                      `jobFunctions[0].checked`
-                    )
-                    if (!isTouchedFirst) {
-                      formik.setFieldTouched(`jobFunctions[0].checked`, true)
-                    }
+                  onAfterChange: formik => {
+                    formik.setFieldTouched(`jobFunctions[0].checked`, true)
                   },
                 },
               ],

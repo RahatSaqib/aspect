@@ -58,4 +58,9 @@ export default defineMessages({
     id: 'pages.Notifications.geographyRequired',
     defaultMessage: 'You should select at least one option',
   },
+  notificationChannels: {
+    id: 'pages.Notifications.notificationChannels',
+    defaultMessage:
+      'At least one of the notification channels should be selected',
+  },
 })
