@@ -134,8 +134,9 @@ describe('Scheduler task tracker', () => {
       await knex('SchedulerTaskExecutionLog').where('success', false).del()
     })
     it('should store exception in SchedulerTaskExecutionLog', async () => {
-      subscribe('test', subscription)
       const messageContext = await createMessageContext()
+
+      subscribe(messageContext.queue, subscription)
       const action1 = {
         type: 'UNEXISTING_TEST_MESSAGE',
       }
