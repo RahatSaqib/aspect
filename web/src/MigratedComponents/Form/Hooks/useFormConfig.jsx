@@ -138,7 +138,7 @@ export const useFormConfig = formConfig => {
        */
       formik.setFieldValue(fieldName, value, false)
       /**
-       * 2. assemble latest set of `values`
+       * 2.1. assemble latest set of `values`
        * (formik.values is not yet up-to-date because it is updated asynchronously by formik engine)
        */
       const values = {
@@ -146,11 +146,27 @@ export const useFormConfig = formConfig => {
       }
       set(values, fieldName, value)
       /**
-       * 3. refresh visibility of all fields and register validators of only visible fields
+       * 2.2. assemble latest set of `touched`
+       * (formik.touched is not yet up-to-date because it is updated asynchronously by formik engine)
+       */
+      const touched = {
+        ...formik.touched,
+      }
+      set(touched, fieldName, true)
+      /**
+       * 3. address func onAfterChange if defined for item
+       */
+      const { items = [] } = meta
+      const { onAfterChange } = items.find(({ id }) => id === fieldName) || {}
+      if (onAfterChange) {
+        onAfterChange(formik, touched)
+      }
+      /**
+       * 4. refresh visibility of all fields and register validators of only visible fields
        */
       registerVisibleFields(values, formik, fieldName)
       /**
-       * 4. validate form for current set of `values` for all visible fields
+       * 5. validate form for current set of `values` for all visible fields
        */
       formik.validateForm(values)
     },

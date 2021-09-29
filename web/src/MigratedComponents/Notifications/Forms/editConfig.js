@@ -1,5 +1,6 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
+import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
@@ -23,7 +24,7 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
-const getSectionsBase = (formatMessage) => [
+const getSectionsBase = formatMessage => [
   {
     id: 'section_notificationType',
     label: 'Notification Type',
@@ -78,7 +79,7 @@ const getSectionsBase = (formatMessage) => [
               endpoint: ASSAY_LIST.ENDPOINT,
               hideIfNoOptions: false,
               queryKey: ASSAY_LIST.KEY,
-              normalizeLoadedData: (response) => {
+              normalizeLoadedData: response => {
                 const { ok, data } = response
                 const options =
                   ok === true ? getBaseData(data, formatMessage, messages) : []
@@ -120,7 +121,7 @@ const getSectionsBase = (formatMessage) => [
                       formatMessage,
                       messages
                     )
-                    options = options.map((it) => ({ ...it, scope }))
+                    options = options.map(it => ({ ...it, scope }))
                   }
                 }
                 return options
@@ -231,7 +232,7 @@ const getSectionsBase = (formatMessage) => [
               },
               isMulti: true,
               dependencies: ['deviceLevelId'],
-              placeholder: (formik) => {
+              placeholder: formik => {
                 const { deviceLevelId } = formik.values
                 return deviceLevelId
                   ? formatMessage(
@@ -240,7 +241,7 @@ const getSectionsBase = (formatMessage) => [
                   : '-'
               },
             },
-            label: (formik) => {
+            label: formik => {
               const { deviceLevelId } = formik.values
               return deviceLevelId
                 ? formatMessage(
@@ -248,7 +249,7 @@ const getSectionsBase = (formatMessage) => [
                   )
                 : '-'
             },
-            visibleIf: (values) => {
+            visibleIf: values => {
               const { deviceLevelId } = values
               return deviceLevelId && deviceLevelId !== 'national'
             },
@@ -308,7 +309,7 @@ const getSectionsBase = (formatMessage) => [
             },
             type: 'text',
             labelI18nKey: 'emailSubject',
-            visibleIf: (values) => values.sendEmail === true,
+            visibleIf: values => values.sendEmail === true,
           },
         ],
       },
@@ -327,7 +328,7 @@ const getSectionsBase = (formatMessage) => [
             },
             type: 'text',
             labelI18nKey: 'emailBody',
-            visibleIf: (values) => values.sendEmail === true,
+            visibleIf: values => values.sendEmail === true,
           },
         ],
       },
@@ -348,7 +349,7 @@ const getSectionsBase = (formatMessage) => [
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'smsBody',
-            visibleIf: (values) => values.sendSms === true,
+            visibleIf: values => values.sendSms === true,
           },
         ],
       },
@@ -368,7 +369,7 @@ const getSectionsBase = (formatMessage) => [
             },
             type: 'text',
             labelI18nKey: 'webUrl',
-            visibleIf: (values) => values.sendWeb === true,
+            visibleIf: values => values.sendWeb === true,
           },
         ],
       },
@@ -386,7 +387,7 @@ const getSectionsBase = (formatMessage) => [
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'webBody',
-            visibleIf: (values) => values.sendWeb === true,
+            visibleIf: values => values.sendWeb === true,
           },
         ],
       },
@@ -408,7 +409,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
             ...acc,
             {
               id: `row-jf${jf.id}-name`,
-              presetInitialValues: (initialValues) => {
+              presetInitialValues: initialValues => {
                 const jobFunctions = initialValues.jobFunctions || []
                 jobFunctions[index] = jobFunctions[index] || {
                   jobFunctionId: jf.id,
@@ -426,6 +427,15 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                     itemContainer: cssClasses('max-width-100pcr'),
                   },
                   label: jf.name,
+                  onAfterChange: (formik, touchedFields) => {
+                    const isTouchedFirst = get(
+                      touchedFields,
+                      `jobFunctions[0].checked`
+                    )
+                    if (!isTouchedFirst) {
+                      formik.setFieldTouched(`jobFunctions[0].checked`, true)
+                    }
+                  },
                 },
               ],
             },
@@ -440,7 +450,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                     endpoint: PERSON_LIST.ENDPOINT,
                     hideIfNoOptions: false,
                     queryKey: PERSON_LIST.KEY,
-                    normalizeLoadedData: (response) => {
+                    normalizeLoadedData: response => {
                       const { ok, data } = response
                       let options = []
                       if (ok === true) {
@@ -467,7 +477,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
                   },
                   label: 'Tags',
                   labelI18nKey: 'jobFunctionTags',
-                  visibleIf: (values) => values.jobFunctions[index].checked,
+                  visibleIf: values => values.jobFunctions[index].checked,
                 },
               ],
             },

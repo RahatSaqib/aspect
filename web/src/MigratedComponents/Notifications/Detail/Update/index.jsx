@@ -17,6 +17,7 @@ import ShellFooter from '../../../Shell/Footer'
 import { NOTIFICATION_DETAIL } from '../../../QueryFetch/Notification'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { getFormConfigWithData } from '../utils'
+import validationSchema from '../../Forms/validation'
 
 const AspectNotificationDetail = ({
   notificationId,
@@ -44,7 +45,8 @@ const AspectNotificationDetail = ({
             intl,
             jobFunctions,
             notificationType,
-            notificationTypeName
+            notificationTypeName,
+            validationSchema(intl.formatMessage, { jobFunctions })
           )
         )
       },

@@ -1,15 +1,14 @@
 import * as Yup from 'yup'
-import filter from 'lodash/filter'
 import messages from './messages'
 
-const optionsForSendXXX = (requiredMessage) => ({
+const optionsForSendXXX = requiredMessage => ({
   is: true,
   then: Yup.string().required(requiredMessage),
   otherwise: Yup.string().nullable(),
 })
 
-const validationSchema = (formatMessage) =>
-  Yup.object().shape({
+const validationSchema = (formatMessage, { jobFunctions }) => {
+  return Yup.object().shape({
     notificationType: Yup.string().oneOf(['resultBased', 'issueBased']),
     name: Yup.string().required(
       formatMessage(messages.notificationNameRequired)
@@ -28,7 +27,7 @@ const validationSchema = (formatMessage) =>
                   .oneOf(['ResultCategories', 'ResultCategoryGroups']),
               })
             )
-            .required()
+            .required(formatMessage(messages.resultCategoryRequired))
             .min(1, formatMessage(messages.resultCategoryRequired)),
         })
       )
@@ -46,29 +45,42 @@ const validationSchema = (formatMessage) =>
         is: 'national',
         then: Yup.array().min(0),
         otherwise: Yup.array()
-          .required()
+          .required(formatMessage(messages.geographyRequired))
           .min(1, formatMessage(messages.geographyRequired)),
       }),
-    jobFunctions: Yup.array()
-      .ensure()
-      .required()
-      .transform((value, originalValue) => {
-        const result = filter(originalValue, (elem) => elem.checked)
-        return result
-      })
-      .min(1, formatMessage(messages.jobFunctionRequired))
-      .of(
-        Yup.object().shape({
-          jobFunctionId: Yup.string().required(),
-          checked: Yup.boolean().required(),
-          tags: Yup.array().of(
-            Yup.object().shape({
-              label: Yup.string(),
-              value: Yup.number().required(),
-            })
-          ),
-        })
-      ),
+    'jobFunctions[0].checked': Yup.boolean().when(
+      jobFunctions.map((_, index) => `jobFunctions[${index}].checked`),
+      {
+        is: (...args) => {
+          // if all Job Function checkboxes are unchecked
+          return !args.find(checked => checked === true)
+        },
+        then: Yup.boolean().required(
+          formatMessage(messages.jobFunctionRequired)
+        ),
+        otherwise: Yup.boolean(),
+      }
+    ),
+    // jobFunctions: Yup.array()
+    //   .ensure()
+    //   .required()
+    //   .transform((value, originalValue) => {
+    //     const result = filter(originalValue, elem => elem.checked)
+    //     return result
+    //   })
+    //   .min(1, formatMessage(messages.jobFunctionRequired))
+    //   .of(
+    //     Yup.object().shape({
+    //       jobFunctionId: Yup.string().required(),
+    //       checked: Yup.boolean().required(),
+    //       tags: Yup.array().of(
+    //         Yup.object().shape({
+    //           label: Yup.string(),
+    //           value: Yup.number().required(),
+    //         })
+    //       ),
+    //     })
+    //   ),
     emailSubject: Yup.string().when(
       'sendEmail',
       optionsForSendXXX(formatMessage(messages.emailSubjectRequired))
@@ -97,5 +109,6 @@ const validationSchema = (formatMessage) =>
         formatMessage(messages.webUrlInvalidFormat)
       ),
   })
+}
 
 export default validationSchema
