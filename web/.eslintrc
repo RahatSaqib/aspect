@@ -2,7 +2,6 @@
   "plugins": ["prettier", "react", "react-hooks", "small-import", "lodash"],
   "extends": [
     "airbnb",
-    "eslint:recommended",
     "plugin:prettier/recommended",
     "plugin:lodash/canonical"
   ],
@@ -22,12 +21,17 @@
     "jest": true
   },
   "rules": {
-    /**
-     * see https://eslint.org/docs/rules/
-     */
     "consistent-return": "off",
     "class-methods-use-this": "off",
-    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
     "func-names": "off",
     "global-require": "off",
     "import/extensions": "off",
@@ -65,14 +69,12 @@
     "prettier/prettier": [
       "error",
       {
-        /**
-         * see https://prettier.io/docs/en/options.html
-         */
         "semi": false,
         "singleQuote": true,
         "trailingComma": "es5",
         "eol": "lf",
-        "parser": "babel"
+        "parser": "babel",
+        "arrowParens": "avoid"
       }
     ],
     "object-curly-newline": ["error", { "consistent": true }],
