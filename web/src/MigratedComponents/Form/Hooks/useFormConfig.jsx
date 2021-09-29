@@ -145,12 +145,21 @@ export const useFormConfig = formConfig => {
         ...formik.values,
       }
       set(values, fieldName, value)
+
       /**
-       * 3. refresh visibility of all fields and register validators of only visible fields
+       * 3. address func onAfterChange if defined for item
+       */
+      const { items = [] } = meta
+      const { onAfterChange } = items.find(({ id }) => id === fieldName) || {}
+      if (onAfterChange) {
+        onAfterChange(formik)
+      }
+      /**
+       * 4. refresh visibility of all fields and register validators of only visible fields
        */
       registerVisibleFields(values, formik, fieldName)
       /**
-       * 4. validate form for current set of `values` for all visible fields
+       * 5. validate form for current set of `values` for all visible fields
        */
       formik.validateForm(values)
     },
