@@ -1,3 +1,6 @@
+const { subscriptions: notificationSubscriptions } =
+  require('../notification/endpoints').subscriptions
+
 const subscriptions = [
   {
     actions: {
@@ -11,7 +14,7 @@ async function onNotificationTypeCreated(
   { messageContext }
 ) {
   return messageContext.run(async () =>
-    messageContext.queue.subscribe('notificationType', subscriptions)
+    messageContext.queue.subscribe('notification', notificationSubscriptions)
   )
 }
 

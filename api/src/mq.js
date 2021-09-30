@@ -156,7 +156,8 @@ class MessageQueue {
       subscribeName,
       queueOptions
     )
-    this.queues.push(queue)
+
+    if (!this.queues.includes(queue)) this.queues.push(queue)
     await this.channel.bindQueue(queue, exchange, topic)
     if (purgeOnStart) {
       await this.channel.purgeQueue(queue)

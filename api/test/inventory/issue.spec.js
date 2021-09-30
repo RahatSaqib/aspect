@@ -8,6 +8,7 @@ const { knex } = require('../../src/db')
 const {
   createMessageContext,
   waitForIdle,
+  dispatchAndWaitForAction,
   waitForAction,
 } = require('../utils/mqUtils')
 const {
@@ -229,7 +230,7 @@ describe('Inventory Stock Issues Endpoint', () => {
         })
         .where({ siteId, consumableId })
       // escalate
-      await messageContext.escalateIssues(issueId)
+      await dispatchAndWaitForAction(escalateIssues(issueId))
       await waitForIdle(1000)
 
       const issue = await getIssue(knex, issueId)

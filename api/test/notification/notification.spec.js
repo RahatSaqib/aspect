@@ -65,9 +65,13 @@ describe('Issue based Notifications triggers', () => {
       .delete()
   })
   it('should create a issue based notification without special filter conditions', async () => {
+    let notifications = await knex('Notification')
+      .where({ issueId: insertedIssueId })
+      .select()
+    assert.equal(notifications.length, 0)
     await dispatchAndWaitForAction(issueCreated(insertedIssueId))
     await waitForIdle(1000)
-    const notifications = await knex('Notification')
+    notifications = await knex('Notification')
       .where({ issueId: insertedIssueId })
       .select()
     assert.equal(notifications.length, 1)
@@ -264,7 +268,6 @@ describe('Result Notifications triggers', () => {
         )
       ).id
       assert.isNotNull(resultId)
-      messageContext.dispatch(resultLogged(resultId, 1, 1))
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
       const notifications = await knex('Notification')
