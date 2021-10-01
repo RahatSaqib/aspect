@@ -38,15 +38,15 @@ const AspectNotificationDetails = () => {
   }, [data])
 
   const { mutate: submitNotification } = useMutation(
-    (values, notificationId) => {
+    ({ values, id }) => {
       let endpoint = NOTIFICATION_DETAIL.ENDPOINT
       if (notificationId) {
-        endpoint += `/${notificationId}`
+        endpoint += `/${id}`
       }
 
       return fetchWrapperForQueries({
         endpoint,
-        method: notificationId ? 'PUT' : 'POST',
+        method: id ? 'PUT' : 'POST',
         params: {
           ...values,
         },
@@ -67,9 +67,8 @@ const AspectNotificationDetails = () => {
     const values = sanitizeFormValues(formik.values, { meta })
     // save only checked Job Functions
     values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
-    const id = isNumber(notificationId) ? +notificationId : undefined
-
-    submitNotification(values, id)
+    const id = isNumber(+notificationId) ? +notificationId : undefined
+    submitNotification({ values, id })
   }
 
   const props = {
