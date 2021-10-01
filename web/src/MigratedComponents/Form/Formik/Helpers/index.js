@@ -45,7 +45,7 @@ const mergeFormConfigWithData = (data, config, messages) => {
   return configToMutate
 }
 
-const getInitialValuesFromFormConfig = config => {
+const getInitialValuesFromFormConfig = (config, values) => {
   const initialValues = {}
   const { sections } = config
   sections.forEach(({ rows }) => {
@@ -56,9 +56,9 @@ const getInitialValuesFromFormConfig = config => {
       }
       items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
         const { component } = controlType
-        let value = initialValue || ''
+        let value = (values ? get(values, fieldName) : initialValue) || ''
         if (component === 'checkbox') {
-          value = initialValue === true
+          value = (values ? get(values, fieldName) : initialValue) === true
         }
         if (isMulti) {
           initialValues[rowId] = initialValues[rowId] || [
@@ -66,7 +66,11 @@ const getInitialValuesFromFormConfig = config => {
               __guid__: uniqueId(rowId),
             },
           ]
-          set(initialValues[rowId][0], fieldName, value)
+          if (values) {
+            initialValues[rowId] = values[rowId]
+          } else {
+            set(initialValues[rowId][0], fieldName, value)
+          }
         } else {
           set(initialValues, fieldName, value)
         }

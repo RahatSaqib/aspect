@@ -322,6 +322,40 @@ async function createNotificationIfNotCreatedAlready(
   }
 }
 
+async function getNotification(request) {
+  const { params } = request
+  const { id } = params
+
+  const notificationQuery = knex
+    .select(
+      'ntc.name as notificationTypeName',
+      'ntc.externalId as notificationType',
+      'nt.name as name',
+      'nt.filterCondition as filterCondition',
+      'et.subject as emailSubject',
+      'et.body as emailBody',
+      'st.message as smsBody',
+      'wt.url as webUrl',
+      'wt.payload as webBody'
+    )
+    .from('NotificationType as nt')
+    .leftJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
+    .leftJoin('EmailTemplate as et', 'et.id', 'mt.emailTemplateId')
+    .leftJoin('SmsTemplate as st', 'st.id', 'mt.smsTemplateId')
+    .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
+    .where('nt.id', id)
+    .andWhere('ntc.externalId', 'resultBased')
+
+  const notification = await notificationQuery.first()
+
+  return { ok: true, data: notification }
+}
+
 async function getNotifications(request) {
   const { auth, query, params } = request
 
@@ -621,6 +655,7 @@ module.exports = {
   listNotifications,
   onIssueEscalated,
   getNotifications,
+  getNotification,
   shouldNotifyIssue,
   saveNotification,
 }

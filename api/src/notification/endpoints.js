@@ -4,6 +4,7 @@ const {
   listNotifications,
   onIssueEscalated,
   getNotifications,
+  getNotification,
   saveNotification,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
@@ -78,6 +79,20 @@ const routes = [
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/notification/{id}',
+    handler: getNotification,
+    config: {
+      description: 'Get Notification',
+      notes: 'Details of a Notification',
+      validate: {
+        params: {
+          id: Joi.number().integer().positive().required(),
+        },
       },
     },
   },

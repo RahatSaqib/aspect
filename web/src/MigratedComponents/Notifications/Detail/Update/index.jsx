@@ -26,6 +26,7 @@ const AspectNotificationDetail = ({
 }) => {
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
+  const [values, setValues] = useState(false)
 
   const { isLoading, isError, error } = useQuery(
     [NOTIFICATION_DETAIL.KEY, { notificationId }],
@@ -35,11 +36,36 @@ const AspectNotificationDetail = ({
       }),
     {
       onSuccess: resp => {
-        /**
-         * TODO: refactor when notifications will be saveable
-         */
         const { data } = resp
-        const { notificationTypeName, notificationType } = data
+        const {
+          notificationTypeName,
+          notificationType,
+          name,
+          emailSubject,
+          emailBody,
+          smsBody,
+          webUrl,
+          webBody,
+          filterCondition,
+        } = data
+        const filter = JSON.parse(filterCondition)
+        setValues({
+          notificationTypeName,
+          notificationType,
+          name,
+          emailSubject,
+          emailBody,
+          sendEmail: !!(emailSubject || emailBody),
+          smsBody,
+          sendSms: !!smsBody,
+          webUrl,
+          webBody,
+          sendWeb: !!(webUrl || webBody),
+          jobFunctions: filter.jobFunctions,
+          deviceLevelId: filter.deviceLevelId,
+          areaItems: filter.areaItems,
+          result: filter.result,
+        })
         setFormConfig(
           getFormConfigWithData(
             intl,
@@ -52,7 +78,6 @@ const AspectNotificationDetail = ({
       },
     }
   )
-
   if (isError) {
     throw new Error(error)
   }
@@ -60,7 +85,7 @@ const AspectNotificationDetail = ({
   return (
     <Shell>
       {!isLoading && formConfig ? (
-        <FormikProvider config={formConfig}>
+        <FormikProvider config={formConfig} values={values}>
           <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
             <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>

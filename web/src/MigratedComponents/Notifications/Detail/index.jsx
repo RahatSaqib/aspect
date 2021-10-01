@@ -73,6 +73,7 @@ const AspectNotificationDetails = () => {
   }
 
   const props = {
+    notificationId: isNumber(+notificationId) ? +notificationId : undefined,
     notificationType: isNumber(notificationId)
       ? +notificationId
       : notificationId,
