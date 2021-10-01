@@ -18,12 +18,12 @@ async function getNotificationSubscriptions(knex) {
           memo,
           {
             notificationTypeCategoryId,
-            triggerCondition = '{}',
+            triggerCondition,
             filterCondition,
             memoKey,
           }
         ) => {
-          const { action, method } = JSON.parse(triggerCondition)
+          const { action, method } = JSON.parse(triggerCondition || '{}')
           if (action) {
             const elemToAdd = {
               method,

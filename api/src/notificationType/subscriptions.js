@@ -1,5 +1,6 @@
-const { subscriptions: notificationSubscriptions } =
-  require('../notification/endpoints').subscriptions
+const {
+  subscriptions: notificationSubscriptions,
+} = require('../notification/endpoints')
 
 const subscriptions = [
   {
