@@ -629,6 +629,10 @@ const technician = {
       module: 'deviceApiKey',
       activity: 'edit',
     },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
   ],
 }
 
