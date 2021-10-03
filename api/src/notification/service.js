@@ -515,14 +515,16 @@ async function saveNotificationType({
           updatedBy: userId,
         })
         .where({ id: notificationTypeId })
-      ;({ messageTypeId } = await knex('NotificationType')
+      ;({ messageTypeId } = await knex
         .select('messageTypeId')
-        .where({ id: notificationTypeId }))
-      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex(
-        'MessageType'
-      )
-        .where({ id: messageTypeId })
-        .select()
+        .from('NotificationType')
+        .where({ id: notificationTypeId })
+        .first())
+      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex
+        .select('emailTemplateId', 'smsTemplateId', 'webHookTemplateId')
+        .from('MessageType')
+        .where('id', messageTypeId)
+        .first()
 
       /**
        * EmailTemplate
