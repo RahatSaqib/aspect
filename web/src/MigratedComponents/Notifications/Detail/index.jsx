@@ -40,7 +40,7 @@ const AspectNotificationDetails = () => {
   const { mutate: submitNotification } = useMutation(
     ({ values, id }) => {
       let endpoint = NOTIFICATION_DETAIL.ENDPOINT
-      if (notificationId) {
+      if (id) {
         endpoint += `/${id}`
       }
 
@@ -63,22 +63,24 @@ const AspectNotificationDetails = () => {
     }
   )
 
+  const id = isNaN(notificationId) ? undefined : Number(notificationId)
+
   const onSubmit = (formik, meta) => {
     const values = sanitizeFormValues(formik.values, { meta })
     // save only checked Job Functions
     values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
+    // check if init value of th job tags is a string
     values.jobFunctions.map(item => {
       if (item.tags === '') {
         item.tags = []
       }
       return item
     })
-    const id = isNumber(+notificationId) ? +notificationId : undefined
     submitNotification({ values, id })
   }
 
   const props = {
-    notificationId: isNumber(+notificationId) ? +notificationId : undefined,
+    notificationId: id,
     notificationType: isNumber(notificationId)
       ? +notificationId
       : notificationId,
