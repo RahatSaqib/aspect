@@ -8,6 +8,7 @@ const { knex } = require('../../src/db')
 const {
   createMessageContext,
   waitForIdle,
+  dispatchAndWaitForAction,
   waitForAction,
 } = require('../utils/mqUtils')
 const {
@@ -106,6 +107,7 @@ describe('Inventory Stock Issues Endpoint', () => {
       const sampleIds = await knex('Result')
         .whereIn('id', resultIds)
         .pluck('sampleId')
+      await knex('Consumable').where({ name: 'Test Cartridge' })
       await knex('Result').whereIn('id', resultIds).delete()
       await knex('Sample').whereIn('id', sampleIds).delete()
       await knex('Device').whereIn('id', deviceIds).delete()
@@ -227,11 +229,8 @@ describe('Inventory Stock Issues Endpoint', () => {
           quantityOnHand,
         })
         .where({ siteId, consumableId })
-
       // escalate
-      const action = escalateIssues(issueId)
-      await messageContext.escalateIssues(issueId)
-      await waitForAction(action)
+      await dispatchAndWaitForAction(escalateIssues(issueId))
       await waitForIdle(1000)
 
       const issue = await getIssue(knex, issueId)
