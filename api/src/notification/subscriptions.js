@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const actionHandlers = require('./actionHandler')
 
 async function getNotificationSubscriptions(knex) {
