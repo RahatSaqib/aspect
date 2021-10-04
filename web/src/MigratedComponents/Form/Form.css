@@ -18,6 +18,7 @@
 
 .form__sectionItemsContainer {
   padding-bottom: 40px;
+  flex-grow: 1;
 }
 
 .form__sectionItemsContainer.flex-dir-column {
@@ -61,8 +62,25 @@
 .form__row {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
+}
+
+.form__row-buttons {
+  display: flex;
+  flex-direction: row;
+  padding-top: 20px;
+}
+
+.form__button {
+  height: max-content;
+  padding: 3px !important;
+}
+.form__button-close {
+  color: darkred;
+}
+
+.form__button > div {
+  width: 24px;
+  height: 24px;
 }
 
 .form__input {
@@ -110,4 +128,9 @@
   padding: 0;
   margin: 0;
   min-width: 0;
+}
+
+.form_FormControl {
+  position: relative;
+  width: 100%;
 }

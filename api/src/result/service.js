@@ -118,7 +118,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
             title: value.title,
             i18nKey: value.i18nKey,
             formatter: value.formatter,
-            postProcess: (resultData) => JSON.parse(resultData),
+            postProcess: resultData => JSON.parse(resultData),
           })
         }
       })
@@ -292,7 +292,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         })
     })
     // only results which are reportable for either ResultCategory
-    .where((builder) =>
+    .where(builder =>
       builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1)
     )
     .whereIn('rs.externalId', [
@@ -309,7 +309,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
       }
       if (params.patientSample) {
-        queryBuilder.where((builder) =>
+        queryBuilder.where(builder =>
           builder
             .where('sp.externalId', 'like', `%${params.patientSample}%`)
             .orWhere(
@@ -348,7 +348,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         )
 
       if (params.resultCategories) {
-        queryBuilder.where((builder) =>
+        queryBuilder.where(builder =>
           builder
             .whereIn('rc1.externalId', params.resultCategories.split(','))
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
@@ -427,7 +427,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .whereIn(
       'rfu.resultId',
-      data.map((r) => r.id)
+      data.map(r => r.id)
     )
     .select(
       'rfu.resultId',
@@ -450,7 +450,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
     .whereIn(
       'rn.resultId',
-      data.map((r) => r.id)
+      data.map(r => r.id)
     )
     .select(
       'rn.resultId',
@@ -463,7 +463,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rnt.name as noteType'
     )
 
-  const transformedData = _.map(data, (d) => ({
+  const transformedData = _.map(data, d => ({
     id: d.id,
     externalId: d.externalId,
     endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
@@ -477,7 +477,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     resultCategory2ExternalId: d.resultCategory2ExternalId,
     patientData: d.patientData ? JSON.parse(d.patientData) : null,
     resultData: d.resultData
-      ? _.pick(JSON.parse(d.resultData), ['resultText', 'copies', 'log'])
+      ? _.pick(JSON.parse(d.resultData), [
+          'resultText',
+          'copies',
+          'log',
+          'detectedResistance',
+        ])
       : null,
     sample: {
       id: d.sampleId,
@@ -519,11 +524,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       i18nKey: d.resultTreatmentStatusi18nKey,
     },
     followUps: _.sortBy(
-      _.filter(followUps, { resultId: d.id }).map((f) => _.omit(f, 'resultId')),
+      _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['date', 'updatedOn']
     ),
     comments: _.orderBy(
-      _.filter(comments, { resultId: d.id }).map((f) => _.omit(f, 'resultId')),
+      _.filter(comments, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
       ['createdOn'],
       ['desc']
     ),
@@ -552,25 +557,25 @@ async function downloadResultsList(request) {
   const myProm = async () => {
     const idsToUpdate = _.uniq(
       _.map(
-        _.pickBy(results.data, (elem) => elem.workflowStatus.setDelivered),
-        (elem) => elem.id
+        _.pickBy(results.data, elem => elem.workflowStatus.setDelivered),
+        elem => elem.id
       )
     )
-    const idsToBeRegistered = _.uniq(_.map(results.data, (elem) => elem.id))
+    const idsToBeRegistered = _.uniq(_.map(results.data, elem => elem.id))
     if (idsToUpdate && idsToUpdate.length > 0)
       await updateResultWorkflowStatus(idsToUpdate, user.id, 'Delivered')
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
   }
   // eslint-disable-next-line no-console
-  await myProm().catch((err) => console.log(err))
+  await myProm().catch(err => console.log(err))
   return results
 }
 
 async function addResultDownloadLog(idsToBeRegistered, userId) {
   const now = new Date()
 
-  return Promise.each(idsToBeRegistered, async (resultId) =>
+  return Promise.each(idsToBeRegistered, async resultId =>
     knex('ResultDownloadLog').insert({
       resultId,
       createdOn: now,
@@ -588,7 +593,7 @@ async function updateResultWorkflowStatus(
     .where('externalId', resultWorkflowStatusExternalId)
     .first('id')
   const now = new Date()
-  return Promise.each(idsToUpdate, async (resultId) => {
+  return Promise.each(idsToUpdate, async resultId => {
     const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
@@ -673,8 +678,8 @@ async function showFileReferencesById(auth, resultId) {
       'fct.mimeType',
       'fct.mimeSubtype'
     )
-    .then((items) =>
-      items.map((ref) => {
+    .then(items =>
+      items.map(ref => {
         ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
         return ref
       })
@@ -684,10 +689,10 @@ async function showFileReferencesById(auth, resultId) {
 
 function downloadFile(request, reply) {
   return downloadFileAsync(request)
-    .then((path) => {
+    .then(path => {
       reply.file(path)
     })
-    .catch((err) => {
+    .catch(err => {
       logger.error(err)
       throw err
     })
@@ -699,10 +704,10 @@ function downloadFirstImage(request, reply) {
     params: { resultId },
   } = request
   return downloadFileAsync({ auth, params: { resultId, mimeType: 'image' } })
-    .then((path) => {
+    .then(path => {
       reply.file(path)
     })
-    .catch((err) => {
+    .catch(err => {
       logger.error(err)
       throw err
     })
@@ -719,7 +724,7 @@ async function downloadFileAsync({ auth, params }) {
     .join('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
     .where('rf.resultId', resultId)
-    .modify((qb) => {
+    .modify(qb => {
       if (fileReferenceId != null) {
         qb.where('f.id', fileReferenceId)
       }
@@ -779,6 +784,8 @@ async function getResultByResultId(
     ;[data] = results
     if (data.resultData) {
       data.resultData = JSON.parse(data.resultData)
+      // full result text for the result details page
+      data.fullResultText = data.resultData.resultText
     }
     if (data.formSchema) {
       data.formSchema = JSON.parse(data.formSchema)
@@ -851,7 +858,7 @@ async function getResultForStringTemplateProcessing(
         'pd.partnerId'
       )
     })
-    .leftJoin('PartnerAssay as pa', (qb) => {
+    .leftJoin('PartnerAssay as pa', qb => {
       qb.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
     .leftJoin('PatientCase as c', 'r.patientCaseId', 'c.id')
@@ -1396,7 +1403,7 @@ async function updateFormDataByResultId(
       return undefinedFieldMessage
     }
     const fieldValidationErrors = []
-    _.each(Object.keys(newFormData), (formFieldKey) => {
+    _.each(Object.keys(newFormData), formFieldKey => {
       const formFieldValue = _.get(newFormData, formFieldKey)
       const formFieldSchema = _.get(formSchema, ['fields', formFieldKey])
       if (!_.isNil(formFieldValue)) {
@@ -1441,7 +1448,7 @@ async function updateFormDataByResultId(
     })
     const { id: currentUserId } = await getUser(auth.credentials.name)
     let deviceLogId
-    await messageContext.transact(async (knex) => {
+    await messageContext.transact(async knex => {
       const updatedResult = {
         formData: JSON.stringify(mergedFormData),
         updatedBy: currentUserId,
@@ -1594,7 +1601,7 @@ async function listFollowUps(request) {
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin('ResultCategory as rc1', 'fua.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'fua.resultCategory2', 'rc2.id')
-    .where((queryBuilder) => {
+    .where(queryBuilder => {
       queryBuilder.where('fua.partnerId', dataConstraints.partner.id)
       if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
 
@@ -1647,7 +1654,7 @@ async function listFollowUps(request) {
   const data = await queryBuilder
 
   // convert data to nested JSON
-  const followUps = _.uniqBy(data, 'id').map((f) =>
+  const followUps = _.uniqBy(data, 'id').map(f =>
     Object.assign(
       _.pick(f, ['id', 'name', 'externalId', 'i18nKey']),
       {
@@ -1660,9 +1667,9 @@ async function listFollowUps(request) {
       },
       {
         assays: _.uniqBy(
-          data.filter((d) => d.id === f.id && d.assayId),
+          data.filter(d => d.id === f.id && d.assayId),
           'assayId'
-        ).map((a) =>
+        ).map(a =>
           Object.assign(
             _.mapKeys(
               _.pick(a, [
@@ -1677,13 +1684,13 @@ async function listFollowUps(request) {
             {
               resultCategories: _.uniqBy(
                 data.filter(
-                  (d) =>
+                  d =>
                     d.id === f.id &&
                     d.assayId === a.assayId &&
                     d.resultCategory1Id
                 ),
-                (r) => `${r.resultCategory1Id}-${r.resultCategory2Id}`
-              ).map((r) => ({
+                r => `${r.resultCategory1Id}-${r.resultCategory2Id}`
+              ).map(r => ({
                 category1: _.mapKeys(
                   _.pick(r, [
                     'resultCategory1Id',
@@ -1869,12 +1876,12 @@ async function updateTreatmentStatusBasedOnFollowUps(
     .where('resultId', result.data.id)
     .select('f.externalId', 't.externalId as followUpTypeExternalId')
   let treatmentStatusExternalId = 'AwaitingTreatment'
-  if (_.find(followUps, (f) => f.followUpTypeExternalId === 'treatment')) {
+  if (_.find(followUps, f => f.followUpTypeExternalId === 'treatment')) {
     treatmentStatusExternalId = 'OnTreatment'
   } else if (
     _.find(
       followUps,
-      (f) => f.followUpTypeExternalId === 'outcome' && f.externalId !== 'cured'
+      f => f.followUpTypeExternalId === 'outcome' && f.externalId !== 'cured'
     )
   ) {
     treatmentStatusExternalId = 'NotPossible'
@@ -2185,7 +2192,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
-    .modify((b) => {
+    .modify(b => {
       if (query.reportableSiteId || query.reportableSiteName) {
         /**
          * onlyEverTransferred filter can only be applied if
@@ -2204,8 +2211,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
           const siteOperationAndValue = query.reportableSiteId
             ? `= ${query.reportableSiteId}`
             : `IN (
-                SELECT s_transfer.id 
-                FROM Site s_transfer 
+                SELECT s_transfer.id
+                FROM Site s_transfer
                 WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
               )`
           b.whereRaw(
@@ -2266,7 +2273,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         /**
          * If treatment filters are required, then we get only the results delivered and downloaded in the reporter app
          */
-        queryBuilder.andWhere((b) => {
+        queryBuilder.andWhere(b => {
           b.where('rca.requiresTreatment', true).orWhere(
             'rca2.requiresTreatment',
             true
@@ -2275,7 +2282,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
 
       if (params.patientOrResearchId) {
-        queryBuilder.where((builder) =>
+        queryBuilder.where(builder =>
           builder
             .whereRaw(
               'LOWER(JSON_EXTRACT(r.patientData, "$.id")) like LOWER(JSON_QUOTE(?))',
@@ -2285,7 +2292,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         )
       }
       if (params.treatmentStatus === 'AwaitingTreatment') {
-        queryBuilder.where((builder) =>
+        queryBuilder.where(builder =>
           builder
             .where('rts.externalId', params.treatmentStatus)
             .orWhereNull('rts.externalId')
@@ -2373,7 +2380,7 @@ async function clinicalIndicatorAggregations(request) {
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
     })
-    .modify((qb) => {
+    .modify(qb => {
       if (query.minDate) {
         qb.where('r.endedOn', '>=', query.minDate)
       }
@@ -2434,8 +2441,8 @@ async function processGroupedQuery(resultQuery, groupBy) {
 
   const reservedWords = ['day', 'month', 'week', 'year']
 
-  groupBy.forEach((g) => {
-    resultQuery.modify((qb) => {
+  groupBy.forEach(g => {
+    resultQuery.modify(qb => {
       const name = reservedWords.includes(g) ? `${g}_value` : g
       qb.select(paramToDb[g])
       qb.groupBy(name)
@@ -2443,8 +2450,8 @@ async function processGroupedQuery(resultQuery, groupBy) {
     })
   })
 
-  const data = (await resultQuery).map((item) => {
-    groupBy.forEach((g) => {
+  const data = (await resultQuery).map(item => {
+    groupBy.forEach(g => {
       if (reservedWords.includes(g)) {
         // set value for originally intended prop name and delete temporal prop
         item[g] = item[`${g}_value`]
@@ -2484,7 +2491,7 @@ async function followUpAggregations(request) {
 
   // get followUpType from query, or set it to 1st item ('treatment') from followUpTypes
   const followUpTypes = (await knex('FollowUpType').select('externalId')).map(
-    (x) => x.externalId
+    x => x.externalId
   )
   const [treatmentFollowUpType] = followUpTypes
   let followUpType = query.followUpType || treatmentFollowUpType
@@ -2537,7 +2544,7 @@ async function followUpAggregations(request) {
       partnerId: 'g.partnerId',
       siteName: 's.name',
     })
-    .modify((qb) => {
+    .modify(qb => {
       if (assay) {
         qb.whereIn('a.externalId', assay)
       }

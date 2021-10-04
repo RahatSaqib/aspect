@@ -9,6 +9,7 @@ import classnames from 'classnames/bind'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
+import { useFormikContext } from 'formik'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
@@ -18,7 +19,6 @@ import {
   getDateObject,
 } from '../../../shared/utils/dateFormat'
 import { useAuthState } from '../../../Providers/AuthProvider'
-import { useFormikState } from '../Formik/Context'
 
 import styles from './DatePicker.css'
 
@@ -99,7 +99,7 @@ const AspectDatePickerBase = props => {
 }
 
 const AspectDatePicker = props => {
-  const { updateField } = useFormikState()
+  const { updateField } = useFormikContext()
   const { displayPreferences, culture } = useAuthState()
   const { formik, classNames, controlType, ...rest } = props
   const { values } = formik

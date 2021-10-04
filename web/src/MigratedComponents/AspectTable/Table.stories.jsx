@@ -9,6 +9,7 @@ const { data } = mockDatafetch(totalDataCount)
 
 const baseConfig = () => ({
   name: 'notification',
+  namePlural: 'notifications',
   columns: [
     {
       key: 'lastTriggeredOn',

@@ -5,13 +5,13 @@ const hapiLogger = {
   version: '1.0.0',
   register: async server => {
     server.ext('onRequest', (request, reply) => {
-      logger.http(`${request.method.toString().toUpperCase()} ${request.url}`)
+      logger.info(`${request.method.toString().toUpperCase()} ${request.url}`)
       if (request.params)
-        logger.http(request.params, { reLabel: 'aspect:api:request:params' })
+        logger.info(request.params, { reLabel: 'aspect:api:request:params' })
       if (request.headers)
-        logger.http(request.headers, { reLabel: 'aspect:api:headers' })
+        logger.info(request.headers, { reLabel: 'aspect:api:headers' })
       if (request.payload)
-        logger.http(request.payload, { reLabel: 'aspect:request:payload' })
+        logger.info(request.payload, { reLabel: 'aspect:request:payload' })
 
       return reply.continue
     })

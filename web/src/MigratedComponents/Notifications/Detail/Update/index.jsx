@@ -7,10 +7,6 @@ import { useQuery } from 'react-query'
 
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import { FormikProvider } from '../../../Form/Formik/Context'
-import {
-  getInitialValuesFromFormConfig,
-  mergeFormConfigWithData,
-} from '../../../Form/Formik/Helpers'
 
 import AspectForm from '../../../Form'
 import FormActions from '../../../Form/formActions'
@@ -18,13 +14,17 @@ import Shell from '../../../Shell'
 import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
-import getFormConfig from '../../Forms/editConfig'
 import { NOTIFICATION_DETAIL } from '../../../QueryFetch/Notification'
 import fetchWrapperForQueries from '../../../QueryFetch'
-import messages from '../messages'
+import { getFormConfigWithData } from '../utils'
+import validationSchema from '../../Forms/validation'
 
-const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
-  const { formatMessage } = useI18n()
+const AspectNotificationDetail = ({
+  notificationId,
+  jobFunctions,
+  onSubmit,
+}) => {
+  const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
 
   const { isLoading, isError, error } = useQuery(
@@ -35,22 +35,19 @@ const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
       }),
     {
       onSuccess: resp => {
+        /**
+         * TODO: refactor when notifications will be saveable
+         */
         const { data } = resp
         const { notificationTypeName, notificationType } = data
-
-        const initialValues = {
-          ...getInitialValuesFromFormConfig(formSchema),
-          notificationTypeName, // to display as read-only field
-          notificationType, // to keep in formik.values as hidden field
-        }
-
-        const formSchema = getFormConfig(
-          formatMessage,
-          notificationType,
-          jobFunctions
-        )
         setFormConfig(
-          mergeFormConfigWithData(initialValues, formSchema, messages)
+          getFormConfigWithData(
+            intl,
+            jobFunctions,
+            notificationType,
+            notificationTypeName,
+            validationSchema(intl.formatMessage)
+          )
         )
       },
     }
@@ -65,7 +62,7 @@ const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
       {!isLoading && formConfig ? (
         <FormikProvider config={formConfig}>
           <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
-            <FormActions config={formConfig} />
+            <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>
             <AspectForm config={formConfig} />
@@ -82,6 +79,7 @@ const AspectNotificationDetail = ({ notificationId, jobFunctions }) => {
 AspectNotificationDetail.propTypes = {
   notificationId: PropTypes.number.isRequired,
   jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default AspectNotificationDetail

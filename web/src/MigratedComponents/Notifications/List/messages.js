@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  notificationsTableName: {
+    id: 'pages.Notifications.table.notificationsTableName',
+    defaultMessage: 'notification',
+  },
+  notificationsTableNamePlural: {
+    id: 'pages.Notifications.table.notificationsTableNamePlural',
+    defaultMessage: 'notifications',
+  },
   notificationsTableHeaderName: {
     id: 'pages.Notifications.table.nameHeader',
     defaultMessage: 'Name',
@@ -11,6 +19,10 @@ export const messages = defineMessages({
       one {# Name}
       other {# Names}
     }`,
+  },
+  notificationsTableHeaderCategory: {
+    id: 'pages.Notifications.table.categoryHeader',
+    defaultMessage: 'Category',
   },
   notificationsTableHeaderLastTriggered: {
     id: 'pages.Notifications.table.lastTriggeredHeader',

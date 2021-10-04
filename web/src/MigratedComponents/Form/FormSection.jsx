@@ -1,24 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
+import { FieldArray, useFormikContext } from 'formik'
+import range from 'lodash/range'
 
-import { useFormikState } from './Formik/Context'
-import FormItem from './FormItem'
+import FormSectionRow from './FormSectionRow'
 import messagesBase from './messages'
-import styles from './Form.css'
-
-const cssClasses = classnames.bind(styles)
 
 const getVisibleRows = (rows, formik) => {
   return rows.map(row => {
-    if (row.visibleIf && !row.visibleIf(formik.values)) {
+    const { values } = formik
+    if (row.visibleIf && !row.visibleIf(values)) {
       // row is hidden explicitly
       return false
     }
     // row is visible if at least one item is visible
-    const itemsVisible = row.items.map(item =>
-      item.visibleIf ? item.visibleIf(formik.values) : true
+    const { isMulti, id: rowId } = row
+    const itemsVisible = row.items.map(({ visibleIf }) =>
+      range(isMulti ? values[rowId].length : 1)
+        .map(subRowIndex => (visibleIf ? visibleIf(values, subRowIndex) : true))
+        .includes(true)
     )
     return itemsVisible.includes(true)
   })
@@ -30,8 +31,9 @@ const FormSection = ({
   messages,
   rows = [],
   visibleIf,
+  parentKey,
 }) => {
-  const { formik } = useFormikState()
+  const { formik } = useFormikContext()
 
   // check if section is visible
   const isSectionVisible = visibleIf ? visibleIf(formik.values) : true
@@ -41,26 +43,38 @@ const FormSection = ({
   return isSectionVisible ? (
     <Grid item xs={fullWidth ? 12 : 10}>
       {rows &&
-        rows.map((row, rowIndex) =>
-          visibleRows[rowIndex] === true ? (
-            <Grid
-              key={`row-${rowIndex.toString()}`}
-              container
-              className={cssClasses('form__sectionItemsContainer', {
-                [classNames.container]: !!classNames.container,
-              })}
-            >
-              {row.items &&
-                row.items.map((item, itemIndex) => (
-                  <FormItem
-                    key={`row-${rowIndex.toString()}-item-${itemIndex.toString()}`}
-                    {...item}
-                    messages={messages}
-                  />
-                ))}
-            </Grid>
-          ) : null
-        )}
+        rows.map((row, rowIndex) => {
+          const key = `${parentKey}-${row.id}`
+          if (visibleRows[rowIndex] === true) {
+            const { items, isMulti } = row
+            const commonProps = { rowIndex, items, classNames, messages }
+            if (isMulti) {
+              const subRows = formik.values[row.id]
+              return (
+                <FieldArray
+                  key={key}
+                  name={row.id}
+                  render={arrayHelpers =>
+                    subRows.map(({ __guid__: subRowKey }, subRowIndex) => (
+                      <FormSectionRow
+                        {...commonProps}
+                        arrayHelpers={arrayHelpers}
+                        isMulti
+                        key={subRowKey}
+                        parentKey={subRowKey}
+                        rowId={row.id}
+                        showDeleteButton={subRows.length > 1}
+                        subRowIndex={subRowIndex}
+                      />
+                    ))
+                  }
+                />
+              )
+            }
+            return <FormSectionRow {...commonProps} key={key} parentKey={key} />
+          }
+          return null
+        })}
     </Grid>
   ) : null
 }
@@ -70,6 +84,7 @@ FormSection.defaultProps = {
   fullWidth: false,
   messages: messagesBase,
   visibleIf: () => true,
+  parentKey: '',
 }
 
 FormSection.propTypes = {
@@ -78,6 +93,7 @@ FormSection.propTypes = {
   rows: PropTypes.oneOfType([PropTypes.array]).isRequired,
   messages: PropTypes.oneOfType([PropTypes.object]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
+  parentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
 export default FormSection

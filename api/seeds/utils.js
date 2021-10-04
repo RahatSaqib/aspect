@@ -47,6 +47,7 @@ const tables = [
   ['Permission', seedStaticDataPermission],
   ['TimeZone', 'id'],
   'DeviceMaintenanceStatus',
+  'NotificationTypeCategory',
 ]
 
 const uniqueKeys = {
@@ -522,7 +523,11 @@ async function getSeedsFolder(table, overridedSeeds) {
   return folder
 }
 
-async function seedTable(knex, fixtureItem, overridedSeeds) {
+async function seedTable(
+  knex,
+  fixtureItem,
+  overridedSeeds = { seedsFolder: null, staticDataFiles: [] }
+) {
   const table = _.isArray(fixtureItem) ? fixtureItem[0] : fixtureItem
   const keyColumn = _.isArray(fixtureItem) ? fixtureItem[1] : 'externalId'
 
@@ -583,10 +588,10 @@ async function warnNotExistingOverridedSeeds(overridedSeeds) {
   }
 }
 
-async function seedStaticData(knex, overridedSeeds) {
-  if (!overridedSeeds)
-    overridedSeeds = { seedsFolder: null, staticDataFiles: [] }
-
+async function seedStaticData(
+  knex,
+  overridedSeeds = { seedsFolder: null, staticDataFiles: [] }
+) {
   for (const tableItem of tables) {
     // eslint-disable-next-line no-await-in-loop
     await seedTable(knex, tableItem, overridedSeeds)
@@ -2490,13 +2495,21 @@ async function insertSites(knex, partnerId, countryId, sites) {
     const existingSite = await knex('Site')
       .where('externalId', site.externalId)
       .first('id')
-    const { id: siteGeographyId } = await knex('Geography as g')
+
+    const geography = await knex('Geography as g')
       .join('State as s', 'g.stateId', 's.id')
       .join('Lga as l', 'g.lgaId', 'l.id')
       .where({ countryId })
       .where('s.name', site.stateName)
       .where('l.name', site.lgaName)
       .first('g.id')
+
+    if (!geography)
+      throw new Error(
+        `Missing geography for state ${site.stateName} and lga ${site.lgaName}`
+      )
+
+    const { id: siteGeographyId } = geography
     if (existingSite) {
       siteId = existingSite.id
       await knex('Site').where('id', siteId).update({

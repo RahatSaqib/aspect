@@ -137,4 +137,144 @@ export default defineMessages({
     id: 'legends.Unknown.resultCategoryPresumptivePositive',
     defaultMessage: 'Presumptive Positive',
   },
+
+  /**
+   * ResultCategoryGroups
+   */
+  gxEbolaGPDetectedNPDetected: {
+    id: 'resultCategoryGroup.gxEbolaGPDetectedNPDetected',
+    defaultMessage: 'GP Detected - NP Detected',
+  },
+  gxEbolaGPDetected: {
+    id: 'resultCategoryGroup.gxEbolaGPDetected',
+    defaultMessage: 'GP Detected',
+  },
+  gxEbolaNPDetected: {
+    id: 'resultCategoryGroup.gxEbolaNPDetected',
+    defaultMessage: 'NP Detected',
+  },
+  gxEbolaGPNotDetectedNPNotDetected: {
+    id: 'resultCategoryGroup.gxEbolaGPNotDetectedNPNotDetected',
+    defaultMessage: 'GP Not Detected - NP Not Detected',
+  },
+  gxEbolaGPNotDetectedNPDetected: {
+    id: 'resultCategoryGroup.gxEbolaGPNotDetectedNPDetected',
+    defaultMessage: 'GP Not Detected - NP Detected',
+  },
+  gxEbolaGPDetectedNPNotDetected: {
+    id: 'resultCategoryGroup.gxEbolaGPDetectedNPNotDetected',
+    defaultMessage: 'GP Detected - NP Not Detected',
+  },
+  gxEbolaGPInvalid: {
+    id: 'resultCategoryGroup.gxEbolaGPInvalid',
+    defaultMessage: 'GP Invalid',
+  },
+  gxEbolaGPError: {
+    id: 'resultCategoryGroup.gxEbolaGPError',
+    defaultMessage: 'Error',
+  },
+  gxEbolaGPNoResult: {
+    id: 'resultCategoryGroup.gxEbolaGPNoResult',
+    defaultMessage: 'GP No Result',
+  },
+  gxMtbRifMtbNotDetected: {
+    id: 'resultCategoryGroup.gxMtbRifMtbNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  gxMtbRifMtbDetected: {
+    id: 'resultCategoryGroup.gxMtbRifMtbDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  gxMtbRifMtbDetectedRifDetected: {
+    id: 'resultCategoryGroup.gxMtbRifMtbDetectedRifDetected',
+    defaultMessage: 'MTB Detected RIF Detected',
+  },
+  gxMtbRifMtbDetectedRifNotDetected: {
+    id: 'resultCategoryGroup.gxMtbRifMtbDetectedRifNotDetected',
+    defaultMessage: 'MTB Detected RIF Not Detected',
+  },
+  gxMtbRifMtbDetectedRifIndeterminate: {
+    id: 'resultCategoryGroup.gxMtbRifMtbDetectedRifIndeterminate',
+    defaultMessage: 'MTB Detected RIF Indeterminate',
+  },
+  gxMtbRifMtbInvalid: {
+    id: 'resultCategoryGroup.gxMtbRifMtbInvalid',
+    defaultMessage: 'MTB Invalid',
+  },
+  gxMtbRifMtbError: {
+    id: 'resultCategoryGroup.gxMtbRifMtbError',
+    defaultMessage: 'MTB Error',
+  },
+  gxMtbRifMtbNoResult: {
+    id: 'resultCategoryGroup.gxMtbRifMtbNoResult',
+    defaultMessage: 'MTB No Result',
+  },
+  gxMtbRifUltraMtbNotDetected: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  gxMtbRifUltraMtbTraceDetected: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbTraceDetected',
+    defaultMessage: 'MTB Trace Detected',
+  },
+  gxMtbRifUltraMtbDetected: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  gxMtbRifUltraMtbDetectedRifNotDetected: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbDetectedRifNotDetected',
+    defaultMessage: 'MTB Detected - Rif Not Detected',
+  },
+  gxMtbRifUltraMtbDetectedRifDetected: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbDetectedRifDetected',
+    defaultMessage: 'MTB Detected - Rif Detected',
+  },
+  gxMtbRifUltraMtbDetectedRifIndeterminate: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbDetectedRifIndeterminate',
+    defaultMessage: 'MTB Detected - Rif Indeterminate',
+  },
+  gxMtbRifUltraMtbInvalid: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbInvalid',
+    defaultMessage: 'MTB Invalid',
+  },
+  gxMtbRifUltraMtbError: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbError',
+    defaultMessage: 'MTB Error',
+  },
+  gxMtbRifUltraMtbNoResult: {
+    id: 'resultCategoryGroup.gxMtbRifUltraMtbNoResult',
+    defaultMessage: 'MTB No Result',
+  },
+  gxMtbXdrMtbNotDetected: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  gxMtbXdrMtbDetected: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  gxMtbXdrMtbDetectedXdrDetected: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedXdrDetected',
+    defaultMessage: 'MTB Detected XDR Detected',
+  },
+  gxMtbXdrMtbDetectedXdrNotDetected: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedXdrNotDetected',
+    defaultMessage: 'MTB Detected XDR Not Detected',
+  },
+  gxMtbXdrMtbDetectedXdrIndeterminate: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedXdrIndeterminate',
+    defaultMessage: 'MTB Detected XDR Indeterminate',
+  },
+  gxMtbXdrMtbInvalid: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbInvalid',
+    defaultMessage: 'MTB Invalid',
+  },
+  gxMtbXdrMtbError: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbError',
+    defaultMessage: 'MTB Error',
+  },
+  gxMtbXdrMtbNoResult: {
+    id: 'resultCategoryGroup.gxMtbXdrMtbNoResult',
+    defaultMessage: 'MTB No Result',
+  },
 })

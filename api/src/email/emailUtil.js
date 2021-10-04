@@ -1,20 +1,21 @@
 const _ = require('lodash')
 const nodemailer = require('nodemailer')
+const config = require('../config')
 
 async function sendEmail(to, subject, htmlContent, textContent, attachments) {
   const transporter = nodemailer.createTransport(
     {
-      host: process.env['email.host'],
-      port: process.env['email.port'] || 465,
+      host: config.email.host,
+      port: config.email.port,
       auth: {
-        user: process.env['email.user'],
-        pass: process.env['email.password'],
+        user: config.email.user,
+        pass: config.email.password,
       },
     },
     {
       from: {
         name: 'Aspect',
-        address: process.env['email.fromEmail'],
+        address: config.email.fromEmail,
       },
     }
   )

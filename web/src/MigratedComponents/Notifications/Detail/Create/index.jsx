@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import { FormikProvider } from '../../../Form/Formik/Context'
-import {
-  getInitialValuesFromFormConfig,
-  mergeFormConfigWithData,
-} from '../../../Form/Formik/Helpers'
 
 import AspectForm from '../../../Form'
 import FormActions from '../../../Form/formActions'
@@ -16,39 +12,30 @@ import Shell from '../../../Shell'
 import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import ShellFooter from '../../../Shell/Footer'
-import getFormConfig from '../../Forms/editConfig'
-import { getNotificationMeta } from '../../List/config'
-import messages from '../messages'
+import { getFormConfigWithData } from '../utils'
+import validationSchema from '../../Forms/validation'
 
-const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
+const AspectNotificationDetail = ({
+  notificationType,
+  jobFunctions,
+  onSubmit,
+}) => {
   const intl = useI18n()
-  const [formConfig, setFormConfig] = useState(false)
-  useEffect(() => {
-    if (!formConfig) {
-      const formSchema = getFormConfig(
-        intl.formatMessage,
-        notificationType,
-        jobFunctions
-      )
-      const { name, value } = getNotificationMeta(notificationType, intl)
-      const initialValues = {
-        ...getInitialValuesFromFormConfig(formSchema),
-        notificationTypeName: name, // to display as read-only field
-        notificationType: value, // to keep in formik.values as hidden field
-      }
-      setFormConfig(
-        mergeFormConfigWithData(initialValues, formSchema, messages)
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formConfig, intl, notificationType])
-
+  const [formConfig] = useState(
+    getFormConfigWithData(
+      intl,
+      jobFunctions,
+      notificationType,
+      '',
+      validationSchema(intl.formatMessage)
+    )
+  )
   return (
     <Shell>
       {formConfig ? (
         <FormikProvider config={formConfig}>
           <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
-            <FormActions config={formConfig} />
+            <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>
             <AspectForm config={formConfig} />
@@ -65,6 +52,7 @@ const AspectNotificationDetail = ({ notificationType, jobFunctions }) => {
 AspectNotificationDetail.propTypes = {
   notificationType: PropTypes.string.isRequired,
   jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default AspectNotificationDetail

@@ -1,16 +1,18 @@
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
+import isArray from 'lodash/isArray'
+import isEqual from 'lodash/isEqual'
+import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
-
-import map from 'lodash/map'
 import union from 'lodash/union'
-import filter from 'lodash/filter'
+import uniqWith from 'lodash/uniqWith'
+
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import { SITE_ALL } from '../../QueryFetch/Site'
-import { getBaseData, validationBase } from '../../Form/Formik/Helpers'
+import { getBaseData, getBaseValidation } from '../../Form/Formik/Helpers'
 import PERSON_LIST from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
 
@@ -46,7 +48,7 @@ const getSectionsBase = formatMessage => [
         ],
       },
       {
-        id: 0,
+        id: 1,
         items: [
           {
             id: 'name',
@@ -55,7 +57,6 @@ const getSectionsBase = formatMessage => [
             },
             fullWidth: true,
             labelI18nKey: 'notificationTitle',
-            validate: validationBase.required,
           },
         ],
       },
@@ -67,7 +68,8 @@ const getSectionsBase = formatMessage => [
     labelI18nKey: 'whenResultIs',
     rows: [
       {
-        id: 0,
+        id: 'result',
+        isMulti: true,
         items: [
           {
             id: 'assayId',
@@ -85,7 +87,6 @@ const getSectionsBase = formatMessage => [
               placeholder: formatMessage(messages.assayPlaceholder),
             },
             labelI18nKey: 'assayTitle',
-            validate: validationBase.required,
           },
           {
             id: 'resultCategoryId',
@@ -93,31 +94,41 @@ const getSectionsBase = formatMessage => [
               component: 'select',
               endpoint: ASSAY_LIST.ENDPOINT,
               hideIfNoOptions: false,
+              isMulti: true,
               queryKey: ASSAY_LIST.KEY,
-              normalizeLoadedData: (response, formik) => {
+              normalizeLoadedData: (response, formik, subRowIndex) => {
                 let options = []
-                const { assayId: selectedAssayId } = formik.values
+                const { assayId: selectedAssayId } =
+                  formik.values.result[subRowIndex]
                 if (selectedAssayId) {
                   const { ok, data } = response
                   if (ok === true) {
                     const selectedAssay = data.find(
                       ({ externalId }) => externalId === selectedAssayId
                     )
-                    const { resultCategories = [] } = selectedAssay || {}
+                    const { resultCategories = [], resultCategoryGroups } =
+                      selectedAssay || {}
+                    const scope =
+                      isArray(resultCategoryGroups) &&
+                      !isEmpty(resultCategoryGroups)
+                        ? 'ResultCategoryGroups'
+                        : 'ResultCategories'
                     options = getBaseData(
-                      resultCategories,
+                      scope === 'ResultCategoryGroups'
+                        ? resultCategoryGroups
+                        : resultCategories,
                       formatMessage,
                       messages
                     )
+                    options = options.map(it => ({ ...it, scope }))
                   }
                 }
                 return options
               },
-              dependencies: ['assayId'],
+              dependencies: ['result[{{subRowIndex}}].assayId'],
               placeholder: formatMessage(messages.resultPlaceholder),
             },
             labelI18nKey: 'resultTitle',
-            validate: validationBase.required,
           },
         ],
       },
@@ -129,7 +140,7 @@ const getSectionsBase = formatMessage => [
     labelI18nKey: 'fromThisDevice',
     rows: [
       {
-        id: 0,
+        id: 10,
         items: [
           {
             id: 'deviceLevelId',
@@ -143,12 +154,14 @@ const getSectionsBase = formatMessage => [
                 },
                 { label: formatMessage(messages.AreaState), value: 'state' },
                 { label: formatMessage(messages.AreaLGA), value: 'lga' },
-                { label: formatMessage(messages.AreaLaboratory), value: 'lab' },
+                {
+                  label: formatMessage(messages.AreaLaboratory),
+                  value: 'lab',
+                },
               ],
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
             },
             label: formatMessage(messages.SelectAreaTitle),
-            validate: validationBase.required,
           },
           {
             id: 'areaItems',
@@ -235,7 +248,6 @@ const getSectionsBase = formatMessage => [
                   )
                 : '-'
             },
-            validate: validationBase.required,
             visibleIf: values => {
               const { deviceLevelId } = values
               return deviceLevelId && deviceLevelId !== 'national'
@@ -251,7 +263,7 @@ const getSectionsBase = formatMessage => [
     labelI18nKey: 'send',
     rows: [
       {
-        id: 0,
+        id: 20,
         items: [
           {
             id: 'sendEmail',
@@ -260,7 +272,6 @@ const getSectionsBase = formatMessage => [
             },
             classNames: checkboxClassNames,
             initialValue: true,
-            // label: 'Email',
             labelI18nKey: 'email',
           },
           {
@@ -269,7 +280,6 @@ const getSectionsBase = formatMessage => [
               component: 'checkbox',
             },
             classNames: checkboxClassNames,
-            // label: 'SMS',
             labelI18nKey: 'sms',
           },
           {
@@ -278,7 +288,6 @@ const getSectionsBase = formatMessage => [
               component: 'checkbox',
             },
             classNames: checkboxClassNames,
-            // label: 'Web',
             labelI18nKey: 'web',
           },
         ],
@@ -287,38 +296,37 @@ const getSectionsBase = formatMessage => [
       // Email
       // -----------------------------------
       {
-        id: 1,
+        id: 30,
         items: [
           {
             id: 'emailSubject',
             controlType: {
-              component: 'textField',
+              component: 'placeholderTextField',
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
             },
             type: 'text',
             labelI18nKey: 'emailSubject',
-            validate: validationBase.required,
             visibleIf: values => values.sendEmail === true,
           },
         ],
       },
       {
-        id: 2,
+        id: 40,
         items: [
           {
             id: 'emailBody',
             controlType: {
-              component: 'textArea',
+              component: 'placeholderTextArea',
               rowsMax: 10,
+              rows: 4,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
             },
             type: 'text',
             labelI18nKey: 'emailBody',
-            validate: validationBase.required,
             visibleIf: values => values.sendEmail === true,
           },
         ],
@@ -327,19 +335,19 @@ const getSectionsBase = formatMessage => [
       // SMS
       // -----------------------------------
       {
-        id: 3,
+        id: 50,
         items: [
           {
             id: 'smsBody',
             controlType: {
-              component: 'textArea',
+              component: 'placeholderTextArea',
               rowsMax: 5,
+              rows: 2,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'smsBody',
-            validate: validationBase.required,
             visibleIf: values => values.sendSms === true,
           },
         ],
@@ -348,19 +356,36 @@ const getSectionsBase = formatMessage => [
       // Web
       // -----------------------------------
       {
-        id: 4,
+        id: 60,
+        items: [
+          {
+            id: 'webUrl',
+            controlType: {
+              component: 'textField',
+            },
+            classNames: {
+              itemContainer: cssClasses('item-in-group-container'),
+            },
+            type: 'text',
+            labelI18nKey: 'webUrl',
+            visibleIf: values => values.sendWeb === true,
+          },
+        ],
+      },
+      {
+        id: 61,
         items: [
           {
             id: 'webBody',
             controlType: {
-              component: 'textArea',
+              component: 'placeholderTextArea',
               rowsMax: 10,
+              rows: 3,
             },
             classNames: {
               itemContainer: cssClasses('item-in-group-container'),
             },
             labelI18nKey: 'webBody',
-            validate: validationBase.required,
             visibleIf: values => values.sendWeb === true,
           },
         ],
@@ -370,75 +395,97 @@ const getSectionsBase = formatMessage => [
 ]
 
 const getConfig = (formatMessage, notificationType, jobFunctions) => {
+  const validationBase = getBaseValidation(formatMessage, messages)
   const jobFunctionsRows = {
     id: 'toAnyOfTheseJobFunctions',
     label: 'toAnyOfTheseJobFunctions',
     labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
-      ...map(jobFunctions, jf => ({
-        id: `$jf${jf.id}`,
-        items: [
-          {
-            id: `jf${jf.id}`,
-            controlType: {
-              component: 'checkbox',
-            },
-            classNames: {
-              controlContainer: cssClasses('checkbox-container'),
-              itemContainer: cssClasses('max-width-100pcr'),
-            },
-            label: jf.name,
-          },
-        ],
-      })),
-      {
-        id: 0,
-        items: [
-          {
-            id: 'jfTags',
-            controlType: {
-              component: 'select',
-              endpoint: PERSON_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: PERSON_LIST.KEY,
-              normalizeLoadedData: response => {
-                const { ok, data } = response
-                let options = []
-                if (ok === true) {
-                  let tags = union(
-                    ...data.map(person => {
-                      return (person.tags || '').split(';')
-                    })
-                  )
-                    .map(tag => tag.trim())
-                    .filter(tag => tag !== '')
-                  tags = [...new Set(tags)]
-                  options = tags.map(tag => ({ label: tag, value: tag }))
+      ...reduce(
+        jobFunctions,
+        (acc, jf, index) => {
+          acc = [
+            ...acc,
+            {
+              id: `row-jf${jf.id}-name`,
+              presetInitialValues: initialValues => {
+                const jobFunctions = initialValues.jobFunctions || []
+                jobFunctions[index] = jobFunctions[index] || {
+                  jobFunctionId: jf.id,
                 }
-                return options
+                initialValues.jobFunctions = jobFunctions
               },
-              isMulti: true,
+              items: [
+                {
+                  id: `jobFunctions[${index}].checked`,
+                  controlType: {
+                    component: 'checkbox',
+                  },
+                  classNames: {
+                    controlContainer: cssClasses('checkbox-container'),
+                    itemContainer: cssClasses('max-width-100pcr'),
+                  },
+                  label: jf.name,
+                  onAfterChange: formik => {
+                    formik.setFieldTouched(`jobFunctions[0].checked`, true)
+                  },
+                },
+              ],
             },
-            classNames: {
-              // container: cssClasses('tags-container'),
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+            {
+              id: `row-jf${jf.id}-tags`,
+              items: [
+                {
+                  id: `jobFunctions[${index}].tags`,
+                  initialValue: [],
+                  controlType: {
+                    component: 'select',
+                    endpoint: PERSON_LIST.ENDPOINT,
+                    hideIfNoOptions: false,
+                    queryKey: PERSON_LIST.KEY,
+                    normalizeLoadedData: response => {
+                      const { ok, data } = response
+                      let options = []
+                      if (ok === true) {
+                        let personTags = union(
+                          ...data.map(({ tagDetails }) => tagDetails)
+                        )
+                        personTags = uniqWith(personTags, isEqual)
+                        options = personTags.map(({ tagName, tagId }) => ({
+                          label: tagName,
+                          value: tagId,
+                        }))
+                      }
+                      return options
+                    },
+                    isMulti: true,
+                  },
+                  classNames: {
+                    itemContainer: cssClasses(
+                      'max-width-100pc',
+                      'tags-container'
+                    ),
+                    controlContainer: cssClasses('full-width-100pc'),
+                    item: cssClasses('full-width-100pc'),
+                  },
+                  label: 'Tags',
+                  labelI18nKey: 'jobFunctionTags',
+                  visibleIf: values => values.jobFunctions[index].checked,
+                },
+              ],
             },
-            label: 'Tags',
-            labelI18nKey: 'jobFunctionTags',
-            visibleIf: values => {
-              const anySelection = filter(Object.keys(values), property => {
-                if (property.indexOf('jf') >= 0 && values[property]) return true
-              })
-              return anySelection.length > 0
-            },
-          },
-        ],
-      },
+          ]
+
+          return acc
+        },
+        []
+      ),
     ],
   }
-  const sections = [...getSectionsBase(formatMessage), jobFunctionsRows]
+  const sections = [
+    ...getSectionsBase(formatMessage, validationBase),
+    jobFunctionsRows,
+  ]
   return {
     title: formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',

@@ -1,7 +1,5 @@
 {
     "arrowParens": "avoid",
-    "eol": "lf",
-    "parser": "babel",
     "semi": false,
     "singleQuote": true,
     "tabWidth": 2,

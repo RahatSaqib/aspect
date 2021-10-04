@@ -1,12 +1,23 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
+import isEqualWith from 'lodash/isEqualWith'
+import isPlainObject from 'lodash/isPlainObject'
+import keys from 'lodash/keys'
+import range from 'lodash/range'
 import reduce from 'lodash/reduce'
+import set from 'lodash/set'
+import xor from 'lodash/xor'
 
-import { pickItems, pickKeys } from '../Formik/Helpers/index'
+import {
+  getInitialValuesFromFormConfig,
+  pickItems,
+  pickKeys,
+} from '../Formik/Helpers'
 
 const getState = formConfig => {
   const { sections } = formConfig
-  const initialValues = pickKeys(sections, 'initialValue', '')
+  const initialValues = getInitialValuesFromFormConfig(formConfig)
   const fieldTypes = pickKeys(sections, 'type')
   const items = pickItems(sections)
   const byId = reduce(
@@ -36,27 +47,81 @@ const getState = formConfig => {
     validators,
   }
 }
-export const useFormConfig = formConfig => {
-  const currentState = getState(formConfig)
-  const [meta, setMeta] = useState(currentState)
 
-  if (!isEqual(meta.initialValues, currentState.initialValues)) {
-    setMeta(currentState)
+const skipGuids = keys => keys.filter(key => key !== '__guid__')
+const compareValuesSkipGuid = (obj1, obj2) => {
+  const keys1 = skipGuids(keys(obj1))
+  const keys2 = skipGuids(keys(obj2))
+  if (keys1.length !== keys2.length || xor(keys1, keys2).length > 0) {
+    return false
+  }
+  for (let j1 = 0; j1 < keys1.length; j1++) {
+    const key = keys1[j1]
+    const v1 = obj1[key]
+    const v2 = obj2[key]
+    if (isArray(v1)) {
+      if (!isArray(v2) || v1.length !== v2.length) {
+        return false
+      }
+      for (let k = 0; k < v1.length; k++) {
+        if (!compareValuesSkipGuid(v1[k], v2[k])) {
+          return false
+        }
+      }
+    } else if (isPlainObject(v1)) {
+      if (!isPlainObject(v2)) {
+        return false
+      }
+      if (!compareValuesSkipGuid(v1, v2)) {
+        return false
+      }
+    } else if (!isEqual(v1, v2)) {
+      return false
+    }
   }
 
-  const registerVisibleFields = useCallback((values, formik) => {
+  return true
+}
+export const useFormConfig = formConfig => {
+  const [meta, setMeta] = useState(getState(formConfig))
+
+  useEffect(() => {
+    const currentState = getState(formConfig)
+    if (
+      !isEqualWith(
+        meta.initialValues,
+        currentState.initialValues,
+        compareValuesSkipGuid
+      )
+    ) {
+      setMeta(currentState)
+    }
+  }, [formConfig, meta.initialValues])
+
+  const registerVisibleFields = useCallback((values, formik, touchedName) => {
     const { items = [] } = meta
     const validators = {}
-    items.forEach(({ id, validate, visibleIf }) => {
-      formik.unregisterField(id)
+    items.forEach(({ id, validate, validateIf, visibleIf, row }) => {
+      const { isMulti, id: rowId } = row
+      range(isMulti ? values[rowId].length : 1).forEach(subRowIndex => {
+        const itemId = `${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`
+        formik.unregisterField(itemId)
 
-      const isVisible = !visibleIf || visibleIf(values)
-      if (isVisible) {
-        if (validate) {
-          validators[id] = validate
+        const isVisible = !visibleIf || visibleIf(values, subRowIndex)
+        if (isVisible) {
+          if (
+            validateIf &&
+            !validateIf(values, formik, { subRowIndex, touchedName })
+          ) {
+            validate = undefined
+          }
+
+          if (validate) {
+            validators[itemId] = validate
+          }
+          formik.registerField(itemId, { validate })
         }
-        formik.registerField(id, { validate })
-      }
+      })
     })
     return { validators }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,14 +143,23 @@ export const useFormConfig = formConfig => {
        */
       const values = {
         ...formik.values,
-        [fieldName]: value,
+      }
+      set(values, fieldName, value)
+
+      /**
+       * 3. address func onAfterChange if defined for item
+       */
+      const { items = [] } = meta
+      const { onAfterChange } = items.find(({ id }) => id === fieldName) || {}
+      if (onAfterChange) {
+        onAfterChange(formik)
       }
       /**
-       * 3. refresh visibility of all fields and register validators of only visible fields
+       * 4. refresh visibility of all fields and register validators of only visible fields
        */
-      registerVisibleFields(values, formik)
+      registerVisibleFields(values, formik, fieldName)
       /**
-       * 4. validate form for current set of `values` for all visible fields
+       * 5. validate form for current set of `values` for all visible fields
        */
       formik.validateForm(values)
     },
