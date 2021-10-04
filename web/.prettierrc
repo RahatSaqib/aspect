@@ -1,6 +1,9 @@
 {
-    "trailingComma": "es5",
-    "tabWidth": 2,
+    "arrowParens": "avoid",
+    "eol": "lf",
+    "parser": "babel",
     "semi": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5"
 }
