@@ -2,7 +2,7 @@ const chai = require('chai')
 const _ = require('lodash')
 
 const { knex } = require('../../src/db')
-const { shouldNotifyIssue } = require('../../src/notification/service')
+const { shouldNotify } = require('../../src/notification/service')
 const {
   issueTypeToId,
   issueStatusToId,
@@ -101,9 +101,9 @@ describe('Issue Notification', () => {
     it('Should send notification to the clinician jobFunction', async () => {
       const clinicianIssueInItsSiteId =
         issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
-      const issue = await shouldNotifyIssue(
+      const issue = await shouldNotify(
         knex,
-        clinicianIssueInItsSiteId,
+        { issueId: clinicianIssueInItsSiteId },
         clinician.personId,
         clinician.jobFunctionId
       )
@@ -111,9 +111,9 @@ describe('Issue Notification', () => {
     })
     it('Should NOT send notification to the clinician jobFunction', async () => {
       const clicnicianNotItsSiteIssueId = _.last(issueToDeleteId) // the last issue inserted in before each
-      const issue = await shouldNotifyIssue(
+      const issue = await shouldNotify(
         knex,
-        clicnicianNotItsSiteIssueId,
+        { issueId: clicnicianNotItsSiteIssueId },
         clinicianInDifferentSiteResult.personId,
         clinicianInDifferentSiteResult.jobFunctionId
       )
@@ -134,9 +134,9 @@ describe('Issue Notification', () => {
     })
     it('should send notification to the Regional Manager jobFunction', async () => {
       const rmIssueInItsSiteId = issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
-      const issue = await shouldNotifyIssue(
+      const issue = await shouldNotify(
         knex,
-        rmIssueInItsSiteId,
+        { issueId: rmIssueInItsSiteId },
         rm.personId,
         rm.jobFunctionId
       )
@@ -145,9 +145,9 @@ describe('Issue Notification', () => {
     it('should NOT send notification to the Regional Manager jobFunction', async () => {
       const rmNotItsSiteIssueId = _.last(issueToDeleteId) // the last issue inserted in before each
 
-      const issue = await shouldNotifyIssue(
+      const issue = await shouldNotify(
         knex,
-        rmNotItsSiteIssueId,
+        { issueId: rmNotItsSiteIssueId },
         rmInDifferentStateResult.personId,
         rmInDifferentStateResult.jobFunctionId
       )

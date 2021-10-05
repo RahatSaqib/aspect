@@ -22,6 +22,7 @@ class MessageQueue {
     this.queues = []
     this.queueEmitActions = null
     this.messageContextIdx = 0
+    this.channel = null
     this.unsubscribe = this.unsubscribe.bind(this)
   }
 
@@ -93,100 +94,121 @@ class MessageQueue {
    *
    *   Can specify multiple action types per subscription.
    */
-  subscribe(name, subscriptions, messageTtl) {
+  async subscribe(name, subscriptions, messageTtl) {
     if (_.isFunction(subscriptions)) {
       const subscribeName = `${this.name}_${name}_subscribe`
       const messageContext = this.createMessageContext(subscribeName)
-      this.subscribe(name, subscriptions({ messageContext }))
+      await this.subscribe(name, subscriptions({ messageContext }))
     } else if (_.isFunction(subscriptions.then)) {
-      subscriptions.then(subs => this.subscribe(name, subs))
+      const subs = await subscriptions
+      await this.subscribe(name, subs)
     } else if (_.isArray(subscriptions)) {
-      _.each(subscriptions, (subscription, subscriptionIndex) => {
+      await Promise.each(subscriptions, (subscription, subscriptionIndex) =>
         this.subscribe(`${name}_${subscriptionIndex}`, subscription)
-      })
+      )
     } else {
-      _.each(subscriptions.actions, (messageHandler, type) => {
-        let handlerFunction = async () => Promise.resolve()
-        let shouldHandle = () => true
-        let consumeOptions
-        let bindingKey = ''
-        let purgeOnStart = false
-        if (_.isFunction(messageHandler)) {
-          handlerFunction = messageHandler
-        } else {
-          ;({ handlerFunction } = messageHandler)
-          if (messageHandler.shouldHandle) {
-            ;({ shouldHandle } = messageHandler)
-          }
-          if (messageHandler.consumerTag) {
-            consumeOptions = {
-              consumerTag: messageHandler.consumerTag,
-            }
-          }
-          if (messageHandler.allowInfiniteListeners) {
-            const maxListeners = this.emitter.getMaxListeners()
-            if (maxListeners > 0) {
-              this.emitter.setMaxListeners(0)
-            }
-          }
-          if (messageHandler.bindingKey) {
-            bindingKey = `.${messageHandler.bindingKey}`
-          }
-          if (messageHandler.purgeOnStart) {
-            purgeOnStart = true
-          }
-        }
-        const { channel, name: queueName } = this
-        const subscribeName = `${queueName}_${name}_actions_${type}`
-        const topic = `aspect.actions.${type}${bindingKey}`
-        logger.debug(`subscribe ${subscribeName} ${topic}`, {
-          reLabel: 'aspect:mq:subscribe',
-        })
-        const queueOptions = messageTtl ? { messageTtl } : undefined
-        const { queue } = channel.assertQueue(subscribeName, queueOptions)
-        this.queues.push(queue)
-        channel.bindQueue(queue, exchange, topic)
-        if (purgeOnStart) {
-          channel.purgeQueue(queue)
-        }
-        channel.consume(
-          queue,
-          message => {
-            const content = message.content.toString()
-            const messageContext = this.createMessageContext(subscribeName)
-            const action = JSON.parse(content)
-            logger.debug(`consume ${messageContext.id} ${content}`, {
-              reLabel: 'aspect:mq:consume',
-            })
-            if (shouldHandle(action)) {
-              Promise.resolve(handlerFunction(action, { messageContext }))
-                .then(() => {
-                  // Do not ack until handlerFunction result resolves
-                  // Allows backpressure per consumer, if this is not needed can
-                  // return something (or nothing) that resolves immediately
-                  logger.debug(`ack ${messageContext.id}`, {
-                    reLabel: 'aspect:mq:ack',
-                  })
-                  this.channel.ack(message)
-                })
-                .catch(err => {
-                  logger.error(err, { reLabel: 'aspect:mq:error' })
-                  // TODO nack/dead letter queue?
-                  this.channel.ack(message)
-                })
-            } else {
-              this.channel.nack(message)
-            }
-          },
-          consumeOptions
-        )
-      })
+      await Promise.each(_.keys(subscriptions.actions), async type => {
+        const messageHandler = subscriptions.actions[type]
+        await this.subscribeSingleAction(name, messageTtl, messageHandler, type)
+      }).catch(err => logger.error(err))
     }
   }
 
-  unsubscribe(queueName, topic, consumerTag) {
-    this.channel.cancel(consumerTag)
-    this.channel.unbindQueue(queueName, exchange, topic)
+  async subscribeSingleAction(name, messageTtl, messageHandler, type) {
+    let handlerFunction = async () => Promise.resolve()
+    let shouldHandle = () => true
+    let consumeOptions
+    let bindingKey = ''
+    let purgeOnStart = false
+    if (_.isFunction(messageHandler)) {
+      handlerFunction = messageHandler
+    } else {
+      ;({ handlerFunction } = messageHandler)
+      if (messageHandler.shouldHandle) {
+        ;({ shouldHandle } = messageHandler)
+      }
+      if (messageHandler.consumerTag) {
+        consumeOptions = {
+          consumerTag: messageHandler.consumerTag,
+        }
+      }
+      if (messageHandler.allowInfiniteListeners) {
+        const maxListeners = this.emitter.getMaxListeners()
+        if (maxListeners > 0) {
+          this.emitter.setMaxListeners(0)
+        }
+      }
+      if (messageHandler.bindingKey) {
+        bindingKey = `.${messageHandler.bindingKey}`
+      }
+      if (messageHandler.purgeOnStart) {
+        purgeOnStart = true
+      }
+    }
+    const { name: queueName } = this
+    const subscribeName = `${queueName}_${name}_actions_${type}`
+    const topic = `aspect.actions.${type}${bindingKey}`
+    logger.debug(`subscribe ${subscribeName} ${topic}`, {
+      reLabel: 'aspect:mq:subscribe',
+    })
+    const queueOptions = messageTtl ? { messageTtl } : undefined
+    const { queue } = await this.channel.assertQueue(
+      subscribeName,
+      queueOptions
+    )
+
+    if (!this.queues.includes(queue)) this.queues.push(queue)
+    await this.channel.bindQueue(queue, exchange, topic)
+    if (purgeOnStart) {
+      await this.channel.purgeQueue(queue)
+    }
+    await this.channel.consume(
+      queue,
+      async message => {
+        if (!message) return
+        const content = message.content.toString()
+        const messageContext = this.createMessageContext(subscribeName)
+        const action = JSON.parse(content)
+        logger.debug(`consume ${messageContext.id} ${content}`, {
+          reLabel: 'aspect:mq:consume',
+        })
+        if (shouldHandle(action)) {
+          Promise.resolve(handlerFunction(action, { messageContext }))
+            .then(() => {
+              // Do not ack until handlerFunction result resolves
+              // Allows backpressure per consumer, if this is not needed can
+              // return something (or nothing) that resolves immediately
+              logger.debug(`ack ${messageContext.id}`, {
+                reLabel: 'aspect:mq:ack',
+              })
+              this.channel.ack(message)
+            })
+            .catch(err => {
+              logger.error(err, { reLabel: 'aspect:mq:error' })
+              // TODO nack/dead letter queue?
+              this.channel.ack(message)
+            })
+        } else {
+          this.channel.nack(message)
+        }
+      },
+      consumeOptions
+    )
+  }
+
+  async unsubscribe(queueName) {
+    const regex = `_${queueName.toLowerCase()}_.*_actions_`
+    const re = new RegExp(regex)
+    const selectedQueries = _.filter(this.queues, q => re.test(q))
+    await Promise.each(selectedQueries || [], async q => {
+      const { queue } = await this.channel.assertQueue(q)
+      if (queue) {
+        await this.channel.unbindQueue(queue, exchange, 'aspect.actions.#')
+        await this.channel.deleteQueue(q)
+
+        _.remove(this.queues, q => re.test(q))
+      }
+    })
   }
 
   async subscribeEmitActions() {

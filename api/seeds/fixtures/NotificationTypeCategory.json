@@ -2,11 +2,19 @@
   "data": [
     {
       "name": "Issue-Based",
-      "externalId": "issueBased"
+      "externalId": "issueBased",
+      "triggerCondition": {
+        "action": "ISSUE_CREATED",
+        "method": "issueBased"
+      }
     },
     {
       "name": "Result-Based",
-      "externalId": "resultBased"
+      "externalId": "resultBased",
+      "triggerCondition": {
+        "action": "RESULT_LOGGED",
+        "method": "resultBased"
+      }
     }
   ]
 }
