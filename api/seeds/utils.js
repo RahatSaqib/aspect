@@ -3318,6 +3318,45 @@ async function updateIssueNotificationTemplates(
   await knex('SmsTemplate').whereNotIn('id', smsTemplatesToDelete).del()
 }
 
+async function updateCustomFields(
+  knex,
+  partnerId,
+  jsonSchemaFile,
+  externalIdToUpdate,
+  externalIdsToDelete = []
+) {
+  /**
+   * In func `runSeed` (see above in current file) we silently run func
+   * `addForms` from `./relativeObjectsSeeds.js`
+   * That func created `FormDefinition` records for
+   * - formTypeId = 1 (Gx Connect Form)
+   * - diseaseId = 1 (Tuberculosis)
+   * - assayId = NULL (for all assayId's for above diseaseId)
+   * So, here in this func `updateCustomFields` we remove some records from FormDefinition
+   * and update another record with new jsonSchema file in table `FileDefinitionSchema`.
+   */
+  if (!_.isEmpty(externalIdsToDelete)) {
+    await knex('FormDefinition')
+      .where({ partnerId })
+      .whereIn('externalId', externalIdsToDelete)
+      .del()
+  }
+
+  let { id: formDefinitionSchemaId } =
+    (await knex('FormDefinitionSchema')
+      .where({ jsonSchemaFile })
+      .first('id')) || {}
+  if (!formDefinitionSchemaId) {
+    ;[formDefinitionSchemaId] = await knex('FormDefinitionSchema').insert({
+      jsonSchemaFile,
+    })
+  }
+
+  await knex('FormDefinition')
+    .where({ partnerId, externalId: externalIdToUpdate })
+    .update({ formDefinitionSchemaId })
+}
+
 module.exports = {
   seed,
   seedTable,
@@ -3391,4 +3430,6 @@ module.exports = {
   seedIssueEscalationTriggersForPartner,
   deleteIssueTypes,
   updateIssueNotificationTemplates,
+
+  updateCustomFields,
 }

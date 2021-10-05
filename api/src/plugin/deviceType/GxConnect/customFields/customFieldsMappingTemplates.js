@@ -2,6 +2,7 @@ const objectMapper = require('object-mapper')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { stateSelectList } = require('../../../../geography/service')
+const { getListSitesForSelectList } = require('../../../../site/service')
 
 const getGxAlertAssayId = {
   abbottM2000PlasmaHivVL: 9,
@@ -185,25 +186,44 @@ const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
 
 const mapGxConnectCustomFieldsWithDataSources = async (
   aspectFields,
-  countryId,
-  stateId,
-  mapper = null
+  { partnerId, countryId, stateId, mapper = null }
 ) => {
   const fields = mapGxConnectCustomFields(aspectFields, mapper)
   await Promise.each(
     _.filter(fields.CustomFields.Fields, elem => elem.optionSource),
     async field => {
-      const { data: statesOrLgas } = await stateSelectList({
-        params: {
-          countryId,
-          stateId: field.optionSource === 'lga' && stateId ? stateId : null,
-        },
-      })
+      const { optionSource, customUrlMappingFields } = field
+      if (optionSource === 'lga' || optionSource === 'state') {
+        const { data: statesOrLgas } = await stateSelectList({
+          params: {
+            countryId,
+            stateId: field.optionSource === 'lga' && stateId ? stateId : null,
+          },
+        })
+        field.InputControlData.options = _.map(statesOrLgas, geography => ({
+          value: geography.id,
+          text: geography.name,
+        }))
+      } else if (optionSource === 'all-sites') {
+        const dataConstraints = {
+          partner: {
+            id: partnerId,
+          },
+          country: {
+            id: countryId,
+          },
+        }
+        const { data: items } = await getListSitesForSelectList(dataConstraints)
+        if (!field.InputControlData) {
+          field.InputControlData = {}
+        }
+        field.InputControlData.options = _.map(items, item => ({
+          value: item[customUrlMappingFields?.key || 'externalId'],
+          text: item[customUrlMappingFields?.value || 'name'],
+        }))
+      }
+
       delete field.optionSource
-      field.InputControlData.options = _.map(statesOrLgas, geography => ({
-        value: geography.id,
-        text: geography.name,
-      }))
     }
   )
   return fields

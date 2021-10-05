@@ -20,8 +20,12 @@ const getCustomFields = async (knex, partnerId, deviceId) => {
 
     const mappedFields = await mapGxConnectCustomFieldsWithDataSources(
       customFields,
-      countryId,
-      stateId
+      {
+        partnerId,
+        deviceId,
+        countryId,
+        stateId,
+      }
     )
     if (!validate(gxConnectSchema, mappedFields)) {
       logger.error(
