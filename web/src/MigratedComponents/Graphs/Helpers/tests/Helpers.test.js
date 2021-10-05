@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import {
   calcPercentageSplitBar,
   getISOFromString,
@@ -86,7 +87,9 @@ describe('Graph Helpers', () => {
 
     describe('PieRowchart: groupForPieRow', () => {
       it('should group data by types correctly', () => {
-        const mergedParams = [{ currentMonth: '2020-10-01' }]
+        const mergedParams = [
+          { currentMonth: `${format(new Date(), 'yyyy-MM')}-01` },
+        ]
         const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
         expect(grouped).toEqual(pieRowDataFromAPIOut)
       })

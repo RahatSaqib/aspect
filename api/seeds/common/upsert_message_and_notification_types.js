@@ -5,7 +5,7 @@ const { getBaseIssues } = require('../relatedObjects/issues')
 const {
   getBaseNotificationTypes,
 } = require('../relatedObjects/notificationTypes')
-
+const { notificationTypeCategoryToId } = require('../../src/shared/dictionary')
 const { upsertSingle } = require('../utils')
 
 const now = new Date()
@@ -33,6 +33,9 @@ async function upsertMessageAndNotificationTypes(
     .select('id', 'externalId', 'name')
   const jobFunctions = await knex('JobFunction').select('id', 'name')
 
+  const notificationTypeCategoryId = await notificationTypeCategoryToId(
+    'issueBased'
+  )
   // iterate over the issue types so we can create message and notification types as needed
   await Promise.each(issueTypesInDb, async issueTypeInDb => {
     const issue = issues[issueTypeInDb.externalId]
@@ -100,6 +103,7 @@ async function upsertMessageAndNotificationTypes(
             messageTypeId,
             level: 1,
             canAcknowledge: 0,
+            notificationTypeCategoryId,
             name: `${issueTypeInDb.name} - ${
               jobFunctions.find(jf => jf.id === jobFunctionId).name
             }`,
