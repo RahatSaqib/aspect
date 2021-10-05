@@ -12,12 +12,14 @@ export const getFormConfigWithData = (
   jobFunctions,
   notificationType,
   notificationTypeName,
-  validationSchema = null
+  validationSchema = null,
+  isEdit
 ) => {
   const formSchema = getFormConfig(
     intl.formatMessage,
     notificationType,
-    jobFunctions
+    jobFunctions,
+    isEdit
   )
   const { name } = getNotificationMeta(notificationType, intl)
   const initialValues = {

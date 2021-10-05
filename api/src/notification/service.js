@@ -288,9 +288,6 @@ async function getNotificationPolicy(
     'g.stateId',
     'g.lgaId',
     'mt.alertTemplateId',
-    'mt.emailTemplateId',
-    'mt.smsTemplateId',
-    'mt.webhookTemplateId',
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
@@ -303,7 +300,14 @@ async function getNotificationPolicy(
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .modify((queryBuilder, { resultId, issueId }) => {
       if (!_.isNil(issueId)) {
-        extraFields = ['i.siteId', 'i.deviceId', 'i.resultId']
+        extraFields = [
+          'i.siteId',
+          'i.deviceId',
+          'i.resultId',
+          'mt.emailTemplateId',
+          'mt.smsTemplateId',
+          'mt.webhookTemplateId',
+        ]
         queryBuilder
           .join('Issue as i', joinBuilder =>
             // If issue is escalated past configured level, send again
@@ -321,6 +325,15 @@ async function getNotificationPolicy(
           'result.siteId as siteId',
           'result.deviceId as deviceId',
           'result.resultId as resultId',
+          knex.raw(
+            'CASE mt.filterCondition.sendEmail WHEN 1 mt.emailTemplateId ELSE NULL END as emailTemplateId'
+          ),
+          knex.raw(
+            'CASE mt.filterCondition.sendSms WHEN 1 mt.smsTemplateId ELSE NULL END as smsTemplateId'
+          ),
+          knex.raw(
+            'CASE mt.filterCondition.sendWeb WHEN 1 mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
+          ),
         ]
         queryBuilder
           .crossJoin(
@@ -481,7 +494,7 @@ async function createNotificationIfNotCreatedAlready(
       }
     }
 
-    if (policy.emailTemplateId != null) {
+    if (policy.sendEmail != null) {
       const [emailMessageId] = await knex('EmailMessage').insert({
         emailTemplateId: policy.emailTemplateId,
         ...sharedMessageProperties,
@@ -489,7 +502,7 @@ async function createNotificationIfNotCreatedAlready(
       notification.emailMessageId = emailMessageId
       context.emailMessageCreated(emailMessageId)
     }
-    if (policy.smsTemplateId != null) {
+    if (policy.sendSms != null) {
       const [smsMessageId] = await knex('SmsMessage').insert({
         smsTemplateId: policy.smsTemplateId,
         ...sharedMessageProperties,
@@ -498,7 +511,7 @@ async function createNotificationIfNotCreatedAlready(
       context.smsMessageCreated(smsMessageId)
     }
 
-    if (policy.webhookTemplateId != null) {
+    if (policy.sendWeb != null) {
       const [webhookMessageId] = await knex('WebhookMessage').insert({
         webhookTemplateId: policy.webhookTemplateId,
         ...sharedMessageProperties,
@@ -722,7 +735,7 @@ async function saveNotificationType({
        */
       if (emailTemplateId) {
         whereClause = { id: emailTemplateId }
-        // update or delete
+        // update
         if (sendEmail) {
           await knex('EmailTemplate')
             .where(whereClause)
@@ -736,8 +749,6 @@ async function saveNotificationType({
               updatedOn: now,
               updatedBy: userId,
             })
-        } else {
-          await knex('EmailTemplate').where(whereClause).del()
         }
       } else if (sendEmail) {
         // insert
@@ -748,7 +759,7 @@ async function saveNotificationType({
        */
       if (smsTemplateId) {
         whereClause = { id: smsTemplateId }
-        // update or delete
+        // update
         if (sendSms) {
           await knex('SmsTemplate')
             .update({
@@ -757,8 +768,6 @@ async function saveNotificationType({
               updatedBy: userId,
             })
             .where(whereClause)
-        } else {
-          await knex('SmsTemplate').where(whereClause).del()
         }
       } else if (sendSms) {
         ;[smsTemplateId] = await insertSmsTemplate()
@@ -768,7 +777,7 @@ async function saveNotificationType({
        */
       if (webHookTemplateId) {
         whereClause = { id: webHookTemplateId }
-        // update or delete
+        // update
         if (sendWeb) {
           await knex('WebhookTemplate')
             .update({
@@ -778,8 +787,6 @@ async function saveNotificationType({
               updatedBy: userId,
             })
             .where(whereClause)
-        } else {
-          await knex('WebhookTemplate').where(whereClause).del()
         }
       } else if (sendWeb) {
         ;[webHookTemplateId] = await insertWebHookTemplate()
@@ -805,6 +812,9 @@ async function saveNotificationType({
           deviceLevelId,
           jobFunctions,
           result,
+          sendEmail,
+          sendSms,
+          sendWeb,
         }),
       })
       .where({ id: notificationTypeId })

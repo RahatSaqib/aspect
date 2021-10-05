@@ -55,12 +55,12 @@ const AspectNotificationDetail = ({
           name,
           emailSubject,
           emailBody,
-          sendEmail: !!(emailSubject || emailBody),
+          sendEmail: filter.sendEmail,
           smsBody,
-          sendSms: !!smsBody,
+          sendSms: filter.sendSms,
           webUrl,
           webBody,
-          sendWeb: !!(webUrl || webBody),
+          sendWeb: filter.sendWeb,
           jobFunctions: filter.jobFunctions,
           deviceLevelId: filter.deviceLevelId,
           areaItems: filter.areaItems,
@@ -72,7 +72,8 @@ const AspectNotificationDetail = ({
             jobFunctions,
             notificationType,
             notificationTypeName,
-            validationSchema(intl.formatMessage)
+            validationSchema(intl.formatMessage),
+            true
           )
         )
       },
