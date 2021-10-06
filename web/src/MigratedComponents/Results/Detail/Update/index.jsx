@@ -40,13 +40,13 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
 
   useEffect(() => {
     // define few extra props for `transfer` button
-    const action = formSchema.actions.items.find((x) => x.id === 'transfer')
+    const action = formSchema.actions.items.find(x => x.id === 'transfer')
     action.onClick = () => setTransferResultOpen(true)
     action.isVisible = (permissions, isEditMode) => {
       return (
         !isEditMode &&
         // eslint-disable-next-line lodash/prefer-some
-        findIndex(permissions, (elem) => elem === 'result:edit') >= 0
+        findIndex(permissions, elem => elem === 'result:edit') >= 0
       )
     }
   }, [])

@@ -3246,7 +3246,7 @@ async function seed(knex) {
   const modules = ['A', 'B', 'C', 'D']
 
   await Promise.all(
-    _.map(geography.countries, async (country) => {
+    _.map(geography.countries, async country => {
       const countryData = _.pick(country, [
         'abbreviation',
         'name',
@@ -3278,7 +3278,7 @@ async function seed(knex) {
       ]
 
       await Promise.all(
-        _.map(country.states || [], async (state) => {
+        _.map(country.states || [], async state => {
           const stateData = _.pick(state, ['abbreviation', 'name'])
           const [stateId] = await knex('State').insert(stateData)
           stateData.id = stateId
@@ -3293,7 +3293,7 @@ async function seed(knex) {
           stateData.geographyId = stateGeographyId
 
           await Promise.all(
-            _.map(state.lgas || [], async (lga) => {
+            _.map(state.lgas || [], async lga => {
               const lgaData = _.pick(lga, ['name'])
 
               const [lgaId] = await knex('Lga').insert(lgaData)
@@ -3313,42 +3313,39 @@ async function seed(knex) {
                 )
               ) {
                 await Promise.all(
-                  _.map(
-                    _.range(1, 6 - (lgaData.id % 5)),
-                    async (siteNumber) => {
-                      const city =
-                        lga.cities && lga.cities[siteNumber - 1]
-                          ? lga.cities[siteNumber - 1]
-                          : null
-                      const siteData = {
-                        partnerId: partnerOneId,
-                        geographyId,
-                        externalId: `${state.name}_${siteNumber}`,
-                        name: city
-                          ? `${city} ${
-                              labStrings[_.random(0, labStrings.length - 1)]
-                            }`
-                          : `${lga.name} County ${
-                              siteNumber % 2 ? 'Lab' : 'Clinic'
-                            } ${siteNumber}`,
-                        shortName:
-                          city || `${lga.name}, ${stateKey} ${siteNumber}`,
-                        city: city || `${lga.name} City`,
-                        street1: `${lgaData.id} Main Street`,
-                        zip: `12345-${lgaData.id}`,
-                        latitude: _.has(state, 'lat')
-                          ? state.lat + _.random(-0.5, 0.5, true)
-                          : undefined,
-                        longitude: _.has(state, 'lng')
-                          ? state.lng + _.random(-0.5, 0.5, true)
-                          : undefined,
-                        ...auditFields,
-                      }
-                      const [siteId] = await knex('Site').insert(siteData)
-                      siteData.id = siteId
-                      countryData.sites.push(siteData)
+                  _.map(_.range(1, 6 - (lgaData.id % 5)), async siteNumber => {
+                    const city =
+                      lga.cities && lga.cities[siteNumber - 1]
+                        ? lga.cities[siteNumber - 1]
+                        : null
+                    const siteData = {
+                      partnerId: partnerOneId,
+                      geographyId,
+                      externalId: `${state.name}_${siteNumber}`,
+                      name: city
+                        ? `${city} ${
+                            labStrings[_.random(0, labStrings.length - 1)]
+                          }`
+                        : `${lga.name} County ${
+                            siteNumber % 2 ? 'Lab' : 'Clinic'
+                          } ${siteNumber}`,
+                      shortName:
+                        city || `${lga.name}, ${stateKey} ${siteNumber}`,
+                      city: city || `${lga.name} City`,
+                      street1: `${lgaData.id} Main Street`,
+                      zip: `12345-${lgaData.id}`,
+                      latitude: _.has(state, 'lat')
+                        ? state.lat + _.random(-0.5, 0.5, true)
+                        : undefined,
+                      longitude: _.has(state, 'lng')
+                        ? state.lng + _.random(-0.5, 0.5, true)
+                        : undefined,
+                      ...auditFields,
                     }
-                  )
+                    const [siteId] = await knex('Site').insert(siteData)
+                    siteData.id = siteId
+                    countryData.sites.push(siteData)
+                  })
                 )
               }
             })
@@ -3385,7 +3382,7 @@ async function seed(knex) {
         'Sam',
         'Steve',
       ],
-      async (name) => {
+      async name => {
         let userId
         if (name === 'Admin') {
           userId = adminId
@@ -3452,7 +3449,7 @@ async function seed(knex) {
     cell: config.admin.cell,
   })
 
-  await Promise.each(geography.countries, async (country) => {
+  await Promise.each(geography.countries, async country => {
     const countryData = countries[country.abbreviation]
     const siteDatas = countryData.sites
     if (siteDatas.length === 0) {
@@ -3461,7 +3458,7 @@ async function seed(knex) {
 
     // insert some routers with sims:
     const routerIds = []
-    await Promise.each(_.range(routerNumber), async (i) => {
+    await Promise.each(_.range(routerNumber), async i => {
       const siteData = siteDatas[i % siteDatas.length]
       const [routerId] = await knex('Device').insert({
         ...auditFields,
@@ -3482,7 +3479,7 @@ async function seed(knex) {
     })
 
     // ... and 1-3 sims for some routers
-    const sims = _.map(_.range(0, routerNumber, 2), (i) => {
+    const sims = _.map(_.range(0, routerNumber, 2), i => {
       const routerId = routerIds[i]
       return {
         ...auditFields,
@@ -3496,7 +3493,7 @@ async function seed(knex) {
 
     // insert GeneXpert devices
     const devicesGeneXpert = []
-    await Promise.each(_.range(deviceNumber), async (i) => {
+    await Promise.each(_.range(deviceNumber), async i => {
       const siteData = siteDatas[i % siteDatas.length]
       const routerId = routerIds[i]
       const device = {
@@ -3611,7 +3608,7 @@ async function seed(knex) {
     })
 
     // Insert Inventory Items
-    await Promise.each(_.range(siteDatas.length), async (i) => {
+    await Promise.each(_.range(siteDatas.length), async i => {
       const siteData = siteDatas[i]
       // TB Cartridges
       await knex('InventoryItem').insert({
@@ -3672,7 +3669,7 @@ async function seed(knex) {
 
       // some TB samples:
       let samples = []
-      await Promise.each(_.range(resultMtbNumber / 2), async (i) => {
+      await Promise.each(_.range(resultMtbNumber / 2), async i => {
         const siteData = siteDatas[i % siteDatas.length]
         const sample = {
           externalId: `SMP-TB-${i}`,
@@ -3766,9 +3763,9 @@ async function seed(knex) {
         },
       }
 
-      await Promise.each(_.range(resultMtbNumber), async (i) => {
+      await Promise.each(_.range(resultMtbNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
-        const siteData = siteDatas.find((site) => site.id === device.siteId)
+        const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
 
@@ -3776,7 +3773,7 @@ async function seed(knex) {
         const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
-          (r) => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+          r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
         resultData.resultText = result.resultText
         const [resultId] = await knex('Result').insert({
@@ -3970,7 +3967,7 @@ async function seed(knex) {
       })
 
       // some TB ULTRA samples:
-      await Promise.each(_.range(resultMtbUltraNumber / 2), async (i) => {
+      await Promise.each(_.range(resultMtbUltraNumber / 2), async i => {
         const siteData = siteDatas[i % siteDatas.length]
         const sample = {
           externalId: `SMP-TBU-${i}`,
@@ -4070,9 +4067,9 @@ async function seed(knex) {
         },
       }
 
-      await Promise.each(_.range(resultMtbUltraNumber), async (i) => {
+      await Promise.each(_.range(resultMtbUltraNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
-        const siteData = siteDatas.find((site) => site.id === device.siteId)
+        const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultMtbUltraNumber, 6000)
 
@@ -4080,7 +4077,7 @@ async function seed(knex) {
         const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
-          (r) => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+          r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
         resultData.resultText = result.resultText
         const [resultId] = await knex('Result').insert({
@@ -4224,7 +4221,7 @@ async function seed(knex) {
       })
 
       // some TB XDR samples:
-      await Promise.each(_.range(resultMtbXdrNumber / 2), async (i) => {
+      await Promise.each(_.range(resultMtbXdrNumber / 2), async i => {
         const siteData = siteDatas[i % siteDatas.length]
         const sample = {
           externalId: `SMP-TBXDR-${i}`,
@@ -4331,9 +4328,9 @@ async function seed(knex) {
         },
       }
 
-      await Promise.each(_.range(resultMtbXdrNumber), async (i) => {
+      await Promise.each(_.range(resultMtbXdrNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
-        const siteData = siteDatas.find((site) => site.id === device.siteId)
+        const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultMtbXdrNumber, 6000)
 
@@ -4341,7 +4338,7 @@ async function seed(knex) {
         const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
-          (r) => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+          r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
 
         resultData.resultText = result.resultText
@@ -4492,7 +4489,7 @@ async function seed(knex) {
 
       // some Ebola samples:
       samples = []
-      await Promise.each(_.range(resultEbolaNumber / 2), async (i) => {
+      await Promise.each(_.range(resultEbolaNumber / 2), async i => {
         const siteData = siteDatas[i % siteDatas.length]
         const sample = {
           externalId: `SMP-EB-${i}`,
@@ -4573,15 +4570,15 @@ async function seed(knex) {
         },
       }
 
-      await Promise.each(_.range(resultEbolaNumber), async (i) => {
+      await Promise.each(_.range(resultEbolaNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
-        const siteData = siteDatas.find((site) => site.id === device.siteId)
+        const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultEbolaNumber, 6000)
         const rndModule = _.random(0, 3)
 
         let j = 0
-        await Promise.each(possibleResults, async (result) => {
+        await Promise.each(possibleResults, async result => {
           j += 1
           if (_.random(5) === 0) {
             resultData.resultText = result.resultText
@@ -4666,7 +4663,7 @@ async function seed(knex) {
 
       // some HIV VL samples:
       samples = []
-      await Promise.each(_.range(resultHivVlNumber / 2), async (i) => {
+      await Promise.each(_.range(resultHivVlNumber / 2), async i => {
         const siteData = siteDatas[i % siteDatas.length]
         const sample = {
           externalId: `SMP-HIV-${i}`,
@@ -4749,9 +4746,9 @@ async function seed(knex) {
 
       // make sure we have at least one result with these status
       const ensureResultIds = [acknowledged, validated, deliverable]
-      await Promise.each(_.range(resultHivVlNumber), async (i) => {
+      await Promise.each(_.range(resultHivVlNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
-        const siteData = siteDatas.find((site) => site.id === device.siteId)
+        const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
@@ -4759,7 +4756,7 @@ async function seed(knex) {
         const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
-          (r) => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+          r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
 
         let copies = 0
@@ -4848,7 +4845,7 @@ async function seed(knex) {
       // some HCV samples for GeneXpert
       samples = []
       await Promise.all(
-        _.map(_.range(resultHcvNumber / 2), async (i) => {
+        _.map(_.range(resultHcvNumber / 2), async i => {
           const sample = {
             externalId: `SMP-HCV-GX-${i}`,
             collectedOn: calculateDateForResult(
@@ -4915,9 +4912,9 @@ async function seed(knex) {
         },
       }
 
-      await Promise.each(_.range(resultHcvNumber), async (i) => {
+      await Promise.each(_.range(resultHcvNumber), async i => {
         const device = devicesGeneXpert[i % devicesGeneXpert.length]
-        const siteData = siteDatas.find((site) => site.id === device.siteId)
+        const siteData = siteDatas.find(site => site.id === device.siteId)
         const sample = samples[i % samples.length]
         const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
@@ -4925,7 +4922,7 @@ async function seed(knex) {
         const rndModule = _.random(0, 3)
         const result = _.find(
           possibleResults,
-          (r) => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+          r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
         )
 
         let copies = 0
@@ -4949,7 +4946,7 @@ async function seed(knex) {
 
         let j = 0
         await Promise.all(
-          _.map(possibleResults, async (result) => {
+          _.map(possibleResults, async result => {
             j += 1
             if (_.random(5) === 0) {
               const [resultId] = await knex('Result').insert({
@@ -5181,7 +5178,7 @@ async function seed(knex) {
   // Fill device flags with random data
   // TODO: Remove when we implemented the jobs that calculate these flags
   const devices = await knex('Device').select('id')
-  await Promise.each(devices, async (device) => {
+  await Promise.each(devices, async device => {
     await knex('FactDeviceFlag').insert({
       deviceId: device.id,
       offline: _.random(10) === 0,
@@ -5217,9 +5214,9 @@ async function seed(knex) {
 
   const results = await knex('Result').select('id').limit(20)
   await Promise.all(
-    _.map(results, async (result) => {
+    _.map(results, async result => {
       await Promise.all(
-        _.map(tagIds, async (tagId) => {
+        _.map(tagIds, async tagId => {
           if (_.random(2) === 0) {
             await knex('ResultTag').insert({
               resultId: result.id,
@@ -5233,7 +5230,7 @@ async function seed(knex) {
   // Create DashboardWidget
   const widgetIds = {}
   await Promise.all(
-    _.map(dashboardWidget.stat, async (widget) => {
+    _.map(dashboardWidget.stat, async widget => {
       const widgetData = _.pick(widget, [
         'title',
         'titleI18nKey',

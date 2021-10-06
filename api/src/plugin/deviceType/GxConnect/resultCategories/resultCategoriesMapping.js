@@ -204,12 +204,12 @@ const errorResultCategories = [
   result1CategoryMapping['no result'],
 ]
 
-const isMtbPositiveOrError = (resultTextValues) =>
+const isMtbPositiveOrError = resultTextValues =>
   mtbPositiveResultCategories.includes(
     result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
   )
 
-const defaultResultCategory2Map = (resultTextValues) => {
+const defaultResultCategory2Map = resultTextValues => {
   const result2Text = sanitizeResultTextValue(resultTextValues[1])
   return result2CategoryMapping[result2Text]
 }
@@ -217,14 +217,14 @@ const defaultResultCategory2Map = (resultTextValues) => {
 const allowedResultCategory2Mappings = {
   GxMtbXdr: {
     isAllowed: isMtbPositiveOrError,
-    map: (resultTextValues) => {
+    map: resultTextValues => {
       const result1 =
         result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
       if (errorResultCategories.includes(result1)) return result1
 
       // Get the first positive result present in the results chain...
       const resultCategory2Values = resultTextValues.slice(1)
-      const positiveResult = resultCategory2Values.find((resultTextValue) => {
+      const positiveResult = resultCategory2Values.find(resultTextValue => {
         const mappedResult =
           result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
         return (
@@ -235,7 +235,7 @@ const allowedResultCategory2Mappings = {
       // ...then return DETECTED if at least one resistance result is positive
       if (positiveResult) return result2CategoryMapping.detected
 
-      const errorResult = resultCategory2Values.find((resultTextValue) => {
+      const errorResult = resultCategory2Values.find(resultTextValue => {
         const mappedResult =
           result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
         return mappedResult && errorResultCategories.includes(mappedResult)
@@ -307,12 +307,12 @@ function getResultCategoriesHivVL(result1Text) {
  * @param {string} resultText The result text of a GeneXpert result
  * @returns An object including all the parsed category types and their values. Ex.: { MTB: 'Detected', 'RIF RESISTANCE': 'NotDetected'  }
  */
-const parseResultText = (resultText) => {
+const parseResultText = resultText => {
   const results = {}
 
   const resultTextValues = splitResultTextValues(resultText)
-  resultTextValues.forEach((val) => {
-    const categoryType = categoryTypes.find((ct) =>
+  resultTextValues.forEach(val => {
+    const categoryType = categoryTypes.find(ct =>
       val.toLowerCase().includes(ct.toLowerCase())
     )
 
@@ -338,10 +338,10 @@ const parseResultText = (resultText) => {
  * @param {string} resultText The result text of a GeneXpert result
  * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
  */
-const getDetectedResistanceCategoryTypes = (resultText) => {
+const getDetectedResistanceCategoryTypes = resultText => {
   const detectedResistances = []
   const resultsCollection = parseResultText(resultText)
-  Object.keys(resultsCollection).forEach((categoryType) => {
+  Object.keys(resultsCollection).forEach(categoryType => {
     if (
       categoryType !== 'MTB' &&
       resultsCollection[categoryType] === 'Detected'

@@ -19,7 +19,7 @@ exports.seed = async function (knex) {
     .where('assayId', knex('Assay').select('id').where('externalId', uknwExtId))
     .andWhere('resultData', 'like', '%INH%')
 
-  await Promise.each(ids, async (item) => {
+  await Promise.each(ids, async item => {
     const resData = JSON.parse(
       (await knex('Result').select('resultData').where('id', item.id))[0]
         .resultData

@@ -67,7 +67,7 @@ async function preProcessAddDeviceData({
   // directly from GxConnect but also includes gxAlertDeviceId
   if (
     !_.isEmpty(configurationData) &&
-    _.every(Object.keys(configurationData), (configurationDataKey) =>
+    _.every(Object.keys(configurationData), configurationDataKey =>
       [
         'macAddress',
         'shortName',
@@ -86,7 +86,7 @@ async function preProcessAddDeviceData({
   }
   await knex.from('Device').where({ id: device.id }).update(deviceDetails)
   if (configurationData.disabledModules) {
-    await Promise.each(configurationData.disabledModules, (modules) =>
+    await Promise.each(configurationData.disabledModules, modules =>
       shouldTriggerModuleDisabled(knex, messageContext, device, modules)
     )
   }
@@ -285,12 +285,11 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
   let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
-    const sortedInventoryChanges = _.sortBy(
-      inventoryChanges,
-      (inventoryChange) => parseDateOrDefault(inventoryChange.dateChanged)
+    const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
+      parseDateOrDefault(inventoryChange.dateChanged)
     )
     inventoryItemIds = await Promise.all(
-      _.map(sortedInventoryChanges, async (inventoryChange) => {
+      _.map(sortedInventoryChanges, async inventoryChange => {
         const matchingConsumables = await findConsumables({
           name: inventoryChange.consumableName,
         })
@@ -343,7 +342,7 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
     )
   }
   return {
-    inventoryItemIds: _.filter(inventoryItemIds, (id) => id > 0),
+    inventoryItemIds: _.filter(inventoryItemIds, id => id > 0),
   }
 }
 
@@ -583,7 +582,7 @@ async function findExistingResult(availableResultDetails, knex) {
   } else if (matchingResults.length > 1 && geneXpertTestId) {
     matchingResults = _.filter(
       matchingResults,
-      (result) =>
+      result =>
         _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
         geneXpertTestId
     )
@@ -609,7 +608,7 @@ async function findExistingResult(availableResultDetails, knex) {
     } else if (matchingResults.length > 1) {
       matchingResults = _.filter(
         matchingResults,
-        (result) =>
+        result =>
           _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
           geneXpertTestId
       )
@@ -635,7 +634,7 @@ async function findExistingResult(availableResultDetails, knex) {
     } else if (matchingResults.length > 1) {
       matchingResults = _.filter(
         matchingResults,
-        (result) =>
+        result =>
           _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
           geneXpertTestId
       )
@@ -646,9 +645,9 @@ async function findExistingResult(availableResultDetails, knex) {
   }
   if (
     _.isEmpty(matchingResult) &&
-    !_.isEmpty(_.filter(potentialSampleIds, (elem) => elem)) &&
+    !_.isEmpty(_.filter(potentialSampleIds, elem => elem)) &&
     siteId &&
-    !_.isEmpty(_.filter(potentialAssayIds, (elem) => elem)) &&
+    !_.isEmpty(_.filter(potentialAssayIds, elem => elem)) &&
     startedOn
   ) {
     matchingResults = await queryStart
@@ -664,7 +663,7 @@ async function findExistingResult(availableResultDetails, knex) {
       if (geneXpertTestId) {
         matchingResults = _.filter(
           matchingResults,
-          (result) =>
+          result =>
             _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
             geneXpertTestId
         )
@@ -673,7 +672,7 @@ async function findExistingResult(availableResultDetails, knex) {
         if (geneXpertTestId) {
           matchingResults = _.filter(
             matchingResults,
-            (result) => result.externalId === geneXpertTestId
+            result => result.externalId === geneXpertTestId
           )
         }
       }
@@ -685,7 +684,7 @@ async function findExistingResult(availableResultDetails, knex) {
         ) {
           matchingResults = _.filter(
             matchingResults,
-            (result) =>
+            result =>
               potentialSampleIds.includes(result.sampleId) &&
               result.siteId === siteId &&
               potentialAssayIds.includes(result.assayId)
@@ -696,7 +695,7 @@ async function findExistingResult(availableResultDetails, knex) {
         if (cartridgeSerial && instrumentSerial) {
           matchingResults = _.filter(
             matchingResults,
-            (result) =>
+            result =>
               result.consumableSerial === cartridgeSerial &&
               result.instrumentSerial === instrumentSerial
           )

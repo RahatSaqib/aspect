@@ -174,7 +174,7 @@ async function seed(knex) {
   const targetTokens = ['MDR', 'Smear', 'HIV', 'Total']
   let regionNumber = 0
   await Promise.all(
-    _.map(adminRegions, async (region) => {
+    _.map(adminRegions, async region => {
       regionNumber += 1
       const regionUserName = `myanmar_ro${regionNumber}`
       const { id: regionId } = await knex('Geography')
@@ -211,7 +211,7 @@ async function seed(knex) {
       })
       let targetTotal = 0
       await Promise.all(
-        _.map(targetTokens, async (token) => {
+        _.map(targetTokens, async token => {
           let targetValue = 850 + Math.floor(Math.random() * 200 - 100)
 
           if (token === 'Total') {
@@ -319,7 +319,7 @@ async function seed(knex) {
 
   const siteDatas = []
   await Promise.all(
-    _.map(myanmarSites.sites, async (site) => {
+    _.map(myanmarSites.sites, async site => {
       const { id: siteGeographyId } = await knex('Geography')
         .where({
           countryId,
@@ -357,7 +357,7 @@ async function seed(knex) {
       const sampleTypeDBSId = await sampleTypeToId('DBS')
       const samples = []
       await Promise.all(
-        _.map(_.range(500), async (i) => {
+        _.map(_.range(500), async i => {
           const sample = {
             externalId: `SMP-TB-${i}`,
             collectedOn: calculateDateForResult(i, 500, millisInMinute),
@@ -371,7 +371,7 @@ async function seed(knex) {
       )
 
       await Promise.all(
-        _.map(site.devices, async (deviceSeed) => {
+        _.map(site.devices, async deviceSeed => {
           const device = {
             partnerId,
             geographyId: siteGeographyId,
@@ -394,7 +394,7 @@ async function seed(knex) {
 
           // only create results if managed region
           await Promise.all(
-            _.map(_.range(resultMtbNumber), async (i) => {
+            _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]
               let randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
 
@@ -410,7 +410,7 @@ async function seed(knex) {
               const rnd = _.random(0, 100)
               const result = _.find(
                 possibleResults,
-                (r) => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+                r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
               )
 
               resultData.resultText = result.resultText
@@ -480,7 +480,7 @@ async function seed(knex) {
   // Lab User Jobs
   let labNumber = 0
   await Promise.all(
-    _.map(adminRegions, async (region) => {
+    _.map(adminRegions, async region => {
       labNumber += 1
       const labUserName = `myanmar_lab${labNumber}`
       const { siteId, geographyId } = await knex('Site as s')
@@ -523,7 +523,7 @@ async function seed(knex) {
   // Create DashboardWidget
   const statWidgets = []
   await Promise.all(
-    _.map(dashboardWidget.stat, async (widget) => {
+    _.map(dashboardWidget.stat, async widget => {
       const widgetData = _.pick(widget, [
         'title',
         'titleI18nKey',
@@ -565,7 +565,7 @@ async function seed(knex) {
 
   const targetWidgets = []
   await Promise.all(
-    _.map(dashboardWidget.target, async (widget) => {
+    _.map(dashboardWidget.target, async widget => {
       const widgetData = _.pick(widget, [
         'title',
         'titleI18nKey',
@@ -598,14 +598,14 @@ async function seed(knex) {
   )
 
   await Promise.all(
-    _.map(statWidgets, async (widgetId) => {
+    _.map(statWidgets, async widgetId => {
       await knex('JobFunctionDashboardWidget').insert([
         { jobFunctionId: jobFunctionIdAdmin, widgetId },
         { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
         { jobFunctionId: jobFunctionIdLabUser, widgetId },
       ])
     }),
-    _.map(targetWidgets, async (widgetId) => {
+    _.map(targetWidgets, async widgetId => {
       await knex('JobFunctionDashboardWidget').insert([
         { jobFunctionId: jobFunctionIdAdmin, widgetId },
         { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
@@ -622,7 +622,7 @@ async function seed(knex) {
     .first('id')
   // Insert Inventory Items
   await Promise.all(
-    _.map(_.range(siteDatas.length), async (i) => {
+    _.map(_.range(siteDatas.length), async i => {
       const siteData = siteDatas[i]
       const siteId = siteData.id
       // TB Cartridges
@@ -709,7 +709,7 @@ async function seed(knex) {
         .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
     })
     .orderBy('deviceId')
-    .then((items) =>
+    .then(items =>
       items.reduce((memo, row) => {
         if (!memo[row.deviceId]) {
           memo[row.deviceId] = {}
@@ -720,9 +720,9 @@ async function seed(knex) {
     )
 
   await Promise.all(
-    _.map(devices, async (device) => {
+    _.map(devices, async device => {
       await Promise.all(
-        _.map(luIssueTypeIds, async (issueTypeId) => {
+        _.map(luIssueTypeIds, async issueTypeId => {
           const issueStatusId =
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
@@ -783,7 +783,7 @@ async function seed(knex) {
     )
 
   await Promise.all(
-    _.map(luPolicies, async (policy) => {
+    _.map(luPolicies, async policy => {
       const deviceId = _.get(deviceIds, ['policy.deviceId', 'policy.personId'])
       if (deviceId) {
         const [alertMessageId] = await knex('AlertMessage').insert({
@@ -835,9 +835,9 @@ async function seed(knex) {
   issue.level = 2
   issueIds = []
   await Promise.all(
-    _.map(devices, async (device) => {
+    _.map(devices, async device => {
       await Promise.all(
-        _.map(roIssueTypeIds, async (issueTypeId) => {
+        _.map(roIssueTypeIds, async issueTypeId => {
           const issueStatusId =
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
@@ -901,7 +901,7 @@ async function seed(knex) {
     )
 
   await Promise.all(
-    _.map(roPolicies, async (policy) => {
+    _.map(roPolicies, async policy => {
       const deviceId = _.get(deviceIds, ['policy.deviceId', 'policy.personId'])
       if (deviceId) {
         const message = policy.notificationTypeName.endsWith('RO View')

@@ -24,8 +24,8 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
     {
-      number: (n) => (isNumber(n) ? formatNumber(n) : false),
-      string: (t) => t && t.split('\n').map((r) => <p>{r}</p>),
+      number: n => (isNumber(n) ? formatNumber(n) : false),
+      string: t => t && t.split('\n').map(r => <p>{r}</p>),
       default: identity,
     }
   )
@@ -61,7 +61,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
             )}`}
         </TableCell>
       ) : (
-        extraColumns.map((column) => (
+        extraColumns.map(column => (
           // TODO: refactor, see DeviceOperationTableRow
           <TableCell key={column.get('i18nKey')} hiddenOn="nd">
             {formatterByType(column.get('type'))(

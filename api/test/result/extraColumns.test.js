@@ -4,8 +4,8 @@ const {
   sanitizeExtraColumns,
 } = require('../../src/result/extraColumns')
 
-const cloneResults = (results) =>
-  results.map((r) => {
+const cloneResults = results =>
+  results.map(r => {
     return { ...r }
   })
 
@@ -87,7 +87,7 @@ describe('Result Schema', () => {
         {
           db: 'resultData_aDbValue',
           fieldName: 'aDbValue',
-          postProcess: (dbValue) => `${dbValue} ...Right?`,
+          postProcess: dbValue => `${dbValue} ...Right?`,
         },
       ]
 
@@ -105,7 +105,7 @@ describe('Result Schema', () => {
         {
           db: 'resultData_aDbValue',
           fieldName: 'aDbValue',
-          postProcess: (dbValue) => `${dbValue} ...Right?`,
+          postProcess: dbValue => `${dbValue} ...Right?`,
         },
       ]
       sanitizeExtraColumns(extraColumns)
