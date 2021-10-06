@@ -3330,8 +3330,11 @@ async function updateIssueNotificationTemplates(
 async function updateCustomFields(
   knex,
   partnerId,
+  // file name to check (and create if missing) in table FormDefinitionSchema
   jsonSchemaFile,
+  // externalId in table `FormDefinition` to update
   externalIdToUpdate,
+  // externalId's in table `FormDefinition` to delete
   externalIdsToDelete = []
 ) {
   /**

@@ -67,18 +67,19 @@
       "order": 10,
       "caption": "Address",
       "i18nKeyCaption": "AddressI18nCaptionKey",
+      "gxAlertDbColumn": "PatientStreet",
       "controlType": "textBox"
     },
     {
       "id": 1105,
-      "name": "Referring Clinician or Facility Phone Number (if known)",
-      "title": "Referring Clinician or Facility Phone Number (if known)",
-      "i18nKey": "ReferringClinicianI18nkey",
+      "name": "Mobile Number",
+      "title": "Mobile Number",
+      "i18nKey": "MobileNumberI18nkey",
       "fieldType": "text",
       "order": 11,
       "gxAlertDbColumn": "RequestorPhone",
-      "caption": "Referring Clinician or Facility Phone Number (if known)",
-      "i18nKeyCaption": "Referringphonei18nKeyCaption",
+      "caption": "Mobile Number",
+      "i18nKeyCaption": "MobileNumberI18nKeyCaption",
       "controlType": "textBox"
     },
     {
@@ -131,10 +132,39 @@
     },
     {
       "id": 1202,
+      "name": "Repeat Test",
+      "i18nKey": "RepeatTesti18nKey",
+      "fieldType": "number",
+      "order": 31,
+      "title": "Repeat Test",
+      "caption": "Repeat Test",
+      "gxAlertDbColumn": "RepeatTest",
+      "i18nKeyCaption": "RepeatTesti18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 0,
+          "value": "First or second",
+          "order": 0
+        },
+        {
+          "key": 1,
+          "value": "Follow-up",
+          "order": 10
+        },
+        {
+          "key": 2,
+          "value": "Repeat Baseline",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 1210,
       "name": "HIV Status",
       "i18nKey": "HIVStatusI18nKey",
       "fieldType": "text",
-      "order": 31,
+      "order": 35,
       "title": "HIV Status",
       "caption": "HIV Status",
       "i18nKeyCaption": "HIVStatusI8nCaptionKey",
@@ -158,11 +188,11 @@
       ]
     },
     {
-      "id": 1203,
+      "id": 1211,
       "name": "Sample Type",
       "i18nKey": "SampleTypeI18nKey",
       "fieldType": "text",
-      "order": 32,
+      "order": 36,
       "title": "Sample Type",
       "caption": "Sample Type",
       "i18nKeyCaption": "SampleTypeI8nCaptionKey",
@@ -183,11 +213,11 @@
     {
       "id": 1301,
       "name": "TBRegistrationNumberPrevious",
-      "title": "TB Registration Number - Previous",
+      "title": "TB Registration Number - Previous (if any)",
       "i18nKey": "TBRegistrationNumberPreviousI18nKey",
       "fieldType": "text",
       "order": 40,
-      "caption": "TB Registration Number - Previous",
+      "caption": "TB Registration Number - Previous (if any)",
       "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
       "controlType": "textBox"
     },
