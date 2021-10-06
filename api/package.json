@@ -32,6 +32,7 @@
     "test": "npm-run-all test:json test:unit test:contract",
     "test:json": "ajv test -s jsonSchemas/dynamicFormSchema.json -d 'src/forms/formsDefinition/*.json' --valid",
     "test:quiet": "npm-run-all test:unit test:contract:quiet",
+    "test:bdd": "cucumber-js",
     "test:contract": "TZ=UTC npm-run-all -c start:background mocha:contract stop:background",
     "test:contract:quiet": "TZ=UTC npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
     "test:unit": "TZ=UTC npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
@@ -121,6 +122,8 @@
     "object-mapper": "^6.2.0",
     "phone": "^3.1.4",
     "pug": "^3.0.2",
+    "puppeteer": "^10.4.0",
+    "puppeteer-core": "^10.4.0",
     "raven": "^2.6.4",
     "shx": "^0.3.3",
     "timezone-support": "^2.0.2",
@@ -131,6 +134,7 @@
     "winston-sentry-log": "^1.0.22"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^7.3.1",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
