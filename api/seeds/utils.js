@@ -3327,26 +3327,31 @@ async function updateIssueNotificationTemplates(
   await knex('SmsTemplate').whereNotIn('id', smsTemplatesToDelete).del()
 }
 
+/**
+ * Updates generated records in FormDefinition table to meet country requirements.
+ *
+ * Notice that in func `runSeed` (see above in current file) we silently run func
+ * `addForms` from `./relativeObjectsSeeds.js`
+ * That func created `FormDefinition` records for
+ * - formTypeId = 1 (Gx Connect Form)
+ * - diseaseId = 1 (Tuberculosis)
+ * - assayId = NULL (for all assayId's for above diseaseId)
+ * So, here in this func `updateCustomFields` we remove some records from FormDefinition
+ * and update another record with new jsonSchema file in table `FileDefinitionSchema`.
+ *
+ * @param {*} knex Knex object
+ * @param {number} partnerId The ID of the partner that will get the update applied
+ * @param {string} jsonSchemaFile file name to check (and create if missing) in table FormDefinitionSchema
+ * @param {string} externalIdToUpdate externalId in table `FormDefinition` to update
+ * @param {Array<string>} partnerId externalId's in table `FormDefinition` to delete
+ */
 async function updateCustomFields(
   knex,
   partnerId,
-  // file name to check (and create if missing) in table FormDefinitionSchema
   jsonSchemaFile,
-  // externalId in table `FormDefinition` to update
   externalIdToUpdate,
-  // externalId's in table `FormDefinition` to delete
   externalIdsToDelete = []
 ) {
-  /**
-   * In func `runSeed` (see above in current file) we silently run func
-   * `addForms` from `./relativeObjectsSeeds.js`
-   * That func created `FormDefinition` records for
-   * - formTypeId = 1 (Gx Connect Form)
-   * - diseaseId = 1 (Tuberculosis)
-   * - assayId = NULL (for all assayId's for above diseaseId)
-   * So, here in this func `updateCustomFields` we remove some records from FormDefinition
-   * and update another record with new jsonSchema file in table `FileDefinitionSchema`.
-   */
   if (!_.isEmpty(externalIdsToDelete)) {
     await knex('FormDefinition')
       .where({ partnerId })

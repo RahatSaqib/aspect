@@ -18,7 +18,7 @@
       "i18nKey": "AgeFieldi18nKey",
       "fieldType": "number",
       "order": 2,
-      "gxAlertDbColumn": "PatientAgeYears",
+      "gxAlertDbColumn": "PatientAge",
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
