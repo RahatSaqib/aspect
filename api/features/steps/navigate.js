@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 const { When, Then, And, Given, AfterAll } = require('@cucumber/cucumber')
-const expect = require('chai')
+const { expect } = require('chai')
 const puppeteer = require('puppeteer')
 
 const { setDefaultTimeout } = require('@cucumber/cucumber')
@@ -26,20 +26,12 @@ When('search for Argentina', async function () {
 })
 
 Then('Count results', async function () {
-  /*const linkTexts = await this.page.evaluate('#result-stats', elements =>
+  await this.page.waitForNavigation()
+  const linkTexts = await this.page.$$eval('#result-stats', elements =>
     elements.map(item => item.textContent)
-  )*/
+  )
+  expect(linkTexts).with.lengthOf(1)
 
-  const anchor = await this.page.$$("a[href='https://www.argentina.gob.ar']")
-  // prints a array of text
-  console.log(anchor)
-
-  // uncomment close statement if you want
-  // await this.browser.close()
-})
-
-AfterAll( async function () {
-  
   // uncomment close statement if you want
   await this.browser.close()
 })
