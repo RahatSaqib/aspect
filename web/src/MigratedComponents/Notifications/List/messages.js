@@ -40,11 +40,22 @@ export const messages = defineMessages({
     id: 'pages.Notifications.table.contactsHeader',
     defaultMessage: 'Contacts',
   },
+  notificationsTableHeaderJobFunctions: {
+    id: 'pages.Notifications.table.jobFunctionsHeader',
+    defaultMessage: 'Job Functions',
+  },
   notificationsTableContactsCount: {
     id: 'pages.Notifications.notificationsTableContactsCount',
     defaultMessage: `{itemCount, plural,
       one {# Contact}
       other {# Contacts}
+    }`,
+  },
+  notificationsTableJobFunctionsCount: {
+    id: 'pages.Notifications.notificationsTableJobFunctionsCount',
+    defaultMessage: `{itemCount, plural,
+      one {# Job Function}
+      other {# Job Functions}
     }`,
   },
 

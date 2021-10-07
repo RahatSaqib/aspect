@@ -185,7 +185,7 @@ async function listNotifications(request) {
       knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
       knex.raw(`
         CASE
-        WHEN ntc.externalId = 'issueBased'
+        WHEN ntc.externalId = 'issueBased' AND GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') IS NULL
         THEN SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.name),',',5)
         ELSE GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ')
         END as contacts
