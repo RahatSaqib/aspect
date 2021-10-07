@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -27,6 +27,22 @@ const AspectNotificationDetail = ({
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
   const [values, setValues] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && values) {
+      setFormConfig(
+        getFormConfigWithData(
+          intl,
+          jobFunctions,
+          values.notificationType,
+          values.notificationTypeName,
+          validationSchema(intl.formatMessage),
+          true,
+          values
+        )
+      )
+    }
+  }, [isLoading, values])
 
   const { isLoading, isError, error } = useQuery(
     [NOTIFICATION_DETAIL.KEY, { notificationId }],
@@ -66,16 +82,6 @@ const AspectNotificationDetail = ({
           areaItems: filter.areaItems,
           result: filter.result,
         })
-        setFormConfig(
-          getFormConfigWithData(
-            intl,
-            jobFunctions,
-            notificationType,
-            notificationTypeName,
-            validationSchema(intl.formatMessage),
-            true
-          )
-        )
       },
     }
   )
@@ -86,7 +92,7 @@ const AspectNotificationDetail = ({
   return (
     <Shell>
       {!isLoading && formConfig ? (
-        <FormikProvider config={formConfig} values={values}>
+        <FormikProvider config={formConfig}>
           <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
             <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>

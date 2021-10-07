@@ -15,9 +15,9 @@ import {
   pickKeys,
 } from '../Formik/Helpers'
 
-const getState = (formConfig, values) => {
+const getState = formConfig => {
   const { sections } = formConfig
-  const initialValues = getInitialValuesFromFormConfig(formConfig, values)
+  const initialValues = getInitialValuesFromFormConfig(formConfig)
   const fieldTypes = pickKeys(sections, 'type')
   const items = pickItems(sections)
   const byId = reduce(
@@ -82,11 +82,11 @@ const compareValuesSkipGuid = (obj1, obj2) => {
 
   return true
 }
-export const useFormConfig = (formConfig, values) => {
-  const [meta, setMeta] = useState(getState(formConfig, values))
+export const useFormConfig = formConfig => {
+  const [meta, setMeta] = useState(getState(formConfig))
 
   useEffect(() => {
-    const currentState = getState(formConfig, values)
+    const currentState = getState(formConfig)
     if (
       !isEqualWith(
         meta.initialValues,
@@ -96,7 +96,7 @@ export const useFormConfig = (formConfig, values) => {
     ) {
       setMeta(currentState)
     }
-  }, [formConfig, meta.initialValues, values])
+  }, [formConfig, meta.initialValues])
 
   const registerVisibleFields = useCallback((values, formik, touchedName) => {
     const { items = [] } = meta

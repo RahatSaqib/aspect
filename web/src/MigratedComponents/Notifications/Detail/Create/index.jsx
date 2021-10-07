@@ -28,7 +28,8 @@ const AspectNotificationDetail = ({
       notificationType,
       '',
       validationSchema(intl.formatMessage),
-      false
+      false,
+      null
     )
   )
   return (
