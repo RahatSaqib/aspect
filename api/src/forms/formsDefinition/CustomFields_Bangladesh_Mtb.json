@@ -7,6 +7,7 @@
       "i18nKey": "PatientNameI18nKey",
       "fieldType": "text",
       "order": 1,
+      "gxAlertDbColumn": "PatientName",
       "caption": "Patient Name",
       "i18nKeyCaption": "PatientNameI18nCaptionKey",
       "controlType": "textBox"
@@ -40,8 +41,8 @@
       "i18nKey": "GenderI18nKey",
       "fieldType": "number",
       "order": 3,
-      "caption": "Gender",
       "gxAlertDbColumn": "PatientGender",
+      "caption": "Gender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
       "items": [
@@ -65,9 +66,9 @@
       "i18nKey": "AddressI18nKey",
       "fieldType": "text",
       "order": 10,
+      "gxAlertDbColumn": "PatientStreet",
       "caption": "Address",
       "i18nKeyCaption": "AddressI18nCaptionKey",
-      "gxAlertDbColumn": "PatientStreet",
       "controlType": "textBox"
     },
     {
@@ -77,7 +78,7 @@
       "i18nKey": "MobileNumberI18nkey",
       "fieldType": "text",
       "order": 11,
-      "gxAlertDbColumn": "RequestorPhone",
+      "gxAlertDbColumn": "PatientPhone",
       "caption": "Mobile Number",
       "i18nKeyCaption": "MobileNumberI18nKeyCaption",
       "controlType": "textBox"
@@ -88,7 +89,7 @@
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
       "order": 12,
-      "gxAlertDbColumn": "HealthFacility",
+      "gxAlertDbColumn": "ReferringFacility",
       "title": "Referring Facility",
       "caption": "Referring Facility",
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
@@ -107,7 +108,7 @@
       "i18nKey": "TBHistoryI18nKey",
       "fieldType": "text",
       "order": 30,
-      "gxAlertDbColumn": "PreviouslyTreated",
+      "gxAlertDbColumn": "TBHistory",
       "title": "TB History",
       "caption": "TB History",
       "i18nKeyCaption": "TBHistoryI8nCaptionKey",
@@ -130,41 +131,14 @@
         }
       ]
     },
-    {
-      "id": 1202,
-      "name": "Repeat Test",
-      "i18nKey": "RepeatTesti18nKey",
-      "fieldType": "number",
-      "order": 31,
-      "title": "Repeat Test",
-      "caption": "Repeat Test",
-      "gxAlertDbColumn": "RepeatTest",
-      "i18nKeyCaption": "RepeatTesti18nCaptionKey",
-      "controlType": "comboBox",
-      "items": [
-        {
-          "key": 0,
-          "value": "First or second",
-          "order": 0
-        },
-        {
-          "key": 1,
-          "value": "Follow-up",
-          "order": 10
-        },
-        {
-          "key": 2,
-          "value": "Repeat Baseline",
-          "order": 20
-        }
-      ]
-    },
+
     {
       "id": 1210,
       "name": "HIV Status",
       "i18nKey": "HIVStatusI18nKey",
       "fieldType": "text",
       "order": 35,
+      "gxAlertDbColumn": "HIVStatus",
       "title": "HIV Status",
       "caption": "HIV Status",
       "i18nKeyCaption": "HIVStatusI8nCaptionKey",
@@ -193,6 +167,7 @@
       "i18nKey": "SampleTypeI18nKey",
       "fieldType": "text",
       "order": 36,
+      "gxAlertDbColumn": "SampleType",
       "title": "Sample Type",
       "caption": "Sample Type",
       "i18nKeyCaption": "SampleTypeI8nCaptionKey",
@@ -217,6 +192,7 @@
       "i18nKey": "TBRegistrationNumberPreviousI18nKey",
       "fieldType": "text",
       "order": 40,
+      "gxAlertDbColumn": "TBRegistrationNumberPrevious",
       "caption": "TB Registration Number - Previous (if any)",
       "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
       "controlType": "textBox"
@@ -228,6 +204,7 @@
       "i18nKey": "TBRegistrationNumberCurrentI18nKey",
       "fieldType": "text",
       "order": 41,
+      "gxAlertDbColumn": "TBRegistrationNumberCurrent",
       "caption": "TB Registration Number - Current",
       "i18nKeyCaption": "TBRegistrationNumberCurrentI18nCaptionKey",
       "controlType": "textBox"

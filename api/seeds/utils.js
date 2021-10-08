@@ -8,6 +8,9 @@ const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
+  assayToId,
+  diseaseToId,
+  formTypeToId,
   allResultCategoryToId,
   issueTypeToId,
   allJobFunctionToId,
@@ -3327,51 +3330,80 @@ async function updateIssueNotificationTemplates(
   await knex('SmsTemplate').whereNotIn('id', smsTemplatesToDelete).del()
 }
 
-/**
- * Updates generated records in FormDefinition table to meet country requirements.
- *
- * Notice that in func `runSeed` (see above in current file) we silently run func
- * `addForms` from `./relativeObjectsSeeds.js`
- * That func created `FormDefinition` records for
- * - formTypeId = 1 (Gx Connect Form)
- * - diseaseId = 1 (Tuberculosis)
- * - assayId = NULL (for all assayId's for above diseaseId)
- * So, here in this func `updateCustomFields` we remove some records from FormDefinition
- * and update another record with new jsonSchema file in table `FileDefinitionSchema`.
- *
- * @param {*} knex Knex object
- * @param {number} partnerId The ID of the partner that will get the update applied
- * @param {string} jsonSchemaFile file name to check (and create if missing) in table FormDefinitionSchema
- * @param {string} externalIdToUpdate externalId in table `FormDefinition` to update
- * @param {Array<string>} partnerId externalId's in table `FormDefinition` to delete
- */
-async function updateCustomFields(
-  knex,
-  partnerId,
-  jsonSchemaFile,
-  externalIdToUpdate,
-  externalIdsToDelete = []
-) {
-  if (!_.isEmpty(externalIdsToDelete)) {
-    await knex('FormDefinition')
-      .where({ partnerId })
-      .whereIn('externalId', externalIdsToDelete)
-      .del()
+async function upsertForms(knex, partnerId, forms) {
+  if (!partnerId) {
+    try {
+      // eslint-disable-next-line prefer-const
+      ;({ partnerId } = await knex('User as u')
+        .join('Person as p', 'u.id', 'p.userId')
+        .join('Job as j', 'p.id', 'j.personId')
+        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .where('jf.name', 'admin')
+        .first('p.lastPartnerId as partnerId'))
+      if (!partnerId) {
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('Error inserting forms', e)
+      return false
+    }
   }
+  await Promise.each(_.keys(forms), async key => {
+    const {
+      fileName,
+      formDefinition: {
+        order,
+        title,
+        i18nKeyTitle,
+        externalId,
+        formTypeExternalId,
+        diseaseExternalId,
+        assayExternalId,
+        subTitle,
+        i18nKeySubTitle,
+        description,
+        i18nKeyDescription,
+      },
+    } = forms[key]
 
-  let { id: formDefinitionSchemaId } =
-    (await knex('FormDefinitionSchema')
-      .where({ jsonSchemaFile })
-      .first('id')) || {}
-  if (!formDefinitionSchemaId) {
-    ;[formDefinitionSchemaId] = await knex('FormDefinitionSchema').insert({
-      jsonSchemaFile,
-    })
-  }
+    const formTypeId = await formTypeToId(formTypeExternalId)
+    const diseaseId = await diseaseToId(diseaseExternalId)
+    const assayId = await assayToId(assayExternalId)
 
-  await knex('FormDefinition')
-    .where({ partnerId, externalId: externalIdToUpdate })
-    .update({ formDefinitionSchemaId })
+    const { id: formDefinitionSchemaId } = await upsertSingle(
+      knex,
+      'formDefinitionSchema',
+      {
+        jsonSchemaFile: fileName,
+      }
+    )
+
+    await upsertSingle(
+      knex,
+      'FormDefinition',
+      {
+        partnerId,
+        externalId,
+      },
+      {
+        formTypeId,
+        partnerId,
+        diseaseId,
+        order,
+        assayId,
+        title,
+        i18nKeyTitle,
+        subTitle,
+        i18nKeySubTitle,
+        description,
+        i18nKeyDescription,
+        externalId,
+        formDefinitionSchemaId,
+      }
+    )
+  })
+  return true
 }
 
 module.exports = {
@@ -3448,5 +3480,5 @@ module.exports = {
   deleteIssueTypes,
   updateIssueNotificationTemplates,
 
-  updateCustomFields,
+  upsertForms,
 }

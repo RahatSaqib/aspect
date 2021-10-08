@@ -1,0 +1,168 @@
+{
+  "CustomFieldsTB": {
+    "fileName": "CustomFieldsTB.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Tuberculosis fields",
+      "i18nKeyTitle": "CustomFieldsTBi18nkey",
+      "externalId": "CustomFieldsTB",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "CustomFieldsHIVVL": {
+    "fileName": "CustomFieldsHIVVL.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFieldsHIVVL",
+      "i18nKeyTitle": "CustomFieldsHIVVLi18nkey",
+      "externalId": "CustomFieldsHIVVL",
+      "formTypeExternalId": "gxConnectForm",
+      "assayExternalId": "GxHiv1Vl",
+      "diseaseExternalId": "hiv"
+    }
+  },
+  "CustomFieldsExample": {
+    "fileName": "CustomFieldsExample.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFieldsExample",
+      "i18nKeyTitle": "CustomFieldsExamplei18nkey",
+      "externalId": "CustomFieldsExample",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "TBResult": {
+    "fileName": "TBResult.json",
+    "formDefinition": {
+      "order": 0,
+      "title": "TB Result data",
+      "i18nKeyTitle": "TBResult18nkey",
+      "externalId": "TBResult",
+      "formTypeExternalId": "resultFormWeb",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "TBProbes": {
+    "fileName": "TBProbes.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "TB Probes",
+      "i18nKeyTitle": "TBProbes18nkey",
+      "externalId": "TBProbes",
+      "formTypeExternalId": "resultFormWeb",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "TBCaseHealthCondition": {
+    "fileName": "TBCaseHealthCondition.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Health Condition",
+      "i18nKeyTitle": "TBCaseHealthCondition18nkey",
+      "externalId": "TBCaseHealthCondition",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "TBCaseTreatment": {
+    "fileName": "TBCaseTreatment.json",
+    "formDefinition": {
+      "order": 2,
+      "title": "Treatment",
+      "i18nKeyTitle": "TBTreatment18nkey",
+      "externalId": "TBCaseTreatment",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "HIVResult": {
+    "fileName": "HIVResult.json",
+    "formDefinition": {
+      "order": 0,
+      "title": "HIV Result data",
+      "i18nKeyTitle": "HIVResult18nkey",
+      "externalId": "HIVResult",
+      "formTypeExternalId": "resultFormWeb",
+      "diseaseExternalId": "hiv"
+    }
+  },
+  "HIVProbes": {
+    "fileName": "HIVProbes.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "HIV Probes",
+      "i18nKeyTitle": "HIVProbes18nkey",
+      "externalId": "HIVProbes",
+      "formTypeExternalId": "resultFormWeb",
+      "diseaseExternalId": "hiv"
+    }
+  },
+  "HIVCaseHealthCondition": {
+    "fileName": "HIVCaseHealthCondition.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Health Condition",
+      "i18nKeyTitle": "HIVCaseHealthCondition18nkey",
+      "externalId": "HIVCaseHealthCondition",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "hiv"
+    }
+  },
+  "HIVCaseTreatment": {
+    "fileName": "HIVCaseTreatment.json",
+    "formDefinition": {
+      "order": 2,
+      "title": "Treatment",
+      "i18nKeyTitle": "HIVCaseTreatmenti18nkey",
+      "externalId": "HIVCaseTreatment",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "hiv"
+    }
+  },
+  "CovidResult": {
+    "fileName": "CovidResult.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Result",
+      "i18nKeyTitle": "CovidResulti18nKey",
+      "externalId": "CovidResult",
+      "formTypeExternalId": "resultFormWeb",
+      "diseaseExternalId": "covid19"
+    }
+  },
+  "CovidCaseHealthCondition": {
+    "fileName": "CovidCaseHealthCondition.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Health Condition",
+      "i18nKeyTitle": "CovidCaseHealthConditioni18nkey",
+      "externalId": "CovidCaseHealthCondition",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "covid19"
+    }
+  },
+  "CovidCaseTreatment": {
+    "fileName": "CovidCaseTreatment.json",
+    "formDefinition": {
+      "order": 0,
+      "title": "Treatment",
+      "i18nKeyTitle": "CovidCaseTreatmenti18nkey",
+      "externalId": "CovidCaseTreatment",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "covid19"
+    }
+  },
+  "CovidCaseAditionalData": {
+    "fileName": "CovidCaseAditionalData.json",
+    "formDefinition": {
+      "order": 2,
+      "title": "Aditional Data",
+      "i18nKeyTitle": "CovidCaseAditionalDatai18nkey",
+      "externalId": "CovidCaseAditionalData",
+      "formTypeExternalId": "CaseCreation",
+      "diseaseExternalId": "covid19"
+    }
+  }
+}
