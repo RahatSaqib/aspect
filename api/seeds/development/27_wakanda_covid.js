@@ -3,6 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
+const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
 const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
@@ -21,7 +22,6 @@ const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
 const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
-const forms = require('./fixtures/forms')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
@@ -380,9 +380,7 @@ async function seed(knex) {
       'dashboardWidgetTitleTotalDeaths',
     ])
     .select('id as widgetId')
-
-  await utils.upsertForms(knex, partnerId, forms)
-
+  await addForms(knex, partnerId)
   await Promise.each(statWidgets, async elem =>
     knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunctionIdAdmin, widgetId: elem.widgetId },
