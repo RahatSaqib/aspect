@@ -38,9 +38,11 @@ export const getFormConfigWithData = (
       return foundJF && foundJF.length ? foundJF[0] : item
     })
   }
+
   return {
     ...mergeFormConfigWithData(mergedValues, formSchema, messages),
     validationSchema,
+    values: mergedValues,
   }
 }
 

@@ -11,7 +11,7 @@ export const FormikProvider = ({ config, children }) => {
   const { actions, validationSchema = null } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const { meta, registerVisibleFields, updateField } = useFormConfig(config)
-  const { initialValues } = meta
+  const initialValues = config.values || meta.initialValues
 
   const formikConfiguration = {
     enableReinitialize: true,
