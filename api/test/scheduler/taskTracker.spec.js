@@ -2,8 +2,6 @@ const chai = require('chai')
 const _ = require('lodash')
 const { taskTracker } = require('../../src/scheduler/taskTracker')
 const {
-  createMessageContext,
-  waitForAction,
   dispatchAndWaitForAction,
   waitForIdle,
   subscribe,
@@ -13,7 +11,7 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
 const { assert } = chai
 
-describe.only('Scheduler task tracker', () => {
+describe('Scheduler task tracker', () => {
   beforeEach(async () => {
     /**
      * Execute the scheduler task device maintenance status logging for the last 30 days
@@ -84,10 +82,8 @@ describe.only('Scheduler task tracker', () => {
       /**
        * Execute the task again for filling the missing dates
        */
-      const messageContext = await createMessageContext()
       const action = logDeviceMaintenanceStatus()
-      await messageContext.dispatch(action)
-      await waitForAction(action)
+      await dispatchAndWaitForAction(action, 2000)
       await waitForIdle(2000)
       const withSchedulerTaskRecords = await knex('SchedulerTaskExecutionLog')
         .where('success', true)
@@ -134,7 +130,6 @@ describe.only('Scheduler task tracker', () => {
       await knex('SchedulerTaskExecutionLog').where('success', false).del()
     })
     it('should store exception in SchedulerTaskExecutionLog', async () => {
-      const messageContext = await createMessageContext()
       subscribe('SomeActions', subscription)
       const action1 = {
         type: 'UNEXISTING_TEST_MESSAGE',
@@ -147,10 +142,9 @@ describe.only('Scheduler task tracker', () => {
         ['myTinyFunc1', 'myTinyFunc2']
       )
       assert.lengthOf(errorRecords, 0)
-      await messageContext.dispatch(action1)
-      await messageContext.dispatch(action2)
-      await waitForAction(action1)
-      await waitForAction(action2)
+
+      await dispatchAndWaitForAction(action1, 2000)
+      await dispatchAndWaitForAction(action2, 2000)
       await waitForIdle(2000)
       errorRecords = await knex('SchedulerTaskExecutionLog').whereIn(
         'taskName',
