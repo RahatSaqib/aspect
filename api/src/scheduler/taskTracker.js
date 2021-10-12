@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const Promise = require('bluebird')
 const { parseISO, subDays } = require('date-fns')
 const _ = require('lodash')
@@ -74,14 +75,37 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       // If this task is daily basis it will complete the range of dates
       // we want to run the task.
       if (dailyRun) daysToRun = getDaysWithNoRuns(executedDates)
-
+      console.log('##########################################', 1, {
+        taskName: schedulerMethod.name,
+        daysToRun,
+        dailyRun,
+        messageContext,
+        action,
+      })
       await Promise.each(daysToRun, async day => {
+        console.log('___________ Promise.each', 1, {
+          day,
+          mqName: messageContext.queue.name,
+        })
         let jobExecutionId
         try {
-          ;[jobExecutionId] = await knex('SchedulerTaskExecutionLog').insert({
+          const payload = {
             taskName: schedulerMethod.name,
             processingDate: getCustomToday(day),
             startDate: new Date(),
+          }
+          ;[jobExecutionId] = await knex('SchedulerTaskExecutionLog').insert(
+            payload
+          )
+          // ;[jobExecutionId] = await knex('SchedulerTaskExecutionLog').insert({
+          //   taskName: schedulerMethod.name,
+          //   processingDate: getCustomToday(day),
+          //   startDate: new Date(),
+          // })
+          console.log('___________ Promise.each - inserted', 2, {
+            jobExecutionId,
+            payload,
+            mqName: messageContext.queue.name,
           })
           logger.debug(
             `Execute Task ${schedulerMethod.name} for dates ${getCustomToday(
@@ -89,15 +113,32 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             )}`,
             { reLabel: 'aspect:taskTracker' }
           )
+          console.log('___________ Promise.each', 3, {
+            mqName: messageContext.queue.name,
+          })
           await schedulerMethod({ ...action, today: day }, { messageContext })
+          console.log('___________ Promise.each', 4, {
+            mqName: messageContext.queue.name,
+          })
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
               success: true,
             })
             .where('id', jobExecutionId)
+          console.log('___________ Promise.each', 5, {
+            mqName: messageContext.queue.name,
+          })
         } catch (dailyException) {
+          console.log('___________ Promise.each - exception', 6, {
+            dailyException,
+            mqName: messageContext.queue.name,
+          })
           const errorMessage = JSON.stringify(dailyException)
+          console.log('___________ Promise.each - exception', 7, {
+            errorMessage,
+            mqName: messageContext.queue.name,
+          })
           logger.error(dailyException, { reLabel: 'aspect:taskTracker' })
           await knex('SchedulerTaskExecutionLog')
             .update({
@@ -105,15 +146,37 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
               errorMessage,
             })
             .where('id', jobExecutionId)
+          console.log('___________ Promise.each - exception', 8, {
+            errorMessage,
+            jobExecutionId,
+            mqName: messageContext.queue.name,
+          })
         }
       })
     } catch (ex) {
+      console.log('___________ global exception', 100, {
+        ex,
+        mqName: messageContext.queue.name,
+      })
       const errorMessage = JSON.stringify(ex)
+      console.log('___________ global exception', 101, {
+        errorMessage,
+        mqName: messageContext.queue.name,
+      })
       logger.error(ex, { reLabel: 'aspect:taskTracker' })
-      await knex('SchedulerTaskExecutionLog').insert({
+      const payload = {
         taskName: schedulerMethod.name,
         endDate: new Date(),
         errorMessage,
+      }
+      await knex('SchedulerTaskExecutionLog').insert(payload)
+      // await knex('SchedulerTaskExecutionLog').insert({
+      //   taskName: schedulerMethod.name,
+      //   endDate: new Date(),
+      //   errorMessage,
+      // })
+      console.log('___________ global exception - inserted', 102, {
+        mqName: messageContext.queue.name,
       })
     }
   })

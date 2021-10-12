@@ -11,7 +11,8 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
 const { assert } = chai
 
-describe('Scheduler task tracker', () => {
+// eslint-disable-next-line no-only-tests/no-only-tests
+describe.only('Scheduler task tracker', () => {
   beforeEach(async () => {
     /**
      * Execute the scheduler task device maintenance status logging for the last 30 days

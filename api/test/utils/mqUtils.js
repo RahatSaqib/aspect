@@ -2,7 +2,7 @@ const QUEUE_IDLE_TIME = 300
 const QUEUE_TIMEOUT_TIME = 4000
 
 const { createMessageQueue } = require('../../src/mq')
-const config = require('../../src/config')
+// const config = require('../../src/config')
 const {
   updateSubscription: updateHandlersSubscription,
 } = require('../../src/subscriptions')
@@ -10,7 +10,8 @@ const {
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue(config.amqp.name)
+    // sharedQueue = await createMessageQueue(config.amqp.name)
+    sharedQueue = await createMessageQueue('aspect_test')
   }
   return sharedQueue
 }
