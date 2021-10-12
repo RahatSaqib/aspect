@@ -3,7 +3,6 @@ const _ = require('lodash')
 const { taskTracker } = require('../../src/scheduler/taskTracker')
 const {
   dispatchAndWaitForAction,
-  waitForIdle,
   subscribe,
 } = require('../utils/mqUtils')
 const { knex } = require('../../src/db')
@@ -11,7 +10,7 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
 const { assert } = chai
 
-describe.only('Scheduler task tracker', () => {
+describe('Scheduler task tracker', () => {
   describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
     beforeEach(async () => {
       /**
