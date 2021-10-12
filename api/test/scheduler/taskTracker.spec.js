@@ -130,12 +130,14 @@ describe('Scheduler task tracker', () => {
           taskTracker(myTinyFunc1, action, context),
       },
     }
+    let messageContext = before(async () => {
+      messageContext = await createMessageContext()
+      await subscribe('SomeActions', subscription)
+    })
     afterEach(async () => {
       await knex('SchedulerTaskExecutionLog').where('success', false).del()
     })
     it('should store exception in SchedulerTaskExecutionLog', async () => {
-      const messageContext = await createMessageContext()
-      subscribe('SomeActions', subscription)
       const action1 = {
         type: 'UNEXISTING_TEST_MESSAGE',
       }
