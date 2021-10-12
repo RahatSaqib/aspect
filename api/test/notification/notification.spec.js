@@ -78,10 +78,12 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe('Result Notifications triggers (new)', () => {
+describe('Result Notifications triggers', () => {
   let results = []
   let ntNoFilterConditionId
   let messageContext
+  const name = 'Result based notification'
+  const path = '/api/notification'
 
   const filterCondition = {
     result: [
@@ -138,7 +140,7 @@ describe('Result Notifications triggers (new)', () => {
 
     ;[ntNoFilterConditionId] = await knex('NotificationType').insert({
       partnerId: 1,
-      name: 'Result based notification',
+      name,
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
@@ -173,6 +175,11 @@ describe('Result Notifications triggers (new)', () => {
   describe('Checking filtering condition channel', () => {
     before(async () => createTestContext(filterCondition))
     after(removeTestContext)
+
+    let id
+    let data
+    let fltrCon
+
     it('should create a notification which will send only sms and not an email', async () => {
       const insertedResult = _.sample(results)
       messageContext.dispatch(resultLogged(insertedResult.id, 1, 1))
@@ -181,6 +188,66 @@ describe('Result Notifications triggers (new)', () => {
         .where({ resultId: insertedResult.id })
         .distinct()
       assert.isAtLeast(notifications.length, 1)
+    })
+
+    it('should load result based notification', async () => {
+      shared.checkToken(server, path)
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 200)
+      const foundRBN = res.body.data.filter(item => item.name === name)
+      if (foundRBN && foundRBN.length) {
+        id = foundRBN[0].id
+        const res = await server
+          .get(`${path}/${id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        data = res.body.data
+        fltrCon = JSON.parse(data.filterCondition)
+        assert.property(data, 'notificationTypeName')
+        assert.property(data, 'notificationType')
+        assert.property(data, 'name')
+        assert.property(data, 'filterCondition')
+        assert.property(data, 'emailSubject')
+        assert.property(data, 'emailBody')
+        assert.property(data, 'smsBody')
+        assert.property(data, 'webUrl')
+        assert.property(data, 'webBody')
+      }
+    })
+
+    it('should save result based notification', async () => {
+      shared.checkToken(server, path)
+      const payload = {
+        notificationType: data.notificationType,
+        name: data.name,
+        emailSubject: '',
+        emailBody: '',
+        sendEmail: false,
+        smsBody: data.smsBody || '',
+        sendSms: fltrCon.sendSms,
+        webUrl: '',
+        webBody: '',
+        sendWeb: false,
+        jobFunctions: [
+          {
+            jobFunctionId: '1',
+            checked: true,
+            tags: [],
+          },
+        ],
+        deviceLevelId: fltrCon.deviceLevelId,
+        areaItems: fltrCon.areaItems,
+        result: fltrCon.result,
+      }
+      const res = await server
+        .put(`${path}/${id}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send(payload)
+
+      assert.equal(res.status, 200)
     })
   })
 })
