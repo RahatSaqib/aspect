@@ -3373,7 +3373,7 @@ async function upsertForms(knex, partnerId, forms) {
 
     const { id: formDefinitionSchemaId } = await upsertSingle(
       knex,
-      'formDefinitionSchema',
+      'FormDefinitionSchema',
       {
         jsonSchemaFile: fileName,
       }
