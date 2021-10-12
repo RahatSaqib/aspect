@@ -113,16 +113,21 @@ const rawPayloadPlugin = {
     })
   },
 }
-
+const queueName = config.scheduler.enabled
+  ? config.amqp.name
+  : `${config.amqp.name}_for_testing`
 const messageQueuePlugin = {
   name: 'messageQueue',
   version,
   register: async server =>
-    createMessageQueue(config.amqp.name)
+    createMessageQueue(queueName)
       .then(async queue => {
         addLoggers(server, queue)
         await addSubscriptions(queue)
         if (config.scheduler.enabled) {
+          console.log(
+            '----------------------------------------- Enable the scheduler'
+          )
           startScheduler(queue)
         }
         return queue

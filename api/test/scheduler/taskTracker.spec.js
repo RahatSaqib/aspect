@@ -12,15 +12,14 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 const { assert } = chai
 
 describe.only('Scheduler task tracker', () => {
-  beforeEach(async () => {
-    /**
-     * Execute the scheduler task device maintenance status logging for the last 30 days
-     */
-
-    const action = logDeviceMaintenanceStatus()
-    await dispatchAndWaitForAction(action)
-  })
   describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
+    beforeEach(async () => {
+      /**
+       * Execute the scheduler task device maintenance status logging for the last 30 days
+       */
+      const action = logDeviceMaintenanceStatus()
+      await dispatchAndWaitForAction(action)
+    })
     it('should log the maintenance status of each un-logged device for the missing dates', async () => {
       const daysExecuted = await knex('SchedulerTaskExecutionLog')
         .orderBy('processingDate', 'DESC')
@@ -84,7 +83,6 @@ describe.only('Scheduler task tracker', () => {
        */
       const action = logDeviceMaintenanceStatus()
       await dispatchAndWaitForAction(action)
-      await waitForIdle()
       const withSchedulerTaskRecords = await knex('SchedulerTaskExecutionLog')
         .where('success', true)
         .whereIn('processingDate', [
@@ -145,7 +143,6 @@ describe.only('Scheduler task tracker', () => {
       assert.lengthOf(errorRecords, 0)
       await dispatchAndWaitForAction(action1)
       await dispatchAndWaitForAction(action2)
-      await waitForIdle()
       errorRecords = await knex('SchedulerTaskExecutionLog')
         .whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
         .select()

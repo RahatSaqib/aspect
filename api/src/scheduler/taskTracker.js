@@ -74,9 +74,19 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       // If this task is daily basis it will complete the range of dates
       // we want to run the task.
       if (dailyRun) daysToRun = getDaysWithNoRuns(executedDates)
-      console.log('dailyRun', schedulerMethod.name, dailyRun)
+      console.log(
+        'dailyRun',
+        schedulerMethod.name,
+        daysToRun,
+        messageContext.queue.name
+      )
       await Promise.each(daysToRun, async day => {
-        console.log('run for specific Date', schedulerMethod.name, day)
+        console.log(
+          'run for specific Date',
+          schedulerMethod.name,
+          day,
+          messageContext.queue.name
+        )
         let jobExecutionId
         try {
           ;[jobExecutionId] = await knex('SchedulerTaskExecutionLog').insert({
@@ -84,6 +94,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             processingDate: getCustomToday(day),
             startDate: new Date(),
           })
+
           logger.debug(
             `Execute Task ${schedulerMethod.name} for dates ${getCustomToday(
               day
@@ -98,7 +109,8 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             ' JobId/Result',
             schedulerMethod.name,
             jobExecutionId,
-            result
+            result,
+            messageContext.queue.name
           )
           await knex('SchedulerTaskExecutionLog')
             .update({
@@ -106,7 +118,11 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
               success: true,
             })
             .where('id', jobExecutionId)
-          console.log(`updated ${jobExecutionId}`)
+          console.log(
+            `updated ${jobExecutionId}`,
+            schedulerMethod.name,
+            messageContext.queue.name
+          )
         } catch (dailyException) {
           const errorMessage = JSON.stringify(dailyException)
           console.log('dailyError message', errorMessage, dailyException)
@@ -123,7 +139,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       })
     } catch (ex) {
       const errorMessage = JSON.stringify(ex)
-      console.log('Global exception')
+      console.log('Global exception', ex, messageContext.queue.name)
       logger.error(ex, { reLabel: 'aspect:taskTracker' })
       await knex('SchedulerTaskExecutionLog').insert({
         taskName: schedulerMethod.name,
