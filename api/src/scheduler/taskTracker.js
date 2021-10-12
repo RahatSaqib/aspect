@@ -74,8 +74,9 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       // If this task is daily basis it will complete the range of dates
       // we want to run the task.
       if (dailyRun) daysToRun = getDaysWithNoRuns(executedDates)
-
+      console.log('dailyRun', schedulerMethod.name, dailyRun)
       await Promise.each(daysToRun, async day => {
+        console.log('run for specific Date', schedulerMethod.name, day)
         let jobExecutionId
         try {
           ;[jobExecutionId] = await knex('SchedulerTaskExecutionLog').insert({
@@ -89,31 +90,45 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             )}`,
             { reLabel: 'aspect:taskTracker' }
           )
-          await schedulerMethod({ ...action, today: day }, { messageContext })
+          const result = await schedulerMethod(
+            { ...action, today: day },
+            { messageContext }
+          )
+          console.log(
+            ' JobId/Result',
+            schedulerMethod.name,
+            jobExecutionId,
+            result
+          )
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
               success: true,
             })
             .where('id', jobExecutionId)
+          console.log(`updated ${jobExecutionId}`)
         } catch (dailyException) {
           const errorMessage = JSON.stringify(dailyException)
+          console.log('dailyError message', errorMessage, dailyException)
           logger.error(dailyException, { reLabel: 'aspect:taskTracker' })
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
-              errorMessage,
+              errorMessage: _.isEmpty(errorMessage)
+                ? dailyException
+                : errorMessage,
             })
             .where('id', jobExecutionId)
         }
       })
     } catch (ex) {
       const errorMessage = JSON.stringify(ex)
+      console.log('Global exception')
       logger.error(ex, { reLabel: 'aspect:taskTracker' })
       await knex('SchedulerTaskExecutionLog').insert({
         taskName: schedulerMethod.name,
         endDate: new Date(),
-        errorMessage,
+        errorMessage: _.isEmpty(errorMessage) ? ex : errorMessage,
       })
     }
   })

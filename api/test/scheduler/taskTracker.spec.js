@@ -11,7 +11,7 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
 const { assert } = chai
 
-describe('Scheduler task tracker', () => {
+describe.only('Scheduler task tracker', () => {
   beforeEach(async () => {
     /**
      * Execute the scheduler task device maintenance status logging for the last 30 days
@@ -111,11 +111,11 @@ describe('Scheduler task tracker', () => {
     })
   })
   describe('UNEXISTING_TEST_MESSAGE', () => {
-    const myTinyFunc1 = () => {
+    const myTinyFunc1 = async () => {
       const newLocal = 'The big string Error'
       throw newLocal
     }
-    const myTinyFunc2 = () => {
+    const myTinyFunc2 = async () => {
       throw new Error('The big Error')
     }
     const subscription = {
@@ -139,10 +139,9 @@ describe('Scheduler task tracker', () => {
       const action2 = {
         type: 'UNEXISTING_TEST_MESSAGE2',
       }
-      let errorRecords = await knex('SchedulerTaskExecutionLog').whereIn(
-        'taskName',
-        ['myTinyFunc1', 'myTinyFunc2']
-      )
+      let errorRecords = await knex('SchedulerTaskExecutionLog')
+        .whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
+        .select()
       assert.lengthOf(errorRecords, 0)
       await dispatchAndWaitForAction(action1)
       await dispatchAndWaitForAction(action2)
