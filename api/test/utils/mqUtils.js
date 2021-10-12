@@ -23,7 +23,7 @@ async function queuePurge() {
 
 async function subscribe(subscriptionName, subscription) {
   const queue = await queueConnect()
-  queue.subscribe(subscriptionName, subscription)
+  await queue.subscribe(subscriptionName, subscription)
 }
 
 async function updateSubscription(subscriptorKey) {

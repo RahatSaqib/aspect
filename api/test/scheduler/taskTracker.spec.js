@@ -88,7 +88,7 @@ describe('Scheduler task tracker', () => {
       const action = logDeviceMaintenanceStatus()
       await messageContext.dispatch(action)
       await waitForAction(action)
-      await waitForIdle(2000)
+      await waitForIdle()
       const withSchedulerTaskRecords = await knex('SchedulerTaskExecutionLog')
         .where('success', true)
         .whereIn('processingDate', [
@@ -130,7 +130,8 @@ describe('Scheduler task tracker', () => {
           taskTracker(myTinyFunc1, action, context),
       },
     }
-    let messageContext = before(async () => {
+    let messageContext
+    before(async () => {
       messageContext = await createMessageContext()
       await subscribe('SomeActions', subscription)
     })
@@ -153,7 +154,7 @@ describe('Scheduler task tracker', () => {
       await messageContext.dispatch(action2)
       await waitForAction(action1)
       await waitForAction(action2)
-      await waitForIdle(2000)
+      await waitForIdle()
       errorRecords = await knex('SchedulerTaskExecutionLog').whereIn(
         'taskName',
         ['myTinyFunc1', 'myTinyFunc2']
