@@ -11,7 +11,7 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
 const { assert } = chai
 
-describe.only('Scheduler task tracker', () => {
+describe('Scheduler task tracker', () => {
   beforeEach(async () => {
     /**
      * Execute the scheduler task device maintenance status logging for the last 30 days
