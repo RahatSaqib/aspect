@@ -326,13 +326,13 @@ async function getNotificationPolicy(
           'result.deviceId as deviceId',
           'result.resultId as resultId',
           knex.raw(
-            'CASE mt.filterCondition.sendEmail WHEN 1 mt.emailTemplateId ELSE NULL END as emailTemplateId'
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
           ),
           knex.raw(
-            'CASE mt.filterCondition.sendSms WHEN 1 mt.smsTemplateId ELSE NULL END as smsTemplateId'
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.smsTemplateId ELSE NULL END as smsTemplateId'
           ),
           knex.raw(
-            'CASE mt.filterCondition.sendWeb WHEN 1 mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
           ),
         ]
         queryBuilder
