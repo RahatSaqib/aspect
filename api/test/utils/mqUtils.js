@@ -10,7 +10,7 @@ const {
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue(config.amqp.name)
+    sharedQueue = await createMessageQueue(`${config.amqp.name}_for_testing`)
   }
   return sharedQueue
 }
