@@ -1,10 +1,7 @@
 const chai = require('chai')
 const _ = require('lodash')
 const { taskTracker } = require('../../src/scheduler/taskTracker')
-const {
-  dispatchAndWaitForAction,
-  subscribe,
-} = require('../utils/mqUtils')
+const { dispatchAndWaitForAction, subscribe } = require('../utils/mqUtils')
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 
