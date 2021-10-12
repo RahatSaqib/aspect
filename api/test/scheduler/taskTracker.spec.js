@@ -155,10 +155,10 @@ describe('Scheduler task tracker', () => {
       await waitForAction(action1)
       await waitForAction(action2)
       await waitForIdle()
-      errorRecords = await knex('SchedulerTaskExecutionLog').whereIn(
-        'taskName',
-        ['myTinyFunc1', 'myTinyFunc2']
-      )
+      errorRecords = await knex('SchedulerTaskExecutionLog')
+        .whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
+        .select()
+      console.log('errorRecords', errorRecords)
       assert.lengthOf(errorRecords, 2)
       _.each(errorRecords, record => {
         assert.isNotEmpty(record.errorMessage)
