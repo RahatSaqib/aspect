@@ -7,7 +7,7 @@ const { setDefaultTimeout } = require('@cucumber/cucumber')
 
 setDefaultTimeout(60 * 1000)
 
-const generalRegex = 'Type "{text1}" in "{textFieldName}" TextField'
+const generalRegex = /^Type "([^"])*" in "([^"])*" TextField$/
 const generalFn = async (text1, textFieldName) => {
   await this.page.waitForSelector(`input[name='${textFieldName}']`)
   await this.page.type(`input[name='${textFieldName}']`, text1)
@@ -17,7 +17,7 @@ When(/^'open the page {2}"([^"])*"$/, async function (page) {
   await this.page.goto(page)
 })
 Then(generalRegex, generalFn)
-When(generalRegex, generalFn)
+// When(generalRegex, generalFn)
 
 // When('search for Argentina', async function () {
 //   await this.page.waitForSelector("[name='q']")
