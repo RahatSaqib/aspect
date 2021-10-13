@@ -153,7 +153,11 @@ describe.only('Scheduler task tracker', () => {
         .whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
         .whereNotNull('processingDate')
         .whereNotNull('endDate')
+        .whereNotNull('errorMessage')
         .where('success', 0)
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', {
+        errorRecords
+      })
       assert.lengthOf(errorRecords, 2)
       _.each(errorRecords, record => {
         assert.isNotEmpty(record.errorMessage)
