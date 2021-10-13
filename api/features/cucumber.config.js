@@ -1,9 +1,23 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable new-cap */
-const { BeforeAll, AfterAll } = require('@cucumber/cucumber')
+const {
+  BeforeAll,
+  AfterAll,
+  setDefaultTimeout,
+  setWorldConstructor,
+  World,
+} = require('@cucumber/cucumber')
 const puppeteer = require('puppeteer')
-const { setDefaultTimeout } = require('@cucumber/cucumber')
+const context = require('./context/scope')
 
+class CustomWorld extends World {
+  constructor(browser, page, options = {}) {
+    super(options)
+
+    this.browser = browser
+    this.page = page
+  }
+}
 setDefaultTimeout(60 * 1000)
 
 BeforeAll(async function () {
@@ -12,11 +26,11 @@ BeforeAll(async function () {
     headless: true,
   })
   const page = await browser.newPage()
-  world._browser = browser
-  world.page = page
+  setWorldConstructor(new CustomWorld(browser, page))
 })
 
 AfterAll(function () {
   const world = this
-  return this._browser.close()
+  // console.log('config', this)
+  return this.browser.close()
 })
