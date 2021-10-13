@@ -1,8 +1,13 @@
-Feature: Login
-    Feature Description: Admin login
-    This is the login feature example with cucumber.
-  Scenario: Verify that this users can login
+Feature: Login Page
+  Scenario: Try to login with admin and lower level users checking the menu we receive.
     Given The browser is open
-    When open the Google page
-    And search for Argentina 
-    Then Count results 
+    When open the page "http://localhost:8000/login"
+    And  Search for "alt="Aspect" attribute in type "img"
+    Then Type "admin" in "user" TextField   
+    And Type "test07" in "password" TextField
+    And  Click Submit button
+    # Then Receive text "Browse"
+            # | name           | description                                |
+            # | Phone XL       | A large phone with one of the best screens |
+            # | Phone Mini     | A great phone with one of the best cameras |
+            # | Phone Standard |                                            |
