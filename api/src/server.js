@@ -125,9 +125,6 @@ const messageQueuePlugin = {
         addLoggers(server, queue)
         await addSubscriptions(queue)
         if (config.scheduler.enabled) {
-          console.log(
-            '----------------------------------------- Enable the scheduler'
-          )
           startScheduler(queue)
         }
         return queue
