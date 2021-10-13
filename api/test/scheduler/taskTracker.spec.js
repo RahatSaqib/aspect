@@ -142,7 +142,7 @@ describe('Scheduler task tracker', () => {
       errorRecords = await knex('SchedulerTaskExecutionLog')
         .whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
         .select()
-      assert.lengthOf(errorRecords, 2)
+      assert.isAtLeast(errorRecords, 2)
       _.each(errorRecords, record => {
         assert.isNotEmpty(record.errorMessage)
         assert.isNotNull(record.errorMessage)
