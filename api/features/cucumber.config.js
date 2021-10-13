@@ -6,12 +6,18 @@ const { setDefaultTimeout } = require('@cucumber/cucumber')
 
 setDefaultTimeout(60 * 1000)
 
-Before(async () => {
+Before(async function () {
   const world = this
-  world._browser = await puppeteer.launch({
+  const browser = await puppeteer.launch({
     headless: true,
   })
-  world.page = await this.browser.newPage()
+  const page = await this.browser.newPage()
+  world._browser = browser
+  world.page = page
 })
 
-After(() => this._browser.close())
+After(function () {
+  const world = this
+  console.log('this', world.attach, world.log)
+  return this._browser.close()
+})
