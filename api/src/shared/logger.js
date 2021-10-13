@@ -13,7 +13,6 @@ const config = require('../config')
 const { combine, timestamp, label, printf, errors } = format
 // Plain text
 const plainTextFormat = printf(info => {
-  // console.log(info)
   // this is for boom validations errors, it doesn't arrive with message property
   if (!info.message) return JSON.stringify(info, null, 3)
   if (typeof info.message === 'object') {

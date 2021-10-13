@@ -1,7 +1,7 @@
 {
-  "plugins": ["prettier", "react", "react-hooks","small-import","lodash"],
+  "plugins": ["prettier", "react", "react-hooks", "small-import", "lodash"],
   "extends": [
-    "airbnb", 
+    "airbnb",
     "plugin:prettier/recommended",
     "plugin:lodash/canonical"
   ],
@@ -21,14 +21,12 @@
     "jest": true
   },
   "rules": {
-    /**
-     * see https://eslint.org/docs/rules/
-     */
     "consistent-return": "off",
     "class-methods-use-this": "off",
     "no-console": [
       "error",
-      { "allow": [
+      {
+        "allow": [
           "warn",
           "error"
         ]
@@ -71,9 +69,6 @@
     "prettier/prettier": [
       "error",
       {
-        /**
-         * see https://prettier.io/docs/en/options.html
-         */
         "semi": false,
         "singleQuote": true,
         "trailingComma": "es5",
@@ -120,10 +115,7 @@
       }
     ],
     "small-import/no-full-import": "warn",
-    "lodash/import-scope": [
-      2,
-      "method"
-    ],
+    "lodash/import-scope": [2, "method"],
     "lodash/collection-method-value": "off",
     "lodash/consistent-compose": "off",
     "lodash/identity-shorthand": "off",
