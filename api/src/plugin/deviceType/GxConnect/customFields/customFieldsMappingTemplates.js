@@ -4,6 +4,8 @@ const Promise = require('bluebird')
 const { stateSelectList } = require('../../../../geography/service')
 const { getListSitesForSelectList } = require('../../../../site/service')
 
+// all values should match returned values in func `GetTestTypeIdByAssayName`
+// in GxConnect file `Utilities/Helpers.cs`
 const getGxAlertAssayId = {
   abbottM2000PlasmaHivVL: 9,
   abbottM2000PlasmaHbvVL: 9,
@@ -11,7 +13,7 @@ const getGxAlertAssayId = {
   abbottM2000HIVEID: 9,
   abbottM2000DaanNCOVID19: 15,
   GxMtbRif: 4,
-  GxMtbRifUltra: 10,
+  GxMtbRifUltra: 12,
   GxHiv1Vl: 9,
   GxHiv1Qual: 8,
   GxEbola: 7,
