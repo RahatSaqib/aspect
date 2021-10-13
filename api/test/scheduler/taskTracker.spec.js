@@ -13,14 +13,14 @@ const { assert } = chai
 
 // eslint-disable-next-line no-only-tests/no-only-tests
 describe.only('Scheduler task tracker', () => {
-  // beforeEach(async () => {
-  //   /**
-  //    * Execute the scheduler task device maintenance status logging for the last 30 days
-  //    */
-  //   const action = logDeviceMaintenanceStatus()
-  //   await dispatchAndWaitForAction(action)
-  // })
   describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
+    beforeEach(async () => {
+      /**
+       * Execute the scheduler task device maintenance status logging for the last 30 days
+       */
+      const action = logDeviceMaintenanceStatus()
+      await dispatchAndWaitForAction(action)
+    })
     afterEach(async () => {
       await knex('SchedulerTaskExecutionLog').where('success', false).del()
     })
