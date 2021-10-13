@@ -12,7 +12,7 @@ const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 const { assert } = chai
 
 // eslint-disable-next-line no-only-tests/no-only-tests
-describe.only('Scheduler task tracker', () => {
+describe('Scheduler task tracker', () => {
   describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
     beforeEach(async () => {
       /**
