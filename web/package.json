@@ -35,19 +35,6 @@
     "build-storybook": "build-storybook",
     "scaffold": "plop "
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "./src/**/*.css": [
-      "prettier --write"
-    ],
-    "./{cfg,src}/**/*.{js,jsx}": [
-      "eslint --fix --max-warnings 0"
-    ]
-  },
   "jest": {
     "setupFiles": [
       "<rootDir>/src/__setup__/polyfills.js",
@@ -144,13 +131,11 @@
     "html-loader": "^2.1.2",
     "html-webpack-harddisk-plugin": "^2.0.0",
     "html-webpack-plugin": "^5.3.2",
-    "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.6",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^16.7.0",
-    "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "2.2.0",
     "mockdate": "^3.0.5",
     "npm-run-all": "^4.1.5",
