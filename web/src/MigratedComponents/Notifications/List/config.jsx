@@ -29,6 +29,7 @@ import { DateTimeCellFlagged } from '../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../AspectTable/TableCell/NumberCell'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
 import IconProvider from '../../IconProvider'
+import TranslatedCell from '../../AspectTable/TableCell/TranslatedCell'
 
 const groupedOptions = ({ formatMessage }) => [
   {
@@ -176,6 +177,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       width: 20,
       disableHide: true,
       disableGroupBy: true,
+      format: TranslatedCell,
     },
     {
       key: 'totalTriggers',
