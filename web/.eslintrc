@@ -69,12 +69,15 @@
     "prettier/prettier": [
       "error",
       {
-        "semi": false,
-        "singleQuote": true,
-        "trailingComma": "es5",
+        /**
+         * see https://prettier.io/docs/en/options.html
+         */
+        "arrowParens": "avoid",
         "eol": "lf",
         "parser": "babel",
-        "arrowParens": "avoid"
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "es5"
       }
     ],
     "object-curly-newline": ["error", { "consistent": true }],

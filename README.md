@@ -11,7 +11,8 @@ React Client App lives under `web`
 Setup Development Environemnt
 ------------------------------
 
-See: [API README](api/README.md#new-development-setup) & [Web README](web/README.md#installation)
+Install [Husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged) tools by running `yarn` in the root.
+Continue both web and API installs by reading: [API README](api/README.md#new-development-setup) & [Web README](web/README.md#installation)
 
 Deployment
 ----------
