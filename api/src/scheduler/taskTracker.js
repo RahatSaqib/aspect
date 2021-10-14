@@ -82,6 +82,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             processingDate: getCustomToday(day),
             startDate: new Date(),
           })
+
           logger.debug(
             `Execute Task ${schedulerMethod.name} for dates ${getCustomToday(
               day
@@ -101,7 +102,9 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
-              errorMessage,
+              errorMessage: _.isEmpty(errorMessage)
+                ? dailyException
+                : errorMessage,
             })
             .where('id', jobExecutionId)
         }
@@ -112,7 +115,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
       await knex('SchedulerTaskExecutionLog').insert({
         taskName: schedulerMethod.name,
         endDate: new Date(),
-        errorMessage,
+        errorMessage: _.isEmpty(errorMessage) ? ex : errorMessage,
       })
     }
   })

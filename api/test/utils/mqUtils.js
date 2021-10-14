@@ -10,8 +10,7 @@ const {
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    // sharedQueue = await createMessageQueue(config.amqp.name)
-    sharedQueue = await createMessageQueue('aspect_test')
+    sharedQueue = await createMessageQueue(`${config.amqp.name}_for_testing`)
   }
   return sharedQueue
 }
@@ -24,7 +23,7 @@ async function queuePurge() {
 
 async function subscribe(subscriptionName, subscription) {
   const queue = await queueConnect()
-  queue.subscribe(subscriptionName, subscription)
+  await queue.subscribe(subscriptionName, subscription)
 }
 
 async function updateSubscription(subscriptorKey) {
