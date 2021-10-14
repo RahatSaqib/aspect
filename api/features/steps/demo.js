@@ -32,7 +32,4 @@ Then('Count results', async function () {
     elements.map(item => item.textContent)
   )
   expect(linkTexts).with.lengthOf(1)
-
-  // uncomment close statement if you want
-  // await this.browser.close()
 })

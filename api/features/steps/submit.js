@@ -1,12 +1,11 @@
 /* eslint-disable new-cap */
-const { Then, And } = require('@cucumber/cucumber')
-const { expect } = require('chai')
+const { Then } = require('@cucumber/cucumber')
 
-Then('Click Submit button', async () => {
-  const [response] = await Promise.all([
-    this.page.waitForNavigation(), // The promise resolves after navigation has finished
-    this.page.click("input[type='submit']"), // Clicking the link will indirectly cause a navigation
+Then('Click Submit button', async function () {
+  const { page } = this
+  await Promise.all([
+    // page.click('button[type=submit]'),
+    page.keyboard.press('Enter'),
+    page.waitForNavigation(),
   ])
-
-  console.log('response', response)
 })
