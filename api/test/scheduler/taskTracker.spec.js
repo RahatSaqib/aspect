@@ -16,6 +16,7 @@ describe('Scheduler task tracker', () => {
       const action = logDeviceMaintenanceStatus()
       await dispatchAndWaitForAction(action)
     })
+
     it('should log the maintenance status of each un-logged device for the missing dates', async () => {
       const daysExecuted = await knex('SchedulerTaskExecutionLog')
         .orderBy('processingDate', 'DESC')
@@ -79,6 +80,7 @@ describe('Scheduler task tracker', () => {
        */
       const action = logDeviceMaintenanceStatus()
       await dispatchAndWaitForAction(action)
+
       const withSchedulerTaskRecords = await knex('SchedulerTaskExecutionLog')
         .where('success', true)
         .whereIn('processingDate', [
@@ -137,6 +139,7 @@ describe('Scheduler task tracker', () => {
         .whereIn('taskName', ['myTinyFunc1', 'myTinyFunc2'])
         .select()
       assert.lengthOf(errorRecords, 0)
+
       await dispatchAndWaitForAction(action1)
       await dispatchAndWaitForAction(action2)
       errorRecords = await knex('SchedulerTaskExecutionLog')
