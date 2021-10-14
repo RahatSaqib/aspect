@@ -3,7 +3,7 @@ const fs = require('fs')
 const _ = require('lodash')
 const path = require('path')
 
-const dict = []
+const dict = {}
 const getFileUpdatedDate = path => {
   const { mtime } = fs.statSync(path)
   return mtime
