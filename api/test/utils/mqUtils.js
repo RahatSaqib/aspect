@@ -2,7 +2,7 @@ const QUEUE_IDLE_TIME = 300
 const QUEUE_TIMEOUT_TIME = 4000
 
 const { createMessageQueue } = require('../../src/mq')
-// const config = require('../../src/config')
+const config = require('../../src/config')
 const {
   updateSubscription: updateHandlersSubscription,
 } = require('../../src/subscriptions')
