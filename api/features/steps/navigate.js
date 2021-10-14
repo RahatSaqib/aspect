@@ -21,15 +21,10 @@ When('search for Argentina', async function () {
   await this.page.keyboard.press('Enter')
 })
 
-Then(
-  'Search for "alt={string} attribute in type {string}',
-  async function (att, domElement) {
-    // ${domElement}
-    const expetedDomElement = await this.page.$(`[${att}]`)
-    assert.isNotNull(expetedDomElement)
-    // await this.page.type("[name='q']", 'Argentina')
-  }
-)
+Then('Search for html element {string}', async function (att) {
+  const expetedDomElement = await this.page.$(`[data-test="${att}"]`)
+  assert.isNotNull(expetedDomElement)
+})
 
 Then('Count results', async function () {
   await this.page.waitForNavigation()

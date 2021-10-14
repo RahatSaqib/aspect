@@ -188,6 +188,7 @@ export const Login = ({
               <Button
                 type="submit"
                 variant="contained"
+                data-test="loginSubmit"
                 color="primary"
                 className={cssClasses('Button')}
                 disabled={!form.valid}

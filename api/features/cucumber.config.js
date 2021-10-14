@@ -3,13 +3,19 @@
 const { Before, After, setDefaultTimeout } = require('@cucumber/cucumber')
 const puppeteer = require('puppeteer')
 
-setDefaultTimeout(60 * 1000)
+// setDefaultTimeout(60 * 1000)
 // setWorldConstructor(CustomWorld)
 
 Before(async function () {
   const world = this
   const browser = await puppeteer.launch({
     headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+    ],
+    executablePath: 'google-chrome',
   })
   world.browser = browser
   world.page = await browser.newPage()

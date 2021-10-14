@@ -8,7 +8,7 @@ const { setDefaultTimeout } = require('@cucumber/cucumber')
 setDefaultTimeout(60 * 1000)
 
 const generalRegex = /^Type "([^"])*" in "([^"])*" TextField$/
-const generalFn = async (text1, textFieldName) => {
+const generalFn = async function (text1, textFieldName) {
   await this.page.waitForSelector(`input[name='${textFieldName}']`)
   await this.page.type(`input[name='${textFieldName}']`, text1)
 }
