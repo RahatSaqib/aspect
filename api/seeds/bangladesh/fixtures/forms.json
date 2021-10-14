@@ -1,0 +1,37 @@
+{
+  "CustomFields_Bangladesh_Mtb": {
+    "fileName": "CustomFields_Bangladesh_Mtb.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Tuberculosis fields",
+      "i18nKeyTitle": "CustomFieldsTBi18nkey",
+      "externalId": "CustomFields_Bangladesh_Mtb",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "CustomFields_Bangladesh_Mtb_Ultra": {
+    "fileName": "CustomFields_Bangladesh_Mtb_Ultra.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Tuberculosis fields - for Mtb-Ultra only",
+      "i18nKeyTitle": "CustomFieldsTBUltraI18nkey",
+      "externalId": "CustomFields_Bangladesh_Mtb_Ultra",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "tb",
+      "assayExternalId": "GxMtbRifUltra"
+    }
+  },
+  "CustomFields_Bangladesh_HivVL": {
+    "fileName": "CustomFields_Bangladesh_HivVL.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields-HIVVL",
+      "i18nKeyTitle": "CustomFieldsHIVVLi18nkey",
+      "externalId": "CustomFields_Bangladesh_HivVL",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "hiv",
+      "assayExternalId": "GxHiv1Vl"
+    }
+  }
+}

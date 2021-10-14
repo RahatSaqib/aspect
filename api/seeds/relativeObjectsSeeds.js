@@ -121,6 +121,11 @@ async function addIssueTypes(
 }
 
 async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
+  const existingSchemas = await knex('FormDefinitionSchema').select()
+  if (!_.isEmpty(existingSchemas)) {
+    return
+  }
+
   let partnerId = _partnerId
   if (!partnerId) {
     try {
@@ -145,7 +150,6 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
     .where({ partnerId })
     .pluck('externalId')
 
-  const existingSchemas = await knex('FormDefinitionSchema').select()
   await Promise.each(Object.keys(forms), async form => {
     if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
       const formDefinitionSchemaId =
