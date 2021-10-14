@@ -221,18 +221,22 @@ async function listSitesForSelectList(request) {
       },
     }
   }
+  const response = await getListSitesForSelectList(dataConstraints, query?.tags)
+  return response
+}
 
+async function getListSitesForSelectList(dataConstraints, tags) {
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
-  if (query && query.tags && query.tags.length > 0)
+  if (tags && tags.length > 0)
     sitesQuery = sitesQuery
       .leftOuterJoin('SiteTag as stg', 's.id', 'stg.siteId')
       .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
-      .whereIn('t.title', query.tags)
+      .whereIn('t.title', tags)
 
   sitesQuery = sitesQuery
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
@@ -404,4 +408,5 @@ module.exports = {
   updateSite,
   listSitesForSelectList,
   listSitesWithReporters,
+  getListSitesForSelectList,
 }

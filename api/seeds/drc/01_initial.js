@@ -15,7 +15,6 @@ const {
 const {
   commonUpserts,
   upsertGeneXpertDeviceTypeAndAssays,
-  upsertDashboardWidgets,
 } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 
