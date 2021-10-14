@@ -542,7 +542,7 @@ async function getNotification(request) {
       'wt.payload as webBody'
     )
     .from('NotificationType as nt')
-    .leftJoin(
+    .innerJoin(
       'NotificationTypeCategory as ntc',
       'nt.notificationTypeCategoryId',
       'ntc.id'
@@ -553,8 +553,9 @@ async function getNotification(request) {
     .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
     .where('nt.id', id)
     .andWhere('ntc.externalId', 'resultBased')
+    .first()
 
-  const notification = await notificationQuery.first()
+  const notification = await notificationQuery
 
   return { ok: true, data: notification }
 }
