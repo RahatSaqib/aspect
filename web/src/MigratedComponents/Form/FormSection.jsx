@@ -55,18 +55,20 @@ const FormSection = ({
                   key={key}
                   name={row.id}
                   render={arrayHelpers =>
-                    subRows.map(({ __guid__: subRowKey }, subRowIndex) => (
-                      <FormSectionRow
-                        {...commonProps}
-                        arrayHelpers={arrayHelpers}
-                        isMulti
-                        key={subRowKey}
-                        parentKey={subRowKey}
-                        rowId={row.id}
-                        showDeleteButton={subRows.length > 1}
-                        subRowIndex={subRowIndex}
-                      />
-                    ))
+                    subRows.map(
+                      ({ __guid__: subRowKey = row.id }, subRowIndex) => (
+                        <FormSectionRow
+                          {...commonProps}
+                          arrayHelpers={arrayHelpers}
+                          isMulti
+                          key={subRowKey}
+                          parentKey={subRowKey}
+                          rowId={row.id}
+                          showDeleteButton={subRows.length > 1}
+                          subRowIndex={subRowIndex}
+                        />
+                      )
+                    )
                   }
                 />
               )

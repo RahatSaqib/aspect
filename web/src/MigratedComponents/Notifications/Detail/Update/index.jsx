@@ -77,7 +77,13 @@ const AspectNotificationDetail = ({
           webUrl,
           webBody,
           sendWeb: filter.sendWeb,
-          jobFunctions: filter.jobFunctions,
+          jobFunctions: filter.jobFunctions.map(jf => ({
+            ...jf,
+            tags: jf.tags.map(tag => ({
+              ...tag,
+              value: `${tag.value}`,
+            })),
+          })),
           deviceLevelId: filter.deviceLevelId,
           areaItems: filter.areaItems,
           result: filter.result,
