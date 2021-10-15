@@ -529,7 +529,7 @@ async function getNotification(request) {
   const { params } = request
   const { id } = params
 
-  const notificationQuery = knex
+  const notification = await knex
     .select(
       'ntc.name as notificationTypeName',
       'ntc.externalId as notificationType',
@@ -554,8 +554,6 @@ async function getNotification(request) {
     .where('nt.id', id)
     .andWhere('ntc.externalId', 'resultBased')
     .first()
-
-  const notification = await notificationQuery
 
   return { ok: true, data: notification }
 }
