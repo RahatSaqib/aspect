@@ -20,14 +20,6 @@ const messages = defineMessages({
       other {# more {name}s}
     }`,
   },
-  issueBased: {
-    id: 'pages.TableCell.issueBasedNotification',
-    defaultMessage: 'Issue Based',
-  },
-  resultBased: {
-    id: 'pages.TableCell.resultBasedNotification',
-    defaultMessage: 'Result Based',
-  },
 })
 
 export default messages
