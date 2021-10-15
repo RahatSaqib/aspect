@@ -1,0 +1,4 @@
+{
+    "web/{cfg,src}/**/*.{js,jsx}": ["eslint --fix --max-warnings 0"],
+    "web/**/*.css": ["prettier --write"]
+}
