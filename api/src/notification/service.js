@@ -183,6 +183,17 @@ async function listNotifications(request) {
       knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
+      /**
+       * TODO:
+       * After migrating IssueBased notification to the new format of storing them in NotificationType table,
+       * change below query to
+       *   knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
+       * because in below query we left backward compatibility with contacts for IssueBased notification
+       * coming from Person table in case when their JobFunctions are not set (as they were not set in old flow)
+       * and do this by this 2 lines:
+       *   WHEN ntc.externalId = 'issueBased' AND GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') IS NULL
+       *   THEN SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.name),',',5)
+       */
       knex.raw(`
         CASE
         WHEN ntc.externalId = 'issueBased' AND GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') IS NULL
