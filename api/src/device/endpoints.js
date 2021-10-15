@@ -446,6 +446,7 @@ const routes = [
     path: '/device/performance/{deviceId}',
     handler: asyncHandler(getDevicePerformance),
     config: {
+      auth: { scope: ['device:view'] },
       description: 'Historic utilization and error rates for the device',
     },
   },

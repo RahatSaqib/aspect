@@ -27,8 +27,10 @@ describe('Custom field mapper', () => {
 
     const mappingOutput = await mapGxConnectCustomFieldsWithDataSources(
       datasourceExample,
-      1,
-      1
+      {
+        countryId: 1,
+        stateId: 1,
+      }
     )
 
     assert.notDeepEqual(mappingOutput.CustomFields.Fields, [

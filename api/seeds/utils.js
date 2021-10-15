@@ -8,6 +8,9 @@ const relativeObjectsSeeds = require('./relativeObjectsSeeds')
 const { getBaseIssues } = require('./relatedObjects/issues')
 const {
   allAssayTypeToId,
+  assayToId,
+  diseaseToId,
+  formTypeToId,
   allResultCategoryToId,
   issueTypeToId,
   allJobFunctionToId,
@@ -3327,6 +3330,82 @@ async function updateIssueNotificationTemplates(
   await knex('SmsTemplate').whereNotIn('id', smsTemplatesToDelete).del()
 }
 
+async function upsertForms(knex, partnerId, forms) {
+  if (!partnerId) {
+    try {
+      // eslint-disable-next-line prefer-const
+      ;({ partnerId } = await knex('User as u')
+        .join('Person as p', 'u.id', 'p.userId')
+        .join('Job as j', 'p.id', 'j.personId')
+        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .where('jf.name', 'admin')
+        .first('p.lastPartnerId as partnerId'))
+      if (!partnerId) {
+        ;({ partnerId } = await knex('Partner as p').first('id as partnerId'))
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('Error inserting forms', e)
+      return false
+    }
+  }
+  await Promise.each(_.keys(forms), async key => {
+    const {
+      fileName,
+      formDefinition: {
+        order,
+        title,
+        i18nKeyTitle,
+        externalId,
+        formTypeExternalId,
+        diseaseExternalId,
+        assayExternalId,
+        subTitle,
+        i18nKeySubTitle,
+        description,
+        i18nKeyDescription,
+      },
+    } = forms[key]
+
+    const formTypeId = await formTypeToId(formTypeExternalId)
+    const diseaseId = await diseaseToId(diseaseExternalId)
+    const assayId = await assayToId(assayExternalId)
+
+    const { id: formDefinitionSchemaId } = await upsertSingle(
+      knex,
+      'FormDefinitionSchema',
+      {
+        jsonSchemaFile: fileName,
+      }
+    )
+
+    await upsertSingle(
+      knex,
+      'FormDefinition',
+      {
+        partnerId,
+        externalId,
+      },
+      {
+        formTypeId,
+        partnerId,
+        diseaseId,
+        order,
+        assayId,
+        title,
+        i18nKeyTitle,
+        subTitle,
+        i18nKeySubTitle,
+        description,
+        i18nKeyDescription,
+        externalId,
+        formDefinitionSchemaId,
+      }
+    )
+  })
+  return true
+}
+
 module.exports = {
   seed,
   seedTable,
@@ -3400,4 +3479,6 @@ module.exports = {
   seedIssueEscalationTriggersForPartner,
   deleteIssueTypes,
   updateIssueNotificationTemplates,
+
+  upsertForms,
 }
