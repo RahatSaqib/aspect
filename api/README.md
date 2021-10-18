@@ -333,3 +333,26 @@ yarn upgrade
 ## For Issues and notification system check the next link
 
 [Issues and notification system](ISSUES.md#A-simple-description-of-the-system)
+
+## RabbitMQ Troubleshooting
+
+As mentioned above under "New Development Setup", you can find the RabbitMQ UI at: http://localhost:15672 and login as guest:guest
+
+Sometimes, it can be useful for troubleshooting to publish a message to a queue. To do that, log in to the management UI, click on Queues, select the queue that you wish to publish a message, then expand "Publish Message". The payload has to be in JSON format. For example, to publish a message about an SMS being ready for sending, the payload would be:
+
+```json
+{
+  "type": "SMS_MESSAGE_READY_FOR_SENDING",
+  "smsMessageId": 3
+}
+```
+
+### Use RabbitMQ management UI on a server
+
+You can use ssh port forwarding to view the RabbitMQ management UI on another server. For example, to browse the management UI of the DRC server:
+
+```bash
+ssh drc -L 15673:localhost:15672
+```
+
+You'll be able to browse the UI in your browser at http://localhost:15673
