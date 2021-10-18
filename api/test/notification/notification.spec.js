@@ -82,7 +82,7 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe('Result Notifications triggers', () => {
+describe.only('Result Notifications triggers', () => {
   let results = []
   let ntNoFilterConditionId
   let messageContext
@@ -139,12 +139,12 @@ describe('Result Notifications triggers', () => {
     ],
     deviceLevelId: 'lga',
   }
-  const createTestContext = async filterCondition => {
+  const createTestContext = async (filterCondition,partnerId=1) => {
     resultCategory1 = await resultCategoryToId('Detected')
     results = await knex('Result as r')
       .join('Geography as g', 'r.geographyId', 'g.id')
       .join('Lga as l', 'g.lgaId', 'l.id')
-      .where({ partnerId: 1 })
+      .where({ partnerId })
       .whereNotExists(
         knex('Notification as n').whereRaw('n.resultId = r.id').select()
       )
@@ -183,33 +183,50 @@ describe('Result Notifications triggers', () => {
     results = []
   }
   describe('Filter without JF', () => {
-    before(async () => createTestContext(filterConditionWithAssay))
-    after(removeTestContext)
-    describe('Filter for wayne country and Detected result', () => {
-      let insertedResult = null
+    let deviceContext
+    before(async () =>{ 
+      deviceContext= await createGxConnectTestContext(server,{
+        countryCode: 'US',
+        adminUsername: 'admin',
+        adminPassword: 'test07',
+        deviceName: `My super device`,
+        macAddress: `Oh wow, look at that MAC ADDRESS!`,
+        hostId: `SuperHostId`,
+        deviceSerialNumber: `My device serial number`,
+        siteExternalId: 'Ohio_Wayne'
+      })
+      await deviceContext.registerAndSetDevice()
+      const { lgaId }=await knex('Geography as g').where('id',deviceContext.site.geographyId).first('lgaId')
+      await createTestContext(filterConditionWithAssay, deviceContext.device.partnerId)
+      
+      await deviceContext.createResultForThisDevice()
+      results=await deviceContext.getAllResults()
+      console.log('-----------------------------------',results)
+      
+
+    })
+    after(async () => {
+      await deviceContext.cleanUp()
+      await removeTestContext()
+    })
+    describe('Filter for Wayne county and Detected result', () => {
+      let sampleResult = null
       before(async () => {
-        const result = _.sample(
-          _.filter(results, elem => elem.lgaName === 'Wayne')
-        )
-        ;[insertedResult] = await knex('Result').insert({
-          ..._.omit(result, ['id', 'resultCategory1', 'lgaName', 'externalId']),
-          resultCategory1,
-          externalId: 'MytestsResultID',
-        })
-        assert.isNotNull(insertedResult)
+        sampleResult = _.sample(results)
+        assert.isNotNull(sampleResult)
       })
       after(async () => {
         await Promise.each(
           ['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'],
-          table => knex(table).where({ resultId: insertedResult }).delete()
+          table => knex(table).where({ resultId: sampleResult.id }).delete()
         )
-        await knex('Result').where({ externalId: 'MytestsResultID' }).delete()
+        await knex('Result').where({ id: sampleResult.id }).delete()
       })
       it('should create a result based notification for particular lga', async () => {
-        messageContext.dispatch(resultLogged(insertedResult, 1, 1))
+        messageContext.dispatch(resultLogged(sampleResult.id, 1, 1))
         await waitForIdle(1000)
         const notifications = await knex('Notification')
-          .where({ resultId: insertedResult })
+          .where({ resultId: sampleResult.id })
           .distinct()
         assert.isAtLeast(notifications.length, 1)
       })
@@ -218,8 +235,7 @@ describe('Result Notifications triggers', () => {
       const resultId = _.sample(
         _.filter(
           results,
-          elem =>
-            elem.lgaName === 'Wayne' && elem.resultCategory1 !== resultCategory1
+          elem => elem.resultCategory1 !== resultCategory1
         )
       ).id
       assert.isNotNull(resultId)
@@ -346,10 +362,10 @@ describe('Result Notifications triggers', () => {
       assert.equal(notifications.length, 1)
     })
   })
-  describe.only('With unaproved devices ', () => {
+  describe('With unaproved devices ', () => {
     let deviceContext
     before(async () => {
-      deviceContext = createGxConnectTestContext(server, {
+      deviceContext = await createGxConnectTestContext(server, {
         countryCode: 'US',
         adminUsername: 'admin',
         adminPassword: 'test07',
@@ -359,15 +375,32 @@ describe('Result Notifications triggers', () => {
         deviceSerialNumber: `I don't have more ideas`,
       })
       await deviceContext.registerAndSetDevice('decommissioned')
+      await createTestContext(filterConditionWithAssay, deviceContext.device.partnerId)
+      
+
     })
-    after(async () => deviceContext.cleanUp())
+    after(async () => {
+      await deviceContext.cleanUp()
+      await removeTestContext()
+    })
     it("When the device is unauthorized it shouldn't sent any notification", async () => {
       const deviceApprovedStatus = await deviceApprovalToId('approved')
+
       console.log(deviceContext, 'deviceContext')
       const { DeviceApprovalId } = await knex('Device')
         .where({ hostId: 'SuperHostId' })
         .first('DeviceApprovalId')
       assert.notEqual(DeviceApprovalId, deviceApprovedStatus)
+      const { device } = deviceContext
+      const { notificationsForDevice } = await knex('Notification as n').join('Result as r','r.id','n.resultId').where('r.deviceId', device.id).count('n.id as notificationsForDevice').first()
+      assert.equal(notificationsForDevice,0)
+      await deviceContext.createResultForThisDevice()
+      const [result] = await deviceContext.getAllResults()
+      console.log(result)
+      messageContext.dispatch(resultLogged(result.id, 1, 1))
+      await waitForIdle(1000)
+      const { notificationsForDeviceWithResults } = await knex('Notification as n').join('Result as r','r.id','n.resultId').where('r.deviceId', device.id).count('n.id as notificationsForDeviceWithResults').first()
+      assert.equal(notificationsForDeviceWithResults,0)
     })
   })
 })

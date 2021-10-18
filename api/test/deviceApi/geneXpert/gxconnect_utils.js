@@ -76,6 +76,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('PushNotificationMessage').whereIn('resultId', resultIds).delete()
   await knex('WebhookMessage').whereIn('resultId', resultIds).delete()
+  await knex('ResultFollowUp').whereIn('resultId', resultIds).delete()
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
@@ -127,7 +128,6 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('ResultTag').delete()
   await knex('SiteTag').delete()
   await knex('Tag').delete()
-
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   const sitesAndDevices = await knex('Result')
@@ -145,14 +145,17 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('Notification').whereIn('issueId', issueIds).delete()
   await knex('Issue').whereIn('id', issueIds).delete()
+  await knex('DeviceSim').whereIn('deviceId', deviceIds).delete()
+  await knex('Device').whereIn('deviceId', deviceIds).delete()
+
   await knex('Device')
-    .whereIn('siteId', siteIds)
     .orWhereIn('id', deviceIds)
     .orWhereIn(
       'id',
       _.map(sitesAndDevices, elem => elem.deviceId)
     )
     .delete()
+  await knex('Device').whereIn('siteId', siteIds).delete()
 
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
@@ -179,6 +182,7 @@ function createGxConnectTestContext(
     deviceSerialNumber,
     adminUsername,
     adminPassword,
+    siteExternalId,
   }
 ) {
   return new GxConnectApiTestContext(server, {
@@ -189,6 +193,7 @@ function createGxConnectTestContext(
     deviceSerialNumber,
     adminUsername,
     adminPassword,
+    siteExternalId,
   })
 }
 
@@ -203,6 +208,7 @@ class GxConnectApiTestContext {
       deviceSerialNumber,
       adminUsername,
       adminPassword,
+      siteExternalId,
     }
   ) {
     this.server = server
@@ -222,7 +228,7 @@ class GxConnectApiTestContext {
       type: {
         id: 'CepheidGeneXpert',
       },
-      site: null,
+      site: !siteExternalId ? null : { id: siteExternalId },
       log: null,
       configuration: {
         data: { macAddress, hostId, deviceSerialNumber },
@@ -371,7 +377,7 @@ class GxConnectApiTestContext {
   }
 
   async cleanUp() {
-    await waitForIdle(2000)
+    await waitForIdle()
     if (!_.isEmpty(this.apiKeys)) {
       await deleteDeviceSiteDataAndRefreshTokens(
         knex,
@@ -381,10 +387,12 @@ class GxConnectApiTestContext {
     }
   }
 
-  async createResultForThisDevice({
-    assayExternalId = 'GxMtbRif',
-    resultDetails = {},
-  }) {
+  async createResultForThisDevice(
+    { assayExternalId, resultDetails } = {
+      assayExternalId: 'GxMtbRif',
+      resultDetails: {},
+    }
+  ) {
     const daysToSubtract = Math.ceil(Math.random() ** 4 * 60)
     const randomDate = subDays(new Date(), daysToSubtract)
     const randomNumber = subDays(new Date(), daysToSubtract).getTime()
