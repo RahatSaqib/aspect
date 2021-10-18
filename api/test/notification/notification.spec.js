@@ -11,7 +11,8 @@ const {
   createMessageContext,
   updateSubscription,
 } = require('../utils/mqUtils')
-// const { createResult, getResult } = require('../result/result_utils')
+const { createResult, getResult } = require('../result/result_utils')
+const { deviceApprovalToId } = require('../../src/shared/dictionary')
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -345,7 +346,7 @@ describe('Result Notifications triggers', () => {
       assert.equal(notifications.length, 1)
     })
   })
-  describe('With unaproved devices ', () => {
+  describe.only('With unaproved devices ', () => {
     let deviceContext
     before(async () => {
       deviceContext = createGxConnectTestContext(server, {
@@ -354,12 +355,20 @@ describe('Result Notifications triggers', () => {
         adminPassword: 'test07',
         deviceName: `An Epic Device`,
         macAddress: `Oh wow, look at that MAC ADDRESS!`,
-        hostId: `What is a host id?`,
+        hostId: `SuperHostId`,
         deviceSerialNumber: `I don't have more ideas`,
       })
+      await deviceContext.registerAndSetDevice('decommissioned')
     })
-    afterEach(async () => deviceContext.cleanUp())
-    it("When the device is unauthorized it shouldn't sent any notification", () => {})
+    after(async () => deviceContext.cleanUp())
+    it("When the device is unauthorized it shouldn't sent any notification", async () => {
+      const deviceApprovedStatus = await deviceApprovalToId('approved')
+      console.log(deviceContext, 'deviceContext')
+      const { DeviceApprovalId } = await knex('Device')
+        .where({ hostId: 'SuperHostId' })
+        .first('DeviceApprovalId')
+      assert.notEqual(DeviceApprovalId, deviceApprovedStatus)
+    })
   })
 })
 describe('Notification routes', () => {

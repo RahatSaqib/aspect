@@ -261,7 +261,7 @@ class GxConnectApiTestContext {
     return run(async () => this.registerAndSetDevice())
   }
 
-  registerAndSetDevice() {
+  registerAndSetDevice(token = 'approved') {
     return run(async knex => {
       this.apiKey = await this.registerDevice()
       this.apiKeys.push(this.apiKey)
@@ -278,7 +278,7 @@ class GxConnectApiTestContext {
       )
 
       const [{ id: deviceApprovalIdApproved }] = [
-        await knex('DeviceApproval').where({ token: 'approved' }).first(),
+        await knex('DeviceApproval').where({ token }).first(),
       ]
       if (deviceApprovalIdApproved !== this.device.deviceApprovalId) {
         await knex('Device')
