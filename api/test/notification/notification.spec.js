@@ -4,7 +4,6 @@ const _ = require('lodash')
 const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
-
 const server = require('../utils/testUtils')
 const {
   dispatchAndWaitForAction,
@@ -12,6 +11,10 @@ const {
   createMessageContext,
   updateSubscription,
 } = require('../utils/mqUtils')
+// const { createResult, getResult } = require('../result/result_utils')
+const {
+  createGxConnectTestContext,
+} = require('../deviceApi/geneXpert/gxconnect_utils')
 const { resultLogged } = require('../../src/result/actions')
 const { issueCreated } = require('../../src/issue/actions')
 const {
@@ -341,6 +344,22 @@ describe('Result Notifications triggers', () => {
         .distinct()
       assert.equal(notifications.length, 1)
     })
+  })
+  describe('With unaproved devices ', () => {
+    let deviceContext
+    before(async () => {
+      deviceContext = createGxConnectTestContext(server, {
+        countryCode: 'US',
+        adminUsername: 'admin',
+        adminPassword: 'test07',
+        deviceName: `An Epic Device`,
+        macAddress: `Oh wow, look at that MAC ADDRESS!`,
+        hostId: `What is a host id?`,
+        deviceSerialNumber: `I don't have more ideas`,
+      })
+    })
+    afterEach(async () => deviceContext.cleanUp())
+    it("When the device is unauthorized it shouldn't sent any notification", () => {})
   })
 })
 describe('Notification routes', () => {
