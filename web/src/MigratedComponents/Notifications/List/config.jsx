@@ -192,13 +192,13 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
     {
       key: 'contacts',
-      label: formatMessage(messages.notificationsTableHeaderContacts),
+      label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       disableHide: true,
       disableGroupBy: true,
       width: 25,
       aggregate: totalItemCount,
       Aggregated: ({ value }) =>
-        `${formatMessage(messages.notificationsTableContactsCount, {
+        `${formatMessage(messages.notificationsTableJobFunctionsCount, {
           itemCount: formatNumber(value),
         })}`,
       format: ContactsCell,
