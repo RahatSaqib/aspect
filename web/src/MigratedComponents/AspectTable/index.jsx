@@ -6,8 +6,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
-import forEach from 'lodash/forEach'
-import get from 'lodash/get'
 
 import fetchWrapperForQueries from '../QueryFetch'
 import ErrorBoundary from '../ErrorBoundary'
@@ -60,7 +58,6 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
   const [params, setParams] = useState(
     removeNullFromCollection({ size, sortCol, sortDir, page, filters })
   )
-  const [translatedData, setTranslatedData] = useState(false)
 
   const {
     error,
@@ -115,28 +112,13 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
     setAllowReset(!allowReset)
   }
 
-  useEffect(() => {
-    if (config && config.columns && data && data.data) {
-      forEach(
-        config.columns.filter(cfg => cfg.translate),
-        cfg => {
-          const { key } = cfg
-          forEach(data.data, row => {
-            row[key] = cfg.translate(row[key])
-          })
-        }
-      )
-      setTranslatedData(data)
-    }
-  }, [data, config])
-
-  return isLoading || !translatedData ? (
+  return isLoading || !data ? (
     <Loading />
   ) : (
     <ErrorBoundary>
       <AspectTableCore
         config={config}
-        tableData={translatedData}
+        tableData={data}
         params={params}
         pageCount={Math.ceil(data.total / size)}
         isFetching={isFetching}
