@@ -96,7 +96,21 @@ const resultBasedNotificationPayload = {
       otherwise: Joi.required(),
     })
     .description('Selected items which are subset of selected deviceLevelId'),
-  sendEmail: Joi.bool().description('To send over email'),
+  sendEmail: Joi.bool()
+    .when('sendSms', {
+      // check first sendSms...
+      is: Joi.bool().valid(false),
+      then: Joi.when('sendWeb', {
+        // then check sendWeb
+        is: Joi.bool().valid(false),
+        then: Joi.valid(true).required(
+          'At least one of the notification channels should be selected'
+        ),
+        otherwise: Joi.optional().allow('', null),
+      }),
+      otherwise: Joi.optional().allow('', null),
+    })
+    .description('To send over email'),
   sendSms: Joi.bool().description('To send over sms'),
   sendWeb: Joi.bool().description('To send over webhook'),
   emailSubject: Joi.string()

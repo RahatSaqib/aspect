@@ -1,12 +1,14 @@
 const Joi = require('@hapi/joi')
+const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   listNotifications,
-  onIssueEscalated,
   getNotifications,
+  getNotification,
   saveNotification,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
+const { onIssueEscalated } = require('./actionHandler')
 const {
   listNotificationsBaseConfig,
   resultBasedNotificationPayload,
@@ -82,6 +84,20 @@ const routes = [
     },
   },
   {
+    method: 'GET',
+    path: '/notification/{id}',
+    handler: getNotification,
+    config: {
+      description: 'Get Notification',
+      notes: 'Details of a Notification',
+      validate: {
+        params: {
+          id: Joi.number().integer().positive().required(),
+        },
+      },
+    },
+  },
+  {
     method: 'POST',
     path: '/notification',
     handler: asyncHandler(saveNotification),
@@ -117,6 +133,7 @@ const routes = [
 ]
 
 const subscriptions = [
+  getNotificationTriggerSubscriptions,
   {
     actions: {
       ISSUE_ESCALATED: onIssueEscalated,

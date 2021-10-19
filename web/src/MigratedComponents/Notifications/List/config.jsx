@@ -23,7 +23,11 @@ import union from 'lodash/union'
 
 import messages from './messages'
 import tableMessages from '../../AspectTable/TableCell/messages'
-import { timeClassification, totalItemCount } from '../../AspectTable/Helpers'
+import {
+  timeClassification,
+  totalItemCount,
+  translate,
+} from '../../AspectTable/Helpers'
 import ContactsCell from '../../AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../AspectTable/TableCell/NumberCell'
@@ -176,6 +180,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       width: 20,
       disableHide: true,
       disableGroupBy: true,
+      translate: translate(messages, formatMessage),
     },
     {
       key: 'totalTriggers',
@@ -192,13 +197,13 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
     {
       key: 'contacts',
-      label: formatMessage(messages.notificationsTableHeaderContacts),
+      label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       disableHide: true,
       disableGroupBy: true,
       width: 25,
       aggregate: totalItemCount,
       Aggregated: ({ value }) =>
-        `${formatMessage(messages.notificationsTableContactsCount, {
+        `${formatMessage(messages.notificationsTableJobFunctionsCount, {
           itemCount: formatNumber(value),
         })}`,
       format: ContactsCell,

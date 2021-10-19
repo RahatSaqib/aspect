@@ -8,20 +8,22 @@ import useFormConfig from '../../Hooks/useFormConfig'
 
 export const FormikProvider = ({ config, children }) => {
   const debug = false
-  const { actions } = config
+  const { actions, validationSchema = null } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const { meta, registerVisibleFields, updateField } = useFormConfig(config)
-  const { initialValues } = meta
+  const initialValues = config.values || meta.initialValues
 
-  const formik = useFormik({
+  const formikConfiguration = {
     enableReinitialize: true,
     initialValues,
     validateOnMount: false,
+    validationSchema,
     onSubmit: values => {
       const payload = sanitizeFormValues(values, { meta })
       console.log(JSON.stringify(payload, null, 2)) // eslint-disable-line no-console
     },
-  })
+  }
+  const formik = useFormik(formikConfiguration)
 
   useEffect(() => {
     /**
@@ -36,7 +38,6 @@ export const FormikProvider = ({ config, children }) => {
     formik.validateForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
   return (
     <FormikProviderBase
       value={{

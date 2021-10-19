@@ -7,6 +7,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.New.title',
     defaultMessage: 'New Notification',
   },
+  titleEdit: {
+    id: 'pages.NotificationDetail.Edit.title',
+    defaultMessage: 'Edit Notification',
+  },
   save: {
     id: 'pages.NotificationDetail.save',
     defaultMessage: 'Save',

@@ -15,6 +15,7 @@ const {
   getConstraints,
 } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
+const { notificationTypeCreated } = require('../notificationType/actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
@@ -25,6 +26,119 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
+
+const evaluationMethods = {
+  issueBased: () => true, // this will be developed once we move the issue based notification to the ui
+  resultBased: resultConditionsMet,
+}
+function resultCategoryFilters(
+  queryBuilder,
+  { result: results = [] },
+  resultAlias
+) {
+  if (results.length > 0) {
+    queryBuilder
+      .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
+      .leftJoin(
+        'ResultCategory as rc1',
+        `${resultAlias}.resultCategory1`,
+        'rc1.id'
+      )
+      .leftJoin('ResultCategoryGroup as rcg', function () {
+        this.on(`a.id`, 'rcg.assayId')
+          .andOn(function () {
+            this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+              `${resultAlias}.resultCategory1`,
+              'rcg.resultCategory1Id'
+            )
+          })
+          .andOn(function () {
+            this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+              `${resultAlias}.resultCategory2`,
+              'rcg.resultCategory2Id'
+            )
+          })
+      })
+      .leftJoin(
+        'ResultCategory as rc2',
+        `${resultAlias}.resultCategory2`,
+        'rc2.id'
+      )
+    queryBuilder.where(resultBuilder =>
+      _.each(results, elem => {
+        resultBuilder.orWhere(whereBuilder => {
+          whereBuilder.where('a.externalId', elem.assayId)
+          if (
+            _.find(
+              elem.resultCategoryId,
+              item => item.scope === 'ResultCategoryGroups'
+            )
+          )
+            whereBuilder.whereIn(
+              'rcg.externalId',
+              _.map(
+                _.filter(
+                  elem.resultCategoryId,
+                  item => item.scope === 'ResultCategoryGroups'
+                ),
+                obj => obj.value
+              )
+            )
+          if (
+            _.find(
+              elem.resultCategoryId,
+              item => item.scope === 'ResultCategories'
+            )
+          ) {
+            const itemsToFilter = _.map(
+              _.filter(
+                elem.resultCategoryId,
+                item => item.scope === 'ResultCategories'
+              ),
+              obj => obj.value
+            )
+            whereBuilder.andWhere(builder =>
+              builder
+                .whereIn('rc1.externalId', itemsToFilter)
+                .orWhereIn('rc2.externalId', itemsToFilter)
+            )
+          }
+        })
+      })
+    )
+  }
+}
+
+function geographyFilters(
+  queryBuilder,
+  { areaItems, deviceLevelId },
+  { device = 'd', geography = 'g' }
+) {
+  if (deviceLevelId === 'state') {
+    queryBuilder.whereIn(
+      `${geography}.stateId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
+  }
+  if (deviceLevelId === 'lga') {
+    queryBuilder.whereIn(
+      `${geography}.lgaId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
+  }
+  if (deviceLevelId === 'lab') {
+    queryBuilder.whereIn(
+      `${device}.siteId`,
+      _.map(areaItems, area => _.toInteger(area.value))
+    )
+  }
+}
+
+function resultConditionsMet(queryBuilder, filterCondition, aliases) {
+  const { result = 'r' } = aliases
+  resultCategoryFilters(queryBuilder, filterCondition, result)
+  geographyFilters(queryBuilder, filterCondition, aliases)
+}
 
 async function listNotifications(request) {
   const { query, auth } = request
@@ -51,16 +165,24 @@ async function listNotifications(request) {
   const getItems = notificationQuery
     .clone()
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftJoin('Person as per', 'j.personId', 'per.id')
+    .leftOuterJoin('JobFunction as jf', qb => {
+      qb.on(
+        knex.raw(`
+          JSON_SEARCH(
+            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
+            'one',
+            CAST(jf.id as char)
+          ) IS NOT NULL
+        `)
+      )
+    })
     .select(
       'nt.id as id',
       'nt.name',
       knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
-      knex.raw(
-        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
-      ),
+      knex.raw('COUNT(DISTINCT jf.name) as contactsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
@@ -89,22 +211,30 @@ async function listNotifications(request) {
   return { ok: true, total, data, length: data.length }
 }
 
-async function onIssueEscalated({ issueId }, { messageContext: context }) {
-  await context.transact(async knex => {
-    const now = new Date()
-    // Find escalation policy for the issue
-    const policies = await getEscalationPolicy(knex, issueId)
-    // for each job function, find all policies with maximum constrained level,
-    // since we are ordered by, max level at first position and filter all with same
-    let jobFunctionId = null
-    let jobFunctionLevel = null
-    await Promise.each(policies, async policy => {
-      if (_.isNil(policy.jobFunctionId)) {
-        await createNotificationIfNotCreatedAlready(
-          { issueId, policy, now },
-          { messageContext: context, knex }
-        )
-      } else {
+async function createNotifications(knex, action, context) {
+  const now = new Date()
+  const { filterCondition = null, notificationTypeCategoryId = 'issueBased' } =
+    action
+  const policies = await getNotificationPolicy(
+    knex,
+    action,
+    evaluationMethods[notificationTypeCategoryId],
+    filterCondition
+  )
+  // for each job function, find all policies with maximum constrained level,
+  // since we are ordered by, max level at first position and filter all with same
+  let jobFunctionId = null
+  let jobFunctionLevel = null
+  const { jobFunctions = [] } = filterCondition || {}
+  await Promise.each(policies, async policy => {
+    if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions)) {
+      await createNotificationIfNotCreatedAlready(
+        action,
+        { policy, now },
+        { messageContext: context, knex }
+      )
+    } else {
+      if (_.isEmpty(jobFunctions) && policy.jobFunctionId)
         if (policy.jobFunctionId !== jobFunctionId) {
           ;({ jobFunctionId, level: jobFunctionLevel } = policy)
         } else if (policy.level !== jobFunctionLevel) {
@@ -113,17 +243,11 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
           /* eslint-disable no-continue */
           return Promise.resolve()
         }
-        const tags = await getTagsByPolicy(knex, policy)
-        const people = await getPeopleToNotify(knex, policy, tags)
-        await sendIssueNotificationsToPeople(
-          knex,
-          context,
-          people,
-          policy,
-          issueId
-        )
-      }
-    })
+
+      const tags = await getTagsByPolicy(knex, policy)
+      const people = await getPeopleToNotify(knex, policy, tags, jobFunctions)
+      await sendNotificationsToPeople(knex, context, people, policy, action)
+    }
   })
 }
 
@@ -157,72 +281,147 @@ async function getTagsByPolicy(txKnex, policy) {
   ]
 }
 
-async function getEscalationPolicy(txknex, issueId) {
-  return txknex('NotificationType as nt')
+async function getNotificationPolicy(
+  txKnex,
+  action,
+  extraConditionsFunction = () => true,
+  extraConditions = {}
+) {
+  const selectColums = [
+    'nt.id',
+    'nt.jobFunctionId',
+    'nt.level',
+    'nt.sendToContactsWithMatchingTags',
+    'g.countryId',
+    'g.stateId',
+    'g.lgaId',
+    'mt.alertTemplateId',
+  ]
+  let extraFields = []
+  const aliases = { geography: 'g' }
+  const records = txKnex('NotificationType as nt')
+    .join(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .join('Issue as i', function () {
-      // If issue is escalated past configured level, send again
-      // on escalation to maximum configured level
-      this.on('i.issueTypeId', 'nt.issueTypeId')
-        .andOn('i.partnerId', 'nt.partnerId')
-        .andOn('i.level', '>=', 'nt.level')
-    })
-    .leftJoin('Geography as g', 'i.geographyId', 'g.id')
-    .where({ 'i.id': issueId })
+    .modify((queryBuilder, { resultId, issueId }) => {
+      if (!_.isNil(issueId)) {
+        extraFields = [
+          'i.siteId',
+          'i.deviceId',
+          'i.resultId',
+          'mt.emailTemplateId',
+          'mt.smsTemplateId',
+          'mt.webhookTemplateId',
+        ]
+        queryBuilder
+          .join('Issue as i', joinBuilder =>
+            // If issue is escalated past configured level, send again
+            // on escalation to maximum configured level
+            joinBuilder
+              .on('i.issueTypeId', 'nt.issueTypeId')
+              .andOn('i.partnerId', 'nt.partnerId')
+              .andOn('i.level', '>=', 'nt.level')
+          )
+          .leftJoin('Geography as g', 'i.geographyId', 'g.id')
+          .where({ 'i.id': issueId })
+        aliases.issue = 'i'
+      } else if (!_.isNil(resultId)) {
+        extraFields = [
+          'result.siteId as siteId',
+          'result.deviceId as deviceId',
+          'result.resultId as resultId',
+          knex.raw(
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
+          ),
+          knex.raw(
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.smsTemplateId ELSE NULL END as smsTemplateId'
+          ),
+          knex.raw(
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
+          ),
+        ]
+        queryBuilder
+          .crossJoin(
+            knex('Result as r')
+              .where('r.id', resultId)
+              .select(
+                'r.siteId',
+                'r.assayId',
+                'r.deviceId',
+                'r.id as resultId',
+                'r.resultCategory1',
+                'r.resultCategory2'
+              )
+              .as('result')
+          )
+          .join('Device as d', 'result.deviceId', 'd.id')
+          .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+          .where('ntc.externalId', 'resultBased')
+        aliases.result = 'result'
+        aliases.device = 'd'
+      }
+    }, action)
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
-    .select(
-      'nt.id',
-      'nt.jobFunctionId',
-      'nt.level',
-      'nt.sendToContactsWithMatchingTags',
-      'i.siteId',
-      'i.deviceId',
-      'i.resultId',
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      'mt.alertTemplateId',
-      'mt.emailTemplateId',
-      'mt.smsTemplateId',
-      'mt.webhookTemplateId'
-    )
+    .modify(extraConditionsFunction, extraConditions, aliases)
+    .distinct(selectColums.concat(extraFields))
+  return records
 }
 
-async function getPeopleToNotify(txKnex, policy, tags) {
-  return txKnex('Job as j')
+async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
+  const people = txKnex('Job as j')
     .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
     .modify(queryBuilder => {
       if (policy.sendToContactsWithMatchingTags) {
-        queryBuilder
-          .join('PersonTag as pt', 'j.personId', 'pt.personId')
-          .whereIn('pt.tagId', _.uniq(tags))
+        queryBuilder.whereIn('pt.tagId', _.uniq(tags))
       }
-      queryBuilder.where('jf.id', policy.jobFunctionId)
+      if (policy.jobFunctionId)
+        queryBuilder.where('jf.id', policy.jobFunctionId)
+      if (!_.isEmpty(jobFunctions)) {
+        queryBuilder.where(jfBuilder => {
+          _.each(jobFunctions, ({ jobFunctionId, tags = [] }) => {
+            jfBuilder.orWhere(builder => {
+              builder.where('jf.id', jobFunctionId)
+              if (tags.length > 0) {
+                builder.whereIn(
+                  'pt.tagId',
+                  _.uniq(_.map(tags, tag => tag.value))
+                )
+              }
+            })
+          })
+        })
+      }
     })
-    .distinct('j.personId as id')
+    .distinct('j.personId as id', 'j.jobFunctionId')
+  return people
 }
 
-async function sendIssueNotificationsToPeople(
+async function sendNotificationsToPeople(
   txKnex,
   context,
   people,
   policy,
-  issueId
+  action
 ) {
   const now = new Date()
   // Issue notification to every person assigned, (subscriber will create as necessary)
   await Promise.all(
     people.map(async person => {
-      const issuePermitted = await shouldNotifyIssue(
+      const shouldNotifyToPerson = await shouldNotify(
         txKnex,
-        issueId,
+        action,
         person.id,
-        policy.jobFunctionId
+        person.jobFunctionId
       )
-      if (issuePermitted != null) {
+      if (shouldNotifyToPerson != null) {
         await createNotificationIfNotCreatedAlready(
-          { issueId, personId: person.id, policy, now },
+          action,
+          { personId: person.id, policy, now },
           { messageContext: context, knex: txKnex }
         )
       }
@@ -230,29 +429,38 @@ async function sendIssueNotificationsToPeople(
   )
 }
 
-async function shouldNotifyIssue(txKnex, issueId, personId, jobFunctionId) {
-  // does person have job context that can see this issue?
+async function shouldNotify(
+  txKnex,
+  { issueId = null, resultId = null },
+  personId,
+  jobFunctionId
+) {
+  const aliasMapping = {
+    device: 'd',
+    site: 's',
+    geography: 'g',
+    partner: 'p',
+    showUnapprovedDevices: true,
+    showDecommissionedDevices: true,
+  }
+  // does person have job context that can see this issue/result?
   const constraints = await getJobConstraints(personId, jobFunctionId)
-  const issue = txKnex('Issue as i')
+  const table = !_.isNil(issueId) ? 'Issue as i' : 'Result as i'
+  if (!_.isNil(issueId)) aliasMapping.issue = 'i'
+  else aliasMapping.result = 'i'
+  return txKnex(table)
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'i.siteId', 's.id')
     .leftJoin('Geography as g', 'i.geographyId', 'g.id')
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
-    .modify(addConstraints, constraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      partner: 'p',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
-    })
-    .where({ 'i.id': issueId })
+    .modify(addConstraints, constraints, aliasMapping)
+    .where({ 'i.id': issueId || resultId })
     .first('i.id')
-  return issue
 }
 
 async function createNotificationIfNotCreatedAlready(
-  { issueId, personId = null, policy, now = new Date() },
+  { issueId = null, resultId = null },
+  { personId = null, policy, now = new Date() },
   { messageContext: context, knex }
 ) {
   context.bindActionCreators({
@@ -262,7 +470,12 @@ async function createNotificationIfNotCreatedAlready(
     smsMessageCreated,
     webhookMessageCreated,
   })
-  const notification = { issueId, notificationTypeId: policy.id, personId }
+  const notification = {
+    issueId,
+    resultId,
+    notificationTypeId: policy.id,
+    personId,
+  }
   const existingNotification = await knex('Notification')
     .where(notification)
     .first()
@@ -278,7 +491,6 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-
     if (personId) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
@@ -298,7 +510,6 @@ async function createNotificationIfNotCreatedAlready(
       notification.emailMessageId = emailMessageId
       context.emailMessageCreated(emailMessageId)
     }
-
     if (policy.smsTemplateId != null) {
       const [smsMessageId] = await knex('SmsMessage').insert({
         smsTemplateId: policy.smsTemplateId,
@@ -322,6 +533,39 @@ async function createNotificationIfNotCreatedAlready(
   }
 }
 
+async function getNotification(request) {
+  const { params } = request
+  const { id } = params
+
+  const notification = await knex
+    .select(
+      'ntc.name as notificationTypeName',
+      'ntc.externalId as notificationType',
+      'nt.name as name',
+      'nt.filterCondition as filterCondition',
+      'et.subject as emailSubject',
+      'et.body as emailBody',
+      'st.message as smsBody',
+      'wt.url as webUrl',
+      'wt.payload as webBody'
+    )
+    .from('NotificationType as nt')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
+    .leftJoin('EmailTemplate as et', 'et.id', 'mt.emailTemplateId')
+    .leftJoin('SmsTemplate as st', 'st.id', 'mt.smsTemplateId')
+    .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
+    .where('nt.id', id)
+    .andWhere('ntc.externalId', 'resultBased')
+    .first()
+
+  return { ok: true, data: notification }
+}
+
 async function getNotifications(request) {
   const { auth, query, params } = request
 
@@ -330,6 +574,7 @@ async function getNotifications(request) {
   const notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .leftJoin('Issue as iss', 'iss.Id', 'n.issueId')
+    .leftJoin('Result as r', 'r.Id', 'n.resultId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .leftJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
     .leftJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
@@ -338,13 +583,13 @@ async function getNotifications(request) {
     .leftJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .modify(addConstraints, dataConstraints, { partner: 'p', result: 'r' })
 
-  const getCount = notificationQuery.clone().count('n.issueId as total').first()
+  const getCount = notificationQuery.clone().count('n.id as total').first()
 
   const getNotificationHistory = notificationQuery
     .clone()
-    .modify(sortPageParams, query, 'iss.createdOn')
+    .modify(sortPageParams, query, 'n.createdOn')
     .select([
       knex.raw(
         'sum(case when mswm.externalId = "Sent" then 1 else 0 end) as webhookSent'
@@ -355,8 +600,8 @@ async function getNotifications(request) {
       knex.raw(
         'sum(case when msem.externalId = "Sent" then 1 else 0 end) as emailSent'
       ),
-      'iss.createdOn as date',
-      'n.id',
+      'n.createdOn as date',
+      'n.issueId',
     ])
     .groupBy('n.issueId')
 
@@ -481,21 +726,23 @@ async function saveNotificationType({
           updatedBy: userId,
         })
         .where({ id: notificationTypeId })
-      ;({ messageTypeId } = await knex('NotificationType')
+      ;({ messageTypeId } = await knex
         .select('messageTypeId')
-        .where({ id: notificationTypeId }))
-      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex(
-        'MessageType'
-      )
-        .where({ id: messageTypeId })
-        .select()
+        .from('NotificationType')
+        .where({ id: notificationTypeId })
+        .first())
+      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex
+        .select('emailTemplateId', 'smsTemplateId', 'webHookTemplateId')
+        .from('MessageType')
+        .where('id', messageTypeId)
+        .first()
 
       /**
        * EmailTemplate
        */
       if (emailTemplateId) {
         whereClause = { id: emailTemplateId }
-        // update or delete
+        // update
         if (sendEmail) {
           await knex('EmailTemplate')
             .where(whereClause)
@@ -509,8 +756,6 @@ async function saveNotificationType({
               updatedOn: now,
               updatedBy: userId,
             })
-        } else {
-          await knex('EmailTemplate').where(whereClause).del()
         }
       } else if (sendEmail) {
         // insert
@@ -521,7 +766,7 @@ async function saveNotificationType({
        */
       if (smsTemplateId) {
         whereClause = { id: smsTemplateId }
-        // update or delete
+        // update
         if (sendSms) {
           await knex('SmsTemplate')
             .update({
@@ -530,8 +775,6 @@ async function saveNotificationType({
               updatedBy: userId,
             })
             .where(whereClause)
-        } else {
-          await knex('SmsTemplate').where(whereClause).del()
         }
       } else if (sendSms) {
         ;[smsTemplateId] = await insertSmsTemplate()
@@ -541,7 +784,7 @@ async function saveNotificationType({
        */
       if (webHookTemplateId) {
         whereClause = { id: webHookTemplateId }
-        // update or delete
+        // update
         if (sendWeb) {
           await knex('WebhookTemplate')
             .update({
@@ -551,8 +794,6 @@ async function saveNotificationType({
               updatedBy: userId,
             })
             .where(whereClause)
-        } else {
-          await knex('WebhookTemplate').where(whereClause).del()
         }
       } else if (sendWeb) {
         ;[webHookTemplateId] = await insertWebHookTemplate()
@@ -578,6 +819,9 @@ async function saveNotificationType({
           deviceLevelId,
           jobFunctions,
           result,
+          sendEmail,
+          sendSms,
+          sendWeb,
         }),
       })
       .where({ id: notificationTypeId })
@@ -595,7 +839,12 @@ async function saveNotificationType({
 }
 
 async function saveNotification(request) {
-  const { auth, params, payload } = request
+  const {
+    auth,
+    params,
+    payload,
+    plugins: { messageContext },
+  } = request
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
@@ -611,6 +860,10 @@ async function saveNotification(request) {
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
     }
+    if (!messageContext.notificationTypeCreated)
+      messageContext.bindActionCreators({ notificationTypeCreated })
+    messageContext.notificationTypeCreated(notificationTypeId)
+
     return { ok: true, notificationTypeId }
   }
 
@@ -619,8 +872,11 @@ async function saveNotification(request) {
 
 module.exports = {
   listNotifications,
-  onIssueEscalated,
   getNotifications,
-  shouldNotifyIssue,
+  getNotification,
+  createNotifications,
+  shouldNotify,
+  resultConditionsMet,
+  getPeopleToNotify,
   saveNotification,
 }
