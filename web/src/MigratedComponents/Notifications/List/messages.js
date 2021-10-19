@@ -106,6 +106,16 @@ export const messages = defineMessages({
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
   },
+
+  // values for notifications list
+  issueBased: {
+    id: 'pages.TableCell.issueBasedNotification',
+    defaultMessage: 'Issue Based',
+  },
+  resultBased: {
+    id: 'pages.TableCell.resultBasedNotification',
+    defaultMessage: 'Result Based',
+  },
 })
 
 export default messages

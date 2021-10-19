@@ -19,6 +19,7 @@ import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import isNil from 'lodash/isNil'
 import map from 'lodash/map'
+import get from 'lodash/get'
 import { dateFNSLocales } from '../../../Providers/I18nProvider'
 
 const mockedDataNames = [
@@ -230,6 +231,11 @@ function getReturnUrl(returnUrlRaw, defaultUrl) {
   return `${path}?${query.toString()}`
 }
 
+const translate = (mesages, formatMessage) => value => {
+  const message = get(mesages, value, value)
+  return message === value ? value : formatMessage(message)
+}
+
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
@@ -247,4 +253,5 @@ export {
   totalItemCount,
   useUrlQuery,
   getReturnUrl,
+  translate,
 }
