@@ -402,16 +402,6 @@ describe('Result Notifications triggers', () => {
     let data
     let fltrCon
 
-    it('should create a notification which will send sms and email but not webhook', async () => {
-      const insertedResult = _.sample(results)
-      messageContext.dispatch(resultLogged(insertedResult.id, 1, 1))
-      await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId: insertedResult.id })
-        .distinct()
-      assert.isAtLeast(notifications.length, 1)
-    })
-
     it('should load result based notification', async () => {
       shared.checkToken(server, path)
       const res = await server
