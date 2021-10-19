@@ -411,7 +411,15 @@
           "abbreviation": "OR",
           "name": "Oregon",
           "lat": 44.572021,
-          "lng": -122.070938
+          "lng": -122.070938,
+          "lgas": [
+            {
+              "name": "Jackson"
+            },
+            {
+              "name": "Hood River"
+            }
+          ]
         },
         {
           "abbreviation": "PA",

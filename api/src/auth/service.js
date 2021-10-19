@@ -484,7 +484,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   const { payload } = request
 
   let loggedInUser = await getUser(request.auth.credentials.name)
-
+  console.log('loggedInUser', loggedInUser)
   if (!loggedInUser) {
     return Boom.notFound('User not Found')
   }

@@ -654,6 +654,7 @@ async function updateSiteWithContext(context) {
     })
     .select('id')
     .limit(2)
+  console.log('Site', sites)
   if (sites.length !== 1) {
     throw Boom.badRequest(`Cannot find unique site with id ${siteExternalId}`)
   }

@@ -888,7 +888,7 @@ async function seed(knex) {
         const geoData = { countryId, stateId, lgaId }
         const [geographyId] = await knex('Geography').insert(geoData)
         lgaData.geographyId = geographyId
-        if (state.name === 'Ohio') {
+        if (state.name === 'Ohio' || state.name === 'Oregon') {
           const siteData = {
             partnerId: partnerOneId,
             geographyId,

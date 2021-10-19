@@ -20,7 +20,12 @@ const {
 
 const { assert } = chai
 
-async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
+async function deleteDeviceSiteDataAndRefreshTokens(
+  knex,
+  apiKeys,
+  clientId,
+  deleteSites
+) {
   const tokens = apiKeys.map(key => key.token)
   const siteIds = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
@@ -147,7 +152,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('Issue').whereIn('id', issueIds).delete()
   await knex('DeviceSim').whereIn('deviceId', deviceIds).delete()
   await knex('Device').whereIn('deviceId', deviceIds).delete()
-
+  await knex('DeviceMaintenance').whereIn('deviceId', deviceIds).delete()
   await knex('Device')
     .orWhereIn('id', deviceIds)
     .orWhereIn(
@@ -161,13 +166,14 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('FactInventoryConsumptionRate', siteIds).delete()
   await knex('SiteTag').whereIn('siteId', siteIds).delete()
-  await knex('Site')
-    .whereIn('id', siteIds)
-    .orWhereIn(
-      'id',
-      _.map(sitesAndDevices, elem => elem.siteId)
-    )
-    .delete()
+  if (deleteSites)
+    await knex('Site')
+      .whereIn('id', siteIds)
+      .orWhereIn(
+        'id',
+        _.map(sitesAndDevices, elem => elem.siteId)
+      )
+      .delete()
 
   await knex('RefreshToken').where({ clientId }).delete()
 }
@@ -376,13 +382,14 @@ class GxConnectApiTestContext {
     return run(async () => this.cleanUp())
   }
 
-  async cleanUp() {
+  async cleanUp(deleteSites = true) {
     await waitForIdle()
     if (!_.isEmpty(this.apiKeys)) {
       await deleteDeviceSiteDataAndRefreshTokens(
         knex,
         _.map(this.apiKeys, apiKey => ({ token: apiKey })),
-        this.clientId
+        this.clientId,
+        deleteSites
       )
     }
   }
@@ -515,8 +522,11 @@ class GxConnectApiTestContext {
     })
   }
 
-  async getAllResults() {
-    return knex('Result as r').where('r.deviceId', this.device.id).select()
+  async getAllResults(queryModifier = null) {
+    const query = knex('Result as r').where('r.deviceId', this.device.id)
+
+    if (queryModifier) query.modify(queryModifier)
+    return query.select('r.*')
   }
 }
 
