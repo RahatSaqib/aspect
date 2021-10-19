@@ -28,10 +28,11 @@ const DateTimeCellBase = ({ value, flagged, since }) => {
 DateTimeCellBase.defaultProps = {
   flagged: false,
   since: false,
+  value: undefined,
 }
 
 DateTimeCellBase.propTypes = {
-  value: string.isRequired,
+  value: string,
   flagged: bool,
   since: bool,
 }

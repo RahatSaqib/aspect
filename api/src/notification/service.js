@@ -165,16 +165,24 @@ async function listNotifications(request) {
   const getItems = notificationQuery
     .clone()
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftJoin('Person as per', 'j.personId', 'per.id')
+    .leftOuterJoin('JobFunction as jf', qb => {
+      qb.on(
+        knex.raw(`
+          JSON_SEARCH(
+            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
+            'one',
+            CAST(jf.id as char)
+          ) IS NOT NULL
+        `)
+      )
+    })
     .select(
       'nt.id as id',
       'nt.name',
       knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
-      knex.raw(
-        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
-      ),
+      knex.raw('COUNT(DISTINCT jf.name) as contactsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')

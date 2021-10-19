@@ -16,7 +16,7 @@ const TableBodyRow = ({
   cells.map(
     ({
       getCellProps,
-      column: { format = false },
+      column: { format = false, translate = false },
       render,
       isGrouped,
       isAggregated,
@@ -39,7 +39,12 @@ const TableBodyRow = ({
           ) : isPlaceholder ? (
             <PlaceholderCell />
           ) : (
-            <Cell render={render} format={format} value={value} />
+            <Cell
+              render={render}
+              format={format}
+              value={value}
+              translate={translate}
+            />
           )}
         </TableCell>
       )
