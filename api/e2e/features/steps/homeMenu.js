@@ -1,7 +1,7 @@
 /* eslint-disable new-cap */
 const _ = require('lodash')
 const { Then } = require('@cucumber/cucumber')
-const { assert } = require('chai')
+const { assert } = require('mocha')
 
 Then('Has to have this menu {string}', async function (menuItems) {
   const { page } = this
