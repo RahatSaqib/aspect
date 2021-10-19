@@ -1,22 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable new-cap */
 const { Before, After, setDefaultTimeout } = require('@cucumber/cucumber')
-const puppeteer = require('puppeteer')
+const { chromium } = require('playwright')
 
 // setDefaultTimeout(60 * 1000)
 // setWorldConstructor(CustomWorld)
 
 Before(async function () {
   const world = this
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-    ],
-    executablePath: 'google-chrome',
-  })
+  const browser = await chromium.launch({ headless: true })
   world.browser = browser
   world.page = await browser.newPage()
   // console.log('Before All', world)
