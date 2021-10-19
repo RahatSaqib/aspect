@@ -6,16 +6,18 @@ import { useIntl } from 'react-intl'
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
 
-const NotificationsContextualMenu = ({ item: { id } }) => {
+const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
+
+  const { id, typeCategory } = item
 
   const getItemActions = navigate => [
     {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
       action: () => navigate(`/browse/notification/${id}`),
-      disabled: true,
+      disabled: typeCategory !== 'resultBased',
     },
     {
       icon: 'FaCopy',
@@ -48,6 +50,7 @@ const NotificationsContextualMenu = ({ item: { id } }) => {
 NotificationsContextualMenu.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    typeCategory: PropTypes.string,
   }).isRequired,
 }
 
