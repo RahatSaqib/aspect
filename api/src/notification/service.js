@@ -332,7 +332,7 @@ async function getNotificationPolicy(
             'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.smsTemplateId ELSE NULL END as smsTemplateId'
           ),
           knex.raw(
-            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
           ),
         ]
         queryBuilder
