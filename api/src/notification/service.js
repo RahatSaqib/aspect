@@ -494,7 +494,7 @@ async function createNotificationIfNotCreatedAlready(
       }
     }
 
-    if (policy.sendEmail != null) {
+    if (policy.emailTemplateId != null) {
       const [emailMessageId] = await knex('EmailMessage').insert({
         emailTemplateId: policy.emailTemplateId,
         ...sharedMessageProperties,
@@ -502,7 +502,7 @@ async function createNotificationIfNotCreatedAlready(
       notification.emailMessageId = emailMessageId
       context.emailMessageCreated(emailMessageId)
     }
-    if (policy.sendSms != null) {
+    if (policy.smsTemplateId != null) {
       const [smsMessageId] = await knex('SmsMessage').insert({
         smsTemplateId: policy.smsTemplateId,
         ...sharedMessageProperties,
@@ -511,7 +511,7 @@ async function createNotificationIfNotCreatedAlready(
       context.smsMessageCreated(smsMessageId)
     }
 
-    if (policy.sendWeb != null) {
+    if (policy.webhookTemplateId != null) {
       const [webhookMessageId] = await knex('WebhookMessage').insert({
         webhookTemplateId: policy.webhookTemplateId,
         ...sharedMessageProperties,
