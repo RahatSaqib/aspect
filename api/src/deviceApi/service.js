@@ -654,7 +654,6 @@ async function updateSiteWithContext(context) {
     })
     .select('id')
     .limit(2)
-  console.log('Site', sites)
   if (sites.length !== 1) {
     throw Boom.badRequest(`Cannot find unique site with id ${siteExternalId}`)
   }
@@ -956,7 +955,6 @@ function createNewDeviceFromRequest(request, now) {
       defaultSite = await knex('Site as s')
         .where('externalId', siteExternalId)
         .first()
-
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,

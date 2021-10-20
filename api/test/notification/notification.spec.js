@@ -23,6 +23,7 @@ const {
   resultCategoryToId,
   issueStatusToId,
 } = require('../../src/shared/dictionary')
+const { createUser, removeUser } = require('../utils/authUtils')
 
 const { assert } = chai
 describe('Issue based Notifications triggers', () => {
@@ -33,7 +34,6 @@ describe('Issue based Notifications triggers', () => {
     const messageTypes = await knex('MessageType')
       .whereNotNull('smsTemplateId')
       .select()
-
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'issueBased'
     )
@@ -184,7 +184,7 @@ describe.only('Result Notifications triggers', () => {
     await knex('NotificationType').where({ id: ntToDelete }).delete()
     results = []
   }
-  describe('Filter without JF', () => {
+  describe.only('Filter without JF', () => {
     let deviceContext
     let device2Context
     let results2
@@ -192,7 +192,7 @@ describe.only('Result Notifications triggers', () => {
     const filterConditionForJackson = {
       result: [
         {
-          assayId: 'assayTypeMtbRif',
+          assayId: 'GxMtbRif',
           resultCategoryId: [
             {
               label: 'Detected',
@@ -210,17 +210,42 @@ describe.only('Result Notifications triggers', () => {
       ],
       deviceLevelId: 'lga',
     }
-
+    const getResults = deviceId =>
+      knex('Result as r')
+        // .join('Geography as g', 'g.id', 'r.geographyId')
+        // .join('Lga as l', 'g.lgaId', 'l.id')
+        // .select('r.*', 'l.name as lgaName')
+        .where({ 'r.deviceId': deviceId })
+    let jacksonUserId
     before(async () => {
+      const { geographyId } = await knex('Geography as g')
+        .join('State as s', 's.id', 'g.stateId')
+        .join('Lga as l', 'l.id', 'g.lgaId')
+        .where({ 's.name': 'Oregon', 'l.name': 'Jackson' })
+        .first('g.id as geographyId')
+
+      jacksonUserId = await createUser(
+        'Partner One',
+        'US',
+        'jackson',
+        'jackson',
+        [
+          {
+            jobFunctionExternalId: 'admin',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+        ],
+        geographyId
+      )
+
       deviceContext = await createGxConnectTestContext(server, {
         countryCode: 'US',
-        adminUsername: 'admin',
-        adminPassword: 'test07',
+        adminUsername: 'jackson',
+        adminPassword: 'jackson',
         deviceName: `My super device`,
         macAddress: `Oh wow, look at that MAC ADDRESS!`,
         hostId: `SuperHostId`,
         deviceSerialNumber: `My device serial number`,
-        siteExternalId: 'Oregon_Jackson',
       })
       device2Context = await createGxConnectTestContext(server, {
         countryCode: 'US',
@@ -230,37 +255,39 @@ describe.only('Result Notifications triggers', () => {
         macAddress: `Oh wow, look at that MAC ADDRESS number 2!`,
         hostId: `SuperHostId2`,
         deviceSerialNumber: `My device serial number 2`,
-        siteExternalId: 'Oregon_Hood River',
       })
-
+      // const { geographyId } = await knex('Geography as g')
+      //   .join('Lga as l', 'l.id', 'g.lgaId')
+      //   .join('State as s', 's.id', 'g.stateId')
+      //   .where({ 'l.name': 'Jackson', 's.Name': 'Oregon' })
+      //   .select('g.id as geographyId')
       await deviceContext.registerAndSetDevice()
       await device2Context.registerAndSetDevice()
       await createTestContext(
         filterConditionWithAssay,
         deviceContext.device.partnerId
       )
-      await device2Context.createResultForThisDevice()
-      await deviceContext.createResultForThisDevice()
-      const queryBuilder = builder =>
-        builder
-          .join('Geography as g', 'g.id', 'r.geographyId')
-          .join('Lga as l', 'g.lgaId', 'l.id')
-          .select('l.name as lgaName')
-      results = await deviceContext.getAllResults(queryBuilder)
-      results2 = await deviceContext.getAllResults(queryBuilder)
+      await Promise.each(_.range(1, 10), async () =>
+        device2Context.createResultForThisDevice()
+      )
+      await Promise.each(_.range(1, 10), async () =>
+        deviceContext.createResultForThisDevice()
+      )
     })
     after(async () => {
       await deviceContext.cleanUp(false)
       await device2Context.cleanUp(false)
       await removeTestContext()
+      await removeUser(jacksonUserId)
     })
     describe('Filter for Jackson county and Detected result', () => {
       let sampleResult = null
       before(async () => {
-        sampleResult = _.sample(results)
+        const deviceResults = await getResults(deviceContext.device.id)
+        sampleResult = _.sample(deviceResults)
         assert.isNotNull(sampleResult)
         await createTestContext(
-          filterConditionWithAssay,
+          filterConditionForJackson,
           deviceContext.device.partnerId
         )
       })
@@ -272,24 +299,29 @@ describe.only('Result Notifications triggers', () => {
         await knex('Result').where({ id: sampleResult.id }).delete()
         await removeTestContext()
       })
-      it('should create a result based notification for particular lga', async () => {
-        console.log('sampleResult', sampleResult)
-        messageContext.dispatch(resultLogged(sampleResult.id, 1, 1))
+      it.only('should create a result based notification for particular lga (Jackson)', async () => {
+        const detected = await resultCategoryToId('Detected')
+        const deviceResults = await getResults(deviceContext.device.id)
+        console.log('deviceResults', deviceResults)
+        const resultSample = _.sample(
+          _.filter(deviceResults, elem => elem.resultCategory1 === detected)
+        )
+        console.log(resultSample)
+        const { id: resultId = null } = resultSample
+        assert.isNotNull(resultId)
+        console.log(resultId)
+        messageContext.dispatch(resultLogged(resultId, 1, 1))
         await waitForIdle(1000)
         const notifications = await knex('Notification')
-          .where({ resultId: sampleResult.id })
+          .where({ resultId })
           .distinct()
         assert.isAtLeast(notifications.length, 1)
       })
     })
     it('should NOT create a result based notification for result category distinct to detected', async () => {
-      console.log(
-        'Filtered REsults',
-        results.length,
-        _.filter(results, elem => elem.resultCategory1 !== resultCategory1)
-      )
+      const detected = await resultCategoryToId('Detected')
       const resultId = _.sample(
-        _.filter(results, elem => elem.resultCategory1 !== resultCategory1)
+        _.filter(results, elem => elem.resultCategory1 !== detected)
       ).id
       assert.isNotNull(resultId)
       messageContext.dispatch(resultLogged(resultId, 1, 1))
@@ -410,7 +442,6 @@ describe.only('Result Notifications triggers', () => {
           'nt.notificationTypeCategoryId': notificationTypeCategoryId,
         })
         .distinct()
-      console.log('notifications', notifications)
       assert.equal(notifications.length, 1)
     })
   })

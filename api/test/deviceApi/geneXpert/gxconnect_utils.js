@@ -188,7 +188,6 @@ function createGxConnectTestContext(
     deviceSerialNumber,
     adminUsername,
     adminPassword,
-    siteExternalId,
   }
 ) {
   return new GxConnectApiTestContext(server, {
@@ -199,7 +198,6 @@ function createGxConnectTestContext(
     deviceSerialNumber,
     adminUsername,
     adminPassword,
-    siteExternalId,
   })
 }
 
@@ -214,7 +212,6 @@ class GxConnectApiTestContext {
       deviceSerialNumber,
       adminUsername,
       adminPassword,
-      siteExternalId,
     }
   ) {
     this.server = server
@@ -234,7 +231,7 @@ class GxConnectApiTestContext {
       type: {
         id: 'CepheidGeneXpert',
       },
-      site: !siteExternalId ? null : { id: siteExternalId },
+      site: null,
       log: null,
       configuration: {
         data: { macAddress, hostId, deviceSerialNumber },
@@ -273,9 +270,9 @@ class GxConnectApiTestContext {
     return run(async () => this.registerAndSetDevice())
   }
 
-  registerAndSetDevice(token = 'approved') {
+  registerAndSetDevice(statusToken = 'approved') {
     return run(async knex => {
-      this.apiKey = await this.registerDevice()
+      await this.registerDevice()
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
       this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
@@ -290,7 +287,7 @@ class GxConnectApiTestContext {
       )
 
       const [{ id: deviceApprovalIdApproved }] = [
-        await knex('DeviceApproval').where({ token }).first(),
+        await knex('DeviceApproval').where({ token: statusToken }).first(),
       ]
       if (deviceApprovalIdApproved !== this.device.deviceApprovalId) {
         await knex('Device')
@@ -303,9 +300,8 @@ class GxConnectApiTestContext {
 
   async registerDevice() {
     const clientAccessToken = await this.requestClientToken()
-    const deviceApiKey = await this.requestNewDeviceApiKey(clientAccessToken)
-    await this.sendInitialDeviceConfiguration(deviceApiKey)
-    return deviceApiKey
+    this.apiKey = await this.requestNewDeviceApiKey(clientAccessToken)
+    await this.sendInitialDeviceConfiguration()
   }
 
   requestClientToken() {
@@ -338,7 +334,7 @@ class GxConnectApiTestContext {
       .catch(assert.fail)
   }
 
-  async sendInitialDeviceConfiguration(deviceApiKey) {
+  async sendInitialDeviceConfiguration() {
     const configurationData = {}
     if (this.macAddress) {
       configurationData.macAddress = this.macAddress
@@ -351,7 +347,7 @@ class GxConnectApiTestContext {
     }
     await this.server
       .post('/device')
-      .set('Authorization', `Bearer ${deviceApiKey}`)
+      .set('Authorization', `Bearer ${this.apiKey}`)
       .send(
         _.merge({}, this.basicDevicePayload, {
           configuration: {
@@ -421,7 +417,9 @@ class GxConnectApiTestContext {
       'DiagnosticDevice'
     )
     const resultCategories = await allResultCategoryToId()
+    const resultCategoriesKeys = _.keys(resultCategories)
     const resultTypePatientId = await resultTypeToId('Patient')
+    const rand = _.random(10)
     const [resultId] = await knex('Result').insert(
       _.merge(
         {
@@ -437,8 +435,11 @@ class GxConnectApiTestContext {
           resultSourceId: resultSourceDiagnosticDeviceId,
           resultTypeId: resultTypePatientId,
           sampleId: sample.id,
-          resultCategory1: resultCategories.Unknown,
-          resultCategory2: resultCategories.Unknown,
+          resultCategory1:
+            rand < 7
+              ? resultCategories.Detected
+              : resultCategories[_.sample(resultCategoriesKeys)],
+          resultCategory2: resultCategories[_.sample(resultCategoriesKeys)],
           resultData: '{}',
           formData: '{}',
           patientData: '{}',
@@ -452,6 +453,7 @@ class GxConnectApiTestContext {
         resultDetails
       )
     )
+    console.log(this.device.name, resultId)
     return resultId
   }
 

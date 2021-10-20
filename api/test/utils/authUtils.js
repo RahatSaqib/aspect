@@ -35,7 +35,8 @@ async function createUser(
       deviceTypeExternalId: null,
       diseaseExternalId: null,
     },
-  ]
+  ],
+  userGeographyId = null
 ) {
   const partner = await knex('Partner').where('name', partnerName).first()
   if (!partner) {
@@ -49,11 +50,17 @@ async function createUser(
       `countryAbbreviation ${countryAbbreviation} not found in the database`
     )
   }
-  const geography = await knex('Geography')
-    .where('countryId', country.id)
-    .whereNull('stateId')
-    .whereNull('lgaId')
-    .first()
+  let geography
+  if (!userGeographyId)
+    geography = await knex('Geography')
+      .where('countryId', country.id)
+      .whereNull('stateId')
+      .whereNull('lgaId')
+      .first()
+  else
+    geography = await await knex('Geography')
+      .where('id', userGeographyId)
+      .first()
   const user = await knex('User').where('name', username).first()
   let userId
   if (user) {

@@ -71,6 +71,7 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
       .join('Site as s', 'd.siteId', 's.id')
       .where('d.id', deviceId)
       .first('g.countryId', 's.id as siteId', 'd.partnerId', 'd.geographyId')
+    console.log('device', device)
     const { countryId, partnerId, geographyId, siteId } = device || {}
     // throw error if no device found or it is not assigned to site
     if (!device || !siteId) {
