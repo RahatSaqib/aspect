@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const config = require('../../src/config')
 const { upsertJobFunction } = require('../common')
+const upsertResultCategoryGroup = require('../common/upsert_result_category_group')
 const {
   rowsAsObject,
   getPermissionModules,
@@ -16,6 +17,7 @@ const {
   resultSourceToId,
   fileContentTypeToId,
   messageSeverityToId,
+  resultCategoryToId,
 } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -60,7 +62,7 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
-  await knex('Assay').insert({
+  const [CommCareGatesRDTId] = await knex('Assay').insert({
     name: 'CommCare Gates RDT',
     abbreviation: 'CC RDT',
     i18nKey: 'assayCommCareGatesRDT',
@@ -107,6 +109,51 @@ async function seed(knex) {
       },
     }),
   })
+
+  const detectedId = await resultCategoryToId('Detected')
+  const notDetectedId = await resultCategoryToId('NotDetected')
+  await knex('ResultCategoryAssay').insert({
+    assayId: CommCareGatesRDTId,
+    resultCategoryId: detectedId
+  })
+  await knex('ResultCategoryAssay').insert({
+    assayId: CommCareGatesRDTId,
+    resultCategoryId: notDetectedId
+  })
+  await upsertResultCategoryGroup(knex, [
+    {
+      externalId: 'CommCareGatesRDT_Detected_NotDetected',
+      i18nKey: 'CommCareGatesRDT_Detected_NotDetected',
+      name: 'CommCareGatesRDT_Detected_NotDetected',
+      resultCategory1ExternalId: 'Detected',
+      resultCategory2ExternalId: 'NotDetected',
+      assayExternalId: 'CommCareGatesRDT',
+    },
+    {
+      externalId: 'CommCareGatesRDT_Detected_Detected',
+      i18nKey: 'CommCareGatesRDT_Detected_Detected',
+      name: 'CommCareGatesRDT_Detected_Detected',
+      resultCategory1ExternalId: 'Detected',
+      resultCategory2ExternalId: 'Detected',
+      assayExternalId: 'CommCareGatesRDT',
+    },
+    {
+      externalId: 'CommCareGatesRDT_NotDetected_Detected',
+      i18nKey: 'CommCareGatesRDT_NotDetected_Detected',
+      name: 'CommCareGatesRDT_NotDetected_Detected',
+      resultCategory1ExternalId: 'NotDetected',
+      resultCategory2ExternalId: 'Detected',
+      assayExternalId: 'CommCareGatesRDT',
+    },
+    {
+      externalId: 'CommCareGatesRDT_NotDetected_NotDetected',
+      i18nKey: 'CommCareGatesRDT_NotDetected_NotDetected',
+      name: 'CommCareGatesRDT_NotDetected_NotDetected',
+      resultCategory1ExternalId: 'NotDetected',
+      resultCategory2ExternalId: 'NotDetected',
+      assayExternalId: 'CommCareGatesRDT',
+    },
+  ])
 
   const [usCountry] = await knex('Country as c')
     .where({ 'c.a3': 'USA' })

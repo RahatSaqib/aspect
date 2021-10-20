@@ -354,6 +354,7 @@ async function getNotificationPolicy(
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
+    .where('nt.enabled', true)
     .distinct(selectColums.concat(extraFields))
   return records
 }
