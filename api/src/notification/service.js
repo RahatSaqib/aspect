@@ -327,7 +327,7 @@ async function getNotificationPolicy(
           .crossJoin(
             knex('Result as r')
               .where('r.id', resultId)
-              // .andWhere('r.endedOn', '>=', subDays(new Date(), 30))
+              .andWhere('r.endedOn', '>=', subDays(new Date(), 30))
               .select(
                 'r.siteId',
                 'r.assayId',
