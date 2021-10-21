@@ -18,6 +18,7 @@ const { issueCreated } = require('../../src/issue/actions')
 const {
   notificationTypeCategoryToId,
   resultCategoryToId,
+  deviceApprovalToId,
   issueStatusToId,
 } = require('../../src/shared/dictionary')
 
@@ -217,11 +218,41 @@ describe('Result Notifications triggers', () => {
     before(async () => createTestContext(filterConditionWithAssay))
     after(removeTestContext)
     describe('Filter for wayne country and Detected result', () => {
+      it('should NOT create a result based notification for particular lga BUT with unapproved Device', async () => {
+        let notifications = await knex('Notification')
+          .whereIn('resultId', [insertedResultDetected])
+          .distinct()
+        const qtyOfNotifications = notifications.length
+        assert.isAtLeast(notifications.length, 0)
+        const device = await knex('Device as d')
+          .join('Result as r', 'r.deviceId', 'd.id')
+          .where('r.id', insertedResultDetected)
+          .first('d.*')
+        await knex('Device')
+          .update({
+            deviceApprovalId: await deviceApprovalToId('decommissioned'),
+          })
+          .where({ id: device.id })
+
+        messageContext.dispatch(resultLogged(insertedResultDetected, 1, 1))
+        await waitForIdle(1000)
+        notifications = await knex('Notification')
+          .whereIn('resultId', [insertedResultDetected])
+          .distinct()
+        assert.equal(qtyOfNotifications, notifications.length)
+        await knex('Device')
+          .update({
+            deviceApprovalId: await deviceApprovalToId('approved'),
+          })
+          .where({
+            id: device.id,
+          })
+      })
       it('should create a result based notification for particular lga', async () => {
         messageContext.dispatch(resultLogged(insertedResultDetected, 1, 1))
         await waitForIdle(1000)
         const notifications = await knex('Notification')
-          .whereIn('resultId', [insertedResultDetected, insertedResultUnknow])
+          .whereIn('resultId', [insertedResultDetected])
           .distinct()
         assert.isAtLeast(notifications.length, 1)
       })
