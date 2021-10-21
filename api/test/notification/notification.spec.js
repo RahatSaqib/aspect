@@ -82,6 +82,9 @@ describe('Result Notifications triggers', () => {
   let results = []
   let ntNoFilterConditionId
   let messageContext
+  const name = 'Result based notification'
+  const path = '/api/notification'
+
   const filterConditionWithAssay = {
     result: [
       {
@@ -148,6 +151,7 @@ describe('Result Notifications triggers', () => {
     assert.isAtLeast(results.length, 1)
     const messageTypes = await knex('MessageType')
       .whereNotNull('smsTemplateId')
+      .whereNotNull('emailTemplateId')
       .select()
 
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
@@ -156,7 +160,7 @@ describe('Result Notifications triggers', () => {
 
     ;[ntNoFilterConditionId] = await knex('NotificationType').insert({
       partnerId: 1,
-      name: 'Result based notification',
+      name,
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
@@ -168,6 +172,16 @@ describe('Result Notifications triggers', () => {
     await updateSubscription('notification')
   }
   const removeTestContext = async () => {
+    await Promise.each(
+      ['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'],
+      table =>
+        knex(table)
+          .whereIn(
+            'resultId',
+            _.map(results, r => r.id)
+          )
+          .delete()
+    )
     await knex('Notification')
       .whereIn(
         'resultId',
@@ -178,6 +192,7 @@ describe('Result Notifications triggers', () => {
     await knex('NotificationType').where({ id: ntNoFilterConditionId }).delete()
     results = []
   }
+
   describe('Filter without JF', () => {
     before(async () => createTestContext(filterConditionWithAssay))
     after(removeTestContext)
@@ -247,6 +262,7 @@ describe('Result Notifications triggers', () => {
       assert.isEmpty(notifications)
     })
   })
+
   describe('Filter by JF', () => {
     let inserted
     before(async () => createTestContext(filterConditionWithJf))
@@ -348,7 +364,113 @@ describe('Result Notifications triggers', () => {
       assert.equal(notifications.length, 1)
     })
   })
-  describe('No filtering', () => {
+
+  const filterCondition = {
+    result: [
+      {
+        assayId: 'DaktariHivVL',
+        resultCategoryId: [
+          {
+            label: 'Detected',
+            scope: 'ResultCategories',
+            value: 'Detected',
+          },
+        ],
+      },
+    ],
+    sendEmail: true,
+    sendSms: true,
+    sendWeb: false,
+    areaItems: [
+      {
+        label: 'Wayne',
+        value: '12',
+      },
+    ],
+    jobFunctions: [
+      {
+        tags: [],
+        jobFunctionId: '1',
+      },
+      {
+        tags: [],
+        jobFunctionId: '2',
+      },
+    ],
+    deviceLevelId: 'lga',
+  }
+
+  describe('Checking edit functionality', () => {
+    before(async () => createTestContext(filterCondition))
+    after(removeTestContext)
+
+    let id
+    let data
+    let fltrCon
+
+    it('should load result based notification', async () => {
+      shared.checkToken(server, path)
+      const res = await server
+        .get(path)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 200)
+      const foundRBN = res.body.data.filter(item => item.name === name)
+      if (foundRBN && foundRBN.length) {
+        id = foundRBN[0].id
+        const res = await server
+          .get(`${path}/${id}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        data = res.body.data
+        fltrCon = JSON.parse(data.filterCondition)
+        assert.property(data, 'notificationTypeName')
+        assert.property(data, 'notificationType')
+        assert.property(data, 'name')
+        assert.property(data, 'filterCondition')
+        assert.property(data, 'emailSubject')
+        assert.property(data, 'emailBody')
+        assert.property(data, 'smsBody')
+        assert.property(data, 'webUrl')
+        assert.property(data, 'webBody')
+      }
+    })
+
+    it('should save result based notification', async () => {
+      shared.checkToken(server, path)
+      const payload = {
+        notificationType: data.notificationType,
+        name: data.name,
+        emailSubject: '',
+        emailBody: '',
+        sendEmail: false,
+        smsBody: data.smsBody || '',
+        sendSms: fltrCon.sendSms,
+        webUrl: '',
+        webBody: '',
+        sendWeb: false,
+        jobFunctions: [
+          {
+            jobFunctionId: '1',
+            checked: true,
+            tags: [],
+          },
+        ],
+        deviceLevelId: fltrCon.deviceLevelId,
+        areaItems: fltrCon.areaItems,
+        result: fltrCon.result,
+      }
+      const res = await server
+        .put(`${path}/${id}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .send(payload)
+
+      assert.equal(res.status, 200)
+    })
+  })
+})
+
+describe('No filtering', () => {
     before(async () => createTestContext(null))
     after(async () => removeTestContext())
     afterEach(async () =>
