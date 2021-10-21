@@ -160,7 +160,7 @@ describe('Result Notifications triggers', () => {
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
-      filterCondition: JSON.stringify(filterCondition),
+      filterCondition: filterCondition ? JSON.stringify(filterCondition) : null,
       messageTypeId: _.sample(messageTypes).id,
     })
     messageContext = await createMessageContext()
@@ -196,7 +196,13 @@ describe('Result Notifications triggers', () => {
       })
       after(async () => {
         await Promise.each(
-          ['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'],
+          [
+            'EmailMessage',
+            'SmsMessage',
+            'AlertMessage',
+            'Notification',
+            'WebhookMessage',
+          ],
           table => knex(table).where({ resultId: insertedResult }).delete()
         )
         await knex('Result').where({ externalId: 'MytestsResultID' }).delete()
@@ -271,11 +277,11 @@ describe('Result Notifications triggers', () => {
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
       const notifications = await knex('Notification')
-        .where({ resultId })
+        .where({ resultId, notificationTypeId: ntNoFilterConditionId })
         .distinct()
       assert.equal(notifications.length, 1)
     })
-    it('Should create or not  a result based notification filtering by  JobFunction and tags', async () => {
+    it('Should create or not a result based notification filtering by JobFunction and tags', async () => {
       ;[inserted] = await knex('Tag').insert([
         { partnerId: 1, title: 'oneTag' },
         { partnerId: 1, title: 'secondTag' },
@@ -333,13 +339,53 @@ describe('Result Notifications triggers', () => {
       messageContext.dispatch(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
       notifications = await knex('Notification as n')
-        .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
         .where({
           resultId,
-          'nt.notificationTypeCategoryId': notificationTypeCategoryId,
+          notificationTypeId: ntNoFilterConditionId,
+          // 'nt.notificationTypeCategoryId': notificationTypeCategoryId,
         })
         .distinct()
       assert.equal(notifications.length, 1)
+    })
+  })
+  describe('No filtering', () => {
+    before(async () => createTestContext(null))
+    after(async () => removeTestContext())
+    afterEach(async () =>
+      knex('Notification')
+        .whereIn(
+          'resultId',
+          _.map(results, r => r.id)
+        )
+        .delete()
+    )
+    it('Should create a result based notification', async () => {
+      const resultId = _.sample(
+        _.filter(results, elem => elem.resultCategory1 === resultCategory1)
+      ).id
+      assert.isNotNull(resultId)
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntNoFilterConditionId })
+        .distinct()
+      assert.equal(notifications.length, 1)
+    })
+
+    it('Should not create a disabled result based notification', async () => {
+      await knex('NotificationType')
+        .where({ id: ntNoFilterConditionId })
+        .update({ enabled: false })
+      const resultId = _.sample(
+        _.filter(results, elem => elem.resultCategory1 === resultCategory1)
+      ).id
+      assert.isNotNull(resultId)
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntNoFilterConditionId })
+        .distinct()
+      assert.equal(notifications.length, 0)
     })
   })
 })

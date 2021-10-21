@@ -31,12 +31,12 @@ const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
   resultBased: resultConditionsMet,
 }
-function resultCategoryFilters(
-  queryBuilder,
-  { result: results = [] },
-  resultAlias
-) {
-  if (results.length > 0) {
+function resultCategoryFilters(queryBuilder, filterConditions, resultAlias) {
+  let resultFilters = []
+  const { result } = filterConditions || {}
+  if (result) resultFilters = result
+
+  if (resultFilters.length > 0) {
     queryBuilder
       .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
       .leftJoin(
@@ -65,12 +65,12 @@ function resultCategoryFilters(
         'rc2.id'
       )
     queryBuilder.where(resultBuilder =>
-      _.each(results, elem => {
+      _.each(resultFilters, filterElem => {
         resultBuilder.orWhere(whereBuilder => {
-          whereBuilder.where('a.externalId', elem.assayId)
+          whereBuilder.where('a.externalId', filterElem.assayId)
           if (
             _.find(
-              elem.resultCategoryId,
+              filterElem.resultCategoryId,
               item => item.scope === 'ResultCategoryGroups'
             )
           )
@@ -78,7 +78,7 @@ function resultCategoryFilters(
               'rcg.externalId',
               _.map(
                 _.filter(
-                  elem.resultCategoryId,
+                  filterElem.resultCategoryId,
                   item => item.scope === 'ResultCategoryGroups'
                 ),
                 obj => obj.value
@@ -86,13 +86,13 @@ function resultCategoryFilters(
             )
           if (
             _.find(
-              elem.resultCategoryId,
+              filterElem.resultCategoryId,
               item => item.scope === 'ResultCategories'
             )
           ) {
             const itemsToFilter = _.map(
               _.filter(
-                elem.resultCategoryId,
+                filterElem.resultCategoryId,
                 item => item.scope === 'ResultCategories'
               ),
               obj => obj.value
@@ -111,9 +111,11 @@ function resultCategoryFilters(
 
 function geographyFilters(
   queryBuilder,
-  { areaItems, deviceLevelId },
+  filterConditions,
   { device = 'd', geography = 'g' }
 ) {
+  const { areaItems, deviceLevelId } = filterConditions || {}
+
   if (deviceLevelId === 'state') {
     queryBuilder.whereIn(
       `${geography}.stateId`,
@@ -517,6 +519,7 @@ async function createNotificationIfNotCreatedAlready(
     }
 
     const [notificationId] = await knex('Notification').insert(notification)
+
     context.notificationCreated(notificationId)
   }
 }

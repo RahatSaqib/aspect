@@ -1,10 +1,10 @@
+const Promise = require('bluebird')
+const isNil = require('lodash/isNil')
 const {
   allResultCategoryToId,
   issueTypeToId,
-  notificationTypeCategoryToId
+  notificationTypeCategoryToId,
 } = require('../../src/shared/dictionary')
-const Promise = require('bluebird')
-const isNil = require('lodash/isNil')
 
 module.exports = async knex => {
   const partnerIds = await knex('Partner').pluck('id')
@@ -25,17 +25,30 @@ module.exports = async knex => {
       .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
       .where({
         partnerId,
-        issueTypeId: resultReceivedIssueTypeId
+        issueTypeId: resultReceivedIssueTypeId,
       })
-      .select(['nt.*', knex.raw('mt.emailTemplateId IS NOT NULL as sendEmail'), knex.raw('mt.smsTemplateId IS NOT NULL as sendSms'), knex.raw('mt.webhookTemplateId IS NOT NULL as sendWeb')])
+      .select([
+        'nt.*',
+        knex.raw('mt.emailTemplateId IS NOT NULL as sendEmail'),
+        knex.raw('mt.smsTemplateId IS NOT NULL as sendSms'),
+        knex.raw('mt.webhookTemplateId IS NOT NULL as sendWeb'),
+      ])
 
     const now = new Date()
 
     // Iterate and migrate notification types
     await Promise.each(notificationTypes, async notificationType => {
       // Create the new notification type
-      const { id, issueTypeId, jobFunctionId, level, sendSms, sendEmail, sendWeb, ...restProps } =
-        notificationType
+      const {
+        id,
+        issueTypeId,
+        jobFunctionId,
+        level,
+        sendSms,
+        sendEmail,
+        sendWeb,
+        ...restProps
+      } = notificationType
       let issueEscalationTrigger
       const filterCondition = {
         jobFunctions: [
@@ -47,7 +60,7 @@ module.exports = async knex => {
         ],
         sendSms,
         sendEmail,
-        sendWeb
+        sendWeb,
       }
 
       // If it corresponds to an escalation level > 1, then the notification has filters
@@ -113,7 +126,7 @@ module.exports = async knex => {
                         q.andWhere('resultCategory2Id', resultCategory2Id)
                       }
                     })
-                  
+
                   if (resultCategoryGroups.length > 0) {
                     // If result category groups exist, then add all of them as scoped categories
                     resultCategoryGroups.forEach(rcg =>
@@ -129,11 +142,12 @@ module.exports = async knex => {
                   ) {
                     // Else if result category 1 was defined in the old condition, then add it as a scoped category
                     const resultCategory1 = await knex('ResultCategory as rc')
-                      .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
-                      .where(
+                      .innerJoin(
+                        'ResultCategoryAssay as rca',
                         'rc.id',
-                        resultCategory1Id
+                        'rca.resultCategoryId'
                       )
+                      .where('rc.id', resultCategory1Id)
                       .andWhere('rca.assayId', assayId)
                       .select('rc.*')
 
@@ -143,7 +157,10 @@ module.exports = async knex => {
                       value: resultCategory1.externalId,
                     })
                   } else {
-                    console.error(`No result category group defined for the result category 1 ${rc1ExternalId}, result category 2 '${rc2ExternalId}', and assay '${assayExternalId}'. The filter condition will be skipped.`)
+                    /* eslint-disable no-console */
+                    console.error(
+                      `No result category group defined for the result category 1 ${rc1ExternalId}, result category 2 '${rc2ExternalId}', and assay '${assayExternalId}'. The filter condition will be skipped.`
+                    )
                   }
                 })
               })

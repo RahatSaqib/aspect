@@ -114,11 +114,11 @@ async function seed(knex) {
   const notDetectedId = await resultCategoryToId('NotDetected')
   await knex('ResultCategoryAssay').insert({
     assayId: CommCareGatesRDTId,
-    resultCategoryId: detectedId
+    resultCategoryId: detectedId,
   })
   await knex('ResultCategoryAssay').insert({
     assayId: CommCareGatesRDTId,
-    resultCategoryId: notDetectedId
+    resultCategoryId: notDetectedId,
   })
   await upsertResultCategoryGroup(knex, [
     {
