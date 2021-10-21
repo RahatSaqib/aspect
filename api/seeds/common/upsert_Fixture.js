@@ -1,10 +1,9 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const NotificationTypeCategory = require('../fixtures/NotificationTypeCategory.json')
 
-async function seed(knex) {
-  await Promise.each(NotificationTypeCategory.data || [], async datum => {
-    const existingRecords = await knex('NotificationTypeCategory')
+async function upsertFixture(knex, fixture, table) {
+  await Promise.each(fixture.data || [], async datum => {
+    const existingRecords = await knex(table)
       .where('externalId', datum.externalId)
       .first('id')
     const elementToInsert = _.reduce(
@@ -18,13 +17,15 @@ async function seed(knex) {
       {}
     )
     if (!existingRecords) {
-      await knex('NotificationTypeCategory').insert(elementToInsert)
+      await knex(table).insert(elementToInsert)
     } else {
-      await knex('NotificationTypeCategory')
+      await knex(table)
         .update(elementToInsert)
         .where('externalId', elementToInsert.externalId)
     }
   })
 }
 
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = {
+  upsertFixture,
+}
