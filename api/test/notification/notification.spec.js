@@ -468,9 +468,8 @@ describe('Result Notifications triggers', () => {
       assert.equal(res.status, 200)
     })
   })
-})
 
-describe('No filtering', () => {
+  describe('No filtering', () => {
     before(async () => createTestContext(null))
     after(async () => removeTestContext())
     afterEach(async () =>
