@@ -401,7 +401,10 @@ export default function siteReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_SINGLE_SITE:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
-        mutState.set('items', receiveItem(mutState.items, immutItem))
+        mutState.set(
+          'items',
+          mutState.items.setIn(['byId', immutItem.get('id')], immutItem)
+        )
       })
     case types.RECEIVE_ASSIGN_PERSON:
       return state.withMutations(mutState => {
