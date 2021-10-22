@@ -379,7 +379,6 @@ describe('Result Notifications triggers', () => {
     })
   })
 
-
   describe('Checking edit functionality', () => {
     before(async () => createTestContext(baseFilterCondition))
     after(removeTestContext)
