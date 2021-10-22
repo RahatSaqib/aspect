@@ -62,24 +62,27 @@ export const SiteDetail = props => {
   } = props
   const { siteId } = useParams()
   const intl = useIntl()
-  const { editable, site, siteTags, siteContacts } = useSelector(state => {
-    const site = state.site.items.byId.get(siteId)
-    const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
-    const siteContacts = state.person.siteContacts.getIn(
-      [siteId],
-      Immutable.List()
-    )
-    return {
-      editable: isEditable(state.user, 'site'),
-      site,
-      siteTags,
-      lastServerResponseTime: state.getIn([
-        'globals',
-        'lastServerResponseTime',
-      ]),
-      siteContacts,
+  const { editable, site, siteTags, siteContacts, user } = useSelector(
+    state => {
+      const site = state.site.items.byId.get(siteId)
+      const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
+      const siteContacts = state.person.siteContacts.getIn(
+        [siteId],
+        Immutable.List()
+      )
+      return {
+        editable: isEditable(state.user, 'site'),
+        site,
+        siteTags,
+        lastServerResponseTime: state.getIn([
+          'globals',
+          'lastServerResponseTime',
+        ]),
+        siteContacts,
+        user: state.user,
+      }
     }
-  })
+  )
 
   useEffect(() => {
     const handleFetchSite = siteId => {
@@ -146,6 +149,7 @@ export const SiteDetail = props => {
                 siteTags={siteTags.toJS()}
                 onSiteTagChange={onSiteTagChange}
                 siteContacts={siteContacts.toJS()}
+                user={user}
               />
             </Route>
             <Route path="alerts">

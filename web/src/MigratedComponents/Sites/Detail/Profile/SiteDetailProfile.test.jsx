@@ -29,6 +29,7 @@ describe('SiteDetailProfile Component', () => {
     location: {},
     match: {},
     disabled: true,
+    user: { countryAbbreviation: 'US' },
   }
 
   it('should shallow render without crash', () => {
