@@ -66,7 +66,7 @@ export const commonDefinitions = defineMessages({
 })
 
 export function getCustomMessage(messages, key, user, params) {
-  const { countryAbbreviation } = user
+  const { countryAbbreviation } = user || {}
   const { formatMessage } = i18nWrapper()
 
   let message = messages[`${key}_${countryAbbreviation}`] // default Key can be 'state' or 'lga', in this case

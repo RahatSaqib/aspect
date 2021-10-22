@@ -45,6 +45,7 @@ export const SiteDetail = props => {
     fetchSiteContacts,
     fetchTags,
     updateTags,
+    user,
   } = props
 
   useEffect(
@@ -84,6 +85,7 @@ export const SiteDetail = props => {
               siteTags={siteTags.toJS()}
               onSiteTagChange={onSiteTagChange}
               siteContacts={siteContacts.toJS()}
+              user={user}
             />
           </Route>
           <Route path="alerts">
@@ -131,6 +133,7 @@ const mapStateToProps = (state, ownProps) => {
     siteTags,
     lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),
     siteContacts,
+    user: state.user,
   }
 }
 
@@ -153,6 +156,7 @@ SiteDetail.propTypes = {
   fetchTags: PropTypes.func.isRequired,
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
+  user: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 export default flowRight(
   injectIntl,

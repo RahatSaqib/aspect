@@ -157,8 +157,14 @@ async function showSite(request) {
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
     .where('siteId', params.siteId)
-    .distinct('dt.id', 'dt.name', 'dtc.id as category')
-    .select()
+    .select(
+      'd.id',
+      'd.name',
+      'd.shortName',
+      'dt.id as deviceTypeId',
+      'dt.name as deviceTypeName',
+      'dtc.id as category'
+    )
 
   const result = { ok: true, data: item }
 
