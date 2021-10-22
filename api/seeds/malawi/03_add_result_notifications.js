@@ -4,7 +4,7 @@ const {
   seedIssueEventTriggersForPartner,
   seedIssueEscalationTriggersForPartner,
 } = require('../utils')
-
+const { partnerName, adminUserName } = require('./fixtures/partnerData')
 const {
   messageSeverityToId,
   issueTypeToId,
@@ -14,10 +14,12 @@ const { addIssueTypes } = require('../relativeObjectsSeeds')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
-    .where('name', 'DRC')
+    .where('name', partnerName)
     .first('id')
 
-  const { id: adminId } = await knex('User').where('name', 'admin').first('id')
+  const { id: adminId } = await knex('User')
+    .where('name', adminUserName)
+    .first('id')
 
   const issueTypeExternalId = 'ResultReceived'
 

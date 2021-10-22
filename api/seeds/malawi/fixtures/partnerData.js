@@ -7,7 +7,7 @@ module.exports = {
   deviceApiToken: 'RMENANyMAcKSKInABeAtHIcuRSiCiTZe',
   lowerLevelUserPassword: 'Y29bDu28',
   serverUrl: 'https://malawi.aspect.id',
-  partnerAbbreviation: 'MW',
+  partnerAbbreviation: 'MWI',
   fixtures: {
     jobFunctions,
   },
