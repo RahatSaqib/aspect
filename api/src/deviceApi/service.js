@@ -955,7 +955,6 @@ function createNewDeviceFromRequest(request, now) {
       defaultSite = await knex('Site as s')
         .where('externalId', siteExternalId)
         .first()
-
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
