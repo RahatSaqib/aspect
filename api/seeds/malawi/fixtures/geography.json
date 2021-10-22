@@ -1,0 +1,117 @@
+{
+  "countries": [
+    {
+      "abbreviation": "MW",
+      "name": "Malawi",
+      "a3": "Mwi",
+      "culture": "en-US",
+      "countryCode": "265",
+      "timezone": "South Africa Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|Assayname|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Central Region",
+          "lgas": [
+            {
+              "name": "Dedza"
+            },
+            {
+              "name": "Dowa"
+            },
+            {
+              "name": "Kasungu"
+            },
+            {
+              "name": "Lilongwe"
+            },
+            {
+              "name": "Mchinji"
+            },
+            {
+              "name": "Nkhotakota"
+            },
+            {
+              "name": "Ntcheu"
+            },
+            {
+              "name": "Ntchisi"
+            },
+            {
+              "name": "Salima"
+            }
+          ]
+        },
+        {
+          "name": "Northern Region",
+          "lgas": [
+            {
+              "name": "Chitipa"
+            },
+            {
+              "name": "Karonga"
+            },
+            {
+              "name": "Likoma"
+            },
+            {
+              "name": "Mzimba"
+            },
+            {
+              "name": "Nkhata Bay"
+            },
+            {
+              "name": "Rumphi"
+            }
+          ]
+        },
+        {
+          "name": "Southern Region",
+          "lgas": [
+            {
+              "name": "Balaka"
+            },
+            {
+              "name": "Blantyre"
+            },
+            {
+              "name": "Chikwawa"
+            },
+            {
+              "name": "Chiradzulu"
+            },
+            {
+              "name": "Machinga"
+            },
+            {
+              "name": "Mangochi"
+            },
+            {
+              "name": "Mulanje"
+            },
+            {
+              "name": "Mwanza"
+            },
+            {
+              "name": "Nsanje"
+            },
+            {
+              "name": "Thyolo"
+            },
+            {
+              "name": "Phalombe"
+            },
+            {
+              "name": "Zomba"
+            },
+            {
+              "name": "Neno"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
