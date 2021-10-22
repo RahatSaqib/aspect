@@ -394,7 +394,7 @@ const getSectionsBase = formatMessage => [
   },
 ]
 
-const getConfig = (formatMessage, notificationType, jobFunctions) => {
+const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
   const validationBase = getBaseValidation(formatMessage, messages)
   const jobFunctionsRows = {
     id: 'toAnyOfTheseJobFunctions',
@@ -487,7 +487,9 @@ const getConfig = (formatMessage, notificationType, jobFunctions) => {
     jobFunctionsRows,
   ]
   return {
-    title: formatMessage(messages.titleNew, 'New Notification'),
+    title: isEdit
+      ? formatMessage(messages.titleEdit, 'Edit Notification')
+      : formatMessage(messages.titleNew, 'New Notification'),
     icon: 'document',
     actions: {
       default: 'save',

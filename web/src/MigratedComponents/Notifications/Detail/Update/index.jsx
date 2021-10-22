@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -26,6 +26,23 @@ const AspectNotificationDetail = ({
 }) => {
   const intl = useI18n()
   const [formConfig, setFormConfig] = useState(false)
+  const [values, setValues] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && values) {
+      setFormConfig(
+        getFormConfigWithData(
+          intl,
+          jobFunctions,
+          values.notificationType,
+          values.notificationTypeName,
+          validationSchema(intl.formatMessage),
+          true,
+          values
+        )
+      )
+    }
+  }, [isLoading, values])
 
   const { isLoading, isError, error } = useQuery(
     [NOTIFICATION_DETAIL.KEY, { notificationId }],
@@ -35,24 +52,45 @@ const AspectNotificationDetail = ({
       }),
     {
       onSuccess: resp => {
-        /**
-         * TODO: refactor when notifications will be saveable
-         */
         const { data } = resp
-        const { notificationTypeName, notificationType } = data
-        setFormConfig(
-          getFormConfigWithData(
-            intl,
-            jobFunctions,
-            notificationType,
-            notificationTypeName,
-            validationSchema(intl.formatMessage)
-          )
-        )
+        const {
+          notificationTypeName,
+          notificationType,
+          name,
+          emailSubject,
+          emailBody,
+          smsBody,
+          webUrl,
+          webBody,
+          filterCondition,
+        } = data
+        const filter = JSON.parse(filterCondition)
+        setValues({
+          notificationTypeName,
+          notificationType,
+          name,
+          emailSubject,
+          emailBody,
+          sendEmail: filter.sendEmail,
+          smsBody,
+          sendSms: filter.sendSms,
+          webUrl,
+          webBody,
+          sendWeb: filter.sendWeb,
+          jobFunctions: filter.jobFunctions.map(jf => ({
+            ...jf,
+            tags: jf.tags.map(tag => ({
+              ...tag,
+              value: `${tag.value}`,
+            })),
+          })),
+          deviceLevelId: filter.deviceLevelId,
+          areaItems: filter.areaItems,
+          result: filter.result,
+        })
       },
     }
   )
-
   if (isError) {
     throw new Error(error)
   }

@@ -93,7 +93,6 @@ describe('Result Notifications triggers', () => {
   let messageContext
   const name = 'Result based notification'
   const path = '/api/notification'
-
   let resultCategory1
 
   const createTestContext = async filterCondition => {
@@ -380,10 +379,10 @@ describe('Result Notifications triggers', () => {
     })
   })
 
+
   describe('Checking edit functionality', () => {
     before(async () => createTestContext(baseFilterCondition))
     after(removeTestContext)
-
     let id
     let data
     let fltrCon
