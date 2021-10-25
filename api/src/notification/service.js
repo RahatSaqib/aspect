@@ -108,11 +108,7 @@ function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
   }
 }
 
-function geographyFilters(
-  queryBuilder,
-  filterConditions,
-  aliases
-) {
+function geographyFilters(queryBuilder, filterConditions, aliases) {
   const { areaItems, deviceLevelId } = filterConditions || {}
   const { device = 'd', geography = 'g' } = aliases
 
@@ -123,19 +119,21 @@ function geographyFilters(
           `${geography}.stateId`,
           _.map(areaItems, area => _.toInteger(area.value))
         )
-        break;
+        break
       case 'lga':
         queryBuilder.whereIn(
           `${geography}.lgaId`,
           _.map(areaItems, area => _.toInteger(area.value))
         )
-        break;
+        break
       case 'lab':
         queryBuilder.whereIn(
           `${device}.siteId`,
           _.map(areaItems, area => _.toInteger(area.value))
         )
-        break;
+        break
+      default:
+        break
     }
   }
 }

@@ -4,9 +4,7 @@ const {
   createTestContext,
   getDeviceFromApiKey,
   getLastResult,
-  getLastResultId,
 } = require('../utils')
-const { waitForIdle } = require('../../utils/mqUtils')
 
 const server = require('../../utils/testUtils')
 
