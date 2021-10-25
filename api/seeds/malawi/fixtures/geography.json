@@ -1,0 +1,138 @@
+{
+  "countries": [
+    {
+      "abbreviation": "MW",
+      "name": "Malawi",
+      "a3": "MWI",
+      "culture": "en-US",
+      "countryCode": "265",
+      "timezone": "South Africa Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|Assayname|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Central West ",
+          "abbreviation": "CW",
+          "lgas": [
+            {
+              "name": "Dedza"
+            },
+            {
+              "name": "Lilongwe"
+            },
+            {
+              "name": "Mchinji"
+            },
+            {
+              "name": "Ntcheu"
+            }
+          ]
+        },
+        {
+          "name": "Northern Zone",
+          "abbreviation": "NZ",
+          "lgas": [
+            {
+              "name": "Chitipa"
+            },
+            {
+              "name": "Karonga"
+            },
+            {
+              "name": "Likoma"
+            },
+            {
+              "name": "Mzimba N"
+            },
+            {
+              "name": "Nkhata Bay"
+            },
+            {
+              "name": "Rumphi"
+            },
+            {
+              "name": "Mzimba S"
+            }
+          ]
+        },
+        {
+          "name": "South West",
+          "abbreviation": "SW",
+          "lgas": [
+            {
+              "name": "Blantyre"
+            },
+            {
+              "name": "Chikwawa"
+            },
+            {
+              "name": "Chiradzulu"
+            },
+            {
+              "name": "Mwanza"
+            },
+            {
+              "name": "Nsanje"
+            },
+            {
+              "name": "Thyolo"
+            },
+            {
+              "name": "Neno"
+            },
+            {
+              "name": "Malamulo Mission"
+            }
+          ]
+        },
+        {
+          "name": "Central East",
+          "abbreviation": "CE",
+          "lgas": [
+            {
+              "name": "Dowa"
+            },
+            {
+              "name": "Kasungu"
+            },
+            {
+              "name": "Nkhotakota"
+            },
+            {
+              "name": "Ntchisi"
+            },
+            {
+              "name": "Salima"
+            }
+          ]
+        },
+        {
+          "name": "South East",
+          "abbreviation": "SE",
+          "lgas": [
+            {
+              "name": "Balaka"
+            },
+            {
+              "name": "Machinga"
+            },
+            {
+              "name": "Mangochi"
+            },
+            {
+              "name": "Mulanje"
+            },
+            {
+              "name": "Phalombe"
+            },
+            {
+              "name": "Zomba"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
