@@ -13,16 +13,11 @@
       "monthStartsOnDay": 1,
       "states": [
         {
-          "name": "Central Region",
+          "name": "Central West ",
+          "abbreviation": "CW",
           "lgas": [
             {
               "name": "Dedza"
-            },
-            {
-              "name": "Dowa"
-            },
-            {
-              "name": "Kasungu"
             },
             {
               "name": "Lilongwe"
@@ -31,21 +26,13 @@
               "name": "Mchinji"
             },
             {
-              "name": "Nkhotakota"
-            },
-            {
               "name": "Ntcheu"
-            },
-            {
-              "name": "Ntchisi"
-            },
-            {
-              "name": "Salima"
             }
           ]
         },
         {
-          "name": "Northern Region",
+          "name": "Northern Zone",
+          "abbreviation": "NZ",
           "lgas": [
             {
               "name": "Chitipa"
@@ -57,22 +44,23 @@
               "name": "Likoma"
             },
             {
-              "name": "Mzimba"
+              "name": "Mzimba N"
             },
             {
               "name": "Nkhata Bay"
             },
             {
               "name": "Rumphi"
+            },
+            {
+              "name": "Mzimba S"
             }
           ]
         },
         {
-          "name": "Southern Region",
+          "name": "South West",
+          "abbreviation": "SW",
           "lgas": [
-            {
-              "name": "Balaka"
-            },
             {
               "name": "Blantyre"
             },
@@ -81,15 +69,6 @@
             },
             {
               "name": "Chiradzulu"
-            },
-            {
-              "name": "Machinga"
-            },
-            {
-              "name": "Mangochi"
-            },
-            {
-              "name": "Mulanje"
             },
             {
               "name": "Mwanza"
@@ -101,13 +80,55 @@
               "name": "Thyolo"
             },
             {
+              "name": "Neno"
+            },
+            {
+              "name": "Malamulo Mission"
+            }
+          ]
+        },
+        {
+          "name": "Central East",
+          "abbreviation": "CE",
+          "lgas": [
+            {
+              "name": "Dowa"
+            },
+            {
+              "name": "Kasungu"
+            },
+            {
+              "name": "Nkhotakota"
+            },
+            {
+              "name": "Ntchisi"
+            },
+            {
+              "name": "Salima"
+            }
+          ]
+        },
+        {
+          "name": "South East",
+          "abbreviation": "SE",
+          "lgas": [
+            {
+              "name": "Balaka"
+            },
+            {
+              "name": "Machinga"
+            },
+            {
+              "name": "Mangochi"
+            },
+            {
+              "name": "Mulanje"
+            },
+            {
               "name": "Phalombe"
             },
             {
               "name": "Zomba"
-            },
-            {
-              "name": "Neno"
             }
           ]
         }
