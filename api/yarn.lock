@@ -8135,6 +8135,7 @@ snapdragon@^0.8.1:
 
 sort-any@^1.2.3:
   version "1.2.9"
+
   resolved "https://registry.npmjs.org/sort-any/-/sort-any-1.2.9.tgz#82b2513a68ad8aae6f2763fbc6212868b1aad0ca"
   integrity sha512-6LEFNVLeWrbCpFxhS+KdZypqY4XrtOA1dY1vQSacR91SJ/sXKUrR1wK7AUgLOXlLVXnaws3NcZ8lZPMdfkhlHw==
   dependencies:

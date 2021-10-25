@@ -1,6 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { subDays } = require('date-fns')
 const {
   knex,
   filterParams,
@@ -349,6 +350,7 @@ async function getNotificationPolicy(
           .crossJoin(
             knex('Result as r')
               .where('r.id', resultId)
+              .andWhere('r.endedOn', '>=', subDays(new Date(), 30))
               .select(
                 'r.siteId',
                 'r.assayId',
@@ -360,8 +362,10 @@ async function getNotificationPolicy(
               .as('result')
           )
           .join('Device as d', 'result.deviceId', 'd.id')
+          .join('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
           .leftJoin('Geography as g', 'd.geographyId', 'g.id')
           .where('ntc.externalId', 'resultBased')
+          .andWhere('da.token', 'approved')
         aliases.result = 'result'
         aliases.device = 'd'
       }
