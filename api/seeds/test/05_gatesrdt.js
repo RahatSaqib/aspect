@@ -1,7 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
-const _ = require('lodash')
 const config = require('../../src/config')
 const { upsertJobFunction } = require('../common')
 const upsertResultCategoryGroup = require('../common/upsert_result_category_group')
@@ -15,8 +14,6 @@ const {
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
-  fileContentTypeToId,
-  messageSeverityToId,
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
 

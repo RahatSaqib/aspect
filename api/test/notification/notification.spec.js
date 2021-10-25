@@ -2,7 +2,6 @@ const chai = require('chai')
 const { subDays } = require('date-fns')
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
@@ -56,15 +55,15 @@ describe('Issue based Notifications triggers', () => {
       messageTypeId: _.sample(messageTypes).id,
     })
     const issueStatusId = await issueStatusToId('Active')
-      ;[insertedIssueId] = await knex('Issue').insert({
-        partnerId: resultSample.partnerId,
-        deviceId: resultSample.deviceId,
-        siteId: resultSample.siteId,
-        issueStatusId,
-        issueTypeId,
-        createdOn,
-        updatedOn,
-      })
+    ;[insertedIssueId] = await knex('Issue').insert({
+      partnerId: resultSample.partnerId,
+      deviceId: resultSample.deviceId,
+      siteId: resultSample.siteId,
+      issueStatusId,
+      issueTypeId,
+      createdOn,
+      updatedOn,
+    })
   })
   after(async () => {
     await knex('Notification').where('issueId', insertedIssueId).delete()
@@ -92,7 +91,6 @@ describe('Result Notifications triggers', () => {
   let ntId
   let messageContext
   const name = 'Result based notification'
-  const path = '/api/notification'
   let resultCategory1
 
   const createTestContext = async filterCondition => {
@@ -105,15 +103,15 @@ describe('Result Notifications triggers', () => {
       'resultBased'
     )
 
-      ;[ntId] = await knex('NotificationType').insert({
-        partnerId: 1,
-        name,
-        createdOn: new Date(),
-        updatedOn: new Date(),
-        notificationTypeCategoryId,
-        filterCondition: filterCondition ? JSON.stringify(filterCondition) : null,
-        messageTypeId: _.sample(messageTypes).id,
-      })
+    ;[ntId] = await knex('NotificationType').insert({
+      partnerId: 1,
+      name,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      notificationTypeCategoryId,
+      filterCondition: filterCondition ? JSON.stringify(filterCondition) : null,
+      messageTypeId: _.sample(messageTypes).id,
+    })
     messageContext = await createMessageContext()
 
     await updateSubscription('notification')
@@ -154,30 +152,30 @@ describe('Result Notifications triggers', () => {
       .distinct('r.*', 'l.name as lgaName')
     assert.isAtLeast(results.length, 1)
     const result = _.sample(_.filter(results, elem => elem.lgaName === 'Wayne'))
-      ;[insertedResultDetected] = await knex('Result').insert({
-        ..._.omit(result, [
-          'id',
-          'resultCategory1',
-          'lgaName',
-          'externalId',
-          'endedOn',
-        ]),
-        resultCategory1,
-        externalId: 'MytestsResultID',
-        endedOn: new Date(),
-      })
-      ;[insertedResultUnknow] = await knex('Result').insert({
-        ..._.omit(result, [
-          'id',
-          'resultCategory1',
-          'lgaName',
-          'externalId',
-          'endedOn',
-        ]),
-        resultCategory1: await resultCategoryToId('Unknown'),
-        externalId: 'MytestsResultID2',
-        endedOn: new Date(),
-      })
+    ;[insertedResultDetected] = await knex('Result').insert({
+      ..._.omit(result, [
+        'id',
+        'resultCategory1',
+        'lgaName',
+        'externalId',
+        'endedOn',
+      ]),
+      resultCategory1,
+      externalId: 'MytestsResultID',
+      endedOn: new Date(),
+    })
+    ;[insertedResultUnknow] = await knex('Result').insert({
+      ..._.omit(result, [
+        'id',
+        'resultCategory1',
+        'lgaName',
+        'externalId',
+        'endedOn',
+      ]),
+      resultCategory1: await resultCategoryToId('Unknown'),
+      externalId: 'MytestsResultID2',
+      endedOn: new Date(),
+    })
     notWayneResult = await knex('Result').insert({
       ..._.omit(_.sample(_.filter(results, elem => elem.lgaName !== 'Wayne')), [
         'id',
@@ -380,18 +378,26 @@ describe('Result Notifications triggers', () => {
   })
 
   describe('No filtering', () => {
-    before(async () => createTestContext({
-      jobFunctions: [
-        {
-          tags: [],
-          jobFunctionId: '1',
-        }
-      ],
-    }))
+    before(async () =>
+      createTestContext({
+        jobFunctions: [
+          {
+            tags: [],
+            jobFunctionId: '1',
+          },
+        ],
+      })
+    )
     after(async () => removeTestContext())
     afterEach(async () =>
       Promise.each(
-        ['EmailMessage', 'SmsMessage', 'AlertMessage', 'WebhookMessage', 'Notification'],
+        [
+          'EmailMessage',
+          'SmsMessage',
+          'AlertMessage',
+          'WebhookMessage',
+          'Notification',
+        ],
         table =>
           knex(table)
             .whereIn('resultId', [
@@ -441,7 +447,9 @@ describe('Notification routes', () => {
       name: 'A notification',
       createdOn: new Date(),
       updatedOn: new Date(),
-      notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
+      notificationTypeCategoryId: await notificationTypeCategoryToId(
+        'resultBased'
+      ),
       filterCondition: JSON.stringify({}),
       messageTypeId: messageType.id,
     })
@@ -473,12 +481,12 @@ describe('Notification routes', () => {
     const res = await server
       .get(`${path}/${ntId}`)
       .set('Authorization', `Bearer ${shared.token}`)
-    
+
     assert.typeOf(res.body, 'Object')
     assert.property(res.body, 'data')
     assert.typeOf(res.body.data, 'Object')
     assert.equal(res.status, 200)
-    
+
     notificationType = res.body.data
     assert.property(notificationType, 'notificationTypeName')
     assert.property(notificationType, 'notificationType')
@@ -515,7 +523,7 @@ describe('Notification routes', () => {
       areaItems: baseFilterCondition.areaItems,
       result: baseFilterCondition.result,
     }
-    
+
     const res = await server
       .put(`${path}/${ntId}`)
       .set('Authorization', `Bearer ${shared.token}`)
