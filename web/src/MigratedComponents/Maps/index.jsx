@@ -47,14 +47,14 @@ const AspectMap = ({
       zoom={zoom}
     >
       {filteredData?.map(
-        ({ lat, lng, color, id, maintenanceStatusName, name }) => (
+        ({ lat, lng, color, id, maintenanceStatusI18nKey, name }) => (
           <GooglePin
             id={id}
             key={id}
             position={{ lat, lng }}
             config={markersConfig}
             color={color}
-            info={{ maintenanceStatusName, name }}
+            info={{ maintenanceStatusI18nKey, name }}
           />
         )
       )}
