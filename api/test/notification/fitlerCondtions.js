@@ -64,6 +64,7 @@ const baseFilterCondition = {
     },
   ],
   sendEmail: true,
+  smsBody: 'A body',
   sendSms: true,
   sendWeb: false,
   areaItems: [
