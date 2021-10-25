@@ -117,7 +117,7 @@ describe('CommCare Result API routes', () => {
     })
     afterEach(context.afterEach)
 
-    it.only('should add and return device results', async () => {
+    it('should add and return device results', async () => {
       const { apiKey } = context
 
       let payload = getCommCarePayload({
@@ -193,16 +193,3 @@ describe('CommCare Result API routes', () => {
     })
   })
 })
-
-async function getLastNotification(knex, deviceId) {
-  const resultId = await getLastResultId(knex, deviceId)
-  await waitForIdle()
-  const notification = await knex('Notification as n')
-    .join('Issue as i', 'i.id', 'n.issueId')
-    .join('IssueType as it', 'it.id', 'i.issueTypeId')
-    .join('SmsMessage as s', 'n.smsMessageId', 's.id')
-    .where('i.resultId', resultId)
-    .orderBy('i.id', 'desc')
-    .first('it.externalId as issueType', 'i.level', 's.message')
-  return notification
-}
