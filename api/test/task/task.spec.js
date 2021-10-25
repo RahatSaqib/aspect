@@ -6,7 +6,7 @@ const server = require('../utils/testUtils')
 
 const { assert } = chai
 const context = createAlertTestContext({ user: 'admin' })
-describe.only('Task Routes', () => {
+describe('Task Routes', () => {
   before(context.beforeEach)
   after(context.afterEach)
 
