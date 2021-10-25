@@ -32,37 +32,35 @@ const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
   resultBased: resultConditionsMet,
 }
-function resultCategoryFilters(queryBuilder, filterConditions, resultAlias) {
-  let resultFilters = []
-  const { result } = filterConditions || {}
-  if (result) resultFilters = result
+function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
+  const { result: resultFilters } = filterConditions || {}
 
-  if (resultFilters.length > 0) {
+  if (resultFilters && resultFilters.length > 0) {
     queryBuilder
-      .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
+      .join('Assay as a', `${tblResultAlias}.assayId`, 'a.id')
       .leftJoin(
         'ResultCategory as rc1',
-        `${resultAlias}.resultCategory1`,
+        `${tblResultAlias}.resultCategory1`,
         'rc1.id'
       )
       .leftJoin('ResultCategoryGroup as rcg', function () {
         this.on(`a.id`, 'rcg.assayId')
           .andOn(function () {
             this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
-              `${resultAlias}.resultCategory1`,
+              `${tblResultAlias}.resultCategory1`,
               'rcg.resultCategory1Id'
             )
           })
           .andOn(function () {
             this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
-              `${resultAlias}.resultCategory2`,
+              `${tblResultAlias}.resultCategory2`,
               'rcg.resultCategory2Id'
             )
           })
       })
       .leftJoin(
         'ResultCategory as rc2',
-        `${resultAlias}.resultCategory2`,
+        `${tblResultAlias}.resultCategory2`,
         'rc2.id'
       )
     queryBuilder.where(resultBuilder =>
@@ -113,33 +111,38 @@ function resultCategoryFilters(queryBuilder, filterConditions, resultAlias) {
 function geographyFilters(
   queryBuilder,
   filterConditions,
-  { device = 'd', geography = 'g' }
+  aliases
 ) {
   const { areaItems, deviceLevelId } = filterConditions || {}
+  const { device = 'd', geography = 'g' } = aliases
 
-  if (deviceLevelId === 'state') {
-    queryBuilder.whereIn(
-      `${geography}.stateId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
-  }
-  if (deviceLevelId === 'lga') {
-    queryBuilder.whereIn(
-      `${geography}.lgaId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
-  }
-  if (deviceLevelId === 'lab') {
-    queryBuilder.whereIn(
-      `${device}.siteId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
+  if (areaItems && deviceLevelId) {
+    switch (deviceLevelId) {
+      case 'state':
+        queryBuilder.whereIn(
+          `${geography}.stateId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break;
+      case 'lga':
+        queryBuilder.whereIn(
+          `${geography}.lgaId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break;
+      case 'lab':
+        queryBuilder.whereIn(
+          `${device}.siteId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break;
+    }
   }
 }
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
-  const { result = 'r' } = aliases
-  resultCategoryFilters(queryBuilder, filterCondition, result)
+  const tblResultAlias = aliases.result ? aliases.result : 'r'
+  resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
 }
 
