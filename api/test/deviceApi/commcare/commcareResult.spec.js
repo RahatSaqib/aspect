@@ -117,7 +117,7 @@ describe('CommCare Result API routes', () => {
     })
     afterEach(context.afterEach)
 
-    it('should add and return device results', async () => {
+    it.only('should add and return device results', async () => {
       const { apiKey } = context
 
       let payload = getCommCarePayload({
@@ -137,18 +137,11 @@ describe('CommCare Result API routes', () => {
       const { id: deviceId } = await getDeviceFromApiKey(knex, apiKey)
 
       let result = await getLastResult(knex, deviceId)
-      let notification = await getLastNotification(knex, deviceId)
       assert.equal(result.id, '123')
       assert.equal(result.data.resultText, 'negative')
       assert.equal(result.data.hcwConfirmatoryResult, 'negative')
       assert.equal(result.patient.gender, 'male')
       assert.equal(result.patient.age, 28)
-      assert.equal(notification.issueType, 'ResultReceived')
-      assert.equal(notification.level, 2)
-      assert.equal(
-        notification.message,
-        'Dear participant ID #study-123: An HIV self-test is a screening test. Please ensure you re-test in 3 months.'
-      )
 
       payload = getCommCarePayload({
         id: '456',
@@ -167,19 +160,12 @@ describe('CommCare Result API routes', () => {
       assert.typeOf(res2.body, 'Object')
 
       result = await getLastResult(knex, deviceId)
-      notification = await getLastNotification(knex, deviceId)
       assert.equal(result.id, '456')
       assert.equal(result.data.resultText, 'negative')
       assert.equal(result.data.hcwConfirmatoryResult, 'positive')
       assert.equal(result.patient.gender, 'female')
       assert.equal(result.patient.phone, '+112345678')
       assert.equal(result.patient.age, 43)
-      assert.equal(notification.issueType, 'ResultReceived')
-      assert.equal(notification.level, 3)
-      assert.equal(
-        notification.message,
-        'Dear participant ID #study-456: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible'
-      )
 
       payload = getCommCarePayload({
         id: '821',
@@ -204,14 +190,6 @@ describe('CommCare Result API routes', () => {
       assert.equal(result.data.hcwTiebreakerResult, 'negative')
       assert.equal(result.patient.gender, 'male')
       assert.equal(result.patient.age, 30)
-      notification = await getLastNotification(knex, deviceId)
-      assert.equal(notification.issueType, 'ResultReceived')
-      assert.equal(notification.level, 2)
-
-      assert.equal(
-        notification.message,
-        'Dear participant ID #study-821: An HIV self-test is a screening test. Please ensure you re-test in 3 months.'
-      )
     })
   })
 })
