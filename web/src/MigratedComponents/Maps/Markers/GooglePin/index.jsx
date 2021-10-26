@@ -44,9 +44,11 @@ const GooglePin = ({
       >
         {name && maintenanceStatusI18nKey ? (
           <AspectTooltip
-            title={`${name}: ${formatMessage(
-              get(messages, maintenanceStatusI18nKey, maintenanceStatusI18nKey)
-            )}`}
+            title={`${name}: ${
+              get(messages, maintenanceStatusI18nKey)
+                ? formatMessage(get(messages, maintenanceStatusI18nKey))
+                : maintenanceStatusI18nKey
+            }`}
             placement="top"
           >
             <IconProvider icon="FaMapMarkerAlt" title={false} />
