@@ -42,16 +42,14 @@ module.exports = require('../utils').seed(async knex => {
       approved: 1,
       createdOn: now,
       lockedOut: 0,
-      canLogin: 1,
       failedPasswordAttempts: 0,
-      ...auditFields,
     })
     let { geographyId, id: siteId } =
       (await knex('Site as s')
         .where('name', clinician.site)
         .first('geographyId', 'id')) || {}
 
-    if (siteId) {
+    if (!siteId) {
       ;({ geographyId } =
         (await knex('Lga as l')
           .join('Geography as g', 'g.lgaId', 'l.id')
@@ -59,14 +57,14 @@ module.exports = require('../utils').seed(async knex => {
             'l.name': clinician.lga,
           })
           .first('g.id as geographyId')) || {})
-      ;({ siteId } = await knex('Site').insert({
+      ;[siteId] = await knex('Site').insert({
         ...auditFields,
-        name: clinician.name,
-        shortName: clinician.name.substr(0, 45),
-        externalId: clinician.name.substr(0, 45),
+        name: clinician.site,
+        shortName: clinician.site.substr(0, 45),
+        externalId: clinician.site.substr(0, 45),
         partnerId,
         geographyId,
-      }))
+      })
     }
     if (geographyId) {
       const [personId] = await knex('Person').insert({
@@ -79,6 +77,7 @@ module.exports = require('../utils').seed(async knex => {
         culture,
         timezone,
         userId,
+        canLogin: 1,
         ...auditFields,
       })
       const [jobId] = await knex('Job').insert({ personId, jobFunctionId })
