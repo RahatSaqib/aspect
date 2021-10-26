@@ -34,6 +34,45 @@ describe('Site routes', () => {
         assert.property(res.body, 'total')
         siteId = res.body.data[0].id
       })
+      it('should return a list of sites for filling a select list', async () => {
+        const res = await server
+          .get(`${path}/select-list/all`)
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'array')
+        assert.isAtLeast(res.body.data.length, 2)
+        assert.property(res.body.data[0], 'id')
+        assert.property(res.body.data[0], 'name')
+        assert.property(res.body.data[0], 'stateId')
+        assert.property(res.body.data[0], 'stateName')
+        assert.property(res.body.data[0], 'partnerId')
+        assert.property(res.body.data[0], 'countryId')
+        assert.property(res.body.data[0], 'lgaId')
+        assert.property(res.body.data[0], 'externalId')
+      })
+      it('should return a list of sites for filling a select list in Reporter app, with a limited set of fields', async () => {
+        const res = await server
+          .get(`${path}/select-list/reporter`)
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'array')
+        assert.equal(res.body.mode, 'reporter')
+        assert.isAtLeast(res.body.data.length, 2)
+        assert.property(res.body.data[0], 'id')
+        assert.property(res.body.data[0], 'name')
+        assert.property(res.body.data[0], 'stateId')
+        assert.property(res.body.data[0], 'stateName')
+        assert.notProperty(res.body.data[0], 'partnerId')
+        assert.notProperty(res.body.data[0], 'countryId')
+        assert.notProperty(res.body.data[0], 'lgaId')
+        assert.notProperty(res.body.data[0], 'externalId')
+      })
       it('should return a single site when using a valid token', async () => {
         const res = await server
           .get(`${path}/${siteId}`)
