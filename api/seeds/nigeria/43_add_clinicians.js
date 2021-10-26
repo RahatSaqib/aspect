@@ -1,0 +1,92 @@
+const Promise = require('bluebird')
+const bcrypt = require('bcrypt')
+const clinicians = require('./fixtures/clinicians')
+const config = require('../../src/config')
+const {
+  partnerName,
+  adminUserName,
+  defaultPassword,
+} = require('./fixtures/partnerData')
+const logger = require('../../src/shared/logger')
+
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
+
+module.exports = require('../utils').seed(async knex => {
+  const { id: partnerId } = await knex('Partner')
+    .where('name', partnerName)
+    .first()
+  const {
+    culture,
+    timezone,
+    id: countryId,
+  } = await knex('Country')
+    .where({ abbreviation: 'NG' })
+    .first('culture', 'timezone', 'id')
+  const { id: adminId } = await knex('User')
+    .where('name', adminUserName)
+    .first()
+  const auditFields = {
+    createdOn: new Date(),
+    createdBy: adminId,
+    updatedOn: new Date(),
+    updatedBy: adminId,
+  }
+  const { id: jobFunctionId } = await knex('JobFunction')
+    .where('externalId', 'clinician')
+    .first()
+  await Promise.each(clinicians, async clinician => {
+    const now = new Date()
+    const [userId] = await knex('User').insert({
+      name: clinician.email,
+      password: bcrypt.hashSync(defaultPassword, saltRounds),
+      approved: 1,
+      createdOn: now,
+      lockedOut: 0,
+      canLogin: 1,
+      failedPasswordAttempts: 0,
+      ...auditFields,
+    })
+    let { geographyId, id: siteId } =
+      (await knex('Site as s')
+        .where('name', clinician.site)
+        .first('geographyId', 'id')) || {}
+
+    if (siteId) {
+      ;({ geographyId } =
+        (await knex('Lga as l')
+          .join('Geography as g', 'g.lgaId', 'l.id')
+          .where({
+            'l.name': clinician.lga,
+          })
+          .first('g.id as geographyId')) || {})
+      ;({ siteId } = await knex('Site').insert({
+        ...auditFields,
+        name: clinician.name,
+        shortName: clinician.name.substr(0, 45),
+        externalId: clinician.name.substr(0, 45),
+        partnerId,
+        geographyId,
+      }))
+    }
+    if (geographyId) {
+      const [personId] = await knex('Person').insert({
+        name: clinician.officer,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        email: clinician.email,
+        cell: clinician.phoneNumber,
+        geographyId,
+        culture,
+        timezone,
+        userId,
+        ...auditFields,
+      })
+      const [jobId] = await knex('Job').insert({ personId, jobFunctionId })
+      await knex('JobContext').insert({ jobId, siteId })
+    } else {
+      logger.warning(
+        `NOT found geography for:${clinician.lga} and ${clinician.site}`
+      )
+    }
+  })
+}, __filename)
