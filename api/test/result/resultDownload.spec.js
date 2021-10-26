@@ -215,7 +215,7 @@ describe('Result download routes', () => {
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(500)
+      await Promise.delay(1000)
 
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
@@ -319,7 +319,7 @@ describe('Result download routes', () => {
       const res = await server
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
-      await Promise.delay(500)
+      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog')
