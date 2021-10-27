@@ -60,16 +60,16 @@ module.exports = require('../utils').seed(async knex => {
           .first('g.id as geographyId')) || {})
       ;[siteId] = await knex('Site').insert({
         ...auditFields,
-        name: _.startCase(clinician.site),
+        name: clinician.site.replace(/\w+/g, _.capitalize),
         shortName: clinician.site.substr(0, 45),
-        externalId: _.lowerCase(clinician.site).substr(0, 45),
+        externalId: clinician.site.substr(0, 45),
         partnerId,
         geographyId,
       })
     }
     if (geographyId) {
       const [personId] = await knex('Person').insert({
-        name: _.startCase(clinician.officer),
+        name: clinician.officer.replace(/\w+/g, _.capitalize),
         lastPartnerId: partnerId,
         lastCountryId: countryId,
         email: clinician.email,
