@@ -94,10 +94,10 @@ module.exports = async knex => {
 
               const scopedResultCategories = []
 
-              // resultcategory1 y resultcategory2 vacios => solo assay
-              // resultcategory1 no vacio y resultcategory2 vacio => todos los category groups de resultcategory1, o solo resultcategory1
-              // resultcategory1 no vacio y resultcategory2 no vacio => todos los category groups de resultcategory1 y resultcategory2
-              // resultcategory1 vacio y resultcategory2 no vacio => todos los category groups de resultcategory2 o lanzar error
+              // resultcategory1 and resultcategory2 empty => assay is the only condition
+              // resultcategory1 not-empty and resultcategory2 empty => all the category groups including resultCategory1, or only resultCategory1
+              // resultcategory1 not-empty and resultcategory2 not-empty => all the category groups of resultCateogry1 and resultCategory2
+              // resultcategory1 empty and resultcategory2 not-empty => all the category groups of resultcategory2 or throw error
 
               if (isNil(resultCategory1) || resultCategory1.length === 0)
                 resultCategory1 = [null]
