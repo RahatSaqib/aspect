@@ -215,7 +215,7 @@ async function listSitesForSelectList(request) {
 
   // get data constraints
   let dataConstraints = await getConstraints(auth.credentials)
-  if (mode === 'all') {
+  if (mode === 'all' || mode === 'reporter') {
     // get all sites in user's country and partner
     const { partnerId, countryId } = await getUser(auth.credentials.name)
     dataConstraints = {
@@ -227,11 +227,15 @@ async function listSitesForSelectList(request) {
       },
     }
   }
-  const response = await getListSitesForSelectList(dataConstraints, query?.tags)
+  const response = await getListSitesForSelectList(
+    dataConstraints,
+    query?.tags,
+    mode
+  )
   return response
 }
 
-async function getListSitesForSelectList(dataConstraints, tags) {
+async function getListSitesForSelectList(dataConstraints, tags, mode) {
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
@@ -244,19 +248,22 @@ async function getListSitesForSelectList(dataConstraints, tags) {
       .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
       .whereIn('t.title', tags)
 
+  let columnsToSelect = ['s.id', 's.name', 'g.stateId', 'st.name as stateName']
+
+  if (mode !== 'reporter') {
+    columnsToSelect = [
+      ...columnsToSelect,
+      's.partnerId',
+      'g.countryId',
+      'g.lgaId',
+      's.externalId',
+    ]
+  }
+
   sitesQuery = sitesQuery
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
-    .select(
-      's.id',
-      's.name',
-      's.partnerId',
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      'st.name as stateName',
-      's.externalId'
-    )
+    .select(columnsToSelect)
     .distinct()
 
   const sites = await sitesQuery
@@ -273,6 +280,7 @@ async function getListSitesForSelectList(dataConstraints, tags) {
     ok: true,
     countryName: countryState.countryName,
     stateName: countryState.stateName,
+    mode,
     data: sites,
   }
 }
