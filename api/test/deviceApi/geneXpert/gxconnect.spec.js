@@ -24,7 +24,7 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
-const { run, knex: knexDb } = require('../../../src/db')
+const { knex } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen } = require('../../../src/device/actions')
@@ -45,9 +45,9 @@ const {
   gxMtbXdr: gxMtbXdrMappings,
   assayGxCovid19: assayGxCovid19Mappings,
 } = require('./notVLResultTextMappings')
-const { knex } = require('../../../src/db')
 
 const server = require('../../utils/testUtils')
+const logger = require('../../../src/shared/logger')
 
 const { assert, expect } = chai
 
@@ -68,20 +68,17 @@ describe('Device API routes for GxConnect Devices', () => {
         adminPassword,
       })
 
-      const { runTest } = context
-
-      it('should respond with UNAUTHORIZED', () =>
-        runTest(async () => {
-          const { basicDevicePayload } = context
-          await server
-            .post('/device')
-            .set('Authorization', 'Bearer ')
-            .send(basicDevicePayload)
-            .then(res => {
-              assert.equal(res.statusCode, 401)
-            })
-            .catch(assert.fail)
-        }))
+      it('should respond with UNAUTHORIZED', async () => {
+        const { basicDevicePayload } = context
+        await server
+          .post('/device')
+          .set('Authorization', 'Bearer ')
+          .send(basicDevicePayload)
+          .then(res => {
+            assert.equal(res.statusCode, 401)
+          })
+          .catch(assert.fail)
+      })
     })
 
     describe('when an unknown device API key is specified', () => {
@@ -91,20 +88,17 @@ describe('Device API routes for GxConnect Devices', () => {
         adminPassword,
       })
 
-      const { runTest } = context
-
-      it('should respond with UNAUTHORIZED', () =>
-        runTest(async () => {
-          const { basicDevicePayload } = context
-          await server
-            .post('/device')
-            .set('Authorization', 'Bearer fg2g9cjx0njzgbfmkem0')
-            .send(basicDevicePayload)
-            .then(res => {
-              assert.equal(res.statusCode, 401)
-            })
-            .catch(assert.fail)
-        }))
+      it('should respond with UNAUTHORIZED', async () => {
+        const { basicDevicePayload } = context
+        await server
+          .post('/device')
+          .set('Authorization', 'Bearer fg2g9cjx0njzgbfmkem0')
+          .send(basicDevicePayload)
+          .then(res => {
+            assert.equal(res.statusCode, 401)
+          })
+          .catch(assert.fail)
+      })
     })
 
     describe('when a known device API key is specified', () => {
@@ -117,21 +111,20 @@ describe('Device API routes for GxConnect Devices', () => {
           })
 
           before(context.beforeRequestNewApiKey)
-          const { runTest } = context
+
           after(context.afterCleanUp)
 
-          it('should respond with NOT_FOUND', () =>
-            runTest(async () => {
-              const { deviceAuth, basicDevicePayload } = context
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(basicDevicePayload)
-                .then(res => {
-                  assert.equal(res.statusCode, 404)
-                })
-                .catch(assert.fail)
-            }))
+          it('should respond with NOT_FOUND', async () => {
+            const { deviceAuth, basicDevicePayload } = context
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(basicDevicePayload)
+              .then(res => {
+                assert.equal(res.statusCode, 404)
+              })
+              .catch(assert.fail)
+          })
         })
 
         describe('after a device name and country code have been specified', () => {
@@ -144,49 +137,47 @@ describe('Device API routes for GxConnect Devices', () => {
           })
 
           beforeEach(context.beforeRegisterAndSetDevice)
-          const { runTest } = context
+
           afterEach(context.afterCleanUp)
 
-          it('should respond with OK', () =>
-            runTest(async () => {
-              const { deviceAuth, basicDevicePayload } = context
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(basicDevicePayload)
-                .then(res => {
-                  assert.equal(res.statusCode, 200)
-                })
-                .catch(assert.fail)
-            }))
+          it('should respond with OK', async () => {
+            const { deviceAuth, basicDevicePayload } = context
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(basicDevicePayload)
+              .then(res => {
+                assert.equal(res.statusCode, 200)
+              })
+              .catch(assert.fail)
+          })
 
-          it('should have created a device and linked it to the device API key', () =>
-            runTest(async knex => {
-              const { basicDevicePayload, apiKey } = context
-              const deviceDetails = await knex('DeviceApiKey as dak')
-                .join('Device as d', 'dak.DeviceId', 'd.id')
-                .join('Site as s', 'd.siteId', 's.id')
-                .join('Geography as g', 's.geographyId', 'g.id')
-                .join('Country as c', 'g.countryId', 'c.id')
-                .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-                .where({ 'dak.token': apiKey })
-                .select(
-                  'd.name as deviceName',
-                  'd.macAddress',
-                  's.name as siteName',
-                  'c.abbreviation as countryCode',
-                  'dt.externalId as deviceType'
-                )
-              assert.deepEqual(deviceDetails, [
-                {
-                  deviceName,
-                  macAddress,
-                  siteName: deviceName,
-                  countryCode,
-                  deviceType: basicDevicePayload.type.id,
-                },
-              ])
-            }))
+          it('should have created a device and linked it to the device API key', async () => {
+            const { basicDevicePayload, apiKey } = context
+            const deviceDetails = await knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .join('Site as s', 'd.siteId', 's.id')
+              .join('Geography as g', 's.geographyId', 'g.id')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+              .where({ 'dak.token': apiKey })
+              .select(
+                'd.name as deviceName',
+                'd.macAddress',
+                's.name as siteName',
+                'c.abbreviation as countryCode',
+                'dt.externalId as deviceType'
+              )
+            assert.deepEqual(deviceDetails, [
+              {
+                deviceName,
+                macAddress,
+                siteName: deviceName,
+                countryCode,
+                deviceType: basicDevicePayload.type.id,
+              },
+            ])
+          })
 
           it('should update timezone', async () => {
             const { basicDevicePayload, deviceAuth, device } = context
@@ -208,7 +199,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            let newDevice = await knexDb('Device as d')
+            let newDevice = await knex('Device as d')
               .where('d.id', device.id)
               .first('d.*')
 
@@ -228,7 +219,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 },
               })
 
-            newDevice = await knexDb('Device as d')
+            newDevice = await knex('Device as d')
               .where('d.id', device.id)
               .first('d.*')
             assert.isOk(newDevice)
@@ -253,9 +244,11 @@ describe('Device API routes for GxConnect Devices', () => {
       after(firstContext.afterCleanUp)
 
       it('should not create a duplicate device', () =>
-        firstContext.runTest(async knex => {
+        firstContext.runTest(async knexDB => {
           // Check that device exists with MAC Address and Instrument Serial
-          const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+          const firstDeviceUniqueIdentifiers = await knexDB(
+            'DeviceApiKey as dak'
+          )
             .join('Device as d', 'dak.DeviceId', 'd.id')
             .where({ 'dak.token': firstContext.apiKey })
             .select('d.hostId', 'd.serial')
@@ -279,7 +272,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           await secondContext.registerAndSetDevice()
 
-          await secondContext.runTestInline(async knex => {
+          await secondContext.runTestInline(async knexDB => {
             assert.notEqual(secondContext.apiKey, firstContext.apiKey)
             // Submit same device configuration with host ID and device serial numbers
             await server
@@ -297,7 +290,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 })
               )
 
-            const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
+            const firstDeviceApiKeyStatus = await knexDB('DeviceApiKey as dak')
               .where({ 'dak.token': firstContext.apiKey })
               .select('dak.deviceId', 'dak.revoked')
 
@@ -311,7 +304,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             // Check that device exists with MAC Address and Instrument
             // Serial linked to the new device API key
-            const secondDeviceUniqueIdentifiers = await knex(
+            const secondDeviceUniqueIdentifiers = await knexDB(
               'DeviceApiKey as dak'
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -346,9 +339,9 @@ describe('Device API routes for GxConnect Devices', () => {
         after(firstContext.afterCleanUp)
 
         it('should update the MAC address for the device and assign it with a new API key', () =>
-          firstContext.runTest(async knex => {
+          firstContext.runTest(async knexDB => {
             // Check that device exists with MAC Address and Instrument Serial
-            const firstDeviceUniqueIdentifiers = await knex(
+            const firstDeviceUniqueIdentifiers = await knexDB(
               'DeviceApiKey as dak'
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -371,10 +364,12 @@ describe('Device API routes for GxConnect Devices', () => {
 
             await secondContext.registerAndSetDevice()
 
-            await secondContext.runTestInline(async knex => {
+            await secondContext.runTestInline(async knexDB => {
               assert.notEqual(secondContext.apiKey, firstContext.apiKey)
 
-              const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
+              const firstDeviceApiKeyStatus = await knexDB(
+                'DeviceApiKey as dak'
+              )
                 .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
                 .select('dak.deviceId', 'dak.revoked')
 
@@ -388,7 +383,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
               // Check that the device still exists with the new MAC Address
               // Serial linked to the new device API key
-              const secondDeviceUniqueIdentifiers = await knex(
+              const secondDeviceUniqueIdentifiers = await knexDB(
                 'DeviceApiKey as dak'
               )
                 .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -425,84 +420,83 @@ describe('Device API routes for GxConnect Devices', () => {
         })
 
         before(context.beforeRegisterAndSetDevice)
-        const { runTest } = context
+
         after(context.afterCleanUp)
 
-        it('should update the MAC address of the existing device', () =>
-          runTest(async knex => {
-            // Check that device exists with MAC Address and Instrument Serial
-            const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .where({ 'dak.token': context.apiKey })
-              .select('d.macAddress', 'd.hostId', 'd.serial')
+        it('should update the MAC address of the existing device', async () => {
+          // Check that device exists with MAC Address and Instrument Serial
+          const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .where({ 'dak.token': context.apiKey })
+            .select('d.macAddress', 'd.hostId', 'd.serial')
 
-            assert.deepEqual(deviceUniqueIdentifiers, [
-              {
-                macAddress,
-                hostId,
-                serial: deviceSerialNumber,
-              },
-            ])
+          assert.deepEqual(deviceUniqueIdentifiers, [
+            {
+              macAddress,
+              hostId,
+              serial: deviceSerialNumber,
+            },
+          ])
 
-            // Single device exists, now send a new MAC address
-            const newMacAddress = 'MAC12345678FAKE'
-            await server
-              .post('/device')
-              .set('Authorization', context.deviceAuth)
-              .send(
-                _.assign({}, context.basicDevicePayload, {
-                  configuration: {
-                    data: {
-                      macAddress: newMacAddress,
-                      deviceSerialNumber,
-                      hostId,
-                    },
+          // Single device exists, now send a new MAC address
+          const newMacAddress = 'MAC12345678FAKE'
+          await server
+            .post('/device')
+            .set('Authorization', context.deviceAuth)
+            .send(
+              _.assign({}, context.basicDevicePayload, {
+                configuration: {
+                  data: {
+                    macAddress: newMacAddress,
+                    deviceSerialNumber,
+                    hostId,
                   },
-                })
-              )
-
-            // Check that the MAC address has changed
-            const newDeviceDetails = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .join('Site as s', 'd.siteId', 's.id')
-              .join('Geography as g', 's.geographyId', 'g.id')
-              .join('Country as c', 'g.countryId', 'c.id')
-              .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-              .where({ 'dak.token': context.apiKey })
-              .select(
-                'd.id as deviceId',
-                'd.name as deviceName',
-                'd.macAddress',
-                'd.serial',
-                'd.hostId',
-                's.name as siteName',
-                'c.abbreviation as countryCode',
-                'dt.externalId as deviceType'
-              )
-
-            assert.deepEqual(
-              _.map(newDeviceDetails, device => _.omit(device, 'deviceId')),
-              [
-                {
-                  deviceName,
-                  macAddress: newMacAddress,
-                  serial: deviceSerialNumber,
-                  hostId,
-                  siteName: deviceName,
-                  countryCode,
-                  deviceType: context.basicDevicePayload.type.id,
                 },
-              ]
+              })
             )
 
-            // Check that there are no orphaned devices with
-            // the old MAC address
-            const orphanedDevices = await knex('Device')
-              .where({ macAddress })
-              .select()
+          // Check that the MAC address has changed
+          const newDeviceDetails = await knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .join('Site as s', 'd.siteId', 's.id')
+            .join('Geography as g', 's.geographyId', 'g.id')
+            .join('Country as c', 'g.countryId', 'c.id')
+            .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+            .where({ 'dak.token': context.apiKey })
+            .select(
+              'd.id as deviceId',
+              'd.name as deviceName',
+              'd.macAddress',
+              'd.serial',
+              'd.hostId',
+              's.name as siteName',
+              'c.abbreviation as countryCode',
+              'dt.externalId as deviceType'
+            )
 
-            assert.isEmpty(orphanedDevices)
-          }))
+          assert.deepEqual(
+            _.map(newDeviceDetails, device => _.omit(device, 'deviceId')),
+            [
+              {
+                deviceName,
+                macAddress: newMacAddress,
+                serial: deviceSerialNumber,
+                hostId,
+                siteName: deviceName,
+                countryCode,
+                deviceType: context.basicDevicePayload.type.id,
+              },
+            ]
+          )
+
+          // Check that there are no orphaned devices with
+          // the old MAC address
+          const orphanedDevices = await knex('Device')
+            .where({ macAddress })
+            .select()
+
+          assert.isEmpty(orphanedDevices)
+        })
       })
     })
 
@@ -522,9 +516,9 @@ describe('Device API routes for GxConnect Devices', () => {
         after(firstContext.afterCleanUp)
 
         it('should create a new device with the new serial and assign it with a new API key', () =>
-          firstContext.runTest(async knex => {
+          firstContext.runTest(async knexDB => {
             // Check that device exists with MAC Address and Instrument Serial
-            const firstDeviceUniqueIdentifiers = await knex(
+            const firstDeviceUniqueIdentifiers = await knexDB(
               'DeviceApiKey as dak'
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -549,10 +543,12 @@ describe('Device API routes for GxConnect Devices', () => {
 
             await secondContext.registerAndSetDevice()
 
-            await secondContext.runTestInline(async knex => {
+            await secondContext.runTestInline(async knexDB => {
               assert.notEqual(secondContext.apiKey, firstContext.apiKey)
 
-              const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
+              const firstDeviceApiKeyStatus = await knexDB(
+                'DeviceApiKey as dak'
+              )
                 .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
                 .select('dak.deviceId', 'dak.revoked')
 
@@ -566,7 +562,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
               // Check that the device exists with the new Device
               // Serial linked to the new device API key
-              const secondDeviceUniqueIdentifiers = await knex(
+              const secondDeviceUniqueIdentifiers = await knexDB(
                 'DeviceApiKey as dak'
               )
                 .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -611,83 +607,82 @@ describe('Device API routes for GxConnect Devices', () => {
         })
 
         before(context.beforeRegisterAndSetDevice)
-        const { runTest } = context
+
         after(context.afterCleanUp)
 
-        it('should update the serial of the existing device', () =>
-          runTest(async knex => {
-            // Check that device exists with MAC Address and Instrument Serial
-            const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .where({ 'dak.token': context.apiKey })
-              .select('d.macAddress', 'd.hostId', 'd.serial')
+        it('should update the serial of the existing device', async () => {
+          // Check that device exists with MAC Address and Instrument Serial
+          const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .where({ 'dak.token': context.apiKey })
+            .select('d.macAddress', 'd.hostId', 'd.serial')
 
-            assert.deepEqual(deviceUniqueIdentifiers, [
-              {
-                macAddress,
-                hostId,
-                serial: deviceSerialNumber,
-              },
-            ])
+          assert.deepEqual(deviceUniqueIdentifiers, [
+            {
+              macAddress,
+              hostId,
+              serial: deviceSerialNumber,
+            },
+          ])
 
-            // Single device exists, now send a new instrument serial numbers
-            const newDeviceSerialNumber = 'Cepheid-PC-098765'
-            await server
-              .post('/device')
-              .set('Authorization', context.deviceAuth)
-              .send(
-                _.assign({}, context.basicDevicePayload, {
-                  configuration: {
-                    data: {
-                      hostId,
-                      deviceSerialNumber: newDeviceSerialNumber,
-                    },
+          // Single device exists, now send a new instrument serial numbers
+          const newDeviceSerialNumber = 'Cepheid-PC-098765'
+          await server
+            .post('/device')
+            .set('Authorization', context.deviceAuth)
+            .send(
+              _.assign({}, context.basicDevicePayload, {
+                configuration: {
+                  data: {
+                    hostId,
+                    deviceSerialNumber: newDeviceSerialNumber,
                   },
-                })
-              )
-
-            // Check that the instrument serial has changed
-            const newDeviceDetails = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .join('Site as s', 'd.siteId', 's.id')
-              .join('Geography as g', 's.geographyId', 'g.id')
-              .join('Country as c', 'g.countryId', 'c.id')
-              .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-              .where({ 'dak.token': context.apiKey })
-              .select(
-                'd.id as deviceId',
-                'd.name as deviceName',
-                'd.macAddress',
-                'd.hostId',
-                'd.serial',
-                's.name as siteName',
-                'c.abbreviation as countryCode',
-                'dt.externalId as deviceType'
-              )
-
-            assert.deepEqual(
-              _.map(newDeviceDetails, device => _.omit(device, 'deviceId')),
-              [
-                {
-                  deviceName,
-                  macAddress,
-                  hostId,
-                  serial: newDeviceSerialNumber,
-                  siteName: deviceName,
-                  countryCode,
-                  deviceType: context.basicDevicePayload.type.id,
                 },
-              ]
+              })
             )
 
-            // Check that there are no orphaned devices with
-            // the instrument serial numbers
-            const orphanedDevices = await knex('Device')
-              .where({ serial: deviceSerialNumber })
-              .select()
+          // Check that the instrument serial has changed
+          const newDeviceDetails = await knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .join('Site as s', 'd.siteId', 's.id')
+            .join('Geography as g', 's.geographyId', 'g.id')
+            .join('Country as c', 'g.countryId', 'c.id')
+            .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+            .where({ 'dak.token': context.apiKey })
+            .select(
+              'd.id as deviceId',
+              'd.name as deviceName',
+              'd.macAddress',
+              'd.hostId',
+              'd.serial',
+              's.name as siteName',
+              'c.abbreviation as countryCode',
+              'dt.externalId as deviceType'
+            )
 
-            assert.isEmpty(orphanedDevices)
-          }))
+          assert.deepEqual(
+            _.map(newDeviceDetails, device => _.omit(device, 'deviceId')),
+            [
+              {
+                deviceName,
+                macAddress,
+                hostId,
+                serial: newDeviceSerialNumber,
+                siteName: deviceName,
+                countryCode,
+                deviceType: context.basicDevicePayload.type.id,
+              },
+            ]
+          )
+
+          // Check that there are no orphaned devices with
+          // the instrument serial numbers
+          const orphanedDevices = await knex('Device')
+            .where({ serial: deviceSerialNumber })
+            .select()
+
+          assert.isEmpty(orphanedDevices)
+        })
       })
     })
   })
@@ -739,86 +734,91 @@ describe('Device API routes for GxConnect Devices', () => {
       deviceSerialNumber,
     })
     beforeEach(context.beforeRegisterAndSetDevice)
-    const { runTest } = context
     afterEach(context.afterCleanUp)
 
-    it('should update the last seen and last ping time', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, device } = context
-        const deviceBefore = await knex('Device').where('id', device.id).first()
+    it('should update the last seen and last ping time', async () => {
+      const { basicDevicePayload, deviceAuth, device } = context
+      const deviceBefore = await knex('Device').where('id', device.id).first()
 
-        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
-        await waitForApproximately(1, 'second')
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(basicDevicePayload)
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-          .catch(assert.fail)
+      const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
+      await waitForApproximately(1, 'second')
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(basicDevicePayload)
+        .then(res => {
+          assert.equal(res.status, 200)
+        })
+        .catch(assert.fail)
 
-        await waitForDeviceSeen
-        await waitForIdle()
+      await waitForDeviceSeen
+      await waitForIdle()
 
-        const deviceAfter = await knex('Device').where('id', device.id).first()
-        deviceAfter.id.should.equal(deviceBefore.id)
-        new Date(deviceAfter.lastSeenOn).should.be.above(
-          deviceBefore.lastSeenOn
-        )
-        new Date(deviceAfter.lastPingOn).should.be.above(
-          deviceBefore.lastPingOn
-        )
-      }))
+      const deviceAfter = await knex('Device').where('id', device.id).first()
+      deviceAfter.id.should.equal(deviceBefore.id)
+      new Date(deviceAfter.lastSeenOn).should.be.above(deviceBefore.lastSeenOn)
+      new Date(deviceAfter.lastPingOn).should.be.above(deviceBefore.lastPingOn)
+    })
 
-    it('should eventually update the device fact offline status to false', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, device } = context
-        await knex('FactDeviceFlag')
-          .where('deviceId', device.id)
-          .update({ offline: 1 })
+    it('should eventually update the device fact offline status to false', async () => {
+      const { basicDevicePayload, deviceAuth, device } = context
+      await knex('FactDeviceFlag')
+        .where('deviceId', device.id)
+        .update({ offline: 1 })
 
-        const deviceBefore = await knex('Device').where('id', device.id).first()
+      const deviceBefore = await knex('Device').where('id', device.id).first()
 
-        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
-        await waitForApproximately(1, 'second')
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(basicDevicePayload)
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-          .catch(assert.fail)
+      const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
+      await waitForApproximately(1, 'second')
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(basicDevicePayload)
+        .then(res => {
+          assert.equal(res.status, 200)
+        })
+        .catch(assert.fail)
 
-        await waitForDeviceSeen
-        await waitForIdle()
+      await waitForDeviceSeen
+      await waitForIdle()
 
-        const deviceAfter = await knex('Device as d')
-          .join('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
-          .where('d.id', device.id)
-          .first()
-        deviceAfter.id.should.equal(deviceBefore.id)
-        assert.notOk(deviceAfter.offline)
-      }))
+      const deviceAfter = await knex('Device as d')
+        .join('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
+        .where('d.id', device.id)
+        .first()
+      deviceAfter.id.should.equal(deviceBefore.id)
+      assert.notOk(deviceAfter.offline)
+    })
   })
 
-  describe('results', () => {
-    const context = createGxConnectTestContext(server, {
-      countryCode,
-      adminUsername,
-      adminPassword,
-      deviceName,
-      macAddress,
-      deviceSerialNumber,
+  describe.only('results', () => {
+    let context
+
+    let getLastResult
+    let basicDevicePayload
+    beforeEach(async () => {
+      context = createGxConnectTestContext(server, {
+        countryCode,
+        adminUsername,
+        adminPassword,
+        deviceName,
+        macAddress,
+        deviceSerialNumber,
+      })
+      logger.info('Creating context')
+      await context.beforeRegisterAndSetDevice()
+      ;({ getLastResult, basicDevicePayload } = context)
+      logger.info('registering device')
     })
-    beforeEach(context.beforeRegisterAndSetDevice)
-    const { runTest, getLastResult, basicDevicePayload } = context
-    afterEach(context.afterCleanUp)
+    afterEach(async () => {
+      logger.info('before cleanning')
+      await context.afterCleanUp()
+      logger.info('Cleaned')
+    })
 
     const getResultCategoriesTestCallback = trackedResults => async () => {
       const { deviceAuth, device } = context
-
+      console.log('trackedResults', trackedResults)
       await Promise.each(trackedResults, async assertion => {
         const {
           resultText,
@@ -827,6 +827,7 @@ describe('Device API routes for GxConnect Devices', () => {
           assayExternalId,
         } = assertion
         // Send a new result
+        logger.info(['Posting result', assertion])
         await server
           .post('/device')
           .set('Authorization', deviceAuth)
@@ -857,8 +858,9 @@ describe('Device API routes for GxConnect Devices', () => {
               }
             )
           )
+        logger.info('Posted result')
         await waitForIdle()
-
+        logger.info('After wait for iddle')
         const lastResultId = await getLastResultId(knex, device.id)
         const { resultCategory1, resultCategory2, assayId } = await knex(
           'Result'
@@ -883,6 +885,7 @@ describe('Device API routes for GxConnect Devices', () => {
           assayId,
         }
         assert.deepEqual(expected, actual)
+        logger.info('end testing')
       })
     }
 
@@ -911,100 +914,98 @@ describe('Device API routes for GxConnect Devices', () => {
       getResultCategoriesTestCallback(gxMtbRifMappings)
     ).timeout(120000)
 
-    it('should reject a result without a start or end date date', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
+    it('should reject a result without a start or end date date', async () => {
+      const { basicDevicePayload, deviceAuth } = context
 
-        const beforeResultDetails = await getLastResult()
+      const beforeResultDetails = await getLastResult()
 
-        assert.isUndefined(beforeResultDetails)
+      assert.isUndefined(beforeResultDetails)
 
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(_.assign({}, basicDevicePayload, basicResultPayload))
-          .then(res => {
-            assert.equal(res.status, 400)
-          })
-          .catch(assert.fail)
-
-        const afterResultDetails = await getLastResult()
-        assert.isUndefined(afterResultDetails)
-      }))
-
-    it('should append a result if the sample ID, instrument serial and test dates are not known', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth, device, site, now } = context
-
-        const beforeResultDetails = await getLastResult()
-
-        assert.isUndefined(beforeResultDetails)
-
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                sample: { id: 'new sample' },
-                instrument: { serial: 'new instrument' },
-                startedOn: testStartedOn,
-              }),
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-          .catch(assert.fail)
-
-        const afterResultDetails = await getLastResult()
-
-        // this device is located in the America/New_York time zone, so we have to
-        // convert testStartedOn to UTC in order to compare it to the value in the database
-        expect(afterResultDetails).to.containSubset({
-          deviceId: device.id,
-          siteId: device.siteId,
-          geographyId: site.geographyId,
-          assay: basicResultPayload.result.assay.id,
-          assayVersion: basicResultPayload.result.assay.version,
-          resultWorkflowStatus: 'Deliverable',
-          resultSource: 'DiagnosticDevice',
-          resultType: 'Patient',
-          resultCategory1: 'Success',
-          resultCategory2: null,
-          sampleId: 'new sample',
-          sampleCollectedOn: null,
-          sampleOriginSiteId: device.siteId,
-          sampleTypeId: null,
-          resultData: _.assign({}, basicResultPayload.result.data, {
-            geneXpertTestId: basicResultPayload.result.id,
-          }),
-          startedOn: getLocalDateTimeStringInUtc(
-            testStartedOn.toISOString().replace('Z', ''),
-            'America/New_York'
-          ),
-          endedOn: null,
-          consumableSerial: null,
-          consumableExpirationDate: null,
-          consumableLot: null,
-          instrumentSerial: 'new instrument',
-          moduleName: null,
-          moduleSerial: null,
-          patientData: basicResultPayload.result.patient,
-          senderVersion: basicResultPayload.result.sender.version,
-          senderOperator: basicResultPayload.result.sender.operator,
-          notes: null,
-          errorCode: null,
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(_.assign({}, basicDevicePayload, basicResultPayload))
+        .then(res => {
+          assert.equal(res.status, 400)
         })
-      }))
+        .catch(assert.fail)
+
+      const afterResultDetails = await getLastResult()
+      assert.isUndefined(afterResultDetails)
+    })
+
+    it('should append a result if the sample ID, instrument serial and test dates are not known', async () => {
+      const { basicDevicePayload, deviceAuth, device, site, now } = context
+
+      const beforeResultDetails = await getLastResult()
+
+      assert.isUndefined(beforeResultDetails)
+
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+            result: _.assign({}, basicResultPayload.result, {
+              sample: { id: 'new sample' },
+              instrument: { serial: 'new instrument' },
+              startedOn: testStartedOn,
+            }),
+          })
+        )
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
+
+      const afterResultDetails = await getLastResult()
+
+      // this device is located in the America/New_York time zone, so we have to
+      // convert testStartedOn to UTC in order to compare it to the value in the database
+      expect(afterResultDetails).to.containSubset({
+        deviceId: device.id,
+        siteId: device.siteId,
+        geographyId: site.geographyId,
+        assay: basicResultPayload.result.assay.id,
+        assayVersion: basicResultPayload.result.assay.version,
+        resultWorkflowStatus: 'Deliverable',
+        resultSource: 'DiagnosticDevice',
+        resultType: 'Patient',
+        resultCategory1: 'Success',
+        resultCategory2: null,
+        sampleId: 'new sample',
+        sampleCollectedOn: null,
+        sampleOriginSiteId: device.siteId,
+        sampleTypeId: null,
+        resultData: _.assign({}, basicResultPayload.result.data, {
+          geneXpertTestId: basicResultPayload.result.id,
+        }),
+        startedOn: getLocalDateTimeStringInUtc(
+          testStartedOn.toISOString().replace('Z', ''),
+          'America/New_York'
+        ),
+        endedOn: null,
+        consumableSerial: null,
+        consumableExpirationDate: null,
+        consumableLot: null,
+        instrumentSerial: 'new instrument',
+        moduleName: null,
+        moduleSerial: null,
+        patientData: basicResultPayload.result.patient,
+        senderVersion: basicResultPayload.result.sender.version,
+        senderOperator: basicResultPayload.result.sender.operator,
+        notes: null,
+        errorCode: null,
+      })
+    })
 
     it('should append a result HIV VL and categorized it well', async () => {
       const { deviceAuth, basicDevicePayload, now } = context
@@ -1064,268 +1065,284 @@ describe('Device API routes for GxConnect Devices', () => {
       })
     })
 
-    it('should update a result if the sample ID, instrument serial and test dates are known', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth, now } = context
+    it('should update a result if the sample ID, instrument serial and test dates are known', async () => {
+      const { basicDevicePayload, deviceAuth, now } = context
 
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
-        const sampleId = 'GxConnect test will be updated'
-        const instrumentSerial = 'GxConnect Test with same instrument'
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+      const sampleId = 'GxConnect test will be updated'
+      const instrumentSerial = 'GxConnect Test with same instrument'
 
-        // Send a new result
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-              }),
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
+      // Send a new result
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+            result: _.assign({}, basicResultPayload.result, {
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+            }),
           })
-          .catch(assert.fail)
+        )
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
 
-        const beforeUpdateResultDetails = await getLastResult()
+      const beforeUpdateResultDetails = await getLastResult()
 
-        await waitForApproximately(2, 'seconds')
+      await waitForApproximately(2, 'seconds')
 
-        // Send new data about existing result
-        const newResultData = {
-          customFieldData: {
-            1: {
-              notAvailable: false,
-              label: 'HIV Status',
-              value: 'Positive',
-            },
-            2: {
-              notAvailable: false,
-              label: 'Visual Analysis',
-              value: 'Blood Stained',
-            },
+      // Send new data about existing result
+      const newResultData = {
+        customFieldData: {
+          1: {
+            notAvailable: false,
+            label: 'HIV Status',
+            value: 'Positive',
           },
-        }
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-                data: newResultData,
-              }),
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
+          2: {
+            notAvailable: false,
+            label: 'Visual Analysis',
+            value: 'Blood Stained',
+          },
+        },
+      }
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+            result: _.assign({}, basicResultPayload.result, {
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+              data: newResultData,
+            }),
           })
-          .catch(assert.fail)
-
-        const afterUpdateResultDetails = await getLastResult()
-
-        assert.equal(beforeUpdateResultDetails.id, afterUpdateResultDetails.id)
-        assert.equal(
-          beforeUpdateResultDetails.createdOn.toString(),
-          afterUpdateResultDetails.createdOn.toString()
         )
-        expect(afterUpdateResultDetails.resultData).to.containSubset(
-          newResultData
-        )
-        expect(afterUpdateResultDetails.updatedOn).to.be.above(
-          beforeUpdateResultDetails.updatedOn
-        )
-      }))
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
 
-    it('should merge results with same sample ID, start time, end time and instrument serial', () =>
-      runTest(async knex => {
-        const { deviceAuth, device, now } = context
+      const afterUpdateResultDetails = await getLastResult()
 
-        const resultIds = []
-        const countResults = () =>
-          knex('Result')
-            .count('id as cnt')
-            .then(([{ cnt }]) => cnt)
-        const initialCount = await countResults()
+      assert.equal(beforeUpdateResultDetails.id, afterUpdateResultDetails.id)
+      assert.equal(
+        beforeUpdateResultDetails.createdOn.toString(),
+        afterUpdateResultDetails.createdOn.toString()
+      )
+      expect(afterUpdateResultDetails.resultData).to.containSubset(
+        newResultData
+      )
+      expect(afterUpdateResultDetails.updatedOn).to.be.above(
+        beforeUpdateResultDetails.updatedOn
+      )
+    })
 
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: dateFormat(new Date(), 'T'),
-                startedOn: now,
-                endedOn: now,
-                instrument: {
-                  serial: 'CEPH-PC-7813',
-                },
-                sample: {
-                  id: "Bryan's Sputum",
-                },
-                data: { a: 'b' },
-                assay: { id: 'GxHiv1Vl' },
+    it('should merge results with same sample ID, start time, end time and instrument serial', async () => {
+      const { deviceAuth, device, now } = context
+
+      const resultIds = []
+      const countResults = () =>
+        knex('Result')
+          .count('id as cnt')
+          .then(([{ cnt }]) => cnt)
+      const initialCount = await countResults()
+
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: dateFormat(new Date(), 'T'),
+              startedOn: now,
+              endedOn: now,
+              instrument: {
+                serial: 'CEPH-PC-7813',
               },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        let lastResultId = await getLastResultId(knex, device.id)
-        resultIds.push(lastResultId)
-
-        let result1 = await knex('Result as r')
-          .where({ id: resultIds[0] })
-          .first()
-        expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
-        assert.isNotOk(result1.errorCode)
-        assert.equal(initialCount + 1, await countResults())
-
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: dateFormat(new Date(), 'T'),
-                startedOn: now,
-                endedOn: now,
-                instrument: {
-                  serial: 'CEPH-PC-7813',
-                },
-                sample: {
-                  id: "Bryan's Sputum",
-                },
-                data: { a: 'b', c: 'd' },
-                assay: { id: 'GxHiv1Vl' },
+              sample: {
+                id: "Bryan's Sputum",
               },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        lastResultId = await getLastResultId(knex, device.id)
-        assert.equal(lastResultId, resultIds.slice(-1)[0])
+              data: { a: 'b' },
+              assay: { id: 'GxHiv1Vl' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      let lastResultId = await getLastResultId(knex, device.id)
+      resultIds.push(lastResultId)
 
-        result1 = await knex('Result as r')
-          .where({ id: resultIds.slice(-1)[0] })
-          .first()
-        expect(JSON.parse(result1.resultData)).to.containSubset({
-          a: 'b',
-          c: 'd',
-        })
-        assert.isNotOk(result1.errorCode)
-        assert.equal(initialCount + 1, await countResults())
+      let result1 = await knex('Result as r')
+        .where({ id: resultIds[0] })
+        .first()
+      expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
+      assert.isNotOk(result1.errorCode)
+      assert.equal(initialCount + 1, await countResults())
 
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: dateFormat(new Date(), 'T'),
-                startedOn: subMinutes(now, 5),
-                endedOn: now,
-                instrument: {
-                  serial: 'CEPH-PC-7813',
-                },
-                sample: {
-                  id: "Bryan's Sputum 2",
-                },
-                data: { a: 'b' },
-                assay: { id: 'GxHiv1Vl' },
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: dateFormat(new Date(), 'T'),
+              startedOn: now,
+              endedOn: now,
+              instrument: {
+                serial: 'CEPH-PC-7813',
               },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        lastResultId = await getLastResultId(knex, device.id)
-        assert.notEqual(lastResultId, resultIds[0])
+              sample: {
+                id: "Bryan's Sputum",
+              },
+              data: { a: 'b', c: 'd' },
+              assay: { id: 'GxHiv1Vl' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      lastResultId = await getLastResultId(knex, device.id)
+      assert.equal(lastResultId, resultIds.slice(-1)[0])
 
-        resultIds.push(lastResultId)
+      result1 = await knex('Result as r')
+        .where({ id: resultIds.slice(-1)[0] })
+        .first()
+      expect(JSON.parse(result1.resultData)).to.containSubset({
+        a: 'b',
+        c: 'd',
+      })
+      assert.isNotOk(result1.errorCode)
+      assert.equal(initialCount + 1, await countResults())
 
-        let result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
-        assert.equal(initialCount + 2, await countResults())
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: dateFormat(new Date(), 'T'),
+              startedOn: subMinutes(now, 5),
+              endedOn: now,
+              instrument: {
+                serial: 'CEPH-PC-7813',
+              },
+              sample: {
+                id: "Bryan's Sputum 2",
+              },
+              data: { a: 'b' },
+              assay: { id: 'GxHiv1Vl' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      lastResultId = await getLastResultId(knex, device.id)
+      assert.notEqual(lastResultId, resultIds[0])
 
-        const result1SampleSite = await knex('Site as s')
-          .where({ id: result1.siteId })
-          .first()
+      resultIds.push(lastResultId)
 
-        const result2SampleSite = await knex('Site as s')
-          .where('partnerId', result1SampleSite.partnerId)
-          .where('id', '<>', result1.siteId)
-          .first()
+      let result2 = await knex('Result as r')
+        .where({ id: resultIds[1] })
+        .first()
+      assert.equal(initialCount + 2, await countResults())
 
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: dateFormat(new Date(), 'T'),
-                data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-                type: { id: 'Study' },
-                source: { id: 'EnteredByHand' },
-                workflow: { status: { id: 'Acknowledged' } },
-                category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-                assay: {
-                  id: 'GxMtbRif',
-                  version: '1a.c1',
+      const result1SampleSite = await knex('Site as s')
+        .where({ id: result1.siteId })
+        .first()
+
+      const result2SampleSite = await knex('Site as s')
+        .where('partnerId', result1SampleSite.partnerId)
+        .where('id', '<>', result1.siteId)
+        .first()
+
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: dateFormat(new Date(), 'T'),
+              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+              type: { id: 'Study' },
+              source: { id: 'EnteredByHand' },
+              workflow: { status: { id: 'Acknowledged' } },
+              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+              assay: {
+                id: 'GxMtbRif',
+                version: '1a.c1',
+              },
+              startedOn: subMinutes(now, 5),
+              endedOn: now,
+              sample: {
+                id: "Bryan's Sputum 2",
+                type: {
+                  id: 'Plasma',
                 },
-                startedOn: subMinutes(now, 5),
-                endedOn: now,
-                sample: {
-                  id: "Bryan's Sputum 2",
-                  type: {
-                    id: 'Plasma',
-                  },
-                  originSite: {
-                    id: result2SampleSite.externalId,
-                  },
+                originSite: {
+                  id: result2SampleSite.externalId,
                 },
-                location: {
-                  longitude: -87.581222,
-                  latitude: 30.419348,
+              },
+              location: {
+                longitude: -87.581222,
+                latitude: 30.419348,
+              },
+              consumable: {
+                serial: '132-44-222',
+                expirationDate: '2014-03-01',
+                lot: '331-1',
+              },
+              instrument: {
+                serial: 'CEPH-PC-7813',
+                module: {
+                  name: 'ModA',
+                  serial: '555-8',
                 },
-                consumable: {
-                  serial: '132-44-222',
-                  expirationDate: '2014-03-01',
-                  lot: '331-1',
-                },
-                instrument: {
-                  serial: 'CEPH-PC-7813',
-                  module: {
-                    name: 'ModA',
-                    serial: '555-8',
-                  },
-                },
-                research: { id: 'R123' },
-                patient: {
+              },
+              research: { id: 'R123' },
+              patient: {
+                id: 'P-333',
+                name: 'Bob',
+                surname: 'Hope',
+                gender: 'M',
+                age: 72,
+                dateOfBirth: '1903-05-29',
+                address: '123 Main Street',
+                phone: '856-7909',
+              },
+              oemData: JSON.stringify({
+                maker: 'ABC',
+                model: '123A',
+                serial: '123-456-789',
+              }),
+              rawData: JSON.stringify({
+                startedOn: '2013-05-13',
+                endedOn: '2013-12-01T01:30',
+                patientData: {
                   id: 'P-333',
                   name: 'Bob',
                   surname: 'Hope',
@@ -1335,546 +1352,583 @@ describe('Device API routes for GxConnect Devices', () => {
                   address: '123 Main Street',
                   phone: '856-7909',
                 },
-                oemData: JSON.stringify({
-                  maker: 'ABC',
-                  model: '123A',
-                  serial: '123-456-789',
-                }),
-                rawData: JSON.stringify({
-                  startedOn: '2013-05-13',
-                  endedOn: '2013-12-01T01:30',
-                  patientData: {
-                    id: 'P-333',
-                    name: 'Bob',
-                    surname: 'Hope',
-                    gender: 'M',
-                    age: 72,
-                    dateOfBirth: '1903-05-29',
-                    address: '123 Main Street',
-                    phone: '856-7909',
-                  },
-                  location: {
-                    longitude: -87.581222,
-                    latitude: 30.419348,
-                  },
-                }),
-                sender: {
-                  version: '99-1',
-                  operator: 'Bob O',
+                location: {
+                  longitude: -87.581222,
+                  latitude: 30.419348,
                 },
-                notes: 'My Awesome notes about this Awesome result!',
-                error: {
-                  code: '123',
-                  notes: 'Oh NOZE!',
-                },
+              }),
+              sender: {
+                version: '99-1',
+                operator: 'Bob O',
               },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        lastResultId = await getLastResultId(knex, device.id)
-        assert.equal(lastResultId, resultIds[1])
+              notes: 'My Awesome notes about this Awesome result!',
+              error: {
+                code: '123',
+                notes: 'Oh NOZE!',
+              },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      lastResultId = await getLastResultId(knex, device.id)
+      assert.equal(lastResultId, resultIds[1])
 
-        result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
-        assert.equal(initialCount + 2, await countResults())
-        expect(JSON.parse(result2.resultData)).to.containSubset({
-          a: 'b',
-          c: 2,
-          d: false,
-          e: { f: 'g' },
-        })
-        assert.equal(result2.assayVersion, '1a.c1')
-        assert.approximately(result2.latitude, 30.419348, 0.000001)
-        assert.approximately(result2.longitude, -87.581222, 0.000001)
-        assert.equal(result2.consumableSerial, '132-44-222')
-        assert.deepEqual(
-          result2.consumableExpirationDate,
-          new Date('2014-03-01')
-        )
-        assert.equal(result2.consumableLot, '331-1')
-        assert.equal(result2.instrumentSerial, 'CEPH-PC-7813')
-        assert.equal(result2.moduleName, 'ModA')
-        assert.equal(result2.moduleSerial, '555-8')
-        assert.equal(result2.researchId, 'R123')
-        assert.deepEqual(JSON.parse(result2.patientData), {
+      result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
+      assert.equal(initialCount + 2, await countResults())
+      expect(JSON.parse(result2.resultData)).to.containSubset({
+        a: 'b',
+        c: 2,
+        d: false,
+        e: { f: 'g' },
+      })
+      assert.equal(result2.assayVersion, '1a.c1')
+      assert.approximately(result2.latitude, 30.419348, 0.000001)
+      assert.approximately(result2.longitude, -87.581222, 0.000001)
+      assert.equal(result2.consumableSerial, '132-44-222')
+      assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
+      assert.equal(result2.consumableLot, '331-1')
+      assert.equal(result2.instrumentSerial, 'CEPH-PC-7813')
+      assert.equal(result2.moduleName, 'ModA')
+      assert.equal(result2.moduleSerial, '555-8')
+      assert.equal(result2.researchId, 'R123')
+      assert.deepEqual(JSON.parse(result2.patientData), {
+        id: 'P-333',
+        name: 'Bob',
+        surname: 'Hope',
+        gender: 'M',
+        age: 72,
+        dateOfBirth: '1903-05-29T00:00:00.000Z',
+        address: '123 Main Street',
+        phone: '856-7909',
+      })
+      assert.deepEqual(JSON.parse(result2.oemData), {
+        maker: 'ABC',
+        model: '123A',
+        serial: '123-456-789',
+      })
+      assert.deepEqual(JSON.parse(result2.rawData), {
+        startedOn: '2013-05-13',
+        endedOn: '2013-12-01T01:30',
+        patientData: {
           id: 'P-333',
           name: 'Bob',
           surname: 'Hope',
           gender: 'M',
           age: 72,
-          dateOfBirth: '1903-05-29T00:00:00.000Z',
+          dateOfBirth: '1903-05-29',
           address: '123 Main Street',
           phone: '856-7909',
-        })
-        assert.deepEqual(JSON.parse(result2.oemData), {
-          maker: 'ABC',
-          model: '123A',
-          serial: '123-456-789',
-        })
-        assert.deepEqual(JSON.parse(result2.rawData), {
-          startedOn: '2013-05-13',
-          endedOn: '2013-12-01T01:30',
-          patientData: {
-            id: 'P-333',
-            name: 'Bob',
-            surname: 'Hope',
-            gender: 'M',
-            age: 72,
-            dateOfBirth: '1903-05-29',
-            address: '123 Main Street',
-            phone: '856-7909',
-          },
-          location: {
-            longitude: -87.581222,
-            latitude: 30.419348,
-          },
-        })
-        assert.equal(result2.senderVersion, '99-1')
-        assert.equal(result2.senderOperator, 'Bob O')
-        assert.equal(
-          result2.notes,
-          'My Awesome notes about this Awesome result!'
+        },
+        location: {
+          longitude: -87.581222,
+          latitude: 30.419348,
+        },
+      })
+      assert.equal(result2.senderVersion, '99-1')
+      assert.equal(result2.senderOperator, 'Bob O')
+      assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
+      assert.equal(result2.errorCode, '123')
+      assert.equal(result2.errorNotes, 'Oh NOZE!')
+
+      const result2Type = await knex('ResultType as rt')
+        .where({ id: result2.resultTypeId })
+        .first('externalId')
+      assert.equal(result2Type.externalId, 'Study')
+
+      const result2Source = await knex('ResultSource as rs')
+        .where({ id: result2.resultSourceId })
+        .first('externalId')
+      assert.equal(result2Source.externalId, 'EnteredByHand')
+
+      const result2Status = await knex('ResultWorkflowStatus as rs')
+        .innerJoin(
+          'ResultWorkflowLog as rwl',
+          'rs.id',
+          'rwl.ResultWorkflowStatusId'
         )
-        assert.equal(result2.errorCode, '123')
-        assert.equal(result2.errorNotes, 'Oh NOZE!')
+        .where('rwl.id', result2.resultWorkflowStatusLogId)
+        .first('externalId')
+      assert.equal(result2Status.externalId, 'Acknowledged')
 
-        const result2Type = await knex('ResultType as rt')
-          .where({ id: result2.resultTypeId })
-          .first('externalId')
-        assert.equal(result2Type.externalId, 'Study')
+      const result2Assay = await knex('Assay as assay')
+        .where({ id: result2.assayId })
+        .first('externalId', 'name')
+      assert.equal(result2Assay.externalId, 'GxMtbRif')
+      assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
 
-        const result2Source = await knex('ResultSource as rs')
-          .where({ id: result2.resultSourceId })
-          .first('externalId')
-        assert.equal(result2Source.externalId, 'EnteredByHand')
+      const result2Sample = await knex('Sample as s')
+        .where({ id: result2.sampleId })
+        .first()
 
-        const result2Status = await knex('ResultWorkflowStatus as rs')
-          .innerJoin(
-            'ResultWorkflowLog as rwl',
-            'rs.id',
-            'rwl.ResultWorkflowStatusId'
-          )
-          .where('rwl.id', result2.resultWorkflowStatusLogId)
-          .first('externalId')
-        assert.equal(result2Status.externalId, 'Acknowledged')
+      assert.notEqual(result2.siteId, result2Sample.originSiteId)
+      assert.equal(result2SampleSite.id, result2Sample.originSiteId)
+      assert.equal(result2Sample.externalId, "Bryan's Sputum 2")
 
-        const result2Assay = await knex('Assay as assay')
-          .where({ id: result2.assayId })
-          .first('externalId', 'name')
-        assert.equal(result2Assay.externalId, 'GxMtbRif')
-        assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
+      const [result2Category1, result2Category2] = await knex(
+        'ResultCategory as rt'
+      )
+        .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
+        .select('externalId')
+      assert.equal(result2Category1.externalId, 'Detected')
+      assert.equal(result2Category2.externalId, 'Indeterminate')
+    })
 
-        const result2Sample = await knex('Sample as s')
-          .where({ id: result2.sampleId })
-          .first()
+    it('should update a result if the sample ID and startedOn date matches an existing result', async () => {
+      const { deviceAuth, device, now } = context
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+      const sampleId = 'dupe'
+      const instrumentSerial = 'Tested on the same instrument'
 
-        assert.notEqual(result2.siteId, result2Sample.originSiteId)
-        assert.equal(result2SampleSite.id, result2Sample.originSiteId)
-        assert.equal(result2Sample.externalId, "Bryan's Sputum 2")
+      // Send a new result
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_1',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      const firstResultId = await getLastResultId(knex, device.id)
 
-        const [result2Category1, result2Category2] = await knex(
-          'ResultCategory as rt'
-        )
-          .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
-          .select('externalId')
-        assert.equal(result2Category1.externalId, 'Detected')
-        assert.equal(result2Category2.externalId, 'Indeterminate')
-      }))
+      // Send another result with the same sample ID, but different start date
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_2',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
 
-    it('should update a result if the sample ID and startedOn date matches an existing result', () =>
-      runTest(async knex => {
-        const { deviceAuth, device, now } = context
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
-        const sampleId = 'dupe'
-        const instrumentSerial = 'Tested on the same instrument'
+      const secondResultId = await getLastResultId(knex, device.id)
+      assert.equal(firstResultId, secondResultId)
+    })
 
-        // Send a new result
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: 'unique_id_1',
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        const firstResultId = await getLastResultId(knex, device.id)
+    it('should update a result and set result category 2 correctly if it was previously set and is now null', async () => {
+      const { deviceAuth, device, now } = context
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+      const sampleId = 'dupe'
+      const instrumentSerial = 'Tested on the same instrument'
 
-        // Send another result with the same sample ID, but different start date
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: 'unique_id_2',
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
+      // Send a new result
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_1',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+              data: { resultText: 'NO RESULT' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      const firstResultId = await getLastResultId(knex, device.id)
 
-        const secondResultId = await getLastResultId(knex, device.id)
-        assert.equal(firstResultId, secondResultId)
-      }))
+      // Send another result with the same sample ID, but different start date
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_2',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+              data: { resultText: 'NOT DETECTED' },
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
 
-    it('should update a result and set result category 2 correctly if it was previously set and is now null', () =>
-      runTest(async knex => {
-        const { deviceAuth, device, now } = context
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
-        const sampleId = 'dupe'
-        const instrumentSerial = 'Tested on the same instrument'
+      const secondResultId = await getLastResultId(knex, device.id)
+      assert.equal(firstResultId, secondResultId)
 
-        // Send a new result
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: 'unique_id_1',
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-                data: { resultText: 'NO RESULT' },
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        const firstResultId = await getLastResultId(knex, device.id)
+      const [result] = await knex('Result')
+        .select('resultCategory1', 'resultCategory2')
+        .where('id', firstResultId)
 
-        // Send another result with the same sample ID, but different start date
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: 'unique_id_2',
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-                data: { resultText: 'NOT DETECTED' },
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
+      assert.equal(
+        result.resultCategory1,
+        await resultCategoryToId('NotDetected')
+      )
+      assert.equal(result.resultCategory2, null)
+    })
 
-        const secondResultId = await getLastResultId(knex, device.id)
-        assert.equal(firstResultId, secondResultId)
+    it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', async () => {
+      const { deviceAuth, device, now } = context
+      const testStartedOn = setMilliseconds(
+        subMinutes(
+          subHours(now, Math.floor(Math.random() * 24)),
+          Math.floor(Math.random() * 60)
+        ),
+        0
+      )
+      const sampleId = 'dupe'
+      const instrumentSerial = 'Tested on the same instrument'
 
-        const [result] = await knex('Result')
-          .select('resultCategory1', 'resultCategory2')
-          .where('id', firstResultId)
+      // Send a new result
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_1',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: testStartedOn,
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
+      const firstResultId = await getLastResultId(knex, device.id)
 
-        assert.equal(
-          result.resultCategory1,
-          await resultCategoryToId('NotDetected')
-        )
-        assert.equal(result.resultCategory2, null)
-      }))
+      // Send another result with the same sample ID, but different start date
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: 'unique_id_2',
+              sample: { id: sampleId },
+              instrument: { serial: instrumentSerial },
+              startedOn: setMilliseconds(subMinutes(testStartedOn, 1234), 0),
+            },
+          }
+        ),
+        expectedStatusCode: 200,
+      })
 
-    it('should append (NOT update) a result if the sample ID matches an existing result, but the startedOn date does not', () =>
-      runTest(async knex => {
-        const { deviceAuth, device, now } = context
-        const testStartedOn = setMilliseconds(
-          subMinutes(
-            subHours(now, Math.floor(Math.random() * 24)),
-            Math.floor(Math.random() * 60)
-          ),
-          0
-        )
-        const sampleId = 'dupe'
-        const instrumentSerial = 'Tested on the same instrument'
+      const secondResultId = await getLastResultId(knex, device.id)
+      assert.notEqual(firstResultId, secondResultId)
+    })
 
-        // Send a new result
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: 'unique_id_1',
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: testStartedOn,
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
-        const firstResultId = await getLastResultId(knex, device.id)
+    it('should convert the result start/end date into UTC and store created/updated on in UTC', async () => {
+      const { basicDevicePayload, deviceAuth } = context
 
-        // Send another result with the same sample ID, but different start date
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: 'unique_id_2',
-                sample: { id: sampleId },
-                instrument: { serial: instrumentSerial },
-                startedOn: setMilliseconds(subMinutes(testStartedOn, 1234), 0),
-              },
-            }
-          ),
-          expectedStatusCode: 200,
-        })
+      const timezone = 'South Africa Standard Time'
+      const testStartedOn = '2020-08-10T14:00:00Z'
+      const testEndedOn = '2020-08-10T15:30:00Z'
 
-        const secondResultId = await getLastResultId(knex, device.id)
-        assert.notEqual(firstResultId, secondResultId)
-      }))
-
-    it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
-
-        const timezone = 'South Africa Standard Time'
-        const testStartedOn = '2020-08-10T14:00:00Z'
-        const testEndedOn = '2020-08-10T15:30:00Z'
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                startedOn: testStartedOn,
-                endedOn: testEndedOn,
-                assay: _.assign({}, basicResultPayload.result.assay, {
-                  id: 'GxMtbRif',
-                }),
-                data: basicResultPayload.result.data,
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+            result: _.assign({}, basicResultPayload.result, {
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              assay: _.assign({}, basicResultPayload.result.assay, {
+                id: 'GxMtbRif',
               }),
-              configuration: { data: { timezone } },
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
+              data: basicResultPayload.result.data,
+            }),
+            configuration: { data: { timezone } },
           })
-          .catch(assert.fail)
-
-        const resultDetails = await getLastResult()
-
-        expect(resultDetails.startedOn.getTime()).to.equal(
-          getLocalDateTimeStringInUtc(
-            testStartedOn.replace('Z', ''),
-            'Africa/Johannesburg'
-          ).getTime()
         )
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
 
-        expect(resultDetails.endedOn.getTime()).to.equal(
-          getLocalDateTimeStringInUtc(
-            testEndedOn.replace('Z', ''),
-            'Africa/Johannesburg'
-          ).getTime()
-        )
+      const resultDetails = await getLastResult()
 
-        expect(resultDetails.createdOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
+      expect(resultDetails.startedOn.getTime()).to.equal(
+        getLocalDateTimeStringInUtc(
+          testStartedOn.replace('Z', ''),
+          'Africa/Johannesburg'
+        ).getTime()
+      )
 
-        expect(resultDetails.updatedOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
-      }))
+      expect(resultDetails.endedOn.getTime()).to.equal(
+        getLocalDateTimeStringInUtc(
+          testEndedOn.replace('Z', ''),
+          'Africa/Johannesburg'
+        ).getTime()
+      )
 
-    it('should get the module name from a previous result on the same module serial if it is not included in the payload', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
-        const testStartedOn = '2020-08-10T14:00:00Z'
+      expect(resultDetails.createdOn.getTime()).to.be.closeTo(Date.now(), 2000)
 
-        // Send a new result
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                startedOn: testStartedOn,
-                assay: _.assign({}, basicResultPayload.result.assay, {
-                  id: 'GxMtbRif',
-                }),
-                id: 'unique_id_1',
-                sample: { id: 'sample_id_1' },
-                instrument: {
-                  serial: '820799',
-                  module: {
-                    serial: '724158',
-                    name: 'A3',
-                  },
-                },
-                consumable: {
-                  serial: '12345',
-                },
-                data: basicResultPayload.result.data,
+      expect(resultDetails.updatedOn.getTime()).to.be.closeTo(Date.now(), 2000)
+    })
+
+    it('should get the module name from a previous result on the same module serial if it is not included in the payload', async () => {
+      const { basicDevicePayload, deviceAuth } = context
+      const testStartedOn = '2020-08-10T14:00:00Z'
+
+      // Send a new result
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+            result: _.assign({}, basicResultPayload.result, {
+              startedOn: testStartedOn,
+              assay: _.assign({}, basicResultPayload.result.assay, {
+                id: 'GxMtbRif',
               }),
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
+              id: 'unique_id_1',
+              sample: { id: 'sample_id_1' },
+              instrument: {
+                serial: '820799',
+                module: {
+                  serial: '724158',
+                  name: 'A3',
+                },
+              },
+              consumable: {
+                serial: '12345',
+              },
+              data: basicResultPayload.result.data,
+            }),
           })
-          .catch(assert.fail)
+        )
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
 
-        // Send another result with missing module name
-        _.unset(basicResultPayload, 'result.instrument.module.name')
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                startedOn: testStartedOn,
-                assay: _.assign({}, basicResultPayload.result.assay, {
-                  id: 'GxMtbRif',
-                }),
-                id: 'unique_id_2',
-                sample: { id: 'sample_id_2' },
-                instrument: {
-                  serial: '820799',
-                  module: {
-                    serial: '724158',
-                  },
-                },
-                consumable: {
-                  serial: '12345',
-                },
-                data: basicResultPayload.result.data,
+      // Send another result with missing module name
+      _.unset(basicResultPayload, 'result.instrument.module.name')
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+            result: _.assign({}, basicResultPayload.result, {
+              startedOn: testStartedOn,
+              assay: _.assign({}, basicResultPayload.result.assay, {
+                id: 'GxMtbRif',
               }),
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
+              id: 'unique_id_2',
+              sample: { id: 'sample_id_2' },
+              instrument: {
+                serial: '820799',
+                module: {
+                  serial: '724158',
+                },
+              },
+              consumable: {
+                serial: '12345',
+              },
+              data: basicResultPayload.result.data,
+            }),
           })
-          .catch(assert.fail)
+        )
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
 
-        const afterResultDetails = await getLastResult()
-        expect(afterResultDetails.moduleName).to.equal('A3')
-      }))
+      const afterResultDetails = await getLastResult()
+      expect(afterResultDetails.moduleName).to.equal('A3')
+    })
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(() =>
-        run(async knex =>
-          knex('Assay').where({ externalId: assayName }).delete()
-        )
-      )
+      after(async () => knex('Assay').where({ externalId: assayName }).delete())
 
-      it('should set the result to assay GxUnknown', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, device } = context
+      it('should set the result to assay GxUnknown', async () => {
+        const { basicDevicePayload, deviceAuth, device } = context
 
-          const resultId = 'UNIQUE-ID-NEW-ASSAY'
-          const assayVersion = '1'
-          const getAssayDetails = async assayName =>
-            knex('Assay as a')
-              .join('AssayType as at', 'a.assayTypeId', 'at.id')
-              .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-              .where({ 'a.externalId': assayName })
-              .first(
-                'a.id as assayId',
-                'a.name as assayName',
-                'a.externalId as assayExternalId',
-                'at.name as assayTypeName',
-                'dt.externalId as deviceTypeExternalId'
-              )
-          const newAssayDetailsBefore = await getAssayDetails(assayName)
-          assert.isUndefined(newAssayDetailsBefore)
-
-          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign(
-                {},
-                _.assign({}, basicDevicePayload, basicResultPayload),
-                {
-                  result: _.assign({}, basicResultPayload.result, {
-                    id: resultId,
-                    startedOn: testStartedOn,
-                    assay: {
-                      id: assayName,
-                      version: assayVersion,
-                    },
-                  }),
-                }
-              )
+        const resultId = 'UNIQUE-ID-NEW-ASSAY'
+        const assayVersion = '1'
+        const getAssayDetails = async assayName =>
+          knex('Assay as a')
+            .join('AssayType as at', 'a.assayTypeId', 'at.id')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+            .where({ 'a.externalId': assayName })
+            .first(
+              'a.id as assayId',
+              'a.name as assayName',
+              'a.externalId as assayExternalId',
+              'at.name as assayTypeName',
+              'dt.externalId as deviceTypeExternalId'
             )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
+        const newAssayDetailsBefore = await getAssayDetails(assayName)
+        assert.isUndefined(newAssayDetailsBefore)
 
-          const resultDetails = await getLastResult(knex, device.id)
-          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
-          assert.equal(resultDetails.assay, 'GxUnknown')
-        }))
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                id: resultId,
+                startedOn: testStartedOn,
+                assay: {
+                  id: assayName,
+                  version: assayVersion,
+                },
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const resultDetails = await getLastResult(knex, device.id)
+        assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
+        assert.equal(resultDetails.assay, 'GxUnknown')
+      })
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
       const initialQuantityOnHand = 100
 
-      it('should reduce inventory levels of that consumable appropriately', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, device, site, now } = context
+      it('should reduce inventory levels of that consumable appropriately', async () => {
+        const { basicDevicePayload, deviceAuth, device, site, now } = context
 
-          const consumableAssay = await knex('ConsumableAssay as ca')
+        const consumableAssay = await knex('ConsumableAssay as ca')
+          .join('Assay as a', 'ca.assayId', 'a.id')
+          .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+          .where({ 'dt.externalId': basicDevicePayload.type.id })
+          .andWhere('ca.quantity', '>', 0)
+          .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
+
+        assert.isNotEmpty(consumableAssay)
+        assert.isAbove(consumableAssay.quantity, 0)
+
+        const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+        const [inventoryItemId] = await knex('InventoryItem').insert({
+          consumableId: consumableAssay.consumableId,
+          siteId: site.id,
+          expiresOn: expiryDate,
+          quantityOnHand: initialQuantityOnHand,
+          createdOn: subDays(now, 4),
+          updatedOn: subDays(now, 4),
+        })
+
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                id: dateFormat(new Date(), 'T'),
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+                sample: { id: 'Existing Sample' },
+                instrument: { serial: 'Existing Instrument' },
+                assay: {
+                  id: consumableAssay.assayId,
+                  version: '2',
+                },
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const lastResultId = await getLastResultId(knex, device.id)
+        const inventoryItem = await knex('InventoryItem')
+          .where({ id: inventoryItemId })
+          .first()
+        assert.equal(
+          inventoryItem.quantityOnHand,
+          _.max([0, initialQuantityOnHand - consumableAssay.quantity])
+        )
+
+        const inventoryLogs = await knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .where({ inventoryItemId })
+          .select(
+            'il.consumableId',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.quantity'
+          )
+        assert.deepEqual(inventoryLogs, [
+          {
+            consumableId: inventoryItem.consumableId,
+            siteId: site.id,
+            consumableReason: 'Test Conducted',
+            resultId: lastResultId,
+            quantity: consumableAssay.quantity,
+          },
+        ])
+      })
+
+      describe('when the test already exists in the database', () => {
+        it('should NOT reduce inventory levels of the consumable', async () => {
+          const { basicDevicePayload, deviceAuth, site, now } = context
+          const uniqueTestId = dateFormat(new Date(), 'T')
+
+          const consumableAssays = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
             .where({ 'dt.externalId': basicDevicePayload.type.id })
             .andWhere('ca.quantity', '>', 0)
-            .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
+            .select('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
 
-          assert.isNotEmpty(consumableAssay)
+          assert.isNotEmpty(consumableAssays)
+          const [consumableAssay] = consumableAssays
           assert.isAbove(consumableAssay.quantity, 0)
 
           const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
@@ -1887,8 +1941,26 @@ describe('Device API routes for GxConnect Devices', () => {
             updatedOn: subDays(now, 4),
           })
 
-          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
+            .where({
+              consumableId: consumableAssay.consumableId,
+              siteId: site.id,
+              expiresOn: getLocalDateInUtc(expiryDate),
+            })
+            .first()
+
+          const testStartedOn = setMilliseconds(
+            subMinutes(
+              subHours(now, Math.floor(Math.random() * 24)),
+              Math.floor(Math.random() * 60)
+            ),
+            0
+          )
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          const sampleId = 'GxConnect test reduces inventory'
+          const instrumentSerial = 'Cepheid PC serial'
+
+          // Send first test
           await server
             .post('/device')
             .set('Authorization', deviceAuth)
@@ -1898,15 +1970,15 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, basicDevicePayload, basicResultPayload),
                 {
                   result: _.assign({}, basicResultPayload.result, {
-                    id: dateFormat(new Date(), 'T'),
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                    sample: { id: 'Existing Sample' },
-                    instrument: { serial: 'Existing Instrument' },
+                    id: uniqueTestId,
                     assay: {
                       id: consumableAssay.assayId,
                       version: '2',
                     },
+                    sample: { id: sampleId },
+                    instrument: { serial: instrumentSerial },
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
                   }),
                 }
               )
@@ -1917,16 +1989,11 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const lastResultId = await getLastResultId(knex, device.id)
-          const inventoryItem = await knex('InventoryItem')
-            .where({ id: inventoryItemId })
-            .first()
-          assert.equal(
-            inventoryItem.quantityOnHand,
-            _.max([0, initialQuantityOnHand - consumableAssay.quantity])
-          )
+          const beforeUpdateResultDetails = await getLastResult()
 
-          const inventoryLogs = await knex('InventoryLog as il')
+          const inventoryLogsAfterFirstRequest = await knex(
+            'InventoryLog as il'
+          )
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
             .where({ inventoryItemId })
             .select(
@@ -1936,241 +2003,41 @@ describe('Device API routes for GxConnect Devices', () => {
               'il.resultId',
               'il.quantity'
             )
-          assert.deepEqual(inventoryLogs, [
-            {
-              consumableId: inventoryItem.consumableId,
-              siteId: site.id,
-              consumableReason: 'Test Conducted',
-              resultId: lastResultId,
-              quantity: consumableAssay.quantity,
-            },
-          ])
-        }))
 
-      describe('when the test already exists in the database', () => {
-        it('should NOT reduce inventory levels of the consumable', () =>
-          runTest(async knex => {
-            const { basicDevicePayload, deviceAuth, site, now } = context
-            const uniqueTestId = dateFormat(new Date(), 'T')
-
-            const consumableAssays = await knex('ConsumableAssay as ca')
-              .join('Assay as a', 'ca.assayId', 'a.id')
-              .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-              .where({ 'dt.externalId': basicDevicePayload.type.id })
-              .andWhere('ca.quantity', '>', 0)
-              .select(
-                'ca.consumableId',
-                'ca.quantity',
-                'a.externalId as assayId'
-              )
-
-            assert.isNotEmpty(consumableAssays)
-            const [consumableAssay] = consumableAssays
-            assert.isAbove(consumableAssay.quantity, 0)
-
-            const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-            const [inventoryItemId] = await knex('InventoryItem').insert({
+          const inventoryItemAfterFirstRequest = await knex('InventoryItem')
+            .where({
               consumableId: consumableAssay.consumableId,
               siteId: site.id,
-              expiresOn: expiryDate,
-              quantityOnHand: initialQuantityOnHand,
-              createdOn: subDays(now, 4),
-              updatedOn: subDays(now, 4),
+              expiresOn: getLocalDateInUtc(expiryDate),
             })
+            .first()
 
-            const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: getLocalDateInUtc(expiryDate),
-              })
-              .first()
+          assert.equal(
+            inventoryItemAfterFirstRequest.quantityOnHand,
+            _.max([
+              0,
+              inventoryItemBeforeFirstRequest.quantityOnHand -
+                consumableAssay.quantity,
+            ])
+          )
 
-            const testStartedOn = setMilliseconds(
-              subMinutes(
-                subHours(now, Math.floor(Math.random() * 24)),
-                Math.floor(Math.random() * 60)
-              ),
-              0
-            )
-            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-            const sampleId = 'GxConnect test reduces inventory'
-            const instrumentSerial = 'Cepheid PC serial'
+          await waitForApproximately(2, 'seconds')
 
-            // Send first test
-            await server
-              .post('/device')
-              .set('Authorization', deviceAuth)
-              .send(
-                _.assign(
-                  {},
-                  _.assign({}, basicDevicePayload, basicResultPayload),
-                  {
-                    result: _.assign({}, basicResultPayload.result, {
-                      id: uniqueTestId,
-                      assay: {
-                        id: consumableAssay.assayId,
-                        version: '2',
-                      },
-                      sample: { id: sampleId },
-                      instrument: { serial: instrumentSerial },
-                      startedOn: testStartedOn,
-                      endedOn: testEndedOn,
-                    }),
-                  }
-                )
-              )
-              .then(res => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
-              })
-              .catch(assert.fail)
-
-            const beforeUpdateResultDetails = await getLastResult()
-
-            const inventoryLogsAfterFirstRequest = await knex(
-              'InventoryLog as il'
-            )
-              .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-              .where({ inventoryItemId })
-              .select(
-                'il.consumableId',
-                'il.siteId',
-                'cr.name as consumableReason',
-                'il.resultId',
-                'il.quantity'
-              )
-
-            const inventoryItemAfterFirstRequest = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: getLocalDateInUtc(expiryDate),
-              })
-              .first()
-
-            assert.equal(
-              inventoryItemAfterFirstRequest.quantityOnHand,
-              _.max([
-                0,
-                inventoryItemBeforeFirstRequest.quantityOnHand -
-                  consumableAssay.quantity,
-              ])
-            )
-
-            await waitForApproximately(2, 'seconds')
-
-            // Send second request for same test
-            const newResultData = {
-              customFieldData: {
-                1: {
-                  notAvailable: false,
-                  label: 'HIV Status',
-                  value: 'Positive',
-                },
-                2: {
-                  notAvailable: false,
-                  label: 'Visual Analysis',
-                  value: 'Blood Stained',
-                },
+          // Send second request for same test
+          const newResultData = {
+            customFieldData: {
+              1: {
+                notAvailable: false,
+                label: 'HIV Status',
+                value: 'Positive',
               },
-            }
-            await server
-              .post('/device')
-              .set('Authorization', deviceAuth)
-              .send(
-                _.assign(
-                  {},
-                  _.assign({}, basicDevicePayload, basicResultPayload),
-                  {
-                    result: _.assign({}, basicResultPayload.result, {
-                      id: uniqueTestId,
-                      assay: {
-                        id: consumableAssay.assayId,
-                        version: '2',
-                      },
-                      sample: { id: sampleId },
-                      instrument: { serial: instrumentSerial },
-                      startedOn: testStartedOn,
-                      endedOn: testEndedOn,
-                      data: newResultData,
-                    }),
-                  }
-                )
-              )
-              .then(res => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
-              })
-              .catch(assert.fail)
-
-            const afterUpdateResultDetails = await getLastResult()
-
-            assert.equal(
-              afterUpdateResultDetails.id,
-              beforeUpdateResultDetails.id
-            )
-            assert.equal(
-              afterUpdateResultDetails.createdOn.toString(),
-              beforeUpdateResultDetails.createdOn.toString()
-            )
-            expect(afterUpdateResultDetails.updatedOn).to.be.above(
-              beforeUpdateResultDetails.updatedOn
-            )
-
-            const inventoryItemAfterSecondRequest = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: getLocalDateInUtc(expiryDate),
-              })
-              .first()
-
-            assert.deepEqual(
-              inventoryItemAfterSecondRequest,
-              inventoryItemAfterFirstRequest
-            )
-
-            const inventoryLogsAfterSecondRequest = await knex(
-              'InventoryLog as il'
-            )
-              .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-              .where({ inventoryItemId })
-              .select(
-                'il.consumableId',
-                'il.siteId',
-                'cr.name as consumableReason',
-                'il.resultId',
-                'il.quantity'
-              )
-            assert.deepEqual(
-              inventoryLogsAfterSecondRequest,
-              inventoryLogsAfterFirstRequest
-            )
-
-            const matchingConsumableAssayAfterSecondRequest = _.find(
-              consumableAssays,
-              {
-                consumableId: _.head(inventoryLogsAfterSecondRequest)
-                  .consumableId,
-                quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
-              }
-            )
-            assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
-          }))
-      })
-    })
-
-    describe('when an error code has been specified in the result payload', () => {
-      it('should set the workflow status of the result to error', () =>
-        runTest(async () => {
-          const { basicDevicePayload, deviceAuth } = context
-
-          const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
-          const errorCode = '12345'
-
-          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+              2: {
+                notAvailable: false,
+                label: 'Visual Analysis',
+                value: 'Blood Stained',
+              },
+            },
+          }
           await server
             .post('/device')
             .set('Authorization', deviceAuth)
@@ -2180,11 +2047,342 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, basicDevicePayload, basicResultPayload),
                 {
                   result: _.assign({}, basicResultPayload.result, {
-                    id: errorTestResultId,
+                    id: uniqueTestId,
+                    assay: {
+                      id: consumableAssay.assayId,
+                      version: '2',
+                    },
+                    sample: { id: sampleId },
+                    instrument: { serial: instrumentSerial },
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
-                    error: {
-                      code: errorCode,
+                    data: newResultData,
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const afterUpdateResultDetails = await getLastResult()
+
+          assert.equal(
+            afterUpdateResultDetails.id,
+            beforeUpdateResultDetails.id
+          )
+          assert.equal(
+            afterUpdateResultDetails.createdOn.toString(),
+            beforeUpdateResultDetails.createdOn.toString()
+          )
+          expect(afterUpdateResultDetails.updatedOn).to.be.above(
+            beforeUpdateResultDetails.updatedOn
+          )
+
+          const inventoryItemAfterSecondRequest = await knex('InventoryItem')
+            .where({
+              consumableId: consumableAssay.consumableId,
+              siteId: site.id,
+              expiresOn: getLocalDateInUtc(expiryDate),
+            })
+            .first()
+
+          assert.deepEqual(
+            inventoryItemAfterSecondRequest,
+            inventoryItemAfterFirstRequest
+          )
+
+          const inventoryLogsAfterSecondRequest = await knex(
+            'InventoryLog as il'
+          )
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .where({ inventoryItemId })
+            .select(
+              'il.consumableId',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.quantity'
+            )
+          assert.deepEqual(
+            inventoryLogsAfterSecondRequest,
+            inventoryLogsAfterFirstRequest
+          )
+
+          const matchingConsumableAssayAfterSecondRequest = _.find(
+            consumableAssays,
+            {
+              consumableId: _.head(inventoryLogsAfterSecondRequest)
+                .consumableId,
+              quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+            }
+          )
+          assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
+        })
+      })
+    })
+
+    describe('when an error code has been specified in the result payload', () => {
+      it('should set the workflow status of the result to error', async () => {
+        const { basicDevicePayload, deviceAuth } = context
+
+        const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
+        const errorCode = '12345'
+
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                id: errorTestResultId,
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+                error: {
+                  code: errorCode,
+                },
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const lastResult = await getLastResult()
+        assert.deepEqual(
+          _.pick(
+            lastResult,
+            'errorCode',
+            'resultCategory1',
+            'resultWorkflowStatus'
+          ),
+          {
+            errorCode,
+            resultCategory1: 'Error',
+            resultWorkflowStatus: 'Error',
+          }
+        )
+        assert.equal(lastResult.resultData.geneXpertTestId, errorTestResultId)
+      })
+    })
+
+    describe('when no workflow status has been specified in the result payload', () => {
+      it('should default the workflow status to "Deliverable"', async () => {
+        const { basicDevicePayload, deviceAuth } = context
+
+        const testResultId = 'UNIQUE-ID-WITH-DELIVERABLE-RESULT'
+
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                id: testResultId,
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const lastResult = await getLastResult()
+        assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
+          resultWorkflowStatus: 'Deliverable',
+        })
+        assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
+      })
+    })
+
+    describe('when a workflow status has been specified in the result payload', () => {
+      it('should set the workflow status of the result accordingly', async () => {
+        const { basicDevicePayload, deviceAuth } = context
+
+        const testResultId = 'UNIQUE-ID-WITH-WORKFLOW-RESULT'
+
+        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                id: testResultId,
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+                workflow: { status: { id: 'Acknowledged' } },
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const lastResult = await getLastResult()
+        assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
+          resultWorkflowStatus: 'Acknowledged',
+        })
+        assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
+      })
+    })
+
+    describe('when the result comes from a site that has location data saved', () => {
+      describe('and the result has NO coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates and geography of the result to those of the site/device', async () => {
+          const { now, basicDevicePayload, deviceAuth, apiKey } = context
+          const latitude = Math.random() * 360
+          const longitude = Math.random() * 360
+          const deviceLocationDetails = await knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .join('Site as s', 'd.siteId', 's.id')
+            .innerJoin('Geography as g', function () {
+              this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+            })
+            .join('Country as c', 'g.countryId', 'c.id')
+            .where({ 'dak.token': apiKey })
+            .first(
+              'd.id',
+              's.id as siteId',
+              'g.id as geographyId',
+              'c.id as countryId'
+            )
+          const { id: geographyId } = await knex('Geography')
+            .where('countryId', deviceLocationDetails.countryId)
+            .whereNotNull('stateId')
+            .whereNotNull('lgaId')
+            .orderBy('id', 'desc')
+            .first('id')
+          await knex('Site')
+            .where({ id: deviceLocationDetails.siteId })
+            .update({ latitude, longitude, geographyId })
+          const gpsCoordsMissingResultId = 'GXCONNECT-ID-WITHOUT-GPS-COORDS'
+          const testStartedOn = setMilliseconds(
+            subMinutes(
+              subHours(now, Math.floor(Math.random() * 24)),
+              Math.floor(Math.random() * 60)
+            ),
+            0
+          )
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: gpsCoordsMissingResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  }),
+                }
+              )
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = await getLastResult()
+          const resultSite = await knex('Site')
+            .where({ id: lastResult.siteId })
+            .first()
+          expect(lastResult).to.containSubset({
+            latitude: resultSite.latitude,
+            longitude: resultSite.longitude,
+            geographyId: resultSite.geographyId,
+          })
+        })
+      })
+
+      describe('and the result HAS coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates of the ones specified in the payload', async () => {
+          const { now, deviceAuth, apiKey } = context
+          const siteLatitude = Math.random() * 360
+          const siteLongitude = Math.random() * 360
+          const deviceLocationDetails = await knex('DeviceApiKey as dak')
+            .join('Device as d', 'dak.DeviceId', 'd.id')
+            .join('Site as s', 'd.siteId', 's.id')
+            .innerJoin('Geography as g', function () {
+              this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+            })
+            .join('Country as c', 'g.countryId', 'c.id')
+            .where({ 'dak.token': apiKey })
+            .first(
+              'd.id',
+              's.id as siteId',
+              'g.id as geographyId',
+              'c.id as countryId'
+            )
+          const { id: geographyId } = await knex('Geography')
+            .where('countryId', deviceLocationDetails.countryId)
+            .whereNotNull('stateId')
+            .whereNotNull('lgaId')
+            .orderBy('id', 'desc')
+            .first('id')
+          await knex('Site')
+            .where({ id: deviceLocationDetails.siteId })
+            .update({
+              latitude: siteLatitude,
+              longitude: siteLongitude,
+              geographyId,
+            })
+
+          const gpsCoordsInResultId = 'GXCONNECT-ID-WITH-GPS-COORDS'
+          const resultLatitude = Math.random() * 360
+          const resultLongitude = Math.random() * 360
+          assert.notEqual(siteLatitude, resultLatitude)
+          assert.notEqual(siteLongitude, resultLongitude)
+          const testStartedOn = setMilliseconds(
+            subMinutes(
+              subHours(now, Math.floor(Math.random() * 24)),
+              Math.floor(Math.random() * 60)
+            ),
+            0
+          )
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign(
+                {},
+                _.assign({}, basicDevicePayload, basicResultPayload),
+                {
+                  result: _.assign({}, basicResultPayload.result, {
+                    id: gpsCoordsInResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    instrument: {
+                      serial: '512934',
+                      module: {
+                        serial: '654321',
+                        name: 'A1',
+                      },
+                    },
+                    location: {
+                      latitude: resultLatitude,
+                      longitude: resultLongitude,
                     },
                   }),
                 }
@@ -2197,527 +2395,260 @@ describe('Device API routes for GxConnect Devices', () => {
             .catch(assert.fail)
 
           const lastResult = await getLastResult()
-          assert.deepEqual(
-            _.pick(
-              lastResult,
-              'errorCode',
-              'resultCategory1',
-              'resultWorkflowStatus'
-            ),
-            {
-              errorCode,
-              resultCategory1: 'Error',
-              resultWorkflowStatus: 'Error',
-            }
-          )
-          assert.equal(lastResult.resultData.geneXpertTestId, errorTestResultId)
-        }))
-    })
-
-    describe('when no workflow status has been specified in the result payload', () => {
-      it('should default the workflow status to "Deliverable"', () =>
-        runTest(async () => {
-          const { basicDevicePayload, deviceAuth } = context
-
-          const testResultId = 'UNIQUE-ID-WITH-DELIVERABLE-RESULT'
-
-          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign(
-                {},
-                _.assign({}, basicDevicePayload, basicResultPayload),
-                {
-                  result: _.assign({}, basicResultPayload.result, {
-                    id: testResultId,
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                  }),
-                }
-              )
-            )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const lastResult = await getLastResult()
-          assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
-            resultWorkflowStatus: 'Deliverable',
-          })
-          assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
-        }))
-    })
-
-    describe('when a workflow status has been specified in the result payload', () => {
-      it('should set the workflow status of the result accordingly', () =>
-        runTest(async () => {
-          const { basicDevicePayload, deviceAuth } = context
-
-          const testResultId = 'UNIQUE-ID-WITH-WORKFLOW-RESULT'
-
-          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign(
-                {},
-                _.assign({}, basicDevicePayload, basicResultPayload),
-                {
-                  result: _.assign({}, basicResultPayload.result, {
-                    id: testResultId,
-                    startedOn: testStartedOn,
-                    endedOn: testEndedOn,
-                    workflow: { status: { id: 'Acknowledged' } },
-                  }),
-                }
-              )
-            )
-            .then(res => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const lastResult = await getLastResult()
-          assert.deepEqual(_.pick(lastResult, 'resultWorkflowStatus'), {
-            resultWorkflowStatus: 'Acknowledged',
-          })
-          assert.equal(lastResult.resultData.geneXpertTestId, testResultId)
-        }))
-    })
-
-    describe('when the result comes from a site that has location data saved', () => {
-      describe('and the result has NO coordinates specified in the payload', () => {
-        it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
-          runTest(async knex => {
-            const { now, basicDevicePayload, deviceAuth, apiKey } = context
-            const latitude = Math.random() * 360
-            const longitude = Math.random() * 360
-            const deviceLocationDetails = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function () {
-                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-              })
-              .join('Country as c', 'g.countryId', 'c.id')
-              .where({ 'dak.token': apiKey })
-              .first(
-                'd.id',
-                's.id as siteId',
-                'g.id as geographyId',
-                'c.id as countryId'
-              )
-            const { id: geographyId } = await knex('Geography')
-              .where('countryId', deviceLocationDetails.countryId)
-              .whereNotNull('stateId')
-              .whereNotNull('lgaId')
-              .orderBy('id', 'desc')
-              .first('id')
-            await knex('Site')
-              .where({ id: deviceLocationDetails.siteId })
-              .update({ latitude, longitude, geographyId })
-            const gpsCoordsMissingResultId = 'GXCONNECT-ID-WITHOUT-GPS-COORDS'
-            const testStartedOn = setMilliseconds(
-              subMinutes(
-                subHours(now, Math.floor(Math.random() * 24)),
-                Math.floor(Math.random() * 60)
-              ),
-              0
-            )
-            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-
-            await server
-              .post('/device')
-              .set('Authorization', deviceAuth)
-              .send(
-                _.assign(
-                  {},
-                  _.assign({}, basicDevicePayload, basicResultPayload),
-                  {
-                    result: _.assign({}, basicResultPayload.result, {
-                      id: gpsCoordsMissingResultId,
-                      startedOn: testStartedOn,
-                      endedOn: testEndedOn,
-                    }),
-                  }
-                )
-              )
-              .then(res => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
-              })
-              .catch(assert.fail)
-
-            const lastResult = await getLastResult()
-            const resultSite = await knex('Site')
-              .where({ id: lastResult.siteId })
-              .first()
-            expect(lastResult).to.containSubset({
-              latitude: resultSite.latitude,
-              longitude: resultSite.longitude,
-              geographyId: resultSite.geographyId,
-            })
-          }))
-      })
-
-      describe('and the result HAS coordinates specified in the payload', () => {
-        it('should set the the GPS coordinates of the ones specified in the payload', () =>
-          runTest(async knex => {
-            const { now, deviceAuth, apiKey } = context
-            const siteLatitude = Math.random() * 360
-            const siteLongitude = Math.random() * 360
-            const deviceLocationDetails = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function () {
-                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-              })
-              .join('Country as c', 'g.countryId', 'c.id')
-              .where({ 'dak.token': apiKey })
-              .first(
-                'd.id',
-                's.id as siteId',
-                'g.id as geographyId',
-                'c.id as countryId'
-              )
-            const { id: geographyId } = await knex('Geography')
-              .where('countryId', deviceLocationDetails.countryId)
-              .whereNotNull('stateId')
-              .whereNotNull('lgaId')
-              .orderBy('id', 'desc')
-              .first('id')
-            await knex('Site')
-              .where({ id: deviceLocationDetails.siteId })
-              .update({
-                latitude: siteLatitude,
-                longitude: siteLongitude,
-                geographyId,
-              })
-
-            const gpsCoordsInResultId = 'GXCONNECT-ID-WITH-GPS-COORDS'
-            const resultLatitude = Math.random() * 360
-            const resultLongitude = Math.random() * 360
-            assert.notEqual(siteLatitude, resultLatitude)
-            assert.notEqual(siteLongitude, resultLongitude)
-            const testStartedOn = setMilliseconds(
-              subMinutes(
-                subHours(now, Math.floor(Math.random() * 24)),
-                Math.floor(Math.random() * 60)
-              ),
-              0
-            )
-            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-
-            await server
-              .post('/device')
-              .set('Authorization', deviceAuth)
-              .send(
-                _.assign(
-                  {},
-                  _.assign({}, basicDevicePayload, basicResultPayload),
-                  {
-                    result: _.assign({}, basicResultPayload.result, {
-                      id: gpsCoordsInResultId,
-                      startedOn: testStartedOn,
-                      endedOn: testEndedOn,
-                      instrument: {
-                        serial: '512934',
-                        module: {
-                          serial: '654321',
-                          name: 'A1',
-                        },
-                      },
-                      location: {
-                        latitude: resultLatitude,
-                        longitude: resultLongitude,
-                      },
-                    }),
-                  }
-                )
-              )
-              .then(res => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
-              })
-              .catch(assert.fail)
-
-            const lastResult = await getLastResult()
-            const resultSite = await knex('Site')
-              .where({ id: lastResult.siteId })
-              .first()
-            assert.notEqual(lastResult.latitude, resultSite.latitude)
-            assert.notEqual(lastResult.longitude, resultSite.longitude)
-            assert.equal(lastResult.geographyId, geographyId)
-          }))
+          const resultSite = await knex('Site')
+            .where({ id: lastResult.siteId })
+            .first()
+          assert.notEqual(lastResult.latitude, resultSite.latitude)
+          assert.notEqual(lastResult.longitude, resultSite.longitude)
+          assert.equal(lastResult.geographyId, geographyId)
+        })
       })
     })
 
     describe('when the result was previously sent', () => {
       describe('incomplete with no end time', () => {
         describe('and is sent again with an end time and a result', () => {
-          it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
-            runTest(async () => {
-              const { deviceAuth, now } = context
-              const instrumentSerial = '803165'
-              const cartridgeSerial = '725194650'
-              const startedOnDate = setMilliseconds(now, 0)
-              const startedOn = dateFormat(
-                startedOnDate,
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              )
-              const startedOnDateInUtc = getLocalDateTimeStringInUtc(
-                startedOn.replace('Z', ''),
-                'America/New_York'
-              )
+          it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", async () => {
+            const { deviceAuth, now } = context
+            const instrumentSerial = '803165'
+            const cartridgeSerial = '725194650'
+            const startedOnDate = setMilliseconds(now, 0)
+            const startedOn = dateFormat(
+              startedOnDate,
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            )
+            const startedOnDateInUtc = getLocalDateTimeStringInUtc(
+              startedOn.replace('Z', ''),
+              'America/New_York'
+            )
 
-              const incompleteResultPayload = _.merge(
-                {},
-                basicDevicePayload,
-                { name: deviceName },
-                basicResultPayload,
-                {
-                  result: {
-                    startedOn,
-                    endedOn: null,
-                    instrument: {
-                      serial: instrumentSerial,
-                    },
-                    consumable: {
-                      serial: cartridgeSerial,
-                    },
-                    data: { resultText: 'NO RESULT' },
+            const incompleteResultPayload = _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  startedOn,
+                  endedOn: null,
+                  instrument: {
+                    serial: instrumentSerial,
                   },
-                }
-              )
-              delete incompleteResultPayload.result.id
-              // Initial incomplete result details
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(incompleteResultPayload)
-                .then(res => {
-                  assert.equal(res.status, 200)
-                })
-                .catch(assert.fail)
-
-              const incompleteResult = await getLastResult()
-              expect(incompleteResult).to.containSubset({
-                resultCategory1: 'NoResult',
-                resultCategory2: null,
-                startedOn: startedOnDateInUtc,
-                endedOn: null,
-                resultData: {
-                  resultText: 'NO RESULT',
-                },
-              })
-
-              const endedOnDate = addMinutes(startedOnDate, 103)
-              const endedOn = dateFormat(
-                endedOnDate,
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              )
-              const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-                endedOn.replace('Z', ''),
-                'America/New_York'
-              )
-
-              const completeResultPayload = _.merge(
-                {},
-                incompleteResultPayload,
-                {
-                  result: {
-                    endedOn,
-                    data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+                  consumable: {
+                    serial: cartridgeSerial,
                   },
-                }
-              )
-              // Then complete result details
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(completeResultPayload)
-                .then(res => {
-                  assert.equal(res.status, 200)
-                })
-                .catch(assert.fail)
-
-              const completeResult = await getLastResult()
-              expect(completeResult).to.containSubset({
-                resultCategory1: 'Detected',
-                resultCategory2: 'Indeterminate',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
-                resultData: {
-                  resultText: 'DETECTED MEDIUM|INDETERMINATE|',
+                  data: { resultText: 'NO RESULT' },
                 },
+              }
+            )
+            delete incompleteResultPayload.result.id
+            // Initial incomplete result details
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(incompleteResultPayload)
+              .then(res => {
+                assert.equal(res.status, 200)
               })
-              assert.equal(completeResult.id, incompleteResult.id)
-              assert.notEqual(
-                completeResult.externalId,
-                incompleteResult.externalId
-              )
-            }))
+              .catch(assert.fail)
+
+            const incompleteResult = await getLastResult()
+            expect(incompleteResult).to.containSubset({
+              resultCategory1: 'NoResult',
+              resultCategory2: null,
+              startedOn: startedOnDateInUtc,
+              endedOn: null,
+              resultData: {
+                resultText: 'NO RESULT',
+              },
+            })
+
+            const endedOnDate = addMinutes(startedOnDate, 103)
+            const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            const endedOnDateInUtc = getLocalDateTimeStringInUtc(
+              endedOn.replace('Z', ''),
+              'America/New_York'
+            )
+
+            const completeResultPayload = _.merge({}, incompleteResultPayload, {
+              result: {
+                endedOn,
+                data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+              },
+            })
+            // Then complete result details
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(completeResultPayload)
+              .then(res => {
+                assert.equal(res.status, 200)
+              })
+              .catch(assert.fail)
+
+            const completeResult = await getLastResult()
+            expect(completeResult).to.containSubset({
+              resultCategory1: 'Detected',
+              resultCategory2: 'Indeterminate',
+              startedOn: startedOnDateInUtc,
+              endedOn: endedOnDateInUtc,
+              resultData: {
+                resultText: 'DETECTED MEDIUM|INDETERMINATE|',
+              },
+            })
+            assert.equal(completeResult.id, incompleteResult.id)
+            assert.notEqual(
+              completeResult.externalId,
+              incompleteResult.externalId
+            )
+          })
         })
       })
 
       describe('complete with result', () => {
         describe('and is sent again with no result in the result text', () => {
-          it('should ignore the result data that has been sent', () =>
-            runTest(async () => {
-              const { deviceAuth, now } = context
-              const instrumentSerial = '803165'
-              const cartridgeSerial = '725194660'
-              const startedOnDate = setMilliseconds(now, 0)
-              const startedOn = dateFormat(
-                startedOnDate,
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              )
-              const startedOnDateInUtc = getLocalDateTimeStringInUtc(
-                startedOn.replace('Z', ''),
-                'America/New_York'
-              )
+          it('should ignore the result data that has been sent', async () => {
+            const { deviceAuth, now } = context
+            const instrumentSerial = '803165'
+            const cartridgeSerial = '725194660'
+            const startedOnDate = setMilliseconds(now, 0)
+            const startedOn = dateFormat(
+              startedOnDate,
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            )
+            const startedOnDateInUtc = getLocalDateTimeStringInUtc(
+              startedOn.replace('Z', ''),
+              'America/New_York'
+            )
 
-              const endedOnDate = addMinutes(startedOnDate, 103)
-              const endedOn = dateFormat(
-                endedOnDate,
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              )
-              const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-                endedOn.replace('Z', ''),
-                'America/New_York'
-              )
+            const endedOnDate = addMinutes(startedOnDate, 103)
+            const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+            const endedOnDateInUtc = getLocalDateTimeStringInUtc(
+              endedOn.replace('Z', ''),
+              'America/New_York'
+            )
 
-              const completeResultPayload = _.merge(
-                {},
-                basicDevicePayload,
-                { name: deviceName },
-                basicResultPayload,
-                {
-                  result: {
-                    startedOn,
-                    endedOn,
-                    instrument: {
-                      serial: instrumentSerial,
-                    },
-                    consumable: {
-                      serial: cartridgeSerial,
-                    },
-                    data: {
-                      resultText:
-                        'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
-                    },
+            const completeResultPayload = _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  startedOn,
+                  endedOn,
+                  instrument: {
+                    serial: instrumentSerial,
                   },
-                }
+                  consumable: {
+                    serial: cartridgeSerial,
+                  },
+                  data: {
+                    resultText:
+                      'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                  },
+                },
+              }
+            )
+            // Initial complete result details
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(completeResultPayload)
+              .then(res => {
+                assert.equal(res.status, 200)
+              })
+              .catch(assert.fail)
+            const result1 = await getLastResult()
+            expect(result1).to.containSubset({
+              resultCategory1: 'Detected',
+              resultCategory2: 'NotDetected',
+              startedOn: startedOnDateInUtc,
+              endedOn: endedOnDateInUtc,
+              resultData: {
+                resultText: 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+              },
+            })
+
+            // Then send NO RESULT
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'NO RESULT|NO RESULT|' },
+                  },
+                })
               )
-              // Initial complete result details
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(completeResultPayload)
-                .then(res => {
-                  assert.equal(res.status, 200)
-                })
-                .catch(assert.fail)
-              const result1 = await getLastResult()
-              expect(result1).to.containSubset({
-                resultCategory1: 'Detected',
-                resultCategory2: 'NotDetected',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
-                resultData: {
-                  resultText:
-                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
-                },
+              .then(res => {
+                assert.equal(res.status, 409)
               })
+              .catch(assert.fail)
+            const result2 = await getLastResult()
+            expect(result2).to.containSubset({
+              resultCategory1: 'Detected',
+              resultCategory2: 'NotDetected',
+              startedOn: startedOnDateInUtc,
+              endedOn: endedOnDateInUtc,
+              resultData: {
+                resultText: 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+              },
+            })
+            assert.equal(result2.id, result1.id)
 
-              // Then send NO RESULT
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(
-                  _.merge({}, completeResultPayload, {
-                    result: {
-                      data: { resultText: 'NO RESULT|NO RESULT|' },
-                    },
-                  })
-                )
-                .then(res => {
-                  assert.equal(res.status, 409)
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'NO RESULT' },
+                  },
                 })
-                .catch(assert.fail)
-              const result2 = await getLastResult()
-              expect(result2).to.containSubset({
-                resultCategory1: 'Detected',
-                resultCategory2: 'NotDetected',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
-                resultData: {
-                  resultText:
-                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
-                },
+              )
+              .then(res => {
+                assert.equal(res.status, 409)
               })
-              assert.equal(result2.id, result1.id)
+              .catch(assert.fail)
+            const result3 = await getLastResult()
+            expect(result3).to.containSubset({
+              resultCategory1: 'Detected',
+              resultCategory2: 'NotDetected',
+              startedOn: startedOnDateInUtc,
+              endedOn: endedOnDateInUtc,
+              resultData: {
+                resultText: 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+              },
+            })
+            assert.equal(result3.id, result1.id)
 
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(
-                  _.merge({}, completeResultPayload, {
-                    result: {
-                      data: { resultText: 'NO RESULT' },
-                    },
-                  })
-                )
-                .then(res => {
-                  assert.equal(res.status, 409)
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'MTB DETECTED MEDIUM|NO RESULT' },
+                  },
                 })
-                .catch(assert.fail)
-              const result3 = await getLastResult()
-              expect(result3).to.containSubset({
-                resultCategory1: 'Detected',
-                resultCategory2: 'NotDetected',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
-                resultData: {
-                  resultText:
-                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
-                },
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
               })
-              assert.equal(result3.id, result1.id)
-
-              await server
-                .post('/device')
-                .set('Authorization', deviceAuth)
-                .send(
-                  _.merge({}, completeResultPayload, {
-                    result: {
-                      data: { resultText: 'MTB DETECTED MEDIUM|NO RESULT' },
-                    },
-                  })
-                )
-                .then(res => {
-                  assert.equal(res.status, 200)
-                })
-                .catch(assert.fail)
-              const result4 = await getLastResult()
-              expect(result4).to.containSubset({
-                resultCategory1: 'Detected',
-                resultCategory2: 'NoResult',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
-                resultData: {
-                  resultText: 'MTB DETECTED MEDIUM|NO RESULT',
-                },
-              })
-              assert.equal(result4.id, result1.id)
-            }))
+              .catch(assert.fail)
+            const result4 = await getLastResult()
+            expect(result4).to.containSubset({
+              resultCategory1: 'Detected',
+              resultCategory2: 'NoResult',
+              startedOn: startedOnDateInUtc,
+              endedOn: endedOnDateInUtc,
+              resultData: {
+                resultText: 'MTB DETECTED MEDIUM|NO RESULT',
+              },
+            })
+            assert.equal(result4.id, result1.id)
+          })
         })
       })
     })
@@ -2733,27 +2664,154 @@ describe('Device API routes for GxConnect Devices', () => {
       deviceSerialNumber,
     })
     beforeEach(context.beforeRegisterAndSetDevice)
-    const { runTest } = context
+
     afterEach(context.afterCleanUp)
 
-    it('should create inventory items that do not exist', () =>
-      runTest(async knex => {
+    it('should create inventory items that do not exist', async () => {
+      const { basicDevicePayload, deviceAuth, site, now } = context
+      const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+        .where({ siteId: site.id })
+        .select()
+      assert.isEmpty(inventoryItemsAtSiteBefore)
+
+      const startedOn = subHours(subDays(now, 1), 2)
+      const endedOn = subHours(now, 2)
+      const expirationDate = dateFormat(
+        addYears(now, 1).setHours(0, 0, 0, 0),
+        "yyyy-MM-dd'T'HH:mm:ss'Z'"
+      )
+      const consumableName = 'Xpert HIV-1 Qual Cartridge'
+      const consumableReason = 'Captured'
+      const initialQuantity = 100
+      const quantity = 5
+
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, basicDevicePayload, {
+            operation: {
+              startedOn,
+              endedOn,
+              data: {
+                inventoryChanges: [
+                  {
+                    consumableName,
+                    consumableReasonName: consumableReason,
+                    quantity,
+                    resultingQuantityOnHand: initialQuantity + quantity,
+                    dateChanged: startedOn,
+                    expirationDate,
+                  },
+                ],
+              },
+            },
+          })
+        )
+        .then(res => {
+          assert.equal(res.status, 200, res.text)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
+
+      const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ siteId: site.id })
+        .select(
+          'ii.id',
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      assert.deepEqual(
+        _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+          _.omit(inventoryItem, 'id')
+        ),
+        [
+          {
+            consumableName,
+            inTransitFromSiteId: null,
+            lotNumber: null,
+            expiresOn: new Date(expirationDate),
+            quantityOnHand: _.max([0, initialQuantity + quantity]),
+          },
+        ]
+      )
+
+      const inventoryLog = await knex('InventoryLog as il')
+        .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+        .join('Consumable as c', 'il.consumableId', 'c.id')
+        .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+        .select(
+          'c.name as consumableName',
+          'il.siteId',
+          'cr.name as consumableReason',
+          'il.resultId',
+          'il.operation',
+          'il.lotNumber',
+          'il.expiresOn',
+          'il.quantity',
+          'il.notes',
+          'il.adjustedFrom',
+          'il.adjustedTo'
+        )
+
+      assert.deepEqual(inventoryLog, [
+        {
+          consumableName,
+          siteId: site.id,
+          consumableReason,
+          resultId: null,
+          operation: 'add from GxConnect',
+          lotNumber: null,
+          expiresOn: new Date(expirationDate),
+          quantity,
+          notes: null,
+          adjustedFrom: setMilliseconds(startedOn, 0),
+          adjustedTo: null,
+        },
+      ])
+    })
+
+    describe('inventory update', () => {
+      const initialQuantityOnHand = 100
+      beforeEach(async () => {
+        const {
+          basicDevicePayload,
+          site: { id: siteId },
+        } = context
+        const consumableAssay = await knex('ConsumableAssay as ca')
+          .join('Assay as a', 'ca.assayId', 'a.id')
+          .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+          .where({ 'dt.externalId': basicDevicePayload.type.id })
+          .andWhere('ca.quantity', '>', 0)
+          .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
+
+        assert.isNotEmpty(consumableAssay)
+        assert.isAbove(consumableAssay.quantity, 0)
+
+        const expiryDate = new Date(
+          addYears(new Date(), 1).setHours(0, 0, 0, 0)
+        )
+        await knex('InventoryItem').insert({
+          consumableId: consumableAssay.consumableId,
+          siteId,
+          expiresOn: expiryDate,
+          quantityOnHand: initialQuantityOnHand,
+        })
+      })
+
+      it('should ignore changes for consumables that are unknown', async () => {
         const { basicDevicePayload, deviceAuth, site, now } = context
         const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .select()
-        assert.isEmpty(inventoryItemsAtSiteBefore)
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const expirationDate = dateFormat(
-          addYears(now, 1).setHours(0, 0, 0, 0),
-          "yyyy-MM-dd'T'HH:mm:ss'Z'"
-        )
-        const consumableName = 'Xpert HIV-1 Qual Cartridge'
-        const consumableReason = 'Captured'
-        const initialQuantity = 100
-        const quantity = 5
+        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
 
         await server
           .post('/device')
@@ -2766,10 +2824,10 @@ describe('Device API routes for GxConnect Devices', () => {
                 data: {
                   inventoryChanges: [
                     {
-                      consumableName,
-                      consumableReasonName: consumableReason,
-                      quantity,
-                      resultingQuantityOnHand: initialQuantity + quantity,
+                      consumableName: 'Unknown consumable type',
+                      consumableReasonName: 'Captured',
+                      quantity: 12,
+                      resultingQuantityOnHand: 112,
                       dateChanged: startedOn,
                       expirationDate,
                     },
@@ -2784,621 +2842,76 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem')
           .where({ siteId: site.id })
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.deepEqual(
-          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
-            _.omit(inventoryItem, 'id')
-          ),
-          [
-            {
-              consumableName,
-              inTransitFromSiteId: null,
-              lotNumber: null,
-              expiresOn: new Date(expirationDate),
-              quantityOnHand: _.max([0, initialQuantity + quantity]),
-            },
-          ]
-        )
+          .select()
+        assert.deepEqual(inventoryItemsAtSiteBefore, inventoryItemsAtSiteAfter)
+      })
 
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .select(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-
-        assert.deepEqual(inventoryLog, [
-          {
-            consumableName,
-            siteId: site.id,
-            consumableReason,
-            resultId: null,
-            operation: 'add from GxConnect',
-            lotNumber: null,
-            expiresOn: new Date(expirationDate),
-            quantity,
-            notes: null,
-            adjustedFrom: setMilliseconds(startedOn, 0),
-            adjustedTo: null,
-          },
-        ])
-      }))
-
-    describe('inventory update', () => {
-      const initialQuantityOnHand = 100
-      beforeEach(() =>
-        run(async knex => {
-          const {
-            basicDevicePayload,
-            site: { id: siteId },
-          } = context
-          const consumableAssay = await knex('ConsumableAssay as ca')
-            .join('Assay as a', 'ca.assayId', 'a.id')
-            .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-            .where({ 'dt.externalId': basicDevicePayload.type.id })
-            .andWhere('ca.quantity', '>', 0)
-            .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
-
-          assert.isNotEmpty(consumableAssay)
-          assert.isAbove(consumableAssay.quantity, 0)
-
-          const expiryDate = new Date(
-            addYears(new Date(), 1).setHours(0, 0, 0, 0)
-          )
-          await knex('InventoryItem').insert({
-            consumableId: consumableAssay.consumableId,
-            siteId,
-            expiresOn: expiryDate,
-            quantityOnHand: initialQuantityOnHand,
-          })
-        })
-      )
-      it('should ignore changes for consumables that are unknown', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, site, now } = context
-          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-            .where({ siteId: site.id })
-            .select()
-
-          const startedOn = subHours(subDays(now, 1), 2)
-          const endedOn = subHours(now, 2)
-          const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: {
-                    inventoryChanges: [
-                      {
-                        consumableName: 'Unknown consumable type',
-                        consumableReasonName: 'Captured',
-                        quantity: 12,
-                        resultingQuantityOnHand: 112,
-                        dateChanged: startedOn,
-                        expirationDate,
-                      },
-                    ],
-                  },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfter = await knex('InventoryItem')
-            .where({ siteId: site.id })
-            .select()
-          assert.deepEqual(
-            inventoryItemsAtSiteBefore,
-            inventoryItemsAtSiteAfter
-          )
-        }))
-
-      it('should accept all types of GeneXpert cartridges', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, site, now } = context
-
-          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-            .where({ siteId: site.id })
-            .pluck('id')
-
-          const startedOn = subHours(subDays(now, 1), 2)
-          const endedOn = subHours(now, 2)
-          const consumableReason = 'Captured'
-
-          const inventoryChanges = [
-            {
-              consumableName: 'GeneXpert TB Cartridge',
-              consumableReasonName: consumableReason,
-              quantity: 13,
-              resultingQuantityOnHand: 86,
-              dateChanged: addHours(startedOn, 1),
-              expirationDate: dateFormat(
-                new Date(subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)),
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              ),
-            },
-            {
-              consumableName: 'GeneXpert Ebola Cartridge',
-              consumableReasonName: consumableReason,
-              quantity: 3,
-              resultingQuantityOnHand: 21,
-              dateChanged: addHours(startedOn, 2),
-              expirationDate: dateFormat(
-                new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              ),
-            },
-            {
-              consumableName: 'Xpert HIV-1 Qual Cartridge',
-              consumableReasonName: consumableReason,
-              quantity: 44,
-              resultingQuantityOnHand: 50,
-              dateChanged: addHours(startedOn, 3),
-              expirationDate: dateFormat(
-                new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              ),
-            },
-            {
-              consumableName: 'Xpert HIV-1 Viral Load Cartridge',
-              consumableReasonName: consumableReason,
-              quantity: 1,
-              resultingQuantityOnHand: 13,
-              dateChanged: addHours(startedOn, 4),
-              expirationDate: dateFormat(
-                new Date(subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)),
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              ),
-            },
-            {
-              consumableName: 'GeneXpert TB Ultra Cartridge',
-              consumableReasonName: consumableReason,
-              quantity: 26,
-              resultingQuantityOnHand: 41,
-              dateChanged: addHours(startedOn, 5),
-              expirationDate: dateFormat(
-                new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
-                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              ),
-            },
-          ]
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: { inventoryChanges },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.deepEqual(
-            _.sortBy(
-              _.map(inventoryItemsAtSiteAfter, inventoryItem =>
-                _.omit(inventoryItem, 'id')
-              ),
-              'consumableName'
-            ),
-            _.sortBy(
-              _.map(inventoryChanges, inventoryChange => ({
-                consumableName: inventoryChange.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: new Date(inventoryChange.expirationDate),
-                quantityOnHand: inventoryChange.resultingQuantityOnHand,
-              })),
-              'consumableName'
-            )
-          )
-
-          const inventoryLog = await knex('InventoryLog as il')
-            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-            .join('Consumable as c', 'il.consumableId', 'c.id')
-            .whereIn(
-              'il.inventoryItemId',
-              _.map(inventoryItemsAtSiteAfter, 'id')
-            )
-            .select(
-              'c.name as consumableName',
-              'il.siteId',
-              'cr.name as consumableReason',
-              'il.resultId',
-              'il.operation',
-              'il.lotNumber',
-              'il.expiresOn',
-              'il.quantity',
-              'il.notes',
-              'il.adjustedFrom',
-              'il.adjustedTo'
-            )
-
-          assert.deepEqual(
-            _.sortBy(inventoryLog, ['consumableName', 'consumableReason']),
-            _.sortBy(
-              _.map(inventoryChanges, inventoryChange => ({
-                consumableName: inventoryChange.consumableName,
-                siteId: site.id,
-                consumableReason,
-                resultId: null,
-                operation: 'add from GxConnect',
-                lotNumber: null,
-                expiresOn: new Date(inventoryChange.expirationDate),
-                quantity: Math.abs(inventoryChange.quantity),
-                notes: null,
-                adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-                adjustedTo: null,
-              })),
-              ['consumableName', 'consumableReason']
-            )
-          )
-        }))
-
-      it('should increase the quantity inventory items that do exist', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, site, now } = context
-          const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .orderBy(['ii.createdOn', 'ii.id'])
-            .first(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.isNotEmpty(inventoryItemAtSiteBefore)
-
-          const startedOn = subHours(subDays(now, 1), 2)
-          const endedOn = subHours(now, 2)
-          const consumableReason = 'Captured'
-          const quantity = 13
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: {
-                    inventoryChanges: [
-                      {
-                        consumableName:
-                          inventoryItemAtSiteBefore.consumableName,
-                        consumableReasonName: consumableReason,
-                        quantity,
-                        resultingQuantityOnHand:
-                          inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                        dateChanged: startedOn,
-                        expirationDate: inventoryItemAtSiteBefore.expiresOn,
-                      },
-                    ],
-                  },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ 'ii.id': inventoryItemAtSiteBefore.id })
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.deepEqual(
-            _.map(inventoryItemsAtSiteAfter, inventoryItem =>
-              _.omit(inventoryItem, 'id')
-            ),
-            [
-              {
-                consumableName: inventoryItemAtSiteBefore.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: inventoryItemAtSiteBefore.expiresOn,
-                quantityOnHand: _.max([
-                  0,
-                  inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                ]),
-              },
-            ]
-          )
-
-          const inventoryLog = await knex('InventoryLog as il')
-            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-            .join('Consumable as c', 'il.consumableId', 'c.id')
-            .whereIn(
-              'il.inventoryItemId',
-              _.map(inventoryItemsAtSiteAfter, 'id')
-            )
-            .orderBy('il.id', 'desc')
-            .first(
-              'c.name as consumableName',
-              'il.siteId',
-              'cr.name as consumableReason',
-              'il.resultId',
-              'il.operation',
-              'il.lotNumber',
-              'il.expiresOn',
-              'il.quantity',
-              'il.notes',
-              'il.adjustedFrom',
-              'il.adjustedTo'
-            )
-
-          assert.deepEqual(inventoryLog, {
-            consumableName: inventoryItemAtSiteBefore.consumableName,
-            siteId: site.id,
-            consumableReason,
-            resultId: null,
-            operation: 'add from GxConnect',
-            lotNumber: null,
-            expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantity,
-            notes: null,
-            adjustedFrom: setMilliseconds(startedOn, 0),
-            adjustedTo: null,
-          })
-        }))
-
-      it('should decrease the quantity on hand of existing inventory items', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, site, now } = context
-          const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .orderBy(['ii.createdOn', 'ii.id'])
-            .first(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.isNotEmpty(inventoryItemAtSiteBefore)
-
-          const startedOn = subHours(subDays(now, 1), 2)
-          const endedOn = subHours(now, 2)
-          const consumableReason = 'Captured'
-          const quantity = -3
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: {
-                    inventoryChanges: [
-                      {
-                        consumableName:
-                          inventoryItemAtSiteBefore.consumableName,
-                        consumableReasonName: consumableReason,
-                        quantity,
-                        resultingQuantityOnHand:
-                          inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                        dateChanged: startedOn,
-                        expirationDate: inventoryItemAtSiteBefore.expiresOn,
-                      },
-                    ],
-                  },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ 'ii.id': inventoryItemAtSiteBefore.id })
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-
-          assert.deepEqual(
-            _.map(inventoryItemsAtSiteAfter, inventoryItem =>
-              _.omit(inventoryItem, 'id')
-            ),
-            [
-              {
-                consumableName: inventoryItemAtSiteBefore.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: inventoryItemAtSiteBefore.expiresOn,
-                quantityOnHand: _.max([
-                  0,
-                  inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                ]),
-              },
-            ]
-          )
-
-          const inventoryLog = await knex('InventoryLog as il')
-            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-            .join('Consumable as c', 'il.consumableId', 'c.id')
-            .whereIn(
-              'il.inventoryItemId',
-              _.map(inventoryItemsAtSiteAfter, 'id')
-            )
-            .orderBy('il.id', 'desc')
-            .first(
-              'c.name as consumableName',
-              'il.siteId',
-              'cr.name as consumableReason',
-              'il.resultId',
-              'il.operation',
-              'il.lotNumber',
-              'il.expiresOn',
-              'il.quantity',
-              'il.notes',
-              'il.adjustedFrom',
-              'il.adjustedTo'
-            )
-
-          assert.deepEqual(inventoryLog, {
-            consumableName: inventoryItemAtSiteBefore.consumableName,
-            siteId: site.id,
-            consumableReason,
-            resultId: null,
-            operation: 'remove from GxConnect',
-            lotNumber: null,
-            expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantity: Math.abs(quantity),
-            notes: null,
-            adjustedFrom: setMilliseconds(startedOn, 0),
-            adjustedTo: null,
-          })
-        }))
-    })
-
-    it('should accept different reasons', () =>
-      runTest(async knex => {
+      it('should accept all types of GeneXpert cartridges', async () => {
         const { basicDevicePayload, deviceAuth, site, now } = context
 
         const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .pluck('id')
 
-        const startedOn = subDays(now, 1)
-        const endedOn = addHours(startedOn, 2)
+        const startedOn = subHours(subDays(now, 1), 2)
+        const endedOn = subHours(now, 2)
+        const consumableReason = 'Captured'
 
         const inventoryChanges = [
           {
             consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: 'Captured',
+            consumableReasonName: consumableReason,
             quantity: 13,
-            resultingQuantityOnHand: 73,
-            dateChanged: subHours(startedOn, 1),
+            resultingQuantityOnHand: 86,
+            dateChanged: addHours(startedOn, 1),
             expirationDate: dateFormat(
-              new Date(subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)),
+              new Date(subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)),
               "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
             consumableName: 'GeneXpert Ebola Cartridge',
-            consumableReasonName: 'Captured',
-            quantity: -3,
-            resultingQuantityOnHand: 18,
-            dateChanged: subHours(startedOn, 2),
-            expirationDate: dateFormat(
-              new Date(subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)),
-              "yyyy-MM-dd'T'HH:mm:ss'Z'"
-            ),
-          },
-          {
-            consumableName: 'Xpert HIV-1 Qual Cartridge',
-            consumableReasonName: 'Transfer Sent',
-            quantity: -4,
-            resultingQuantityOnHand: 46,
-            dateChanged: subHours(startedOn, 3),
-            expirationDate: dateFormat(
-              new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
-              "yyyy-MM-dd'T'HH:mm:ss'Z'"
-            ),
-          },
-          {
-            consumableName: 'Xpert HIV-1 Viral Load Cartridge',
-            consumableReasonName: 'Transfer Received',
-            quantity: 11,
-            resultingQuantityOnHand: 24,
-            dateChanged: subHours(startedOn, 4),
+            consumableReasonName: consumableReason,
+            quantity: 3,
+            resultingQuantityOnHand: 21,
+            dateChanged: addHours(startedOn, 2),
             expirationDate: dateFormat(
               new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
               "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
-            consumableName: 'GeneXpert TB Ultra Cartridge',
-            consumableReasonName: 'Lost',
-            quantity: -6,
-            resultingQuantityOnHand: 30,
-            dateChanged: subHours(startedOn, 5),
+            consumableName: 'Xpert HIV-1 Qual Cartridge',
+            consumableReasonName: consumableReason,
+            quantity: 44,
+            resultingQuantityOnHand: 50,
+            dateChanged: addHours(startedOn, 3),
             expirationDate: dateFormat(
-              new Date(subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)),
+              new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
               "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
           {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: 'Expired',
-            quantity: -6,
-            resultingQuantityOnHand: 50,
-            dateChanged: subHours(startedOn, 6),
+            consumableName: 'Xpert HIV-1 Viral Load Cartridge',
+            consumableReasonName: consumableReason,
+            quantity: 1,
+            resultingQuantityOnHand: 13,
+            dateChanged: addHours(startedOn, 4),
             expirationDate: dateFormat(
-              new Date(subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)),
+              new Date(subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)),
+              "yyyy-MM-dd'T'HH:mm:ss'Z'"
+            ),
+          },
+          {
+            consumableName: 'GeneXpert TB Ultra Cartridge',
+            consumableReasonName: consumableReason,
+            quantity: 26,
+            resultingQuantityOnHand: 41,
+            dateChanged: addHours(startedOn, 5),
+            expirationDate: dateFormat(
+              new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
               "yyyy-MM-dd'T'HH:mm:ss'Z'"
             ),
           },
@@ -3439,7 +2952,7 @@ describe('Device API routes for GxConnect Devices', () => {
             _.map(inventoryItemsAtSiteAfter, inventoryItem =>
               _.omit(inventoryItem, 'id')
             ),
-            ['consumableName', 'consumableReason', 'expiresOn']
+            'consumableName'
           ),
           _.sortBy(
             _.map(inventoryChanges, inventoryChange => ({
@@ -3449,7 +2962,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expiresOn: new Date(inventoryChange.expirationDate),
               quantityOnHand: inventoryChange.resultingQuantityOnHand,
             })),
-            ['consumableName', 'consumableReason', 'expiresOn']
+            'consumableName'
           )
         )
 
@@ -3472,21 +2985,14 @@ describe('Device API routes for GxConnect Devices', () => {
           )
 
         assert.deepEqual(
-          _.sortBy(inventoryLog, [
-            'consumableName',
-            'consumableReason',
-            'expiresOn',
-          ]),
+          _.sortBy(inventoryLog, ['consumableName', 'consumableReason']),
           _.sortBy(
             _.map(inventoryChanges, inventoryChange => ({
               consumableName: inventoryChange.consumableName,
               siteId: site.id,
-              consumableReason: inventoryChange.consumableReasonName,
+              consumableReason,
               resultId: null,
-              operation:
-                inventoryChange.quantity >= 0
-                  ? 'add from GxConnect'
-                  : 'remove from GxConnect',
+              operation: 'add from GxConnect',
               lotNumber: null,
               expiresOn: new Date(inventoryChange.expirationDate),
               quantity: Math.abs(inventoryChange.quantity),
@@ -3494,44 +3000,31 @@ describe('Device API routes for GxConnect Devices', () => {
               adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
               adjustedTo: null,
             })),
-            ['consumableName', 'consumableReason', 'expiresOn']
+            ['consumableName', 'consumableReason']
           )
         )
-      }))
+      })
 
-    it('should identify lots based on expiration date and adjust the quantity of the correct lot', () =>
-      runTest(async knex => {
+      it('should increase the quantity inventory items that do exist', async () => {
         const { basicDevicePayload, deviceAuth, site, now } = context
-
-        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
-          .pluck('id')
+          .orderBy(['ii.createdOn', 'ii.id'])
+          .first(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.isNotEmpty(inventoryItemAtSiteBefore)
 
-        const startedOn = subDays(now, 5)
-        const endedOn = addHours(startedOn, 2)
-
-        const lot1 = {
-          consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
-          quantity: 73,
-          resultingQuantityOnHand: 73,
-          dateChanged: subHours(startedOn, 2),
-          expirationDate: dateFormat(
-            new Date(subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)),
-            "yyyy-MM-dd'T'HH:mm:ss'Z'"
-          ),
-        }
-        const lot2 = {
-          consumableName: 'GeneXpert TB Cartridge',
-          consumableReasonName: 'Captured',
-          quantity: 38,
-          resultingQuantityOnHand: 38,
-          dateChanged: subHours(startedOn, 2),
-          expirationDate: dateFormat(
-            new Date(subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)),
-            "yyyy-MM-dd'T'HH:mm:ss'Z'"
-          ),
-        }
+        const startedOn = subHours(subDays(now, 1), 2)
+        const endedOn = subHours(now, 2)
+        const consumableReason = 'Captured'
+        const quantity = 13
 
         await server
           .post('/device')
@@ -3541,7 +3034,19 @@ describe('Device API routes for GxConnect Devices', () => {
               operation: {
                 startedOn,
                 endedOn,
-                data: { inventoryChanges: [lot1, lot2] },
+                data: {
+                  inventoryChanges: [
+                    {
+                      consumableName: inventoryItemAtSiteBefore.consumableName,
+                      consumableReasonName: consumableReason,
+                      quantity,
+                      resultingQuantityOnHand:
+                        inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                      dateChanged: startedOn,
+                      expirationDate: inventoryItemAtSiteBefore.expiresOn,
+                    },
+                  ],
+                },
               },
             })
           )
@@ -3552,6 +3057,759 @@ describe('Device API routes for GxConnect Devices', () => {
           .catch(assert.fail)
 
         const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ 'ii.id': inventoryItemAtSiteBefore.id })
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(
+          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+            _.omit(inventoryItem, 'id')
+          ),
+          [
+            {
+              consumableName: inventoryItemAtSiteBefore.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryItemAtSiteBefore.expiresOn,
+              quantityOnHand: _.max([
+                0,
+                inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
+            },
+          ]
+        )
+
+        const inventoryLog = await knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .join('Consumable as c', 'il.consumableId', 'c.id')
+          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+          .orderBy('il.id', 'desc')
+          .first(
+            'c.name as consumableName',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.operation',
+            'il.lotNumber',
+            'il.expiresOn',
+            'il.quantity',
+            'il.notes',
+            'il.adjustedFrom',
+            'il.adjustedTo'
+          )
+
+        assert.deepEqual(inventoryLog, {
+          consumableName: inventoryItemAtSiteBefore.consumableName,
+          siteId: site.id,
+          consumableReason,
+          resultId: null,
+          operation: 'add from GxConnect',
+          lotNumber: null,
+          expiresOn: inventoryItemAtSiteBefore.expiresOn,
+          quantity,
+          notes: null,
+          adjustedFrom: setMilliseconds(startedOn, 0),
+          adjustedTo: null,
+        })
+      })
+
+      it('should decrease the quantity on hand of existing inventory items', async () => {
+        const { basicDevicePayload, deviceAuth, site, now } = context
+        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .orderBy(['ii.createdOn', 'ii.id'])
+          .first(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.isNotEmpty(inventoryItemAtSiteBefore)
+
+        const startedOn = subHours(subDays(now, 1), 2)
+        const endedOn = subHours(now, 2)
+        const consumableReason = 'Captured'
+        const quantity = -3
+
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      consumableName: inventoryItemAtSiteBefore.consumableName,
+                      consumableReasonName: consumableReason,
+                      quantity,
+                      resultingQuantityOnHand:
+                        inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                      dateChanged: startedOn,
+                      expirationDate: inventoryItemAtSiteBefore.expiresOn,
+                    },
+                  ],
+                },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ 'ii.id': inventoryItemAtSiteBefore.id })
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+
+        assert.deepEqual(
+          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+            _.omit(inventoryItem, 'id')
+          ),
+          [
+            {
+              consumableName: inventoryItemAtSiteBefore.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryItemAtSiteBefore.expiresOn,
+              quantityOnHand: _.max([
+                0,
+                inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
+            },
+          ]
+        )
+
+        const inventoryLog = await knex('InventoryLog as il')
+          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+          .join('Consumable as c', 'il.consumableId', 'c.id')
+          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+          .orderBy('il.id', 'desc')
+          .first(
+            'c.name as consumableName',
+            'il.siteId',
+            'cr.name as consumableReason',
+            'il.resultId',
+            'il.operation',
+            'il.lotNumber',
+            'il.expiresOn',
+            'il.quantity',
+            'il.notes',
+            'il.adjustedFrom',
+            'il.adjustedTo'
+          )
+
+        assert.deepEqual(inventoryLog, {
+          consumableName: inventoryItemAtSiteBefore.consumableName,
+          siteId: site.id,
+          consumableReason,
+          resultId: null,
+          operation: 'remove from GxConnect',
+          lotNumber: null,
+          expiresOn: inventoryItemAtSiteBefore.expiresOn,
+          quantity: Math.abs(quantity),
+          notes: null,
+          adjustedFrom: setMilliseconds(startedOn, 0),
+          adjustedTo: null,
+        })
+      })
+    })
+
+    it('should accept different reasons', async () => {
+      const { basicDevicePayload, deviceAuth, site, now } = context
+
+      const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+        .where({ siteId: site.id })
+        .pluck('id')
+
+      const startedOn = subDays(now, 1)
+      const endedOn = addHours(startedOn, 2)
+
+      const inventoryChanges = [
+        {
+          consumableName: 'GeneXpert TB Cartridge',
+          consumableReasonName: 'Captured',
+          quantity: 13,
+          resultingQuantityOnHand: 73,
+          dateChanged: subHours(startedOn, 1),
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          ),
+        },
+        {
+          consumableName: 'GeneXpert Ebola Cartridge',
+          consumableReasonName: 'Captured',
+          quantity: -3,
+          resultingQuantityOnHand: 18,
+          dateChanged: subHours(startedOn, 2),
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          ),
+        },
+        {
+          consumableName: 'Xpert HIV-1 Qual Cartridge',
+          consumableReasonName: 'Transfer Sent',
+          quantity: -4,
+          resultingQuantityOnHand: 46,
+          dateChanged: subHours(startedOn, 3),
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          ),
+        },
+        {
+          consumableName: 'Xpert HIV-1 Viral Load Cartridge',
+          consumableReasonName: 'Transfer Received',
+          quantity: 11,
+          resultingQuantityOnHand: 24,
+          dateChanged: subHours(startedOn, 4),
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          ),
+        },
+        {
+          consumableName: 'GeneXpert TB Ultra Cartridge',
+          consumableReasonName: 'Lost',
+          quantity: -6,
+          resultingQuantityOnHand: 30,
+          dateChanged: subHours(startedOn, 5),
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          ),
+        },
+        {
+          consumableName: 'GeneXpert TB Cartridge',
+          consumableReasonName: 'Expired',
+          quantity: -6,
+          resultingQuantityOnHand: 50,
+          dateChanged: subHours(startedOn, 6),
+          expirationDate: dateFormat(
+            new Date(subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          ),
+        },
+      ]
+
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, basicDevicePayload, {
+            operation: {
+              startedOn,
+              endedOn,
+              data: { inventoryChanges },
+            },
+          })
+        )
+        .then(res => {
+          assert.equal(res.status, 200, res.text)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
+
+      const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ siteId: site.id })
+        .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+        .select(
+          'ii.id',
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      assert.deepEqual(
+        _.sortBy(
+          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+            _.omit(inventoryItem, 'id')
+          ),
+          ['consumableName', 'consumableReason', 'expiresOn']
+        ),
+        _.sortBy(
+          _.map(inventoryChanges, inventoryChange => ({
+            consumableName: inventoryChange.consumableName,
+            inTransitFromSiteId: null,
+            lotNumber: null,
+            expiresOn: new Date(inventoryChange.expirationDate),
+            quantityOnHand: inventoryChange.resultingQuantityOnHand,
+          })),
+          ['consumableName', 'consumableReason', 'expiresOn']
+        )
+      )
+
+      const inventoryLog = await knex('InventoryLog as il')
+        .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+        .join('Consumable as c', 'il.consumableId', 'c.id')
+        .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+        .select(
+          'c.name as consumableName',
+          'il.siteId',
+          'cr.name as consumableReason',
+          'il.resultId',
+          'il.operation',
+          'il.lotNumber',
+          'il.expiresOn',
+          'il.quantity',
+          'il.notes',
+          'il.adjustedFrom',
+          'il.adjustedTo'
+        )
+
+      assert.deepEqual(
+        _.sortBy(inventoryLog, [
+          'consumableName',
+          'consumableReason',
+          'expiresOn',
+        ]),
+        _.sortBy(
+          _.map(inventoryChanges, inventoryChange => ({
+            consumableName: inventoryChange.consumableName,
+            siteId: site.id,
+            consumableReason: inventoryChange.consumableReasonName,
+            resultId: null,
+            operation:
+              inventoryChange.quantity >= 0
+                ? 'add from GxConnect'
+                : 'remove from GxConnect',
+            lotNumber: null,
+            expiresOn: new Date(inventoryChange.expirationDate),
+            quantity: Math.abs(inventoryChange.quantity),
+            notes: null,
+            adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
+            adjustedTo: null,
+          })),
+          ['consumableName', 'consumableReason', 'expiresOn']
+        )
+      )
+    })
+
+    it('should identify lots based on expiration date and adjust the quantity of the correct lot', async () => {
+      const { basicDevicePayload, deviceAuth, site, now } = context
+
+      const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+        .where({ siteId: site.id })
+        .pluck('id')
+
+      const startedOn = subDays(now, 5)
+      const endedOn = addHours(startedOn, 2)
+
+      const lot1 = {
+        consumableName: 'GeneXpert TB Cartridge',
+        consumableReasonName: 'Captured',
+        quantity: 73,
+        resultingQuantityOnHand: 73,
+        dateChanged: subHours(startedOn, 2),
+        expirationDate: dateFormat(
+          new Date(subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)),
+          "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        ),
+      }
+      const lot2 = {
+        consumableName: 'GeneXpert TB Cartridge',
+        consumableReasonName: 'Captured',
+        quantity: 38,
+        resultingQuantityOnHand: 38,
+        dateChanged: subHours(startedOn, 2),
+        expirationDate: dateFormat(
+          new Date(subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)),
+          "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        ),
+      }
+
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, basicDevicePayload, {
+            operation: {
+              startedOn,
+              endedOn,
+              data: { inventoryChanges: [lot1, lot2] },
+            },
+          })
+        )
+        .then(res => {
+          assert.equal(res.status, 200, res.text)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
+
+      const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ siteId: site.id })
+        .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+        .select(
+          'ii.id',
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      assert.deepEqual(
+        _.sortBy(
+          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+            _.omit(inventoryItem, 'id')
+          ),
+          'expiresOn'
+        ),
+        _.sortBy(
+          _.map([lot1, lot2], inventoryChange => ({
+            consumableName: inventoryChange.consumableName,
+            inTransitFromSiteId: null,
+            lotNumber: null,
+            expiresOn: new Date(inventoryChange.expirationDate),
+            quantityOnHand: inventoryChange.resultingQuantityOnHand,
+          })),
+          'expiresOn'
+        )
+      )
+
+      const inventoryLogs = await knex('InventoryLog as il')
+        .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+        .join('Consumable as c', 'il.consumableId', 'c.id')
+        .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
+        .select(
+          'il.id',
+          'c.name as consumableName',
+          'il.siteId',
+          'cr.name as consumableReason',
+          'il.resultId',
+          'il.operation',
+          'il.lotNumber',
+          'il.expiresOn',
+          'il.quantity',
+          'il.notes',
+          'il.adjustedFrom',
+          'il.adjustedTo'
+        )
+
+      assert.deepEqual(
+        _.sortBy(
+          _.map(inventoryLogs, inventoryLog => _.omit(inventoryLog, 'id')),
+          ['consumableName', 'consumableReason', 'expiresOn']
+        ),
+        _.sortBy(
+          _.map([lot1, lot2], inventoryChange => ({
+            consumableName: inventoryChange.consumableName,
+            siteId: site.id,
+            consumableReason: inventoryChange.consumableReasonName,
+            resultId: null,
+            operation:
+              inventoryChange.quantity >= 0
+                ? 'add from GxConnect'
+                : 'remove from GxConnect',
+            lotNumber: null,
+            expiresOn: new Date(inventoryChange.expirationDate),
+            quantity: Math.abs(inventoryChange.quantity),
+            notes: null,
+            adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
+            adjustedTo: null,
+          })),
+          ['consumableName', 'consumableReason', 'expiresOn']
+        )
+      )
+
+      const updateToLot1 = _.assign({}, lot1, {
+        consumableReasonName: 'Stolen',
+        quantity: -3,
+        resultingQuantityOnHand: 70,
+        dateChanged: subHours(startedOn, 1),
+      })
+
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, basicDevicePayload, {
+            operation: {
+              startedOn,
+              endedOn,
+              data: { inventoryChanges: [updateToLot1] },
+            },
+          })
+        )
+        .then(res => {
+          assert.equal(res.status, 200, res.text)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
+
+      const lot1InventoryItem = _.find(inventoryItemsAtSiteAfter, {
+        expiresOn: new Date(lot1.expirationDate),
+      })
+      const lot2InventoryItem = _.find(inventoryItemsAtSiteAfter, {
+        expiresOn: new Date(lot2.expirationDate),
+      })
+      const lot1InventoryItemAfterAdjustment1 = await knex(
+        'InventoryItem as ii'
+      )
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ 'ii.id': lot1InventoryItem.id })
+        .first(
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      const lot2InventoryItemAfterAdjustment1 = await knex(
+        'InventoryItem as ii'
+      )
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ 'ii.id': lot2InventoryItem.id })
+        .first(
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      assert.deepEqual(lot1InventoryItemAfterAdjustment1, {
+        consumableName: lot1.consumableName,
+        inTransitFromSiteId: null,
+        lotNumber: null,
+        expiresOn: new Date(lot1.expirationDate),
+        quantityOnHand: _.max([
+          0,
+          lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+        ]),
+      })
+      assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
+        consumableName: lot2.consumableName,
+        inTransitFromSiteId: null,
+        lotNumber: null,
+        expiresOn: new Date(lot2.expirationDate),
+        quantityOnHand: lot2.resultingQuantityOnHand,
+      })
+
+      const updateToLot2 = _.assign({}, lot2, {
+        consumableReasonName: 'Transfer Received',
+        quantity: 100,
+        resultingQuantityOnHand: 138,
+        dateChanged: subHours(startedOn, 1),
+      })
+
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.assign({}, basicDevicePayload, {
+            operation: {
+              startedOn,
+              endedOn,
+              data: { inventoryChanges: [updateToLot2] },
+            },
+          })
+        )
+        .then(res => {
+          assert.equal(res.status, 200, res.text)
+          assert.typeOf(res.body, 'Object')
+        })
+        .catch(assert.fail)
+
+      const lot1InventoryItemAfterAdjustment2 = await knex(
+        'InventoryItem as ii'
+      )
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ 'ii.id': lot1InventoryItem.id })
+        .first(
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      const lot2InventoryItemAfterAdjustment2 = await knex(
+        'InventoryItem as ii'
+      )
+        .join('Consumable as c', 'ii.consumableId', 'c.id')
+        .where({ 'ii.id': lot2InventoryItem.id })
+        .first(
+          'c.name as consumableName',
+          'ii.inTransitFromSiteId',
+          'ii.lotNumber',
+          'ii.expiresOn',
+          'ii.quantityOnHand'
+        )
+      assert.deepEqual(lot1InventoryItemAfterAdjustment2, {
+        consumableName: lot1.consumableName,
+        inTransitFromSiteId: null,
+        lotNumber: null,
+        expiresOn: new Date(lot1.expirationDate),
+        quantityOnHand: _.max([
+          0,
+          lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+        ]),
+      })
+      assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
+        consumableName: lot2.consumableName,
+        inTransitFromSiteId: null,
+        lotNumber: null,
+        expiresOn: new Date(lot2.expirationDate),
+        quantityOnHand: _.max([
+          0,
+          lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
+        ]),
+      })
+      const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
+        .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+        .join('Consumable as c', 'il.consumableId', 'c.id')
+        .whereIn('il.inventoryItemId', [
+          lot1InventoryItem.id,
+          lot2InventoryItem.id,
+        ])
+        .orderBy('il.id')
+        .select(
+          'c.name as consumableName',
+          'il.siteId',
+          'cr.name as consumableReason',
+          'il.resultId',
+          'il.operation',
+          'il.lotNumber',
+          'il.expiresOn',
+          'il.quantity',
+          'il.notes',
+          'il.adjustedFrom',
+          'il.adjustedTo'
+        )
+      assert.deepEqual(
+        _.sortBy(inventoryLogsForLot1And2, [
+          'consumableName',
+          'consumableReason',
+          'expiresOn',
+        ]),
+        _.sortBy(
+          [
+            {
+              consumableName: lot1.consumableName,
+              siteId: site.id,
+              consumableReason: lot1.consumableReasonName,
+              resultId: null,
+              operation: 'add from GxConnect',
+              lotNumber: null,
+              expiresOn: new Date(lot1.expirationDate),
+              quantity: Math.abs(lot1.resultingQuantityOnHand),
+              notes: null,
+              adjustedFrom: setMilliseconds(lot1.dateChanged, 0),
+              adjustedTo: null,
+            },
+            {
+              consumableName: lot2.consumableName,
+              siteId: site.id,
+              consumableReason: lot2.consumableReasonName,
+              resultId: null,
+              operation: 'add from GxConnect',
+              lotNumber: null,
+              expiresOn: new Date(lot2.expirationDate),
+              quantity: Math.abs(lot2.resultingQuantityOnHand),
+              notes: null,
+              adjustedFrom: setMilliseconds(lot2.dateChanged, 0),
+              adjustedTo: null,
+            },
+            {
+              consumableName: lot1.consumableName,
+              siteId: site.id,
+              consumableReason: updateToLot1.consumableReasonName,
+              resultId: null,
+              operation: 'remove from GxConnect',
+              lotNumber: null,
+              expiresOn: new Date(lot1.expirationDate),
+              quantity: Math.abs(updateToLot1.quantity),
+              notes: null,
+              adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
+              adjustedTo: null,
+            },
+            {
+              consumableName: lot2.consumableName,
+              siteId: site.id,
+              consumableReason: updateToLot2.consumableReasonName,
+              resultId: null,
+              operation: 'add from GxConnect',
+              lotNumber: null,
+              expiresOn: new Date(lot2.expirationDate),
+              quantity: Math.abs(updateToLot2.quantity),
+              notes: null,
+              adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
+              adjustedTo: null,
+            },
+          ],
+          ['consumableName', 'consumableReason', 'expiresOn']
+        )
+      )
+    })
+
+    describe('when quantity on hand is explicitly specified in the data', () => {
+      it('should overwrite the quantity on hand in the inventory record', async () => {
+        const { basicDevicePayload, deviceAuth, site, now } = context
+
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+          .where({ siteId: site.id })
+          .pluck('id')
+
+        const startedOn = subDays(now, 7)
+        const endedOn = addHours(startedOn, 2)
+        const expirationDate = dateFormat(
+          new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
+          "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
+
+        const initialLotCaptured = {
+          consumableName: 'GeneXpert TB Cartridge',
+          consumableReasonName: 'Captured',
+          quantity: 25,
+          resultingQuantityOnHand: 25,
+          dateChanged: subHours(startedOn, 2),
+          expirationDate,
+        }
+
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [initialLotCaptured] },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfterCapture = await knex(
+          'InventoryItem as ii'
+        )
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
@@ -3565,568 +3823,213 @@ describe('Device API routes for GxConnect Devices', () => {
           )
         assert.deepEqual(
           _.sortBy(
-            _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+            _.map(inventoryItemsAtSiteAfterCapture, inventoryItem =>
               _.omit(inventoryItem, 'id')
             ),
             'expiresOn'
           ),
-          _.sortBy(
-            _.map([lot1, lot2], inventoryChange => ({
-              consumableName: inventoryChange.consumableName,
+          [
+            {
+              consumableName: initialLotCaptured.consumableName,
               inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: new Date(inventoryChange.expirationDate),
-              quantityOnHand: inventoryChange.resultingQuantityOnHand,
-            })),
+              expiresOn: new Date(initialLotCaptured.expirationDate),
+              quantityOnHand: initialLotCaptured.resultingQuantityOnHand,
+            },
+          ]
+        )
+
+        const inventoryLost = {
+          consumableName: 'GeneXpert TB Cartridge',
+          consumableReasonName: 'Lost',
+          quantity: -5,
+          resultingQuantityOnHand: 999,
+          dateChanged: subHours(startedOn, 1),
+          expirationDate,
+        }
+
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [inventoryLost] },
+              },
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfterLoss = await knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(
+          _.sortBy(
+            _.map(inventoryItemsAtSiteAfterLoss, inventoryItem =>
+              _.omit(inventoryItem, 'id')
+            ),
             'expiresOn'
-          )
-        )
-
-        const inventoryLogs = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .select(
-            'il.id',
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-
-        assert.deepEqual(
-          _.sortBy(
-            _.map(inventoryLogs, inventoryLog => _.omit(inventoryLog, 'id')),
-            ['consumableName', 'consumableReason', 'expiresOn']
           ),
-          _.sortBy(
-            _.map([lot1, lot2], inventoryChange => ({
-              consumableName: inventoryChange.consumableName,
-              siteId: site.id,
-              consumableReason: inventoryChange.consumableReasonName,
-              resultId: null,
-              operation:
-                inventoryChange.quantity >= 0
-                  ? 'add from GxConnect'
-                  : 'remove from GxConnect',
+          [
+            {
+              consumableName: inventoryLost.consumableName,
+              inTransitFromSiteId: null,
               lotNumber: null,
-              expiresOn: new Date(inventoryChange.expirationDate),
-              quantity: Math.abs(inventoryChange.quantity),
-              notes: null,
-              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-              adjustedTo: null,
-            })),
-            ['consumableName', 'consumableReason', 'expiresOn']
-          )
+              expiresOn: new Date(inventoryLost.expirationDate),
+              quantityOnHand: inventoryLost.resultingQuantityOnHand,
+            },
+          ]
         )
-
-        const updateToLot1 = _.assign({}, lot1, {
-          consumableReasonName: 'Stolen',
-          quantity: -3,
-          resultingQuantityOnHand: 70,
-          dateChanged: subHours(startedOn, 1),
-        })
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, basicDevicePayload, {
-              operation: {
-                startedOn,
-                endedOn,
-                data: { inventoryChanges: [updateToLot1] },
-              },
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200, res.text)
-            assert.typeOf(res.body, 'Object')
-          })
-          .catch(assert.fail)
-
-        const lot1InventoryItem = _.find(inventoryItemsAtSiteAfter, {
-          expiresOn: new Date(lot1.expirationDate),
-        })
-        const lot2InventoryItem = _.find(inventoryItemsAtSiteAfter, {
-          expiresOn: new Date(lot2.expirationDate),
-        })
-        const lot1InventoryItemAfterAdjustment1 = await knex(
-          'InventoryItem as ii'
-        )
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': lot1InventoryItem.id })
-          .first(
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        const lot2InventoryItemAfterAdjustment1 = await knex(
-          'InventoryItem as ii'
-        )
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': lot2InventoryItem.id })
-          .first(
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.deepEqual(lot1InventoryItemAfterAdjustment1, {
-          consumableName: lot1.consumableName,
-          inTransitFromSiteId: null,
-          lotNumber: null,
-          expiresOn: new Date(lot1.expirationDate),
-          quantityOnHand: _.max([
-            0,
-            lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
-          ]),
-        })
-        assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
-          consumableName: lot2.consumableName,
-          inTransitFromSiteId: null,
-          lotNumber: null,
-          expiresOn: new Date(lot2.expirationDate),
-          quantityOnHand: lot2.resultingQuantityOnHand,
-        })
-
-        const updateToLot2 = _.assign({}, lot2, {
-          consumableReasonName: 'Transfer Received',
-          quantity: 100,
-          resultingQuantityOnHand: 138,
-          dateChanged: subHours(startedOn, 1),
-        })
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, basicDevicePayload, {
-              operation: {
-                startedOn,
-                endedOn,
-                data: { inventoryChanges: [updateToLot2] },
-              },
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200, res.text)
-            assert.typeOf(res.body, 'Object')
-          })
-          .catch(assert.fail)
-
-        const lot1InventoryItemAfterAdjustment2 = await knex(
-          'InventoryItem as ii'
-        )
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': lot1InventoryItem.id })
-          .first(
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        const lot2InventoryItemAfterAdjustment2 = await knex(
-          'InventoryItem as ii'
-        )
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': lot2InventoryItem.id })
-          .first(
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.deepEqual(lot1InventoryItemAfterAdjustment2, {
-          consumableName: lot1.consumableName,
-          inTransitFromSiteId: null,
-          lotNumber: null,
-          expiresOn: new Date(lot1.expirationDate),
-          quantityOnHand: _.max([
-            0,
-            lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
-          ]),
-        })
-        assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
-          consumableName: lot2.consumableName,
-          inTransitFromSiteId: null,
-          lotNumber: null,
-          expiresOn: new Date(lot2.expirationDate),
-          quantityOnHand: _.max([
-            0,
-            lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
-          ]),
-        })
-        const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', [
-            lot1InventoryItem.id,
-            lot2InventoryItem.id,
-          ])
-          .orderBy('il.id')
-          .select(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-        assert.deepEqual(
-          _.sortBy(inventoryLogsForLot1And2, [
-            'consumableName',
-            'consumableReason',
-            'expiresOn',
-          ]),
-          _.sortBy(
-            [
-              {
-                consumableName: lot1.consumableName,
-                siteId: site.id,
-                consumableReason: lot1.consumableReasonName,
-                resultId: null,
-                operation: 'add from GxConnect',
-                lotNumber: null,
-                expiresOn: new Date(lot1.expirationDate),
-                quantity: Math.abs(lot1.resultingQuantityOnHand),
-                notes: null,
-                adjustedFrom: setMilliseconds(lot1.dateChanged, 0),
-                adjustedTo: null,
-              },
-              {
-                consumableName: lot2.consumableName,
-                siteId: site.id,
-                consumableReason: lot2.consumableReasonName,
-                resultId: null,
-                operation: 'add from GxConnect',
-                lotNumber: null,
-                expiresOn: new Date(lot2.expirationDate),
-                quantity: Math.abs(lot2.resultingQuantityOnHand),
-                notes: null,
-                adjustedFrom: setMilliseconds(lot2.dateChanged, 0),
-                adjustedTo: null,
-              },
-              {
-                consumableName: lot1.consumableName,
-                siteId: site.id,
-                consumableReason: updateToLot1.consumableReasonName,
-                resultId: null,
-                operation: 'remove from GxConnect',
-                lotNumber: null,
-                expiresOn: new Date(lot1.expirationDate),
-                quantity: Math.abs(updateToLot1.quantity),
-                notes: null,
-                adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
-                adjustedTo: null,
-              },
-              {
-                consumableName: lot2.consumableName,
-                siteId: site.id,
-                consumableReason: updateToLot2.consumableReasonName,
-                resultId: null,
-                operation: 'add from GxConnect',
-                lotNumber: null,
-                expiresOn: new Date(lot2.expirationDate),
-                quantity: Math.abs(updateToLot2.quantity),
-                notes: null,
-                adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
-                adjustedTo: null,
-              },
-            ],
-            ['consumableName', 'consumableReason', 'expiresOn']
-          )
-        )
-      }))
-
-    describe('when quantity on hand is explicitly specified in the data', () => {
-      it('should overwrite the quantity on hand in the inventory record', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, site, now } = context
-
-          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-            .where({ siteId: site.id })
-            .pluck('id')
-
-          const startedOn = subDays(now, 7)
-          const endedOn = addHours(startedOn, 2)
-          const expirationDate = dateFormat(
-            new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
-            "yyyy-MM-dd'T'HH:mm:ss'Z'"
-          )
-
-          const initialLotCaptured = {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: 'Captured',
-            quantity: 25,
-            resultingQuantityOnHand: 25,
-            dateChanged: subHours(startedOn, 2),
-            expirationDate,
-          }
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: { inventoryChanges: [initialLotCaptured] },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfterCapture = await knex(
-            'InventoryItem as ii'
-          )
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.deepEqual(
-            _.sortBy(
-              _.map(inventoryItemsAtSiteAfterCapture, inventoryItem =>
-                _.omit(inventoryItem, 'id')
-              ),
-              'expiresOn'
-            ),
-            [
-              {
-                consumableName: initialLotCaptured.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: new Date(initialLotCaptured.expirationDate),
-                quantityOnHand: initialLotCaptured.resultingQuantityOnHand,
-              },
-            ]
-          )
-
-          const inventoryLost = {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: 'Lost',
-            quantity: -5,
-            resultingQuantityOnHand: 999,
-            dateChanged: subHours(startedOn, 1),
-            expirationDate,
-          }
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: { inventoryChanges: [inventoryLost] },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfterLoss = await knex(
-            'InventoryItem as ii'
-          )
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.deepEqual(
-            _.sortBy(
-              _.map(inventoryItemsAtSiteAfterLoss, inventoryItem =>
-                _.omit(inventoryItem, 'id')
-              ),
-              'expiresOn'
-            ),
-            [
-              {
-                consumableName: inventoryLost.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: new Date(inventoryLost.expirationDate),
-                quantityOnHand: inventoryLost.resultingQuantityOnHand,
-              },
-            ]
-          )
-        }))
+      })
     })
 
     describe('when quantity on hand is not specified in the data', () => {
-      it('should calculate the quantity on hand in the inventory record', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, site, now } = context
+      it('should calculate the quantity on hand in the inventory record', async () => {
+        const { basicDevicePayload, deviceAuth, site, now } = context
 
-          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-            .where({ siteId: site.id })
-            .pluck('id')
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+          .where({ siteId: site.id })
+          .pluck('id')
 
-          const startedOn = subDays(now, 9)
-          const endedOn = addHours(startedOn, 2)
-          const expirationDate = dateFormat(
-            new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
-            "yyyy-MM-dd'T'HH:mm:ss'Z'"
-          )
+        const startedOn = subDays(now, 9)
+        const endedOn = addHours(startedOn, 2)
+        const expirationDate = dateFormat(
+          new Date(subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)),
+          "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
 
-          const initialLotCaptured = {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: 'Captured',
-            quantity: 25,
-            dateChanged: subHours(startedOn, 2),
-            expirationDate,
-          }
+        const initialLotCaptured = {
+          consumableName: 'GeneXpert TB Cartridge',
+          consumableReasonName: 'Captured',
+          quantity: 25,
+          dateChanged: subHours(startedOn, 2),
+          expirationDate,
+        }
 
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: { inventoryChanges: [initialLotCaptured] },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
-            })
-            .catch(assert.fail)
-
-          const inventoryItemsAtSiteAfterCapture = await knex(
-            'InventoryItem as ii'
-          )
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.deepEqual(
-            _.sortBy(
-              _.map(inventoryItemsAtSiteAfterCapture, inventoryItem =>
-                _.omit(inventoryItem, 'id')
-              ),
-              'expiresOn'
-            ),
-            [
-              {
-                consumableName: initialLotCaptured.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: new Date(initialLotCaptured.expirationDate),
-                quantityOnHand: initialLotCaptured.quantity,
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [initialLotCaptured] },
               },
-            ]
-          )
-
-          const inventoryLost = {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: 'Lost',
-            quantity: -5,
-            dateChanged: subHours(startedOn, 1),
-            expirationDate,
-          }
-
-          await server
-            .post('/device')
-            .set('Authorization', deviceAuth)
-            .send(
-              _.assign({}, basicDevicePayload, {
-                operation: {
-                  startedOn,
-                  endedOn,
-                  data: { inventoryChanges: [inventoryLost] },
-                },
-              })
-            )
-            .then(res => {
-              assert.equal(res.status, 200, res.text)
-              assert.typeOf(res.body, 'Object')
             })
-            .catch(assert.fail)
+          )
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
 
-          const inventoryItemsAtSiteAfterLoss = await knex(
-            'InventoryItem as ii'
+        const inventoryItemsAtSiteAfterCapture = await knex(
+          'InventoryItem as ii'
+        )
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
           )
-            .join('Consumable as c', 'ii.consumableId', 'c.id')
-            .where({ siteId: site.id })
-            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-            .select(
-              'ii.id',
-              'c.name as consumableName',
-              'ii.inTransitFromSiteId',
-              'ii.lotNumber',
-              'ii.expiresOn',
-              'ii.quantityOnHand'
-            )
-          assert.deepEqual(
-            _.sortBy(
-              _.map(inventoryItemsAtSiteAfterLoss, inventoryItem =>
-                _.omit(inventoryItem, 'id')
-              ),
-              'expiresOn'
+        assert.deepEqual(
+          _.sortBy(
+            _.map(inventoryItemsAtSiteAfterCapture, inventoryItem =>
+              _.omit(inventoryItem, 'id')
             ),
-            [
-              {
-                consumableName: inventoryLost.consumableName,
-                inTransitFromSiteId: null,
-                lotNumber: null,
-                expiresOn: new Date(inventoryLost.expirationDate),
-                quantityOnHand: _.max([
-                  0,
-                  initialLotCaptured.quantity + inventoryLost.quantity,
-                ]),
+            'expiresOn'
+          ),
+          [
+            {
+              consumableName: initialLotCaptured.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: new Date(initialLotCaptured.expirationDate),
+              quantityOnHand: initialLotCaptured.quantity,
+            },
+          ]
+        )
+
+        const inventoryLost = {
+          consumableName: 'GeneXpert TB Cartridge',
+          consumableReasonName: 'Lost',
+          quantity: -5,
+          dateChanged: subHours(startedOn, 1),
+          expirationDate,
+        }
+
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, basicDevicePayload, {
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges: [inventoryLost] },
               },
-            ]
+            })
           )
-        }))
+          .then(res => {
+            assert.equal(res.status, 200, res.text)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const inventoryItemsAtSiteAfterLoss = await knex('InventoryItem as ii')
+          .join('Consumable as c', 'ii.consumableId', 'c.id')
+          .where({ siteId: site.id })
+          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+          .select(
+            'ii.id',
+            'c.name as consumableName',
+            'ii.inTransitFromSiteId',
+            'ii.lotNumber',
+            'ii.expiresOn',
+            'ii.quantityOnHand'
+          )
+        assert.deepEqual(
+          _.sortBy(
+            _.map(inventoryItemsAtSiteAfterLoss, inventoryItem =>
+              _.omit(inventoryItem, 'id')
+            ),
+            'expiresOn'
+          ),
+          [
+            {
+              consumableName: inventoryLost.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: new Date(inventoryLost.expirationDate),
+              quantityOnHand: _.max([
+                0,
+                initialLotCaptured.quantity + inventoryLost.quantity,
+              ]),
+            },
+          ]
+        )
+      })
     })
   })
   describe('Daily details', () => {
@@ -4142,10 +4045,10 @@ describe('Device API routes for GxConnect Devices', () => {
       beforeEach(async () => {
         await context.beforeRegisterAndSetDevice()
         const { partnerId } = context.device
-        const { geographyId } = await knexDb('Site as s')
+        const { geographyId } = await knex('Site as s')
           .where({ externalId: 'Ohio_Wayne' })
           .first('s.geographyId')
-        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
+        ;[insertedConfiguration] = await knex('DeviceConfiguration').insert({
           deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
           geographyId,
           partnerId,
@@ -4159,7 +4062,7 @@ describe('Device API routes for GxConnect Devices', () => {
       })
       afterEach(async () => {
         await context.afterCleanUp()
-        await knexDb('DeviceConfiguration')
+        await knex('DeviceConfiguration')
           .where({ id: insertedConfiguration })
           .delete()
       })
@@ -4200,10 +4103,10 @@ describe('Device API routes for GxConnect Devices', () => {
       })
       let insertedConfiguration = null
       beforeEach(async () => {
-        const siteOhio = await knexDb('Site as s')
+        const siteOhio = await knex('Site as s')
           .where({ externalId: 'OH_Dayton' })
           .first()
-        await knexDb('Site').insert({
+        await knex('Site').insert({
           ..._.omit(siteOhio, ['name', 'id', 'externalId']),
           name: 'Dayton Ohio 2',
           externalId: 'OH_Dayton_2',
@@ -4211,7 +4114,7 @@ describe('Device API routes for GxConnect Devices', () => {
         await context.beforeRegisterAndSetDevice()
         const { partnerId } = context.device
 
-        ;[insertedConfiguration] = await knexDb('DeviceConfiguration').insert({
+        ;[insertedConfiguration] = await knex('DeviceConfiguration').insert({
           deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
           geographyId: siteOhio.geographyId,
           partnerId,
@@ -4225,7 +4128,7 @@ describe('Device API routes for GxConnect Devices', () => {
       })
       afterEach(async () => {
         await context.afterCleanUp()
-        await knexDb('DeviceConfiguration')
+        await knex('DeviceConfiguration')
           .where({ id: insertedConfiguration })
           .delete()
       })
