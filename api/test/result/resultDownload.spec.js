@@ -280,7 +280,7 @@ describe('Result download routes', () => {
           `${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(500)
+      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -293,7 +293,7 @@ describe('Result download routes', () => {
           diseaseExternalIds: 'tb,ebola,hiv',
         })
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(500)
+      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
