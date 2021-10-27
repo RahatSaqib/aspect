@@ -29,7 +29,7 @@ const {
   baseFilterCondition,
 } = require('./fitlerCondtions')
 
-describe('Issue based Notifications triggers', () => {
+describe.only('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const issueTypes = await knex('IssueType').pluck('id')
@@ -86,7 +86,7 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe('Result Notifications triggers', () => {
+describe.only('Result Notifications triggers', () => {
   let results = []
   let ntId
   let messageContext
@@ -434,7 +434,7 @@ describe('Result Notifications triggers', () => {
     })
   })
 })
-describe('Notification routes', () => {
+describe.only('Notification routes', () => {
   const path = '/api/notification'
   let ntId
   let notificationType
@@ -507,7 +507,7 @@ describe('Notification routes', () => {
       emailSubject: '',
       emailBody: '',
       sendEmail: false,
-      smsBody: baseFilterCondition.smsBody || '',
+      smsBody: 'A body',
       sendSms: baseFilterCondition.sendSms,
       webUrl: '',
       webBody: '',
