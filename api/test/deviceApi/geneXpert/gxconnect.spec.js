@@ -791,7 +791,7 @@ describe('Device API routes for GxConnect Devices', () => {
     })
   })
 
-  describe.only('results', () => {
+  describe('results', () => {
     let context
 
     let getLastResult
@@ -818,75 +818,67 @@ describe('Device API routes for GxConnect Devices', () => {
 
     const getResultCategoriesTestCallback = trackedResults => async () => {
       const { deviceAuth, device } = context
-      console.log('trackedResults', trackedResults)
-      await Promise.each(trackedResults, async assertion => {
-        const {
-          resultText,
-          resultCategory1ExternalId,
-          resultCategory2ExternalId,
-          assayExternalId,
-        } = assertion
-        // Send a new result
-        logger.info(['Posting result', assertion])
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.merge(
-              {},
-              basicDevicePayload,
-              { name: `${deviceName}${Math.random() * 1000}` },
-              basicResultPayload,
-              {
-                result: {
-                  id: `new result ${Math.floor(Math.random() * 1000)}`,
-                  startedOn: subDays(
-                    new Date(),
-                    Math.floor(Math.random() * 100)
-                  ),
-                  data: { resultText },
-                  assay: { id: assayExternalId },
-                  sample: {
-                    id: `new sample ${Math.floor(Math.random() * 1000)}`,
-                  },
-                  instrument: {
-                    serial: `new instrument ${Math.floor(
-                      Math.random() * 1000
-                    )}`,
-                  },
-                },
-              }
-            )
-          )
-        logger.info('Posted result')
-        await waitForIdle()
-        logger.info('After wait for iddle')
-        const lastResultId = await getLastResultId(knex, device.id)
-        const { resultCategory1, resultCategory2, assayId } = await knex(
-          'Result'
-        )
-          .where('id', lastResultId)
-          .first()
 
-        const expectedResultCategory1Id = await resultCategoryToId(
-          resultCategory1ExternalId
+      const assertion = _.sample(trackedResults)
+      const {
+        resultText,
+        resultCategory1ExternalId,
+        resultCategory2ExternalId,
+        assayExternalId,
+      } = assertion
+      // Send a new result
+      logger.info(['Posting result', assertion])
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.merge(
+            {},
+            basicDevicePayload,
+            { name: `${deviceName}${Math.random() * 1000}` },
+            basicResultPayload,
+            {
+              result: {
+                id: `new result ${Math.floor(Math.random() * 1000)}`,
+                startedOn: subDays(new Date(), Math.floor(Math.random() * 100)),
+                data: { resultText },
+                assay: { id: assayExternalId },
+                sample: {
+                  id: `new sample ${Math.floor(Math.random() * 1000)}`,
+                },
+                instrument: {
+                  serial: `new instrument ${Math.floor(Math.random() * 1000)}`,
+                },
+              },
+            }
+          )
         )
-        const expectedResultCategory2Id =
-          (await resultCategoryToId(resultCategory2ExternalId)) || null
-        const expectedAssayId = await assayToId(assayExternalId)
-        const expected = {
-          resultCategory1Id: expectedResultCategory1Id,
-          resultCategory2Id: expectedResultCategory2Id,
-          assayId: expectedAssayId,
-        }
-        const actual = {
-          resultCategory1Id: resultCategory1,
-          resultCategory2Id: resultCategory2,
-          assayId,
-        }
-        assert.deepEqual(expected, actual)
-        logger.info('end testing')
-      })
+      logger.info('Posted result')
+      await waitForIdle()
+      logger.info('After wait for iddle')
+      const lastResultId = await getLastResultId(knex, device.id)
+      const { resultCategory1, resultCategory2, assayId } = await knex('Result')
+        .where('id', lastResultId)
+        .first()
+
+      const expectedResultCategory1Id = await resultCategoryToId(
+        resultCategory1ExternalId
+      )
+      const expectedResultCategory2Id =
+        (await resultCategoryToId(resultCategory2ExternalId)) || null
+      const expectedAssayId = await assayToId(assayExternalId)
+      const expected = {
+        resultCategory1Id: expectedResultCategory1Id,
+        resultCategory2Id: expectedResultCategory2Id,
+        assayId: expectedAssayId,
+      }
+      const actual = {
+        resultCategory1Id: resultCategory1,
+        resultCategory2Id: resultCategory2,
+        assayId,
+      }
+      assert.deepEqual(expected, actual)
+      logger.info('end testing')
     }
 
     it(
