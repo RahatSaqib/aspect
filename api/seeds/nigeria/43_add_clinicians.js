@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
+const _ = require('lodash')
 const clinicians = require('./fixtures/clinicians')
 const config = require('../../src/config')
 const {
@@ -59,16 +60,16 @@ module.exports = require('../utils').seed(async knex => {
           .first('g.id as geographyId')) || {})
       ;[siteId] = await knex('Site').insert({
         ...auditFields,
-        name: clinician.site,
+        name: _.startCase(clinician.site),
         shortName: clinician.site.substr(0, 45),
-        externalId: clinician.site.substr(0, 45),
+        externalId: _.lowerCase(clinician.site).substr(0, 45),
         partnerId,
         geographyId,
       })
     }
     if (geographyId) {
       const [personId] = await knex('Person').insert({
-        name: clinician.officer,
+        name: _.startCase(clinician.officer),
         lastPartnerId: partnerId,
         lastCountryId: countryId,
         email: clinician.email,
