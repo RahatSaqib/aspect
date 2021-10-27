@@ -47,7 +47,6 @@ const {
 } = require('./notVLResultTextMappings')
 
 const server = require('../../utils/testUtils')
-const logger = require('../../../src/shared/logger')
 
 const { assert, expect } = chai
 
@@ -805,15 +804,11 @@ describe('Device API routes for GxConnect Devices', () => {
         macAddress,
         deviceSerialNumber,
       })
-      logger.info('Creating context')
       await context.beforeRegisterAndSetDevice()
       ;({ getLastResult, basicDevicePayload } = context)
-      logger.info('registering device')
     })
     afterEach(async () => {
-      logger.info('before cleanning')
       await context.afterCleanUp()
-      logger.info('Cleaned')
     })
 
     const getResultCategoriesTestCallback = trackedResults => async () => {
@@ -827,7 +822,6 @@ describe('Device API routes for GxConnect Devices', () => {
         assayExternalId,
       } = assertion
       // Send a new result
-      logger.info(['Posting result', assertion])
       await server
         .post('/device')
         .set('Authorization', deviceAuth)
@@ -853,9 +847,7 @@ describe('Device API routes for GxConnect Devices', () => {
             }
           )
         )
-      logger.info('Posted result')
       await waitForIdle()
-      logger.info('After wait for iddle')
       const lastResultId = await getLastResultId(knex, device.id)
       const { resultCategory1, resultCategory2, assayId } = await knex('Result')
         .where('id', lastResultId)
@@ -878,7 +870,6 @@ describe('Device API routes for GxConnect Devices', () => {
         assayId,
       }
       assert.deepEqual(expected, actual)
-      logger.info('end testing')
     }
 
     it(
