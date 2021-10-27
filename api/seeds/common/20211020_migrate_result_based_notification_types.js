@@ -23,6 +23,7 @@ module.exports = async knex => {
 
     const notificationTypes = await knex('NotificationType as nt')
       .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+      .leftJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
       .where({
         partnerId,
         issueTypeId: resultReceivedIssueTypeId,
@@ -32,7 +33,9 @@ module.exports = async knex => {
         knex.raw('mt.emailTemplateId IS NOT NULL as sendEmail'),
         knex.raw('mt.smsTemplateId IS NOT NULL as sendSms'),
         knex.raw('mt.webhookTemplateId IS NOT NULL as sendWeb'),
+        knex.raw('COUNT(n.id) as numberOfSentNotifications'),
       ])
+      .groupBy(['nt.id', 'mt.id'])
 
     const now = new Date()
 
@@ -47,6 +50,7 @@ module.exports = async knex => {
         sendSms,
         sendEmail,
         sendWeb,
+        numberOfSentNotifications,
         ...restProps
       } = notificationType
       let issueEscalationTrigger
@@ -186,7 +190,10 @@ module.exports = async knex => {
       }
 
       await knex('NotificationType').insert(migratedNotificationType)
-      await knex('NotificationType').where({ id }).update({ enabled: false })
+      if (numberOfSentNotifications > 0)
+        await knex('NotificationType').where({ id }).update({ enabled: false })
+      else
+        await knex('NotificationType').where({ id }).del()
     })
   })
 }
