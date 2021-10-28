@@ -1,7 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
-const _ = require('lodash')
 const config = require('../../src/config')
 const { upsertJobFunction } = require('../common')
 const {
@@ -14,8 +13,6 @@ const {
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
-  fileContentTypeToId,
-  messageSeverityToId,
 } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -156,83 +153,6 @@ async function seed(knex) {
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
-
-  // Create WebhookTemplate for downloading images
-  const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
-  const [webhookTemplateId] = await knex('WebhookTemplate').insert({
-    externalId: 'commcareDownloadImage',
-    method: 'GET',
-    url: '{{ result.data.resultImageUrl }}',
-    fileName: '{{ result.data.resultImageFileName }}',
-    fileContentTypeId: await fileContentTypeToId('imageJpg'),
-    headers: JSON.stringify({
-      Authorization: `ApiKey ${commcareApiKey}`,
-    }),
-    ...auditFields,
-  })
-
-  const [resultPositiveSmsTemplateId] = await knex('SmsTemplate').insert({
-    phoneNumber: '{{ result.patient.phone }}',
-    message:
-      'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible',
-    ...auditFields,
-  })
-  const [resultNegativeSmsTemplateId] = await knex('SmsTemplate').insert({
-    phoneNumber: '{{ result.patient.phone }}',
-    message:
-      'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please ensure you re-test in 3 months.',
-    ...auditFields,
-  })
-
-  const messageSeverityId = await messageSeverityToId('Alert')
-  const [resultReceivedMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    webhookTemplateId,
-  })
-
-  const [resultPositiveMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    smsTemplateId: resultPositiveSmsTemplateId,
-  })
-
-  const [resultNegativeMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId,
-    smsTemplateId: resultNegativeSmsTemplateId,
-  })
-
-  // Notifications
-  await knex('NotificationType').insert([
-    {
-      name: 'Result Received',
-      partnerId,
-      issueTypeId: issueTypes.ResultReceived.id,
-      jobFunctionId: jobFunctionIdAdmin,
-      level: 1,
-      canAcknowledge: 0,
-      messageTypeId: resultReceivedMessageTypeId,
-      ...auditFields,
-    },
-    {
-      name: 'Result Negative',
-      partnerId,
-      issueTypeId: issueTypes.ResultReceived.id,
-      jobFunctionId: jobFunctionIdAdmin,
-      level: 2,
-      canAcknowledge: 0,
-      messageTypeId: resultNegativeMessageTypeId,
-      ...auditFields,
-    },
-    {
-      name: 'Result Positive',
-      partnerId,
-      issueTypeId: issueTypes.ResultReceived.id,
-      jobFunctionId: jobFunctionIdAdmin,
-      level: 3,
-      canAcknowledge: 0,
-      messageTypeId: resultPositiveMessageTypeId,
-      ...auditFields,
-    },
-  ])
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([

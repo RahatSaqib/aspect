@@ -253,6 +253,9 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
+          mode: Joi.string()
+            .allow(null, '')
+            .description('The mode that was use for this request'),
           countryName: Joi.string()
             .required()
             .description('Country name of the user that requested the sites'),
@@ -270,18 +273,26 @@ const routes = [
                   .description('Unique ID of the site'),
                 name: Joi.string().required().description('Name of the site'),
                 partnerId: Joi.number()
-                  .required()
+                  .when('mode', {
+                    not: 'reporter',
+                    then: Joi.required(),
+                  })
                   .allow(null)
                   .description("Unique ID of the site's partner"),
                 countryId: Joi.number()
-                  .required()
+                  .when('mode', {
+                    not: 'reporter',
+                    then: Joi.required(),
+                  })
                   .description("Unique ID of the site's country"),
                 stateId: Joi.number()
-                  .required()
                   .allow(null)
                   .description("Unique ID of the site's state"),
                 lgaId: Joi.number()
-                  .required()
+                  .when('mode', {
+                    not: 'reporter',
+                    then: Joi.required(),
+                  })
                   .allow(null)
                   .description("Unique ID of the site's LGA"),
                 stateName: Joi.string()
@@ -289,7 +300,10 @@ const routes = [
                   .allow(null)
                   .description("Name of the site's state"),
                 externalId: Joi.string()
-                  .required()
+                  .when('mode', {
+                    not: 'reporter',
+                    then: Joi.required(),
+                  })
                   .description('External ID of the site'),
               })
             ),
