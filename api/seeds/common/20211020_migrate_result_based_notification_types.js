@@ -192,8 +192,7 @@ module.exports = async knex => {
       await knex('NotificationType').insert(migratedNotificationType)
       if (numberOfSentNotifications > 0)
         await knex('NotificationType').where({ id }).update({ enabled: false })
-      else
-        await knex('NotificationType').where({ id }).del()
+      else await knex('NotificationType').where({ id }).del()
     })
   })
 }

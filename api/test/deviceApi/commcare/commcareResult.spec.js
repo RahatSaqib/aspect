@@ -13,7 +13,7 @@ const { knex } = require('../../../src/db')
 
 const pluginPath = '/device/plugin/commcare'
 
-describe('CommCare Result API routes', () => {
+describe.skip('CommCare Result API routes', () => {
   describe('Check patient phone normalization malawi', () => {
     const context = createTestContext(server, {
       user: 'reporter_admin',
