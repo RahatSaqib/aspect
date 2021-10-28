@@ -84,7 +84,7 @@ module.exports = async knex => {
 
           if (evaluationMethod === 'result-category') {
             let { resultCategory1=[], resultCategory2=[]} = evaluationParameter
-            const { assays: evaluatedAssays } = evaluationParameter
+            const { assays: evaluatedAssays=[] } = evaluationParameter
 
             filterCondition.result = []
 
