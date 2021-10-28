@@ -1,6 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { subDays } = require('date-fns')
 const {
   knex,
   filterParams,
@@ -31,46 +32,44 @@ const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
   resultBased: resultConditionsMet,
 }
-function resultCategoryFilters(
-  queryBuilder,
-  { result: results = [] },
-  resultAlias
-) {
-  if (results.length > 0) {
+function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
+  const { result: resultFilters } = filterConditions || {}
+
+  if (resultFilters && resultFilters.length > 0) {
     queryBuilder
-      .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
+      .join('Assay as a', `${tblResultAlias}.assayId`, 'a.id')
       .leftJoin(
         'ResultCategory as rc1',
-        `${resultAlias}.resultCategory1`,
+        `${tblResultAlias}.resultCategory1`,
         'rc1.id'
       )
       .leftJoin('ResultCategoryGroup as rcg', function () {
         this.on(`a.id`, 'rcg.assayId')
           .andOn(function () {
             this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
-              `${resultAlias}.resultCategory1`,
+              `${tblResultAlias}.resultCategory1`,
               'rcg.resultCategory1Id'
             )
           })
           .andOn(function () {
             this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
-              `${resultAlias}.resultCategory2`,
+              `${tblResultAlias}.resultCategory2`,
               'rcg.resultCategory2Id'
             )
           })
       })
       .leftJoin(
         'ResultCategory as rc2',
-        `${resultAlias}.resultCategory2`,
+        `${tblResultAlias}.resultCategory2`,
         'rc2.id'
       )
     queryBuilder.where(resultBuilder =>
-      _.each(results, elem => {
+      _.each(resultFilters, filterElem => {
         resultBuilder.orWhere(whereBuilder => {
-          whereBuilder.where('a.externalId', elem.assayId)
+          whereBuilder.where('a.externalId', filterElem.assayId)
           if (
             _.find(
-              elem.resultCategoryId,
+              filterElem.resultCategoryId,
               item => item.scope === 'ResultCategoryGroups'
             )
           )
@@ -78,7 +77,7 @@ function resultCategoryFilters(
               'rcg.externalId',
               _.map(
                 _.filter(
-                  elem.resultCategoryId,
+                  filterElem.resultCategoryId,
                   item => item.scope === 'ResultCategoryGroups'
                 ),
                 obj => obj.value
@@ -86,13 +85,13 @@ function resultCategoryFilters(
             )
           if (
             _.find(
-              elem.resultCategoryId,
+              filterElem.resultCategoryId,
               item => item.scope === 'ResultCategories'
             )
           ) {
             const itemsToFilter = _.map(
               _.filter(
-                elem.resultCategoryId,
+                filterElem.resultCategoryId,
                 item => item.scope === 'ResultCategories'
               ),
               obj => obj.value
@@ -109,34 +108,39 @@ function resultCategoryFilters(
   }
 }
 
-function geographyFilters(
-  queryBuilder,
-  { areaItems, deviceLevelId },
-  { device = 'd', geography = 'g' }
-) {
-  if (deviceLevelId === 'state') {
-    queryBuilder.whereIn(
-      `${geography}.stateId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
-  }
-  if (deviceLevelId === 'lga') {
-    queryBuilder.whereIn(
-      `${geography}.lgaId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
-  }
-  if (deviceLevelId === 'lab') {
-    queryBuilder.whereIn(
-      `${device}.siteId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
+function geographyFilters(queryBuilder, filterConditions, aliases) {
+  const { areaItems, deviceLevelId } = filterConditions || {}
+  const { device = 'd', geography = 'g' } = aliases
+
+  if (areaItems && deviceLevelId) {
+    switch (deviceLevelId) {
+      case 'state':
+        queryBuilder.whereIn(
+          `${geography}.stateId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break
+      case 'lga':
+        queryBuilder.whereIn(
+          `${geography}.lgaId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break
+      case 'lab':
+        queryBuilder.whereIn(
+          `${device}.siteId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break
+      default:
+        break
+    }
   }
 }
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
-  const { result = 'r' } = aliases
-  resultCategoryFilters(queryBuilder, filterCondition, result)
+  const tblResultAlias = aliases.result ? aliases.result : 'r'
+  resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
 }
 
@@ -165,16 +169,24 @@ async function listNotifications(request) {
   const getItems = notificationQuery
     .clone()
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftJoin('Person as per', 'j.personId', 'per.id')
+    .leftOuterJoin('JobFunction as jf', qb => {
+      qb.on(
+        knex.raw(`
+          JSON_SEARCH(
+            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
+            'one',
+            CAST(jf.id as char)
+          ) IS NOT NULL
+        `)
+      )
+    })
     .select(
       'nt.id as id',
       'nt.name',
       knex.raw('count(distinct n.issueId) as totalTriggers'),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT per.id) as contactsCount'),
-      knex.raw(
-        "SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT per.`name`),',',5) as contacts"
-      ),
+      knex.raw('COUNT(DISTINCT jf.name) as contactsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
@@ -288,9 +300,6 @@ async function getNotificationPolicy(
     'g.stateId',
     'g.lgaId',
     'mt.alertTemplateId',
-    'mt.emailTemplateId',
-    'mt.smsTemplateId',
-    'mt.webhookTemplateId',
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
@@ -303,7 +312,14 @@ async function getNotificationPolicy(
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .modify((queryBuilder, { resultId, issueId }) => {
       if (!_.isNil(issueId)) {
-        extraFields = ['i.siteId', 'i.deviceId', 'i.resultId']
+        extraFields = [
+          'i.siteId',
+          'i.deviceId',
+          'i.resultId',
+          'mt.emailTemplateId',
+          'mt.smsTemplateId',
+          'mt.webhookTemplateId',
+        ]
         queryBuilder
           .join('Issue as i', joinBuilder =>
             // If issue is escalated past configured level, send again
@@ -321,11 +337,21 @@ async function getNotificationPolicy(
           'result.siteId as siteId',
           'result.deviceId as deviceId',
           'result.resultId as resultId',
+          knex.raw(
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
+          ),
+          knex.raw(
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.smsTemplateId ELSE NULL END as smsTemplateId'
+          ),
+          knex.raw(
+            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
+          ),
         ]
         queryBuilder
           .crossJoin(
             knex('Result as r')
               .where('r.id', resultId)
+              .andWhere('r.endedOn', '>=', subDays(new Date(), 30))
               .select(
                 'r.siteId',
                 'r.assayId',
@@ -337,8 +363,10 @@ async function getNotificationPolicy(
               .as('result')
           )
           .join('Device as d', 'result.deviceId', 'd.id')
+          .join('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
           .leftJoin('Geography as g', 'd.geographyId', 'g.id')
           .where('ntc.externalId', 'resultBased')
+          .andWhere('da.token', 'approved')
         aliases.result = 'result'
         aliases.device = 'd'
       }
@@ -346,6 +374,7 @@ async function getNotificationPolicy(
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
+    .where('nt.enabled', true)
     .distinct(selectColums.concat(extraFields))
   return records
 }
@@ -508,8 +537,42 @@ async function createNotificationIfNotCreatedAlready(
     }
 
     const [notificationId] = await knex('Notification').insert(notification)
+
     context.notificationCreated(notificationId)
   }
+}
+
+async function getNotification(request) {
+  const { params } = request
+  const { id } = params
+
+  const notification = await knex
+    .select(
+      'ntc.name as notificationTypeName',
+      'ntc.externalId as notificationType',
+      'nt.name as name',
+      'nt.filterCondition as filterCondition',
+      'et.subject as emailSubject',
+      'et.body as emailBody',
+      'st.message as smsBody',
+      'wt.url as webUrl',
+      'wt.payload as webBody'
+    )
+    .from('NotificationType as nt')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
+    .leftJoin('EmailTemplate as et', 'et.id', 'mt.emailTemplateId')
+    .leftJoin('SmsTemplate as st', 'st.id', 'mt.smsTemplateId')
+    .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
+    .where('nt.id', id)
+    .andWhere('ntc.externalId', 'resultBased')
+    .first()
+
+  return { ok: true, data: notification }
 }
 
 async function getNotifications(request) {
@@ -672,21 +735,23 @@ async function saveNotificationType({
           updatedBy: userId,
         })
         .where({ id: notificationTypeId })
-      ;({ messageTypeId } = await knex('NotificationType')
+      ;({ messageTypeId } = await knex
         .select('messageTypeId')
-        .where({ id: notificationTypeId }))
-      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex(
-        'MessageType'
-      )
-        .where({ id: messageTypeId })
-        .select()
+        .from('NotificationType')
+        .where({ id: notificationTypeId })
+        .first())
+      let { emailTemplateId, smsTemplateId, webHookTemplateId } = await knex
+        .select('emailTemplateId', 'smsTemplateId', 'webHookTemplateId')
+        .from('MessageType')
+        .where('id', messageTypeId)
+        .first()
 
       /**
        * EmailTemplate
        */
       if (emailTemplateId) {
         whereClause = { id: emailTemplateId }
-        // update or delete
+        // update
         if (sendEmail) {
           await knex('EmailTemplate')
             .where(whereClause)
@@ -700,8 +765,6 @@ async function saveNotificationType({
               updatedOn: now,
               updatedBy: userId,
             })
-        } else {
-          await knex('EmailTemplate').where(whereClause).del()
         }
       } else if (sendEmail) {
         // insert
@@ -712,7 +775,7 @@ async function saveNotificationType({
        */
       if (smsTemplateId) {
         whereClause = { id: smsTemplateId }
-        // update or delete
+        // update
         if (sendSms) {
           await knex('SmsTemplate')
             .update({
@@ -721,8 +784,6 @@ async function saveNotificationType({
               updatedBy: userId,
             })
             .where(whereClause)
-        } else {
-          await knex('SmsTemplate').where(whereClause).del()
         }
       } else if (sendSms) {
         ;[smsTemplateId] = await insertSmsTemplate()
@@ -732,7 +793,7 @@ async function saveNotificationType({
        */
       if (webHookTemplateId) {
         whereClause = { id: webHookTemplateId }
-        // update or delete
+        // update
         if (sendWeb) {
           await knex('WebhookTemplate')
             .update({
@@ -742,8 +803,6 @@ async function saveNotificationType({
               updatedBy: userId,
             })
             .where(whereClause)
-        } else {
-          await knex('WebhookTemplate').where(whereClause).del()
         }
       } else if (sendWeb) {
         ;[webHookTemplateId] = await insertWebHookTemplate()
@@ -769,6 +828,9 @@ async function saveNotificationType({
           deviceLevelId,
           jobFunctions,
           result,
+          sendEmail,
+          sendSms,
+          sendWeb,
         }),
       })
       .where({ id: notificationTypeId })
@@ -820,6 +882,7 @@ async function saveNotification(request) {
 module.exports = {
   listNotifications,
   getNotifications,
+  getNotification,
   createNotifications,
   shouldNotify,
   resultConditionsMet,

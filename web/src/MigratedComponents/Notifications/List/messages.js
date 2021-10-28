@@ -40,11 +40,22 @@ export const messages = defineMessages({
     id: 'pages.Notifications.table.contactsHeader',
     defaultMessage: 'Contacts',
   },
+  notificationsTableHeaderJobFunctions: {
+    id: 'pages.Notifications.table.jobFunctionsHeader',
+    defaultMessage: 'Job Functions',
+  },
   notificationsTableContactsCount: {
     id: 'pages.Notifications.notificationsTableContactsCount',
     defaultMessage: `{itemCount, plural,
       one {# Contact}
       other {# Contacts}
+    }`,
+  },
+  notificationsTableJobFunctionsCount: {
+    id: 'pages.Notifications.notificationsTableJobFunctionsCount',
+    defaultMessage: `{itemCount, plural,
+      one {# Job Function}
+      other {# Job Functions}
     }`,
   },
 
@@ -94,6 +105,16 @@ export const messages = defineMessages({
   notificationTypeOnlineDate: {
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
+  },
+
+  // values for notifications list
+  issueBased: {
+    id: 'pages.TableCell.issueBasedNotification',
+    defaultMessage: 'Issue Based',
+  },
+  resultBased: {
+    id: 'pages.TableCell.resultBasedNotification',
+    defaultMessage: 'Result Based',
   },
 })
 

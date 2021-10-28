@@ -263,7 +263,42 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = getBaseQueryForResults()
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
@@ -275,21 +310,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
         'r.resultCategory2',
         'rca2.resultCategoryId'
       )
-    })
-    .leftJoin('ResultCategoryGroup as rcg', function () {
-      this.on('r.assayId', 'rcg.assayId')
-        .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
-            'r.resultCategory1',
-            'rcg.resultCategory1Id'
-          )
-        })
-        .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
-            'r.resultCategory2',
-            'rcg.resultCategory2Id'
-          )
-        })
     })
     // only results which are reportable for either ResultCategory
     .where(builder =>
@@ -567,8 +587,9 @@ async function downloadResultsList(request) {
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
   }
-  // eslint-disable-next-line no-console
-  await myProm().catch(err => console.log(err))
+  myProm().catch(err => {
+    logger.error(err)
+  })
   return results
 }
 

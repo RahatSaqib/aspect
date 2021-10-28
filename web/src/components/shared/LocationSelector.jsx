@@ -14,21 +14,28 @@ import StateSelectField, {
 import LgaSelectField, {
   getSelectedState,
 } from '../../filter/geography/LgaSelectField'
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../shared/utils/customMessages'
 
-const messages = defineMessages({
-  country: {
-    id: 'pages.LocationSelector.country',
-    defaultMessage: 'Country',
-  },
-  state: {
-    id: 'pages.LocationSelector.state',
-    defaultMessage: 'State',
-  },
-  lga: {
-    id: 'pages.LocationSelector.lga',
-    defaultMessage: 'Area',
-  },
-})
+const messages = {
+  ...commonDefinitions,
+  ...defineMessages({
+    country: {
+      id: 'pages.LocationSelector.country',
+      defaultMessage: 'Country',
+    },
+    state: {
+      id: 'pages.LocationSelector.state',
+      defaultMessage: 'State',
+    },
+    lga: {
+      id: 'pages.LocationSelector.lga',
+      defaultMessage: 'Area',
+    },
+  }),
+}
 
 const styles = {
   fieldContainer: {
@@ -126,6 +133,7 @@ export class LocationSelector extends PureComponent {
       lgaIdFieldName,
       selectedCountryId,
       selectedStateId,
+      user,
     } = this.props
 
     const countriesLoading = loading || countries.loading
@@ -171,7 +179,7 @@ export class LocationSelector extends PureComponent {
             component={renderStateSelectField}
             // restProps
             countryId={selectedCountryId}
-            floatingLabelText={formatMessage(messages.state)}
+            floatingLabelText={getCustomMessage(messages, 'state', user)}
             style={styles.field}
             disabled={statesDisabled}
           />
@@ -184,7 +192,7 @@ export class LocationSelector extends PureComponent {
             // restProps
             countryId={selectedCountryId}
             stateId={selectedStateId}
-            floatingLabelText={formatMessage(messages.lga)}
+            floatingLabelText={getCustomMessage(messages, 'lga', user)}
             style={styles.field}
             disabled={lgasDisabled}
           />
@@ -221,6 +229,7 @@ function mapStateToProps(state, ownProps) {
     selectedCountryId,
     selectedStateId,
     selectedLgaId,
+    user: state.user,
   }
 }
 
