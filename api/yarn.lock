@@ -6619,9 +6619,9 @@ nssocket@^0.6.0:
     lazy "~1.0.11"
 
 nth-check@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/nth-check/-/nth-check-2.0.0.tgz#1bb4f6dac70072fc313e8c9cd1417b5074c0a125"
-  integrity sha512-i4sc/Kj8htBrAiH1viZ0TgU8Y5XqCaV/FziYK6TBczxmeKm3AEFWqqF3195yKudrarqy7Zu80Ra5dobFjn9X/Q==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/nth-check/-/nth-check-2.0.1.tgz#2efe162f5c3da06a28959fbd3db75dbeea9f0fc2"
+  integrity sha512-it1vE95zF6dTT9lBsYbxvqh0Soy4SPowchj0UBGj/V6cTPnXXtQOPUbhZ6CmGzAD/rW22LQK6E96pcdJXk4A4w==
   dependencies:
     boolbase "^1.0.0"
 
@@ -8135,7 +8135,6 @@ snapdragon@^0.8.1:
 
 sort-any@^1.2.3:
   version "1.2.9"
-
   resolved "https://registry.npmjs.org/sort-any/-/sort-any-1.2.9.tgz#82b2513a68ad8aae6f2763fbc6212868b1aad0ca"
   integrity sha512-6LEFNVLeWrbCpFxhS+KdZypqY4XrtOA1dY1vQSacR91SJ/sXKUrR1wK7AUgLOXlLVXnaws3NcZ8lZPMdfkhlHw==
   dependencies:
