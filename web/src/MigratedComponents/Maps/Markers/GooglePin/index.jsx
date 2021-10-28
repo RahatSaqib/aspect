@@ -2,14 +2,14 @@ import React from 'react'
 import { func, shape, string, number } from 'prop-types'
 import { OverlayView } from '@react-google-maps/api'
 import classnames from 'classnames/bind'
-import get from 'lodash/get'
 
 import IconProvider from '../../../IconProvider'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import useI18n from '../../../../Hooks/i18n/useI18n'
 
 import styles from './GooglePin.css'
-import messages from '../../DailyStatus/messages'
+import messages from '../../../../shared/messages/deviceStatusMessages'
+import formatI18nMessage from '../../../../shared/i18n/formatterWeb'
 
 const cssClasses = classnames.bind(styles)
 
@@ -44,11 +44,12 @@ const GooglePin = ({
       >
         {name && maintenanceStatusI18nKey ? (
           <AspectTooltip
-            title={`${name}: ${
-              get(messages, maintenanceStatusI18nKey)
-                ? formatMessage(get(messages, maintenanceStatusI18nKey))
-                : maintenanceStatusI18nKey
-            }`}
+            title={`${name}: ${formatI18nMessage(
+              messages,
+              formatMessage,
+              maintenanceStatusI18nKey,
+              maintenanceStatusI18nKey
+            )}`}
             placement="top"
           >
             <IconProvider icon="FaMapMarkerAlt" title={false} />
