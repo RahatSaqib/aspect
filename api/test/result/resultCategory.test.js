@@ -49,9 +49,15 @@ describe('Extracting data from Result Text and categorize them', async () => {
         const payloadCategory = getResultCategories(
           _.assign({}, result.payload.result)
         )
-        payloadCategory.forEach((elem, index) =>
-          assert.equal(result[`expectedCategory${index + 1}`], elem.id)
-        )
+        const expected = {
+          resultCategory1Id: result.expectedCategory1,
+          resultCategory2Id: result.expectedCategory2,
+        }
+        const actual = {
+          resultCategory1Id: _.get(payloadCategory[0], 'id', null),
+          resultCategory2Id: _.get(payloadCategory[1], 'id', null),
+        }
+        assert.deepEqual(expected, actual)
       })
     })
   })
