@@ -1,0 +1,12 @@
+#!/bin/sh
+local_branch_name="$(git rev-parse --abbrev-ref HEAD)"
+valid_branch_regex='^((fix|feat|feature|no-ticket|draft|do-not-merge)\/[a-zA-Z0-9\-]{0,35})$'
+message="Branch name should match (fix|feat|feature|no-ticket)/(branch-name) and not be longer than 35 chars."
+
+if [[ ! $local_branch_name =~ $valid_branch_regex ]]; then
+    echo "$message"
+    exit 1
+fi
+
+echo "Branch name '$local_branch_name' is valid ✅"
+exit 0
