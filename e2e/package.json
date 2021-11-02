@@ -1,0 +1,11 @@
+{
+  "name": "aspect-e2e-tests",
+  "version": "1.0.0",
+  "description": "project for running all e2e tests scenarios",
+  "main": "index.js",
+  "author": "systemone",
+  "dependencies": {
+    "@cucumber/cucumber": "^8.0.0-rc.1",
+    "playwright": "^1.16.3"
+  }
+}
