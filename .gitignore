@@ -36,6 +36,7 @@ e2e/**/reports/
 # packages/web
 **/dist/assets/
 **/dist/index.html
+web/dist
 
 #nyc output
 .nyc_output/
@@ -45,3 +46,6 @@ e2e/**/reports/
 
 # Excel temp files
 **/~$*.xlsx
+
+# Example storybooks
+web/src/example-stories/

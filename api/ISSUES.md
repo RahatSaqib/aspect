@@ -1,5 +1,10 @@
 # ASPECT ISSUE AND NOTIFICATION SYSTEM
 
+For some examples please refer to these prs:
+
+- <https://github.com/SystemOneId/aspect/pull/1413/files>
+- <https://github.com/SystemOneId/aspect/pull/1415/files>
+
 ## A simple description of the system
 
 In the next chart you are going to find a simple diagram with the objective to introduce and present the artifacts we are going to work with for the issue and notification system. The idea is to give you a general idea of what implies and what are the main entities we need to know. Later in the text we are going to provide a more detailed explanation about them:
@@ -25,7 +30,7 @@ An example of this could be Myanmar where we defined some specific issues and tr
 All these customizations must be implemented in the corresponding action where we want Aspect to do something different and specific.
 
 For checking the configuration of the plugin you should check the file
-``api/src/plugin/registration.js`` line 36 where is defined the plugin structure with all the actions we can overwrite.
+`api/src/plugin/registration.js` line 36 where is defined the plugin structure with all the actions we can overwrite.
 
 ### Default actions (can be overwritten) are
 
@@ -88,7 +93,7 @@ We are using the message queue exactly for what is described above. As you can r
 
 ### Message queue implementation
 
-In the file ``api/src/mq.js`` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit doesn’t fit our needs, it could be easily replaced by another one.
+In the file `api/src/mq.js` you will find an abstraction of the MQ. We are using Rabbit-MQ right now, but if in the future rabbit doesn’t fit our needs, it could be easily replaced by another one.
 
 This class has some methods, but the most important are:
 
@@ -96,9 +101,9 @@ This class has some methods, but the most important are:
 
 The current implementation of the MQ uses only one queue and different actions on it. These actions are an identifier of the event you want to subscribe to (Filtering and categorization of the event)
 
-You can check all the queues and subscriptions in file ``api/src/subscriptions.js``. Refer to the README on how to access the RabbitMQ UI.
+You can check all the queues and subscriptions in file `api/src/subscriptions.js`. Refer to the README on how to access the RabbitMQ UI.
 
-Also, after creating the message queue, we start the scheduler (see ``scheduler.js``) which will trigger some scheduled tasks that are going to dispatch messages to the message queue, like daily device maintenance status.
+Also, after creating the message queue, we start the scheduler (see `scheduler.js`) which will trigger some scheduled tasks that are going to dispatch messages to the message queue, like daily device maintenance status.
 
 ## Issues
 
@@ -135,15 +140,15 @@ Not scheduled or dual behaviour actions:
 - ModuleTemperatureError: This issue is triggered when there are some error codes related to module temperature and when those error codes arrive we trigger this issue. Right now it is only used in Myanmar’s plugin.
 - ModulePowerError: it is triggered when some error code related to module power arrives. Right now it is only used in Myanmar’s plugin.
 - MachineTemperatureError: It is triggered when some error code related to Machine Temperature error arrives. Right now it is only used in Myanmar’s plugin.
-- MachinePowerError:  It is triggered when some error code related to Machine Power error arrives. Right now it is only used in Myanmar’s plugin.
-- ModuleProceduralError:  It is triggered when some error code related to Module Procedural error arrives. Right now it is only used in Myanmar’s plugin.
+- MachinePowerError: It is triggered when some error code related to Machine Power error arrives. Right now it is only used in Myanmar’s plugin.
+- ModuleProceduralError: It is triggered when some error code related to Module Procedural error arrives. Right now it is only used in Myanmar’s plugin.
 - MachineProceduralError: It is triggered when some error code related to Machine procedural error arrives. Right now it is only used in Myanmar’s plugin.
-- DataCategoryLowError: It Triggers when the percentage of results that have a custom field completed falls below a certain threshold. For example, if less than 90% of results have "null" for "gender" in the custom fields, trigger the data category low error.  Right now it is only used in Myanmar’s plugin.
+- DataCategoryLowError: It Triggers when the percentage of results that have a custom field completed falls below a certain threshold. For example, if less than 90% of results have "null" for "gender" in the custom fields, trigger the data category low error. Right now it is only used in Myanmar’s plugin.
 - ReagentHealthError: It triggers if there's a certain number of errors with error codes that they consider reagent-related.This is triggered when a reagent lot has any issue.Right now it is only used in Myanmar’s plugin.
 
 ### Defining issues
 
-The issues are defined in ``api/seeds/relatedObjects/issues.js``. For creating a new one, you should add there a new entry. For example:
+The issues are defined in `api/seeds/relatedObjects/issues.js`. For creating a new one, you should add there a new entry. For example:
 
 ```javascript
  YourNewIssue: { // This is the external id
@@ -226,8 +231,8 @@ This function should be saved in the table IssueEventTrigger field filterIssueCo
 {"evaluationFunction": "filterByLotAndAssay"}
 ```
 
-Where ``filterByLotAndAssay`` is the function called for filtering.
-This function should be located in the file ``filterConditions.js`` of the specific partner. The issue folder is the place for saving the default functions.
+Where `filterByLotAndAssay` is the function called for filtering.
+This function should be located in the file `filterConditions.js` of the specific partner. The issue folder is the place for saving the default functions.
 
 ## Resolution
 
@@ -273,15 +278,15 @@ It has 5 different channels to communicate:
 - Webhook: if we need to notify another software with the issue generated we can post issue details through this channel.
 - Alert: Is the visual and graphical notification in Aspect system.
 
-The notifications are going to be fired after analyzing if we have configured the DB in the ``NotificationType`` table any row for that issue Type. We can also filter by partner and jobfunction. That means we can have different message types per partner or jobfunction for the same issue Type. The ``MessageType`` Table has the configuration of the templates we are going to send through the different channels. We need at least one message type configuration for producing the notification.
+The notifications are going to be fired after analyzing if we have configured the DB in the `NotificationType` table any row for that issue Type. We can also filter by partner and jobfunction. That means we can have different message types per partner or jobfunction for the same issue Type. The `MessageType` Table has the configuration of the templates we are going to send through the different channels. We need at least one message type configuration for producing the notification.
 
 ## Configuring new Issue with notification
 
 This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving it by the scheduler.
-*The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/registration.js
-Also, it's important to mention that in this tutorial we will use plugin functions for triggering and resolving issues, but you can do it in many ways which were described in the Triggering section.*
+_The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/registration.js
+Also, it's important to mention that in this tutorial we will use plugin functions for triggering and resolving issues, but you can do it in many ways which were described in the Triggering section._
 
-1) Start by adding a function for analyzing if your issue should be triggered or not. Let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
+1.  Start by adding a function for analyzing if your issue should be triggered or not. Let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:
 
     ```javascript
     // ...
@@ -291,7 +296,7 @@ Also, it's important to mention that in this tutorial we will use plugin functio
     // ...
     ```
 
-2) If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
+2.  If needed, add a function for analyzing if your issue should be resolved or not. In this example, we will use plugin function for achieving that, so let's go to 'api/src/plugin/issueResolutions.js' and add a new plugin for your conditions-met function:
 
     ```javascript
     // ...
@@ -301,30 +306,30 @@ Also, it's important to mention that in this tutorial we will use plugin functio
     // ...
     ```
 
-    ***This step isn't needed if you won't use plugin functions.***
+    **_This step isn't needed if you won't use plugin functions._**
 
-3) Define your action creator. Our standard is to define this function in files called action.js, like we have ``api/src/device/actions.js``. Feel free of creating a new file or use an existant one, but try to follow the same concept.
-The action creator is the function that will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
+3.  Define your action creator. Our standard is to define this function in files called action.js, like we have `api/src/device/actions.js`. Feel free of creating a new file or use an existant one, but try to follow the same concept.
+    The action creator is the function that will be binded to your RabbitMQ context and will queue a new action for triggering your issue. For example:
 
-    ```javascript
-    function yourNewIssueTriggerCheck(someParams) {
-      return {
-        type: 'YOUR_NEW_ISSUE',
-        someParams
-      }
-    }
-    ```
+        ```javascript
+        function yourNewIssueTriggerCheck(someParams) {
+          return {
+            type: 'YOUR_NEW_ISSUE',
+            someParams
+          }
+        }
+        ```
 
-4) At ``api/seeds/relatedObjects/issues.js``, add a new entry for describing the new issue. *Please, refer to the Defining Issues section for more information*.
+4.  At `api/seeds/relatedObjects/issues.js`, add a new entry for describing the new issue. _Please, refer to the Defining Issues section for more information_.
 
-5) At the ``api/seeds/fixtures/IssueEventTrigger.json`` fixture, add a new entry for describing the conditions that should be matched for triggering the issue. *Please, refer to the Triggering section for more information*. 
-Remember that:
+5.  At the `api/seeds/fixtures/IssueEventTrigger.json` fixture, add a new entry for describing the conditions that should be matched for triggering the issue. _Please, refer to the Triggering section for more information_.
+    Remember that:
 
-    - If you are using plugin functions, you should set the function created at the step 1 as the *evaluationParameter*.
-    - The *issueType* property should be the same as the external id configured on step 4
-    - The *action* property should be the same as the action type configured on step 3
+        - If you are using plugin functions, you should set the function created at the step 1 as the *evaluationParameter*.
+        - The *issueType* property should be the same as the external id configured on step 4
+        - The *action* property should be the same as the action type configured on step 3
 
-6) Define the call to your action creator. This can be done in many places, like schedulers or also like other plugins (onResultLogged, for example). This will queue the action you configured, so the issue evaluation will be triggered.
+6.  Define the call to your action creator. This can be done in many places, like schedulers or also like other plugins (onResultLogged, for example). This will queue the action you configured, so the issue evaluation will be triggered.
 
     ```javascript
     // Bind your action creator if it doesn't exist yet
@@ -332,27 +337,27 @@ Remember that:
     if (!messageContext.yourNewIssueTriggerCheck) {
       messageContext = messageContext.bindActionCreators({
         yourNewIssueTriggerCheck,
-      })
+      });
     }
-    await messageContext.yourNewIssueTriggerCheck(resultDeviceId)
+    await messageContext.yourNewIssueTriggerCheck(resultDeviceId);
     ```
 
-7) Create a new seed file for upserting the
+7.  Create a new seed file for upserting the
     - Issue type
     - Issue event trigger
     - Notification type
     - Issue resolution
-  Optionally, you can use the helper allocated at ``api/seeds/common/add_issue.js``
+      Optionally, you can use the helper allocated at `api/seeds/common/add_issue.js`
 
 ## Creating a new Action
 
-For creating a new Action you need to subscribe to the message queue.  For doing it you should add it in the file ``api/src/subscriptions.js`` a new action:function pair, With the next format:
+For creating a new Action you need to subscribe to the message queue. For doing it you should add it in the file `api/src/subscriptions.js` a new action:function pair, With the next format:
 
 ```javascript
-queue.subscribe('case', require('./case/endpoints').subscriptions)
+queue.subscribe('case', require('./case/endpoints').subscriptions);
 ```
 
-Where ``require('./case/endpoints')`` is the file location where all the key pairs are written.
+Where `require('./case/endpoints')` is the file location where all the key pairs are written.
 
 And subscriptions is an array of JSON object with an actions dictionary.
 
@@ -365,10 +370,10 @@ const subscriptions = [
       RESULT_LOGGED: onResultLogged,
     },
   },
-]
+];
 ```
 
 In this example CASE_ADDED is the action (Constant string) we are going to subscribe the function name onCaseAdded
-      ``CASE_ADDED: onCaseAdded,``
+`CASE_ADDED: onCaseAdded,`
 
-This means if an action ``CASE_ADDED`` was queued on the MQ, the message queue dispatcher is going to call ``onCaseAdded`` function.
+This means if an action `CASE_ADDED` was queued on the MQ, the message queue dispatcher is going to call `onCaseAdded` function.

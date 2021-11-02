@@ -117,6 +117,7 @@ async function getResultQuery(
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
       siteName: 's.name',
     })
     .select(
@@ -248,9 +249,14 @@ async function resultsTransmittedDashboard(request) {
     offset
   )
 
+  // eslint-disable-next-line no-confusing-arrow
+  const roundPercent = percent =>
+    percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
+
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
-    return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
+    const percent = denominator === 0 ? 0 : (100.0 * numerator) / denominator
+    return roundPercent(percent)
   }
   // calculate all percentages
   items.forEach(item => {
@@ -279,7 +285,7 @@ async function resultsTransmittedDashboard(request) {
     if (pcPrev === null) {
       return 0
     }
-    return pcCurr - pcPrev
+    return roundPercent(pcCurr - pcPrev)
   }
   const findItem = (yearMonth, assayExternalId) => item =>
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
@@ -344,6 +350,7 @@ async function resultsTransmittedDashboard(request) {
         }
       }
     )
+    .filter(item => item.cntAll > 0)
     .sort((a, b) => b.cntAll - a.cntAll)
 
   return {

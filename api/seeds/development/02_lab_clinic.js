@@ -13,12 +13,11 @@ const {
   subMinutes,
   subMonths,
 } = require('date-fns')
-const { upsertJobFunction } = require('../common')
+const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const { getPermissionModules } = require('../utils')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
@@ -30,9 +29,9 @@ const {
   resultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
+const jobFunctionsFixtureReporter = require('./fixtures/jobFunctions_reporter')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
-
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 180
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
@@ -236,8 +235,6 @@ async function seed(knex) {
     }),
   })
 
-  const modules = await getPermissionModules(knex)
-
   // Create clinics for every state in Malawi
   const [malawiCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MWI' })
@@ -266,56 +263,13 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
-
-  const jobFunctionIdLabAdmin = await upsertJobFunction(
-    knex,
-    'Lab Admin',
-    partnerId
-  )
-
-  await knex('JobFunctionPermission').insert([
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.device.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabAdmin,
-      permissionId: modules.result.edit,
-    },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.assay.edit },
-    { jobFunctionId: jobFunctionIdLabAdmin, permissionId: modules.browse.view },
-  ])
-
-  await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.edit },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceApiKey.edit,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.edit },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventory.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.notification.edit,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.issue.edit,
-    },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.taskMenu.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.edit },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-  ])
+  await upsertJobFunctionFixture(knex, jobFunctionsFixtureReporter, partnerId)
+  const [jobFunctionIdAdmin] = await knex('JobFunction')
+    .where({ externalId: 'admin', partnerId })
+    .pluck('id')
+  const [jobFunctionIdLabAdmin] = await knex('JobFunction')
+    .where({ externalId: 'labAdmin', partnerId })
+    .pluck('id')
 
   // add widgets
   const widgets = await knex('DashboardWidget').select('id', 'title')
@@ -408,7 +362,7 @@ async function seed(knex) {
           deviceTypeId: deviceTypeIdReporter,
           deviceApprovalId: approvedDeviceApprovalId,
           name: `${siteData.name} Reporter`,
-          shortName: `R-${_.random(100000, 999999)}`,
+          shortName: `${siteData.city || siteData.name} Reporter`,
           serial: `S1-R-${_.random(100000, 999999)}`,
           lastSeenOn: lastTime,
           lastPingOn: lastTime,
@@ -610,7 +564,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -639,10 +593,8 @@ async function seed(knex) {
     .where('externalId', 'abbottM2000DBSHivVL')
     .first()
 
-  const {
-    Validated: validated,
-    Deliverable: deliverable,
-  } = await allResultWorkflowStatusToId()
+  const { Validated: validated, Deliverable: deliverable } =
+    await allResultWorkflowStatusToId()
 
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
@@ -724,7 +676,7 @@ async function seed(knex) {
       device.id
     )
 
-    const resultId = await knex('Result').insert({
+    const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId: assayIdEid,
@@ -850,7 +802,7 @@ async function seed(knex) {
       originSiteId: siteId,
     }
 
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     samples.push(sample)
   }
@@ -892,7 +844,7 @@ async function seed(knex) {
       sample.externalId,
       device.id
     )
-    const resultId = await knex('Result').insert({
+    const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId: assayIdHivVl,

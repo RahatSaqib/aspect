@@ -1,3 +1,8 @@
+import format from 'date-fns/format'
+import endOfMonth from 'date-fns/endOfMonth'
+
+const now = new Date()
+const lastDayOfMonth = format(endOfMonth(new Date()), 'dd')
 const pieRowDataFromAPIIn = [
   {
     assayId: '16',
@@ -125,8 +130,10 @@ const pieRowDataFromAPIOut = [
       heading: 'cntAll',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D16%26minDate%3D2020-10-01%26maxDate%3D2020-10-31',
+      link: `/browse/result?filters=assayId%3D16%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-${lastDayOfMonth}`,
       value: [
         {
           id: 'cntAll',
@@ -140,8 +147,13 @@ const pieRowDataFromAPIOut = [
       heading: 'cntPositive',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D16%26minDate%3D2020-10-01%26maxDate%3D2020-10-31%26resultCategoryId%3D18',
+      link: `/browse/result?filters=assayId%3D16%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-${lastDayOfMonth}%26resultCategoryId%3D18`,
       value: [
         {
           id: 'cntPositive',
@@ -270,8 +282,10 @@ const pieRowDataFromAPIOut = [
       heading: 'cntAll',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D14%26minDate%3D2020-10-01%26maxDate%3D2020-10-31',
+      link: `/browse/result?filters=assayId%3D14%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-${lastDayOfMonth}`,
       value: [
         {
           id: 'cntAll',
@@ -285,8 +299,13 @@ const pieRowDataFromAPIOut = [
       heading: 'cntPositive',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D14%26minDate%3D2020-10-01%26maxDate%3D2020-10-31%26resultCategoryId%3D1',
+      link: `/browse/result?filters=assayId%3D14%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-${lastDayOfMonth}%26resultCategoryId%3D1`,
       value: [
         {
           id: 'cntPositive',
@@ -415,8 +434,10 @@ const pieRowDataFromAPIOut = [
       heading: 'cntAll',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D20%26minDate%3D2020-10-01%26maxDate%3D2020-10-31',
+      link: `/browse/result?filters=assayId%3D20%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-${lastDayOfMonth}`,
       value: [
         {
           id: 'cntAll',
@@ -430,8 +451,13 @@ const pieRowDataFromAPIOut = [
       heading: 'cntPositive',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D20%26minDate%3D2020-10-01%26maxDate%3D2020-10-31%26resultCategoryId%3D1',
+      link: `/browse/result?filters=assayId%3D20%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-${lastDayOfMonth}%26resultCategoryId%3D1`,
       value: [
         {
           id: 'cntPositive',
@@ -560,8 +586,10 @@ const pieRowDataFromAPIOut = [
       heading: 'cntAll',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D18%26minDate%3D2020-10-01%26maxDate%3D2020-10-31',
+      link: `/browse/result?filters=assayId%3D18%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-${lastDayOfMonth}`,
       value: [
         {
           id: 'cntAll',
@@ -575,8 +603,13 @@ const pieRowDataFromAPIOut = [
       heading: 'cntPositive',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D18%26minDate%3D2020-10-01%26maxDate%3D2020-10-31%26resultCategoryId%3D1',
+      link: `/browse/result?filters=assayId%3D18%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-${lastDayOfMonth}%26resultCategoryId%3D1`,
       value: [
         {
           id: 'cntPositive',
@@ -705,8 +738,10 @@ const pieRowDataFromAPIOut = [
       heading: 'cntAll',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D33%26minDate%3D2020-10-01%26maxDate%3D2020-10-31',
+      link: `/browse/result?filters=assayId%3D33%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-${lastDayOfMonth}`,
       value: [
         {
           id: 'cntAll',
@@ -720,8 +755,13 @@ const pieRowDataFromAPIOut = [
       heading: 'cntPositive',
       type: 'solid',
       format: 'int',
-      link:
-        '/browse/result?filters=assayId%3D33%26minDate%3D2020-10-01%26maxDate%3D2020-10-31%26resultCategoryId%3D33',
+      link: `/browse/result?filters=assayId%3D33%26minDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-01%26maxDate%3D${format(
+        now,
+        'yyyy-MM'
+      )}-${lastDayOfMonth}%26resultCategoryId%3D33`,
       value: [
         {
           id: 'cntPositive',

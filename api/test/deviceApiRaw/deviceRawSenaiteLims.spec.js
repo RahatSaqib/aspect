@@ -11,7 +11,7 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-describe('Device API Raw routes for Senaite LIMS', () => {
+describe.skip('Device API Raw routes for Senaite LIMS', () => {
   const deviceApiRawPath = '/device/raw'
   const validApiKeyToken = randomToken()
   let senaiteLimsDeviceId
@@ -71,9 +71,11 @@ describe('Device API Raw routes for Senaite LIMS', () => {
 
   after(async () => {
     await waitAsyncComplete()
-    const { id: deviceApiKeyId, deviceId, siteId } = await knex(
-      'DeviceApiKey as dak'
-    )
+    const {
+      id: deviceApiKeyId,
+      deviceId,
+      siteId,
+    } = await knex('DeviceApiKey as dak')
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.token', validApiKeyToken)
       .first('dak.id', 'dak.deviceId', 'd.siteId')

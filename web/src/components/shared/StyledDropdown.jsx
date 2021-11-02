@@ -3,12 +3,16 @@ import omit from 'lodash/omit'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Input from '@material-ui/core/Input'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const styles = theme => ({
   root: {
     color: 'black',
     minWidth: 180,
+  },
+  icon: {
+    color: theme.customPropertiesVariables['--aspect-color-white'],
   },
   select: {
     outlineStyle: 'none',
@@ -52,20 +56,26 @@ const styles = theme => ({
   },
 })
 
-export const Dropdown = ({ classes, source, ...props }) => (
-  <Select
-    input={<Input disableUnderline />}
-    classes={{ ...omit(classes, 'menu') }}
-    MenuProps={{ classes: { paper: classes.menu } }}
-    {...props}
-  >
-    {source &&
-      source.map(item => (
-        <MenuItem key={item.value} value={item.value}>
-          {item.label}
-        </MenuItem>
-      ))}
-  </Select>
-)
-
+export const Dropdown = ({ classes, source, ...props }) => {
+  const { messages } = props
+  const { formatMessage } = useI18n()
+  return (
+    <Select
+      input={<Input disableUnderline />}
+      classes={{ ...omit(classes, 'menu') }}
+      MenuProps={{ classes: { paper: classes.menu } }}
+      variant="standard"
+      {...props}
+    >
+      {source &&
+        source.map(item => (
+          <MenuItem key={item.value} value={item.value}>
+            {messages && messages[item.i18nKey]
+              ? formatMessage(messages[item.i18nKey])
+              : item.label}
+          </MenuItem>
+        ))}
+    </Select>
+  )
+}
 export default withStyles(styles)(Dropdown)

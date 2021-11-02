@@ -117,7 +117,7 @@ const enhance = compose(
   withTodayProps,
   withDateFormatProps,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
 
       this.setState({
@@ -126,7 +126,7 @@ const enhance = compose(
       })
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { inventoryItem, today } = nextProps
       if (this.props.inventoryItem === inventoryItem) {
         return

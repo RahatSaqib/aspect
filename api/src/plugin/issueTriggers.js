@@ -37,16 +37,25 @@ async function analyzeWithQuery(
     .modify(
       (builder, moduleSerial, consumableLot, assayId) => {
         if (moduleSerial) builder.where({ moduleSerial })
-        else builder.where({ consumableLot, assayId })
+        else {
+          /**
+           * to avoid unhandled error
+           * "Undefined binding(s) detected when compiling FIRST. Undefined column(s): [consumableLot, assayId]"
+           * which happens when one of the bindings values is `undefined` - make sure params are
+           * not `undefined`
+           */
+          if (consumableLot !== undefined) builder.where({ consumableLot })
+          if (assayId !== undefined) builder.where({ assayId })
+        }
       },
       moduleSerial,
       consumableLot,
       assayId
     )
+
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-
   const { resultsWithErrors, totalResults } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
@@ -62,13 +71,18 @@ async function analyzeWithQuery(
 async function analyzeCategories(
   knex,
   action,
-  { categoryId, threshold, below, daysPeriod, minResults }
+  { categoryId, errorCodes, threshold, below, daysPeriod, minResults }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
 
-  const { resultCategoryId } = action.options.data
-  const categoryReceivedId = await resultCategoryToId(resultCategoryId)
-  if (categoryReceivedId === categoryToCompare)
+  const { resultCategoryId, resultErrorCode } = action.options.data
+
+  if (
+    (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
+    (!_.isNil(resultErrorCode) &&
+      _.includes(errorCodes, parseInt(resultErrorCode, 10)))
+  ) {
+    action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
       action,
@@ -79,11 +93,16 @@ async function analyzeCategories(
       builder =>
         builder.first(
           knex.raw(
-            'sum(case when resultCategory1=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
+            `sum(case when resultCategory1=? ${
+              errorCodes && errorCodes.length > 0
+                ? ` OR errorcode in(${errorCodes.join(',')})`
+                : ``
+            } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
             categoryToCompare
           )
         )
     )
+  }
   return false
 }
 
@@ -131,10 +150,11 @@ async function analyzeUnusedModules(
 async function analyzeErrors(
   knex,
   action,
-  { errorCode, threshold, below, daysPeriod, minResults }
+  { errorCodes, threshold, below, daysPeriod, minResults }
 ) {
   const { resultErrorCode } = action.options.data
-  if (parseInt(resultErrorCode, 10) === errorCode) {
+  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+    action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
       action,
@@ -145,8 +165,9 @@ async function analyzeErrors(
       builder =>
         builder.first(
           knex.raw(
-            'sum(case when errorcode=? then 1 else 0 end) as resultsWithErrors, count(id) as totalResults',
-            resultErrorCode
+            `sum(case when errorcode in (${errorCodes.join(
+              ','
+            )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
           )
         )
     )
@@ -157,10 +178,15 @@ async function analyzeErrors(
 async function analyzeDeviceHardwareError(
   knex,
   action,
-  { errorCode, daysPeriod, minErrors }
+  { errorCodes, daysPeriod, minErrors }
 ) {
-  const { errorCode: actualErrorCode } = action.options.data
-  if (parseInt(actualErrorCode, 10) === errorCode) {
+  const { resultErrorCode } = action.options.data
+
+  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
+  // the rest is of the entry is identical. Ignore those duplicates.
+  const errorCodesWithDuplicateLogEntries = ['2126']
+
+  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const query = knex('DeviceOperation')
       .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .where('deviceId', action.deviceId)
@@ -171,19 +197,23 @@ async function analyzeDeviceHardwareError(
             CASE WHEN
               IFNULL(data ->> '$.type', '') = 'gx-log'
               AND
-              CAST( IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) = ?
+              (data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
+                ','
+              )}) OR IFNULL(data ->> '$.logLevel', '') = 'INFO')
+              AND
+              CAST(IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
+                ','
+              )})
             THEN 1
             ELSE 0
             END
           ) AS totalErrors
-          `,
-          errorCode
+          `
         )
       )
-
     const [{ totalErrors }] = await query
     action.options.data.totalErrors = totalErrors
-
+    action.options.data.errorCodes = errorCodes
     return totalErrors >= minErrors
   }
   return false

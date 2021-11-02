@@ -33,11 +33,12 @@ const groupByKey = (
   const grouped = filtered.reduce((acc, curr) => {
     const countKey = keyToConsume
       ? curr[keyToConsume]
-      : filter(graphColorMap, ['id', 99])[0].externalId
+      : filter(graphColorMap, ['id', 999])[0].externalId
 
-    const dateFormatted = formatDate
-      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
-      : curr[indexBy]
+    const dateFormatted =
+      formatDate && formatDate !== 'MMM'
+        ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
+        : curr[indexBy]
 
     acc[curr[indexBy]] = {
       ...acc[curr[indexBy]],
@@ -218,7 +219,7 @@ const groupForPieRow = (data, mergedParams) => {
       }
     }
     return pieRows.push(
-      Object.keys(pieRow).reduce(function(r, k) {
+      Object.keys(pieRow).reduce((r, k) => {
         return r.concat(pieRow[k])
       }, [])
     )
@@ -269,22 +270,23 @@ const groupForOldTreatmentAPI = (
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
-    const dateFormatted = formatDate
-      ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
-      : curr[indexBy]
+    const dateFormatted =
+      formatDate && formatDate !== 'MMM'
+        ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
+        : curr[indexBy]
 
     acc[curr[indexBy]] = {
       monthTested: dateFormatted,
       Confirmed:
         displayMethod === 'percentage'
-          ? Number(curr[keyToConsume]).toFixed(1)
+          ? +Number(curr[keyToConsume]).toFixed(1)
           : curr[keyToConsume],
       NotConfirmed:
         curr[keyToConsume] < 1
           ? displayMethod === 'percentage'
-            ? '100.0'
+            ? 100
             : curr.total
-          : Number(100 - curr[keyToConsume]).toFixed(1),
+          : +Number(100 - curr[keyToConsume]).toFixed(1),
       totalCnt: curr.total,
     }
     return acc
@@ -322,8 +324,8 @@ const groupForPieOldTreatmentAPI = (data, keyToConsume) => {
   return [...groupedConfirmed, ...groupedNotConfirmed]
 }
 
-const weekendOrHolidayInactive = (inactive, total, isWeekendOrHoliday) =>
-  isWeekendOrHoliday ? 0 : calcPercentageForGraphs(inactive, total)
+const weekendOrHolidayInactive = (inactive = 0, total, isWeekendOrHoliday) =>
+  isWeekendOrHoliday ? 0 : +calcPercentageForGraphs(inactive, total)
 
 const groupForDeviceStatusAPI = (
   data,
@@ -334,18 +336,8 @@ const groupForDeviceStatusAPI = (
 ) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
   const grouped = filtered.reduce((acc, curr) => {
-    const {
-      isWeekendOrHoliday,
-      devicesActive,
-      devicesTotal,
-      devicesInactive,
-      inactiveUnknown,
-      inactiveConnectivity,
-      inactiveDecommissioned,
-      inactiveDownForRepair,
-      inactiveNoResultsReported,
-      inactiveOutOfInventory,
-    } = curr
+    const { isWeekendOrHoliday, devicesActive, devicesTotal, devicesInactive } =
+      curr
 
     const dateFormatted = formatDate
       ? format(negateTimeZoneOffset(curr[indexBy]), formatDate)
@@ -357,39 +349,59 @@ const groupForDeviceStatusAPI = (
       date: dateFormatted,
       devicesTotal,
       devicesActiveRaw: devicesActive,
-      devicesActive: calcPercentageForGraphs(devicesActive, devicesTotal),
+      devicesActive: +calcPercentageForGraphs(devicesActive, devicesTotal),
       weekendOrHoliday: isWeekendOrHoliday
         ? shouldBeZero
           ? 0
-          : calcPercentageForGraphs(devicesInactive, devicesTotal)
+          : +calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
       inactiveUnknown: weekendOrHolidayInactive(
-        inactiveUnknown,
+        curr.inactiveUnknown,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveConnectivity: weekendOrHolidayInactive(
-        inactiveConnectivity,
+        curr.inactiveConnectivity,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveDecommissioned: weekendOrHolidayInactive(
-        inactiveDecommissioned,
+        curr.inactiveDecommissioned,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveDownForRepair: weekendOrHolidayInactive(
-        inactiveDownForRepair,
+        curr.inactiveDownForRepair,
         devicesTotal,
         isWeekendOrHoliday
       ),
-      inactiveNoResultsReported: weekendOrHolidayInactive(
-        inactiveNoResultsReported,
+      inactiveNoTestsPerformed: weekendOrHolidayInactive(
+        curr.inactiveNoTestsPerformed,
         devicesTotal,
         isWeekendOrHoliday
       ),
       inactiveOutOfInventory: weekendOrHolidayInactive(
-        inactiveOutOfInventory,
+        curr.inactiveOutOfInventory,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoStaff: weekendOrHolidayInactive(
+        curr.inactiveNoStaff,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoSamples: weekendOrHolidayInactive(
+        curr.inactiveNoSamples,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveNoPower: weekendOrHolidayInactive(
+        curr.inactiveNoPower,
+        devicesTotal,
+        isWeekendOrHoliday
+      ),
+      inactiveOther: weekendOrHolidayInactive(
+        curr.inactiveOther,
         devicesTotal,
         isWeekendOrHoliday
       ),
@@ -399,13 +411,12 @@ const groupForDeviceStatusAPI = (
   return normaliseKeys(grouped)
 }
 
-const groupForInvetoryStatusAPI = (data, keysToRename) => {
+const groupForInvetoryStatusAPI = (data, i18nKeys, formatMessage, messages) => {
   const grouped = []
   map(data, ({ consumableId, consumableName, ...rest }) =>
     map(rest, (val, key) => {
-      const findRenamedKey = filter(keysToRename, { externalId: key })
-      const renamedKey =
-        findRenamedKey && findRenamedKey.length ? findRenamedKey[0].name : key
+      const findRenamedKey = formatMessage(messages[i18nKeys[key]])
+      const renamedKey = findRenamedKey || key
       return grouped.push({
         consumableId,
         consumableName,

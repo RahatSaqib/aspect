@@ -1,7 +1,8 @@
 import React, { Fragment, memo } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
 import flowRight from 'lodash/flowRight'
+
+import { useAuthState } from '../AuthProvider'
 
 import {
   getPermissions,
@@ -15,7 +16,9 @@ const PermissionsProvider = ({
   extra: extraPermissions,
   children,
 }) => {
-  const { permissions } = useSelector(({ user }) => user.toJS().jwt)
+  const {
+    jwt: { permissions },
+  } = useAuthState()
   const permissionsByTypes = flowRight([
     groupByPermissionTypes,
     getPermissions,
@@ -27,13 +30,14 @@ const PermissionsProvider = ({
 PermissionsProvider.defaultProps = {
   override: [],
   extra: [],
+  children: null,
 }
 
 PermissionsProvider.propTypes = {
   permissions: PropTypes.oneOfType([PropTypes.array]).isRequired,
   override: PropTypes.oneOfType([PropTypes.array]),
   extra: PropTypes.oneOfType([PropTypes.array]),
-  children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 }
 
 export default memo(PermissionsProvider)

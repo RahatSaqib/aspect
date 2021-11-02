@@ -104,6 +104,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .orWhereIn('resultId', resultIds)
     .delete()
 
+  await knex('DeviceMaintenance').whereIn('deviceId', deviceIds).delete()
+
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactResultsDevice').whereIn('deviceId', deviceIds).delete()
@@ -147,16 +149,16 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  await knex('ResultFollowUp').whereIn('resultId', resultIds).delete()
+
+  await knex('ResultTag').delete()
+  await knex('SiteTag').delete()
+  await knex('Tag').delete()
 
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
-
-  await knex('ResultTag').delete()
-
-  await knex('Tag').delete()
 
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
@@ -171,8 +173,12 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
-
+  await knex('JobContext').whereIn('siteId', siteIds).delete()
   await knex('Site').whereIn('id', siteIds).delete()
+
+  await knex('DeviceMaintenanceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
 }
 
 function createGxAlertTestContext(server) {
@@ -216,10 +222,8 @@ class GxAlertApiTestContext {
   }
 
   createGxAlertApiKey(apiKeyDetails = {}) {
-    const {
-      countryAbbreviation = 'US',
-      partnerName = 'Partner One',
-    } = apiKeyDetails
+    const { countryAbbreviation = 'US', partnerName = 'Partner One' } =
+      apiKeyDetails
     return run(async knex => {
       const gxAlertDeviceType = await knex
         .from('DeviceType')
@@ -300,7 +304,8 @@ class GxAlertApiTestContext {
       this.basicDevicePayload.configuration.data.gxAlertDeviceId !==
       gxAlertDeviceId
     ) {
-      this.basicDevicePayload.configuration.data.gxAlertDeviceId = gxAlertDeviceId
+      this.basicDevicePayload.configuration.data.gxAlertDeviceId =
+        gxAlertDeviceId
     }
   }
 

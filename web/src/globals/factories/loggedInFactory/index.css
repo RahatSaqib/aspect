@@ -24,6 +24,16 @@
   position: absolute;
   right: 0;
   top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.Page-Content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-top: var(--aspect-app-bar-height);
 }
 
 .VerticalAppBar {
@@ -86,13 +96,13 @@
 }
 
 .Link__link {
-  color: var(--aspect-color-black);
-  font-size: var(--aspect-font-size-sm);
+  color: var(--aspect-color-black) !important;
+  font-size: var(--aspect-font-size-sm) !important;
 }
 
 .Link__link:hover {
-  color: var(--aspect-color-grey-2);
-  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-grey-2) !important;
+  font-weight: var(--lato-font-weight-bold) !important;
 }
 
 .Navigation--vertical .Link__link::after,

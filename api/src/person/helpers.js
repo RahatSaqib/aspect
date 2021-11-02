@@ -1,12 +1,14 @@
 const Joi = require('@hapi/joi')
 
-const ok = Joi.boolean().required().description(
-  `
+const ok = Joi.boolean()
+  .required()
+  .description(
+    `
     True means workflow ran well, False - some non-breakable error happened.
     If both cases - see more details in other props (i.e. "data").
     FYI - breakable error is when returning Boom.
     `
-)
+  )
 // -------------------------------------------------------------------------------
 const contactDetailsPayload = {
   name: Joi.string().max(500).required(),
@@ -38,19 +40,19 @@ const personDetailsResponse = {
         userId: Joi.number().allow(null).description('User id'),
         username: Joi.string().allow(null).description('User name'),
         name: Joi.string().required().description('Person name'),
-        title: Joi.string().allow(null).description('Person title'),
-        email: Joi.string().allow(null).description('Person email'),
-        email2: Joi.string().allow(null).description('Person second email'),
-        phone: Joi.string().allow(null).description('Person phone'),
-        cell: Joi.string().allow(null).description('Person cell'),
+        title: Joi.string().allow(null, '').description('Person title'),
+        email: Joi.string().allow(null, '').description('Person email'),
+        email2: Joi.string().allow(null, '').description('Person second email'),
+        phone: Joi.string().allow(null, '').description('Person phone'),
+        cell: Joi.string().allow(null, '').description('Person cell'),
         countryId: Joi.number().required().description('Country id'),
         geogId: Joi.number().allow(null).description('Person geographyId'),
         stateId: Joi.number().allow(null).description('State id'),
         lgaId: Joi.number().allow(null).description('Lga id'),
-        zip: Joi.string().allow(null).description('Person zip'),
+        zip: Joi.string().allow(null, '').description('Person zip'),
         timezone: Joi.string().required().description('Person timezone'),
         culture: Joi.string().required().description('Person culture'),
-        notes: Joi.string().allow(null).description('Person notes'),
+        notes: Joi.string().allow(null, '').description('Person notes'),
         lastPartnerId: Joi.number()
           .allow(null)
           .description('Person lastPartnerId'),

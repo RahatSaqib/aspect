@@ -19,13 +19,15 @@ const {
 // ---------------------------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------------------------
-const ok = Joi.boolean().required().description(
-  `
+const ok = Joi.boolean()
+  .required()
+  .description(
+    `
     True means workflow ran well, False - some non-breakable error happened.
     If both cases - see more details in other props (i.e. "data").
     FYI - breakable error is when return Boom.
     `
-)
+  )
 
 const jobResponse = {
   options: {
@@ -189,7 +191,7 @@ const routes = [
     config: {
       description: 'Job Functions for Select List',
       notes: 'Tree structure of Partners and Job Functons',
-      auth: { scope: ['person'] },
+      auth: { scope: ['person', 'deviceApiKey'] },
     },
   },
   {
@@ -427,7 +429,9 @@ const routes = [
           siteId: Joi.number().allow(null),
           // device/assay type
           diseaseId: Joi.number().allow(null),
-          deviceTypeId: Joi.number().allow(null),
+          deviceTypeId: Joi.string()
+            .allow(null)
+            .description('The device type external id'),
           assayTypeId: Joi.number().allow(null),
           assayId: Joi.number().allow(null),
         },

@@ -50,6 +50,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('DeviceMaintenanceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
+  await knex('DeviceMaintenance').whereIn('deviceId', deviceIds).delete()
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
   await knex('InventoryLog').whereIn('resultId', resultIds).delete()
@@ -309,6 +310,13 @@ async function createResult(
   await knex('Result').where('id', resultId).update({
     resultWorkflowStatusLogId: lastLogId,
   })
+  await knex('DeviceLog').insert({
+    deviceId,
+    source: 'TEST',
+    createdOn: now,
+    senderIp: 'TEST',
+    resultId,
+  })
   return resultId
 }
 
@@ -355,6 +363,7 @@ class DeviceApiTestContext {
       const { userId } = await knex('User')
         .where({ name: this.user })
         .first('id as userId')
+      this.userId = userId
 
       const clientToken = await this.requestClientToken({
         user: this.user,
@@ -422,6 +431,7 @@ class DeviceApiTestContext {
       const { userId } = await knex('User')
         .where({ name: this.user })
         .first('id as userId')
+      this.userId = userId
 
       const clientToken = await this.requestClientToken({
         user: this.user,
@@ -448,6 +458,7 @@ class DeviceApiTestContext {
       })
       this.deviceId = deviceId
       this.deviceIds.push(deviceId)
+      this.siteId = siteId // device is assigned to this site
       const apiKey = await this.createApiKey(knex, null, deviceId)
       // save device id for the following tests
       this.apiKey = apiKey
@@ -593,7 +604,6 @@ async function getMaxDeviceId(knex) {
     .from('Device')
     .orderBy('id', 'desc')
     .limit(1)
-    .select('id')
     .pluck('id')
   return maxDeviceId
 }

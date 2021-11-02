@@ -1,12 +1,25 @@
 import * as Yup from 'yup'
-import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
-import cloneDeep from 'lodash/cloneDeep'
 
+import cloneDeep from 'lodash/cloneDeep'
+import flatten from 'lodash/flatten'
+import get from 'lodash/get'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
+import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+import keys from 'lodash/keys'
+import omit from 'lodash/omit'
+import set from 'lodash/set'
+import uniqueId from 'lodash/uniqueId'
+
+import { isUrl } from '../../../../shared/utils/validate'
 import messages from '../messages'
 
-const mergeFormConfigWithData = (data, config) => {
-  const configToMutate = cloneDeep(config)
+const mergeFormConfigWithData = (data, config, messages) => {
+  const configToMutate = {
+    ...cloneDeep(config),
+    messages,
+  }
   const { sections } = configToMutate
   if (!isEmpty(data)) {
     sections.map(({ rows }) =>
@@ -32,16 +45,76 @@ const mergeFormConfigWithData = (data, config) => {
   return configToMutate
 }
 
-const pickKeys = (data, keys) => {
+const getInitialValuesFromFormConfig = config => {
+  const initialValues = {}
+  const { sections } = config
+  sections.forEach(({ rows }) => {
+    rows.forEach(row => {
+      const { items, isMulti, id: rowId, presetInitialValues } = row
+      if (presetInitialValues) {
+        presetInitialValues(initialValues)
+      }
+      items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
+        const { component } = controlType
+        let value = initialValue || ''
+        if (component === 'checkbox') {
+          value = initialValue === true
+        }
+        if (isMulti) {
+          initialValues[rowId] = initialValues[rowId] || [
+            {
+              __guid__: uniqueId(rowId),
+            },
+          ]
+          set(initialValues[rowId][0], fieldName, value)
+        } else {
+          set(initialValues, fieldName, value)
+        }
+      })
+    })
+  })
+
+  return initialValues
+}
+
+const pickKeys = (sections, key, defaultValue) => {
   const picked = {}
-  if (data && data.length) {
-    data.map(({ rows }) =>
-      rows.map(({ items }) =>
-        items.map(({ id, [keys]: keyToPick }) => (picked[id] = keyToPick || ''))
+  if (sections && sections.length) {
+    flatten(
+      sections.map(({ rows }) => flatten(rows.map(row => row.items)))
+    ).forEach(({ controlType: { component } = {}, id, [key]: keyToPick }) => {
+      let value = keyToPick || defaultValue
+      if (key === 'initialValue') {
+        if (component === 'checkbox') {
+          value = keyToPick === true
+        }
+      }
+      picked[id] = value
+    })
+  }
+  return picked
+}
+
+const pickItems = sections => {
+  let items = []
+  if (sections && sections.length) {
+    items = flatten(
+      sections.map(({ rows }) =>
+        flatten(
+          rows.map(row =>
+            row.items.map(item =>
+              /**
+               * add 'row' prop to 'item' to be able to handle
+               * items in multiplied rows
+               */
+              ({ ...item, row })
+            )
+          )
+        )
       )
     )
   }
-  return picked
+  return items
 }
 
 const buildErrorMessage = (formik, id) => {
@@ -113,10 +186,108 @@ const buildLabel = (label, validation) => {
   return `${label} ${isrequired ? '*' : ''}`
 }
 
+const getLabel = ({
+  messages,
+  formatMessage,
+  labelI18nKey,
+  label,
+  formik,
+  validation,
+}) => {
+  let text
+  if (labelI18nKey) {
+    text = formatMessage(
+      messages[isFunction(labelI18nKey) ? labelI18nKey(formik) : labelI18nKey]
+    )
+  } else {
+    text = isFunction(label) ? label(formik) : label
+  }
+
+  return buildLabel(text, validation)
+}
+
+const getFormattedString = (
+  i18nKey,
+  { messages, formatMessage, formik },
+  defaultValue
+) => {
+  let text = defaultValue || ''
+  if (i18nKey) {
+    text = formatMessage(
+      messages[isFunction(i18nKey) ? i18nKey(formik) : i18nKey]
+    )
+  }
+
+  return text
+}
+
+const getBaseData = (data, formatMessage, messages) => {
+  return data.map(({ externalId, i18nKey, name }) => ({
+    value: externalId,
+    label: formatMessage(messages[i18nKey], name),
+  }))
+}
+
+const getFieldErrorProps = (formik, id) => ({
+  error: get(formik.touched, id) && get(formik.errors, id)?.length > 0,
+  helperText: get(formik.touched, id) && get(formik.errors, id),
+})
+
+const getBaseValidation = (formatMessage, messages) => {
+  const requiredBase = (value, i18nKey) =>
+    value ? '' : formatMessage(messages[i18nKey])
+
+  return {
+    required: value => requiredBase(value, 'required'),
+    checked: requiredBase,
+    requiredLimitLength: (value, maxLength, i18nLimitLength) => {
+      if (!value) return formatMessage(messages.required)
+      return value.length > maxLength
+        ? formatMessage(messages[i18nLimitLength])
+        : ''
+    },
+    requiredValidUrl: value => {
+      if (!value) return formatMessage(messages.required)
+      return isUrl(value) ? '' : formatMessage(messages.webUrlInvalid)
+    },
+  }
+}
+
+const sanitizeFormValues = (
+  values,
+  { meta, removeReadOnly = true, removeGuids = true }
+) => {
+  const { fieldTypes } = meta
+  /**
+   * prepare payload, i.e.
+   * - conditionally remove read only props
+   * - remove props `__guid__` from array of objects
+   */
+  const payload = cloneDeep(values)
+  keys(payload).forEach(key => {
+    if (fieldTypes[key] === 'readOnly' && removeReadOnly) {
+      delete payload[key]
+    } else if (isArray(payload[key]) && removeGuids) {
+      payload[key] = payload[key].map(it =>
+        isPlainObject(it) ? omit(it, ['__guid__']) : it
+      )
+    }
+  })
+  return payload
+}
+
 export {
   buildErrorMessage,
-  createValidationSchema,
   buildLabel,
+  createValidationSchema,
+  getBaseData,
+  getFieldErrorProps,
+  getFormattedString,
+  getInitialValuesFromFormConfig,
+  getLabel,
   mergeFormConfigWithData,
+  pickItems,
   pickKeys,
+  getBaseValidation,
+  sanitizeFormValues,
 }

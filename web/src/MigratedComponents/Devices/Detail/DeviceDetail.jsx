@@ -1,19 +1,21 @@
 import React, { useCallback } from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
 import {
-  Switch,
-  Redirect,
+  Routes,
+  Navigate,
   Route,
-  useHistory,
+  useNavigate,
   useParams,
   useLocation,
 } from 'react-router-dom'
-import { useQuery, useMutation, queryCache } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+
+import { useAuthState } from '../../../Providers/AuthProvider'
 import isEditable from '../../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../../components/shared/DelayShowingProgressBar'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -31,11 +33,14 @@ import {
   DEVICE_PERFORMANCE,
 } from '../../QueryFetch/Device/index'
 import {
+  updateSingleDevice,
   updateDeviceMaintenanceStatus,
   updateDeviceMaintenance,
 } from '../../../device/DeviceRedux'
 
-const cssClasses = classnames.bind(require('./DeviceDetail.css'))
+import styles from './DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   profile: {
@@ -56,45 +61,40 @@ const messages = defineMessages({
   },
 })
 
-export const DeviceDetail = ({ match }) => {
+export const DeviceDetail = props => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const user = useAuthState()
   const editable = isEditable(user, 'device')
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
-  const history = useHistory()
+  const navigate = useNavigate()
   const { deviceId } = useParams()
   const intl = useIntl()
+  const queryClient = useQueryClient()
 
-  const {
-    data: { device = {}, devicePerformance = {} } = {},
-    isLoading,
-  } = useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
-    const { data: device = false } = await fetchWrapperForQueries({
-      endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
+  const { data: { device = {}, devicePerformance = {} } = {}, isLoading } =
+    useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
+      const { data: device = false } = await fetchWrapperForQueries({
+        endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
+      })
+      const devicePerformance = await fetchWrapperForQueries({
+        endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
+        params: searchParams,
+      })
+      return { device, devicePerformance }
     })
-    const devicePerformance = await fetchWrapperForQueries({
-      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-      params: searchParams,
-    })
-    return { device, devicePerformance }
-  })
-
-  const [updateSingleDevice] = useMutation(data =>
-    fetchWrapperForQueries({
-      endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-      method: 'PUT',
-      params: data,
-    })
-  )
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
-    queryCache.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
-  }, [deviceId])
+    queryClient.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
+  }, [deviceId, queryClient])
 
-  //
-  const [onMaintenanceSubmit] = useMutation(
+  const { mutate: updateDevice } = useMutation(
+    ({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)),
+    { onSuccess }
+  )
+
+  const { mutate: onMaintenanceSubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenanceStatus({
@@ -107,7 +107,7 @@ export const DeviceDetail = ({ match }) => {
       onSuccess,
     }
   )
-  const [onCalibrationSubmit] = useMutation(
+  const { mutate: onCalibrationSubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenance({
@@ -120,7 +120,7 @@ export const DeviceDetail = ({ match }) => {
       onSuccess,
     }
   )
-  const [onWarrantySubmit] = useMutation(
+  const { mutate: onWarrantySubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenance({
@@ -140,10 +140,13 @@ export const DeviceDetail = ({ match }) => {
     const searchParams = new URLSearchParams(location.search)
     searchParams.set('dateRange', dateRange)
 
-    history.replace({
-      ...location,
-      search: searchParams.toString(),
-    })
+    navigate(
+      {
+        ...location,
+        search: `?${searchParams.toString()}`,
+      },
+      { replace: true }
+    )
   }
 
   return (
@@ -169,12 +172,12 @@ export const DeviceDetail = ({ match }) => {
               currentTarget: {
                 dataset: { path },
               },
-            }) => history.push(path)}
+            }) => navigate(path)}
             disabled={disabled}
             data-path={path}
             color="primary"
             variant="contained"
-            inverse={path !== history?.location?.pathname}
+            inverse={path !== location?.pathname}
           >
             {label}
           </AspectButton>
@@ -182,66 +185,50 @@ export const DeviceDetail = ({ match }) => {
       </ShellHeader>
       <ShellContent>
         {device.id && (
-          <Switch>
-            <Route
-              exact
-              path={match.path}
-              render={props => (
-                <DeviceDetailProfile
-                  {...props}
-                  dateRange={dateRange}
-                  onDateRangeChange={onDateRangeChange}
-                  device={Immutable.fromJS(device)}
-                  devicePerformance={Immutable.fromJS(devicePerformance)}
-                  disabled={!editable}
-                  updateSingleDevice={updateSingleDevice}
-                  onMaintenanceSubmit={onMaintenanceSubmit}
-                  onCalibrationSubmit={onCalibrationSubmit}
-                  onWarrantySubmit={onWarrantySubmit}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={`${match.path}/operation`}
-              render={props => (
-                <DeviceDetailOperation
-                  intl={intl}
-                  {...props}
-                  device={Immutable.fromJS(device)}
-                  disabled={!editable}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={`${match.path}/alerts`}
-              render={props => (
-                <DeviceDetailAlerts
-                  intl={intl}
+          <Routes>
+            <Route path="">
+              <DeviceDetailProfile
+                {...props}
+                dateRange={dateRange}
+                onDateRangeChange={onDateRangeChange}
+                device={Immutable.fromJS(device)}
+                devicePerformance={Immutable.fromJS(devicePerformance)}
+                disabled={!editable}
+                updateSingleDevice={updateDevice}
+                onMaintenanceSubmit={onMaintenanceSubmit}
+                onCalibrationSubmit={onCalibrationSubmit}
+                onWarrantySubmit={onWarrantySubmit}
+              />
+            </Route>
+            <Route path="operation">
+              <DeviceDetailOperation
+                intl={intl}
+                {...props}
+                device={Immutable.fromJS(device)}
+                disabled={!editable}
+              />
+            </Route>
+            <Route path="alerts">
+              <DeviceDetailAlerts
+                intl={intl}
+                {...props}
+                device={Immutable.fromJS(device)}
+                disabled={!editable}
+              />
+            </Route>
+            <Route path="edit">
+              {editable ? (
+                <DeviceDetailEdit
                   {...props}
                   device={Immutable.fromJS(device)}
-                  disabled={!editable}
+                  editable={editable}
+                  updateSingleDevice={updateDevice}
                 />
+              ) : (
+                <Navigate replace to="." />
               )}
-            />
-            <Route
-              exact
-              path={`${match.path}/edit`}
-              render={props =>
-                editable ? (
-                  <DeviceDetailEdit
-                    {...props}
-                    device={Immutable.fromJS(device)}
-                    editable={editable}
-                    updateSingleDevice={updateSingleDevice}
-                  />
-                ) : (
-                  <Redirect to={match.url} />
-                )
-              }
-            />
-          </Switch>
+            </Route>
+          </Routes>
         )}
         {isLoading && (
           <DelayShowingProgressCircular
@@ -255,8 +242,8 @@ export const DeviceDetail = ({ match }) => {
   )
 }
 
-DeviceDetail.propTypes = {
-  match: PropTypes.oneOf([PropTypes.object]).isRequired,
-}
+// DeviceDetail.propTypes = {
+//   match: PropTypes.oneOfType([PropTypes.object]).isRequired,
+// }
 
 export default DeviceDetail

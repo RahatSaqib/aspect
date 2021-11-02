@@ -1,9 +1,9 @@
-import React, { useRef } from 'react'
+import React, { useRef, useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
 import deburr from 'lodash/deburr'
 import noop from 'lodash/noop'
 import Downshift from 'downshift'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import Popper from '@material-ui/core/Popper'
 import Paper from '@material-ui/core/Paper'
@@ -75,7 +75,7 @@ const styles = theme => ({
   },
   paper: {
     zIndex: 1,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     left: 0,
     right: 0,
     overflowY: 'auto',
@@ -90,9 +90,17 @@ const styles = theme => ({
     flexGrow: 1,
   },
   divider: {
-    height: theme.spacing.unit * 2,
+    height: theme.spacing(2),
   },
 })
+
+const getSelectedItemByText = (dataSource, inputValue) => {
+  const inputValueLo = inputValue.toLowerCase()
+  const selectedItem = dataSource.find(
+    item => item.text.toLowerCase() === inputValueLo
+  )
+  return selectedItem
+}
 
 const AutoComplete = ({
   classes: classesMap,
@@ -107,36 +115,83 @@ const AutoComplete = ({
 }) => {
   const popperNode = useRef(null)
 
-  const handleChange = value => {
-    onSelect(value)
+  // last processed values
+  const [lastInputValue, setLastInputValue] = useState(searchText)
+  const [lastSelectedItem, setLastSelectedItem] = useState(
+    getSelectedItemByText(dataSource, searchText)
+  )
+  // set static value at 1-st render for initial text and item
+  const initialInputValue = useMemo(() => lastInputValue, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const initialSelectedItem = useMemo(() => lastSelectedItem, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleChange = selectedItem => {
+    const changedText = selectedItem ? selectedItem.text : ''
+    const hasChanged = lastInputValue !== changedText
+
+    if (hasChanged) {
+      setLastInputValue(changedText)
+      setLastSelectedItem(selectedItem)
+
+      onSelect(selectedItem)
+    }
+  }
+
+  const processChangedText = text => {
+    setLastInputValue(text)
+    setLastSelectedItem(getSelectedItemByText(dataSource, text))
+
+    onUpdateInput(text)
   }
 
   const handleInputBlur = ({ target: { value } }) => {
-    onUpdateInput(value)
+    if (lastInputValue !== value) {
+      processChangedText(value)
+    }
   }
 
   const handleInputKeyUp = ({ key, target: { value } }) => {
-    if (key === 'Enter') {
-      onUpdateInput(value)
+    if (key === 'Enter' && lastInputValue !== value) {
+      processChangedText(value)
+    }
+  }
+
+  const handleInputKeyDown = ({ key, nativeEvent }, setState) => {
+    if (key === 'Escape') {
+      /**
+       * see https://www.npmjs.com/package/downshift#default-handlers for 'Escape'
+       *
+       * Default functionality has 2 glitches:
+       * 1. By default, if isOpen is false (i.e. no matches/suggestions found), the inputValue
+       * will be set to an empty string and selectedItem will be set to null.
+       * 2. Or, if user touched input text (typed something and then removed entered symbols)
+       * then on hitting `Esc` key default behavior is the same and above - input value is set
+       * to empty and selectedItem sets to null.
+       *
+       * But we need to restore inputValue to the last processed value,
+       * so we directly set state here
+       */
+
+      // prevent default 'Escape' behavior
+      nativeEvent.preventDownshiftDefault = true
+
+      // enforce state props to the latest processed value
+      setState({
+        isOpen: false,
+        inputValue: lastInputValue,
+      })
     }
   }
 
   const itemToString = item => (item ? item.text : '')
 
-  const preventResetOnBlur = (state, changes) => {
-    if (changes.type === Downshift.stateChangeTypes.blurInput) {
-      return {}
-    }
-    return changes
-  }
-
   return (
     <div className={classesMap.root}>
       <Downshift
         selectedItem={searchText}
+        initialInputValue={initialInputValue}
+        initialSelectedItem={initialSelectedItem}
         itemToString={itemToString}
         onChange={handleChange}
-        stateReducer={preventResetOnBlur}
       >
         {({
           getInputProps,
@@ -146,6 +201,7 @@ const AutoComplete = ({
           inputValue,
           isOpen,
           selectedItem,
+          setState,
         }) => (
           <div className={classesMap.container}>
             {renderInput({
@@ -160,6 +216,11 @@ const AutoComplete = ({
               InputProps: getInputProps({
                 onBlur: handleInputBlur,
                 onKeyUp: handleInputKeyUp,
+                /**
+                 * use some custom code to overwrite default behavior of 'Escape' event handler
+                 * (see details in https://www.npmjs.com/package/downshift#default-handlers for 'Escape')
+                 */
+                onKeyDown: event => handleInputKeyDown(event, setState),
               }),
             })}
             <Popper
@@ -179,7 +240,7 @@ const AutoComplete = ({
                     square
                     className={classesMap.paper}
                     style={{
-                      minWidth: popperNode
+                      minWidth: popperNode.current
                         ? popperNode.current.clientWidth + 32
                         : null,
                     }}

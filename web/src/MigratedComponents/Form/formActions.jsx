@@ -2,25 +2,28 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
-import { useSelector } from 'react-redux'
 import isFunction from 'lodash/isFunction'
+import { useFormikContext } from 'formik'
 
-import { useFormikState } from './Formik/Context'
+import { useAuthState } from '../../Providers/AuthProvider'
 
-const cssClasses = classnames.bind(require('./Form.css'))
+import styles from './Form.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FormActionButton = ({ formik, action, onClick, isVisible }) => {
   return formik ? (
     <Button
-      variant="contained"
-      color={action.id === 'cancel' ? 'default' : 'primary'}
-      onClick={() =>
-        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
-      }
       className={cssClasses('form__button', `form__button--${action.id}`, {
         'form__button--enabled': isVisible,
         'form__button--disabled': !isVisible,
       })}
+      color={action.id === 'cancel' ? 'default' : 'primary'}
+      disabled={!formik.isValid}
+      onClick={() =>
+        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
+      }
+      variant="contained"
     >
       {action.text}
     </Button>
@@ -35,11 +38,13 @@ const getDefaultDisplayState = defaultAction => {
   }, {})
 }
 
-const FormActions = ({ config }) => {
-  const permissions = useSelector(({ user }) => user.jwt.permissions)
+const FormActions = ({ config, onSubmit }) => {
+  const {
+    jwt: { permissions },
+  } = useAuthState()
   const { actions } = config
   const { items: formActions, default: defaultAction } = actions
-  const { formik, toggleEdit, setToggleEdit } = useFormikState()
+  const { formik, toggleEdit, setToggleEdit, meta } = useFormikContext()
   const [displayConfig, setDisplayConfig] = useState(
     getDefaultDisplayState(defaultAction)
   )
@@ -56,7 +61,11 @@ const FormActions = ({ config }) => {
           formik.resetForm()
           break
         case 'save':
-          formik.handleSubmit()
+          if (onSubmit) {
+            onSubmit(formik, meta)
+          } else {
+            formik.handleSubmit()
+          }
           setToggleEdit(false)
           break
 
@@ -76,8 +85,9 @@ const FormActions = ({ config }) => {
 
   return (
     formActions &&
-    formActions.map(action => (
+    formActions.map((action, actionIndex) => (
       <FormActionButton
+        key={`action-${actionIndex.toString()}`}
         formik={formik}
         action={action}
         onClick={setActionToAction}

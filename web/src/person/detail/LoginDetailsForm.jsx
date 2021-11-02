@@ -9,7 +9,9 @@ import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const hasError = field => field.touched && field.error
 
@@ -70,7 +72,7 @@ const getInitialValues = (loginDetails, shouldPrefill, emailValue) => ({
 const enhance = compose(
   pure,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
@@ -82,7 +84,7 @@ const enhance = compose(
       })
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { loginDetails, shouldPrefill, emailValue } = nextProps
 
       if (this.props.loginDetails !== loginDetails) {
@@ -116,19 +118,23 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onSubmit: ({ openCurrentPasswordInputDialog, handleSubmit }) => event => {
-      if (openCurrentPasswordInputDialog) {
-        event.preventDefault()
-        return openCurrentPasswordInputDialog()
-      }
-      return handleSubmit(event)
-    },
-
-    onCurrentPasswordKeyPress: ({ handleSubmit }) => event => {
-      if (event.key === 'Enter') {
+    onSubmit:
+      ({ openCurrentPasswordInputDialog, handleSubmit }) =>
+      event => {
+        if (openCurrentPasswordInputDialog) {
+          event.preventDefault()
+          return openCurrentPasswordInputDialog()
+        }
         return handleSubmit(event)
-      }
-    },
+      },
+
+    onCurrentPasswordKeyPress:
+      ({ handleSubmit }) =>
+      event => {
+        if (event.key === 'Enter') {
+          return handleSubmit(event)
+        }
+      },
   })
 )
 
@@ -163,7 +169,7 @@ export const LoginDetailsForm = ({
         value={values.username}
         onChange={onUsernameChange}
         disabled={loading}
-        error={hasError(username)}
+        error={!!hasError(username)}
         helperText={hasError(username)}
         inputProps={{ maxLength: 255 }}
         margin="normal"
@@ -180,7 +186,6 @@ export const LoginDetailsForm = ({
         disabled={loading}
         meta={newPassword}
         textFieldProps={{
-          floatingLabelText: intl.formatMessage(messages.newPassword),
           type: 'password',
           name: 'newPassword',
           maxLength: 100,
@@ -188,7 +193,7 @@ export const LoginDetailsForm = ({
           fullWidth: true,
           label: intl.formatMessage(messages.newPassword),
           helperText: hasError(newPassword),
-          error: hasError(newPassword),
+          error: !!hasError(newPassword),
         }}
         popOverProps={{}}
       />
@@ -202,7 +207,7 @@ export const LoginDetailsForm = ({
         value={values.confirmNewPassword}
         onChange={onConfirmNewPasswordChange}
         disabled={loading}
-        error={hasError(confirmNewPassword)}
+        error={!!hasError(confirmNewPassword)}
         helperText={hasError(confirmNewPassword)}
         inputProps={{ maxLength: 100 }}
       />
@@ -243,7 +248,6 @@ export const LoginDetailsForm = ({
         </Button>,
       ]}
       open={currentPasswordInputDialogOpen || false}
-      onEscapeKeyDown={closeCurrentPasswordInputDialog}
       onClose={closeCurrentPasswordInputDialog}
       title={intl.formatMessage(messages.currentPasswordDialogHeader)}
     >
@@ -257,7 +261,7 @@ export const LoginDetailsForm = ({
         onChange={onCurrentPasswordChange}
         onKeyPress={onCurrentPasswordKeyPress}
         disabled={loading}
-        error={hasError(currentPassword)}
+        error={!!hasError(currentPassword)}
         helperText={hasError(currentPassword)}
         inputProps={{ maxLength: 100 }}
         margin="normal"

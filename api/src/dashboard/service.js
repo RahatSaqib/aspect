@@ -14,7 +14,6 @@ const {
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { queryValue } = require('../shared/sql-2-knex')
-const { canView } = require('../auth/constraints')
 const { addExtraData } = require('./options')
 
 const resultsTransmittedDashboard = require('./resultsTransmitted')
@@ -62,18 +61,6 @@ async function getDashboardWidget({ id, partnerId }, options) {
   return widgets
 }
 
-function getWidgetLink(widget, auth) {
-  const linkParts = widget.link ? widget.link.split('/') : []
-  if (
-    linkParts.length === 3 &&
-    linkParts[1] === 'browse' &&
-    (!canView(auth, `${linkParts[2]}:`) || !canView(auth, 'browse:'))
-  ) {
-    return null
-  }
-  return widget.link
-}
-
 async function summaryDashboard(request) {
   const { auth, query } = request
   // get data constraints
@@ -84,19 +71,15 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
-      widget.link = getWidgetLink(widget, request.auth)
-      const count = await queryValue(
-        widget.sqlForIndicator,
+      const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
+      const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
+      const extra = await queryValue(sqlForExtra, dataConstraints, query)
+      const { cnt: countCnt, ...restCountProps } = (await queryValue(
+        sqlForIndicator,
         dataConstraints,
         query
-      )
-      const unit = await queryValue(
-        widget.sqlForStatUnit,
-        dataConstraints,
-        query
-      )
+      )) || { cnt: null }
 
-      const extra = await queryValue(widget.sqlForExtra, dataConstraints, query)
       widget = _.assign(
         _.omit(widget, [
           'sqlForIndicator',
@@ -105,14 +88,15 @@ async function summaryDashboard(request) {
           'sortOrder',
         ]),
         {
-          count: count ? count.cnt : 0,
+          count: countCnt || 0,
           unit: unit ? unit.cnt : null,
           extra: extra ? extra.cnt : null,
+          ...restCountProps,
         }
       )
 
-      if (!_.isEmpty(widget.options)) {
-        widget.options = JSON.parse(widget.options)
+      if (!_.isEmpty(options)) {
+        widget.options = JSON.parse(options)
         addExtraData(widget)
       }
 
@@ -335,10 +319,12 @@ async function getConsumablesList(auth, dataConstraints) {
       device: 'd',
       assay: 'a',
     })
-    .groupBy('c.id', 's.id')
+    .groupBy('c.id', 'c.externalId', 's.id')
     .select(
       's.id as siteId',
       'c.id as consumableId',
+      'c.externalId as consumableExternalId',
+      'c.i18nKey as i18nKey',
       'c.name as consumableName',
       knex.raw(
         "sum(it.externalId = 'InventoryStockout' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntStockout"
@@ -347,7 +333,6 @@ async function getConsumablesList(auth, dataConstraints) {
         "sum(it.externalId = 'InventoryStockExpiring' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntExpiring"
       )
     )
-
   return consumables
 }
 
@@ -399,10 +384,17 @@ async function inventoryItemDashboard(request) {
           _.isObject
         )
         if (!_.isEmpty(result)) {
-          const { consumableId, consumableName } = list[0]
-          acc.push({
+          const {
             consumableId,
             consumableName,
+            consumableExternalId,
+            i18nKey,
+          } = list[0]
+          acc.push({
+            consumableId,
+            consumableExternalId,
+            consumableName,
+            i18nKey,
             data: result,
             affectedSiteIds,
           })

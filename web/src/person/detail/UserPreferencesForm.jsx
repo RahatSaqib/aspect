@@ -10,7 +10,9 @@ import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
 import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const getInitialValues = userPreferences => ({
   timezone: userPreferences.get('timezone'),
@@ -20,7 +22,7 @@ const getInitialValues = userPreferences => ({
 const enhance = compose(
   pure,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
 
       this.setState({
@@ -29,7 +31,7 @@ const enhance = compose(
       })
     },
     // TODO: extract state out to outer components
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { userPreferences } = nextProps
       if (this.props.userPreferences !== userPreferences) {
         // Re-initialize

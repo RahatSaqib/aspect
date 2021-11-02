@@ -5,23 +5,46 @@ require('isomorphic-fetch')
 const Promise = require('bluebird')
 
 const config = require('../config')
-const { knex } = require('../db')
+const { filterParams, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const logger = require('../shared/logger')
 
 async function getReports(request) {
-  const { auth } = request
+  const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
   const reportsQuery = knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('JobFunction as jf', 'jf.id', 'jfr.jobFunctionId')
+    .innerJoin('Job as j', 'jf.id', 'j.jobFunctionId')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { person: 'p' })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
 
   const getItems = reportsQuery
     .clone()
+    .modify(filterParams, query, {
+      reportName: (queryBuilder, value) => {
+        queryBuilder.whereRaw(
+          `(
+            r.name LIKE CONCAT('%', ?, '%')
+            OR
+            r.description LIKE CONCAT('%', ?, '%')
+          )`,
+          [value, value]
+        )
+      },
+    })
     .orderBy('r.sortOrder', 'asc')
-    .select('r.name', 'r.description', 'r.externalId', 'r.sortOrder')
+    .select(
+      'r.name',
+      'r.description',
+      'r.externalId',
+      'r.sortOrder',
+      'r.i18nKey',
+      'r.i18nKeyDescription'
+    )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -30,21 +53,28 @@ async function getReports(request) {
 
 async function getReportDetails(auth, externalId) {
   const dataConstraints = await getConstraints(auth.credentials)
+
+  if ((await knex('Report').where({ externalId }).first()) === null)
+    throw Boom.badRequest('The requested report does not exist')
+
   const report = await knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { person: 'p' })
     .where('r.externalId', externalId)
     .select(
       'r.description',
       'r.externalId',
-      'r.fileName',
-      'r.geographyId',
+      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
       'r.id',
       'r.i18nKey',
-      'r.name',
-      'r.partnerId'
+      'r.name'
     )
     .first()
+
+  if (!report)
+    throw Boom.forbidden("You don't have access to the requested report")
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
@@ -207,7 +237,7 @@ function proxyGxReport(request, reply) {
         )
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }

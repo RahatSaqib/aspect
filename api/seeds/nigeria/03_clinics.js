@@ -166,7 +166,7 @@ async function seed(knex) {
   await insertSites(knex, partnerId, countryId, sites.sites)
 
   // add reporter logins for testing
-  const { id: adminId } = knex('User').where('name', 'admin').first('id')
+  const { id: adminId } = await knex('User').where('name', 'admin').first('id')
 
   const jobFunctionIdClinician = await upsertJobFunction(
     knex,

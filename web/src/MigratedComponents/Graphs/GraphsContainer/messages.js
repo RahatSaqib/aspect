@@ -6,7 +6,7 @@ export const messages = defineMessages({
     defaultMessage: 'Average Monthly Suppression Rate',
   },
   clinicalIndicatorsPieSubLegend: {
-    id: 'pages.Status.clinicalIndicatorsPieLegend',
+    id: 'pages.Status.clinicalIndicatorsPieSubLegend',
     defaultMessage: 'Total Cases',
   },
   clinicalIndicatorsCovidName: {
@@ -16,6 +16,14 @@ export const messages = defineMessages({
   clinicalIndicatorsCovidGenderRecoveryRates: {
     id: 'pages.Status.clinicalIndicatorsCovidGenderRecoveryRates',
     defaultMessage: 'Recovery Rates by Gender',
+  },
+  clinicalIndicatorsCovidTitle: {
+    id: 'pages.Status.clinicalIndicatorsCovidTitle.title',
+    defaultMessage: 'COVID Results',
+  },
+  clinicalIndicatorsCovidPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsCovidPieLegend',
+    defaultMessage: 'Average Monthly Positivity Rate',
   },
   clinicalIndicatorsVLTitle: {
     id: 'pages.Status.clinicalIndicatorsVL.title',
@@ -35,7 +43,7 @@ export const messages = defineMessages({
   },
   clinicalIndicatorsTBDetectedPie: {
     id: 'pages.Status.clinicalIndicatorsTBDetectedPie.title',
-    defaultMessage: 'Average monthly TB Detected Rate',
+    defaultMessage: 'Average Monthly TB Detected Rate',
   },
   clinicalIndicatorsTBPieLegend: {
     id: 'pages.Status.clinicalIndicatorsTB.pie',
@@ -58,8 +66,7 @@ export const messages = defineMessages({
     defaultMessage: 'Tests',
   },
   covidGraphDailyMortalityAndRecoveryByGenderAndGender: {
-    id:
-      'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
+    id: 'pages.Status.covidGraphDailyMortalityAndRecoveryByGenderAndGender.graph',
     defaultMessage: 'Age and Gender',
   },
   treatmentGraphStatusMonthly: {
@@ -89,6 +96,15 @@ export const messages = defineMessages({
   testsOverTimeAvgTitle: {
     id: 'pages.Status.testsOverTimeAvgTitle.graph',
     defaultMessage: 'Average Monthly Tests Performed',
+  },
+
+  clinicalIndicatorsXdrTitle: {
+    id: 'pages.Status.clinicalIndicatorsXdr.title',
+    defaultMessage: 'TB XDR',
+  },
+  clinicalIndicatorsXdrPieLegend: {
+    id: 'pages.Status.clinicalIndicatorsXdr.pie',
+    defaultMessage: 'Average Monthly Resistance Rate',
   },
 })
 

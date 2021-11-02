@@ -3,14 +3,14 @@ import noop from 'lodash/noop'
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 // Material-UI
 import TextField from '@material-ui/core/TextField'
 
 const styles = () => ({
   root: {
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: 0,
+    marginBottom: 20,
     width: 256,
   },
 })
@@ -22,7 +22,11 @@ export class FocusBlurTextField extends PureComponent {
     onKeyUp: PropTypes.func,
     onCommitValue: PropTypes.func.isRequired,
     value: PropTypes.string,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    component: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.func,
+      PropTypes.object, // type of default object after withStyles()()
+    ]),
   }
 
   static defaultProps = {

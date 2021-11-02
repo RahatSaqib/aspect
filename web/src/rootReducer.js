@@ -32,6 +32,7 @@ import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatus
 import report from './report/ReportRedux'
 import patient from './patient/PatientRedux'
 import deviceMaintenanceStatus from './MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
+import resultCategoryGroup from './filter/resource/ResultCategoryGroupSelectField/ResultCategoryGroupSelectFieldRedux'
 import _case from './case/CaseRedux'
 
 const appReducer = combineReducers({
@@ -46,6 +47,7 @@ const appReducer = combineReducers({
   deviceApiKey,
   deviceApproval,
   deviceMaintenanceStatus,
+  resultCategoryGroup,
   deviceOperation,
   deviceType,
   disease,
@@ -75,7 +77,6 @@ const App = Immutable.Record({
   assay: undefined,
   assayType: undefined,
   case: undefined,
-  clinicalIndicators: undefined,
   consumable: undefined,
   demo: undefined,
   device: undefined,
@@ -94,7 +95,6 @@ const App = Immutable.Record({
   patient: undefined,
   person: undefined,
   report: undefined,
-  reporter: undefined,
   result: undefined,
   resultTreatmentStatus: undefined,
   resultWorkflowStatus: undefined,
@@ -104,6 +104,7 @@ const App = Immutable.Record({
   task: undefined,
   user: undefined,
   deviceMaintenanceStatus: undefined,
+  resultCategoryGroup: undefined,
 })
 
 const initialState = new App()

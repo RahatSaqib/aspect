@@ -1,6 +1,8 @@
 const chai = require('chai')
+const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const { assayToId, diseaseToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
 
@@ -36,9 +38,11 @@ describe('Result Follow Up', () => {
           assert.typeOf(res.body.data[0].assays, 'array')
         })
     })
+
     it('should return a list of possible result follow ups filtered by disease', async () => {
+      const diseaseId = await diseaseToId('hiv')
       const res = await server
-        .get(`${path}?diseaseId=3`)
+        .get(`${path}?diseaseId=${diseaseId}`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
@@ -58,6 +62,37 @@ describe('Result Follow Up', () => {
       assert.property(res.body.data[0].type, 'i18nKey')
       assert.property(res.body.data[0], 'assays')
       assert.typeOf(res.body.data[0].assays, 'array')
+    })
+    it('should return a list of possible result follow ups filtered by assay', async () => {
+      const assayId = await assayToId('abbottM2000DBSHivVL')
+      const res = await server
+        .get(`${path}?assayId=${assayId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.property(res.body, 'total')
+      assert.isAtLeast(res.body.data.length, 5)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'name')
+      assert.property(res.body.data[0], 'externalId')
+      assert.property(res.body.data[0], 'i18nKey')
+      assert.property(res.body.data[0], 'type')
+      assert.property(res.body.data[0].type, 'id')
+      assert.property(res.body.data[0].type, 'name')
+      assert.property(res.body.data[0].type, 'externalId')
+      assert.property(res.body.data[0].type, 'i18nKey')
+      assert.property(res.body.data[0], 'assays')
+      assert.typeOf(res.body.data[0].assays, 'array')
+
+      assert.isAtLeast(
+        _.intersection(
+          _.map(res.body.data, elem => elem.externalId),
+          ['rrvl', 'iaac', 'st2o3lr', 'mcr', 'cured', 'died']
+        ).length,
+        6
+      )
     })
   })
 
@@ -82,14 +117,12 @@ describe('Result Follow Up', () => {
         assert.equal(responseFirst.statusCode, 200)
 
         // should have follow up with the externalId 'drtb-prexdr'
-        const {
-          externalId: externalIdFollowUp,
-          date: followUpDate,
-        } = await knex('ResultFollowUp as rfu')
-          .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
-          .where('rfu.resultId', resultId)
-          .where('rfu.externalId', resultFollowUpExternalId)
-          .first('fu.externalId', 'rfu.date')
+        const { externalId: externalIdFollowUp, date: followUpDate } =
+          await knex('ResultFollowUp as rfu')
+            .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+            .where('rfu.resultId', resultId)
+            .where('rfu.externalId', resultFollowUpExternalId)
+            .first('fu.externalId', 'rfu.date')
 
         assert.equal(externalIdFollowUp, 'drtb-prexdr')
         assert.equal(date.getTime(), followUpDate.getTime())

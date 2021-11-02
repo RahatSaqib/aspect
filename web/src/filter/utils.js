@@ -1,3 +1,4 @@
+import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
 import isUndefined from 'lodash/isUndefined'
 import reduce from 'lodash/reduce'
@@ -23,7 +24,12 @@ export const mergeToFiltersParams = (filters, filtersParams) => {
     filters,
     (filtersParams, v, k) => {
       if (nonEmptyFilterValue(v)) {
-        filtersParams.set(k, v)
+        if (isArray(v)) {
+          filtersParams.delete(k)
+          v.forEach(value => filtersParams.append(k, value))
+        } else {
+          filtersParams.set(k, v)
+        }
       } else {
         filtersParams.delete(k)
       }
@@ -33,9 +39,34 @@ export const mergeToFiltersParams = (filters, filtersParams) => {
   )
 }
 
-const defaultSanitizer = (a, k) => {
+const groups = {
+  assayAndResultCategory: [
+    'assayId',
+    'resultCategoryId',
+    'resultCategory2Id',
+    'resultCategoryGroupId',
+    'diseaseId',
+  ],
+  geography: ['countryId', 'stateId', 'lgaId'],
+  date: ['minDate', 'maxDate'],
+}
+
+const findFilterConfigByKey = (config, key) =>
+  find(config, configObject => configObject[key]) && !config[key]
+
+const defaultSanitizer = ({ a, k, config }) => {
+  if (!a.value) a.value = new URLSearchParams()
   const { value } = a
-  if (nonEmptyFilterValue(value.get(k))) {
+  const filterGroupsContainingKey = filter(Object.keys(groups), groupKey =>
+    groups[groupKey].includes(k)
+  )
+  if (
+    !find(filterGroupsContainingKey, groupKey =>
+      findFilterConfigByKey(config, groupKey)
+    ) &&
+    nonEmptyFilterValue(value.get(k))
+  ) {
+    // If there isn't any filter group configured that contains the specified key and the value is set, then remove the key from filters
     value.delete(k)
     return {
       sanitized: true,
@@ -45,20 +76,26 @@ const defaultSanitizer = (a, k) => {
   return a
 }
 
-const makeArraySanitizer = keys => a => keys.reduce(defaultSanitizer, a)
+const makeArraySanitizer =
+  keys =>
+  ({ a, config }) =>
+    // Removes from the filters only the keys that weren't configured independently
+    keys
+      .filter(k => !findFilterConfigByKey(config, k))
+      .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
 
-const makeKeySanitizer = k => a => defaultSanitizer(a, k)
+const makeKeySanitizer =
+  k =>
+  ({ a, config }) =>
+    defaultSanitizer({ a, k, config })
 
 const sanitizerByConfigKey = {
-  assayAndResultCategory: makeArraySanitizer([
-    'assayId',
-    'resultCategoryId',
-    'diseaseId',
-  ]),
-  geography: makeArraySanitizer(['countryId', 'stateId', 'lgaId']),
+  assayId: defaultSanitizer,
+  assayAndResultCategory: makeArraySanitizer(groups.assayAndResultCategory),
+  geography: makeArraySanitizer(groups.geography),
   state: identity,
   lga: identity,
-  date: makeArraySanitizer(['minDate', 'maxDate']),
+  date: makeArraySanitizer(groups.date),
   patientOrResearchId: defaultSanitizer,
   partnerId: defaultSanitizer,
   sampleId: defaultSanitizer,
@@ -70,19 +107,27 @@ const sanitizerByConfigKey = {
   notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
   revoked: defaultSanitizer,
+  reportableSiteName: defaultSanitizer,
+  reportableSiteId: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
+  deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
+  onlyEverTransferred: defaultSanitizer,
+  onlyReportableResults: defaultSanitizer,
+  onlyDownloadedByReporter: defaultSanitizer,
+  onlyTreatmentRequired: defaultSanitizer,
+  treatmentStatus: defaultSanitizer,
 }
 
 export const sanitizeFiltersStringBy = config => filtersString =>
   reduce(
     sanitizerByConfigKey,
     (acc, sanitizer, key) => {
-      if (find(config, configObject => configObject[key]) || config[key]) {
+      if (findFilterConfigByKey(config, key)) {
         return acc
       }
-      return sanitizer(acc, key)
+      return sanitizer({ a: acc, k: key, config })
     },
     {
       sanitized: false,
@@ -124,6 +169,7 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
         result.push({
           value: source.value,
           label: source.label,
+          i18nKey: source.i18nKey,
         })
       else if (isPermitted && source.href) {
         if (source.href === '/browse') {
@@ -132,12 +178,14 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
             result.push({
               href: filteredSource.value,
               label: source.label,
+              i18nKey: source.i18nKey,
             })
           }
         } else
           result.push({
             href: source.href,
             label: source.label,
+            i18nKey: source.i18nKey,
           })
       }
       return result
@@ -161,7 +209,10 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
         mapKeys(source, (value, key) => {
           switch (key) {
             case 'assayAndResultCategory':
-              result.assayAndResultCategory = true
+              result.assayId = true
+              result.diseaseId = true
+              result.resultCategory = true
+              result.resultCategoryGroup = true
               break
             case 'geography':
               result.geography = true
@@ -171,6 +222,12 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'siteName':
               result.siteName = true
+              break
+            case 'reportableSiteName':
+              result.reportableSiteName = true
+              break
+            case 'reportableSiteId':
+              result.reportableSiteId = true
               break
             case 'siteId':
               result.siteId = true
@@ -183,6 +240,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'deviceApproval':
               result.deviceApproval = true
+              break
+            case 'deviceMaintenanceStatus':
+              result.deviceMaintenanceStatus = true
               break
             case 'deviceType':
               result.deviceType = true
@@ -229,11 +289,35 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'onlyReportableResults':
               result.onlyReportableResults = true
               break
+            case 'onlyDownloadedByReporter':
+              result.onlyDownloadedByReporter = true
+              break
+            case 'onlyEverTransferred':
+              result.onlyEverTransferred = true
+              break
+            case 'onlyTreatmentRequired':
+              result.onlyTreatmentRequired = true
+              break
             case 'issueTypeId':
               result.issueTypeId = true
               break
             case 'onlyOpenIssues':
               result.onlyOpenIssues = true
+              break
+            case 'stockLeft':
+              result.stockLeft = true
+              break
+            case 'consumable':
+              result.consumable = true
+              break
+            case 'assayId':
+              result.assayId = true
+              break
+            case 'reportName':
+              result.reportName = true
+              break
+            case 'diseaseId':
+              result.disease = true
               break
             default:
           }
@@ -244,4 +328,23 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
     {}
   )
   return reducedFilters
+}
+
+export const isCountryFilterHidden = countries =>
+  countries.loading === false &&
+  !!countries.lastRefreshed &&
+  countries.items.size === 1
+
+export const getFilters = urlSearchParams => {
+  const filters = {}
+  urlSearchParams.forEach((value, key) => {
+    if (filters[key]) {
+      let filter = filters[key]
+      filter = isArray(filter) ? filter : [filter]
+      filters[key] = [...filter, value]
+    } else {
+      filters[key] = value
+    }
+  })
+  return filters
 }

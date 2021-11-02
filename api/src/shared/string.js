@@ -86,6 +86,10 @@ function splitWithEscape(stringToSplit, splitOnCharacter, escapeCharacter) {
     .map(item => item.replace(new RegExp(e, 'g'), ''))
 }
 
+function splitCsvWithTrim(csv, defaultValue) {
+  return csv ? csv.split(',').map(name => name.trim()) : [defaultValue]
+}
+
 function nullIfEmpty(value) {
   return value === '' ? null : value
 }
@@ -98,6 +102,7 @@ module.exports = {
   convertStringToFloat,
   getAllStringsEnclosedBetweenCharacters,
   splitWithEscape,
+  splitCsvWithTrim,
   escapeReservedRegexCharacters,
   nullIfEmpty,
   isNumeric,

@@ -88,7 +88,7 @@ const enhance = compose(
   withTodayProps,
   withDateFormatProps,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
 
       this.setState({
@@ -97,7 +97,7 @@ const enhance = compose(
       })
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { today } = nextProps
       // Re-initialize
       // Create new inventoryItem (without associating to any existing inventoryItem)
@@ -148,7 +148,7 @@ const enhance = compose(
     validate,
   }),
   lifecycle({
-    componentWillReceiveProps({
+    UNSAFE_componentWillReceiveProps({
       today,
       consumable,
       values,

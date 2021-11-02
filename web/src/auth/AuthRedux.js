@@ -91,7 +91,7 @@ function loginFailure(err) {
 }
 
 export function loginStart({ user, password }) {
-  return function(dispatch) {
+  return function (dispatch) {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
     const requestedAt = Date.now()
@@ -112,39 +112,34 @@ export function loginStart({ user, password }) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
+                id: 'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
                 defaultMessage: 'Login Failed',
               },
               message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                id: 'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
                 defaultMessage: 'Invalid username or password',
               },
               resolution: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                id: 'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
                 defaultMessage:
                   "We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
               },
             }),
           },
-          'Authentication failed. Wrong password.': {
+          // eslint-disable-next-line no-dupe-keys
+          'Authentication failed. Wrong username or password.': {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
+                id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.title',
                 defaultMessage: 'Login Failed',
               },
               message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
-                defaultMessage: 'Incorrect password',
+                id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.message',
+                defaultMessage: 'Incorrect username or password',
               },
               resolution: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution',
                 defaultMessage:
                   'Please, correct the credentials your entered and try again.',
               },
@@ -154,18 +149,15 @@ export function loginStart({ user, password }) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.incorrectPassword.title',
+                id: 'errorResponseMessages.loginStart.POST.401.incorrectPassword.title',
                 defaultMessage: 'Could not update your credentials',
               },
               message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
+                id: 'errorResponseMessages.loginStart.POST.401.incorrectPassword.message',
                 defaultMessage: 'The password you entered is incorrect',
               },
               resolution: {
-                id:
-                  'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
+                id: 'errorResponseMessages.loginStart.POST.401.incorrectPassword.resolution',
                 defaultMessage: 'Please, re-enter your password and try again.',
               },
             }),
@@ -176,13 +168,11 @@ export function loginStart({ user, password }) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
+                id: 'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.title',
                 defaultMessage: 'Login failed',
               },
               message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
+                id: 'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
                 defaultMessage:
                   "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
               },
@@ -192,13 +182,11 @@ export function loginStart({ user, password }) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title',
+                id: 'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title',
                 defaultMessage: "Couldn't login with your credentials",
               },
               message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
+                id: 'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
                 defaultMessage:
                   'There was a conflict with your credentials. Please, contact an administrator for support.',
               },
@@ -210,18 +198,15 @@ export function loginStart({ user, password }) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.loginStart.POST.403.accountLocked.title',
+                id: 'errorResponseMessages.loginStart.POST.403.accountLocked.title',
                 defaultMessage: 'Login failed',
               },
               message: {
-                id:
-                  'errorResponseMessages.loginStart.POST.403.accountLocked.message',
+                id: 'errorResponseMessages.loginStart.POST.403.accountLocked.message',
                 defaultMessage: 'Your user account has been locked',
               },
               resolution: {
-                id:
-                  'errorResponseMessages.loginStart.POST.403.accountLocked.resolution',
+                id: 'errorResponseMessages.loginStart.POST.403.accountLocked.resolution',
                 defaultMessage:
                   'You can contact us to unlock your account for you by email ({supportEmail})',
               },
@@ -252,6 +237,7 @@ export function loginStart({ user, password }) {
             countryAbbreviation: json.countryAbbreviation,
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
+            loggedOutReason: '',
           })
         )
       )
@@ -288,7 +274,7 @@ function refreshFailure() {
 }
 
 export function refreshStart() {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const state = getState()
     const { clientId, refresh } = state.user
 
@@ -326,7 +312,7 @@ export function refreshStart() {
 }
 
 export function resetPasswordEnterEmailAddress(emailAddress) {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const state = getState()
     const { clientId } = state.user
 
@@ -340,8 +326,7 @@ export function resetPasswordEnterEmailAddress(emailAddress) {
         default: inlineErrorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
+              id: 'errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title',
               defaultMessage: 'Error Sending Reset Password Email',
             },
           })
@@ -361,7 +346,7 @@ function createResetPasswordEnterPasswordSuccess(username) {
 }
 
 export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const state = getState()
     const { clientId } = state.user
 
@@ -376,8 +361,7 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
         default: inlineErrorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
+              id: 'errorResponseMessages.resetPasswordEnterPassword.POST.default.title',
               defaultMessage: 'Error Saving New Password',
             },
           })
@@ -439,7 +423,7 @@ function acceptLicenseFailure(err) {
 }
 
 export function acceptLicenseStart(licenseId) {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
     const requestedAt = Date.now()

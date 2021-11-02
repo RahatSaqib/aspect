@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
 import { connect } from 'react-redux'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
@@ -27,7 +27,9 @@ import SiteDetailProfile from './profile/SiteDetailProfile'
 import SiteForm from './edit/SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 
-const cssClasses = classnames.bind(require('./SiteDetail.css'))
+import styles from './SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const SiteDetail = props => {
   const intl = useIntl()
@@ -43,6 +45,7 @@ export const SiteDetail = props => {
     fetchSiteContacts,
     fetchTags,
     updateTags,
+    user,
   } = props
 
   useEffect(
@@ -72,51 +75,40 @@ export const SiteDetail = props => {
       <Helmet title={intl.formatMessage(messages.title)} />
       {!hasSiteWithLocation() ? <LinearProgress /> : null}
       {hasSiteWithLocation() ? (
-        <Switch>
-          <Route
-            exact
-            path={match.path}
-            render={props => (
-              <SiteDetailProfile
+        <Routes>
+          <Route path="">
+            <SiteDetailProfile
+              formatMessage={intl.formatMessage}
+              disabled={!editable}
+              {...props}
+              site={site}
+              siteTags={siteTags.toJS()}
+              onSiteTagChange={onSiteTagChange}
+              siteContacts={siteContacts.toJS()}
+              user={user}
+            />
+          </Route>
+          <Route path="alerts">
+            <SiteDetailAlert {...props} disabled={!editable} site={site} />
+          </Route>
+          <Route path="edit">
+            {editable ? (
+              <SiteForm
                 formatMessage={intl.formatMessage}
+                onSubmit={updateSingleSiteFromForm}
+                onSiteTagChange={onSiteTagChange}
+                updateLatLongFromFormAddress={updateLatLongFromFormAddress}
                 disabled={!editable}
                 {...props}
                 site={site}
                 siteTags={siteTags.toJS()}
-                onSiteTagChange={onSiteTagChange}
                 siteContacts={siteContacts.toJS()}
               />
+            ) : (
+              <Navigate replace to={match.url} />
             )}
-          />
-          <Route
-            exact
-            path={`${match.path}/alerts`}
-            render={props => (
-              <SiteDetailAlert {...props} disabled={!editable} site={site} />
-            )}
-          />
-          <Route
-            exact
-            path={`${match.path}/edit`}
-            render={props =>
-              editable ? (
-                <SiteForm
-                  formatMessage={intl.formatMessage}
-                  onSubmit={updateSingleSiteFromForm}
-                  onSiteTagChange={onSiteTagChange}
-                  updateLatLongFromFormAddress={updateLatLongFromFormAddress}
-                  disabled={!editable}
-                  {...props}
-                  site={site}
-                  siteTags={siteTags.toJS()}
-                  siteContacts={siteContacts.toJS()}
-                />
-              ) : (
-                <Redirect to={match.url} />
-              )
-            }
-          />
-        </Switch>
+          </Route>
+        </Routes>
       ) : null}
       <section className={cssClasses('Section', 'Section--first')}>
         <Paper>
@@ -141,6 +133,7 @@ const mapStateToProps = (state, ownProps) => {
     siteTags,
     lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),
     siteContacts,
+    user: state.user,
   }
 }
 
@@ -163,6 +156,7 @@ SiteDetail.propTypes = {
   fetchTags: PropTypes.func.isRequired,
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
+  user: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 export default flowRight(
   injectIntl,

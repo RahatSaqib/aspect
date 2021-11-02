@@ -87,6 +87,11 @@ const routes = [
                 resultCategories: Joi.array()
                   .allow(null)
                   .description('The json for result Categories'),
+                resultCategoryGroups: Joi.array()
+                  .allow(null)
+                  .description(
+                    `The json for ResultCategoryGroup items of current assay`
+                  ),
                 hasResults: Joi.bool()
                   .allow(null)
                   .description('If assay is used by any result'),
@@ -151,9 +156,8 @@ const routes = [
             assayId: Joi.number().description('The assay Id'),
             name: Joi.string().description('The assay Name'),
             assayTypeName: Joi.string().description('The assay type Name'),
-            deviceTypeExternalId: Joi.string().description(
-              'The device type id'
-            ),
+            deviceTypeExternalId:
+              Joi.string().description('The device type id'),
             deviceTypeName: Joi.string().description('The device type Name'),
             resultCategory1Label: Joi.string()
               .allow(null)

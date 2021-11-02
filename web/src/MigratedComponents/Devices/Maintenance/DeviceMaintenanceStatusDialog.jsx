@@ -9,8 +9,11 @@ import DeviceMaintenanceStatusSelectField from '../../../filter/resource/DeviceM
 import recomposeForm from '../../../components/recomposeForm'
 
 import AspectDialog from '../../../components/shared/AspectDialog'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./BaseDialog.css'))
+import styles from './BaseDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   dialogTitle: {
@@ -39,33 +42,32 @@ const messages = defineMessages({
   },
 })
 
-export function validate({ maintenanceStatus }, { intl }) {
+export function validate({ maintenanceStatus }, { formatMessage }) {
   const errors = {}
   if (!maintenanceStatus) {
-    errors.contextDate = intl.formatMessage(
-      messages.maintenanceStatusIsRequired
-    )
+    errors.contextDate = formatMessage(messages.maintenanceStatusIsRequired)
   }
   return errors
 }
 
 const deviceMaintenanceStatusDialog = WrappedComponent => props => {
-  const [values, setValues] = useState({})
-  const { device, intl } = props
+  const [values, setValues] = useState(false)
+  const { device } = props
+  const { formatMessage } = useI18n()
 
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (!values) {
       setValues({
         maintenanceStatus: device.get('maintenanceStatus') || null,
         notes: device.get('maintenanceStatusNotes') || null,
-      }),
-    [device]
-  )
+      })
+    }
+  }, [device, values])
 
   const allProps = {
     ...props,
     labels: {
-      dialogTitle: intl.formatMessage(messages.dialogTitle),
+      dialogTitle: formatMessage(messages.dialogTitle),
     },
     onChange: values => {
       setValues(values)
@@ -76,7 +78,6 @@ const deviceMaintenanceStatusDialog = WrappedComponent => props => {
 }
 
 const FormDialog = ({
-  intl,
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
@@ -87,67 +88,69 @@ const FormDialog = ({
   onMaintenanceStatusChange,
   onNotesChange,
   handleSubmit,
-}) => (
-  <AspectDialog
-    actions={[
-      <Button color="primary" onClick={onCancel}>
-        {intl.formatMessage(messages.cancel)}
-      </Button>,
-      <Button
-        color="primary"
-        variant="contained"
-        disabled={form.pristine || !form.valid || form.submitting}
-        onClick={handleSubmit}
-      >
-        {intl.formatMessage(messages.submit)}
-      </Button>,
-    ]}
-    maxWidth="sm"
-    open={isDialogActive}
-    onEscapeKeyDown={onCancel}
-    onClose={onCancel}
-    title={labels.dialogTitle}
-  >
-    <form className={cssClasses('Form')}>
-      <div className={cssClasses('Form__Content')}>
-        <section>
-          <div>
-            <DeviceMaintenanceStatusSelectField
-              value={values.maintenanceStatus || ''}
-              onMaintenanceStatusChange={onMaintenanceStatusChange}
-              floatingLabelText={intl.formatMessage(messages.maintenanceStatus)}
+}) => {
+  const { formatMessage } = useI18n()
+  return (
+    <AspectDialog
+      actions={[
+        <Button color="primary" onClick={onCancel}>
+          {formatMessage(messages.cancel)}
+        </Button>,
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={form.pristine || !form.valid || form.submitting}
+          onClick={handleSubmit}
+        >
+          {formatMessage(messages.submit)}
+        </Button>,
+      ]}
+      maxWidth="sm"
+      open={isDialogActive}
+      onClose={onCancel}
+      title={labels.dialogTitle}
+    >
+      <form className={cssClasses('Form')}>
+        <div className={cssClasses('Form__Content')}>
+          <section>
+            <div>
+              <DeviceMaintenanceStatusSelectField
+                value={values.maintenanceStatus || ''}
+                onDeviceMaintenanceStatusChange={onMaintenanceStatusChange}
+                floatingLabelText={formatMessage(messages.maintenanceStatus)}
+                fullWidth
+                helperText={
+                  meta.maintenanceStatus.touched && meta.maintenanceStatus.error
+                }
+                onlyManuallySetableStatuses
+              />
+            </div>
+          </section>
+          <section>
+            <TextField
               fullWidth
-              helperText={
-                meta.maintenanceStatus.touched && meta.maintenanceStatus.error
-              }
-              intl={intl}
+              type="notes"
+              name="notes"
+              label={formatMessage(messages.notes)}
+              disabled={form.submitting}
+              value={values.notes || ''}
+              onChange={onNotesChange}
+              multiline
+              rows={2}
+              error={meta.notes.touched && meta.notes.error}
+              helperText={meta.notes.touched && meta.notes.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 2000 }}
             />
-          </div>
-        </section>
-        <section>
-          <TextField
-            fullWidth
-            type="notes"
-            name="notes"
-            label={intl.formatMessage(messages.notes)}
-            disabled={form.submitting}
-            value={values.notes}
-            onChange={onNotesChange}
-            multiline
-            rows={2}
-            error={meta.notes.touched && meta.notes.error}
-            helperText={meta.notes.touched && meta.notes.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 2000 }}
-          />
-        </section>
-      </div>
-    </form>
-  </AspectDialog>
-)
+          </section>
+        </div>
+      </form>
+    </AspectDialog>
+  )
+}
 
 export default flowRight(
   React.memo,

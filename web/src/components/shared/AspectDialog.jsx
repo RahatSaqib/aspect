@@ -10,12 +10,15 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 import IconProvider from '../../MigratedComponents/IconProvider'
 
-const cssClasses = classnames.bind(require('./AspectDialog.css'))
+import styles from './AspectDialog.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectDialog = ({
   actions,
   autoScrollBodyContent,
   children,
+  dialogContentClasses,
   maxWidth,
   modal,
   onRequestClose,
@@ -32,6 +35,7 @@ const AspectDialog = ({
             aria-label="close"
             className={cssClasses('button-close')}
             onClick={onRequestClose}
+            size="medium"
           >
             <IconProvider icon="MdClose" />
           </IconButton>
@@ -53,7 +57,13 @@ const AspectDialog = ({
     >
       {title && renderTitle()}
 
-      <DialogContent>{children}</DialogContent>
+      <DialogContent
+        classes={{
+          ...dialogContentClasses,
+        }}
+      >
+        {children}
+      </DialogContent>
 
       {React.Children.count(actions) > 0 && (
         <DialogActions>{React.Children.toArray(actions)}</DialogActions>
@@ -66,6 +76,7 @@ AspectDialog.propTypes = {
   actions: PropTypes.node, // eslint-disable-line
   autoScrollBodyContent: PropTypes.bool,
   children: PropTypes.node.isRequired,
+  dialogContentClasses: PropTypes.objectOf(PropTypes.shape),
   maxWidth: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', false]),
   modal: PropTypes.bool,
   onRequestClose: PropTypes.func, // eslint-disable-line
@@ -74,6 +85,7 @@ AspectDialog.propTypes = {
 }
 AspectDialog.defaultProps = {
   autoScrollBodyContent: false,
+  dialogContentClasses: {},
   maxWidth: 'md',
   modal: false,
   title: '',

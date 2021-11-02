@@ -21,6 +21,17 @@ const { allTimeZoneToId } = require('../../shared/dictionary')
 
 const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
+const {
+  result1CategoryMapping,
+  mapResultCategory2,
+  getResultCategoriesHivVL,
+  getVLCopies,
+  getDetectedResistanceCategoryTypes,
+} = require('./GxConnect/resultCategories/resultCategoriesMapping')
+const {
+  splitResultTextValues,
+  sanitizeResultTextValue,
+} = require('./GxConnect/resultCategories/utils')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -178,6 +189,13 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     const copies = getVLCopies(_.get(payload, 'data.resultText'))
     if (copies) _.set(payload, 'data.copies', copies)
   }
+
+  if (potentialAssayIds.includes('GxMtbXdr')) {
+    const detectedResistanceCategoryTypes = getDetectedResistanceCategoryTypes(
+      _.get(payload, 'data.resultText')
+    )
+    _.set(payload, 'data.detectedResistance', detectedResistanceCategoryTypes)
+  }
   const existingResult = await findExistingResult(
     {
       partnerId: device.partnerId,
@@ -188,6 +206,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       potentialSampleIds: [sampleId],
       siteId: device.siteId,
       potentialAssayIds,
+      startedOn: payload.startedOn,
     },
     knex
   )
@@ -223,6 +242,21 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     }
   }
   payload.id = generatedExternalId
+
+  // if the module name is not part of the payload, try to get it from
+  // existing results on the device
+  const moduleNamePath = 'instrument.module.name'
+  const moduleSerial = _.get(payload, 'instrument.module.serial')
+  if (!_.get(payload, moduleNamePath) && moduleSerial) {
+    const moduleName = await getModuleNameForResult(
+      deviceId,
+      moduleSerial,
+      payload.startedOn,
+      knex
+    )
+    if (moduleName) _.set(payload, moduleNamePath, moduleName)
+    else _.unset(payload, moduleNamePath)
+  }
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {
@@ -515,6 +549,7 @@ async function findExistingResult(availableResultDetails, knex) {
     potentialSampleIds = [],
     siteId = null,
     potentialAssayIds = [],
+    startedOn = null,
   } = availableResultDetails
   const selectFields = [
     'r.id',
@@ -525,6 +560,7 @@ async function findExistingResult(availableResultDetails, knex) {
     'rc2.externalId as resultCategory2',
     'a.externalId as assayId',
     's.externalId as sampleId',
+    knex.raw('r.resultData->>"$.geneXpertTestId" as geneXpertTestId'),
   ]
   const queryStart = knex
     .from('Result as r')
@@ -565,27 +601,6 @@ async function findExistingResult(availableResultDetails, knex) {
   if (_.isEmpty(matchingResult) && geneXpertTestId) {
     matchingResults = await queryStart
       .clone()
-      .andWhereRaw(
-        'JSON_EXTRACT(r.resultData, "$.geneXpertTestId") = ?',
-        geneXpertTestId
-      )
-      .select(selectFields)
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    }
-    if (matchingResults.length > 1 && gxAlertUniqueId) {
-      matchingResults = _.filter(matchingResults, {
-        externalId: gxAlertUniqueId,
-      })
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
-
-  if (_.isEmpty(matchingResult) && geneXpertTestId) {
-    matchingResults = await queryStart
-      .clone()
       .andWhere('r.externalId', geneXpertTestId)
       .select(selectFields)
     if (matchingResults.length === 1) {
@@ -603,7 +618,12 @@ async function findExistingResult(availableResultDetails, knex) {
     }
   }
 
-  if (_.isEmpty(matchingResult) && cartridgeSerial && instrumentSerial) {
+  if (
+    _.isEmpty(matchingResult) &&
+    cartridgeSerial &&
+    instrumentSerial &&
+    cartridgeSerial.length > 5
+  ) {
     matchingResults = await queryStart
       .clone()
       .andWhere('r.consumableSerial', cartridgeSerial)
@@ -623,18 +643,19 @@ async function findExistingResult(availableResultDetails, knex) {
       }
     }
   }
-
   if (
     _.isEmpty(matchingResult) &&
-    !_.isEmpty(potentialSampleIds) &&
+    !_.isEmpty(_.filter(potentialSampleIds, elem => elem)) &&
     siteId &&
-    !_.isEmpty(potentialAssayIds)
+    !_.isEmpty(_.filter(potentialAssayIds, elem => elem)) &&
+    startedOn
   ) {
     matchingResults = await queryStart
       .clone()
       .whereIn('s.externalId', potentialSampleIds)
       .andWhere('r.siteId', siteId)
       .whereIn('a.externalId', potentialAssayIds)
+      .andWhere('r.startedOn', startedOn)
       .select(selectFields)
     if (matchingResults.length === 1) {
       ;[matchingResult] = matchingResults
@@ -685,7 +706,17 @@ async function findExistingResult(availableResultDetails, knex) {
       }
     }
   }
-  return matchingResult
+  // if we find an existing result we are going to add an extra validation to compare the externalId or
+  // the genexpert test id which is generated by the devices. If match with one of them we are going to take that as a match.
+  // if not we are not going to take that as a match.
+  if (
+    !_.isEmpty(matchingResult) &&
+    (!geneXpertTestId ||
+      !matchingResult.geneXpertTestId ||
+      _.isEqual(geneXpertTestId, matchingResult.geneXpertTestId))
+  )
+    return matchingResult
+  return null
 }
 
 async function getOrCreateSite(
@@ -839,68 +870,12 @@ function getResultCategories(payload) {
     payloadCategory = []
     const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
-      const resultTextValues = _.compact(payloadResultText.split('|'))
+      const resultTextValues = splitResultTextValues(payloadResultText)
       const assayId = _.get(payload, 'assay.id')
 
       if (resultTextValues.length > 0) {
-        const result1Text = resultTextValues[0]
-          .toLowerCase()
-          .replace(/mtb/, '')
-          .replace(/ebola gp/, '')
-          .replace(/hiv-1/, '')
-          .replace(/sars-cov-2/, '')
-          .trim()
-        const result1CategoryMapping = {
-          'not detected': 'NotDetected',
-          'não detectado': 'NotDetected',
-          'не обнаружен': 'NotDetected',
-          'non détecté': 'NotDetected',
-          'no detectado': 'NotDetected',
-          detected: 'Detected',
-          'detected very low': 'Detected',
-          'detected low': 'Detected',
-          'detected medium': 'Detected',
-          'detected high': 'Detected',
-          detectado: 'Detected',
-          'detectado alto': 'Detected',
-          'detectado médio': 'Detected',
-          'detectado baixo': 'Detected',
-          'detectado muito baixo': 'Detected',
-          обнаружен: 'Detected',
-          'обнаружен очень низкий': 'Detected',
-          'обнаружен низкий': 'Detected',
-          'обнаружен средний': 'Detected',
-          'обнаружен высокий': 'Detected',
-          détecté: 'Detected',
-          'détecté très bas': 'Detected',
-          'détecté bas': 'Detected',
-          'détecté moyen': 'Detected',
-          'détecté élevé': 'Detected',
-          'detectado muy bajo': 'Detected',
-          'detectado bajo': 'Detected',
-          'detectado medio': 'Detected',
-          invalid: 'Invalid',
-          inválido: 'Invalid',
-          недействительный: 'Invalid',
-          'non valide': 'Invalid',
-          'no result': 'NoResult',
-          'sem resultado': 'NoResult',
-          безрезультатно: 'NoResult',
-          'sans résultat': 'NoResult',
-          'sin resultado': 'NoResult',
-          error: 'Error',
-          erro: 'Error',
-          ошибка: 'Error',
-          erreur: 'Error',
-          negative: 'Negative',
-          positive: 'Positive',
-          'presumptive positive': 'Indeterminate',
-          'presumptive pos': 'Indeterminate',
-          'null null': 'Success',
-        }
-        if (assayId === 'GxMtbRifUltra') {
-          result1CategoryMapping['trace detected'] = 'Trace Detected'
-        }
+        const result1Text = sanitizeResultTextValue(resultTextValues[0])
+
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
         }
@@ -911,57 +886,10 @@ function getResultCategories(payload) {
           if (externalId) payloadCategory = [{ id: externalId }]
         }
       }
-      const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
-      const canHaveSecondResult =
-        ([
-          'Detected',
-          'Trace Detected',
-          'Error',
-          'Invalid',
-          'NoResult',
-          'Success',
-        ].includes(result1) ||
-          !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)) &&
-        assayId !== 'GxHiv1Vl'
 
-      if (resultTextValues.length > 1) {
-        const result2Text = resultTextValues[1]
-          .toLowerCase()
-          .replace(/rif resistance/, '')
-          .replace(/ebola np/, '')
-          .trim()
-        if (canHaveSecondResult) {
-          const result2CategoryMapping = {
-            'not detected': 'NotDetected',
-            'não detectado': 'NotDetected',
-            'не обнаружен': 'NotDetected',
-            'non détecté': 'NotDetected',
-            'no detectado': 'NotDetected',
-            detected: 'Detected',
-            detectado: 'Detected',
-            обнаружен: 'Detected',
-            détecté: 'Detected',
-            indeterminate: 'Indeterminate',
-            indeterminado: 'Indeterminate',
-            неопределенный: 'Indeterminate',
-            indéterminé: 'Indeterminate',
-            error: 'Error',
-            invalid: 'Invalid',
-            'no result': 'NoResult',
-          }
-          if (result2CategoryMapping[result2Text]) {
-            payloadCategory = [
-              ...payloadCategory,
-              { id: result2CategoryMapping[result2Text] },
-            ]
-          }
-        }
-      } else if (
-        canHaveSecondResult &&
-        ['Error', 'Invalid', 'NoResult'].includes(result1)
-      ) {
-        payloadCategory = [...payloadCategory, { id: result1 }]
-      }
+      const resultCategory2 = mapResultCategory2(assayId, resultTextValues)
+      if (resultCategory2)
+        payloadCategory = [...payloadCategory, { id: resultCategory2 }]
     } else {
       const assayId = _.get(payload, 'assay.id')
       if (assayId === 'GxHiv1Vl') {
@@ -972,28 +900,6 @@ function getResultCategories(payload) {
   return payloadCategory
 }
 
-function getVLCopies(result1Text) {
-  if (result1Text && !result1Text.includes('< 40')) {
-    const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-    const arr = regex.exec(result1Text.replace('HIV-1', ''))
-
-    return arr ? parseFloat(arr[0]) : null
-  }
-  return null
-}
-
-function getResultCategoriesHivVL(result1Text) {
-  const copies = getVLCopies(result1Text)
-  // Add HIV VL Categories
-  if (copies) {
-    if (copies < 1000 && copies >= 40) return 'LessThan1000'
-    if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
-    return 'LessThan40'
-  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
-    return 'NoResult'
-}
-
 function macAddressValid(macAddress) {
   return (
     !_.isEmpty(macAddress) &&
@@ -1001,6 +907,19 @@ function macAddressValid(macAddress) {
     macAddress.trim().length > 3 &&
     macAddress !== 'MAC005345000000'
   )
+}
+
+async function getModuleNameForResult(deviceId, moduleSerial, startedOn, knex) {
+  const latestResultOnModuleSerial = await knex('Result')
+    .where({ deviceId, moduleSerial })
+    .where('startedOn', '<=', startedOn)
+    .whereNotNull('moduleName')
+    .orderBy('endedOn', 'desc')
+    .first('moduleName')
+
+  return latestResultOnModuleSerial
+    ? latestResultOnModuleSerial.moduleName
+    : null
 }
 
 module.exports = {
@@ -1014,4 +933,5 @@ module.exports = {
   getResultCategoriesHivVL,
   getResultCategories,
   getVLCopies,
+  getModuleNameForResult,
 }

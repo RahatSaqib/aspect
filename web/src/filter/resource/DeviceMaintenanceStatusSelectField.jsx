@@ -1,123 +1,86 @@
 // Imports from packages
-import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
+import { useQuery } from 'react-query'
+import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { defineMessages } from 'react-intl'
 
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
-import { fetchDeviceMaintenanceStatus as fetchStatuses } from '../../MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
+import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
+import { DEVICE_STATUS } from '../../MigratedComponents/QueryFetch/Device/index'
+import { types } from '../../MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
+import useI18n from '../../Hooks/i18n/useI18n'
+import messages from '../../shared/messages/deviceStatusMessages'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
 
-const messages = defineMessages({
-  active: {
-    id: 'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.active',
-    defaultMessage: 'Active',
-  },
-  inactiveConnectivity: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity',
-    defaultMessage: 'Connectivity',
-  },
-  inactiveDecommissioned: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned',
-    defaultMessage: 'Decommissioned',
-  },
-  inactiveDownForRepair: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair',
-    defaultMessage: 'Down For Repair',
-  },
-  inactiveNoResultsReported: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported',
-    defaultMessage: 'No Results Reported',
-  },
-  inactiveOutOfInventory: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory',
-    defaultMessage: 'Out Of Inventory',
-  },
-  inactiveUnknown: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown',
-    defaultMessage: 'Unknown',
-  },
-  reportedActive: {
-    id:
-      'pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive',
-    defaultMessage: 'Active',
-  },
-})
-export class DeviceMaintenanceStatusSelectField extends PureComponent {
-  static propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    intl: PropTypes.object.isRequired,
-    fetchStatuses: PropTypes.func.isRequired,
-    maintenanceStatusItems: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
+const DeviceMaintenanceStatusSelectField = ({
+  onDeviceMaintenanceStatusChange,
+  value,
+  onlyManuallySetableStatuses,
+  ...restProps
+}) => {
+  const { formatMessage } = useI18n()
+  const { data, isError } = useQuery(
+    [DEVICE_STATUS.KEY, onlyManuallySetableStatuses],
+    async () => {
+      return fetchWrapperForQueries({
+        endpoint: DEVICE_STATUS.ENDPOINT,
+        params: { onlyManuallySet: onlyManuallySetableStatuses },
       })
-    ).isRequired,
-    onMaintenanceStatusChange: PropTypes.func.isRequired,
-    value: PropTypes.string,
-  }
+    }
+  )
 
-  static defaultProps = {
-    value: '',
-  }
+  const [maintenanceStatuses, setMaintenanceStatuses] = useState(false)
+  const dispatch = useDispatch()
 
-  componentDidMount() {
-    this.props.fetchStatuses(false)
-  }
+  useEffect(() => {
+    if (data && !isError) {
+      const items = data.data
+      setMaintenanceStatuses(items)
+      dispatch({
+        type: types.RECEIVE_DEVICE_MAINTENCE_STATUS,
+        items,
+        lastRefreshed: new Date(),
+      })
+    }
+  }, [data, dispatch, isError])
 
-  handleChange = ({ target: { value } }) => {
-    this.props.onMaintenanceStatusChange(value)
-  }
-
-  render() {
-    const { maintenanceStatusItems, value, intl } = this.props
-    const restProps = omit(this.props, [
-      'fetchDeviceTypes',
-      'deviceTypeItems',
-      'onMaintenanceStatusChange',
-      'value',
-    ])
-    return (
-      <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        {maintenanceStatusItems
-          .filter(a => a.get('manuallySet'))
-          .map(a => (
-            <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
-              {intl.formatMessage(messages[a.get('i18nKey')])}
+  return (
+    <SelectField
+      {...restProps}
+      value={value}
+      onChange={({ target: { value } }) => {
+        onDeviceMaintenanceStatusChange(value)
+      }}
+    >
+      {maintenanceStatuses
+        ? maintenanceStatuses.map(ms => (
+            <MenuItem key={ms.externalId} value={ms.externalId}>
+              {formatI18nMessage(
+                messages,
+                formatMessage,
+                ms.i18nKey,
+                ms.i18nKey
+              )}
             </MenuItem>
-          ))}
-      </SelectField>
-    )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    maintenanceStatusItems: state.deviceMaintenanceStatus.items,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      fetchStatuses,
-    },
-    dispatch
+          ))
+        : null}
+    </SelectField>
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  DeviceMaintenanceStatusSelectField
-)
+DeviceMaintenanceStatusSelectField.defaultProps = {
+  value: '',
+  onlyManuallySetableStatuses: false,
+}
+
+DeviceMaintenanceStatusSelectField.propTypes = {
+  onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func])
+    .isRequired,
+  value: PropTypes.oneOfType([PropTypes.string]),
+  onlyManuallySetableStatuses: PropTypes.oneOfType([PropTypes.bool]),
+}
+
+export default DeviceMaintenanceStatusSelectField

@@ -1,50 +1,58 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { useFormik } from 'formik'
-import omitBy from 'lodash/omitBy'
-import pick from 'lodash/pick'
-import keys from 'lodash/keys'
+import { FormikProvider as FormikProviderBase, useFormik } from 'formik'
 
-import { pickKeys } from '../Helpers/index'
 import DisplayFormikState from '../Helpers/debug'
+import { sanitizeFormValues } from '../Helpers'
+import useFormConfig from '../../Hooks/useFormConfig'
 
-const FormikContext = React.createContext()
-
-const FormikProvider = ({ config, children }) => {
+export const FormikProvider = ({ config, children }) => {
   const debug = false
-  const { actions } = config
+  const { actions, validationSchema = null } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
-  const initialValues = pickKeys(config.sections, ['initialValue'])
-  const fieldTypes = pickKeys(config.sections, ['type'])
+  const { meta, registerVisibleFields, updateField } = useFormConfig(config)
+  const initialValues = config.values || meta.initialValues
 
-  const formik = useFormik({
+  const formikConfiguration = {
+    enableReinitialize: true,
     initialValues,
     validateOnMount: false,
-    onSubmit: values =>
-      // eslint-disable-next-line no-console
-      console.log(
-        JSON.stringify(
-          pick(values, keys(omitBy(fieldTypes, i => i === 'readOnly'))),
-          null,
-          2
-        )
-      ),
-  })
+    validationSchema,
+    onSubmit: values => {
+      const payload = sanitizeFormValues(values, { meta })
+      console.log(JSON.stringify(payload, null, 2)) // eslint-disable-line no-console
+    },
+  }
+  const formik = useFormik(formikConfiguration)
 
+  useEffect(() => {
+    /**
+     * 1. based on initial values:
+     *    - define all visible fields and
+     *    - register in formik all visible fields with validators
+     */
+    registerVisibleFields(initialValues, formik)
+    /**
+     * 2. validate form to populate formik.errors
+     */
+    formik.validateForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
-    <FormikContext.Provider value={{ formik, toggleEdit, setToggleEdit }}>
+    <FormikProviderBase
+      value={{
+        ...formik, // provide formikProps in the root (i.e. FieldArray needs setFormikState)
+        formik,
+        setToggleEdit,
+        toggleEdit,
+        updateField,
+        meta,
+      }}
+    >
       {children}
       {debug && <DisplayFormikState {...formik} />}
-    </FormikContext.Provider>
+    </FormikProviderBase>
   )
 }
 
-function useFormikState() {
-  const context = React.useContext(FormikContext)
-  if (context === undefined) {
-    throw new Error('useFormikState must be used within a FormikProvider')
-  }
-  return context
-}
-
-export { FormikContext, FormikProvider, useFormikState }
+export default FormikProvider

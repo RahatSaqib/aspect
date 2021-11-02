@@ -26,9 +26,7 @@ describe('Device Api Key List module', () => {
           formatHTMLMessage: value => JSON.stringify(value),
           now: () => now,
         },
-        history: {
-          push: () => {},
-        },
+        navigate: () => {},
         location: {
           search: '',
         },

@@ -18,7 +18,9 @@ import SiteSelectField from '../../../../filter/resource/SiteSelectField'
 import ConnectedTagInput from '../../../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../../../tag/TagRedux'
 
-const cssClasses = classnames.bind(require('../DeviceDetail.css'))
+import styles from '../DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   tags: {
@@ -70,24 +72,35 @@ const enhance = compose(
         values,
       }),
 
-      onDiscardClick: ($, { device }) => () => ({
-        values: initializeValuesFrom(device),
-      }),
+      onDiscardClick:
+        ($, { device }) =>
+        () => ({
+          values: initializeValuesFrom(device),
+        }),
     }
   ),
   withHandlers({
-    onInitialLoad: ({ device, fetchTags }) => () => {
-      fetchTags(device.get('id'), 'device')
-    },
+    onInitialLoad:
+      ({ device, fetchTags }) =>
+      () => {
+        fetchTags(device.get('id'), 'device')
+      },
 
-    onSubmit: ({ device, updateSingleDevice }) => values =>
-      updateSingleDevice(device.get('id'), {
-        siteId: values.siteId,
-      }),
+    onSubmit:
+      ({ device, updateSingleDevice }) =>
+      values =>
+        updateSingleDevice({
+          deviceId: device.get('id'),
+          data: {
+            siteId: values.siteId,
+          },
+        }),
 
-    onDeviceTagChange: ({ updateTags }) => (qryId, qryType, tags) => {
-      updateTags(qryId, qryType, tags.join(','))
-    },
+    onDeviceTagChange:
+      ({ updateTags }) =>
+      (qryId, qryType, tags) => {
+        updateTags(qryId, qryType, tags.join(','))
+      },
   }),
   lifecycle({
     componentDidMount() {
@@ -189,12 +202,12 @@ export const DeviceDetailEdit = ({
 }
 
 DeviceDetailEdit.propTypes = {
-  device: PropTypes.oneOf([PropTypes.object]).isRequired,
+  device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   editable: PropTypes.bool.isRequired,
-  deviceTags: PropTypes.oneOf([PropTypes.object]).isRequired,
-  form: PropTypes.oneOf([PropTypes.object]).isRequired,
-  meta: PropTypes.oneOf([PropTypes.object]).isRequired,
-  values: PropTypes.oneOf([PropTypes.object]).isRequired,
+  deviceTags: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  form: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  meta: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  values: PropTypes.oneOfType([PropTypes.object]).isRequired,
   onSiteIdChange: PropTypes.func.isRequired,
   onDiscardClick: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,

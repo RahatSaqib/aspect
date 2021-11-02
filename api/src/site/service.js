@@ -8,6 +8,9 @@ const {
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { resultStatusToId } = require('../shared/dictionary')
+const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
+const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
 const totalDevicesQuery = knex('Device as d')
   .whereRaw('d.siteId = s.id')
@@ -89,13 +92,16 @@ async function listSites(request) {
         return
       }
       const deviceQuery = knex('Device as d')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .select('d.siteId')
         .modify(filterParams, query, {
           deviceName: 'd.name',
+          deviceType: 'dt.externalId',
         })
 
       this.whereIn('s.id', deviceQuery)
     })
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
     .groupBy(['s.id'])
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(filterParams, query, {
@@ -151,8 +157,14 @@ async function showSite(request) {
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
     .where('siteId', params.siteId)
-    .distinct('dt.id', 'dt.name', 'dtc.id as category')
-    .select()
+    .select(
+      'd.id',
+      'd.name',
+      'd.shortName',
+      'dt.id as deviceTypeId',
+      'dt.name as deviceTypeName',
+      'dtc.id as category'
+    )
 
   const result = { ok: true, data: item }
 
@@ -165,25 +177,29 @@ async function updateSite(request) {
   // TODO: check permission
   const changedSiteFields = await transformGeographyFromUpdates(payload)
   // update item
+  const site = Object.assign(
+    _.pick(changedSiteFields, [
+      'name',
+      'shortName',
+      'externalId',
+      'street1',
+      'street2',
+      'geographyId',
+      'city',
+      'zip',
+      'latitude',
+      'longitude',
+    ]),
+    {
+      timezoneId: _.isEmpty(changedSiteFields.timezone)
+        ? null
+        : changedSiteFields.timezone,
+    }
+  )
+
   const updatedCount = await knex('Site')
     .where('id', params.siteId)
-    .update(
-      Object.assign(
-        _.pick(changedSiteFields, [
-          'name',
-          'shortName',
-          'externalId',
-          'street1',
-          'street2',
-          'geographyId',
-          'city',
-          'zip',
-          'latitude',
-          'longitude',
-        ]),
-        { timezoneId: changedSiteFields.timezone } // TODO standardize timezone name
-      )
-    )
+    .update(site)
 
   if (updatedCount !== 1) {
     throw new Error('Unknown error')
@@ -199,7 +215,7 @@ async function listSitesForSelectList(request) {
 
   // get data constraints
   let dataConstraints = await getConstraints(auth.credentials)
-  if (mode === 'all') {
+  if (mode === 'all' || mode === 'reporter') {
     // get all sites in user's country and partner
     const { partnerId, countryId } = await getUser(auth.credentials.name)
     dataConstraints = {
@@ -211,39 +227,43 @@ async function listSitesForSelectList(request) {
       },
     }
   }
+  const response = await getListSitesForSelectList(
+    dataConstraints,
+    query?.tags,
+    mode
+  )
+  return response
+}
 
+async function getListSitesForSelectList(dataConstraints, tags, mode) {
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
-  if (query && query.tags && query.tags.length > 0)
+  if (tags && tags.length > 0)
     sitesQuery = sitesQuery
       .leftOuterJoin('SiteTag as stg', 's.id', 'stg.siteId')
       .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
-      .whereIn('t.title', query.tags)
+      .whereIn('t.title', tags)
+
+  let columnsToSelect = ['s.id', 's.name', 'g.stateId', 'st.name as stateName']
+
+  if (mode !== 'reporter') {
+    columnsToSelect = [
+      ...columnsToSelect,
+      's.partnerId',
+      'g.countryId',
+      'g.lgaId',
+      's.externalId',
+    ]
+  }
 
   sitesQuery = sitesQuery
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
-    .select(
-      's.id',
-      's.name',
-      's.shortName',
-      's.partnerId',
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      'l.name as lgaName',
-      'st.name as stateName',
-      's.longitude',
-      's.latitude',
-      's.zip',
-      's.street1',
-      's.street2',
-      's.city',
-      's.externalId'
-    )
+    .select(columnsToSelect)
     .distinct()
 
   const sites = await sitesQuery
@@ -260,6 +280,7 @@ async function listSitesForSelectList(request) {
     ok: true,
     countryName: countryState.countryName,
     stateName: countryState.stateName,
+    mode,
     data: sites,
   }
 }
@@ -287,6 +308,112 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
     .first(SELECT_SHOW_FIELDS)
 }
 
+async function listSitesWithReporters(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(
+    auth.credentials,
+    'actionDashboard'
+  )
+  const { minDate, maxDate } = query
+  const resultStatusTransferId = await resultStatusToId('Transfer')
+
+  // const sites
+  const siteQuery = knex('Site as s')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Result as r', queryBuilder => {
+      queryBuilder.on('r.reportableSiteId', 's.id')
+      if (minDate) {
+        queryBuilder.andOn('r.endedOn', '>=', knex.raw('?', [minDate]))
+      }
+      if (maxDate) {
+        queryBuilder.andOn('r.endedOn', '<=', knex.raw('?', [maxDate]))
+      }
+    })
+    .leftOuterJoin('Sample as sample', 'r.sampleId', 'sample.id')
+    .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftOuterJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .leftOuterJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftOuterJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftOuterJoin('SiteTag as siteTag', 's.id', 'siteTag.siteId')
+    .leftOuterJoin('Tag as tag', 'siteTag.tagId', 'tag.id')
+    /**
+     * take only clinics
+     */
+    .where('tag.title', 'Reportable Site')
+    .where(function () {
+      if (!query.siteIds) {
+        return
+      }
+      this.whereIn('s.id', query.siteIds.split(','))
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      siteId: 's.id',
+      partnerId: 's.partnerId',
+      deviceName: 'd.name',
+      deviceType: 'dt.externalId',
+      assayId: 'r.assayId',
+      diseaseId: 'dis.id',
+    })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .groupBy('s.id')
+
+  // totals available items
+  const getCount = knex
+    .count('siteId as count')
+    .from(
+      siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery')
+    )
+    .first()
+
+  // get page items
+  const getItems = siteQuery
+    .clone()
+    // add joins and different counts for results - (not)onTreatment, requiresTreatment, notPossible, ...
+    .modify(queryBuilder => {
+      addResultCountsQuery(queryBuilder, knex)
+    })
+    // add joins/count for 'transferred' results
+    .modify(queryBuilder => {
+      addTransferredQuery(queryBuilder, knex, resultStatusTransferId, {
+        minDate,
+        maxDate,
+      })
+    })
+    .modify(sortPageParams, query, 'siteName')
+    .select(
+      'g.countryId',
+      'g.stateId',
+      'st.name as stateName',
+      'g.lgaId',
+      'l.name as lgaName',
+      's.partnerId',
+      's.id as siteId',
+      's.id as id',
+      's.name as siteName',
+      knex.raw('coalesce(s.shortName,s.externalId) as siteShortName')
+    )
+
+  // run both queries
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  /**
+   * to make last 4 columns to add up to the total-columns - add 'transferred' to first 3 counts
+   */
+  data.forEach(item => {
+    item.totalResults += item.transferred
+    item.delivered += item.transferred
+    item.requiresTreatment += item.transferred
+  })
+
+  return { ok: true, total, length: data.length, data }
+}
+
 module.exports = {
   listSites,
   getSite,
@@ -294,4 +421,6 @@ module.exports = {
   showSite,
   updateSite,
   listSitesForSelectList,
+  listSitesWithReporters,
+  getListSitesForSelectList,
 }

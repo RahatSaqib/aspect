@@ -95,4 +95,16 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldNoMatchTags',
     defaultMessage: 'Press enter to add tag',
   },
+  actionAdd: {
+    id: 'pages.SiteDetail.actionAdd',
+    defaultMessage: 'Add',
+  },
+  actionUpdate: {
+    id: 'pages.SiteDetail.actionUpdate',
+    defaultMessage: 'Update',
+  },
+  actionChange: {
+    id: 'pages.SiteDetail.actionChange',
+    defaultMessage: 'Change',
+  },
 })

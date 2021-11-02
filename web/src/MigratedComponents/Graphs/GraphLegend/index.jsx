@@ -9,11 +9,12 @@ import IconProvider from '../../IconProvider'
 
 import usePrevious from '../../../Hooks/CustomHooks'
 import { getAverageFromData } from '../Helpers/Formatters'
-import AspectLink from '../../../components/shared/AspectLink'
+import AspectLink from '../../AspectLink'
 
 import messages from '../GraphsContainer/messages'
+import styles from './GraphLegend.css'
 
-const cssClasses = classnames.bind(require('./GraphLegend.css'))
+const cssClasses = classnames.bind(styles)
 
 const GraphLegend = ({ height, legends, width }) => {
   return (

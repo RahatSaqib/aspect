@@ -4,6 +4,7 @@ import { mount } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import * as reactRedux from 'react-redux'
 
 import { Site } from '../../../site/SiteRedux'
 import { SiteDetail } from './SiteDetail'
@@ -15,29 +16,41 @@ const SiteDetailComponent = props => (
 )
 
 describe('SiteDetail component', () => {
+  let spies = []
+
+  beforeAll(() => {
+    jest.mock('react-router-dom', () => ({
+      useParams: () => ({ siteId: '1' }),
+    }))
+    jest.mock('react-redux', () => ({
+      connect: jest.fn(),
+    }))
+
+    spies = [
+      jest.spyOn(reactRedux, 'useSelector').mockReturnValue({
+        editable: true,
+        site: new Site(),
+        siteTags: Immutable.List(),
+        siteContacts: Immutable.List(),
+      }),
+    ]
+  })
+  afterAll(() => {
+    spies.forEach(spy => spy.mockRestore())
+    jest.unmock('react-router-dom')
+    jest.unmock('react-redux')
+  })
+
   const props = {
-    match: {
-      params: {
-        siteId: '1',
-      },
-      path: '/browse/site/:siteId/alerts',
-      url: '/browe/site',
-    },
-    history: {},
+    navigate: jest.fn(),
     location: {},
-    editable: true,
-    site: new Site(),
-    siteTags: Immutable.List(),
-    siteContacts: Immutable.List(),
-    onSiteTagChange: noop,
+    // redux actions
     fetchSingleSite: noop,
     updateSingleSiteFromForm: noop,
     fetchSiteContacts: noop,
     fetchTags: noop,
     updateTags: noop,
     updateLatLongFromFormAddress: noop,
-    onDoNotAcceptClick: noop,
-    onAcceptClick: noop,
   }
 
   it('should render without crashing', () => {

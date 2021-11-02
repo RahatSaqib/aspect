@@ -70,6 +70,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .pluck('id')
   await knex('EmailMessage').whereIn('resultId', resultIds).delete()
+  await knex('ResultDownloadLog').whereIn('resultId', resultIds).delete()
+  await knex('ResultStatusLog').whereIn('resultId', resultIds).delete()
   await knex('AlertMessage').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('PushNotificationMessage').whereIn('resultId', resultIds).delete()
@@ -117,15 +119,16 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
-  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
-
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
-  await knex('ResultTag').delete()
 
+  await knex('ResultTag').delete()
+  await knex('SiteTag').delete()
   await knex('Tag').delete()
+
+  await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   const sitesAndDevices = await knex('Result')
     .whereIn('id', resultIds)
@@ -140,8 +143,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     )
   await knex('DeviceOperation').whereIn('id', opIds).delete()
 
-  await knex('Issue').whereIn('deviceId', deviceIds).delete()
-
+  await knex('Notification').whereIn('issueId', issueIds).delete()
+  await knex('Issue').whereIn('id', issueIds).delete()
   await knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('id', deviceIds)
@@ -154,6 +157,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
   await knex('FactInventoryConsumptionRate', siteIds).delete()
+  await knex('SiteTag').whereIn('siteId', siteIds).delete()
   await knex('Site')
     .whereIn('id', siteIds)
     .orWhereIn(
@@ -396,7 +400,7 @@ class GxConnectApiTestContext {
     const assay = await knex('Assay')
       .where('externalId', assayExternalId)
       .first()
-    sample.id = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     const resultSourceDiagnosticDeviceId = await resultSourceToId(
       'DiagnosticDevice'

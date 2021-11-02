@@ -16,8 +16,8 @@ describe('/result/clinical-indicator-aggregations', () => {
 
   let resultsForUser = null
   let reportableResultCategories = null
-
-  shared.checkToken(server, path)
+  let assays = null
+  let resultCategories
 
   const getResultsForUser = () =>
     server
@@ -28,11 +28,13 @@ describe('/result/clinical-indicator-aggregations', () => {
   before(() =>
     runTestWithKnex(async knex => {
       resultsForUser = await getResultsForUser()
+      assays = await knex('Assay').select('id', 'externalId', 'i18nKey')
       reportableResultCategories = await knex('ResultCategoryAssay as rca')
         .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
         .where('rca.reportable', true)
         .distinct('rc.externalId')
         .pluck('externalId')
+      resultCategories = await knex('ResultCategory as rc').select('*')
     })
   )
 
@@ -44,13 +46,19 @@ describe('/result/clinical-indicator-aggregations', () => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
             resultCategory1: o.resultCategory1Name.replace(' ', ''),
+            resultCategory1I18nKey: o.resultCategory1I18nKey,
           }))
           .filter(function (o) {
             return reportableResultCategories.indexOf(o.resultCategory1) > -1
           })
-          .groupBy('resultCategory1')
+          .map(
+            ({ resultCategory1, resultCategory1I18nKey }) =>
+              `${resultCategory1}_${resultCategory1I18nKey}`
+          )
+          .groupBy()
           .map((value, key) => ({
-            resultCategory1: key,
+            resultCategory1: key.split('_')[0],
+            resultCategory1I18nKey: key.split('_')[1],
             cnt: value.length,
           }))
           .value()
@@ -155,12 +163,13 @@ describe('/result/clinical-indicator-aggregations', () => {
             categoryMonth: `${o.resultCategory1Name.replace(' ', '')}_${format(
               new Date(o.endedOn),
               'yyyy-MM'
-            )}`,
+            )}_${o.resultCategory1I18nKey}`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
-            resultCategory1: key.substring(0, key.indexOf('_')),
-            month: key.substring(key.indexOf('_') + 1),
+            resultCategory1: key.split('_')[0],
+            resultCategory1I18nKey: key.split('_')[2],
+            month: key.split('_')[1],
             cnt: value.length,
           }))
           .value()
@@ -175,15 +184,15 @@ describe('/result/clinical-indicator-aggregations', () => {
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
-            categoryMonth: `${o.assayName}_${format(
-              new Date(o.endedOn),
-              'yyyy-MM'
-            )}`,
+            categoryMonth: `${
+              _.find(assays, assay => assay.id === o.assayId).externalId
+            }_${format(new Date(o.endedOn), 'yyyy-MM')}_${o.assayI18nKey}`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
-            assay: key.substring(0, key.indexOf('_')),
-            month: key.substring(key.indexOf('_') + 1),
+            assay: key.split('_')[0],
+            assayI18nKey: key.split('_')[2],
+            month: key.split('_')[1],
             cnt: value.length,
           }))
           .value()
@@ -200,5 +209,66 @@ describe('/result/clinical-indicator-aggregations', () => {
           res.body.message.substring(0, 24),
           '"groupBy" must be one of'
         )
+      }))
+
+  it('for specified assay should return results grouped by month, resultCategory2, resultCategory1', async () =>
+    server
+      .get(
+        `${path}?assay=DaktariHivVL&groupBy=month&groupBy=resultCategory2&groupBy=resultCategory1`
+      )
+      .set('Authorization', `Bearer ${shared.token}`)
+      .then(res => {
+        assert.equal(res.status, 200)
+
+        // assayId for 'DaktariHivVL'
+        const { id: assayId } = assays.find(
+          assay => assay.externalId === 'DaktariHivVL'
+        )
+        // normalize/group raw data by month, resultCategory2, resultCategory1
+        const expectedResponse = _.chain(resultsForUser)
+          .filter(
+            x =>
+              +x.assayId === +assayId &&
+              ['Detected', 'Not Detected'].includes(x.resultCategory1Name)
+          )
+          .map(o => ({
+            groupingKey: `${
+              // month date
+              format(new Date(o.endedOn), 'yyyy-MM')
+            }_${
+              // resultCategory1
+              o.resultCategory1I18nKey
+                ? resultCategories.find(
+                    x => x.i18nKey === o.resultCategory1I18nKey
+                  ).externalId
+                : 'null'
+            }_${o.resultCategory1I18nKey ?? 'null'}_${
+              // resultCategory2
+              o.resultCategory2I18nKey
+                ? resultCategories.find(
+                    x => x.i18nKey === o.resultCategory2I18nKey
+                  ).externalId
+                : 'null'
+            }_${o.resultCategory2I18nKey ?? 'null'}`,
+          }))
+          .groupBy('groupingKey')
+          .map((value, key) => {
+            const getValue = val => (val === 'null' ? null : val)
+
+            return {
+              month: key.split('_')[0],
+
+              resultCategory1: getValue(key.split('_')[1]),
+              resultCategory1I18nKey: getValue(key.split('_')[2]),
+
+              resultCategory2: getValue(key.split('_')[3]),
+              resultCategory2I18nKey: getValue(key.split('_')[4]),
+
+              cnt: value.length,
+            }
+          })
+          .value()
+
+        assert.deepEqual(res.body.data, expectedResponse)
       }))
 })

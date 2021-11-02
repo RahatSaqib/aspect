@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
+import isArray from 'lodash/isArray'
 
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 
@@ -16,6 +17,7 @@ const styles = theme => ({
   emptyMenuItem: {
     height: 0,
     padding: 0,
+    overflow: 'hidden',
   },
   placeholder: {
     color: theme.palette.text.disabled,
@@ -25,7 +27,28 @@ const styles = theme => ({
   },
 })
 
+const getSelectedValue = (value, children, multiple) => {
+  const emptyValue = multiple ? [] : ''
+  let normalizedValue = value
+  if (multiple) {
+    normalizedValue = isArray(value) ? value : [value]
+  }
+
+  return React.Children.count(children) === 0 ||
+    /** list of MenuItem's doesn't contain 'value' */
+    !React.Children.toArray(children).find(menuItem => {
+      if (multiple) {
+        return normalizedValue.includes(menuItem.props?.value)
+      }
+
+      return menuItem.props?.value === normalizedValue
+    })
+    ? emptyValue
+    : normalizedValue
+}
+
 const SelectField = ({
+  autoWidth,
   classes: classesMap,
   className,
   errorText,
@@ -38,60 +61,75 @@ const SelectField = ({
   value,
   children,
   onChange,
+  multiple,
   ...restProps
-}) => (
-  <TextField
-    select
-    margin="normal"
-    label={floatingLabelText}
-    InputLabelProps={{
-      shrink: floatingLabelFixed || undefined,
-    }}
-    FormHelperTextProps={{
-      style: errorStyle,
-    }}
-    SelectProps={{
-      autoWidth: true,
-      displayEmpty: true,
-      value,
-    }}
-    className={classNames(classesMap.root, className)}
-    classes={{
-      root: classNames({ [classesMap.fullWidth]: fullWidth }),
-    }}
-    error={!!errorText}
-    helperText={errorText || helperText}
-    onChange={onChange}
-    {...restProps}
-  >
-    {!!hintText && (
-      <MenuItem value="" className={classesMap.emptyMenuItem}>
-        <span className={classesMap.placeholder}>{hintText}</span>
-      </MenuItem>
-    )}
-    {children}
-  </TextField>
-)
+}) => {
+  const [selectedValue, setSelectedValue] = useState(
+    getSelectedValue(value, children, multiple)
+  )
+
+  useEffect(() => {
+    const newValue = getSelectedValue(value, children, multiple)
+    setSelectedValue(newValue)
+  }, [value]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <TextField
+      select
+      margin="normal"
+      label={floatingLabelText}
+      InputLabelProps={{
+        shrink: floatingLabelFixed || undefined,
+      }}
+      FormHelperTextProps={{
+        style: errorStyle,
+      }}
+      SelectProps={{
+        autoWidth,
+        displayEmpty: true,
+        multiple,
+        value: selectedValue,
+      }}
+      className={classNames(classesMap.root, className)}
+      classes={{
+        root: classNames({ [classesMap.fullWidth]: fullWidth }),
+      }}
+      error={!!errorText}
+      helperText={errorText || helperText}
+      onChange={onChange}
+      {...restProps}
+    >
+      {!!hintText && (
+        <MenuItem value="" className={classesMap.emptyMenuItem}>
+          <span className={classesMap.placeholder}>{hintText}</span>
+        </MenuItem>
+      )}
+      {children}
+    </TextField>
+  )
+}
 
 SelectField.propTypes = {
   autoWidth: PropTypes.bool,
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.oneOfType([PropTypes.object]).isRequired,
   className: PropTypes.string,
   errorText: PropTypes.node,
   errorStyle: PropTypes.object, // eslint-disable-line
   floatingLabelFixed: PropTypes.bool,
   floatingLabelText: PropTypes.string,
   fullWidth: PropTypes.bool,
-  helperText: PropTypes.string,
+  helperText: PropTypes.node,
   hintText: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
     PropTypes.bool,
     PropTypes.object,
+    PropTypes.arrayOf(PropTypes.string),
   ]), // eslint-disable-line
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   onChange: PropTypes.func.isRequired,
+  multiple: PropTypes.bool,
 }
 
 SelectField.defaultProps = {
@@ -104,6 +142,8 @@ SelectField.defaultProps = {
   fullWidth: false,
   hintText: '',
   value: '',
+  children: null,
+  multiple: false,
 }
 
 export default withStyles(styles)(SelectField)

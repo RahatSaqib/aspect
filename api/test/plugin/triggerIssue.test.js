@@ -3,10 +3,7 @@ const {
   analyzeResultsWithErrors,
   hasUnusedModules,
 } = require('../../src/plugin/issueTriggers')
-const {
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
-} = require('../../src/result/actions')
+const { resultAnalyzeCategoriesAndErrors } = require('../../src/result/actions')
 
 const { assert } = chai
 
@@ -81,8 +78,8 @@ describe('This test is for testing different triggers conditions', () => {
 
       {
         errorCode: 5007,
-        type1: 'RESULT_ANALYZE_PROBES_MODULE',
-        type2: 'RESULT_ANALYZE_PROBES_LOT',
+        type1: 'RESULT_ANALYZE_PROBES_FAILED_MODULE',
+        type2: 'RESULT_ANALYZE_PROBES_FAILED_LOT',
       },
       {
         errorCode: 5011,
@@ -101,8 +98,8 @@ describe('This test is for testing different triggers conditions', () => {
       },
       {
         errorCode: 5016,
-        type1: 'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE',
-        type2: 'FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT',
+        type1: 'RESULT_ANALYZE_INVALIDS_MODULE',
+        type2: 'RESULT_ANALYZE_INVALIDS_LOT',
       },
       {
         // on non existing code it should return default values
@@ -111,14 +108,27 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_LOT',
       },
     ].forEach(elem => {
-      const analyzeProbesModule = resultAnalyzeErrors(1, 1, elem.errorCode, {
-        moduleName: 'Test1',
-        moduleSerial: 'Module2',
-      })
-      const analyzeProbesLot = resultAnalyzeErrors(1, 1, elem.errorCode, {
-        consumableLot: 1234,
-        assayId: 1,
-      })
+      const analyzeProbesModule = resultAnalyzeCategoriesAndErrors(
+        1,
+        1,
+        elem.resultCategoryId,
+        elem.errorCode,
+        {
+          moduleName: 'Test1',
+          moduleSerial: 'Module2',
+        }
+      )
+      const analyzeProbesLot = resultAnalyzeCategoriesAndErrors(
+        1,
+        1,
+        elem.resultCategoryId,
+
+        elem.errorCode,
+        {
+          consumableLot: 1234,
+          assayId: 1,
+        }
+      )
       assert.isObject(analyzeProbesModule)
       assert.property(analyzeProbesModule, 'type')
       assert.equal(analyzeProbesModule.type, elem.type1)
@@ -138,19 +148,23 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_LOT',
       },
     ].forEach(elem => {
-      const analyzeProbesModule = resultAnalyzeCategories(
+      const analyzeProbesModule = resultAnalyzeCategoriesAndErrors(
         1,
         1,
         elem.resultCategoryId,
+        elem.errorCode,
+
         {
           moduleName: 'Test1',
           moduleSerial: 'Module2',
         }
       )
-      const analyzeProbesLot = resultAnalyzeCategories(
+      const analyzeProbesLot = resultAnalyzeCategoriesAndErrors(
         1,
         1,
         elem.resultCategoryId,
+        elem.errorCode,
+
         {
           consumableLot: 1234,
           assayId: 1,

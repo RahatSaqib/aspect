@@ -38,6 +38,8 @@ import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
 import values from 'lodash/values'
 
+import { i18nWrapper } from '../../../../Providers/I18nProvider'
+import messages from '../messages'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const now = new Date()
@@ -93,8 +95,10 @@ export const isDateEqual = field => (date1, date2) => {
   return get(date1) === get(date2)
 }
 
-export const isAllSameDateFields = (fields = []) => (date1, date2) =>
-  every(fields, field => isDateEqual(field)(date1, date2))
+export const isAllSameDateFields =
+  (fields = []) =>
+  (date1, date2) =>
+    every(fields, field => isDateEqual(field)(date1, date2))
 
 export const normalizeDate = ({ date, minDate = since, maxDate = until }) => {
   if (!isValid(date)) {
@@ -240,7 +244,7 @@ const getTimePeriod = (cnt, period, dateFormat) => {
       timePeriod = subDays(dateNow, cnt)
       break
     case period === 'months':
-      timePeriod = startOfMonth(subMonths(dateNow, cnt))
+      timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
       break
 
     default:
@@ -249,7 +253,18 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   }
   return format(timePeriod, dateFormat)
 }
+const startOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
 
+  const offset = time.split(
+    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
+  )[1]
+  return new Date(
+    startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
+      .toISOString()
+      .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
+  )
+}
 const getAllDaysInCurrentMonth = (
   upToToday = false,
   dateFormat = 'yyyy-MM-dd'
@@ -260,14 +275,14 @@ const getAllDaysInCurrentMonth = (
   return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
-const getPreviousPeriod = (period = 'month', dateFormat) => {
+const getPreviousPeriod = (
+  period = 'month',
+  dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+) => {
   // currently only works for month
-  const previousPeriodStart = format(
-    negateTimeZoneOffset(getTimePeriod(1, period, dateFormat)),
-    dateFormat
-  )
+  const previousPeriodStart = getTimePeriod(1, period, dateFormat)
   const previousPeriodEnd = format(
-    endOfMonth(negateTimeZoneOffset(previousPeriodStart)),
+    endOfMonth(new Date(previousPeriodStart)),
     dateFormat
   )
   return { start: previousPeriodStart, end: previousPeriodEnd }
@@ -278,61 +293,60 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
   maxDate: format(endOfMonth(subMonths(date, offset)), dateFormat),
 })
 
-const lastMonthLabel = (date, count, dateFormat) =>
-  `Last Month (${format(
-    startOfMonth(subMonths(date, count)),
-    dateFormat
-  )} - ${format(endOfMonth(subMonths(date, count)), dateFormat)})`
-
-const dateRangeOptions = key => {
-  const dateFormatLabel = 'dd/MM'
+const dateRangeOptions = (key, showLast30Days = true) => {
+  const { formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
-  const dateFormatMonths = 'MMMM yyyy'
-  const monthsToGet = 12
+  const dateFormatRanges = {
+    day: '2-digit',
+    month: '2-digit',
+  }
+  const dateFormatMonths = { month: 'long', year: 'numeric' }
   const today = negateTimeZoneOffset(new Date())
-  const dateRange = [
-    {
-      id: 0,
-      name: 'Last 30 Days',
+  const dateRange = []
+
+  if (showLast30Days)
+    dateRange.push({
+      id: DATE_CONSTS.DATE_RANGE_OPTIONS.LAST_30_DAYS,
+      name: formatMessage
+        ? formatMessage(messages.last30Days)
+        : messages.hoursPlaceholder.id,
       value: {
         minDate: getTimePeriod(30, 'days', dateFormatValue),
         maxDate: format(today, dateFormatValue),
       },
+    })
+
+  dateRange.push({
+    id: DATE_CONSTS.DATE_RANGE_OPTIONS.CURRENT_MONTH,
+    name: formatMessage
+      ? formatMessage(messages.thisMonth, {
+          minDate: formatDate(startOfMonth(today), dateFormatRanges),
+          maxDate: formatDate(endOfMonth(today), dateFormatRanges),
+        })
+      : messages.thisMonth.id,
+    value: {
+      minDate: format(startOfMonth(today), dateFormatValue),
+      maxDate: format(endOfMonth(today), dateFormatValue),
     },
-  ]
+  })
+
+  dateRange.push({
+    id: DATE_CONSTS.DATE_RANGE_OPTIONS.LAST_MONTH,
+    name: formatMessage(messages.lastMonth, {
+      minDate: formatDate(startOfMonth(subMonths(today, 1)), dateFormatRanges),
+      maxDate: formatDate(endOfMonth(subMonths(today, 1)), dateFormatRanges),
+    }),
+    value: monthRangeByCount(today, 1, dateFormatValue),
+  })
+
+  const monthsToGet = 10
   times(monthsToGet, month => {
-    const count = month + 1
-    switch (count) {
-      case 1:
-        dateRange.push({
-          id: count,
-          name: `This Month (${format(
-            startOfMonth(today),
-            dateFormatLabel
-          )} - ${format(endOfMonth(today), dateFormatLabel)})`,
-          value: {
-            minDate: format(startOfMonth(today), dateFormatValue),
-            maxDate: format(endOfMonth(today), dateFormatValue),
-          },
-        })
-        break
-
-      case 2:
-        dateRange.push({
-          id: count,
-          name: lastMonthLabel(today, month, dateFormatLabel),
-          value: monthRangeByCount(today, month, dateFormatValue),
-        })
-        break
-
-      default:
-        dateRange.push({
-          id: count,
-          name: format(subMonths(today, month), dateFormatMonths),
-          value: monthRangeByCount(today, month, dateFormatValue),
-        })
-        break
-    }
+    const count = month + 2
+    dateRange.push({
+      id: `MONTH-${count.toString().padStart(2, 0)}`,
+      name: formatDate(subMonths(today, count), dateFormatMonths),
+      value: monthRangeByCount(today, count, dateFormatValue),
+    })
   })
   return {
     [key]: [...dateRange],
@@ -361,14 +375,15 @@ const checkIfParamsIsDate = (params, encode = true) => {
       : getISOFromString(value, startKeys.includes(key), endKeys.includes(key))
 
   if (isPlainObject(params)) {
-    const output = {}
-    map(
-      params,
-      (value, key) =>
-        (output[key] = dateStringMatches.includes(key)
-          ? iSOHelper(value, key)
-          : value)
-    )
+    const output = [] // {}
+    map(params, (value, key) => {
+      const values = isArray(value) ? value : [value]
+      return values.map(v =>
+        output.push(
+          `${key}=${dateStringMatches.includes(key) ? iSOHelper(v, key) : v}`
+        )
+      )
+    })
     return output
   }
 
@@ -399,6 +414,5 @@ export {
   getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
-  lastMonthLabel,
   negateTimeZoneOffset,
 }

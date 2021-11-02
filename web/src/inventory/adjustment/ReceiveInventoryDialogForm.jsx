@@ -84,7 +84,7 @@ const enhance = compose(
   withTodayProps,
   withDateFormatProps,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
 
       this.setState({
@@ -93,7 +93,7 @@ const enhance = compose(
       })
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       const { inventoryItem, today } = nextProps
       if (this.props.inventoryItem === inventoryItem) {
         return
@@ -119,6 +119,8 @@ const enhance = compose(
     const destination = items.byId.findEntry(
       o =>
         o.get('siteId') === values.toSiteId &&
+        o.get('expiresOn') &&
+        values.expiresOn &&
         new Date(o.get('expiresOn')).getTime() === values.expiresOn.getTime() &&
         o.get('lotNumber') === values.lotNumber &&
         o.get('inTransitFromSiteId') === null

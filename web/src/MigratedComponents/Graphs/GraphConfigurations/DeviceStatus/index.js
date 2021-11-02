@@ -1,6 +1,6 @@
 import BarGraph from '../../BarGraph'
 import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
 
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
@@ -9,7 +9,7 @@ const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
 
-const deviceStatusGraphs = {
+const deviceStatusGraphs = () => ({
   deviceStatus: {
     id: 'deviceStatus',
     title: 'deviceStatusTitle',
@@ -21,7 +21,7 @@ const deviceStatusGraphs = {
         selectedValue: 'Date Range',
         endpoint: false,
         state: 'deviceDateRange',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'dateRange',
         data: dateRangeOptions('deviceDateRange'),
         sortByKeys: ['id'],
@@ -37,26 +37,37 @@ const deviceStatusGraphs = {
         type: 'stackedDeviceActivity',
         size: 12,
         componentClasses: ['BARCLASS'],
+        i18nKey: {
+          devicesActive: 'devicesActive',
+          devicesInactive: 'devicesInactive',
+          inactiveUnknown: 'inactiveUnknown',
+          inactiveNoTestsPerformed: 'inactiveNoTestsPerformed',
+          inactiveOutOfInventory: 'inactiveOutOfInventory',
+          inactiveDownForRepair: 'inactiveDownForRepair',
+          inactiveConnectivity: 'inactiveConnectivity',
+          inactiveDecommissioned: 'inactiveDecommissioned',
+          weekendOrHoliday: 'weekendOrHoliday',
+          inactiveNoStaff: 'inactiveNoStaff',
+          inactiveNoSamples: 'inactiveNoSamples',
+          inactiveNoPower: 'inactiveNoPower',
+          inactiveOther: 'inactiveOther',
+        },
         api: {
           method: 'GET',
           endpoint: '/dashboard/operational-data/activity-over-time',
           params: {
-            [MIN_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').start,
-            [MAX_DATE]: getPreviousPeriod('months', 'yyyy-MM-dd').end,
+            [MIN_DATE]: getPreviousPeriod(
+              'months',
+              "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+            ).start,
+            [MAX_DATE]: getPreviousPeriod(
+              'months',
+              "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+            ).end,
           },
         },
         indexBy: 'date',
         keyToConsume: 'devicesActive',
-        legendsToRename: [
-          {
-            externalId: 'devicesActive',
-            name: 'Active',
-          },
-          {
-            externalId: 'inactiveUnknown',
-            name: 'Unknown ',
-          },
-        ],
         legendsToPopover: [
           {
             externalId: 'inactiveUnknown',
@@ -67,6 +78,7 @@ const deviceStatusGraphs = {
             },
           },
         ],
+        legendsNotToRender: ['inactiveDecommissioned'],
         tickValuesYShape: 'clubsandwich',
         tickValuesXShape: 'all',
         displayMethod: 'percentage',
@@ -75,6 +87,6 @@ const deviceStatusGraphs = {
       },
     ],
   },
-}
+})
 
 export default deviceStatusGraphs

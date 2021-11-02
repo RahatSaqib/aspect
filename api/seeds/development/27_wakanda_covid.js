@@ -5,11 +5,7 @@ const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
-const {
-  commonUpserts,
-  upsertJobFunctionPermission,
-  upsertJobFunction,
-} = require('../common')
+const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const {
   normalizeTreatmentStatusDistributionByResults,
@@ -21,6 +17,7 @@ const {
   deviceApprovalToId,
 } = require('../../src/shared/dictionary')
 const utils = require('../utils')
+const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
@@ -82,72 +79,25 @@ async function seed(knex) {
     {
       countries: [countryWakanda],
     },
-    'WK'
+    'WK',
+    null,
+    null,
+    {
+      fixtures: {
+        jobFunctions: jobFunctionsFixtureWakanda,
+      },
+    }
   )
-
-  // Give permission to dashboard, browse, sites, results, devices, reporters
-  const modules = await utils.getPermissionModules(knex)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
     .where('name', 'Admin')
     .where({ partnerId })
     .first('id')
 
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.edit,
-    modules.issue.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.reporter.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where('name', 'Regional Officer')
+  const { id: jobFunctionIdClinician } = await knex('JobFunction')
+    .where('name', 'Clinician')
     .where({ partnerId })
     .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.demo.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where('name', 'Lab User')
-    .where({ partnerId })
-    .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
 
   const covidDeviceTypes = (
     await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)
@@ -217,10 +167,8 @@ async function seed(knex) {
             const device = {
               ...auditFields,
               name: `${labData.name} ${deviceType.name}`.substr(0, 255),
-              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(
-                0,
-                45
-              ),
+              shortName:
+                `${labData.externalId}_${deviceType.externalId}`.substr(0, 45),
               deviceTypeId: deviceType.id,
               deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
@@ -242,7 +190,7 @@ async function seed(knex) {
               ).join(''),
             }
 
-            device.id = await knex('Device').insert(device)
+            ;[device.id] = await knex('Device').insert(device)
             countryData.devices.push(device)
 
             // add clinics in the LGA
@@ -316,27 +264,6 @@ async function seed(knex) {
   const clinicList = countryData.clinics
   const firstClinic = clinicList[0]
   const secondClinic = clinicList[1]
-
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerId
-  )
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.demo.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.assay.edit,
-    modules.device.view,
-    modules.browse.view,
-    modules.person.view,
-  ])
 
   // Create User
   const [userIdFirstClinic] = await knex('User').insert({
@@ -443,7 +370,7 @@ async function seed(knex) {
   )
 
   // add follow ups
-  await utils.addFollowUps(knex, [partnerId], followUp)
+  await utils.addFollowUps(knex, followUp, [partnerId])
 
   const statWidgets = await knex('DashboardWidget')
     .whereIn('titleI18nKey', [

@@ -9,15 +9,7 @@ const {
   revokeUsersToken,
   lockedOutUser,
 } = require('../auth/service')
-
-const getPeople = () =>
-  knex('Person as p')
-    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Job as j', 'p.id', 'j.personId')
-    .leftJoin('JobContext as jc', 'jc.jobId', 'j.id')
-    .leftJoin('Site as s', 'jc.siteId', 's.id')
+const { getPeopleBase } = require('../shared/utilsPerson')
 
 async function listPeople(request) {
   const { auth, query } = request
@@ -25,7 +17,7 @@ async function listPeople(request) {
 
   const { geographicLevel, tags } = query
 
-  const personQuery = getPeople()
+  const personQuery = getPeopleBase()
     .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
     .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
     .leftJoin('Tag as t', 'pt.tagId', 't.id')
@@ -105,6 +97,19 @@ async function listPeople(request) {
   // return result when both queries are finished
   const [{ total }, data] = await Promise.all([getCount, getItems])
 
+  const personIds = data.map(({ id }) => id)
+  const personTags = await knex('Tag as t')
+    .innerJoin('PersonTag as pt', 't.id', 'pt.tagId')
+    .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
+    .whereIn('pt.personId', personIds)
+    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .select('t.title as tagName', 't.id as tagId', 'pt.personId')
+  data.forEach(item => {
+    item.tagDetails = personTags
+      .filter(personTag => item.id === personTag.personId)
+      .map(({ tagName, tagId }) => ({ tagName, tagId }))
+  })
+
   return { ok: true, total, data, length: data.length }
 }
 
@@ -112,7 +117,7 @@ async function availableContacts(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const data = await getPeople()
+  const data = await getPeopleBase()
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .groupBy('p.id')
     .select('p.name', 'p.id')
@@ -132,7 +137,7 @@ async function assignContact(request) {
     const { id: jobFunctionIdDefault } = await knex('JobFunction')
       .where({ name: 'Lab User' })
       .first('id')
-    jobId = await knex('Job').insert({
+    ;[jobId] = await knex('Job').insert({
       personId: personDetails.id,
       jobFunctionId: jobFunctionIdDefault,
     })
@@ -415,12 +420,20 @@ async function listRefreshTokens(request) {
 
   const tokenQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
-    .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
+    .leftJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
-  const getCount = tokenQuery.clone().count('r.clientId as count').first()
+  const getCount = knex
+    .from(
+      tokenQuery
+        .clone()
+        .select(knex.raw("CONCAT(p.name, ':', r.clientName) as id"))
+        .as('reporterIds')
+    )
+    .countDistinct('id as count')
+    .first()
 
   const getItems = tokenQuery
     .clone()
@@ -482,9 +495,9 @@ async function listRefreshTokens(request) {
         .on('rca.resultCategoryId', 'rt.resultCategory1')
         .andOn('rca.assayId', 'rt.assayId')
     })
-    .groupBy('r.clientId', 'p.name', 'r.clientName')
+    .groupBy('p.name', 'r.clientName')
     .select(
-      'r.clientId as id',
+      knex.raw("CONCAT(p.name, ':', r.clientName) as id"),
       'p.name as user',
       'r.clientName as deviceName',
       'r.createdOn',
@@ -506,6 +519,7 @@ async function listRefreshTokens(request) {
         "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
       )
     )
+    .distinct()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }

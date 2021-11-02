@@ -1,6 +1,5 @@
 import { stringify } from 'querystring'
 import pick from 'lodash/pick'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
@@ -19,6 +18,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
@@ -124,7 +124,7 @@ function prefillEmailValue(email, personId) {
 }
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestPersons(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -193,7 +193,7 @@ export function exportContacts(
   reportName
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
 
     return aspectFetch(
       `/person/export?${stringify({
@@ -459,19 +459,16 @@ export function updateSinglePersonLoginDetails(personId, data) {
         409: inlineWarning(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
               defaultMessage: 'This Username is Unavailable',
             },
             message: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
               defaultMessage:
                 'The username that you have entered is already in use by another user on the system',
             },
             resolution: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
               defaultMessage: 'Please try another username',
             },
           })
@@ -479,8 +476,7 @@ export function updateSinglePersonLoginDetails(personId, data) {
         404: errorNotFound(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
               defaultMessage: "Could Not Find User's Details",
             },
           })
@@ -488,8 +484,7 @@ export function updateSinglePersonLoginDetails(personId, data) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
               defaultMessage: 'Saving Login Details Failed',
             },
           })
@@ -597,8 +592,7 @@ export function deletePersonAssignment(data) {
           403: errorForbidden(
             defineMessages({
               title: {
-                id:
-                  'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
+                id: 'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
                 defaultMessage: 'Not Found',
               },
             })

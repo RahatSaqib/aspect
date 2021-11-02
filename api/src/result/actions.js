@@ -88,78 +88,82 @@ function resultUpdated(resultId, deviceLogId, userId) {
   }
 }
 
-const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
-  const valueToCompare = errorCode
-    ? parseInt(errorCode, 10)
-    : resultCategoryId.toUpperCase()
+const obtainProperAction = (
+  moduleSerial,
+  {
+    errorCode = null,
+    resultCategoryId, // <-- this is result category externalid
+  }
+) => {
+  const valueToCompare =
+    errorCode && !_.isNaN(parseInt(errorCode, 10))
+      ? parseInt(errorCode, 10)
+      : resultCategoryId.toUpperCase()
 
-  if (moduleSerial) {
-    switch (valueToCompare) {
-      case 'INVALID':
-        return types.RESULT_ANALYZE_INVALIDS_MODULE
+  switch (valueToCompare) {
+    case 5001:
+    case 5002:
+    case 5003:
+    case 5004:
+    case 5005:
+    case 5015:
+    case 5016:
+    case 'INVALID':
+      return moduleSerial
+        ? types.RESULT_ANALYZE_INVALIDS_MODULE
+        : types.RESULT_ANALYZE_INVALIDS_LOT
 
-      case 2005:
-        return types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE
-      case 2008:
-        return types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE
-      case 2026:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE
+    case 2005:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE
+        : types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT
+    case 2008:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE
+        : types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT
+    case 2026:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE
+        : types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT
 
-      case 2032:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE
-      case 2035:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE
-      case 2037:
-        return types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE
-      case 2096:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE
-      case 2097:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE
-      case 5011:
-        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE
-      case 5006:
-        return types.RESULT_ANALYZE_PROBES_HIGH_MODULE
-      case 5016:
-        return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_MODULE
-      case 5017:
-        return types.RESULT_ANALYZE_PROBES_FAILED_MODULE
-      case 5007:
-      default:
-        return types.RESULT_ANALYZE_PROBES_MODULE
-    }
-  } else {
-    switch (valueToCompare) {
-      case 'INVALID':
-        return types.RESULT_ANALYZE_INVALIDS_LOT
-      case 2005:
-        return types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT
-      case 2008:
-        return types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT
-      case 2026:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT
+    case 2032:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE
+        : types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT
+    case 2035:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE
+        : types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT
+    case 2037:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE
+        : types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT
+    case 2096:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE
+        : types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT
+    case 2097:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE
+        : types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT
+    case 5011:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE
+        : types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT
+    case 5006:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_PROBES_HIGH_MODULE
+        : types.RESULT_ANALYZE_PROBES_HIGH_LOT
+    case 5007:
+    case 5017:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_PROBES_FAILED_MODULE
+        : types.RESULT_ANALYZE_PROBES_FAILED_LOT
 
-      case 2032:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT
-      case 2035:
-        return types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT
-      case 2037:
-        return types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT
-      case 2096:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT
-      case 2097:
-        return types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT
-      case 5011:
-        return types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT
-      case 5006:
-        return types.RESULT_ANALYZE_PROBES_HIGH_LOT
-      case 5016:
-        return types.FAILED_TO_VERIFY_VALID_BACKGROUND_ERROR_FOR_ANALYTE_LOT
-      case 5017:
-        return types.RESULT_ANALYZE_PROBES_FAILED_LOT
-      case 5007:
-      default:
-        return types.RESULT_ANALYZE_PROBES_LOT
-    }
+    default:
+      return moduleSerial
+        ? types.RESULT_ANALYZE_PROBES_MODULE
+        : types.RESULT_ANALYZE_PROBES_LOT
   }
 }
 /**
@@ -182,44 +186,31 @@ const obtainProperAction = (moduleSerial, { errorCode, resultCategoryId }) => {
 
  */
 
-function resultAnalyzeErrors(deviceId, resultId, resultErrorCode, data) {
-  if (!deviceId) {
-    throw new Error(
-      'Must specify deviceId resultErrorCode for resultAnalyzeErrors'
-    )
-  }
-
-  const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = obtainProperAction(moduleSerial, {
-    errorCode: resultErrorCode,
-  })
-  return {
-    type: actionType,
-    deviceId,
-    resultId,
-    options: {
-      data: {
-        ...data,
-        resultErrorCode,
-      },
-    },
-  }
-}
-
-function resultAnalyzeCategories(deviceId, resultId, resultCategoryId, data) {
-  if (!deviceId && !resultCategoryId) {
+function resultAnalyzeCategoriesAndErrors(
+  deviceId,
+  resultId,
+  resultCategoryId, // <-- this is result category externalid
+  resultErrorCode,
+  data
+) {
+  if (!deviceId && !(resultCategoryId && resultErrorCode)) {
     throw new Error(
       'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
     )
   }
   const moduleSerial = _.get(data, 'moduleSerial')
-  const actionType = obtainProperAction(moduleSerial, { resultCategoryId })
+
+  const actionType = obtainProperAction(moduleSerial, {
+    resultCategoryId, // <-- this is result category externalid
+    errorCode: resultErrorCode,
+  })
+
   return {
     type: actionType,
     deviceId,
     resultId,
     options: {
-      data: { ...data, resultCategoryId },
+      data: { ...data, resultCategoryId, resultErrorCode },
     },
   }
 }
@@ -434,14 +425,15 @@ function resultMachineUnknownError(deviceId) {
  *
  * resultId is required
  */
-function resultModuleReplaced(resultId, options) {
+function resultModuleReplaced(resultId, deviceId, options) {
   if (!resultId) {
     throw new Error('Must specify resultId for resultModuleReplaced')
   }
   return {
     type: types.RESULT_MODULE_REPLACED,
+    deviceId,
     resultId,
-    options,
+    options: { data: options },
   }
 }
 
@@ -470,7 +462,6 @@ module.exports = {
   resultModuleUnknownError,
   resultMachineUnknownError,
   resultModuleReplaced,
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
+  resultAnalyzeCategoriesAndErrors,
   resultUnusedModules,
 }

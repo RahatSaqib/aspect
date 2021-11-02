@@ -19,18 +19,8 @@ describe('License component', () => {
   it('should render the license content with newlines replaced', () => {
     const license = shallow(<License {...props} />)
 
-    expect(
-      license
-        .find('p')
-        .at(0)
-        .text()
-    ).toBe('License here!')
+    expect(license.find('p').at(0).text()).toBe('License here!')
 
-    expect(
-      license
-        .find('p')
-        .at(1)
-        .text()
-    ).toBe('You better accept!')
+    expect(license.find('p').at(1).text()).toBe('You better accept!')
   })
 })

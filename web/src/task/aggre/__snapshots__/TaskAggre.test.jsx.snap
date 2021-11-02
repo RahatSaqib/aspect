@@ -7,13 +7,7 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
     encodeSpecialCharacters={true}
     title="Task"
   />
-  <DetailBackBar
-    location={
-      Object {
-        "search": "",
-      }
-    }
-  />
+  <DetailBackBar />
   <section
     className="Section"
   >
@@ -46,38 +40,6 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
         disabled={true}
       />
       <pure(withHandlers(EmptyList))
-        intl={
-          Object {
-            "defaultFormats": Object {},
-            "defaultLocale": "en",
-            "formatDate": [Function],
-            "formatDateToParts": [Function],
-            "formatDisplayName": [Function],
-            "formatList": [Function],
-            "formatMessage": [Function],
-            "formatNumber": [Function],
-            "formatNumberToParts": [Function],
-            "formatPlural": [Function],
-            "formatRelativeTime": [Function],
-            "formatTime": [Function],
-            "formatTimeToParts": [Function],
-            "formats": Object {},
-            "formatters": Object {
-              "getDateTimeFormat": [Function],
-              "getDisplayNames": [Function],
-              "getListFormat": [Function],
-              "getMessageFormat": [Function],
-              "getNumberFormat": [Function],
-              "getPluralRules": [Function],
-              "getRelativeTimeFormat": [Function],
-            },
-            "locale": "en",
-            "messages": Object {},
-            "onError": [Function],
-            "textComponent": Symbol(react.fragment),
-            "timeZone": undefined,
-          }
-        }
         location={
           Object {
             "search": "",

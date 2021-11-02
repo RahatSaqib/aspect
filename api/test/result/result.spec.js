@@ -1,17 +1,26 @@
 const chai = require('chai')
 const _ = require('lodash')
-const { addMinutes, parseISO, format: dateFormat } = require('date-fns')
+const {
+  addMinutes,
+  subDays,
+  parseISO,
+  format: dateFormat,
+} = require('date-fns')
 const Promise = require('bluebird')
 const { createResult, getResult } = require('./result_utils')
+const {
+  createGxConnectTestContext,
+} = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
 const {
   deviceApprovalToId,
   allResultCategoryToId,
+  resultCategoryToId,
+  resultStatusToId,
   diseaseToId,
 } = require('../../src/shared/dictionary')
 const { knex } = require('../../src/db')
 const AssayCovidResultFormSchema = require('../../seeds/fixtures/AssayCovidResultFormSchema.json')
-const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
 const {
   createTestContext,
@@ -20,8 +29,8 @@ const {
   getLastResult,
 } = require('../deviceApi/utils')
 const { getAdminId } = require('../utils/authUtils')
-
 const server = require('../utils/testUtils')
+const { addResultDownloadLog } = require('../../src/result/service')
 
 const { assert, expect } = chai
 
@@ -78,6 +87,153 @@ describe('Result routes', () => {
       assert.property(res.body, 'total')
       assert.typeOf(res.body.extraColumns, 'array')
     }
+
+    describe('results with filters for treatments', () => {
+      let siteId
+      let deviceId
+      let partnerId
+      let resultsDownloadedByReporterIds
+      let deviceContext
+
+      beforeEach(async () => {
+        deviceContext = createGxConnectTestContext(server, {
+          countryCode: 'US',
+          adminUsername: 'admin',
+          adminPassword: 'test07',
+          deviceName: `An Epic Device`,
+          macAddress: `Oh wow, look at that MAC ADDRESS!`,
+          hostId: `What is a host id?`,
+          deviceSerialNumber: `I don't have more ideas`,
+        })
+        await deviceContext.beforeRegisterAndSetDevice()
+        const { device } = deviceContext
+        deviceId = device.id
+        siteId = device.siteId
+        partnerId = device.partnerId
+
+        await knex('Device')
+          .where({ id: deviceId })
+          .update({ defaultReportableSiteId: siteId })
+
+        const resultCategoryDetected = await resultCategoryToId('Detected')
+        const resultCategoryError = await resultCategoryToId('Error')
+        /**
+         * INSERT 25 RESULTS
+         */
+        await Promise.each(_.range(0, 25), async i => {
+          const resultDetails = {
+            consumableLot: 'Lot 0',
+            moduleName: 'Module A',
+            moduleSerial: 'M-123456-0',
+            instrumentSerial: 'S-1234-0',
+            endedOn: subDays(new Date(), i),
+            errorCode: null,
+            errorNotes: null,
+            /**
+             * 20 results will be reportable and will require treatment (DETECTED)
+             * 5 resutls will not be reportable and will not require treatment (ERROR)
+             */
+            resultCategory1:
+              i > 4 ? resultCategoryDetected : resultCategoryError,
+          }
+          await deviceContext.createResultForThisDevice({
+            resultDetails,
+          })
+        })
+
+        const { id: userId } = await knex('User')
+          .where({ name: 'admin' })
+          .first()
+
+        /**
+         * DOWNLOAD 15 RESULTS IN THE REPORTER APP
+         */
+        resultsDownloadedByReporterIds = await knex('Result')
+          .where({ deviceId })
+          .orderBy('id', 'desc')
+          .pluck('id')
+          .limit(15)
+        await addResultDownloadLog(resultsDownloadedByReporterIds, userId)
+      })
+
+      afterEach(async () => deviceContext.cleanUp())
+
+      it('should get all the reportable results for a reportable site', async () => {
+        const res = await server
+          .get(path)
+          .query({
+            onlyReportableResults: true,
+            reportableSiteId: siteId,
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.body.data.length, 20)
+      })
+
+      it('should get all the reportable results for a reportable site that were downloaded at the reporter app', async () => {
+        const res = await server
+          .get(path)
+          .query({
+            onlyReportableResults: true,
+            reportableSiteId: siteId,
+            onlyDownloadedByReporter: true,
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 15)
+      })
+
+      it('should get all the results requiring treatment for a reportable site', async () => {
+        const res = await server
+          .get(path)
+          .query({
+            onlyTreatmentRequired: true,
+            reportableSiteId: siteId,
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 20)
+      })
+
+      it('should get only the results that were transferred from a reportable site', async () => {
+        const [resultIdToTransfer] = resultsDownloadedByReporterIds
+        const { id: anotherSiteId } = await knex('Site')
+          .where({ partnerId })
+          .first()
+        /**
+         * Transfer one result to another site
+         * - Update reportableSiteId in Result table
+         * - Add a new entry in the ResultStatusLog
+         */
+        await knex('Result')
+          .where({ id: resultIdToTransfer })
+          .update({ reportableSiteId: anotherSiteId })
+        const transferStatusId = await resultStatusToId('Transfer')
+
+        await knex('ResultStatusLog').insert({
+          resultStatusId: transferStatusId,
+          resultId: resultIdToTransfer,
+          createdOn: new Date(),
+          createdBy: 1,
+          data: JSON.stringify({
+            siteId,
+            reportableSiteId: anotherSiteId,
+            previousReportableSiteId: siteId,
+            sampleOriginSiteId: siteId,
+          }),
+        })
+
+        const res = await server
+          .get(path)
+          .query({
+            onlyEverTransferred: true,
+            reportableSiteId: siteId,
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.body.data.length, 1)
+      })
+    })
+
     it('should return a list of results', async () => {
       const res = await server
         .get(path)
@@ -127,6 +283,7 @@ describe('Result routes', () => {
 
       validateResponse(res)
     })
+
     it('should return a list of results filtered by disease', async () => {
       const { diseaseId } = await knex('Disease')
         .where({ externalId: 'hiv' })
@@ -277,88 +434,6 @@ describe('Result routes', () => {
       assert.property(res.body.data.assay, 'resultDataSchema')
       assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
       assert.property(res.body.data, 'files')
-    })
-
-    const assayBdMgitGndAssayExternalId = 'assayBdMgitGnd'
-    const bdmgitGndClinicianUsername = 'mgit_gnd_clinician'
-    const bdmgitGndClinicianPassword = 'mgit-gnd-clinician-pass'
-    let bdmgitGndClinicianUserId
-    let bdmgitGndClinicianAuthAccessToken
-
-    const assayDaktariHivVlExternalId = 'DaktariHivVL'
-    const daktariHivVlClinicianUsername = 'dak_vl_clinician'
-    const daktariHivVlClinicianPassword = 'vl-vl-clinician-pass'
-    let daktariHivVlClinicianUserId
-    let daktariHivVlClinicianAuthAccessToken
-    before(async () => {
-      bdmgitGndClinicianUserId = await createUser(
-        'Partner One',
-        'US',
-        bdmgitGndClinicianUsername,
-        bdmgitGndClinicianPassword,
-        [
-          {
-            jobFunctionExternalId: 'clinician',
-            assayExternalId: assayBdMgitGndAssayExternalId,
-          },
-        ]
-      )
-      bdmgitGndClinicianAuthAccessToken = await getAccessToken(
-        bdmgitGndClinicianUsername,
-        bdmgitGndClinicianPassword
-      )
-
-      daktariHivVlClinicianUserId = await createUser(
-        'Partner One',
-        'US',
-        daktariHivVlClinicianUsername,
-        daktariHivVlClinicianPassword,
-        [
-          {
-            jobFunctionExternalId: 'clinician',
-            assayExternalId: assayDaktariHivVlExternalId,
-          },
-        ]
-      )
-      daktariHivVlClinicianAuthAccessToken = await getAccessToken(
-        daktariHivVlClinicianUsername,
-        daktariHivVlClinicianPassword
-      )
-    })
-
-    after(async () => {
-      removeUser(bdmgitGndClinicianUserId)
-      removeUser(daktariHivVlClinicianUserId)
-    })
-
-    it("should constrain results returned based on the user's job context", async () => {
-      const mgitUserResultsResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${bdmgitGndClinicianAuthAccessToken}`)
-      assert.equal(mgitUserResultsResponse.status, 200)
-      assert.typeOf(mgitUserResultsResponse.body, 'Object')
-      assert.property(mgitUserResultsResponse.body, 'data')
-      assert.typeOf(mgitUserResultsResponse.body.data, 'array')
-      assert.equal(mgitUserResultsResponse.body.data.length, 0)
-      assert.property(mgitUserResultsResponse.body, 'total')
-      assert.typeOf(mgitUserResultsResponse.body.extraColumns, 'array')
-
-      const daktariHivVlUserResultsResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${daktariHivVlClinicianAuthAccessToken}`)
-      assert.equal(daktariHivVlUserResultsResponse.status, 200)
-      assert.typeOf(daktariHivVlUserResultsResponse.body, 'Object')
-      assert.property(daktariHivVlUserResultsResponse.body, 'data')
-      assert.typeOf(daktariHivVlUserResultsResponse.body.data, 'array')
-      assert.isAtLeast(daktariHivVlUserResultsResponse.body.data.length, 5)
-      const { name: daktariHivVlAssayName } = await knex('Assay')
-        .where('externalId', assayDaktariHivVlExternalId)
-        .first()
-      daktariHivVlUserResultsResponse.body.data.forEach(result => {
-        assert.equal(result.assayName, daktariHivVlAssayName)
-      })
-      assert.property(daktariHivVlUserResultsResponse.body, 'total')
-      assert.typeOf(daktariHivVlUserResultsResponse.body.extraColumns, 'array')
     })
   })
 
@@ -618,18 +693,17 @@ describe('Result routes', () => {
         changedOn,
       }
       // update with resultTreatmentStatusId
-      await server
+      const res = await server
         .put(`${path}/treatment-status/${resultId}`)
         .send(updateWithId)
         .set('Authorization', `Bearer${shared.token}`)
-        .then(res => {
-          baseTreatmentStatusAssertion(res)
 
-          const { treatmentStatus } = res.body.data
+      baseTreatmentStatusAssertion(res)
 
-          // check if resultWorkflowStatus was updated
-          assert.equal(treatmentStatus.externalId, 'OnTreatment')
-        })
+      const { treatmentStatus } = res.body.data
+
+      // check if resultWorkflowStatus was updated
+      assert.equal(treatmentStatus.externalId, 'OnTreatment')
     })
 
     it('Should update result treatment status given a resultId - set resultNotes', async () => {
@@ -973,7 +1047,8 @@ describe('Result routes', () => {
                 resultData: { resultText, typeOfTest: testTypeText },
                 formData: {
                   ...formDataToSend,
-                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  dateAndTimeOfTest:
+                    formDataToSend.dateAndTimeOfTest.toISOString(),
                 },
                 startedOn: dateAndTimeOfTest,
                 endedOn: dateAndTimeOfTest,
@@ -1076,7 +1151,8 @@ describe('Result routes', () => {
                 resultData: { resultText, typeOfTest: testTypeText },
                 formData: {
                   ...formDataToSend,
-                  dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                  dateAndTimeOfTest:
+                    formDataToSend.dateAndTimeOfTest.toISOString(),
                 },
                 startedOn: dateAndTimeOfTest,
                 endedOn: dateAndTimeOfTest,
@@ -1215,7 +1291,8 @@ describe('Result routes', () => {
                   },
                   formData: {
                     ...formDataToSend,
-                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                    dateAndTimeOfTest:
+                      formDataToSend.dateAndTimeOfTest.toISOString(),
                   },
                   startedOn: resultFromInstrument.startedOn,
                   endedOn: resultFromInstrument.endedOn,
@@ -1234,7 +1311,8 @@ describe('Result routes', () => {
                   resultData: { resultText, typeOfTest: testTypeText },
                   formData: {
                     ...formDataToSend,
-                    dateAndTimeOfTest: formDataToSend.dateAndTimeOfTest.toISOString(),
+                    dateAndTimeOfTest:
+                      formDataToSend.dateAndTimeOfTest.toISOString(),
                   },
                   startedOn: dateAndTimeOfTest,
                   endedOn: dateAndTimeOfTest,

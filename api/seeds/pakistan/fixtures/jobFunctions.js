@@ -1,6 +1,14 @@
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+  technician,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
-  {
-    name: 'Admin',
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'assay',
@@ -74,10 +82,21 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'edit',
       },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'router',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Regional Officer',
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'assay',
@@ -144,9 +163,8 @@ module.exports = [
         activity: 'edit',
       },
     ],
-  },
-  {
-    name: 'Lab User',
+  }),
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'assay',
@@ -212,10 +230,13 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'view',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Clinician',
+  }),
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'assay',
@@ -281,6 +302,11 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'view',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
+  }),
+  technician,
 ]

@@ -4,11 +4,22 @@ import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
 import Contacts from '../Contacts/Contacts'
-import messages from '../messages'
+import localMessages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
 import Summary from '../../../../globals/components/Summary'
+import {
+  getCustomMessage,
+  commonDefinitions,
+} from '../../../../shared/utils/customMessages'
 
-const cssClasses = classnames.bind(require('../SiteDetail.css'))
+import styles from '../SiteDetail.css'
+
+const cssClasses = classnames.bind(styles)
+
+const messages = {
+  ...commonDefinitions,
+  ...localMessages,
+}
 
 const SiteDetailProfile = ({
   site,
@@ -16,6 +27,7 @@ const SiteDetailProfile = ({
   siteContacts,
   formatMessage,
   disabled,
+  user,
 }) => {
   const fields = [
     {
@@ -41,7 +53,7 @@ const SiteDetailProfile = ({
       ),
     },
     {
-      label: formatMessage(messages.fieldState),
+      label: getCustomMessage(messages, 'state', user),
       value: site.get('state'),
     },
     {
@@ -49,7 +61,7 @@ const SiteDetailProfile = ({
       value: site.get('city'),
     },
     {
-      label: formatMessage(messages.fieldLGA),
+      label: getCustomMessage(messages, 'lga', user),
       value: site.get('lga'),
     },
     {
@@ -64,7 +76,7 @@ const SiteDetailProfile = ({
             to:
               device.category === 2
                 ? '/browse/router'
-                : `/browse/device?filters=deviceTypeId%3D${device.id}`,
+                : `/browse/device/${device.id}`,
           })),
     },
     {
@@ -80,7 +92,8 @@ const SiteDetailProfile = ({
             <Summary
               key={`${label}_${site.get('id')}`}
               title={label}
-              description={value}
+              // `description` is marked as required in Summary
+              description={value || ''}
               cols="4"
             />
           ))}
@@ -109,6 +122,7 @@ SiteDetailProfile.propTypes = {
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   siteContacts: PropTypes.arrayOf(PropTypes.object),
+  user: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default SiteDetailProfile

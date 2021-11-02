@@ -24,35 +24,31 @@ const messages = defineMessages({
 const enhance = compose(
   injectIntl,
   withHandlers({
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
-    onPathClick: ({ history, match }) => path => {
-      history.push({
-        pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
-      })
-    },
+    onBackClick:
+      ({ navigate }) =>
+      () => {
+        navigate(-1)
+      },
+    onPathClick:
+      ({ navigate, params }) =>
+      path => {
+        navigate({
+          pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => params[key]),
+        })
+      },
   })
 )
 
 export const NotificationDetailBackBar = ({
   intl,
-  history,
   location,
-  match,
   title,
   // --- injected by recompose ---
   onBackClick,
   onPathClick,
   disabled = true,
 }) => (
-  <DetailBackBar
-    history={history}
-    location={location}
-    match={match}
-    onBackClick={onBackClick}
-    title={title}
-  >
+  <DetailBackBar onBackClick={onBackClick} title={title}>
     {[
       {
         label: intl.formatMessage(messages.view),
@@ -83,7 +79,7 @@ export const NotificationDetailBackBar = ({
             data-path={path}
             color="primary"
             variant="contained"
-            inverse={match.path !== path}
+            inverse={location.pathname !== path}
             disabled={disabled}
           >
             {label}
@@ -94,10 +90,10 @@ export const NotificationDetailBackBar = ({
 )
 
 NotificationDetailBackBar.propTypes = {
-  intl: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  location: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  history: PropTypes.oneOf(['PropTypes.Object']).isRequired,
-  match: PropTypes.oneOf(['PropTypes.Object']).isRequired,
+  intl: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // history: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // match: PropTypes.oneOfType([PropTypes.object]).isRequired,
   onBackClick: PropTypes.func.isRequired,
   onPathClick: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,

@@ -1,27 +1,23 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
+import Immutable from 'immutable'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
+import messages from './i18n/generalMessages'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchWorkflowStatuses: PropTypes.func.isRequired,
-    workflowStatusItems: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-      })
-    ).isRequired,
+    workflowStatusItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onWorkflowStatusChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }
@@ -30,6 +26,8 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
     allItemText: 'All',
     value: '',
   }
+
+  static contextType = I18nContext
 
   componentDidMount() {
     this.props.fetchWorkflowStatuses(false)
@@ -48,13 +46,18 @@ export class ResultWorkflowStatusSelectField extends PureComponent {
       'onWorkflowStatusChange',
       'value',
     ])
-
+    const { formatMessage } = this.context
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {workflowStatusItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {formatI18nMessage(
+              messages,
+              formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

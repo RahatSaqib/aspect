@@ -1,5 +1,7 @@
 const Joi = require('@hapi/joi')
-
+const logger = require('./shared/logger')
+const { REGEX_ISODATESTRING } = require('./shared/date')
+const { splitCsvWithTrim } = require('./shared/string')
 // Adds all API routes to the server
 function addClientRoutes(server) {
   server.route(
@@ -84,6 +86,9 @@ function addClientRoutes(server) {
   )
   server.route(
     require('./case/endpoints').routes.map(decorateClientAPI('case'))
+  )
+  server.route(
+    require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI())
   )
 }
 
@@ -177,7 +182,7 @@ function asyncHandler(handler) {
       .then(reply)
       .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       })
 }
@@ -194,17 +199,19 @@ function getSortPageParams(params, sortColumnMapping, defaultSort) {
 // extracts and sanitizes the parameters related to sorting from the
 // candidate params and returns them as an object
 function getSortParams(params, sortColumnMapping, defaultSort) {
-  const result = {}
+  const orders = splitCsvWithTrim(params.sortDir, 'asc')
+  let columnNames = splitCsvWithTrim(params.sortCol, defaultSort)
 
-  result.sortCol =
-    sortColumnMapping && params.sortCol && sortColumnMapping[params.sortCol]
-      ? sortColumnMapping[params.sortCol]
-      : params.sortCol
-      ? params.sortCol
-      : defaultSort
-  result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
+  if (sortColumnMapping) {
+    columnNames = columnNames.map(name => sortColumnMapping[name] || name)
+  }
 
-  return result
+  const orderBy = columnNames.map((name, index) => ({
+    column: name,
+    order: orders[index] || 'asc',
+  }))
+
+  return { orderBy }
 }
 
 // extracts and sanitizes the parameters related to paging from the
@@ -238,10 +245,21 @@ function validateSortPageParams(...sortColumns) {
   }
 }
 
-function validateDateRangeParams() {
+function validateDateRangeParams(isoDateFormatExpected = false) {
+  if (isoDateFormatExpected)
+    return {
+      minDate: Joi.date().iso().allow(null).description('From Date'),
+      maxDate: Joi.date().iso().allow(null).description('To Date'),
+    }
   return {
-    minDate: Joi.date().iso().allow(null).description('From Date'),
-    maxDate: Joi.date().iso().allow(null).description('To Date'),
+    minDate: Joi.string()
+      .pattern(REGEX_ISODATESTRING)
+      .allow(null)
+      .description('From Date'),
+    maxDate: Joi.string()
+      .pattern(REGEX_ISODATESTRING)
+      .allow(null)
+      .description('To Date'),
   }
 }
 

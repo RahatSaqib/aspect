@@ -1,10 +1,11 @@
 const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
-
+const { Promise } = require('bluebird')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { knex } = require('../../src/db')
 
 const { assert } = chai
 const server = require('../utils/testUtils')
@@ -26,7 +27,7 @@ describe('Inventory Routes', () => {
               assert.typeOf(res.body, 'Object')
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
-              assert.equal(res.body.data.length, 2)
+              assert.isAtLeast(res.body.data.length, 2)
               res.body.data.forEach(inventoryItem => {
                 assert.property(inventoryItem, 'id')
                 assert.property(inventoryItem, 'consumableId')
@@ -45,6 +46,7 @@ describe('Inventory Routes', () => {
                 assert.property(inventoryItem, 'countryName')
                 assert.property(inventoryItem, 'stateName')
                 assert.property(inventoryItem, 'lgaName')
+                assert.property(inventoryItem, 'dailyConsumptionRate')
               })
               assert.property(res.body, 'total')
               done()
@@ -77,44 +79,102 @@ describe('Inventory Routes', () => {
     describe('/inventory/group-by-site', () => {
       const path = '/api/inventory/group-by-site'
 
+      const assertSite = site => {
+        assert.property(site, 'siteId')
+        assert.property(site, 'siteName')
+        assert.property(site, 'countryId')
+        assert.property(site, 'stateId')
+        assert.property(site, 'lgaId')
+        assert.property(site, 'countryName')
+        assert.property(site, 'stateName')
+        assert.property(site, 'lgaName')
+        assert.property(site, 'inventoryItems')
+      }
+
+      const assertInventoryItem = inventoryItem => {
+        assert.property(inventoryItem, 'id')
+        assert.property(inventoryItem, 'consumableId')
+        assert.property(inventoryItem, 'expiresOn')
+        assert.property(inventoryItem, 'canExpire')
+        assert.property(inventoryItem, 'lotNumber')
+        assert.property(inventoryItem, 'quantityOnHand')
+        assert.property(inventoryItem, 'consumableName')
+        assert.property(inventoryItem, 'manufacturer')
+        assert.property(inventoryItem, 'unitShortName')
+      }
+
       describe('GET', () => {
         shared.checkToken(server, path)
+        const deviceIds = []
+        const inventoryItemIds = []
+        const siteIds = []
 
-        it('should return a list of sites, each with a list of inventory items, when using valid token', done => {
-          server
+        // This before each ensures we have at least 2 devices with inventory items in each it()
+        beforeEach(async () => {
+          const { id: consumableId } = await knex('Consumable')
+            .where({ externalId: 'GxMtbRifCartridge' })
+            .first()
+          const { partner, country } = await getConstraints({ name: 'admin' })
+          const { id: geographyId } = await knex('Geography')
+            .where({ countryId: country.id })
+            .first()
+          const { id: gxDeviceTypeId } = await knex('DeviceType')
+            .where({ externalId: 'CepheidGeneXpert' })
+            .first()
+          const { id: deviceApprovedId } = await knex('DeviceApproval')
+            .where({ token: 'approved' })
+            .first()
+          const now = new Date()
+          await Promise.each(_.range(2), async n => {
+            const [siteId] = await knex('Site').insert({
+              partnerId: partner.id,
+              geographyId,
+              externalId: `Site ${n}`,
+              name: `Site ${n}`,
+              shortName: `Site ${n}`,
+            })
+            const [deviceId] = await knex('Device').insert({
+              name: `Device ${n}`,
+              shortName: `Device ${n}`,
+              deviceTypeId: gxDeviceTypeId,
+              deviceApprovalId: deviceApprovedId,
+              partnerId: partner.id,
+              geographyId,
+              siteId,
+              createdOn: now,
+              updatedOn: now,
+              lastPingOn: now,
+              lastSeenOn: now,
+            })
+            const [inventoryItemId] = await knex('InventoryItem').insert({
+              consumableId,
+              siteId,
+              lotNumber: '',
+              expiresOn: now,
+              quantityOnHand: 100,
+            })
+            siteIds.push(siteId)
+            deviceIds.push(deviceId)
+            inventoryItemIds.push(inventoryItemId)
+          })
+        })
+
+        it('should return a list of sites, each with a list of inventory items, when using valid token', async () => {
+          const res = await server
             .get(path)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'array')
-              assert.equal(res.body.data.length, 2)
-              res.body.data.forEach(site => {
-                assert.property(site, 'siteId')
-                assert.property(site, 'siteName')
-                assert.property(site, 'countryId')
-                assert.property(site, 'stateId')
-                assert.property(site, 'lgaId')
-                assert.property(site, 'countryName')
-                assert.property(site, 'stateName')
-                assert.property(site, 'lgaName')
-                assert.property(site, 'inventoryItems')
-                site.inventoryItems.forEach(inventoryItem => {
-                  assert.property(inventoryItem, 'id')
-                  assert.property(inventoryItem, 'consumableId')
-                  assert.property(inventoryItem, 'expiresOn')
-                  assert.property(inventoryItem, 'canExpire')
-                  assert.property(inventoryItem, 'lotNumber')
-                  assert.property(inventoryItem, 'quantityOnHand')
-                  assert.property(inventoryItem, 'consumableName')
-                  assert.property(inventoryItem, 'manufacturer')
-                  assert.property(inventoryItem, 'unitShortName')
-                })
-              })
-              assert.property(res.body, 'total')
-              done()
-            })
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 2)
+          res.body.data.forEach(site => {
+            assertSite(site)
+            site.inventoryItems.forEach(inventoryItem =>
+              assertInventoryItem(inventoryItem)
+            )
+          })
+          assert.property(res.body, 'total')
         })
 
         it('should accept consumableId and siteName as query string parameters', done => {
@@ -138,6 +198,12 @@ describe('Inventory Routes', () => {
               })
               done()
             })
+        })
+
+        afterEach(async () => {
+          await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+          await knex('Device').whereIn('id', deviceIds).delete()
+          await knex('Site').whereIn('id', siteIds).delete()
         })
       })
     })
@@ -265,11 +331,11 @@ describe('Inventory Routes', () => {
       })
     )
 
-    describe('/inventory/add/{inventoryItemId}', () => {
+    describe('/inventory/add', () => {
       describe('PUT', () => {
         it('should update the quantity of an inventory item', done => {
           server
-            .put(`${addInventoryPath}/${inventoryItem.id}`)
+            .put(`${addInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -295,11 +361,11 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe('/inventory/remove/{inventoryItemId}', () => {
+    describe('/inventory/remove', () => {
       describe('PUT', () => {
         it('should update the quantity of an inventory item', done => {
           server
-            .put(`${removeInventoryPath}/${inventoryItem.id}`)
+            .put(`${removeInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -326,7 +392,7 @@ describe('Inventory Routes', () => {
 
         it('should remove the inventory item from view quantity is zero', done => {
           server
-            .put(`${removeInventoryPath}/${inventoryItem.id}`)
+            .put(`${removeInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -358,11 +424,11 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe('/inventory/transfer/{inventoryItemId}', () => {
+    describe('/inventory/transfer', () => {
       describe('PUT', () => {
         it('should add an inventory item in transit to the destination site', done => {
           server
-            .put(`${transferInventoryPath}/${inventoryItem.id}`)
+            .put(`${transferInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -394,7 +460,7 @@ describe('Inventory Routes', () => {
               })
 
               server
-                .put(`${transferInventoryPath}/${inventoryItem.id}`)
+                .put(`${transferInventoryPath}`)
                 .send({
                   consumableId: inventoryItem.consumableId,
                   lotNumber: inventoryItem.lotNumber,
@@ -437,7 +503,7 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe('/inventory/receive/{inventoryItemId}', () => {
+    describe('/inventory/receive', () => {
       describe('PUT', () => {
         let receivedItem
         afterEach(async () =>
@@ -451,7 +517,7 @@ describe('Inventory Routes', () => {
 
         it('should add an inventory item to the site', done => {
           server
-            .put(`${transferInventoryPath}/${inventoryItem.id}`)
+            .put(`${transferInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
@@ -467,7 +533,7 @@ describe('Inventory Routes', () => {
               assert.equal(res.status, 200)
               transitItem = res.body.data.newInventoryItem
               server
-                .put(`${receiveInventoryPath}/${transitItem.id}`)
+                .put(`${receiveInventoryPath}`)
                 .send({
                   consumableId: transitItem.consumableId,
                   lotNumber: transitItem.lotNumber,

@@ -1,26 +1,38 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-
+import messages from '../../device/list/messages'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatRelative } from '../../shared/utils/dateFormat'
+import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 
-const RouterTableRow = ({ intl, router, ...restProps }) => (
-  <TableRow {...restProps} className={cssClasses(restProps.className)}>
-    <TableCell>{router.get('name')}</TableCell>
-    <TableCell>{router.get('approval')}</TableCell>
-    <TableCell>{formatRelative(intl, router.get('createdOn'))}</TableCell>
-    <TableCell>{formatRelative(intl, router.get('lastSeen'))}</TableCell>
-  </TableRow>
-)
+const RouterTableRow = ({ router, ...restProps }) => {
+  const { formatDistance, formatMessage } = useI18n()
+  return (
+    <TableRow {...restProps} className={cssClasses(restProps.className)}>
+      <TableCell>{router.get('name')}</TableCell>
+      <TableCell>
+        {formatMessage(
+          messages[router.get('statusI18nKey')],
+          router.get('approval')
+        )}
+      </TableCell>
+      <TableCell>
+        {formatDistance(new Date(router.get('createdOn')), new Date(), true)}
+      </TableCell>
+      <TableCell>
+        {formatDistance(new Date(router.get('lastSeen')), new Date(), true)}
+      </TableCell>
+    </TableRow>
+  )
+}
 
 export default enhance(RouterTableRow)

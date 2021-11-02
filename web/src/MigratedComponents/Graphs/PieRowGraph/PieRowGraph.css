@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  padding: 10px;
+  padding: 10px 30px 10px 10px;
   border-radius: 15px;
 }
 
@@ -27,6 +27,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 120px;
 }
 
 .piegraphs__rowTitle {
@@ -58,7 +59,7 @@
 .piegraphs__columnTitle {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex-start;
   min-height: 40px;
   text-align: center;
   font-weight: 600;
@@ -76,7 +77,10 @@
   }
 }
 
-@media only screen and (min-device-width: 1024px) and (max-device-width: 1440px) {
+@media screen and (min-width: 768px) and (max-width: 1440px) {
+  .piegraphs__columnTitle {
+    width: 80px;
+  }
   .piegraphs__column:nth-child(n + 5):not(:last-child) div:after {
     content: ' ';
     display: block;

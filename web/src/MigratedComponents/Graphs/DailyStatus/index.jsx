@@ -1,31 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { useIntl } from 'react-intl'
 
-import { getIndex, getTotalDays, dateRangeByWeekDay } from './Helpers'
+import useI18n from '../../../Hooks/i18n/useI18n'
+
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'
+import DailyStatusDialog from './DailyStatusDialog'
 import DateRanges from './DateRanges'
 import messages from './messages'
 import GRAPH_CONSTS from '../../../globals/consts/Graphs/CONSTS'
 import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
+import Loading from '../../../globals/components/Loading'
 
-import {
-  getPreviousPeriod,
-  dateRangeOptions,
-  extractOptionValue,
-} from '../Helpers/Formatters'
-import AspectDropdown from '../../AspectDropdown'
+import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
+import AspectDropDown from '../../AspectDropDown'
 
 import AspectCard from '../../AspectCard'
 import CardSelectors from '../CardSelectors'
+import useDailyStatus from './Helpers/useDailyStatus'
 
-import fetchWrapperForQueries from '../../QueryFetch'
-import { DAILY_STATUS, DEVICE_STATUS } from '../../QueryFetch/Device'
+import styles from './DailyStatus.css'
 
-const cssClasses = classnames.bind(require('./DailyStatus.css'))
+const cssClasses = classnames.bind(styles)
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 const selectorModifiers = [
@@ -33,7 +29,7 @@ const selectorModifiers = [
     selectedValue: 'Date Range',
     endpoint: false,
     state: 'deviceDateRange',
-    component: AspectDropdown,
+    component: AspectDropDown,
     identifier: 'dateRange',
     data: dateRangeOptions('deviceDateRange'),
     sortByKeys: ['id'],
@@ -42,89 +38,71 @@ const selectorModifiers = [
   },
 ]
 
-const Loading = () => (
-  <div className={cssClasses('dailystatus__spinner')}>
-    <CircularProgress />
-  </div>
-)
-
 const DailyStatus = () => {
-  const minDate = getPreviousPeriod('months', 'yyyy-MM-dd').start
-  const maxDate = getPreviousPeriod('months', 'yyyy-MM-dd').end
-  const { formatMessage } = useIntl()
-  const [statusses, setStatusses] = useState(false)
-  const [visibleStatuses, setVisibleStatuses] = useState(false)
-  const [toggleAll, setToggleAll] = useState({
-    checked: true,
-    label: formatMessage(messages.dailyStatusToggleAll),
-    key: 'all',
-  })
-  const [params, setParams] = useState({ minDate, maxDate })
-  const startOfMonth = new Date(params.minDate)
-  const endOfPeriodDate = new Date(params.maxDate)
-  const dateRanges = dateRangeByWeekDay(startOfMonth, endOfPeriodDate)
-  const totalDays = getTotalDays(params)
-
+  const [dialogState, setDialogState] = useState({ isOpen: false })
+  const minDate = getPreviousPeriod(
+    'months',
+    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+  ).start
+  const maxDate = getPreviousPeriod(
+    'months',
+    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+  ).end
+  const { formatMessage } = useI18n()
   const {
-    isLoading: devicesIsLoading,
-    isError: devicesIsError,
-    data: { data: devicesDaily } = false,
-    error: devicesError,
-  } = useQuery([DAILY_STATUS.KEY, { params }], async (key, { params }) =>
-    fetchWrapperForQueries({
-      endpoint: DAILY_STATUS.ENDPOINT,
-      params,
-    })
-  )
+    devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
+    statuses: {
+      allStatuses,
+      visibleStatuses,
+      deviceStatusesIsLoading,
+      deviceStatusesIsError,
+      deviceStatusesError,
+    },
+    actions: {
+      changeDeviceStatus,
+      getDeviceDayDetails,
+      toggleAll,
+      toggleStatusVisibility,
+      updateFromActionComponent,
+    },
+    dateTime: { dateRanges, totalDays },
+  } = useDailyStatus(minDate, maxDate)
 
-  const {
-    isLoading: deviceStatussesIsLoading,
-    isError: deviceStatussesIsError,
-    error: deviceStatussesError,
-  } = useQuery(
-    DEVICE_STATUS.KEY,
-    async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
-    {
-      onSuccess: ({ data }) => {
-        const output = []
-        data.map(status => output.push({ ...status, checked: true }))
-        setStatusses(output)
+  const onClickDay = ({ day, deviceId }) => {
+    const {
+      deviceName,
+      periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
+      note,
+    } = getDeviceDayDetails({ day, deviceId })
+    setDialogState({
+      isOpen: true,
+      deviceName,
+      data: {
+        day, // day clicked (formatted as "YYYY-MM-DD")
+        startedOn,
+        endedOn,
+        deviceId,
+        maintenanceStatusExternalId,
+        note,
       },
-    }
-  )
-
-  const toggleStatusVisibility = name => {
-    const tempStatusses = [...visibleStatuses]
-    if (name === 'all') {
-      tempStatusses.map(status => (status.checked = !toggleAll.checked))
-      setToggleAll({
-        ...toggleAll,
-        checked: !toggleAll.checked,
-      })
-      setVisibleStatuses(tempStatusses)
-    } else {
-      const index = getIndex(tempStatusses, 'i18nKey', name)
-      const currentChecked = tempStatusses[index].checked
-      tempStatusses[index].checked = !currentChecked
-      setVisibleStatuses(tempStatusses)
-    }
+    })
   }
 
-  useEffect(() => {
-    if (!visibleStatuses) {
-      setVisibleStatuses(statusses)
-    }
-  }, [statusses, visibleStatuses])
+  const onHideDailyStatusDialog = () => {
+    setDialogState({ isOpen: false })
+  }
 
-  const updateFromActionComponent = ({ identifier, selectedOption }) =>
-    setParams(extractOptionValue(identifier, selectedOption))
+  const onDailyStatusSubmit = ({ deviceId, values }) => {
+    setDialogState({ isOpen: false })
+    changeDeviceStatus({ deviceId, values })
+  }
 
   if (devicesIsError) {
     throw new Error(devicesError)
   }
 
-  if (deviceStatussesIsError) {
-    throw new Error(deviceStatussesError)
+  if (deviceStatusesIsError) {
+    throw new Error(deviceStatusesError)
   }
 
   return (
@@ -139,29 +117,47 @@ const DailyStatus = () => {
       }}
       name="dailyStatus"
     >
-      {!devicesIsLoading && !deviceStatussesIsLoading ? (
+      {!devicesIsLoading && !deviceStatusesIsLoading ? (
         <div className={cssClasses('dailystatus__container')}>
           <DailyStatusFilters
             toggleAll={toggleAll}
-            statusses={visibleStatuses}
+            statuses={visibleStatuses}
             action={toggleStatusVisibility}
           />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
           {devicesDaily.map(
-            ({ name, maintenanceStatusHistory, totalResults }) => (
+            ({
+              id: deviceId,
+              name,
+              shortName,
+              maintenanceStatusHistory,
+              totalResults,
+            }) => (
               <DailyStatusClinic
-                name={name}
+                key={deviceId}
+                name={shortName || name}
                 data={maintenanceStatusHistory}
                 total={totalResults}
-                statusses={visibleStatuses}
+                statuses={visibleStatuses}
                 consts={GRAPH_CONSTS}
                 totalDays={totalDays}
+                onClickDay={onClickDay}
+                deviceId={deviceId}
               />
             )
           )}
+
+          <DailyStatusDialog
+            data={dialogState.data}
+            deviceName={dialogState.deviceName}
+            isOpen={dialogState.isOpen}
+            onCancel={onHideDailyStatusDialog}
+            onSubmit={onDailyStatusSubmit}
+            statuses={allStatuses}
+          />
         </div>
       ) : (
-        <Loading />
+        <Loading className={cssClasses('dailyStatus__spinner')} />
       )}
     </AspectCard>
   )

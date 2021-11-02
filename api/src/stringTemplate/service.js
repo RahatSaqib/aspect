@@ -12,6 +12,7 @@ handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
+handlebars.registerHelper('formatPhone', formatPhone)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
 handlebars.registerHelper('defaultTo', defaultTo)
@@ -69,6 +70,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
       .leftJoin('Assay as a', `r.assayId`, 'a.id')
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
@@ -91,6 +93,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
+        'c.countryCode as countryCode',
         'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
@@ -117,7 +120,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'a.name as assayName',
         'sample.externalId as sampleExternalId',
         'rc1.externalId as resultCategory1ExternalId',
-        'rc2.externalId as resultCategory2ExternalId'
+        'rc2.externalId as resultCategory2ExternalId',
+        'rs.name as reportableSiteName'
       )
   }
 
@@ -150,6 +154,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    siteExternalId: string
  *    siteName: string
  *    countryName: string
+ *    countryCode: int
  *    siteShortName: string
  *    siteStreet1: string
  *    siteStreet2: string
@@ -222,6 +227,8 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  * @param  {object} data the result record with the following properties:
  *  {
  *    partnerPlugin: string
+ *    countryName: string
+ *    countryCode: int
  *    siteExternalId: string
  *    siteName: string
  *    siteShortName: string
@@ -266,6 +273,10 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *  }
  * @return a nested JSON object containing the data from the result record
  *  {
+      country: {
+        name: countryName,
+        dialingCode: countryCode,
+      },
       site: {
         id: siteExternalId,
         name: siteName,
@@ -346,6 +357,7 @@ async function getBaseDataSource(data) {
   return {
     country: {
       name: d.countryName,
+      dialingCode: d.countryCode,
     },
     site: {
       id: d.siteExternalId,
@@ -413,6 +425,7 @@ async function getBaseDataSource(data) {
       category2: {
         id: d.resultCategory2ExternalId,
       },
+      reportableSiteName: d.reportableSiteName,
     },
     person: {
       name: d.personName,
@@ -425,7 +438,7 @@ async function getBaseDataSource(data) {
       occurrences: isHardwareIssue
         ? issueData.totalErrors // <-- 'totalErrors' is defined in analyzeDeviceHardwareError()
         : issueData.resultsWithErrors,
-      errorCode: isHardwareIssue ? issueData.errorCode : d.resultErrorCode,
+      errorCode: issueData.errorCodes,
     },
     log: {
       startedOn: isHardwareIssue ? issueData.startedOn : null,
@@ -498,7 +511,11 @@ function isoDate(date) {
 }
 
 function getArgumentFromOptions(options, keyInOptionsHash) {
-  if (typeof options === 'string') {
+  if (
+    ['string', 'number', 'undefined', 'null', 'boolean', 'symbol'].includes(
+      typeof options
+    )
+  ) {
     return options
   }
   return _.get(options, ['hash', keyInOptionsHash])
@@ -512,6 +529,38 @@ function formatDate(date, options) {
     getArgumentFromOptions(options, 'formatString') ||
     _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
   return formatDateOrDefault(date, dateFormat)
+}
+
+function formatPhone(phoneNumber, options) {
+  if (_.isNil(phoneNumber) || !phoneNumber.replace(/\s/, '')) {
+    return ''
+  }
+  const countryDialingCode = `${
+    getArgumentFromOptions(options, 'dialingCode') || ''
+  }`.replace(/[\s-\\+]/, '')
+  let sanitizedPhoneNumber = phoneNumber.replace(/[\s-]/, '')
+  if (countryDialingCode) {
+    if (sanitizedPhoneNumber.indexOf(countryDialingCode) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
+        countryDialingCode.length
+      )
+    } else if (sanitizedPhoneNumber.indexOf(`0${countryDialingCode}`) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
+        countryDialingCode.length + 1
+      )
+    } else if (sanitizedPhoneNumber.indexOf(`00${countryDialingCode}`) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
+        countryDialingCode.length + 2
+      )
+    }
+    if (sanitizedPhoneNumber.indexOf('0') === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(1)
+    }
+    if (sanitizedPhoneNumber.indexOf('+') !== 0) {
+      sanitizedPhoneNumber = `+${countryDialingCode}${sanitizedPhoneNumber}`
+    }
+  }
+  return sanitizedPhoneNumber
 }
 
 function toLowerCase(stringValue) {

@@ -15,14 +15,12 @@ function getCommCarePayload({
       '1528890813120.jpg': {
         content_type: 'image/jpeg',
         length: 302162,
-        url:
-          'https://www.commcarehq.org/a/testproject-24/api/form/attachment/cb4f3814-1304-4b7a-ba61-39cd7c0bd3c6/1528890813120.jpg',
+        url: 'https://www.commcarehq.org/a/testproject-24/api/form/attachment/cb4f3814-1304-4b7a-ba61-39cd7c0bd3c6/1528890813120.jpg',
       },
       'form.xml': {
         content_type: 'text/xml',
         length: 1570,
-        url:
-          'https://www.commcarehq.org/a/testproject-24/api/form/attachment/cb4f3814-1304-4b7a-ba61-39cd7c0bd3c6/form.xml',
+        url: 'https://www.commcarehq.org/a/testproject-24/api/form/attachment/cb4f3814-1304-4b7a-ba61-39cd7c0bd3c6/form.xml',
       },
     },
     build_id: 'ecf92eccb64d48d583843c7cf8cc6a1c',

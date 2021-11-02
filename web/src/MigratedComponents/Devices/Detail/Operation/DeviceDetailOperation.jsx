@@ -4,13 +4,13 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { defineMessages, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import IconButton from '@material-ui/core/IconButton'
 import Card from '@material-ui/core/Card'
 import { MdFileDownload } from 'react-icons/md'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import { useParams } from 'react-router-dom'
 
 import {
   makeSortPageSelector,
@@ -29,7 +29,9 @@ import {
   DeviceOperationDataTableRow,
 } from './DeviceOperationDataTable'
 
-const cssClasses = classnames.bind(require('../DeviceDetail.css'))
+import styles from '../DeviceDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const EMPTY_DATE = new Date()
 
@@ -102,54 +104,63 @@ const enhance = compose(
       items: state.deviceOperation.items,
       table: state.deviceOperation.table,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchDeviceOperations,
-    })
+    }
   ),
+  WrapperComponent => props => {
+    const { deviceId } = useParams()
+    return <WrapperComponent {...props} deviceId={deviceId} />
+  },
   withHandlers({
-    onInitialLoad: ({
-      match,
-      location,
-      fetchDeviceOperations,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        filtersParams.set('deviceId', match.params.deviceId)
-        fetchDeviceOperations(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
+    onInitialLoad:
+      ({
+        deviceId,
+        location,
+        fetchDeviceOperations,
+        sortCol,
+        sortDir,
+        pageAt,
+        pageSize,
+      }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          filtersParams.set('deviceId', deviceId)
+          fetchDeviceOperations(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
+      },
 
-    onExportClick: ({
-      location,
-      exportResults,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => formatType => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportResults(
-          filtersParams,
-          formatType,
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
-      }
-    },
+    onExportClick:
+      ({ location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
+      formatType => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportResults(
+            filtersParams,
+            formatType,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize
+          )
+        }
+      },
   }),
   lifecycle({
     componentDidMount() {
       this.props.onInitialLoad()
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -158,7 +169,7 @@ const enhance = compose(
 )
 
 export const DeviceDetailOperation = ({
-  history,
+  navigate,
   location,
   device,
   // --- injected by recompose ---
@@ -215,19 +226,14 @@ export const DeviceDetailOperation = ({
           <div>
             <DataTableProgressBar disabled={!table.loading} />
             {items.currentIdList.isEmpty() && (
-              <BrowseEmptyList
-                history={history}
-                location={location}
-                intl={intl}
-              />
+              <BrowseEmptyList navigate={navigate} location={location} />
             )}
             {!items.currentIdList.isEmpty() && (
               <DeviceOperationDataTable
-                selectable={false}
                 className={cssClasses('DeviceOperationDataTable')}
               >
                 <DeviceOperationDataTableHead
-                  history={history}
+                  navigate={navigate}
                   location={location}
                   sortColumnKey={sortCol}
                   sortColumnDir={sortDir}
@@ -274,7 +280,7 @@ export const DeviceDetailOperation = ({
             )}
             {!items.currentIdList.isEmpty() && (
               <BrowseTablePaginator
-                history={history}
+                navigate={navigate}
                 location={location}
                 intl={intl}
                 paginatorStatus={messages.paginatorStatus}
@@ -291,11 +297,11 @@ export const DeviceDetailOperation = ({
 }
 
 DeviceDetailOperation.propTypes = {
-  history: PropTypes.oneOf([PropTypes.object]).isRequired,
-  location: PropTypes.oneOf([PropTypes.object]).isRequired,
-  device: PropTypes.oneOf([PropTypes.object]).isRequired,
-  table: PropTypes.oneOf([PropTypes.object]).isRequired,
-  items: PropTypes.oneOf([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  device: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  table: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  items: PropTypes.oneOfType([PropTypes.object]).isRequired,
   sortCol: PropTypes.string.isRequired,
   sortDir: PropTypes.string.isRequired,
   pageAt: PropTypes.number.isRequired,

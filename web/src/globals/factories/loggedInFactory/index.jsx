@@ -10,25 +10,30 @@ import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 import ConnectedNavDrawer from './ConnectedNavDrawer'
 import VerticalAppBar from './VerticalAppBar'
 import HorizontalAppBar from './HorizontalAppBar'
+import Footer from '../../../MigratedComponents/Footer'
 
-const cssClasses = classnames.bind(require('./index.css'))
+import styles from './index.css'
+
+const cssClasses = classnames.bind(styles)
 
 export const loggedInFactory = compose(
   intlScrollToTopOnUpdateFactory,
-  render => props => (
-    <div classnames={cssClasses('Layout')}>
-      <ConnectedNavDrawer history={props.history} location={props.location} />
-      <div className={cssClasses('Panel')}>
-        <VerticalAppBar history={props.history} location={props.location} />
-        <HorizontalAppBar history={props.history} location={props.location} />
-        <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        {render(props)}
-        <IdleDialog intl={props.intl} />
-        <AppNotificationDialog intl={props.intl} />
-        <AppNotificationSnackBar intl={props.intl} />
+  render => props =>
+    (
+      <div classnames={cssClasses('Layout')}>
+        <ConnectedNavDrawer history={props.history} location={props.location} />
+        <div className={cssClasses('Panel')}>
+          <VerticalAppBar />
+          <HorizontalAppBar />
+          <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+          <div className={cssClasses('Page-Content')}>{render(props)}</div>
+          <IdleDialog intl={props.intl} />
+          <AppNotificationDialog intl={props.intl} />
+          <AppNotificationSnackBar intl={props.intl} />
+          <Footer />
+        </div>
       </div>
-    </div>
-  ),
+    ),
   React.createFactory,
   pure
 )

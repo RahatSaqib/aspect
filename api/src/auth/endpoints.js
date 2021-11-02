@@ -161,6 +161,7 @@ const routes = [
     path: '/auth/update-person-login-details/{personId}',
     handler: asyncHandler(updateUsernameAndPasswordForPerson),
     config: {
+      auth: { scope: ['person:edit'] },
       description: 'Update username and password linked to a person',
       notes: 'Returns an array of the fields that were updated',
       validate: {

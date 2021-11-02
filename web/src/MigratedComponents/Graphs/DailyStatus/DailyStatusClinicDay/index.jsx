@@ -1,31 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
 import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
+import noop from 'lodash/noop'
 
+import useI18n from '../../../../Hooks/i18n/useI18n'
+import messages from '../messages'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
+import { getDayTitle } from '../Helpers'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
 
-const messages = defineMessages({
-  toolTipTitleWithStatus: {
-    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus',
-    defaultMessage: `{maintenanceStatusName} for {daysInSameStatus, plural,
-      one {# day}
-      other {# days}
-    }`,
-  },
-  toolTipTitleWithoutStatus: {
-    id: 'pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus',
-    defaultMessage: `{daysInSameStatus, plural,
-      one {# day}
-      other {# days}
-    } since last update`,
-  },
-})
+const cssClasses = classnames.bind(styles)
 
-const DayBlock = ({ dayModifier, consts }) => {
+const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
@@ -37,15 +26,21 @@ const DayBlock = ({ dayModifier, consts }) => {
         height: `${blockHeight}px`,
         margin: `0 ${marginWidth / 2}px`,
       }}
+      onClick={onClick}
+      role="presentation"
     />
   )
 }
 
+DayBlock.defaultProps = {
+  dayModifier: null,
+}
 DayBlock.propTypes = {
-  dayModifier: PropTypes.string.isRequired,
+  dayModifier: PropTypes.string,
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
   }).isRequired,
+  onClick: PropTypes.func.isRequired,
 }
 
 const DailyStatusClinicDay = ({
@@ -53,71 +48,106 @@ const DailyStatusClinicDay = ({
   daysInSameStatus,
   isWeekend,
   maintenanceStatusName,
+  maintenanceStatusManuallySetBy,
   maintenanceStatusI18nKey,
-  statusses,
+  maintenanceStatusExternalId,
+  statuses,
+  totalResults,
+  onClickDay,
 }) => {
-  const { formatMessage } = useIntl()
+  const { formatDate, formatMessage } = useI18n()
+  const isActive =
+    maintenanceStatusI18nKey === 'active' ||
+    maintenanceStatusI18nKey === 'reportedActive'
+  const isEditable = maintenanceStatusExternalId !== 'active'
   const { weekend } = consts
   const { checked } =
-    filter(statusses, {
+    filter(statuses, {
       i18nKey: maintenanceStatusI18nKey,
     })[0] || false
 
   let dayModifier = isWeekend ? weekend : null
   if (checked) {
-    dayModifier =
-      maintenanceStatusI18nKey === 'active' ||
-      maintenanceStatusI18nKey === 'reportedActive'
-        ? maintenanceStatusI18nKey
-        : isWeekend
-        ? weekend
-        : maintenanceStatusI18nKey
+    dayModifier = isActive
+      ? maintenanceStatusI18nKey
+      : isWeekend
+      ? weekend
+      : maintenanceStatusI18nKey
   }
 
-  return checked && daysInSameStatus ? (
+  const title = getDayTitle({
+    checked,
+    daysInSameStatus,
+    formatMessage,
+    isActive,
+    maintenanceStatusName,
+    totalResults,
+    messages,
+    maintenanceStatusI18nKey,
+  })
+
+  const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
+    ? `; ${formatMessage(messages.toolTipLastUpdatedBy, {
+        username: maintenanceStatusManuallySetBy.name,
+        updatedDate: formatDate(
+          new Date(maintenanceStatusManuallySetBy.updatedDate)
+        ),
+      })}`
+    : ''
+
+  return (
     <AspectTooltip
+      showPointerCursor={isEditable}
       title={
-        maintenanceStatusName
-          ? formatMessage(messages.toolTipTitleWithStatus, {
-              maintenanceStatusName,
-              daysInSameStatus,
-            })
-          : formatMessage(messages.toolTipTitleWithoutStatus, {
-              daysInSameStatus,
-            })
+        !isEditable
+          ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}`
+          : `${title}${manuallySet}`
       }
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock dayModifier={dayModifier} consts={consts} />
-    </AspectTooltip>
-  ) : (
-    <AspectTooltip
-      title={maintenanceStatusName}
-      toolTipContainerClass="inline__tooltip"
-      placement="right"
-    >
-      <DayBlock dayModifier={dayModifier} consts={consts} />
+      <DayBlock
+        consts={consts}
+        dayModifier={dayModifier}
+        onClick={isEditable ? onClickDay : noop}
+      />
     </AspectTooltip>
   )
 }
 
 DailyStatusClinicDay.defaultProps = {
   maintenanceStatusName: false,
+  maintenanceStatusManuallySetBy: {},
+  totalResults: 0,
+  daysInSameStatus: 1,
+  maintenanceStatusI18nKey: '',
+  maintenanceStatusExternalId: '',
+  statuses: [],
 }
 
 DailyStatusClinicDay.propTypes = {
-  isWeekend: PropTypes.string.isRequired,
-  maintenanceStatusI18nKey: PropTypes.string.isRequired,
+  isWeekend: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+  maintenanceStatusI18nKey: PropTypes.string,
   maintenanceStatusName: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool,
   ]),
-  daysInSameStatus: PropTypes.string.isRequired,
-  statusses: PropTypes.string.isRequired,
+  maintenanceStatusManuallySetBy: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    name: PropTypes.string,
+    updatedDate: PropTypes.string,
+  }),
+  maintenanceStatusExternalId: PropTypes.string,
+  daysInSameStatus: PropTypes.number,
+  statuses: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.object),
+  ]),
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,
+  totalResults: PropTypes.number,
+  onClickDay: PropTypes.func.isRequired,
 }
 
 export { DailyStatusClinicDay, DayBlock }

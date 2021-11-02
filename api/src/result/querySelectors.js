@@ -12,20 +12,27 @@ const LIST_FIELDS = [
   ),
   'r.errorCode',
   'rs.name as resultWorkflowStatus',
+  'rs.i18nkey as resultWorkflowStatusI18nkey',
   'rts.externalId as resultTreatmentStatus',
+  knex.raw(
+    "CASE WHEN GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 THEN NULL ELSE CASE WHEN rts.i18nKey IS NOT NULL THEN rts.i18nKey ELSE 'ResultTreatmentStatusNotAvailable' END END AS resultTreatmentStatusI18nKey"
+  ),
   knex.raw(
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end as treatmentStatusInfo"
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.assayId',
   'rc1.name as resultCategory1Name',
+  'rc1.i18nKey as resultCategory1I18nKey',
   'st.name as stateName',
   'si.name as siteName',
   'a.name as assayName',
+  'a.i18nkey as assayI18nKey',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
   'dis.name as diseaseName',
   'dis.externalId as diseaseExternalId',
+  'rca.requiresTreatment',
 ]
 
 // Fields used for reports mtb-detected-rr-detected and results_hiv_not_suppressed

@@ -1,75 +1,28 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import {
+  bool,
+  func,
+  number,
+  object,
+  oneOfType,
+  shape,
+  string,
+} from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import DATE_CONSTS from '../../globals/consts/DateTime/CONSTS'
-import AspectLink from '../../components/shared/AspectLink'
+import AspectLink from '../AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import IconProvider from '../IconProvider'
-import { buildMessagesFromI18nKeys } from './Helpers'
-import {
-  getTimePeriod,
-  getAllDaysInCurrentMonth,
-} from '../../components/shared/DateTimeInput/utils/date'
+import { buildWidgetToLinkParams, translate } from './Helpers'
 import WidgetAlert from './Alerts'
+import messages from './messages'
 
-const cssClasses = classnames.bind(require('./Widgets.css'))
+import styles from './Widgets.css'
 
-const buildDateRange = term => {
-  let dateRange
-  const {
-    DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
-  } = DATE_CONSTS
-  switch (true) {
-    case term === 'last30Days':
-      dateRange = {
-        [MIN_DATE]: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
-        [MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
-      }
-      break
-
-    case term === 'currentMonth':
-      dateRange = {
-        [MIN_DATE]: getAllDaysInCurrentMonth().start,
-        [MAX_DATE]: getAllDaysInCurrentMonth(true).end,
-      }
-      break
-
-    default:
-      dateRange = {}
-      break
-  }
-  return dateRange
-}
-
-const buildWidgetToLinkParams = (link, linkParams) => {
-  const inParams = JSON.parse(linkParams)
-  if (
-    inParams &&
-    Object.keys(inParams).length !== 0 &&
-    inParams.constructor === Object
-  ) {
-    let tempParams = {}
-    for (const [key, value] of Object.entries(inParams)) {
-      switch (true) {
-        case key === 'dateRange':
-          tempParams = { ...tempParams, ...buildDateRange(value) }
-          break
-
-        default:
-          tempParams[key] = value
-          break
-      }
-    }
-    return `${link}?filters=${encodeURIComponent(
-      new URLSearchParams(tempParams).toString()
-    )}`
-  }
-  return link
-}
+const cssClasses = classnames.bind(styles)
 
 const EmptyWidget = () => (
   <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
@@ -83,51 +36,56 @@ const EmptyWidget = () => (
 )
 
 const AspectWidget = ({
-  data,
   data: {
     link,
     linkParams,
     icon,
     description,
+    descriptionI18nKey,
     count,
     extra,
     title,
+    titleI18nKey,
     unit,
     subTitle,
+    subTitleI18nKey,
     statStatus,
     extraLabel,
     statUnitI18nKey,
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
-  const messages = defineMessage(buildMessagesFromI18nKeys(data))
-  const linkParam = buildWidgetToLinkParams(link, linkParams)
-
+  const { formatMessage } = useIntl()
+  const translator = { formatMessage, messages }
+  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
+  const titleText = translate(titleI18nKey, title, translator)
   return (
     <AspectLink
       to={linkParam}
-      className={cssClasses('Summary', {
-        'Summary_Link--disabled': !link,
-      })}
-      testId="SummaryStatus--Summary_Link"
+      className={{
+        active: cssClasses('Summary'),
+        disabled: cssClasses('Summary', 'Summary_Link--disabled'),
+      }}
     >
       <Card className={cssClasses('Summary__Card')}>
         <div className={cssClasses('Summary__Card__Title')}>
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
             <AspectTooltip
-              title={title}
+              title={titleText}
               toolTipContainerClass="inline__tooltip"
             >
-              {title}
+              {titleText}
             </AspectTooltip>
             <span className={cssClasses('Summary__Card__Title--sub')}>
-              {subTitle}
+              {translate(subTitleI18nKey, subTitle, translator)}
             </span>
           </span>
           {description ? (
-            <AspectTooltip showHelpIcon title={description} />
+            <AspectTooltip
+              showHelpIcon
+              title={translate(descriptionI18nKey, description, translator)}
+            />
           ) : null}
         </div>
         <div className={cssClasses('Summary__Card__Content')}>
@@ -141,7 +99,7 @@ const AspectWidget = ({
                 className={cssClasses('Summary__Card__Item__Messages--main')}
               >
                 {statUnitI18nKey !== null &&
-                  intlFormatMessage(messages.statUnitI18nKey, { unit })}
+                  formatMessage(messages[statUnitI18nKey], { unit })}
               </div>
               <div className={cssClasses('Summary__Card__Item__Messages--sub')}>
                 {statStatus}
@@ -167,23 +125,23 @@ const AspectWidget = ({
 }
 
 AspectWidget.propTypes = {
-  data: PropTypes.shape({
-    link: PropTypes.string,
-    linkParams: PropTypes.string,
-    icon: PropTypes.string,
-    description: PropTypes.string,
-    count: PropTypes.string,
-    extra: PropTypes.object,
-    title: PropTypes.string,
-    unit: PropTypes.string,
-    subTitle: PropTypes.object,
-    statUnit: PropTypes.string,
-    statStatus: PropTypes.object,
-    extraLabel: PropTypes.object,
-    statUnitI18nKey: PropTypes.string,
-    alert: PropTypes.shape({
-      config: PropTypes.object.isRequired,
-      display: PropTypes.isRequired,
+  data: shape({
+    link: string,
+    linkParams: string,
+    icon: string,
+    description: string,
+    count: oneOfType([string, number]),
+    extra: oneOfType([object]),
+    title: string,
+    unit: oneOfType([string, number]),
+    subTitle: oneOfType([object, string]),
+    statUnit: string,
+    statStatus: oneOfType([object]),
+    extraLabel: oneOfType([object]),
+    statUnitI18nKey: string,
+    alert: shape({
+      config: oneOfType([object]).isRequired,
+      display: oneOfType([bool, func]).isRequired,
     }),
   }).isRequired,
 }

@@ -27,7 +27,6 @@ async function up(knex) {
     x.dateTime('createdOn').notNullable()
     x.integer('createdBy').unsigned().index().references('id').inTable('User')
     x.specificType('data', 'JSON')
-    x.charset('utf8')
   })
 
   await knex.schema.alterTable('Result', x => {

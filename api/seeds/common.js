@@ -9,11 +9,14 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
-const {
-  fixture: defaultJobFunctionsFixture,
-} = require('./common/fixtures/jobFunctions')
+const followUpFixture = require('./fixtures/FollowUp.json')
+const timezone = require('./fixtures/TimeZone.json')
+const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
+const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
+const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
+const geneXpertResultDataSchemaMTBXdr = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBXdr.json')
 const geneXpertResultDataSchemaMTBRifUltra = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRifUltra.json')
 const geneXpertResultDataSchemaHivVl = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivVl.json')
 const geneXpertResultDataSchemaHivQual = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaHivQual.json')
@@ -30,40 +33,11 @@ const {
   allAssayTypeToId,
   allResultSourceToId,
   resultCategoryToId,
-  unitToId,
   partnerTypeToId,
 } = require('../src/shared/dictionary')
+const upsertConsumables = require('./common/upsert_consumables')
 
-/**
- *
- * @param {*} knex Knex object
- * @param {*} partnerId The ID of the partner that will get the upsers applied
- * @param {*} adminId The ID of the admin user
- * @param {*} geography The geography definitions
- * @param {*} countryAbbreviation The country's two letters code
- * @param {*} deviceApiToken The API token for GxAlert device
- * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
- */
-async function commonUpserts(
-  knex,
-  partnerId,
-  adminId,
-  geography,
-  countryAbbreviation,
-  deviceApiToken = null,
-  usersInsertConfig = null,
-  partnerData = {}
-) {
-  const now = new Date()
-  utils.hasSeededStaticData = true
-  const auditFields = {
-    createdOn: now,
-    createdBy: adminId,
-    updatedOn: now,
-    updatedBy: adminId,
-  }
-
-  // Reuse previously seeded "static" data
+async function upsertGeography(knex, geography) {
   const countries = {}
   await Promise.each(geography.countries, async country => {
     const countryData = _.pick(country, [
@@ -106,9 +80,46 @@ async function commonUpserts(
     await upsertStatesAndLgas(knex, countryId, country.states)
   })
 
-  const { culture, timezone, id: countryId, geographyId } = countries[
-    countryAbbreviation
-  ]
+  return countries
+}
+
+/**
+ *
+ * @param {*} knex Knex object
+ * @param {*} partnerId The ID of the partner that will get the upsers applied
+ * @param {*} adminId The ID of the admin user
+ * @param {*} geography The geography definitions
+ * @param {*} countryAbbreviation The country's two letters code
+ * @param {*} deviceApiToken The API token for GxAlert device
+ * @param {*} usersInsertConfig If it's not null, function will insert one user for each existing job function. This configuration object includes the props: password (string) | excludedJobFunctions (array of external ids). Ex.: { password: "12345", excludedJobFunctions: [ "admin" ] }
+ */
+async function commonUpserts(
+  knex,
+  partnerId,
+  adminId,
+  geography,
+  countryAbbreviation,
+  deviceApiToken = null,
+  usersInsertConfig = null,
+  partnerData = {}
+) {
+  const now = new Date()
+  utils.hasSeededStaticData = true
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  const countries = await upsertGeography(knex, geography)
+
+  const {
+    culture,
+    timezone,
+    id: countryId,
+    geographyId,
+  } = countries[countryAbbreviation]
   let { id: adminPersonId } =
     (await knex('Person')
       .where({
@@ -258,10 +269,11 @@ async function upsertJobFunction(
   knex,
   jobFunctionName,
   partnerId,
-  permissions,
-  removeMissingPermissions = false
+  permissions = [],
+  options = {}
 ) {
-  if (!permissions) permissions = []
+  const { reports = [], removeMissingPermissions = false } = options
+
   let { id: jobFunctionId } =
     (await knex('JobFunction')
       .where({
@@ -276,12 +288,15 @@ async function upsertJobFunction(
       partnerId,
     })
   }
-  await upsertJobFunctionPermission(
-    knex,
-    jobFunctionId,
-    permissions,
-    removeMissingPermissions
-  )
+  if (!_.isEmpty(reports))
+    await upsertJobFunctionReport(knex, jobFunctionId, reports)
+  if (!_.isEmpty(permissions))
+    await upsertJobFunctionPermission(
+      knex,
+      jobFunctionId,
+      _.uniq(permissions),
+      removeMissingPermissions
+    )
   return jobFunctionId
 }
 
@@ -393,12 +408,42 @@ async function copyDashboardWidgetsFromJobFunction(
   await knex('JobFunctionDashboardWidget').insert(permissions)
 }
 
+async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
+  if (_.isEmpty(reports)) throw new Error('Attemp to insert empty reports')
+  const reportsIds = await knex('Report')
+    .whereIn('externalId', reports)
+    .pluck('id')
+
+  const existingJobFunctionReports = await knex('JobFunctionReport')
+    .where({ jobFunctionId })
+    .pluck('reportId')
+
+  await knex('JobFunctionReport')
+    .where({ jobFunctionId })
+    .whereNotIn('reportId', reportsIds)
+    .delete()
+
+  const JobFunctionReport = _.map(
+    reportsIds.filter(
+      reportId => !existingJobFunctionReports.includes(reportId)
+    ),
+    reportId => ({
+      jobFunctionId,
+      reportId,
+    })
+  )
+  if (!_.isEmpty(JobFunctionReport))
+    await knex('JobFunctionReport').insert(JobFunctionReport)
+}
+
 async function upsertJobFunctionPermission(
   knex,
   jobFunctionId,
   jobPermissions,
   removeMissing = false
 ) {
+  if (_.isEmpty(jobPermissions))
+    throw new Error('Attemp to upsert empty permissions')
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
@@ -419,7 +464,8 @@ async function upsertJobFunctionPermission(
       permissionId,
     })
   )
-  await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  if (!_.isEmpty(JobFunctionPermission))
+    await knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
 
 async function upsertGxAlertDevice(
@@ -582,12 +628,12 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   }
 
   // Add assays
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } =
+    await allResultSourceToId()
 
   const {
     'MTB/Rif': assayTypeMTBRifId,
+    'MTB/XDR': assayTypeMtbXdrId,
     Ebola: assayTypeEbolaId,
     'HIV VL': assayTypeHivVlId,
     'HIV Qual': assayTypeHivQualId,
@@ -596,13 +642,6 @@ async function upsertGeneXpertDeviceTypeAndAssays(
     Unknown: assayTypeUnknownId,
   } = await allAssayTypeToId()
 
-  const piece = await unitToId('Piece')
-  const commonProps = {
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-    quantity: 1,
-  }
   if (_.includes(assayExternalIds, 'GxUnknown')) {
     await createAssay(
       knex,
@@ -634,12 +673,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       null,
       null
     )
-    await upsertConsumables(
-      knex,
-      'Xpert HCV Viral Load Cartridge',
-      'GxHcv',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['GxHcv'])
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
     await createAssay(
@@ -666,12 +700,34 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
-    await upsertConsumables(
+    await upsertConsumables(knex, true, ['GxMtbRif'])
+  }
+  if (_.includes(assayExternalIds, 'GxMtbXdr')) {
+    await createAssay(
       knex,
-      'GeneXpert TB Cartridge',
-      'GxMtbRif',
-      commonProps
+      'GeneXpert MTB/XDR',
+      'assayGeneXpertMtbXdr',
+      'GxMtbXdr',
+      assayTypeMtbXdrId,
+      deviceTypeGeneXpertId,
+      resultSourceDiagnosticId,
+      'XDR',
+      geneXpertPatientDataSchema,
+      overrideResultDataSchema || geneXpertResultDataSchemaMTBXdr,
+      [
+        'Detected',
+        'NotDetected',
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+      ],
+      'MTB',
+      'resultCategoryMtb',
+      'XDR',
+      'resultCategoryXDR'
     )
+    await upsertConsumables(knex, true, ['GxMtbXdr'])
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
     await createAssay(
@@ -699,12 +755,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
-    await upsertConsumables(
-      knex,
-      'GeneXpert TB Ultra Cartridge',
-      'GxMtbRifUltra',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['GxMtbRifUltra'])
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
     await createAssay(
@@ -730,12 +781,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
-    await upsertConsumables(
-      knex,
-      'Xpert HIV-1 Viral Load Cartridge',
-      'GxHiv1Vl',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['GxHiv1Vl'])
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
     await createAssay(
@@ -753,12 +799,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
-    await upsertConsumables(
-      knex,
-      'Xpert HIV-1 Qual Cartridge',
-      'GxHiv1Qual',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['GxHiv1Qual'])
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
     await createAssay(
@@ -776,12 +817,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GP',
       'resultCategoryEbolaGp'
     )
-    await upsertConsumables(
-      knex,
-      'GeneXpert Ebola Cartridge',
-      'GxEbola',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['GxEbola'])
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
     await createAssay(
@@ -803,22 +839,28 @@ async function upsertGeneXpertDeviceTypeAndAssays(
         'Invalid',
         'NoResult',
         'Error',
+        'PresumptivePositive',
       ],
       'COVID-19',
       'resultCategoryCovid19'
     )
-    await upsertConsumables(
-      knex,
-      'GeneXpert COVID-19 Cartridge',
-      'assayGXCovid19',
-      commonProps
-    )
+    await upsertConsumables(knex, true, ['assayGXCovid19'])
   }
 
   await utils.updateAssayResultCategoryTreatmentEmphasize(knex)
 
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
+  await utils.addFollowUps(knex, followUpFixture, null, assayExternalIds)
+
+  const existingAssayExternalIds = await knex('Assay')
+    .whereIn('externalId', assayExternalIds)
+    .pluck('externalId')
+  await upsertResultCategoryGroup(
+    knex,
+    gxResultCategoryGroups,
+    existingAssayExternalIds
+  )
 }
 
 async function createAssay(
@@ -927,7 +969,7 @@ async function upsertStatesAndLgas(knex, countryId, states) {
 }
 
 // adds the categories (array of externalIds) to the given assayId
-// safe to execute multiple times - will only add new entires
+// safe to execute multiple times - will only add new entries
 async function upsertAssayResultCategories(knex, assayId, categories) {
   await Promise.all(
     _.map(categories || [], async category => {
@@ -1077,7 +1119,8 @@ async function getStatesByName(knex, countryId) {
 
 async function baseGxAlertMigration(
   variables = defaultGxAlertMigrationVariables,
-  knex
+  knex,
+  partnerData = {}
 ) {
   // -----------------------------------------------
   // Supplement passed variables with default values
@@ -1190,7 +1233,9 @@ async function baseGxAlertMigration(
     adminId,
     geographyFromGxAlert,
     countries[0].abbreviation,
-    gxAlertDevice.deviceApiKeyToken
+    gxAlertDevice.deviceApiKeyToken,
+    null,
+    partnerData
   )
 
   // --------------------------------------------
@@ -1245,6 +1290,7 @@ async function baseGxAlertMigration(
       order: cf.order,
     }
   })
+
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
     geneXpertAssayExternalIds,
@@ -1568,11 +1614,17 @@ async function baseGxAlertMigration(
         }
       })
       .first()
+    const personTimeZone =
+      _.get(
+        _.find(timezone.data, tz => tz.id === person.timezone),
+        'id'
+      ) || countries[0].timezone
+    const canLogIn = !_.isEmpty(person.username)
     if (existingPerson) {
       if (
         existingPerson.name !== person.personName ||
         existingPerson.partnerId !== partnerId ||
-        existingPerson.timezone !== person.timezone ||
+        existingPerson.timezone !== personTimeZone ||
         existingPerson.title !== person.title ||
         existingPerson.geographyId !== geographyId ||
         existingPerson.email !== person.personEmailAddress ||
@@ -1588,7 +1640,7 @@ async function baseGxAlertMigration(
             ...existingPerson,
             name: person.personName,
             partnerId,
-            timezone: person.timezone,
+            timezone: personTimeZone,
             title: person.title,
             geographyId,
             email: person.personEmailAddress,
@@ -1599,6 +1651,7 @@ async function baseGxAlertMigration(
             hideNotes: person.hideNotes,
             updatedOn: now,
             updatedBy: adminId,
+            canLogIn,
           })
       }
       personId = existingPerson.id
@@ -1606,7 +1659,7 @@ async function baseGxAlertMigration(
       ;[personId] = await knex('Person').insert({
         name: person.personName,
         partnerId,
-        timezone: person.timezone || countries[0].timezone,
+        timezone: personTimeZone,
         geographyId,
         title: person.title,
         email: person.personEmailAddress,
@@ -1619,6 +1672,7 @@ async function baseGxAlertMigration(
         hideSampleId: person.hideSampleId,
         hideNotes: person.hideNotes,
         culture: 'en',
+        canLogIn,
         ...auditFields,
       })
     }
@@ -1682,10 +1736,41 @@ async function baseGxAlertMigration(
   return returnValue
 }
 
+async function removeJobFunctions(knex, jobFunctionsToDelete) {
+  await Promise.each(jobFunctionsToDelete, async ({ id }) => {
+    const jobIds = await knex('Job').where('jobFunctionId', id).pluck('id')
+    if (jobIds.length > 0) {
+      await knex('JobContext').whereIn('jobId', jobIds).delete()
+      await knex('Job').whereIn('id', jobIds).delete()
+    }
+    await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
+    await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
+    await knex('JobFunctionReport').where('jobFunctionId', id).delete()
+    await knex('JobFunction').where({ id }).delete()
+  })
+}
+
+/**
+ *
+ * Synchronizes the provided fixture with the job functions configuration in the database, removing from the database the ones that aren't in the fixture, inserting the ones that aren't at the database, and updating the ones present in both sides.
+ * It makes the same process for updating the permissions and reports assigned to each job function.
+ *
+ * @param {object} knex
+ * @param {Array} jobFunctionFixture
+ * @param {number} partnerId
+ */
 async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
+
+  const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
+  const jobFunctionsToDelete = await knex('JobFunction')
+    .where({ partnerId })
+    .whereNotIn('externalId', externalIds)
+  await removeJobFunctions(knex, jobFunctionsToDelete, partnerId)
+
   await Promise.each(jobFunctionFixture, async jf => {
-    const jobFunction = _.omit(jf, ['permissions'])
+    const jobFunction = _.omit(jf, ['permissions', 'reports'])
+
     const permissionIds = await Promise.map(
       jf.permissions || [],
       async permission => {
@@ -1698,18 +1783,22 @@ async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
 
         if (!permissionId)
           throw new Error(
-            `Unexistant permission ${permission.module}:${permission.activity}`
+            `Permission ${permission.module}:${permission.activity} doesn't exist and therefore cannot be assigned to a job function.`
           )
 
         return permissionId
       }
     )
+
     await upsertJobFunction(
       knex,
       jobFunction.name,
       partnerId,
-      permissionIds,
-      true
+      _.uniq(permissionIds),
+      {
+        reports: jf.reports,
+        removeMissingPermissions: true,
+      }
     )
   })
 }
@@ -2036,43 +2125,6 @@ async function upsertDashboardWidgets(
   )
 }
 
-async function upsertConsumables(
-  knex,
-  consumableName,
-  assayExternalId,
-  { unit, canExpire = 1, manufacturer, quantity = 1 }
-) {
-  if (!unit) {
-    unit = await unitToId('Piece')
-  }
-  const [assayId] = await knex('Assay')
-    .where('externalId', assayExternalId)
-    .pluck('id')
-
-  const propsConsumables = {
-    name: consumableName,
-    unit,
-    canExpire,
-    manufacturer,
-  }
-  let { id: consumableId } =
-    (await knex('Consumable').where(propsConsumables).first()) || {}
-  if (!consumableId) {
-    ;[consumableId] = await knex('Consumable').insert(propsConsumables)
-  }
-  const propsConsumableAssay = {
-    consumableId,
-    assayId,
-    quantity,
-  }
-  const consumableAssay = await knex('ConsumableAssay')
-    .where(propsConsumableAssay)
-    .first()
-  if (!consumableAssay) {
-    await knex('ConsumableAssay').insert(propsConsumableAssay)
-  }
-}
-
 async function upsertPermissionFixture(knex) {
   const currentPermissions = await knex('Permission').select()
 
@@ -2121,8 +2173,8 @@ module.exports = {
   seedLabClinicFixture,
   ensureResultTreatmentStatuses,
   upsertDashboardWidgets,
-  upsertConsumables,
   upsertJobFunctionFixture,
   upsertPermissionFixture,
   getStatesByName,
+  upsertGeography,
 }

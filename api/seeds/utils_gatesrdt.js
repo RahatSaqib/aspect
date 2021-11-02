@@ -89,7 +89,7 @@ async function createSample(knex, siteId, sampleTypeId, i) {
     originSiteId: siteId,
   }
 
-  sample.id = await knex('Sample').insert(sample)
+  ;[sample.id] = await knex('Sample').insert(sample)
 
   return sample
 }
@@ -146,10 +146,8 @@ async function createResults(
     })
   }
 
-  const {
-    Validated: validated,
-    Deliverable: deliverable,
-  } = await allResultWorkflowStatusToId()
+  const { Validated: validated, Deliverable: deliverable } =
+    await allResultWorkflowStatusToId()
 
   const rnd = _.random(0, 100)
   const resultSourceLimsId = await resultSourceToId('LIMS')
@@ -220,7 +218,7 @@ async function createResults(
       deviceId
     )
 
-    const resultId = await knex('Result').insert({
+    const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
       assayId,

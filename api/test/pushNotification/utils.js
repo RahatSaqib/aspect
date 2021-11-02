@@ -74,7 +74,7 @@ class PushNotificationTestContext {
       })
 
       // add issue
-      this.issueId = await knex('Issue').insert({
+      ;[this.issueId] = await knex('Issue').insert({
         issueTypeId,
         issueStatusId,
         partnerId,
@@ -90,7 +90,7 @@ class PushNotificationTestContext {
       assert.isOk(this.issueId)
 
       // add sample push notification message
-      this.messageId = await knex('PushNotificationMessage').insert({
+      ;[this.messageId] = await knex('PushNotificationMessage').insert({
         pushNotificationTemplateId,
         messageStatusId,
         personId: userId,
@@ -103,7 +103,7 @@ class PushNotificationTestContext {
       assert.isOk(this.messageId)
 
       // add notification
-      this.notificationId = await knex('Notification').insert({
+      ;[this.notificationId] = await knex('Notification').insert({
         notificationTypeId,
         issueId: this.issueId,
         personId: userId,

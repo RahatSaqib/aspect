@@ -20,11 +20,14 @@ async function activityOverTimeDashboard(request) {
       devicesInactive: 0,
       devicesTotal: 0,
       inactiveUnknown: 0,
-      inactiveNoResultsReported: 0,
+      inactiveNoTestsPerformed: 0,
       inactiveOutOfInventory: 0,
       inactiveDownForRepair: 0,
-      inactiveConnectivity: 0,
       inactiveDecommissioned: 0,
+      inactiveNoStaff: 0,
+      inactiveNoSamples: 0,
+      inactiveNoPower: 0,
+      inactiveOther: 0,
     }
   )
 
@@ -121,9 +124,9 @@ async function activityOverTimeDashboard(request) {
           WHEN dms.externalId = 'inactiveUnknown'
           THEN d.id ELSE null
         END`),
-      inactiveNoResultsReported: knex.raw(`DISTINCT
+      inactiveNoTestsPerformed: knex.raw(`DISTINCT
         CASE
-          WHEN dms.externalId = 'inactiveNoResultsReported'
+          WHEN dms.externalId = 'inactiveNoTestsPerformed'
           THEN d.id ELSE null
         END`),
       inactiveOutOfInventory: knex.raw(`DISTINCT
@@ -136,14 +139,29 @@ async function activityOverTimeDashboard(request) {
           WHEN dms.externalId = 'inactiveDownForRepair'
           THEN d.id ELSE null
         END`),
-      inactiveConnectivity: knex.raw(`DISTINCT
-        CASE
-          WHEN dms.externalId = 'inactiveConnectivity'
-          THEN d.id ELSE null
-        END`),
       inactiveDecommissioned: knex.raw(`DISTINCT
         CASE
           WHEN dms.externalId = 'inactiveDecommissioned'
+          THEN d.id ELSE null
+        END`),
+      inactiveNoStaff: knex.raw(`DISTINCT
+        CASE
+          WHEN dms.externalId = 'inactiveNoStaff'
+          THEN d.id ELSE null
+        END`),
+      inactiveNoSamples: knex.raw(`DISTINCT
+        CASE
+          WHEN dms.externalId = 'inactiveNoSamples'
+          THEN d.id ELSE null
+        END`),
+      inactiveNoPower: knex.raw(`DISTINCT
+        CASE
+          WHEN dms.externalId = 'inactiveNoPower'
+          THEN d.id ELSE null
+        END`),
+      inactiveOther: knex.raw(`DISTINCT
+        CASE
+          WHEN dms.externalId = 'inactiveOther'
           THEN d.id ELSE null
         END`),
     })

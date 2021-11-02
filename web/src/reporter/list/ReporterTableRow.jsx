@@ -1,68 +1,125 @@
+import React from 'react'
 import classnames from 'classnames/bind'
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+import AspectLink from '../../MigratedComponents/AspectLink'
+import {
+  buildURL,
+  getFiltersObjectFromLocation,
+} from '../../MigratedComponents/AspectLink/helpers'
 
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import isEditable from '../../shared/selectors/isEditable'
-import AspectCheckbox from '../../components/shared/AspectCheckbox'
-import { formatRelative } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import ReporterLinkCell from './ReporterLinkCell'
 
-const ReporterTableRow = ({ intl, reporter, onRevokedItem, ...restProps }) => {
-  const [disabled, setDisabled] = useState({})
-  const user = useSelector(state => state.user)
+import styles from '../../components/shared/DataTableRow.css'
 
-  const onRevokedChange = ({ target }, revoked) => {
-    onRevokedItem({ id: target.dataset.id, revoked })
-  }
-  useEffect(() => {
-    setDisabled(!isEditable(user, 'reporter'))
-  }, [user])
+const cssClasses = classnames.bind(styles)
+
+const ReporterTableRow = ({ reporter, ...restProps }) => {
+  const location = useLocation()
+  // Get current filters - Needed for adding the selected date filters
+  const currentFilters = getFiltersObjectFromLocation(location)
+  const LinkToResults = ({ params = {}, children }) => (
+    <AspectLink
+      to={buildURL('/browse/result', {
+        filters: {
+          ...currentFilters,
+          ...params,
+          /**
+           * when both `reportableSiteName` and `reportableSiteId` are specified then
+           * it means we fetch from API data for concrete site Id, and use name as initial text
+           * value for AutoComplete in filter panel and as label for filter button.
+           * So:
+           * - reportableSiteName - for initialInputValue in AutoComplete and to show in filter button
+           * - reportableSiteId - for payload to fetch data
+           */
+          reportableSiteName: reporter.get('siteName'),
+          reportableSiteId: reporter.get('siteId'),
+        },
+      })}
+    >
+      {children}
+    </AspectLink>
+  )
+
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
-      <TableCell>{reporter.get('user')}</TableCell>
-      <TableCell>{reporter.get('deviceName')}</TableCell>
-      <TableCell>{formatRelative(intl, reporter.get('createdOn'))}</TableCell>
-      <TableCell>{formatRelative(intl, reporter.get('lastSeen'))}</TableCell>
-      <TableCell>{intl.formatNumber(reporter.get('delivered'))}</TableCell>
       <TableCell>
-        {intl.formatNumber(reporter.get('requiresFollowUp'))}
+        <ReporterLinkCell data={reporter} />
       </TableCell>
       <TableCell>
-        {intl.formatNumber(reporter.get('confirmFollowUpRatio'), {
-          style: 'percent',
-        })}
+        <LinkToResults>{reporter.get('totalResults')}</LinkToResults>
       </TableCell>
       <TableCell>
-        {intl.formatNumber(reporter.get('acknowledgedRatio'), {
-          style: 'percent',
-        })}
-      </TableCell>
-      <TableCell
-        style={{
-          color: reporter.get('confirmFollowUpRatio') === 1 ? '' : 'red',
-        }}
-      >
-        {intl.formatNumber(reporter.get('totalOnTreatment'))}/
-        {intl.formatNumber(reporter.get('requiresFollowUp'))}
-      </TableCell>
-      <TableCell>
-        <AspectCheckbox
-          name="revoked"
-          className={cssClasses('Checkbox__field')}
-          inputProps={{
-            'data-id': reporter.get('id'),
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
           }}
-          disabled={disabled}
-          checked={reporter.get('revoked')}
-          onChange={onRevokedChange}
-        />
+        >
+          {reporter.get('delivered')}
+        </LinkToResults>
+      </TableCell>
+      <TableCell>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+          }}
+        >
+          {reporter.get('requiresTreatment')}
+        </LinkToResults>
+      </TableCell>
+      <TableCell>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyTreatmentRequired: true,
+            treatmentStatus: 'OnTreatment',
+          }}
+        >
+          {reporter.get('onTreatment')}
+        </LinkToResults>
+      </TableCell>
+      <TableCell>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyEverTransferred: true,
+            onlyTreatmentRequired: true,
+          }}
+        >
+          {reporter.get('transferred')}
+        </LinkToResults>
+      </TableCell>
+      <TableCell>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+            treatmentStatus: 'NotPossible',
+          }}
+        >
+          {reporter.get('notPossible')}
+        </LinkToResults>
+      </TableCell>
+      <TableCell>
+        <LinkToResults
+          params={{
+            onlyDownloadedByReporter: true,
+            onlyReportableResults: true,
+            onlyTreatmentRequired: true,
+            treatmentStatus: 'AwaitingTreatment',
+          }}
+        >
+          {reporter.get('notOnTreatment')}
+        </LinkToResults>
       </TableCell>
     </TableRow>
   )

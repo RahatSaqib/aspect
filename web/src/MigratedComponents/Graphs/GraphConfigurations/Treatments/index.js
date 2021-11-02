@@ -1,6 +1,15 @@
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
+import subMonths from 'date-fns/subMonths'
+
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
+import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+
+const {
+  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+} = DATE_CONSTS
 
 const treatmentStatusGraphs = {
   treatmentStatus: {
@@ -23,14 +32,14 @@ const treatmentStatusGraphs = {
         selectedValue: 'All Sites',
         endpoint: '/dashboard/site',
         state: 'siteList',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'siteId',
       },
       {
         selectedValue: 'Viral Load',
         endpoint: '/dashboard/site',
         state: 'assayResultCategoryList',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'assayTypeId',
       },
     ],
@@ -43,36 +52,50 @@ const treatmentStatusGraphs = {
         size: 8,
         componentClasses: ['BARCLASS'],
         api: {
-          method: 'POST',
+          method: 'GET',
           endpoint: '/result/confirmed-treatment-tracking',
-          params: {},
+          params: {
+            [MIN_DATE]: startOfMonth(subMonths(new Date(), 12)),
+            [MAX_DATE]: endOfMonth(subMonths(new Date(), 1)),
+          },
         },
         indexBy: 'monthTested',
-        keyToConsume: 'pcConfirmed',
+        keyToConsume: 'pcOnTreatment',
+        i18nKey: {
+          Confirmed: 'Confirmed',
+          NotConfirmed: 'NotConfirmed',
+        },
         tickValuesYShape: 'none',
         tickValuesXShape: 'all',
         displayMethod: 'percentage', // todo: actual
         displayLegend: true,
-        formatDate: 'MMM yy',
+        formatDate: 'MMM',
         clickThrough: {
           allow: true,
           baseUrl: '/browse/result?filters=',
-          keys: ['treatmentStatusId', 'indexBy'],
+          keys: ['treatmentStatus', 'indexBy'],
         },
       },
       {
-        id: 'treatmentStatusMonthly',
+        id: 'treatmentStatusMonthlyPie',
         component: PieGraph,
         type: 'pieLegacyTreatment',
         size: 4,
         componentClasses: ['piegraph__container'],
+        i18nKey: {
+          Confirmed: 'Confirmed',
+          NotConfirmed: 'NotConfirmed',
+        },
         api: {
-          method: 'POST',
+          method: 'GET',
           endpoint: '/result/confirmed-treatment-tracking',
-          params: {},
+          params: {
+            [MIN_DATE]: startOfMonth(subMonths(new Date(), 12)),
+            [MAX_DATE]: endOfMonth(subMonths(new Date(), 1)),
+          },
         },
         indexBy: 'monthTested',
-        keyToConsume: 'cntConfirmed',
+        keyToConsume: 'onTreatment',
         displayMethod: 'percentage',
         formatDate: 'MMM yy',
         averages: {

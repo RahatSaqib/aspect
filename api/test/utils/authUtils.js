@@ -112,7 +112,6 @@ async function createUser(
   const licenseIds = await knex('License as l')
     .whereNull('l.partnerId')
     .orWhere('l.partnerId', partner.id)
-    .select()
     .pluck('l.id')
   await Promise.each(licenseIds, async licenseId => {
     const licensePerson = await knex('LicensePerson')
@@ -237,19 +236,18 @@ async function removeUser(userId) {
   if (!userId) {
     return Promise.resolve()
   }
-  const personIds = await knex('Person')
-    .where({ userId })
-    .select('id')
-    .pluck('id')
-  const jobIds = await knex('Job')
-    .whereIn('personId', personIds)
-    .select('id')
-    .pluck('id')
+  const personIds = await knex('Person').where({ userId }).pluck('id')
+  const jobIds = await knex('Job').whereIn('personId', personIds).pluck('id')
   await knex('JobContext').whereIn('jobId', jobIds).del()
   await knex('Job').whereIn('id', jobIds).del()
   await knex('LicensePerson').whereIn('personId', personIds).del()
   await knex('Person').where({ userId }).del()
   await knex('RefreshToken').where({ userId }).del()
+  await knex('Result').where({ createdBy: userId }).del()
+  await knex('Device').where({ createdBy: userId }).del()
+  const siteIds = await knex('Site').where('createdBy', userId).pluck('id')
+  await knex('Sample').whereIn('originSiteId', siteIds).del()
+  await knex('Site').where({ createdBy: userId }).del()
   await knex('User').where({ id: userId }).del()
 }
 

@@ -8,7 +8,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
   <div
     className="Form__Content"
   >
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -16,6 +16,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       }
       autoFocus={true}
       disabled={true}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -26,10 +27,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       margin="normal"
       name="username"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="text"
-      variant="standard"
     />
     <WithStyles(StrongPasswordInput)
       disabled={true}
@@ -43,10 +41,13 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
           "formatDate": [Function],
+          "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
           "formatDisplayName": [Function],
           "formatList": [Function],
+          "formatListToParts": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
           "formatNumberToParts": [Function],
@@ -76,8 +77,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -88,9 +88,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       }
     />
     <br />
-    <TextField
+    <ForwardRef(TextField)
       autoFocus={true}
       disabled={true}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -100,10 +101,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       label="Confirm New Password"
       name="confirmNewPassword"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
     <WithStyles(AspectSwitch)
       labelText="User lockedout"
@@ -113,34 +111,35 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
   <div
     className="Form__ActionRow"
   >
-    <WithStyles(Button)
+    <ForwardRef(Button)
       color="primary"
       disabled={true}
       type="submit"
       variant="contained"
     >
       Save
-    </WithStyles(Button)>
+    </ForwardRef(Button)>
   </div>
   <AspectDialog
     actions={
       Array [
-        <WithStyles(Button)
+        <ForwardRef(Button)
           color="primary"
           disabled={true}
         >
           Cancel
-        </WithStyles(Button)>,
-        <WithStyles(Button)
+        </ForwardRef(Button)>,
+        <ForwardRef(Button)
           color="primary"
           disabled={true}
           onClick={[Function]}
         >
           Submit
-        </WithStyles(Button)>,
+        </ForwardRef(Button)>,
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -150,7 +149,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
     <p>
       To update your login details, please enter your current password
     </p>
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -158,6 +157,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       }
       autoFocus={true}
       disabled={true}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -168,10 +168,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
   </AspectDialog>
 </form>
@@ -185,7 +182,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__Content"
   >
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -193,6 +190,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -203,10 +201,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       margin="normal"
       name="username"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="text"
-      variant="standard"
     />
     <WithStyles(StrongPasswordInput)
       disabled={false}
@@ -220,10 +215,13 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
           "formatDate": [Function],
+          "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
           "formatDisplayName": [Function],
           "formatList": [Function],
+          "formatListToParts": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
           "formatNumberToParts": [Function],
@@ -253,8 +251,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -265,9 +262,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
     />
     <br />
-    <TextField
+    <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -277,10 +275,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       label="Confirm New Password"
       name="confirmNewPassword"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
     <WithStyles(AspectSwitch)
       labelText="User lockedout"
@@ -290,34 +285,35 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__ActionRow"
   >
-    <WithStyles(Button)
+    <ForwardRef(Button)
       color="primary"
       disabled={true}
       type="submit"
       variant="contained"
     >
       Save
-    </WithStyles(Button)>
+    </ForwardRef(Button)>
   </div>
   <AspectDialog
     actions={
       Array [
-        <WithStyles(Button)
+        <ForwardRef(Button)
           color="primary"
           disabled={false}
         >
           Cancel
-        </WithStyles(Button)>,
-        <WithStyles(Button)
+        </ForwardRef(Button)>,
+        <ForwardRef(Button)
           color="primary"
           disabled={true}
           onClick={[Function]}
         >
           Submit
-        </WithStyles(Button)>,
+        </ForwardRef(Button)>,
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -327,7 +323,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     <p>
       To update your login details, please enter your current password
     </p>
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -335,6 +331,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -345,10 +342,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
   </AspectDialog>
 </form>
@@ -362,7 +356,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__Content"
   >
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -370,6 +364,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -380,10 +375,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       margin="normal"
       name="username"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="text"
-      variant="standard"
     />
     <WithStyles(StrongPasswordInput)
       disabled={false}
@@ -397,10 +389,13 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
           "formatDate": [Function],
+          "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
           "formatDisplayName": [Function],
           "formatList": [Function],
+          "formatListToParts": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
           "formatNumberToParts": [Function],
@@ -430,8 +425,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -442,9 +436,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
     />
     <br />
-    <TextField
+    <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -454,10 +449,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       label="Confirm New Password"
       name="confirmNewPassword"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
     <WithStyles(AspectSwitch)
       labelText="User lockedout"
@@ -467,34 +459,35 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__ActionRow"
   >
-    <WithStyles(Button)
+    <ForwardRef(Button)
       color="primary"
       disabled={true}
       type="submit"
       variant="contained"
     >
       Save
-    </WithStyles(Button)>
+    </ForwardRef(Button)>
   </div>
   <AspectDialog
     actions={
       Array [
-        <WithStyles(Button)
+        <ForwardRef(Button)
           color="primary"
           disabled={false}
         >
           Cancel
-        </WithStyles(Button)>,
-        <WithStyles(Button)
+        </ForwardRef(Button)>,
+        <ForwardRef(Button)
           color="primary"
           disabled={true}
           onClick={[Function]}
         >
           Submit
-        </WithStyles(Button)>,
+        </ForwardRef(Button)>,
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -504,7 +497,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     <p>
       To update your login details, please enter your current password
     </p>
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -512,6 +505,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -522,10 +516,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
   </AspectDialog>
 </form>
@@ -539,7 +530,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__Content"
   >
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -547,6 +538,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -557,10 +549,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       margin="normal"
       name="username"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="text"
-      variant="standard"
     />
     <WithStyles(StrongPasswordInput)
       disabled={false}
@@ -574,10 +563,13 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
           "formatDate": [Function],
+          "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
           "formatDisplayName": [Function],
           "formatList": [Function],
+          "formatListToParts": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
           "formatNumberToParts": [Function],
@@ -607,8 +599,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -619,9 +610,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
     />
     <br />
-    <TextField
+    <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -631,10 +623,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       label="Confirm New Password"
       name="confirmNewPassword"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
     <WithStyles(AspectSwitch)
       labelText="User lockedout"
@@ -644,34 +633,35 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__ActionRow"
   >
-    <WithStyles(Button)
+    <ForwardRef(Button)
       color="primary"
       disabled={true}
       type="submit"
       variant="contained"
     >
       Save
-    </WithStyles(Button)>
+    </ForwardRef(Button)>
   </div>
   <AspectDialog
     actions={
       Array [
-        <WithStyles(Button)
+        <ForwardRef(Button)
           color="primary"
           disabled={false}
         >
           Cancel
-        </WithStyles(Button)>,
-        <WithStyles(Button)
+        </ForwardRef(Button)>,
+        <ForwardRef(Button)
           color="primary"
           disabled={true}
           onClick={[Function]}
         >
           Submit
-        </WithStyles(Button)>,
+        </ForwardRef(Button)>,
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -681,7 +671,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
     <p>
       To update your login details, please enter your current password
     </p>
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -689,6 +679,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -699,10 +690,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
   </AspectDialog>
 </form>
@@ -716,7 +704,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
   <div
     className="Form__Content"
   >
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -724,6 +712,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -734,10 +723,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       margin="normal"
       name="username"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="text"
-      variant="standard"
     />
     <WithStyles(StrongPasswordInput)
       disabled={false}
@@ -751,10 +737,13 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
           "formatDate": [Function],
+          "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
           "formatDisplayName": [Function],
           "formatList": [Function],
+          "formatListToParts": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
           "formatNumberToParts": [Function],
@@ -784,8 +773,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -796,9 +784,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       }
     />
     <br />
-    <TextField
+    <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -808,10 +797,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       label="Confirm New Password"
       name="confirmNewPassword"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
     <WithStyles(AspectSwitch)
       labelText="User lockedout"
@@ -821,34 +807,35 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
   <div
     className="Form__ActionRow"
   >
-    <WithStyles(Button)
+    <ForwardRef(Button)
       color="primary"
       disabled={false}
       type="submit"
       variant="contained"
     >
       Save
-    </WithStyles(Button)>
+    </ForwardRef(Button)>
   </div>
   <AspectDialog
     actions={
       Array [
-        <WithStyles(Button)
+        <ForwardRef(Button)
           color="primary"
           disabled={false}
         >
           Cancel
-        </WithStyles(Button)>,
-        <WithStyles(Button)
+        </ForwardRef(Button)>,
+        <ForwardRef(Button)
           color="primary"
           disabled={false}
           onClick={[Function]}
         >
           Submit
-        </WithStyles(Button)>,
+        </ForwardRef(Button)>,
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -858,7 +845,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
     <p>
       To update your login details, please enter your current password
     </p>
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -866,6 +853,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -876,10 +864,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
   </AspectDialog>
 </form>
@@ -893,7 +878,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
   <div
     className="Form__Content"
   >
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -901,6 +886,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -911,10 +897,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       margin="normal"
       name="username"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="text"
-      variant="standard"
     />
     <WithStyles(StrongPasswordInput)
       disabled={false}
@@ -928,10 +911,13 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
         Object {
           "defaultFormats": Object {},
           "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
           "formatDate": [Function],
+          "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
           "formatDisplayName": [Function],
           "formatList": [Function],
+          "formatListToParts": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
           "formatNumberToParts": [Function],
@@ -961,8 +947,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       textFieldProps={
         Object {
           "autoFocus": true,
-          "error": undefined,
-          "floatingLabelText": "New Password",
+          "error": false,
           "fullWidth": true,
           "helperText": undefined,
           "label": "New Password",
@@ -973,9 +958,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       }
     />
     <br />
-    <TextField
+    <ForwardRef(TextField)
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -985,10 +971,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       label="Confirm New Password"
       name="confirmNewPassword"
       onChange={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
     <WithStyles(AspectSwitch)
       labelText="User lockedout"
@@ -998,34 +981,35 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
   <div
     className="Form__ActionRow"
   >
-    <WithStyles(Button)
+    <ForwardRef(Button)
       color="primary"
       disabled={true}
       type="submit"
       variant="contained"
     >
       Save
-    </WithStyles(Button)>
+    </ForwardRef(Button)>
   </div>
   <AspectDialog
     actions={
       Array [
-        <WithStyles(Button)
+        <ForwardRef(Button)
           color="primary"
           disabled={false}
         >
           Cancel
-        </WithStyles(Button)>,
-        <WithStyles(Button)
+        </ForwardRef(Button)>,
+        <ForwardRef(Button)
           color="primary"
           disabled={true}
           onClick={[Function]}
         >
           Submit
-        </WithStyles(Button)>,
+        </ForwardRef(Button)>,
       ]
     }
     autoScrollBodyContent={false}
+    dialogContentClasses={Object {}}
     maxWidth="md"
     modal={false}
     open={false}
@@ -1035,7 +1019,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
     <p>
       To update your login details, please enter your current password
     </p>
-    <TextField
+    <ForwardRef(TextField)
       FormHelperTextProps={
         Object {
           "margin": "dense",
@@ -1043,6 +1027,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       }
       autoFocus={true}
       disabled={false}
+      error={false}
       fullWidth={true}
       inputProps={
         Object {
@@ -1053,10 +1038,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
-      required={false}
-      select={false}
       type="password"
-      variant="standard"
     />
   </AspectDialog>
 </form>

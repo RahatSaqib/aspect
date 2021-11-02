@@ -19,9 +19,9 @@ const {
   assignContact,
   unAssignContact,
 } = require('./service')
+
 const { exportContacts } = require('./serviceReports')
 const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
-const { exportReporters } = require('./reporterServiceReports')
 
 function listContactBaseConfig() {
   return {
@@ -42,6 +42,10 @@ function listContactBaseConfig() {
           .items(Joi.string())
           .single()
           .description('The tags assigned to persons'),
+        tagDetails: Joi.array()
+          .items(Joi.object())
+          .single()
+          .description('The array of {tagName,tagId} assigned to persons'),
         ...validateAllGeographyFilterParams(),
         ...validateSortPageParams('name', 'level', 'state', 'lga'),
       },
@@ -200,15 +204,6 @@ const routes = [
             ),
         }),
       },
-      ...listReporterBaseConfig(),
-    },
-  },
-  {
-    method: 'GET',
-    path: '/reporter/export',
-    handler: exportReporters,
-    config: {
-      description: 'Export Reporter List into Excel or CSV',
       ...listReporterBaseConfig(),
     },
   },

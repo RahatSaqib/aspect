@@ -21,6 +21,35 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
   return parseDateOrDefault(date, defaultValue)
 }
 
+const getMonthYearUserTimeZoneField = (
+  knex,
+  field,
+  alias = 'monthYear',
+  offset = '+00:00'
+) =>
+  knex.raw(`CONCAT_WS(
+    '-',
+    CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
+    LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
+    ) ${alias ? ` as ${alias}` : ''}`)
+
+const getMonthYearField = (knex, field, alias = 'monthYear') =>
+  knex.raw(`CONCAT_WS(
+    '-',
+    CAST(YEAR(${field}) AS CHAR ),
+    LPAD(CAST(MONTH(${field}) AS CHAR ),2,'0')
+    ) ${alias ? ` as ${alias}` : ''}`)
+
+const getISODateUserTimeZoneField = (
+  knex,
+  field,
+  alias = 'isoDate',
+  offset = '+00:00'
+) =>
+  knex.raw(
+    `CONCAT(DATE_FORMAT(CONVERT_TZ(${field}, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as ${alias}`
+  )
+
 function parseDateOrDefault(
   date,
   options = { formatString: null, backupDate: null, defaultDate: null }
@@ -113,11 +142,13 @@ function getTimeZoneById(allTimeZones, timeZoneId) {
 These are the different patterns of date format this regular expression validate.
 for further information check the unit test api/test/shared/date.test.js:65
 
-2020-11-26T15:00:24.000-11:00
-2020-11-26T15:00:24.000Z
-2020-11-26T15:00:24-11:00
+2020-11-26T15:00:24.000-11:00 (Milliseconds + Timezone Offset)
+2020-11-26T15:00:24.000Z (Milliseconds Only)
+2020-11-26T15:00:24-11:00 (Timezone Offset Only)
+2020-11-26T15%3A00%3A24.000%2B11%3A00 (URI encoded)
 */
-const REGEX_ISODATESTRING = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/
+const REGEX_ISODATESTRING =
+  /^\d{4}-[01]\d-[0-3]\dT[0-2]\d(:|%3A)[0-5]\d(:|%3A)[0-5]\d(\.\d{3})?(Z|[-+]|%2B)?(([0-2]\d)(:|%3A)([0-5]\d))?$/
 
 function getOffsetFromIsoDateString(time) {
   return time.slice(-1) !== 'Z' && REGEX_ISODATESTRING.test(time)
@@ -152,6 +183,8 @@ const startOfMonthUTC = dateString => {
   )
 }
 function startOfDayUtc(date) {
+  const timePart = date.toISOString().split('T')[1]
+  if (timePart && timePart === '00:00:00.000Z') return date
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
 
@@ -167,6 +200,10 @@ function startOfTodayUtc() {
  */
 function getDateSubstring(isoDateTime) {
   return isoDateTime.substring(0, 10)
+}
+
+function dayOfYear(date) {
+  return parseInt(format(date, 'D', { useAdditionalDayOfYearTokens: true }), 10)
 }
 
 module.exports = {
@@ -186,4 +223,8 @@ module.exports = {
   getOffsetFromIsoDateString,
   REGEX_ISODATESTRING,
   getDateSubstring,
+  getMonthYearField,
+  getMonthYearUserTimeZoneField,
+  getISODateUserTimeZoneField,
+  dayOfYear,
 }

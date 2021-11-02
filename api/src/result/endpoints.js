@@ -11,6 +11,7 @@ const {
   validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
+  treatmentTrackingValidationQuery,
 } = require('./endpointsValidation')
 const {
   listResults,
@@ -739,7 +740,7 @@ const routes = [
     },
   },
   {
-    method: 'POST',
+    method: 'GET',
     path: '/result/confirmed-treatment-tracking',
     handler: asyncHandler(confirmedTreatmentTracking),
     config: {
@@ -750,12 +751,7 @@ const routes = [
         scope: ['treatmentStatus:view', 'result:view'],
       },
       validate: {
-        payload: {
-          siteId: Joi.number().integer().allow(null),
-          assayTypeId: Joi.number().integer().allow(null),
-          resultCategoryId: Joi.number().integer().allow(null),
-          endedOn: Joi.date().iso().allow(null).description('Ending date'),
-        },
+        ...treatmentTrackingValidationQuery(),
       },
     },
   },
@@ -1347,6 +1343,12 @@ const routes = [
                 followUp: Joi.string()
                   .allow(null)
                   .description('The followUp that the count is grouped by'),
+                followUpI18nKey: Joi.string()
+                  .allow('', null)
+                  .description('Follow up 18n key'),
+                resultCategory1I18nKey: Joi.string()
+                  .allow('', null)
+                  .description('Result Category 1 18n key'),
               })
             ),
         }),

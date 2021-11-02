@@ -18,7 +18,7 @@ const {
 } = require('./utils')
 const { deviceTypeCategoryToId } = require('../src/shared/dictionary')
 
-async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
+async function getMGITResultFromTBPositive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = getLinkedResultDate(result)
   const now = new Date()
   const assay = _.sample(assaysMGIT)
@@ -44,7 +44,7 @@ async function upsertMGITDeviceTypeAndAssays(
   assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
-  const deviceTypeBDMGITId = await knex('DeviceType').insert({
+  const [deviceTypeBDMGITId] = await knex('DeviceType').insert({
     externalId: 'BDMGIT',
     name: 'BD MGIT',
     manufacturer: 'Becton Dickinson',
@@ -67,7 +67,7 @@ async function upsertMGITDeviceTypeAndAssays(
     (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) ||
     {}
   if (!assayBdMgitAstId) {
-    assayBdMgitAstId = await knex('Assay').insert({
+    ;[assayBdMgitAstId] = await knex('Assay').insert({
       ...assayBdMgitAst,
       externalId: 'assayBdMgitAst',
     })
@@ -121,7 +121,7 @@ async function upsertMGITDeviceTypeAndAssays(
     (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) ||
     {}
   if (!assayBdMgitGndId) {
-    assayBdMgitGndId = await knex('Assay').insert({
+    ;[assayBdMgitGndId] = await knex('Assay').insert({
       ...assayBdMgitGnd,
       externalId: 'assayBdMgitGnd',
     })
@@ -228,7 +228,7 @@ async function upsertCultureAssays(
     (await knex('Assay').where('externalId', 'assayGenericDst').first('id')) ||
     {}
   if (!assayGenericDstId) {
-    assayGenericDstId = await knex('Assay').insert({
+    ;[assayGenericDstId] = await knex('Assay').insert({
       ...assayGenericDst,
       externalId: 'assayGenericDst',
     })
@@ -290,7 +290,7 @@ async function upsertCultureAssays(
       .where('externalId', 'assayGenericCulture')
       .first('id')) || {}
   if (!assayGenericCultureId) {
-    assayGenericCultureId = await knex('Assay').insert({
+    ;[assayGenericCultureId] = await knex('Assay').insert({
       ...assayGenericCulture,
       externalId: 'assayGenericCulture',
     })
@@ -318,12 +318,16 @@ async function upsertCultureAssays(
     })
   )
 
+  await knex('ResultCategoryAssay')
+    .update({ requiresTreatment: 1 })
+    .where({ resultCategoryId: await resultCategoryToId('PositiveMTB') })
+
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
 }
 
 module.exports = {
   upsertMGITDeviceTypeAndAssays,
-  getMGITResultFromTBPossitive,
+  getMGITResultFromTBPositive,
   upsertCultureAssays,
 }

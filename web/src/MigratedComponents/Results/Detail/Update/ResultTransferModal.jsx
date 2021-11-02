@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import { defineMessages, injectIntl } from 'react-intl'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import AutoComplete from '../../../../components/shared/AutoComplete'
@@ -16,79 +16,11 @@ import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
 import { aspectFetch } from '../../../../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
 import { SitesAllErrors } from './errors'
+import messages from '../messages'
 
-const cssClasses = classnames.bind(require('../Detail.css'))
+import styles from '../Detail.css'
 
-const messages = defineMessages({
-  header: {
-    id: 'pages.transferResult.header',
-    defaultMessage: 'Transfer Result',
-  },
-  titleSites: {
-    id: 'pages.transferResult.titleSites',
-    defaultMessage: 'Transfer to Clinic',
-  },
-  hint: {
-    id: 'pages.transferResult.hint',
-    defaultMessage: 'Enter clinic name',
-  },
-  buttonCancel: {
-    id: 'pages.transferResult.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-  buttonTransfer: {
-    id: 'pages.transferResult.buttonTransfer',
-    defaultMessage: 'Transfer',
-  },
-  includeAllResults: {
-    id: 'pages.transferResult.includeAllResults',
-    defaultMessage: 'Include ALL results related to Patient ID',
-  },
-  processing: {
-    id: 'pages.transferResult.processing',
-    defaultMessage: 'Processing...',
-  },
-  note: {
-    id: 'pages.transferResult.note',
-    defaultMessage: `
-      Please notice that above field 'Transfer to Clinic' lists all clinics, even those
-      which you may not have access to.
-      In a such case - by transferring this result you won't
-      be able to edit this result record any more, and your
-      action cannot be undone.
-    `,
-  },
-  successOk: {
-    id: 'pages.transferResult.successOk',
-    defaultMessage: `Ok`,
-  },
-  successHeader: {
-    id: 'pages.transferResult.successHeader',
-    defaultMessage: `
-      Result Transfer Completed
-    `,
-  },
-  successMessage: {
-    id: 'pages.transferResult.successMessage',
-    defaultMessage: `
-      <p>
-        Result for patient <strong>"{{patientId}}"</strong> has been transferred from
-        <strong>
-          "{{oldSiteName}}"
-        </strong>
-        to
-        <strong>
-          "{{newSiteName}}"
-        </strong>
-      </p>
-      <br />
-      <p>
-        After clicking below button <strong>{{buttonOk}}</strong>
-        you will be redirected to the list of results.
-      </p>
-    `,
-  },
-})
+const cssClasses = classnames.bind(styles)
 
 const ResultTransferModal = ({
   intl: { formatMessage },
@@ -104,14 +36,14 @@ const ResultTransferModal = ({
   const [isProcessing, setIsProcessing] = useState(false)
   const [transferError, setTransferError] = useState(null)
   const [isSuccessAlert, setSuccessAlert] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   useQuery(
     [SITE_ALL.KEY],
     async () =>
       fetchWrapperForQueries({
         endpoint: `${SITE_ALL.ENDPOINT}`,
-        errors: SitesAllErrors,
+        customErrorNotifications: SitesAllErrors,
       }),
     {
       onSuccess: ({ data }) =>
@@ -145,11 +77,12 @@ const ResultTransferModal = ({
     }
   }, [isOpen])
 
-  const onRequestClose = () => {
+  const onRequestClose = useCallback(() => {
     if (!isProcessing && onClose) {
       onClose()
     }
-  }
+  }, [isProcessing, onClose])
+
   const onSubmit = () => {
     setIsProcessing(true)
 
@@ -186,7 +119,7 @@ const ResultTransferModal = ({
     () => (
       <div className={cssClasses('processing')}>
         <div className={cssClasses('processing-spinner')}>
-          <CircularProgress size="100%" thickness="1" disableShrink />
+          <CircularProgress size="100%" thickness={1} disableShrink />
         </div>
         <div className={cssClasses('processing-label')}>
           {formatMessage(messages.processing)}
@@ -197,11 +130,6 @@ const ResultTransferModal = ({
   )
 
   const renderSuccessAlert = useCallback(() => {
-    const html = formatMessage(messages.successMessage)
-      .replace('{{patientId}}', patientId)
-      .replace('{{oldSiteName}}', sourceSite && sourceSite.name)
-      .replace('{{newSiteName}}', selectedSite && selectedSite.text)
-      .replace('{{buttonOk}}', formatMessage(messages.successOk))
     return (
       <AspectDialog
         actions={[
@@ -209,27 +137,43 @@ const ResultTransferModal = ({
             color="primary"
             variant="contained"
             onClick={() => {
-              history.push('/browse/result')
+              navigate('/browse/result')
             }}
           >
             {formatMessage(messages.successOk)}
           </Button>,
         ]}
         maxWidth="xs"
+        onClose={(event, reason) => {
+          if (reason !== 'backdropClick') {
+            onRequestClose()
+          }
+        }}
         open
         title={formatMessage(messages.successHeader)}
-        disableBackdropClick
         disableEscapeKeyDown
       >
-        <div
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{
-            __html: html,
-          }}
-        />
+        <div>
+          <p>
+            {formatMessage(messages.successMessagePatient, {
+              patientId: <strong>{patientId}</strong>,
+              oldSiteName: <strong>{sourceSite?.name}</strong>,
+              newSiteName: <strong>{selectedSite?.text}</strong>,
+            })}
+          </p>
+          <br />
+          <p>{formatMessage(messages.successMessageButton)}</p>
+        </div>
       </AspectDialog>
     )
-  }, [history, patientId, formatMessage, sourceSite, selectedSite])
+  }, [
+    formatMessage,
+    patientId,
+    sourceSite?.name,
+    selectedSite?.text,
+    navigate,
+    onRequestClose,
+  ])
 
   return (
     <AspectDialog
@@ -251,11 +195,15 @@ const ResultTransferModal = ({
         </Button>,
       ]}
       maxWidth="sm"
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          onRequestClose()
+        }
+      }}
       open={isOpen}
       onRequestClose={onRequestClose}
       showCrossIcon
       title={`${formatMessage(messages.header)}: ${patientId}`}
-      disableBackdropClick
       disableEscapeKeyDown
     >
       <div>
@@ -272,8 +220,8 @@ const ResultTransferModal = ({
         <TextField
           fullWidth
           multiline
-          rowsMax="5"
-          placeholder="Enter comment"
+          maxRows="5"
+          placeholder={formatMessage(messages.enterComment)}
           onChange={event => setComment(event.target.value)}
           margin="normal"
           value={comment}
@@ -281,11 +229,13 @@ const ResultTransferModal = ({
         />
       </div>
 
-      <CheckboxField
-        checked={includeAllResults}
-        label={formatMessage(messages.includeAllResults)}
-        onChange={(event, isChecked) => setIncludeAllResults(isChecked)}
-      />
+      <div style={{ marginTop: 20, marginBottom: 10 }}>
+        <CheckboxField
+          checked={includeAllResults}
+          label={formatMessage(messages.includeAllResults)}
+          onChange={event => setIncludeAllResults(event.target.checked)}
+        />
+      </div>
       <div className={cssClasses('NoteWrapper')}>
         {formatMessage(messages.note)}
       </div>

@@ -1,6 +1,7 @@
 import React from 'react'
-import TextField from '@material-ui/core/TextField'
 
-const AspectTextArea = props => <TextField {...props} multiline />
+import AspectTextField from './TextField'
+
+const AspectTextArea = props => <AspectTextField {...props} multiline />
 
 export default AspectTextArea

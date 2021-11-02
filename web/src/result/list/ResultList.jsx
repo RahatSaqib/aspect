@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
+import map from 'lodash/map'
 import without from 'lodash/without'
 import partial from 'lodash/partial'
+import filter from 'lodash/filter'
 import identity from 'lodash/identity'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
-import { useHistory, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import fromPairs from 'lodash/fromPairs'
 import { useQuery } from 'react-query'
 
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
-import { receiveList, Items } from '../../shared/metaReducers/items'
+import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -42,11 +43,15 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import AspectButton from '../../components/shared/AspectButton'
+import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { RESULT_LIST } from '../../MigratedComponents/QueryFetch/Result'
+import { i18nWrapper } from '../../Providers/I18nProvider'
 
-const cssClasses = classnames.bind(require('./ResultList.css'))
+import styles from './ResultList.css'
+
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   {
@@ -65,8 +70,20 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   {
+    reportableSiteName: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
+    reportableSiteId: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
     deviceName: true,
     requiredPermissions: ['device'],
+  },
+  {
+    deviceType: true,
+    requiredPermissions: [],
   },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
@@ -75,19 +92,33 @@ const FILTERS_CONFIG = [
     onlyReportableResults: true,
     requiredPermissions: ['assay:view'],
   },
+  {
+    onlyDownloadedByReporter: true,
+    requiredPermissions: [],
+  },
+  {
+    onlyEverTransferred: true,
+    requiredPermissions: [],
+  },
+  { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
 
+// eslint-disable-next-line no-unused-vars
 const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-const onAddNewButtonClick = history => () => history.push('/browse/result/add')
+// eslint-disable-next-line no-unused-vars
+const onAddNewButtonClick = navigate => () => navigate('/browse/result/add')
 
-const onRowClick = history => ({
-  currentTarget: {
-    dataset: { resultId },
-  },
-}) => history.push(`/browse/result/${resultId}`)
+const onRowClick =
+  navigate =>
+  ({
+    currentTarget: {
+      dataset: { resultId },
+    },
+  }) =>
+    navigate(`/browse/result/${resultId}`)
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -97,7 +128,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'sampleId',
     'errorCode',
     'patientId',
-    'resultText',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
     /* --- table.extraColumns BEGIN --- */
@@ -123,76 +153,93 @@ const messageByI18nKey = partial(
   // Explicit declare messageBy[i18nKey] so that the keys are searchable.
   (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
   {
-    resultCategoryCopiesMl: (title, intl) =>
-      intl.formatMessage(messages.resultCategoryCopiesMl),
+    resultCategoryCopiesMl: (title, formatMessage) =>
+      formatMessage(messages.resultCategoryCopiesMl),
     default: identity,
   }
 )
 
-const getBaseColumns = intl => {
-  return Immutable.List([
-    {
-      key: 'endedOn',
-      label: intl.formatMessage(messages.endedOn),
-      sortable: true,
-    },
-    {
-      key: 'deviceName',
-      label: intl.formatMessage(messages.deviceName),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'sampleOriginSiteName',
-      label: intl.formatMessage(messages.sampleOriginSiteName),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'sampleId',
-      label: intl.formatMessage(messages.sampleId),
-      sortable: true,
-    },
-    {
-      key: 'assayName',
-      label: intl.formatMessage(messages.assayName),
-      sortable: true,
-    },
-    {
-      key: 'resultText',
-      label: intl.formatMessage(messages.resultText),
-      sortable: true,
-    },
-    {
-      key: 'errorCode',
-      label: intl.formatMessage(messages.errorCode),
-      sortable: true,
-      hiddenOn: 'md',
-    },
-    {
-      key: 'resultWorkflowStatus',
-      label: intl.formatMessage(messages.resultWorkflowStatus),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'treatmentStatusInfo',
-      label: intl.formatMessage(messages.resultTreatmentStatus),
-      sortable: true,
-      hiddenOn: 'sm',
-    },
-    {
-      key: 'patientId',
-      label: intl.formatMessage(messages.patiendId),
-      sortable: true,
-      hiddenOn: 'xs',
-    },
-  ])
+const getBaseColumns = (extraColumns = []) => {
+  const { formatMessage } = i18nWrapper()
+  return Immutable.List(
+    filter(
+      [
+        {
+          key: 'endedOn',
+          label: formatMessage(messages.endedOn),
+          sortable: true,
+        },
+        {
+          key: 'deviceName',
+          label: formatMessage(messages.deviceName),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+        {
+          key: 'sampleOriginSiteName',
+          label: formatMessage(messages.sampleOriginSiteName),
+          sortable: true,
+          hiddenOn: 'sm',
+        },
+        {
+          key: 'sampleId',
+          label: formatMessage(messages.sampleId),
+          sortable: true,
+        },
+        {
+          key: 'assayName',
+          label: formatMessage(messages.assayName),
+          sortable: true,
+        },
+        {
+          key: 'resultText',
+          label: formatMessage(messages.resultText),
+          sortable: true,
+        },
+        ...map(extraColumns, column => ({
+          key: column?.db,
+          label: messageByI18nKey(column?.i18nKey)(
+            column?.title,
+            formatMessage
+          ),
+          sortable: true,
+          hiddenOn: 'md',
+        })),
+        {
+          key: 'errorCode',
+          label: formatMessage(messages.errorCode),
+          sortable: true,
+          hiddenOn: 'lg',
+        },
+        {
+          key: 'resultWorkflowStatus',
+          label: formatMessage(messages.resultWorkflowStatus),
+          sortable: true,
+          hiddenOn: 'md',
+        },
+        {
+          key: 'treatmentStatusInfo',
+          label: formatMessage(messages.resultTreatmentStatus),
+          sortable: true,
+          hiddenOn: 'md',
+        },
+        {
+          key: 'patientId',
+          label: formatMessage(messages.patientId),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+      ],
+      elem =>
+        (extraColumns.length > 0 && elem.key !== 'resultText') ||
+        extraColumns.length === 0
+    )
+  )
 }
-
 export const ResultListWithProps = ({
   intl,
-  history,
+  // history,
+  navigate,
   location,
   isLoading,
   items,
@@ -210,21 +257,23 @@ export const ResultListWithProps = ({
     <Helmet title={intl.formatMessage(messages.resultsTitle)} />
     <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
     <BrowseFilters
-      history={history}
+      navigate={navigate}
       location={location}
       intl={intl}
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
     >
+      {/** ? 
       <AddNewButton
         type="button"
         color="primary"
         variant="contained"
         browseButton
-        onClick={onAddNewButtonClick(history)}
+        onClick={onAddNewButtonClick(navigate)}
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
+    */}
     </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
@@ -235,15 +284,12 @@ export const ResultListWithProps = ({
         reportName="Results"
       />
       {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
+        <BrowseEmptyList navigate={navigate} location={location} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <ResultDataTable
-          selectable={false}
-          className={cssClasses('ResultDataTable')}
-        >
+        <ResultDataTable className={cssClasses('ResultDataTable')}>
           <ResultDataTableHead
-            history={history}
+            navigate={navigate}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
@@ -258,8 +304,9 @@ export const ResultListWithProps = ({
                   intl={intl}
                   extraColumns={table.extraColumns}
                   result={result}
-                  onClick={onRowClick(history)}
+                  onClick={onRowClick(navigate)}
                   data-result-id={result.get('id')}
+                  messages={messages}
                 />
               ))}
           </TableBody>
@@ -267,7 +314,7 @@ export const ResultListWithProps = ({
       )}
       {!items.currentIdList.isEmpty() && (
         <BrowseTablePaginator
-          history={history}
+          navigate={navigate}
           location={location}
           intl={intl}
           timedMessageUsed={sortCol === 'endedOn'}
@@ -285,9 +332,11 @@ export const ResultListWithProps = ({
 const ResultList = () => {
   // >>>>>> Hooks <<<<<<
   const intl = useIntl()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
-  const userPermissions = useSelector(state => state.user.jwt.permissions)
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
@@ -327,17 +376,18 @@ const ResultList = () => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const {
-      sanitized: filtersSanitized,
-      value: filtersParams,
-    } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
     }
 
     const sortPage = makeSortPageSelector({
@@ -349,7 +399,7 @@ const ResultList = () => {
       ? new URLSearchParams(urlSearchParams.get('filters'))
       : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(fromPairs([...urlFilters.entries()]))
+    setFilters(getFilters(urlFilters))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
@@ -357,23 +407,13 @@ const ResultList = () => {
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
     if (data) {
-      const { data: list, total: totalItems } = data
-      setItems(receiveList(items, Immutable.fromJS(list)))
+      const { data: list, total: totalItems, extraColumns } = data
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
-      setTable(receiveTableItems(table, totalItems))
-      setColumns(
-        getBaseColumns(intl).concat(
-          table.extraColumns.map(column => ({
-            key: column.get('db'),
-            label: messageByI18nKey(column.get('i18nKey'))(
-              column.get('title'),
-              intl
-            ),
-            sortable: true,
-            hiddenOn: 'md',
-          }))
-        )
-      )
+      const newTable = receiveTableItems(table, totalItems, extraColumns)
+      setTable(newTable)
+
+      setColumns(getBaseColumns(extraColumns))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
@@ -387,16 +427,16 @@ const ResultList = () => {
         formatType,
         sortCol,
         sortDir,
-        page,
-        size,
+        0,
+        total,
         'results'
       )
     }
   }
-
   const baseProps = {
     intl,
-    history,
+    // history,
+    navigate,
     location,
     isLoading,
     items,
@@ -410,7 +450,6 @@ const ResultList = () => {
     pageAt: page,
     pageSize: size,
   }
-
   if (isError) throw new Error(error)
 
   return <ResultListWithProps {...baseProps} />

@@ -1,0 +1,993 @@
+{
+  "fields": [
+    {
+      "id": 301,
+      "name": "PlainField",
+      "title": "plain field",
+      "i18nKey": "PlainFieldi18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "caption": "PlainField value",
+      "i18nKeyCaption": "PlainFieldi18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 302,
+      "name": "ConditionalField",
+      "title": "conditional field",
+      "i18nKey": "ConditionalFieldi18nKey",
+      "fieldType": "text",
+      "order": 0,
+      "caption": "ConditionalField value",
+      "i18nKeyCaption": "ConditionalFieldi18nCaptionKey",
+      "controlType": "textBox",
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "PlainField",
+          "valueToCompare": 1,
+          "operator": "===",
+          "conjunctionGroupName": "PlainFieldCollectionGroup"
+        }
+      ]
+    },
+    {
+      "id": 303,
+      "name": "ValidationField",
+      "i18nKey": "ValidationFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "title": "ValidationField",
+      "caption": "ValidationField value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 1,
+          "max": 10,
+          "errorMessage": "This value should be higher than 0",
+          "errorMessageI18nKey": "ValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 304,
+      "name": "datetime",
+      "i18nKey": "ProbeBi18nKey",
+      "fieldType": "date",
+      "order": 6,
+      "title": "datetime field",
+      "caption": "datetime field value",
+      "i18nKeyCaption": "i18nCaptionKey",
+      "controlType": "datePicker"
+    },
+    {
+      "id": 305,
+      "name": "calculatedLabel",
+      "i18nKey": "calculatedLabelI18nkey",
+      "fieldType": "number",
+      "order": 15,
+      "title": "Calculated Label",
+      "caption": "calculatedLabel value",
+      "i18nKeyCaption": "calculatedLabel",
+      "controlType": "textBox",
+      "calculated": {
+        "fieldId1": 5,
+        "fixedValue": "now",
+        "function": "datediff",
+        "format": "week"
+      }
+    },
+    {
+      "id": 306,
+      "name": "dataSource",
+      "title": "dataSource",
+      "i18nKey": "dataSource",
+      "fieldType": "text",
+      "order": 0,
+      "controlType": "comboBox",
+      "optionSource": "state",
+      "required": true
+    },
+    {
+      "id": 307,
+      "name": "CheckboxedField",
+      "fieldType": "text",
+      "title": "CheckboxedField Type",
+      "i18nKey": "treatmentTypei18nKey",
+      "caption": "The treatmet type applied to the patient",
+      "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
+      "order": 0,
+      "controlType": "checkBox",
+      "required": true
+    },
+    {
+      "id": 308,
+      "name": "outcome",
+      "title": "outcome",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 3,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "value": "Cured",
+          "key": 0
+        },
+        {
+          "value": "Died",
+          "key": 2
+        },
+        {
+          "value": "Recovered",
+          "key": 3
+        },
+        {
+          "value": "Not Recovered",
+          "key": 4
+        },
+        {
+          "value": "Unknown",
+          "key": 5
+        }
+      ]
+    },
+    {
+      "id": 309,
+      "name": "ReferringHealthFacilityProvince",
+      "title": "Referring Health Facility Province",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 40,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "items": [
+        {
+          "key": "Punjab",
+          "text": "Punjab",
+          "order": 0
+        },
+        {
+          "key": "Sindh",
+          "value": "Sindh",
+          "order": 1
+        },
+        {
+          "key": "Balochistan",
+          "value": "Balochistan",
+          "order": 3
+        },
+        {
+          "key": "Khyber Pakhtunkhwa",
+          "value": "Khyber Pakhtunkhwa",
+          "order": 4
+        },
+        {
+          "key": "FATA",
+          "value": "FATA",
+          "order": 5
+        },
+        {
+          "key": "Azad Jammu & Kahmir",
+          "value": "Azad Jammu & Kahmir",
+          "order": 6
+        },
+        {
+          "key": "Gilgit Baltistan",
+          "value": "Gilgit Baltistan",
+          "order": 7
+        },
+        {
+          "key": "Islamabad & CT",
+          "value": "Islamabad & CT",
+          "order": 8
+        }
+      ]
+    },
+    {
+      "id": 310,
+      "name": "ReferringHealthFacilityDistrict",
+      "title": "Referring Health Facility District",
+      "i18nKey": "outcomei18nKey",
+      "fieldType": "text",
+      "order": 45,
+      "controlType": "autoComplete",
+      "required": false,
+      "typeOfOptionSource": "fixedList",
+      "filters": [
+        {
+          "conjunction": "or",
+          "propToCompare": "ReferringHealthFacilityProvince",
+          "fieldToCompare": "state",
+          "operator": "==="
+        },
+        {
+          "propToCompare": "ReferringHealthFacilityProvince",
+          "fieldToCompare": "state",
+          "operator": "not-selected"
+        }
+      ],
+      "items": [
+        {
+          "key": "Attock",
+          "value": "Attock",
+          "order": 0,
+          "state": "Punjab"
+        },
+        {
+          "key": "Bahawalnagar",
+          "value": "Bahawalnagar",
+          "order": 1,
+          "state": "Punjab"
+        },
+        {
+          "key": "Bahawalpur",
+          "value": "Bahawalpur",
+          "order": 2,
+          "state": "Punjab"
+        },
+        {
+          "key": "Bhakkar",
+          "value": "Bhakkar",
+          "order": 3,
+          "state": "Punjab"
+        },
+        {
+          "key": "Chakwal",
+          "value": "Chakwal",
+          "order": 4,
+          "state": "Punjab"
+        },
+        {
+          "key": "Chiniot",
+          "value": "Chiniot",
+          "order": 5,
+          "state": "Punjab"
+        },
+        {
+          "key": "Dera Ghazi Khan",
+          "value": "Dera Ghazi Khan",
+          "order": 6,
+          "state": "Punjab"
+        },
+        {
+          "key": "Faisalabad",
+          "value": "Faisalabad",
+          "order": 7,
+          "state": "Punjab"
+        },
+        {
+          "key": "Gujranwala",
+          "value": "Gujranwala",
+          "order": 8,
+          "state": "Punjab"
+        },
+        {
+          "key": "Gujrat",
+          "value": "Gujrat",
+          "order": 9,
+          "state": "Punjab"
+        },
+        {
+          "key": "Hafizabad",
+          "value": "Hafizabad",
+          "order": 10,
+          "state": "Punjab"
+        },
+        {
+          "key": "Jhang",
+          "value": "Jhang",
+          "order": 11,
+          "state": "Punjab"
+        },
+        {
+          "key": "Jhelum",
+          "value": "Jhelum",
+          "order": 12,
+          "state": "Punjab"
+        },
+        {
+          "key": "Kasur",
+          "value": "Kasur",
+          "order": 13,
+          "state": "Punjab"
+        },
+        {
+          "key": "Khanewal",
+          "value": "Khanewal",
+          "order": 14,
+          "state": "Punjab"
+        },
+        {
+          "key": "Khushab",
+          "value": "Khushab",
+          "order": 15,
+          "state": "Punjab"
+        },
+        {
+          "key": "Lahore",
+          "value": "Lahore",
+          "order": 16,
+          "state": "Punjab"
+        },
+        {
+          "key": "Layyah",
+          "value": "Layyah",
+          "order": 17,
+          "state": "Punjab"
+        },
+        {
+          "key": "Lodhran",
+          "value": "Lodhran",
+          "order": 18,
+          "state": "Punjab"
+        },
+        {
+          "key": "Mandi Bahaudin",
+          "value": "Mandi Bahaudin",
+          "order": 19,
+          "state": "Punjab"
+        },
+        {
+          "key": "Mianwali",
+          "value": "Mianwali",
+          "order": 20,
+          "state": "Punjab"
+        },
+        {
+          "key": "Multan",
+          "value": "Multan",
+          "order": 21,
+          "state": "Punjab"
+        },
+        {
+          "key": "Muzaffargarh",
+          "value": "Muzaffargarh",
+          "order": 22,
+          "state": "Punjab"
+        },
+        {
+          "key": "Nankana Sahib",
+          "value": "Nankana Sahib",
+          "order": 23,
+          "state": "Punjab"
+        },
+        {
+          "key": "Narowal",
+          "value": "Narowal",
+          "order": 24,
+          "state": "Punjab"
+        },
+        {
+          "key": "Okara",
+          "value": "Okara",
+          "order": 25,
+          "state": "Punjab"
+        },
+        {
+          "key": "Pak Pattan",
+          "value": "Pak Pattan",
+          "order": 26,
+          "state": "Punjab"
+        },
+        {
+          "key": "Rahim Yar Khan",
+          "value": "Rahim Yar Khan",
+          "order": 27,
+          "state": "Punjab"
+        },
+        {
+          "key": "Rajanpur",
+          "value": "Rajanpur",
+          "order": 28,
+          "state": "Punjab"
+        },
+        {
+          "key": "Rawalpindi",
+          "value": "Rawalpindi",
+          "order": 29,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sahiwal",
+          "value": "Sahiwal",
+          "order": 30,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sargodha",
+          "value": "Sargodha",
+          "order": 31,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sheikhupura",
+          "value": "Sheikhupura",
+          "order": 32,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sialkot",
+          "value": "Sialkot",
+          "order": 33,
+          "state": "Punjab"
+        },
+        {
+          "key": "Toba Tek Singh",
+          "value": "Toba Tek Singh",
+          "order": 34,
+          "state": "Punjab"
+        },
+        {
+          "key": "Vehari",
+          "value": "Vehari",
+          "order": 35,
+          "state": "Punjab"
+        },
+        {
+          "key": "Badin",
+          "value": "Badin ",
+          "order": 0,
+          "state": "Sindh"
+        },
+        {
+          "key": "Dadu",
+          "value": "Dadu",
+          "order": 1,
+          "state": "Sindh"
+        },
+        {
+          "key": "Ghotki",
+          "value": "Ghotki",
+          "order": 2,
+          "state": "Sindh"
+        },
+        {
+          "key": "Hyderabad",
+          "value": "Hyderabad",
+          "order": 3,
+          "state": "Sindh"
+        },
+        {
+          "key": "Jacobabad",
+          "value": "Jacobabad",
+          "order": 4,
+          "state": "Sindh"
+        },
+        {
+          "key": "Jamshoro",
+          "value": "Jamshoro",
+          "order": 5,
+          "state": "Sindh"
+        },
+        {
+          "key": "Karachi",
+          "value": "Karachi",
+          "order": 6,
+          "state": "Sindh"
+        },
+        {
+          "key": "Kashmore",
+          "value": "Kashmore",
+          "order": 7,
+          "state": "Sindh"
+        },
+        {
+          "key": "Khairpur",
+          "value": "Khairpur",
+          "order": 8,
+          "state": "Sindh"
+        },
+        {
+          "key": "Larkana",
+          "value": "Larkana",
+          "order": 9,
+          "state": "Sindh"
+        },
+        {
+          "key": "Matiari",
+          "value": "Matiari",
+          "order": 10,
+          "state": "Sindh"
+        },
+        {
+          "key": "Mirpurkhas",
+          "value": "Mirpurkhas",
+          "order": 11,
+          "state": "Sindh"
+        },
+        {
+          "key": "Naushahro Feroz",
+          "value": "Naushahro Feroz",
+          "order": 12,
+          "state": "Sindh"
+        },
+        {
+          "key": "Qamber Shahdadkot",
+          "value": "Qamber Shahdadkot",
+          "order": 13,
+          "state": "Sindh"
+        },
+        {
+          "key": "Sanghar",
+          "value": "Sanghar",
+          "order": 14,
+          "state": "Sindh"
+        },
+        {
+          "key": "Shaheed Benazirabad",
+          "value": "Shaheed Benazirabad",
+          "order": 15,
+          "state": "Sindh"
+        },
+        {
+          "key": "Shikarpur",
+          "value": "Shikarpur",
+          "order": 16,
+          "state": "Sindh"
+        },
+        {
+          "key": "Sujawal",
+          "value": "Sujawal",
+          "order": 17,
+          "state": "Sindh"
+        },
+        {
+          "key": "Sukkur",
+          "value": "Sukkur",
+          "order": 18,
+          "state": "Sindh"
+        },
+        {
+          "key": "Tando Allahyar",
+          "value": "Tando Allahyar",
+          "order": 19,
+          "state": "Sindh"
+        },
+        {
+          "key": "Tando Muhammad Khan",
+          "value": "Tando Muhammad Khan",
+          "order": 20,
+          "state": "Sindh"
+        },
+        {
+          "key": "Tharparkar",
+          "value": "Tharparkar",
+          "order": 21,
+          "state": "Sindh"
+        },
+        {
+          "key": "Thatha",
+          "value": "Thatha",
+          "order": 22,
+          "state": "Sindh"
+        },
+        {
+          "key": "Umerkot",
+          "value": "Umerkot",
+          "order": 23,
+          "state": "Sindh"
+        },
+        {
+          "key": "Killa Saifullah",
+          "value": "Killa Saifullah",
+          "order": 12,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Kohlu",
+          "value": "Kohlu",
+          "order": 13,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Lasbela",
+          "value": "Lasbela",
+          "order": 14,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Loralai",
+          "value": "Loralai",
+          "order": 15,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Mastung",
+          "value": "Mastung",
+          "order": 16,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Musakhel",
+          "value": "Musakhel",
+          "order": 17,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Nasirabad",
+          "value": "Nasirabad",
+          "order": 18,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Nuskhi",
+          "value": "Nuskhi",
+          "order": 19,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Panjgur",
+          "value": "Panjgur",
+          "order": 20,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Pishin",
+          "value": "Pishin",
+          "order": 21,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Quetta",
+          "value": "Quetta",
+          "order": 22,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Sibi",
+          "value": "Sibi",
+          "order": 23,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Sherani",
+          "value": "Sherani",
+          "order": 24,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Turbat",
+          "value": "Turbat",
+          "order": 25,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Washuk",
+          "value": "Washuk",
+          "order": 26,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Zhob",
+          "value": "Zhob",
+          "order": 27,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Ziarat",
+          "value": "Ziarat",
+          "order": 28,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Abbottabad",
+          "value": "Abbottabad",
+          "order": 0,
+          "state": "KP"
+        },
+        {
+          "key": "Bannu",
+          "value": "Bannu",
+          "order": 1,
+          "state": "KP"
+        },
+        {
+          "key": "Battagram",
+          "value": "Battagram",
+          "order": 2,
+          "state": "KP"
+        },
+        {
+          "key": "Buner",
+          "value": "Buner",
+          "order": 3,
+          "state": "KP"
+        },
+        {
+          "key": "Charsadda",
+          "value": "Charsadda",
+          "order": 4,
+          "state": "KP"
+        },
+        {
+          "key": "Chitral",
+          "value": "Chitral",
+          "order": 5,
+          "state": "KP"
+        },
+        {
+          "key": "Dera Ismail Khan",
+          "value": "Dera Ismail Khan",
+          "order": 6,
+          "state": "KP"
+        },
+        {
+          "key": "Hangu",
+          "value": "Hangu",
+          "order": 7,
+          "state": "KP"
+        },
+        {
+          "key": "Haripur",
+          "value": "Haripur",
+          "order": 8,
+          "state": "KP"
+        },
+        {
+          "key": "Karak",
+          "value": "Karak",
+          "order": 9,
+          "state": "KP"
+        },
+        {
+          "key": "Kohat",
+          "value": "Kohat",
+          "order": 10,
+          "state": "KP"
+        },
+        {
+          "key": "Kohistan",
+          "value": "Kohistan",
+          "order": 11,
+          "state": "KP"
+        },
+        {
+          "key": "Lakki Marwat",
+          "value": "Lakki Marwat",
+          "order": 12,
+          "state": "KP"
+        },
+        {
+          "key": "Lower Dir",
+          "value": "Lower Dir",
+          "order": 13,
+          "state": "KP"
+        },
+        {
+          "key": "Malakand",
+          "value": "Malakand",
+          "order": 14,
+          "state": "KP"
+        },
+        {
+          "key": "Mansehra",
+          "value": "Mansehra",
+          "order": 15,
+          "state": "KP"
+        },
+        {
+          "key": "Mardan",
+          "value": "Mardan",
+          "order": 16,
+          "state": "KP"
+        },
+        {
+          "key": "Nowshera",
+          "value": "Nowshera",
+          "order": 17,
+          "state": "KP"
+        },
+        {
+          "key": "Peshawar",
+          "value": "Peshawar",
+          "order": 18,
+          "state": "KP"
+        },
+        {
+          "key": "Shangla",
+          "value": "Shangla",
+          "order": 19,
+          "state": "KP"
+        },
+        {
+          "key": "Swabi",
+          "value": "Swabi",
+          "order": 20,
+          "state": "KP"
+        },
+        {
+          "key": "Swat",
+          "value": "Swat",
+          "order": 21,
+          "state": "KP"
+        },
+        {
+          "key": "Tank",
+          "value": "Tank",
+          "order": 22,
+          "state": "KP"
+        },
+        {
+          "key": "Upper Dir",
+          "value": "Upper Dir",
+          "order": 23,
+          "state": "KP"
+        },
+        {
+          "key": "Bajour Agency",
+          "value": "Bajour Agency",
+          "order": 0,
+          "state": "FATA"
+        },
+        {
+          "key": "Khyber Agency",
+          "value": "Khyber Agency",
+          "order": 1,
+          "state": "FATA"
+        },
+        {
+          "key": "Kurram Agency",
+          "value": "Kurram Agency",
+          "order": 2,
+          "state": "FATA"
+        },
+        {
+          "key": "Mohmand Agency",
+          "value": "Mohmand Agency",
+          "order": 3,
+          "state": "FATA"
+        },
+        {
+          "key": "North Waziristan",
+          "value": "North Waziristan",
+          "order": 4,
+          "state": "FATA"
+        },
+        {
+          "key": "South Warizistan",
+          "value": "South Warizistan",
+          "order": 5,
+          "state": "FATA"
+        },
+        {
+          "key": "Orakzai Agency",
+          "value": "Orakzai Agency",
+          "order": 6,
+          "state": "FATA"
+        },
+        {
+          "key": "Bagh",
+          "value": "Bagh",
+          "order": 0,
+          "state": "AJK"
+        },
+        {
+          "key": "Bhimber",
+          "value": "Bhimber",
+          "order": 1,
+          "state": "AJK"
+        },
+        {
+          "key": "Hattian Bala",
+          "value": "Hattian Bala",
+          "order": 2,
+          "state": "AJK"
+        },
+        {
+          "key": "Haveli",
+          "value": "Haveli",
+          "order": 3,
+          "state": "AJK"
+        },
+        {
+          "key": "Kotli",
+          "value": "Kotli",
+          "order": 4,
+          "state": "AJK"
+        },
+        {
+          "key": "Mirpur",
+          "value": "Mirpur",
+          "order": 5,
+          "state": "AJK"
+        },
+        {
+          "key": "Muzaffarabad",
+          "value": "Muzaffarabad",
+          "order": 6,
+          "state": "AJK"
+        },
+        {
+          "key": "Neelum",
+          "value": "Neelum",
+          "order": 7,
+          "state": "AJK"
+        },
+        {
+          "key": "Poonch",
+          "value": "Poonch",
+          "order": 8,
+          "state": "AJK"
+        },
+        {
+          "key": "Sudhnoti",
+          "value": "Sudhnoti",
+          "order": 9,
+          "state": "AJK"
+        },
+        {
+          "key": "Astore",
+          "value": "Astore",
+          "order": 0,
+          "state": "GB"
+        },
+        {
+          "key": "Diamir",
+          "value": "Diamir",
+          "order": 1,
+          "state": "GB"
+        },
+        {
+          "key": "Ghanche",
+          "value": "Ghanche",
+          "order": 2,
+          "state": "GB"
+        },
+        {
+          "key": "Ghizer",
+          "value": "Ghizer",
+          "order": 3,
+          "state": "GB"
+        },
+        {
+          "key": "Gilgit",
+          "value": "Gilgit",
+          "order": 4,
+          "state": "GB"
+        },
+        {
+          "key": "Hunza",
+          "value": "Hunza",
+          "order": 5,
+          "state": "GB"
+        },
+        {
+          "key": "Kharmang",
+          "value": "Kharmang",
+          "order": 6,
+          "state": "GB"
+        },
+        {
+          "key": "Nagar",
+          "value": "Nagar",
+          "order": 7,
+          "state": "GB"
+        },
+        {
+          "key": "Shigar",
+          "value": "Shigar",
+          "order": 8,
+          "state": "GB"
+        },
+        {
+          "key": "Skardu",
+          "value": "Skardu",
+          "order": 9,
+          "state": "GB"
+        },
+        {
+          "key": "Islamabad",
+          "value": "Islamabad",
+          "order": 0,
+          "state": "ICT"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

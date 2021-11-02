@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
 const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
+const logger = require('../shared/logger')
 
 const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
@@ -105,10 +106,12 @@ async function authenticate(request) {
         message: err.message,
       }
       if (err.isConnectionError !== undefined) {
-        const boomMessage = err.isConnectionError
-          ? "Couldn't connect to GxAlert"
-          : 'There was a conflict with your credentials'
-        return Boom.conflict(boomMessage, data)
+        if (err.isConnectionError)
+          return Boom.conflict("Couldn't connect to GxAlert", data)
+        return Boom.unauthorized(
+          'There was a conflict with your GxAlert credentials',
+          data
+        )
       }
 
       return Boom.internal(
@@ -119,7 +122,7 @@ async function authenticate(request) {
   }
 
   if (user.lockedOut === 1) {
-    return Boom.unauthorized('Your account is locked.')
+    return Boom.forbidden('Your account is locked.')
   }
 
   // if password isn't a bcrypt hash, user was migrated from
@@ -138,21 +141,30 @@ async function authenticate(request) {
     const pwResult = await bcryptCompare(payload.password, user.password)
 
     if (!pwResult) {
-      const lock =
-        user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
+      const attempts = user.failedPasswordAttempts + 1
+      const lock = attempts >= config.passwordAttempts ? 1 : 0
       const updateFailedPass = query(
         'Update failed password attempts and set locked out status on user'
       )
         .from('User')
         .where({ id: user.id })
         .update({
-          failedPasswordAttempts: user.failedPasswordAttempts + 1,
+          failedPasswordAttempts: attempts,
           lockedOut: lock,
         })
 
       await updateFailedPass
 
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+      if (lock) {
+        logger.alert(`User account locked due to too many invalid login attempts
+        Username: ${payload.name}
+        Attempts: ${attempts}
+        `)
+      }
+
+      return Boom.unauthorized(
+        'Authentication failed. Wrong username or password.'
+      )
     }
   }
 
@@ -571,9 +583,8 @@ async function createResetPasswordToken(request) {
       },
       users[0].culture
     )
-    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(
-      generatedEmail.html
-    )
+    const inlineImageAttachments =
+      await templateProcessor.getInlineImageAttachments(generatedEmail.html)
 
     await emailUtil.sendEmail(
       params.email,

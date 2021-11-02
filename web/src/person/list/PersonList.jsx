@@ -1,9 +1,8 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
@@ -21,10 +20,10 @@ import {
 import requirePermissions from '../../components/shared/requirePermissions'
 import AspectButton from '../../components/shared/AspectButton'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
-// import CheckboxField from '../../components/shared/CheckboxField'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -37,41 +36,46 @@ import {
   PersonDataTableHead,
   PersonDataTableRow,
 } from './PersonDataTable'
+import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 import ExportListButton from '../../globals/components/ExportListButton'
 
-const cssClasses = classnames.bind(require('./PersonList.css'))
+import styles from './PersonList.css'
 
-const messages = defineMessages({
+const cssClasses = classnames.bind(styles)
+
+const messages = {
   ...commonDefinitions,
-  contactsTitle: {
-    id: 'pages.PersonList.title',
-    defaultMessage: 'Contacts',
-  },
-  personName: {
-    id: 'pages.PersonList.personName',
-    defaultMessage: 'Name',
-  },
-  level: {
-    id: 'pages.PersonList.level',
-    defaultMessage: 'Job',
-  },
-  paginatorStatus: {
-    id: 'pages.PersonList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+  ...defineMessages({
+    contactsTitle: {
+      id: 'pages.PersonList.title',
+      defaultMessage: 'Contacts',
+    },
+    personName: {
+      id: 'pages.PersonList.personName',
+      defaultMessage: 'Name',
+    },
+    level: {
+      id: 'pages.PersonList.level',
+      defaultMessage: 'Job',
+    },
+    paginatorStatus: {
+      id: 'pages.PersonList.paginatorStatus',
+      defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
       one {# contact}
       other {# contacts}
     }`,
-  },
-  tags: {
-    id: 'pages.PersonList.tags',
-    defaultMessage: 'Tags',
-  },
-  addContact: {
-    id: 'pages.PersonList.addContact',
-    defaultMessage: 'New Contact',
-  },
-})
+    },
+    tags: {
+      id: 'pages.PersonList.tags',
+      defaultMessage: 'Tags',
+    },
+    addContact: {
+      id: 'pages.PersonList.addContact',
+      defaultMessage: 'New Contact',
+    },
+  }),
+}
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -96,7 +100,6 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  injectIntl,
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -107,7 +110,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: fromPairs([...filtersParams.entries()]),
+        filters: getFilters(filtersParams),
       }
     }
   ),
@@ -124,69 +127,67 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({
-      location,
-      fetchPersons,
-      sortCol,
-      sortDir,
-      pageAt,
-      pageSize,
-    }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
-      }
-    },
-
-    onExcelClick: ({
-      location,
-      exportContacts,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportContacts(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'contacts'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { personId },
+    onInitialLoad:
+      ({ location, fetchPersons, sortCol, sortDir, pageAt, pageSize }) =>
+      () => {
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        }
       },
-    }) => history.push(`/browse/person/${personId}`),
 
-    showNewContactPage: ({ history }) => event => {
-      event.stopPropagation()
-      history.push('/browse/person/add')
-    },
+    onExcelClick:
+      ({ location, exportContacts, sortCol, sortDir, pageAt, table }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+        if (!sanitized) {
+          exportContacts(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            table.get('total') > 0 ? table.get('total') : 1,
+            format,
+            'contacts'
+          )
+        }
+      },
+
+    onRowClick:
+      ({ navigate }) =>
+      ({
+        currentTarget: {
+          dataset: { personId },
+        },
+      }) =>
+        navigate(`/browse/person/${personId}`),
+
+    showNewContactPage:
+      ({ navigate }) =>
+      event => {
+        event.stopPropagation()
+        navigate('/browse/person/add')
+      },
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -201,7 +202,7 @@ const enhance = compose(
       this.props.onInitialLoad()
     },
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
       }
@@ -210,8 +211,7 @@ const enhance = compose(
 )
 
 export const PersonList = ({
-  intl,
-  history,
+  navigate,
   location,
   table,
   items,
@@ -229,14 +229,14 @@ export const PersonList = ({
   const AddNewButton = requirePermissions({
     permissions: ['person:edit'],
   })(AspectButton)
+  const { formatMessage } = i18nWrapper()
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.contactsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.contactsTitle)} />
+      <Helmet title={formatMessage(messages.contactsTitle)} />
+      <NavTitle title={formatMessage(messages.contactsTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
-        intl={intl}
         config={reducedFilters}
       >
         <AddNewButton
@@ -246,13 +246,13 @@ export const PersonList = ({
           browseButton
           onClick={showNewContactPage}
         >
-          {intl.formatMessage(messages.addContact)}
+          {formatMessage(messages.addContact)}
         </AddNewButton>
       </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}
@@ -262,39 +262,36 @@ export const PersonList = ({
         />
 
         {!items.currentIdList.isEmpty() && (
-          <PersonDataTable
-            selectable={false}
-            className={cssClasses('PersonDataTable')}
-          >
+          <PersonDataTable className={cssClasses('PersonDataTable')}>
             <PersonDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
               columns={[
                 {
                   key: 'name',
-                  label: intl.formatMessage(messages.personName),
+                  label: formatMessage(messages.personName),
                   sortable: true,
                 },
                 {
                   key: 'level',
-                  label: intl.formatMessage(messages.level),
+                  label: formatMessage(messages.level),
                   sortable: true,
                 },
                 {
                   key: 'state',
-                  label: getCustomMessage(intl, messages, 'state', user),
+                  label: getCustomMessage(messages, 'state', user),
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: getCustomMessage(intl, messages, 'lga', user),
+                  label: getCustomMessage(messages, 'lga', user),
                   sortable: true,
                 },
                 {
                   key: 'tags',
-                  label: intl.formatMessage(messages.tags),
+                  label: formatMessage(messages.tags),
                   sortable: true,
                 },
               ]}
@@ -305,7 +302,6 @@ export const PersonList = ({
                 .map(person => (
                   <PersonDataTableRow
                     key={person.get('id')}
-                    intl={intl}
                     person={person}
                     onClick={onRowClick}
                     data-person-id={person.get('id')}
@@ -316,9 +312,8 @@ export const PersonList = ({
         )}
         {!items.currentIdList.isEmpty() && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}
             pageAt={pageAt}

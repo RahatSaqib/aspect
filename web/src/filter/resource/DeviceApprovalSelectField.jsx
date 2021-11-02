@@ -1,27 +1,23 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
+import Immutable from 'immutable'
+import messages from '../../shared/messages/deviceApprovalMessages'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchDeviceApprovals: PropTypes.func.isRequired,
-    deviceApprovalItems: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-      })
-    ).isRequired,
+    deviceApprovalItems: PropTypes.instanceOf(Immutable.List).isRequired,
     onDeviceApprovalChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }
@@ -30,6 +26,8 @@ export class DeviceApprovalSelectField extends PureComponent {
     allItemText: 'All',
     value: '',
   }
+
+  static contextType = I18nContext
 
   componentDidMount() {
     this.props.fetchDeviceApprovals(false)
@@ -48,13 +46,19 @@ export class DeviceApprovalSelectField extends PureComponent {
       'onDeviceApprovalChange',
       'value',
     ])
+    const { formatMessage } = this.context
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceApprovalItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {formatI18nMessage(
+              messages,
+              formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

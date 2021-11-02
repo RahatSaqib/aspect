@@ -1,8 +1,9 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
+import isNull from 'lodash/isNull'
 
+import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
@@ -17,74 +18,82 @@ import {
 } from '../InventoryRedux'
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 
-const cssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from '../../components/shared/DataTableRow.css'
 
-const InventoryTableRow = ({ inventoryItem, key }) => {
-  const intl = useIntl()
+const cssClasses = classnames.bind(styles)
+
+const InventoryTableRow = ({ inventoryItem }) => {
+  const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
   const getActions = isInTransit => [
     {
       icon: 'FaCheck',
-      text: intl.formatMessage(messages.receiveInventory),
+      text: formatMessage(messages.receiveInventory),
       disabled: !isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showReceiveInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaPlus',
-      text: intl.formatMessage(messages.addInventory),
+      text: formatMessage(messages.addInventory),
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showAddInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaExchangeAlt',
-      text: intl.formatMessage(messages.transferInventory),
+      text: formatMessage(messages.transferInventory),
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showTransferInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaMinus',
-      text: intl.formatMessage(messages.removeInventory),
+      text: formatMessage(messages.removeInventory),
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showRemoveInventoryDialog(inventoryItemId)),
     },
   ]
 
+  // helper funcs
+  const hasProp = name => inventoryItem.get('visibleProperties').includes(name)
+  const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
+  const hasQtyOnHand = qty =>
+    isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
+  const hasDailyConsumption = qty =>
+    isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(qty)
+
   return (
-    <TableRow key={key} className={cssClasses('TableRow')}>
-      {inventoryItem.get('visibleProperties').includes('siteName') ? (
+    <TableRow className={cssClasses('TableRow')}>
+      {hasProp('siteName') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'siteName'])}
+          rowSpan={rowSpan('siteName')}
         >
           {inventoryItem.get('siteName')}
         </TableCell>
       ) : null}
-      {inventoryItem.get('visibleProperties').includes('consumableName') ? (
+      {hasProp('consumableName') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'consumableName'])}
+          rowSpan={rowSpan('consumableName')}
         >
           {inventoryItem.get('consumableName')}
         </TableCell>
       ) : null}
-      {inventoryItem.get('visibleProperties').includes('quantityOnHand') ? (
+      {hasProp('quantityOnHand') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'quantityOnHand'])}
+          rowSpan={rowSpan('quantityOnHand')}
         >
           {inventoryItem.get('inTransitFromSiteName') ? (
             <span>
-              {intl.formatNumber(inventoryItem.get('quantityOnHand'))}
+              {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
               &nbsp;
               <small>
-                {intl.formatMessage(messages.inTransitFromSiteName, {
+                {formatMessage(messages.inTransitFromSiteName, {
                   inTransitFromSiteName: inventoryItem.get(
                     'inTransitFromSiteName'
                   ),
@@ -92,14 +101,22 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
               </small>
             </span>
           ) : (
-            inventoryItem.get('quantityOnHand')
+            hasQtyOnHand(inventoryItem.get('quantityOnHand'))
           )}
         </TableCell>
       ) : null}
-      {inventoryItem.get('visibleProperties').includes('expiresOn') ? (
+      {hasProp('dailyConsumptionRate') ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
+          rowSpan={rowSpan('dailyConsumptionRate')}
+        >
+          {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
+        </TableCell>
+      ) : null}
+      {hasProp('expiresOn') ? (
+        <TableCell
+          className={cssClasses('TableCell')}
+          rowSpan={rowSpan('expiresOn')}
         >
           <span
             className={
@@ -112,6 +129,14 @@ const InventoryTableRow = ({ inventoryItem, key }) => {
               ? formatDate(inventoryItem.get('expiresOn'))
               : 'N/A'}
           </span>
+        </TableCell>
+      ) : null}
+      {hasProp('stockLeft') ? (
+        <TableCell
+          className={cssClasses('TableCell')}
+          rowSpan={rowSpan('stockLeft')}
+        >
+          {inventoryItem.get('stockLeft')}
         </TableCell>
       ) : null}
       <TableCell className={cssClasses('TableCell')}>

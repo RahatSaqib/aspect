@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
+import findIndex from 'lodash/findIndex'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import { mergeFormConfigWithData } from '../../../Form/Formik/Helpers'
 import AspectForm from '../../../Form'
@@ -26,10 +26,10 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
 
   const { isLoading, isError, error } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
-    async (key, { resultId }) =>
+    async ({ queryKey: [, { resultId }] }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-        errors: ResultDetailsErrors,
+        customErrorNotifications: ResultDetailsErrors,
       }),
     { onSuccess: setFormData }
   )
@@ -42,8 +42,13 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
     // define few extra props for `transfer` button
     const action = formSchema.actions.items.find(x => x.id === 'transfer')
     action.onClick = () => setTransferResultOpen(true)
-    action.isVisible = (permissions, isEditMode) =>
-      !isEditMode && !!permissions.get('result:edit')
+    action.isVisible = (permissions, isEditMode) => {
+      return (
+        !isEditMode &&
+        // eslint-disable-next-line lodash/prefer-some
+        findIndex(permissions, elem => elem === 'result:edit') >= 0
+      )
+    }
   }, [])
 
   useEffect(() => {

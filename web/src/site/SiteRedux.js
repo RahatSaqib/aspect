@@ -1,5 +1,4 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
@@ -24,6 +23,7 @@ import {
   Table,
 } from '../shared/metaReducers/table'
 import { getLatLongFromAddress, convertToFloat } from './utils/address'
+import { getFilters } from '../filter/utils'
 
 export const types = {
   REQUEST_SITES: 'REQUEST_SITES',
@@ -69,7 +69,7 @@ function rejectSites() {
 
 export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestSites(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
@@ -123,7 +123,7 @@ export function exportSites(
   reportName
 ) {
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
 
     return aspectFetch(
       `/site/export?${stringify({
@@ -401,7 +401,10 @@ export default function siteReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_SINGLE_SITE:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
-        mutState.set('items', receiveItem(mutState.items, immutItem))
+        mutState.set(
+          'items',
+          mutState.items.setIn(['byId', immutItem.get('id')], immutItem)
+        )
       })
     case types.RECEIVE_ASSIGN_PERSON:
       return state.withMutations(mutState => {

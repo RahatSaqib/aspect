@@ -6,9 +6,11 @@ import keys from 'lodash/keys'
 import last from 'lodash/last'
 import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
+import get from 'lodash/get'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
+import nth from 'lodash/nth'
 import sortBy from 'lodash/sortBy'
 import startCase from 'lodash/startCase'
 import split from 'lodash/split'
@@ -26,7 +28,6 @@ import {
   getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
-  lastMonthLabel,
   negateTimeZoneOffset,
 } from '../../../../components/shared/DateTimeInput/utils/date'
 
@@ -139,7 +140,7 @@ const clubsandwich = (boundaries, rounded = false) => {
   const low = first(boundaries)
   const high = last(boundaries)
   const middle = high / 2
-  return [low, rounded ? roundIfNumber(middle) : middle, high]
+  return uniq([low, rounded ? roundIfNumber(middle) : middle, high])
 }
 
 const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
@@ -211,13 +212,12 @@ const generateTickValues = (
     default:
       break
   }
-
   return values
 }
 
 const filterColour = value =>
   graphColorMap.filter(
-    color => color.externalId === value || color.id === 99
+    color => color.externalId === value || color.id === 999
   )[0].color
 
 const generateColorForValue = ({ id: valueId }) => filterColour(valueId)
@@ -241,21 +241,33 @@ const generateToolTip = (
   displayMethod,
   assaysFromState,
   formatNumber,
-  type
+  type,
+  formatMessage,
+  intlMessages,
+  i18nKeys = {}
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
-  let displayId = translateLabel(id, assaysFromState)
+  let displayId = translateLabel(
+    id,
+    assaysFromState,
+    formatMessage,
+    intlMessages,
+    i18nKeys
+  )
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
     const displayCount = Math.round(devicesTotal * valuePercentage)
-    const displayTitle = `device${displayCount === 1 ? '' : 's'}`
+    const displayTitle = formatMessage(
+      intlMessages[`device${displayCount === 1 ? '' : 's'}`]
+    )
+
     displayValue = `${displayCount} ${displayTitle}`
   } else if (type === 'solid') {
     displayValue = value
   } else if (type === 'barInventory') {
-    displayId = 'Locations'
+    displayId = formatMessage(intlMessages.location)
     displayValue = value
   } else if (type === 'bar' || type === 'barLegacyTreatment') {
     let totalOut = 0
@@ -288,13 +300,23 @@ const removeStringsFromArray = string => {
   return newString.length > 1 ? newString[1] : newString[0]
 }
 
-const translateLabel = (string, assaysFromState, legendsToRename) => {
-  const dictionary = legendsToRename ? [...legendsToRename] : []
+const translateLabel = (
+  string,
+  assaysFromState,
+  formatMessage,
+  intlMessages,
+  i18nKeys
+) => {
+  const dictionary = []
   assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
-      resultCategories.map(({ externalId, name }) =>
-        dictionary.push({ externalId, name })
+      resultCategories.map(
+        ({ resultCategories }) =>
+          Array.isArray(resultCategories) &&
+          resultCategories.map(({ externalId, name }) =>
+            dictionary.push({ externalId, name })
+          )
       )
   )
 
@@ -302,22 +324,29 @@ const translateLabel = (string, assaysFromState, legendsToRename) => {
   const newString = assayResults.filter(
     ({ externalId }) => externalId === string
   )
-
-  return newString.length
-    ? newString[0].name
+  return formatMessage && intlMessages[i18nKeys[string]]
+    ? formatMessage(intlMessages[i18nKeys[string]]) ||
+        get(nth(newString, 0), 'name')
     : makeProperCase(removeStringsFromArray(string))
 }
-
-const generateLegend = (
+const generateLegendIntl = (
+  formatMessage,
+  intlMessages,
+  i18nKeys,
   string,
   assaysFromState,
   type = false,
-  legendsNotToRender = false,
-  legendsToRename = false
+  legendsNotToRender = false
 ) => {
-  if (!legendsNotToRender.includes(string)) {
+  if (!legendsNotToRender?.includes(string)) {
     return {
-      label: translateLabel(string, assaysFromState, legendsToRename, type),
+      label: translateLabel(
+        string,
+        assaysFromState,
+        formatMessage,
+        intlMessages,
+        i18nKeys
+      ),
       color: generateColorForLegend(string, type),
     }
   }
@@ -331,9 +360,11 @@ const formatDataByGraphType = (
   formatDate,
   indexBy,
   keyToConsume,
-  keysToRename,
+  i18nKeys,
   type,
-  mergedParams
+  mergedParams,
+  formatMessage,
+  messages
 ) => {
   let grouped
   switch (type) {
@@ -376,7 +407,12 @@ const formatDataByGraphType = (
       break
 
     case 'barInventory':
-      grouped = groupForInvetoryStatusAPI(data, keysToRename)
+      grouped = groupForInvetoryStatusAPI(
+        data,
+        i18nKeys,
+        formatMessage,
+        messages
+      )
       break
 
     case 'pieLegacyTreatment':
@@ -452,7 +488,13 @@ const extractOptionValue = (identifier, selectedOption) => {
         consumableId: selectedOption ? selectedOption.consumableId : null,
       }
       break
-
+    case 'consumableExternalId':
+      optionValue = {
+        consumableExternalId: selectedOption
+          ? selectedOption.consumableExternalId
+          : null,
+      }
+      break
     default:
       break
   }
@@ -492,7 +534,7 @@ export {
   formatValuesForGraphs,
   generateColorForLegend,
   generateColorForValue,
-  generateLegend,
+  generateLegendIntl,
   generateMargin,
   generateTickValues,
   generateToolTip,
@@ -512,7 +554,6 @@ export {
   groupForPie,
   groupForPieOldTreatmentAPI,
   groupForPieRow,
-  lastMonthLabel,
   negateTimeZoneOffset,
   normaliseKeys,
   percentageOrActualForPie,

@@ -12,9 +12,9 @@ import {
 } from '../../../components/shared/tableBody'
 import { formatRelative } from '../../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(
-  require('./NotificationDeliveryTableRow.css')
-)
+import styles from './NotificationDeliveryTableRow.css'
+
+const cssClasses = classnames.bind(styles)
 
 const enhance = identity(injectIntl)
 
@@ -33,7 +33,7 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>{delivery.title}</TableCell>
     <TableCell className={cssClasses('TableCell')}>{delivery.site}</TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {formatRelative(intl, delivery.time)}
+      {formatRelative(delivery.time)}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>…</TableCell>
   </TableRow>

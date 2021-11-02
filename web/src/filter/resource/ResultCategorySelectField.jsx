@@ -1,24 +1,28 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
+import isArray from 'lodash/isArray'
 import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
-
-// Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
+import messages from './i18n/generalMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { I18nContext } from '../../Providers/I18nProvider'
 
 export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
-    assayId: PropTypes.string,
+    assayId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string),
+    ]),
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }
@@ -28,6 +32,8 @@ export class ResultCategorySelectField extends PureComponent {
     assayId: '',
     value: '',
   }
+
+  static contextType = I18nContext
 
   componentDidMount() {
     this.props.fetchAssays(false)
@@ -47,17 +53,24 @@ export class ResultCategorySelectField extends PureComponent {
       'onResultCategoryChange',
       'value',
     ])
-    const possibleAssay = assayItems.find(a => a.get('id') === assayId)
+    const assayIds = isArray(assayId) ? assayId : [assayId]
+    const possibleAssay = assayItems.find(a => assayIds.includes(a.get('id')))
     const resultCategories = possibleAssay
       ? possibleAssay.get('resultCategories')
       : []
+    const { formatMessage } = this.context
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {resultCategories.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {formatI18nMessage(
+              messages,
+              formatMessage,
+              a.get('i18nKey'),
+              a.get('name')
+            )}
           </MenuItem>
         ))}
       </SelectField>

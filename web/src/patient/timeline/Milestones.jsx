@@ -1,19 +1,21 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import ExpansionPanel from '@material-ui/core/ExpansionPanel'
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionActions from '@material-ui/core/AccordionActions'
 import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
-const cssClasses = classnames.bind(require('./Milestones.css'))
+import styles from './Milestones.css'
 
-const sampleTexts = {
+const cssClasses = classnames.bind(styles)
+
+const messages = defineMessages({
   sampleId: {
-    id: 'pages.Milestones.sampleId',
+    id: 'pages.MilestonesSample.sampleId',
     defaultMessage: 'Sample ',
   },
   originalSiteName: {
@@ -32,9 +34,6 @@ const sampleTexts = {
     id: 'pages.Milestones.notes',
     defaultMessage: 'Description: ',
   },
-}
-
-const resultsTexts = {
   result: {
     id: 'pages.Milestones.resultNotes',
     defaultMessage: 'Result ',
@@ -55,17 +54,6 @@ const resultsTexts = {
     id: 'pages.Milestones.viewResultsDetails',
     defaultMessage: 'view Results Details ',
   },
-  notes: {
-    id: 'pages.Milestones.notes',
-    defaultMessage: 'Description: ',
-  },
-  sampleId: {
-    id: 'pages.Milestones.sampleId',
-    defaultMessage: 'Sample Id: ',
-  },
-}
-
-const followUpsTexts = {
   date: {
     id: 'pages.Milestones.date',
     defaultMessage: 'Date ',
@@ -82,15 +70,9 @@ const followUpsTexts = {
     id: 'pages.Milestones.followUpCreatedOn',
     defaultMessage: 'Created On: ',
   },
-}
-const treatmentTexts = {
   resultTreatmentStatusLogDate: {
     id: 'pages.Milestones.resultTreatmentStatusLogData',
     defaultMessage: 'Treatment date: ',
-  },
-  date: {
-    id: 'pages.Milestones.date',
-    defaultMessage: 'Created on: ',
   },
   resultTreatmentStatusLogMethod: {
     id: 'pages.Milestones.resultTreatmentStatusLogMethod',
@@ -104,7 +86,7 @@ const treatmentTexts = {
     id: 'pages.Milestones.resultTreatmentName',
     defaultMessage: 'Treatment',
   },
-}
+})
 
 const TimelineGenericPatientMilestone = ({
   title,
@@ -115,7 +97,7 @@ const TimelineGenericPatientMilestone = ({
 }) => {
   const [expanded, setExpanded] = useState(expand)
   return (
-    <ExpansionPanel
+    <Accordion
       onChange={(event, expandparam) => setExpanded(expandparam)}
       style={{
         width: '100%',
@@ -124,9 +106,7 @@ const TimelineGenericPatientMilestone = ({
       }}
       expanded={expanded}
     >
-      <ExpansionPanelSummary
-        expandIcon={expanded ? <span>-</span> : <span>+</span>}
-      >
+      <AccordionSummary expandIcon={expanded ? <span>-</span> : <span>+</span>}>
         <div style={{ width: '100%' }}>
           <div className={cssClasses('Summary__Title')}>{title.key}</div>
           <div
@@ -136,8 +116,8 @@ const TimelineGenericPatientMilestone = ({
             {title.value}
           </div>
         </div>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails style={{ display: 'table' }}>
+      </AccordionSummary>
+      <AccordionDetails style={{ display: 'table' }}>
         <div style={{ width: '100%' }}>
           <ul>
             {details &&
@@ -153,58 +133,57 @@ const TimelineGenericPatientMilestone = ({
               ))}
           </ul>
         </div>
-      </ExpansionPanelDetails>
+      </AccordionDetails>
       {link && (
-        <ExpansionPanelActions style={{ width: '100%', marginRight: 10 }}>
+        <AccordionActions style={{ width: '100%', marginRight: 10 }}>
           <Link
             to={link.to}
             className={cssClasses('Summary__Description__Link')}
           >
             {link.text}
           </Link>
-        </ExpansionPanelActions>
+        </AccordionActions>
       )}
-    </ExpansionPanel>
+    </Accordion>
   )
 }
 
 const TimelineItemResult = ({ result, intl, expand }) => {
-  const messagesResult = defineMessages(resultsTexts)
   const detailsFields = [
     {
-      key: intl.formatMessage(messagesResult.resultSiteName),
+      key: intl.formatMessage(messages.resultSiteName),
       value: result.get('resultSiteName'),
     },
     {
-      key: intl.formatMessage(messagesResult.assayType),
+      key: intl.formatMessage(messages.assayType),
       value: result.get('assayAbbreviation'),
     },
     {
-      key: intl.formatMessage(messagesResult.resultEndedOn),
+      key: intl.formatMessage(messages.resultEndedOn),
       value: format(
         parseISO(result.get('resultEndedOn')),
         'yyyy-MM-dd HH:mm:ss'
       ),
     },
     {
-      key: intl.formatMessage(messagesResult.notes),
+      key: intl.formatMessage(messages.notes),
       value: result.get('resultNotes'),
     },
     {
-      key: intl.formatMessage(messagesResult.sampleId),
+      key: intl.formatMessage(messages.sampleId),
       value: result.get('sampleId'),
     },
   ]
   return (
     <TimelineGenericPatientMilestone
       title={{
-        key: intl.formatMessage(messagesResult.result),
+        key: intl.formatMessage(messages.result),
         value: result.get('description'),
       }}
       details={detailsFields}
       link={{
         to: `/browse/result/${result.get('resultId')}`,
-        text: intl.formatMessage(messagesResult.viewResultsDetails),
+        text: intl.formatMessage(messages.viewResultsDetails),
       }}
       expand={expand}
       color="#c2f9e3"
@@ -213,7 +192,6 @@ const TimelineItemResult = ({ result, intl, expand }) => {
 }
 
 const TimelineItemFollowUp = ({ fu, intl, expand }) => {
-  const messages = defineMessages(followUpsTexts)
   const detailsFields = [
     {
       key: intl.formatMessage(messages.date),
@@ -241,7 +219,6 @@ const TimelineItemFollowUp = ({ fu, intl, expand }) => {
   )
 }
 const TimelineItemSample = ({ sample, intl, expand }) => {
-  const messages = defineMessages(sampleTexts)
   const detailsFields = [
     {
       key: intl.formatMessage(messages.originalSiteName),
@@ -277,7 +254,6 @@ const TimelineItemSample = ({ sample, intl, expand }) => {
 }
 
 const TimelineItemTreatment = ({ treatment, intl, expand }) => {
-  const messages = defineMessages(treatmentTexts)
   const detailsFields = [
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogDate),

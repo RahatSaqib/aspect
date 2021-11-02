@@ -22,7 +22,7 @@ module.exports = {
       'avgTimeToUpload',
       'moduleSwaps',
       'instrumentsReplaced',
-      'unusedModules',
+      'percentageOfModulesFunctioning',
       'averageRecipientsOfEmail',
       'averageRecipientsOfSms',
       'averageLengthOfSms',
@@ -33,6 +33,8 @@ module.exports = {
       'averageDurationServiceInterruption',
       'percentageOfDaysWithServiceInterruption',
       'serverUptimeTitle',
+      'deviceCalibrationPastDue',
+      'deviceCalibratedWhenDue',
     ])
   ),
 }

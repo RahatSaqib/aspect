@@ -1,13 +1,17 @@
-// eslint-disable-next-line import/order
-const { addIssueTypes } = require('../relativeObjectsSeeds')
-
 module.exports = require('../utils').seed(seed, __filename)
 
-const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
+const {
+  serverUrl,
+  partnerName,
+  adminUserName,
+  adminPassword,
+  deviceApiToken,
+} = require('./fixtures/partnerData')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget')
@@ -29,7 +33,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User')
-    .where({ name: 'myanmar_admin' })
+    .where({ name: adminUserName })
     .first('id')
   if (existingAdminUser) {
     return
@@ -37,8 +41,8 @@ async function seed(knex) {
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
-    name: 'myanmar_admin',
-    password: bcrypt.hashSync(ADMIN_PW, saltRounds),
+    name: adminUserName,
+    password: bcrypt.hashSync(adminPassword, saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -52,13 +56,13 @@ async function seed(knex) {
   }
 
   const [partnerId] = await knex('Partner').insert({
-    name: 'Myanmar',
+    name: partnerName,
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
-    serverUrl: 'https://myanmar.aspect.id',
+    serverUrl,
   })
   await addIssueTypes(knex, partnerId, adminId, null)
   // Reuse previously seeded "static" data
@@ -80,7 +84,7 @@ async function seed(knex) {
     .select('s.id', 's.name', 's.abbreviation')
 
   // create site for GxAlert device
-  const gxAlertSiteId = await knex('Site').insert({
+  const [gxAlertSiteId] = await knex('Site').insert({
     ...auditFields,
     name: 'GxAlert Site',
     shortName: 'GxA Site',
@@ -92,7 +96,7 @@ async function seed(knex) {
   })
 
   // insert GxAlert device
-  const gxAlertDeviceId = await knex('Device').insert({
+  const [gxAlertDeviceId] = await knex('Device').insert({
     ...auditFields,
     name: 'GxAlert',
     deviceTypeId: await deviceTypeToId('GxAlert'),
@@ -107,7 +111,7 @@ async function seed(knex) {
   })
 
   await knex('DeviceApiKey').insert({
-    token: 'ukpjat39531egjy4pc20',
+    token: deviceApiToken,
     revoked: 0,
     partnerId,
     geographyId: myanmarGeographyId,

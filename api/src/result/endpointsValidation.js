@@ -7,20 +7,20 @@ const {
 
 const getResultAggregationsValidate = validGroups => ({
   ...validateDateRangeParams(),
-  assayType: Joi.string().allow('').description('Filter for assay type'),
+  assayType: Joi.string().allow(null, '').description('Filter for assay type'),
   assay: Joi.alternatives()
     .try(Joi.array(), Joi.string())
     .description('Filter for assay'),
   resultCategory1: Joi.string()
-    .allow('')
+    .allow(null, '')
     .description('Filter for result category 1'),
   resultCategory2: Joi.string()
-    .allow('')
+    .allow(null, '')
     .description('Filter for result category 2'),
-  siteName: Joi.string().allow('').description('Filter for site'),
-  deviceName: Joi.string().allow('').description('Filter for device'),
+  siteName: Joi.string().allow(null, '').description('Filter for site'),
+  deviceName: Joi.string().allow(null, '').description('Filter for device'),
   groupBy: Joi.alternatives()
-    .allow('', null)
+    .allow(null, '')
     .try(
       Joi.array().items(Joi.string().valid(...validGroups)),
       Joi.string().valid(...validGroups)
@@ -53,32 +53,41 @@ const followUpAggregationsValidGroups = [
 const resultAggregationsResponseItem = {
   cnt: Joi.number().required().description('The count of results in the group'),
   resultCategory1: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description('Result Category 1 that the count is grouped by'),
+  resultCategory1I18nKey: Joi.string()
+    .allow(null, '')
+    .description('Result Category 1 intl key that the count is grouped by'),
   resultCategory2: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description('Result Category 2 that the count is grouped by'),
+  resultCategory2I18nKey: Joi.string()
+    .allow(null, '')
+    .description('Result Category 2 intl key that the count is grouped by'),
   assay: Joi.string()
-    .allow(null)
+    .allow(null, '')
+    .description('Assay name that the count is grouped by'),
+  assayI18nKey: Joi.string()
+    .allow(null, '')
     .description('Assay name that the count is grouped by'),
   week: Joi.string().description('The week that the count is grouped by'),
   month: Joi.string().description('The month that the count is grouped by'),
   year: Joi.string().description('The year that the count is grouped by'),
   day: Joi.string().description('The day that the count is grouped by'),
   gender: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description('The gender that the count is grouped by'),
   age: Joi.number()
     .allow(null)
     .description('The age that the count is grouped by'),
   state: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description('The state that the count is grouped by'),
 }
 
 const resultUpdatePayload = {
   endedOn: Joi.date().iso().required().description('When the result was ready'),
-  sampleId: Joi.string().max(500).allow('', null).description('Sample ID'),
+  sampleId: Joi.string().max(500).allow(null, '').description('Sample ID'),
   sampleTypeId: Joi.number()
     .allow(null)
     .description('Sample type (Plasma, Sputum, etc.)'),
@@ -89,17 +98,20 @@ const resultUpdatePayload = {
   sampleOriginSiteId: Joi.number()
     .allow(null)
     .description('Where the sample was collected'),
-  patientId: Joi.string().max(500).allow('', null).description('Patient ID'),
-  caseId: Joi.string().max(500).allow('', null).description('Case ID'),
+  patientId: Joi.string().max(500).allow(null, '').description('Patient ID'),
+  caseId: Joi.string().max(500).allow(null, '').description('Case ID'),
   resultCategory1: Joi.number()
     .required()
     .description('The result of the test'),
   resultCategory2: Joi.number()
     .allow(null)
     .description('The result of the test'),
-  tags: Joi.string().max(500).allow('').description('Tags for the result'),
+  tags: Joi.string()
+    .max(500)
+    .allow(null, '')
+    .description('Tags for the result'),
   formData: Joi.object()
-    .allow('', null)
+    .allow(null, '')
     .description('Form data to save along with the result'),
 }
 
@@ -120,10 +132,12 @@ const baseResultResponse = {
   id: Joi.number()
     .required()
     .description('Unique ID of the result for this instance of Aspect'),
-  deviceName: Joi.string().allow('').description('Filter for device name'),
-  sampleId: Joi.string().allow(null).description('Sample id'),
+  deviceName: Joi.string()
+    .allow(null, '')
+    .description('Filter for device name'),
+  sampleId: Joi.string().allow(null, '').description('Sample id'),
   externalId: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description('Unique ID of the result for this diagnostic device'),
   startedOn: Joi.date()
     .allow(null)
@@ -135,29 +149,31 @@ const baseResultResponse = {
     .description(
       'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
     ),
-  stateName: Joi.string().allow(null).description("The device's state name"),
+  stateName: Joi.string()
+    .allow(null, '')
+    .description("The device's state name"),
   resultCategory1Name: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description("The result's category 1 name"),
   resultCategory2Name: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description("The result's category 2 name"),
-  siteName: Joi.string().allow(null).description('The name of the site'),
+  siteName: Joi.string().allow(null, '').description('The name of the site'),
   assayId: Joi.number().integer().description('The id of the assay'),
   sampleOriginSiteName: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description('Sample original site name'),
   patientId: Joi.string().allow(null, '').description('The patient Id'),
   treatmentStatusInfo: Joi.string()
     .allow(null, '')
     .description('treatment status info'),
   errorCode: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description(
       'If an error occurred, contains the error code from the device'
     ),
   resultWorkflowStatus: Joi.string()
-    .allow(null)
+    .allow(null, '')
     .description("The result's Workflow status name"),
   caseExternalId: Joi.string()
     .optional()
@@ -178,14 +194,38 @@ function validateResultListResponse() {
     ...baseResultResponse,
     assayName: Joi.string()
       .description('The name of the assay performed to this result')
-      .allow('', null),
+      .allow(null, ''),
     resultText: Joi.string()
       .description('The Text of the result')
-      .allow('', null),
+      .allow(null, ''),
     resultTreatmentStatus: Joi.string()
       .description('The status of the result treatment')
       .optional()
-      .allow('', null),
+      .allow(null, ''),
+    resultCategory2Name: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category 2'),
+    resultCategory2I18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category 2 i18n key'),
+    resultCategory1Titlei18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category title 1 i18n key'),
+    resultCategory2Titlei18nKey: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The name of the result category title 2 i18n key'),
+    resultCategory1Title: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The default name of the result category 1'),
+    resultCategory2Title: Joi.string()
+      .optional()
+      .allow(null, '')
+      .description('The default name of the result category 2'),
   }
 }
 
@@ -212,106 +252,119 @@ function validateResultDetailResponse() {
       .allow(null, '')
       .description('The device serial number'),
     countryName: Joi.string().description("The device's country name"),
-    stateName: Joi.string().allow(null).description("The device's state name"),
-    lgaName: Joi.string().allow(null).description("The device's lga name"),
+    stateName: Joi.string()
+      .allow(null, '')
+      .description("The device's state name"),
+    lgaName: Joi.string().allow(null, '').description("The device's lga name"),
     resultWorkflowChangedOn: Joi.date()
       .allow(null)
       .description('The date when status was changed'),
     resultCategory1Name: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description("The result's category 1 name"),
     resultCategory2Name: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description("The result's category 2 name"),
     resultWorkflowStatusId: Joi.number()
       .integer()
       .description("The result's workflow status id"),
     resultWorkflowStatus: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description("The result's Workflow status name"),
     resultWorkflowStatusExternalId: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
     formData: Joi.object().allow(null).description('The form data'),
     siteId: Joi.number().integer().positive().description('The id of the site'),
     resultTreatmentStatusCreatedBy: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('The name of the user that created the note'),
-    siteName: Joi.string().allow(null).description('The name of the site'),
-    assayVersion: Joi.string().allow(null).description('The assay Version'),
-    assayName: Joi.string().allow(null).description('The assay name'),
+    siteName: Joi.string().allow(null, '').description('The name of the site'),
+    assayVersion: Joi.string().allow(null, '').description('The assay Version'),
+    assayName: Joi.string().allow(null, '').description('The assay name'),
     consumableSerial: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('The consumable serial'),
     instrumentalSerial: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('The instrumental serial'),
-    consumableLot: Joi.string().allow(null).description('The consumable lot'),
+    consumableLot: Joi.string()
+      .allow(null, '')
+      .description('The consumable lot'),
     instrumentSerial: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Instrumental serial number'),
-    moduleName: Joi.string().allow(null).description('The module name'),
-    moduleSerial: Joi.string().allow(null).description('The module serial'),
-    researchId: Joi.string().allow(null).description('The research id'),
-    senderVersion: Joi.string().allow(null).description('The sender version'),
-    senderOperator: Joi.string().allow(null).description('The sender operator'),
+    moduleName: Joi.string().allow(null, '').description('The module name'),
+    moduleSerial: Joi.string().allow(null, '').description('The module serial'),
+    researchId: Joi.string().allow(null, '').description('The research id'),
+    senderVersion: Joi.string()
+      .allow(null, '')
+      .description('The sender version'),
+    senderOperator: Joi.string()
+      .allow(null, '')
+      .description('The sender operator'),
     consumableExpirationDate: Joi.date()
       .allow(null)
       .description('The consumable expiration date'),
     notes: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Any notes entered for the sample'),
     errorCode: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description(
         'If an error occurred, contains the error code from the device'
       ),
     errorNotes: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Contains any details about the error'),
     assayId: Joi.number().integer().description('The id of the assay'),
     sampleOriginSiteId: Joi.number()
       .allow(null)
       .integer()
       .description('the id of the original site'),
-    sampleId: Joi.string().allow(null).description('Sample id'),
-    sampleGroup: Joi.string().allow(null).description('Sample group'),
+    sampleId: Joi.string().allow(null, '').description('Sample id'),
+    sampleGroup: Joi.string().allow(null, '').description('Sample group'),
     sampleCollectedOn: Joi.date()
       .allow(null)
       .description('The date when the sample has been collected'),
     sampleOriginSiteName: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Sample original site name'),
-    sampleTypeName: Joi.string().allow(null).description('Sample type name'),
-    patientId: Joi.string().allow(null).description('The patient Id'),
+    sampleTypeName: Joi.string()
+      .allow(null, '')
+      .description('Sample type name'),
+    patientId: Joi.string().allow(null, '').description('The patient Id'),
     patientData: Joi.object().allow(null).description('The patient data'),
     formSchema: Joi.object().allow(null).description('The form data object'),
     assay: Joi.object().allow(null).description('The assay object'),
     assayType: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description("The type of the result's assay"),
     deviceType: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description("The type of the result's device"),
     resultText: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('The result represented in text format'),
+    fullResultText: Joi.string()
+      .allow(null, '')
+      .description('The full result represented in text format'),
     resultCategory1Label: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('The name of the test made for the first result category'),
     resultCategory2Label: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('The name of the test made for the second result category'),
     treatmentStatus: Joi.object()
       .allow(null)
       .description('The treatment status object'),
     resultWorkflowLogReason: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Value of Reason from latest ResultWorkflowLog'),
     resultWorkflowLogOperator: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Operator from the latest ResultWorkflowLog'),
     resultWorkflowLogCreatedOn: Joi.date()
       .allow(null)
@@ -343,7 +396,9 @@ function validateResultDetailResponse() {
     resultNotes: Joi.array().description('List of result notes'),
     requiresTreatment: Joi.number()
       .allow(null, '')
-      .description('Predicted required treatment'),
+      .description(
+        'Indicates if the result category and assay require treatment'
+      ),
     patientCaseId: Joi.number()
       .allow(null)
       .optional()
@@ -394,7 +449,7 @@ function validateResultDetailResponse() {
         'The id of reportable site, differ from siteId when transferred'
       ),
     reportableSiteName: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description(
         'The name of reportable site, differ from siteName when transferred'
       ),
@@ -405,7 +460,7 @@ function validateResultDetailResponse() {
       .allow(null)
       .description('When transferred result was clicked'),
     transferredBy: Joi.string()
-      .allow(null)
+      .allow(null, '')
       .description('Who transferred result to another clinic'),
     resultStatusLogId: Joi.number()
       .allow(null)
@@ -436,37 +491,68 @@ function listResultsBaseConfig() {
     },
     validate: {
       query: {
-        deviceId: Joi.number().allow('').description('Filter for device ID'),
-        assayId: Joi.number().allow('').description('Filter for assay ID'),
+        deviceId: Joi.number()
+          .allow(null, '')
+          .description('Filter for device ID'),
+        assayId: Joi.alternatives()
+          .try(Joi.array().items(Joi.number()), Joi.number())
+          .allow(null, '')
+          .description('Filter for assay ID(s)'),
         diseaseId: Joi.number()
           .integer()
           .positive()
           .optional()
           .description('The disease ID'),
         resultCategoryId: Joi.number()
-          .allow('')
+          .allow(null, '')
           .description('Result-1 Category ID'),
         resultCategory2Id: Joi.number()
-          .allow('')
+          .allow(null, '')
           .description('Result-2 Category ID'),
-        errorCode: Joi.string().allow('').description('Filter error code'),
+        resultCategoryGroupId: Joi.string()
+          .allow(null, '')
+          .description(
+            'Result Category Group external id for assays with multiple results'
+          ),
+        errorCode: Joi.string()
+          .allow(null, '')
+          .description('Filter error code'),
         deviceName: Joi.string()
-          .allow('')
+          .allow(null, '')
           .description('Filter for device name'),
-        siteName: Joi.string().allow('').description('Filter for site name'),
+        deviceType: Joi.string()
+          .allow(null, '')
+          .description('Filter for device type ExternalId'),
+        siteName: Joi.string()
+          .allow(null, '')
+          .description('Filter for site name'),
         patientOrResearchId: Joi.string()
-          .allow('')
+          .allow(null, '')
           .description('Filter for patient/research ID'),
-        sampleId: Joi.string().allow('').description('Filter for sample ID'),
+        sampleId: Joi.string()
+          .allow(null, '')
+          .description('Filter for sample ID'),
         sampleOriginSite: Joi.string()
-          .allow('')
+          .allow(null, '')
           .description('Filter for sample origin site ID'),
         workflowStatusId: Joi.number()
-          .allow('')
+          .allow(null, '')
           .description('Filter for Result Workflow Status ID'),
+        onlyTreatmentRequired: Joi.bool().description(
+          'Filter for only results that require treatment, defined on their result category and assay'
+        ),
+        onlyDownloadedByReporter: Joi.bool().description(
+          'Filter for only results downloaded by the Reporter App'
+        ),
         treatmentStatusId: Joi.number()
-          .allow('')
+          .allow(null, '')
           .description('Filter for Result Treatment Status ID'),
+        treatmentStatus: Joi.string()
+          .allow(null, '')
+          .description('Filter for Result Treatment Status by External ID'),
+        onlyEverTransferred: Joi.bool().description(
+          'Filter for only results that have been ever transferred'
+        ),
         jsonFields: Joi.array()
           .max(10)
           .items(Joi.string().max(50))
@@ -476,22 +562,27 @@ function listResultsBaseConfig() {
           ),
         // query param 'format' is applicable only for handler 'exportDevices'
         format: Joi.string()
-          .allow('')
+          .allow(null, '')
           .description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
         ...validateSortPageParams(),
         // transfer result
         reportableSiteName: Joi.string()
-          .allow('', null)
+          .allow(null, '')
           .description(
             'The name of reportable site, differ from siteName when transferred'
           ),
+        reportableSiteId: Joi.number()
+          .allow(null)
+          .integer()
+          .positive()
+          .description('The id of reportable site'),
         transferredOn: Joi.date()
           .allow(null)
           .description('When result was transferred to another clinic'),
         transferredBy: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Who transferred result to another clinic'),
         resultStatusLogId: Joi.number()
           .allow(null)
@@ -501,7 +592,7 @@ function listResultsBaseConfig() {
             'The id of last entry in ResultStatusLog for current result'
           ),
         caseId: Joi.string()
-          .allow('')
+          .allow(null, '')
           .optional()
           .description(
             'Case externalid for filtering only Results related with'
@@ -510,6 +601,11 @@ function listResultsBaseConfig() {
           .optional()
           .description(
             'It filters only results with no "Invalid", "No result" or "Error" categories'
+          ),
+        showUnapprovedDevices: Joi.boolean()
+          .default(false)
+          .description(
+            'If true, will include all the results of unapproved devices'
           ),
       },
     },
@@ -549,6 +645,43 @@ function getResponseForComments() {
   }
 }
 
+function treatmentTrackingValidationQuery() {
+  return {
+    query: {
+      ...validateAllGeographyFilterParams(),
+      ...validateDateRangeParams(),
+      assay: Joi.string().allow(null, '').description('Assay Name'),
+      assayId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for assay ID'),
+      assayTypeId: Joi.number().integer().positive(),
+      deviceId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for device ID'),
+      deviceName: Joi.string()
+        .allow(null, '')
+        .description('Filter for device name'),
+      deviceType: Joi.string()
+        .allow(null, '')
+        .description('Filter for device type ExternalId'),
+      diseaseId: Joi.number()
+        .integer()
+        .positive()
+        .description('The disease ID'),
+      resultCategoryId: Joi.number().integer().positive(),
+      siteName: Joi.string()
+        .allow(null, '')
+        .description('Filter for site name'),
+      siteId: Joi.number()
+        .integer()
+        .positive()
+        .description('Filter for site Id'),
+    },
+  }
+}
+
 module.exports = {
   listResultsBaseConfig,
   getResponseForComments,
@@ -560,4 +693,5 @@ module.exports = {
   validateResultDetailResponse,
   resultCreatePayload,
   resultUpdatePayload,
+  treatmentTrackingValidationQuery,
 }

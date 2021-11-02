@@ -8,7 +8,7 @@ const msgInstrumentReplaced = `{{device.name}}:
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const getDeviceBaseHtml = ({ customPart, errorCode }) => `
+const getDeviceBaseHtml = ({ customPart }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -48,7 +48,7 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
           </tr>
           <tr>
               <td>
-                Error Code
+                Error Code(s)
               </td>
               <td>
                 {{issue.errorCode}}
@@ -177,13 +177,13 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
 </html>
 `
 
-const getDeviceBaseText = ({ customPart, errorCode }) => `
+const getDeviceBaseText = ({ customPart }) => `
 This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{issue.errorCode}}
+Error Code(s): {{issue.errorCode}}
 
 Occurrences: {{issue.occurrences}}
 
@@ -231,15 +231,23 @@ const errorIssueEmailHtml = getDeviceBaseHtml({
   <<REPLACE WITH MODULE OR REAGENT>>
   <tr>
     <td>
-      Cartridge Type
+      Assay
     </td>
     <td>
-      {{result.assay.name}}
+      {{result.data.assay}}
     </td>
   </tr>
   <tr>
     <td>
-      Date/Time
+      Assay Version
+    </td>
+    <td>
+      {{result.data.assayVersion}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Date/Time (UTC)
     </td>
     <td>
       {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -254,9 +262,11 @@ System Serial: {{result.instrumentSerial}}
 
 <<REPLACE WITH MODULE OR REAGENT>>
 
-Cartridge Type: {{result.assay.name}}
+Assay: {{result.data.assay}}
 
-Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+Assay Version: {{result.data.assayVersion}}
+
+Date/Time (UTC): {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 `,
 })
 
@@ -316,7 +326,7 @@ const hardwareErrorIssueEmailHtml = errorCode =>
     </tr>
     <tr>
       <td>
-        Date/Time
+        Date/Time (UTC)
       </td>
       <td>
         {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -330,7 +340,7 @@ const hardwareErrorIssueEmailText = errorCode =>
     customPart: `
 System Serial: {{device.serial}}
 
-Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+Date/Time (UTC): {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
   `,
   })
 
@@ -345,6 +355,9 @@ async function getBaseIssues(auditFields) {
         externalId: 'ResultReceived',
         i18nKey: 'issueTypeResultReceived',
         issueCategoryId: issueCategories.DataHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
       },
     },
     DeviceOffline: {
@@ -369,8 +382,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject:
           '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-        body:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        body: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         htmlBody:
           '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
         ...auditFields,
@@ -397,8 +409,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: '{{device.name}}: No Testing',
-        body:
-          '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
+        body: '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
         htmlBody:
           '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
@@ -452,8 +463,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: '{{device.name}}: Critical Module Errors',
-        body:
-          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+        body: 'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
         htmlBody:
           'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
@@ -506,8 +516,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject:
           '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+        body: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         htmlBody:
           '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         ...auditFields,
@@ -535,8 +544,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject:
           '{{device.name}} has power errors on module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
+        body: '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
         htmlBody:
           '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
         ...auditFields,
@@ -564,8 +572,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: '{{device.name}}: Machine Temperature Errors',
-        body:
-          '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
+        body: '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
         htmlBody:
           '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
         ...auditFields,
@@ -592,8 +599,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: '{{device.name}}: Power error across machine',
-        body:
-          '{{device.name}}: Power error across machine, conduct troubleshooting.',
+        body: '{{device.name}}: Power error across machine, conduct troubleshooting.',
         htmlBody:
           '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
         ...auditFields,
@@ -622,8 +628,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: '{{device.name}}: Possible module failure',
-        body:
-          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        body: '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         htmlBody:
           '{{device.name}}: Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
         ...auditFields,
@@ -650,8 +655,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: '{{device.name}}: Procedural Errors',
-        body:
-          '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
+        body: '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
         htmlBody:
           '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
         ...auditFields,
@@ -679,8 +683,7 @@ async function getBaseIssues(auditFields) {
       },
       EmailTemplate: {
         subject: 'Low Collection Rate',
-        body:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        body: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         htmlBody:
           '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
@@ -848,40 +851,6 @@ async function getBaseIssues(auditFields) {
         externalId: 'TooManyInvalidResultsLot',
         i18nKey: 'issueStatusTooManyInvalidResultsLot',
         issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextLot,
-        htmlBody: errorIssueEmailHtmlLot,
-        ...auditFields,
-      },
-    },
-    ProbeCheckTooLowModule: {
-      issueType: {
-        name: 'Probe Check Too Low On Module',
-        externalId: 'ProbeCheckTooLowModule',
-        i18nKey: 'issueStatusProbeCheckTooLowModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
-        ...auditFields,
-      },
-    },
-    ProbeCheckTooLowLot: {
-      issueType: {
-        name: 'Probe Check Too Low On Lot',
-        externalId: 'ProbeCheckTooLowLot',
-        i18nKey: 'issueStatusProbesTooLow',
-        issueCategoryId: issueCategories.ReagentHealth,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,

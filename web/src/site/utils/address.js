@@ -3,7 +3,15 @@ import isNumber from 'lodash/isNumber'
 import some from 'lodash/some'
 import isString from 'lodash/isString'
 
-const geocoder = new google.maps.Geocoder()
+let geocoder = null
+function getGeoCoder() {
+  if (!geocoder) {
+    try {
+      geocoder = new google.maps.Geocoder()
+    } catch {} // eslint-disable-line no-empty
+  }
+  return geocoder
+}
 
 export function isValidLatLng({ lat, lng }) {
   return isNumber(lat) && isNumber(lng)
@@ -34,6 +42,10 @@ export function getLatLongFromAddress(address) {
   return new Promise((resolve, reject) => {
     if (!isValidFullAddress(address)) {
       return reject(new Error('invalid address'))
+    }
+    const geocoder = getGeoCoder()
+    if (!geocoder) {
+      return reject(new Error('Can not create Geocoder instance'))
     }
 
     const addressQuery = formatFullAddressToAddressQuery(address)

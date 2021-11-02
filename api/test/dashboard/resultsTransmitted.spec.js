@@ -160,12 +160,10 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     }
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
     const { Resolved: issueStatusResolvedId } = await allIssueStatusToId()
-    const {
-      ResultReceived: issueTypeResultReceivedId,
-    } = await allIssueTypeToId()
-    const {
-      DiagnosticDevice: resultSourceDiagnosticId,
-    } = await allResultSourceToId()
+    const { ResultReceived: issueTypeResultReceivedId } =
+      await allIssueTypeToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } =
+      await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
     const messageStatusSentId = await messageStatusToId('Sent')
     const {
@@ -214,7 +212,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteId,
         }
-        sample.id = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
         samples.push(sample)
       })
       let totalPositive = 0
@@ -353,6 +351,9 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const reset = async (tableName, id = 0) =>
       knex(tableName).where('id', '>', id).delete()
     // reset all data tables affected in test
+    await knex('Notification')
+      .where('issueId', '>', initialState.issueId)
+      .delete()
     await reset('Issue', initialState.issueId)
     await reset('EmailMessage', initialState.emailMessageId)
     await reset('SmsMessage', initialState.smsMessageId)

@@ -48,7 +48,6 @@ async function up(knex) {
     user.boolean('legacyPassword').notNullable().defaultTo(0)
     user.string('resetPasswordToken', 36)
     user.dateTime('resetPasswordTokenExpires')
-    user.charset('utf8')
   })
 
   await knex.schema.createTable('Country', country => {
@@ -75,20 +74,17 @@ async function up(knex) {
     country.string('testEqaRegex', 45)
     country.integer('monthStartsOnDay')
     country.integer('weekStartsOnDay ')
-    country.charset('utf8')
   })
 
   await knex.schema.createTable('State', state => {
     state.increments('id')
     state.string('name').notNullable()
     state.string('abbreviation', 10)
-    state.charset('utf8')
   })
 
   await knex.schema.createTable('Lga', lga => {
     lga.increments('id')
     lga.string('name').notNullable()
-    lga.charset('utf8')
   })
 
   await knex.schema.createTable('Geography', geography => {
@@ -111,7 +107,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Lga')
-    geography.charset('utf8')
   })
 
   await knex.schema.createTable('Person', person => {
@@ -152,7 +147,6 @@ async function up(knex) {
     person.dateTime('acceptedLicenseOn')
     addCreateFields(person)
     addUpdateFields(person)
-    person.charset('utf8')
   })
 
   await knex.schema.createTable('JobFunction', jobFunction => {
@@ -165,7 +159,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Partner')
-    jobFunction.charset('utf8')
   })
 
   await knex.schema.createTable('Permission', permission => {
@@ -175,15 +168,11 @@ async function up(knex) {
     permission.string('module').notNullable()
     // e.g.: view, edit, admin, view:aggregate, view:historical etc
     permission.string('activity').notNullable()
-
-    // Since permissions are static, UI labels can be created programmatically
-    permission.charset('utf8')
   })
 
   await knex.schema.createTable('Feature', feature => {
     feature.increments('id')
     feature.string('module').notNullable()
-    feature.charset('utf8')
   })
 
   await knex.schema.createTable('JobFunctionFeature', jobFunctionFeature => {
@@ -200,7 +189,6 @@ async function up(knex) {
       .references('id')
       .inTable('Feature')
     jobFunctionFeature.primary(['jobFunctionId', 'featureId'])
-    jobFunctionFeature.charset('utf8')
   })
 
   await knex.schema.createTable(
@@ -219,7 +207,6 @@ async function up(knex) {
         .references('id')
         .inTable('Permission')
       jobFunctionPermission.primary(['permissionId', 'jobFunctionId'])
-      jobFunctionPermission.charset('utf8')
     }
   )
 
@@ -238,7 +225,6 @@ async function up(knex) {
       .references('id')
       .inTable('JobFunction')
     job.unique(['personId', 'jobFunctionId'])
-    job.charset('utf8')
   })
 
   await knex.schema.createTable('JobContext', jobContext => {
@@ -262,7 +248,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Site')
-    jobContext.charset('utf8')
   })
 
   await knex.schema.createTable('RefreshToken', refreshToken => {
@@ -279,7 +264,6 @@ async function up(knex) {
     refreshToken.boolean('revoked').notNullable().defaultTo(0)
     refreshToken.dateTime('createdOn').notNullable()
     refreshToken.primary(['userId', 'clientId'])
-    refreshToken.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceApiKey', apiKey => {
@@ -307,7 +291,6 @@ async function up(knex) {
       .inTable('Device')
     addCreateFields(apiKey)
     addUpdateFields(apiKey)
-    apiKey.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
@@ -315,7 +298,6 @@ async function up(knex) {
     deviceTypeFeature.string('name').notNullable()
     deviceTypeFeature.boolean('hasConnectivity').notNullable().defaultTo(0)
     deviceTypeFeature.boolean('hasResults').notNullable().defaultTo(0)
-    deviceTypeFeature.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceType', deviceType => {
@@ -332,7 +314,6 @@ async function up(knex) {
     deviceType.string('plugin')
     deviceType.specificType('configurationDataSchema', 'JSON')
     deviceType.specificType('deviceOperationSchema', 'JSON')
-    deviceType.charset('utf8')
     // TODO add device_type id1 - id4_query or appropriate alternative
     // used to uniquely identify devices and still to be discussed
   })
@@ -385,7 +366,6 @@ async function up(knex) {
     site.integer('hoursEnd')
     addCreateFieldsNullable(site)
     addUpdateFieldsNullable(site)
-    site.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceStatusLog', deviceStatusLog => {
@@ -497,7 +477,6 @@ async function up(knex) {
     device.specificType('configurationData', 'JSON')
     addCreateFieldsNullable(device)
     addUpdateFieldsNullable(device)
-    device.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceSim', sim => {
@@ -514,7 +493,6 @@ async function up(knex) {
     sim.string('number')
     addCreateFields(sim)
     addUpdateFields(sim)
-    sim.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceSiteHistory', history => {
@@ -534,7 +512,6 @@ async function up(knex) {
       .references('id')
       .inTable('Site')
     addCreateFieldsNullable(history)
-    history.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceOperation', op => {
@@ -550,14 +527,12 @@ async function up(knex) {
     op.dateTime('endedOn')
     op.specificType('data', 'JSON').notNullable()
     addCreateFieldsNullable(op)
-    op.charset('utf8')
   })
 
   await knex.schema.createTable('AssayType', assayType => {
     assayType.increments('id')
     assayType.string('name').notNullable()
     assayType.string('i18nKey')
-    assayType.charset('utf8')
   })
 
   await knex.schema.createTable('Assay', assay => {
@@ -592,7 +567,6 @@ async function up(knex) {
     assay.string('resultCategory2i18nKey')
     assay.specificType('resultDataSchema', 'JSON')
     assay.specificType('patientDataSchema', 'JSON')
-    assay.charset('utf8')
   })
 
   await knex.schema.createTable('ResultSource', resultType => {
@@ -600,7 +574,6 @@ async function up(knex) {
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
     resultType.string('externalId').notNullable()
-    resultType.charset('utf8')
   })
 
   await knex.schema.createTable('ResultGeneratedResult', table => {
@@ -617,7 +590,6 @@ async function up(knex) {
       .references('id')
       .inTable('Result')
     table.primary(['sourceResultId', 'generatedResultId'])
-    table.charset('utf8')
   })
 
   await knex.schema.createTable('ResultType', resultType => {
@@ -625,7 +597,6 @@ async function up(knex) {
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
     resultType.string('externalId').notNullable()
-    resultType.charset('utf8')
   })
 
   // holds general categories such as "Detected"/"Invalid"
@@ -634,7 +605,6 @@ async function up(knex) {
     resultCategory.string('name').notNullable()
     resultCategory.string('i18nKey')
     resultCategory.string('externalId').notNullable()
-    resultCategory.charset('utf8')
   })
 
   // which result categories apply to which assays?
@@ -664,7 +634,6 @@ async function up(knex) {
     sampleType.string('name').notNullable()
     sampleType.string('i18nKey').notNullable()
     sampleType.string('externalId').notNullable()
-    sampleType.charset('utf8')
   })
 
   // the sample that the result is based on (multiple results can refer to the same sample)
@@ -684,7 +653,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Site')
-    sample.charset('utf8')
   })
 
   await knex.schema.createTable('Result', result => {
@@ -783,7 +751,6 @@ async function up(knex) {
     result.boolean('qcCheck').notNullable().defaultTo(0)
     addCreateFieldsNullable(result)
     addUpdateFieldsNullable(result)
-    result.charset('utf8')
   })
 
   await knex.schema.createTable('DeviceLog', deviceLog => {
@@ -814,14 +781,12 @@ async function up(knex) {
       .references('id')
       .inTable('DeviceOperation')
       .onDelete('SET NULL')
-    deviceLog.charset('utf8')
   })
 
   await knex.schema.createTable('Unit', unit => {
     unit.increments('id')
     unit.string('name').notNullable()
     unit.string('shortName')
-    unit.charset('utf8')
   })
 
   await knex.schema.createTable('Consumable', consumable => {
@@ -842,7 +807,6 @@ async function up(knex) {
     consumable.boolean('canExpire').notNullable().defaultTo(0)
     consumable.text('manufacturer')
     consumable.boolean('autoInclude').notNullable().defaultTo(0)
-    consumable.charset('utf8')
   })
 
   await knex.schema.createTable('ConsumableReason', consumableReason => {
@@ -851,7 +815,6 @@ async function up(knex) {
     consumableReason.string('i18nKey')
     consumableReason.boolean('decrease').notNullable().defaultTo(0)
     consumableReason.boolean('reset').notNullable().defaultTo(0)
-    consumableReason.charset('utf8')
   })
 
   await knex.schema.createTable('ConsumableAssay', consumableAssay => {
@@ -924,7 +887,6 @@ async function up(knex) {
     inventoryItem.float('quantityOnHand')
     addCreateFieldsNullable(inventoryItem)
     addUpdateFieldsNullable(inventoryItem)
-    inventoryItem.charset('utf8')
   })
 
   await knex.schema.createTable('InventoryLog', inventoryLog => {
@@ -965,7 +927,6 @@ async function up(knex) {
     inventoryLog.dateTime('adjustedFrom')
     inventoryLog.dateTime('adjustedTo')
     addCreateFieldsNullable(inventoryLog)
-    inventoryLog.charset('utf8')
   })
 
   // this table logs any change of QC-Check checkbox on 'Result Details' page
@@ -980,7 +941,6 @@ async function up(knex) {
         .inTable('Result')
       resultQualityControlLog.boolean('qcCheck').notNullable().defaultTo(0)
       addCreateFields(resultQualityControlLog)
-      resultQualityControlLog.charset('utf8')
     }
   )
 
@@ -992,7 +952,6 @@ async function up(knex) {
     messageStatus.string('name').notNullable()
     messageStatus.string('i18nKey').notNullable()
     messageStatus.string('externalId').notNullable()
-    messageStatus.charset('utf8')
   })
 
   // Alert, Recommendation
@@ -1001,7 +960,6 @@ async function up(knex) {
     messageSeverity.string('name').notNullable()
     messageSeverity.string('i18nKey').notNullable()
     messageSeverity.string('externalId').notNullable()
-    messageSeverity.charset('utf8')
   })
 
   await knex.schema.createTable('AlertTemplate', alertTemplate => {
@@ -1009,7 +967,6 @@ async function up(knex) {
     alertTemplate.text('message').notNullable()
     addCreateFieldsNullable(alertTemplate)
     addUpdateFieldsNullable(alertTemplate)
-    alertTemplate.charset('utf8')
   })
 
   await knex.schema.createTable('AlertMessage', alertMessage => {
@@ -1052,7 +1009,6 @@ async function up(knex) {
       .inTable('Result')
     alertMessage.text('message')
     addTimestamps(alertMessage)
-    alertMessage.charset('utf8')
   })
 
   await knex.schema.createTable('EmailTemplate', emailTemplate => {
@@ -1062,7 +1018,6 @@ async function up(knex) {
     emailTemplate.text('htmlBody')
     addCreateFieldsNullable(emailTemplate)
     addUpdateFieldsNullable(emailTemplate)
-    emailTemplate.charset('utf8')
   })
 
   await knex.schema.createTable('EmailMessage', emailMessage => {
@@ -1107,7 +1062,6 @@ async function up(knex) {
     emailMessage.text('body')
     emailMessage.text('htmlBody')
     addTimestamps(emailMessage)
-    emailMessage.charset('utf8')
   })
 
   await knex.schema.createTable('SmsTemplate', smsTemplate => {
@@ -1115,7 +1069,6 @@ async function up(knex) {
     smsTemplate.string('message', 1000).notNullable()
     addCreateFieldsNullable(smsTemplate)
     addUpdateFieldsNullable(smsTemplate)
-    smsTemplate.charset('utf8')
   })
 
   await knex.schema.createTable('SmsMessage', smsMessage => {
@@ -1158,7 +1111,6 @@ async function up(knex) {
       .inTable('Result')
     smsMessage.string('message', 1000)
     addTimestamps(smsMessage)
-    smsMessage.charset('utf8')
   })
 
   // Device Offline, Module Error
@@ -1185,7 +1137,6 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('SmsTemplate')
-    messageType.charset('utf8')
   })
 
   // Issues and events
@@ -1196,7 +1147,6 @@ async function up(knex) {
     issueCategory.string('name').notNullable()
     issueCategory.string('i18nKey').notNullable()
     issueCategory.string('externalId').notNullable()
-    issueCategory.charset('utf8')
   })
 
   // Type of issue Device Offline, Module Error, etc.
@@ -1216,7 +1166,6 @@ async function up(knex) {
     issueType.string('name').notNullable()
     issueType.string('i18nKey').notNullable()
     issueType.string('externalId').notNullable()
-    issueType.charset('utf8')
   })
 
   // Issue status, e.g. Active, Acknowledged, DueSoon, OK
@@ -1225,7 +1174,6 @@ async function up(knex) {
     issueStatus.string('name').notNullable()
     issueStatus.string('i18nKey').notNullable()
     issueStatus.string('externalId').notNullable()
-    issueStatus.charset('utf8')
   })
 
   await knex.schema.createTable('IssueStatusLog', issueStatusLog => {
@@ -1259,7 +1207,6 @@ async function up(knex) {
   await knex.schema.createTable('IssueEventStatus', issueStatus => {
     issueStatus.increments('id')
     issueStatus.string('externalId').notNullable()
-    issueStatus.charset('utf8')
   })
 
   await knex.schema.createTable('Issue', issue => {
@@ -1314,7 +1261,6 @@ async function up(knex) {
       .onDelete('SET NULL')
     issue.integer('level').notNullable().defaultTo(1)
     addTimestamps(issue)
-    issue.charset('utf8')
   })
 
   await knex.schema.createTable(
@@ -1337,7 +1283,6 @@ async function up(knex) {
       issueEscalationTrigger.integer('escalateToLevel').notNullable()
       issueEscalationTrigger.specificType('escalationConditions', 'JSON')
       addTimestamps(issueEscalationTrigger)
-      issueEscalationTrigger.charset('utf8')
     }
   )
 
@@ -1358,7 +1303,6 @@ async function up(knex) {
       .onDelete('CASCADE')
     issueEvent.specificType('data', 'JSON')
     addTimestamps(issueEvent, { update: false })
-    issueEvent.charset('utf8')
   })
 
   // Notifications
@@ -1394,7 +1338,6 @@ async function up(knex) {
     notificationType.string('name').notNullable()
     addCreateFields(notificationType)
     addUpdateFields(notificationType)
-    notificationType.charset('utf8')
   })
 
   await knex.schema.createTable('Notification', notification => {
@@ -1436,7 +1379,6 @@ async function up(knex) {
       .inTable('SmsMessage')
       .onDelete('SET NULL')
     addTimestamps(notification, { update: false })
-    notification.charset('utf8')
   })
 
   // facts-table for result counts by device
@@ -1603,7 +1545,6 @@ async function up(knex) {
     widget.string('sqlForIndicator', 2000).notNullable()
     widget.string('link')
     widget.integer('sortOrder').unsigned().notNullable()
-    widget.charset('utf8')
   })
 
   await knex.schema.createTable('DashboardWidgetStat', widget => {
@@ -1625,7 +1566,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('DashboardWidget')
-    widget.charset('utf8')
   })
 
   await knex.schema.createTable('DashboardWidgetTarget', widget => {
@@ -1639,7 +1579,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('DashboardWidget')
-    widget.charset('utf8')
   })
 
   await knex.schema.createTable(
@@ -1658,7 +1597,6 @@ async function up(knex) {
         .references('id')
         .inTable('DashboardWidget')
       jobFunctionDashboardWidget.primary(['widgetId', 'jobFunctionId'])
-      jobFunctionDashboardWidget.charset('utf8')
     }
   )
 

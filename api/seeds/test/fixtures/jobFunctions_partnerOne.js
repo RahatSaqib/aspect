@@ -3,19 +3,11 @@ const {
   regionalOfficer,
   labUser,
   clinician,
-} = require('../../common/fixtures/jobFunctions')
+  technician,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  {
-    name: admin.name,
-    permissions: [
-      ...admin.permissions,
-      { module: 'patient', activity: 'view' },
-      { module: 'patient', activity: 'edit' },
-      { module: 'case', activity: 'edit' },
-      { module: 'demo', activity: 'edit' },
-    ],
-  },
+  admin,
   regionalOfficer,
   labUser,
   clinician,
@@ -47,5 +39,17 @@ module.exports = [
         activity: 'edit',
       },
     ],
+    reports: [
+      'mtb_detected_rr_detected',
+      'critical_errors_by_device',
+      'rif_resistance_rate',
+      'results_hiv_not_suppressed',
+      'device_calibration_report',
+      'device_activity',
+      'device_utilization',
+      'device_activity_percent',
+      'module_swaps',
+    ],
   },
+  technician,
 ]

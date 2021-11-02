@@ -44,28 +44,25 @@ describe('Issue Trigger', () => {
     let maxLastDateOffline
     let maxLastDateNoResult
     it('should return a list of devices when using valid token "approved"', async () => {
-      await server
+      const res = await server
         .get('/api/device')
         .set('Authorization', `Bearer ${shared.token}`)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAbove(res.body.data.length, 0)
-          deviceId = res.body.data[0].id
 
-          const {
-            maxDaysDeviceOffline = 7,
-            maxDaysDeviceNoResults = 14,
-          } = knex('Device as d')
-            .join('Partner as p', 'd.partnerId', 'p.id')
-            .where({ id: deviceId })
-            .first('p.maxDaysDeviceOffline', 'p.maxDaysDeviceNoResults')
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAbove(res.body.data.length, 0)
+      deviceId = res.body.data[0].id
 
-          maxLastDateOffline = subDays(now, maxDaysDeviceOffline + 1)
-          maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults + 1)
-        })
+      const { maxDaysDeviceOffline = 7, maxDaysDeviceNoResults = 14 } =
+        await knex('Device as d')
+          .join('Partner as p', 'd.partnerId', 'p.id')
+          .where('d.id', deviceId)
+          .first('p.maxDaysDeviceOffline', 'p.maxDaysDeviceNoResults')
+
+      maxLastDateOffline = subDays(now, maxDaysDeviceOffline + 1)
+      maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults + 1)
     })
 
     describe('should trigger different device events', () => {

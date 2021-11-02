@@ -1,56 +1,56 @@
 {
   "data": [
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DSTB - 2RHZE",
       "externalId": "dstb-2rhze",
       "i18nKey": "dstb-2rhze"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DSTB - 4RH",
       "externalId": "dstb-4rh",
       "i18nKey": "dstb-4rh"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DRTB - Bedaquiline Based shorter regimen",
       "externalId": "drtb-bbsr",
       "i18nKey": "drtb-bbsr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DRTB - Injection Based shorter regimen",
       "externalId": "drtb-ibsr",
       "i18nKey": "drtb-ibsr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DRTB - Long Oral MDT-TB regimen and Pre XDR-TB",
       "externalId": "drtb-lomr",
       "i18nKey": "drtb-lomr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DRTB - Pre XDR-TB (RES FQ) regimen/XDR-TB",
       "externalId": "drtb-prexdr",
       "i18nKey": "drtb-prexdr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DRTB - Beyond XDR-TB (Individualized)",
       "externalId": "drtb-bxdr",
       "i18nKey": "drtb-bxdr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr"],
       "type": "treatment",
       "name": "DRTB - Beyond XDR-TB (Individualized)",
       "externalId": "drtb-bxdr",
@@ -85,7 +85,7 @@
       "i18nKey": "mcr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "abbottM2000PlasmaHivVL", "abbottM2000DBSHivVL", "GxHiv1Vl", "QHivVL", "ReporterHivVL", "assayAlereQHiv12VLPlasma"],
       "type": "outcome",
       "name": "Cured",
       "externalId": "cured",

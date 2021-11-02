@@ -1,6 +1,6 @@
 import PieRowGraph from '../../PieRowGraph'
 import { dateRangeOptions } from '../../Helpers/Formatters'
-import AspectDropdown from '../../../AspectDropdown'
+import AspectDropDown from '../../../AspectDropDown'
 
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
@@ -8,12 +8,12 @@ const {
   DATE_RANGE_OPTIONS,
   DATE_RANGE_KEYS: { CURRENT_MONTH },
 } = DATE_CONSTS
-const dateRanges = dateRangeOptions()
-const currentMonth =
-  dateRanges[Object.keys(dateRanges)][DATE_RANGE_OPTIONS.LAST_MONTH].value
-    .minDate
+const dateRanges = dateRangeOptions('resultsDateRange', false)
+const currentMonth = dateRanges.resultsDateRange.find(
+  dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH
+).value.minDate
 
-const resultsTransmittedGraphs = {
+const resultsTransmittedGraphs = () => ({
   resultsTransmitted: {
     id: 'resultsTransmitted',
     title: 'resultsTransmittedTitle',
@@ -25,12 +25,12 @@ const resultsTransmittedGraphs = {
         selectedValue: 'Date Range',
         endpoint: false,
         state: 'resultsDateRange',
-        component: AspectDropdown,
+        component: AspectDropDown,
         identifier: 'currentMonth',
-        data: dateRangeOptions('resultsDateRange'),
+        data: dateRanges,
         sortByKeys: ['id'],
         isClearable: false,
-        defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
+        defaultSelectedOption: DATE_RANGE_OPTIONS.CURRENT_MONTH,
       },
     ],
     graphRenderPermissions: ['dashboard', 'operationalData'],
@@ -55,6 +55,6 @@ const resultsTransmittedGraphs = {
       },
     ],
   },
-}
+})
 
 export default resultsTransmittedGraphs

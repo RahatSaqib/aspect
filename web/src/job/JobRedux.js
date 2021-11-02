@@ -48,8 +48,7 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title',
+              id: 'errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title',
               defaultMessage: 'Error Loading Partners And Job Functions',
             },
           })

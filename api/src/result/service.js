@@ -41,6 +41,7 @@ const { getSiteByPartnerCountry, getSite } = require('../site/service')
 const { getDeviceByDeviceId } = require('../device/service')
 const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
+const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
 const {
   getAllAssaySchemas,
   getAssayResultCategories,
@@ -48,20 +49,38 @@ const {
 const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
+const logger = require('../shared/logger')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
   const assayColumns = []
-  if (query.assayId) {
-    const assay = await knex('Assay as a').where('a.id', query.assayId).first()
+  /**
+   * assayColumns items shape:
+   * {
+        db: 'resultText', // Query column to process
+        type: 'string', // The type of the value shown in the UI. Depending what this value is, the formatting will be different. Possible values: string, number.
+        title: 'Collection of Results', // The default title of the extra column
+        i18nKey: 'collectionOfResults', // The i18nKey of the extra column title
+        fieldName: 'collectionOfResults', // The name of the result's field to set
+        postProcess: resultText => doSomething(resultText) // A function that will receive the raw db value and return the new processed value
+        formatter: 'joinArrayWithCommas' // The name of the custom formatter function defined in the UI
+      }
+   */
+
+  if (query.assayId && !_.isArray(query.assayId)) {
+    const { assayId } = query
+    const assay = await knex('Assay as a').where('a.id', assayId).first()
 
     if (assay.resultCategory1Label) {
-      selectFields.push('rc1.name as resultCategory1Name')
-      sortableFields.push('resultCategory1Name')
+      if (!sortableFields.includes('resultCategory1Name')) {
+        selectFields.push('rc1.name as resultCategory1Name')
+        sortableFields.push('resultCategory1Name')
+      }
       assayColumns.push({
         db: 'resultCategory1Name',
+        fieldName: 'resultCategory1Name',
         type: 'string',
         title: assay.resultCategory1Label,
         i18nKey: assay.resultCategory1i18nKey,
@@ -69,36 +88,41 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     }
 
     if (assay.resultCategory2Label) {
-      selectFields.push('rc2.name as resultCategory2Name')
-      sortableFields.push('resultCategory2Name')
+      if (!sortableFields.includes('resultCategory2Name')) {
+        selectFields.push('rc2.name as resultCategory2Name')
+        sortableFields.push('resultCategory2Name')
+      }
       assayColumns.push({
         db: 'resultCategory2Name',
+        fieldName: 'resultCategory2Name',
         type: 'string',
         title: assay.resultCategory2Label,
         i18nKey: assay.resultCategory2i18nKey,
       })
     }
 
-    const resultDataSchema = JSON.parse(assay.resultDataSchema)
-    _.each(resultDataSchema, (value, key) => {
-      if (value.list) {
-        selectFields.push(
-          knex.raw('JSON_EXTRACT(resultData, ?) as ?', [
-            `$.${key}`,
-            key.replace('.', '_'),
-          ])
-        )
-
-        sortableFields.push(key.replace('.', '_'))
-
-        assayColumns.push({
-          db: key.replace('.', '_'),
-          type: value.type,
-          title: value.title,
-          i18nKey: value.i18nKey,
-        })
-      }
-    })
+    if (assay.resultDataSchema) {
+      const resultDataSchema = JSON.parse(assay.resultDataSchema)
+      _.each(resultDataSchema, (value, key) => {
+        if (value.list) {
+          const alias = key.replace('.', '_')
+          if (!sortableFields.includes(alias)) {
+            selectFields.push(
+              knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, alias])
+            )
+            sortableFields.push(alias)
+          }
+          assayColumns.push({
+            db: alias,
+            type: value.type,
+            title: value.title,
+            i18nKey: value.i18nKey,
+            formatter: value.formatter,
+            postProcess: resultData => JSON.parse(resultData),
+          })
+        }
+      })
+    }
   }
 
   // now we know if the sort that was passed is valid:
@@ -110,29 +134,30 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
+
+  selectFields.push('rc2.name as resultCategory2Name')
+  selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
+  selectFields.push('a.resultCategory2i18nKey as resultCategory2Titlei18nKey')
+  selectFields.push('a.resultCategory1i18nKey as resultCategory1Titlei18nKey')
+  selectFields.push('a.resultCategory1label as resultCategory1Title')
+  selectFields.push('a.resultCategory2label as resultCategory2Title')
 
   // get rows
   const getItems = resultQuery
     .clone()
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  // if assay specified columns from the resultData field, parse them to valid JSON
-  if (assayColumns) {
-    _.each(data, d => {
-      _.each(assayColumns, c => {
-        if (c && c.db.indexOf('resultCategory') === -1) {
-          const path = c.db.replace('.', '_')
-          _.set(d, path, JSON.parse(d[path]))
-        }
-      })
-    })
-  }
+
+  // Create extra columns based on the assay configuration
+  applyExtraColumns(data, assayColumns)
+  // Remove extraColumns fields that shouldn't be retrieved to UI
+  sanitizeExtraColumns(assayColumns)
 
   const result = {
     ok: true,
@@ -170,8 +195,13 @@ function getResultTreatmentStatus(response) {
 }
 
 async function getResultsForExport(query, auth) {
-  const selectFields = _.clone(SELECT_COMMON_FIELDS)
-  const sortableFields = _.clone(SORT_FIELDS)
+  const selectFields = [
+    ...SELECT_COMMON_FIELDS,
+    knex.raw(
+      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+    ),
+  ]
+  const sortableFields = [...SORT_FIELDS]
 
   const assayColumns = []
   if (query.assayId) {
@@ -191,6 +221,12 @@ async function getResultsForExport(query, auth) {
     if (assay.resultCategory2Label) {
       selectFields.push('rc2.name as resultCategory2Name')
       sortableFields.push('resultCategory2Name')
+      assayColumns.push({
+        db: 'resultCategory2Name',
+        type: 'string',
+        title: assay.resultCategory2Label,
+        i18nKey: assay.resultCategory2i18nKey,
+      })
     }
   }
 
@@ -204,12 +240,14 @@ async function getResultsForExport(query, auth) {
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   const data = await resultQuery
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
   const result = {
     ok: true,
     data,
+    extraColumns: assayColumns,
   }
 
   return result
@@ -225,7 +263,42 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = getBaseQueryForResults()
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.treatmentStatusLogId',
+      'rtsl.id'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtsl.resultTreatmentStatusId',
+      'rts.id'
+    )
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
+    .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
+    .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
@@ -324,11 +397,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       country: 'c',
     })
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
   // get rows
   const getItems = resultQuery
     .clone()
+    .groupBy('r.id')
     .modify(sortPageParams, query, 'r.updatedOn')
     .select(
       'r.id',
@@ -423,7 +497,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     resultCategory2ExternalId: d.resultCategory2ExternalId,
     patientData: d.patientData ? JSON.parse(d.patientData) : null,
     resultData: d.resultData
-      ? _.pick(JSON.parse(d.resultData), ['resultText', 'copies', 'log'])
+      ? _.pick(JSON.parse(d.resultData), [
+          'resultText',
+          'copies',
+          'log',
+          'detectedResistance',
+        ])
       : null,
     sample: {
       id: d.sampleId,
@@ -508,8 +587,9 @@ async function downloadResultsList(request) {
     if (idsToBeRegistered && idsToBeRegistered.length > 0)
       await addResultDownloadLog(idsToBeRegistered, user.id)
   }
-  // eslint-disable-next-line no-console
-  await myProm().catch(err => console.log(err))
+  myProm().catch(err => {
+    logger.error(err)
+  })
   return results
 }
 
@@ -557,7 +637,6 @@ async function showResult(request) {
     params: { resultId },
     auth,
   } = request
-
   const result = await getResultByResultId(auth, resultId)
   return result.ok ? result : Boom.notFound()
 }
@@ -635,7 +714,7 @@ function downloadFile(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }
@@ -650,7 +729,7 @@ function downloadFirstImage(request, reply) {
       reply.file(path)
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }
@@ -692,7 +771,6 @@ async function getResultByResultId(
 ) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -714,20 +792,26 @@ async function getResultByResultId(
       device: 'd',
       result: 'r',
     })
-    .select(fields)
-
+    .select([
+      ...fields,
+      knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+      ),
+    ])
   let data = null
-
   // translate result data back to an object and get assay details
   // if selecting the result was successful
   if (results.length === 1) {
     ;[data] = results
     if (data.resultData) {
       data.resultData = JSON.parse(data.resultData)
+      // full result text for the result details page
+      data.fullResultText = data.resultData.resultText
     }
     if (data.formSchema) {
       data.formSchema = JSON.parse(data.formSchema)
     }
+
     if (data.formData) {
       data.formData = JSON.parse(data.formData)
     }
@@ -761,6 +845,13 @@ async function getResultByResultId(
     getResultTreatmentStatus(data)
     data.resultNotes = await getResultNotesByResultId(resultId)
     data.resultTreatmentStatusCreatedBy = userName
+
+    if (
+      data.resultData &&
+      data.resultData.detectedResistance &&
+      data.resultData.detectedResistance.length > 0
+    )
+      data.detectedResistance = data.resultData.detectedResistance.join(', ')
   }
 
   return { ok: results.length === 1, data }
@@ -905,9 +996,8 @@ async function updateResultWorkflowStatusByResultId(
 
   // check if a externalId is provided
   if (resultWorkflowStatusExternalId) {
-    resultWorkflowLogEntry.resultWorkflowStatusId = await resultWorkflowStatusToId(
-      resultWorkflowStatusExternalId
-    )
+    resultWorkflowLogEntry.resultWorkflowStatusId =
+      await resultWorkflowStatusToId(resultWorkflowStatusExternalId)
     if (!resultWorkflowLogEntry.resultWorkflowStatusId) {
       return 'Invalid ResultWorkflowStatus ID'
     }
@@ -939,7 +1029,10 @@ async function listTreatmentStatusTypes() {
   const getCount = resultQuery.clone().count('rsl.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'i18nKey', 'name', 'externalId')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -963,13 +1056,8 @@ async function updateTreatmentStatusPost(request) {
     Boom.notFound()
   }
 
-  const {
-    resultTreatmentStatusId,
-    externalId,
-    data,
-    method,
-    changedOn,
-  } = payload
+  const { resultTreatmentStatusId, externalId, data, method, changedOn } =
+    payload
 
   return updateTreatmentStatus(
     request,
@@ -1440,7 +1528,10 @@ async function listWorkflowStatusTypes() {
   const getCount = resultQuery.clone().count('rs.id as count').first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name', 'i18nKey')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -1534,10 +1625,28 @@ async function listFollowUps(request) {
     .where(queryBuilder => {
       queryBuilder.where('fua.partnerId', dataConstraints.partner.id)
       if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
-    })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      disease: 'dis',
+
+      if (query.typeId) {
+        queryBuilder.where('fu.followUpTypeId', query.typeId)
+      }
+
+      if (query.assayId) {
+        queryBuilder.where(function () {
+          this.where('fua.assayId', query.assayId).orWhereNull('fua.assayId')
+        })
+      }
+
+      if (query.resultCategory1) {
+        queryBuilder.where(function () {
+          this.where('fua.resultCategory1', query.resultCategory1)
+        })
+      }
+
+      if (query.resultCategory2) {
+        queryBuilder.where(function () {
+          this.where('fua.resultCategory2', query.resultCategory2)
+        })
+      }
     })
     .orderBy('fu.id', 'a.id', 'rc1.id', 'rc2.id')
     .select(
@@ -1562,28 +1671,6 @@ async function listFollowUps(request) {
       'rc2.externalId as resultCategory2ExternalId',
       'rc2.i18nKey as resultCategory2I18nKey'
     )
-
-  if (query.typeId) {
-    queryBuilder.where('fu.followUpTypeId', query.typeId)
-  }
-
-  if (query.assayId) {
-    queryBuilder.where(function () {
-      this.where('fua.assayId', query.assayId).orWhereNull('fua.assayId')
-    })
-  }
-
-  if (query.resultCategory1) {
-    queryBuilder.where(function () {
-      this.where('fua.resultCategory1', query.resultCategory1)
-    })
-  }
-
-  if (query.resultCategory2) {
-    queryBuilder.where(function () {
-      this.where('fua.resultCategory2', query.resultCategory2)
-    })
-  }
 
   const data = await queryBuilder
 
@@ -1868,9 +1955,12 @@ async function transferResult(request) {
     params: { resultId },
     payload: { siteId, timestamp, comment, includeAllResults },
   } = request
-  const { partnerId, countryId, id: currentUserId, userName } = await getUser(
-    auth.credentials.name
-  )
+  const {
+    partnerId,
+    countryId,
+    id: currentUserId,
+    userName,
+  } = await getUser(auth.credentials.name)
 
   // get the result so we can check access
   const result = await getResultByResultId(auth, resultId)
@@ -1920,9 +2010,10 @@ async function transferResult(request) {
       createdOn: now,
       createdBy: currentUserId,
       data: JSON.stringify({
-        siteId: result.siteId,
+        siteId: result.data.siteId,
         reportableSiteId: siteId,
-        sampleOriginSiteId: result.sampleOriginSiteId,
+        previousReportableSiteId: result.data.reportableSiteId,
+        sampleOriginSiteId: result.data.sampleOriginSiteId,
         comment,
       }),
       timestamp,
@@ -1945,9 +2036,9 @@ async function transferResult(request) {
       resultTreatmentStatusId,
       method: 'transfer',
       data: JSON.stringify({
-        siteId: result.siteId,
+        siteId: result.data.siteId,
         reportableSiteId: siteId,
-        sampleOriginSiteId: result.sampleOriginSiteId,
+        sampleOriginSiteId: result.data.sampleOriginSiteId,
       }),
       createdOn: now,
       changedOn: now,
@@ -2093,7 +2184,23 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
+  const { showUnapprovedDevices = false } = query
   const resultQuery = getBaseQueryForResults()
+    .leftJoin('ResultCategoryGroup as rcg', function () {
+      this.on('r.assayId', 'rcg.assayId')
+        .andOn(function () {
+          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+            'r.resultCategory1',
+            'rcg.resultCategory1Id'
+          )
+        })
+        .andOn(function () {
+          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+            'r.resultCategory2',
+            'rcg.resultCategory2Id'
+          )
+        })
+    })
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
@@ -2106,6 +2213,53 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
+    .modify(b => {
+      if (query.reportableSiteId || query.reportableSiteName) {
+        /**
+         * onlyEverTransferred filter can only be applied if
+         * reportableSiteId or reportableSiteName is set
+         * In UI, the first one is shown only if the second one is entered.
+         */
+        if (query.onlyEverTransferred) {
+          /**
+           * If only ever transferred is requested,
+           * then we should show only the results that were ever transferred from the reportable site.
+           * For this, we should:
+           * - Get all the transfer logs
+           * - ...where this result was transferred
+           * - ...and the previous reportable site was the one specified in the reportableSiteId or reportableSiteName filter
+           */
+          const siteOperationAndValue = query.reportableSiteId
+            ? `= ${query.reportableSiteId}`
+            : `IN (
+                SELECT s_transfer.id
+                FROM Site s_transfer
+                WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
+              )`
+          b.whereRaw(
+            `EXISTS (
+              SELECT rslog_transfer.resultId
+              FROM ResultStatusLog as rslog_transfer
+                INNER JOIN ResultStatus as rs_transfer ON rslog_transfer.resultStatusId = rs_transfer.id
+              WHERE rslog_transfer.resultId = r.id
+                and rs_transfer.externalId = 'Transfer'
+                and CAST(IFNULL(rslog_transfer.data ->> '$.previousReportableSiteId', 0) as UNSIGNED) ${siteOperationAndValue}
+            )`
+          )
+        } else {
+          /**
+           * If only ever transferred is NOT requested,
+           * then we should show only the results with the reportable site id/name associated
+           */
+          // eslint-disable-next-line no-lonely-if
+          if (query.reportableSiteId) {
+            b.where('sirep.id', query.reportableSiteId)
+          } else {
+            b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+          }
+        }
+      }
+    })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -2116,6 +2270,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
       siteName: 'si.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
@@ -2125,8 +2280,28 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       patientCaseId: 'r.patientCaseId',
       diseaseId: 'dis.id',
       onlyReportableResults: 'rca.reportable',
+      resultCategoryGroupId: 'rcg.externalId',
     })
     .modify((queryBuilder, params) => {
+      if (params.onlyDownloadedByReporter)
+        queryBuilder.innerJoin(
+          'ResultDownloadLog as rdl',
+          'r.id',
+          'rdl.resultId'
+        )
+
+      if (params.onlyTreatmentRequired || params.treatmentStatus) {
+        /**
+         * If treatment filters are required, then we get only the results delivered and downloaded in the reporter app
+         */
+        queryBuilder.andWhere(b => {
+          b.where('rca.requiresTreatment', true).orWhere(
+            'rca2.requiresTreatment',
+            true
+          )
+        })
+      }
+
       if (params.patientOrResearchId) {
         queryBuilder.where(builder =>
           builder
@@ -2136,6 +2311,15 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             )
             .orWhere('r.researchId', 'like', `%${params.patientOrResearchId}%`)
         )
+      }
+      if (params.treatmentStatus === 'AwaitingTreatment') {
+        queryBuilder.where(builder =>
+          builder
+            .where('rts.externalId', params.treatmentStatus)
+            .orWhereNull('rts.externalId')
+        )
+      } else if (params.treatmentStatus) {
+        queryBuilder.where('rts.externalId', params.treatmentStatus)
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
@@ -2149,6 +2333,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       result: 'r',
       country: 'c',
       disease: 'dis',
+      showUnapprovedDevices,
     })
   return resultQuery
 }
@@ -2187,6 +2372,7 @@ async function clinicalIndicatorAggregations(request) {
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
@@ -2213,6 +2399,7 @@ async function clinicalIndicatorAggregations(request) {
       partnerId: 'g.partnerId',
       siteName: 's.name',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
     })
     .modify(qb => {
       if (query.minDate) {
@@ -2244,16 +2431,21 @@ async function clinicalIndicatorAggregations(request) {
     .count('r.id as cnt')
 
   const data = await processGroupedQuery(resultQuery, groupBy)
-
   return { data }
 }
 
 async function processGroupedQuery(resultQuery, groupBy) {
   // handle possible groups:
   const paramToDb = {
-    resultCategory1: 'rc1.externalId as resultCategory1',
-    resultCategory2: 'rc2.externalId as resultCategory2',
-    assay: 'a.name as assay',
+    resultCategory1: [
+      'rc1.externalId as resultCategory1',
+      'rc1.i18nKey as resultCategory1I18nKey ',
+    ],
+    resultCategory2: [
+      'rc2.externalId as resultCategory2',
+      'rc2.i18nKey as resultCategory2I18nKey ',
+    ],
+    assay: ['a.externalId as assay', 'a.i18nKey as assayI18nKey'],
 
     week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
     month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),
@@ -2265,7 +2457,7 @@ async function processGroupedQuery(resultQuery, groupBy) {
     ),
     age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
     state: 'st.name as state',
-    followUp: `fu.externalId as followUp`,
+    followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
   }
 
   const reservedWords = ['day', 'month', 'week', 'year']
@@ -2333,6 +2525,7 @@ async function followUpAggregations(request) {
 
   const resultQuery = knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
@@ -2368,6 +2561,7 @@ async function followUpAggregations(request) {
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       deviceName: 'd.name',
+      deviceType: 'dt.externalId',
       partnerId: 'g.partnerId',
       siteName: 's.name',
     })
@@ -2560,8 +2754,7 @@ async function updateOrCreateResult(request, result = {}) {
   result.endedOn = payload.endedOn
   result.updatedOn = now
   result.updatedBy = userId
-  result.reportableSiteId =
-    payload.sampleOriginSiteId || device.defaultReportableSiteId || site.id
+  result.reportableSiteId = payload.sampleOriginSiteId || site.id
 
   // create sample-entry or update it
   result.sampleId = await updateOrCreateSample(
@@ -2704,7 +2897,8 @@ async function updateOrCreateSample(
     }
     return sampleId
   }
-  return [await knex('Sample').insert(sampleData)]
+  const [id] = await knex('Sample').insert(sampleData)
+  return id
 }
 
 module.exports = {
@@ -2745,4 +2939,6 @@ module.exports = {
   createResult,
   updateResult,
   addPartnerQueryConstraints,
+  getBaseQueryForResults,
+  addResultDownloadLog,
 }

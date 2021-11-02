@@ -5,19 +5,21 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 
-const cssClasses = classnames.bind(require('../DailyStatus.css'))
+import styles from '../DailyStatus.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DailyStatusFilters = ({
   toggleAll: { checked, key, label },
-  statusses,
+  statuses,
   action,
 }) => {
   return (
-    <div className={cssClasses('statusses__row')}>
-      <div className={cssClasses('statusses__spacer')} />
-      <div className={cssClasses('statusses__container')}>
+    <div className={cssClasses('statuses__row')}>
+      <div className={cssClasses('statuses__spacer')} />
+      <div className={cssClasses('statuses__container')}>
         <FormGroup row>
-          <div className={cssClasses('statusses__status')}>
+          <div className={cssClasses('statuses__status')}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -25,10 +27,7 @@ const DailyStatusFilters = ({
                   onChange={() => action(key)}
                   value={key}
                   classes={{
-                    root: cssClasses(
-                      'status__checkbox',
-                      `status__checkbox--${key}`
-                    ),
+                    root: cssClasses(`status__checkbox--${key}`),
                   }}
                 />
               }
@@ -37,13 +36,14 @@ const DailyStatusFilters = ({
           </div>
         </FormGroup>
         <FormGroup row>
-          <div className={cssClasses('statusses__status')}>
-            {statusses
-              ? statusses.map(({ externalId, name, checked }) => (
+          <div className={cssClasses('statuses__status')}>
+            {statuses
+              ? statuses.map(({ externalId, name, checked }) => (
                   <FormControlLabel
+                    key={externalId}
                     classes={{
-                      root: cssClasses('statusses__statusroot'),
-                      label: cssClasses('statusses__statuslabel'),
+                      root: cssClasses('statuses__statusroot'),
+                      label: cssClasses('statuses__statuslabel'),
                     }}
                     control={
                       <Checkbox
@@ -51,10 +51,7 @@ const DailyStatusFilters = ({
                         onChange={() => action(externalId)}
                         value={externalId}
                         classes={{
-                          root: cssClasses(
-                            'status__checkbox',
-                            `status__checkbox--${externalId}`
-                          ),
+                          root: cssClasses(`status__checkbox--${externalId}`),
                         }}
                       />
                     }
@@ -75,7 +72,7 @@ DailyStatusFilters.propTypes = {
     label: PropTypes.string,
     key: PropTypes.string,
   }).isRequired,
-  statusses: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  statuses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]).isRequired,
   action: PropTypes.func.isRequired,
 }
 

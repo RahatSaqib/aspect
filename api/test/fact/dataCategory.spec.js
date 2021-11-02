@@ -178,9 +178,8 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       const resultSourceId = await resultSourceToId('Generated')
       const resultTypeId = await resultTypeToId('Patient')
       const resultMtbNumber = 100
-      const {
-        Detected: resultCategoryDetectedId,
-      } = await allResultCategoryToId()
+      const { Detected: resultCategoryDetectedId } =
+        await allResultCategoryToId()
       const { id: assayGeneXpertMtbRifId } = await knex('Assay')
         .where({ externalId: 'GxMtbRif' })
         .first()
@@ -202,7 +201,7 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
             sampleTypeId,
             originSiteId: siteId,
           }
-          sample.id = await knex('Sample').insert(sample)
+          ;[sample.id] = await knex('Sample').insert(sample)
           samples.push(sample)
         })
       )

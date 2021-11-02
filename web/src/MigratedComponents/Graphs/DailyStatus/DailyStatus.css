@@ -11,7 +11,10 @@
 }
 
 .clinic__name {
-  min-width: 330px;
+  width: 330px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   text-align: right;
   padding: 0 10px 0;
   font-size: 14.4px;
@@ -24,19 +27,25 @@
 
 .clinic__day {
   background-color: white;
+  color: transparent;
   transition: background-color 0.2s ease;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .clinic__day--null {
   background-color: transparent;
 }
 
-/* 
- * Statusses targeted:
+/*
+ * Statuses targeted:
  * active
  * reportedActive
  * inactiveUnknown
- * inactiveNoResultsReported
+ * inactiveNoTestsPerformed
  * inactiveOutOfInventory
  * inactiveDownForRepair
  * inactiveConnectivity
@@ -50,33 +59,23 @@
 .clinic__day--active,
 .clinic__day--reportedActive {
   background-color: var('--aspect-device-active');
+  color: var('--aspect-color-black-2');
 }
 
 .clinic__day--inactive {
-  background-color: var('--aspect-device-connectivity');
+  background-color: var('--aspect-device-inactiveConnectivity');
 }
 
-.clinic__day--inactiveNoResultsReported {
-  background-color: var('--storm-gray');
+.clinic__day--inactiveNoTestsPerformed {
+  background-color: var('--aspect-device-inactiveNoTestsPerformed');
 }
 
 .clinic__day--inactiveDownForRepair {
-  background-color: var('--aspect-device-needs-repair');
+  background-color: var('--aspect-device-inactiveDownForRepair');
 }
 
 .clinic__day--inactiveUnknown {
-  background-color: #ffffff;
-  border: 1px solid black;
-}
-
-.clinic__day--inactiveUnknown:after {
-  content: '';
-  position: absolute;
-  margin-top: -0.5px;
-  border-top: 1px solid black;
-  width: 22px;
-  transform: rotate(36deg);
-  transform-origin: 0% 0%;
+  background-color: var('--aspect-device-inactiveUnknown');
 }
 
 .clinic__day--inactiveOutOfInventory {
@@ -84,20 +83,32 @@
 }
 
 .clinic__day--noResultsReported {
-  background-color: var('--aspect-device-inactiveNoResultsReported');
+  background-color: var('--aspect-device-inactiveNoTestsPerformed');
 }
 
 .clinic__day--inactiveConnectivity {
-  background-color: var('--aspect-device-connectivity');
+  background-color: var('--aspect-device-inactiveConnectivity');
 }
 
 .clinic__day--inactiveDecommissioned {
   background-color: var('--aspect-device-inactiveDecommissioned');
 }
+.clinic__day--inactiveNoStaff {
+  background-color: var('--aspect-device-inactiveNoStaff');
+}
+.clinic__day--inactiveNoSamples {
+  background-color: var('--aspect-device-inactiveNoSamples');
+}
+.clinic__day--inactiveNoPower {
+  background-color: var('--aspect-device-inactiveNoPower');
+}
+.clinic__day--inactiveOther {
+  background-color: var('--aspect-device-inactiveOther');
+}
 
 .status__checkbox {
-  transform: scale(1.5);
-  margin: 0 10px 0;
+  transform: scale(1.5) !important;
+  margin: 0 10px 0 !important;
 }
 
 .status__checkbox--all {
@@ -109,22 +120,34 @@
   color: var('--aspect-device-active') !important;
 }
 .status__checkbox--inactiveUnknown {
-  color: black !important;
+  color: var('--aspect-device-inactiveUnknown') !important;
 }
-.status__checkbox--inactiveNoResultsReported {
-  color: var('--aspect-device-inactiveNoResultsReported') !important;
+.status__checkbox--inactiveNoTestsPerformed {
+  color: var('--aspect-device-inactiveNoTestsPerformed') !important;
 }
 .status__checkbox--inactiveOutOfInventory {
   color: var('--aspect-device-inactiveOutOfInventory') !important;
 }
 .status__checkbox--inactiveDownForRepair {
-  color: var('--aspect-device-needs-repair') !important;
+  color: var('--aspect-device-inactiveDownForRepair') !important;
 }
 .status__checkbox--inactiveConnectivity {
-  color: var('--aspect-device-connectivity') !important;
+  color: var('--aspect-device-inactiveConnectivity') !important;
 }
 .status__checkbox--inactiveDecommissioned {
   color: var('--aspect-device-inactiveDecommissioned') !important;
+}
+.status__checkbox--inactiveNoStaff {
+  color: var('--aspect-device-inactiveNoStaff') !important;
+}
+.status__checkbox--inactiveNoSamples {
+  color: var('--aspect-device-inactiveNoSamples') !important;
+}
+.status__checkbox--inactiveNoPower {
+  color: var('--aspect-device-inactiveNoPower') !important;
+}
+.status__checkbox--inactiveOther {
+  color: var('--aspect-device-inactiveOther') !important;
 }
 
 .clinic__day--future {
@@ -137,8 +160,8 @@
   justify-content: center;
   align-items: center;
   padding: 0 15px;
-  background: #333333;
-  color: white;
+  border: 1px solid #333333;
+  background: white;
   font-size: 11px;
 }
 
@@ -163,32 +186,32 @@
   text-transform: uppercase;
 }
 
-.statusses__spacer {
+.statuses__spacer {
   width: 415px;
 }
 
-.statusses__row {
+.statuses__row {
   display: flex;
-  height: 120px;
+  min-height: 120px;
 }
 
-.statusses__container {
+.statuses__container {
   margin: 20px 18px;
 }
 
-.statusses__status {
-  width: 70%;
+.statuses__status {
+  width: 80%;
 }
 
-.statusses__statusroot {
-  margin-top: 5px;
+.statuses__statusroot {
+  margin-top: 5px !important;
 }
 
-.statusses__statuslabel {
-  margin-right: 10px;
+.statuses__statuslabel {
+  margin-right: 10px !important;
 }
 
-.dailystatus__spinner {
+.dailyStatus__spinner {
   height: 100%;
   display: flex;
   justify-content: center;

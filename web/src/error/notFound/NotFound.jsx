@@ -10,7 +10,9 @@ import IconButton from '@material-ui/core/IconButton'
 import ActionHome from '@material-ui/icons/Home'
 import ActionBack from '@material-ui/icons/KeyboardArrowLeft'
 
-const cssClasses = classnames.bind(require('./NotFound.css'))
+import styles from './NotFound.css'
+
+const cssClasses = classnames.bind(styles)
 
 export class NotFound extends PureComponent {
   static defaultProps = {
@@ -35,7 +37,7 @@ export class NotFound extends PureComponent {
         </h2>
         <IconButton
           className={cssClasses('Container__Button')}
-          onClick={this.props.history.goBack}
+          onClick={() => this.props.navigate(-1)}
         >
           <ActionBack fontSize="large" />
         </IconButton>

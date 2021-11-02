@@ -1,10 +1,13 @@
 import React, { Suspense, lazy, memo } from 'react'
-import PropTypes from 'prop-types'
+import isBoolean from 'lodash/isBoolean'
+import { bool, string, oneOfType } from 'prop-types'
 import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
 import ErrorBoundary from '../ErrorBoundary'
 
-const cssClasses = classnames.bind(require('./Icons.css'))
+import styles from './Icons.css'
+
+const cssClasses = classnames.bind(styles)
 
 async function loadIconModule(icon) {
   const iconFamily = icon.substring(0, 2).toLowerCase()
@@ -12,14 +15,25 @@ async function loadIconModule(icon) {
     case iconFamily === 'fa':
       return import('react-icons/fa')
 
+    case iconFamily === 'ai':
+      return import('react-icons/ai')
+
+    case iconFamily === 'bs':
+      return import('react-icons/bs')
+
     default:
       return import('react-icons/md')
   }
 }
 
-const IconProvider = memo(({ icon, className }) => {
+/**
+ * Icon component to dynamically import icon from string.
+ * Falls back to default icon if failure
+ */
+
+const IconProvider = memo(({ icon, className, title }) => {
   const IconShell = ({ children }) => (
-    <div className={cssClasses([className])}>{children}</div>
+    <div className={cssClasses({ [className]: !!className })}>{children}</div>
   )
 
   const IconComponent = lazy(() =>
@@ -43,16 +57,33 @@ const IconProvider = memo(({ icon, className }) => {
         <ErrorBoundary
           fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
         >
-          <IconComponent />
+          <IconComponent
+            title={isBoolean(title) ? (!title ? '' : icon) : title}
+          />
         </ErrorBoundary>
       </IconShell>
     </Suspense>
   )
 })
 
+IconProvider.defaultProps = {
+  className: null,
+  title: true,
+}
+
 IconProvider.propTypes = {
-  icon: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
+  /**
+    String of the icon name to be displayed
+  */
+  icon: string.isRequired,
+  /**
+    Class name for icon to be displayed
+  */
+  className: string,
+  /**
+    Class name for icon to be displayed
+  */
+  title: oneOfType([bool, string]),
 }
 
 export default IconProvider

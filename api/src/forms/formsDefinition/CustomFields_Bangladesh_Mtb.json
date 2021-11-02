@@ -1,0 +1,213 @@
+{
+  "fields": [
+    {
+      "id": 1101,
+      "name": "PatientName",
+      "title": "Patient Name",
+      "i18nKey": "PatientNameI18nKey",
+      "fieldType": "text",
+      "order": 1,
+      "gxAlertDbColumn": "PatientName",
+      "caption": "Patient Name",
+      "i18nKeyCaption": "PatientNameI18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 1102,
+      "name": "Age",
+      "title": "Age",
+      "i18nKey": "AgeFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "gxAlertDbColumn": "PatientAge",
+      "caption": "Age",
+      "i18nKeyCaption": "Agei18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 0,
+          "max": 150,
+          "errorMessage": "The age should be a number between 1-150",
+          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
+        }
+      ]
+    },
+
+    {
+      "id": 1103,
+      "name": "Gender",
+      "title": "Gender",
+      "i18nKey": "GenderI18nKey",
+      "fieldType": "number",
+      "order": 3,
+      "gxAlertDbColumn": "PatientGender",
+      "caption": "Gender",
+      "i18nKeyCaption": "Genderi18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 1,
+          "value": "Male",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "Female",
+          "order": 10
+        }
+      ]
+    },
+
+    {
+      "id": 1104,
+      "name": "Address",
+      "title": "Address",
+      "i18nKey": "AddressI18nKey",
+      "fieldType": "text",
+      "order": 10,
+      "gxAlertDbColumn": "PatientStreet",
+      "caption": "Address",
+      "i18nKeyCaption": "AddressI18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 1105,
+      "name": "Mobile Number",
+      "title": "Mobile Number",
+      "i18nKey": "MobileNumberI18nkey",
+      "fieldType": "text",
+      "order": 11,
+      "gxAlertDbColumn": "PatientPhone",
+      "caption": "Mobile Number",
+      "i18nKeyCaption": "MobileNumberI18nKeyCaption",
+      "controlType": "textBox"
+    },
+    {
+      "id": 1106,
+      "name": "Referring Facility",
+      "i18nKey": "ReferringFacilityI18nkey",
+      "fieldType": "text",
+      "order": 12,
+      "gxAlertDbColumn": "ReferringFacility",
+      "title": "Referring Facility",
+      "caption": "Referring Facility",
+      "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
+      "controlType": "autoComplete",
+      "optionSource": "all-sites",
+      "customUrlMappingFields": {
+        "key": "externalId",
+        "value": "name"
+      }
+    },
+
+    {
+      "id": 1201,
+      "name": "TB History",
+      "i18nKey": "TBHistoryI18nKey",
+      "fieldType": "text",
+      "order": 30,
+      "gxAlertDbColumn": "TBHistory",
+      "title": "TB History",
+      "caption": "TB History",
+      "i18nKeyCaption": "TBHistoryI8nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": "unknown",
+          "value": "Unknown History",
+          "order": 0
+        },
+        {
+          "key": "new",
+          "value": "New Test",
+          "order": 10
+        },
+        {
+          "key": "treated",
+          "value": "Previously Treated",
+          "order": 20
+        }
+      ]
+    },
+
+    {
+      "id": 1210,
+      "name": "HIV Status",
+      "i18nKey": "HIVStatusI18nKey",
+      "fieldType": "text",
+      "order": 35,
+      "gxAlertDbColumn": "HIVStatus",
+      "title": "HIV Status",
+      "caption": "HIV Status",
+      "i18nKeyCaption": "HIVStatusI8nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": "positive",
+          "value": "Positive",
+          "order": 10
+        },
+        {
+          "key": "negative",
+          "value": "Negative",
+          "order": 20
+        },
+        {
+          "key": "unknown",
+          "value": "Unknown",
+          "order": 99
+        }
+      ]
+    },
+    {
+      "id": 1211,
+      "name": "Sample Type",
+      "i18nKey": "SampleTypeI18nKey",
+      "fieldType": "text",
+      "order": 36,
+      "gxAlertDbColumn": "SampleType",
+      "title": "Sample Type",
+      "caption": "Sample Type",
+      "i18nKeyCaption": "SampleTypeI8nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": "pulmonary",
+          "value": "Pulmonary",
+          "order": 10
+        },
+        {
+          "key": "extra",
+          "value": "Extra-pulmonary",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 1301,
+      "name": "TBRegistrationNumberPrevious",
+      "title": "TB Registration Number - Previous (if any)",
+      "i18nKey": "TBRegistrationNumberPreviousI18nKey",
+      "fieldType": "text",
+      "order": 40,
+      "gxAlertDbColumn": "TBRegistrationNumberPrevious",
+      "caption": "TB Registration Number - Previous (if any)",
+      "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "id": 1302,
+      "name": "TBRegistrationNumberCurrent",
+      "title": "TB Registration Number - Current",
+      "i18nKey": "TBRegistrationNumberCurrentI18nKey",
+      "fieldType": "text",
+      "order": 41,
+      "gxAlertDbColumn": "TBRegistrationNumberCurrent",
+      "caption": "TB Registration Number - Current",
+      "i18nKeyCaption": "TBRegistrationNumberCurrentI18nCaptionKey",
+      "controlType": "textBox"
+    }
+  ],
+  "refForms": []
+}

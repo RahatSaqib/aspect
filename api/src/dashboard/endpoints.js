@@ -165,7 +165,7 @@ const routes = [
                 inactiveUnknown: Joi.number().description(
                   'The number of inactive "Unknown" devices in the system as of that day'
                 ),
-                inactiveNoResultsReported: Joi.number().description(
+                inactiveNoTestsPerformed: Joi.number().description(
                   'The number of inactive "NoResultsReported" devices in the system as of that day'
                 ),
                 inactiveOutOfInventory: Joi.number().description(
@@ -174,14 +174,23 @@ const routes = [
                 inactiveDownForRepair: Joi.number().description(
                   'The number of inactive "DownForRepair" devices in the system as of that day'
                 ),
-                inactiveConnectivity: Joi.number().description(
-                  'The number of inactive "Connectivity" devices in the system as of that day'
-                ),
                 inactiveDecommissioned: Joi.number().description(
                   'The number of inactive "Decommissioned" devices in the system as of that day'
                 ),
                 isWeekendOrHoliday: Joi.bool().description(
                   'Indicates whether the day is a weekend day or a holiday.'
+                ),
+                inactiveNoStaff: Joi.number().description(
+                  'The number of inactive "No Staff" devices in the system as of that day'
+                ),
+                inactiveNoSamples: Joi.number().description(
+                  'The number of inactive "No Samples" devices in the system as of that day'
+                ),
+                inactiveNoPower: Joi.number().description(
+                  'The number of inactive "No Power" devices in the system as of that day'
+                ),
+                inactiveOther: Joi.number().description(
+                  'The number of inactive "Other" devices in the system as of that day'
                 ),
               })
             ),

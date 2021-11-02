@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import {
   calcPercentageSplitBar,
   getISOFromString,
@@ -86,7 +87,9 @@ describe('Graph Helpers', () => {
 
     describe('PieRowchart: groupForPieRow', () => {
       it('should group data by types correctly', () => {
-        const mergedParams = [{ currentMonth: '2020-10-01' }]
+        const mergedParams = [
+          { currentMonth: `${format(new Date(), 'yyyy-MM')}-01` },
+        ]
         const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
         expect(grouped).toEqual(pieRowDataFromAPIOut)
       })
@@ -95,7 +98,7 @@ describe('Graph Helpers', () => {
     describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
       it('should group data by key correctly - for old treatment API bar', () => {
         const indexBy = 'monthTested'
-        const keyToConsume = 'pcConfirmed'
+        const keyToConsume = 'pcOnTreatment'
         const displayMethod = 'percentage'
         const filterBy = false
         const formatDate = 'MMM yy'
@@ -114,7 +117,7 @@ describe('Graph Helpers', () => {
     describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
       it('should group data by key correctly - Skewed data as percentage', () => {
         const indexBy = 'monthTested'
-        const keyToConsume = 'pcConfirmed'
+        const keyToConsume = 'pcOnTreatment'
         const displayMethod = 'percentage'
         const filterBy = false
         const formatDate = 'MMM yy'
@@ -133,7 +136,7 @@ describe('Graph Helpers', () => {
     describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
       it('should group data by key correctly - Skewed data as percentage opposite', () => {
         const indexBy = 'monthTested'
-        const keyToConsume = 'pcConfirmed'
+        const keyToConsume = 'pcOnTreatment'
         const displayMethod = 'percentage'
         const filterBy = false
         const formatDate = 'MMM yy'
@@ -152,7 +155,7 @@ describe('Graph Helpers', () => {
     describe('Barchart (Treatment Status): groupForOldTreatmentAPI', () => {
       it('should group data by key correctly - Skewed data as actual', () => {
         const indexBy = 'monthTested'
-        const keyToConsume = 'pcConfirmed'
+        const keyToConsume = 'pcOnTreatment'
         const displayMethod = 'actual'
         const filterBy = false
         const formatDate = 'MMM yy'

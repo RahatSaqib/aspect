@@ -1,7 +1,7 @@
 @import '../../globals/variables.css';
 
 :root {
-  @custom-media --sm-viewport (min-width: 620px);
+  @custom-media --sm-viewport (min-width: 620px and max-width: 919px);
   @custom-media --md-viewport (min-width: 920px);
 }
 
@@ -45,7 +45,7 @@
 }
 
 .Modal {
-  z-index: var(--z-index-overlay);
+  z-index: var(--z-index-overlay) !important;
 }
 
 .Popover {
@@ -88,16 +88,37 @@
   padding: 0 10px;
 }
 
-.checkbox__container {
-  padding: 10px 0 0 0;
+.Control--wide {
+  max-width: 33%;
 }
 
-.checkbox__label {
-  font-size: 12px;
+.Control--wide div {
+  width: calc(100% - 3px);
 }
 
-.checkbox__group {
-  padding: 10px 0 0 14px;
+.Control--wide div:focus {
+  padding-right: 8px;
+}
+
+/* .Control > label[class*='CheckboxField-root'],  */
+.Control > div[class*='MuiFormControl-root'] {
+  width: 256px;
+}
+
+.Control-checkbox {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+}
+
+.Control .Control__inner {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.checkbox-wrapper {
+  margin-right: 4px;
 }
 
 @media screen and (--sm-viewport) {

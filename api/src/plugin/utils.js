@@ -2,15 +2,19 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
-  resultAnalyzeErrors,
-  resultAnalyzeCategories,
+  resultAnalyzeCategoriesAndErrors,
 } = require('../result/actions')
 const {
   deviceInstrumentReplaced,
   deviceModuleDisabled,
   deviceHardwareError,
+  hardwareErrorActions,
 } = require('../device/actions')
-const { issueTypeToId, allResultCategoryToId } = require('../shared/dictionary')
+const {
+  deviceMaintenanceTypeToId,
+  issueTypeToId,
+} = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
@@ -18,12 +22,10 @@ async function getPartnerPluginName({ partnerId, caseId }) {
     ;[partnerPluginName] = await knex('PatientCase as c')
       .innerJoin('Partner as p', 'c.partnerId', 'p.id')
       .where('c.id', caseId)
-      .select('p.plugin')
       .pluck('p.plugin')
   } else if (partnerId) {
     ;[partnerPluginName] = await knex('Partner')
       .where('id', partnerId)
-      .select('plugin')
       .pluck('plugin')
   }
   return partnerPluginName
@@ -33,168 +35,99 @@ async function getDeviceTypePluginName(deviceId) {
   const [deviceTypePluginName] = await knex('Device as d')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where('d.id', deviceId || 0)
-    .first('dt.plugin')
     .pluck('dt.plugin')
   return deviceTypePluginName
 }
 
 async function getReplacedModuleSerials(knex, deviceId) {
-  const replacedModuleSerials = knex('Issue as i')
+  return knex('Issue as i')
     .join('IssueType as it', 'it.id', 'i.issueTypeId')
     .where('it.externalId', 'ModuleReplaced')
     .where('i.deviceId', deviceId)
     .select(knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial'))
-    .then(items => items.map(s => s.replacedModuleSerial))
-
-  return replacedModuleSerials
-}
-
-async function shouldTriggerResultCategoryAnalysis(
-  messageContext,
-  deviceId,
-  resultId,
-  resultCategoryId,
-  { resultOutcome, moduleSerial, assayId, consumableLot }
-) {
-  const resultCategories = await allResultCategoryToId()
-  const categoriesToAnalyze = [resultCategories.Invalid]
-  if (categoriesToAnalyze.includes(resultCategoryId)) {
-    if (!messageContext.resultAnalyzeCategories) {
-      messageContext = messageContext.bindActionCreators({
-        resultAnalyzeCategories,
-      })
-    }
-    const { resultCategoryExternalId } = await knex('ResultCategory')
-      .where({
-        id: resultCategoryId,
-      })
-      .first('externalId as resultCategoryExternalId')
-    await messageContext.resultAnalyzeCategories(
-      deviceId,
-      resultId,
-      resultCategoryExternalId,
-      {
-        moduleSerial,
-        resultOutcome,
-      }
-    )
-    await messageContext.resultAnalyzeCategories(
-      deviceId,
-      resultId,
-      resultCategoryExternalId,
-      {
-        assayId,
-        consumableLot,
-        resultOutcome,
-      }
-    )
-  }
+    .then(rows => rows.map(({ replacedModuleSerial }) => replacedModuleSerial))
 }
 
 async function shouldTriggerResultErrorAnalysis(
   messageContext,
   deviceId,
   resultId,
+  resultCategory1, // <-- this is result category externalid
   resultErrorCode,
-  { resultOutcome, moduleSerial, assayId, consumableLot }
+  { resultOutcome, moduleSerial, assayId, consumableLot, instrumentSerial }
 ) {
-  const errorsToAnalyze = [
-    5007,
-    5006,
-    5016,
-    5017,
-    5011,
-    2005,
-    2008,
-    2026,
-    2032,
-    2035,
-    2036,
-    2096,
-    2097,
-  ]
-  if (errorsToAnalyze.includes(parseInt(resultErrorCode, 10))) {
-    if (!messageContext.resultAnalyzeErrors) {
-      messageContext = messageContext.bindActionCreators({
-        resultAnalyzeErrors,
-      })
-    }
-    await messageContext.resultAnalyzeErrors(
-      deviceId,
-      resultId,
-      resultErrorCode,
-      {
-        moduleSerial,
-        resultOutcome,
-      }
-    )
-    await messageContext.resultAnalyzeErrors(
-      deviceId,
-      resultId,
-      resultErrorCode,
-      {
-        assayId,
-        consumableLot,
-        resultOutcome,
-      }
-    )
+  if (!messageContext.resultAnalyzeCategoriesAndErrors) {
+    messageContext = messageContext.bindActionCreators({
+      resultAnalyzeCategoriesAndErrors,
+    })
   }
+  logger.debug([
+    `shouldTriggerResultErrorAnalysis resultid:${resultId}`,
+    resultCategory1, // <-- this is result category externalid
+    resultErrorCode,
+  ])
+
+  // this one is for result base issue, only needs module serial.
+  // others data parameters are for filtering not for triggering the issue.
+  await messageContext.resultAnalyzeCategoriesAndErrors(
+    deviceId,
+    resultId,
+    resultCategory1, // <-- this is result category externalid
+    resultErrorCode,
+    { resultOutcome, moduleSerial, instrumentSerial }
+  )
+  // this 2nd one is for reagent base issue, it needs assayid and consumablelot.
+  await messageContext.resultAnalyzeCategoriesAndErrors(
+    deviceId,
+    resultId,
+    resultCategory1, // <-- this is result category externalid
+    resultErrorCode,
+    { resultOutcome, assayId, consumableLot, instrumentSerial }
+  )
 }
 
-async function shouldTriggerModuleReplaced(knex, messageContext, resultId) {
-  const result = await knex('Result')
-    .where('id', resultId)
-    .first(
-      'id',
-      'deviceId',
-      'moduleName',
-      'moduleSerial',
-      'createdOn',
-      'endedOn',
-      'updatedOn'
-    )
-  if (!result) {
+async function shouldTriggerModuleReplaced(
+  knex,
+  messageContext,
+  resultId,
+  deviceId,
+  moduleSerial,
+  instrumentSerial,
+  moduleName,
+  startedOn
+) {
+  if (!moduleSerial && !moduleName && !startedOn && !deviceId) {
     return
   }
+  logger.debug(`shouldTriggerModuleReplaced resultid: ${resultId}`, {
+    reLabel: 'onResultLogged:shouldTriggerModuleReplaced',
+  })
 
   if (!messageContext.resultModuleReplaced) {
     messageContext = messageContext.bindActionCreators({
       resultModuleReplaced,
     })
   }
-
-  // get all modules that were replaced so we can ignore them in the queries below:
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    result.deviceId
-  )
   // check if a module was just now replaced and trigger replacement-issue if it was
-  if (
-    result.moduleName &&
-    result.moduleSerial &&
-    result.createdOn.getTime() === result.updatedOn.getTime()
-  ) {
-    // get the most recent result from the same moduleName as the current result
-    const previousResultOnModule = await knex('Result')
-      .where('deviceId', result.deviceId)
-      .where('moduleName', result.moduleName)
-      .whereNotNull('moduleSerial')
-      .whereNot('id', result.id)
-      .whereRaw('endedOn < ?', [result.endedOn])
-      .orderBy('endedOn', 'desc')
-      .first('moduleSerial')
-    if (
-      previousResultOnModule &&
-      previousResultOnModule.moduleSerial !== result.moduleSerial &&
-      !replacedModuleSerials.includes(previousResultOnModule.moduleSerial)
-    ) {
-      messageContext.resultModuleReplaced(result.id, {
-        moduleName: result.moduleName,
-        replacedModuleSerial: previousResultOnModule.moduleSerial,
-        newModuleSerial: result.moduleSerial,
-      })
-      replacedModuleSerials.push(previousResultOnModule.moduleSerial)
-    }
+  // get the most recent result from the same moduleName as the current result
+  const previousResultOnModule = await knex('Result')
+    .where('deviceId', deviceId)
+    .where('moduleName', moduleName)
+    .whereNotNull('moduleSerial')
+    .where('moduleSerial', '<>', moduleSerial)
+    .andWhere('instrumentSerial', instrumentSerial)
+    .whereRaw('startedOn < ?', [startedOn])
+    .orderBy('startedOn', 'desc')
+    .first('moduleSerial', 'id')
+
+  if (previousResultOnModule) {
+    messageContext.resultModuleReplaced(resultId, deviceId, {
+      moduleName,
+      replacedModuleSerial: previousResultOnModule.moduleSerial,
+      newModuleSerial: moduleSerial,
+      instrumentSerial,
+      oldResultId: previousResultOnModule.id,
+    })
   }
 }
 
@@ -204,12 +137,16 @@ async function shouldTriggerModuleDisabled(
   device,
   deviceModule
 ) {
+  // only makes sense if the issue type is defined for the country
+  const moduleReplacedIssueTypeId = await issueTypeToId('ModuleReplaced')
+  if (!moduleReplacedIssueTypeId) return
+
   /**
    * Check if the module was already replaced
    */
   const moduleReplacedIssue = await knex('Issue')
     .where({
-      issueTypeId: await issueTypeToId('ModuleReplaced'),
+      issueTypeId: moduleReplacedIssueTypeId,
       deviceId: device.id,
     })
     .andWhere(
@@ -223,6 +160,7 @@ async function shouldTriggerModuleDisabled(
    * If the module wasn't replaced already, we trigger the event to create the new issue.
    */
   if (!moduleReplacedIssue) {
+    logger.debug(['shouldTriggerModuleDisabled', device, deviceModule])
     if (!messageContext.deviceModuleDisabled) {
       messageContext = messageContext.bindActionCreators({
         deviceModuleDisabled,
@@ -259,6 +197,8 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
   }
 
   if (!messageContext.deviceInstrumentReplaced) {
+    logger.debug([`shouldTriggerInstrumentReplaced resultid:${resultId}`])
+
     messageContext = messageContext.bindActionCreators({
       deviceInstrumentReplaced,
     })
@@ -315,9 +255,7 @@ async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
 }
 
 async function shouldTriggerHardwareErrorAnalysis(
-  knex,
   messageContext,
-  partnerId,
   device,
   payload,
   deviceOperationId
@@ -328,81 +266,157 @@ async function shouldTriggerHardwareErrorAnalysis(
   } = payload
 
   if (details.Errors && _.isArray(details.Errors) && details.Errors.length) {
-    // get all IssueEventTriggers starting with `Hardware`
-    const hardwareEventTriggers = await knex('IssueEventTrigger as iet')
-      .innerJoin('IssueType as it', 'iet.issueTypeId', 'it.id')
-      .innerJoin('IssueEventStatus as ies', 'iet.issueEventStatusId', 'ies.id')
-      .where('ies.externalId', 'Triggered')
-      .where('iet.partnerId', partnerId)
-      .whereRaw('it.externalId LIKE ?', ['Hardware%'])
-      .select(
-        'iet.issueTypeId',
-        'it.externalId as issueType',
-        'iet.triggerConditions as triggerConditionsRaw'
-      )
-      .then(items =>
-        items.map(x => ({
-          ...x,
-          // append new prop with parsed JSON string
-          triggerConditions: JSON.parse(x.triggerConditionsRaw),
-        }))
-      )
-
-    /**
-     * get 1st IssueEventTrigger with needed ErrorCode
-     * --> see original details in prop 'triggerConditions' in /seeds/fixtures/IssueEventTrigger.json
-     * for 'Hardware*' issueTypes
-     */
-    const hardwareIssueEventTrigger = _.reduce(
-      details.Errors,
-      (memo, errorItem) => {
-        // get error code from log entry in 'deviceOperation'
-        const errorCode = parseInt(errorItem.ErrorCode, 10)
-        // get 1st IssueEventTrigger with same error code
-        const hardwareIssueEventTrigger = hardwareEventTriggers.find(
-          issueEventTrigger => {
-            const {
-              triggerConditions: {
-                conditions: { evaluationFilterParameters = {} },
-              } = {},
-            } = issueEventTrigger
-
-            return errorCode === evaluationFilterParameters.errorCode
-          }
-        )
-
-        if (!memo && hardwareIssueEventTrigger) {
-          memo = hardwareIssueEventTrigger
-        }
-
-        return memo
-      },
-      null
+    const errorForTriggering = _.find(details.Errors, error =>
+      _.includes(Object.keys(hardwareErrorActions), error.ErrorCode)
     )
-
-    if (hardwareIssueEventTrigger) {
-      const {
-        triggerConditions: {
-          conditions: {
-            evaluationFilterParameters: { errorCode },
-          },
-          action: actionType,
-        },
-      } = hardwareIssueEventTrigger
+    if (errorForTriggering) {
+      logger.debug(
+        `shouldTriggerHardwareErrorAnalysis error:${errorForTriggering}`
+      )
       const options = {
         startedOn,
         details,
         deviceOperationId,
-        errorCode,
       }
-
       if (!messageContext.deviceHardwareError) {
         messageContext = messageContext.bindActionCreators({
           deviceHardwareError,
         })
       }
-      messageContext.deviceHardwareError(device, actionType, options)
+      messageContext.deviceHardwareError(
+        device,
+        errorForTriggering.ErrorCode,
+        options
+      )
     }
+  }
+}
+
+async function shouldLogDeviceCalibration(
+  knex,
+  deviceId,
+  payload,
+  deviceMaintenanceTypeId
+) {
+  const {
+    startedOn: calibratedOn,
+    data: { details = {} },
+  } = payload
+  /**
+   * if log entry contains non-empty array `Calibrations`
+   * then insert/update entry into DeviceMaintenance table
+   */
+  if (
+    details.Calibrations &&
+    _.isArray(details.Calibrations) &&
+    details.Calibrations.length &&
+    deviceId &&
+    calibratedOn
+  ) {
+    await setDeviceCalibrationStatus(knex, deviceId, calibratedOn, {
+      deviceMaintenanceTypeId,
+      notes: 'Create calibration from GeneXpert logs',
+    })
+  }
+}
+
+async function setDeviceCalibrationStatus(
+  knex,
+  deviceId,
+  calibratedOn,
+  { deviceMaintenanceTypeId, notes }
+) {
+  logger.debug(
+    `shouldLogDeviceCalibration: analyzing value ${JSON.stringify({
+      deviceId,
+      calibratedOn,
+    })}`,
+    { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
+  )
+
+  if (!deviceMaintenanceTypeId) {
+    deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+  }
+
+  // get currently active maintenance item
+  const itemCurrent = await knex('DeviceMaintenance')
+    .where({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    })
+    /**
+     * below ordering is actually not needed cuz we should have only single entry with
+     * above WHERE condition, but let's keep this 'orderBy' here to have such
+     * extra validation to get item with latest 'contextDate'
+     */
+    .orderBy('contextDate', 'desc')
+    .first()
+
+  // set `current` to 1 if ...
+  const current =
+    // ... missing current entry ...
+    !itemCurrent ||
+    // ... or when current calibration date is less than new date
+    itemCurrent.contextDate < calibratedOn
+      ? 1
+      : 0
+
+  // reset 'current' if current calibration date is less than new date
+  const shouldResetCurrent =
+    itemCurrent && itemCurrent.contextDate < calibratedOn
+  if (shouldResetCurrent) {
+    await knex('DeviceMaintenance').update({ current: 0 }).where({
+      id: itemCurrent.id,
+    })
+  }
+
+  // get today's maintenance item
+  const itemToday = await knex('DeviceMaintenance')
+    .where({
+      deviceId,
+      deviceMaintenanceTypeId,
+    })
+    // only one entry per day
+    .whereRaw('DATE(contextDate) = DATE(?)', [calibratedOn])
+    .first()
+
+  /**
+   * Check different conditions for itemToday and itemCurrent.
+   * Notice to do nothing (no below conditions match) if
+   * - itemToday with calibratedOn exists (i.e. no dupes for same day for this deviceId),
+   * - and no need to change itemCurrent (i.e. shouldResetCurrent = false)
+   */
+  if (itemToday && itemToday.current === 0 && shouldResetCurrent) {
+    /**
+     * condition means itemCurrent had been reset (because
+     * calibratedOn > itemCurrent.contextDate) but itemToday (with calibratedOn)
+     * exists and by some reason is NOT set as 'current'
+     */
+    logger.debug(
+      'shouldLogDeviceCalibration: update today item - it is not current and shouldResetCurrent=true',
+      { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
+    )
+    await knex('DeviceMaintenance').update({ current: 1 }).where({
+      id: itemToday.id,
+    })
+  } else if (!itemToday) {
+    logger.debug(
+      'shouldLogDeviceCalibration: insert item for today, because it is missing',
+      { reLabel: 'deviceApi:shouldLogDeviceCalibration' }
+    )
+    await knex('DeviceMaintenance').insert({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current,
+      contextDate: calibratedOn,
+      notes,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      /**
+       * notice that columns 'createdBy' and 'updatedBy' remain NULL-ed
+       */
+    })
   }
 }
 
@@ -414,6 +428,7 @@ module.exports = {
   shouldTriggerModuleDisabled,
   shouldTriggerInstrumentReplaced,
   shouldTriggerResultErrorAnalysis,
-  shouldTriggerResultCategoryAnalysis,
   shouldTriggerHardwareErrorAnalysis,
+  shouldLogDeviceCalibration,
+  setDeviceCalibrationStatus,
 }

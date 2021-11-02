@@ -1,51 +1,47 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router-dom'
+
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import { fetchAssays } from '../../assay/AssayRedux'
 import messages from './messages'
 import SummaryStatus from './SummaryStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import { useAuthState } from '../../Providers/AuthProvider'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
 import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
 import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
+import xdrGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/XDR'
 import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Treatments'
 import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
+import useI18n from '../../Hooks/i18n/useI18n'
 
-import ColorDemo from './ColorDemo/ColorDemo'
+import styles from './Status.css'
 
-const cssClasses = classnames.bind(require('./Status.css'))
+const cssClasses = classnames.bind(styles)
 
-const Status = ({ history, location, colorDemo }) => {
-  const intl = useIntl()
-  const { hivResults } = hivGraphs
-  const { tbDetected, tbResults } = tbGraphs
-  const { treatmentStatus } = treatmentStatusGraphs
-  const { inventoryStatus } = inventoryStatusGraphs
-  const { deviceStatus } = deviceStatusGraphs
-  const { testsOverTime } = testsPerFormedGraphs
-  const {
-    covidDailyConfirmed,
-    covidCasesByAgeAndGender,
-    covidMortalityAndRecoveryConfig,
-    covidMortalityAndRecoveryByGender,
-  } = covidGraphs
+const Status = () => {
+  const location = useLocation()
+  const { formatMessage } = useI18n()
+  const [graphs, setGraphs] = useState(false)
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
-  const userName = useSelector(({ user }) => user.jwt.name)
-  const countryIsoAlpha2CodeIgnored = useSelector(
-    ({ user }) => user.countryAbbreviation
-  )
+  const {
+    countryAbbreviation: countryIsoAlpha2CodeIgnored,
+    jwt: { name: userName },
+    culture,
+  } = useAuthState()
+
   const assays = useSelector(({ assay }) =>
     assay.items.toJS().filter(a => a.hasResults)
   )
@@ -66,157 +62,73 @@ const Status = ({ history, location, colorDemo }) => {
     }
   }, [userName, location])
 
+  useEffect(() => {
+    if (culture) {
+      const { hivResults } = hivGraphs
+      const { tbDetected, tbResults } = tbGraphs
+      const { xdrResults } = xdrGraphs
+      const {
+        covidResults,
+        covidDailyConfirmed,
+        covidCasesByAgeAndGender,
+        covidMortalityAndRecoveryConfig,
+        covidMortalityAndRecoveryByGender,
+      } = covidGraphs
+      const { treatmentStatus } = treatmentStatusGraphs
+      const { inventoryStatus } = inventoryStatusGraphs
+      const { deviceStatus } = deviceStatusGraphs()
+      const { testsOverTime } = testsPerFormedGraphs
+      setGraphs([
+        testsOverTime,
+        hivResults,
+        tbDetected,
+        tbResults,
+        xdrResults,
+        covidResults,
+        treatmentStatus,
+        deviceStatus,
+        covidDailyConfirmed,
+        covidMortalityAndRecoveryConfig,
+        covidMortalityAndRecoveryByGender,
+        covidCasesByAgeAndGender,
+        inventoryStatus,
+      ])
+    }
+  }, [culture])
+
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
       <div className={cssClasses('FiltersGroup')}>
-        <BrowseSiteDropdown intl={intl} history={history} location={location} />
+        <BrowseSiteDropdown />
       </div>
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           <SummaryStatus
-            intl={intl}
-            history={history}
-            location={location}
             className={cssClasses('Section--summary')}
             dashboard="home"
           />
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
-        <PermissionsProvider permissions={testsOverTime.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={testsOverTime} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={hivResults.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={hivResults} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={tbDetected.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={tbDetected} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={tbResults.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={tbResults} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={treatmentStatus.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={treatmentStatus}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={deviceStatus.graphRenderPermissions}>
-          {assays && assays.length ? (
-            <GraphsContainer assaysFromState={assays} config={deviceStatus} />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidDailyConfirmed.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidDailyConfirmed}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidMortalityAndRecoveryConfig.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidMortalityAndRecoveryConfig}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidMortalityAndRecoveryByGender.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidMortalityAndRecoveryByGender}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={covidCasesByAgeAndGender.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={covidCasesByAgeAndGender}
-            />
-          ) : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      {colorDemo && <ColorDemo vars={process.env} />}
-
-      <ErrorBoundary>
-        <PermissionsProvider
-          permissions={inventoryStatus.graphRenderPermissions}
-        >
-          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
-        </PermissionsProvider>
-      </ErrorBoundary>
+      {graphs
+        ? graphs.map(graph => (
+            <ErrorBoundary key={graph.id}>
+              <PermissionsProvider permissions={graph.graphRenderPermissions}>
+                {assays?.length ? (
+                  <GraphsContainer assaysFromState={assays} config={graph} />
+                ) : null}
+              </PermissionsProvider>
+            </ErrorBoundary>
+          ))
+        : null}
 
       <Reports
-        intl={intl}
-        location={location}
         className={cssClasses('Section--withStatus')}
-        title={intl.formatMessage(messages.reportsTitle)}
+        title={formatMessage(messages.reportsTitle)}
       />
     </div>
   )
-}
-
-Status.defaultProps = {
-  colorDemo: false,
-}
-
-Status.propTypes = {
-  colorDemo: PropTypes.bool,
-  history: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default Status

@@ -78,10 +78,7 @@ async function removeCase(_case) {
 
 async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('PatientCase').where(whereFields).update(updateFields)
-  const caseIds = await knex('PatientCase')
-    .where(whereFields)
-    .select('id')
-    .pluck('id')
+  const caseIds = await knex('PatientCase').where(whereFields).pluck('id')
   if (messageContext && caseIds.length) {
     // queue message for each affected Case row
     if (!messageContext.caseUpdated) {
@@ -142,8 +139,9 @@ async function getCases({ query, auth }) {
       'sos.name as sampleOriginSite',
       'd.name as diseaseName',
       'd.id as diseaseId',
+      'd.i18nkey as diseaseI18nKey',
       'd.externalId as diseaseExternalId',
-      knex.raw(`'Active' as status`),
+      knex.raw("'Active' as status"),
       knex.raw(
         'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'
       ),

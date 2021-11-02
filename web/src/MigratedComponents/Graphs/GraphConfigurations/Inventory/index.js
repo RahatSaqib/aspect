@@ -1,5 +1,5 @@
 import BarGraph from '../../BarGraph'
-import AspectDropdown from '../../../AspectDropdown'
+import ConsumableDropDown from '../../../AspectDropDown/ConsumableDropDown'
 
 const inventoryGraphs = {
   inventoryStatus: {
@@ -8,79 +8,45 @@ const inventoryGraphs = {
     assays: [],
     selectorModifiers: [
       {
-        selectedValue: 'Consumable',
-        endpoint: '/dashboard/inventory-item',
-        state: 'data.inventoryConsumableSummaryList',
-        component: AspectDropdown,
-        identifier: 'consumableId',
-        data: null,
-        sortByKeys: ['consumableName'],
-        keyMapping: { idKey: 'consumableId', nameKey: 'consumableName' },
-        isClearable: false,
-        defaultSelectedOption: {
-          key: 'consumableName',
-          value: 'GeneXpert TB Cartridge',
-        },
+        component: ConsumableDropDown,
       },
     ],
     componentSize: 'full',
     group: 'assaysNotNeeded',
-    graphRenderPermissions: ['dashboard'],
+    graphRenderPermissions: ['dashboard', 'operationalData'],
     graphType: [
       {
-        id: 'tbResultsByCategory1Monthly',
+        id: 'suppliesExpiryByPeriod',
         component: BarGraph,
         type: 'barInventory',
         size: 12,
+        i18nKey: {
+          moreThan180: 'moreThan180',
+          noConsumption: 'noConsumption',
+          notRecorded: 'notRecorded',
+          outOfStock: 'outOfStock',
+          upTo14: 'upTo14',
+          upTo30: 'upTo30',
+          upTo90: 'upTo90',
+          upTo180: 'upTo180',
+        },
         componentClasses: ['BARCLASS'],
         api: {
           endpoint: '/inventory/days-by-location',
-          params: {
-            consumableId: 5,
-          },
         },
         indexBy: 'increment',
         keyToConsume: 'count',
-        keysToRename: [
-          {
-            externalId: 'outOfStock',
-            name: 'Out of Stock',
-          },
-          {
-            externalId: 'upTo14',
-            name: '1-14 Days ',
-          },
-          {
-            externalId: 'upTo30',
-            name: '15-30 Days',
-          },
-          {
-            externalId: 'upTo90',
-            name: '1-3 Months',
-          },
-          {
-            externalId: 'upTo180',
-            name: '4-6 Months',
-          },
-          {
-            externalId: 'moreThan180',
-            name: '>6 Months',
-          },
-          {
-            externalId: 'notRecorded',
-            name: 'Not Recorded',
-          },
-          {
-            externalId: 'noConsumption',
-            name: 'No Consumption',
-          },
-        ],
         filterBy: {},
         tickValuesYShape: 'twos',
         tickValuesXShape: 'all',
         displayMethod: 'actual',
         displayLegend: false,
         formatDate: 'MMM yy',
+        clickThrough: {
+          allow: true,
+          baseUrl: '/browse/inventory?filters=',
+          keys: ['stockLeft', 'consumableId'],
+        },
       },
     ],
   },

@@ -51,42 +51,42 @@
       "i18nKey": "resultCategoryDiscordant"
     },
     {
-      "name": "< 40",
+      "name": "< 40 cp/mL",
       "externalId": "LessThan40",
       "i18nKey": "resultCategoryLessThan40"
     },
     {
-      "name": ">= 40",
+      "name": ">= 40 cp/mL",
       "externalId": "MoreThan40",
       "i18nKey": "resultCategoryMoreThan40"
     },
     {
-      "name": "< 150",
+      "name": "< 150 cp/mL",
       "externalId": "LessThan150",
       "i18nKey": "resultCategoryLessThan150"
     },
     {
-      "name": ">= 150",
+      "name": ">= 150 cp/mL",
       "externalId": "MoreThan150",
       "i18nKey": "resultCategoryMoreThan150"
     },
     {
-      "name": "< 550",
+      "name": "< 550 cp/mL",
       "externalId": "LessThan550",
       "i18nKey": "resultCategoryLessThan550"
     },
     {
-      "name": ">= 550",
+      "name": ">= 550 cp/mL",
       "externalId": "MoreThan550",
       "i18nKey": "resultCategoryMoreThan550"
     },
     {
-      "name": "< 1000",
+      "name": "< 1000 cp/mL",
       "externalId": "LessThan1000",
       "i18nKey": "resultCategoryLessThan1000"
     },
     {
-      "name": ">= 1000",
+      "name": ">= 1000 cp/mL",
       "externalId": "MoreThan1000",
       "i18nKey": "resultCategoryMoreThan1000"
     },
@@ -164,6 +164,11 @@
       "name": "Positive",
       "i18nKey": "resultCategoryPositive",
       "externalId": "Positive"
+    },
+    {
+      "name": "Presumptive Positive",
+      "i18nKey": "resultCategoryPresumptivePositive",
+      "externalId": "PresumptivePositive"
     }
   ]
 }

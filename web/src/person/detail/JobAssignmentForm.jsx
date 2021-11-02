@@ -22,8 +22,11 @@ import AssayTypeSelectField from '../../filter/resource/AssayTypeSelectField'
 import AssaySelectField from '../../filter/resource/AssaySelectField'
 
 import PersonAssignments from './PersonAssignments'
+import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./PersonDetail.css'))
+import styles from './PersonDetail.css'
+
+const cssClasses = classnames.bind(styles)
 
 const DEFAULT_VALUES = {
   jobFunctionId: undefined,
@@ -50,7 +53,7 @@ const enhance = compose(
   })),
   pure,
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
@@ -73,35 +76,42 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onStateIdChange: ({ onStateIdChange, values }) => stateId => {
-      values.lgaId = undefined
-      values.siteId = undefined
-      onStateIdChange(stateId)
-    },
-    onLgaIdChange: ({ onLgaIdChange, values }) => lgaId => {
-      values.siteId = undefined
-      onLgaIdChange(lgaId)
-    },
-    onJobFunctionIdChange: ({ onJobFunctionIdChange }) => jobFunctionId => {
-      onJobFunctionIdChange(jobFunctionId)
-    },
-    handleSubmit: ({ handleSubmit, values, form }) => event => {
-      handleSubmit(event)
-      values.jobFunctionId = undefined
-      values.stateId = undefined
-      values.lgaId = undefined
-      values.siteId = undefined
-      values.diseaseId = undefined
-      values.deviceTypeId = undefined
-      values.assayTypeId = undefined
-      values.assayId = undefined
-      form.valid = false
-    },
+    onStateIdChange:
+      ({ onStateIdChange, values }) =>
+      stateId => {
+        values.lgaId = undefined
+        values.siteId = undefined
+        onStateIdChange(stateId)
+      },
+    onLgaIdChange:
+      ({ onLgaIdChange, values }) =>
+      lgaId => {
+        values.siteId = undefined
+        onLgaIdChange(lgaId)
+      },
+    onJobFunctionIdChange:
+      ({ onJobFunctionIdChange }) =>
+      jobFunctionId => {
+        onJobFunctionIdChange(jobFunctionId)
+      },
+    handleSubmit:
+      ({ handleSubmit, values, form }) =>
+      event => {
+        handleSubmit(event)
+        values.jobFunctionId = undefined
+        values.stateId = undefined
+        values.lgaId = undefined
+        values.siteId = undefined
+        values.diseaseId = undefined
+        values.deviceTypeId = undefined
+        values.assayTypeId = undefined
+        values.assayId = undefined
+        form.valid = false
+      },
   })
 )
 
 export const JobAssignmentForm = ({
-  intl,
   loading,
   form,
   meta,
@@ -121,7 +131,7 @@ export const JobAssignmentForm = ({
   onDeleteAssignment,
   user,
 }) => {
-  const { formatMessage } = intl
+  const { formatMessage } = useI18n()
   const baseProps = {
     allItemText: formatMessage(messages.all),
     disabled: form.submitting,
@@ -172,12 +182,7 @@ export const JobAssignmentForm = ({
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelText={getCustomMessage(
-                intl,
-                messages,
-                'state',
-                user
-              )}
+              floatingLabelText={getCustomMessage(messages, 'state', user)}
             />
             <LgaSelectField
               {...baseProps}
@@ -185,7 +190,7 @@ export const JobAssignmentForm = ({
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelText={getCustomMessage(intl, messages, 'lga', user)}
+              floatingLabelText={getCustomMessage(messages, 'lga', user)}
             />
             <SiteSelectField
               {...baseProps}
@@ -198,7 +203,6 @@ export const JobAssignmentForm = ({
             />
             <DiseaseSelectField
               {...baseProps}
-              intl={intl}
               floatingLabelText={formatMessage(messages.disease)}
               value={values.diseaseId}
               onDiseaseIdChange={onDiseaseIdChange}
@@ -211,7 +215,6 @@ export const JobAssignmentForm = ({
             />
             <AssayTypeSelectField
               {...baseProps}
-              intl={intl}
               floatingLabelText={formatMessage(messages.assayType)}
               value={values.assayTypeId}
               diseaseId={values.diseaseId}
@@ -220,7 +223,6 @@ export const JobAssignmentForm = ({
             <AssaySelectField
               {...baseProps}
               floatingLabelText={formatMessage(messages.assay)}
-              intl={intl}
               diseaseId={values.diseaseId}
               assayTypeId={values.assayTypeId}
               value={values.assayId}
@@ -243,7 +245,6 @@ export const JobAssignmentForm = ({
       </Unit>
       <Unit sm="1-2" className={cssClasses('Section__Content')}>
         <PersonAssignments
-          intl={intl}
           assignments={assignments}
           loadedAssignments={loadedAssignments}
           onDeleteAssignment={onDeleteAssignment}

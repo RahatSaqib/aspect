@@ -1,9 +1,13 @@
 .ChildrenContainer {
+  cursor: default;
+}
+
+.ChildrenContainer_clickable {
   cursor: pointer;
 }
 
 .Tooltip {
-  font-size: 14px;
+  font-size: 14px !important;
 }
 
 .Tooltip__Numbers {

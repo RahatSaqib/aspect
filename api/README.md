@@ -2,7 +2,7 @@
 
 This is the web api for all aspect clients.
 
-Swagger UI is available for testing the UI manually and viewing route documentation at <http://localhost:8080/documentation> .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
+Swagger UI is available for testing the UI manually and viewing route documentation at <http://localhost:8080/documentation> . Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
 ## Recommended versions
 
@@ -103,7 +103,7 @@ yarn install
 
 ### Environment Configuration
 
-Then add a .env file to the root of the application (inline with server.js) and add your environment config to it.  See `.env.example` for reference.
+Then add a .env file to the root of the application (inline with server.js) and add your environment config to it. See `.env.example` for reference.
 
 ```env
 secret=Any_Random_String
@@ -127,8 +127,20 @@ amqp.url=amqp://localhost
 Optionally, configure the Raven DSN to ship errors to Sentry:
 
 ```env
-raven.dsn=https://...
+# Optional Sentry configuration
+sentry.dsn='https://sentrydsn ....'
+
 ```
+
+### NVM Management
+
+- we have a `.nvmrc` file in the root that will allow us to initiate our developer environment to the correct node version on load.
+- you will be able to add a small snippet to your bash of choice to change the NVM version automatically, or
+- simply run `nvm use` (space after 'use' is intentional) and it will change to the version specified within `.nvmrc`
+
+#### Using ZSH?
+
+- <https://gist.github.com/pokorson/c2bd488842f4714c06d97b0b417e2619>
 
 ### Running Server
 
@@ -197,7 +209,7 @@ Once your environment is configured run tests using the `yarn test` command
 
 Migrations are managed with [knex](http://knexjs.org/#Migrations).
 
-To update to latest migration, run `yarn run knex migrate:latest`.  Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order.  It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
+To update to latest migration, run `yarn run knex migrate:latest`. Migrations are tracked in the `knex_migrations` table so only migrations that have not been applied will be run in the appropriate order. It is safe to run migrations at any time. If no migrations need to run, the command will only print a message indicating that you are up to date.
 
 ```bash
 # Create a new migration
@@ -216,7 +228,7 @@ $ yarn run knex migrate:rollback
 
 ### Troubleshooting
 
-Note that MySQL does not allow transactional DDL (schema updates).  If you make an error during development of your new migration, you may have to manually run DDL updates that were aborted due to an error. You may also have to manually delete the entry in the `knex_migrations` table for the migration to get to a consistent state.  This is a limitation in MySQL, not knex.
+Note that MySQL does not allow transactional DDL (schema updates). If you make an error during development of your new migration, you may have to manually run DDL updates that were aborted due to an error. You may also have to manually delete the entry in the `knex_migrations` table for the migration to get to a consistent state. This is a limitation in MySQL, not knex.
 
 As an example, assume that you need to manually clean up a migration named '20160913144739_permissions.js' (and it is the latest migration):
 
@@ -234,7 +246,7 @@ delete from knex_migrations where name='20160913144739_permissions.js';
 
 ## Seed Files
 
-Seed files populate your database with test or development seed data.  They are not configured by default.  If you would like to use them, edit your `.env` file and set your seeds directory containing the scripts that populate your database.
+Seed files populate your database with test or development seed data. They are not configured by default. If you would like to use them, edit your `.env` file and set your seeds directory containing the scripts that populate your database.
 
 ```env
 # in .env
@@ -247,7 +259,7 @@ Now you can run all seed files within that directory (alphabetical order).
 yarn run knex seed:run
 ```
 
-Unlike migrations ALL seed files are run every time.  You should structure your seed files to take this into account.  The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run. If a seed file should only be executed once, check for existing data and return early before inserting new seed data.
+Unlike migrations ALL seed files are run every time. You should structure your seed files to take this into account. The files are run in alphabetical order, so it is good practice to prefix your seed name with the order to run. If a seed file should only be executed once, check for existing data and return early before inserting new seed data.
 
 ## Stress test with siege
 
@@ -281,11 +293,11 @@ For example, to trigger a "Device No Results" issue post to <http://localhost:80
 
 ```json
 {
-    "issueType": "DeviceNoResults",
-    "data": {
-        "deviceId": 18,
-        "lastResultOn": "2020-07-01"
-    }
+  "issueType": "DeviceNoResults",
+  "data": {
+    "deviceId": 18,
+    "lastResultOn": "2020-07-01"
+  }
 }
 ```
 
@@ -321,3 +333,26 @@ yarn upgrade
 ## For Issues and notification system check the next link
 
 [Issues and notification system](ISSUES.md#A-simple-description-of-the-system)
+
+## RabbitMQ Troubleshooting
+
+As mentioned above under "New Development Setup", you can find the RabbitMQ UI at: http://localhost:15672 and login as guest:guest
+
+Sometimes, it can be useful for troubleshooting to publish a message to a queue. To do that, log in to the management UI, click on Queues, select the queue that you wish to publish a message, then expand "Publish Message". The payload has to be in JSON format. For example, to publish a message about an SMS being ready for sending, the payload would be:
+
+```json
+{
+  "type": "SMS_MESSAGE_READY_FOR_SENDING",
+  "smsMessageId": 3
+}
+```
+
+### Use RabbitMQ management UI on a server
+
+You can use ssh port forwarding to view the RabbitMQ management UI on another server. For example, to browse the management UI of the DRC server:
+
+```bash
+ssh drc -L 15673:localhost:15672
+```
+
+You'll be able to browse the UI in your browser at http://localhost:15673

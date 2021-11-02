@@ -15,19 +15,17 @@ exports[`InventoryItemList module InventoryItemList component should render corr
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     config={null}
     dateFilterLabel="Expires On"
-    history={
-      Object {
-        "push": [Function],
-      }
-    }
     intl={
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
+        "defaultRichTextElements": undefined,
         "formatDate": [Function],
+        "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
         "formatDisplayName": [Function],
         "formatList": [Function],
+        "formatListToParts": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
         "formatNumberToParts": [Function],
@@ -57,18 +55,17 @@ exports[`InventoryItemList module InventoryItemList component should render corr
         "search": "",
       }
     }
+    navigate={[Function]}
   >
-    <requirePermissions(AspectButton)
+    <Memo(requirePermissions(AspectButton))
       browseButton={true}
       color="primary"
-      extraPermissions={Array []}
       onClick={[Function]}
-      overriddenPermissions={Array []}
       type="button"
       variant="contained"
     >
       Add Inventory
-    </requirePermissions(AspectButton)>
+    </Memo(requirePermissions(AspectButton))>
   </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <DataTableCard
     className="DataTableCard--action"
@@ -95,48 +92,12 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       visible={false}
     />
     <pure(withHandlers(EmptyList))
-      history={
-        Object {
-          "push": [Function],
-        }
-      }
-      intl={
-        Object {
-          "defaultFormats": Object {},
-          "defaultLocale": "en",
-          "formatDate": [Function],
-          "formatDateToParts": [Function],
-          "formatDisplayName": [Function],
-          "formatList": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatNumberToParts": [Function],
-          "formatPlural": [Function],
-          "formatRelativeTime": [Function],
-          "formatTime": [Function],
-          "formatTimeToParts": [Function],
-          "formats": Object {},
-          "formatters": Object {
-            "getDateTimeFormat": [Function],
-            "getDisplayNames": [Function],
-            "getListFormat": [Function],
-            "getMessageFormat": [Function],
-            "getNumberFormat": [Function],
-            "getPluralRules": [Function],
-            "getRelativeTimeFormat": [Function],
-          },
-          "locale": "en",
-          "messages": Object {},
-          "onError": [Function],
-          "textComponent": Symbol(react.fragment),
-          "timeZone": undefined,
-        }
-      }
       location={
         Object {
           "search": "",
         }
       }
+      navigate={[Function]}
     />
   </DataTableCard>
   <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(lifecycle(InventoryAdjustmentDialogForm))))))))
@@ -144,10 +105,13 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
+        "defaultRichTextElements": undefined,
         "formatDate": [Function],
+        "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
         "formatDisplayName": [Function],
         "formatList": [Function],
+        "formatListToParts": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
         "formatNumberToParts": [Function],
@@ -181,10 +145,13 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
+        "defaultRichTextElements": undefined,
         "formatDate": [Function],
+        "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
         "formatDisplayName": [Function],
         "formatList": [Function],
+        "formatListToParts": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
         "formatNumberToParts": [Function],
@@ -219,10 +186,13 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
+        "defaultRichTextElements": undefined,
         "formatDate": [Function],
+        "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
         "formatDisplayName": [Function],
         "formatList": [Function],
+        "formatListToParts": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
         "formatNumberToParts": [Function],
@@ -257,10 +227,13 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
+        "defaultRichTextElements": undefined,
         "formatDate": [Function],
+        "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
         "formatDisplayName": [Function],
         "formatList": [Function],
+        "formatListToParts": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
         "formatNumberToParts": [Function],
@@ -294,10 +267,13 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       Object {
         "defaultFormats": Object {},
         "defaultLocale": "en",
+        "defaultRichTextElements": undefined,
         "formatDate": [Function],
+        "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
         "formatDisplayName": [Function],
         "formatList": [Function],
+        "formatListToParts": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
         "formatNumberToParts": [Function],

@@ -600,9 +600,7 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'day',
           })
-          DateRangeSelectorWrapper.find(SelectField)
-            .at(1)
-            .simulate('click')
+          DateRangeSelectorWrapper.find(SelectField).at(1).simulate('click')
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
@@ -664,9 +662,7 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'week',
           })
-          DateRangeSelectorWrapper.find(SelectField)
-            .at(1)
-            .simulate('click')
+          DateRangeSelectorWrapper.find(SelectField).at(1).simulate('click')
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
@@ -734,9 +730,7 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'month',
           })
-          DateRangeSelectorWrapper.find(SelectField)
-            .at(1)
-            .simulate('click')
+          DateRangeSelectorWrapper.find(SelectField).at(1).simulate('click')
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
@@ -828,9 +822,7 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'quarter',
           })
-          DateRangeSelectorWrapper.find(SelectField)
-            .at(1)
-            .simulate('click')
+          DateRangeSelectorWrapper.find(SelectField).at(1).simulate('click')
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)

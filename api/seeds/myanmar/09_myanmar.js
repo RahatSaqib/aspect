@@ -43,8 +43,7 @@ async function seed(knex) {
     })
     .update({
       subject: 'Possible module failure',
-      body:
-        'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+      body: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
       htmlBody:
         'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
@@ -225,7 +224,7 @@ async function seed(knex) {
     )
 
   await Promise.each(roAlertTemplates, async roAlertTemplate => {
-    const newRoAlertTemplateId = await knex('AlertTemplate').insert({
+    const [newRoAlertTemplateId] = await knex('AlertTemplate').insert({
       message: roAlertTemplate.message,
       hideWhenSiteFilterIsSelected: true,
       createdOn: now,
@@ -260,7 +259,7 @@ async function seed(knex) {
       webhookTemplateId,
     } = roAlertTemplate
 
-    const newMessageTypeId = await knex('MessageType').insert({
+    const [newMessageTypeId] = await knex('MessageType').insert({
       messageSeverityId,
       alertTemplateId: newRoAlertTemplateId,
       emailTemplateId,
@@ -294,7 +293,7 @@ async function seed(knex) {
     )
 
   await Promise.each(roLuViewAlertTemplates, async luRoViewAlertTemplate => {
-    const newRoLuViewAlertTemplateId = await knex('AlertTemplate').insert({
+    const [newRoLuViewAlertTemplateId] = await knex('AlertTemplate').insert({
       message: luRoViewAlertTemplate.message,
       hideWhenSiteFilterIsNotSelected: true,
       createdOn: now,
@@ -330,7 +329,7 @@ async function seed(knex) {
       webhookTemplateId,
     } = luRoViewAlertTemplate
 
-    const newMessageTypeId = await knex('MessageType').insert({
+    const [newMessageTypeId] = await knex('MessageType').insert({
       messageSeverityId,
       alertTemplateId: newRoLuViewAlertTemplateId,
       emailTemplateId,

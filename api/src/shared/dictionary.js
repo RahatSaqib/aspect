@@ -9,6 +9,7 @@ const cacheConfig = {
   AssayType: {
     keyColumn: 'name',
   },
+  Consumable: {},
   ConsumableReason: {
     keyColumn: 'name',
   },
@@ -38,6 +39,7 @@ const cacheConfig = {
   JobFunction: {},
   MessageSeverity: {},
   MessageStatus: {},
+  NotificationTypeCategory: {},
   PartnerType: {
     keyColumn: 'name',
   },
@@ -47,6 +49,7 @@ const cacheConfig = {
   ResultTreatmentStatus: {},
   ResultType: {},
   ResultWorkflowStatus: {},
+  Report: {},
   SampleType: {},
   TimeZone: {
     keyColumn: 'timeZone',
@@ -59,9 +62,8 @@ const cacheConfig = {
 async function rowsByColumn(table) {
   let cache = tableCache[table]
   if (cache == null) {
-    const { keyColumn = 'externalId', additionalColumns = [] } = cacheConfig[
-      table
-    ]
+    const { keyColumn = 'externalId', additionalColumns = [] } =
+      cacheConfig[table]
 
     // this gives us { [key1]: {[col1]: row1[col1], [col2]: row2[col2]...
     const columns = ['id', ...additionalColumns]

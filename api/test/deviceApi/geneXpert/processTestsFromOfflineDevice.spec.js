@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const chai = require('chai')
-const { addDays, addHours, format, subDays } = require('date-fns')
+const { addDays, addHours, format, subDays, parseISO } = require('date-fns')
 const Promise = require('bluebird')
 
 const {
@@ -51,7 +51,7 @@ describe('Backward update db after getting tests from offline device', () => {
           })
       })
       .where('dmsl.deviceId', deviceId)
-      .where('dmsl.day', '>=', minDate)
+      .where('dmsl.day', '>=', knex.raw('Date(?)', [minDate]))
       .whereNull('dmsl2.id')
       .select('dmsl.*')
 
@@ -83,7 +83,6 @@ describe('Backward update db after getting tests from offline device', () => {
     })
     assert.equal(response.statusCode, 200)
     const { id: deviceId, partnerId } = response.body.device
-
     // wait a bit until all MQ jobs are finished after creating a new device
     await waitForIdle()
 
@@ -146,18 +145,17 @@ describe('Backward update db after getting tests from offline device', () => {
     const maxDate = now
     const days = []
     for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
-      days.push(new Date(`${format(day, 'yyyy-MM-dd')}T00:00:00.000Z`))
+      days.push(`${format(day, 'yyyy-MM-dd')}T00:00:00.000Z`)
     }
-
     /**
      * 4.1. set Offline status in DeviceMaintenanceStatusLog for all related days for this deviceId.
      * Notice that we dispatch in MQ same action 'logDeviceMaintenanceStatus' as in `api/src/scheduler.js`,
      * but pass there a day which is treated as 'today' to process past date.
      */
-    await Promise.each(days, async day =>
+    await Promise.each(days, day =>
       dispatchAndWaitForAction(logDeviceMaintenanceStatus(day))
     )
-
+    await waitForIdle()
     /**
      * 4.2. check that all processed days should be set to `inactiveUnknown` because
      * func onDeviceMaintenanceStatusLogScheduled (see in api/src/device/service.js)
@@ -172,11 +170,10 @@ describe('Backward update db after getting tests from offline device', () => {
     })
 
     /**
-     * 4.3. Let's manually change statuses for 1st, 2nd and 3rd days from 'inactiveUnknown'
-     * to 'inactiveNoResultsReported', 'inactiveOutOfInventory' and 'inactiveDownForRepair'
+     * 4.3. Let's manually change statuses for 1st, and 2nd days from 'inactiveUnknown'
+     * to 'inactiveOutOfInventory' and 'inactiveDownForRepair'
      */
     const customStatuses = [
-      deviceMaintenanceStatusToId.inactiveNoResultsReported,
       deviceMaintenanceStatusToId.inactiveOutOfInventory,
       deviceMaintenanceStatusToId.inactiveDownForRepair,
     ]
@@ -201,14 +198,15 @@ describe('Backward update db after getting tests from offline device', () => {
      * 5. Insert results for days which have been marked as inactiveUnknown
      */
     await Promise.each(days, async (day, index) => {
+      const date = parseISO(day)
       // post tests to Offline device for each day when DeviceMaintenanceStatusLog was set to 'inactiveUnknown'
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
         payload: _.merge({}, devicePayload, basicResultPayload, {
           result: {
             id: `${basicResultPayload.result.id}-${index}`,
-            startedOn: addHours(day, 5),
-            endedOn: addHours(day, 7),
+            startedOn: addHours(date, 5),
+            endedOn: addHours(date, 7),
             sample: {
               id: `${basicResultPayload.result.sample.id}-${index}`,
             },

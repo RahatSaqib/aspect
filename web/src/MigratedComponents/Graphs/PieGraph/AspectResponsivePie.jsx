@@ -8,7 +8,7 @@ import {
   PieInnerLegendSolid,
   PieInnerLegendDoughNut,
 } from '../GraphLegend'
-
+import messages from '../intlMessages'
 import {
   generateColorForValue,
   generateToolTip,
@@ -17,7 +17,9 @@ import {
 
 import { GraphToolTip } from '../GraphToolTip'
 
-const cssClasses = classnames.bind(require('./PieGraph.css'))
+import styles from './PieGraph.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectResponsivePie = ({
   assaysFromState,
@@ -28,8 +30,9 @@ const AspectResponsivePie = ({
   keys,
   type = false,
   link,
+  i18nKeys,
 }) => {
-  const { formatNumber: intlFormatNumber } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
   const config = (type, data, displayMethod) => {
     switch (true) {
       case type === 'doughnut':
@@ -92,12 +95,17 @@ const AspectResponsivePie = ({
         motionDamping={15}
         tooltip={v => (
           <GraphToolTip
+            clickThrough={false}
+            displayMethod={displayMethod}
             values={generateToolTip(
               v,
               displayMethod,
               assaysFromState,
               intlFormatNumber,
-              type
+              type,
+              formatMessage,
+              messages,
+              i18nKeys
             )}
           />
         )}
@@ -117,17 +125,19 @@ const AspectResponsivePie = ({
 AspectResponsivePie.defaultProps = {
   type: false,
   link: false,
+  i18nKeys: {},
 }
 
 AspectResponsivePie.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  averages: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  averages: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  i18nKeys: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default AspectResponsivePie

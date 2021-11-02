@@ -44,7 +44,11 @@ async function seed(knex) {
   const jobFunctionNtpNoResultsId = await upsertJobFunction(
     knex,
     'NTP - No Results',
-    partnerId
+    partnerId,
+    [],
+    {
+      reports: ['critical_errors_by_device', 'device_calibration_report'],
+    }
   )
   await copyPermissionsAndDashboardWidgetsFromJobFunction(
     knex,

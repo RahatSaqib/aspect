@@ -14,6 +14,7 @@ const {
 } = require('../../shared/dictionary')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
+const logger = require('../../shared/logger')
 
 class DefaultSenaiteLIMS extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -43,7 +44,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       try {
         payload = JSON.parse(payloadBody)
       } catch (error) {
-        console.error(error) // eslint-disable-line no-console
+        logger.error(error)
       }
     }
     const now = new Date()
@@ -521,9 +522,8 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           }
           resultRecord.resultData.senaiteResult.value =
             selectedResultOption.value
-          resultRecord.resultData.senaiteResult.resultCaptureDate = parseDateOrDefault(
-            testResultAnalysis.ResultCaptureDate
-          ) // "2018/03/20 06:23:3.774431 GMT+2"
+          resultRecord.resultData.senaiteResult.resultCaptureDate =
+            parseDateOrDefault(testResultAnalysis.ResultCaptureDate) // "2018/03/20 06:23:3.774431 GMT+2"
           resultRecord.resultData.senaiteResult.remarks =
             testResultAnalysis.Remarks // ""
           resultRecord.resultData.senaiteResult.unit = testResultAnalysis.Unit // ""
@@ -547,15 +547,15 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             testResultAnalysis.review_state // "verified"
           resultRecord.resultData.senaiteResult.worksheetAnalysisReviewState =
             testResultAnalysis.worksheetanalysis_review_state // "unassigned"
-          resultRecord.resultData.senaiteResult.creationDate = parseDateOrDefault(
-            testResultAnalysis.creation_date
-          ) // "2017/10/23 09:04:58 GMT+2"
+          resultRecord.resultData.senaiteResult.creationDate =
+            parseDateOrDefault(testResultAnalysis.creation_date) // "2017/10/23 09:04:58 GMT+2"
           resultRecord.resultData.senaiteResult.creator =
             testResultAnalysis.Creator // "kadyea"
           const senaiteResultModificationDate = parseDateOrDefault(
             testResultAnalysis.modification_date
           ) // "2018/03/20 06:23:4.257171 GMT+2"
-          resultRecord.resultData.senaiteResult.modificationDate = senaiteResultModificationDate
+          resultRecord.resultData.senaiteResult.modificationDate =
+            senaiteResultModificationDate
 
           const resultWorkflowStatusSenaiteMapping = {
             sample_received: 'Ordered',

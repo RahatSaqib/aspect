@@ -1,8 +1,6 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import formatDistanceStrict from 'date-fns/formatDistanceStrict'
-import parseISO from 'date-fns/parseISO'
 import { injectIntl } from 'react-intl'
 
 import {
@@ -14,10 +12,11 @@ import ColoredNumber from '../../components/shared/ColoredNumber'
 import messages from './messages'
 import { formatRelative } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
-const sharedCssClasses = classnames.bind(
-  require('../../components/shared/DataTableRow.css')
-)
+import styles from './DeviceTableRow.css'
+import stylesShared from '../../components/shared/DataTableRow.css'
+
+const cssClasses = classnames.bind(styles)
+const sharedCssClasses = classnames.bind(stylesShared)
 
 const enhance = identity(injectIntl)
 
@@ -28,7 +27,6 @@ const Rate = ({ intl, it, messageId, threshold }) => (
     ) : (
       <ColoredNumber
         number={it.rate}
-        intl={intl}
         formatNumberStyle="percent"
         error={threshold && it.rate > threshold}
       />
@@ -43,7 +41,7 @@ const DeviceTableRow = ({
   intl,
   device,
   onAlertClick,
-  displayPreferences,
+  displayPreferences: { errorRateThreshold },
   ...restProps
 }) => (
   <TableRow
@@ -65,7 +63,7 @@ const DeviceTableRow = ({
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
-        threshold={displayPreferences.get('errorRateThreshold')}
+        threshold={errorRateThreshold}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
@@ -84,15 +82,8 @@ const DeviceTableRow = ({
         />
       ))}
     </TableCell>
-    <TableCell>
-      {intl.formatMessage(messages.reportingForDays, {
-        period: formatDistanceStrict(
-          new Date(),
-          parseISO(device.get('createdOn'))
-        ),
-      })}
-    </TableCell>
-    <TableCell>{formatRelative(intl, device.get('lastSeen'))}</TableCell>
+    <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
+    <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
     <TableCell numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>

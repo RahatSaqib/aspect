@@ -34,6 +34,45 @@ describe('Site routes', () => {
         assert.property(res.body, 'total')
         siteId = res.body.data[0].id
       })
+      it('should return a list of sites for filling a select list', async () => {
+        const res = await server
+          .get(`${path}/select-list/all`)
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'array')
+        assert.isAtLeast(res.body.data.length, 2)
+        assert.property(res.body.data[0], 'id')
+        assert.property(res.body.data[0], 'name')
+        assert.property(res.body.data[0], 'stateId')
+        assert.property(res.body.data[0], 'stateName')
+        assert.property(res.body.data[0], 'partnerId')
+        assert.property(res.body.data[0], 'countryId')
+        assert.property(res.body.data[0], 'lgaId')
+        assert.property(res.body.data[0], 'externalId')
+      })
+      it('should return a list of sites for filling a select list in Reporter app, with a limited set of fields', async () => {
+        const res = await server
+          .get(`${path}/select-list/reporter`)
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        assert.property(res.body, 'data')
+        assert.typeOf(res.body.data, 'array')
+        assert.equal(res.body.mode, 'reporter')
+        assert.isAtLeast(res.body.data.length, 2)
+        assert.property(res.body.data[0], 'id')
+        assert.property(res.body.data[0], 'name')
+        assert.property(res.body.data[0], 'stateId')
+        assert.property(res.body.data[0], 'stateName')
+        assert.notProperty(res.body.data[0], 'partnerId')
+        assert.notProperty(res.body.data[0], 'countryId')
+        assert.notProperty(res.body.data[0], 'lgaId')
+        assert.notProperty(res.body.data[0], 'externalId')
+      })
       it('should return a single site when using a valid token', async () => {
         const res = await server
           .get(`${path}/${siteId}`)
@@ -158,18 +197,18 @@ describe('Site routes', () => {
         lab.geographyId = geographyId
 
         // Tags insert
-        const labTagId = await knex('Tag').insert(labTag)
+        const [labTagId] = await knex('Tag').insert(labTag)
         labTag.id = labTagId
         tags.push(labTag)
-        const clinicTagId = await knex('Tag').insert(clinicTag)
+        const [clinicTagId] = await knex('Tag').insert(clinicTag)
         clinicTag.id = clinicTagId
         tags.push(clinicTag)
 
         // Sites insert
-        const labId = await knex('Site').insert(lab)
+        const [labId] = await knex('Site').insert(lab)
         lab.id = labId
         sites.push(lab)
-        const clinicId = await knex('Site').insert(clinic)
+        const [clinicId] = await knex('Site').insert(clinic)
         clinic.id = clinicId
         sites.push(clinic)
 
@@ -203,19 +242,11 @@ describe('Site routes', () => {
           assert.isAtLeast(res.body.data.length, 2)
           assert.property(res.body.data[0], 'id')
           assert.property(res.body.data[0], 'name')
-          assert.property(res.body.data[0], 'shortName')
           assert.property(res.body.data[0], 'partnerId')
           assert.property(res.body.data[0], 'countryId')
           assert.property(res.body.data[0], 'stateId')
           assert.property(res.body.data[0], 'lgaId')
-          assert.property(res.body.data[0], 'lgaName')
           assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'longitude')
-          assert.property(res.body.data[0], 'latitude')
-          assert.property(res.body.data[0], 'zip')
-          assert.property(res.body.data[0], 'street1')
-          assert.property(res.body.data[0], 'street2')
-          assert.property(res.body.data[0], 'city')
           assert.property(res.body.data[0], 'externalId')
         })
 

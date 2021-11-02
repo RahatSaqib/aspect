@@ -17,7 +17,7 @@ import isNil from 'lodash/isNil'
 import Downshift from 'downshift'
 
 import FormControl from '@material-ui/core/FormControl'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
@@ -27,6 +27,7 @@ import Popper from '@material-ui/core/Popper'
 import { formatWithLocale } from '../../../shared/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 import {
   since,
@@ -64,28 +65,28 @@ const styles = theme => ({
   separator: {
     display: 'flex',
     alignItems: 'center',
-    margin: `0 ${theme.spacing.unit}px`,
+    margin: `0 ${theme.spacing(1)}`,
   },
   formControl: {
     width: '100%',
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)} 0`,
   },
   popper: {
     zIndex: theme.zIndex.tooltip,
   },
   paper: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   options: {
-    maxHeight: (OPTION_HEIGHT + theme.spacing.unit) * 5.75,
+    maxHeight: `calc((${OPTION_HEIGHT}px + ${theme.spacing(1)}) * 5.75)`,
     overflowY: 'scroll',
   },
   option: {
     minWidth: 'auto',
   },
   button: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     alignSelf: 'flex-start',
   },
 })
@@ -121,9 +122,8 @@ const dateTimeReverseKeyMap = {
   [displayKeys[4]]: ['m'],
 }
 
-const displayOptions = intl => {
-  const locale = _fp.prop(['locale'], intl)
-  const dateFnFormat = formatWithLocale(locale)
+const displayOptions = culture => {
+  const dateFnFormat = formatWithLocale(culture)
 
   return {
     [displayKeys[0]]: {
@@ -231,8 +231,7 @@ const getDefaultFieldsPropsWithI18n = formatMessage =>
     },
   })
 
-const getDefaultFieldsProps = intl => {
-  const formatMessage = _fp.prop(['formatMessage'], intl)
+const getDefaultFieldsProps = formatMessage => {
   if (isFunction(formatMessage)) {
     return getDefaultFieldsPropsWithI18n(formatMessage)
   }
@@ -449,10 +448,8 @@ export const DateTimeSelect = props => {
         } = downshiftProps
         const growId = `${baseKey}-grow`
         const suggestions = getSuggestionOptions(inputValue, options)
-        const {
-          InputProps: baseInputProps,
-          ...restTextFieldProps
-        } = TextFieldProps
+        const { InputProps: baseInputProps, ...restTextFieldProps } =
+          TextFieldProps
 
         const handleBlur = () => {
           const optionFromInput = findOptionByLabel(inputValue, options)
@@ -546,7 +543,6 @@ const DateTimeInput = props => {
     className,
     onChange,
     onBlur,
-    intl,
     value: valueRaw,
     defaultValue,
     dateFormat,
@@ -575,9 +571,12 @@ const DateTimeInput = props => {
 
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
-  const FieldProps = originFieldProps || getDefaultFieldsProps(intl)
-  const TextFieldsProps = _fp.merge(getDefaultFieldsProps(intl), FieldProps)
-  const formatMessage = _fp.prop(['formatMessage'], intl)
+  const { formatMessage, culture } = useI18n()
+  const FieldProps = originFieldProps || getDefaultFieldsProps(formatMessage)
+  const TextFieldsProps = _fp.merge(
+    getDefaultFieldsProps(formatMessage),
+    FieldProps
+  )
   const minDate = getDateObject(min)
   const maxDate = getDateObject(max)
   const orderList = getOrderList(displayFormat)
@@ -623,15 +622,17 @@ const DateTimeInput = props => {
     }
   }
 
-  const handleChange = set => ({ value: nextValue }) => {
-    const changedDate = set(optionsDate, nextValue)
-    setOptionsDate(changedDate)
-    setDateTime(changedDate)
+  const handleChange =
+    set =>
+    ({ value: nextValue }) => {
+      const changedDate = set(optionsDate, nextValue)
+      setOptionsDate(changedDate)
+      setDateTime(changedDate)
 
-    if (isControlled()) {
-      onChange(changedDate)
+      if (isControlled()) {
+        onChange(changedDate)
+      }
     }
-  }
 
   const handleKeyPress = nextFieldKey => event => {
     if (event.key === 'Enter') {
@@ -640,14 +641,16 @@ const DateTimeInput = props => {
     }
   }
 
-  const invokeAll = (refs, handlerName) => (...args) =>
-    _fp.pipe(
-      _fp.values,
-      _fp.filter(
-        ref => ref && ref.current && isFunction(ref.current[handlerName])
-      ),
-      _fp.map(ref => ref.current[handlerName](...args))
-    )(refs)
+  const invokeAll =
+    (refs, handlerName) =>
+    (...args) =>
+      _fp.pipe(
+        _fp.values,
+        _fp.filter(
+          ref => ref && ref.current && isFunction(ref.current[handlerName])
+        ),
+        _fp.map(ref => ref.current[handlerName](...args))
+      )(refs)
 
   const handleBlur = event => {
     const { currentTarget } = event
@@ -678,7 +681,7 @@ const DateTimeInput = props => {
     >
       {map(normalizeFormat(displayFormat), (display, i) => {
         const baseKey = `${display}-${i}`
-        const displayOption = displayOptions(intl)[dateTimeKeyMap[display]]
+        const displayOption = displayOptions(culture)[dateTimeKeyMap[display]]
 
         if (displayOption) {
           const TextFieldProps = TextFieldsProps[display]
@@ -747,11 +750,7 @@ DateTimeInput.propTypes = {
   timeFormat: PropTypes.string, // eslint-disable-line react/require-default-props
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
-  intl: PropTypes.shape({
-    formatMessage: PropTypes.func,
-  }),
-  value: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/require-default-props
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // eslint-disable-line react/require-default-props
   defaultValue: DateType, // eslint-disable-line react/forbid-prop-types,
   minDate: DateType,
   maxDate: DateType,

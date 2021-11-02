@@ -105,10 +105,8 @@ async function doSendPushNotificationMessage(
   const { sendPushNotification } = require('./pushNotificationUtil')
 
   // assume status is 'Sent'
-  const {
-    Sent: messageStatusIdSent,
-    Error: messageStatusIdError,
-  } = await allMessageStatusToId()
+  const { Sent: messageStatusIdSent, Error: messageStatusIdError } =
+    await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
 
   // send push notification

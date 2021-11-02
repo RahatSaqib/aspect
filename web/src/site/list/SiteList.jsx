@@ -1,8 +1,8 @@
 import flowRight from 'lodash/flowRight'
-import fromPairs from 'lodash/fromPairs'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import Immutable from 'immutable'
 import {
   compose,
   withProps,
@@ -11,13 +11,10 @@ import {
   setPropTypes,
 } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import Immutable from 'immutable'
 import { useQuery } from 'react-query'
-import PropTypeOf from '../../shared/types'
 
 import {
   getCustomMessage,
@@ -29,6 +26,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
+  getFilters,
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
@@ -47,59 +45,64 @@ import {
 import ExportListButton from '../../globals/components/ExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
+import useI18n from '../../Hooks/i18n/useI18n'
 
-const cssClasses = classnames.bind(require('./SiteList.css'))
+import styles from './SiteList.css'
 
-export const messages = defineMessages({
+const cssClasses = classnames.bind(styles)
+
+export const messages = {
   ...commonDefinitions,
-  sitesTitle: {
-    id: 'pages.SiteList.title',
-    defaultMessage: 'Sites',
-  },
-  siteName: {
-    id: 'pages.SiteList.siteName',
-    defaultMessage: 'Name',
-  },
-  totalDevices: {
-    id: 'pages.SiteList.totalDevices',
-    defaultMessage: 'Number of Devices',
-  },
-  externalId: {
-    id: 'pages.SiteList.externalId',
-    defaultMessage: 'Site ID',
-  },
-  siteIssues: {
-    id: 'pages.SiteList.siteIssues',
-    defaultMessage: 'Issues',
-  },
-  issueCategoryDeviceHealth: {
-    id: 'pages.SiteList.issueCategoryDeviceHealth',
-    defaultMessage: 'Device',
-  },
-  issueCategoryReagentHealth: {
-    id: 'pages.SiteList.issueCategoryReagentHealth',
-    defaultMessage: 'Reagent',
-  },
-  issueCategoryDataHealth: {
-    id: 'pages.SiteList.issueCategoryDataHealth',
-    defaultMessage: 'Data',
-  },
-  issueCategoryConnectivityHealth: {
-    id: 'pages.SiteList.issueCategoryConnectivityHealth',
-    defaultMessage: 'Connectivity',
-  },
-  paginatorStatus: {
-    id: 'pages.SiteList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+  ...defineMessages({
+    sitesTitle: {
+      id: 'pages.SiteList.title',
+      defaultMessage: 'Sites',
+    },
+    siteName: {
+      id: 'pages.SiteList.siteName',
+      defaultMessage: 'Name',
+    },
+    totalDevices: {
+      id: 'pages.SiteList.totalDevices',
+      defaultMessage: 'Number of Devices',
+    },
+    externalId: {
+      id: 'pages.SiteList.externalId',
+      defaultMessage: 'Site ID',
+    },
+    siteIssues: {
+      id: 'pages.SiteList.siteIssues',
+      defaultMessage: 'Issues',
+    },
+    issueCategoryDeviceHealth: {
+      id: 'pages.SiteList.issueCategoryDeviceHealth',
+      defaultMessage: 'Device',
+    },
+    issueCategoryReagentHealth: {
+      id: 'pages.SiteList.issueCategoryReagentHealth',
+      defaultMessage: 'Reagent',
+    },
+    issueCategoryDataHealth: {
+      id: 'pages.SiteList.issueCategoryDataHealth',
+      defaultMessage: 'Data',
+    },
+    issueCategoryConnectivityHealth: {
+      id: 'pages.SiteList.issueCategoryConnectivityHealth',
+      defaultMessage: 'Connectivity',
+    },
+    paginatorStatus: {
+      id: 'pages.SiteList.paginatorStatus',
+      defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
       one {# site}
       other {# sites}
     }`,
-  },
-  latestInventoryUpdate: {
-    id: 'pages.SiteList.latestInventoryUpdate',
-    defaultMessage: 'Latest Inventory Update',
-  },
-})
+    },
+    latestInventoryUpdate: {
+      id: 'pages.SiteList.latestInventoryUpdate',
+      defaultMessage: 'Latest Inventory Update',
+    },
+  }),
+}
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -135,13 +138,6 @@ const filtersFromLocation = composeSanitizer(
 
 const enhance = compose(
   injectIntl,
-  setPropTypes({
-    intl: PropTypeOf.intl.isRequired,
-    location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-    table: PropTypes.instanceOf(Immutable.Record).isRequired,
-    items: PropTypes.instanceOf(Immutable.Record).isRequired,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',
@@ -152,7 +148,7 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       return {
-        filters: fromPairs([...filtersParams.entries()]),
+        filters: getFilters(filtersParams),
       }
     }
   ),
@@ -165,67 +161,76 @@ const enhance = compose(
         user: state.user,
       }
     },
-    bindActionCreators.bind(null, {
+    {
       fetchSites,
       exportSites,
-    })
+    }
   ),
+  setPropTypes({
+    location: PropTypes.object.isRequired,
+    navigate: PropTypes.func.isRequired,
+    table: PropTypes.instanceOf(Immutable.Record).isRequired,
+    items: PropTypes.instanceOf(Immutable.Record).isRequired,
+  }),
   withHandlers({
-    onAlertClick: ({ history }) => event => {
-      event.stopPropagation()
-      const {
+    onAlertClick:
+      ({ navigate }) =>
+      event => {
+        event.stopPropagation()
+        const {
+          currentTarget: {
+            dataset: { siteId },
+          },
+        } = event
+        navigate(`/browse/site/${siteId}/alerts`)
+      },
+
+    onExcelClick:
+      ({ location, exportSites, sortCol, sortDir, pageAt, pageSize }) =>
+      formatType => {
+        const format = formatType.id
+        const { sanitized, value: filtersParams } =
+          filtersFromLocation(location)
+
+        if (!sanitized) {
+          exportSites(
+            filtersParams,
+            sortCol,
+            sortDir,
+            pageAt,
+            pageSize,
+            format,
+            'sites'
+          )
+        }
+      },
+
+    onRowClick:
+      ({ navigate }) =>
+      ({
         currentTarget: {
           dataset: { siteId },
         },
-      } = event
-      history.push(`/browse/site/${siteId}/alerts`)
-    },
-
-    onExcelClick: ({
-      location,
-      exportSites,
-      sortCol,
-      sortDir,
-      pageAt,
-      table,
-    }) => formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSites(
-          filtersParams,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'sites'
-        )
-      }
-    },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: {
-        dataset: { siteId },
-      },
-    }) => history.push(`/browse/site/${siteId}`),
+      }) =>
+        navigate(`/browse/site/${siteId}`),
   }),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       const { sanitized, value: searchParams } = searchSanitizer(
         this.props.location
       )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } =
+        filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
+        this.props.navigate(
+          {
+            ...this.props.location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
       }
       const reducedFilters = reduceFiltersConfig(
         FILTERS_CONFIG,
@@ -239,11 +244,8 @@ const enhance = compose(
 )
 
 export const SiteList = ({
-  intl,
-  history,
+  navigate,
   location,
-  table,
-  items,
   // --- injected by recompose ---
   onExcelClick,
   sortCol,
@@ -256,12 +258,13 @@ export const SiteList = ({
   user,
 }) => {
   const { value: filtersParams } = filtersFromLocation(location)
-  const filters = fromPairs([...filtersParams.entries()])
+  const filters = getFilters(filtersParams)
   const [siteList, setSiteList] = useState(false)
+  const { formatMessage } = useI18n()
 
   const { data: { data, total } = false } = useQuery(
     [SITE_LIST.KEY, { sortCol, sortDir, pageAt, pageSize, filters }],
-    async (key, { sortCol, sortDir, pageAt, pageSize, filters }) =>
+    async ({ queryKey: [, { sortCol, sortDir, pageAt, pageSize, filters }] }) =>
       fetchWrapperForQueries({
         endpoint: SITE_LIST.ENDPOINT,
         method: 'GET',
@@ -278,73 +281,68 @@ export const SiteList = ({
   useEffect(() => {
     setSiteList(data)
   }, [data])
-
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-      <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
+      <Helmet title={formatMessage(messages.sitesTitle)} />
+      <NavTitle title={formatMessage(messages.sitesTitle)} />
       <BrowseFilters
-        history={history}
+        navigate={navigate}
         location={location}
-        intl={intl}
         config={reducedFilters}
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
+        <DataTableProgressBar disabled={siteList} />
         {!siteList && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
+          <BrowseEmptyList navigate={navigate} location={location} />
         )}
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
+          visible={siteList && siteList.length}
           reportName="Sites"
         />
 
         {siteList && (
-          <SiteDataTable
-            selectable={false}
-            className={cssClasses('SiteDataTable')}
-          >
+          <SiteDataTable className={cssClasses('SiteDataTable')}>
             <SiteDataTableHead
-              history={history}
+              navigate={navigate}
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
               columns={[
                 {
                   key: 'name',
-                  label: intl.formatMessage(messages.siteName),
+                  label: formatMessage(messages.siteName),
                   sortable: true,
                 },
                 {
                   key: 'state',
-                  label: getCustomMessage(intl, messages, 'state', user),
+                  label: getCustomMessage(messages, 'state', user),
                   sortable: true,
                 },
                 {
                   key: 'lga',
-                  label: getCustomMessage(intl, messages, 'lga', user),
+                  label: getCustomMessage(messages, 'lga', user),
                   sortable: true,
                 },
                 {
                   key: 'siteId',
-                  label: intl.formatMessage(messages.externalId),
+                  label: formatMessage(messages.externalId),
                   sortable: true,
                 },
                 {
                   key: 'totalDevices',
-                  label: intl.formatMessage(messages.totalDevices),
+                  label: formatMessage(messages.totalDevices),
                   sortable: true,
                 },
                 {
                   key: 'inventoryUpdatedOn',
-                  label: intl.formatMessage(messages.latestInventoryUpdate),
+                  label: formatMessage(messages.latestInventoryUpdate),
                   sortable: true,
                 },
                 {
                   key: 'siteIssues',
-                  label: intl.formatMessage(messages.siteIssues),
+                  label: formatMessage(messages.siteIssues),
                 },
               ]}
             />
@@ -353,7 +351,6 @@ export const SiteList = ({
                 siteList?.map(site => (
                   <SiteDataTableRow
                     key={site.id}
-                    intl={intl}
                     site={site}
                     onClick={onRowClick}
                     onAlertClick={onAlertClick}
@@ -365,9 +362,8 @@ export const SiteList = ({
         )}
         {siteList && siteList.length < total && (
           <BrowseTablePaginator
-            history={history}
+            navigate={navigate}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={total}
             pageAt={pageAt}

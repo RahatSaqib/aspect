@@ -1,10 +1,9 @@
 import { stringify } from 'querystring'
-import fromPairs from 'lodash/fromPairs'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetchFile, aspectFetch } from '../shared/utils/fetch'
-import { mergeToFiltersParams } from '../filter/utils'
+import { getFilters, mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -79,9 +78,8 @@ export function fetchDevices(
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
-
     return aspectFetch(
       `/device?${stringify({
         sortCol,
@@ -159,8 +157,7 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
+              id: 'errorResponseMessages.fetchDevicesForSelectList.GET.default.title',
               defaultMessage: 'Loading Devices Failed',
             },
           })
@@ -192,7 +189,7 @@ export function fetchSingleDevice(deviceId, rawFiltersParams) {
     filtersParams.set('dateRange', rawFiltersParams.get('dateRange'))
   }
   return dispatch => {
-    const filters = fromPairs([...filtersParams.entries()])
+    const filters = getFilters(filtersParams)
     const requestedAt = Date.now()
     dispatch(requestSingleDevice(requestedAt, deviceId))
     return aspectFetch(`/device/${deviceId}?${stringify(filters)}`, {
@@ -237,8 +234,7 @@ function receiveUpdatedSingleDevice(requestedAt, item) {
 
 export function updateSingleDevice(deviceId, data) {
   return dispatch => {
-    const requestedAt = Date.now()
-    dispatch(requestUpdatingSingleDevice(requestedAt, deviceId, data))
+    dispatch(requestUpdatingSingleDevice(new Date(), deviceId, data))
 
     return aspectFetch(`/device/${deviceId}`, {
       method: 'PUT',
@@ -255,11 +251,50 @@ export function updateSingleDevice(deviceId, data) {
         ),
       },
     }).then(json =>
-      dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
+      dispatch(
+        receiveUpdatedSingleDevice(new Date(), {
+          ...json.data,
+          id: deviceId,
+        })
+      )
     )
   }
 }
-
+// TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
+export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
+  return dispatch => {
+    const filters = getFilters(filtersParams)
+    return aspectFetch(
+      `/device/exportDeviceLogs?${stringify({
+        format: fileFormat,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.400.title',
+                defaultMessage: 'Exporting DeviceLog Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.exportResults.GET.default.title',
+                defaultMessage: 'Exporting Device Log Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(async elem => {
+      const file = await elem.blob
+      dispatch(receivedExportResponse(file, fileFormat, reportName))
+    })
+  }
+}
 export function exportDevices(
   rawFiltersParams,
   extraFilters = {},
@@ -273,8 +308,7 @@ export function exportDevices(
 ) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = fromPairs([...filtersParams.entries()])
-
+    const filters = getFilters(filtersParams)
     return aspectFetchFile(
       `/device/export?${stringify({
         sortCol,
@@ -341,8 +375,7 @@ export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
   const i18nErrorTitleDescriptor = () =>
     defineMessages({
       title: {
-        id:
-          'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
+        id: 'errorResponseMessages.updateDeviceMaintenance.maintenance.POST.default.title',
         defaultMessage: 'Setting Maintenance Status Failed',
       },
     })
@@ -387,15 +420,13 @@ export function updateDeviceMaintenance({
     externalId === 'calibration'
       ? defineMessages({
           title: {
-            id:
-              'errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title',
+            id: 'errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title',
             defaultMessage: 'Setting Device Calibration Date Failed',
           },
         })
       : defineMessages({
           title: {
-            id:
-              'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
+            id: 'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
             defaultMessage: 'Setting Device Warranty Due Date Failed',
           },
         })
@@ -432,8 +463,7 @@ export function fetchPerformanceReport(deviceId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id:
-                'errorResponseMessages.fetchPerformanceReport.GET.default.title',
+              id: 'errorResponseMessages.fetchPerformanceReport.GET.default.title',
               defaultMessage: 'Error Loading Device profile performance report',
             },
           })

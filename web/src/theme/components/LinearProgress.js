@@ -1,12 +1,14 @@
-import { lighten } from '@material-ui/core/styles/colorManipulator'
+import { lighten } from '@material-ui/core/styles'
 
 export default ({ themedColors }) => ({
   MuiLinearProgress: {
-    colorPrimary: {
-      backgroundColor: lighten(themedColors.primary, 0.6),
-    },
-    barColorPrimary: {
-      backgroundColor: themedColors.primary,
+    styleOverrides: {
+      colorPrimary: {
+        backgroundColor: lighten(themedColors.primary, 0.6),
+      },
+      barColorPrimary: {
+        backgroundColor: themedColors.primary,
+      },
     },
   },
 })

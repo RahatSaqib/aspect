@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/styles'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AspectCheckbox from './AspectCheckbox'
 
@@ -15,8 +15,7 @@ const styles = {
     lineHeight: '24px',
   },
   checkbox: {
-    marginRight: 12,
-    padding: '10px 0',
+    marginRight: 1,
   },
   icon: {
     fontSize: 24,
@@ -26,6 +25,7 @@ const styles = {
 const CheckboxField = ({
   classes: classesMap,
   className,
+  classNames,
   label,
   ...restProps
 }) => (
@@ -36,20 +36,27 @@ const CheckboxField = ({
     }}
     className={className}
     control={
-      <AspectCheckbox classes={{ root: classesMap.checkbox }} {...restProps} />
+      <AspectCheckbox
+        classes={{ root: classesMap.checkbox }}
+        className={classNames.controlContainer}
+        {...restProps}
+      />
     }
     label={label}
   />
 )
 
 CheckboxField.propTypes = {
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.objectOf(PropTypes.shape),
   className: PropTypes.string,
+  classNames: PropTypes.objectOf(PropTypes.shape),
   label: PropTypes.string.isRequired,
 }
 
 CheckboxField.defaultProps = {
   className: '',
+  classNames: {},
+  classes: {},
 }
 
 export default withStyles(styles)(CheckboxField)

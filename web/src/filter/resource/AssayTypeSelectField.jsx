@@ -9,6 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchAssayTypes } from '../../assay/AssayTypeRedux'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const messages = defineMessages({
   assayTypeCD4: {
@@ -85,7 +86,6 @@ const enhance = compose(
   pure,
   setPropTypes({
     allItemText: PropTypes.string,
-    intl: PropTypes.object.isRequired,
     onAssayTypeIdChange: PropTypes.func.isRequired,
     diseaseId: PropTypes.string,
     value: PropTypes.string,
@@ -99,7 +99,7 @@ const enhance = compose(
     })
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
           this.props.onAssayTypeIdChange(value === 'all' ? undefined : value)
@@ -123,33 +123,38 @@ const textForAssayTypeItem = (assayTypeItem, formatMessage) => {
 
 export const AssayTypeSelectField = ({
   allItemText,
-  intl,
   assayTypes,
   onChange,
   diseaseId,
+  // to remove from restProps
+  onAssayTypeIdChange,
+  fetchAssayTypes,
   ...restProps
-}) => (
-  <SelectField
-    {...restProps}
-    onChange={onChange}
-    disabled={
-      restProps.disabled || assayTypes.loading || assayTypes.items.isEmpty()
-    }
-  >
-    {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-    {assayTypes.items
-      .filter(
-        at =>
-          !diseaseId ||
-          !at.get('diseaseId') ||
-          at.get('diseaseId').toString() === diseaseId.toString()
-      )
-      .map(at => (
-        <MenuItem key={at.get('id')} value={at.get('id')}>
-          {textForAssayTypeItem(at, intl.formatMessage)}
-        </MenuItem>
-      ))}
-  </SelectField>
-)
+}) => {
+  const { formatMessage } = useI18n()
+  return (
+    <SelectField
+      {...restProps}
+      onChange={onChange}
+      disabled={
+        restProps.disabled || assayTypes.loading || assayTypes.items.isEmpty()
+      }
+    >
+      {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+      {assayTypes.items
+        .filter(
+          at =>
+            !diseaseId ||
+            !at.get('diseaseId') ||
+            at.get('diseaseId').toString() === diseaseId.toString()
+        )
+        .map(at => (
+          <MenuItem key={at.get('id')} value={at.get('id')}>
+            {textForAssayTypeItem(at, formatMessage)}
+          </MenuItem>
+        ))}
+    </SelectField>
+  )
+}
 
 export default enhance(AssayTypeSelectField)

@@ -1,55 +1,20 @@
-import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
 import React from 'react'
+import PropTypes from 'prop-types'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
 import MenuItem from '@material-ui/core/MenuItem'
 
+import messages from './i18n/diseaseMessages'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDiseases } from '../../disease/DiseaseRedux'
-
-const messages = defineMessages({
-  diseaseNameDengueFever: {
-    id: 'filter.DiseaseSelectField.diseaseNameDengueFever',
-    defaultMessage: 'Dengue Fever',
-  },
-  diseaseNameEbola: {
-    id: 'filter.DiseaseSelectField.diseaseNameEbola',
-    defaultMessage: 'Ebola',
-  },
-  diseaseNameHepatitisB: {
-    id: 'filter.DiseaseSelectField.diseaseNameHepatitisB',
-    defaultMessage: 'Hepatitis B',
-  },
-  diseaseNameHepatitisC: {
-    id: 'filter.DiseaseSelectField.diseaseNameHepatitisC',
-    defaultMessage: 'Hepatitis C',
-  },
-  diseaseNameHIVAIDS: {
-    id: 'filter.DiseaseSelectField.diseaseNameHIVAIDS',
-    defaultMessage: 'HIV/AIDS',
-  },
-  diseaseNameCovid19: {
-    id: 'filter.DiseaseSelectField.diseaseNameCovid19',
-    defaultMessage: 'SARS-CoV-2 (COVID-19)',
-  },
-  diseaseNameTuberculosis: {
-    id: 'filter.DiseaseSelectField.diseaseNameTuberculosis',
-    defaultMessage: 'Tuberculosis',
-  },
-  diseaseNameZikaFever: {
-    id: 'filter.DiseaseSelectField.diseaseNameZikaFever',
-    defaultMessage: 'Zika Fever',
-  },
-})
+import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const enhance = compose(
   pure,
   setPropTypes({
     allItemText: PropTypes.string,
-    intl: PropTypes.object.isRequired,
     onDiseaseIdChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }),
@@ -62,7 +27,7 @@ const enhance = compose(
     })
   ),
   lifecycle({
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
           this.props.onDiseaseIdChange(value === 'all' ? undefined : value)
@@ -76,26 +41,20 @@ const enhance = compose(
   })
 )
 
-const textForDiseaseItem = (diseaseItem, formatMessage) => {
-  return (
-    (messages[diseaseItem.get('i18nKey')]
-      ? formatMessage(messages[diseaseItem.get('i18nKey')])
-      : diseaseItem.get('name')) || diseaseItem.get('name')
-  )
-}
-
 export const DiseaseSelectField = ({
   allItemText,
-  intl,
   onlyWithResults,
   diseases,
   onChange,
+  // to remove from restProps
+  onDiseaseIdChange,
+  fetchDiseases,
   ...restProps
 }) => {
   const validDisease = onlyWithResults
     ? diseases.items.filter(a => a.get('hasResults'))
     : diseases.items
-
+  const { formatMessage } = useI18n()
   return (
     <SelectField
       {...restProps}
@@ -110,7 +69,12 @@ export const DiseaseSelectField = ({
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {validDisease.map(d => (
         <MenuItem key={d.get('id')} value={d.get('id')}>
-          {textForDiseaseItem(d, intl.formatMessage)}
+          {formatI18nMessage(
+            messages,
+            formatMessage,
+            d.get('i18nKey'),
+            d.get('name')
+          )}
         </MenuItem>
       ))}
     </SelectField>

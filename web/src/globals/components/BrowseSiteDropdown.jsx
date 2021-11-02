@@ -3,14 +3,17 @@ import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { defineMessages } from 'react-intl'
+
+import useI18n from '../../Hooks/i18n/useI18n'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { mergeToFiltersParams } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
 
-const cssClasses = classnames.bind(require('./BrowseSiteDropdown.css'))
+import styles from './BrowseSiteDropdown.css'
+
+const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   allSites: {
@@ -27,9 +30,9 @@ const enhance = compose(
     state => ({
       sitesSelectList: state.site.selectList,
     }),
-    bindActionCreators.bind(null, {
+    {
       fetchSitesForSelectList,
-    })
+    }
   ),
   lifecycle({
     componentDidMount() {
@@ -37,20 +40,26 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: ({ history, location }) => ({ target: { value } }) => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = mergeToFiltersParams(
-        { siteId: value },
-        new URLSearchParams(searchParams.get('filters') || '')
-      )
-      searchParams.set('filters', filtersParams)
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
+    onChange:
+      ({ navigate, location }) =>
+      ({ target: { value } }) => {
+        const searchParams = new URLSearchParams(location.search)
+        const filtersParams = mergeToFiltersParams(
+          { siteId: value },
+          new URLSearchParams(searchParams.get('filters') || '')
+        )
+        searchParams.set('filters', filtersParams)
+        navigate(
+          {
+            ...location,
+            search: `?${searchParams.toString()}`,
+          },
+          { replace: true }
+        )
+      },
   }),
-  withProps(({ intl, location, sitesSelectList, theme }) => {
+  withProps(({ location, sitesSelectList, theme }) => {
+    const { formatMessage } = useI18n()
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
@@ -65,7 +74,7 @@ const enhance = compose(
         }))
         .insert(0, {
           value: '',
-          label: intl.formatMessage(messages.allSites, {
+          label: formatMessage(messages.allSites, {
             region: sitesSelectList.stateName || sitesSelectList.countryName,
           }),
         })

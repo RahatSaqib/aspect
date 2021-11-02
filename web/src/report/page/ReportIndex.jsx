@@ -1,13 +1,16 @@
 import flowRight from 'lodash/flowRight'
 import fromPairs from 'lodash/fromPairs'
-import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
-import { connect } from 'react-redux'
+import React, { useState, useEffect } from 'react'
+
+import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
-
+import { useQuery } from 'react-query'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { safeDownloadFile } from '../../shared/utils/files'
+import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
+import REPORT_LIST from '../../MigratedComponents/QueryFetch/Report/index'
 import {
   makeSearchParamsSanitizer,
   composeSanitizer,
@@ -19,16 +22,12 @@ import {
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
-import { fetchReports, getReportFile } from '../ReportRedux'
+import { useAuthState } from '../../Providers/AuthProvider'
+import messages from './messages'
 
-const cssClasses = classnames.bind(require('./ReportIndex.css'))
+import styles from './ReportIndex.css'
 
-const messages = defineMessages({
-  reportsTitle: {
-    id: 'pages.ReportIndex.title',
-    defaultMessage: 'Reports',
-  },
-})
+const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
@@ -39,6 +38,7 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
+  { reportName: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer()
@@ -51,111 +51,101 @@ const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
-const enhance = compose(
-  injectIntl,
-  withProps(({ location }) => {
-    const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-    return {
-      filters: fromPairs([...filtersParams.entries()]),
-    }
-  }),
-  connect(
-    state => ({
-      items: state.report.items,
-      loading: state.report.loading,
-      userPermissions: state.user.jwt.permissions,
-    }),
-    {
-      fetchReports,
-      getReportFile,
-    }
-  ),
-  withHandlers({
-    onInitialLoad: ({ location, fetchReports }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchReports(filtersParams)
-      }
-    },
-    onClickDownload: ({ location, getReportFile }) => externalId => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        getReportFile(externalId, filtersParams)
-      }
-    },
-  }),
-  lifecycle({
-    componentDidMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const {
-        sanitized: filtersSanitized,
-        value: filtersParams,
-      } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
+const ReportIndex = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const intl = useIntl()
+  const {
+    jwt: { permissions: userPermissions },
+  } = useAuthState()
+  const [items, setItems] = useState()
+  const [filters, setFilters] = useState([])
 
-        this.props.history.replace({
-          ...this.props.location,
-          search: searchParams.toString(),
-        })
-      }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
-      this.setState({
-        reducedFilters,
+  const { data: { data } = false } = useQuery(
+    [REPORT_LIST.KEY, location.search],
+    async () => {
+      const { value: filtersParams } = filtersFromLocation(location)
+      return fetchWrapperForQueries({
+        endpoint: REPORT_LIST.ENDPOINT,
+        params: { ...fromPairs([...filtersParams.entries()]) },
       })
+    }
+  )
+  const onClickDownload = (externalId, fileExtension = 'xlsx') => {
+    setFilters({ ...filters, format: fileExtension })
+    filtersFromLocation.format = fileExtension
+    if (!filtersFromLocation.maxDate) filtersFromLocation.maxDate = new Date()
+    return fetchWrapperForQueries({
+      endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
+      params: { ...filtersFromLocation },
+    }).then(async resp => {
+      const file = await resp.blob
+      safeDownloadFile(file, resp.fileName)
+    })
+  }
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const { sanitized: filtersSanitized, value: filtersParams } =
+      filtersSanitizer(searchParams.get('filters') || '')
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
 
-      this.props.onInitialLoad()
-    },
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
+    const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+    setFilters(fromPairs([...Object.entries(reducedFilters)]))
+  }, [location, navigate, userPermissions])
 
-    componentDidUpdate(prevProps) {
-      if (this.props.location.search !== prevProps.location.search) {
-        this.props.onInitialLoad()
-      }
-    },
-  })
-)
+  useEffect(() => {
+    if (data) {
+      setItems(data)
+    }
+  }, [data])
 
-const ReportIndex = ({
-  intl,
-  history,
-  location,
-  items,
-  // --- injected by recompose ---
-  onClickDownload,
-  reducedFilters,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
-    {reducedFilters && (
-      <BrowseFilters
-        history={history}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
-        showBrowseDropdown={false}
-      />
-    )}
-    <Grid container>
-      {items.map(report => {
-        const externalId = report.get('externalId')
-        return (
-          <ReportCard
-            title={report.get('name')}
-            description={report.get('description')}
-            onClick={() => onClickDownload(externalId)}
-            history={history}
-          />
-        )
-      })}
-    </Grid>
-  </div>
-)
-
-export default enhance(ReportIndex)
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.reportsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
+      {filters && (
+        <BrowseFilters
+          navigate={navigate}
+          location={location}
+          intl={intl}
+          config={filters}
+          showBrowseDropdown={false}
+        />
+      )}
+      <Grid
+        container
+        spacing={16}
+        sx={{
+          width: 'auto',
+          margin: 0,
+        }}
+      >
+        {items?.map(
+          ({ externalId, name, description, i18nKey, i18nKeyDescription }) => (
+            <ReportCard
+              title={name}
+              description={description}
+              i18nKey={i18nKey}
+              i18nKeyDescription={i18nKeyDescription}
+              key={externalId}
+              onClick={fileExtension =>
+                onClickDownload(externalId, fileExtension)
+              }
+              navigate={navigate}
+            />
+          )
+        )}
+      </Grid>
+    </div>
+  )
+}
+export default ReportIndex

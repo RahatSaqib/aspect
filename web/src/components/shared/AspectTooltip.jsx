@@ -5,12 +5,15 @@ import Tooltip from '@material-ui/core/Tooltip'
 
 import IconProvider from '../../MigratedComponents/IconProvider'
 
-const cssClasses = classnames.bind(require('./AspectTooltip.css'))
+import styles from './AspectTooltip.css'
+
+const cssClasses = classnames.bind(styles)
 
 const AspectTooltip = ({
   title,
   children,
   showHelpIcon,
+  showPointerCursor,
   toolTipClass,
   toolTipContainerClass,
   iconClass,
@@ -19,10 +22,17 @@ const AspectTooltip = ({
   <Tooltip
     classes={{ tooltip: cssClasses(toolTipClass) }}
     title={title}
+    disableInteractive
     {...rest}
   >
     <div className={cssClasses(toolTipContainerClass)}>
-      <span className={cssClasses('ChildrenContainer')}>{children}</span>
+      <span
+        className={cssClasses('ChildrenContainer', {
+          ChildrenContainer_clickable: showPointerCursor,
+        })}
+      >
+        {children}
+      </span>
       {showHelpIcon ? (
         <IconProvider icon="MdHelp" className={cssClasses(iconClass)} />
       ) : null}
@@ -35,15 +45,19 @@ AspectTooltip.defaultProps = {
   toolTipClass: 'Tooltip',
   toolTipContainerClass: null,
   iconClass: 'HelpIcon',
+  showPointerCursor: true,
+  title: '',
+  children: null,
 }
 
 AspectTooltip.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  children: PropTypes.node,
   showHelpIcon: PropTypes.bool,
   toolTipClass: PropTypes.string,
   toolTipContainerClass: PropTypes.string,
   iconClass: PropTypes.string,
+  showPointerCursor: PropTypes.bool,
 }
 
 export default AspectTooltip
