@@ -1,5 +1,6 @@
 const chai = require('chai')
 const _ = require('lodash')
+const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 
 const {
@@ -213,6 +214,9 @@ describe('Result download routes', () => {
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
+      // we're not awaiting the insert before returning in service.js, so need a delay here
+      await Promise.delay(1000)
+
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -252,17 +256,15 @@ describe('Result download routes', () => {
           )}`
         )
         .set('Authorization', `Bearer ${shared.token}`)
+      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
-      /**
-       * see 'api/seeds/commonGenerateResults.js' func 'addTBResults()' - we insert results for
-       * assays 'elem.externalId === 'GxMtbRif' || elem.externalId === 'GxMtbRifUltra''
-       */
       res = await server
         .get(
           `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
         )
         .set('Authorization', `Bearer ${shared.token}`)
+      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
@@ -270,20 +272,15 @@ describe('Result download routes', () => {
           `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`
         )
         .set('Authorization', `Bearer ${shared.token}`)
+      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingNoResults(res)
-
-      res = await server
-        .get(
-          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&treatmentStatus=OnTreatment`
-        )
-        .set('Authorization', `Bearer ${shared.token}`)
-      // assertReporterResultDownloadResponseContainingResults(res, results.length)
 
       res = await server
         .get(
           `${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`
         )
         .set('Authorization', `Bearer ${shared.token}`)
+      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -296,6 +293,7 @@ describe('Result download routes', () => {
           diseaseExternalIds: 'tb,ebola,hiv',
         })
         .set('Authorization', `Bearer ${shared.token}`)
+      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -321,6 +319,7 @@ describe('Result download routes', () => {
       const res = await server
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
+      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog')

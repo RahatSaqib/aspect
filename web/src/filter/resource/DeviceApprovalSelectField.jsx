@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 import Immutable from 'immutable'
-import messages from './i18n/deviceApprovalMessages'
+import messages from '../../shared/messages/deviceApprovalMessages'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceApprovals } from '../../deviceApproval/DeviceApprovalRedux'

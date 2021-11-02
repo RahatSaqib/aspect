@@ -32,46 +32,44 @@ const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
   resultBased: resultConditionsMet,
 }
-function resultCategoryFilters(
-  queryBuilder,
-  { result: results = [] },
-  resultAlias
-) {
-  if (results.length > 0) {
+function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
+  const { result: resultFilters } = filterConditions || {}
+
+  if (resultFilters && resultFilters.length > 0) {
     queryBuilder
-      .join('Assay as a', `${resultAlias}.assayId`, 'a.id')
+      .join('Assay as a', `${tblResultAlias}.assayId`, 'a.id')
       .leftJoin(
         'ResultCategory as rc1',
-        `${resultAlias}.resultCategory1`,
+        `${tblResultAlias}.resultCategory1`,
         'rc1.id'
       )
       .leftJoin('ResultCategoryGroup as rcg', function () {
         this.on(`a.id`, 'rcg.assayId')
           .andOn(function () {
             this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
-              `${resultAlias}.resultCategory1`,
+              `${tblResultAlias}.resultCategory1`,
               'rcg.resultCategory1Id'
             )
           })
           .andOn(function () {
             this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
-              `${resultAlias}.resultCategory2`,
+              `${tblResultAlias}.resultCategory2`,
               'rcg.resultCategory2Id'
             )
           })
       })
       .leftJoin(
         'ResultCategory as rc2',
-        `${resultAlias}.resultCategory2`,
+        `${tblResultAlias}.resultCategory2`,
         'rc2.id'
       )
     queryBuilder.where(resultBuilder =>
-      _.each(results, elem => {
+      _.each(resultFilters, filterElem => {
         resultBuilder.orWhere(whereBuilder => {
-          whereBuilder.where('a.externalId', elem.assayId)
+          whereBuilder.where('a.externalId', filterElem.assayId)
           if (
             _.find(
-              elem.resultCategoryId,
+              filterElem.resultCategoryId,
               item => item.scope === 'ResultCategoryGroups'
             )
           )
@@ -79,7 +77,7 @@ function resultCategoryFilters(
               'rcg.externalId',
               _.map(
                 _.filter(
-                  elem.resultCategoryId,
+                  filterElem.resultCategoryId,
                   item => item.scope === 'ResultCategoryGroups'
                 ),
                 obj => obj.value
@@ -87,13 +85,13 @@ function resultCategoryFilters(
             )
           if (
             _.find(
-              elem.resultCategoryId,
+              filterElem.resultCategoryId,
               item => item.scope === 'ResultCategories'
             )
           ) {
             const itemsToFilter = _.map(
               _.filter(
-                elem.resultCategoryId,
+                filterElem.resultCategoryId,
                 item => item.scope === 'ResultCategories'
               ),
               obj => obj.value
@@ -110,34 +108,39 @@ function resultCategoryFilters(
   }
 }
 
-function geographyFilters(
-  queryBuilder,
-  { areaItems, deviceLevelId },
-  { device = 'd', geography = 'g' }
-) {
-  if (deviceLevelId === 'state') {
-    queryBuilder.whereIn(
-      `${geography}.stateId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
-  }
-  if (deviceLevelId === 'lga') {
-    queryBuilder.whereIn(
-      `${geography}.lgaId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
-  }
-  if (deviceLevelId === 'lab') {
-    queryBuilder.whereIn(
-      `${device}.siteId`,
-      _.map(areaItems, area => _.toInteger(area.value))
-    )
+function geographyFilters(queryBuilder, filterConditions, aliases) {
+  const { areaItems, deviceLevelId } = filterConditions || {}
+  const { device = 'd', geography = 'g' } = aliases
+
+  if (areaItems && deviceLevelId) {
+    switch (deviceLevelId) {
+      case 'state':
+        queryBuilder.whereIn(
+          `${geography}.stateId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break
+      case 'lga':
+        queryBuilder.whereIn(
+          `${geography}.lgaId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break
+      case 'lab':
+        queryBuilder.whereIn(
+          `${device}.siteId`,
+          _.map(areaItems, area => _.toInteger(area.value))
+        )
+        break
+      default:
+        break
+    }
   }
 }
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
-  const { result = 'r' } = aliases
-  resultCategoryFilters(queryBuilder, filterCondition, result)
+  const tblResultAlias = aliases.result ? aliases.result : 'r'
+  resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
 }
 
@@ -180,7 +183,9 @@ async function listNotifications(request) {
     .select(
       'nt.id as id',
       'nt.name',
-      knex.raw('count(distinct n.issueId) as totalTriggers'),
+      knex.raw(
+        `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
+      ),
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT jf.name) as contactsCount'),
       knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
@@ -371,6 +376,7 @@ async function getNotificationPolicy(
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
+    .where('nt.enabled', true)
     .distinct(selectColums.concat(extraFields))
   return records
 }
@@ -533,6 +539,7 @@ async function createNotificationIfNotCreatedAlready(
     }
 
     const [notificationId] = await knex('Notification').insert(notification)
+
     context.notificationCreated(notificationId)
   }
 }
