@@ -1,11 +1,8 @@
 import format from 'date-fns/format'
+import endOfMonth from 'date-fns/endOfMonth'
 
 const now = new Date()
-const lastDayOfMonth = new Date(
-  now.getFullYear(),
-  now.getMonth() + 1,
-  0
-).getDate('dd')
+const lastDayOfMonth = format(endOfMonth(new Date()), 'dd')
 const pieRowDataFromAPIIn = [
   {
     assayId: '16',
