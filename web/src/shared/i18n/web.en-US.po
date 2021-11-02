@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-09-07T10:56:22.553Z\n"
+"POT-Creation-Date: 2021-10-29T09:11:26.140Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -279,31 +279,13 @@ msgstr "Acknowledging Issue Failed"
 #. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [legends.Unknown.devicesActive]
-#. defaultMessage is:
-#. Active
 #. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
-#. [pages.DeviceList.status.active]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceList.status.reportedActive]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.active]
+#. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
 #. Active
 #. [pages.TaskList.issueStatusActive]
-#. defaultMessage is:
-#. Active
-#. [pages.DailyStatus.maintenanceStatus.active]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceDetailProfile.maintenanceStatus.active]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceDetailProfile.maintenanceStatus.reportedActive]
 #. defaultMessage is:
 #. Active
 #: extracted_strings.json
@@ -673,16 +655,10 @@ msgstr "Approval"
 msgid "Approval Status"
 msgstr "Approval Status"
 
-#. [pages.DeviceList.status.approved]
-#. defaultMessage is:
-#. Approved
 #. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.filter.status.approved]
-#. defaultMessage is:
-#. Approved
-#. [pages.deviceDetail.deviceApprovalApproved]
+#. [pages.shared.deviceApproval.approved]
 #. defaultMessage is:
 #. Approved
 #: extracted_strings.json
@@ -783,13 +759,7 @@ msgstr "Assign DeviceApiKeys Failed"
 msgid "Assign {count} Keys"
 msgstr "Assign {count} Keys"
 
-#. [pages.DeviceList.status.assigned]
-#. defaultMessage is:
-#. Assigned
-#. [pages.filter.status.assigned]
-#. defaultMessage is:
-#. Assigned
-#. [pages.deviceDetail.deviceApprovalAssigned]
+#. [pages.shared.deviceApproval.assigned]
 #. defaultMessage is:
 #. Assigned
 #: extracted_strings.json
@@ -802,6 +772,20 @@ msgstr "Assigned"
 #: extracted_strings.json
 msgid "Assignment Details"
 msgstr "Assignment Details"
+
+#. [pages.Notifications.assayRequired]
+#. defaultMessage is:
+#. At least one assay is required for result based notifications
+#: extracted_strings.json
+msgid "At least one assay is required for result based notifications"
+msgstr "At least one assay is required for result based notifications"
+
+#. [pages.Notifications.notificationChannels]
+#. defaultMessage is:
+#. At least one of the notification channels should be selected
+#: extracted_strings.json
+msgid "At least one of the notification channels should be selected"
+msgstr "At least one of the notification channels should be selected"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1168,12 +1152,19 @@ msgstr "Case ID"
 msgid "Cases"
 msgstr "Cases"
 
+#. [pages.Notifications.table.categoryHeader]
+#. defaultMessage is:
+#. Category
+#: extracted_strings.json
+msgid "Category"
+msgstr "Category"
+
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
 msgid "Category 2"
-msgstr ""
+msgstr "Category 2"
 
 #. [pages.NotificationDetail.actionChange]
 #. defaultMessage is:
@@ -1418,10 +1409,7 @@ msgstr "Connected"
 #. [pages.DeviceList.connectivityHealth]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.DeviceList.status.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity]
+#. [pages.shared.deviceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1430,13 +1418,7 @@ msgstr "Connected"
 #. [pages.TaskList.taskListOptionsConnectivity]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.DailyStatus.maintenanceStatus.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceDetailProfile.connectivity]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #: extracted_strings.json
@@ -1449,13 +1431,6 @@ msgstr "Connectivity"
 #: extracted_strings.json
 msgid "Connectivity Health"
 msgstr "Connectivity Health"
-
-#. [legends.Unknown.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity issues
-#: extracted_strings.json
-msgid "Connectivity issues"
-msgstr "Connectivity issues"
 
 #. [filter.popover.consumable]
 #. defaultMessage is:
@@ -1550,7 +1525,7 @@ msgstr "Contaminated"
 #. Copies/ML
 #: extracted_strings.json
 msgid "Copies/ML"
-msgstr ""
+msgstr "Copies/ML"
 
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
@@ -1689,6 +1664,8 @@ msgid ""
 "Counts devices that didn't use all available module bays for running the "
 "most recent 20 results. This can indicate a faulty module"
 msgstr ""
+"Counts devices that didn't use all available module bays for running the "
+"most recent 20 results. This can indicate a faulty module"
 
 #. [component.Widget.percentageOfModulesFunctioningDescription]
 #. defaultMessage is:
@@ -1987,28 +1964,10 @@ msgstr "Days for Instrument Replacement"
 msgid "Deaths"
 msgstr "Deaths"
 
-#. [legends.Unknown.inactiveDecommissioned]
+#. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
-#. [pages.DeviceList.status.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DeviceList.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DailyStatus.maintenanceStatus.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.filter.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.deviceDetail.deviceApprovalDecommissioned]
+#. [pages.shared.deviceStatus.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #: extracted_strings.json
@@ -2371,23 +2330,7 @@ msgstr "District"
 msgid "Division"
 msgstr "Division"
 
-#. [pages.DeviceList.status.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#. [pages.DailyStatus.maintenanceStatus.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#: extracted_strings.json
-msgid "Down For Repair"
-msgstr "Down For Repair"
-
-#. [legends.Unknown.inactiveDownForRepair]
+#. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
 #. Down for Repair
 #: extracted_strings.json
@@ -2470,6 +2413,13 @@ msgstr "Ebola"
 msgid "Edit"
 msgstr "Edit"
 
+#. [pages.NotificationDetail.Edit.title]
+#. defaultMessage is:
+#. Edit Notification
+#: extracted_strings.json
+msgid "Edit Notification"
+msgstr "Edit Notification"
+
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
 #. Either your computer has been disconnected from the internet or our server has failed to respond.
@@ -2521,6 +2471,20 @@ msgstr "Email Sent"
 #: extracted_strings.json
 msgid "Email Subject"
 msgstr "Email Subject"
+
+#. [pages.Notifications.emailBodyRequired]
+#. defaultMessage is:
+#. Email body is required
+#: extracted_strings.json
+msgid "Email body is required"
+msgstr "Email body is required"
+
+#. [pages.Notifications.emailSubjectRequired]
+#. defaultMessage is:
+#. Email subject is required
+#: extracted_strings.json
+msgid "Email subject is required"
+msgstr "Email subject is required"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -3108,7 +3072,7 @@ msgstr "Full Name"
 #. GP
 #: extracted_strings.json
 msgid "GP"
-msgstr ""
+msgstr "GP"
 
 #. [resultCategoryGroup.gxEbolaGPDetected]
 #. defaultMessage is:
@@ -3724,7 +3688,7 @@ msgstr ""
 "change the column that you are sorting on in the list or change the page "
 "number that you are viewing"
 
-#. [legends.Unknown.devicesInactive]
+#. [pages.shared.deviceStatus.inactive]
 #. defaultMessage is:
 #. Inactive
 #. [pages.TaskList.issueStatusInactive]
@@ -3780,14 +3744,14 @@ msgstr "Indeterminate"
 #. Insert Placeholder For
 #: extracted_strings.json
 msgid "Insert Placeholder For"
-msgstr ""
+msgstr "Insert Placeholder For"
 
 #. [placeholders.trigger.button.label]
 #. defaultMessage is:
 #. Insert placeholder
 #: extracted_strings.json
 msgid "Insert placeholder"
-msgstr ""
+msgstr "Insert placeholder"
 
 #. [forms.formItem.instrumentSerial]
 #. defaultMessage is:
@@ -3869,6 +3833,13 @@ msgstr "Invalid credentials. Please, login again."
 msgid "Invalid username or password"
 msgstr "Invalid username or password"
 
+#. [pages.Notifications.invalidWebhookUrl]
+#. defaultMessage is:
+#. Invalid webhook url
+#: extracted_strings.json
+msgid "Invalid webhook url"
+msgstr "Invalid webhook url"
+
 #. [pages.Status.summaryWidgetGroup.inventory]
 #. defaultMessage is:
 #. Inventory
@@ -3903,6 +3874,13 @@ msgstr "Inventory on Hand"
 #: extracted_strings.json
 msgid "Is at least {minLength} characters long"
 msgstr "Is at least {minLength} characters long"
+
+#. [pages.TableCell.issueBasedNotification]
+#. defaultMessage is:
+#. Issue Based
+#: extracted_strings.json
+msgid "Issue Based"
+msgstr "Issue Based"
 
 #. [pages.DeviceList.issues]
 #. defaultMessage is:
@@ -3940,6 +3918,13 @@ msgstr "Job"
 #: extracted_strings.json
 msgid "Job Assignment"
 msgstr "Job Assignment"
+
+#. [pages.Notifications.table.jobFunctionsHeader]
+#. defaultMessage is:
+#. Job Functions
+#: extracted_strings.json
+msgid "Job Functions"
+msgstr "Job Functions"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -5048,19 +5033,7 @@ msgstr "No Consumption"
 msgid "No Data Available"
 msgstr "No Data Available"
 
-#. [legends.Unknown.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceList.status.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoPower]
+#. [pages.shared.deviceStatus.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
 #: extracted_strings.json
@@ -5074,68 +5047,28 @@ msgstr "No Power"
 msgid "No Result"
 msgstr "No Result"
 
-#. [legends.Unknown.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Results
-#: extracted_strings.json
-msgid "No Results"
-msgstr "No Results"
-
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported]
+#. [pages.shared.deviceStatus.inactiveNoResultsReported]
 #. defaultMessage is:
 #. No Results Reported
 #: extracted_strings.json
 msgid "No Results Reported"
 msgstr "No Results Reported"
 
-#. [legends.Unknown.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DeviceList.status.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoSamples]
+#. [pages.shared.deviceStatus.inactiveNoSamples]
 #. defaultMessage is:
 #. No Samples
 #: extracted_strings.json
 msgid "No Samples"
 msgstr "No Samples"
 
-#. [legends.Unknown.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceList.status.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoStaff]
+#. [pages.shared.deviceStatus.inactiveNoStaff]
 #. defaultMessage is:
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
 msgstr "No Staff"
 
-#. [pages.DeviceList.status.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Tests Performed
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Tests Performed
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Tests Performed
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoTestsPerformed]
+#. [pages.shared.deviceStatus.inactiveNoTestsPerformed]
 #. defaultMessage is:
 #. No Tests Performed
 #: extracted_strings.json
@@ -5543,28 +5476,12 @@ msgstr "Operator"
 msgid "Ordered"
 msgstr "Ordered"
 
-#. [pages.DeviceList.status.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DailyStatus.maintenanceStatus.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveOther]
+#. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Other"
-
-#. [legends.Unknown.inactiveOther]
-#. defaultMessage is:
-#. Other Reasons
-#: extracted_strings.json
-msgid "Other Reasons"
-msgstr "Other Reasons"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -5577,21 +5494,12 @@ msgstr ""
 "Our technical team has been notified of the problem and will attend to it as "
 "soon as possible."
 
-#. [pages.DeviceList.status.inactiveOutOfInventory]
+#. [pages.shared.deviceStatus.inactiveOutOfInventory]
 #. defaultMessage is:
-#. Out Of Inventory
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out Of Inventory
-#. [pages.DailyStatus.maintenanceStatus.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out Of Inventory
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out Of Inventory
+#. Out of Inventory
 #: extracted_strings.json
-msgid "Out Of Inventory"
-msgstr "Out Of Inventory"
+msgid "Out of Inventory"
+msgstr "Out of Inventory"
 
 #. [legends.Unknown.outOfStock]
 #. defaultMessage is:
@@ -5602,13 +5510,6 @@ msgstr "Out Of Inventory"
 #: extracted_strings.json
 msgid "Out of Stock"
 msgstr "Out of Stock"
-
-#. [legends.Unknown.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out of inventory
-#: extracted_strings.json
-msgid "Out of inventory"
-msgstr "Out of inventory"
 
 #. [pages.Milestones.followUpName]
 #. defaultMessage is:
@@ -5839,6 +5740,13 @@ msgstr "Please enter a new password"
 msgid "Please enter a valid email address"
 msgstr "Please enter a valid email address"
 
+#. [pages.NotificationDetail.webUrlInvalid]
+#. defaultMessage is:
+#. Please enter a valid url
+#: extracted_strings.json
+msgid "Please enter a valid url"
+msgstr "Please enter a valid url"
+
 #. [pages.ResetPassword.enterEmailAddressContent]
 #. defaultMessage is:
 #. Please enter the email address that you are registered with
@@ -5923,6 +5831,13 @@ msgstr "Please select a reason"
 #: extracted_strings.json
 msgid "Please select a site"
 msgstr "Please select a site"
+
+#. [pages.NotificationDetail.jobFunctionAtLeastOneNeeded]
+#. defaultMessage is:
+#. Please select at least one Job Function
+#: extracted_strings.json
+msgid "Please select at least one Job Function"
+msgstr "Please select at least one Job Function"
 
 #. [pages.InventoryAdjustmentDialogForm.consumableRequired]
 #. defaultMessage is:
@@ -6244,13 +6159,7 @@ msgstr "Province"
 msgid "Province/Region"
 msgstr "Province/Region"
 
-#. [pages.DeviceList.status.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#. [pages.filter.status.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#. [pages.deviceDetail.deviceApprovalProvisioned]
+#. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
 #. Provisioned
 #: extracted_strings.json
@@ -6513,10 +6422,7 @@ msgstr "Report"
 msgid "Reportable Site"
 msgstr "Reportable Site"
 
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive]
-#. defaultMessage is:
-#. Reported Active
-#. [pages.DailyStatus.maintenanceStatus.reportedActive]
+#. [pages.shared.deviceStatus.reportedActive]
 #. defaultMessage is:
 #. Reported Active
 #: extracted_strings.json
@@ -6599,6 +6505,13 @@ msgstr "Request a New Password From Aspect"
 #: extracted_strings.json
 msgid "Require printer"
 msgstr "Require printer"
+
+#. [forms.required]
+#. defaultMessage is:
+#. Required
+#: extracted_strings.json
+msgid "Required"
+msgstr "Required"
 
 #. [reporters.requiresTreatment]
 #. defaultMessage is:
@@ -6685,6 +6598,9 @@ msgid "Result 2"
 msgstr "Result 2"
 
 #. [pages.Notification.type.ResultBased]
+#. defaultMessage is:
+#. Result Based
+#. [pages.TableCell.resultBasedNotification]
 #. defaultMessage is:
 #. Result Based
 #: extracted_strings.json
@@ -7490,6 +7406,13 @@ msgstr "Short Name"
 msgid "ShortName"
 msgstr "ShortName"
 
+#. [pages.Notifications.jobFunctionRequired]
+#. defaultMessage is:
+#. Should select at least one job function for this notification
+#: extracted_strings.json
+msgid "Should select at least one job function for this notification"
+msgstr "Should select at least one job function for this notification"
+
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
 #. Show Only Reportable Results
@@ -7782,6 +7705,27 @@ msgstr "Sites"
 msgid "Smear"
 msgstr "Smear"
 
+#. [pages.Notifications.smsBodyRequired]
+#. defaultMessage is:
+#. Sms body is required
+#: extracted_strings.json
+msgid "Sms body is required"
+msgstr "Sms body is required"
+
+#. [pages.Notifications.smsLength]
+#. defaultMessage is:
+#. Sms body shouldn't have no more than 144 characters
+#: extracted_strings.json
+msgid "Sms body shouldn't have no more than 144 characters"
+msgstr "Sms body shouldn't have no more than 144 characters"
+
+#. [pages.NotificationDetail.smsBodyLimit]
+#. defaultMessage is:
+#. Sms message should not be longer than 144 characters
+#: extracted_strings.json
+msgid "Sms message should not be longer than 144 characters"
+msgstr "Sms message should not be longer than 144 characters"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -7988,7 +7932,7 @@ msgstr "TB Rif Resistance"
 #. TB XDR
 #: extracted_strings.json
 msgid "TB XDR"
-msgstr ""
+msgstr "TB XDR"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -8298,6 +8242,13 @@ msgstr "The most that you can remove is {currentQuantity}"
 #: extracted_strings.json
 msgid "The most that you can transfer is {currentQuantity}"
 msgstr "The most that you can transfer is {currentQuantity}"
+
+#. [pages.Notifications.notificationNameRequired]
+#. defaultMessage is:
+#. The notification name is required
+#: extracted_strings.json
+msgid "The notification name is required"
+msgstr "The notification name is required"
 
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
@@ -9047,25 +8998,13 @@ msgstr "Ungroup Column"
 #. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [legends.Unknown.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.DeviceList.status.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
+#. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.deviceDetail.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #: extracted_strings.json
@@ -9283,6 +9222,34 @@ msgstr "Web"
 msgid "Web Body"
 msgstr "Web Body"
 
+#. [pages.NotificationDetail.webUrl]
+#. defaultMessage is:
+#. Web Url
+#: extracted_strings.json
+msgid "Web Url"
+msgstr "Web Url"
+
+#. [pages.Notifications.webBodyRequired]
+#. defaultMessage is:
+#. Web body is required
+#: extracted_strings.json
+msgid "Web body is required"
+msgstr "Web body is required"
+
+#. [pages.Notifications.webUrlInvalidFormat]
+#. defaultMessage is:
+#. Web url has an invalid format
+#: extracted_strings.json
+msgid "Web url has an invalid format"
+msgstr "Web url has an invalid format"
+
+#. [pages.Notifications.webUrlRequired]
+#. defaultMessage is:
+#. Web url is required
+#: extracted_strings.json
+msgid "Web url is required"
+msgstr "Web url is required"
+
 #. [pages.Notifications.table.webhookSentHeader]
 #. defaultMessage is:
 #. Webhook Sent
@@ -9297,7 +9264,7 @@ msgstr "Webhook Sent"
 msgid "Week"
 msgstr "Week"
 
-#. [legends.Unknown.weekendOrHoliday]
+#. [pages.shared.deviceStatus.weekendOrHoliday]
 #. defaultMessage is:
 #. Week or holiday
 #: extracted_strings.json
@@ -9336,7 +9303,7 @@ msgstr "Workflow Status"
 #. XDR
 #: extracted_strings.json
 msgid "XDR"
-msgstr ""
+msgstr "XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -9442,6 +9409,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "You may now login with your new login details."
 msgstr "You may now login with your new login details."
+
+#. [pages.Notifications.resultCategoryRequired]
+#. defaultMessage is:
+#. You should select at least one Result Category for this assay
+#: extracted_strings.json
+msgid "You should select at least one Result Category for this assay"
+msgstr "You should select at least one Result Category for this assay"
+
+#. [pages.Notifications.geographyRequired]
+#. defaultMessage is:
+#. You should select at least one option
+#: extracted_strings.json
+msgid "You should select at least one option"
+msgstr "You should select at least one option"
 
 #. [pages.Login.reasonExpiredJWT]
 #. defaultMessage is:
@@ -10058,6 +10039,13 @@ msgstr "{elapsed} elapsed, {upcoming} upcoming"
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
 msgstr "{itemCount, plural, one {# Contact} other {# Contacts} }"
 
+#. [pages.Notifications.notificationsTableJobFunctionsCount]
+#. defaultMessage is:
+#. {itemCount, plural, one {# Job Function} other {# Job Functions} }
+#: extracted_strings.json
+msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
+msgstr "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
+
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
@@ -10138,6 +10126,21 @@ msgstr "{unit} total calibrations"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{total, plural, one {# result} other {# results} })"
+
+#~ msgid "Connectivity issues"
+#~ msgstr "Connectivity issues"
+
+#~ msgid "Down For Repair"
+#~ msgstr "Down For Repair"
+
+#~ msgid "No Results"
+#~ msgstr "No Results"
+
+#~ msgid "Other Reasons"
+#~ msgstr "Other Reasons"
+
+#~ msgid "Out of inventory"
+#~ msgstr "Out of inventory"
 
 #~ msgid "Incorrect password"
 #~ msgstr "Incorrect password"
