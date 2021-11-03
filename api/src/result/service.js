@@ -797,6 +797,10 @@ async function getResultByResultId(
       knex.raw(
         `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
       ),
+      'st.id as stateId',
+      'dt.id as deviceTypeId',
+      'r.resultCategory1',
+      'r.resultCategory2',
     ])
   let data = null
   // translate result data back to an object and get assay details

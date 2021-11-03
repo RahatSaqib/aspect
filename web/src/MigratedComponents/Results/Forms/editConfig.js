@@ -1,17 +1,69 @@
+import ASSAY_LIST from '../../QueryFetch/Assay'
+import { DEVICE_TYPES } from '../../QueryFetch/Device'
+import { SITE_ALL } from '../../QueryFetch/Site'
+import { GEOGRAPHY_STATES } from '../../QueryFetch/Geography'
+
 import messages from '../Detail/messages'
 
+const getBaseOptions = response => {
+  let options = []
+  const { ok, data } = response
+  if (ok) {
+    options = data.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    }))
+  }
+  return options
+}
+const getResultCategoryOptions = (response, formik, formatMessage) => {
+  let options = []
+  const { ok, data } = response
+  const { assayId } = formik.values
+  if (ok) {
+    const { resultCategories = [] } =
+      data.find(({ id }) => id === assayId) || {}
+    options = resultCategories.map(({ id, name, i18nKey }) => ({
+      label: formatMessage(messages[i18nKey], name),
+      value: id,
+    }))
+  }
+  return options
+}
 const getConfig = formatMessage => {
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',
     actions: {
       default: 'edit',
+      // default: 'save',
       helpers: '',
       items: [
+        /**
+         * define custom buttons - their id's are used to set up
+         * `isVisible` and `onClick` props
+         */
         {
           id: 'transfer',
           text: formatMessage(messages.transferResult),
-          action: 'transferResult',
+        },
+        /**
+         * define generic buttons
+         */
+        {
+          id: 'edit',
+          text: formatMessage(messages.button_Edit, 'Edit'),
+          action: 'enableEdit',
+        },
+        {
+          id: 'save',
+          text: formatMessage(messages.button_Submit, 'Submit'),
+          action: 'saveResult',
+        },
+        {
+          id: 'cancel',
+          text: formatMessage(messages.button_Cancel, 'Cancel'),
+          action: 'cancelEdit',
         },
       ],
     },
@@ -25,11 +77,15 @@ const getConfig = formatMessage => {
             id: 10,
             items: [
               {
-                id: 'siteName',
+                // id: 'siteName',
+                id: 'siteId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: SITE_ALL.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: SITE_ALL.KEY,
+                  normalizeLoadedData: response => getBaseOptions(response),
                 },
-                type: 'readOnly',
                 label: 'Site Name',
                 labelI18nKey: 'siteName',
                 link: {
@@ -42,17 +98,18 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'City',
                 labelI18nKey: 'city',
               },
               {
-                id: 'stateName',
+                id: 'stateId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: GEOGRAPHY_STATES.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: GEOGRAPHY_STATES.KEY,
+                  normalizeLoadedData: response => getBaseOptions(response),
                 },
-                type: 'readOnly',
-                label: 'State',
                 labelI18nKey: 'state',
               },
             ],
@@ -72,7 +129,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Device Name',
                 labelI18nKey: 'deviceName',
                 link: {
@@ -81,12 +137,30 @@ const getConfig = formatMessage => {
                 },
               },
               {
-                id: 'deviceType',
+                id: 'deviceTypeId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: DEVICE_TYPES.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: DEVICE_TYPES.KEY,
+                  normalizeLoadedData: response => {
+                    let options = []
+                    const { ok, data } = response
+                    if (ok) {
+                      options = data
+                        .filter(
+                          ({ name }) =>
+                            !name.includes('Aspect') &&
+                            !name.includes('GxAlert')
+                        )
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        }))
+                    }
+                    return options
+                  },
                 },
-                type: 'readOnly',
-                label: 'Device Type',
                 labelI18nKey: 'deviceType',
               },
               {
@@ -94,7 +168,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Device Serial',
                 labelI18nKey: 'deviceSerial',
               },
@@ -111,13 +184,30 @@ const getConfig = formatMessage => {
             id: 30,
             items: [
               {
-                id: 'assayName',
+                id: 'assayId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: ASSAY_LIST.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: ASSAY_LIST.KEY,
+                  normalizeLoadedData: (response, formik) => {
+                    let options = []
+                    const { ok, data } = response
+                    const { deviceTypeId } = formik.values
+                    if (ok) {
+                      options = data
+                        .filter(item => item.deviceTypeId === deviceTypeId)
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        }))
+                    }
+                    return options
+                  },
+                  dependencies: ['deviceTypeId'],
                 },
                 label: 'Assay',
                 labelI18nKey: 'assay',
-                type: 'readOnly',
               },
             ],
           },
@@ -132,20 +222,30 @@ const getConfig = formatMessage => {
             id: 40,
             items: [
               {
-                id: 'resultCategory1Name',
+                id: 'resultCategory1',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: ASSAY_LIST.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: ASSAY_LIST.KEY,
+                  normalizeLoadedData: (response, formik) =>
+                    getResultCategoryOptions(response, formik, formatMessage),
+                  dependencies: ['assayId'],
                 },
-                type: 'readOnly',
                 label: 'resultCategory1Label',
               },
               {
-                id: 'resultCategory2Name',
+                id: 'resultCategory2',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: ASSAY_LIST.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: ASSAY_LIST.KEY,
+                  normalizeLoadedData: (response, formik) =>
+                    getResultCategoryOptions(response, formik, formatMessage),
+                  dependencies: ['assayId'],
                 },
                 label: 'resultCategory2Label',
-                type: 'readOnly',
                 hideIfNull: true,
               },
               {
@@ -154,7 +254,6 @@ const getConfig = formatMessage => {
                   component: 'textField',
                 },
                 label: 'Detected Resistance',
-                type: 'readOnly',
                 hideIfNull: true,
               },
               {
@@ -164,7 +263,6 @@ const getConfig = formatMessage => {
                 },
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
-                type: 'readOnly',
               },
             ],
           },
@@ -176,16 +274,16 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'string',
                 label: 'Error Code',
                 labelI18nKey: 'errorCode',
               },
               {
                 id: 'notes',
                 controlType: {
-                  component: 'textField',
+                  component: 'textArea',
+                  rowsMax: 5,
+                  rows: 3,
                 },
-                type: 'string',
                 label: 'Notes',
                 labelI18nKey: 'notes',
               },
@@ -237,7 +335,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Sample ID',
                 labelI18nKey: 'sampleId',
               },
@@ -246,7 +343,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Sample Type',
                 labelI18nKey: 'sampleType',
               },
@@ -256,7 +352,6 @@ const getConfig = formatMessage => {
                   component: 'datePicker',
                   format: 'dd MMM yyyy hh:mm',
                 },
-                type: 'readOnly',
                 label: 'Collected On',
                 labelI18nKey: 'collectedOn',
               },
@@ -266,11 +361,14 @@ const getConfig = formatMessage => {
             id: 61,
             items: [
               {
-                id: 'sampleOriginSiteName',
+                id: 'sampleOriginSiteId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: SITE_ALL.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: SITE_ALL.KEY,
+                  normalizeLoadedData: response => getBaseOptions(response),
                 },
-                type: 'readOnly',
                 label: 'Sample Collection Site',
                 labelI18nKey: 'sampleCollectionSite',
               },
@@ -279,16 +377,18 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Collected By',
                 labelI18nKey: 'collectedBy',
               },
               {
-                id: 'reportableSiteName',
+                id: 'reportableSiteId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: SITE_ALL.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: SITE_ALL.KEY,
+                  normalizeLoadedData: response => getBaseOptions(response),
                 },
-                type: 'readOnly',
                 label: 'Reportable Site',
                 labelI18nKey: 'reportableSite',
               },
@@ -309,7 +409,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'string',
                 label: 'Patient ID',
                 labelI18nKey: 'patientId',
               },
@@ -318,7 +417,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'string',
                 label: 'Case ID',
                 labelI18nKey: 'caseId',
               },
@@ -339,7 +437,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Instrument Serial',
                 labelI18nKey: 'instrumentSerial',
               },
@@ -348,7 +445,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Module Name',
                 labelI18nKey: 'moduleName',
               },
@@ -357,7 +453,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Module Serial',
                 labelI18nKey: 'moduleSerial',
               },
@@ -371,7 +466,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'datePicker',
                 },
-                type: 'readOnly',
                 label: 'Consumable Expiration Date',
                 labelI18nKey: 'consumableExpirationDate',
               },
@@ -380,7 +474,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Consumable Lot',
                 labelI18nKey: 'consumableLot',
               },
@@ -389,7 +482,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Consumable Serial',
                 labelI18nKey: 'consumableSerial',
               },
@@ -408,7 +500,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Sender Operator',
                 labelI18nKey: 'senderOperator',
               },

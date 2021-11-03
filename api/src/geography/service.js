@@ -173,15 +173,29 @@ async function countrySelectList(request) {
   return { ok: true, data: countries }
 }
 
+async function stateSelectListForUser(request) {
+  const { stateId } = request.params
+  const dataConstraints = await getConstraints(request.auth.credentials)
+  return getStates(dataConstraints, { stateId })
+}
+
 async function stateSelectList(request) {
   const { countryId, stateId } = request.params
+  const dataConstraints = {
+    country: {
+      id: countryId,
+    },
+  }
+  return getStates(dataConstraints, { stateId })
+}
 
+async function getStates(dataConstraints, { stateId }) {
   let states = []
   if (!stateId) {
     states = await query('Get states for select list')
       .from('State as s')
       .innerJoin('Geography as g', 'g.stateId', 's.id')
-      .where('g.countryId', countryId)
+      .modify(addConstraints, dataConstraints, { geography: 'g' })
       .orderBy(['s.name'], 'asc')
       .distinct('s.id', 's.name')
   } else {
@@ -190,10 +204,10 @@ async function stateSelectList(request) {
     )
       .from('State as s')
       .innerJoin('Geography as g', 'g.stateId', 's.id')
-      .where('g.countryId', countryId)
       .leftJoin('Lga as l', function () {
         this.on('l.id', 'g.lgaId').on({ 'g.stateId': knex.raw(stateId) })
       })
+      .modify(addConstraints, dataConstraints, { geography: 'g' })
       .orderBy(['s.name', 'l.name'], 'asc')
       .distinct(
         's.id as stateId',
@@ -248,6 +262,7 @@ module.exports = {
   buildGeographySelectList,
   countrySelectList,
   stateSelectList,
+  stateSelectListForUser,
   lgaSelectList,
   transformGeographyFromUpdates,
 }

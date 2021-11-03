@@ -80,6 +80,7 @@ const AspectSelect = props => {
           hideIfNoOptions,
           identifier: id,
           isClearable: false,
+          isDisabled: get(props, 'InputProps.disabled'),
           isMulti,
           keyMapping: {
             idKey: 'value',

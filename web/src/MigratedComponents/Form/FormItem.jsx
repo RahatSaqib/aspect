@@ -34,7 +34,7 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && isEmpty(value))
+  let isVisible = !(hideIfNull && isEmpty(value) && !toggleEdit)
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values, subRowIndex)
   }
@@ -72,6 +72,7 @@ const FormItem = ({
         fullWidth
         InputProps={{
           readOnly: !toggleEdit,
+          // is used for TextField, TextArea, Select
           disabled: !toggleEdit || type === 'readOnly',
           disableUnderline: !toggleEdit || type === 'readOnly',
         }}

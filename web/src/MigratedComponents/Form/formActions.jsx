@@ -15,15 +15,13 @@ const FormActionButton = ({ formik, action, onClick, isVisible }) => {
   return formik ? (
     <Button
       className={cssClasses('form__button', `form__button--${action.id}`, {
-        'form__button--enabled': isVisible,
-        'form__button--disabled': !isVisible,
+        'form__button--invisible': !isVisible,
       })}
-      color={action.id === 'cancel' ? 'default' : 'primary'}
       disabled={!formik.isValid}
       onClick={() =>
         isFunction(action.onClick) ? action.onClick() : onClick(action.id)
       }
-      variant="contained"
+      variant={action.id === 'cancel' ? 'outlined' : 'contained'}
     >
       {action.text}
     </Button>

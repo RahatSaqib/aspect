@@ -18,7 +18,7 @@ import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
 
-const AspectResultDetail = ({ formSchema, resultId }) => {
+const AspectResultDetail = ({ formSchema, resultId, onSubmit }) => {
   const [patienId, setPatientId] = useState()
   const [formData, setFormData] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
@@ -31,7 +31,20 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
         customErrorNotifications: ResultDetailsErrors,
       }),
-    { onSuccess: setFormData }
+    {
+      onSuccess: response => {
+        if (response?.ok) {
+          const { data } = response
+          if (data.resultCategory1) {
+            data.resultCategory1 = `${data.resultCategory1}`
+          }
+          if (data.resultCategory2) {
+            data.resultCategory2 = `${data.resultCategory2}`
+          }
+        }
+        setFormData(response)
+      },
+    }
   )
 
   if (isError) {
@@ -67,7 +80,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
             icon={FaNotesMedical}
             title={`${formConfig.title}: ${patienId}`}
           >
-            <FormActions config={formConfig} />
+            <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>
             <AspectForm config={formConfig} />
@@ -89,6 +102,7 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
 AspectResultDetail.propTypes = {
   formSchema: PropTypes.oneOfType([PropTypes.object]).isRequired,
   resultId: PropTypes.number.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default AspectResultDetail

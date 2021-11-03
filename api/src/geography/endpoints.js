@@ -4,6 +4,7 @@ const {
   buildGeographySelectList,
   countrySelectList,
   stateSelectList,
+  stateSelectListForUser,
   lgaSelectList,
 } = require('./service')
 
@@ -53,6 +54,21 @@ const routes = [
         params: {
           countryId: Joi.number().description('Country ID').required(),
           stateId: Joi.number().description('State ID').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/states/{stateId?}',
+    handler: asyncHandler(stateSelectListForUser),
+    config: {
+      description: 'State List',
+      notes: 'List of state IDs and Names',
+      auth: { scope: ['site'] },
+      validate: {
+        params: {
+          stateId: Joi.number().description('State ID').optional(),
         },
       },
     },

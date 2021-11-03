@@ -223,6 +223,7 @@ const SelectComponent = ({
   defaultSelectedOption,
   identifier,
   isClearable,
+  isDisabled,
   isLoading,
   isMulti,
   keyMapping: { idKey, nameKey = 'i18nKey' },
@@ -287,6 +288,7 @@ const SelectComponent = ({
         }
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
+        isDisabled={isDisabled}
         isLoading={isLoading}
         isMulti={isMulti}
         defaultValue={defaultOptionValue}
@@ -305,6 +307,7 @@ SelectComponent.defaultProps = {
   components: undefined,
   defaultSelectedOption: undefined,
   isClearable: true,
+  isDisabled: false,
   isLoading: false,
   isMulti: false,
   keyMapping: {
@@ -324,6 +327,7 @@ SelectComponent.propTypes = {
   defaultSelectedOption: defaultSelectedOptionPropType,
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
+  isDisabled: PropTypes.bool,
   isLoading: PropTypes.bool,
   isMulti: PropTypes.bool,
   keyMapping: PropTypes.oneOfType([PropTypes.object]),
@@ -413,6 +417,7 @@ const AspectDropDown = ({
     hideIfNoOptions = true,
     identifier,
     isClearable,
+    isDisabled,
     isMulti,
     keyMapping,
     messages,
@@ -493,6 +498,7 @@ const AspectDropDown = ({
       defaultSelectedOption={defaultSelectedOption}
       identifier={identifier}
       isClearable={isClearable}
+      isDisabled={isDisabled}
       isMulti={isMulti}
       keyMapping={keyMapping}
       messages={messages}
@@ -524,6 +530,7 @@ AspectDropDown.propTypes = {
     hideIfNoOptions: PropTypes.bool,
     identifier: PropTypes.string.isRequired,
     isClearable: PropTypes.bool,
+    isDisabled: PropTypes.bool,
     isMulti: PropTypes.bool,
     keyMapping: PropTypes.shape({
       idKey: PropTypes.string,

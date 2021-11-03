@@ -263,7 +263,6 @@ export const ResultListWithProps = ({
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
     >
-      {/** ? 
       <AddNewButton
         type="button"
         color="primary"
@@ -273,7 +272,6 @@ export const ResultListWithProps = ({
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
-    */}
     </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
