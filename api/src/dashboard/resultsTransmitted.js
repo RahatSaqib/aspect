@@ -62,18 +62,10 @@ async function getResultQuery(
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Issue AS i', 'r.id', 'i.resultId')
-    .leftOuterJoin('IssueType AS it', function () {
-      this.on('i.issueTypeId', 'it.id').andOn(
-        'it.externalId',
-        knex.raw("'ResultReceived'")
-      )
-    })
     .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('Notification as n', 'i.id', 'n.issueId')
+    .leftOuterJoin('Notification as n', 'r.id', 'n.resultId')
     .leftOuterJoin('EmailMessage as em', function () {
       this.on('n.emailMessageId', 'em.id').andOn(
         'em.messageStatusId',
