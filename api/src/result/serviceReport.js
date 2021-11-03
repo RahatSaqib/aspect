@@ -6,7 +6,6 @@ const { getUser } = require('../auth/service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 
 const { getAllAssaySchemas } = require('../assay/service')
-
 /**
  * 'header' is for 1st row in CSV file,
  * 'key' is prop name in array 'items' in func getDeviceErrorHistoryForAttachment() below
@@ -170,7 +169,9 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', minDate)
-    .where('r.endedOn', '<=', maxDate)
+    .modify((queryBuilder, untilDate) => {
+      if (untilDate) queryBuilder.where('r.endedOn', '<=', untilDate)
+    }, maxDate)
     .select(
       knex.raw('"Assay" as source'),
       /**
