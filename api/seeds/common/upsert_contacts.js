@@ -75,9 +75,10 @@ module.exports = async (knex, partnerData, contacts) => {
       .join('Site as s', 'g.id', 's.geographyId')
       .where('g.countryId', countryId)
       .select('s.id', 's.shortName')
-      .distinct('s.id', 's.shortName')
+      .distinct('s.id', 's.shortName', 's.name')
   ).reduce((siteMap, site) => {
     siteMap[site.shortName] = site.id
+    siteMap[site.name] = site.id
     return siteMap
   }, {})
 
@@ -243,17 +244,17 @@ module.exports = async (knex, partnerData, contacts) => {
         if (
           !['Admin', 'Regional Officer'].includes(jobFunctionName) &&
           !_.isEmpty(person.sites) &&
-          _.some(person.sites, site => !!siteIds[site.shortName])
+          _.some(person.sites, site => !!siteIds[site.shortName || site.name])
         ) {
           const existingJobContexts = await knex('JobContext')
             .whereNotNull('siteId')
             .andWhere({ jobId })
             .select()
           const expectedJobContexts = person.sites
-            .filter(site => !!siteIds[site.shortName])
+            .filter(site => !!siteIds[site.shortName || site.name])
             .map(site => ({
               jobId,
-              siteId: siteIds[site.shortName],
+              siteId: siteIds[site.shortName || site.name],
             }))
           const jobContextItem = expectedJobContexts.filter(
             expectedJobContext =>
@@ -265,7 +266,16 @@ module.exports = async (knex, partnerData, contacts) => {
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
           } else {
-            logger.error('Attempt to insert empty data to table JobContext')
+            logger.error(
+              person.sites.filter(
+                site => !!siteIds[site.shortName || site.name]
+              )
+            )
+            logger.error(
+              `There is an existing JobContext for site ${JSON.stringify(
+                person.sites
+              )} for this person`
+            )
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
