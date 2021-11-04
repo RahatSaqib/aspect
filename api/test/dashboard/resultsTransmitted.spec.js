@@ -134,8 +134,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
       sampleId: await getLastId('Sample'),
       resultId: await getLastId('Result'),
       issueId: await getLastId('Issue'),
-      emailMessageId: await getLastId('EmailMessage'),
-      smsMessageId: await getLastId('SmsMessage'),
     }
     // -----------------------------
     // get data for adding results
@@ -268,7 +266,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           // -----------------------------
           // insert Issue
           // -----------------------------
-          const [issueId] = await knex('Issue').insert({
+          await knex('Issue').insert({
             issueTypeId: issueTypeResultReceivedId,
             issueStatusId: issueStatusResolvedId,
             partnerId,
@@ -286,7 +284,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
             .pluck('id')
           const [notificationId] = await knex('Notification').insert({
             notificationTypeId: resultReceivedId,
-            issueId,
+            resultId,
             personId,
             createdOn: new Date(),
           })
@@ -348,18 +346,16 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
 
   after(async () => {
     // helper
-    const reset = async (tableName, id = 0) =>
-      knex(tableName).where('id', '>', id).delete()
+    const reset = async (tableName, idName, id = 0) =>
+      knex(tableName).where(idName, '>', id).delete()
     // reset all data tables affected in test
-    await knex('Notification')
-      .where('issueId', '>', initialState.issueId)
-      .delete()
-    await reset('Issue', initialState.issueId)
-    await reset('EmailMessage', initialState.emailMessageId)
-    await reset('SmsMessage', initialState.smsMessageId)
-    await reset('Result', initialState.resultId)
-    await reset('Sample', initialState.sampleId)
-    await reset('Device', initialState.deviceId)
+    await reset('Notification', 'resultId', initialState.resultId)
+    await reset('EmailMessage', 'resultId', initialState.resultId)
+    await reset('SmsMessage', 'resultId', initialState.resultId)
+    await reset('Result', 'id', initialState.resultId)
+    await reset('Issue', 'id', initialState.issueId)
+    await reset('Sample', 'id', initialState.sampleId)
+    await reset('Device', 'id', initialState.deviceId)
   })
 
   it('should return data for Results Transmitted graph', async () => {
