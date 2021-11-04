@@ -150,7 +150,7 @@ const evaluateIssues = async (response, issueTypeId) => {
 
   await checkNotificationsForIssue(issues[0].id, issueTypeId)
 }
-
+let qtyOfRuns = 0
 describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -469,12 +469,15 @@ describe('This test suite is for testing different triggers conditions', async (
             errorCode
           )
           const minDate = startOfDayUtc(subDays(new Date(), 30))
-          const data = await getDeviceErrorHistoryForAttachment(
-            context.device.id,
-            minDate,
-            null
-          )
-          assert.equal(data.items.length, 12)
+          if (qtyOfRuns < 2) {
+            qtyOfRuns += 1
+            const data = await getDeviceErrorHistoryForAttachment(
+              context.device.id,
+              minDate,
+              null
+            )
+            assert.equal(data.items.length, 12)
+          }
         })
       })
     })
