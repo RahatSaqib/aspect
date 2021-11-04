@@ -29,12 +29,12 @@ async function seed(knex) {
     .whereNotIn('s.id', _.map(sitesWithTag, 'siteId'))
     .select('s.id')
 
-  await Promise.each(trainingSitesKano, async site => {
-    await knex('SiteTag').insert({
+  await Promise.each(trainingSitesKano, async site =>
+    knex('SiteTag').insert({
       siteId: site.id,
       tagId: reportableSiteTagId,
     })
-  })
+  )
 
   // get training sites in kano that don't have the tag yet
   const trainingSitesRivers = await knex('Site as s')
@@ -51,10 +51,10 @@ async function seed(knex) {
     .whereNotIn('s.id', _.map(sitesWithTag, 'siteId'))
     .select('s.id')
 
-  await Promise.each(trainingSitesRivers, async site => {
-    await knex('SiteTag').insert({
+  await Promise.each(trainingSitesRivers, async site =>
+    knex('SiteTag').insert({
       siteId: site.id,
       tagId: reportableSiteTagId,
     })
-  })
+  )
 }
