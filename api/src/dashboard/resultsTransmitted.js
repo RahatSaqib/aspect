@@ -58,12 +58,12 @@ async function getResultQuery(
   const messageStatusToId = await allMessageStatusToId()
 
   const resultsQuery = knex('Result as r')
+    .innerJoin('Notification as n', 'r.id', 'n.resultId')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('Notification as n', 'r.id', 'n.resultId')
     .leftOuterJoin('EmailMessage as em', function () {
       this.on('n.emailMessageId', 'em.id').andOn(
         'em.messageStatusId',

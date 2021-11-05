@@ -14,8 +14,6 @@ const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
 const {
   allResultCategoryToId,
-  allIssueStatusToId,
-  allIssueTypeToId,
   allSampleTypeToId,
   allResultSourceToId,
   resultTypeToId,
@@ -133,7 +131,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
       deviceId: await getLastId('Device'),
       sampleId: await getLastId('Sample'),
       resultId: await getLastId('Result'),
-      issueId: await getLastId('Issue'),
     }
     // -----------------------------
     // get data for adding results
@@ -260,7 +257,11 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         const [resultId] = await knex('Result').insert(resultElement)
 
         if (resultCategory1 === resultCategoryDetectedId) {
+          const [resultReceivedId] = await knex('IssueType')
+            .where({ externalId: 'ResultReceived' })
+            .pluck('id')
           const [notificationId] = await knex('Notification').insert({
+            notificationTypeId: resultReceivedId,
             resultId,
             personId,
             createdOn: new Date(),
@@ -330,7 +331,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     await reset('EmailMessage', 'resultId', initialState.resultId)
     await reset('SmsMessage', 'resultId', initialState.resultId)
     await reset('Result', 'id', initialState.resultId)
-    await reset('Issue', 'id', initialState.issueId)
     await reset('Sample', 'id', initialState.sampleId)
     await reset('Device', 'id', initialState.deviceId)
   })
