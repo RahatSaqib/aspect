@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import Select, { components } from 'react-select'
 import { defineMessages } from 'react-intl'
+import TextField from '@material-ui/core/TextField'
 
 import get from 'lodash/get'
 import find from 'lodash/find'
@@ -414,6 +415,33 @@ const GroupHeading = props => (
   <components.GroupHeading {...props} style={groupStyles} />
 )
 
+const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
+  const options = getSelectedOptions(
+    selectOptions,
+    defaultSelectedOption,
+    keyMapping.idKey
+  )
+
+  let text = '-'
+  if (options) {
+    if (isArray(options)) {
+      text = options.map(({ label }) => label).join('; ')
+    }
+    text = options.label
+  }
+
+  return (
+    <TextField
+      InputProps={{
+        readOnly: true,
+        disableUnderline: true,
+      }}
+      multiline
+      value={text}
+    />
+  )
+}
+
 const AspectDropDown = ({
   props: {
     classNames,
@@ -507,19 +535,13 @@ const AspectDropDown = ({
   const showUi = selectOptions && (!hideIfNoOptions || selectOptions.length > 0)
 
   if (showLabelWhenDisabled && isDisabled && showUi) {
-    const options = getSelectedOptions(
-      selectOptions,
-      defaultSelectedOption,
-      keyMapping.idKey
+    return (
+      <LabelValue
+        selectOptions={selectOptions}
+        defaultSelectedOption={defaultSelectedOption}
+        keyMapping={keyMapping}
+      />
     )
-
-    if (options) {
-      if (isArray(options)) {
-        return options.map(({ label }) => label).join('; ')
-      }
-      return options.label
-    }
-    return '-'
   }
 
   return showUi ? (
