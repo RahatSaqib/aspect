@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-09-07T10:56:22.553Z\n"
+"POT-Creation-Date: 2021-10-29T09:11:26.140Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -281,31 +281,13 @@ msgstr "Признание проблемы не удалось"
 #. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [legends.Unknown.devicesActive]
-#. defaultMessage is:
-#. Active
 #. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
-#. [pages.DeviceList.status.active]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceList.status.reportedActive]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.active]
+#. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
 #. Active
 #. [pages.TaskList.issueStatusActive]
-#. defaultMessage is:
-#. Active
-#. [pages.DailyStatus.maintenanceStatus.active]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceDetailProfile.maintenanceStatus.active]
-#. defaultMessage is:
-#. Active
-#. [pages.DeviceDetailProfile.maintenanceStatus.reportedActive]
 #. defaultMessage is:
 #. Active
 #: extracted_strings.json
@@ -675,16 +657,10 @@ msgstr "Одобрение"
 msgid "Approval Status"
 msgstr "Статус одобрения"
 
-#. [pages.DeviceList.status.approved]
-#. defaultMessage is:
-#. Approved
 #. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
-#. [pages.filter.status.approved]
-#. defaultMessage is:
-#. Approved
-#. [pages.deviceDetail.deviceApprovalApproved]
+#. [pages.shared.deviceApproval.approved]
 #. defaultMessage is:
 #. Approved
 #: extracted_strings.json
@@ -785,13 +761,7 @@ msgstr "Назначить устройствоАпикейсы Ошибка"
 msgid "Assign {count} Keys"
 msgstr "Назначьте {count} ключи"
 
-#. [pages.DeviceList.status.assigned]
-#. defaultMessage is:
-#. Assigned
-#. [pages.filter.status.assigned]
-#. defaultMessage is:
-#. Assigned
-#. [pages.deviceDetail.deviceApprovalAssigned]
+#. [pages.shared.deviceApproval.assigned]
 #. defaultMessage is:
 #. Assigned
 #: extracted_strings.json
@@ -804,6 +774,21 @@ msgstr "Прикреплен"
 #: extracted_strings.json
 msgid "Assignment Details"
 msgstr "Назначение Детали"
+
+#. [pages.Notifications.assayRequired]
+#. defaultMessage is:
+#. At least one assay is required for result based notifications
+#: extracted_strings.json
+msgid "At least one assay is required for result based notifications"
+msgstr ""
+"Для получения уведомлений по результатам требуется хотя бы один анализ."
+
+#. [pages.Notifications.notificationChannels]
+#. defaultMessage is:
+#. At least one of the notification channels should be selected
+#: extracted_strings.json
+msgid "At least one of the notification channels should be selected"
+msgstr "Следует выбрать хотя бы один из каналов уведомлений."
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1171,12 +1156,19 @@ msgstr "Идентификатор случая"
 msgid "Cases"
 msgstr "Кейсы"
 
+#. [pages.Notifications.table.categoryHeader]
+#. defaultMessage is:
+#. Category
+#: extracted_strings.json
+msgid "Category"
+msgstr "Категория"
+
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
 msgid "Category 2"
-msgstr ""
+msgstr "Категория 2"
 
 #. [pages.NotificationDetail.actionChange]
 #. defaultMessage is:
@@ -1421,10 +1413,7 @@ msgstr "Подключено"
 #. [pages.DeviceList.connectivityHealth]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.DeviceList.status.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveConnectivity]
+#. [pages.shared.deviceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1433,13 +1422,7 @@ msgstr "Подключено"
 #. [pages.TaskList.taskListOptionsConnectivity]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.DailyStatus.maintenanceStatus.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceDetailProfile.connectivity]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #: extracted_strings.json
@@ -1452,13 +1435,6 @@ msgstr "Связь"
 #: extracted_strings.json
 msgid "Connectivity Health"
 msgstr "Состояние подключения"
-
-#. [legends.Unknown.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity issues
-#: extracted_strings.json
-msgid "Connectivity issues"
-msgstr "Проблемы с подключением"
 
 #. [filter.popover.consumable]
 #. defaultMessage is:
@@ -1553,7 +1529,7 @@ msgstr "Загрязненный"
 #. Copies/ML
 #: extracted_strings.json
 msgid "Copies/ML"
-msgstr ""
+msgstr "Копии / ML"
 
 #. [contextualMenu.notifications.copy.title]
 #. defaultMessage is:
@@ -1692,6 +1668,9 @@ msgid ""
 "Counts devices that didn't use all available module bays for running the "
 "most recent 20 results. This can indicate a faulty module"
 msgstr ""
+"Подсчитывает устройства, которые не использовали все доступные отсеки для "
+"модулей, для получения последних 20 результатов. Это может указывать на "
+"неисправный модуль."
 
 #. [component.Widget.percentageOfModulesFunctioningDescription]
 #. defaultMessage is:
@@ -1990,28 +1969,10 @@ msgstr "Дни замены инструмента"
 msgid "Deaths"
 msgstr "Смертей"
 
-#. [legends.Unknown.inactiveDecommissioned]
+#. [pages.shared.deviceApproval.decommissioned]
 #. defaultMessage is:
 #. Decommissioned
-#. [pages.DeviceList.status.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DeviceList.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DailyStatus.maintenanceStatus.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.filter.status.decommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDecommissioned]
-#. defaultMessage is:
-#. Decommissioned
-#. [pages.deviceDetail.deviceApprovalDecommissioned]
+#. [pages.shared.deviceStatus.inactiveDecommissioned]
 #. defaultMessage is:
 #. Decommissioned
 #: extracted_strings.json
@@ -2374,23 +2335,7 @@ msgstr "Район"
 msgid "Division"
 msgstr "Дивизион"
 
-#. [pages.DeviceList.status.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#. [pages.DailyStatus.maintenanceStatus.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveDownForRepair]
-#. defaultMessage is:
-#. Down For Repair
-#: extracted_strings.json
-msgid "Down For Repair"
-msgstr "Выключен для ремонта"
-
-#. [legends.Unknown.inactiveDownForRepair]
+#. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
 #. Down for Repair
 #: extracted_strings.json
@@ -2474,6 +2419,13 @@ msgstr "Эбола"
 msgid "Edit"
 msgstr "Изменить"
 
+#. [pages.NotificationDetail.Edit.title]
+#. defaultMessage is:
+#. Edit Notification
+#: extracted_strings.json
+msgid "Edit Notification"
+msgstr "Изменить уведомление"
+
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
 #. Either your computer has been disconnected from the internet or our server has failed to respond.
@@ -2525,6 +2477,20 @@ msgstr "Письмо отправлено"
 #: extracted_strings.json
 msgid "Email Subject"
 msgstr "Тема письма"
+
+#. [pages.Notifications.emailBodyRequired]
+#. defaultMessage is:
+#. Email body is required
+#: extracted_strings.json
+msgid "Email body is required"
+msgstr "Тело электронной почты обязательно"
+
+#. [pages.Notifications.emailSubjectRequired]
+#. defaultMessage is:
+#. Email subject is required
+#: extracted_strings.json
+msgid "Email subject is required"
+msgstr "Укажите тему электронной почты"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -3112,7 +3078,7 @@ msgstr "Полное имя"
 #. GP
 #: extracted_strings.json
 msgid "GP"
-msgstr ""
+msgstr "GP"
 
 #. [resultCategoryGroup.gxEbolaGPDetected]
 #. defaultMessage is:
@@ -3728,7 +3694,7 @@ msgstr ""
 "фильтра, изменить столбец, по которому вы сортируете в списке, или изменить "
 "номер просматриваемой страницы"
 
-#. [legends.Unknown.devicesInactive]
+#. [pages.shared.deviceStatus.inactive]
 #. defaultMessage is:
 #. Inactive
 #. [pages.TaskList.issueStatusInactive]
@@ -3874,6 +3840,13 @@ msgstr "Недействительные верительные грамоты. 
 msgid "Invalid username or password"
 msgstr "Неверный логин или пароль"
 
+#. [pages.Notifications.invalidWebhookUrl]
+#. defaultMessage is:
+#. Invalid webhook url
+#: extracted_strings.json
+msgid "Invalid webhook url"
+msgstr "Недействительный URL-адрес веб-перехватчика"
+
 #. [pages.Status.summaryWidgetGroup.inventory]
 #. defaultMessage is:
 #. Inventory
@@ -3908,6 +3881,13 @@ msgstr "Инвентаризация на руках"
 #: extracted_strings.json
 msgid "Is at least {minLength} characters long"
 msgstr "Это по крайней мере {minLength} символы длиной"
+
+#. [pages.TableCell.issueBasedNotification]
+#. defaultMessage is:
+#. Issue Based
+#: extracted_strings.json
+msgid "Issue Based"
+msgstr "На основе выпуска"
 
 #. [pages.DeviceList.issues]
 #. defaultMessage is:
@@ -3945,6 +3925,13 @@ msgstr "Работа"
 #: extracted_strings.json
 msgid "Job Assignment"
 msgstr "Назначение работы"
+
+#. [pages.Notifications.table.jobFunctionsHeader]
+#. defaultMessage is:
+#. Job Functions
+#: extracted_strings.json
+msgid "Job Functions"
+msgstr "Функции работы"
 
 #. [results.categoryTypeKANResistanceI18nKey]
 #. defaultMessage is:
@@ -4005,7 +3992,7 @@ msgstr "Лаборатория:"
 #. Laboratory
 #: extracted_strings.json
 msgid "Laboratory"
-msgstr "лаборатория"
+msgstr "Лаборатория"
 
 #. [pages.NotificationDetail.toLabContacts]
 #. defaultMessage is:
@@ -4905,7 +4892,7 @@ msgstr "ПРИМЕЧАНИЕ:"
 #. NP
 #: extracted_strings.json
 msgid "NP"
-msgstr ""
+msgstr "NP"
 
 #. [resultCategoryGroup.gxEbolaNPDetected]
 #. defaultMessage is:
@@ -5054,19 +5041,7 @@ msgstr "Нет потребления"
 msgid "No Data Available"
 msgstr "Данные отсутствуют"
 
-#. [legends.Unknown.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceList.status.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoPower]
-#. defaultMessage is:
-#. No Power
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoPower]
+#. [pages.shared.deviceStatus.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
 #: extracted_strings.json
@@ -5080,68 +5055,28 @@ msgstr "Нет питания"
 msgid "No Result"
 msgstr "Нет результата"
 
-#. [legends.Unknown.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Results
-#: extracted_strings.json
-msgid "No Results"
-msgstr "Нет Результатов"
-
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoResultsReported]
+#. [pages.shared.deviceStatus.inactiveNoResultsReported]
 #. defaultMessage is:
 #. No Results Reported
 #: extracted_strings.json
 msgid "No Results Reported"
 msgstr "Результаты отсутствуют"
 
-#. [legends.Unknown.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DeviceList.status.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoSamples]
-#. defaultMessage is:
-#. No Samples
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoSamples]
+#. [pages.shared.deviceStatus.inactiveNoSamples]
 #. defaultMessage is:
 #. No Samples
 #: extracted_strings.json
 msgid "No Samples"
 msgstr "Нет образцов"
 
-#. [legends.Unknown.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceList.status.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoStaff]
-#. defaultMessage is:
-#. No Staff
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoStaff]
+#. [pages.shared.deviceStatus.inactiveNoStaff]
 #. defaultMessage is:
 #. No Staff
 #: extracted_strings.json
 msgid "No Staff"
 msgstr "Нет персонала"
 
-#. [pages.DeviceList.status.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Tests Performed
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Tests Performed
-#. [pages.DailyStatus.maintenanceStatus.inactiveNoTestsPerformed]
-#. defaultMessage is:
-#. No Tests Performed
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveNoTestsPerformed]
+#. [pages.shared.deviceStatus.inactiveNoTestsPerformed]
 #. defaultMessage is:
 #. No Tests Performed
 #: extracted_strings.json
@@ -5550,28 +5485,12 @@ msgstr "Оператор"
 msgid "Ordered"
 msgstr "Упорядоченный"
 
-#. [pages.DeviceList.status.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DailyStatus.maintenanceStatus.inactiveOther]
-#. defaultMessage is:
-#. Other
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveOther]
+#. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Другой"
-
-#. [legends.Unknown.inactiveOther]
-#. defaultMessage is:
-#. Other Reasons
-#: extracted_strings.json
-msgid "Other Reasons"
-msgstr "Другие Причины"
 
 #. [errorResponseMessages.generic.message]
 #. defaultMessage is:
@@ -5584,21 +5503,12 @@ msgstr ""
 "Наша техническая команда была уведомлена о проблеме и займется ею в "
 "кратчайшие сроки."
 
-#. [pages.DeviceList.status.inactiveOutOfInventory]
+#. [pages.shared.deviceStatus.inactiveOutOfInventory]
 #. defaultMessage is:
-#. Out Of Inventory
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out Of Inventory
-#. [pages.DailyStatus.maintenanceStatus.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out Of Inventory
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out Of Inventory
+#. Out of Inventory
 #: extracted_strings.json
-msgid "Out Of Inventory"
-msgstr "Не инвентаризованный"
+msgid "Out of Inventory"
+msgstr "Нет на складе"
 
 #. [legends.Unknown.outOfStock]
 #. defaultMessage is:
@@ -5609,13 +5519,6 @@ msgstr "Не инвентаризованный"
 #: extracted_strings.json
 msgid "Out of Stock"
 msgstr "Распродано"
-
-#. [legends.Unknown.inactiveOutOfInventory]
-#. defaultMessage is:
-#. Out of inventory
-#: extracted_strings.json
-msgid "Out of inventory"
-msgstr "Нет в наличии"
 
 #. [pages.Milestones.followUpName]
 #. defaultMessage is:
@@ -5847,6 +5750,13 @@ msgstr "Пожалуйста, введите новый пароль"
 msgid "Please enter a valid email address"
 msgstr "Введите действительный адрес электронной почты"
 
+#. [pages.NotificationDetail.webUrlInvalid]
+#. defaultMessage is:
+#. Please enter a valid url
+#: extracted_strings.json
+msgid "Please enter a valid url"
+msgstr "Пожалуйста, введите корректный адрес"
+
 #. [pages.ResetPassword.enterEmailAddressContent]
 #. defaultMessage is:
 #. Please enter the email address that you are registered with
@@ -5934,6 +5844,13 @@ msgstr "Пожалуйста, выберите причину"
 #: extracted_strings.json
 msgid "Please select a site"
 msgstr "Пожалуйста, выберите сайт"
+
+#. [pages.NotificationDetail.jobFunctionAtLeastOneNeeded]
+#. defaultMessage is:
+#. Please select at least one Job Function
+#: extracted_strings.json
+msgid "Please select at least one Job Function"
+msgstr "Выберите хотя бы одну должность"
 
 #. [pages.InventoryAdjustmentDialogForm.consumableRequired]
 #. defaultMessage is:
@@ -6255,13 +6172,7 @@ msgstr "Провинция"
 msgid "Province/Region"
 msgstr "Провинция/Регион"
 
-#. [pages.DeviceList.status.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#. [pages.filter.status.provisioned]
-#. defaultMessage is:
-#. Provisioned
-#. [pages.deviceDetail.deviceApprovalProvisioned]
+#. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
 #. Provisioned
 #: extracted_strings.json
@@ -6524,10 +6435,7 @@ msgstr "Отчет"
 msgid "Reportable Site"
 msgstr "Отчетный сайт"
 
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.reportedActive]
-#. defaultMessage is:
-#. Reported Active
-#. [pages.DailyStatus.maintenanceStatus.reportedActive]
+#. [pages.shared.deviceStatus.reportedActive]
 #. defaultMessage is:
 #. Reported Active
 #: extracted_strings.json
@@ -6610,6 +6518,13 @@ msgstr "Запрос нового пароля с Аспекта"
 #: extracted_strings.json
 msgid "Require printer"
 msgstr "Требуется принтер"
+
+#. [forms.required]
+#. defaultMessage is:
+#. Required
+#: extracted_strings.json
+msgid "Required"
+msgstr "Необходимый"
 
 #. [reporters.requiresTreatment]
 #. defaultMessage is:
@@ -6696,6 +6611,9 @@ msgid "Result 2"
 msgstr "Результат 2"
 
 #. [pages.Notification.type.ResultBased]
+#. defaultMessage is:
+#. Result Based
+#. [pages.TableCell.resultBasedNotification]
 #. defaultMessage is:
 #. Result Based
 #: extracted_strings.json
@@ -7502,6 +7420,13 @@ msgstr "Короткое имя"
 msgid "ShortName"
 msgstr "Короткое имя"
 
+#. [pages.Notifications.jobFunctionRequired]
+#. defaultMessage is:
+#. Should select at least one job function for this notification
+#: extracted_strings.json
+msgid "Should select at least one job function for this notification"
+msgstr "Следует выбрать хотя бы одну должность для этого уведомления."
+
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
 #. Show Only Reportable Results
@@ -7794,6 +7719,27 @@ msgstr "Сайты"
 msgid "Smear"
 msgstr "Мазок"
 
+#. [pages.Notifications.smsBodyRequired]
+#. defaultMessage is:
+#. Sms body is required
+#: extracted_strings.json
+msgid "Sms body is required"
+msgstr "Тело смс обязательно"
+
+#. [pages.Notifications.smsLength]
+#. defaultMessage is:
+#. Sms body shouldn't have no more than 144 characters
+#: extracted_strings.json
+msgid "Sms body shouldn't have no more than 144 characters"
+msgstr "В теле SMS-сообщения должно быть не более 144 символов."
+
+#. [pages.NotificationDetail.smsBodyLimit]
+#. defaultMessage is:
+#. Sms message should not be longer than 144 characters
+#: extracted_strings.json
+msgid "Sms message should not be longer than 144 characters"
+msgstr "SMS-сообщение не должно быть длиннее 144 символов."
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -8000,7 +7946,7 @@ msgstr "Сопротивление туберкулёза"
 #. TB XDR
 #: extracted_strings.json
 msgid "TB XDR"
-msgstr ""
+msgstr "TB XDR"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -8313,6 +8259,13 @@ msgstr "Самое большее, что вы можете удалить, эт
 #: extracted_strings.json
 msgid "The most that you can transfer is {currentQuantity}"
 msgstr "Самое большее, что вы можете перевести, это {currentQuantity}"
+
+#. [pages.Notifications.notificationNameRequired]
+#. defaultMessage is:
+#. The notification name is required
+#: extracted_strings.json
+msgid "The notification name is required"
+msgstr "Требуется название уведомления."
 
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
@@ -9064,25 +9017,13 @@ msgstr "Колонна Разгруппы"
 #. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [legends.Unknown.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.DeviceList.status.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DeviceMaintenanceStatusSelectField.maintenanceStatus.inactiveUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.DailyStatus.maintenanceStatus.inactiveUnknown]
+#. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.deviceDetail.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.DeviceDetailProfile.maintenanceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #: extracted_strings.json
@@ -9301,6 +9242,34 @@ msgstr "Сайт"
 msgid "Web Body"
 msgstr "Веб-тело"
 
+#. [pages.NotificationDetail.webUrl]
+#. defaultMessage is:
+#. Web Url
+#: extracted_strings.json
+msgid "Web Url"
+msgstr "Веб-адрес"
+
+#. [pages.Notifications.webBodyRequired]
+#. defaultMessage is:
+#. Web body is required
+#: extracted_strings.json
+msgid "Web body is required"
+msgstr "Требуется веб-тело"
+
+#. [pages.Notifications.webUrlInvalidFormat]
+#. defaultMessage is:
+#. Web url has an invalid format
+#: extracted_strings.json
+msgid "Web url has an invalid format"
+msgstr "URL-адрес имеет недопустимый формат"
+
+#. [pages.Notifications.webUrlRequired]
+#. defaultMessage is:
+#. Web url is required
+#: extracted_strings.json
+msgid "Web url is required"
+msgstr "Требуется URL-адрес веб-сайта"
+
 #. [pages.Notifications.table.webhookSentHeader]
 #. defaultMessage is:
 #. Webhook Sent
@@ -9315,7 +9284,7 @@ msgstr "Webhook Отправлено"
 msgid "Week"
 msgstr "Неделя"
 
-#. [legends.Unknown.weekendOrHoliday]
+#. [pages.shared.deviceStatus.weekendOrHoliday]
 #. defaultMessage is:
 #. Week or holiday
 #: extracted_strings.json
@@ -9354,7 +9323,7 @@ msgstr "Статус процесса"
 #. XDR
 #: extracted_strings.json
 msgid "XDR"
-msgstr ""
+msgstr "XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -9466,6 +9435,22 @@ msgstr ""
 msgid "You may now login with your new login details."
 msgstr ""
 "Теперь вы можете войти в систему, указав свои новые регистрационные данные."
+
+#. [pages.Notifications.resultCategoryRequired]
+#. defaultMessage is:
+#. You should select at least one Result Category for this assay
+#: extracted_strings.json
+msgid "You should select at least one Result Category for this assay"
+msgstr ""
+"Вы должны выбрать по крайней мере одну категорию результатов для этого "
+"анализа."
+
+#. [pages.Notifications.geographyRequired]
+#. defaultMessage is:
+#. You should select at least one option
+#: extracted_strings.json
+msgid "You should select at least one option"
+msgstr "Вы должны выбрать хотя бы один вариант"
 
 #. [pages.Login.reasonExpiredJWT]
 #. defaultMessage is:
@@ -10085,6 +10070,13 @@ msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
 msgstr ""
 "{пунктСчет, множественное число, один {# Контакт} другой {# Контакты} }"
 
+#. [pages.Notifications.notificationsTableJobFunctionsCount]
+#. defaultMessage is:
+#. {itemCount, plural, one {# Job Function} other {# Job Functions} }
+#: extracted_strings.json
+msgid "{itemCount, plural, one {# Job Function} other {# Job Functions} }"
+msgstr "{itemCount, plural, one {# Функция работы} other {# Функции работы} }"
+
 #. [pages.Notifications.notificationsTableHeaderNameCount]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Name} other {# Names} }
@@ -10166,6 +10158,21 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid "Connectivity issues"
+#~ msgstr "Проблемы с подключением"
+
+#~ msgid "Down For Repair"
+#~ msgstr "Выключен для ремонта"
+
+#~ msgid "No Results"
+#~ msgstr "Нет Результатов"
+
+#~ msgid "Other Reasons"
+#~ msgstr "Другие Причины"
+
+#~ msgid "Out of inventory"
+#~ msgstr "Нет в наличии"
 
 #~ msgid "Incorrect password"
 #~ msgstr "Неверный пароль"

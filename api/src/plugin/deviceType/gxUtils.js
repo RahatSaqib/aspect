@@ -281,7 +281,12 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
   return Promise.resolve(payload)
 }
 
-async function postProcessAddDeviceOperation({ device, payload, now }) {
+async function postProcessAddDeviceOperation({
+  device,
+  payload,
+  now,
+  messageContext,
+}) {
   let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
@@ -330,6 +335,7 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
                   )
                 : null,
               now,
+              messageContext,
             }
             changeParameters.operation = isDecrease
               ? 'remove from GxConnect'

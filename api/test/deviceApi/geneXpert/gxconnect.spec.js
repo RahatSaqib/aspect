@@ -819,71 +819,62 @@ describe('Device API routes for GxConnect Devices', () => {
     const getResultCategoriesTestCallback = trackedResults => async () => {
       const { deviceAuth, device } = context
 
-      await Promise.each(trackedResults, async assertion => {
-        const {
-          resultText,
-          resultCategory1ExternalId,
-          resultCategory2ExternalId,
-          assayExternalId,
-        } = assertion
-        // Send a new result
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.merge(
-              {},
-              basicDevicePayload,
-              { name: `${deviceName}${Math.random() * 1000}` },
-              basicResultPayload,
-              {
-                result: {
-                  id: `new result ${Math.floor(Math.random() * 1000)}`,
-                  startedOn: subDays(
-                    new Date(),
-                    Math.floor(Math.random() * 100)
-                  ),
-                  data: { resultText },
-                  assay: { id: assayExternalId },
-                  sample: {
-                    id: `new sample ${Math.floor(Math.random() * 1000)}`,
-                  },
-                  instrument: {
-                    serial: `new instrument ${Math.floor(
-                      Math.random() * 1000
-                    )}`,
-                  },
+      const assertion = _.sample(trackedResults)
+      const {
+        resultText,
+        resultCategory1ExternalId,
+        resultCategory2ExternalId,
+        assayExternalId,
+      } = assertion
+      // Send a new result
+      await server
+        .post('/device')
+        .set('Authorization', deviceAuth)
+        .send(
+          _.merge(
+            {},
+            basicDevicePayload,
+            { name: `${deviceName}${Math.random() * 1000}` },
+            basicResultPayload,
+            {
+              result: {
+                id: `new result ${Math.floor(Math.random() * 1000)}`,
+                startedOn: subDays(new Date(), Math.floor(Math.random() * 100)),
+                data: { resultText },
+                assay: { id: assayExternalId },
+                sample: {
+                  id: `new sample ${Math.floor(Math.random() * 1000)}`,
                 },
-              }
-            )
+                instrument: {
+                  serial: `new instrument ${Math.floor(Math.random() * 1000)}`,
+                },
+              },
+            }
           )
-        await waitForIdle()
-
-        const lastResultId = await getLastResultId(knex, device.id)
-        const { resultCategory1, resultCategory2, assayId } = await knex(
-          'Result'
         )
-          .where('id', lastResultId)
-          .first()
+      await waitForIdle()
+      const lastResultId = await getLastResultId(knex, device.id)
+      const { resultCategory1, resultCategory2, assayId } = await knex('Result')
+        .where('id', lastResultId)
+        .first()
 
-        const expectedResultCategory1Id = await resultCategoryToId(
-          resultCategory1ExternalId
-        )
-        const expectedResultCategory2Id =
-          (await resultCategoryToId(resultCategory2ExternalId)) || null
-        const expectedAssayId = await assayToId(assayExternalId)
-        const expected = {
-          resultCategory1Id: expectedResultCategory1Id,
-          resultCategory2Id: expectedResultCategory2Id,
-          assayId: expectedAssayId,
-        }
-        const actual = {
-          resultCategory1Id: resultCategory1,
-          resultCategory2Id: resultCategory2,
-          assayId,
-        }
-        assert.deepEqual(expected, actual)
-      })
+      const expectedResultCategory1Id = await resultCategoryToId(
+        resultCategory1ExternalId
+      )
+      const expectedResultCategory2Id =
+        (await resultCategoryToId(resultCategory2ExternalId)) || null
+      const expectedAssayId = await assayToId(assayExternalId)
+      const expected = {
+        resultCategory1Id: expectedResultCategory1Id,
+        resultCategory2Id: expectedResultCategory2Id,
+        assayId: expectedAssayId,
+      }
+      const actual = {
+        resultCategory1Id: resultCategory1,
+        resultCategory2Id: resultCategory2,
+        assayId,
+      }
+      assert.deepEqual(expected, actual)
     }
 
     it(
@@ -909,7 +900,7 @@ describe('Device API routes for GxConnect Devices', () => {
     it(
       'should append a new GxMtbRif result with the correct result categories',
       getResultCategoriesTestCallback(gxMtbRifMappings)
-    ).timeout(120000)
+    )
 
     it('should reject a result without a start or end date date', () =>
       runTest(async () => {

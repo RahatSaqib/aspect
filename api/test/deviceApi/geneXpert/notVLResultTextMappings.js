@@ -911,12 +911,6 @@ const gxMtbRif = [
   // getAssertionItem('GxMtbRif', 'MTB||', 'Error', null), EXCLUDED (not sure how to parse it)
   getAssertionItem('GxMtbRif', 'NO DETECTADO||', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'NO RESULT', 'NoResult', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'NO RESULT',
-    'NoResult',
-    'Exclude (Test/Training)'
-  ),
   getAssertionItem('GxMtbRif', 'NO RESULT |ERROR', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT |NO RESULT', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT |null', 'NoResult', null),
