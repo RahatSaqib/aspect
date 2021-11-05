@@ -1214,41 +1214,6 @@ async function selectInventoryStockAtSite(siteId, consumableId) {
     .first(knex.raw('coalesce(sum(ii.quantityOnHand),0) as totalInStock'))
 }
 
-async function updateInventoryStockLevel(request) {
-  const {
-    auth,
-    params: { siteId, consumableId },
-    payload: { quantity },
-  } = request
-
-  const currentlyLoggedInUser = await getUser(auth.credentials.name)
-  const now = new Date()
-
-  // get MQ context and bind few action creators
-  const messageContext = request.plugins.messageContext.bindActionCreators({
-    inventoryStockout,
-    inventoryStockExpiring,
-    resolveIssues,
-    escalateIssues,
-  })
-
-  const inventoryItemId = await changeInventoryQuantity({
-    siteId,
-    consumableId,
-    quantity,
-    quantityOnHand: quantity,
-    now,
-    operation: 'update stock',
-    userId: currentlyLoggedInUser.id,
-    messageContext,
-  })
-
-  return {
-    ok: true,
-    data: await getInventoryItem(inventoryItemId),
-  }
-}
-
 async function decreaseInventory(inventoryAjustment) {
   const inventoryItemId = await changeInventoryQuantity(
     _.merge(inventoryAjustment, { quantity: -inventoryAjustment.quantity })
@@ -1365,6 +1330,15 @@ async function checkOpenedStockIssues({
   // 'site' may be undefinied if InventoryItem.expiresOn is less than today
   if (site && dailyRate > 0) {
     // try to resolve Stockout/StockExpiring issues, if any opened for this site/consumable
+
+    // get MQ context and bind few action creators
+    messageContext = messageContext.bindActionCreators({
+      inventoryStockout,
+      inventoryStockExpiring,
+      resolveIssues,
+      escalateIssues,
+    })
+
     const props = {
       knex,
       siteId,
@@ -1581,6 +1555,5 @@ module.exports = {
   transferInventory,
   receiveInventory,
   selectInventoryStockAtSite,
-  updateInventoryStockLevel,
   getDaysByLocation,
 }
