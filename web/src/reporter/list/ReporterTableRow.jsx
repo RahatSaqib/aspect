@@ -51,14 +51,20 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
         <ReporterLinkCell data={reporter} />
       </TableCell>
       <TableCell>
-        <LinkToResults>{reporter.get('totalResults')}</LinkToResults>
+        <LinkToResults
+          params={{
+            onlyReportableResults: true,
+          }}
+        >
+          {reporter.get('totalResults')}
+        </LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
           params={{
             onlyDownloadedByReporter: true,
             onlyReportableResults: true,
-            onlyTreatmentRequired: true,
+            onlyTreatmentRequired: false,
           }}
         >
           {reporter.get('delivered')}
