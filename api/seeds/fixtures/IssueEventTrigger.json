@@ -140,12 +140,7 @@
         "action": "RESULT_MODULE_REPLACED"
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleReplaced",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleReplaced"
       }
     },
     {
@@ -171,12 +166,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -202,12 +192,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -234,12 +219,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -266,12 +246,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -297,12 +272,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -328,12 +298,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -343,12 +308,7 @@
         "action": "DEVICE_MODULE_DISABLE_RECEIVED"
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -409,12 +369,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -440,12 +395,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -491,12 +441,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -522,12 +467,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -553,12 +493,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -584,12 +519,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -615,12 +545,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -646,12 +571,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -677,12 +597,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -708,12 +623,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByInstrumentSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByInstrumentSerial"
       }
     },
     {
@@ -739,12 +649,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {
@@ -770,12 +675,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -801,12 +701,7 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay",
-        "functionExtraParameters": [
-          2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-          2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-          4008, 4016, 4006, 4011
-        ]
+        "evaluationFunction": "filterByLotAndAssay"
       }
     },
     {

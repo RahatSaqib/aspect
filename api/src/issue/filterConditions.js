@@ -16,7 +16,7 @@ const filterByModuleSerial = (
 }
 const filterByInstrumentSerial = (
   queryBuilder,
-  { instrumentSerial, extraParams },
+  { instrumentSerial },
   aliases = { issue: 'i' }
 ) => {
   logger.debug(`instrument serial:${instrumentSerial}`, {
@@ -26,11 +26,6 @@ const filterByInstrumentSerial = (
     queryBuilder.whereRaw(`${aliases.issue}.data->>"$.instrumentSerial"=?`, [
       instrumentSerial,
     ])
-  if (extraParams)
-    queryBuilder.whereRaw(
-      `${aliases.issue}.data->>"$.errorCodes" not in (${extraParams.join(',')})`
-    )
-
   return queryBuilder
 }
 const filterByInstrumentAndModuleSerial = (

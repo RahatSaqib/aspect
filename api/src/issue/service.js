@@ -241,7 +241,6 @@ async function findOpenIssue(
   filterIssueCondition = {}
 ) {
   const evaluationFunction = _.get(filterIssueCondition, 'evaluationFunction')
-  const extraParams = _.get(filterIssueCondition, 'functionExtraParameters')
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -268,10 +267,10 @@ async function findOpenIssue(
       action.deviceId
     )
     if (filterFunctions[evaluationFunction])
-      findOpenIssue.modify(filterFunctions[evaluationFunction], {
-        ...action.options.data,
-        extraParams,
-      })
+      findOpenIssue.modify(
+        filterFunctions[evaluationFunction],
+        action.options.data
+      )
   }
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
