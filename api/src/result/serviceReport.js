@@ -161,6 +161,13 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
    *
    * select errors from Result table
    */
+  const filterUntilDate = (
+    queryBuilder,
+    untilDate,
+    fieldName = 'r.endedOn'
+  ) => {
+    if (untilDate) queryBuilder.where(`${fieldName}`, '<=', untilDate)
+  }
   const items = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -169,9 +176,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', minDate)
-    .modify((queryBuilder, untilDate) => {
-      if (untilDate) queryBuilder.where('r.endedOn', '<=', untilDate)
-    }, maxDate)
+    .modify(filterUntilDate, maxDate)
     .select(
       knex.raw('"Assay" as source'),
       /**
@@ -213,7 +218,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .leftOuterJoin('TimeZone as tz', 'd.timezone', 'tz.id')
         .where('do.deviceId', deviceId)
         .where('do.startedOn', '>=', minDate)
-        .where('do.startedOn', '<=', maxDate)
+        .modify(filterUntilDate, maxDate, 'do.startedOn')
         // JSON prop type='gx-log' marks entry received from GxConnect as GeneXpert log
         .whereRaw(`IFNULL(do.data ->> '$.type', '') = 'gx-log'`)
         /**
@@ -261,7 +266,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
     ]
     const results = await knex('Result as r')
       .where('r.deviceId', deviceId)
-      .where('r.endedOn', '<=', maxDate)
+      .modify(filterUntilDate, maxDate)
       .groupBy(missingFields)
       .select(missingFields)
       .min('r.endedOn as endedOn')
