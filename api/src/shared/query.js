@@ -115,8 +115,16 @@ const addResultCountsQuery = (
       })
     })
     .count({
-      totalResults: knex.raw('DISTINCT r.id'),
-      delivered: knex.raw('DISTINCT rdl.resultId'),
+      totalResults: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.reportable = 1
+          THEN r.id ELSE null
+        END`),
+      delivered: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.reportable = 1
+          THEN  rdl.resultId ELSE null
+        END`),
       /**
        * We should only be counting results that were delivered in the last four columns
        * because we're measuring how many of the results are linked to treatment on the
