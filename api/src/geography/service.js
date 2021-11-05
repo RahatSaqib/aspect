@@ -189,47 +189,50 @@ async function stateSelectList(request) {
   return getStates(dataConstraints, { stateId })
 }
 
-async function getStates(dataConstraints, { stateId }) {
+async function getStates(dataConstraints) {
   let states = []
-  if (!stateId) {
-    states = await query('Get states for select list')
-      .from('State as s')
-      .innerJoin('Geography as g', 'g.stateId', 's.id')
-      .modify(addConstraints, dataConstraints, { geography: 'g' })
-      .orderBy(['s.name'], 'asc')
-      .distinct('s.id', 's.name')
-  } else {
-    const statesAndLgas = await query(
-      'Get states and state LGAs for select lists'
-    )
-      .from('State as s')
-      .innerJoin('Geography as g', 'g.stateId', 's.id')
-      .leftJoin('Lga as l', function () {
-        this.on('l.id', 'g.lgaId').on({ 'g.stateId': knex.raw(stateId) })
-      })
-      .modify(addConstraints, dataConstraints, { geography: 'g' })
-      .orderBy(['s.name', 'l.name'], 'asc')
-      .distinct(
-        's.id as stateId',
-        's.name as stateName',
-        'l.id as lgaId',
-        'l.name as lgaName'
-      )
-    states = _.map(_.uniqBy(statesAndLgas, 'stateId'), stateRecord => ({
-      id: stateRecord.stateId,
-      name: stateRecord.stateName,
-    }))
-    const selectedState = _.find(states, { id: stateId })
-    const selectedStateLgas = _.map(
-      _.filter(statesAndLgas, lgaRecord => lgaRecord.lgaId != null),
-      lgaRecord => ({
-        id: lgaRecord.lgaId,
-        name: lgaRecord.lgaName,
-      })
+  const statesAndLgas = await query(
+    'Get states and state LGAs for select lists'
+  )
+    .from('State as s')
+    .innerJoin('Geography as g', 'g.stateId', 's.id')
+    .leftJoin('Lga as l', function () {
+      this.on('l.id', 'g.lgaId')
+      // if (stateId) {
+      //   this.andOn({ 'g.stateId': knex.raw(stateId) })
+      // }
+    })
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .distinct(
+      's.id as stateId',
+      's.name as stateName',
+      'l.id as lgaId',
+      'l.name as lgaName'
     )
 
-    selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
-  }
+  states = _.reduce(
+    _.groupBy(statesAndLgas, 'stateId'),
+    (acc, items) => {
+      const [{ stateId, stateName }] = items // get state values from 1st item
+      const lgas = items
+        .filter(({ lgaId }) => !!lgaId) // include only not null'ed lga's
+        .map(({ lgaId, lgaName }) => ({
+          id: lgaId,
+          name: lgaName,
+        }))
+      acc = [
+        ...acc,
+        {
+          id: stateId,
+          name: stateName,
+          lgas: _.sortBy(lgas, 'name'),
+        },
+      ]
+      return acc
+    },
+    []
+  )
+  states = _.sortBy(states, 'name')
 
   return { ok: true, data: states }
 }

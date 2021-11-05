@@ -4,8 +4,10 @@ import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import isFunction from 'lodash/isFunction'
 import { useFormikContext } from 'formik'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useAuthState } from '../../Providers/AuthProvider'
+import { getReturnUrl, useUrlQuery } from '../AspectTable/Helpers'
 
 import styles from './Form.css'
 
@@ -17,11 +19,11 @@ const FormActionButton = ({ formik, action, onClick, isVisible }) => {
       className={cssClasses('form__button', `form__button--${action.id}`, {
         'form__button--invisible': !isVisible,
       })}
-      disabled={!formik.isValid}
+      disabled={action.id === 'save' && (!formik.isValid || !formik.dirty)}
       onClick={() =>
-        isFunction(action.onClick) ? action.onClick() : onClick(action.id)
+        isFunction(action.onClick) ? action.onClick() : onClick(action)
       }
-      variant={action.id === 'cancel' ? 'outlined' : 'contained'}
+      variant={action.ui?.variant || 'contained'}
     >
       {action.text}
     </Button>
@@ -37,6 +39,9 @@ const getDefaultDisplayState = defaultAction => {
 }
 
 const FormActions = ({ config, onSubmit }) => {
+  const navigate = useNavigate()
+  const { search } = useLocation()
+  const query = useUrlQuery(search)
   const {
     jwt: { permissions },
   } = useAuthState()
@@ -46,18 +51,25 @@ const FormActions = ({ config, onSubmit }) => {
   const [displayConfig, setDisplayConfig] = useState(
     getDefaultDisplayState(defaultAction)
   )
-  const [actionToAction, setActionToAction] = useState(false)
+  const [currentAction, setCurrentAction] = useState(false)
 
   useEffect(() => {
-    if (actionToAction) {
-      switch (actionToAction) {
+    if (currentAction) {
+      switch (currentAction.id) {
         case 'edit':
           setToggleEdit(true)
           break
-        case 'cancel':
-          setToggleEdit(false)
-          formik.resetForm()
+        case 'cancel': {
+          const { returnUrl } = currentAction
+          if (returnUrl) {
+            const path = getReturnUrl(query.get('returnUrl'), returnUrl)
+            navigate(path)
+          } else {
+            setToggleEdit(false)
+            formik.resetForm()
+          }
           break
+        }
         case 'save':
           if (onSubmit) {
             onSubmit(formik, meta)
@@ -67,11 +79,19 @@ const FormActions = ({ config, onSubmit }) => {
           setToggleEdit(false)
           break
 
+        case 'back': {
+          const { returnUrl } = currentAction
+          if (returnUrl) {
+            const path = getReturnUrl(query.get('returnUrl'), returnUrl)
+            navigate(path)
+          }
+          break
+        }
         default:
           break
       }
     }
-  }, [actionToAction])
+  }, [currentAction])
 
   useEffect(() => {
     if (toggleEdit) {
@@ -88,7 +108,7 @@ const FormActions = ({ config, onSubmit }) => {
         key={`action-${actionIndex.toString()}`}
         formik={formik}
         action={action}
-        onClick={setActionToAction}
+        onClick={setCurrentAction}
         isVisible={
           isFunction(action.isVisible)
             ? action.isVisible(permissions, toggleEdit)

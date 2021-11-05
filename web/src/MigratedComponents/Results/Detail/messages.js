@@ -4,6 +4,11 @@ import resultCategoryMessages from '../../../shared/messages/resultCategory'
 import resultCategoryTypeMessages from '../../../shared/messages/resultCategoryType'
 
 const messagesResult = defineMessages({
+  site: {
+    id: 'pages.resultEdit.site',
+    defaultMessage: 'Site',
+  },
+
   resultTitle: {
     id: 'pages.resultEdit.resultTitle',
     defaultMessage: 'Result Details',

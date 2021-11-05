@@ -35,6 +35,11 @@ const DEVICE_LIST = {
   KEY: 'DEVICE_LIST',
 }
 
+const DEVICE_SELECT_LIST = {
+  ENDPOINT: '/device/select-list',
+  KEY: 'DEVICE_SELECT_LIST',
+}
+
 const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
   ENDPOINT: '/device/maintenance-status-by-period/:deviceId',
   ERRORS: {
@@ -145,5 +150,6 @@ export {
   DEVICE_STATUS,
   DEVICE_STATUS_LAST_REPORTED,
   DEVICE_LIST,
+  DEVICE_SELECT_LIST,
   DEVICE_MAINTENANCE_STATUS_BY_PERIOD,
 }

@@ -98,37 +98,42 @@ export const useFormConfig = formConfig => {
     }
   }, [formConfig, meta.initialValues])
 
-  const registerVisibleFields = useCallback((values, formik, touchedName) => {
-    const { items = [] } = meta
-    const validators = {}
-    items.forEach(({ id, validate, validateIf, visibleIf, row }) => {
-      const { isMulti, id: rowId } = row
-      range(isMulti ? values[rowId].length : 1).forEach(subRowIndex => {
-        const itemId = `${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`
-        formik.unregisterField(itemId)
+  const registerVisibleFields = useCallback(
+    (values, formik, isEditMode, touchedName) => {
+      const { items = [] } = meta
+      const validators = {}
+      items.forEach(({ id, validate, validateIf, visibleIf, row }) => {
+        const { isMulti, id: rowId } = row
+        range(isMulti ? values[rowId].length : 1).forEach(subRowIndex => {
+          const itemId = `${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`
+          formik.unregisterField(itemId)
 
-        const isVisible = !visibleIf || visibleIf(values, subRowIndex)
-        if (isVisible) {
-          if (
-            validateIf &&
-            !validateIf(values, formik, { subRowIndex, touchedName })
-          ) {
-            validate = undefined
-          }
+          const isVisible =
+            !visibleIf || visibleIf(values, isEditMode, subRowIndex)
+          if (isVisible) {
+            if (
+              validateIf &&
+              !validateIf(values, formik, { subRowIndex, touchedName })
+            ) {
+              validate = undefined
+            }
 
-          if (validate) {
-            validators[itemId] = validate
+            if (validate) {
+              validators[itemId] = validate
+            }
+            formik.registerField(itemId, { validate })
           }
-          formik.registerField(itemId, { validate })
-        }
+        })
       })
-    })
-    return { validators }
+      return { validators }
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    []
+  )
 
   const updateField = useCallback(
-    (fieldName, value, formik, isTouched = true) => {
+    (fieldName, value, { formik, toggleEdit = true, isTouched = true }) => {
+      // (fieldName, value, { formik, toggleEdit = true, isTouched = true, otherFields = {} }) => {
       /**
        * 1. set field 'touched' and do NOT run validation (3rd param is 'false')
        */
@@ -157,7 +162,7 @@ export const useFormConfig = formConfig => {
       /**
        * 4. refresh visibility of all fields and register validators of only visible fields
        */
-      registerVisibleFields(values, formik, fieldName)
+      registerVisibleFields(values, formik, toggleEdit, fieldName)
       /**
        * 5. validate form for current set of `values` for all visible fields
        */

@@ -1,48 +1,38 @@
-import ASSAY_LIST from '../../QueryFetch/Assay'
-import { DEVICE_TYPES } from '../../QueryFetch/Device'
 import { SITE_ALL } from '../../QueryFetch/Site'
-import { GEOGRAPHY_STATES } from '../../QueryFetch/Geography'
+import {
+  getBaseOptions,
+  siteProps,
+  stateProps,
+  lgaProps,
+  deviceProps,
+  assayProps,
+  resultCategoryControlType,
+} from './utils'
 
 import messages from '../Detail/messages'
 
-const getBaseOptions = response => {
-  let options = []
-  const { ok, data } = response
-  if (ok) {
-    options = data.map(({ id, name }) => ({
-      label: name,
-      value: id,
-    }))
-  }
-  return options
-}
-const getResultCategoryOptions = (response, formik, formatMessage) => {
-  let options = []
-  const { ok, data } = response
-  const { assayId } = formik.values
-  if (ok) {
-    const { resultCategories = [] } =
-      data.find(({ id }) => id === assayId) || {}
-    options = resultCategories.map(({ id, name, i18nKey }) => ({
-      label: formatMessage(messages[i18nKey], name),
-      value: id,
-    }))
-  }
-  return options
-}
-const getConfig = formatMessage => {
+const getConfig = (formatMessage, isNew) => {
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',
     actions: {
-      default: 'edit',
-      // default: 'save',
+      default: isNew ? 'save' : 'edit',
       helpers: '',
       items: [
         /**
          * define custom buttons - their id's are used to set up
          * `isVisible` and `onClick` props
          */
+        {
+          id: 'back',
+          text: formatMessage(messages.button_Back, 'Back to List'),
+          action: 'backToList',
+          ui: {
+            variant: 'outlined',
+          },
+          isVisible: (permissions, isEditMode) => !isNew && !isEditMode,
+          returnUrl: `/browse/result`,
+        },
         {
           id: 'transfer',
           text: formatMessage(messages.transferResult),
@@ -64,10 +54,17 @@ const getConfig = formatMessage => {
           id: 'cancel',
           text: formatMessage(messages.button_Cancel, 'Cancel'),
           action: 'cancelEdit',
+          ui: {
+            variant: 'outlined',
+          },
+          returnUrl: isNew ? `/browse/result` : null,
         },
       ],
     },
     sections: [
+      /**
+       * non-editable fields in Update mode
+       */
       {
         id: 'Site',
         label: 'Site',
@@ -76,42 +73,22 @@ const getConfig = formatMessage => {
           {
             id: 10,
             items: [
-              {
-                // id: 'siteName',
-                id: 'siteId',
-                controlType: {
-                  component: 'select',
-                  endpoint: SITE_ALL.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: SITE_ALL.KEY,
-                  normalizeLoadedData: response => getBaseOptions(response),
-                },
+              ...stateProps(isNew, {
+                label: 'State',
+                labelI18nKey: 'state',
+              }),
+              ...lgaProps(isNew, {
+                label: 'LGA',
+                labelI18nKey: 'lga',
+              }),
+              ...siteProps(isNew, {
                 label: 'Site Name',
                 labelI18nKey: 'siteName',
                 link: {
                   key: 'siteId',
                   url: '/browse/site/:siteId',
                 },
-              },
-              {
-                id: 'lgaName',
-                controlType: {
-                  component: 'textField',
-                },
-                label: 'City',
-                labelI18nKey: 'city',
-              },
-              {
-                id: 'stateId',
-                controlType: {
-                  component: 'select',
-                  endpoint: GEOGRAPHY_STATES.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: GEOGRAPHY_STATES.KEY,
-                  normalizeLoadedData: response => getBaseOptions(response),
-                },
-                labelI18nKey: 'state',
-              },
+              }),
             ],
           },
         ],
@@ -124,44 +101,28 @@ const getConfig = formatMessage => {
           {
             id: 20,
             items: [
-              {
-                id: 'deviceName',
-                controlType: {
-                  component: 'textField',
-                },
+              ...deviceProps(isNew, {
                 label: 'Device Name',
                 labelI18nKey: 'deviceName',
                 link: {
                   key: 'deviceId',
                   url: '/browse/device/:deviceId',
                 },
+              }),
+              {
+                id: 'deviceType',
+                controlType: {
+                  component: 'textField',
+                },
+                labelI18nKey: 'deviceType',
+                type: 'readOnly',
+                visibleIf: values => !!values.deviceId,
               },
               {
                 id: 'deviceTypeId',
                 controlType: {
-                  component: 'select',
-                  endpoint: DEVICE_TYPES.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: DEVICE_TYPES.KEY,
-                  normalizeLoadedData: response => {
-                    let options = []
-                    const { ok, data } = response
-                    if (ok) {
-                      options = data
-                        .filter(
-                          ({ name }) =>
-                            !name.includes('Aspect') &&
-                            !name.includes('GxAlert')
-                        )
-                        .map(({ id, name }) => ({
-                          label: name,
-                          value: id,
-                        }))
-                    }
-                    return options
-                  },
+                  component: 'hidden',
                 },
-                labelI18nKey: 'deviceType',
               },
               {
                 id: 'deviceSerial',
@@ -170,6 +131,8 @@ const getConfig = formatMessage => {
                 },
                 label: 'Device Serial',
                 labelI18nKey: 'deviceSerial',
+                type: 'readOnly',
+                visibleIf: values => !!values.deviceId,
               },
             ],
           },
@@ -183,36 +146,17 @@ const getConfig = formatMessage => {
           {
             id: 30,
             items: [
-              {
-                id: 'assayId',
-                controlType: {
-                  component: 'select',
-                  endpoint: ASSAY_LIST.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: ASSAY_LIST.KEY,
-                  normalizeLoadedData: (response, formik) => {
-                    let options = []
-                    const { ok, data } = response
-                    const { deviceTypeId } = formik.values
-                    if (ok) {
-                      options = data
-                        .filter(item => item.deviceTypeId === deviceTypeId)
-                        .map(({ id, name }) => ({
-                          label: name,
-                          value: id,
-                        }))
-                    }
-                    return options
-                  },
-                  dependencies: ['deviceTypeId'],
-                },
+              ...assayProps(isNew, {
                 label: 'Assay',
                 labelI18nKey: 'assay',
-              },
+              }),
             ],
           },
         ],
       },
+      /**
+       * editable fields in both Create and Update
+       */
       {
         id: 'Result',
         label: 'Result',
@@ -224,26 +168,15 @@ const getConfig = formatMessage => {
               {
                 id: 'resultCategory1',
                 controlType: {
-                  component: 'select',
-                  endpoint: ASSAY_LIST.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: ASSAY_LIST.KEY,
-                  normalizeLoadedData: (response, formik) =>
-                    getResultCategoryOptions(response, formik, formatMessage),
-                  dependencies: ['assayId'],
+                  ...resultCategoryControlType(formatMessage),
                 },
                 label: 'resultCategory1Label',
               },
               {
                 id: 'resultCategory2',
                 controlType: {
-                  component: 'select',
-                  endpoint: ASSAY_LIST.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: ASSAY_LIST.KEY,
-                  normalizeLoadedData: (response, formik) =>
-                    getResultCategoryOptions(response, formik, formatMessage),
-                  dependencies: ['assayId'],
+                  ...resultCategoryControlType(formatMessage),
+                  isClearable: true,
                 },
                 label: 'resultCategory2Label',
                 hideIfNull: true,
@@ -255,6 +188,7 @@ const getConfig = formatMessage => {
                 },
                 label: 'Detected Resistance',
                 hideIfNull: true,
+                visibleIf: (values, isEditMode) => !isNew && !isEditMode,
               },
               {
                 id: 'fullResultText',
@@ -263,6 +197,7 @@ const getConfig = formatMessage => {
                 },
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
+                visibleIf: (values, isEditMode) => !isEditMode,
               },
             ],
           },
@@ -368,6 +303,7 @@ const getConfig = formatMessage => {
                   hideIfNoOptions: false,
                   queryKey: SITE_ALL.KEY,
                   normalizeLoadedData: response => getBaseOptions(response),
+                  isClearable: true,
                 },
                 label: 'Sample Collection Site',
                 labelI18nKey: 'sampleCollectionSite',
@@ -381,16 +317,19 @@ const getConfig = formatMessage => {
                 labelI18nKey: 'collectedBy',
               },
               {
-                id: 'reportableSiteId',
+                id: 'reportableSiteName',
                 controlType: {
-                  component: 'select',
-                  endpoint: SITE_ALL.ENDPOINT,
-                  hideIfNoOptions: false,
-                  queryKey: SITE_ALL.KEY,
-                  normalizeLoadedData: response => getBaseOptions(response),
+                  component: 'textField',
                 },
                 label: 'Reportable Site',
                 labelI18nKey: 'reportableSite',
+                type: 'readOnly',
+              },
+              {
+                id: 'reportableSiteId',
+                controlType: {
+                  component: 'hidden',
+                },
               },
             ],
           },
@@ -428,6 +367,7 @@ const getConfig = formatMessage => {
         id: 'TechicalDetails',
         label: 'Technical Details',
         labelI18nKey: 'technicalDetails',
+        visibleIf: (values, isEditMode) => !isEditMode,
         rows: [
           {
             id: 80,

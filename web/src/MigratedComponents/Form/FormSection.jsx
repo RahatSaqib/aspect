@@ -7,10 +7,10 @@ import range from 'lodash/range'
 import FormSectionRow from './FormSectionRow'
 import messagesBase from './messages'
 
-const getVisibleRows = (rows, formik) => {
+const getVisibleRows = (rows, formik, toggleEdit) => {
   return rows.map(row => {
     const { values } = formik
-    if (row.visibleIf && !row.visibleIf(values)) {
+    if (row.visibleIf && !row.visibleIf(values, toggleEdit)) {
       // row is hidden explicitly
       return false
     }
@@ -18,7 +18,9 @@ const getVisibleRows = (rows, formik) => {
     const { isMulti, id: rowId } = row
     const itemsVisible = row.items.map(({ visibleIf }) =>
       range(isMulti ? values[rowId].length : 1)
-        .map(subRowIndex => (visibleIf ? visibleIf(values, subRowIndex) : true))
+        .map(subRowIndex =>
+          visibleIf ? visibleIf(values, toggleEdit, subRowIndex) : true
+        )
         .includes(true)
     )
     return itemsVisible.includes(true)
@@ -33,12 +35,16 @@ const FormSection = ({
   visibleIf,
   parentKey,
 }) => {
-  const { formik } = useFormikContext()
+  const { formik, toggleEdit } = useFormikContext()
 
   // check if section is visible
-  const isSectionVisible = visibleIf ? visibleIf(formik.values) : true
+  const isSectionVisible = visibleIf
+    ? visibleIf(formik.values, toggleEdit)
+    : true
   // check if rows are visible
-  const visibleRows = isSectionVisible ? getVisibleRows(rows, formik) : []
+  const visibleRows = isSectionVisible
+    ? getVisibleRows(rows, formik, toggleEdit)
+    : []
 
   return isSectionVisible ? (
     <Grid item xs={fullWidth ? 12 : 10}>

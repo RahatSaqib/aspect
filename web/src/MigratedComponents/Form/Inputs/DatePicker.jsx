@@ -99,7 +99,7 @@ const AspectDatePickerBase = props => {
 }
 
 const AspectDatePicker = props => {
-  const { updateField } = useFormikContext()
+  const { updateField, toggleEdit } = useFormikContext()
   const { displayPreferences, culture } = useAuthState()
   const { formik, classNames, controlType, ...rest } = props
   const { values } = formik
@@ -135,7 +135,7 @@ const AspectDatePicker = props => {
     ...optionalProps,
     culture,
     onChange: value => {
-      updateField(props.id, value, props.formik)
+      updateField(props.id, value, { formik, toggleEdit })
     },
     dateFormat: format || displayPreferences.dateTimeFormat, // use `format` from `controlType` or default
     showTimeSelect: isBoolean(props.showTimeSelect)

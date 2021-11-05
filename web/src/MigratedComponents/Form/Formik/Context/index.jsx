@@ -31,7 +31,7 @@ export const FormikProvider = ({ config, children }) => {
      *    - define all visible fields and
      *    - register in formik all visible fields with validators
      */
-    registerVisibleFields(initialValues, formik)
+    registerVisibleFields(initialValues, formik, toggleEdit)
     /**
      * 2. validate form to populate formik.errors
      */

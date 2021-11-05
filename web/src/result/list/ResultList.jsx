@@ -112,13 +112,20 @@ const AddNewButton = requirePermissions({
 const onAddNewButtonClick = navigate => () => navigate('/browse/result/add')
 
 const onRowClick =
-  navigate =>
+  (navigate, location) =>
   ({
     currentTarget: {
       dataset: { resultId },
     },
-  }) =>
-    navigate(`/browse/result/${resultId}`)
+  }) => {
+    const searchParams = new URLSearchParams(location.search)
+
+    const q = new URLSearchParams({
+      returnUrl: `${location.pathname}?${searchParams.toString()}`,
+    })
+
+    navigate(`/browse/result/${resultId}?${q.toString()}`)
+  }
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -302,7 +309,7 @@ export const ResultListWithProps = ({
                   intl={intl}
                   extraColumns={table.extraColumns}
                   result={result}
-                  onClick={onRowClick(navigate)}
+                  onClick={onRowClick(navigate, location)}
                   data-result-id={result.get('id')}
                   messages={messages}
                 />

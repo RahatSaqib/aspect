@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-const messages = defineMessages({
+const messagesBase = defineMessages({
   siteName: {
     id: 'forms.formItem.siteName',
     defaultMessage: 'Site Name',
@@ -135,4 +135,44 @@ const messages = defineMessages({
   },
 })
 
-export default messages
+const headerMessagesBase = {
+  ...defineMessages({
+    site: {
+      id: 'forms.formSectionHeader.site',
+      defaultMessage: 'Site',
+    },
+    device: {
+      id: 'forms.formSectionHeader.device',
+      defaultMessage: 'Device',
+    },
+    assay: {
+      id: 'forms.formSectionHeader.assay',
+      defaultMessage: 'Assay',
+    },
+    result: {
+      id: 'forms.formSectionHeader.result',
+      defaultMessage: 'Result',
+    },
+    date: {
+      id: 'forms.formSectionHeader.date',
+      defaultMessage: 'Date',
+    },
+    sample: {
+      id: 'forms.formSectionHeader.sample',
+      defaultMessage: 'Sample',
+    },
+    patient: {
+      id: 'forms.formSectionHeader.patient',
+      defaultMessage: 'Patient',
+    },
+    technicalDetails: {
+      id: 'forms.formSectionHeader.technicalDetails',
+      defaultMessage: 'Technical Details',
+    },
+  }),
+}
+
+export default {
+  ...messagesBase,
+  ...headerMessagesBase,
+}

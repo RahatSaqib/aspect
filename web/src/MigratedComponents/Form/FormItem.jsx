@@ -36,10 +36,15 @@ const FormItem = ({
   const value = values[id]
   let isVisible = !(hideIfNull && isEmpty(value) && !toggleEdit)
   if (isVisible && visibleIf) {
-    isVisible = visibleIf(formik.values, subRowIndex)
+    isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }
 
   const i18nTools = { messages, formatMessage, formik }
+  const { component } = controlType || {}
+
+  if (component === 'hidden') {
+    return <input type="hidden" name={id} id={id} />
+  }
 
   return isVisible ? (
     <Grid

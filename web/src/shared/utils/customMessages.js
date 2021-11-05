@@ -76,6 +76,10 @@ export const commonDefinitions = defineMessages({
     id: 'button_Submit',
     defaultMessage: 'Submit',
   },
+  button_Back: {
+    id: 'button_Back',
+    defaultMessage: 'Back',
+  },
 })
 
 export function getCustomMessage(messages, key, user, params) {

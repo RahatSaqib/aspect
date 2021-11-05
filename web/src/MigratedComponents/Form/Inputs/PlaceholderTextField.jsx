@@ -14,7 +14,7 @@ const cssClasses = classnames.bind(styles)
 const PlaceholderTextField = props => {
   const { formik, id: fieldName } = props
   const inputRef = useRef()
-  const { updateField } = useFormikContext()
+  const { updateField, toggleEdit } = useFormikContext()
 
   const onClosePlaceholderSelector = () => {
     setTimeout(() => inputRef.current.focus())
@@ -29,7 +29,7 @@ const PlaceholderTextField = props => {
     const txtEnd = value.substring(selectionEnd, value.length)
     value = `${txtStart}${placeholder}${txtEnd}`
 
-    updateField(fieldName, value, formik)
+    updateField(fieldName, value, { formik, toggleEdit })
 
     setTimeout(() => {
       inputRef.current.focus()
