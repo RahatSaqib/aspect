@@ -62,8 +62,6 @@ async function getResultQuery(
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('Issue AS i', 'r.id', 'i.resultId')
-    .leftOuterJoin('IssueStatus AS ist', 'i.issueStatusId', 'ist.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Notification as n', 'r.id', 'n.resultId')
     .leftOuterJoin('EmailMessage as em', function () {
@@ -152,8 +150,6 @@ async function getResultQuery(
             r.resultCategory1 IN (${positiveResultCategories})
             AND
             em.id IS NOT NULL
-            AND
-            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -168,8 +164,6 @@ async function getResultQuery(
             r.resultCategory1 IN (${positiveResultCategories})
             AND
             sm.id IS NOT NULL
-            AND
-            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -187,7 +181,6 @@ async function getResultQuery(
               OR
               sm.id IS NOT NULL
             )
-            AND ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END
@@ -204,8 +197,6 @@ async function getResultQuery(
               OR
               sm.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
             )
-            AND
-            ist.externalId IN ('Active', 'OK', 'Resolved')
           THEN r.id
           ELSE null
         END

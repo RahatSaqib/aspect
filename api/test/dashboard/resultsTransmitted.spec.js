@@ -157,9 +157,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
       updatedBy: userId,
     }
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const { Resolved: issueStatusResolvedId } = await allIssueStatusToId()
-    const { ResultReceived: issueTypeResultReceivedId } =
-      await allIssueTypeToId()
     const { DiagnosticDevice: resultSourceDiagnosticId } =
       await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
@@ -263,27 +260,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         const [resultId] = await knex('Result').insert(resultElement)
 
         if (resultCategory1 === resultCategoryDetectedId) {
-          // -----------------------------
-          // insert Issue
-          // -----------------------------
-          await knex('Issue').insert({
-            issueTypeId: issueTypeResultReceivedId,
-            issueStatusId: issueStatusResolvedId,
-            partnerId,
-            geographyId,
-            siteId,
-            deviceId,
-            resultId,
-            level: 2,
-            createdOn: randomDate,
-            updatedOn: randomDate,
-          })
-
-          const [resultReceivedId] = await knex('IssueType')
-            .where({ externalId: 'ResultReceived' })
-            .pluck('id')
           const [notificationId] = await knex('Notification').insert({
-            notificationTypeId: resultReceivedId,
             resultId,
             personId,
             createdOn: new Date(),
