@@ -237,8 +237,10 @@ const getConfig = (formatMessage, isNew) => {
               {
                 id: 'startedOn',
                 controlType: {
-                  component: 'datePicker',
+                  component: 'dateTimePicker',
                   format: 'dd MMM yyyy hh:mm',
+                  timeIntervals: 1,
+                  isClearable: true,
                 },
                 type: 'string',
                 label: 'Start Date',
@@ -247,7 +249,10 @@ const getConfig = (formatMessage, isNew) => {
               {
                 id: 'endedOn',
                 controlType: {
-                  component: 'datePicker',
+                  component: 'dateTimePicker',
+                  format: 'dd MMM yyyy hh:mm',
+                  timeIntervals: 1,
+                  isClearable: true,
                 },
                 type: 'string',
                 label: 'End Date',

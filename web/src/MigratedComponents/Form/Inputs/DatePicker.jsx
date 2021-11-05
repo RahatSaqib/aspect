@@ -55,6 +55,8 @@ const AspectDatePickerBase = props => {
       'endDate',
       'minDate',
       'maxDate',
+      'timeIntervals',
+      'isClearable',
     ]),
     v => isNil(v)
   )
@@ -114,6 +116,8 @@ const AspectDatePicker = props => {
     endDateId,
     minDateId,
     maxDateId,
+    timeIntervals,
+    isClearable,
   } = controlType
 
   // skip all 'null' and 'undefined' props
@@ -125,6 +129,8 @@ const AspectDatePicker = props => {
       endDate: endDateId ? getDateObject(values[endDateId], null) : null,
       minDate: minDateId ? getDateObject(values[minDateId], null) : null,
       maxDate: maxDateId ? getDateObject(values[maxDateId], null) : null,
+      timeIntervals,
+      isClearable,
     },
     v => isNil(v)
   )
