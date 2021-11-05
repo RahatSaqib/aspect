@@ -1,6 +1,7 @@
 const _ = require('lodash')
 
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const {
   format,
   addDays,
@@ -22,7 +23,7 @@ const {
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 // helper func for percentages
 const getPercent = (numerator, denominator) => {
   return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
