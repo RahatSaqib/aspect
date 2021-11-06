@@ -108,8 +108,9 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-// eslint-disable-next-line no-unused-vars
-const onAddNewButtonClick = navigate => () => navigate('/browse/result/add')
+const onAddNewButtonClick = (navigate, location) => () => {
+  gotoResultDetails(navigate, location, 'add')
+}
 
 const onRowClick =
   (navigate, location) =>
@@ -118,14 +119,18 @@ const onRowClick =
       dataset: { resultId },
     },
   }) => {
-    const searchParams = new URLSearchParams(location.search)
-
-    const q = new URLSearchParams({
-      returnUrl: `${location.pathname}?${searchParams.toString()}`,
-    })
-
-    navigate(`/browse/result/${resultId}?${q.toString()}`)
+    gotoResultDetails(navigate, location, resultId)
   }
+
+const gotoResultDetails = (navigate, location, resultId) => {
+  const searchParams = new URLSearchParams(location.search)
+
+  const q = new URLSearchParams({
+    returnUrl: `${location.pathname}?${searchParams.toString()}`,
+  })
+
+  navigate(`/browse/result/${resultId || 'add'}?${q.toString()}`)
+}
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -275,7 +280,7 @@ export const ResultListWithProps = ({
         color="primary"
         variant="contained"
         browseButton
-        onClick={onAddNewButtonClick(navigate)}
+        onClick={onAddNewButtonClick(navigate, location)}
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
