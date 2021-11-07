@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import { useFormikContext } from 'formik'
+import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -39,6 +40,7 @@ const FormItem = ({
     isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }
 
+  const isRequired = !!get(formik.errors, id)
   const i18nTools = { messages, formatMessage, formik }
   const { component } = controlType || {}
 
@@ -61,11 +63,11 @@ const FormItem = ({
         id={id}
         input={type}
         controlType={{ ...controlType, subRowIndex }}
-        label={getLabel({
+        label={`${getLabel({
           ...i18nTools,
           labelI18nKey,
           label,
-        })}
+        })}${isRequired ? '*' : ''}`}
         link={link}
         placeholder={getFormattedString(placeholder, i18nTools, ' - ')}
         className={cssClasses('form__sectionItemInput', {
