@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import get from 'lodash/get'
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
@@ -90,6 +91,7 @@ const AspectDatePickerBase = props => {
             'maxDate',
             'link',
           ])}
+          className={cssClasses('datepicker__TextField')}
         />
       }
       disabled={InputProps.disabled}
@@ -134,11 +136,22 @@ const AspectDatePicker = props => {
     },
     v => isNil(v)
   )
+  // show error only for touched fields
+  let errorProps = {}
+  const error = get(formik.errors, props.id)
+  if (error && get(formik.touched, props.id)) {
+    errorProps = {
+      ...errorProps,
+      error: true,
+      helperText: error,
+    }
+  }
 
   // effective props for pure component
   const mergedProps = {
     ...rest,
     ...optionalProps,
+    ...errorProps,
     culture,
     onChange: value => {
       updateField(props.id, value, { formik, toggleEdit })

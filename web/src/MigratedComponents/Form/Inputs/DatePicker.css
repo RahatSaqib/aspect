@@ -1,3 +1,7 @@
 .datepicker__wrapper {
   width: 100%;
 }
+
+.datepicker__TextField {
+  margin-bottom: 0 !important;
+}

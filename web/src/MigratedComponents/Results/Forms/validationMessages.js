@@ -6,6 +6,10 @@ export default defineMessages({
     id: 'pages.Result.siteRequired',
     defaultMessage: 'Site is required',
   },
+  deviceRequired: {
+    id: 'pages.Result.deviceRequired',
+    defaultMessage: 'Device is required',
+  },
   assayRequired: {
     id: 'pages.Result.assayRequired',
     defaultMessage: 'Assay is required',

@@ -47,6 +47,7 @@ export const FormikProvider = ({ config, children }) => {
         toggleEdit,
         updateField,
         meta,
+        validationSchema,
       }}
     >
       {children}
