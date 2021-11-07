@@ -197,9 +197,9 @@ export const deviceProps = (isNew, props) => {
           const { deviceType, deviceTypeId, deviceSerial } =
             dataSource.find(({ id }) => id === value) || {}
           // set other fields on a form
-          formik.setFieldValue('deviceType', deviceType, false)
+          formik.setFieldValue('deviceType', deviceType || '', false)
           formik.setFieldValue('deviceTypeId', deviceTypeId, false)
-          formik.setFieldValue('deviceSerial', deviceSerial, false)
+          formik.setFieldValue('deviceSerial', deviceSerial || '', false)
         },
         dependencies: ['siteId'],
         isClearable: true,
