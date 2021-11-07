@@ -1,4 +1,5 @@
 import { SITE_ALL } from '../../QueryFetch/Site'
+import SAMPLE_TYPES from '../../QueryFetch/SampleType'
 import {
   getBaseOptions,
   siteProps,
@@ -279,9 +280,18 @@ const getConfig = (formatMessage, isNew) => {
                 labelI18nKey: 'sampleId',
               },
               {
-                id: 'sampleTypeName',
+                id: 'sampleTypeId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: SAMPLE_TYPES.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: SAMPLE_TYPES.KEY,
+                  normalizeLoadedData: response =>
+                    getBaseOptions(response, {
+                      formatMessage,
+                      propNameForI18n: 'i18nKey',
+                    }),
+                  isClearable: true,
                 },
                 label: 'Sample Type',
                 labelI18nKey: 'sampleType',

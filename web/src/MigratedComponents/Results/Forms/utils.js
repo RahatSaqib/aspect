@@ -5,14 +5,26 @@ import { GEOGRAPHY_STATES } from '../../QueryFetch/Geography'
 
 import messages from '../Detail/messages'
 
-export const getBaseOptions = response => {
+export const getBaseOptions = (
+  response,
+  {
+    formatMessage,
+    propNameForLabel = 'name',
+    propNameForValue = 'id',
+    propNameForI18n,
+  } = {}
+) => {
   let options = []
   const { ok, data } = response
   if (ok) {
-    options = data.map(({ id, name }) => ({
-      label: name,
-      value: id,
-    }))
+    options = data.map(item => {
+      const msg =
+        propNameForI18n && formatMessage ? messages[propNameForI18n] : null
+      return {
+        label: msg ? formatMessage(msg) : item[propNameForLabel],
+        value: item[propNameForValue],
+      }
+    })
   }
   return options
 }

@@ -136,8 +136,11 @@ const AspectDatePicker = props => {
     minDateId,
     maxDateId,
     timeIntervals,
-    isClearable,
   } = controlType
+  let { isClearable } = controlType
+  if (isClearable && rest?.InputProps?.disabled) {
+    isClearable = false
+  }
 
   // skip all 'null' and 'undefined' props
   const optionalProps = omitBy(

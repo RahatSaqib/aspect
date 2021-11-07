@@ -19,6 +19,8 @@ import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
 import { getFormConfigWithData } from '../utils'
+import { sanitizeLoadedFormValues } from '../../../Form/Formik/Helpers'
+import getFormConfig from '../../Forms/editConfig'
 
 const AspectResultDetail = ({ resultId, onSubmit }) => {
   const intl = useI18n()
@@ -44,7 +46,9 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
           if (data.resultCategory2) {
             data.resultCategory2 = `${data.resultCategory2}`
           }
-          setValues(data)
+
+          const config = getFormConfig(intl.formatMessage, false)
+          setValues(sanitizeLoadedFormValues(data, config))
         }
       },
     }

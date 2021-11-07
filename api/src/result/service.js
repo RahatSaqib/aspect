@@ -801,6 +801,7 @@ async function getResultByResultId(
       'dt.id as deviceTypeId',
       'r.resultCategory1',
       'r.resultCategory2',
+      'stp.id as sampleTypeId',
     ])
   let data = null
   // translate result data back to an object and get assay details
@@ -2905,6 +2906,14 @@ async function updateOrCreateSample(
   return id
 }
 
+async function listSampleTypes() {
+  const data = await knex('SampleType')
+    .orderBy('name')
+    .select('id', 'name', 'i18nKey', 'externalId')
+
+  return { ok: true, data }
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -2945,4 +2954,5 @@ module.exports = {
   addPartnerQueryConstraints,
   getBaseQueryForResults,
   addResultDownloadLog,
+  listSampleTypes,
 }

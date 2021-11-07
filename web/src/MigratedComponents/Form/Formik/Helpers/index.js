@@ -45,6 +45,24 @@ const mergeFormConfigWithData = (data, config, messages) => {
   return configToMutate
 }
 
+const sanitizeLoadedFormValues = (values, formConfig) => {
+  const { sections } = formConfig
+  const items = pickItems(sections)
+  const textTypes = [
+    'placeholderTextField',
+    'placeholderTextArea',
+    'textArea',
+    'textField',
+  ]
+  items.forEach(({ id, controlType: { component } = {} }) => {
+    if (component && textTypes.includes(component) && values[id] === null) {
+      // set to empty string because MUI's TextField does not let value to be null
+      values[id] = ''
+    }
+  })
+  return values
+}
+
 const getInitialValuesFromFormConfig = config => {
   const initialValues = {}
   const { sections } = config
@@ -290,4 +308,5 @@ export {
   pickKeys,
   getBaseValidation,
   sanitizeFormValues,
+  sanitizeLoadedFormValues,
 }
