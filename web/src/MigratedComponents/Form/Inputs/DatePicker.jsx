@@ -14,13 +14,14 @@ import { useFormikContext } from 'formik'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
+import useI18n from '../../../Hooks/i18n/useI18n'
 import {
   formatDate,
   formatDateTime,
   getDateObject,
 } from '../../../shared/utils/dateFormat'
 import { useAuthState } from '../../../Providers/AuthProvider'
-
+import messages from '../messages'
 import styles from './DatePicker.css'
 
 const cssClasses = classnames.bind(styles)
@@ -34,6 +35,7 @@ const getDisplayValue = (value, showTimeSelect) => {
 }
 
 const AspectDatePickerBase = props => {
+  const { formatMessage } = useI18n()
   const {
     className,
     culture,
@@ -62,20 +64,31 @@ const AspectDatePickerBase = props => {
     v => isNil(v)
   )
 
-  const updateSelectDate = date => {
-    onChange(date)
-    setSelectedDate(date)
+  const updateSelectDate = (date, event) => {
+    let newValue = date
+    if (!date && event) {
+      const { target: { className = '' } = {} } = event
+      if (className.includes('datepicker__clearButton')) {
+        // change `null` to empty string because
+        // `value` is required in below propTypes
+        newValue = ''
+      }
+    }
+    onChange(newValue)
+    setSelectedDate(newValue)
   }
 
   return (
     <DatePicker
       {...optionalProps}
-      wrapperClassName={cssClasses('datepicker__wrapper')}
+      wrapperClassName={cssClasses('datepicker__wrapper', {
+        'datepicker__no-value': !selectedDate,
+      })}
       className={className}
       showTimeSelect={showTimeSelect}
       selected={selectedDate}
       dateFormat={dateFormat}
-      onChange={date => updateSelectDate(date)}
+      onChange={(date, event) => updateSelectDate(date, event)}
       customInput={
         <TextField
           {...omit(props, [
@@ -100,6 +113,8 @@ const AspectDatePickerBase = props => {
       placeholderText={placeholder}
       value={getDisplayValue(selectedDate, showTimeSelect)}
       locale={culture}
+      clearButtonClassName={cssClasses('datepicker__clearButton')}
+      clearButtonTitle={formatMessage(messages.clearValue)}
     />
   )
 }

@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 const messagesBase = defineMessages({
+  clearValue: {
+    id: 'forms.formItem.clearValue',
+    defaultMessage: 'Clear Value',
+  },
   siteName: {
     id: 'forms.formItem.siteName',
     defaultMessage: 'Site Name',
