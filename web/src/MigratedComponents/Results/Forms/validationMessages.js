@@ -18,4 +18,8 @@ export default defineMessages({
     id: 'pages.Result.startedOnRequired',
     defaultMessage: 'Start date is required',
   },
+  resultCategory1: {
+    id: 'pages.Result.resultCategory1',
+    defaultMessage: 'Field is required',
+  },
 })

@@ -8,6 +8,9 @@ const getValidationSchema = formatMessage =>
     deviceId: Yup.string().required(formatMessage(messages.deviceRequired)),
     assayId: Yup.string().required(formatMessage(messages.assayRequired)),
     startedOn: Yup.mixed().required(formatMessage(messages.startedOnRequired)),
+    resultCategory1: Yup.mixed().required(
+      formatMessage(messages.resultCategory1)
+    ),
   })
 
 export default getValidationSchema
