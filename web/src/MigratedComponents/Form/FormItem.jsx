@@ -40,7 +40,13 @@ const FormItem = ({
     isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }
 
-  const isRequired = !!get(formik.errors, id)
+  /**
+   * TODO: change below isRequired and get actual `required` prop from
+   * validationSchema - notice that some fields in validationSchema are
+   * defined with conditions and/or in deep structure via Yup.array()
+   */
+  const isRequired = !!get(formik.errors, id) && !get(formik.touched, id)
+
   const i18nTools = { messages, formatMessage, formik }
   const { component } = controlType || {}
 

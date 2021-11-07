@@ -90,6 +90,8 @@ const AspectDatePickerBase = props => {
             'minDate',
             'maxDate',
             'link',
+            'timeIntervals',
+            'isClearable',
           ])}
           className={cssClasses('datepicker__TextField')}
         />
