@@ -3,12 +3,9 @@ import * as Yup from 'yup'
 import cloneDeep from 'lodash/cloneDeep'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
-import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
-import isPlainObject from 'lodash/isPlainObject'
-import keys from 'lodash/keys'
-import omit from 'lodash/omit'
+import range from 'lodash/range'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
 
@@ -271,26 +268,74 @@ const getBaseValidation = (formatMessage, messages) => {
   }
 }
 
-const sanitizeFormValues = (
-  values,
-  { meta, removeReadOnly = true, removeGuids = true }
-) => {
-  const { fieldTypes } = meta
-  /**
-   * prepare payload, i.e.
-   * - conditionally remove read only props
-   * - remove props `__guid__` from array of objects
-   */
-  const payload = cloneDeep(values)
-  keys(payload).forEach(key => {
-    if (fieldTypes[key] === 'readOnly' && removeReadOnly) {
-      delete payload[key]
-    } else if (isArray(payload[key]) && removeGuids) {
-      payload[key] = payload[key].map(it =>
-        isPlainObject(it) ? omit(it, ['__guid__']) : it
-      )
+const getVisibleRows = (rows, values, toggleEdit) => {
+  return rows.map(row => {
+    if (row.visibleIf && !row.visibleIf(values, toggleEdit)) {
+      // row is hidden explicitly
+      return false
     }
+    // row is visible if at least one item is visible
+    const { isMulti, id: rowId } = row
+    const itemsVisible = row.items.map(({ visibleIf }) =>
+      range(isMulti ? values[rowId].length : 1)
+        .map(subRowIndex =>
+          visibleIf ? visibleIf(values, toggleEdit, subRowIndex) : true
+        )
+        .includes(true)
+    )
+    return itemsVisible.includes(true)
   })
+}
+
+const sanitizeFormValues = (values, { formConfig, removeReadOnly = true }) => {
+  /**
+   * loop through all sections/rows/items the same way as we do when rendering form
+   * and get only values for visible items.
+   * If we need to submit some of readonly or invisible fields, then do add them to
+   * final payload after running this function. FOr instance - see func `onSubmit`
+   * in `web/src/MigratedComponents/Notifications/Detail/index.jsx` where we append
+   * `notificationType` (which is readonly) and especially `jobFunctions` array.
+   */
+  const toggleEdit = true
+  const payload = {}
+  const { sections } = formConfig
+  sections.forEach(({ rows, visibleIf }) => {
+    // section is hidden
+    if (visibleIf && !visibleIf(values, toggleEdit)) {
+      return null
+    }
+    const visibleRows = getVisibleRows(rows, values, toggleEdit)
+    rows.forEach((row, rowIndex) => {
+      if (visibleRows[rowIndex] === true) {
+        const { items, isMulti } = row
+        if (isMulti) {
+          const subRows = values[row.id]
+          subRows.forEach((_, subRowIndex) => {
+            // loop items in sub-row
+            items.forEach(({ type, id, visibleIf }) => {
+              if (type === 'readOnly' && removeReadOnly) return
+              // item is hidden
+              if (visibleIf && !visibleIf(values, toggleEdit, subRowIndex)) {
+                return
+              }
+              const itemId = `${row.id}[${subRowIndex}].${id}`
+              set(payload, itemId, get(values, itemId))
+            })
+          })
+        } else {
+          items.forEach(({ type, id, visibleIf }) => {
+            if (type === 'readOnly' && removeReadOnly) return
+            // item is hidden
+            if (visibleIf && !visibleIf(values, toggleEdit)) {
+              return
+            }
+            set(payload, id, get(values, id))
+          })
+        }
+      }
+    })
+  })
+
   return payload
 }
 
@@ -309,4 +354,5 @@ export {
   getBaseValidation,
   sanitizeFormValues,
   sanitizeLoadedFormValues,
+  getVisibleRows,
 }

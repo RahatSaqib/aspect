@@ -13,8 +13,11 @@ import './Detail.css'
 import fetchWrapperForQueries from '../../QueryFetch/index'
 import JOBFUNCTIONS_LIST from '../../QueryFetch/JobFunctions/index'
 import { getReturnUrl, useUrlQuery } from '../../AspectTable/Helpers'
+import getFormConfig from '../Forms/editConfig'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const AspectNotificationDetails = () => {
+  const intl = useI18n()
   const { notificationId } = useParams()
   const navigate = useNavigate()
   const { search } = useLocation()
@@ -65,17 +68,26 @@ const AspectNotificationDetails = () => {
 
   const id = isNaN(notificationId) ? undefined : Number(notificationId)
 
-  const onSubmit = (formik, meta) => {
-    const values = sanitizeFormValues(formik.values, { meta })
+  const onSubmit = formik => {
+    const formConfig = getFormConfig(
+      intl.formatMessage,
+      formik.values.notificationType,
+      jobFunctions,
+      true
+    )
+
+    const values = sanitizeFormValues(formik.values, { formConfig })
+    values.notificationType = formik.values.notificationType
+    values.jobFunctions.map((jf, index) => {
+      jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
+      if (jf.tags === '') {
+        jf.tags = []
+      }
+      return jf
+    })
     // save only checked Job Functions
     values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
-    // check if init value of th job tags is a string
-    values.jobFunctions.map(item => {
-      if (item.tags === '') {
-        item.tags = []
-      }
-      return item
-    })
+
     submitNotification({ values, id })
   }
 

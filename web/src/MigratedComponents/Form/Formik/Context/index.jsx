@@ -19,7 +19,7 @@ export const FormikProvider = ({ config, children }) => {
     validateOnMount: false,
     validationSchema,
     onSubmit: values => {
-      const payload = sanitizeFormValues(values, { meta })
+      const payload = sanitizeFormValues(values, { formConfig: config })
       console.log(JSON.stringify(payload, null, 2)) // eslint-disable-line no-console
     },
   }

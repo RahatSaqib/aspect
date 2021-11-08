@@ -3,14 +3,17 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
 import { useMutation } from 'react-query'
 
+import useI18n from '../../../Hooks/i18n/useI18n'
 import { sanitizeFormValues } from '../../Form/Formik/Helpers'
 import Create from './Create'
 import Update from './Update'
 import { RESULT_DETAIL } from '../../QueryFetch/Result'
 import fetchWrapperForQueries from '../../QueryFetch/index'
 import { getReturnUrl, useUrlQuery } from '../../AspectTable/Helpers'
+import getFormConfig from '../Forms/editConfig'
 
 const AspectResultDetail = () => {
+  const intl = useI18n()
   const { resultId } = useParams()
   const navigate = useNavigate()
   const { search } = useLocation()
@@ -41,8 +44,9 @@ const AspectResultDetail = () => {
 
   const id = isNaN(resultId) ? undefined : Number(resultId)
 
-  const onSubmit = (formik, meta) => {
-    const values = sanitizeFormValues(formik.values, { meta })
+  const onSubmit = formik => {
+    const formConfig = getFormConfig(intl.formatMessage, false)
+    const values = sanitizeFormValues(formik.values, { formConfig })
 
     // eslint-disable-next-line
     console.log('>>>>>>>>>>>>>>>', JSON.stringify(values, null, 2))
