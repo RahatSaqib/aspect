@@ -43,8 +43,8 @@ async function analyzeWithQuery(
            * which happens when one of the bindings values is `undefined` - make sure params are
            * not `undefined`
            */
-          if (consumableLot !== undefined) builder.where({ consumableLot })
-          if (assayId !== undefined) builder.where({ assayId })
+          if (!consumableLot) builder.where({ consumableLot })
+          if (!assayId) builder.where({ assayId })
         } else if (moduleSerial) builder.where({ moduleSerial })
       },
       moduleSerial,
@@ -56,11 +56,7 @@ async function analyzeWithQuery(
     query.modify(queryBuilder)
   }
   const { resultsWithErrors, totalResults } = await query
-  console.log(
-    '========================= error rate ===================',
-    resultsWithErrors,
-    totalResults
-  )
+
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(
@@ -107,12 +103,6 @@ async function analyzeCategories(
       moduleSerial,
       action.deviceId,
       errorCodesToSuppress
-    )
-    console.log(
-      '===================AnalyzeCategory:moduleSerial============',
-      forceNotTriggering,
-      moduleSerial,
-      action
     )
   }
   if (!forceNotTriggering)
@@ -172,7 +162,6 @@ async function analyzeUnusedModules(
   let forceNotTriggering = false
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
-    console.log('=========================================================')
     forceNotTriggering = await shouldSuppressed(
       knex,
       moduleSerial,
@@ -214,12 +203,6 @@ async function analyzeErrors(
       moduleSerial,
       action.deviceId,
       errorCodesToSuppress
-    )
-    console.log(
-      '===================analyzeErrors:moduleSerial============',
-      forceNotTriggering,
-      moduleSerial,
-      action
     )
   }
   if (!forceNotTriggering)
