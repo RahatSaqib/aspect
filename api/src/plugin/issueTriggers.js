@@ -27,9 +27,9 @@ async function analyzeWithQuery(
   minResults,
   queryBuilder
 ) {
-  const moduleSerial = _.get(action.options.data, 'moduleSerial')
-  const consumableLot = _.get(action.options.data, 'consumableLot')
-  const assayId = _.get(action.options.data, 'assayId')
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+  const consumableLot = _.get(action, 'options.data.consumableLot')
+  const assayId = _.get(action, 'options.data.assayId')
 
   const query = knex('Result')
     .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
@@ -56,6 +56,11 @@ async function analyzeWithQuery(
     query.modify(queryBuilder)
   }
   const { resultsWithErrors, totalResults } = await query
+  console.log(
+    '========================= error rate ===================',
+    resultsWithErrors,
+    totalResults
+  )
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(
@@ -69,7 +74,7 @@ async function analyzeWithQuery(
 
 async function shouldSuppressed(knex, moduleSerial, deviceId, errorCodes) {
   const { totalIssues = 0 } = await knex('Issue')
-    .where({ moduleSerial, deviceId })
+    .where({ deviceId })
     .whereRaw(`data->>"$.moduleSerial"=?`, moduleSerial)
     .whereRaw(`data->>"$.resultErrorCode" in(${errorCodes.join(',')})`)
     .count('id as totalResults')
@@ -94,13 +99,20 @@ async function analyzeCategories(
   const { resultCategoryId, resultErrorCode } = action.options.data
 
   let forceNotTriggering = false
-  if (!_.isNil(errorCodesToSuppress)) {
-    const moduleSerial = _.get(action.options.data, 'moduleSerial')
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+
+  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
     forceNotTriggering = await shouldSuppressed(
       knex,
       moduleSerial,
       action.deviceId,
       errorCodesToSuppress
+    )
+    console.log(
+      '===================AnalyzeCategory:moduleSerial============',
+      forceNotTriggering,
+      moduleSerial,
+      action
     )
   }
   if (!forceNotTriggering)
@@ -158,8 +170,9 @@ async function analyzeUnusedModules(
   const { deviceId } = action
 
   let forceNotTriggering = false
-  if (!_.isNil(errorCodesToSuppress)) {
-    const moduleSerial = _.get(action.options.data, 'moduleSerial')
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
+    console.log('=========================================================')
     forceNotTriggering = await shouldSuppressed(
       knex,
       moduleSerial,
@@ -193,13 +206,20 @@ async function analyzeErrors(
 ) {
   const { resultErrorCode } = action.options.data
   let forceNotTriggering = false
-  if (!_.isNil(errorCodesToSuppress)) {
-    const moduleSerial = _.get(action.options.data, 'moduleSerial')
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+
+  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
     forceNotTriggering = await shouldSuppressed(
       knex,
       moduleSerial,
       action.deviceId,
       errorCodesToSuppress
+    )
+    console.log(
+      '===================analyzeErrors:moduleSerial============',
+      forceNotTriggering,
+      moduleSerial,
+      action
     )
   }
   if (!forceNotTriggering)
