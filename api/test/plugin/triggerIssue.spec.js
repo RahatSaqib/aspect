@@ -135,16 +135,22 @@ const getIssues = (deviceId, issueTypeId) =>
     .orderBy('createdOn', 'DESC')
     .select()
 
-const evaluateIssues = async (response, issueTypeId) => {
+const evaluateIssues = async (
+  response,
+  issueTypeId,
+  qtyIssuesExpected = 1,
+  issueStatus = 'Active'
+) => {
   assert.equal(response.status, 200)
   assert.typeOf(response.body, 'Object')
 
   const issues = await getIssues(response.body.device.id, issueTypeId)
-
-  assert.equal(issues.length, 1)
-  assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
-
-  await checkNotificationsForIssue(issues[0].id, issueTypeId)
+  assert.equal(issues.length, qtyIssuesExpected)
+  if (qtyIssuesExpected > 0) {
+    assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
+    if (issueStatus === 'Active')
+      await checkNotificationsForIssue(issues[0].id, issueTypeId)
+  }
 }
 describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
@@ -231,100 +237,100 @@ describe('This test suite is for testing different triggers conditions', async (
           : null
       })
 
-      // describe('With previous results older than 30 days', () => {
-      //   let context
+      describe('With previous results older than 30 days', () => {
+        let context
 
-      //   beforeEach(async () => {
-      //     context = createGxConnectTestContext(server, {
-      //       countryCode,
-      //       adminUsername,
-      //       adminPassword,
-      //       deviceName,
-      //       macAddress,
-      //       hostId,
-      //       deviceSerialNumber,
-      //     })
+        beforeEach(async () => {
+          context = createGxConnectTestContext(server, {
+            countryCode,
+            adminUsername,
+            adminPassword,
+            deviceName,
+            macAddress,
+            hostId,
+            deviceSerialNumber,
+          })
 
-      //     await context.beforeRegisterAndSetDevice()
+          await context.beforeRegisterAndSetDevice()
 
-      //     // Post 4 new results older than 30 days.
-      //     await Promise.each(_.range(1, 4), async () => {
-      //       const daysForSubstracting = _.random(200, 300, false)
+          // Post 4 new results older than 30 days.
+          await Promise.each(_.range(1, 4), async () => {
+            const daysForSubstracting = _.random(200, 300, false)
 
-      //       await context.createResultForThisDevice({
-      //         resultDetails: {
-      //           consumableLot: 'Lot 0',
-      //           moduleName: 'Module A',
-      //           moduleSerial: 'M-123456-0',
-      //           instrumentSerial: 'S-1234-0',
-      //           errorCode,
-      //           startedOn: subDays(new Date(), daysForSubstracting),
-      //           endedOn: subDays(new Date(), daysForSubstracting),
-      //           errorNotes: errorCode ? 'Some notes' : null,
-      //           resultCategory1: resultCategoryId,
-      //         },
-      //       })
-      //     })
-      //   })
+            await context.createResultForThisDevice({
+              resultDetails: {
+                consumableLot: 'Lot 0',
+                moduleName: 'Module A',
+                moduleSerial: 'M-123456-0',
+                instrumentSerial: 'S-1234-0',
+                errorCode,
+                startedOn: subDays(new Date(), daysForSubstracting),
+                endedOn: subDays(new Date(), daysForSubstracting),
+                errorNotes: errorCode ? 'Some notes' : null,
+                resultCategory1: resultCategoryId,
+              },
+            })
+          })
+        })
 
-      //   afterEach(async () => {
-      //     await context.cleanUp()
-      //   })
+        afterEach(async () => {
+          await context.cleanUp()
+        })
 
-      //   it(`should not create issue when it has less than 3 results for the last 30 days ${
-      //     errorCode
-      //       ? `error ${errorCode}`
-      //       : `category${resultCategoryExternalId}`
-      //   }`, async () => {
-      //     /**
-      //      * in this testcase we are testing:
-      //      * 1) issueFilter function for this testCondition (With error 5007)
-      //      * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
-      //      * 3) the creation of the issue
-      //      * 4) check if the different noifications were generated.
-      //      */
+        it(`should not create issue when it has less than 3 results for the last 30 days ${
+          errorCode
+            ? `error ${errorCode}`
+            : `category${resultCategoryExternalId}`
+        }`, async () => {
+          /**
+           * in this testcase we are testing:
+           * 1) issueFilter function for this testCondition (With error 5007)
+           * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
+           * 3) the creation of the issue
+           * 4) check if the different noifications were generated.
+           */
 
-      //     const { deviceAuth } = context
+          const { deviceAuth } = context
 
-      //     const results = await context.getAllResults()
-      //     assert.equal(results.length, 3)
-      //     assert.equal(
-      //       _.filter(
-      //         results,
-      //         result => result.endedOn >= subDays(new Date(), 30)
-      //       ),
-      //       0
-      //     )
-      //     const anotherPayload = await getPayload(
-      //       context,
-      //       errorCode,
-      //       resultCategoryExternalId
-      //     )
+          const results = await context.getAllResults()
+          assert.equal(results.length, 3)
+          assert.equal(
+            _.filter(
+              results,
+              result => result.endedOn >= subDays(new Date(), 30)
+            ),
+            0
+          )
+          const anotherPayload = await getPayload(
+            context,
+            errorCode,
+            resultCategoryExternalId
+          )
 
-      //     // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
-      //     const response = await postToDeviceApi({
-      //       authHeader: deviceAuth,
-      //       payload: anotherPayload,
-      //     })
-      //     await waitForIdle()
+          // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: anotherPayload,
+          })
+          await waitForIdle()
 
-      //     /**
-      //      * We are going to push the same lot for a different device and we are going to expect to create a new issue
-      //      */
+          /**
+           * We are going to push the same lot for a different device and we are going to expect to create a new issue
+           */
 
-      //     const issuesForModule = await getIssues(
-      //       response.body.device.id,
-      //       await issueTypeToId(issueTypeModule)
-      //     )
-      //     const issuesForLot = await getIssues(
-      //       response.body.device.id,
-      //       await issueTypeToId(issueTypeLot)
-      //     )
+          const issuesForModule = await getIssues(
+            response.body.device.id,
+            await issueTypeToId(issueTypeModule)
+          )
+          const issuesForLot = await getIssues(
+            response.body.device.id,
+            await issueTypeToId(issueTypeLot)
+          )
 
-      //     assert.equal(issuesForModule.length, 0)
-      //     assert.equal(issuesForLot.length, 0)
-      //   })
-      // })
+          assert.equal(issuesForModule.length, 0)
+          assert.equal(issuesForLot.length, 0)
+        })
+      })
 
       describe('With results in the period of evaluation', () => {
         let context
@@ -418,7 +424,7 @@ describe('This test suite is for testing different triggers conditions', async (
             payload: firstPayload,
           })
           await waitForIdle()
-          await evaluateIssues(response, issueTypeModuleId, errorCode)
+          await evaluateIssues(response, issueTypeModuleId)
 
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
           await Promise.each(_.range(0, 8), async i => {
@@ -442,9 +448,8 @@ describe('This test suite is for testing different triggers conditions', async (
               }),
             })
             await waitForIdle()
-            await evaluateIssues(resp, issueTypeModuleId, errorCode)
+            await evaluateIssues(resp, issueTypeModuleId)
           })
-
           /**
            * We are going to push the same lot for a different device and we are going to expect to create a new issue
            */
@@ -453,16 +458,46 @@ describe('This test suite is for testing different triggers conditions', async (
             payload: anotherDevicePayload,
           })
           await waitForIdle()
+          await evaluateIssues(anotherDeviceResponse, issueTypeModuleId)
           await evaluateIssues(
             anotherDeviceResponse,
-            issueTypeModuleId,
-            errorCode
+            await issueTypeToId(issueTypeLot)
           )
-          await evaluateIssues(
-            anotherDeviceResponse,
-            await issueTypeToId(issueTypeLot),
-            errorCode
+        })
+        it(`Should NOT create an issue because it has previous issue with some specific suppression code`, async () => {
+          const { deviceAuth } = context
+
+          const issueTypeId = await issueTypeToId(issueTypeModule)
+          await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId: await issueStatusToId('Resolved'),
+            deviceId: context.device.id,
+            partnerId: context.device.partnerId,
+            siteId: context.site.id,
+            geographyId: context.site.geographyId,
+            data: JSON.stringify({
+              moduleSerial: 'M-123456-0',
+              resultErrorCode: '1001',
+            }),
+
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          })
+          const issues = await getIssues(context.device.id, issueTypeId)
+          assert.equal(issues.length, 1)
+
+          const firstPayload = await getPayload(
+            context,
+            errorCode,
+            resultCategoryExternalId
           )
+          // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: firstPayload,
+          })
+          await waitForIdle()
+          await evaluateIssues(response, issueTypeModuleId, 1, 'Resolved')
         })
       })
     })

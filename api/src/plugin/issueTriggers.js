@@ -69,11 +69,12 @@ async function analyzeWithQuery(
 }
 
 async function shouldSuppressed(knex, moduleSerial, deviceId, errorCodes) {
-  const { totalIssues = 0 } = await knex('Issue')
+  const { totalIssues } = await knex('Issue')
     .where({ deviceId })
     .whereRaw(`data->>"$.moduleSerial"=?`, moduleSerial)
     .whereRaw(`data->>"$.resultErrorCode" in(${errorCodes.join(',')})`)
-    .count('id as totalResults')
+    .count('id as totalIssues')
+    .first()
   return totalIssues > 0
 }
 
