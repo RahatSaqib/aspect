@@ -248,10 +248,20 @@ function validateResultDetailResponse() {
       .positive()
       .required()
       .description('Device id in aspect'),
+    deviceTypeId: Joi.number()
+      .integer()
+      .positive()
+      .allow(null)
+      .description('The id of the deviceType'),
     deviceSerial: Joi.string()
       .allow(null, '')
       .description('The device serial number'),
     countryName: Joi.string().description("The device's country name"),
+    stateId: Joi.number()
+      .integer()
+      .positive()
+      .allow(null)
+      .description('The id of the state'),
     stateName: Joi.string()
       .allow(null, '')
       .description("The device's state name"),
@@ -259,6 +269,16 @@ function validateResultDetailResponse() {
     resultWorkflowChangedOn: Joi.date()
       .allow(null)
       .description('The date when status was changed'),
+    resultCategory1: Joi.number()
+      .integer()
+      .positive()
+      .allow(null)
+      .description('Value of ResultCategory1'),
+    resultCategory2: Joi.number()
+      .integer()
+      .positive()
+      .allow(null)
+      .description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string()
       .allow(null, '')
       .description("The result's category 1 name"),
@@ -335,6 +355,11 @@ function validateResultDetailResponse() {
     sampleTypeName: Joi.string()
       .allow(null, '')
       .description('Sample type name'),
+    sampleTypeId: Joi.number()
+      .integer()
+      .positive()
+      .allow(null)
+      .description('Sample type Id'),
     patientId: Joi.string().allow(null, '').description('The patient Id'),
     patientData: Joi.object().allow(null).description('The patient data'),
     formSchema: Joi.object().allow(null).description('The form data object'),
