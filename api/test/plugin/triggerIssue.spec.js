@@ -511,7 +511,7 @@ describe('This test suite is for testing different triggers conditions', async (
               minDate,
               null
             )
-            assert.equal(data.items.length, 12)
+            assert.equal(data.items.length, 8)
           }
         })
       })
