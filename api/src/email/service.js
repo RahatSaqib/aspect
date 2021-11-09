@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { subDays, subMonths, startOfMonth, endOfMonth } = require('date-fns')
+const { subDays, subMonths } = require('date-fns')
 
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const {
@@ -16,6 +16,11 @@ const { generateCsvAttachment } = require('../shared/io')
 const {
   getDeviceErrorHistoryForAttachment,
 } = require('../result/serviceReport')
+const {
+  startOfDayUtc,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -204,15 +209,14 @@ async function generateAttachments(attachmentProps, data) {
       const { period } = attachmentItem
 
       let minDate
-      let maxDate
+      let maxDate = null
       if (period === 'last-30-days') {
-        minDate = subDays(now, 30)
-        maxDate = now
+        minDate = startOfDayUtc(subDays(new Date(), 30))
       } else {
         // last month
         const previousMonth = subMonths(now, 1)
-        minDate = startOfMonth(previousMonth)
-        maxDate = endOfMonth(previousMonth)
+        minDate = startOfMonthUTC(previousMonth)
+        maxDate = endOfMonthUTC(previousMonth)
       }
       reportData = await getDeviceErrorHistoryForAttachment(
         deviceId,
