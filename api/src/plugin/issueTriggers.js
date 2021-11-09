@@ -68,71 +68,62 @@ async function analyzeWithQuery(
   )
 }
 
-async function shouldSuppressed(knex, moduleSerial, deviceId, errorCodes) {
-  const { totalIssues } = await knex('Issue')
-    .where({ deviceId })
-    .whereRaw(`data->>"$.moduleSerial"=?`, moduleSerial)
-    .whereRaw(`data->>"$.resultErrorCode" in(${errorCodes.join(',')})`)
-    .count('id as totalIssues')
-    .first()
-  return totalIssues > 0
+async function shouldSuppressTriggering(
+  knex,
+  action,
+  { errorCodesToSuppress }
+) {
+  const { deviceId } = action
+
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
+    const { totalIssues } = await knex('Issue')
+      .where({ deviceId })
+      .whereRaw(`data->>"$.moduleSerial"=?`, moduleSerial)
+      .whereRaw(
+        `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
+      )
+      .count('id as totalIssues')
+      .first()
+    return totalIssues > 0
+  }
+  return false
 }
 
 async function analyzeCategories(
   knex,
   action,
-  {
-    categoryId,
-    errorCodes,
-    threshold,
-    below,
-    daysPeriod,
-    minResults,
-    errorCodesToSuppress,
-  }
+  { categoryId, errorCodes, threshold, below, daysPeriod, minResults }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
 
   const { resultCategoryId, resultErrorCode } = action.options.data
-
-  let forceNotTriggering = false
-  const moduleSerial = _.get(action, 'options.data.moduleSerial')
-
-  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
-    forceNotTriggering = await shouldSuppressed(
+  if (
+    (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
+    (!_.isNil(resultErrorCode) &&
+      _.includes(errorCodes, parseInt(resultErrorCode, 10)))
+  ) {
+    action.options.data.errorCodes = errorCodes
+    return analyzeWithQuery(
       knex,
-      moduleSerial,
-      action.deviceId,
-      errorCodesToSuppress
+      action,
+      threshold,
+      below,
+      daysPeriod,
+      minResults,
+      builder =>
+        builder.first(
+          knex.raw(
+            `sum(case when resultCategory1=? ${
+              errorCodes && errorCodes.length > 0
+                ? ` OR errorcode in(${errorCodes.join(',')})`
+                : ``
+            } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
+            categoryToCompare
+          )
+        )
     )
   }
-  if (!forceNotTriggering)
-    if (
-      (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
-      (!_.isNil(resultErrorCode) &&
-        _.includes(errorCodes, parseInt(resultErrorCode, 10)))
-    ) {
-      action.options.data.errorCodes = errorCodes
-      return analyzeWithQuery(
-        knex,
-        action,
-        threshold,
-        below,
-        daysPeriod,
-        minResults,
-        builder =>
-          builder.first(
-            knex.raw(
-              `sum(case when resultCategory1=? ${
-                errorCodes && errorCodes.length > 0
-                  ? ` OR errorcode in(${errorCodes.join(',')})`
-                  : ``
-              } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
-              categoryToCompare
-            )
-          )
-      )
-    }
   return false
 }
 
@@ -156,112 +147,78 @@ function hasUnusedModules(
 async function analyzeUnusedModules(
   knex,
   action,
-  { minResults, expectedUsedModules, errorCodesToSuppress }
+  { minResults, expectedUsedModules }
 ) {
   const { deviceId } = action
 
-  let forceNotTriggering = false
-  const moduleSerial = _.get(action, 'options.data.moduleSerial')
-  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
-    forceNotTriggering = await shouldSuppressed(
-      knex,
-      moduleSerial,
-      action.deviceId,
-      errorCodesToSuppress
+  const { numberOfResults, numberOfModules } = await knex('Result as r')
+    .where('r.endedOn', '>', startOfDay(addDays(new Date(), -30)))
+    .andWhere('r.deviceId', deviceId)
+    .select(
+      knex.raw('COUNT(*) as numberOfResults'),
+      knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
     )
-  }
-  if (!forceNotTriggering) {
-    const { numberOfResults, numberOfModules } = await knex('Result as r')
-      .where('r.endedOn', '>', startOfDay(addDays(new Date(), -30)))
-      .andWhere('r.deviceId', deviceId)
-      .select(
-        knex.raw('COUNT(*) as numberOfResults'),
-        knex.raw('COUNT(DISTINCT r.moduleName) as numberOfModules')
-      )
-      .first()
+    .first()
 
-    return hasUnusedModules(
-      numberOfResults,
-      numberOfModules,
-      minResults,
-      expectedUsedModules
-    )
-  }
+  return hasUnusedModules(
+    numberOfResults,
+    numberOfModules,
+    minResults,
+    expectedUsedModules
+  )
 }
 
 async function analyzeErrors(
   knex,
   action,
-  { errorCodes, threshold, below, daysPeriod, minResults, errorCodesToSuppress }
+  { errorCodes, threshold, below, daysPeriod, minResults }
 ) {
   const { resultErrorCode } = action.options.data
-  let forceNotTriggering = false
-  const moduleSerial = _.get(action, 'options.data.moduleSerial')
-
-  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
-    forceNotTriggering = await shouldSuppressed(
+  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+    action.options.data.errorCodes = errorCodes
+    return analyzeWithQuery(
       knex,
-      moduleSerial,
-      action.deviceId,
-      errorCodesToSuppress
+      action,
+      threshold,
+      below,
+      daysPeriod,
+      minResults,
+      builder =>
+        builder.first(
+          knex.raw(
+            `sum(case when errorcode in (${errorCodes.join(
+              ','
+            )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
+          )
+        )
     )
   }
-  if (!forceNotTriggering)
-    if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
-      action.options.data.errorCodes = errorCodes
-      return analyzeWithQuery(
-        knex,
-        action,
-        threshold,
-        below,
-        daysPeriod,
-        minResults,
-        builder =>
-          builder.first(
-            knex.raw(
-              `sum(case when errorcode in (${errorCodes.join(
-                ','
-              )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
-            )
-          )
-      )
-    }
   return false
 }
 
 async function analyzeDeviceHardwareError(
   knex,
   action,
-  { errorCodes, daysPeriod, minErrors, errorCodesToSuppress }
+  { errorCodes, daysPeriod, minErrors }
 ) {
   const { resultErrorCode } = action.options.data
 
   // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
   // the rest is of the entry is identical. Ignore those duplicates.
   const errorCodesWithDuplicateLogEntries = ['2126']
-  let forceNotTriggering = false
-  if (!_.isNil(errorCodesToSuppress)) {
-    const moduleSerial = _.get(action.options.data, 'moduleSerial')
-    forceNotTriggering = await shouldSuppressed(
+
+  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+    const [{ totalErrors }] = await hardwareErrors(
       knex,
-      moduleSerial,
       action.deviceId,
-      errorCodesToSuppress
+      daysPeriod,
+      errorCodes,
+      errorCodesWithDuplicateLogEntries
     )
+    action.options.data.totalErrors = totalErrors
+    action.options.data.errorCodes = errorCodes
+    return totalErrors >= minErrors
   }
-  if (!forceNotTriggering)
-    if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
-      const [{ totalErrors }] = await hardwareErrors(
-        knex,
-        action.deviceId,
-        daysPeriod,
-        errorCodes,
-        errorCodesWithDuplicateLogEntries
-      )
-      action.options.data.totalErrors = totalErrors
-      action.options.data.errorCodes = errorCodes
-      return totalErrors >= minErrors
-    }
   return false
 }
 
@@ -304,4 +261,5 @@ module.exports = {
   analyzeUnusedModules,
   hasUnusedModules,
   analyzeDeviceHardwareError,
+  shouldSuppressTriggering,
 }

@@ -156,7 +156,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -182,7 +188,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -208,13 +220,19 @@
             "categoryId": "Invalid",
             "threshold": 0.03,
             "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
               4008, 4016, 4006, 4011
-            ],
-            "daysPeriod": 30,
-            "minResults": 3
+            ]
           }
         }
       },
@@ -236,7 +254,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -262,7 +286,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -359,7 +389,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -385,7 +421,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -408,7 +450,13 @@
           "evaluationParameter": "analyzeUnusedModules",
           "evaluationFilterParameters": {
             "minResults": 20,
-            "expectedUsedModules": 4,
+            "expectedUsedModules": 4
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -431,7 +479,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -457,7 +511,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -483,7 +543,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -509,7 +575,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -535,7 +607,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -561,7 +639,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -587,7 +671,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -613,7 +703,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -639,7 +735,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -665,7 +767,13 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -691,7 +799,13 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -715,7 +829,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [1001],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -736,7 +856,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [1002],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -757,7 +883,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2005],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -778,7 +910,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2008],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -799,7 +937,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2014],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -820,7 +964,13 @@
           "evaluationFilterParameters": {
             "errorCodes": 2026,
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -841,7 +991,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2032],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -862,7 +1018,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2035],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -883,7 +1045,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2037],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -904,7 +1072,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2096],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -925,7 +1099,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2097],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -946,7 +1126,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [2126],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -967,7 +1153,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [4008],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -988,7 +1180,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [4009],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -1009,7 +1207,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [4012],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -1030,7 +1234,13 @@
           "evaluationFilterParameters": {
             "errorCodes": [4017],
             "daysPeriod": 30,
-            "minErrors": 3,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
