@@ -1,4 +1,5 @@
 import format from 'date-fns/format'
+import endOfMonth from 'date-fns/endOfMonth'
 
 const now = new Date()
 const pieRowDataFromAPIIn = [
@@ -131,7 +132,7 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D16%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31`,
+      )}-01%26maxDate%3D${format(endOfMonth(now), 'yyyy-MM-dd')}`,
       value: [
         {
           id: 'cntAll',
@@ -148,7 +149,10 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D16%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31%26resultCategoryId%3D18`,
+      )}-01%26maxDate%3D${format(
+        endOfMonth(now),
+        'yyyy-MM-dd'
+      )}%26resultCategoryId%3D18`,
       value: [
         {
           id: 'cntPositive',
@@ -280,7 +284,7 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D14%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31`,
+      )}-01%26maxDate%3D${format(endOfMonth(now), 'yyyy-MM-dd')}`,
       value: [
         {
           id: 'cntAll',
@@ -297,7 +301,10 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D14%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31%26resultCategoryId%3D1`,
+      )}-01%26maxDate%3D${format(
+        endOfMonth(now),
+        'yyyy-MM-dd'
+      )}%26resultCategoryId%3D1`,
       value: [
         {
           id: 'cntPositive',
@@ -429,7 +436,7 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D20%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31`,
+      )}-01%26maxDate%3D${format(endOfMonth(now), 'yyyy-MM-dd')}`,
       value: [
         {
           id: 'cntAll',
@@ -446,7 +453,10 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D20%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31%26resultCategoryId%3D1`,
+      )}-01%26maxDate%3D${format(
+        endOfMonth(now),
+        'yyyy-MM-dd'
+      )}%26resultCategoryId%3D1`,
       value: [
         {
           id: 'cntPositive',
@@ -578,7 +588,7 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D18%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31`,
+      )}-01%26maxDate%3D${format(endOfMonth(now), 'yyyy-MM-dd')}`,
       value: [
         {
           id: 'cntAll',
@@ -595,7 +605,10 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D18%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31%26resultCategoryId%3D1`,
+      )}-01%26maxDate%3D${format(
+        endOfMonth(now),
+        'yyyy-MM-dd'
+      )}%26resultCategoryId%3D1`,
       value: [
         {
           id: 'cntPositive',
@@ -727,7 +740,7 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D33%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31`,
+      )}-01%26maxDate%3D${format(endOfMonth(now), 'yyyy-MM-dd')}`,
       value: [
         {
           id: 'cntAll',
@@ -744,7 +757,10 @@ const pieRowDataFromAPIOut = [
       link: `/browse/result?filters=assayId%3D33%26minDate%3D${format(
         now,
         'yyyy-MM'
-      )}-01%26maxDate%3D${format(now, 'yyyy-MM')}-31%26resultCategoryId%3D33`,
+      )}-01%26maxDate%3D${format(
+        endOfMonth(now),
+        'yyyy-MM-dd'
+      )}%26resultCategoryId%3D33`,
       value: [
         {
           id: 'cntPositive',
