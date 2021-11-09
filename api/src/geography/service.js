@@ -189,20 +189,23 @@ async function stateSelectList(request) {
   return getStates(dataConstraints, { stateId })
 }
 
-async function getStates(dataConstraints) {
+async function getStates(dataConstraints, { stateId }) {
   let states = []
   const statesAndLgas = await query(
-    'Get states and state LGAs for select lists'
+    stateId
+      ? 'Get states and state LGAs for select lists'
+      : 'Get states for select list'
   )
     .from('State as s')
     .innerJoin('Geography as g', 'g.stateId', 's.id')
     .leftJoin('Lga as l', function () {
       this.on('l.id', 'g.lgaId')
-      // if (stateId) {
-      //   this.andOn({ 'g.stateId': knex.raw(stateId) })
-      // }
+      if (stateId) {
+        this.andOn({ 'g.stateId': knex.raw(stateId) })
+      }
     })
     .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .orderBy(['s.name'], 'asc')
     .distinct(
       's.id as stateId',
       's.name as stateName',
