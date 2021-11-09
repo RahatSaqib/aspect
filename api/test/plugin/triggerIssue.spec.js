@@ -104,6 +104,10 @@ const getMessageTemplates = async () => {
 }
 
 const server = require('../utils/testUtils')
+const { startOfDayUtc } = require('../../src/shared/date')
+const {
+  getDeviceErrorHistoryForAttachment,
+} = require('../../src/result/serviceReport')
 
 const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const messageTemplates = await getMessageTemplates()
@@ -152,6 +156,7 @@ const evaluateIssues = async (
       await checkNotificationsForIssue(issues[0].id, issueTypeId)
   }
 }
+let qtyOfRuns = 0
 describe('This test suite is for testing different triggers conditions', async () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
@@ -367,7 +372,7 @@ describe('This test suite is for testing different triggers conditions', async (
               moduleName: 'Module A',
               moduleSerial: 'M-123456-0',
               instrumentSerial: 'S-1234-0',
-              endedOn: subDays(new Date(), i),
+              endedOn: startOfDayUtc(subDays(new Date(), 30 - i)),
               errorCode: i % 2 === 0 ? errorCode : null,
               errorNotes: i % 2 === 0 ? 'Some notes' : null,
               resultCategory1,
@@ -498,6 +503,16 @@ describe('This test suite is for testing different triggers conditions', async (
           })
           await waitForIdle()
           await evaluateIssues(response, issueTypeModuleId, 1, 'Resolved')
+          const minDate = startOfDayUtc(subDays(new Date(), 30))
+          if (qtyOfRuns < 2) {
+            qtyOfRuns += 1
+            const data = await getDeviceErrorHistoryForAttachment(
+              context.device.id,
+              minDate,
+              null
+            )
+            assert.equal(data.items.length, 12)
+          }
         })
       })
     })
