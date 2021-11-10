@@ -1,4 +1,4 @@
-const { createFetch, base, method, params, parse } = require('http-client')
+const fetch = require('node-fetch')
 const twilio = require('twilio')
 const config = require('../config')
 const logger = require('../shared/logger')
@@ -12,44 +12,34 @@ async function sendSms(cellNumber, message) {
 async function sendSmsAdn(cellNumber, message, adn) {
   // eslint-disable-next-line camelcase
   const { api_key, api_secret, url } = adn
-  let resp = null
+  logger.info('Sending sms by ADN provider')
+  const params = new URLSearchParams()
+  params.append('api_key', api_key)
+  params.append('api_secret', api_secret)
+  params.append('request_type', 'SINGLE_SMS')
+  params.append('mobile', cellNumber)
+  params.append('message_body', message)
   try {
-    const adnFetch = createFetch(
-      method('POST'),
-      base(url),
-      params(
-        JSON.stringify({
-          api_key,
-          api_secret,
-          request_type: 'SINGLE_SMS',
-          message_type: 'TEXT',
-          mobile: cellNumber,
-          message_body: message,
-        })
-      ),
-      parse('json')
-    )
-    try {
-      resp = await adnFetch('/secure/send-sms')
-    } catch (err) {
-      logger.error(err)
-    }
-
-    if (resp.response !== 200) {
-      throw new Error(`Error for sending sms${resp.body}`)
-    }
-    return resp.json()
-
-    // send sms - see https://www.twilio.com/docs/api/messaging/send-messages-copilot#sending-messages-with-copilot
-  } catch (e) {
-    logger.error(e)
+    const response = await fetch(url, { method: 'POST', body: params })
+    const data = await response.json()
+    if (data.api_response_code !== 200)
+      throw new Error(
+        `sending sms throw adn api throw an error ${data.error.error_message}`
+      )
+    else return data
+  } catch (err) {
+    logger.error(err)
   }
+
+  return null
+  // send sms - see https://www.twilio.com/docs/api/messaging/send-messages-copilot#sending-messages-with-copilot
 }
 
 async function sendSmsTwilio(cellNumber, message, twilioConf) {
   // These consts are your settings from https://www.twilio.com/console
   const { accountSid, authToken, fromNumber, messagingServiceSid } = twilioConf
   let clientCreated = null
+  logger.info('Sending sms by Twilio provider')
   try {
     const client = twilio(accountSid, authToken)
 
