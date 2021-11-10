@@ -35,6 +35,8 @@ const WIDGET_FILTER_KEYS = {
   CURRENT_MONTH: 'currentMonth',
 }
 
+const positiveResults = `('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')`
+
 // props will be defined below for each object
 const sqlSnippets = {}
 
@@ -798,13 +800,12 @@ const gxPositiveResultsNotified = {
     LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id AND sm.messageStatusId = 3
     LEFT JOIN EmailMessage em ON n.emailMessageId = em.id AND em.messageStatusId = 3
     LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
-    WHERE
-        rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
-            AND dt.externalId = 'CepheidGeneXpert'
-            AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
-            AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
-            AND (deviceApproval.token = 'approved'
-            OR ISNULL(deviceApproval.token))
+    WHERE rc.externalid IN ${positiveResults}
+      AND dt.externalId = 'CepheidGeneXpert'
+      AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
+      AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+      AND (deviceApproval.token = 'approved'
+      OR ISNULL(deviceApproval.token))
     GROUP BY r.id) AS q
   `,
   sqlForStatUnit: `
@@ -829,13 +830,12 @@ const gxPositiveResultsNotified = {
         LEFT JOIN SmsMessage sm ON n.smsMessageId = sm.id AND sm.messageStatusId = 3
         LEFT JOIN EmailMessage em ON n.emailMessageId = em.id AND em.messageStatusId = 3
         LEFT JOIN DeviceApproval deviceApproval ON d.deviceApprovalId = deviceApproval.id
-        WHERE
-            rc.externalid IN ('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')
-                AND dt.externalId = 'CepheidGeneXpert'
-                AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
-                AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
-                AND (deviceApproval.token = 'approved'
-                OR ISNULL(deviceApproval.token))
+        WHERE rc.externalid IN ${positiveResults}
+          AND dt.externalId = 'CepheidGeneXpert'
+          AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+          AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+          AND (deviceApproval.token = 'approved'
+          OR ISNULL(deviceApproval.token))
         GROUP BY r.id) AS q
   `,
   statUnit: '{unit} last month',
@@ -1142,36 +1142,46 @@ const averageRecipientsOfEmail = {
   titleI18nKey: 'averageRecipientsOfEmail',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
-  FROM
-  (
-  SELECT COUNT(em.resultId) AS resultCount
-  FROM EmailMessage AS em
-  INNER JOIN Device AS d ON d.id = em.deviceId
-  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-  INNER JOIN Site AS s ON d.siteId = s.id
-  LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE YEAR(em.createdOn) = YEAR(NOW())
-  AND MONTH(em.createdOn) = MONTH(NOW())
-  AND em.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
-  GROUP BY em.resultId
-  ) AS innerQuery`,
-  sqlForStatUnit: `SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
-  FROM
-  (
-  SELECT COUNT(em.resultId) AS resultCount
-  FROM EmailMessage AS em
-  INNER JOIN Device AS d ON d.id = em.deviceId
-  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-  INNER JOIN Site AS s ON d.siteId = s.id
-  LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE YEAR(em.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-  AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-  AND em.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
-  GROUP BY em.resultId
-  ) AS innerQuery`,
+  sqlForIndicator: `
+  SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
+    FROM
+    (
+    SELECT COUNT(em.resultId) AS resultCount
+      FROM EmailMessage AS em
+      INNER JOIN Device AS d ON d.id = em.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      INNER JOIN Result AS r ON em.resultId = r.id
+      INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(em.createdOn) = YEAR(NOW())
+        AND MONTH(em.createdOn) = MONTH(NOW())
+        AND em.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'
+        AND rc.externalid IN ${positiveResults}
+      GROUP BY em.resultId
+    ) AS innerQuery
+  `,
+  sqlForStatUnit: `
+  SELECT ifnull(ROUND(AVG(resultCount)),0) AS cnt
+    FROM
+    (
+    SELECT COUNT(em.resultId) AS resultCount
+      FROM EmailMessage AS em
+      INNER JOIN Device AS d ON d.id = em.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      INNER JOIN Result AS r ON em.resultId = r.id
+      INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(em.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND em.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'
+        AND rc.externalid IN ${positiveResults}
+      GROUP BY em.resultId
+    ) AS innerQuery
+  `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/operational-data#resultsTransmitted',
@@ -1194,36 +1204,46 @@ const averageRecipientsOfSms = {
   titleI18nKey: 'averageRecipientsOfSms',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
-  FROM
-  (
-  SELECT COUNT(sms.resultId) AS resultCount
-  FROM SmsMessage AS sms
-  INNER JOIN Device AS d ON d.id = sms.deviceId
-  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-  INNER JOIN Site AS s ON d.siteId = s.id
-  LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE YEAR(sms.createdOn) = YEAR(NOW())
-  AND MONTH(sms.createdOn) = MONTH(NOW())
-  AND sms.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
-  GROUP BY sms.resultId
-  ) AS innerQuery`,
-  sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
-  FROM
-  (
-  SELECT COUNT(sms.resultId) AS resultCount
-  FROM SmsMessage AS sms
-  INNER JOIN Device AS d ON d.id = sms.deviceId
-  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-  INNER JOIN Site AS s ON d.siteId = s.id
-  LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-  AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-  AND sms.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
-  GROUP BY sms.resultId
-  ) AS innerQuery`,
+  sqlForIndicator: `
+  SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
+    FROM
+    (
+    SELECT COUNT(sms.resultId) AS resultCount
+      FROM SmsMessage AS sms
+      INNER JOIN Device AS d ON d.id = sms.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      INNER JOIN Result AS r ON sms.resultId = r.id
+      INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(sms.createdOn) = YEAR(NOW())
+        AND MONTH(sms.createdOn) = MONTH(NOW())
+        AND sms.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'
+        AND rc.externalid IN ${positiveResults}
+      GROUP BY sms.resultId
+    ) AS innerQuery
+  `,
+  sqlForStatUnit: `
+  SELECT IFNULL(ROUND(AVG(resultCount)),0) AS cnt
+    FROM
+    (
+    SELECT COUNT(sms.resultId) AS resultCount
+      FROM SmsMessage AS sms
+      INNER JOIN Device AS d ON d.id = sms.deviceId
+      INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN Site AS s ON d.siteId = s.id
+      INNER JOIN Result AS r ON sms.resultId = r.id
+      INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
+      LEFT OUTER JOIN Geography as g on s.geographyId = g.id
+      WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+        AND sms.resultId IS NOT NULL
+        AND dt.externalId = 'CepheidGeneXpert'
+        AND rc.externalid IN ${positiveResults}
+      GROUP BY sms.resultId
+    ) AS innerQuery
+  `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/operational-data#resultsTransmitted',
