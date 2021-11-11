@@ -167,7 +167,8 @@
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
               4008, 4016, 4006, 4011
-            ]
+            ],
+            "suppressionDays": 30
           }
         }
       },
@@ -195,6 +196,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -228,6 +230,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -261,6 +264,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -293,6 +297,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -318,12 +323,19 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "minResults": 3
+          },
+          "suppressingConditions": {
+            "evaluationMethod": "plugin-function",
+            "evaluationParameter": "shouldSuppressTriggering",
+            "evaluationFilterParameters": {
+              "suppressionDays": 30,
+              "errorCodesToSuppress": [
+                2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006,
+                1018, 2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034,
+                4015, 2017, 4008, 4016, 4006, 4011
+              ]
+            }
           }
         }
       },
@@ -396,6 +408,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -428,6 +441,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -467,38 +481,6 @@
       }
     },
     {
-      "issueType": "CartridgeIntegrityTestFailureLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2037],
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
       "issueType": "SyringePressureTooHighLot",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -522,140 +504,13 @@
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
               4008, 4016, 4006, 4011
-            ]
+            ],
+            "suppressionDays": 30
           }
         }
       },
       "filterIssueCondition": {
         "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
-      "issueType": "SyringeStallErrorLot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2005],
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
-      "issueType": "UltrasonicHornFailureModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2035],
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
-      "issueType": "UltrasonicHornTuningErrorModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2032],
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
-      "issueType": "UltrasonicHornCurrentOutOfRangeModule",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2026],
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
       }
     },
     {
@@ -667,7 +522,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [2096],
+            "errorCodes": [2096, 2097],
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
@@ -678,6 +533,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -699,7 +555,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [2096],
+            "errorCodes": [2096, 2097],
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
@@ -710,6 +566,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
+            "suppressionDays": 30,
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
@@ -720,97 +577,6 @@
       },
       "filterIssueCondition": {
         "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
-      "issueType": "AssaySpecificTerminationError2Module",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2097],
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
-      "issueType": "AssaySpecificTerminationError2Lot",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2097],
-            "threshold": 0.1,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
-        "evaluationFunction": "filterByLotAndAssay"
-      }
-    },
-    {
-      "issueType": "HardwareTemperatureDriftedFromSetPoint",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_TEMPERATURE_DRIFTED_FROM_SETPOINT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [1001],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
       }
     },
     {
@@ -822,34 +588,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCodes": [1002],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareSyringeStallError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_SYRINGE_STALL_ERROR",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2005],
+            "errorCodes": [1002, 1001, 1004],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -877,168 +616,6 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCodes": [2014],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareUltrasonicHornCurrentOutOfRange",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": 2026,
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareUltrasonicHornTuningError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_ULTRASONIC_HORN_TUNING_ERROR",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2032],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareUltrasonicHornFailure",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_ULTRASONIC_HORN_FAILURE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2035],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareCartridgeIntegrityTestFailure",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_CARTRIDGE_INTEGRITY_TEST_FAILURE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2037],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareAssaySpecificTerminationError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2096],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareModuleWasReset",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_MODULE_WAS_RESET",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2126],
             "daysPeriod": 30,
             "minErrors": 3
           }
@@ -1092,34 +669,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCodes": [4009],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareHeaterBTemperatureUnstable",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_HEATER_B_TEMPERATURE_UNSTABLE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [4012],
+            "errorCodes": [4009, 4012],
             "daysPeriod": 30,
             "minErrors": 3
           }
