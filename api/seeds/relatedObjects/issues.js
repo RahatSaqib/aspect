@@ -308,8 +308,8 @@ const hardwareMessage = {
   2097: 'Assay-Specific Termination #2',
   2126: 'Module was Reset',
   4008: 'Power Supply Voltage Out of Range',
-  4009: 'Heater A Temperature Unstable',
-  4012: 'Heater B Temperature Unstable',
+  4009: 'Heater Temperature Unstable',
+  4012: 'Heater Temperature Unstable',
   4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
 }
 const hardwareErrorIssueEmailHtml = errorCode =>
@@ -1147,7 +1147,7 @@ async function getBaseIssues(auditFields) {
     },
     AssaySpecificTerminationError1Module: {
       issueType: {
-        name: 'Assay Specific Termination Error On Module',
+        name: 'Assay Specific Termination Error',
         externalId: 'AssaySpecificTerminationError1Module',
         i18nKey: 'issueStatusAssaySpecificTerminationError1Module',
         issueCategoryId: issueCategories.DeviceHealth,

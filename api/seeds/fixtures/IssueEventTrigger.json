@@ -588,7 +588,34 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCodes": [1002, 1001, 1004],
+            "errorCodes": [1002],
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        },
+        "suppressingConditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationFilterParameters": {
+            "errorCodesToSuppress": [
+              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
+              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
+              4008, 4016, 4006, 4011
+            ]
+          }
+        }
+      }
+    },
+    {
+      "issueType": "HardwareTemperatureDriftedFromSetPoint",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_TEMPERATURE_DRIFTED_FROM_SETPOINT",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCodes": [1001],
             "daysPeriod": 30,
             "minErrors": 3
           }

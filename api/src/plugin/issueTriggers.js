@@ -84,7 +84,7 @@ async function shouldSuppressTriggering(
       .modify((builder, days) => {
         if (days) {
           builder.where(
-            'i.createdOn',
+            'createdOn',
             '>=',
             startOfDayUtc(subDays(new Date(), days))
           )

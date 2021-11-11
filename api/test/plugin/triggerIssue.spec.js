@@ -227,7 +227,8 @@ describe('This test suite is for testing different triggers conditions', async (
     errorCode,
     issueTypeModule,
     issueTypeLot,
-    resultCategoryExternalId
+    resultCategoryExternalId,
+    temporarySuppression = false
   ) => {
     describe(`${issueName} issue creation (Module and lot),${
       errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
@@ -469,7 +470,8 @@ describe('This test suite is for testing different triggers conditions', async (
             await issueTypeToId(issueTypeLot)
           )
         })
-        it(`Should NOT create an issue because it has previous issue with some specific suppression code`, async () => {
+
+        it(`Should NOT create an issue because it has previous issue with some specific suppression code in the last 30 days`, async () => {
           const { deviceAuth } = context
 
           const issueTypeId = await issueTypeToId(issueTypeModule)
@@ -488,7 +490,7 @@ describe('This test suite is for testing different triggers conditions', async (
             createdOn: new Date(),
             updatedOn: new Date(),
           })
-          const issues = await getIssues(context.device.id, issueTypeId)
+          let issues = await getIssues(context.device.id, issueTypeId)
           assert.equal(issues.length, 1)
 
           const firstPayload = await getPayload(
@@ -513,7 +515,47 @@ describe('This test suite is for testing different triggers conditions', async (
             )
             assert.equal(data.items.length, 8)
           }
+          issues = await getIssues(context.device.id, issueTypeId)
+          assert.equal(issues.length, 1)
         })
+        if (temporarySuppression) {
+          it(`Should create an issue because it has previous issue with some specific suppression code created 30 days before`, async () => {
+            const { deviceAuth } = context
+
+            const issueTypeId = await issueTypeToId(issueTypeModule)
+            await knex('Issue').insert({
+              issueTypeId,
+              issueStatusId: await issueStatusToId('Resolved'),
+              deviceId: context.device.id,
+              partnerId: context.device.partnerId,
+              siteId: context.site.id,
+              geographyId: context.site.geographyId,
+              data: JSON.stringify({
+                moduleSerial: 'M-123456-0',
+                resultErrorCode: '1001',
+              }),
+
+              createdOn: subDays(new Date(), 60),
+              updatedOn: new Date(),
+            })
+            let issues = await getIssues(context.device.id, issueTypeId)
+            assert.equal(issues.length, 1)
+
+            const firstPayload = await getPayload(
+              context,
+              errorCode,
+              resultCategoryExternalId
+            )
+            // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: firstPayload,
+            })
+            await waitForIdle()
+            issues = await getIssues(context.device.id, issueTypeId)
+            assert.equal(issues.length, 2)
+          })
+        }
       })
     })
   }
@@ -532,15 +574,9 @@ describe('This test suite is for testing different triggers conditions', async (
       'Probes check Too High',
       5006,
       'ProbeCheckTooHighModule',
-      'ProbeCheckTooHighLot'
-    )
-  })
-  describe('error 5016 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Failed To Verify Valid Background Error For Analyte',
-      5016,
-      'TooManyInvalidResultsModule',
-      'TooManyInvalidResultsLot'
+      'ProbeCheckTooHighLot',
+      null,
+      true
     )
   })
   describe('error 5007 issue', () => {
@@ -548,7 +584,9 @@ describe('This test suite is for testing different triggers conditions', async (
       'Probes check Too Low',
       5007,
       'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot'
+      'ProbeCheckFailedLot',
+      null,
+      true
     )
   })
 
@@ -557,7 +595,9 @@ describe('This test suite is for testing different triggers conditions', async (
       'Probes Check Failed',
       5017,
       'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot'
+      'ProbeCheckFailedLot',
+      null,
+      true
     )
   })
   describe('error 5011 issue', () => {
