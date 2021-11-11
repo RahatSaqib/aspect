@@ -1,4 +1,3 @@
-const Joi = require('@hapi/joi')
 const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')

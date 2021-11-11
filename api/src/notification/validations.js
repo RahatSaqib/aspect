@@ -133,15 +133,14 @@ const resultBasedNotificationPayload = Joi.object({
   persons: Joi.array()
     .items(
       Joi.object().keys({
-        personId: Joi.number()
-          .required()
-          .description('Id of Job Function'),
+        personId: Joi.number().required().description('Id of Job Function'),
         checked: Joi.bool()
           .valid(true, null)
           .optional()
-          .description('Checked job functions')
+          .description('Checked job functions'),
       })
-    ).min(1),
+    )
+    .min(1),
   jobFunctions: Joi.array()
     .items(
       Joi.object().keys({
@@ -163,7 +162,8 @@ const resultBasedNotificationPayload = Joi.object({
           .allow(null)
           .description('Tags for selected Job Function'),
       })
-    ).min(1)
+    )
+    .min(1)
     .description('Checked job functions'),
 }).or('jobFunctions', 'persons')
 

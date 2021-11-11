@@ -233,15 +233,18 @@ async function createNotifications(knex, action, context) {
   let jobFunctionLevel = null
   const { jobFunctions = [], persons = [] } = filterCondition || {}
   await Promise.each(policies, async policy => {
-    if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions) && _.isEmpty(persons)) {
+    if (
+      _.isNil(policy.jobFunctionId) &&
+      _.isEmpty(jobFunctions) &&
+      _.isEmpty(persons)
+    ) {
       await createNotificationIfNotCreatedAlready(
         action,
         { policy, now },
         { messageContext: context, knex }
       )
     } else {
-      if (_.isEmpty(jobFunctions) && policy.jobFunctionId)
-      {
+      if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
         if (policy.jobFunctionId !== jobFunctionId) {
           ;({ jobFunctionId, level: jobFunctionLevel } = policy)
         } else if (policy.level !== jobFunctionLevel) {
@@ -253,7 +256,13 @@ async function createNotifications(knex, action, context) {
       }
 
       const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(knex, policy, tags, jobFunctions, persons)
+      const people = await getPeopleToNotify(
+        knex,
+        policy,
+        tags,
+        jobFunctions,
+        persons
+      )
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
@@ -677,17 +686,22 @@ async function saveNotificationType({
     // If jobFunctions or persons are defined, ensure they all exist
     if (jobFunctions) {
       const jobFunctionsIds = jobFunctions.map(jf => jf.jobFunctionId)
-      const existingJobFunctions = await knex('JobFunction').whereIn('id', jobFunctionsIds)
-      console.log('jobFunctionsIds.length !== existingJobFunctions.length', jobFunctionsIds.length !== existingJobFunctions.length)
+      const existingJobFunctions = await knex('JobFunction').whereIn(
+        'id',
+        jobFunctionsIds
+      )
       if (jobFunctionsIds.length !== existingJobFunctions.length)
-        return Boom.badRequest('Attempt to set unexisting job function to notification')
+        return Boom.badRequest(
+          'Attempt to set unexisting job function to notification'
+        )
     }
     if (persons) {
       const personsIds = persons.map(p => p.personId)
       const existingPersons = await knex('Person').whereIn('id', personsIds)
-      console.log('personsIds.length !== existingPersons.length', personsIds.length !== existingPersons.length)
       if (personsIds.length !== existingPersons.length)
-        return Boom.badRequest('Attempt to set unexisting person to notification')
+        return Boom.badRequest(
+          'Attempt to set unexisting person to notification'
+        )
     }
 
     /**
@@ -898,7 +912,7 @@ async function saveNotification(request) {
     })
 
     if (result instanceof Boom.Boom) return result
-      
+
     const { ok, notificationTypeId, error } = result
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
