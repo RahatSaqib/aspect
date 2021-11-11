@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const path = require('path')
 const _ = require('lodash')
 const { convertToTimeZone } = require('date-fns-timezone')
@@ -10,7 +11,7 @@ const { waitForIdle } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 const {
   assayToId,

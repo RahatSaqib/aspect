@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
 const { run } = require('../../src/db')
@@ -20,7 +21,7 @@ const { waitForIdle } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 const devicePath = '/device'
 const devicePostResultPath = '/device/result'

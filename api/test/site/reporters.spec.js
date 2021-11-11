@@ -67,7 +67,6 @@ const getMonthDateRange = someDate => {
 
 describe('Reporters Dashboard - GET /site/reporters', () => {
   const path = '/api/site/reporters'
-  shared.checkToken(server, path)
 
   const now = parseISO(new Date().toISOString())
   const previousMonth = subMonths(now, 1)
@@ -80,6 +79,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
   let initialCounts
 
   before(async () => {
+    shared.checkToken(server, path)
     // -----------------------------
     // get last item id from tables we touch in test
     // -----------------------------

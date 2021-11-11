@@ -1,15 +1,20 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Assay routes', () => {
   const path = '/api/assay'
-  shared.checkToken(server, path)
+
+  before(() => {
+    shared.checkToken(server, path)
+  })
+
   describe('GET', () => {
     it('should return a list of assays when using valid token', async () => {
       const assayResponse = await server

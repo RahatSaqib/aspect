@@ -439,8 +439,11 @@ describe('Notification routes', () => {
   let ntId
   let notificationType
 
-  beforeEach(async () => {
+  before(() => {
     shared.checkToken(server, path)
+  })
+
+  beforeEach(async () => {
     const messageType = await knex('MessageType').select().first()
     ;[ntId] = await knex('NotificationType').insert({
       partnerId: 1,
@@ -500,7 +503,6 @@ describe('Notification routes', () => {
   })
 
   it('PUT', async () => {
-    shared.checkToken(server, path)
     const payload = {
       notificationType: notificationType.notificationType,
       name: notificationType.name,

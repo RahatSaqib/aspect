@@ -36,7 +36,9 @@ function assertWidgetItemProps(item) {
 describe('Dashboard routes', () => {
   describe('GET /api/dashboard/summary', () => {
     const path = '/api/dashboard/summary'
-    shared.checkToken(server, path)
+    before(() => {
+      shared.checkToken(server, path)
+    })
 
     it('should return a list of stat dashboard widget objects', async () => {
       const res = await server

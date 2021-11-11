@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const {
   setMilliseconds,
   addHours,
@@ -12,14 +13,12 @@ const {
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const { postToDeviceApi } = require('../utils')
 const { knex } = require('../../../src/db')
-const shared = require('../../utils/sharedToken')
 
 const server = require('../../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device API routes for GxAlert Device', () => {
-  shared.checkToken(server, '/api/device')
   function createContext() {
     return createGxAlertTestContext(server)
   }

@@ -8,23 +8,26 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 
 describe('/account-details', () => {
+  const pathGlobal = '/api/account-details/current'
+
   async function getAccountDetails() {
-    const path = '/api/account-details/current'
     const response = await server
-      .get(path)
+      .get(pathGlobal)
       .set('Authorization', `Bearer ${shared.token}`)
       .send()
       .then(res => res.body.data)
     return response
   }
+
+  before(() => {
+    shared.checkToken(server, pathGlobal)
+  })
+
   describe('/account-details/current', () => {
     describe('GET', () => {
-      const path = '/api/account-details/current'
-      shared.checkToken(server, path)
-
       it('should return the account details for the currently logged in user', async () => {
         const res = await server
-          .get(path)
+          .get(pathGlobal)
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
@@ -56,7 +59,7 @@ describe('/account-details', () => {
 
   describe('/account-details/current-contact', () => {
     describe('PUT', () => {
-      const path = '/api/account-details/current-contact'
+      const path = `${pathGlobal}-contact`
 
       let accountDetails
       beforeEach(async () => {
@@ -109,7 +112,7 @@ describe('/account-details', () => {
 
         // Make sure the data has been persisted
         res = await server
-          .get('/api/account-details/current')
+          .get(pathGlobal)
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.title, newJobTitle)
@@ -134,7 +137,7 @@ describe('/account-details', () => {
 
   describe('/account-details/current-preferences', () => {
     describe('PUT', () => {
-      const path = '/api/account-details/current-preferences'
+      const path = `${pathGlobal}-preferences`
 
       let accountDetails
       beforeEach(async () => {
@@ -195,7 +198,7 @@ describe('/account-details', () => {
 
         // Make sure the data has been persisted
         res = await server
-          .get('/api/account-details/current')
+          .get(pathGlobal)
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.timezone, newTimezone)

@@ -14,7 +14,9 @@ describe('Site routes', () => {
     let siteId = 1
 
     let siteData
-    shared.checkToken(server, path)
+    before(() => {
+      shared.checkToken(server, path)
+    })
 
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {

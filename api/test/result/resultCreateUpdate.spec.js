@@ -59,6 +59,10 @@ describe('Result create and update routes', () => {
     'resultNotes',
   ]
 
+  before(async () => {
+    shared.checkToken(server, path)
+  })
+
   after(async () => {
     if (!_.isEmpty(resultIds)) {
       await knex('ResultTreatmentStatusLog')
@@ -82,7 +86,6 @@ describe('Result create and update routes', () => {
   })
 
   describe('POST', () => {
-    shared.checkToken(server, path)
     it('Should create a new result', async () => {
       const resultPayload = {
         siteId: 1,
@@ -289,7 +292,6 @@ describe('Result create and update routes', () => {
   })
 
   describe('PUT', () => {
-    shared.checkToken(server, path)
     it('Should update an existing result', async () => {
       const resultPayload = {
         endedOn: now,
