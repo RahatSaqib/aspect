@@ -121,6 +121,7 @@ const obtainProperAction = (
       return !consumableLot
         ? types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE
         : types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT
+
     case 2026:
       return !consumableLot
         ? types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE

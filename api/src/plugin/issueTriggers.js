@@ -1,6 +1,4 @@
 const subDays = require('date-fns/subDays')
-const addDays = require('date-fns/addDays')
-const startOfDay = require('date-fns/startOfDay')
 const _ = require('lodash')
 const { startOfDayUtc } = require('../shared/date')
 const { resultCategoryToId } = require('../shared/dictionary')
@@ -71,7 +69,7 @@ async function analyzeWithQuery(
 async function shouldSuppressTriggering(
   knex,
   action,
-  { errorCodesToSuppress }
+  { errorCodesToSuppress, suppressionDays }
 ) {
   const { deviceId } = action
 
@@ -83,6 +81,15 @@ async function shouldSuppressTriggering(
       .whereRaw(
         `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
       )
+      .modify((builder, days) => {
+        if (days) {
+          builder.where(
+            'i.createdOn',
+            '>=',
+            startOfDayUtc(subDays(new Date(), days))
+          )
+        }
+      }, suppressionDays)
       .count('id as totalIssues')
       .first()
     return totalIssues > 0
@@ -152,7 +159,7 @@ async function analyzeUnusedModules(
   const { deviceId } = action
 
   const { numberOfResults, numberOfModules } = await knex('Result as r')
-    .where('r.endedOn', '>', startOfDay(addDays(new Date(), -30)))
+    .where('r.endedOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
     .andWhere('r.deviceId', deviceId)
     .select(
       knex.raw('COUNT(*) as numberOfResults'),

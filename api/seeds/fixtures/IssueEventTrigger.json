@@ -687,38 +687,6 @@
         }
       },
       "filterIssueCondition": {
-        "evaluationFunction": "filterByModuleSerial"
-      }
-    },
-    {
-      "issueType": "AssaySpecificTerminationError1Module",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeErrors",
-          "evaluationFilterParameters": {
-            "errorCodes": [2096],
-            "threshold": 0.03,
-            "below": false,
-            "daysPeriod": 30,
-            "minResults": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      },
-      "filterIssueCondition": {
         "evaluationFunction": "filterByInstrumentSerial"
       }
     },
@@ -900,33 +868,6 @@
       }
     },
     {
-      "issueType": "HardwareSyringePressureTooHigh",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_SYRINGE_PRESSURE_TOOHIGH",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2008],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
       "issueType": "HardwareThermistorTemperatureOutOfRange2014",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -1071,33 +1012,6 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCodes": [2096],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareAssaySpecificTerminationError2",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR_2",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2097],
             "daysPeriod": 30,
             "minErrors": 3
           }
