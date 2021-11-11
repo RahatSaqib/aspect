@@ -650,6 +650,7 @@ async function saveNotificationType({
     areaItems,
     deviceLevelId,
     jobFunctions,
+    persons,
     name,
     result,
     //
@@ -673,6 +674,22 @@ async function saveNotificationType({
   }
 
   return transact(async knex => {
+    // If jobFunctions or persons are defined, ensure they all exist
+    if (jobFunctions) {
+      const jobFunctionsIds = jobFunctions.map(jf => jf.jobFunctionId)
+      const existingJobFunctions = await knex('JobFunction').whereIn('id', jobFunctionsIds)
+      console.log('jobFunctionsIds.length !== existingJobFunctions.length', jobFunctionsIds.length !== existingJobFunctions.length)
+      if (jobFunctionsIds.length !== existingJobFunctions.length)
+        return Boom.badRequest('Attempt to set unexisting job function to notification')
+    }
+    if (persons) {
+      const personsIds = persons.map(p => p.personId)
+      const existingPersons = await knex('Person').whereIn('id', personsIds)
+      console.log('personsIds.length !== existingPersons.length', personsIds.length !== existingPersons.length)
+      if (personsIds.length !== existingPersons.length)
+        return Boom.badRequest('Attempt to set unexisting person to notification')
+    }
+
     /**
      * helpers
      */
@@ -839,6 +856,7 @@ async function saveNotificationType({
           areaItems,
           deviceLevelId,
           jobFunctions,
+          persons,
           result,
           sendEmail,
           sendSms,
@@ -872,12 +890,16 @@ async function saveNotification(request) {
   const { notificationType } = payload
 
   if (notificationType === 'resultBased') {
-    const { ok, notificationTypeId, error } = await saveNotificationType({
+    const result = await saveNotificationType({
       id,
       partnerId,
       userId,
       payload,
     })
+
+    if (result instanceof Boom.Boom) return result
+      
+    const { ok, notificationTypeId, error } = result
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
     }

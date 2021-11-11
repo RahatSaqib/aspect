@@ -379,7 +379,7 @@ describe('Result Notifications triggers', () => {
     })
   })
 
-  describe.only('Filter by Person', () => {
+  describe('Filter by Person', () => {
     let adminId
     let managerId
 
@@ -482,10 +482,12 @@ describe('Notification routes', () => {
   const path = '/api/notification'
   let ntId
   let notificationType
-  
+  let personId
+  let basePayload
   beforeEach(async () => {
     shared.checkToken(server, path)
     const messageType = await knex('MessageType').select().first()
+    ;[personId] = await knex('Person').where({ name: 'Admin' }).pluck('id')
     ;[ntId] = await knex('NotificationType').insert({
       partnerId: 1,
       name: 'A notification',
@@ -497,6 +499,34 @@ describe('Notification routes', () => {
       filterCondition: JSON.stringify({}),
       messageTypeId: messageType.id,
     })
+    basePayload = {
+      notificationType: 'resultBased',
+      name: '_____',
+      emailSubject: '',
+      emailBody: '',
+      sendEmail: false,
+      smsBody: 'A body',
+      sendSms: baseFilterCondition.sendSms,
+      webUrl: '',
+      webBody: '',
+      sendWeb: false,
+      jobFunctions: [
+        {
+          jobFunctionId: '1',
+          checked: true,
+          tags: [],
+        },
+      ],
+      persons: [
+        {
+          personId,
+          checked: true,
+        },
+      ],
+      deviceLevelId: baseFilterCondition.deviceLevelId,
+      areaItems: baseFilterCondition.areaItems,
+      result: baseFilterCondition.result,
+    }
   })
 
   afterEach(async () => knex('NotificationType').where('id', ntId).del())
@@ -543,19 +573,64 @@ describe('Notification routes', () => {
     assert.property(notificationType, 'webBody')
   })
 
-  it('PUT', async () => {
+  it('PUT - Unexisting person, should return error 400', async () => {
     shared.checkToken(server, path)
-    const payload = {
-      notificationType: notificationType.notificationType,
-      name: notificationType.name,
-      emailSubject: '',
-      emailBody: '',
-      sendEmail: false,
-      smsBody: 'A body',
-      sendSms: baseFilterCondition.sendSms,
-      webUrl: '',
-      webBody: '',
-      sendWeb: false,
+    
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({
+        ...basePayload,
+        persons: [
+          {
+            personId: '99999999999',
+            checked: true,
+          },
+        ],
+      })
+
+    assert.equal(res.status, 400)
+    assert.equal(res.body.message, 'Attempt to set unexisting person to notification')
+  })
+
+  it('PUT - Unexisting job function, should return error 400', async () => {
+    shared.checkToken(server, path)
+    
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({
+        ...basePayload,
+        jobFunctions: [
+          {
+            jobFunctionId: '99999999999',
+            checked: true,
+          },
+        ],
+      })
+
+      assert.equal(res.status, 400)
+      assert.equal(res.body.message, 'Attempt to set unexisting job function to notification')
+  })
+
+  it('PUT - Correct payload, filterCondition should be updated properly', async () => {
+    shared.checkToken(server, path)
+    
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send(basePayload)
+
+    assert.equal(res.status, 200)
+
+    const { filterCondition } = await knex('NotificationType').where({ id: ntId }).first()
+    assert.deepEqual(JSON.parse(filterCondition), {
+      persons: [
+        {
+          personId,
+          checked: true
+        }
+      ],
       jobFunctions: [
         {
           jobFunctionId: '1',
@@ -564,15 +639,16 @@ describe('Notification routes', () => {
         },
       ],
       deviceLevelId: baseFilterCondition.deviceLevelId,
-      areaItems: baseFilterCondition.areaItems,
+      areaItems: [
+        {
+          label: "Wayne",
+          value: "12"
+        }
+      ],
+      sendEmail: false,
+      sendSms: true,
+      sendWeb: false,
       result: baseFilterCondition.result,
-    }
-
-    const res = await server
-      .put(`${path}/${ntId}`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send(payload)
-
-    assert.equal(res.status, 200)
+    })
   })
 })
