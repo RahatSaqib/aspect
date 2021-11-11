@@ -612,8 +612,6 @@ describe('Notification routes', () => {
   })
 
   it('PUT - Unexisting job function, should return error 400', async () => {
-    shared.checkToken(server, path)
-
     const res = await server
       .put(`${path}/${ntId}`)
       .set('Authorization', `Bearer ${shared.token}`)
@@ -634,9 +632,29 @@ describe('Notification routes', () => {
     )
   })
 
-  it('PUT - Correct payload, filterCondition should be updated properly', async () => {
-    shared.checkToken(server, path)
+  it('PUT - Existing person but without assigned user, should return error 400', async () => {
+    const personWithoutUser = await knex('Person').whereNull('userId').first()
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({
+        ...basePayload,
+        persons: [
+          {
+            personId: personWithoutUser.id,
+            checked: true,
+          },
+        ],
+      })
 
+    assert.equal(res.status, 400)
+    assert.equal(
+      res.body.message,
+      'Attempt to set persons without users to notification'
+    )
+  })
+
+  it('PUT - Correct payload, filterCondition should be updated properly', async () => {
     const res = await server
       .put(`${path}/${ntId}`)
       .set('Authorization', `Bearer ${shared.token}`)

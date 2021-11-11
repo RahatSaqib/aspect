@@ -643,6 +643,37 @@ async function getNotifications(request) {
   return { ok: true, total, data }
 }
 
+/**
+ * Does a deeper validation of the filterCondition object.
+ * @param {object} filterCondition The filterCondition object
+ * @returns true if filterCondition is correct, or a Boom object if a problem was detected
+ */
+const validateFilterCondition = async filterCondition => {
+  const { jobFunctions, persons } = filterCondition
+  if (jobFunctions) {
+    const jobFunctionsIds = jobFunctions.map(jf => jf.jobFunctionId)
+    const existingJobFunctions = await knex('JobFunction').whereIn(
+      'id',
+      jobFunctionsIds
+    )
+    if (jobFunctionsIds.length !== existingJobFunctions.length)
+      return Boom.badRequest(
+        'Attempt to set unexisting job function to notification'
+      )
+  }
+  if (persons) {
+    const personsIds = persons.map(p => p.personId)
+    const existingPersons = await knex('Person').whereIn('id', personsIds)
+    if (personsIds.length !== existingPersons.length)
+      return Boom.badRequest('Attempt to set unexisting person to notification')
+    if (existingPersons.filter(p => _.isNil(p.userId)).length > 0)
+      return Boom.badRequest(
+        'Attempt to set persons without users to notification'
+      )
+  }
+  return true
+}
+
 async function saveNotificationType({
   id: notificationTypeId,
   partnerId,
@@ -683,26 +714,12 @@ async function saveNotificationType({
   }
 
   return transact(async knex => {
-    // If jobFunctions or persons are defined, ensure they all exist
-    if (jobFunctions) {
-      const jobFunctionsIds = jobFunctions.map(jf => jf.jobFunctionId)
-      const existingJobFunctions = await knex('JobFunction').whereIn(
-        'id',
-        jobFunctionsIds
-      )
-      if (jobFunctionsIds.length !== existingJobFunctions.length)
-        return Boom.badRequest(
-          'Attempt to set unexisting job function to notification'
-        )
-    }
-    if (persons) {
-      const personsIds = persons.map(p => p.personId)
-      const existingPersons = await knex('Person').whereIn('id', personsIds)
-      if (personsIds.length !== existingPersons.length)
-        return Boom.badRequest(
-          'Attempt to set unexisting person to notification'
-        )
-    }
+    // TODO: add extra validations for the other filterCondition properties
+    const filterConditionValidation = await validateFilterCondition({
+      jobFunctions,
+      persons,
+    })
+    if (filterConditionValidation !== true) return filterConditionValidation
 
     /**
      * helpers
