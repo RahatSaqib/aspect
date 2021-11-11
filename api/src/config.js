@@ -81,6 +81,10 @@ module.exports = {
     email: process.env['admin.email'],
     cell: process.env['admin.cell'],
   },
+  manager: {
+    email: process.env['manager.email'],
+    cell: process.env['manager.cell'],
+  },
   plugin: {},
   webhook: {},
   scheduler: {

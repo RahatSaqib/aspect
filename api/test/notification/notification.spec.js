@@ -5,6 +5,7 @@ const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
+const config = require('../../src/config')
 const server = require('../utils/testUtils')
 const {
   dispatchAndWaitForAction,
@@ -295,7 +296,7 @@ describe('Result Notifications triggers', () => {
   })
 
   describe('Filter by JF', () => {
-    let inserted
+    let inserted = null
     before(async () => createTestContext(filterConditionWithJf))
     after(async () => {
       await removeTestContext()
@@ -323,6 +324,7 @@ describe('Result Notifications triggers', () => {
         .distinct()
       assert.equal(notifications.length, 1)
     })
+
     it('Should create or not a result based notification filtering by JobFunction and tags', async () => {
       ;[inserted] = await knex('Tag').insert([
         { partnerId: 1, title: 'oneTag' },
@@ -374,6 +376,48 @@ describe('Result Notifications triggers', () => {
         })
         .distinct()
       assert.equal(notifications.length, 1)
+    })
+  })
+
+  describe.only('Filter by Person', () => {
+    let adminId
+    let managerId
+
+    beforeEach(async () => {
+      ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
+      
+      const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
+      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
+      
+      const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
+      
+      // Notify to the Admin user - Send notification
+      // Notify to a Manager - Send notification
+      // Notify to an Admin - DO NOT send notification (the admin user was included as person)
+      // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
+      const filterConditions = {
+        ...filterConditionWithAssay,
+        persons: [{ personId: adminId }],
+        jobFunctions: [{ jobFunctionId: managerJobFunctionId }, { jobFunctionId: adminJobFunctionId }]
+      }
+      await createTestContext(filterConditions)
+    })
+
+    afterEach(removeTestContext)
+    
+    it('should create a result based notification for particular person and job function', async () => {
+      const resultId = insertedResultDetected
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct()
+      
+      assert.equal(notifications.length, 2)
+      const notificationToPerson = notifications.filter(n => n.personId === adminId)
+      const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
+      assert.isNotNull(notificationToPerson)
+      assert.isNotNull(notificationToJobFunction)
     })
   })
 
@@ -438,7 +482,7 @@ describe('Notification routes', () => {
   const path = '/api/notification'
   let ntId
   let notificationType
-
+  
   beforeEach(async () => {
     shared.checkToken(server, path)
     const messageType = await knex('MessageType').select().first()

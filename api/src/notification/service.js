@@ -231,9 +231,9 @@ async function createNotifications(knex, action, context) {
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
   let jobFunctionLevel = null
-  const { jobFunctions = [] } = filterCondition || {}
+  const { jobFunctions = [], persons = [] } = filterCondition || {}
   await Promise.each(policies, async policy => {
-    if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions)) {
+    if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions) && _.isEmpty(persons)) {
       await createNotificationIfNotCreatedAlready(
         action,
         { policy, now },
@@ -241,6 +241,7 @@ async function createNotifications(knex, action, context) {
       )
     } else {
       if (_.isEmpty(jobFunctions) && policy.jobFunctionId)
+      {
         if (policy.jobFunctionId !== jobFunctionId) {
           ;({ jobFunctionId, level: jobFunctionLevel } = policy)
         } else if (policy.level !== jobFunctionLevel) {
@@ -249,9 +250,10 @@ async function createNotifications(knex, action, context) {
           /* eslint-disable no-continue */
           return Promise.resolve()
         }
+      }
 
       const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(knex, policy, tags, jobFunctions)
+      const people = await getPeopleToNotify(knex, policy, tags, jobFunctions, persons)
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
@@ -381,9 +383,10 @@ async function getNotificationPolicy(
   return records
 }
 
-async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
-  const people = txKnex('Job as j')
-    .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
+  const people = txKnex('Person as p')
+    .innerJoin('Job as j', 'p.id', 'j.personId')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
     .modify(queryBuilder => {
       if (policy.sendToContactsWithMatchingTags) {
@@ -406,8 +409,15 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
           })
         })
       }
+      if (!_.isEmpty(persons)) {
+        queryBuilder.orWhere(pBuilder => {
+          _.each(persons, ({ personId }) => {
+            pBuilder.orWhere(builder => builder.where('p.id', personId))
+          })
+        })
+      }
     })
-    .distinct('j.personId as id', 'j.jobFunctionId')
+    .distinct('p.id as id', 'j.jobFunctionId')
   return people
 }
 

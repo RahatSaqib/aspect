@@ -42,7 +42,7 @@ describe('notification endpoints', () => {
   describe('check validations for saving notification', () => {
     let payload
     let validation
-    const schema = Joi.object(resultBasedNotificationPayload)
+    const schema = resultBasedNotificationPayload
     const payloadRaw = {
       notificationType: 'resultBased',
       name: 'test name',
@@ -278,11 +278,36 @@ describe('notification endpoints', () => {
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
       })
+
       it('wrong jobFunctions - []', async () => {
         payload = {
           ...payloadGood,
           jobFunctions: [],
         }
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
+
+      it('wrong persons - null', async () => {
+        payload = {
+          ...payloadGood,
+          persons: null,
+        }
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
+
+      it('wrong persons - []', async () => {
+        payload = {
+          ...payloadGood,
+          persons: [],
+        }
+        validation = schema.validate(payload)
+        assert.isDefined(validation.error)
+      })
+
+      it('wrong jobFunctions and persons - both undefined', async () => {
+        payload = _.omit(payloadGood, ['jobFunctions', 'persons'])
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
       })
