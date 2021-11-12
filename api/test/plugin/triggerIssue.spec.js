@@ -519,7 +519,7 @@ describe('This test suite is for testing different triggers conditions', async (
           assert.equal(issues.length, 1)
         })
         if (temporarySuppression) {
-          it(`Should create an issue because it has previous issue with some specific suppression code created 30 days before`, async () => {
+          it(`Should create an issue because it has previous issue with some specific suppression code created more than 30 days before`, async () => {
             const { deviceAuth } = context
 
             const issueTypeId = await issueTypeToId(issueTypeModule)
