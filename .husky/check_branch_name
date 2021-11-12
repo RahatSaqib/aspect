@@ -7,6 +7,8 @@ message="Branch name should match ($regex)/(branch-kebab-case-name) and not be l
 if [[ ! $local_branch_name =~ $valid_branch_regex ]]; then
     echo "$local_branch_name fails linting ❌"
     echo "$message"
+    echo "For renaming the current branch please use"
+    echo "git branch -m <newname>"
     exit 1
 fi
 

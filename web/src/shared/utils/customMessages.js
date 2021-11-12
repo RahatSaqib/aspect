@@ -63,6 +63,14 @@ export const commonDefinitions = defineMessages({
     id: 'pages.common.lga_PK',
     defaultMessage: 'District',
   },
+  lga_BD: {
+    id: 'pages.common.lga_BD',
+    defaultMessage: 'District',
+  },
+  state_BD: {
+    id: 'pages.common.state_BD',
+    defaultMessage: 'Division',
+  },
 })
 
 export function getCustomMessage(messages, key, user, params) {
