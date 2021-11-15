@@ -399,9 +399,9 @@ describe('Result Notifications triggers', () => {
         .where({ externalId: 'admin' })
         .pluck('id')
 
-      // Notify to the Admin user - Send notification
-      // Notify to a Manager - Send notification
-      // Notify to an Admin - DO NOT send notification (the admin user was included as person)
+      // Notify to the person called "Admin" - Send notification
+      // Notify to a person assigned to the job function "Manager" - Send notification
+      // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
       const filterConditions = {
         ...filterConditionWithAssay,
