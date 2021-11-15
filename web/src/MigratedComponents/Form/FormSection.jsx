@@ -2,28 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
 import { FieldArray, useFormikContext } from 'formik'
-import range from 'lodash/range'
 
+import { getVisibleRows } from './Formik/Helpers/index'
 import FormSectionRow from './FormSectionRow'
 import messagesBase from './messages'
-
-const getVisibleRows = (rows, formik) => {
-  return rows.map(row => {
-    const { values } = formik
-    if (row.visibleIf && !row.visibleIf(values)) {
-      // row is hidden explicitly
-      return false
-    }
-    // row is visible if at least one item is visible
-    const { isMulti, id: rowId } = row
-    const itemsVisible = row.items.map(({ visibleIf }) =>
-      range(isMulti ? values[rowId].length : 1)
-        .map(subRowIndex => (visibleIf ? visibleIf(values, subRowIndex) : true))
-        .includes(true)
-    )
-    return itemsVisible.includes(true)
-  })
-}
 
 const FormSection = ({
   classNames,
@@ -33,12 +15,16 @@ const FormSection = ({
   visibleIf,
   parentKey,
 }) => {
-  const { formik } = useFormikContext()
+  const { formik, toggleEdit } = useFormikContext()
 
   // check if section is visible
-  const isSectionVisible = visibleIf ? visibleIf(formik.values) : true
+  const isSectionVisible = visibleIf
+    ? visibleIf(formik.values, toggleEdit)
+    : true
   // check if rows are visible
-  const visibleRows = isSectionVisible ? getVisibleRows(rows, formik) : []
+  const visibleRows = isSectionVisible
+    ? getVisibleRows(rows, formik.values, toggleEdit)
+    : []
 
   return isSectionVisible ? (
     <Grid item xs={fullWidth ? 12 : 10}>

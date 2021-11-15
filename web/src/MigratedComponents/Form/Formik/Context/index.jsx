@@ -19,7 +19,7 @@ export const FormikProvider = ({ config, children }) => {
     validateOnMount: false,
     validationSchema,
     onSubmit: values => {
-      const payload = sanitizeFormValues(values, { meta })
+      const payload = sanitizeFormValues(values, { formConfig: config })
       console.log(JSON.stringify(payload, null, 2)) // eslint-disable-line no-console
     },
   }
@@ -31,7 +31,7 @@ export const FormikProvider = ({ config, children }) => {
      *    - define all visible fields and
      *    - register in formik all visible fields with validators
      */
-    registerVisibleFields(initialValues, formik)
+    registerVisibleFields(initialValues, formik, toggleEdit)
     /**
      * 2. validate form to populate formik.errors
      */
@@ -47,6 +47,7 @@ export const FormikProvider = ({ config, children }) => {
         toggleEdit,
         updateField,
         meta,
+        validationSchema,
       }}
     >
       {children}

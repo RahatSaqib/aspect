@@ -24,25 +24,14 @@ export const getFormConfigWithData = (
   )
   const { name } = getNotificationMeta(notificationType, intl)
   const initialValues = {
-    ...getInitialValuesFromFormConfig(formSchema),
+    ...getInitialValuesFromFormConfig(formSchema, values),
     notificationTypeName: notificationTypeName || name, // to display as read-only field
     notificationType, // to keep in formik.values as hidden field
   }
-
-  const mergedValues = { ...initialValues, ...values }
-  if (isEdit) {
-    mergedValues.jobFunctions = initialValues.jobFunctions.map(item => {
-      const foundJF = values.jobFunctions.filter(
-        jf => jf.jobFunctionId === item.jobFunctionId
-      )
-      return foundJF && foundJF.length ? foundJF[0] : item
-    })
-  }
-
   return {
-    ...mergeFormConfigWithData(mergedValues, formSchema, messages),
+    ...mergeFormConfigWithData(initialValues, formSchema, messages),
     validationSchema,
-    values: mergedValues,
+    values: initialValues,
   }
 }
 

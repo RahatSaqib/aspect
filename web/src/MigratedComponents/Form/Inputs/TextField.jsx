@@ -19,9 +19,9 @@ const AspectTextField = ({
   validate,
   ...rest
 }) => {
-  const { updateField } = useFormikContext()
+  const { updateField, toggleEdit } = useFormikContext()
   const onChangeLocal = event => {
-    updateField(rest.id, event.target.value, formik)
+    updateField(rest.id, event.target.value, { formik, toggleEdit })
   }
 
   return (

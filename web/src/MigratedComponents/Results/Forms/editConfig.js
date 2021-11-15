@@ -1,21 +1,71 @@
+import { SITE_ALL } from '../../QueryFetch/Site'
+import SAMPLE_TYPES from '../../QueryFetch/SampleType'
+import {
+  getBaseOptions,
+  siteProps,
+  stateProps,
+  lgaProps,
+  deviceProps,
+  assayProps,
+  resultCategoryControlType,
+} from './utils'
+
 import messages from '../Detail/messages'
 
-const getConfig = formatMessage => {
+const getConfig = (formatMessage, isNew) => {
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',
     actions: {
-      default: 'edit',
+      default: isNew ? 'save' : 'edit',
       helpers: '',
       items: [
+        /**
+         * define custom buttons - their id's are used to set up
+         * `isVisible` and `onClick` props
+         */
+        {
+          id: 'back',
+          text: formatMessage(messages.button_Back, 'Back to List'),
+          action: 'backToList',
+          ui: {
+            variant: 'outlined',
+          },
+          isVisible: (permissions, isEditMode) => !isNew && !isEditMode,
+          returnUrl: `/browse/result`,
+        },
         {
           id: 'transfer',
           text: formatMessage(messages.transferResult),
-          action: 'transferResult',
+        },
+        /**
+         * define generic buttons
+         */
+        {
+          id: 'edit',
+          text: formatMessage(messages.button_Edit, 'Edit'),
+          action: 'enableEdit',
+        },
+        {
+          id: 'save',
+          text: formatMessage(messages.button_Submit, 'Submit'),
+          action: 'saveResult',
+        },
+        {
+          id: 'cancel',
+          text: formatMessage(messages.button_Cancel, 'Cancel'),
+          action: 'cancelEdit',
+          ui: {
+            variant: 'outlined',
+          },
+          returnUrl: isNew ? `/browse/result` : null,
         },
       ],
     },
     sections: [
+      /**
+       * non-editable fields in Update mode
+       */
       {
         id: 'Site',
         label: 'Site',
@@ -24,37 +74,22 @@ const getConfig = formatMessage => {
           {
             id: 10,
             items: [
-              {
-                id: 'siteName',
-                controlType: {
-                  component: 'textField',
-                },
-                type: 'readOnly',
+              ...stateProps(isNew, {
+                label: 'State',
+                labelI18nKey: 'state',
+              }),
+              ...lgaProps(isNew, {
+                label: 'LGA',
+                labelI18nKey: 'lga',
+              }),
+              ...siteProps(isNew, {
                 label: 'Site Name',
                 labelI18nKey: 'siteName',
                 link: {
                   key: 'siteId',
                   url: '/browse/site/:siteId',
                 },
-              },
-              {
-                id: 'lgaName',
-                controlType: {
-                  component: 'textField',
-                },
-                type: 'readOnly',
-                label: 'City',
-                labelI18nKey: 'city',
-              },
-              {
-                id: 'stateName',
-                controlType: {
-                  component: 'textField',
-                },
-                type: 'readOnly',
-                label: 'State',
-                labelI18nKey: 'state',
-              },
+              }),
             ],
           },
         ],
@@ -67,36 +102,38 @@ const getConfig = formatMessage => {
           {
             id: 20,
             items: [
-              {
-                id: 'deviceName',
-                controlType: {
-                  component: 'textField',
-                },
-                type: 'readOnly',
+              ...deviceProps(isNew, {
                 label: 'Device Name',
                 labelI18nKey: 'deviceName',
                 link: {
                   key: 'deviceId',
                   url: '/browse/device/:deviceId',
                 },
-              },
+              }),
               {
                 id: 'deviceType',
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
-                label: 'Device Type',
                 labelI18nKey: 'deviceType',
+                type: 'readOnly',
+                visibleIf: values => !!values.deviceId,
+              },
+              {
+                id: 'deviceTypeId',
+                controlType: {
+                  component: 'hidden',
+                },
               },
               {
                 id: 'deviceSerial',
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Device Serial',
                 labelI18nKey: 'deviceSerial',
+                type: 'readOnly',
+                visibleIf: values => !!values.deviceId,
               },
             ],
           },
@@ -110,19 +147,17 @@ const getConfig = formatMessage => {
           {
             id: 30,
             items: [
-              {
-                id: 'assayName',
-                controlType: {
-                  component: 'textField',
-                },
+              ...assayProps(isNew, {
                 label: 'Assay',
                 labelI18nKey: 'assay',
-                type: 'readOnly',
-              },
+              }),
             ],
           },
         ],
       },
+      /**
+       * editable fields in both Create and Update
+       */
       {
         id: 'Result',
         label: 'Result',
@@ -132,20 +167,19 @@ const getConfig = formatMessage => {
             id: 40,
             items: [
               {
-                id: 'resultCategory1Name',
+                id: 'resultCategory1',
                 controlType: {
-                  component: 'textField',
+                  ...resultCategoryControlType(formatMessage),
                 },
-                type: 'readOnly',
                 label: 'resultCategory1Label',
               },
               {
-                id: 'resultCategory2Name',
+                id: 'resultCategory2',
                 controlType: {
-                  component: 'textField',
+                  ...resultCategoryControlType(formatMessage),
+                  isClearable: true,
                 },
                 label: 'resultCategory2Label',
-                type: 'readOnly',
                 hideIfNull: true,
               },
               {
@@ -154,8 +188,8 @@ const getConfig = formatMessage => {
                   component: 'textField',
                 },
                 label: 'Detected Resistance',
-                type: 'readOnly',
                 hideIfNull: true,
+                visibleIf: (values, isEditMode) => !isNew && !isEditMode,
               },
               {
                 id: 'fullResultText',
@@ -164,7 +198,7 @@ const getConfig = formatMessage => {
                 },
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
-                type: 'readOnly',
+                visibleIf: (values, isEditMode) => !isEditMode,
               },
             ],
           },
@@ -176,16 +210,16 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'string',
                 label: 'Error Code',
                 labelI18nKey: 'errorCode',
               },
               {
                 id: 'notes',
                 controlType: {
-                  component: 'textField',
+                  component: 'textArea',
+                  rowsMax: 5,
+                  rows: 3,
                 },
-                type: 'string',
                 label: 'Notes',
                 labelI18nKey: 'notes',
               },
@@ -204,8 +238,10 @@ const getConfig = formatMessage => {
               {
                 id: 'startedOn',
                 controlType: {
-                  component: 'datePicker',
+                  component: 'dateTimePicker',
                   format: 'dd MMM yyyy hh:mm',
+                  timeIntervals: 1,
+                  isClearable: true,
                 },
                 type: 'string',
                 label: 'Start Date',
@@ -214,7 +250,10 @@ const getConfig = formatMessage => {
               {
                 id: 'endedOn',
                 controlType: {
-                  component: 'datePicker',
+                  component: 'dateTimePicker',
+                  format: 'dd MMM yyyy hh:mm',
+                  timeIntervals: 1,
+                  isClearable: true,
                 },
                 type: 'string',
                 label: 'End Date',
@@ -237,16 +276,23 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Sample ID',
                 labelI18nKey: 'sampleId',
               },
               {
-                id: 'sampleTypeName',
+                id: 'sampleTypeId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: SAMPLE_TYPES.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: SAMPLE_TYPES.KEY,
+                  normalizeLoadedData: response =>
+                    getBaseOptions(response, {
+                      formatMessage,
+                      propNameForI18n: 'i18nKey',
+                    }),
+                  isClearable: true,
                 },
-                type: 'readOnly',
                 label: 'Sample Type',
                 labelI18nKey: 'sampleType',
               },
@@ -256,7 +302,6 @@ const getConfig = formatMessage => {
                   component: 'datePicker',
                   format: 'dd MMM yyyy hh:mm',
                 },
-                type: 'readOnly',
                 label: 'Collected On',
                 labelI18nKey: 'collectedOn',
               },
@@ -266,11 +311,15 @@ const getConfig = formatMessage => {
             id: 61,
             items: [
               {
-                id: 'sampleOriginSiteName',
+                id: 'sampleOriginSiteId',
                 controlType: {
-                  component: 'textField',
+                  component: 'select',
+                  endpoint: SITE_ALL.ENDPOINT,
+                  hideIfNoOptions: false,
+                  queryKey: SITE_ALL.KEY,
+                  normalizeLoadedData: response => getBaseOptions(response),
+                  isClearable: true,
                 },
-                type: 'readOnly',
                 label: 'Sample Collection Site',
                 labelI18nKey: 'sampleCollectionSite',
               },
@@ -279,7 +328,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Collected By',
                 labelI18nKey: 'collectedBy',
               },
@@ -288,9 +336,15 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Reportable Site',
                 labelI18nKey: 'reportableSite',
+                type: 'readOnly',
+              },
+              {
+                id: 'reportableSiteId',
+                controlType: {
+                  component: 'hidden',
+                },
               },
             ],
           },
@@ -309,7 +363,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'string',
                 label: 'Patient ID',
                 labelI18nKey: 'patientId',
               },
@@ -318,7 +371,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'string',
                 label: 'Case ID',
                 labelI18nKey: 'caseId',
               },
@@ -330,6 +382,7 @@ const getConfig = formatMessage => {
         id: 'TechicalDetails',
         label: 'Technical Details',
         labelI18nKey: 'technicalDetails',
+        visibleIf: (values, isEditMode) => !isEditMode,
         rows: [
           {
             id: 80,
@@ -339,7 +392,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Instrument Serial',
                 labelI18nKey: 'instrumentSerial',
               },
@@ -348,7 +400,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Module Name',
                 labelI18nKey: 'moduleName',
               },
@@ -357,7 +408,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Module Serial',
                 labelI18nKey: 'moduleSerial',
               },
@@ -371,7 +421,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'datePicker',
                 },
-                type: 'readOnly',
                 label: 'Consumable Expiration Date',
                 labelI18nKey: 'consumableExpirationDate',
               },
@@ -380,7 +429,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Consumable Lot',
                 labelI18nKey: 'consumableLot',
               },
@@ -389,7 +437,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Consumable Serial',
                 labelI18nKey: 'consumableSerial',
               },
@@ -408,7 +455,6 @@ const getConfig = formatMessage => {
                 controlType: {
                   component: 'textField',
                 },
-                type: 'readOnly',
                 label: 'Sender Operator',
                 labelI18nKey: 'senderOperator',
               },

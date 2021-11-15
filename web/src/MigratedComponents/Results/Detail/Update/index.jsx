@@ -5,8 +5,9 @@ import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
 import findIndex from 'lodash/findIndex'
+
+import useI18n from '../../../../Hooks/i18n/useI18n'
 import { FormikProvider } from '../../../Form/Formik/Context'
-import { mergeFormConfigWithData } from '../../../Form/Formik/Helpers'
 import AspectForm from '../../../Form'
 import FormActions from '../../../Form/formActions'
 import Shell from '../../../Shell'
@@ -17,21 +18,27 @@ import { RESULT_DETAIL } from '../../../QueryFetch/Result'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
+import { getFormConfigWithData } from '../utils'
 
-const AspectResultDetail = ({ formSchema, resultId }) => {
-  const [patienId, setPatientId] = useState()
-  const [formData, setFormData] = useState(false)
+const AspectResultDetail = ({ resultId, onSubmit }) => {
+  const intl = useI18n()
+  const [patientId, setPatientId] = useState()
+  const [values, setValues] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
 
-  const { isLoading, isError, error } = useQuery(
+  const {
+    data: queryResponse,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
     async ({ queryKey: [, { resultId }] }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
         customErrorNotifications: ResultDetailsErrors,
-      }),
-    { onSuccess: setFormData }
+      })
   )
 
   if (isError) {
@@ -39,25 +46,36 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
   }
 
   useEffect(() => {
-    // define few extra props for `transfer` button
-    const action = formSchema.actions.items.find(x => x.id === 'transfer')
-    action.onClick = () => setTransferResultOpen(true)
-    action.isVisible = (permissions, isEditMode) => {
-      return (
-        !isEditMode &&
-        // eslint-disable-next-line lodash/prefer-some
-        findIndex(permissions, elem => elem === 'result:edit') >= 0
-      )
-    }
-  }, [])
+    if (isLoading || !queryResponse) return
+    if (queryResponse?.ok) {
+      const { data } = queryResponse
+      if (data.resultCategory1) {
+        data.resultCategory1 = `${data.resultCategory1}`
+      }
+      if (data.resultCategory2) {
+        data.resultCategory2 = `${data.resultCategory2}`
+      }
 
-  useEffect(() => {
-    if (formData) {
-      const { data } = formData
       setPatientId(data.patientId)
-      setFormConfig(mergeFormConfigWithData(data, formSchema))
+
+      const config = getFormConfigWithData(intl, false, data)
+
+      const action = config.actions.items.find(x => x.id === 'transfer')
+      action.onClick = () => setTransferResultOpen(true)
+      action.isVisible = (permissions, isEditMode) => {
+        return (
+          !isEditMode &&
+          // eslint-disable-next-line lodash/prefer-some
+          findIndex(permissions, elem => elem === 'result:edit') >= 0
+        )
+      }
+
+      setFormConfig(config)
+      setValues(data)
+    } else {
+      throw new Error('Can not fetch data for result')
     }
-  }, [formData])
+  }, [isLoading, queryResponse])
 
   return (
     <Shell>
@@ -65,16 +83,16 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
         <FormikProvider config={formConfig}>
           <ShellHeader
             icon={FaNotesMedical}
-            title={`${formConfig.title}: ${patienId}`}
+            title={`${formConfig.title}: ${patientId}`}
           >
-            <FormActions config={formConfig} />
+            <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>
             <AspectForm config={formConfig} />
           </ShellContent>
           <ShellFooter />
           <ResultTransferModal
-            data={formData.data}
+            data={values}
             isOpen={isTransferResultOpenOpen}
             onClose={() => setTransferResultOpen(false)}
           />
@@ -87,8 +105,8 @@ const AspectResultDetail = ({ formSchema, resultId }) => {
 }
 
 AspectResultDetail.propTypes = {
-  formSchema: PropTypes.oneOfType([PropTypes.object]).isRequired,
   resultId: PropTypes.number.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 export default AspectResultDetail
