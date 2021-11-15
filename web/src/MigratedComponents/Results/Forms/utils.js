@@ -63,8 +63,11 @@ export const siteProps = (isNew, props) => {
       ...props,
       id: 'siteId',
       controlType: {
+        /**
+         * TODO: replace `select` to `autoComplete` new field which should be implemented
+         * in https://ops.systemone.id/browse/ASP-2349
+         */
         component: 'select',
-        // component: 'autoComplete',
         endpoint: SITE_ALL.ENDPOINT,
         hideIfNoOptions: false,
         queryKey: SITE_ALL.KEY,

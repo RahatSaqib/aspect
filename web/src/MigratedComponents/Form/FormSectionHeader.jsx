@@ -1,16 +1,15 @@
 import React from 'react'
-// import { defineMessages, useIntl } from 'react-intl'
-import { useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 
+import useI18n from '../../Hooks/i18n/useI18n'
 import styles from './Form.css'
 
 const cssClasses = classnames.bind(styles)
 
 const FormSectionHeader = ({ classNames, header, headerI18nKey, messages }) => {
-  const intl = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <Grid
       item
@@ -19,7 +18,7 @@ const FormSectionHeader = ({ classNames, header, headerI18nKey, messages }) => {
         [classNames.sectionHeader]: !!classNames.sectionHeader,
       })}
     >
-      {headerI18nKey ? intl.formatMessage(messages[headerI18nKey]) : header}
+      {headerI18nKey ? formatMessage(messages[headerI18nKey]) : header}
     </Grid>
   )
 }
