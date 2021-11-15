@@ -632,8 +632,11 @@ describe('Notification routes', () => {
     )
   })
 
-  it('PUT - Existing person but without assigned user, should return error 400', async () => {
-    const personWithoutUser = await knex('Person').whereNull('userId').first()
+  it('PUT - Existing person but without assigned job, should return error 400', async () => {
+    const personWithoutJob = await knex('Person as p')
+      .leftJoin('Job as j', 'p.id', 'j.personId')
+      .whereNull('j.id')
+      .first('p.*')
     const res = await server
       .put(`${path}/${ntId}`)
       .set('Authorization', `Bearer ${shared.token}`)
@@ -641,7 +644,7 @@ describe('Notification routes', () => {
         ...basePayload,
         persons: [
           {
-            personId: personWithoutUser.id,
+            personId: personWithoutJob.id,
             checked: true,
           },
         ],
@@ -650,7 +653,7 @@ describe('Notification routes', () => {
     assert.equal(res.status, 400)
     assert.equal(
       res.body.message,
-      'Attempt to set persons without users to notification'
+      'Attempt to set to notifications persons without assigned jobs'
     )
   })
 

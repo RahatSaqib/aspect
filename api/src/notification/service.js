@@ -663,12 +663,16 @@ const validateFilterCondition = async filterCondition => {
   }
   if (persons) {
     const personsIds = persons.map(p => p.personId)
-    const existingPersons = await knex('Person').whereIn('id', personsIds)
+    const existingPersons = await knex('Person as p')
+      .leftJoin('Job as j', 'p.id', 'j.personId')
+      .whereIn('p.id', personsIds)
+      .groupBy('p.id')
+      .select(['p.id as personId', knex.raw('COUNT(j.id) as numberOfJobs')])
     if (personsIds.length !== existingPersons.length)
       return Boom.badRequest('Attempt to set unexisting person to notification')
-    if (existingPersons.filter(p => _.isNil(p.userId)).length > 0)
+    if (existingPersons.filter(p => _.isNil(p.numberOfJobs) || p.numberOfJobs === 0).length > 0)
       return Boom.badRequest(
-        'Attempt to set persons without users to notification'
+        'Attempt to set to notifications persons without assigned jobs'
       )
   }
   return true
