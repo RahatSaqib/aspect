@@ -740,6 +740,22 @@
           }
         }
       }
+    },
+    {
+      "issueType": "HardwareModuleWasReset",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "HARDWARE_MODULE_WAS_RESET",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeDeviceHardwareError",
+          "evaluationFilterParameters": {
+            "errorCodes": [2126],
+            "daysPeriod": 30,
+            "minErrors": 3
+          }
+        }
+      }
     }
   ]
 }
