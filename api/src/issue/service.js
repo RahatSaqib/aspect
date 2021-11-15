@@ -93,88 +93,100 @@ function onIssueEvent(actionParametersList) {
             filterIssueCondition = null,
           } = actionParameters
 
-          const shouldTriggerEvent = await actionConditionsMet(
-            knex,
-            action,
-            partnerId,
-            JSON.parse(triggerConditions).conditions
-          )
-          logger.debug(
-            {
-              action_type: action.type,
-              shouldTriggerEvent,
-              issueEventStatus: actionParameters.issueEventStatus,
-            },
-            { reLabel: 'issues:onIssueEvent' }
-          )
-          if (shouldTriggerEvent) {
-            const now = new Date()
-            const openIssue = await findOpenIssue(
+          const shouldSuppressEventTriggering = JSON.parse(triggerConditions)
+            .suppressingConditions
+            ? await actionConditionsMet(
+                knex,
+                action,
+                partnerId,
+                JSON.parse(triggerConditions).suppressingConditions || {}
+              )
+            : false
+
+          if (!shouldSuppressEventTriggering) {
+            const shouldTriggerEvent = await actionConditionsMet(
               knex,
-              issueType,
               action,
-              JSON.parse(filterIssueCondition)
+              partnerId,
+              JSON.parse(triggerConditions).conditions
             )
             logger.debug(
               {
                 action_type: action.type,
                 shouldTriggerEvent,
                 issueEventStatus: actionParameters.issueEventStatus,
-                openIssue,
               },
               { reLabel: 'issues:onIssueEvent' }
             )
-            let issue = null
-            if (openIssue) {
-              // ----------------------
-              // check special usecase
-              const { type, options = {} } = action
-              if (type === 'INVENTORY_STOCKOUT') {
-                // get new value for daysDue
-                const { daysDue: daysDueNew } = options
-                // get stringified json of saved action.options from last time
-                const { data } = openIssue
-                if (data) {
-                  const d = JSON.parse(data)
-                  // get old value for daysDue
-                  const { daysDue: daysDueOld } = d || {}
-                  // if new and old values are 0 - exit because it means we already triggered issue after StockLevel = 0
-                  // (i.e. daysDueOld is already 0) and no need to re-trigger it and update Issue table with new value of
-                  // 'data' column with today's date (which is used then to refresh message in AlertMessage table).
-                  // This is what customer requested to not happen, see jira ticket SD-804 for details
-                  if (daysDueOld === 0 && daysDueNew === 0) {
-                    return
-                  }
-                }
-              }
-              // ----------------------
-              issue = await mergeActionData(knex, openIssue, action)
-            } else {
+            if (shouldTriggerEvent) {
+              const now = new Date()
+              const openIssue = await findOpenIssue(
+                knex,
+                issueType,
+                action,
+                JSON.parse(filterIssueCondition)
+              )
               logger.debug(
                 {
                   action_type: action.type,
                   shouldTriggerEvent,
-                  openIssue,
                   issueEventStatus: actionParameters.issueEventStatus,
-                  willCreateIssue: true,
+                  openIssue,
                 },
                 { reLabel: 'issues:onIssueEvent' }
               )
-              issue = await createNewIssue(knex, issueType, action)
-              if (issue != null) {
-                context.issueCreated(issue.id)
+              let issue = null
+              if (openIssue) {
+                // ----------------------
+                // check special usecase
+                const { type, options = {} } = action
+                if (type === 'INVENTORY_STOCKOUT') {
+                  // get new value for daysDue
+                  const { daysDue: daysDueNew } = options
+                  // get stringified json of saved action.options from last time
+                  const { data } = openIssue
+                  if (data) {
+                    const d = JSON.parse(data)
+                    // get old value for daysDue
+                    const { daysDue: daysDueOld } = d || {}
+                    // if new and old values are 0 - exit because it means we already triggered issue after StockLevel = 0
+                    // (i.e. daysDueOld is already 0) and no need to re-trigger it and update Issue table with new value of
+                    // 'data' column with today's date (which is used then to refresh message in AlertMessage table).
+                    // This is what customer requested to not happen, see jira ticket SD-804 for details
+                    if (daysDueOld === 0 && daysDueNew === 0) {
+                      return
+                    }
+                  }
+                }
+                // ----------------------
+                issue = await mergeActionData(knex, openIssue, action)
+              } else {
+                logger.debug(
+                  {
+                    action_type: action.type,
+                    shouldTriggerEvent,
+                    openIssue,
+                    issueEventStatus: actionParameters.issueEventStatus,
+                    willCreateIssue: true,
+                  },
+                  { reLabel: 'issues:onIssueEvent' }
+                )
+                issue = await createNewIssue(knex, issueType, action)
+                if (issue != null) {
+                  context.issueCreated(issue.id)
+                }
               }
-            }
 
-            await knex('IssueEvent').insert({
-              issueId: issue == null ? null : issue.id,
-              issueEventStatusId: await issueEventStatusToId('Triggered'),
-              data: JSON.stringify(action),
-              createdOn: now,
-            })
+              await knex('IssueEvent').insert({
+                issueId: issue == null ? null : issue.id,
+                issueEventStatusId: await issueEventStatusToId('Triggered'),
+                data: JSON.stringify(action),
+                createdOn: now,
+              })
 
-            if (issue != null) {
-              context.issueTriggered(issue.id)
+              if (issue != null) {
+                context.issueTriggered(issue.id)
+              }
             }
           }
         } else if (actionParameters.issueEventStatus === 'Resolved') {
