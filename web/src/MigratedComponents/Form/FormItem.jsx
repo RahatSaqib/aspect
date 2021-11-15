@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 import { useFormikContext } from 'formik'
+import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -34,12 +35,24 @@ const FormItem = ({
   const { formik, toggleEdit } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && isEmpty(value))
+  let isVisible = !(hideIfNull && isEmpty(value) && !toggleEdit)
   if (isVisible && visibleIf) {
-    isVisible = visibleIf(formik.values, subRowIndex)
+    isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }
 
+  /**
+   * TODO: change below isRequired and get actual `required` prop from
+   * validationSchema - notice that some fields in validationSchema are
+   * defined with conditions and/or in deep structure via Yup.array()
+   */
+  const isRequired = !!get(formik.errors, id) && !get(formik.touched, id)
+
   const i18nTools = { messages, formatMessage, formik }
+  const { component } = controlType || {}
+
+  if (component === 'hidden') {
+    return <input type="hidden" name={id} id={id} />
+  }
 
   return isVisible ? (
     <Grid
@@ -56,11 +69,11 @@ const FormItem = ({
         id={id}
         input={type}
         controlType={{ ...controlType, subRowIndex }}
-        label={getLabel({
+        label={`${getLabel({
           ...i18nTools,
           labelI18nKey,
           label,
-        })}
+        })}${isRequired ? '*' : ''}`}
         link={link}
         placeholder={getFormattedString(placeholder, i18nTools, ' - ')}
         className={cssClasses('form__sectionItemInput', {
@@ -72,6 +85,7 @@ const FormItem = ({
         fullWidth
         InputProps={{
           readOnly: !toggleEdit,
+          // is used for TextField, TextArea, Select
           disabled: !toggleEdit || type === 'readOnly',
           disableUnderline: !toggleEdit || type === 'readOnly',
         }}

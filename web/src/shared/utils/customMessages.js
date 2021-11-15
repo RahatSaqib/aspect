@@ -70,6 +70,22 @@ export const commonDefinitions = defineMessages({
   state_BD: {
     id: 'pages.common.state_BD',
     defaultMessage: 'Division',
+   },                                   
+  button_Edit: {
+    id: 'button_Edit',
+    defaultMessage: 'Edit',
+  },
+  button_Cancel: {
+    id: 'button_Cancel',
+    defaultMessage: 'Cancel',
+  },
+  button_Submit: {
+    id: 'button_Submit',
+    defaultMessage: 'Submit',
+  },
+  button_Back: {
+    id: 'button_Back',
+    defaultMessage: 'Back',
   },
 })
 

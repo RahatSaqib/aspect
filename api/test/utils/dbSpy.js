@@ -18,6 +18,7 @@ function buildKnexSpy(resolveWith) {
     }
   }
   knexSpy.modify = returnKnexStub
+  sinon.spy(knexSpy, 'modify')
   return knexSpy
 }
 
