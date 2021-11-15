@@ -89,7 +89,7 @@ function resultUpdated(resultId, deviceLogId, userId) {
 }
 
 const obtainProperAction = (
-  moduleSerial,
+  consumableLot,
   {
     errorCode = null,
     resultCategoryId, // <-- this is result category externalid
@@ -109,59 +109,60 @@ const obtainProperAction = (
     case 5015:
     case 5016:
     case 'INVALID':
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_INVALIDS_MODULE
         : types.RESULT_ANALYZE_INVALIDS_LOT
 
     case 2005:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_MODULE
         : types.RESULT_ANALYZE_SYRINGE_STALL_ERROR_LOT
     case 2008:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE
         : types.RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_LOT
+
     case 2026:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_MODULE
         : types.RESULT_ANALYZE_ULTRASONIC_HORN_CURRENT_OUT_RANGE_LOT
 
     case 2032:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_MODULE
         : types.RESULT_ANALYZE_ULTRASONIC_HORN_TUNING_ERROR_LOT
     case 2035:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_MODULE
         : types.RESULT_ANALYZE_ULTRASONIC_HORN_FAILURE_LOT
     case 2037:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_MODULE
         : types.RESULT_ANALYZE_CARTRIDGE_INTEGRITY_TEST_FAILURE_LOT
     case 2096:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_MODULE
         : types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_ERROR_LOT
     case 2097:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_MODULE
         : types.RESULT_ANALYZE_ASSAY_SPECIFIC_TERMINATION_LOT
     case 5011:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_MODULE
         : types.RESULT_ANALYZE_SIGNAL_LOSS_AMP_CURVE_LOT
     case 5006:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_PROBES_HIGH_MODULE
         : types.RESULT_ANALYZE_PROBES_HIGH_LOT
     case 5007:
     case 5017:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_PROBES_FAILED_MODULE
         : types.RESULT_ANALYZE_PROBES_FAILED_LOT
 
     default:
-      return moduleSerial
+      return !consumableLot
         ? types.RESULT_ANALYZE_PROBES_MODULE
         : types.RESULT_ANALYZE_PROBES_LOT
   }
@@ -198,9 +199,8 @@ function resultAnalyzeCategoriesAndErrors(
       'Must specify deviceId and resultCategoryId for resultAnalyzeInvalids'
     )
   }
-  const moduleSerial = _.get(data, 'moduleSerial')
-
-  const actionType = obtainProperAction(moduleSerial, {
+  const consumableLot = _.get(data, 'consumableLot')
+  const actionType = obtainProperAction(consumableLot, {
     resultCategoryId, // <-- this is result category externalid
     errorCode: resultErrorCode,
   })
