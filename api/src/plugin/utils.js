@@ -82,7 +82,13 @@ async function shouldTriggerResultErrorAnalysis(
     resultId,
     resultCategory1, // <-- this is result category externalid
     resultErrorCode,
-    { resultOutcome, assayId, consumableLot, instrumentSerial }
+    {
+      resultOutcome,
+      assayId,
+      consumableLot,
+      instrumentSerial,
+      moduleSerial,
+    }
   )
 }
 
