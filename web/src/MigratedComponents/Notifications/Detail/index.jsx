@@ -91,18 +91,24 @@ const AspectNotificationDetails = () => {
     submitNotification({ values, id })
   }
 
-  const props = {
-    notificationId: id,
-    notificationType: isNumber(notificationId)
-      ? +notificationId
-      : notificationId,
-    jobFunctions,
-    onSubmit,
-  }
   if (!jobFunctions) return <CircularProgress />
   return (
     <Fragment>
-      {isNaN(+notificationId) ? <Create {...props} /> : <Update {...props} />}
+      {isNaN(+notificationId) ? (
+        <Create
+          jobFunctions={jobFunctions}
+          onSubmit={onSubmit}
+          notificationType={
+            isNumber(notificationId) ? +notificationId : notificationId
+          }
+        />
+      ) : (
+        <Update
+          jobFunctions={jobFunctions}
+          onSubmit={onSubmit}
+          notificationId={id}
+        />
+      )}
     </Fragment>
   )
 }

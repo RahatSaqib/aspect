@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import cloneDeep from 'lodash/cloneDeep'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEqualWith from 'lodash/isEqualWith'
@@ -133,26 +134,22 @@ export const useFormConfig = formConfig => {
 
   const updateField = useCallback(
     (fieldName, value, { formik, toggleEdit = true, isTouched = true }) => {
-      // (fieldName, value, { formik, toggleEdit = true, isTouched = true, otherFields = {} }) => {
       /**
        * 1. set field 'touched' and do NOT run validation (3rd param is 'false')
        */
       formik.setFieldTouched(fieldName, isTouched, false)
       /**
-       * 1. set new value to the field and do NOT run validation (3rd param is 'false')
+       * 2. set new value to the field and do NOT run validation (3rd param is 'false')
        */
       formik.setFieldValue(fieldName, value, false)
       /**
-       * 2. assemble latest set of `values`
+       * 3. assemble latest set of `values`
        * (formik.values is not yet up-to-date because it is updated asynchronously by formik engine)
        */
-      const values = {
-        ...formik.values,
-      }
+      const values = cloneDeep(formik.values)
       set(values, fieldName, value)
-
       /**
-       * 3. address func onAfterChange if defined for item
+       * 4. address func onAfterChange if defined for item
        */
       const { items = [] } = meta
       const { onAfterChange } = items.find(({ id }) => id === fieldName) || {}
@@ -160,11 +157,11 @@ export const useFormConfig = formConfig => {
         onAfterChange(formik)
       }
       /**
-       * 4. refresh visibility of all fields and register validators of only visible fields
+       * 5. refresh visibility of all fields and register validators of only visible fields
        */
       registerVisibleFields(values, formik, toggleEdit, fieldName)
       /**
-       * 5. validate form for current set of `values` for all visible fields
+       * 6. validate form for current set of `values` for all visible fields
        */
       formik.validateForm(values)
     },

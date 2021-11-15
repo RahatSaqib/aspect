@@ -19,8 +19,6 @@ import fetchWrapperForQueries from '../../../QueryFetch'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
 import { getFormConfigWithData } from '../utils'
-import { sanitizeLoadedFormValues } from '../../../Form/Formik/Helpers'
-import getFormConfig from '../../Forms/editConfig'
 
 const AspectResultDetail = ({ resultId, onSubmit }) => {
   const intl = useI18n()
@@ -29,29 +27,18 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
   const [formConfig, setFormConfig] = useState(false)
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
 
-  const { isLoading, isError, error } = useQuery(
+  const {
+    data: queryResponse,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(
     [RESULT_DETAIL.KEY, { resultId }],
     async ({ queryKey: [, { resultId }] }) =>
       fetchWrapperForQueries({
         endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
         customErrorNotifications: ResultDetailsErrors,
-      }),
-    {
-      onSuccess: response => {
-        if (response?.ok) {
-          const { data } = response
-          if (data.resultCategory1) {
-            data.resultCategory1 = `${data.resultCategory1}`
-          }
-          if (data.resultCategory2) {
-            data.resultCategory2 = `${data.resultCategory2}`
-          }
-
-          const config = getFormConfig(intl.formatMessage, false)
-          setValues(sanitizeLoadedFormValues(data, config))
-        }
-      },
-    }
+      })
   )
 
   if (isError) {
@@ -59,10 +46,19 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
   }
 
   useEffect(() => {
-    if (!isLoading && values) {
-      setPatientId(values.patientId)
+    if (isLoading || !queryResponse) return
+    if (queryResponse?.ok) {
+      const { data } = queryResponse
+      if (data.resultCategory1) {
+        data.resultCategory1 = `${data.resultCategory1}`
+      }
+      if (data.resultCategory2) {
+        data.resultCategory2 = `${data.resultCategory2}`
+      }
 
-      const config = getFormConfigWithData(intl, false, values)
+      setPatientId(data.patientId)
+
+      const config = getFormConfigWithData(intl, false, data)
 
       const action = config.actions.items.find(x => x.id === 'transfer')
       action.onClick = () => setTransferResultOpen(true)
@@ -75,8 +71,11 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
       }
 
       setFormConfig(config)
+      setValues(data)
+    } else {
+      throw new Error('Can not fetch data for result')
     }
-  }, [isLoading, values])
+  }, [isLoading, queryResponse])
 
   return (
     <Shell>

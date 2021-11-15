@@ -3,8 +3,11 @@ import * as Yup from 'yup'
 import cloneDeep from 'lodash/cloneDeep'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
+import isBoolean from 'lodash/isBoolean'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
 import range from 'lodash/range'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
@@ -42,25 +45,7 @@ const mergeFormConfigWithData = (data, config, messages) => {
   return configToMutate
 }
 
-const sanitizeLoadedFormValues = (values, formConfig) => {
-  const { sections } = formConfig
-  const items = pickItems(sections)
-  const textTypes = [
-    'placeholderTextField',
-    'placeholderTextArea',
-    'textArea',
-    'textField',
-  ]
-  items.forEach(({ id, controlType: { component } = {} }) => {
-    if (component && textTypes.includes(component) && values[id] === null) {
-      // set to empty string because MUI's TextField does not let value to be null
-      values[id] = ''
-    }
-  })
-  return values
-}
-
-const getInitialValuesFromFormConfig = config => {
+const getInitialValuesFromFormConfig = (config, savedValues) => {
   const initialValues = {}
   const { sections } = config
   sections.forEach(({ rows }) => {
@@ -69,23 +54,65 @@ const getInitialValuesFromFormConfig = config => {
       if (presetInitialValues) {
         presetInitialValues(initialValues)
       }
-      items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
-        const { component } = controlType
-        let value = initialValue || ''
-        if (component === 'checkbox') {
-          value = initialValue === true
-        }
-        if (isMulti) {
-          initialValues[rowId] = initialValues[rowId] || [
-            {
+
+      // multiply rows if saved value is available
+      if (isMulti) {
+        initialValues[rowId] = initialValues[rowId] || []
+        const subRowsInitial = initialValues[rowId]
+        // having saved sub-rows
+        if (
+          savedValues &&
+          isPlainObject(savedValues) &&
+          isArray(savedValues[rowId])
+        ) {
+          const subRowsSaved = savedValues[rowId]
+          subRowsSaved.forEach((subRow, subRowIndex) => {
+            subRowsInitial[subRowIndex] = subRowsInitial[subRowIndex] || {
               __guid__: uniqueId(rowId),
-            },
-          ]
-          set(initialValues[rowId][0], fieldName, value)
+            }
+
+            items.forEach(
+              ({ controlType = {}, id: fieldName, initialValue }) => {
+                const { component } = controlType
+                const savedValue = get(subRow, fieldName)
+                let value
+                if (component === 'checkbox') {
+                  value = isBoolean(savedValue)
+                    ? savedValue
+                    : initialValue === true
+                } else {
+                  value = savedValue || initialValue || ''
+                }
+                set(subRowsInitial[subRowIndex], fieldName, value)
+              }
+            )
+          })
         } else {
-          set(initialValues, fieldName, value)
+          subRowsInitial[0] = subRowsInitial[0] || {
+            __guid__: uniqueId(rowId),
+          }
+          items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
+            const { component } = controlType
+            let value = initialValue || ''
+            if (component === 'checkbox') {
+              value = initialValue === true
+            }
+            set(subRowsInitial[0], fieldName, value)
+          })
         }
-      })
+      } else {
+        items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
+          const { component } = controlType
+          const savedValue = savedValues ? get(savedValues, fieldName) : null
+          let value
+          if (component === 'checkbox') {
+            value = isBoolean(savedValue) ? savedValue : initialValue === true
+          } else {
+            value = savedValue || initialValue || ''
+          }
+          set(initialValues, fieldName, value)
+        })
+      }
     })
   })
 
@@ -353,6 +380,5 @@ export {
   pickKeys,
   getBaseValidation,
   sanitizeFormValues,
-  sanitizeLoadedFormValues,
   getVisibleRows,
 }

@@ -10,14 +10,12 @@ import messages from './messages'
 export const getFormConfigWithData = (intl, isNew, values) => {
   const formSchema = getFormConfig(intl.formatMessage, isNew)
   const validationSchema = getValidationSchema(intl.formatMessage)
-  const initialValues = getInitialValuesFromFormConfig(formSchema)
-
-  const mergedValues = { ...initialValues, ...values }
+  const initialValues = getInitialValuesFromFormConfig(formSchema, values)
 
   return {
-    ...mergeFormConfigWithData(mergedValues, formSchema, messages),
+    ...mergeFormConfigWithData(initialValues, formSchema, messages),
     validationSchema,
-    values: mergedValues,
+    values: initialValues,
   }
 }
 
