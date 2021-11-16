@@ -4,7 +4,7 @@
   "i18nKey": "assayTruenatMtb",
   "externalId": "assayTruenatMtb",
   "assayTypeId": "assayTypeMtb",
-  "deviceTypeId": "deviceTypeTruenat",
+  "deviceTypeId": "molbioTruenat",
   "resultSourceId": "DiagnosticDevice",
   "resultCategory1Label": "MTB",
   "resultCategory1i18nKey": "resultCategoryMTB"
@@ -14,7 +14,7 @@
   "i18nKey": "assayTruenatMtbPlus",
   "externalId": "assayTruenatMtbPlus",
   "assayTypeId": "assayTypeMtb",
-  "deviceTypeId": "deviceTypeTruenat",
+  "deviceTypeId": "molbioTruenat",
   "resultSourceId": "DiagnosticDevice",
   "resultCategory1Label": "MTB",
   "resultCategory1i18nKey": "resultCategoryMTB"
@@ -24,7 +24,7 @@
   "i18nKey": "assayTruenatRif",
   "externalId": "assayTruenatRif",
   "assayTypeId": "assayTypeRif",
-  "deviceTypeId": "deviceTypeTruenat",
+  "deviceTypeId": "molbioTruenat",
   "resultSourceId": "DiagnosticDevice",
   "resultCategory1Label": "Rif",
   "resultCategory1i18nKey": "resultCategoryRif"

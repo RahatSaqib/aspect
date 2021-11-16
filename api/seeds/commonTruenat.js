@@ -1,13 +1,5 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  assayTypeToId,
-  assayToId,
-  deviceTypeToId,
-  deviceTypeCategoryToId,
-  resultSourceToId,
-  resultCategoryToId,
-} = require('../src/shared/dictionary')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
@@ -30,13 +22,15 @@ async function upsertTruenatDeviceTypeAndAssays(
     ) {
       return Promise.resolve()
     }
-    const existingDeviceTypeId = await deviceTypeToId(
-      truenatDeviceType.externalId
-    )
+    const { id: existingDeviceTypeId } =
+      (await knex('DeviceType')
+        .where('externalId', truenatDeviceType.externalId)
+        .first('id')) || {}
     if (!existingDeviceTypeId) {
-      const deviceTypeCategoryId = await deviceTypeCategoryToId(
-        truenatDeviceType.deviceTypeCategoryId
-      )
+      const { id: deviceTypeCategoryId } =
+        (await knex('DeviceTypeCategory')
+          .where('name', truenatDeviceType.deviceTypeCategoryId)
+          .first('id')) || {}
       const [createdDeviceTypeId] = await knex('DeviceType').insert({
         ...truenatDeviceType,
         deviceTypeCategoryId,
@@ -49,11 +43,20 @@ async function upsertTruenatDeviceTypeAndAssays(
 
   const assayIds = {}
   await Promise.each(assays, async truenatAssay => {
-    const existingAssayId = await assayToId(truenatAssay.externalId)
+    const { id: existingAssayId } =
+      (await knex('Assay')
+        .where('externalId', truenatAssay.externalId)
+        .first('id')) || {}
     if (!existingAssayId) {
-      const assayTypeId = await assayTypeToId(truenatAssay.assayTypeId)
+      const { id: assayTypeId } =
+        (await knex('AssayType')
+          .where('externalId', truenatAssay.assayTypeId)
+          .first('id')) || {}
       const deviceTypeId = deviceTypeIds[truenatAssay.deviceTypeId]
-      const resultSourceId = await resultSourceToId(truenatAssay.resultSourceId)
+      const { id: resultSourceId } =
+        (await knex('ResultSource')
+          .where('externalId', truenatAssay.resultSourceId)
+          .first('id')) || {}
       const [createdAssayId] = await knex('Assay').insert({
         patientDataSchema: JSON.stringify(defaultPatientDataSchema),
         resultDataSchema: JSON.stringify(defaultResultDataSchema),
@@ -79,9 +82,10 @@ async function upsertTruenatDeviceTypeAndAssays(
   await Promise.each(
     assayTruenatMtbResultCategories,
     async truenatMtbResultCategory => {
-      const resultCategoryId = await resultCategoryToId(
-        truenatMtbResultCategory
-      )
+      const { id: resultCategoryId } =
+        (await knex('ResultCategory')
+          .where('externalId', truenatMtbResultCategory)
+          .first('id')) || {}
       const sharedTruenatMtbResultCategoryAssayProperties = {
         emphasize: false,
         requiresTreatment: positiveResultCategories.includes(
@@ -122,9 +126,10 @@ async function upsertTruenatDeviceTypeAndAssays(
   await Promise.each(
     assayTruenatMtbRifDxResultCategories,
     async truenatMtbRifDxResultCategory => {
-      const resultCategoryId = await resultCategoryToId(
-        truenatMtbRifDxResultCategory
-      )
+      const { id: resultCategoryId } =
+        (await knex('ResultCategory')
+          .where('externalId', truenatMtbRifDxResultCategory)
+          .first('id')) || {}
       const resultCategoryAssayTruenatMtbRifDx = {
         assayId: assayIds.assayTruenatRif,
         resultCategoryId,
@@ -136,7 +141,7 @@ async function upsertTruenatDeviceTypeAndAssays(
         .first()
       if (!existingResultCategoryAssayTruenatMtbRifDx) {
         await knex('ResultCategoryAssay').insert({
-          ...existingResultCategoryAssayTruenatMtbRifDx,
+          ...resultCategoryAssayTruenatMtbRifDx,
           emphasize: truenatMtbRifDxResultCategory === 'Resistant',
           requiresTreatment: positiveResultCategories.includes(
             truenatMtbRifDxResultCategory
