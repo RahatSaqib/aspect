@@ -3,11 +3,14 @@ import capitalize from 'lodash/capitalize'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import filter from 'lodash/filter'
+import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 import union from 'lodash/union'
 import uniqWith from 'lodash/uniqWith'
+import xor from 'lodash/xor'
 
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
@@ -402,7 +405,13 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
     labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
       ...reduce(
-        jobFunctions,
+        [
+          {
+            id: 'specificPerson',
+            name: formatMessage(messages.fieldPersonSendToSpecific),
+          },
+          ...jobFunctions,
+        ],
         (acc, jf, index) => {
           acc = [
             ...acc,
@@ -470,7 +479,73 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                   },
                   label: 'Tags',
                   labelI18nKey: 'jobFunctionTags',
-                  visibleIf: values => values.jobFunctions[index].checked,
+                  visibleIf: values =>
+                    values.jobFunctions[index].checked &&
+                    values.jobFunctions[index].jobFunctionId !==
+                      'specificPerson',
+                },
+              ],
+            },
+            {
+              id: `row-jf${jf.id}-persons`,
+              items: [
+                {
+                  id: `persons[${index}].persons`,
+                  initialValue: [],
+                  controlType: {
+                    component: 'select',
+                    endpoint: PERSON_LIST.ENDPOINT,
+                    hideIfNoOptions: false,
+                    queryKey: PERSON_LIST.KEY,
+                    normalizeLoadedData: response => {
+                      const { ok, data } = response
+                      const options = []
+                      if (ok === true) {
+                        const withJob = filter(
+                          data,
+                          item => !isEmpty(item.level)
+                        )
+                        const withoutJob = xor(data, withJob)
+                        if (withJob.length) {
+                          map(withJob, ({ id, name, level, state }) =>
+                            options.push({
+                              label: `${name} (${level}${
+                                isEmpty(state) ? '' : `: ${state}`
+                              })`,
+                              value: id,
+                            })
+                          )
+                        }
+                        if (withoutJob.length) {
+                          map(withoutJob, ({ name }) =>
+                            options.push({
+                              label: `${name} (${formatMessage(
+                                messages.optionPersonRoleNotSet
+                              )})`,
+                              value: null,
+                              disabled: true,
+                            })
+                          )
+                        }
+                      }
+                      return options
+                    },
+                    isMulti: true,
+                  },
+                  classNames: {
+                    itemContainer: cssClasses(
+                      'max-width-100pc',
+                      'tags-container'
+                    ),
+                    controlContainer: cssClasses('full-width-100pc'),
+                    item: cssClasses('full-width-100pc'),
+                  },
+                  label: 'Tags',
+                  labelI18nKey: 'jobFunctionTags',
+                  visibleIf: values =>
+                    values.jobFunctions[index].checked &&
+                    values.jobFunctions[index].jobFunctionId ===
+                      'specificPerson',
                 },
               ],
             },

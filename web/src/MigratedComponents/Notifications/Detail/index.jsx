@@ -1,6 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
+import map from 'lodash/map'
+import reduce from 'lodash/reduce'
 import isNumber from 'lodash/isNumber'
 import { useMutation, useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -75,7 +77,6 @@ const AspectNotificationDetails = () => {
       jobFunctions,
       true
     )
-
     const values = sanitizeFormValues(formik.values, { formConfig })
     values.notificationType = formik.values.notificationType
     values.jobFunctions.map((jf, index) => {
@@ -85,9 +86,23 @@ const AspectNotificationDetails = () => {
       }
       return jf
     })
+    // sanitise persons for post endpoint
+    const sanitisedPersons = reduce(
+      formik.values.persons,
+      (acc, curr) => {
+        ;(acc || ((acc = []) && curr?.persons?.length)).push(
+          ...map(curr?.persons, person => ({
+            personId: person?.value,
+            checked: true,
+          }))
+        )
+        return acc
+      },
+      []
+    )
     // save only checked Job Functions
     values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
-
+    values.persons = sanitisedPersons
     submitNotification({ values, id })
   }
 
