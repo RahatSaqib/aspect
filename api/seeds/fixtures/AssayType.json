@@ -1,6 +1,18 @@
 {
   "data": [
     {
+      "name": "MTB",
+      "i18nKey": "assayTypeMtb",
+      "externalId": "assayTypeMtb",
+      "abbreviation": "TB"
+    },
+    {
+      "name": "Rif",
+      "i18nKey": "assayTypeRif",
+      "externalId": "assayTypeRif",
+      "abbreviation": "RIF"
+    },
+    {
       "name": "MTB/Rif",
       "i18nKey": "assayTypeMtbRif",
       "externalId": "assayTypeMtbRif",
@@ -116,6 +128,20 @@
     }
   ],
   "relationships": [
+    {
+      "externalId": "assayTypeMtb",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeRif",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
     {
       "externalId": "assayTypeMtbRif",
       "diseaseId": {
