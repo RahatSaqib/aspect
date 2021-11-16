@@ -506,27 +506,23 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                           item => !isEmpty(item.level)
                         )
                         const withoutJob = xor(data, withJob)
-                        if (withJob.length) {
-                          map(withJob, ({ id, name, level, state }) =>
-                            options.push({
-                              label: `${name} (${level}${
-                                isEmpty(state) ? '' : `: ${state}`
-                              })`,
-                              value: id,
-                            })
-                          )
-                        }
-                        if (withoutJob.length) {
-                          map(withoutJob, ({ name }) =>
-                            options.push({
-                              label: `${name} (${formatMessage(
-                                messages.optionPersonRoleNotSet
-                              )})`,
-                              value: null,
-                              disabled: true,
-                            })
-                          )
-                        }
+                        map(withJob, ({ id, name, level, state }) =>
+                          options.push({
+                            label: `${name} (${level}${
+                              isEmpty(state) ? '' : `: ${state}`
+                            })`,
+                            value: id,
+                          })
+                        )
+                        map(withoutJob, ({ name }) =>
+                          options.push({
+                            label: `${name} (${formatMessage(
+                              messages.optionPersonRoleNotSet
+                            )})`,
+                            value: null,
+                            disabled: true,
+                          })
+                        )
                       }
                       return options
                     },
