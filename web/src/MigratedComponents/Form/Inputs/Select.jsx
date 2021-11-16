@@ -37,7 +37,7 @@ const getValue = (selectedOption, formik, id) => {
 }
 
 const AspectSelect = props => {
-  const { updateField } = useFormikContext()
+  const { updateField, toggleEdit } = useFormikContext()
   const {
     className,
     classNames,
@@ -47,10 +47,12 @@ const AspectSelect = props => {
       hideIfNoOptions = true,
       isMulti,
       normalizeLoadedData,
+      populateOnChange,
       options = [],
       placeholder,
       queryKey,
       subRowIndex,
+      isClearable = false,
     },
     formik,
     id,
@@ -79,7 +81,8 @@ const AspectSelect = props => {
           formik,
           hideIfNoOptions,
           identifier: id,
-          isClearable: false,
+          isClearable,
+          isDisabled: get(props, 'InputProps.disabled'),
           isMulti,
           keyMapping: {
             idKey: 'value',
@@ -90,10 +93,15 @@ const AspectSelect = props => {
           state: getState(queryKey, formik, id),
           subRowIndex,
           updateField,
+          showLabelWhenDisabled: true,
         }}
-        action={({ identifier, selectedOption }) => {
+        action={({ identifier, selectedOption }, dataSource) => {
           const value = getValue(selectedOption, formik, id)
-          updateField(identifier, value, formik)
+          updateField(identifier, value, { formik, toggleEdit })
+
+          if (populateOnChange) {
+            populateOnChange(value, { formik, toggleEdit }, dataSource || [])
+          }
         }}
         theme={UI_CONSTS.themeName.mui}
       />

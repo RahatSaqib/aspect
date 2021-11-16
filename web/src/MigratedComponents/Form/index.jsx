@@ -1,18 +1,27 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form } from 'formik'
+import { Form, useFormikContext } from 'formik'
 
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 
 import FormSection from './FormSection'
 import FormSectionHeader from './FormSectionHeader'
+import formMessagesBase from './messages'
 
 import styles from './Form.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectForm = ({ config: { sections, classNames, messages } }) => {
+const AspectForm = ({
+  config: { sections, classNames, messages: customMessages },
+}) => {
+  const { formik, toggleEdit } = useFormikContext()
+  const messages = {
+    ...formMessagesBase,
+    ...customMessages,
+  }
+
   classNames = classNames || {}
   return (
     <Grid
@@ -35,7 +44,11 @@ const AspectForm = ({ config: { sections, classNames, messages } }) => {
               rows,
               hideHeader,
               classNames = {},
+              visibleIf,
             }) => {
+              if (visibleIf && !visibleIf(formik.values, toggleEdit)) {
+                return null
+              }
               return (
                 <Grid
                   key={id}

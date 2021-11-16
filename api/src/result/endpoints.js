@@ -42,6 +42,7 @@ const {
   followUpAggregations,
   createResult,
   updateResult,
+  listSampleTypes,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
@@ -1410,6 +1411,15 @@ const routes = [
             .keys(validateResultDetailResponse()),
         }),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/sample-types',
+    handler: asyncHandler(listSampleTypes),
+    config: {
+      description: 'Sample types',
+      notes: 'List of all sample types',
     },
   },
 ]

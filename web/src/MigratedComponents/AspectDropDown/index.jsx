@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import Select, { components } from 'react-select'
 import { defineMessages } from 'react-intl'
+import TextField from '@material-ui/core/TextField'
 
 import get from 'lodash/get'
 import find from 'lodash/find'
@@ -223,6 +224,7 @@ const SelectComponent = ({
   defaultSelectedOption,
   identifier,
   isClearable,
+  isDisabled,
   isLoading,
   isMulti,
   keyMapping: { idKey, nameKey = 'i18nKey' },
@@ -235,9 +237,12 @@ const SelectComponent = ({
   const { formatMessage } = useI18n()
   const [busy, setBusy] = useState(true)
   const [defaultOptionValue, setDefaultOptionValue] = useState(false)
+  const [currentSelectedOption, setCurrentSelectedOption] = useState(
+    defaultSelectedOption
+  )
   const [defaultOption] = useState(selectedValue)
   const [, setInputValue] = useState(false)
-  // const [currentValue, setCurrentValue] = useState(false)
+
   const [options, setOptions] = useState(false)
 
   // if defaultSelectedOption is true, then the default selection is set to the first element
@@ -247,10 +252,20 @@ const SelectComponent = ({
       : defaultSelectedOption
 
   useEffect(() => {
-    if (!isEqual(options, data)) {
+    if (
+      // passed-in `data` differs from local `options`
+      !isEqual(options, data) ||
+      /**
+       * when we change value in formik programmatically (i.e. formik.setFieldValue)
+       * then this component gets new value for defaultSelectedOption and we need to
+       * enforce component to re-render in this `if` block
+       */
+      defaultSelectedOption !== currentSelectedOption
+    ) {
       setDefaultOptionValue(
         getSelectedOptions(data, defaultSelectedOption, idKey)
       )
+      setCurrentSelectedOption(defaultSelectedOption)
       setOptions(data)
       /**
        * Because we do not explicitly set `value` for Select component - then
@@ -287,6 +302,7 @@ const SelectComponent = ({
         }
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
+        isDisabled={isDisabled}
         isLoading={isLoading}
         isMulti={isMulti}
         defaultValue={defaultOptionValue}
@@ -305,12 +321,9 @@ SelectComponent.defaultProps = {
   components: undefined,
   defaultSelectedOption: undefined,
   isClearable: true,
+  isDisabled: false,
   isLoading: false,
   isMulti: false,
-  keyMapping: {
-    idKey: 'id',
-    nameKey: 'name',
-  },
   messages: null,
   placeholder: 'Select...',
   selectedValue: '',
@@ -324,9 +337,10 @@ SelectComponent.propTypes = {
   defaultSelectedOption: defaultSelectedOptionPropType,
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
+  isDisabled: PropTypes.bool,
   isLoading: PropTypes.bool,
   isMulti: PropTypes.bool,
-  keyMapping: PropTypes.oneOfType([PropTypes.object]),
+  keyMapping: PropTypes.oneOfType([PropTypes.object]).isRequired,
   messages: PropTypes.oneOfType([PropTypes.object]),
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   selectedValue: PropTypes.string,
@@ -401,6 +415,33 @@ const GroupHeading = props => (
   <components.GroupHeading {...props} style={groupStyles} />
 )
 
+const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
+  const options = getSelectedOptions(
+    selectOptions,
+    defaultSelectedOption,
+    keyMapping.idKey
+  )
+
+  let text = '-'
+  if (options) {
+    if (isArray(options)) {
+      text = options.map(({ label }) => label).join('; ')
+    }
+    text = options.label
+  }
+
+  return (
+    <TextField
+      InputProps={{
+        readOnly: true,
+        disableUnderline: true,
+      }}
+      multiline
+      value={text}
+    />
+  )
+}
+
 const AspectDropDown = ({
   props: {
     classNames,
@@ -413,8 +454,12 @@ const AspectDropDown = ({
     hideIfNoOptions = true,
     identifier,
     isClearable,
+    isDisabled,
     isMulti,
-    keyMapping,
+    keyMapping = {
+      idKey: 'id',
+      nameKey: 'name',
+    },
     messages,
     normalizeLoadedData,
     placeholder,
@@ -423,6 +468,7 @@ const AspectDropDown = ({
     state: reduxStateId,
     subRowIndex,
     updateField,
+    showLabelWhenDisabled = false,
   },
   action,
   theme,
@@ -430,7 +476,7 @@ const AspectDropDown = ({
   const [selectOptions, setSelectOptions] = useState(false)
   const {
     isError,
-    data = false,
+    data: responseFromQuery = false,
     error: queryErrorMessage,
   } = useQuery(
     reduxStateId,
@@ -442,19 +488,19 @@ const AspectDropDown = ({
   )
   const queryDependencies = getQueryDependencies(
     formik,
-    [data, selectOptions],
+    [responseFromQuery, selectOptions],
     dependencies,
     subRowIndex
   )
   useEffect(() => {
-    if (data) {
+    if (responseFromQuery) {
       const isLoadedFromApi =
         endpoint && // if 'endpoint' is defined - we fetch data from api
         normalizeLoadedData &&
-        !isEqual(passedData, data) // loaded data should differ from initial data
+        !isEqual(passedData, responseFromQuery) // loaded data should differ from initial data
       const options = isLoadedFromApi
-        ? normalizeLoadedData(data, formik, subRowIndex) || []
-        : getActualData({ data, reduxStateId, sortByKeys })
+        ? normalizeLoadedData(responseFromQuery, formik, subRowIndex) || []
+        : getActualData({ data: responseFromQuery, reduxStateId, sortByKeys })
       if (options && !isEqual(options, selectOptions)) {
         setSelectOptions(options)
       }
@@ -472,7 +518,7 @@ const AspectDropDown = ({
         isArray(options) &&
         !isEqual(currentValue, actualValue)
       ) {
-        updateField(identifier, actualValue, formik)
+        updateField(identifier, actualValue, { formik })
       }
     }
   }, queryDependencies)
@@ -481,9 +527,26 @@ const AspectDropDown = ({
     throw new Error(queryErrorMessage)
   }
 
-  return selectOptions && (!hideIfNoOptions || selectOptions.length > 0) ? (
+  const onChanged = ({ identifier, selectedOption }) => {
+    const { ok, data: dataSource } = responseFromQuery
+    action({ identifier, selectedOption }, ok ? dataSource : null)
+  }
+
+  const showUi = selectOptions && (!hideIfNoOptions || selectOptions.length > 0)
+
+  if (showLabelWhenDisabled && isDisabled && showUi) {
+    return (
+      <LabelValue
+        selectOptions={selectOptions}
+        defaultSelectedOption={defaultSelectedOption}
+        keyMapping={keyMapping}
+      />
+    )
+  }
+
+  return showUi ? (
     <SelectComponent
-      action={action}
+      action={onChanged}
       classNames={classNames}
       components={{
         GroupHeading,
@@ -493,6 +556,7 @@ const AspectDropDown = ({
       defaultSelectedOption={defaultSelectedOption}
       identifier={identifier}
       isClearable={isClearable}
+      isDisabled={isDisabled}
       isMulti={isMulti}
       keyMapping={keyMapping}
       messages={messages}
@@ -524,6 +588,7 @@ AspectDropDown.propTypes = {
     hideIfNoOptions: PropTypes.bool,
     identifier: PropTypes.string.isRequired,
     isClearable: PropTypes.bool,
+    isDisabled: PropTypes.bool,
     isMulti: PropTypes.bool,
     keyMapping: PropTypes.shape({
       idKey: PropTypes.string,
@@ -537,6 +602,7 @@ AspectDropDown.propTypes = {
     state: PropTypes.string.isRequired,
     subRowIndex: PropTypes.number,
     updateField: PropTypes.func,
+    showLabelWhenDisabled: PropTypes.bool,
   }).isRequired,
   theme: PropTypes.string,
 }

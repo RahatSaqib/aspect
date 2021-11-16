@@ -139,16 +139,22 @@ const getIssues = (deviceId, issueTypeId) =>
     .orderBy('createdOn', 'DESC')
     .select()
 
-const evaluateIssues = async (response, issueTypeId) => {
+const evaluateIssues = async (
+  response,
+  issueTypeId,
+  qtyIssuesExpected = 1,
+  issueStatus = 'Active'
+) => {
   assert.equal(response.status, 200)
   assert.typeOf(response.body, 'Object')
 
   const issues = await getIssues(response.body.device.id, issueTypeId)
-
-  assert.equal(issues.length, 1)
-  assert.equal(issues[0].issueStatusId, await issueStatusToId('Active'))
-
-  await checkNotificationsForIssue(issues[0].id, issueTypeId)
+  assert.equal(issues.length, qtyIssuesExpected)
+  if (qtyIssuesExpected > 0) {
+    assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
+    if (issueStatus === 'Active')
+      await checkNotificationsForIssue(issues[0].id, issueTypeId)
+  }
 }
 let qtyOfRuns = 0
 describe('This test suite is for testing different triggers conditions', async () => {
@@ -221,7 +227,8 @@ describe('This test suite is for testing different triggers conditions', async (
     errorCode,
     issueTypeModule,
     issueTypeLot,
-    resultCategoryExternalId
+    resultCategoryExternalId,
+    temporarySuppression = false
   ) => {
     describe(`${issueName} issue creation (Module and lot),${
       errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
@@ -311,7 +318,7 @@ describe('This test suite is for testing different triggers conditions', async (
             authHeader: deviceAuth,
             payload: anotherPayload,
           })
-          await waitForIdle(1000)
+          await waitForIdle()
 
           /**
            * We are going to push the same lot for a different device and we are going to expect to create a new issue
@@ -422,8 +429,8 @@ describe('This test suite is for testing different triggers conditions', async (
             authHeader: deviceAuth,
             payload: firstPayload,
           })
-          await waitForIdle(1000)
-          await evaluateIssues(response, issueTypeModuleId, errorCode)
+          await waitForIdle()
+          await evaluateIssues(response, issueTypeModuleId)
 
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
           await Promise.each(_.range(0, 8), async i => {
@@ -447,9 +454,8 @@ describe('This test suite is for testing different triggers conditions', async (
               }),
             })
             await waitForIdle()
-            await evaluateIssues(resp, issueTypeModuleId, errorCode)
+            await evaluateIssues(resp, issueTypeModuleId)
           })
-
           /**
            * We are going to push the same lot for a different device and we are going to expect to create a new issue
            */
@@ -457,17 +463,48 @@ describe('This test suite is for testing different triggers conditions', async (
             authHeader: anotherDeviceContext.deviceAuth,
             payload: anotherDevicePayload,
           })
-          await waitForIdle(1000)
+          await waitForIdle()
+          await evaluateIssues(anotherDeviceResponse, issueTypeModuleId)
           await evaluateIssues(
             anotherDeviceResponse,
-            issueTypeModuleId,
-            errorCode
+            await issueTypeToId(issueTypeLot)
           )
-          await evaluateIssues(
-            anotherDeviceResponse,
-            await issueTypeToId(issueTypeLot),
-            errorCode
+        })
+
+        it(`Should NOT create an issue because it has previous issue with some specific suppression code in the last 30 days`, async () => {
+          const { deviceAuth } = context
+
+          const issueTypeId = await issueTypeToId(issueTypeModule)
+          await knex('Issue').insert({
+            issueTypeId,
+            issueStatusId: await issueStatusToId('Resolved'),
+            deviceId: context.device.id,
+            partnerId: context.device.partnerId,
+            siteId: context.site.id,
+            geographyId: context.site.geographyId,
+            data: JSON.stringify({
+              moduleSerial: 'M-123456-0',
+              resultErrorCode: '1001',
+            }),
+
+            createdOn: new Date(),
+            updatedOn: new Date(),
+          })
+          let issues = await getIssues(context.device.id, issueTypeId)
+          assert.equal(issues.length, 1)
+
+          const firstPayload = await getPayload(
+            context,
+            errorCode,
+            resultCategoryExternalId
           )
+          // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: firstPayload,
+          })
+          await waitForIdle()
+          await evaluateIssues(response, issueTypeModuleId, 1, 'Resolved')
           const minDate = startOfDayUtc(subDays(new Date(), 30))
           if (qtyOfRuns < 2) {
             qtyOfRuns += 1
@@ -476,9 +513,49 @@ describe('This test suite is for testing different triggers conditions', async (
               minDate,
               null
             )
-            assert.equal(data.items.length, 12)
+            assert.equal(data.items.length, 8)
           }
+          issues = await getIssues(context.device.id, issueTypeId)
+          assert.equal(issues.length, 1)
         })
+        if (temporarySuppression) {
+          it(`Should create an issue because it has previous issue with some specific suppression code created more than 30 days before`, async () => {
+            const { deviceAuth } = context
+
+            const issueTypeId = await issueTypeToId(issueTypeModule)
+            await knex('Issue').insert({
+              issueTypeId,
+              issueStatusId: await issueStatusToId('Resolved'),
+              deviceId: context.device.id,
+              partnerId: context.device.partnerId,
+              siteId: context.site.id,
+              geographyId: context.site.geographyId,
+              data: JSON.stringify({
+                moduleSerial: 'M-123456-0',
+                resultErrorCode: '1001',
+              }),
+
+              createdOn: subDays(new Date(), 60),
+              updatedOn: new Date(),
+            })
+            let issues = await getIssues(context.device.id, issueTypeId)
+            assert.equal(issues.length, 1)
+
+            const firstPayload = await getPayload(
+              context,
+              errorCode,
+              resultCategoryExternalId
+            )
+            // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: firstPayload,
+            })
+            await waitForIdle()
+            issues = await getIssues(context.device.id, issueTypeId)
+            assert.equal(issues.length, 2)
+          })
+        }
       })
     })
   }
@@ -497,15 +574,9 @@ describe('This test suite is for testing different triggers conditions', async (
       'Probes check Too High',
       5006,
       'ProbeCheckTooHighModule',
-      'ProbeCheckTooHighLot'
-    )
-  })
-  describe('error 5016 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Failed To Verify Valid Background Error For Analyte',
-      5016,
-      'TooManyInvalidResultsModule',
-      'TooManyInvalidResultsLot'
+      'ProbeCheckTooHighLot',
+      null,
+      true
     )
   })
   describe('error 5007 issue', () => {
@@ -513,7 +584,9 @@ describe('This test suite is for testing different triggers conditions', async (
       'Probes check Too Low',
       5007,
       'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot'
+      'ProbeCheckFailedLot',
+      null,
+      true
     )
   })
 
@@ -522,7 +595,9 @@ describe('This test suite is for testing different triggers conditions', async (
       'Probes Check Failed',
       5017,
       'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot'
+      'ProbeCheckFailedLot',
+      null,
+      true
     )
   })
   describe('error 5011 issue', () => {

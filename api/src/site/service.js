@@ -256,6 +256,7 @@ async function getListSitesForSelectList(dataConstraints, tags, mode) {
       's.partnerId',
       'g.countryId',
       'g.lgaId',
+      'l.name as lgaName',
       's.externalId',
     ]
   }
