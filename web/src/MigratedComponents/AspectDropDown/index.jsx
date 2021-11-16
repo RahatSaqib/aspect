@@ -307,6 +307,7 @@ const SelectComponent = ({
         isMulti={isMulti}
         defaultValue={defaultOptionValue}
         options={data}
+        isOptionDisabled={option => option.disabled}
         placeholder={defaultOption || placeholder}
         styles={buildCustomStyles(theme)}
         onChange={onChange}
