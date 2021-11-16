@@ -137,7 +137,7 @@ const resultBasedNotificationPayload = Joi.object({
         checked: Joi.bool()
           .valid(true, null)
           .optional()
-          .description('Checked job functions'),
+          .description('Checked persons'),
       })
     )
     .min(1),
