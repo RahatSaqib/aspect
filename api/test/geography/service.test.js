@@ -3,6 +3,7 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const sinon = require('sinon')
 const { runTest } = require('../utils/generatorFunctionUtils')
+const { addConstraints } = require('../../src/auth/constraints')
 
 describe('geography service', () => {
   const countriesStatesAndLGAs = [
@@ -886,12 +887,13 @@ describe('geography service', () => {
     const statesForSelectList = _.sortBy(
       _.uniqBy(
         _.map(_.filter(countriesStatesAndLGAs, { countryId: 2 }), result => ({
-          id: result.stateId,
-          name: result.stateName,
+          stateId: result.stateId,
+          stateName: result.stateName,
+          lgas: [],
         })),
-        'id'
+        'stateId'
       ),
-      'name'
+      'stateName'
     )
     const requestData = { params: { countryId: 2 } }
 
@@ -907,9 +909,13 @@ describe('geography service', () => {
           .lastCall.returnValue
         assert.equal(stateQuery.from.lastCall.args[0], 'State as s')
         assert.deepEqual(
-          stateQuery.where.lastCall.args,
-          ['g.countryId', requestData.params.countryId],
-          'The where clause seems to be incorrect'
+          stateQuery.modify.lastCall.args,
+          [
+            addConstraints,
+            { country: { id: requestData.params.countryId } },
+            { geography: 'g' },
+          ],
+          'The modify clause seems to be incorrect'
         )
         assert.deepEqual(
           stateQuery.orderBy.lastCall.args,
@@ -918,7 +924,12 @@ describe('geography service', () => {
         )
         assert.deepEqual(
           stateQuery.distinct.lastCall.args,
-          ['s.id', 's.name'],
+          [
+            's.id as stateId',
+            's.name as stateName',
+            'l.id as lgaId',
+            'l.name as lgaName',
+          ],
           'The select clause seems to be incorrect'
         )
       }))
@@ -926,7 +937,30 @@ describe('geography service', () => {
     it('Should return a list of states', () =>
       runTest(service.stateSelectList, [requestData])(response => {
         assert.isTrue(response.ok)
-        assert.deepEqual(response.data, statesForSelectList)
+        let states = _.reduce(
+          _.groupBy(response.data, 'id'),
+          (acc, items) => {
+            const [{ id, name }] = items // get state values from 1st item
+            const lgas = items
+              .filter(({ lgaId }) => !!lgaId) // include only not null'ed lga's
+              .map(({ lgaId, lgaName }) => ({
+                id: lgaId,
+                name: lgaName,
+              }))
+            acc = [
+              ...acc,
+              {
+                stateId: id,
+                stateName: name,
+                lgas: _.sortBy(lgas, 'name'),
+              },
+            ]
+            return acc
+          },
+          []
+        )
+        states = _.sortBy(states, 'stateName')
+        assert.deepEqual(states, statesForSelectList)
       }))
   })
 
