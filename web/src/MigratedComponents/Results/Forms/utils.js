@@ -29,7 +29,7 @@ export const getBaseOptions = (
   return options
 }
 
-export const getReadonly = (id, props, hiddenId) => {
+export const getReadonly = (id, props, hiddenFields) => {
   let items = [
     {
       ...props,
@@ -40,15 +40,18 @@ export const getReadonly = (id, props, hiddenId) => {
       type: 'readOnly',
     },
   ]
-  if (hiddenId && id !== hiddenId) {
+  if (hiddenFields) {
     items = [
       ...items,
-      {
-        id: hiddenId,
-        controlType: {
-          component: 'hidden',
-        },
-      },
+      ...hiddenFields
+        .filter(fld => fld.id !== id)
+        .map(fld => ({
+          id: fld.id,
+          controlType: {
+            component: 'hidden',
+          },
+          type: fld.submitToApi ? undefined : 'readOnly',
+        })),
     ]
   }
   return items
@@ -56,7 +59,7 @@ export const getReadonly = (id, props, hiddenId) => {
 
 export const siteProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('siteName', props, 'siteId')
+    return getReadonly('siteName', props, [{ id: 'siteId' }])
   }
   return [
     {
@@ -111,7 +114,7 @@ export const siteProps = (isNew, props) => {
 
 export const stateProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('stateName', props, 'stateId')
+    return getReadonly('stateName', props, [{ id: 'stateId' }])
   }
   return [
     {
@@ -131,7 +134,7 @@ export const stateProps = (isNew, props) => {
 
 export const lgaProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('lgaName', props, 'lgaId')
+    return getReadonly('lgaName', props, [{ id: 'lgaId' }])
   }
   return [
     {
@@ -166,7 +169,7 @@ export const lgaProps = (isNew, props) => {
 
 export const deviceProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('deviceName', props, 'deviceId')
+    return getReadonly('deviceName', props, [{ id: 'deviceId' }])
   }
   return [
     {
@@ -213,7 +216,7 @@ export const deviceProps = (isNew, props) => {
 
 export const deviceTypeProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('deviceType', props, 'deviceTypeId')
+    return getReadonly('deviceType', props, [{ id: 'deviceTypeId' }])
   }
   return [
     {
@@ -247,7 +250,7 @@ export const deviceTypeProps = (isNew, props) => {
 
 export const deviceSerialProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('deviceSerial', props)
+    return getReadonly('deviceSerial', props, null)
   }
   return [
     {
@@ -262,7 +265,7 @@ export const deviceSerialProps = (isNew, props) => {
 
 export const assayProps = (isNew, props) => {
   if (!isNew) {
-    return getReadonly('assayName', props, 'assayId')
+    return getReadonly('assayName', props, [{ id: 'assayId' }])
   }
   return [
     {

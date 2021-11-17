@@ -43,9 +43,10 @@ const AspectResultDetail = () => {
   )
 
   const id = isNaN(resultId) ? undefined : Number(resultId)
+  const isNew = resultId === 'add' || !id
 
   const onSubmit = formik => {
-    const formConfig = getFormConfig(intl.formatMessage, false)
+    const formConfig = getFormConfig(intl.formatMessage, isNew)
     const values = sanitizeFormValues(formik.values, { formConfig })
 
     /**
@@ -60,7 +61,7 @@ const AspectResultDetail = () => {
 
   return (
     <Fragment>
-      {resultId === 'add' || !id ? (
+      {isNew ? (
         <Create onSubmit={onSubmit} />
       ) : (
         <Update resultId={id} onSubmit={onSubmit} />

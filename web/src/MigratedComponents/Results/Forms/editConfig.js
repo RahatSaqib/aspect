@@ -124,6 +124,7 @@ const getConfig = (formatMessage, isNew) => {
                 controlType: {
                   component: 'hidden',
                 },
+                type: 'readOnly',
               },
               {
                 id: 'deviceSerial',
@@ -367,7 +368,7 @@ const getConfig = (formatMessage, isNew) => {
                 labelI18nKey: 'patientId',
               },
               {
-                id: 'externalId',
+                id: 'caseExternalId',
                 controlType: {
                   component: 'textField',
                 },
