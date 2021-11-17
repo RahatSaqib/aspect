@@ -236,30 +236,36 @@ async function hardwareErrors(
   errorCodes,
   errorCodesWithDuplicateLogEntries
 ) {
-  return knex('DeviceOperation')
-    .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+  // In this subquery, we're using the 'lag' function in MySQL to select the date of the previous row's log entry
+  // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
+  const subquery = knex('DeviceOperation')
     .where('deviceId', deviceId)
+    .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+    .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
+    .whereRaw(
+      `data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`
+    )
+    .where(qb => {
+      qb.whereRaw(
+        `data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
+          ','
+        )})`
+      ).orWhereRaw(`IFNULL(data ->> '$.logLevel', '') = 'INFO'`)
+    })
     .select(
+      'id',
+      'startedOn',
       knex.raw(
-        `
-      SUM(
-        CASE WHEN
-          IFNULL(data ->> '$.type', '') = 'gx-log'
-          AND
-          (data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
-            ','
-          )}) OR IFNULL(data ->> '$.logLevel', '') = 'INFO')
-          AND
-          CAST(IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
-            ','
-          )})
-        THEN 1
-        ELSE 0
-        END
-      ) AS totalErrors
-      `
+        'lag(startedOn, 1) over (partition by deviceId order by startedOn) as previousStartOn'
       )
     )
+    .as('logEntriesWithTimeSpan')
+
+  return knex
+    .count('id as totalErrors')
+    .from(subquery)
+    .whereRaw('timestampdiff(minute, previousStartOn, startedOn) > 60')
+    .orWhere('previousStartOn', null)
 }
 module.exports = {
   analyzeErrors,
