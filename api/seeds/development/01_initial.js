@@ -39,7 +39,10 @@ const {
   upsertMGITDeviceTypeAndAssays,
   upsertCultureAssays,
 } = require('../commonTB')
-const { getRandomTBPatientData } = require('../commonTbresults')
+const {
+  getRandomGeneXpertPatientData,
+  getRandomTruenatPatientData,
+} = require('../commonTBResults')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const {
@@ -3808,7 +3811,7 @@ async function seed(knex) {
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(
-            getRandomTBPatientData(patientNumber, patients)
+            getRandomGeneXpertPatientData(patientNumber, patients)
           ),
           senderVersion: '4.6b',
           senderOperator: 'Marsha',
@@ -3944,7 +3947,7 @@ async function seed(knex) {
                   moduleSerial: `M-1234-${i % 4}`,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(
-                    getRandomTBPatientData(patientNumber, patients)
+                    getRandomGeneXpertPatientData(patientNumber, patients)
                   ),
                   senderVersion: '4.6b',
                   senderOperator: 'Marsha',
@@ -4112,7 +4115,7 @@ async function seed(knex) {
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(
-            getRandomTBPatientData(patientNumber, patients)
+            getRandomGeneXpertPatientData(patientNumber, patients)
           ),
           senderVersion: '4.6b',
           senderOperator: 'Marsha',
@@ -4198,7 +4201,7 @@ async function seed(knex) {
                   moduleSerial: `M-1234-${i % 4}`,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(
-                    getRandomTBPatientData(patientNumber, patients)
+                    getRandomGeneXpertPatientData(patientNumber, patients)
                   ),
                   senderVersion: '4.6b',
                   senderOperator: 'Marsha',
@@ -4379,7 +4382,7 @@ async function seed(knex) {
           moduleSerial: `M-1234-${i % 4}`,
           researchId: `R-ID-${i}`,
           patientData: JSON.stringify(
-            getRandomTBPatientData(patientNumber, patients)
+            getRandomGeneXpertPatientData(patientNumber, patients)
           ),
           senderVersion: '4.6b',
           senderOperator: 'Marsha',
@@ -4465,7 +4468,7 @@ async function seed(knex) {
                   moduleSerial: `M-1234-${i % 4}`,
                   researchId: `R-ID-${i}`,
                   patientData: JSON.stringify(
-                    getRandomTBPatientData(patientNumber, patients)
+                    getRandomGeneXpertPatientData(patientNumber, patients)
                   ),
                   senderVersion: '4.6b',
                   senderOperator: 'Marsha',
