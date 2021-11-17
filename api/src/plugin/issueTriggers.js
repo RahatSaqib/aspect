@@ -175,13 +175,39 @@ async function analyzeUnusedModules(
   )
 }
 
-async function analyzeErrors(
-  knex,
-  action,
-  { errorCodes, threshold, below, daysPeriod, minResults }
-) {
+async function analyzeErrors(knex, action, evaluationFilterParameters) {
   const { resultErrorCode } = action.options.data
-  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+  const {
+    errorCodes,
+    threshold,
+    below,
+    daysPeriod,
+    minResults,
+    checkIfWillBeLotIssue = false,
+  } = evaluationFilterParameters
+  const { resultId } = action
+  let lotIssue = false
+
+  if (checkIfWillBeLotIssue) {
+    const { consumableLot, assayId, moduleSerial } = await knex('Result')
+      .where('id', resultId)
+      .first()
+    lotIssue = await analyzeErrors(
+      knex,
+      {
+        options: { data: { consumableLot, assayId, moduleSerial } },
+        ...action,
+      },
+      {
+        errorCodes,
+        threshold,
+        below,
+        daysPeriod,
+        minResults,
+      }
+    )
+  }
+  if (!lotIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
