@@ -156,7 +156,8 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 3,
+            "checkIfWillBeLotIssue": true
           }
         },
         "suppressingConditions": {
@@ -291,7 +292,8 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 3,
+            "checkIfWillBeLotIssue": true
           }
         },
         "suppressingConditions": {
@@ -402,7 +404,8 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 3,
+            "checkIfWillBeLotIssue": true
           }
         },
         "suppressingConditions": {
@@ -435,7 +438,8 @@
             "threshold": 0.1,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 3,
+            "checkIfWillBeLotIssue": true
           }
         },
         "suppressingConditions": {
@@ -527,7 +531,8 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 3,
+            "checkIfWillBeLotIssue": true
           }
         },
         "suppressingConditions": {

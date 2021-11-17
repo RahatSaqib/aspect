@@ -54,7 +54,6 @@ async function analyzeWithQuery(
     query.modify(queryBuilder)
   }
   const { resultsWithErrors, totalResults } = await query
-
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(
@@ -186,28 +185,14 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
     checkIfWillBeLotIssue = false,
   } = evaluationFilterParameters
   const { resultId } = action
-  let lotIssue = false
-
+  let existingIssue = false
   if (checkIfWillBeLotIssue) {
-    const { consumableLot, assayId, moduleSerial } = await knex('Result')
-      .where('id', resultId)
+    existingIssue = await knex('Issue')
+      .where({ resultId })
+      .whereRaw('data->>"$.resultErrorCode" = ?', [resultErrorCode])
       .first()
-    lotIssue = await analyzeErrors(
-      knex,
-      {
-        options: { data: { consumableLot, assayId, moduleSerial } },
-        ...action,
-      },
-      {
-        errorCodes,
-        threshold,
-        below,
-        daysPeriod,
-        minResults,
-      }
-    )
   }
-  if (!lotIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+  if (!existingIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
