@@ -57,7 +57,7 @@ function getUser(username) {
 function getUserByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
-    .innerJoin('User as u', 'p.userId', 'u.id')
+    .leftJoin('User as u', 'p.userId', 'u.id')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'p.id': personId })
     .first(userProps)
