@@ -44,56 +44,79 @@ const AspectNotificationDetail = ({
     }
   }, [isLoading, values])
 
-  const { isLoading, isError, error } = useQuery(
+  const {
+    data: queryResponse,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(
     [NOTIFICATION_DETAIL.KEY, { notificationId }],
     async ({ queryKey: [, { notificationId }] }) =>
       fetchWrapperForQueries({
         endpoint: `${NOTIFICATION_DETAIL.ENDPOINT}/${notificationId}`,
-      }),
-    {
-      onSuccess: resp => {
-        const { data } = resp
-        const {
-          notificationTypeName,
-          notificationType,
-          name,
-          emailSubject,
-          emailBody,
-          smsBody,
-          webUrl,
-          webBody,
-          filterCondition,
-        } = data
-        const filter = JSON.parse(filterCondition)
-        setValues({
-          notificationTypeName,
-          notificationType,
-          name,
-          emailSubject,
-          emailBody,
-          sendEmail: filter.sendEmail,
-          smsBody,
-          sendSms: filter.sendSms,
-          webUrl,
-          webBody,
-          sendWeb: filter.sendWeb,
-          jobFunctions: filter.jobFunctions.map(jf => ({
-            ...jf,
-            tags: jf.tags.map(tag => ({
-              ...tag,
-              value: `${tag.value}`,
-            })),
-          })),
-          deviceLevelId: filter.deviceLevelId,
-          areaItems: filter.areaItems,
-          result: filter.result,
-        })
-      },
-    }
+      })
   )
+
   if (isError) {
     throw new Error(error)
   }
+
+  useEffect(() => {
+    if (isLoading || !queryResponse) return
+    const { data } = queryResponse
+    const {
+      notificationTypeName,
+      notificationType,
+      name,
+      emailSubject,
+      emailBody,
+      smsBody,
+      webUrl,
+      webBody,
+      filterCondition,
+    } = data
+
+    const filter = JSON.parse(filterCondition)
+
+    setValues({
+      notificationTypeName,
+      notificationType,
+      name,
+      emailSubject,
+      emailBody,
+      sendEmail: filter.sendEmail,
+      smsBody,
+      sendSms: filter.sendSms,
+      webUrl,
+      webBody,
+      sendWeb: filter.sendWeb,
+      /**
+       * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
+       * to make sure all items in array are located in their positions
+       * (filter.jobFunctions is array with only checked items) and are marked as
+       * checked or not. This values in final jobFunctions will be next used in generic func
+       * getInitialValuesFromFormConfig for setting initial values of the form
+       */
+      jobFunctions: jobFunctions.map(jf => {
+        const jfSaved = filter.jobFunctions.find(
+          ({ jobFunctionId }) => jobFunctionId === jf.id
+        )
+        return {
+          jobFunctionId: jf.id,
+          checked: !!jfSaved,
+          tags: jfSaved
+            ? jfSaved.tags.map(tag => ({
+                ...tag,
+                value: `${tag.value}`, // should be string
+              }))
+            : [],
+        }
+      }),
+      deviceLevelId: filter.deviceLevelId,
+      areaItems: filter.areaItems,
+      result: filter.result,
+    })
+  }, [isLoading, queryResponse])
 
   return (
     <Shell>

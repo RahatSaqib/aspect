@@ -562,7 +562,14 @@ async function listDevicesForSelectList(request) {
     })
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .orderBy(['d.name'], 'asc')
-    .select('d.id', 'd.name')
+    .select(
+      'd.id',
+      'd.name',
+      'd.serial as deviceSerial',
+      'd.siteId',
+      'd.deviceTypeId',
+      'dt.name as deviceType'
+    )
 
   return { ok: true, data: devices }
 }

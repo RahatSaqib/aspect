@@ -10,7 +10,7 @@ import { getFieldErrorProps } from '../Formik/Helpers'
 
 const Checkbox = props => {
   const { className, classNames, formik, id, label } = props
-  const { updateField } = useFormikContext()
+  const { updateField, toggleEdit } = useFormikContext()
   const { error, helperText } = getFieldErrorProps(formik, id)
 
   return (
@@ -22,7 +22,7 @@ const Checkbox = props => {
         label={label}
         name={id}
         onChange={event => {
-          updateField(id, event.target.checked, formik)
+          updateField(id, event.target.checked, { formik, toggleEdit })
         }}
         // {...getFieldErrorProps(formik, id)}
       />
