@@ -1,7 +1,8 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const bcrypt = require('bcrypt')
 
-const { knex, filterParams, sortPageParams } = require('../db')
+const { knex, filterParams, sortPageParams, query } = require('../db')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -10,6 +11,8 @@ const {
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
+const config = require('../config')
+const logger = require('../shared/logger')
 
 const SELECT_LIST_FIELDS = [
   'dak.id',
@@ -296,6 +299,69 @@ async function revokeDeviceApiKey(request) {
   }
 }
 
+async function authenticate(username, password, senderIp) {
+  const hashedPassword = await bcrypt.hash(
+    password,
+    parseInt(config.passwordSaltRounds, 10)
+  )
+  const nowTime = new Date().getTime()
+  // TODO: Add username, Password & TTL to device
+  // TODO: Lookup Device API Key with username & hashed password
+  let deviceApiKey = {
+    id: 123,
+    token: 'nrqsc0o9wbkfn6xcshn1',
+    revoked: 0,
+    partnerId: 1,
+    geographyId: null,
+    siteId: null,
+    deviceId: 321,
+    createdOn: new Date(2021, 11, 17, 14, 16, 53),
+    createdBy: 1,
+    updatedOn: new Date(2021, 11, 17, 14, 16, 53),
+    updatedBy: 1,
+    username,
+    password: hashedPassword,
+    ttl: new Date().getTime() - 1000 * 10,
+  }
+  if (!deviceApiKey) {
+    return {
+      authenticated: false,
+      reason: 'invalid',
+    }
+  }
+  if (deviceApiKey.revoked) {
+    return {
+      authenticated: false,
+      reason: 'revoked',
+      data: deviceApiKey,
+    }
+  }
+  if (deviceApiKey.ttl < nowTime) {
+    // TODO: Update Device API Key with New token and TTL (+ 1 hour)
+    // TODO: Insert device log
+    deviceApiKey = {
+      id: 12345,
+      token: 'osrtc1p0xclgo7ydtio2',
+      revoked: 0,
+      partnerId: 1,
+      geographyId: null,
+      siteId: null,
+      deviceId: 54321,
+      createdOn: new Date(2021, 11, 17, 14, 16, 53),
+      createdBy: 1,
+      updatedOn: new Date(2021, 11, 17, 14, 16, 53),
+      updatedBy: 1,
+      username,
+      password: hashedPassword,
+      ttl: new Date().getTime() + 1000 * 60 * 60,
+    }
+  }
+  return {
+    authenticated: true,
+    data: deviceApiKey,
+  }
+}
+
 module.exports = {
   listDeviceApiKeys,
   exportDeviceApiKeys,
@@ -303,4 +369,5 @@ module.exports = {
   createDeviceApiKey,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
+  authenticate,
 }

@@ -11,6 +11,7 @@ const registeredDataProcessors = [
   require('./senaiteLims'),
   require('./cobas'),
   require('./bdMgit'),
+  require('./truenatDevice/authenticate'),
   require('./default'),
 ]
 
