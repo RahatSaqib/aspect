@@ -98,7 +98,7 @@ const AspectNotificationDetail = ({
        * getInitialValuesFromFormConfig for setting initial values of the form
        */
       jobFunctions: jobFunctions.map(jf => {
-        const jfSaved = filter.jobFunctions.find(
+        const jfSaved = filter?.jobFunctions?.find(
           ({ jobFunctionId }) => jobFunctionId === jf.id
         )
         return {

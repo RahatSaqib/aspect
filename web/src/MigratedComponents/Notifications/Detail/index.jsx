@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
 import reduce from 'lodash/reduce'
 import isNumber from 'lodash/isNumber'
+import unset from 'lodash/unset'
 import { useMutation, useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -115,6 +116,9 @@ const AspectNotificationDetails = () => {
     )
     if (sanitisedPersons?.length) {
       values.persons = sanitisedPersons
+    }
+    if (!values?.jobFunctions?.length) {
+      unset(values, 'jobFunctions')
     }
     submitNotification({ values, id })
   }
