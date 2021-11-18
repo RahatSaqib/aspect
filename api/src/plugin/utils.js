@@ -277,7 +277,9 @@ async function shouldTriggerHardwareErrorAnalysis(
     )
     if (errorForTriggering) {
       logger.debug(
-        `shouldTriggerHardwareErrorAnalysis error:${errorForTriggering}`
+        `shouldTriggerHardwareErrorAnalysis error:${JSON.stringify(
+          errorForTriggering
+        )}`
       )
       const options = {
         startedOn,

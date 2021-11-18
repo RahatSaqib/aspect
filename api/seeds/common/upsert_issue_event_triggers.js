@@ -22,6 +22,9 @@ async function upsertIssueEventTrigger(knex, partnerName) {
     const issueEventStatusId = await issueEventStatusToId(
       issueEvent.issueEventStatus
     )
+
+    if (!issueTypeId) return
+
     return upsertSingle(
       knex,
       'IssueEventTrigger',
