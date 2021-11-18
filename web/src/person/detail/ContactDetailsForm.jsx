@@ -283,6 +283,7 @@ export const ContactDetailsForm = ({
   user,
 }) => {
   const { formatMessage } = i18nWrapper()
+
   return (
     <form onSubmit={handleSubmit} className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>

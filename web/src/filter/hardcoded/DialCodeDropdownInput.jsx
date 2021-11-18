@@ -53,9 +53,11 @@ const enhance = compose(
   withHandlers({
     onDialCodeChange:
       ({ onChange, numberPart }) =>
-      ({ dialCode }) => {
-        onChange(`${dialCode} ${numberPart}`.trim())
+      a => {
+        console.log({ a, numberPart })
       },
+    //   // onChange(`${dialCode} ${numberPart}`.trim())
+    // },
 
     onRawNumberChange:
       ({ onChange, dialCode }) =>
@@ -83,9 +85,9 @@ const DialCodeDropdownInput = ({
 }) => (
   <div className={cssClasses(restProps.className, 'Container')}>
     <DialCodeDropdown
-      value={dialCode}
+      value={{ numberPart, dialCode }}
       onChange={onDialCodeChange}
-      className={cssClasses('DialCodeDropdown__dropdown')}
+      name={restProps?.name}
     />
     <TextField
       fullWidth
