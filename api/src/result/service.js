@@ -2756,7 +2756,8 @@ async function updateOrCreateResult(request, result = {}) {
      * can set reportableSiteId only in Create mode, can't change it in Edit mode.
      * Notice that reportableSiteId is auto-filled in Create mode after selecting Site
      */
-    result.reportableSiteId = payload.reportableSiteId
+    result.reportableSiteId =
+      payload.reportableSiteId || payload.sampleOriginSiteId
     /**
      * patientData
      */
