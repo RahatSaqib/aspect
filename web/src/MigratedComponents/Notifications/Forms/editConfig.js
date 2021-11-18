@@ -503,15 +503,22 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                     hideIfNoOptions: false,
                     queryKey: PERSON_LIST.KEY,
                     normalizeLoadedData: (response, formik) => {
-                      function makeLabel(name, level, state) {
-                        return `${name} (${level}${
-                          isEmpty(state) ? '' : `: ${state}`
-                        })`
+                      function makeLabel(name, state) {
+                        const stateLabel = isEmpty(state) ? '' : ` (${state})`
+                        return `${name} ${stateLabel}`
                       }
                       const values = formik?.values
-
                       const { ok, data } = response
-                      const options = []
+                      const options = [
+                        {
+                          label: formatMessage(messages.optionPersonRoleSet),
+                          options: [],
+                        },
+                        {
+                          label: formatMessage(messages.optionPersonRoleNotSet),
+                          options: [],
+                        },
+                      ]
                       if (ok === true) {
                         const selected = intersectionBy(
                           data,
@@ -520,9 +527,9 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                         )
                         if (selected?.length) {
                           const initialValues = []
-                          map(selected, ({ id, name, level, state }) =>
+                          map(selected, ({ id, name, state }) =>
                             initialValues.push({
-                              label: makeLabel(name, level, state),
+                              label: makeLabel(name, state),
                               value: id,
                             })
                           )
@@ -534,17 +541,15 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                           item => !isEmpty(item.level)
                         )
                         const withoutJob = xor(data, withJob)
-                        map(withJob, ({ id, name, level, state }) =>
-                          options.push({
-                            label: makeLabel(name, level, state),
+                        map(withJob, ({ id, name, state }) =>
+                          options[0].options.push({
+                            label: makeLabel(name, state),
                             value: id,
                           })
                         )
-                        map(withoutJob, ({ name }) =>
-                          options.push({
-                            label: `${name} (${formatMessage(
-                              messages.optionPersonRoleNotSet
-                            )})`,
+                        map(withoutJob, ({ name, state }) =>
+                          options[1].options.push({
+                            label: makeLabel(name, state),
                             value: null,
                             disabled: true,
                           })

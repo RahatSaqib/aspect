@@ -396,6 +396,10 @@ export default defineMessages({
     id: 'pages.Notifications.fieldPersonSendToSpecific',
     defaultMessage: 'Send to a specific person',
   },
+  optionPersonRoleSet: {
+    id: 'pages.Notifications.optionPersonRoleSet',
+    defaultMessage: 'Selectable',
+  },
   optionPersonRoleNotSet: {
     id: 'pages.Notifications.optionPersonRoleNotSet',
     defaultMessage: 'Currently not selectable - missing role',
