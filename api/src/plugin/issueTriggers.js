@@ -99,15 +99,32 @@ async function shouldSuppressTriggering(
 async function analyzeCategories(
   knex,
   action,
-  { categoryId, errorCodes, threshold, below, daysPeriod, minResults }
+  {
+    categoryId,
+    errorCodes,
+    threshold,
+    below,
+    daysPeriod,
+    minResults,
+    checkIfWillBeLotIssue,
+  }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-
+  const { resultId } = action
   const { resultCategoryId, resultErrorCode } = action.options.data
+  let existingIssue = false
+  if (checkIfWillBeLotIssue) {
+    existingIssue = await knex('Issue')
+      .where({ resultId })
+      .whereRaw('data->>"$.resultCategoryId" = ?', [resultCategoryId])
+      .first()
+  }
+
   if (
-    (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
-    (!_.isNil(resultErrorCode) &&
-      _.includes(errorCodes, parseInt(resultErrorCode, 10)))
+    !existingIssue &&
+    ((!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
+      (!_.isNil(resultErrorCode) &&
+        _.includes(errorCodes, parseInt(resultErrorCode, 10))))
   ) {
     action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
