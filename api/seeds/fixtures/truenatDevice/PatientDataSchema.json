@@ -17,11 +17,11 @@
   "gender": {
     "title": "Gender",
     "type": "string",
-    "order": 1
+    "order": 3
   },
   "age": {
     "title": "Age",
     "type": "number",
-    "order": 2
+    "order": 4
   }
 }
