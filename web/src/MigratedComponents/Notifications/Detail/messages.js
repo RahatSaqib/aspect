@@ -400,6 +400,14 @@ export default defineMessages({
     id: 'pages.Notifications.optionPersonRoleNotSet',
     defaultMessage: 'Currently not selectable - missing role',
   },
+  personsSelectLabel: {
+    id: 'pages.NotificationDetail.personsSelectLabel',
+    defaultMessage: 'Select the person or persons you want to notify',
+  },
+  selectPersonOption: {
+    id: 'pages.NotificationDetail.selectPersonOption',
+    defaultMessage: 'Select the person or persons',
+  },
   actionAdd: {
     id: 'pages.NotificationDetail.actionAdd',
     defaultMessage: 'Add',

@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
-import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import isNumber from 'lodash/isNumber'
 import { useMutation, useQuery } from 'react-query'
@@ -17,6 +16,7 @@ import JOBFUNCTIONS_LIST from '../../QueryFetch/JobFunctions/index'
 import { getReturnUrl, useUrlQuery } from '../../AspectTable/Helpers'
 import getFormConfig from '../Forms/editConfig'
 import useI18n from '../../../Hooks/i18n/useI18n'
+import messages from './messages.js'
 
 const AspectNotificationDetails = () => {
   const intl = useI18n()
@@ -39,8 +39,17 @@ const AspectNotificationDetails = () => {
   const [jobFunctions, setJobFunctions] = useState(undefined)
 
   useEffect(() => {
-    if (data) setJobFunctions(data[0].jobFunctions)
-  }, [data])
+    if (data) {
+      const mergedJobFunctions = [
+        {
+          id: 'specificPerson',
+          name: intl.formatMessage(messages.fieldPersonSendToSpecific),
+        },
+        ...data[0].jobFunctions,
+      ]
+      setJobFunctions(mergedJobFunctions)
+    }
+  }, [data, intl])
 
   const { mutate: submitNotification } = useMutation(
     ({ values, id }) => {
@@ -71,6 +80,7 @@ const AspectNotificationDetails = () => {
   const id = isNaN(notificationId) ? undefined : Number(notificationId)
 
   const onSubmit = formik => {
+    const specificPersonId = 'specificPerson'
     const formConfig = getFormConfig(
       intl.formatMessage,
       formik.values.notificationType,
@@ -90,19 +100,22 @@ const AspectNotificationDetails = () => {
     const sanitisedPersons = reduce(
       formik.values.persons,
       (acc, curr) => {
-        ;(acc || ((acc = []) && curr?.persons?.length)).push(
-          ...map(curr?.persons, person => ({
-            personId: person?.value,
-            checked: true,
-          }))
-        )
+        ;(acc || ((acc = []) && curr?.length)).push({
+          personId: curr?.value,
+          checked: true,
+        })
         return acc
       },
       []
     )
     // save only checked Job Functions
-    values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
-    values.persons = sanitisedPersons
+    values.jobFunctions = values.jobFunctions.filter(
+      ({ checked, jobFunctionId }) =>
+        checked && jobFunctionId !== specificPersonId
+    )
+    if (sanitisedPersons?.length) {
+      values.persons = sanitisedPersons
+    }
     submitNotification({ values, id })
   }
 

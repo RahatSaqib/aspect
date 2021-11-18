@@ -4,10 +4,10 @@ import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useQuery } from 'react-query'
+import map from 'lodash/map'
 
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import { FormikProvider } from '../../../Form/Formik/Context'
-
 import AspectForm from '../../../Form'
 import FormActions from '../../../Form/formActions'
 import Shell from '../../../Shell'
@@ -112,6 +112,12 @@ const AspectNotificationDetail = ({
             : [],
         }
       }),
+      persons: filter?.persons
+        ? map(filter?.persons, ({ checked, personId }) => ({
+            checked,
+            id: `${personId}`, // should be string
+          }))
+        : null,
       deviceLevelId: filter.deviceLevelId,
       areaItems: filter.areaItems,
       result: filter.result,
