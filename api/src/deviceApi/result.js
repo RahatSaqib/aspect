@@ -754,6 +754,9 @@ async function postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
+
+  await knex('Device').where({ id: result.deviceId }).update({ lastInstrumentSerial: result.instrumentSerial })
+
   await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
