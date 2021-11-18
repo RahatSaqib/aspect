@@ -3,9 +3,11 @@ import capitalize from 'lodash/capitalize'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import intersectionBy from 'lodash/intersectionBy'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
+import set from 'lodash/set'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 import union from 'lodash/union'
@@ -398,6 +400,7 @@ const getSectionsBase = formatMessage => [
 ]
 
 const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
+  const specificPerson = 'specificPerson'
   const validationBase = getBaseValidation(formatMessage, messages)
   const jobFunctionsRows = {
     id: 'toAnyOfTheseJobFunctions',
@@ -405,13 +408,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
     labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
       ...reduce(
-        [
-          {
-            id: 'specificPerson',
-            name: formatMessage(messages.fieldPersonSendToSpecific),
-          },
-          ...jobFunctions,
-        ],
+        [...jobFunctions],
         (acc, jf, index) => {
           acc = [
             ...acc,
@@ -421,6 +418,9 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                 const jobFunctions = initialValues.jobFunctions || []
                 jobFunctions[index] = jobFunctions[index] || {
                   jobFunctionId: jf.id,
+                }
+                if (initialValues?.persons?.length) {
+                  set(jobFunctions[0], 'checked', true)
                 }
                 initialValues.jobFunctions = jobFunctions
               },
@@ -436,7 +436,14 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                   },
                   label: jf.name,
                   onAfterChange: formik => {
-                    formik.setFieldTouched(`jobFunctions[0].checked`, true)
+                    formik.setFieldTouched(
+                      `jobFunctions[${index}].checked`,
+                      true
+                    )
+                    if (jf.id === specificPerson) {
+                      formik.values.persons = null
+                      formik.setFieldValue('persons', null)
+                    }
                   },
                 },
               ],
@@ -481,8 +488,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                   labelI18nKey: 'jobFunctionTags',
                   visibleIf: values =>
                     values.jobFunctions[index].checked &&
-                    values.jobFunctions[index].jobFunctionId !==
-                      'specificPerson',
+                    values.jobFunctions[index].jobFunctionId !== specificPerson,
                 },
               ],
             },
@@ -490,17 +496,39 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
               id: `row-jf${jf.id}-persons`,
               items: [
                 {
-                  id: `persons[${index}].persons`,
-                  initialValue: [],
+                  id: 'persons',
                   controlType: {
                     component: 'select',
                     endpoint: PERSON_LIST.ENDPOINT,
                     hideIfNoOptions: false,
                     queryKey: PERSON_LIST.KEY,
-                    normalizeLoadedData: response => {
+                    normalizeLoadedData: (response, formik) => {
+                      function makeLabel(name, level, state) {
+                        return `${name} (${level}${
+                          isEmpty(state) ? '' : `: ${state}`
+                        })`
+                      }
+                      const values = formik?.values
+
                       const { ok, data } = response
                       const options = []
                       if (ok === true) {
+                        const selected = intersectionBy(
+                          data,
+                          values.persons,
+                          'id'
+                        )
+                        if (selected?.length) {
+                          const initialValues = []
+                          map(selected, ({ id, name, level, state }) =>
+                            initialValues.push({
+                              label: makeLabel(name, level, state),
+                              value: id,
+                            })
+                          )
+                          formik.values.persons = initialValues
+                          formik.setFieldValue('persons', initialValues)
+                        }
                         const withJob = filter(
                           data,
                           item => !isEmpty(item.level)
@@ -508,9 +536,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                         const withoutJob = xor(data, withJob)
                         map(withJob, ({ id, name, level, state }) =>
                           options.push({
-                            label: `${name} (${level}${
-                              isEmpty(state) ? '' : `: ${state}`
-                            })`,
+                            label: makeLabel(name, level, state),
                             value: id,
                           })
                         )
@@ -524,7 +550,7 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                           })
                         )
                       }
-                      return options
+                      return options?.length ? options : null
                     },
                     isMulti: true,
                   },
@@ -536,12 +562,11 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                     controlContainer: cssClasses('full-width-100pc'),
                     item: cssClasses('full-width-100pc'),
                   },
-                  label: 'Tags',
-                  labelI18nKey: 'jobFunctionTags',
+                  label: 'Persons',
+                  labelI18nKey: 'selectPersonOption',
                   visibleIf: values =>
                     values.jobFunctions[index].checked &&
-                    values.jobFunctions[index].jobFunctionId ===
-                      'specificPerson',
+                    values.jobFunctions[index].jobFunctionId === specificPerson,
                 },
               ],
             },

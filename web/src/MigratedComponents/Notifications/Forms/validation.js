@@ -77,6 +77,11 @@ const validationSchema = formatMessage =>
             ),
           })
         ),
+      persons: Yup.array().when('jobFunctions', {
+        is: jobFunctions => jobFunctions[0]?.jobFunctionId === 'specificPerson',
+        then: Yup.array().min(1).required(),
+        otherwise: Yup.array().notRequired(),
+      }),
       sendEmail: Yup.boolean(),
       sendSms: Yup.boolean(),
       sendWeb: Yup.boolean(),
@@ -112,7 +117,6 @@ const validationSchema = formatMessage =>
       if (item.sendEmail || item.sendSms || item.sendWeb) {
         return true // everything is fine
       }
-
       return new Yup.ValidationError(
         formatMessage(messages.notificationChannels),
         null,
