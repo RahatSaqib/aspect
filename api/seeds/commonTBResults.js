@@ -1,12 +1,11 @@
 const _ = require('lodash')
-const {integer} = require("twilio/lib/base/deserialize");
 
 function getRandomGeneXpertPatientData(patientNumber, patientData) {
   const tbPatientData = patientData[_.random(patientNumber)]
   tbPatientData.hivStatus = _.sample([
-    'HIV positive',
-    'HIV negative',
-    'HIV unknow',
+    'HIV Positive',
+    'HIV Negative',
+    'HIV Unknown',
     null,
   ])
   return tbPatientData

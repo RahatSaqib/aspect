@@ -39,10 +39,7 @@ const {
   upsertMGITDeviceTypeAndAssays,
   upsertCultureAssays,
 } = require('../commonTB')
-const {
-  getRandomGeneXpertPatientData,
-  getRandomTruenatPatientData,
-} = require('../commonTBResults')
+const { getRandomGeneXpertPatientData } = require('../commonTBResults')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
 const {

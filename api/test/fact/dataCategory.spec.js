@@ -215,7 +215,10 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
           const sample = samples[i % samples.length]
 
           // get sample patient
-          const patient = getRandomGeneXpertPatientData(totalPatients - 1, patients)
+          const patient = getRandomGeneXpertPatientData(
+            totalPatients - 1,
+            patients
+          )
 
           // set values for all categories
           dataCategories.forEach(category => {
