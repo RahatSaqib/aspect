@@ -393,7 +393,18 @@ async function processGeneXpertLogs(context, data, now) {
   await Promise.each(data, async logItem => {
     try {
       const logItemId = await processLogItem(context, logItem, options)
-      processedLogIds = [...processedLogIds, logItemId]
+      /**
+       * Only Log File entries return `logItemId` from `processLogItem`,
+       * all entries from Cepheid db return `undefined` and should not
+       * be added to the list of processed id's.
+       * Notice that processedLogIds are needed in GxConnect to mark record in SQLite
+       * table `Logs` that it has been processed well in Aspect.
+       * We do not mark records in Cepheid db `system_log` but only keep
+       * `settings.LastProcessedSystemLogTimeForAspect` and store it in setting.jsn.
+       */
+      if (logItemId) {
+        processedLogIds = [...processedLogIds, logItemId]
+      }
     } catch (e) {
       /**
        * if error happened then we do not return this logId as processed,
@@ -413,24 +424,64 @@ async function processGeneXpertLogs(context, data, now) {
   }
 }
 
-async function processLogItem(context, logItem, options) {
-  const { calibrationDeviceMaintenanceTypeId, now } = options
-  const { externalId, logFileName, logLevel, occurredOn } = logItem
-  let { details } = logItem
-  if (_.isString(details)) {
-    details = JSON.parse(details)
+function getLogItemPayload(logItem) {
+  /**
+   * props from log files
+   */
+  if (logItem.logFileName) {
+    const { externalId, logFileName, logLevel, occurredOn } = logItem
+    let { details } = logItem
+    if (_.isString(details)) {
+      details = JSON.parse(details)
+    }
+    return {
+      id: externalId,
+      startedOn: occurredOn,
+      data: {
+        type: 'gx-log',
+        logFileName,
+        logLevel,
+        details,
+      },
+    }
   }
-  const { device, knex } = context
-  const payload = {
-    id: externalId,
-    startedOn: occurredOn,
+  /**
+   * props for errors from Cepheid system_log table
+   */
+  const {
+    log_time: logTime,
+    error_code: ErrorCode,
+    error_type: ErrorType,
+    site_name: ModuleName,
+    site_serial_number: ModuleSerial,
+    instrument_serial_number: InstrumentSerial,
+    sw_version: softwareVersion,
+  } = logItem
+  return {
+    startedOn: logTime,
     data: {
       type: 'gx-log',
-      logFileName,
-      logLevel,
-      details,
+      softwareVersion,
+      details: {
+        Errors: [
+          {
+            Message: logItem.details,
+            ErrorCode,
+            ErrorType,
+            ModuleName,
+            ModuleSerial,
+            InstrumentSerial,
+          },
+        ],
+      },
     },
   }
+}
+
+async function processLogItem(context, logItem, options) {
+  const { device, knex } = context
+  const { calibrationDeviceMaintenanceTypeId, now } = options
+  const payload = getLogItemPayload(logItem)
 
   logger.debug('executing processLogItem', {
     reLabel: 'deviceApi:processLogItem',
@@ -460,7 +511,7 @@ async function processLogItem(context, logItem, options) {
     calibrationDeviceMaintenanceTypeId
   )
 
-  return externalId
+  return logItem.externalId
 }
 
 async function getConnectionSettings(context) {
