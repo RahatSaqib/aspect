@@ -180,6 +180,17 @@ async function listNotifications(request) {
         `)
       )
     })
+    .leftOuterJoin('Person as per', qb => {
+      qb.on(
+        knex.raw(`
+          JSON_SEARCH(
+            nt.filterCondition -> '$.persons[*].personId',
+            'one',
+            CAST(per.id as char)
+          ) IS NOT NULL
+        `)
+      )
+    })
     .select(
       'nt.id as id',
       'nt.name',
@@ -187,8 +198,10 @@ async function listNotifications(request) {
         `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
       ),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT jf.name) as contactsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
+      knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
+      knex.raw('COUNT(DISTINCT per.id) as personsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')

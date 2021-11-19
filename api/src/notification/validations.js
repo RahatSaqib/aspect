@@ -17,8 +17,6 @@ function listNotificationsBaseConfig() {
           'lastTriggeredOn',
           'alertCount',
           'totalTriggers',
-          'contactsCount',
-          'contacts',
           'typeCategory'
         ),
       },
