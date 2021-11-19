@@ -321,7 +321,7 @@ const hardwareErrorIssueEmailHtml = errorCode =>
         System Serial
       </td>
       <td>
-        {{device.serial}}
+        {{device.lastInstrumentSerial}}
       </td>
     </tr>
     <tr>
@@ -338,7 +338,7 @@ const hardwareErrorIssueEmailText = errorCode =>
   getDeviceBaseText({
     errorCode,
     customPart: `
-System Serial: {{device.serial}}
+System Serial: {{device.lastInstrumentSerial}}
 
 Date/Time (UTC): {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
   `,

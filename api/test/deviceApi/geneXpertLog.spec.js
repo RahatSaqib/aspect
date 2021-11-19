@@ -20,6 +20,7 @@ const context = createTestContext(server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
+  instrumentSerial: 'GX-00001',
   baseConfig,
 })
 
@@ -308,6 +309,17 @@ describe('Process GeneXpert Logs', () => {
       .innerJoin('Issue as i', 'ie.issueId', 'i.id')
       .where('ie.issueId', issue.id)
       .first()
+
+    // -------------------
+    // Email message should contain the instrument serial number as the System serial
+    // -------------------
+    const { emailMessage } = await knex('Notification as n')
+      .innerJoin('EmailMessage as em', 'n.emailMessageId', 'em.id')
+      .where('issueId', issue.id)
+      .first('em.body as emailMessage')
+    assert.isNotNull(emailMessage)
+    assert.isTrue(emailMessage.indexOf('System Serial: GX-00001') > -1)
+
     const eventData = JSON.parse(issueEvent.data)
     const { details: eventDetailsStored } = eventData
     expect(eventDetailsStored).to.containSubset(detailsSent)

@@ -1257,7 +1257,7 @@ describe('Device Result API routes', () => {
             assert.typeOf(res.body.result, 'undefined')
           })
 
-        await server
+        const res = await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -1265,14 +1265,23 @@ describe('Device Result API routes', () => {
             operation: { data: { a: 'c' } },
             result: {
               startedOn: now,
-              data: { a: 'd' },
+              data: {
+                a: 'd',
+              },
+              instrument: {
+                serial: 'A NICE INSTRUMENT SERIAL',
+              },
               assay: { id: 'DaktariHivVL' },
             },
           })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+
+        // The last reported instrument serial should be updated in the device table
+        const { lastInstrumentSerial } = await knex('Device')
+          .where({ id: deviceId })
+          .first()
+        assert.equal(lastInstrumentSerial, 'A NICE INSTRUMENT SERIAL')
 
         resultIds.push(await getLastResultId(knex, deviceId))
         opIds.push(await getLastDeviceOperationId(knex, deviceId))
