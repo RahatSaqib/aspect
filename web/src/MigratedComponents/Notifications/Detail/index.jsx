@@ -17,7 +17,6 @@ import JOBFUNCTIONS_LIST from '../../QueryFetch/JobFunctions/index'
 import { getReturnUrl, useUrlQuery } from '../../AspectTable/Helpers'
 import getFormConfig from '../Forms/editConfig'
 import useI18n from '../../../Hooks/i18n/useI18n'
-import messages from './messages.js'
 
 const AspectNotificationDetails = () => {
   const intl = useI18n()
@@ -41,13 +40,7 @@ const AspectNotificationDetails = () => {
 
   useEffect(() => {
     if (data) {
-      const mergedJobFunctions = [
-        {
-          id: 'specificPerson',
-          name: intl.formatMessage(messages.fieldPersonSendToSpecific),
-        },
-        ...data[0].jobFunctions,
-      ]
+      const mergedJobFunctions = [...data[0].jobFunctions]
       setJobFunctions(mergedJobFunctions)
     }
   }, [data, intl])
@@ -119,6 +112,9 @@ const AspectNotificationDetails = () => {
     }
     if (!values?.jobFunctions?.length) {
       unset(values, 'jobFunctions')
+    }
+    if (!values?.persons?.length) {
+      unset(values, 'persons')
     }
     submitNotification({ values, id })
   }

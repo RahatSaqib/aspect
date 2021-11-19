@@ -406,7 +406,7 @@ export default defineMessages({
   },
   personsSelectLabel: {
     id: 'pages.NotificationDetail.personsSelectLabel',
-    defaultMessage: 'Select the person or persons you want to notify',
+    defaultMessage: 'To an individual person',
   },
   selectPersonOption: {
     id: 'pages.NotificationDetail.selectPersonOption',
