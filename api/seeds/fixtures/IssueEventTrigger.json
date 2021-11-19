@@ -164,11 +164,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ],
+            "errorCodesToSuppress": [5006],
             "suppressionDays": 30
           }
         }
@@ -187,7 +183,7 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5006],
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3
@@ -198,11 +194,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [5006]
           }
         }
       },
@@ -233,11 +225,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [5001, 5002, 5003, 5004, 5005, 5015, 5016]
           }
         }
       },
@@ -256,7 +244,7 @@
           "evaluationFilterParameters": {
             "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
             "categoryId": "Invalid",
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3
@@ -267,11 +255,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [5001, 5002, 5003, 5004, 5005, 5015, 5016]
           }
         }
       },
@@ -301,11 +285,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [5017, 5007]
           }
         }
       },
@@ -323,7 +303,7 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5017, 5007],
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3
@@ -333,11 +313,7 @@
             "evaluationParameter": "shouldSuppressTriggering",
             "evaluationFilterParameters": {
               "suppressionDays": 30,
-              "errorCodesToSuppress": [
-                2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006,
-                1018, 2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034,
-                4015, 2017, 4008, 4016, 4006, 4011
-              ]
+              "errorCodesToSuppress": [5017, 5007]
             }
           }
         }
@@ -413,11 +389,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [5011]
           }
         }
       },
@@ -435,7 +407,7 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5011],
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3,
@@ -447,11 +419,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [5011]
           }
         }
       },
@@ -471,18 +439,36 @@
             "minResults": 20,
             "expectedUsedModules": 4
           }
+        }
+      }
+    },
+    {
+      "issueType": "SyringePressureTooHighModule",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_ANALYZE_SYRINGE_PRESSURE_TOO_HIGH_MODULE",
+        "conditions": {
+          "evaluationMethod": "plugin-function",
+          "evaluationParameter": "analyzeErrors",
+          "evaluationFilterParameters": {
+            "errorCodes": [2008],
+            "threshold": 0.03,
+            "below": false,
+            "daysPeriod": 30,
+            "minResults": 3
+          }
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [2008],
+            "suppressionDays": 30
           }
         }
+      },
+      "filterIssueCondition": {
+        "evaluationFunction": "filterByInstrumentSerial"
       }
     },
     {
@@ -495,7 +481,7 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [2008],
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3
@@ -505,11 +491,7 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ],
+            "errorCodesToSuppress": [2008],
             "suppressionDays": 30
           }
         }
@@ -540,11 +522,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [2096, 2097]
           }
         }
       },
@@ -562,7 +540,7 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [2096, 2097],
-            "threshold": 0.1,
+            "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
             "minResults": 3
@@ -573,11 +551,7 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
+            "errorCodesToSuppress": [2096, 2097]
           }
         }
       },
@@ -743,22 +717,6 @@
               2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
               4008, 4016, 4006, 4011
             ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareModuleWasReset",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_MODULE_WAS_RESET",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2126],
-            "daysPeriod": 30,
-            "minErrors": 3
           }
         }
       }
