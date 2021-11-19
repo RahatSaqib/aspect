@@ -23,40 +23,6 @@ describe('/account-details', () => {
     shared.checkToken(server, pathGlobal)
   })
 
-  describe('/account-details/current', () => {
-    describe('GET', () => {
-      it('should return the account details for the currently logged in user', async () => {
-        const res = await server
-          .get(pathGlobal)
-          .set('Authorization', `Bearer ${shared.token}`)
-
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data, 'Object')
-        const accountDetailsFieldNames = [
-          'id',
-          'userId',
-          'username',
-          'name',
-          'title',
-          'email',
-          'email2',
-          'phone',
-          'cell',
-          'countryId',
-          'stateId',
-          'lgaId',
-          'timezone',
-          'culture',
-        ]
-        _.each(accountDetailsFieldNames, fieldName => {
-          assert.property(res.body.data, fieldName)
-        })
-      })
-    })
-  })
-
   describe('/account-details/current-contact', () => {
     describe('PUT', () => {
       const path = `${pathGlobal}-contact`
