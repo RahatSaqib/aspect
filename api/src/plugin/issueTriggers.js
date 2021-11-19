@@ -210,17 +210,12 @@ async function analyzeDeviceHardwareError(
 ) {
   const { resultErrorCode } = action.options.data
 
-  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
-  // the rest is of the entry is identical. Ignore those duplicates.
-  const errorCodesWithDuplicateLogEntries = ['2126']
-
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const [{ totalErrors }] = await hardwareErrors(
       knex,
       action.deviceId,
       daysPeriod,
-      errorCodes,
-      errorCodesWithDuplicateLogEntries
+      errorCodes
     )
     action.options.data.totalErrors = totalErrors
     action.options.data.errorCodes = errorCodes
@@ -229,16 +224,50 @@ async function analyzeDeviceHardwareError(
   return false
 }
 
-async function hardwareErrors(
-  knex,
-  deviceId,
-  daysPeriod,
-  errorCodes,
-  errorCodesWithDuplicateLogEntries
-) {
-  // In this subquery, we're using the 'lag' function in MySQL to select the date of the previous row's log entry
-  // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
-  const subquery = knex('DeviceOperation')
+async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
+  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
+  // the rest is of the entry is identical. Ignore those duplicates.
+  const errorCodesWithDuplicateLogEntries = [2126]
+
+  // Some error codes produce several log entries in a short time frame
+  // For those error codes, only count entries that are at least an hour apart
+  const errorCodesToDeduplicateIfWithinTimeFrame = [
+    1001, 1002, 2014, 4008, 4012, 4017,
+  ]
+
+  // note that currently all hardware based issues only contain one error code as
+  // the trigger condition. If we have to support multiple errorcodes, some of
+  // which are in the `errorCodesToDeduplicateIfWithinTimeFrame` array and others aren't,
+  // we may have to rethink this (though I'm not sure that's even possible to solve)
+  if (
+    errorCodes.some(e => errorCodesToDeduplicateIfWithinTimeFrame.includes(e))
+  ) {
+    // In this subquery, we're using the 'lag' function in MySQL to select the date of the previous row's log entry
+    // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
+    const subquery = knex('DeviceOperation')
+      .where('deviceId', deviceId)
+      .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+      .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
+      .whereRaw(
+        `data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`
+      )
+      .select(
+        'id',
+        'startedOn',
+        knex.raw(
+          'lag(startedOn, 1) over (partition by deviceId order by startedOn) as previousStartedOn'
+        )
+      )
+      .as('logEntriesWithTimeSpan')
+
+    return knex
+      .count('id as totalErrors')
+      .from(subquery)
+      .whereRaw('timestampdiff(minute, previousStartedOn, startedOn) > 60')
+      .orWhere('previousStartedOn', null)
+  }
+
+  return knex('DeviceOperation')
     .where('deviceId', deviceId)
     .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
     .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
@@ -252,20 +281,7 @@ async function hardwareErrors(
         )})`
       ).orWhereRaw(`IFNULL(data ->> '$.logLevel', '') = 'INFO'`)
     })
-    .select(
-      'id',
-      'startedOn',
-      knex.raw(
-        'lag(startedOn, 1) over (partition by deviceId order by startedOn) as previousStartOn'
-      )
-    )
-    .as('logEntriesWithTimeSpan')
-
-  return knex
     .count('id as totalErrors')
-    .from(subquery)
-    .whereRaw('timestampdiff(minute, previousStartOn, startedOn) > 60')
-    .orWhere('previousStartOn', null)
 }
 module.exports = {
   analyzeErrors,
