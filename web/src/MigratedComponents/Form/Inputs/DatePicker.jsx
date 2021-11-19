@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import get from 'lodash/get'
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
@@ -13,13 +14,14 @@ import { useFormikContext } from 'formik'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
+import useI18n from '../../../Hooks/i18n/useI18n'
 import {
   formatDate,
   formatDateTime,
   getDateObject,
 } from '../../../shared/utils/dateFormat'
 import { useAuthState } from '../../../Providers/AuthProvider'
-
+import messages from '../messages'
 import styles from './DatePicker.css'
 
 const cssClasses = classnames.bind(styles)
@@ -33,6 +35,7 @@ const getDisplayValue = (value, showTimeSelect) => {
 }
 
 const AspectDatePickerBase = props => {
+  const { formatMessage } = useI18n()
   const {
     className,
     culture,
@@ -55,24 +58,37 @@ const AspectDatePickerBase = props => {
       'endDate',
       'minDate',
       'maxDate',
+      'timeIntervals',
+      'isClearable',
     ]),
     v => isNil(v)
   )
 
-  const updateSelectDate = date => {
-    onChange(date)
-    setSelectedDate(date)
+  const updateSelectDate = (date, event) => {
+    let newValue = date
+    if (!date && event) {
+      const { target: { className = '' } = {} } = event
+      if (className.includes('datepicker__clearButton')) {
+        // change `null` to empty string because
+        // `value` is required in below propTypes
+        newValue = ''
+      }
+    }
+    onChange(newValue)
+    setSelectedDate(newValue)
   }
 
   return (
     <DatePicker
       {...optionalProps}
-      wrapperClassName={cssClasses('datepicker__wrapper')}
+      wrapperClassName={cssClasses('datepicker__wrapper', {
+        'datepicker__no-value': !selectedDate,
+      })}
       className={className}
       showTimeSelect={showTimeSelect}
       selected={selectedDate}
       dateFormat={dateFormat}
-      onChange={date => updateSelectDate(date)}
+      onChange={(date, event) => updateSelectDate(date, event)}
       customInput={
         <TextField
           {...omit(props, [
@@ -87,19 +103,24 @@ const AspectDatePickerBase = props => {
             'minDate',
             'maxDate',
             'link',
+            'timeIntervals',
+            'isClearable',
           ])}
+          className={cssClasses('datepicker__TextField')}
         />
       }
       disabled={InputProps.disabled}
       placeholderText={placeholder}
       value={getDisplayValue(selectedDate, showTimeSelect)}
       locale={culture}
+      clearButtonClassName={cssClasses('datepicker__clearButton')}
+      clearButtonTitle={formatMessage(messages.clearValue)}
     />
   )
 }
 
 const AspectDatePicker = props => {
-  const { updateField } = useFormikContext()
+  const { updateField, toggleEdit } = useFormikContext()
   const { displayPreferences, culture } = useAuthState()
   const { formik, classNames, controlType, ...rest } = props
   const { values } = formik
@@ -114,7 +135,12 @@ const AspectDatePicker = props => {
     endDateId,
     minDateId,
     maxDateId,
+    timeIntervals,
   } = controlType
+  let { isClearable } = controlType
+  if (isClearable && rest?.InputProps?.disabled) {
+    isClearable = false
+  }
 
   // skip all 'null' and 'undefined' props
   const optionalProps = omitBy(
@@ -125,17 +151,30 @@ const AspectDatePicker = props => {
       endDate: endDateId ? getDateObject(values[endDateId], null) : null,
       minDate: minDateId ? getDateObject(values[minDateId], null) : null,
       maxDate: maxDateId ? getDateObject(values[maxDateId], null) : null,
+      timeIntervals,
+      isClearable,
     },
     v => isNil(v)
   )
+  // show error only for touched fields
+  let errorProps = {}
+  const error = get(formik.errors, props.id)
+  if (error && get(formik.touched, props.id)) {
+    errorProps = {
+      ...errorProps,
+      error: true,
+      helperText: error,
+    }
+  }
 
   // effective props for pure component
   const mergedProps = {
     ...rest,
     ...optionalProps,
+    ...errorProps,
     culture,
     onChange: value => {
-      updateField(props.id, value, props.formik)
+      updateField(props.id, value, { formik, toggleEdit })
     },
     dateFormat: format || displayPreferences.dateTimeFormat, // use `format` from `controlType` or default
     showTimeSelect: isBoolean(props.showTimeSelect)

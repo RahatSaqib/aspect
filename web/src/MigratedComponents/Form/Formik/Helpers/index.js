@@ -4,11 +4,11 @@ import cloneDeep from 'lodash/cloneDeep'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
+import isBoolean from 'lodash/isBoolean'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
 import isPlainObject from 'lodash/isPlainObject'
-import keys from 'lodash/keys'
-import omit from 'lodash/omit'
+import range from 'lodash/range'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
 
@@ -45,7 +45,7 @@ const mergeFormConfigWithData = (data, config, messages) => {
   return configToMutate
 }
 
-const getInitialValuesFromFormConfig = config => {
+const getInitialValuesFromFormConfig = (config, savedValues) => {
   const initialValues = {}
   const { sections } = config
   sections.forEach(({ rows }) => {
@@ -54,23 +54,65 @@ const getInitialValuesFromFormConfig = config => {
       if (presetInitialValues) {
         presetInitialValues(initialValues)
       }
-      items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
-        const { component } = controlType
-        let value = initialValue || ''
-        if (component === 'checkbox') {
-          value = initialValue === true
-        }
-        if (isMulti) {
-          initialValues[rowId] = initialValues[rowId] || [
-            {
+
+      // multiply rows if saved value is available
+      if (isMulti) {
+        initialValues[rowId] = initialValues[rowId] || []
+        const subRowsInitial = initialValues[rowId]
+        // having saved sub-rows
+        if (
+          savedValues &&
+          isPlainObject(savedValues) &&
+          isArray(savedValues[rowId])
+        ) {
+          const subRowsSaved = savedValues[rowId]
+          subRowsSaved.forEach((subRow, subRowIndex) => {
+            subRowsInitial[subRowIndex] = subRowsInitial[subRowIndex] || {
               __guid__: uniqueId(rowId),
-            },
-          ]
-          set(initialValues[rowId][0], fieldName, value)
+            }
+
+            items.forEach(
+              ({ controlType = {}, id: fieldName, initialValue }) => {
+                const { component } = controlType
+                const savedValue = get(subRow, fieldName)
+                let value
+                if (component === 'checkbox') {
+                  value = isBoolean(savedValue)
+                    ? savedValue
+                    : initialValue === true
+                } else {
+                  value = savedValue || initialValue || ''
+                }
+                set(subRowsInitial[subRowIndex], fieldName, value)
+              }
+            )
+          })
         } else {
-          set(initialValues, fieldName, value)
+          subRowsInitial[0] = subRowsInitial[0] || {
+            __guid__: uniqueId(rowId),
+          }
+          items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
+            const { component } = controlType
+            let value = initialValue || ''
+            if (component === 'checkbox') {
+              value = initialValue === true
+            }
+            set(subRowsInitial[0], fieldName, value)
+          })
         }
-      })
+      } else {
+        items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
+          const { component } = controlType
+          const savedValue = savedValues ? get(savedValues, fieldName) : null
+          let value
+          if (component === 'checkbox') {
+            value = isBoolean(savedValue) ? savedValue : initialValue === true
+          } else {
+            value = savedValue || initialValue || ''
+          }
+          set(initialValues, fieldName, value)
+        })
+      }
     })
   })
 
@@ -253,26 +295,74 @@ const getBaseValidation = (formatMessage, messages) => {
   }
 }
 
-const sanitizeFormValues = (
-  values,
-  { meta, removeReadOnly = true, removeGuids = true }
-) => {
-  const { fieldTypes } = meta
-  /**
-   * prepare payload, i.e.
-   * - conditionally remove read only props
-   * - remove props `__guid__` from array of objects
-   */
-  const payload = cloneDeep(values)
-  keys(payload).forEach(key => {
-    if (fieldTypes[key] === 'readOnly' && removeReadOnly) {
-      delete payload[key]
-    } else if (isArray(payload[key]) && removeGuids) {
-      payload[key] = payload[key].map(it =>
-        isPlainObject(it) ? omit(it, ['__guid__']) : it
-      )
+const getVisibleRows = (rows, values, toggleEdit) => {
+  return rows.map(row => {
+    if (row.visibleIf && !row.visibleIf(values, toggleEdit)) {
+      // row is hidden explicitly
+      return false
     }
+    // row is visible if at least one item is visible
+    const { isMulti, id: rowId } = row
+    const itemsVisible = row.items.map(({ visibleIf }) =>
+      range(isMulti ? values[rowId].length : 1)
+        .map(subRowIndex =>
+          visibleIf ? visibleIf(values, toggleEdit, subRowIndex) : true
+        )
+        .includes(true)
+    )
+    return itemsVisible.includes(true)
   })
+}
+
+const sanitizeFormValues = (values, { formConfig, removeReadOnly = true }) => {
+  /**
+   * loop through all sections/rows/items the same way as we do when rendering form
+   * and get only values for visible items.
+   * If we need to submit some of readonly or invisible fields, then do add them to
+   * final payload after running this function. FOr instance - see func `onSubmit`
+   * in `web/src/MigratedComponents/Notifications/Detail/index.jsx` where we append
+   * `notificationType` (which is readonly) and especially `jobFunctions` array.
+   */
+  const toggleEdit = true
+  const payload = {}
+  const { sections } = formConfig
+  sections.forEach(({ rows, visibleIf }) => {
+    // section is hidden
+    if (visibleIf && !visibleIf(values, toggleEdit)) {
+      return null
+    }
+    const visibleRows = getVisibleRows(rows, values, toggleEdit)
+    rows.forEach((row, rowIndex) => {
+      if (visibleRows[rowIndex] === true) {
+        const { items, isMulti } = row
+        if (isMulti) {
+          const subRows = values[row.id]
+          subRows.forEach((_, subRowIndex) => {
+            // loop items in sub-row
+            items.forEach(({ type, id, visibleIf }) => {
+              if (type === 'readOnly' && removeReadOnly) return
+              // item is hidden
+              if (visibleIf && !visibleIf(values, toggleEdit, subRowIndex)) {
+                return
+              }
+              const itemId = `${row.id}[${subRowIndex}].${id}`
+              set(payload, itemId, get(values, itemId))
+            })
+          })
+        } else {
+          items.forEach(({ type, id, visibleIf }) => {
+            if (type === 'readOnly' && removeReadOnly) return
+            // item is hidden
+            if (visibleIf && !visibleIf(values, toggleEdit)) {
+              return
+            }
+            set(payload, id, get(values, id))
+          })
+        }
+      }
+    })
+  })
+
   return payload
 }
 
@@ -290,4 +380,5 @@ export {
   pickKeys,
   getBaseValidation,
   sanitizeFormValues,
+  getVisibleRows,
 }

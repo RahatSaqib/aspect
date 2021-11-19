@@ -63,6 +63,30 @@ export const commonDefinitions = defineMessages({
     id: 'pages.common.lga_PK',
     defaultMessage: 'District',
   },
+  lga_BD: {
+    id: 'pages.common.lga_BD',
+    defaultMessage: 'District',
+  },
+  state_BD: {
+    id: 'pages.common.state_BD',
+    defaultMessage: 'Division',
+  },
+  button_Edit: {
+    id: 'button_Edit',
+    defaultMessage: 'Edit',
+  },
+  button_Cancel: {
+    id: 'button_Cancel',
+    defaultMessage: 'Cancel',
+  },
+  button_Submit: {
+    id: 'button_Submit',
+    defaultMessage: 'Submit',
+  },
+  button_Back: {
+    id: 'button_Back',
+    defaultMessage: 'Back',
+  },
 })
 
 export function getCustomMessage(messages, key, user, params) {

@@ -108,17 +108,29 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-// eslint-disable-next-line no-unused-vars
-const onAddNewButtonClick = navigate => () => navigate('/browse/result/add')
+const onAddNewButtonClick = (navigate, location) => () => {
+  gotoResultDetails(navigate, location, 'add')
+}
 
 const onRowClick =
-  navigate =>
+  (navigate, location) =>
   ({
     currentTarget: {
       dataset: { resultId },
     },
-  }) =>
-    navigate(`/browse/result/${resultId}`)
+  }) => {
+    gotoResultDetails(navigate, location, resultId)
+  }
+
+const gotoResultDetails = (navigate, location, resultId) => {
+  const searchParams = new URLSearchParams(location.search)
+
+  const q = new URLSearchParams({
+    returnUrl: `${location.pathname}?${searchParams.toString()}`,
+  })
+
+  navigate(`/browse/result/${resultId || 'add'}?${q.toString()}`)
+}
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -263,17 +275,15 @@ export const ResultListWithProps = ({
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
     >
-      {/** ? 
       <AddNewButton
         type="button"
         color="primary"
         variant="contained"
         browseButton
-        onClick={onAddNewButtonClick(navigate)}
+        onClick={onAddNewButtonClick(navigate, location)}
       >
         {intl.formatMessage(messages.newResult)}
       </AddNewButton>
-    */}
     </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
@@ -304,7 +314,7 @@ export const ResultListWithProps = ({
                   intl={intl}
                   extraColumns={table.extraColumns}
                   result={result}
-                  onClick={onRowClick(navigate)}
+                  onClick={onRowClick(navigate, location)}
                   data-result-id={result.get('id')}
                   messages={messages}
                 />

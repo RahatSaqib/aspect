@@ -1414,12 +1414,6 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(2126),
-        body: hardwareErrorIssueEmailText(2126),
-        htmlBody: hardwareErrorIssueEmailHtml(2126),
-        ...auditFields,
-      },
     },
     HardwarePowerSupplyVoltageOutOfRange: {
       issueType: {

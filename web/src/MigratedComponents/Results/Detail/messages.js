@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
+import { commonDefinitions } from '../../../shared/utils/customMessages'
+import resultCategoryMessages from '../../../shared/messages/resultCategory'
+import resultCategoryTypeMessages from '../../../shared/messages/resultCategoryType'
 
-const messages = defineMessages({
+const messagesResult = defineMessages({
+  site: {
+    id: 'pages.resultEdit.site',
+    defaultMessage: 'Site',
+  },
+
   resultTitle: {
     id: 'pages.resultEdit.resultTitle',
     defaultMessage: 'Result Details',
@@ -73,4 +81,9 @@ const messages = defineMessages({
   },
 })
 
-export default messages
+export default {
+  ...commonDefinitions,
+  ...resultCategoryMessages,
+  ...resultCategoryTypeMessages,
+  ...messagesResult,
+}
