@@ -387,7 +387,7 @@ async function getBaseDataSource(data) {
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
       serial: d.deviceSerial,
-      lastInstrumentSerial: d.lastInstrumentSerial
+      lastInstrumentSerial: d.lastInstrumentSerial,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},

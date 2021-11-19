@@ -1269,7 +1269,7 @@ describe('Device Result API routes', () => {
                 a: 'd',
               },
               instrument: {
-                serial: "A NICE INSTRUMENT SERIAL",
+                serial: 'A NICE INSTRUMENT SERIAL',
               },
               assay: { id: 'DaktariHivVL' },
             },
@@ -1278,7 +1278,9 @@ describe('Device Result API routes', () => {
         assert.typeOf(res.body, 'Object')
 
         // The last reported instrument serial should be updated in the device table
-        const { lastInstrumentSerial } = await knex('Device').where({ id: deviceId }).first()
+        const { lastInstrumentSerial } = await knex('Device')
+          .where({ id: deviceId })
+          .first()
         assert.equal(lastInstrumentSerial, 'A NICE INSTRUMENT SERIAL')
 
         resultIds.push(await getLastResultId(knex, deviceId))

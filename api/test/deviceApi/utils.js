@@ -215,7 +215,13 @@ async function createSite(knex, { partner, user, site }) {
 
 async function createDevice(
   knex,
-  { siteId, type = 'DaktariVirology', approval = 'approved', instrumentSerial, baseConfig = {} },
+  {
+    siteId,
+    type = 'DaktariVirology',
+    approval = 'approved',
+    instrumentSerial,
+    baseConfig = {},
+  },
   insertLog = false
 ) {
   const now = new Date()
@@ -243,7 +249,7 @@ async function createDevice(
     name: 'Test Device',
     shortName: 'Test Device',
     lastSeenOn: now,
-    lastInstrumentSerial: instrumentSerial
+    lastInstrumentSerial: instrumentSerial,
   })
 
   await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
@@ -262,7 +268,13 @@ async function createDevice(
 
 async function createResult(
   knex,
-  { deviceId, userId, sampleType = 'DBS', assayName = 'DaktariHivVL', instrumentSerial }
+  {
+    deviceId,
+    userId,
+    sampleType = 'DBS',
+    assayName = 'DaktariHivVL',
+    instrumentSerial,
+  }
 ) {
   const now = new Date()
 
@@ -300,7 +312,7 @@ async function createResult(
     startedOn: subHours(now, 2),
     endedOn: now,
     reportableSiteId: siteId,
-    instrumentSerial
+    instrumentSerial,
   })
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
@@ -350,7 +362,7 @@ class DeviceApiTestContext {
     this.baseConfig = baseConfig
     this.instrumentSerial = instrumentSerial
     this.now = new Date()
-    
+
     this.siteIds = []
     this.deviceIds = []
     this.apiKeysWithoutDevice = []
