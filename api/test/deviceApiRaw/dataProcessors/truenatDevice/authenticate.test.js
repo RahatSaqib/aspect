@@ -4,9 +4,9 @@ const Promise = require('bluebird')
 
 const { assert } = chai
 
-describe('Truenat Authenticate Data Processor', () => {
+describe.only('Truenat Authenticate Data Processor', () => {
   function mockTruenatLoginDataProcessor(
-    deviceApiKeyAuthenticateReturns = {
+    deviceApiKeyLookupUsingCredentialsReturns = {
       authenticated: true,
       data: {
         id: 123,
@@ -49,8 +49,8 @@ describe('Truenat Authenticate Data Processor', () => {
           getRemoteAddress: () => '10.11.12.13',
         },
         '../../../deviceApiKey/service': {
-          authenticate: async () =>
-            Promise.resolve(deviceApiKeyAuthenticateReturns),
+          lookupUsingCredentials: async () =>
+            Promise.resolve(deviceApiKeyLookupUsingCredentialsReturns),
         },
         '../../../db': {
           transact: async callback => Promise.resolve(callback(fakeKnex)),
@@ -70,7 +70,7 @@ describe('Truenat Authenticate Data Processor', () => {
       })
       assert.isFalse(canProcessRequest)
       canProcessRequest = await TruenatLogin.canProcessRequest({
-        params: 'truelab/devices/login',
+        params: { params: 'truelab/devices/login' },
       })
       assert.isTrue(canProcessRequest)
     })
