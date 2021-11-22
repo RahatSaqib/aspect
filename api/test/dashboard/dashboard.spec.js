@@ -40,18 +40,6 @@ describe('Dashboard routes', () => {
       shared.checkToken(server, path)
     })
 
-    it('should return a list of stat dashboard widget objects', async () => {
-      const res = await server
-        .get(`${path}`)
-        .set('Authorization', `Bearer ${shared.token}`)
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-      assert.property(res.body, 'data')
-      assert.typeOf(res.body.data, 'array')
-      assert.isAtLeast(res.body.data.length, 4)
-      assertWidgetItemProps(res.body.data[0])
-    })
-
     it('should return a list of stat dashboard widget objects for Operational Data dashboard', async () => {
       const res = await server
         .get(`${path}?dashboard=operational`)
@@ -71,17 +59,6 @@ describe('Dashboard routes', () => {
         )
         .map(({ externalId }) => externalId)
       assert.equal(externalIds.includes(res.body.data[0].externalId), true)
-    })
-
-    it('should return a list of target dashboard widget objects', async () => {
-      const res = await server
-        .get(`${path}`)
-        .set('Authorization', `Bearer ${shared.token}`)
-
-      assert.equal(res.status, 200)
-      assert.typeOf(res.body, 'Object')
-      assert.property(res.body, 'data')
-      assert.typeOf(res.body.data, 'array')
     })
 
     describe('/dashboard/operational-data', () => {
