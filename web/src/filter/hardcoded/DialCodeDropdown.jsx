@@ -1,187 +1,45 @@
+import React from 'react'
 import keyBy from 'lodash/keyBy'
-import classnames from 'classnames/bind'
-import React, { useRef } from 'react'
-import Downshift from 'downshift'
-import MenuItem from '@material-ui/core/MenuItem'
-import Input from '@material-ui/core/Input'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import Popper from '@material-ui/core/Popper'
-import Paper from '@material-ui/core/Paper'
-import { List as VirtualList } from 'react-virtualized'
+import filter from 'lodash/filter'
 import Select from 'react-select'
-// 'web/src/MigratedComponents/AspectDropDown/index.jsx'
+import parsePhoneNumber from 'libphonenumber-js'
 import { getMuiTheme } from '../../MigratedComponents/AspectDropDown'
-
-import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
 import countries from './countries'
 import dialCodes from './dialCodes'
-
-import styles from './DialCodeDropdown.css'
-
-const cssClasses = classnames.bind(styles)
 
 const countryBy = keyBy(countries, 'isoAlpha2Code')
 
 const dialCodesWithCountry = dialCodes.map(({ dialCode, isoAlpha2Code }) => ({
-  // isoAlpha2Code,
-  // dialCode,
-  // countryName: countryBy[isoAlpha2Code].name,
-  label: `${countryBy[isoAlpha2Code].name} (${dialCode})`,
+  label: `${dialCode} (${countryBy[isoAlpha2Code].name})`,
   value: dialCode,
+  iso: isoAlpha2Code,
 }))
 
-console.log(dialCodesWithCountry)
+export const DialCodeDropdown = ({ onChange, name, value, countryId }) => {
+  const parsed = value?.numberPart ? parsePhoneNumber(value?.fullNumber) : false
+  const filterByCountryId = parsed ? parsed.country : countryId
 
-// const renderInput = ({
-//   selectedItem,
-//   inputProps,
-//   toggleButtonProps: { onClick },
-//   ref,
-// }) => (
-
-//   // <Input
-//   //   readOnly
-//   //   className={cssClasses('Dropdown')}
-//   //   inputProps={{
-//   //     className: cssClasses('Dropdown__Input'),
-//   //   }}
-//   //   inputRef={ref}
-//   //   {...inputProps}
-//   //   onClick={onClick}
-//   //   startAdornment={
-//   //     <InputAdornment position="start">
-//   //       {selectedItem && (
-//   //         <FlagIcon
-//   //           withRightMargin
-//   //           countryIsoAlpha2Code={selectedItem.isoAlpha2Code}
-//   //         />
-//   //       )}
-//   //     </InputAdornment>
-//   //   }
-//   //   endAdornment={
-//   //     <InputAdornment position="end">
-//   //       <ArrowDropDownIcon className={cssClasses('Dropdown__Icon')} />
-//   //     </InputAdornment>
-//   //   }
-//   // />
-// )
-
-// const renderMenuItem = ({ index, style, key, getItemProps, selectedItem }) => {
-//   const item = dialCodesWithCountry[index]
-//   const { dialCode, isoAlpha2Code, countryName } = item
-//   const itemProps = getItemProps({ item })
-//   const isSelected = selectedItem === item
-
-//   return (
-//     <MenuItem
-//       key={key}
-//       value={dialCode}
-//       style={style}
-//       selected={isSelected}
-//       {...itemProps}
-//     >
-//       <FlagIcon withRightMargin isoAlpha2Code={isoAlpha2Code} />
-//       <span>
-//         {countryName} ({dialCode})
-//       </span>
-//     </MenuItem>
-//   )
-// }
-
-// const itemToString = item => (item ? item.dialCode : '')
-
-export const DialCodeDropdown = ({ onChange, value, name }) => {
   return (
-    <div style={{ width: '250px', padding: '20px 0', marginRight: '30px' }}>
+    <div style={{ width: '350px', padding: '20px 0', marginRight: '30px' }}>
       <Select
         name={`${name}-country-code`}
         id={`${name}-country-code`}
-        isClearable
         isDisabled={false}
         isLoading={false}
         isMulti={false}
+        defaultValue={
+          filter(
+            dialCodesWithCountry,
+            ({ iso }) => iso === filterByCountryId
+          )[0]
+        }
         options={dialCodesWithCountry}
         styles={getMuiTheme()}
-        onChange={({ value: selectedVal }) =>
-          onChange(selectedVal, value.numberPart)
-        }
+        onChange={selected => onChange({ dialCode: selected?.value, value })}
         // noOptionsMessage={() => formatMessage(messagesBase.noOptionsMessage)}
       />
     </div>
   )
-  // const popperNode = useRef(null)
-  // const initialDialcode =
-  //   props.value.length > 0 && props.value.length < 6 ? props.value : ''
-
-  // return (
-  //   <Downshift
-  //     itemToString={itemToString}
-  //     {...props}
-  //     initialInputValue={initialDialcode}
-  //   >
-  //     {({
-  //       getInputProps,
-  //       getToggleButtonProps,
-  //       getItemProps,
-  //       getMenuProps,
-  //       isOpen,
-  //       selectedItem,
-  //     }) => (
-  //       <div>
-  //         {renderInput({
-  //           ref: popperNode,
-  //           selectedItem,
-  //           inputProps: getInputProps({}),
-  //           toggleButtonProps: getToggleButtonProps({}),
-  //         })}
-  //         <Popper
-  //           open={isOpen}
-  //           anchorEl={popperNode.current}
-  //           transition
-  //           popperOptions={{ placement: 'bottom-start' }}
-  //         >
-  //           <div
-  //             {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
-  //           >
-  //             {isOpen ? (
-  //               <Paper
-  //                 square
-  //                 style={{
-  //                   minWidth: popperNode.current?.clientWidth,
-  //                 }}
-  //               >
-  //                 <VirtualList
-  //                   width={
-  //                     popperNode.current?.clientWidth < 256
-  //                       ? 256
-  //                       : popperNode.current?.clientWidth
-  //                   }
-  //                   height={
-  //                     dialCodesWithCountry.length < 10
-  //                       ? 32 * dialCodesWithCountry.length
-  //                       : 32 * 10
-  //                   }
-  //                   rowCount={dialCodesWithCountry.length}
-  //                   rowHeight={32}
-  //                   rowRenderer={({ index, style, key }) =>
-  //                     renderMenuItem({
-  //                       index,
-  //                       style,
-  //                       key,
-  //                       getItemProps,
-  //                       selectedItem,
-  //                     })
-  //                   }
-  //                 />
-  //               </Paper>
-  //             ) : null}
-  //           </div>
-  //         </Popper>
-  //       </div>
-  //     )}
-  //   </Downshift>
-  // )
 }
 
 export default DialCodeDropdown

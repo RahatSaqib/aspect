@@ -86,7 +86,7 @@ const renderFormField = props => {
 
   return (
     <Field
-      name={name}
+      name={`${name}`}
       onSelectionChanged={onChange}
       selectFieldProps={{
         floatingLabelText: label,

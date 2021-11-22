@@ -283,7 +283,7 @@ export const ContactDetailsForm = ({
   user,
 }) => {
   const { formatMessage } = i18nWrapper()
-
+  const { countryAbbreviation } = user.toJSON()
   return (
     <form onSubmit={handleSubmit} className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
@@ -376,6 +376,7 @@ export const ContactDetailsForm = ({
           <div className={cssClasses('Form__Content__Arrange-field', '')}>
             <DialCodeDropdownInput
               name="phone"
+              countryId={countryAbbreviation}
               label={formatMessage(messages.telephone)}
               value={values.phone}
               onChange={onPhoneChange}
@@ -390,6 +391,7 @@ export const ContactDetailsForm = ({
             />
             <DialCodeDropdownInput
               name="cell"
+              countryId={countryAbbreviation}
               label={formatMessage(messages.mobile)}
               value={values.cell}
               onChange={onCellChange}
@@ -404,7 +406,6 @@ export const ContactDetailsForm = ({
             />
           </div>
         </section>
-
         <section>
           <h1>{formatMessage(messages.location)}</h1>
           <div className={cssClasses('GeographyDropdownGroup')}>

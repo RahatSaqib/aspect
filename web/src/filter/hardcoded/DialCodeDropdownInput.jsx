@@ -3,6 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import TextField from '@material-ui/core/TextField'
+import parsePhoneNumber from 'libphonenumber-js'
 
 import DialCodeDropdown from './DialCodeDropdown'
 import dialCodes from './dialCodes'
@@ -11,68 +12,42 @@ import styles from './DialCodeDropdownInput.css'
 
 const cssClasses = classnames.bind(styles)
 
-const dialCodeBy = keyBy(dialCodes, 'dialCode')
-
-export const parseRawNumber = rawNumber => {
-  let numberPart = rawNumber.replace(/^\s+/, '')
-
-  // Get the trimmed first portion of the number
-  // (up until the first char which isn't '+' or [0-9]
-  const firstPortionDividerMatch = /\s|\(|\)|-/.exec(numberPart)
-  const firstIndexOfSectionDivider = firstPortionDividerMatch
-    ? firstPortionDividerMatch.index
-    : -1
-  const nextDialCode =
-    firstIndexOfSectionDivider > -1
-      ? numberPart.substr(0, firstIndexOfSectionDivider)
-      : numberPart
-
-  if (nextDialCode in dialCodeBy) {
-    numberPart = numberPart.substr(nextDialCode.length)
-  }
-  if (/^[\s()+-]*([0-9][\s()+-]*){0,17}$/.test(numberPart)) {
-    numberPart = numberPart.replace(/^\s+/, '')
-  }
-
-  return {
-    numberPart,
-    nextDialCode,
-  }
-}
-
 const enhance = compose(
   pure,
   withProps(props => {
-    const { numberPart, nextDialCode } = parseRawNumber(props.value)
-
+    const { countryCallingCode, nationalNumber } =
+      parsePhoneNumber(props?.value) || false
     return {
-      numberPart,
-      dialCode: nextDialCode,
+      numberPart: nationalNumber,
+      dialCode: countryCallingCode,
+      fullNumber: props?.value,
     }
   }),
   withHandlers({
     onDialCodeChange:
-      ({ onChange, numberPart }) =>
-      a => {
-        console.log({ a, numberPart })
+      ({ onChange }) =>
+      ({ dialCode }) => {
+        onChange(dialCode)
       },
-    //   // onChange(`${dialCode} ${numberPart}`.trim())
-    // },
 
     onRawNumberChange:
-      ({ onChange, dialCode }) =>
-      ({ target: { value: rawNumber } }) => {
-        if (rawNumber) {
-          const { numberPart, nextDialCode } = parseRawNumber(rawNumber)
-          if (nextDialCode in dialCodeBy) {
-            onChange(`${nextDialCode} ${numberPart}`.trim())
-          } else {
-            onChange(`${dialCode} ${numberPart}`.trim())
-          }
-        } else {
-          onChange(rawNumber)
-        }
+      ({ onChange, fullNUmber }) =>
+      a => {
+        console.log(fullNumber, a)
       },
+    // ({ onChange, dialCode, numberPart }) =>
+    // a => {
+    //   // const { value: numberPart } = target
+    //   console.log({ a, onChange, dialCode, numberPart })
+
+    //   // if (!Number.isNaN(numberPart)) {
+    //   //   let outNumber = numberPart
+    //   //   if (!outNumber.includes(dialCode)) {
+    //   //     outNumber = `${dialCode}${numberPart}`
+    //   //   }
+    //   //   onChange(outNumber.trim())
+    //   // }
+    // },
   })
 )
 
@@ -81,21 +56,25 @@ const DialCodeDropdownInput = ({
   numberPart,
   onDialCodeChange,
   onRawNumberChange,
+  fullNumber,
+  countryId,
   ...restProps
 }) => (
   <div className={cssClasses(restProps.className, 'Container')}>
     <DialCodeDropdown
-      value={{ numberPart, dialCode }}
+      value={{ fullNumber, numberPart, dialCode }}
       onChange={onDialCodeChange}
       name={restProps?.name}
+      countryId={countryId}
     />
     <TextField
       fullWidth
       type="text"
       {...restProps}
       className={cssClasses('Input')}
-      value={numberPart}
+      value={fullNumber}
       onChange={onRawNumberChange}
+      // onChange={{ onChange: onRawNumberChange, dialCode, numberPart }}
     />
   </div>
 )
