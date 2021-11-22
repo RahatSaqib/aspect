@@ -2738,6 +2738,15 @@ async function updateOrCreateResult(request, result = {}) {
     )
   }
 
+  /**
+   * on updating - read current record from db to have all fields without default values
+   * for insert().onConflict() operation
+   */
+  if (isUpdating) {
+    const existingResult = await knex('Result').where({ id: result.id }).first()
+    result = { ...existingResult, ...result }
+  }
+
   // we can start filling in the result details now
   if (isCreating) {
     result.assayId = assay.id
@@ -2801,13 +2810,8 @@ async function updateOrCreateResult(request, result = {}) {
     result.patientCaseId = null
   }
 
-  // looks like all's well. create or update result now so we have a result id for tags, form data, etc.
   // TODO: Log any changes (see ASP-1371)
-  if (isUpdating) {
-    await knex('Result').update(result).where('id', result.id)
-  } else {
-    ;[result.id] = await knex('Result').insert(result)
-  }
+  ;[result.id] = await knex('Result').insert(result).onConflict('id').merge()
 
   // update or insert tags
   await updateTagsById(result.id, 'result', payload.tags, auth)
