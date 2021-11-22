@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 
 const { assert } = chai
 
-describe.only('Truenat Authenticate Data Processor', () => {
+describe('Truenat Authenticate Data Processor', () => {
   function mockTruenatLoginDataProcessor(
     deviceApiKeyLookupUsingCredentialsReturns = {
       authenticated: true,
