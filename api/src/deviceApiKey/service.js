@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const bcrypt = require('bcrypt')
+const addMinutes = require('date-fns/addMinutes')
+const { promisify } = require('util')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const {
@@ -11,7 +13,8 @@ const {
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
-const config = require('../config')
+
+const bcryptCompare = promisify(bcrypt.compare)
 
 const SELECT_LIST_FIELDS = [
   'dak.id',
@@ -299,30 +302,14 @@ async function revokeDeviceApiKey(request) {
 }
 
 async function lookupUsingCredentials(username, password) {
-  const hashedPassword = await bcrypt.hash(
-    password,
-    parseInt(config.passwordSaltRounds, 10)
-  )
   const nowTime = new Date().getTime()
-  // TODO: Add username, Password & TTL to device
-  // TODO: Lookup Device API Key with username & hashed password
-  let deviceApiKey = {
-    id: 123,
-    token: 'nrqsc0o9wbkfn6xcshn1',
-    revoked: 0,
-    partnerId: 1,
-    geographyId: null,
-    siteId: null,
-    deviceId: 321,
-    createdOn: new Date(2021, 11, 17, 14, 16, 53),
-    createdBy: 1,
-    updatedOn: new Date(2021, 11, 17, 14, 16, 53),
-    updatedBy: 1,
-    username,
-    password: hashedPassword,
-    ttl: new Date().getTime() - 1000 * 10,
-  }
-  if (!deviceApiKey) {
+  const deviceApiKey = await knex('DeviceApiKey')
+    .where('username', username)
+    .first()
+  const pwResult = deviceApiKey
+    ? await bcryptCompare(password, _.get(deviceApiKey, 'password'))
+    : false
+  if (!deviceApiKey || !pwResult) {
     return {
       authenticated: false,
       reason: 'invalid',
@@ -336,24 +323,14 @@ async function lookupUsingCredentials(username, password) {
     }
   }
   if (deviceApiKey.ttl < nowTime) {
-    // TODO: Update Device API Key with New token and TTL (+ 1 hour)
-    // TODO: Insert device log
-    deviceApiKey = {
-      id: 12345,
-      token: 'osrtc1p0xclgo7ydtio2',
-      revoked: 0,
-      partnerId: 1,
-      geographyId: null,
-      siteId: null,
-      deviceId: 54321,
-      createdOn: new Date(2021, 11, 17, 14, 16, 53),
-      createdBy: 1,
-      updatedOn: new Date(2021, 11, 17, 14, 16, 53),
-      updatedBy: 1,
-      username,
-      password: hashedPassword,
-      ttl: new Date().getTime() + 1000 * 60 * 60,
-    }
+    const newToken = randomToken()
+    const newTTL = addMinutes(new Date(), 15)
+    deviceApiKey.token = newToken
+    deviceApiKey.ttl = newTTL
+    await knex('DeviceApiKey').where('id', deviceApiKey.id).update({
+      token: newToken,
+      ttl: newTTL,
+    })
   }
   return {
     authenticated: true,

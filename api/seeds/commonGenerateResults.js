@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { promisify } = require('util')
+const bcrypt = require('bcrypt')
 
 const treatmentStatuses = ['OnTreatment', 'AwaitingTreatment', 'NotPossible']
 const millisInHour = 1000 * 60 * 60
@@ -50,6 +52,10 @@ const gxXdrResultData = require('./development/generateResultsSeed/gxXdrResultDa
 const truenatMtbResultData = require('./development/generateResultsSeed/truenatMtbResultData.json')
 const truenatMtbPlusResultData = require('./development/generateResultsSeed/truenatMtbPlusResultData.json')
 const truenatMtbRifDxResultData = require('./development/generateResultsSeed/truenatMtbRifDxResultData.json')
+const { randomToken } = require('../src/deviceApi/apiKey')
+const { passwordSaltRounds } = require('../src/config')
+
+const bcryptHash = promisify(bcrypt.hash)
 
 function calculateDateForResultForCovid(
   currentResult,
@@ -142,7 +148,27 @@ async function createDevicesForAllMissingTypes(
           lastPingOn: new Date(+now - (i * millisInHour) / 3),
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         }
-        await knex('Device').insert(deviceToInsert)
+        const [deviceId] = await knex('Device').insert(deviceToInsert)
+        if (
+          deviceTypesThatRequireDeviceApiKeyWithCredentials.includes(
+            elem.externalId
+          )
+        ) {
+          const password = await bcryptHash(
+            siteData.shortName,
+            parseInt(passwordSaltRounds, 10)
+          )
+          await knex('DeviceApiKey').insert({
+            token: randomToken(),
+            revoked: 0,
+            partnerId: siteData.partnerId,
+            deviceId,
+            username: `device-${deviceId}`,
+            password,
+            ttl: addMinutes(new Date(), 15),
+            ...auditFields,
+          })
+        }
         i += 1
       })
     })

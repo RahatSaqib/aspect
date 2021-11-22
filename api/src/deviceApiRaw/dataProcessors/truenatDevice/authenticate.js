@@ -13,6 +13,7 @@ class TruenatLogin extends SynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.encryptRawData = false
+    this.timeoutMilliseconds = 60000
     this.processRequest = this.processRequest.bind(this)
     this.getResponse = this.getResponse.bind(this)
     this.response = {}
@@ -54,10 +55,12 @@ class TruenatLogin extends SynchronousDataProcessor {
       this.response.token = `Bearer ${deviceApiKeyAuthResult.data.token}`
       this.response.success = true
     } else {
-      throw Boom.unauthorized({
-        username: payload.Username,
-        success: false,
-      })
+      throw Boom.unauthorized(
+        JSON.stringify({
+          username: payload.Username,
+          success: false,
+        })
+      )
     }
   }
 
