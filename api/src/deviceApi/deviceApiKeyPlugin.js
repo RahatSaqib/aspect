@@ -1,7 +1,9 @@
 const Boom = require('@hapi/boom')
+const _ = require('lodash')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
+const { lookupUsingCredentials } = require('../deviceApiKey/service')
 const logger = require('../shared/logger')
 
 function register(plugin) {
@@ -37,10 +39,37 @@ function authenticate(request, h) {
 
 const validateApiKeyAuthBasic = {
   async validate(request, username, password) {
-    return authToken(password)
+    if (!username) {
+      return authToken(password)
+        .then(credentials => ({ isValid: true, credentials }))
+        .catch(() => ({ isValid: false }))
+    }
+    return authUsernameAndPassword(username, password)
+      .then((credentials, error) => {
+        if (error) {
+          return authToken(password)
+        }
+        return credentials
+      })
       .then(credentials => ({ isValid: true, credentials }))
       .catch(() => ({ isValid: false }))
   },
+}
+
+async function authUsernameAndPassword(username, password) {
+  if (!username || !password) {
+    throw Boom.unauthorized('Invalid Credentials')
+  }
+  const deviceApiKeyAuthResult = await lookupUsingCredentials(
+    username,
+    password
+  )
+  const token = _.get(deviceApiKeyAuthResult, 'data.token')
+  const deviceApiKeyId = _.get(deviceApiKeyAuthResult, 'data.id')
+  const scope = ['deviceApi']
+  const name = `(${deviceApiKeyId}) ${username || ''}`.trim()
+  const credentials = { token, scope, name }
+  return credentials
 }
 
 async function authToken(token) {

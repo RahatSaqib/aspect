@@ -101,7 +101,7 @@ function addDeviceRoutes(server) {
 function addDeviceRawRoutes(server) {
   server.route(
     require('./deviceApiRaw/endpoints').routes.map(
-      decorateDeviceAPI('device/raw')
+      decorateDeviceRawAPI('device/raw')
     )
   )
 }
@@ -126,6 +126,16 @@ function decorateDeviceAPI() {
   // must always be authenticated using Device JWT
   const scope = ['+deviceApi']
   const strategies = ['deviceApiBasic', 'deviceApiKey']
+  return decorateAPI({ scope, strategies })
+}
+
+function decorateDeviceRawAPI() {
+  const scope = ['+deviceApi']
+  const strategies = [
+    'deviceApiRawUnauthenticated',
+    // 'deviceApiBasic',
+    'deviceApiKey',
+  ]
   return decorateAPI({ scope, strategies })
 }
 

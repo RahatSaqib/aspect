@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const bcrypt = require('bcrypt')
 
-const { knex, filterParams, sortPageParams, query } = require('../db')
+const { knex, filterParams, sortPageParams } = require('../db')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -12,7 +12,6 @@ const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const config = require('../config')
-const logger = require('../shared/logger')
 
 const SELECT_LIST_FIELDS = [
   'dak.id',
@@ -299,7 +298,7 @@ async function revokeDeviceApiKey(request) {
   }
 }
 
-async function authenticate(username, password, senderIp) {
+async function lookupUsingCredentials(username, password) {
   const hashedPassword = await bcrypt.hash(
     password,
     parseInt(config.passwordSaltRounds, 10)
@@ -369,5 +368,5 @@ module.exports = {
   createDeviceApiKey,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
-  authenticate,
+  lookupUsingCredentials,
 }

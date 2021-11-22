@@ -27,40 +27,69 @@ describe('Truenat Authenticate Data Processor', () => {
       },
     }
   ) {
+    const fakeKnex = () => ({
+      where: () => ({
+        update: async () => Promise.resolve(),
+      }),
+      insert: async () => Promise.resolve([123]),
+    })
+
     return proxyquire(
       '../../../../src/deviceApiRaw/dataProcessors/truenatDevice/authenticate',
       {
         '../_base': {
-          authenticate: async () =>
-            Promise.resolve(deviceApiKeyAuthenticateReturns),
+          SynchronousDataProcessor: class {
+            constructor(request, messageContext) {
+              this.request = request
+              this.messageContext = messageContext
+            }
+          },
+        },
+        '../../../shared/request': {
+          getRemoteAddress: () => '10.11.12.13',
         },
         '../../../deviceApiKey/service': {
           authenticate: async () =>
             Promise.resolve(deviceApiKeyAuthenticateReturns),
+        },
+        '../../../db': {
+          transact: async callback => Promise.resolve(callback(fakeKnex)),
         },
       }
     )
   }
 
   describe('canProcessRequest', () => {
-    it('requires a path of /truelab/devices/login plus a username and password to be sent', () => {
+    it('requires a path of /truelab/devices/login to be accepted', async () => {
       const TruenatLogin = mockTruenatLoginDataProcessor()
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: {}, params: {} }))
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: { Username: 'test' }, params: {} }))
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: { Username: 'test', Password: '' }, params: {} }))
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: { Username: 'test', Password: 'test' }, params: {} }))
+      let canProcessRequest = await TruenatLogin.canProcessRequest({ })
+      assert.isFalse(canProcessRequest)
+      canProcessRequest = await TruenatLogin.canProcessRequest({
+        payload: { Username: 'test', Password: 'test' },
+        params: 'some random array of params',
+      })
+      assert.isFalse(canProcessRequest)
+      canProcessRequest = await TruenatLogin.canProcessRequest({
+        params: 'truelab/devices/login',
+      })
+      assert.isTrue(canProcessRequest)
     })
   })
 
   describe('processRequest', () => {
-    const request = { payload: { Username: 'test', Password: 'test' }, params: {} }
-    it('requires a username and password to be sent', () => {
+    const request = {
+      payload: { Username: 'test', Password: 'test' },
+      params: {},
+      plugins: { rawPayload: "{ Username: 'test', Password: 'test' }" },
+    }
+    const messageContext = { dispatch: () => {} }
+
+    it('will set properties on the response', async () => {
       const TruenatLogin = mockTruenatLoginDataProcessor()
-      const truenatLoginInstance = new TruenatLogin(request)
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: {}, params: {} }))
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: { Username: 'test' }, params: {} }))
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: { Username: 'test', Password: '' }, params: {} }))
-      assert.isFalse(TruenatLogin.canProcessRequest({ payload: { Username: 'test', Password: 'test' }, params: {} }))
+      const truenatLoginInstance = new TruenatLogin(request, messageContext)
+      assert.isEmpty(truenatLoginInstance.response)
+      await truenatLoginInstance.processRequest()
+      assert.isNotEmpty(truenatLoginInstance.response)
     })
   })
 })

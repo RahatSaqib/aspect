@@ -1,13 +1,15 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
-const { authenticate } = require('../../../deviceApiKey/service')
-const { getRemoteAddress } = require('../../shared/request')
+const { lookupUsingCredentials } = require('../../../deviceApiKey/service')
+const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
-const { transact } = require('../../db')
-const { deviceSeen } = require('../../device/actions')
+const { transact } = require('../../../db')
+const { deviceSeen } = require('../../../device/actions')
 
 class TruenatLogin extends SynchronousDataProcessor {
+  static AllowUnauthenticatedRequests = true
+
   constructor(request, messageContext) {
     super(request, messageContext)
     this.encryptRawData = false
@@ -17,9 +19,9 @@ class TruenatLogin extends SynchronousDataProcessor {
   }
 
   static async canProcessRequest(request) {
-    const { payload, params } = request
-    console.log(params)
-    return !!_.get(payload, 'Username') && !!_.get(payload, 'Password')
+    const { params } = request
+    const path = _.get(params, 'params')
+    return Promise.resolve(path === 'truelab/devices/login')
   }
 
   async processRequest() {
@@ -27,10 +29,9 @@ class TruenatLogin extends SynchronousDataProcessor {
     const { payload } = request
     const now = new Date()
     const remoteAddress = getRemoteAddress(request)
-    const deviceApiKeyAuthResult = await authenticate(
+    const deviceApiKeyAuthResult = await lookupUsingCredentials(
       payload.Username,
-      payload.Password,
-      remoteAddress
+      payload.Password
     )
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
