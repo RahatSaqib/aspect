@@ -17,8 +17,6 @@ function listNotificationsBaseConfig() {
           'lastTriggeredOn',
           'alertCount',
           'totalTriggers',
-          'contactsCount',
-          'contacts',
           'typeCategory'
         ),
       },
@@ -133,11 +131,11 @@ const resultBasedNotificationPayload = Joi.object({
   persons: Joi.array()
     .items(
       Joi.object().keys({
-        personId: Joi.number().required().description('Id of Job Function'),
+        personId: Joi.number().required().description('Id of the Person'),
         checked: Joi.bool()
           .valid(true, null)
           .optional()
-          .description('Checked job functions'),
+          .description('Checked persons'),
       })
     )
     .min(1),

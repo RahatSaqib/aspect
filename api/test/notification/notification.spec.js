@@ -511,7 +511,9 @@ describe('Notification routes', () => {
       notificationTypeCategoryId: await notificationTypeCategoryToId(
         'resultBased'
       ),
-      filterCondition: JSON.stringify({}),
+      filterCondition: JSON.stringify({
+        persons: [{ personId: `${personId}`, checked: true }],
+      }),
       messageTypeId: messageType.id,
     })
     basePayload = {
@@ -561,9 +563,14 @@ describe('Notification routes', () => {
       assert.property(notification, 'lastTriggeredOn')
       assert.property(notification, 'totalTriggers')
       assert.property(notification, 'alertCount')
-      assert.property(notification, 'contactsCount')
-      assert.property(notification, 'contacts')
+      assert.property(notification, 'personsCount')
+      assert.property(notification, 'persons')
+      assert.property(notification, 'jobFunctionsCount')
+      assert.property(notification, 'jobFunctions')
     })
+    const [{ persons, personsCount }] = res.body.data.filter(n => n.id === ntId)
+    assert.equal(persons, 'Admin')
+    assert.equal(personsCount, 1)
   })
 
   it('GET /id', async () => {
