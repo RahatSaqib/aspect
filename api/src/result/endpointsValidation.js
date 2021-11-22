@@ -126,6 +126,7 @@ const resultUpdatePayload = {
     .description('Error code for the result'),
   notes: Joi.string().allow(null, '').description('Notes for the result'),
   senderOperator: Joi.string()
+    .max(255)
     .allow(null, '')
     .description('Sender Operator for the result'),
   reportableSiteId: optionalId('The id of reportable site'),
