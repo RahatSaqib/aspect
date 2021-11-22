@@ -98,7 +98,7 @@ const resultUpdatePayload = {
   sampleTypeId: optionalId('Sample type (Plasma, Sputum, etc.)'),
   sampleCollectedOn: Joi.date()
     .iso()
-    .allow(null)
+    .allow(null, '')
     .description('When the sample was collected'),
   sampleOriginSiteId: optionalId('Where the sample was collected'),
   patientId: Joi.string().max(500).allow(null, '').description('Patient ID'),

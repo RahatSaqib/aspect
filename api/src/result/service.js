@@ -2791,7 +2791,7 @@ async function updateOrCreateResult(request, result = {}) {
     result.sampleId,
     payload.sampleId,
     payload.sampleTypeId,
-    payload.sampleCollectedOn,
+    payload.sampleCollectedOn || null,
     payload.sampleOriginSiteId
   )
 
