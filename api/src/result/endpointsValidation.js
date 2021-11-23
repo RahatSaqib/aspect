@@ -110,7 +110,7 @@ const resultUpdatePayload = {
     .required()
     .description('The result of the test'),
   resultCategory2: Joi.number()
-    .allow(null)
+    .allow(null, '') // keep empty string too to address missing value for new results
     .description('The result of the test'),
   tags: Joi.string()
     .max(500)

@@ -2776,7 +2776,7 @@ async function updateOrCreateResult(request, result = {}) {
   }
 
   result.resultCategory1 = payload.resultCategory1
-  result.resultCategory2 = payload.resultCategory2
+  result.resultCategory2 = payload.resultCategory2 || null
   result.startedOn = payload.startedOn
   result.endedOn = payload.endedOn
   result.updatedOn = now
