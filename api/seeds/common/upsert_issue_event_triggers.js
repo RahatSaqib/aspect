@@ -43,4 +43,26 @@ async function upsertIssueEventTrigger(knex, partnerName) {
       }
     )
   })
+  await removeIssueTriggers(knex, partnerName)
+}
+
+async function removeIssueTriggers(knex, partnerName) {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partnerName })
+    .first()
+
+  const issueTypesInserted = await knex('IssueEventTrigger').pluck(
+    'issueTypeId'
+  )
+  const issueTypesInFixture = []
+  _.each(IssueEventTrigger, async ({ issueType }) => {
+    const issueTypeId = await issueTypeToId(issueType)
+    if (issueTypeId) issueTypesInFixture.push(issueTypeId)
+  })
+  await knex('IssueEventTrigger')
+    .whereIn(
+      'issueTypeId',
+      _.difference(issueTypesInserted, issueTypesInFixture)
+    )
+    .where({ partnerId })
 }

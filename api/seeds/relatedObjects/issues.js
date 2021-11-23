@@ -1077,6 +1077,23 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    SyringePressureTooHighModule: {
+      issueType: {
+        name: 'Syringe Pressure Too High On Module',
+        externalId: 'SyringePressureTooHighModule',
+        i18nKey: 'SyringePressureTooHighModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
     SyringeStallErrorLot: {
       issueType: {
         name: 'Syringe Stall Error On Lot',
