@@ -405,7 +405,7 @@ describe('Result Notifications triggers', () => {
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
       const filterConditions = {
         ...filterConditionWithAssay,
-        persons: [{ personId: adminId }],
+        persons: [{ personId: `${adminId}` }],
         jobFunctions: [
           { jobFunctionId: managerJobFunctionId },
           { jobFunctionId: adminJobFunctionId },
@@ -536,7 +536,7 @@ describe('Notification routes', () => {
       ],
       persons: [
         {
-          personId,
+          personId: `${personId}`,
           checked: true,
         },
       ],
@@ -672,7 +672,7 @@ describe('Notification routes', () => {
         ...basePayload,
         persons: [
           {
-            personId: personWithoutJob.id,
+            personId: `${personWithoutJob.id}`,
             checked: true,
           },
         ],
@@ -699,7 +699,7 @@ describe('Notification routes', () => {
     assert.deepEqual(JSON.parse(filterCondition), {
       persons: [
         {
-          personId,
+          personId: `${personId}`,
           checked: true,
         },
       ],

@@ -131,7 +131,7 @@ const resultBasedNotificationPayload = Joi.object({
   persons: Joi.array()
     .items(
       Joi.object().keys({
-        personId: Joi.number().required().description('Id of the Person'),
+        personId: Joi.string().required().description('Id of the Person'),
         checked: Joi.bool()
           .valid(true, null)
           .optional()
