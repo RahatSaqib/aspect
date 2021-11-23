@@ -54,11 +54,11 @@ async function removeIssueTriggers(knex, partnerName) {
   const issueTypesInserted = await knex('IssueEventTrigger').pluck(
     'issueTypeId'
   )
-  const issueTypesInFixture = []
-  _.each(IssueEventTrigger, async ({ issueType }) => {
-    const issueTypeId = await issueTypeToId(issueType)
-    if (issueTypeId) issueTypesInFixture.push(issueTypeId)
-  })
+  const issueTypesInFixture = await Promise.map(
+    IssueEventTrigger,
+    async ({ issueType }) => issueTypeToId(issueType)
+  )
+
   await knex('IssueEventTrigger')
     .delete()
     .whereIn(
