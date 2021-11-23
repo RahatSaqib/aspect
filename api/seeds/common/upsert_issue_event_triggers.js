@@ -60,6 +60,7 @@ async function removeIssueTriggers(knex, partnerName) {
     if (issueTypeId) issueTypesInFixture.push(issueTypeId)
   })
   await knex('IssueEventTrigger')
+    .delete()
     .whereIn(
       'issueTypeId',
       _.difference(issueTypesInserted, issueTypesInFixture)
