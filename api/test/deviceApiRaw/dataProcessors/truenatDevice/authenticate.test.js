@@ -1,10 +1,16 @@
 const chai = require('chai')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
+const sinon = require('sinon')
 
-const { assert } = chai
+const { deviceSeen } = require('../../../../src/device/actions')
+
+const { assert, expect } = chai
 
 describe('Truenat Authenticate Data Processor', () => {
+  let mockDeviceService
+  let mockSharedRequestService
+  let mockDeviceApiKeyService
   function mockTruenatLoginDataProcessor(
     deviceApiKeyLookupUsingCredentialsReturns = {
       authenticated: true,
@@ -27,13 +33,19 @@ describe('Truenat Authenticate Data Processor', () => {
       },
     }
   ) {
-    const fakeKnex = () => ({
-      where: () => ({
-        update: async () => Promise.resolve(),
-      }),
-      insert: async () => Promise.resolve([123]),
-    })
-
+    mockDeviceService = {
+      postPayloadFromDevice: async () => Promise.resolve(),
+    }
+    sinon.spy(mockDeviceService, 'postPayloadFromDevice')
+    mockSharedRequestService = {
+      getRemoteAddress: () => '10.11.12.13',
+    }
+    sinon.spy(mockSharedRequestService, 'getRemoteAddress')
+    mockDeviceApiKeyService = {
+      lookupUsingCredentials: async () =>
+        Promise.resolve(deviceApiKeyLookupUsingCredentialsReturns),
+    }
+    sinon.spy(mockDeviceApiKeyService, 'lookupUsingCredentials')
     return proxyquire(
       '../../../../src/deviceApiRaw/dataProcessors/truenatDevice/authenticate',
       {
@@ -45,16 +57,9 @@ describe('Truenat Authenticate Data Processor', () => {
             }
           },
         },
-        '../../../shared/request': {
-          getRemoteAddress: () => '10.11.12.13',
-        },
-        '../../../deviceApiKey/service': {
-          lookupUsingCredentials: async () =>
-            Promise.resolve(deviceApiKeyLookupUsingCredentialsReturns),
-        },
-        '../../../db': {
-          transact: async callback => Promise.resolve(callback(fakeKnex)),
-        },
+        '../../../shared/request': mockSharedRequestService,
+        '../../../deviceApiKey/service': mockDeviceApiKeyService,
+        '../../../device/service': mockDeviceService,
       }
     )
   }
@@ -82,14 +87,115 @@ describe('Truenat Authenticate Data Processor', () => {
       params: {},
       plugins: { rawPayload: "{ Username: 'test', Password: 'test' }" },
     }
-    const messageContext = { dispatch: () => {} }
+    let messageContext
+    beforeEach(() => {
+      messageContext = { dispatch: () => {} }
+      sinon.spy(messageContext, 'dispatch')
+    })
 
-    it('will set properties on the response', async () => {
+    it('will mutate the response', async () => {
       const TruenatLogin = mockTruenatLoginDataProcessor()
       const truenatLoginInstance = new TruenatLogin(request, messageContext)
       assert.isEmpty(truenatLoginInstance.response)
       await truenatLoginInstance.processRequest()
       assert.isNotEmpty(truenatLoginInstance.response)
+    })
+
+    it('will attempt to lookup device API key using the username & password sent in the request', async () => {
+      const TruenatLogin = mockTruenatLoginDataProcessor()
+      const truenatLoginInstance = new TruenatLogin(request, messageContext)
+      await truenatLoginInstance.processRequest()
+      assert.isOk(mockDeviceApiKeyService.lookupUsingCredentials.calledOnce)
+    })
+
+    describe('when credentials match a device API key', () => {
+      it('will post the payload in the device log', async () => {
+        const TruenatLogin = mockTruenatLoginDataProcessor()
+        const truenatLoginInstance = new TruenatLogin(request, messageContext)
+        await truenatLoginInstance.processRequest()
+        assert.isOk(mockDeviceService.postPayloadFromDevice.calledOnce)
+      })
+
+      it('will dispatch the device seen action', async () => {
+        const TruenatLogin = mockTruenatLoginDataProcessor()
+        const truenatLoginInstance = new TruenatLogin(request, messageContext)
+        await truenatLoginInstance.processRequest()
+        assert.isOk(messageContext.dispatch.calledOnce)
+        const deviceApiKeyLookupRevolvedValue = await mockDeviceApiKeyService
+          .lookupUsingCredentials.lastCall.returnValue
+        const {
+          data: { deviceId },
+        } = deviceApiKeyLookupRevolvedValue
+        assert.isOk(messageContext.dispatch.calledWith(deviceSeen(deviceId)))
+      })
+
+      it('will respond with the device API key details', async () => {
+        const TruenatLogin = mockTruenatLoginDataProcessor()
+        const truenatLoginInstance = new TruenatLogin(request, messageContext)
+        await truenatLoginInstance.processRequest()
+        const credentialLookupSpy =
+          mockDeviceApiKeyService.lookupUsingCredentials.lastCall
+        const deviceApiKeyLookupRevolvedValue =
+          await credentialLookupSpy.returnValue
+        const {
+          data: { token },
+        } = deviceApiKeyLookupRevolvedValue
+        const username = request.payload.Username
+        assert.deepEqual(truenatLoginInstance.response, {
+          username,
+          token: `Bearer ${token}`,
+          success: true,
+        })
+      })
+    })
+
+    describe('when credentials do not match a device API key', () => {
+      it('will respond with 401', async () => {
+        const TruenatLogin = mockTruenatLoginDataProcessor({
+          authenticated: false,
+          reason: 'invalid',
+        })
+        const truenatLoginInstance = new TruenatLogin(request, messageContext)
+        try {
+          await truenatLoginInstance.processRequest()
+          assert.fail('401 Response not returned!')
+        } catch (e) {
+          expect(e).to.containSubset({
+            output: {
+              statusCode: 401,
+              payload: {
+                statusCode: 401,
+                error: 'Unauthorized',
+                message: `{"username":"${request.payload.Username}","success":false}`,
+              },
+            },
+          })
+        }
+      })
+
+      it('will NOT post the payload in the device log', async () => {
+        const TruenatLogin = mockTruenatLoginDataProcessor({
+          authenticated: false,
+          reason: 'invalid',
+        })
+        const truenatLoginInstance = new TruenatLogin(request, messageContext)
+        await expect(truenatLoginInstance.processRequest()).to.be.rejectedWith(
+          `{"username":"${request.payload.Username}","success":false}`
+        )
+        assert.isNotOk(mockDeviceService.postPayloadFromDevice.called)
+      })
+
+      it('will NOT dispatch the device seen action', async () => {
+        const TruenatLogin = mockTruenatLoginDataProcessor({
+          authenticated: false,
+          reason: 'invalid',
+        })
+        const truenatLoginInstance = new TruenatLogin(request, messageContext)
+        await expect(truenatLoginInstance.processRequest()).to.be.rejectedWith(
+          `{"username":"${request.payload.Username}","success":false}`
+        )
+        assert.isNotOk(messageContext.dispatch.called)
+      })
     })
   })
 })

@@ -20,6 +20,7 @@ const {
   filterParams,
   filterDateRangeParams,
   sortPageParams,
+  transact,
 } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -1865,6 +1866,27 @@ async function getDeviceCalibrationsForReport(auth, query) {
   return result
 }
 
+async function postPayloadFromDevice(
+  deviceId,
+  ipAddress,
+  descriptionOfSource,
+  payload
+) {
+  const now = new Date()
+  return transact(async knex => {
+    await knex('DeviceLog').insert({
+      deviceId,
+      source: descriptionOfSource,
+      createdOn: now,
+      senderIp: ipAddress,
+      rawMessage: JSON.stringify(payload),
+    })
+    await knex('Device')
+      .where({ id: deviceId })
+      .update({ lastSeenOn: now, updatedOn: now })
+  })
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -1890,4 +1912,5 @@ module.exports = {
   getDeviceCalibrationsForReport,
   getDeviceBaseQuery,
   setStatusForDateRange,
+  postPayloadFromDevice,
 }

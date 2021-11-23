@@ -4,7 +4,7 @@ const Boom = require('@hapi/boom')
 const { lookupUsingCredentials } = require('../../../deviceApiKey/service')
 const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
-const { transact } = require('../../../db')
+const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceSeen } = require('../../../device/actions')
 
 class TruenatLogin extends SynchronousDataProcessor {
@@ -28,27 +28,19 @@ class TruenatLogin extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { payload } = request
-    const now = new Date()
-    const remoteAddress = getRemoteAddress(request)
     const deviceApiKeyAuthResult = await lookupUsingCredentials(
       payload.Username,
       payload.Password
     )
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
-      await transact(async knex => {
-        await knex('DeviceLog').insert({
-          deviceId: _.get(deviceApiKeyAuthResult, 'data.deviceId'),
-          source: 'Diagnostic Device POST',
-          createdOn: now,
-          senderIp: remoteAddress,
-          rawMessage: JSON.stringify(request.plugins.rawPayload),
-        })
-        await knex('Device')
-          .where({ id: deviceId })
-          .update({ lastSeenOn: now, updatedOn: now })
-        this.messageContext.dispatch(deviceSeen(deviceId))
-      })
+      await postPayloadFromDevice(
+        deviceId,
+        getRemoteAddress(request),
+        'Diagnostic Device POST',
+        request.plugins.rawPayload
+      )
+      this.messageContext.dispatch(deviceSeen(deviceId))
     }
     if (deviceApiKeyAuthResult.authenticated) {
       this.response.username = payload.Username
