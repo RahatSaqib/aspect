@@ -190,7 +190,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
 
       // update timestamps as necessary for original device
       const originalDeviceId = context.device.id
-      await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+      await updateDeviceData(context, handlerOptions, remoteAddress)
 
       // invoke delegate handler
       response = await handler(context)
@@ -203,7 +203,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
           context,
           defaultHandlerOptions
         )
-        await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+        await updateDeviceData(context, handlerOptions, remoteAddress)
       }
 
       // Update DeviceLog with changes added to context when calling handler
@@ -220,12 +220,8 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
   })
 }
 
-async function updateDeviceTimestamps(
-  context,
-  handlerOptions = {},
-  remoteAddress
-) {
-  const { knex, pluginNames: plugins, device } = context
+async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
+  const { knex, pluginNames: plugins, device, payload } = context
   const { updatePing = false } = handlerOptions
 
   const deviceUpdates = {}
@@ -234,7 +230,7 @@ async function updateDeviceTimestamps(
   const deviceSeenOn = await getDeviceSeenOn(context)
   if (deviceSeenOn != null) {
     logger.debug('update deviceSeenOn', {
-      reLabel: 'deviceApi:updateDeviceTimestamps',
+      reLabel: 'deviceApi:updateDeviceData',
     })
 
     // flag as seen even if handler fails
@@ -244,7 +240,7 @@ async function updateDeviceTimestamps(
 
   if (updatePing) {
     logger.debug('update device ping on', {
-      reLabel: 'deviceApi:updateDeviceTimestamps',
+      reLabel: 'deviceApi:updateDeviceData',
     })
 
     const getDevicePingOn = await loadPlugin(plugins, 'getDevicePingOn')
@@ -254,6 +250,9 @@ async function updateDeviceTimestamps(
       deviceUpdates.lastPingFromIp = remoteAddress
     }
   }
+
+  const instrumentSerial = _.get(payload, 'result.instrument.serial', null)
+  if (instrumentSerial) deviceUpdates.lastInstrumentSerial = instrumentSerial
 
   if (!_.isEmpty(deviceUpdates)) {
     await knex('Device').where({ id: device.id }).update(deviceUpdates)

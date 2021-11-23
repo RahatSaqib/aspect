@@ -295,6 +295,13 @@ const routes = [
                   })
                   .allow(null)
                   .description("Unique ID of the site's LGA"),
+                lgaName: Joi.string()
+                  .when('mode', {
+                    not: 'reporter',
+                    then: Joi.required(),
+                  })
+                  .allow(null)
+                  .description("Name of the site's LGA"),
                 stateName: Joi.string()
                   .required()
                   .allow(null)

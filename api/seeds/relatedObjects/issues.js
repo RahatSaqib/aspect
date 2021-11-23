@@ -321,7 +321,7 @@ const hardwareErrorIssueEmailHtml = errorCode =>
         System Serial
       </td>
       <td>
-        {{device.serial}}
+        {{device.lastInstrumentSerial}}
       </td>
     </tr>
     <tr>
@@ -338,7 +338,7 @@ const hardwareErrorIssueEmailText = errorCode =>
   getDeviceBaseText({
     errorCode,
     customPart: `
-System Serial: {{device.serial}}
+System Serial: {{device.lastInstrumentSerial}}
 
 Date/Time (UTC): {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
   `,
@@ -1413,12 +1413,6 @@ async function getBaseIssues(auditFields) {
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(2126),
-        body: hardwareErrorIssueEmailText(2126),
-        htmlBody: hardwareErrorIssueEmailHtml(2126),
-        ...auditFields,
       },
     },
     HardwarePowerSupplyVoltageOutOfRange: {

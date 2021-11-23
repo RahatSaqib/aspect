@@ -155,6 +155,7 @@ const groupForPieRow = (data, mergedParams) => {
   }
 
   const valueSplit = (key, value, type, difference) => {
+    const diffs = difference !== undefined ? { difference } : {}
     switch (true) {
       case type === 'doughnut':
         return [
@@ -162,13 +163,13 @@ const groupForPieRow = (data, mergedParams) => {
             id: key,
             label: key,
             value,
-            difference,
+            ...diffs,
           },
           {
             id: 'noData',
             label: 'noData',
             value: 100 - value,
-            difference,
+            ...diffs,
           },
         ]
 
@@ -188,7 +189,7 @@ const groupForPieRow = (data, mergedParams) => {
             label: key,
             value: value > 0 ? value : 100,
             valueLabel: value,
-            difference,
+            ...diffs,
           },
         ]
     }

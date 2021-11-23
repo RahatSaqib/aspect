@@ -754,6 +754,7 @@ async function postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
+
   await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
