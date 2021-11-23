@@ -18,6 +18,18 @@ export default defineMessages({
     id: 'pages.Result.startedOnRequired',
     defaultMessage: 'Start date is required',
   },
+  endedOnRequired: {
+    id: 'pages.Result.endedOnRequired',
+    defaultMessage: 'End date is required',
+  },
+  endedOnCannotBeBeforeStartedOn: {
+    id: 'pages.Result.endedOnCannotBeBeforeStartedOn',
+    defaultMessage: 'End time cannot be before start time',
+  },
+  timeCannotBeGreaterThanNow: {
+    id: 'pages.Result.timeCannotBeGreaterThanNow',
+    defaultMessage: 'Time cannot be greater than current time',
+  },
   resultCategory1: {
     id: 'pages.Result.resultCategory1',
     defaultMessage: 'Field is required',
