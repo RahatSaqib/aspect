@@ -425,11 +425,12 @@ async function processGeneXpertLogs(context, data, now) {
 }
 
 function getLogItemPayload(logItem) {
+  const { externalId } = logItem
   /**
    * props from log files
    */
   if (logItem.logFileName) {
-    const { externalId, logFileName, logLevel, occurredOn } = logItem
+    const { logFileName, logLevel, occurredOn } = logItem
     let { details } = logItem
     if (_.isString(details)) {
       details = JSON.parse(details)
@@ -451,13 +452,13 @@ function getLogItemPayload(logItem) {
   const {
     log_time: logTime,
     error_code: ErrorCode,
-    error_type: ErrorType,
     site_name: ModuleName,
     site_serial_number: ModuleSerial,
     instrument_serial_number: InstrumentSerial,
     sw_version: softwareVersion,
   } = logItem
   return {
+    id: externalId,
     startedOn: logTime,
     data: {
       type: 'gx-log',
@@ -467,7 +468,6 @@ function getLogItemPayload(logItem) {
           {
             Message: logItem.details,
             ErrorCode,
-            ErrorType,
             ModuleName,
             ModuleSerial,
             InstrumentSerial,
