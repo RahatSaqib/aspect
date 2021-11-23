@@ -62,7 +62,7 @@ describe('Truenat Authenticate Data Processor', () => {
   describe('canProcessRequest', () => {
     it('requires a path of /truelab/devices/login to be accepted', async () => {
       const TruenatLogin = mockTruenatLoginDataProcessor()
-      let canProcessRequest = await TruenatLogin.canProcessRequest({ })
+      let canProcessRequest = await TruenatLogin.canProcessRequest({})
       assert.isFalse(canProcessRequest)
       canProcessRequest = await TruenatLogin.canProcessRequest({
         payload: { Username: 'test', Password: 'test' },
