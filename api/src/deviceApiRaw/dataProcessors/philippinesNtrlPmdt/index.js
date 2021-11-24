@@ -519,10 +519,12 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             senderOperator: mappedResultData.performedBy,
           }
           const resultCategory1Id = {
-            'M. tb Detected': resultCategories.Detected,
-            'M. tb Not Detected': resultCategories.NotDetected,
-            Invalid: resultCategories.Invalid,
-          }[mappedResultData.mtbComplex]
+            'M. TB DETECTED': resultCategories.Detected,
+            'M. TB NOT DETECTED': resultCategories.NotDetected,
+            INVALID: resultCategories.Invalid,
+            'MTB DETECTED': resultCategories.Detected,
+            'MTB NOT DETECTED': resultCategories.NotDetected,
+          }[mappedResultData.mtbComplex?.toUpperCase()]
           const resultCategory2IdMappings = {
             'High-level resistance detected': resultCategories.Resistant,
             'Low-level resistance detected': resultCategories.Resistant,
