@@ -6,6 +6,7 @@ const _ = require('lodash')
 
 const { deviceSeen } = require('../../../../src/device/actions')
 const { resultLogged } = require('../../../../src/result/actions')
+const { formatDateOrDefault } = require('../../../../src/shared/date')
 
 const { assert, expect } = chai
 
@@ -127,6 +128,9 @@ describe.only('Truenat Result Upload Data Processor', () => {
         if (knexSpy.chainedCalls.lastTable() === 'Assay') {
           return Promise.resolve(assay)
         }
+        if (existingResult && knexSpy.chainedCalls.lastTable() === 'Result') {
+          return Promise.resolve(existingResult)
+        }
       } else {
         if (
           args.join(',') ===
@@ -146,9 +150,6 @@ describe.only('Truenat Result Upload Data Processor', () => {
         }
         if (sampleId && knexSpy.chainedCalls.lastTable() === 'Sample') {
           return Promise.resolve({ id: sampleId })
-        }
-        if (existingResult && knexSpy.chainedCalls.lastTable() === 'Result') {
-          return Promise.resolve(existingResult)
         }
       }
       return Promise.resolve()
@@ -211,6 +212,18 @@ describe.only('Truenat Result Upload Data Processor', () => {
       }
     )
   }
+
+  const now = new Date()
+  let clock
+  beforeEach(() => {
+    const now = new Date()
+    clock = sinon.useFakeTimers(now.getTime())
+    clock.restore()
+  })
+
+  afterEach(() => {
+    clock.restore()
+  })
 
   describe('canProcessRequest', () => {
     it('requires a path of /truelab/results/upload to be accepted', async () => {
@@ -364,33 +377,183 @@ describe.only('Truenat Result Upload Data Processor', () => {
       })
     })
 
-    it('will create a new sample', async () => {
-      const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
-      const truenatResultInstance = new TruenatResult(request, messageContext)
-      await truenatResultInstance.processRequest()
-      const {
-        deviceTypeExternalId,
-        siteExternalId,
-        deviceDefaultReportableSiteId,
-      } = defaultDeviceApiKeyDetails
-      const { abbreviation } = defaultAssay
-      const patientId = _.get(request, 'payload.PatientID')
-      const patientName = _.get(request, 'payload.PatientName')
-      const sampleTypeName = _.get(request, 'payload.SampleType')
-      const sampleTypeMappings = { Sputum: 'Sputum' }
-      const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
-        patientId || patientName
-      }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
-      const sampleTypeId = sampleTypeMappings[sampleTypeName]
-        ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
-        : null
-      assert.isOk(
-        knexInsertSpy.calledWith({
-          externalId: sampleExternalId,
-          sampleTypeId,
-          originSiteId: deviceDefaultReportableSiteId,
+    describe('when the sample does not yet exist', () => {
+      it('will create a new sample', async () => {
+        const TruenatResult =
+          fluentMockTruenatResultUploadDataProcessor().build()
+        const truenatResultInstance = new TruenatResult(request, messageContext)
+        await truenatResultInstance.processRequest()
+        const {
+          deviceTypeExternalId,
+          siteExternalId,
+          deviceDefaultReportableSiteId,
+        } = defaultDeviceApiKeyDetails
+        const { abbreviation } = defaultAssay
+        const patientId = _.get(request, 'payload.PatientID')
+        const patientName = _.get(request, 'payload.PatientName')
+        const sampleTypeName = _.get(request, 'payload.SampleType')
+        const sampleTypeMappings = { Sputum: 'Sputum' }
+        const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
+          patientId || patientName
+        }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
+        const sampleTypeId = sampleTypeMappings[sampleTypeName]
+          ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
+          : null
+        assert.isOk(
+          knexInsertSpy.calledWith({
+            externalId: sampleExternalId,
+            sampleTypeId,
+            originSiteId: deviceDefaultReportableSiteId,
+          })
+        )
+      })
+    })
+
+    describe('when the result & sample already exist', () => {
+      it('will use the existing sample when updating the result', async () => {
+        const existingSampleId = 777
+        const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
+          .withExistingResult({
+            id: 5018,
+            externalId: 'UQTB-13-RKHWGN4J-D',
+            assayId: defaultAssay.id,
+            partnerId: defaultDeviceApiKeyDetails.partnerId,
+            geographyId: defaultDeviceApiKeyDetails.geographyId,
+            siteId: defaultDeviceApiKeyDetails.siteId,
+            deviceId: defaultDeviceApiKeyDetails.deviceId,
+            patientCaseId: 551,
+            resultWorkflowStatusLogId: 5734,
+            treatmentStatusLogId: 5734,
+            longitude: defaultDeviceApiKeyDetails.longitude,
+            latitude: defaultDeviceApiKeyDetails.latitude,
+            resultSourceId: staticData.resultSource.DiagnosticDevice,
+            resultTypeId: staticData.resultType.Patient,
+            sampleId: existingSampleId,
+            sampleRunNumber: 1,
+            resultCategory1: staticData.resultCategory.Missing,
+            resultCategory2: null,
+            resultData:
+              '{"ct1": 29, "ct2": 12.1, "ct3": 19.8, "status": "Complete", "labName": "Town TB Lab", "ctLabel1": "Control Ct", "ctLabel2": "MTB Plus", "ctLabel3": "MTB Plus", "testName": "Truenat MTB", "ctResult1": "Detected", "ctResult2": "Detected", "ctResult3": "Detected", "finalResult": "Detected High", "validityStatus": "Valid"}',
+            startedOn: new Date(2021, 10, 19, 13, 25, 14),
+            endedOn: null,
+            consumableSerial: 'Lot 3\tS-1234-1',
+            consumableExpirationDate: null,
+            consumableLot: 'R-ID-13',
+            instrumentSerial: null,
+            moduleName: null,
+            moduleSerial: null,
+            researchId: null,
+            patientData:
+              '{"id": "13-061-5364", "age": 47, "gender": "Male", "doctorName": "", "patientName": "Christina Kazembe"}',
+            senderVersion: null,
+            senderOperator: 'Marsha',
+            notes: 'This is a test... result',
+            oemData: null,
+            rawData: null,
+            errorCode: null,
+            errorNotes: null,
+            createdOn: new Date(2021, 10, 19, 15, 25, 14),
+            createdBy: 1,
+            updatedOn: new Date(2021, 10, 19, 15, 25, 14),
+            updatedBy: 1,
+            formData: null,
+            reportableSiteId:
+              defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId,
+            firstViewedOn: null,
+            resultStatusLogId: 72,
+          })
+          .withSampleId(existingSampleId)
+          .build()
+        const truenatResultInstance = new TruenatResult(request, messageContext)
+        await truenatResultInstance.processRequest()
+        const {
+          partnerId,
+          geographyId,
+          longitude,
+          latitude,
+          siteId,
+          deviceId,
+          deviceTypeExternalId,
+          siteExternalId,
+          deviceDefaultReportableSiteId,
+        } = defaultDeviceApiKeyDetails
+        const { abbreviation } = defaultAssay
+        const patientId = _.get(request, 'payload.PatientID')
+        const patientName = _.get(request, 'payload.PatientName')
+        const sampleTypeName = _.get(request, 'payload.SampleType')
+        const sampleTypeMappings = { Sputum: 'Sputum' }
+        const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
+          patientId || patientName
+        }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
+        const sampleTypeId = sampleTypeMappings[sampleTypeName]
+          ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
+          : null
+        assert.isNotOk(
+          knexInsertSpy.calledWith({
+            externalId: sampleExternalId,
+            sampleTypeId,
+            originSiteId: deviceDefaultReportableSiteId,
+          })
+        )
+        const resultExternalId = `${sampleExternalId}_${formatDateOrDefault(
+          now,
+          'yyyyMMddhhmmss'
+        )}`
+        const finalResult = _.get(request, 'payload.FinalResult')
+        const { resultCategory: resultCategoryIds } = staticData
+        const resultCategory1Id =
+          defaultAssay.externalId === 'assayTruenatUnknown'
+            ? resultCategoryIds.Unknown
+            : {
+                Positive: resultCategoryIds.Detected,
+                Detected: resultCategoryIds.Detected,
+                Negative: resultCategoryIds.NotDetected,
+                'Not Detected': resultCategoryIds.NotDetected,
+                Invalid: resultCategoryIds.Invalid,
+                Indeterminate: resultCategoryIds.Indeterminate,
+                Error: resultCategoryIds.Error,
+              }[finalResult] || resultCategoryIds.Missing
+        expect(knexUpdateSpy.getCall(0).args[0]).to.containSubset({
+          partnerId,
+          geographyId,
+          siteId,
+          deviceId,
+          assayId: defaultAssay.id,
+          longitude,
+          latitude,
+          resultSourceId: staticData.resultSource.DiagnosticDevice,
+          resultTypeId: staticData.resultType.Patient,
+          patientData: JSON.stringify({
+            doctorName: _.get(request, 'payload.DoctorName'),
+            id: patientId,
+            patientName,
+            gender: _.get(request, 'payload.Gender'),
+            age: _.get(request, 'payload.Age'),
+          }),
+          resultData: JSON.stringify({
+            finalResult,
+            status: _.get(request, 'payload.Status'),
+            validityStatus: _.get(request, 'payload.ValidityStatus'),
+            ctLabel1: _.get(request, 'payload.CtLabel1'),
+            ct1: _.get(request, 'payload.Ct1'),
+            ctResult1: _.get(request, 'payload.CtResult1'),
+            ctLabel2: _.get(request, 'payload.CtLabel2'),
+            ct2: _.get(request, 'payload.Ct2'),
+            ctResult2: _.get(request, 'payload.CtResult2'),
+            cLabel3: _.get(request, 'payload.CtLabel3'),
+            ct3: _.get(request, 'payload.Ct3'),
+            ctResult3: _.get(request, 'payload.CtResult3'),
+            labName: _.get(request, 'payload.LabName'),
+            testName: _.get(request, 'payload.TestName'),
+          }),
+          updatedOn: now,
+          sampleId: existingSampleId,
+          externalId: resultExternalId,
+          resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
+          senderOperator: _.get(request, 'payload.User'),
+          notes: _.get(request, 'payload.Notes'),
         })
-      )
+      })
     })
   })
 })

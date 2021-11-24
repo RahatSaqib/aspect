@@ -170,10 +170,7 @@ class TruenatResult extends SynchronousDataProcessor {
             testName,
           }),
           rawData: rawMessage,
-          createdOn: utcNow,
-          createdBy: null,
           updatedOn: utcNow,
-          updatedBy: null,
           sampleId,
           externalId: resultExternalId,
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
@@ -190,11 +187,13 @@ class TruenatResult extends SynchronousDataProcessor {
             resultDetails.endedOn = resultTime
           }
         }
+        const existingResult = await knex('Result')
+          .where({ externalId: resultExternalId, deviceId })
+          .orWhere({ sampleId, siteId, assayId: assay.id })
+          .first()
         const result = {
-          ...((await knex('Result')
-            .where({ externalId: resultExternalId, deviceId })
-            .orWhere({ sampleId, siteId, assayId: assay.id })
-            .first()) || {}),
+          createdOn: utcNow,
+          ...(existingResult || {}),
           ...resultDetails,
         }
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
