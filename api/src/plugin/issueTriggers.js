@@ -41,8 +41,8 @@ async function analyzeWithQuery(
            * which happens when one of the bindings values is `undefined` - make sure params are
            * not `undefined`
            */
-          if (!consumableLot) builder.where({ consumableLot })
-          if (!assayId) builder.where({ assayId })
+          if (consumableLot) builder.where({ consumableLot })
+          if (assayId) builder.where({ assayId })
         } else if (moduleSerial) builder.where({ moduleSerial })
       },
       moduleSerial,
