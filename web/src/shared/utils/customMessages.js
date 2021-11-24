@@ -13,7 +13,7 @@ export const commonDefinitions = defineMessages({
   },
   state_MW: {
     id: 'pages.common.state_MW',
-    defaultMessage: 'District',
+    defaultMessage: 'Zones',
   },
   state_ZANHLS: {
     id: 'pages.common.state_ZANHLS',
@@ -65,6 +65,10 @@ export const commonDefinitions = defineMessages({
   },
   lga_BD: {
     id: 'pages.common.lga_BD',
+    defaultMessage: 'District',
+  },
+  lga_MW: {
+    id: 'pages.common.lga_MW',
     defaultMessage: 'District',
   },
   state_BD: {
