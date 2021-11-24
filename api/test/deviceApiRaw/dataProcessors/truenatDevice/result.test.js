@@ -4,13 +4,11 @@ const Promise = require('bluebird')
 const sinon = require('sinon')
 const _ = require('lodash')
 
-const { deviceSeen } = require('../../../../src/device/actions')
-const { resultLogged } = require('../../../../src/result/actions')
 const { formatDateOrDefault } = require('../../../../src/shared/date')
 
 const { assert, expect } = chai
 
-describe.only('Truenat Result Upload Data Processor', () => {
+describe('Truenat Result Upload Data Processor', () => {
   const defaultPayload = {
     Age: '55',
     Ct1: '19.0',
