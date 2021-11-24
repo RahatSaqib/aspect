@@ -78,14 +78,14 @@ class TruenatResult extends SynchronousDataProcessor {
         const utcNow = new Date()
         const resultSourceId = await resultSourceToId('DiagnosticDevice')
         const resultTypeId = await resultTypeToId('Patient')
-        const resultCategories = await allResultCategoryToId()
+        const resultCategoryIds = await allResultCategoryToId()
         const patientName = _.get(payload, 'PatientName')
         const patientId = _.get(payload, 'PatientID')
         const sampleTypeName = _.get(payload, 'SampleType')
-        const sampleTypes = await allSampleTypeToId()
+        const sampleTypeIds = await allSampleTypeToId()
         const sampleTypeMappings = { Sputum: 'Sputum' }
         const sampleTypeId = sampleTypeMappings[sampleTypeName]
-          ? sampleTypes[sampleTypeMappings[sampleTypeName]]
+          ? sampleTypeIds[sampleTypeMappings[sampleTypeName]]
           : null
         const testName = _.get(payload, 'TestName')
         const assayExternalId =
@@ -123,16 +123,16 @@ class TruenatResult extends SynchronousDataProcessor {
         const finalResult = _.get(payload, 'FinalResult')
         const resultCategory1Id =
           assay.externalId === 'assayTruenatUnknown'
-            ? resultCategories.Unknown
+            ? resultCategoryIds.Unknown
             : {
-                Positive: resultCategories.Detected,
-                Detected: resultCategories.Detected,
-                Negative: resultCategories.NotDetected,
-                'Not Detected': resultCategories.NotDetected,
-                Invalid: resultCategories.Invalid,
-                Indeterminate: resultCategories.Indeterminate,
-                Error: resultCategories.Error,
-              }[finalResult] || resultCategories.Missing
+                Positive: resultCategoryIds.Detected,
+                Detected: resultCategoryIds.Detected,
+                Negative: resultCategoryIds.NotDetected,
+                'Not Detected': resultCategoryIds.NotDetected,
+                Invalid: resultCategoryIds.Invalid,
+                Indeterminate: resultCategoryIds.Indeterminate,
+                Error: resultCategoryIds.Error,
+              }[finalResult] || resultCategoryIds.Missing
         const validityStatus = _.get(payload, 'ValidityStatus')
         const senderOperator = _.get(payload, 'User')
         const labName = _.get(payload, 'LabName')
@@ -176,7 +176,7 @@ class TruenatResult extends SynchronousDataProcessor {
           updatedBy: null,
           sampleId,
           externalId: resultExternalId,
-          resultCategory1: resultCategory1Id || resultCategories.Missing,
+          resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
           senderOperator,
           notes: _.get(payload, 'Notes'),
         }
@@ -190,10 +190,11 @@ class TruenatResult extends SynchronousDataProcessor {
             resultDetails.endedOn = resultTime
           }
         }
-        const result = (await knex('Result')
-          .where({ externalId: resultExternalId, deviceId })
-          .orWhere({ sampleId, siteId, assayId: assay.id })
-          .first()) || {
+        const result = {
+          ...((await knex('Result')
+            .where({ externalId: resultExternalId, deviceId })
+            .orWhere({ sampleId, siteId, assayId: assay.id })
+            .first()) || {}),
           ...resultDetails,
         }
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
@@ -201,7 +202,7 @@ class TruenatResult extends SynchronousDataProcessor {
           const [resultId] = await knex('Result').insert(result)
           result.id = resultId
         } else {
-          await knex('Result').where('id', result.id).update(result)
+          await knex('Result').where('id', result.id).update(resultDetails)
         }
         const deviceLogId = await postPayloadFromDevice(
           {
@@ -277,7 +278,7 @@ class TruenatResult extends SynchronousDataProcessor {
       this.response.success = true
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(payload)
+      console.log(JSON.stringify(payload))
       throw e
     }
   }
