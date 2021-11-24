@@ -168,11 +168,25 @@ const getConfig = (formatMessage, isNew) => {
             id: 40,
             items: [
               {
+                /**
+                 * when this hidden value is not 'EnteredByHand' then it disables
+                 * `resultCategory1`, `resultCategory2` and `endedOn`.
+                 * For reference - see func updateResult in `api/src/result/service.js`
+                 */
+                id: 'resultSourceExternalId',
+                controlType: {
+                  component: 'hidden',
+                },
+                type: 'readOnly',
+              },
+              {
                 id: 'resultCategory1',
                 controlType: {
                   ...resultCategoryControlType(formatMessage),
                 },
                 label: 'resultCategory1Label',
+                disabledIf: values =>
+                  values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
                 id: 'resultCategory2',
@@ -182,6 +196,8 @@ const getConfig = (formatMessage, isNew) => {
                 },
                 label: 'resultCategory2Label',
                 hideIfNull: true,
+                disabledIf: values =>
+                  values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
                 id: 'detectedResistance',
@@ -259,6 +275,8 @@ const getConfig = (formatMessage, isNew) => {
                 type: 'string',
                 label: 'End Date',
                 labelI18nKey: 'endDate',
+                disabledIf: values =>
+                  values.resultSourceExternalId !== 'EnteredByHand',
               },
             ],
           },

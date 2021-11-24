@@ -12,19 +12,19 @@ const getValidationSchema = formatMessage =>
       .test({
         message: formatMessage(messages.timeCannotBeGreaterThanNow),
         test: v => Date.parse(v) < new Date().getTime(),
+      })
+      .when('endedOn', {
+        is: endedOnValue => !!endedOnValue, // is not empty string nor null, i.e. is defined
+        then: Yup.date().max(
+          Yup.ref('endedOn'),
+          formatMessage(messages.startedOnCannotBeAfterEndedOn)
+        ),
       }),
     endedOn: Yup.date()
       .required(formatMessage(messages.endedOnRequired))
       .test({
         message: formatMessage(messages.timeCannotBeGreaterThanNow),
         test: v => Date.parse(v) < new Date().getTime(),
-      })
-      .when('startedOn', {
-        is: startedOnValue => !!startedOnValue, // is not empty string nor null, i.e. is defined
-        then: Yup.date().min(
-          Yup.ref('startedOn'),
-          formatMessage(messages.endedOnCannotBeBeforeStartedOn)
-        ),
       }),
     sampleCollectedOn: Yup.date()
       .required(formatMessage(messages.collectedOnRequired))

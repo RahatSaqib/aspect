@@ -802,6 +802,7 @@ async function getResultByResultId(
       'r.resultCategory1',
       'r.resultCategory2',
       'stp.id as sampleTypeId',
+      'rso.externalId as resultSourceExternalId',
     ])
   let data = null
   // translate result data back to an object and get assay details

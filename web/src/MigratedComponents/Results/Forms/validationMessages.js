@@ -26,9 +26,13 @@ export default defineMessages({
     id: 'pages.Result.collectedOnRequired',
     defaultMessage: 'CollectedOn date is required',
   },
+  startedOnCannotBeAfterEndedOn: {
+    id: 'pages.Result.startedOnCannotBeAfterEndedOn',
+    defaultMessage: 'Start time cannot be after End time',
+  },
   endedOnCannotBeBeforeStartedOn: {
     id: 'pages.Result.endedOnCannotBeBeforeStartedOn',
-    defaultMessage: 'End time cannot be before start time',
+    defaultMessage: 'End time cannot be before Start time',
   },
   timeCannotBeGreaterThanNow: {
     id: 'pages.Result.timeCannotBeGreaterThanNow',

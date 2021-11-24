@@ -528,6 +528,9 @@ function validateResultDetailResponse() {
       .description(
         "Is the result's assay configured to allow deleting of results?"
       ),
+    resultSourceExternalId: Joi.string()
+      .required() // resultSourceId is NOT NULL in Result table
+      .description('External ID of the result source'),
   }
 }
 
