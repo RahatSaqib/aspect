@@ -362,7 +362,7 @@ describe('Process GeneXpert Logs', () => {
     expect(detailsStored).to.containSubset(detailsSent)
   })
 
-  it('should NOT trigger "deviceHardwareError" action if error is one of the errors that produces duplicate log entries', async () => {
+  it.skip('should NOT trigger "deviceHardwareError" action if error is one of the errors that produces duplicate log entries', async () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
     // initial count of deviceOperation entries
