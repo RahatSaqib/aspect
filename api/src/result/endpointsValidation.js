@@ -86,7 +86,11 @@ const resultAggregationsResponseItem = {
 }
 
 const optionalId = description => {
-  return Joi.number().integer().positive().allow(null).description(description)
+  return Joi.number()
+    .integer()
+    .positive()
+    .allow(null, '')
+    .description(description)
 }
 const resultUpdatePayload = {
   startedOn: Joi.date()

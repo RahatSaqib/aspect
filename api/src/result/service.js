@@ -2775,7 +2775,7 @@ async function updateOrCreateResult(request, result = {}) {
     })
   }
 
-  result.resultCategory1 = payload.resultCategory1
+  result.resultCategory1 = payload.resultCategory1 // this is required field
   result.resultCategory2 = payload.resultCategory2 || null
   result.startedOn = payload.startedOn
   result.endedOn = payload.endedOn
@@ -2789,10 +2789,10 @@ async function updateOrCreateResult(request, result = {}) {
   // create sample-entry or update it
   result.sampleId = await updateOrCreateSample(
     result.sampleId,
-    payload.sampleId,
-    payload.sampleTypeId,
+    payload.sampleId || null,
+    payload.sampleTypeId || null,
     payload.sampleCollectedOn || null,
-    payload.sampleOriginSiteId
+    payload.sampleOriginSiteId || null
   )
 
   // create case entry or update it
