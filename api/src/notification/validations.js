@@ -17,8 +17,6 @@ function listNotificationsBaseConfig() {
           'lastTriggeredOn',
           'alertCount',
           'totalTriggers',
-          'contactsCount',
-          'contacts',
           'typeCategory'
         ),
       },
@@ -32,7 +30,7 @@ const optionsForSendXXX = {
   otherwise: Joi.optional().allow('', null),
 }
 
-const resultBasedNotificationPayload = {
+const resultBasedNotificationPayload = Joi.object({
   notificationType: Joi.string()
     /**
      * see all values in getOptions() in `MigratedComponents/Notifications/List/config.jsx`
@@ -130,6 +128,17 @@ const resultBasedNotificationPayload = {
     .when('sendWeb', optionsForSendXXX)
     .pattern(/^(ftp|http|https):\/\/[^ "]+$/, 'Invalid webhook url')
     .description('Webhook url'),
+  persons: Joi.array()
+    .items(
+      Joi.object().keys({
+        personId: Joi.string().required().description('Id of the Person'),
+        checked: Joi.bool()
+          .valid(true, null)
+          .optional()
+          .description('Checked persons'),
+      })
+    )
+    .min(1),
   jobFunctions: Joi.array()
     .items(
       Joi.object().keys({
@@ -152,10 +161,9 @@ const resultBasedNotificationPayload = {
           .description('Tags for selected Job Function'),
       })
     )
-    .required()
     .min(1)
     .description('Checked job functions'),
-}
+}).or('jobFunctions', 'persons')
 
 const saveNotificationResponse = {
   options: {

@@ -952,6 +952,28 @@ async function seed(knex) {
     cell: config.admin.cell,
   })
 
+  const [managerId] = await knex('User').insert({
+    name: 'manager',
+    password: bcrypt.hashSync('test07', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  })
+
+  const [managerPersonId] = await knex('Person').insert({
+    userId: managerId,
+    name: 'Manager',
+    email: config.manager.email,
+    cell: config.manager.cell,
+    lastPartnerId: partnerOneId,
+    lastCountryId: countries.US.id,
+    timezone: countries.US.timezone,
+    culture: countries.US.culture,
+    geographyId,
+    ...auditFields,
+  })
+
   // create clinician user
   const [clinicianId] = await knex('User').insert({
     name: 'clinician',
@@ -1244,6 +1266,11 @@ async function seed(knex) {
     jobFunctionId: jobFunctionIdAdmin,
   })
 
+  const [jobIdManager] = await knex('Job').insert({
+    personId: managerPersonId,
+    jobFunctionId: jobFunctionIdManager,
+  })
+
   const [jobIdClinician] = await knex('Job').insert({
     personId: clinicianPersonId,
     jobFunctionId: jobFunctionIdClinician,
@@ -1252,6 +1279,10 @@ async function seed(knex) {
   // Constrain jobs by context
   await knex('JobContext').insert([
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
+  ])
+
+  await knex('JobContext').insert([
+    { jobId: jobIdManager, geographyId: countries.US.geographyId },
   ])
 
   await knex('JobContext').insert([
