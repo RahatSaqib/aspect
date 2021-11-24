@@ -75,8 +75,8 @@ const FormActions = ({ config, onSubmit }) => {
             onSubmit(formik, meta)
           } else {
             formik.handleSubmit()
+            setToggleEdit(false)
           }
-          setToggleEdit(false)
           break
 
         case 'back': {

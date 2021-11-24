@@ -49,13 +49,6 @@ const AspectResultDetail = () => {
     const formConfig = getFormConfig(intl.formatMessage, isNew)
     const values = sanitizeFormValues(formik.values, { formConfig })
 
-    /**
-     * TODO: remove below console.log after implementing submission of form in
-     * https://ops.systemone.id/browse/ASP-2344
-     */
-    // eslint-disable-next-line
-    console.log('>>>>>>>>>>>>>>>', JSON.stringify(values, null, 2))
-
     submitResult({ values, id })
   }
 
