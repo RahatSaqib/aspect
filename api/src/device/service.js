@@ -1866,22 +1866,22 @@ async function getDeviceCalibrationsForReport(auth, query) {
   return result
 }
 
-async function postPayloadFromDevice(deviceLogDetails, knex) {
+async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
   const now = new Date()
-  const databaseTransaction = async knex => {
-    const [deviceLogId] = await knex('DeviceLog').insert({
+  const databaseTransaction = async inlineKnex => {
+    const [deviceLogId] = await inlineKnex('DeviceLog').insert({
       createdOn: now,
       ...deviceLogDetails,
     })
-    await knex('Device')
+    await inlineKnex('Device')
       .where({ id: deviceLogDetails.deviceId })
       .update({ lastSeenOn: now, updatedOn: now })
     return deviceLogId
   }
-  if (!knex) {
+  if (!optionalKnex) {
     return transact(databaseTransaction)
   }
-  return databaseTransaction(knex)
+  return databaseTransaction(optionalKnex)
 }
 
 module.exports = {
