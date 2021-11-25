@@ -186,6 +186,7 @@ const getConfig = (formatMessage, isNew) => {
                 },
                 label: 'resultCategory1Label',
                 disabledIf: values =>
+                  !!values.resultSourceExternalId &&
                   values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
@@ -197,6 +198,7 @@ const getConfig = (formatMessage, isNew) => {
                 label: 'resultCategory2Label',
                 hideIfNull: true,
                 disabledIf: values =>
+                  !!values.resultSourceExternalId &&
                   values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
@@ -276,6 +278,7 @@ const getConfig = (formatMessage, isNew) => {
                 label: 'End Date',
                 labelI18nKey: 'endDate',
                 disabledIf: values =>
+                  !!values.resultSourceExternalId &&
                   values.resultSourceExternalId !== 'EnteredByHand',
               },
             ],
