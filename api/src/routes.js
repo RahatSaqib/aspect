@@ -132,9 +132,9 @@ function decorateDeviceAPI() {
 function decorateDeviceRawAPI() {
   const scope = ['+deviceApi']
   const strategies = [
-    'deviceApiRawUnauthenticated',
-    // 'deviceApiBasic',
+    'deviceApiBasic',
     'deviceApiKey',
+    'deviceApiRawUnauthenticated',
   ]
   return decorateAPI({ scope, strategies })
 }

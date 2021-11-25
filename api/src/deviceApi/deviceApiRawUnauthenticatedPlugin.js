@@ -20,9 +20,11 @@ function register(plugin) {
 async function authenticate(request, h) {
   const DataProcessorClass = await findRawDataProcessor(request)
   if (DataProcessorClass && DataProcessorClass.AllowUnauthenticatedRequests) {
-    return h.authenticated({ credentials: { scope: ['deviceApi'], name: '' } })
+    return h.authenticated({ credentials: { scope: ['deviceApi'] } })
   }
-  throw Boom.unauthorized('No Handler Found for This Anonymous Request')
+  return h.unauthenticated(
+    Boom.unauthorized('No Handler Found for This Anonymous Request')
+  )
 }
 
 module.exports = {
@@ -31,4 +33,5 @@ module.exports = {
     version,
     register,
   },
+  authenticate,
 }

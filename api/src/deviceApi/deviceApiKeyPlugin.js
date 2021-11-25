@@ -4,6 +4,9 @@ const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
 const { lookupUsingCredentials } = require('../deviceApiKey/service')
+const {
+  authenticate: tryAnonymousAuthenticate,
+} = require('./deviceApiRawUnauthenticatedPlugin')
 const logger = require('../shared/logger')
 
 function register(plugin) {
@@ -28,6 +31,9 @@ function authenticate(request, h) {
   } else if (headers.authorization) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')
+  }
+  if (!token) {
+    return tryAnonymousAuthenticate(request, h)
   }
   return authToken(token)
     .then(credentials => h.authenticated({ credentials }))

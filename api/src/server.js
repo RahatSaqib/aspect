@@ -156,14 +156,14 @@ const plugins = [
   // JWT for authentication in client API
   require('hapi-auth-jwt2'), // eslint-disable-line import/order
 
-  // Unauthenticated access to public Device API Raw Endpoints
-  deviceApiRawUnauthenticatedPlugin,
-
   // API Key in Device API
   deviceApiKeyPlugin,
 
   // Basic authentication in Device API
   require('@hapi/basic'), // eslint-disable-line import/order
+
+  // Unauthenticated access to public Device API Raw Endpoints
+  deviceApiRawUnauthenticatedPlugin,
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
@@ -207,10 +207,6 @@ const start = async () => {
   // Authentication strategies and Authorization Scopes
   // ==========================================================================
   // ==========================================================================
-  server.auth.strategy(
-    'deviceApiRawUnauthenticated',
-    'deviceApiRawUnauthenticated'
-  )
   // use config: { auth: false } on route definition to disable authentication
   // Device API uses API Keys
   server.auth.strategy('deviceApiKey', 'deviceApiKey')
@@ -218,6 +214,10 @@ const start = async () => {
     allowEmptyUsername: true,
     ...validateApiKeyAuthBasic,
   })
+  server.auth.strategy(
+    'deviceApiRawUnauthenticated',
+    'deviceApiRawUnauthenticated'
+  )
 
   // Client API uses JWT
   server.auth.strategy('clientApi', 'jwt', {
