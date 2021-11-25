@@ -1,4 +1,6 @@
 import * as Yup from 'yup'
+import isInteger from 'lodash/isInteger'
+import toNumber from 'lodash/toNumber'
 
 import messages from './validationMessages'
 
@@ -35,6 +37,14 @@ const getValidationSchema = formatMessage =>
     resultCategory1: Yup.mixed().required(
       formatMessage(messages.resultCategory1)
     ),
+    errorCode: Yup.mixed().test({
+      message: formatMessage(messages.errorCode),
+      test: v => {
+        if (!v) return true
+        const num = toNumber(v)
+        return !v.includes('.') && isInteger(num) && num >= 0 && num <= 99999
+      },
+    }),
   })
 
 export default getValidationSchema

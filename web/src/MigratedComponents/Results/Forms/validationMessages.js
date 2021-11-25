@@ -42,4 +42,8 @@ export default defineMessages({
     id: 'pages.Result.resultCategory1',
     defaultMessage: 'Field is required',
   },
+  errorCode: {
+    id: 'pages.Result.errorCode',
+    defaultMessage: 'Error Code must be a positive integer with max 5 digits',
+  },
 })
