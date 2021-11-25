@@ -229,7 +229,7 @@ class TruenatResult extends SynchronousDataProcessor {
         const resultWorkflowLog = {
           resultId: result.id,
           resultWorkflowStatusId,
-          senderOperator,
+          operator: senderOperator,
           reason: `Data from ${labName}`,
           changedOn: utcNow,
           createdOn: utcNow,
