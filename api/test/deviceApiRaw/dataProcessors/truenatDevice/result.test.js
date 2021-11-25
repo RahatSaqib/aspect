@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 const sinon = require('sinon')
 const _ = require('lodash')
 
-const { formatDateOrDefault } = require('../../../../src/shared/date')
+const { parseDateOrDefault } = require('../../../../src/shared/date')
 
 const { assert, expect } = chai
 
@@ -218,18 +218,6 @@ describe('Truenat Result Upload Data Processor', () => {
       }
     )
   }
-
-  const now = new Date()
-  let clock
-  beforeEach(() => {
-    const now = new Date()
-    clock = sinon.useFakeTimers(now.getTime())
-    clock.restore()
-  })
-
-  afterEach(() => {
-    clock.restore()
-  })
 
   describe('canProcessRequest', () => {
     it('requires a path of /truelab/results/upload to be accepted', async () => {
@@ -491,10 +479,6 @@ describe('Truenat Result Upload Data Processor', () => {
           patientId || patientName
         }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
         assert.isUndefined(knexInsertSpies.Sample)
-        const resultExternalId = `${sampleExternalId}_${formatDateOrDefault(
-          now,
-          'yyyyMMddhhmmss'
-        )}`
         const finalResult = _.get(request, 'payload.FinalResult')
         const { resultCategory: resultCategoryIds } = staticData
         const resultCategory1Id =
@@ -542,9 +526,8 @@ describe('Truenat Result Upload Data Processor', () => {
             labName: _.get(request, 'payload.LabName'),
             testName: _.get(request, 'payload.TestName'),
           }),
-          updatedOn: now,
           sampleId: existingSampleId,
-          externalId: resultExternalId,
+          startedOn: parseDateOrDefault('2020-09-27T20:40:58.000Z'),
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
           senderOperator: _.get(request, 'payload.User'),
           notes: _.get(request, 'payload.Notes'),

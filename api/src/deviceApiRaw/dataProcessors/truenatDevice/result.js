@@ -113,10 +113,6 @@ class TruenatResult extends SynchronousDataProcessor {
             originSiteId: deviceDefaultReportableSiteId,
           })
         }
-        const resultExternalId = `${sampleExternalId}_${formatDateOrDefault(
-          utcNow,
-          'yyyyMMddhhmmss'
-        )}`
         const patientAge = _.get(payload, 'Age')
         const patientGender = _.get(payload, 'Gender')
         const resultStatus = _.get(payload, 'Status')
@@ -136,6 +132,10 @@ class TruenatResult extends SynchronousDataProcessor {
         const validityStatus = _.get(payload, 'ValidityStatus')
         const senderOperator = _.get(payload, 'User')
         const labName = _.get(payload, 'LabName')
+        let resultExternalId = `${sampleExternalId}_${formatDateOrDefault(
+          utcNow,
+          'yyyyMMddhhmmss'
+        )}`
         const existingResult = await knex('Result')
           .where({ externalId: resultExternalId, deviceId })
           .orWhere({ sampleId, siteId, assayId: assay.id })
@@ -176,7 +176,6 @@ class TruenatResult extends SynchronousDataProcessor {
           rawData: rawMessage,
           updatedOn: utcNow,
           sampleId,
-          externalId: resultExternalId,
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
           senderOperator,
           notes: _.get(payload, 'Notes'),
@@ -199,12 +198,14 @@ class TruenatResult extends SynchronousDataProcessor {
           createdOn: utcNow,
           ...(existingResult || {}),
           ...newResultDetails,
+          externalId: resultExternalId,
         }
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
         if (!result.id) {
           const [resultId] = await knex('Result').insert(result)
           result.id = resultId
         } else {
+          resultExternalId = existingResult.externalId
           await knex('Result').where('id', result.id).update(newResultDetails)
         }
         const deviceLogId = await postPayloadFromDevice(
