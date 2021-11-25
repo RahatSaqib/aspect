@@ -237,7 +237,6 @@ async function analyzeDeviceHardwareError(
   { errorCodes, daysPeriod, minErrors }
 ) {
   const { resultErrorCode } = action.options.data
-
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const [{ totalErrors }] = await hardwareErrors(
       knex,
@@ -248,6 +247,29 @@ async function analyzeDeviceHardwareError(
     action.options.data.totalErrors = totalErrors
     action.options.data.errorCodes = errorCodes
     return totalErrors >= minErrors
+  }
+  return false
+}
+
+async function checkHardwareSuppression(
+  knex,
+  action,
+  { errorCodesToSuppress }
+) {
+  const { deviceId } = action
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
+    const { totalIssues } = await knex('Issue')
+      .where({ deviceId })
+      .whereRaw(`data->>"$.details.Errors[0].SiteSerialNumber"=?`, moduleSerial)
+      .whereRaw(
+        `data->>'$.details.Errors[0].ErrorCode' in (${errorCodesToSuppress.join(
+          ','
+        )})`
+      )
+      .count('id as totalIssues')
+      .first()
+    return totalIssues > 0
   }
   return false
 }
@@ -277,7 +299,7 @@ async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
       .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
       .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
       .whereRaw(
-        `data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`
+        `data->>'$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`
       )
       .select(
         'id',
@@ -319,4 +341,5 @@ module.exports = {
   hasUnusedModules,
   analyzeDeviceHardwareError,
   shouldSuppressTriggering,
+  checkHardwareSuppression,
 }

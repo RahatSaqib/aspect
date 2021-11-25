@@ -1,12 +1,18 @@
 const chai = require('chai')
+const Promise = require('bluebird')
 const { format, subDays, addDays, addMinutes } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
-const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
+const {
+  deviceMaintenanceTypeToId,
+  issueTypeToId,
+  issueEventStatusToId,
+} = require('../../src/shared/dictionary')
 const { deviceHardwareError } = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
+const { updateSubscription } = require('../utils/mqUtils')
 
 const { assert, expect } = chai
 
@@ -60,6 +66,7 @@ const logDataWithErrors = {
         Message:
           'Cepheid System ID 900001:\r\nHeater A Temperature Unstable.\r\nContact your Authorized Service Provider',
         ErrorCode: '4009',
+        SiteSerialNumber: 'MYSERIAL',
       },
     ],
     RawText:
@@ -77,6 +84,7 @@ const logDataWithErrorThatProducesDuplicatLogEntries = {
       {
         Message: 'Module A1 was reset at 12/29/20 11:09:36',
         ErrorCode: '2126',
+        SiteSerialNumber: 'MYSERIAL',
       },
     ],
     RawText: '<z8>Error 2126: Module A1 was reset at 12/29/20 11:09:36',
@@ -95,6 +103,7 @@ const logDataWithErrorsThatShouldBeDeduplicatedInTimespan = {
         Message:
           'Cepheid System ID 900001:\r\nHeater Temperature Differential Error.\r\nContact your Authorized Service Provider',
         ErrorCode: '1002',
+        SiteSerialNumber: 'MYSERIAL',
       },
     ],
     RawText:
@@ -122,7 +131,37 @@ describe('Process GeneXpert Logs', () => {
     await context.createDeviceWithResult()
   })
   afterEach(context.afterEach)
+  let issueEventTriggerId = null
+  before(async () => {
+    const issueTypeId = await issueTypeToId('HardwareModuleWasReset')
+    const issueEventStatusId = await issueEventStatusToId('Triggered')
+    const triggerConditions = JSON.stringify({
+      action: 'HARDWARE_MODULE_WAS_RESET',
+      conditions: {
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'analyzeDeviceHardwareError',
+        evaluationFilterParameters: {
+          errorCodes: [2126],
+          daysPeriod: 30,
+          minErrors: 3,
+        },
+      },
+    })
 
+    const { id: partnerId } = await knex('Partner').first()
+    ;[issueEventTriggerId] = await knex('IssueEventTrigger').insert({
+      issueTypeId,
+      partnerId,
+      issueEventStatusId,
+      triggerConditions,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+    await updateSubscription('issue')
+  })
+  after(async () =>
+    knex('IssueEventTrigger').where({ id: issueEventTriggerId }).delete()
+  )
   it('should create entry with log details in table DeviceOperation', async () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
@@ -362,7 +401,7 @@ describe('Process GeneXpert Logs', () => {
     expect(detailsStored).to.containSubset(detailsSent)
   })
 
-  it.skip('should NOT trigger "deviceHardwareError" action if error is one of the errors that produces duplicate log entries', async () => {
+  it('should NOT trigger "deviceHardwareError" action if error is one of the errors that produces duplicate log entries', async () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
     // initial count of deviceOperation entries
@@ -645,6 +684,113 @@ describe('Process GeneXpert Logs', () => {
     )
     const { details: detailsStored } = JSON.parse(deviceOperation.data)
     expect(detailsStored).to.containSubset(detailsSent)
+  })
+
+  it('should NOT create entry with Errors in log details and trigger "deviceHardwareError" action if there is a suppresion condition', async () => {
+    const { apiKey, deviceAuth, deviceId } = context
+    assert.isOk(apiKey)
+
+    // helper for getting date N days ago
+    const getDateDaysAgo = daysAgo =>
+      new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
+
+    const logDatas = [
+      {
+        ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
+        externalId: 139,
+        occurredOn: getDateDaysAgo(10),
+      },
+      {
+        ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
+        externalId: 140,
+        occurredOn: getDateDaysAgo(5),
+      },
+      {
+        ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
+        externalId: 141,
+        occurredOn: getDateDaysAgo(2),
+      },
+    ]
+
+    // get device to pass it to action creator deviceHardwareError
+    const device = await knex('Device').where('id', deviceId).first()
+
+    // helper func to get all Issue entries for this deviceId and issueType
+    const getIssues = deviceId =>
+      knex('Issue as i')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        // .where('it.externalId', 'HardwareHeaterTemperatureDifferentialError')
+        .where('i.deviceId', deviceId)
+        .orderBy('i.id', 'desc')
+        .select('i.*')
+
+    // get list of all Issues for this device before posting data
+    const issuesBefore = await getIssues(deviceId)
+
+    /**
+     * See item for "issueType": "HardwareHeaterTemperatureDifferentialError"
+     * in api/seeds/fixtures/IssueEventTrigger.json
+     *
+     * action type for error code 1002
+     * */
+    const hardwareErorCode = '1002'
+
+    /**
+     * post data with error code 1002 within daysPeriod
+     *
+     * See trigger conditions in api/seeds/fixtures/IssueEventTrigger.json, i.e.
+     *  "daysPeriod": 30,
+     *  "minErrors": 3
+     */
+    // helper - define action to wait for, post data, asert response, waitFor*
+    const postError = async (data, shouldTrigger = false) => {
+      const options = {
+        startedOn: new Date(format(data.occurredOn, 'yyyy-MM-dd HH:mm:ss')),
+        details: JSON.parse(data.details),
+      }
+      // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareErrorAnalysis()
+      const action = deviceHardwareError(device, hardwareErorCode, options)
+      const waitForHardwareError = waitForAction(action)
+
+      const res = await postLog(deviceAuth, logSource, data)
+      assert.equal(res.status, 200)
+
+      if (shouldTrigger) {
+        // must dispatch needed action to MQ
+        await waitForHardwareError
+      }
+      await waitForIdle()
+    }
+
+    // post 1-st error
+    await postError(logDatas[0])
+    // this does not trigger issue, i.e. Issue table doesn't contain new entries
+    let issuesAfter = await getIssues(deviceId)
+    assert.equal(issuesBefore.length, issuesAfter.length)
+
+    // post 2-nd error
+    await postError(logDatas[1])
+    // this also does not trigger issue, i.e. Issue table doesn't contain new entries
+    issuesAfter = await getIssues(deviceId)
+    assert.equal(issuesBefore.length, issuesAfter.length)
+
+    // post 3-rd error
+    await postError(logDatas[2])
+    issuesAfter = await getIssues(deviceId)
+    // 3rd error triggers issue - Issue table contains just created record with issue details
+    assert.equal(issuesBefore.length + 1, issuesAfter.length)
+    /// send another error code that the one before suppresed
+    // post 1-st error
+    await Promise.each(logDatas, async logEntry => {
+      logEntry.details = JSON.parse(logEntry.details)
+      logEntry.details.Errors[0].ErrorCode = 4017
+      logEntry.details = JSON.stringify(logEntry.details)
+      await postError(logEntry)
+    })
+
+    issuesAfter = await getIssues(deviceId)
+    // 3rd error triggers issue - Issue table contains just created record with issue details
+    assert.equal(issuesBefore.length + 1, issuesAfter.length)
   })
 
   it('should NOT create entry with Errors in log details and trigger "deviceHardwareError" action if the error code is in the list of error codes that should be deduplicated based on timeframe and the errors are LESS than an hour apart', async () => {

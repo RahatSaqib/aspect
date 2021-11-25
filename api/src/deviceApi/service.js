@@ -459,7 +459,6 @@ async function processLogItem(context, logItem, options) {
     payload,
     deviceOperationId
   )
-
   // process 'calibration' log item
   await shouldLogDeviceCalibration(
     knex,

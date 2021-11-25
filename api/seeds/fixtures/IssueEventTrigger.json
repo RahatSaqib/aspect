@@ -575,7 +575,7 @@
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
@@ -602,7 +602,7 @@
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
@@ -629,7 +629,7 @@
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
@@ -656,7 +656,7 @@
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
@@ -683,7 +683,7 @@
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
@@ -710,7 +710,7 @@
         },
         "suppressingConditions": {
           "evaluationMethod": "plugin-function",
-          "evaluationParameter": "shouldSuppressTriggering",
+          "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
               2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
