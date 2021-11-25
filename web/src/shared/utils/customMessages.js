@@ -13,7 +13,7 @@ export const commonDefinitions = defineMessages({
   },
   state_MW: {
     id: 'pages.common.state_MW',
-    defaultMessage: 'Zones',
+    defaultMessage: 'Zone',
   },
   state_ZANHLS: {
     id: 'pages.common.state_ZANHLS',
