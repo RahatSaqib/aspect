@@ -136,7 +136,11 @@ class TruenatResult extends SynchronousDataProcessor {
         const validityStatus = _.get(payload, 'ValidityStatus')
         const senderOperator = _.get(payload, 'User')
         const labName = _.get(payload, 'LabName')
-        const resultDetails = {
+        const existingResult = await knex('Result')
+          .where({ externalId: resultExternalId, deviceId })
+          .orWhere({ sampleId, siteId, assayId: assay.id })
+          .first()
+        const newResultDetails = {
           partnerId,
           geographyId,
           siteId,
@@ -176,32 +180,32 @@ class TruenatResult extends SynchronousDataProcessor {
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
           senderOperator,
           notes: _.get(payload, 'Notes'),
+          reportableSiteId:
+            _.get(existingResult, 'reportableSiteId') ||
+            deviceDefaultReportableSiteId ||
+            siteId,
         }
         const resultTime = parseDateOrDefault(
           `${_.get(payload, 'Date')} ${_.get(payload, 'Time')}`,
           { formatString: 'yyyy-MM-dd HH-mm-ss', backupDate: utcNow }
         )
         if (resultTime) {
-          resultDetails.startedOn = resultTime
+          newResultDetails.startedOn = resultTime
           if (['Complete', 'Aborted'].includes(resultStatus)) {
-            resultDetails.endedOn = resultTime
+            newResultDetails.endedOn = resultTime
           }
         }
-        const existingResult = await knex('Result')
-          .where({ externalId: resultExternalId, deviceId })
-          .orWhere({ sampleId, siteId, assayId: assay.id })
-          .first()
         const result = {
           createdOn: utcNow,
           ...(existingResult || {}),
-          ...resultDetails,
+          ...newResultDetails,
         }
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
         if (!result.id) {
           const [resultId] = await knex('Result').insert(result)
           result.id = resultId
         } else {
-          await knex('Result').where('id', result.id).update(resultDetails)
+          await knex('Result').where('id', result.id).update(newResultDetails)
         }
         const deviceLogId = await postPayloadFromDevice(
           {

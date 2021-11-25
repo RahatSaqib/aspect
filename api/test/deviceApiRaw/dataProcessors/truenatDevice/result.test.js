@@ -72,8 +72,8 @@ describe('Truenat Result Upload Data Processor', () => {
   let mockSharedRequestService
   let mockDb
   let knexSpy
-  let knexInsertSpy
-  let knexUpdateSpy
+  let knexInsertSpies
+  let knexUpdateSpies
   let mockKnex
   function mockTruenatResultUploadDataProcessor(
     deviceApiKeyDetails,
@@ -152,9 +152,13 @@ describe('Truenat Result Upload Data Processor', () => {
       }
       return Promise.resolve()
     }
-    knexInsertSpy = sinon.spy()
+    knexInsertSpies = {}
     knex.insert = async function (...args) {
-      knexInsertSpy(...args)
+      const lastTableName = knexSpy.chainedCalls.lastTable()
+      if (!knexInsertSpies[lastTableName]) {
+        knexInsertSpies[lastTableName] = sinon.spy()
+      }
+      knexInsertSpies[lastTableName](...args)
       knexSpy.chainedCalls.insert = [...knexSpy.chainedCalls.insert, args]
       if (newSampleId && knexSpy.chainedCalls.lastTable() === 'Sample') {
         return Promise.resolve([newSampleId])
@@ -170,9 +174,13 @@ describe('Truenat Result Upload Data Processor', () => {
       }
       return Promise.resolve()
     }
-    knexUpdateSpy = sinon.spy()
+    knexUpdateSpies = {}
     knex.update = async function (...args) {
-      knexUpdateSpy(...args)
+      const lastTableName = knexSpy.chainedCalls.lastTable()
+      if (!knexUpdateSpies[lastTableName]) {
+        knexUpdateSpies[lastTableName] = sinon.spy()
+      }
+      knexUpdateSpies[lastTableName](...args)
       knexSpy.chainedCalls.update = [...knexSpy.chainedCalls.update, args]
       return Promise.resolve()
     }
@@ -398,7 +406,7 @@ describe('Truenat Result Upload Data Processor', () => {
           ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
           : null
         assert.isOk(
-          knexInsertSpy.calledWith({
+          knexInsertSpies.Sample.calledWith({
             externalId: sampleExternalId,
             sampleTypeId,
             originSiteId: deviceDefaultReportableSiteId,
@@ -455,8 +463,7 @@ describe('Truenat Result Upload Data Processor', () => {
             updatedOn: new Date(2021, 10, 19, 15, 25, 14),
             updatedBy: 1,
             formData: null,
-            reportableSiteId:
-              defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId,
+            reportableSiteId: null,
             firstViewedOn: null,
             resultStatusLogId: 72,
           })
@@ -483,16 +490,7 @@ describe('Truenat Result Upload Data Processor', () => {
         const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
           patientId || patientName
         }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
-        const sampleTypeId = sampleTypeMappings[sampleTypeName]
-          ? staticData.sampleType[sampleTypeMappings[sampleTypeName]]
-          : null
-        assert.isNotOk(
-          knexInsertSpy.calledWith({
-            externalId: sampleExternalId,
-            sampleTypeId,
-            originSiteId: deviceDefaultReportableSiteId,
-          })
-        )
+        assert.isUndefined(knexInsertSpies.Sample)
         const resultExternalId = `${sampleExternalId}_${formatDateOrDefault(
           now,
           'yyyyMMddhhmmss'
@@ -511,7 +509,7 @@ describe('Truenat Result Upload Data Processor', () => {
                 Indeterminate: resultCategoryIds.Indeterminate,
                 Error: resultCategoryIds.Error,
               }[finalResult] || resultCategoryIds.Missing
-        expect(knexUpdateSpy.getCall(0).args[0]).to.containSubset({
+        expect(knexUpdateSpies.Result.firstCall.args[0]).to.containSubset({
           partnerId,
           geographyId,
           siteId,
@@ -550,6 +548,102 @@ describe('Truenat Result Upload Data Processor', () => {
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
           senderOperator: _.get(request, 'payload.User'),
           notes: _.get(request, 'payload.Notes'),
+          reportableSiteId: deviceDefaultReportableSiteId,
+        })
+      })
+
+      it("will NOT overwrite the result's reportable site ID", async () => {
+        const existingResultReportableSiteId = 202
+        const existingSampleId = 777
+        const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
+          .withExistingResult({
+            id: 5018,
+            externalId: 'UQTB-13-RKHWGN4J-D',
+            assayId: defaultAssay.id,
+            partnerId: defaultDeviceApiKeyDetails.partnerId,
+            geographyId: defaultDeviceApiKeyDetails.geographyId,
+            siteId: defaultDeviceApiKeyDetails.siteId,
+            deviceId: defaultDeviceApiKeyDetails.deviceId,
+            patientCaseId: 551,
+            resultWorkflowStatusLogId: 5734,
+            treatmentStatusLogId: 5734,
+            longitude: defaultDeviceApiKeyDetails.longitude,
+            latitude: defaultDeviceApiKeyDetails.latitude,
+            resultSourceId: staticData.resultSource.DiagnosticDevice,
+            resultTypeId: staticData.resultType.Patient,
+            sampleId: existingSampleId,
+            sampleRunNumber: 1,
+            resultCategory1: staticData.resultCategory.Missing,
+            resultCategory2: null,
+            resultData:
+              '{"ct1": 29, "ct2": 12.1, "ct3": 19.8, "status": "Complete", "labName": "Town TB Lab", "ctLabel1": "Control Ct", "ctLabel2": "MTB Plus", "ctLabel3": "MTB Plus", "testName": "Truenat MTB", "ctResult1": "Detected", "ctResult2": "Detected", "ctResult3": "Detected", "finalResult": "Detected High", "validityStatus": "Valid"}',
+            startedOn: new Date(2021, 10, 19, 13, 25, 14),
+            endedOn: null,
+            consumableSerial: 'Lot 3\tS-1234-1',
+            consumableExpirationDate: null,
+            consumableLot: 'R-ID-13',
+            instrumentSerial: null,
+            moduleName: null,
+            moduleSerial: null,
+            researchId: null,
+            patientData:
+              '{"id": "13-061-5364", "age": 47, "gender": "Male", "doctorName": "", "patientName": "Christina Kazembe"}',
+            senderVersion: null,
+            senderOperator: 'Marsha',
+            notes: 'This is a test... result',
+            oemData: null,
+            rawData: null,
+            errorCode: null,
+            errorNotes: null,
+            createdOn: new Date(2021, 10, 19, 15, 25, 14),
+            createdBy: 1,
+            updatedOn: new Date(2021, 10, 19, 15, 25, 14),
+            updatedBy: 1,
+            formData: null,
+            reportableSiteId: existingResultReportableSiteId,
+            firstViewedOn: null,
+            resultStatusLogId: 72,
+          })
+          .withSampleId(existingSampleId)
+          .build()
+        const truenatResultInstance = new TruenatResult(request, messageContext)
+        await truenatResultInstance.processRequest()
+        assert.notEqual(
+          knexUpdateSpies.Result.lastCall.args[0].reportableSiteId,
+          defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId
+        )
+        assert.notEqual(
+          knexUpdateSpies.Result.lastCall.args[0].reportableSiteId,
+          defaultDeviceApiKeyDetails.siteId
+        )
+      })
+    })
+
+    describe('when the device does not have a default reportable site ID', () => {
+      it("will use the device site ID as a fallback for the result's reportable site ID", async () => {
+        const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
+          .withDeviceApiKeyDetails({
+            ...defaultDeviceApiKeyDetails,
+            deviceDefaultReportableSiteId: null,
+          })
+          .build()
+        const truenatResultInstance = new TruenatResult(request, messageContext)
+        await truenatResultInstance.processRequest()
+        expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
+          reportableSiteId: defaultDeviceApiKeyDetails.siteId,
+        })
+      })
+    })
+
+    describe('when the device has a default reportable site ID', () => {
+      it("will assign the result's reportable site ID", async () => {
+        const TruenatResult =
+          fluentMockTruenatResultUploadDataProcessor().build()
+        const truenatResultInstance = new TruenatResult(request, messageContext)
+        await truenatResultInstance.processRequest()
+        expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
+          reportableSiteId:
+            defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId,
         })
       })
     })
