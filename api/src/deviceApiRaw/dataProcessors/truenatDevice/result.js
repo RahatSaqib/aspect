@@ -38,7 +38,7 @@ class TruenatResult extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { auth, payload } = request
-    this.response = { deviceApiRawId: this.id, resultIds: [] }
+    this.response = { deviceApiRawId: this.id }
 
     try {
       await transact(async knex => {
