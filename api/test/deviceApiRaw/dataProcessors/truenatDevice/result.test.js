@@ -466,18 +466,10 @@ describe('Truenat Result Upload Data Processor', () => {
           latitude,
           siteId,
           deviceId,
-          deviceTypeExternalId,
-          siteExternalId,
           deviceDefaultReportableSiteId,
         } = defaultDeviceApiKeyDetails
-        const { abbreviation } = defaultAssay
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
-        const sampleTypeName = _.get(request, 'payload.SampleType')
-        const sampleTypeMappings = { Sputum: 'Sputum' }
-        const sampleExternalId = `${deviceTypeExternalId}_${abbreviation}_${siteExternalId}_${
-          patientId || patientName
-        }_${sampleTypeMappings[sampleTypeName] || 'Unknown'}`
         assert.isUndefined(knexInsertSpies.Sample)
         const finalResult = _.get(request, 'payload.FinalResult')
         const { resultCategory: resultCategoryIds } = staticData
