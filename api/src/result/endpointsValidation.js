@@ -124,8 +124,10 @@ const resultUpdatePayload = {
     .allow(null, '')
     .description('Form data to save along with the result'),
 
-  errorCode: Joi.string()
-    .max(255)
+  errorCode: Joi.number()
+    .integer()
+    .max(99999)
+    .min(1)
     .allow(null, '')
     .description('Error code for the result'),
   notes: Joi.string().allow(null, '').description('Notes for the result'),
@@ -211,6 +213,11 @@ const baseResultResponse = {
   diseaseExternalId: Joi.string()
     .required()
     .description('the external id of the disease'),
+
+  detectedResistance: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('CSV with detected resistances'),
 }
 
 function validateResultListResponse() {

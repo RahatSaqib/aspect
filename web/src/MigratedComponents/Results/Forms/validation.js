@@ -42,7 +42,7 @@ const getValidationSchema = formatMessage =>
       test: v => {
         if (!v) return true
         const num = toNumber(v)
-        return !v.includes('.') && isInteger(num) && num >= 0 && num <= 99999
+        return !v.includes('.') && isInteger(num) && num >= 1 && num <= 99999
       },
     }),
   })

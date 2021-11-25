@@ -2783,7 +2783,7 @@ async function updateOrCreateResult(request, result = {}) {
   result.updatedOn = now
   result.updatedBy = userId
 
-  result.errorCode = payload.errorCode
+  result.errorCode = payload.errorCode || null
   result.notes = payload.notes
   result.senderOperator = payload.senderOperator
 
