@@ -177,6 +177,19 @@ async function listNotifications(request) {
             'one',
             CAST(jf.id as char)
           ) IS NOT NULL
+          OR
+          nt.jobFunctionId = jf.id
+        `)
+      )
+    })
+    .leftOuterJoin('Person as per', qb => {
+      qb.on(
+        knex.raw(`
+          JSON_SEARCH(
+            nt.filterCondition -> '$.persons[*].personId',
+            'one',
+            CAST(per.id as char)
+          ) IS NOT NULL
         `)
       )
     })
@@ -187,8 +200,10 @@ async function listNotifications(request) {
         `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
       ),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT jf.name) as contactsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as contacts`),
+      knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
+      knex.raw('COUNT(DISTINCT per.id) as personsCount'),
+      knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
@@ -231,16 +246,20 @@ async function createNotifications(knex, action, context) {
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
   let jobFunctionLevel = null
-  const { jobFunctions = [] } = filterCondition || {}
+  const { jobFunctions = [], persons = [] } = filterCondition || {}
   await Promise.each(policies, async policy => {
-    if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions)) {
+    if (
+      _.isNil(policy.jobFunctionId) &&
+      _.isEmpty(jobFunctions) &&
+      _.isEmpty(persons)
+    ) {
       await createNotificationIfNotCreatedAlready(
         action,
         { policy, now },
         { messageContext: context, knex }
       )
     } else {
-      if (_.isEmpty(jobFunctions) && policy.jobFunctionId)
+      if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
         if (policy.jobFunctionId !== jobFunctionId) {
           ;({ jobFunctionId, level: jobFunctionLevel } = policy)
         } else if (policy.level !== jobFunctionLevel) {
@@ -249,9 +268,16 @@ async function createNotifications(knex, action, context) {
           /* eslint-disable no-continue */
           return Promise.resolve()
         }
+      }
 
       const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(knex, policy, tags, jobFunctions)
+      const people = await getPeopleToNotify(
+        knex,
+        policy,
+        tags,
+        jobFunctions,
+        persons
+      )
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
@@ -381,9 +407,10 @@ async function getNotificationPolicy(
   return records
 }
 
-async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
-  const people = txKnex('Job as j')
-    .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
+  const people = txKnex('Person as p')
+    .innerJoin('Job as j', 'p.id', 'j.personId')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
     .modify(queryBuilder => {
       if (policy.sendToContactsWithMatchingTags) {
@@ -406,8 +433,15 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions) {
           })
         })
       }
+      if (!_.isEmpty(persons)) {
+        queryBuilder.orWhere(pBuilder => {
+          _.each(persons, ({ personId }) => {
+            pBuilder.orWhere(builder => builder.where('p.id', personId))
+          })
+        })
+      }
     })
-    .distinct('j.personId as id', 'j.jobFunctionId')
+    .distinct('p.id as id', 'j.jobFunctionId')
   return people
 }
 
@@ -624,6 +658,45 @@ async function getNotifications(request) {
   return { ok: true, total, data }
 }
 
+/**
+ * Does a deeper validation of the filterCondition object.
+ * @param {object} filterCondition The filterCondition object
+ * @returns true if filterCondition is correct, or a Boom object if a problem was detected
+ */
+const validateFilterCondition = async filterCondition => {
+  const { jobFunctions, persons } = filterCondition
+  if (jobFunctions) {
+    const jobFunctionsIds = jobFunctions.map(jf => jf.jobFunctionId)
+    const existingJobFunctions = await knex('JobFunction').whereIn(
+      'id',
+      jobFunctionsIds
+    )
+    if (jobFunctionsIds.length !== existingJobFunctions.length)
+      return Boom.badRequest(
+        'Attempt to set unexisting job function to notification'
+      )
+  }
+  if (persons) {
+    const personsIds = persons.map(p => p.personId)
+    const existingPersons = await knex('Person as p')
+      .leftJoin('Job as j', 'p.id', 'j.personId')
+      .whereIn('p.id', personsIds)
+      .groupBy('p.id')
+      .select(['p.id as personId', knex.raw('COUNT(j.id) as numberOfJobs')])
+    if (personsIds.length !== existingPersons.length)
+      return Boom.badRequest('Attempt to set unexisting person to notification')
+    if (
+      existingPersons.filter(
+        p => _.isNil(p.numberOfJobs) || p.numberOfJobs === 0
+      ).length > 0
+    )
+      return Boom.badRequest(
+        'Attempt to set to notifications persons without assigned jobs'
+      )
+  }
+  return true
+}
+
 async function saveNotificationType({
   id: notificationTypeId,
   partnerId,
@@ -640,6 +713,7 @@ async function saveNotificationType({
     areaItems,
     deviceLevelId,
     jobFunctions,
+    persons,
     name,
     result,
     //
@@ -663,6 +737,13 @@ async function saveNotificationType({
   }
 
   return transact(async knex => {
+    // TODO: add extra validations for the other filterCondition properties
+    const filterConditionValidation = await validateFilterCondition({
+      jobFunctions,
+      persons,
+    })
+    if (filterConditionValidation !== true) return filterConditionValidation
+
     /**
      * helpers
      */
@@ -829,6 +910,7 @@ async function saveNotificationType({
           areaItems,
           deviceLevelId,
           jobFunctions,
+          persons,
           result,
           sendEmail,
           sendSms,
@@ -862,12 +944,16 @@ async function saveNotification(request) {
   const { notificationType } = payload
 
   if (notificationType === 'resultBased') {
-    const { ok, notificationTypeId, error } = await saveNotificationType({
+    const result = await saveNotificationType({
       id,
       partnerId,
       userId,
       payload,
     })
+
+    if (result instanceof Boom.Boom) return result
+
+    const { ok, notificationTypeId, error } = result
     if (!ok) {
       return Boom.internal(`Can not save notification: ${error}`)
     }
