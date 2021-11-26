@@ -392,7 +392,16 @@ async function processGeneXpertLogs(context, data, now) {
   await Promise.each(data, async logItem => {
     try {
       const logItemId = await processLogItem(context, logItem, options)
-      processedLogIds = [...processedLogIds, logItemId]
+      /**
+       * Skip touching `processedLogIds` for Cepheid db-based system logs
+       * Notice that processedLogIds are needed in GxConnect to mark record in SQLite
+       * table `Logs` that it has been processed well in Aspect.
+       * We do not mark records in Cepheid db `system_log` but only keep
+       * `settings.LastProcessedSystemLogTimeForAspect` and store it in setting.jsn.
+       */
+      if (logItem.logFileName !== 'GeneXpert DB') {
+        processedLogIds = [...processedLogIds, logItemId]
+      }
     } catch (e) {
       /**
        * if error happened then we do not return this logId as processed,
@@ -450,7 +459,6 @@ async function processLogItem(context, logItem, options) {
     payload,
     deviceOperationId
   )
-
   // process 'calibration' log item
   await shouldLogDeviceCalibration(
     knex,
@@ -459,7 +467,7 @@ async function processLogItem(context, logItem, options) {
     calibrationDeviceMaintenanceTypeId
   )
 
-  return externalId
+  return logItem.externalId
 }
 
 async function getConnectionSettings(context) {

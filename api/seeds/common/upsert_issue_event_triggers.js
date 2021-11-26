@@ -43,4 +43,27 @@ async function upsertIssueEventTrigger(knex, partnerName) {
       }
     )
   })
+  await removeIssueTriggers(knex, partnerName)
+}
+
+async function removeIssueTriggers(knex, partnerName) {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partnerName })
+    .first()
+
+  const issueTypesInserted = await knex('IssueEventTrigger').pluck(
+    'issueTypeId'
+  )
+  const issueTypesInFixture = await Promise.map(
+    IssueEventTrigger,
+    async ({ issueType }) => issueTypeToId(issueType)
+  )
+
+  await knex('IssueEventTrigger')
+    .delete()
+    .whereIn(
+      'issueTypeId',
+      _.difference(issueTypesInserted, issueTypesInFixture)
+    )
+    .where({ partnerId })
 }

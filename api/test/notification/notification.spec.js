@@ -5,6 +5,7 @@ const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
+const config = require('../../src/config')
 const server = require('../utils/testUtils')
 const {
   dispatchAndWaitForAction,
@@ -295,7 +296,7 @@ describe('Result Notifications triggers', () => {
   })
 
   describe('Filter by JF', () => {
-    let inserted
+    let inserted = null
     before(async () => createTestContext(filterConditionWithJf))
     after(async () => {
       await removeTestContext()
@@ -323,6 +324,7 @@ describe('Result Notifications triggers', () => {
         .distinct()
       assert.equal(notifications.length, 1)
     })
+
     it('Should create or not a result based notification filtering by JobFunction and tags', async () => {
       ;[inserted] = await knex('Tag').insert([
         { partnerId: 1, title: 'oneTag' },
@@ -374,6 +376,63 @@ describe('Result Notifications triggers', () => {
         })
         .distinct()
       assert.equal(notifications.length, 1)
+    })
+  })
+
+  describe('Filter by Person', () => {
+    let adminId
+    let managerId
+
+    beforeEach(async () => {
+      ;[adminId] = await knex('Person')
+        .where({ email: config.admin.email })
+        .pluck('id')
+
+      const [managerJobFunctionId] = await knex('JobFunction')
+        .where({ externalId: 'manager' })
+        .pluck('id')
+      ;[managerId] = await knex('Person')
+        .where({ email: config.manager.email })
+        .pluck('id')
+
+      const [adminJobFunctionId] = await knex('JobFunction')
+        .where({ externalId: 'admin' })
+        .pluck('id')
+
+      // Notify to the person called "Admin" - Send notification
+      // Notify to a person assigned to the job function "Manager" - Send notification
+      // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
+      // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
+      const filterConditions = {
+        ...filterConditionWithAssay,
+        persons: [{ personId: `${adminId}` }],
+        jobFunctions: [
+          { jobFunctionId: managerJobFunctionId },
+          { jobFunctionId: adminJobFunctionId },
+        ],
+      }
+      await createTestContext(filterConditions)
+    })
+
+    afterEach(removeTestContext)
+
+    it('should create a result based notification for particular person and job function', async () => {
+      const resultId = insertedResultDetected
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct()
+
+      assert.equal(notifications.length, 2)
+      const notificationToPerson = notifications.filter(
+        n => n.personId === adminId
+      )
+      const notificationToJobFunction = notifications.filter(
+        n => n.personId === managerId
+      )
+      assert.isNotNull(notificationToPerson)
+      assert.isNotNull(notificationToJobFunction)
     })
   })
 
@@ -438,13 +497,14 @@ describe('Notification routes', () => {
   const path = '/api/notification'
   let ntId
   let notificationType
-
+  let personId
+  let basePayload
   before(() => {
     shared.checkToken(server, path)
   })
-
   beforeEach(async () => {
     const messageType = await knex('MessageType').select().first()
+    ;[personId] = await knex('Person').where({ name: 'Admin' }).pluck('id')
     ;[ntId] = await knex('NotificationType').insert({
       partnerId: 1,
       name: 'A notification',
@@ -453,14 +513,44 @@ describe('Notification routes', () => {
       notificationTypeCategoryId: await notificationTypeCategoryToId(
         'resultBased'
       ),
-      filterCondition: JSON.stringify({}),
+      filterCondition: JSON.stringify({
+        persons: [{ personId: `${personId}`, checked: true }],
+      }),
       messageTypeId: messageType.id,
     })
+    basePayload = {
+      notificationType: 'resultBased',
+      name: '_____',
+      emailSubject: '',
+      emailBody: '',
+      sendEmail: false,
+      smsBody: 'A body',
+      sendSms: baseFilterCondition.sendSms,
+      webUrl: '',
+      webBody: '',
+      sendWeb: false,
+      jobFunctions: [
+        {
+          jobFunctionId: '1',
+          checked: true,
+          tags: [],
+        },
+      ],
+      persons: [
+        {
+          personId: `${personId}`,
+          checked: true,
+        },
+      ],
+      deviceLevelId: baseFilterCondition.deviceLevelId,
+      areaItems: baseFilterCondition.areaItems,
+      result: baseFilterCondition.result,
+    }
   })
 
   afterEach(async () => knex('NotificationType').where('id', ntId).del())
 
-  it('GET', async () => {
+  it('GET - With filterConditions', async () => {
     const res = await server
       .get(path)
       .set('Authorization', `Bearer ${shared.token}`)
@@ -475,9 +565,35 @@ describe('Notification routes', () => {
       assert.property(notification, 'lastTriggeredOn')
       assert.property(notification, 'totalTriggers')
       assert.property(notification, 'alertCount')
-      assert.property(notification, 'contactsCount')
-      assert.property(notification, 'contacts')
+      assert.property(notification, 'personsCount')
+      assert.property(notification, 'persons')
+      assert.property(notification, 'jobFunctionsCount')
+      assert.property(notification, 'jobFunctions')
     })
+    const [{ persons, personsCount }] = res.body.data.filter(n => n.id === ntId)
+    assert.equal(persons, 'Admin')
+    assert.equal(personsCount, 1)
+  })
+
+  it('GET - With jobFunctionId', async () => {
+    await knex('NotificationType')
+      .where({ id: ntId })
+      .update({ filterCondition: null, jobFunctionId: 1 })
+
+    const res = await server
+      .get(path)
+      .set('Authorization', `Bearer ${shared.token}`)
+
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+    assert.property(res.body, 'data')
+    assert.typeOf(res.body.data, 'array')
+    assert.isAtLeast(res.body.data.length, 1)
+    const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(
+      n => n.id === ntId
+    )
+    assert.equal(jobFunctions, 'Admin')
+    assert.equal(jobFunctionsCount, 1)
   })
 
   it('GET /id', async () => {
@@ -502,18 +618,95 @@ describe('Notification routes', () => {
     assert.property(notificationType, 'webBody')
   })
 
-  it('PUT', async () => {
-    const payload = {
-      notificationType: notificationType.notificationType,
-      name: notificationType.name,
-      emailSubject: '',
-      emailBody: '',
-      sendEmail: false,
-      smsBody: 'A body',
-      sendSms: baseFilterCondition.sendSms,
-      webUrl: '',
-      webBody: '',
-      sendWeb: false,
+  it('PUT - Unexisting person, should return error 400', async () => {
+    before(() => {
+      shared.checkToken(server, path)
+    })
+
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({
+        ...basePayload,
+        persons: [
+          {
+            personId: '99999999999',
+            checked: true,
+          },
+        ],
+      })
+
+    assert.equal(res.status, 400)
+    assert.equal(
+      res.body.message,
+      'Attempt to set unexisting person to notification'
+    )
+  })
+
+  it('PUT - Unexisting job function, should return error 400', async () => {
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({
+        ...basePayload,
+        jobFunctions: [
+          {
+            jobFunctionId: '99999999999',
+            checked: true,
+          },
+        ],
+      })
+
+    assert.equal(res.status, 400)
+    assert.equal(
+      res.body.message,
+      'Attempt to set unexisting job function to notification'
+    )
+  })
+
+  it('PUT - Existing person but without assigned job, should return error 400', async () => {
+    const personWithoutJob = await knex('Person as p')
+      .leftJoin('Job as j', 'p.id', 'j.personId')
+      .whereNull('j.id')
+      .first('p.*')
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send({
+        ...basePayload,
+        persons: [
+          {
+            personId: `${personWithoutJob.id}`,
+            checked: true,
+          },
+        ],
+      })
+
+    assert.equal(res.status, 400)
+    assert.equal(
+      res.body.message,
+      'Attempt to set to notifications persons without assigned jobs'
+    )
+  })
+
+  it('PUT - Correct payload, filterCondition should be updated properly', async () => {
+    const res = await server
+      .put(`${path}/${ntId}`)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send(basePayload)
+
+    assert.equal(res.status, 200)
+
+    const { filterCondition } = await knex('NotificationType')
+      .where({ id: ntId })
+      .first()
+    assert.deepEqual(JSON.parse(filterCondition), {
+      persons: [
+        {
+          personId: `${personId}`,
+          checked: true,
+        },
+      ],
       jobFunctions: [
         {
           jobFunctionId: '1',
@@ -522,15 +715,16 @@ describe('Notification routes', () => {
         },
       ],
       deviceLevelId: baseFilterCondition.deviceLevelId,
-      areaItems: baseFilterCondition.areaItems,
+      areaItems: [
+        {
+          label: 'Wayne',
+          value: '12',
+        },
+      ],
+      sendEmail: false,
+      sendSms: true,
+      sendWeb: false,
       result: baseFilterCondition.result,
-    }
-
-    const res = await server
-      .put(`${path}/${ntId}`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send(payload)
-
-    assert.equal(res.status, 200)
+    })
   })
 })

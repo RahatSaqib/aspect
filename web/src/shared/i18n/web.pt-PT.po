@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-10-29T09:11:26.140Z\n"
+"POT-Creation-Date: 2021-11-24T18:57:10.397Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -679,10 +679,10 @@ msgstr "Área"
 msgid "Aspect has Encountered a Problem."
 msgstr "Aspecto encontrou um problema."
 
-#. [forms.formSectionHeader.assay]
+#. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
-#. [forms.formItem.assay]
+#. [forms.formSectionHeader.assay]
 #. defaultMessage is:
 #. Assay
 #. [placeholder.result.Assay]
@@ -727,6 +727,13 @@ msgstr "Tipo de ensaio"
 #: extracted_strings.json
 msgid "Assay Type:"
 msgstr "Tipo de ensaio:"
+
+#. [pages.Result.assayRequired]
+#. defaultMessage is:
+#. Assay is required
+#: extracted_strings.json
+msgid "Assay is required"
+msgstr "É necessário um ensaio"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
 #. defaultMessage is:
@@ -958,6 +965,9 @@ msgstr "BD MGIT AST"
 msgid "BD MGIT GND"
 msgstr "BD MGIT GND"
 
+#. [button_Back]
+#. defaultMessage is:
+#. Back
 #. [pages.NotificationList.backButton]
 #. defaultMessage is:
 #. Back
@@ -1111,6 +1121,9 @@ msgstr "Não pode ser editado"
 #. [pages.RouterDetail.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [button_Cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.BaseDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1249,6 +1262,13 @@ msgstr "Escolha etiquetas"
 #: extracted_strings.json
 msgid "City"
 msgstr "Cidade"
+
+#. [forms.formItem.clearValue]
+#. defaultMessage is:
+#. Clear Value
+#: extracted_strings.json
+msgid "Clear Value"
+msgstr "Limpiar Valores"
 
 #. [shared.EmptyList.clearFilters]
 #. defaultMessage is:
@@ -2217,6 +2237,13 @@ msgstr "Tipo de dispositivo"
 msgid "Device Warranty"
 msgstr "Garantia do dispositivo"
 
+#. [pages.Result.deviceRequired]
+#. defaultMessage is:
+#. Device is required
+#: extracted_strings.json
+msgid "Device is required"
+msgstr "O dispositivo é necessário"
+
 #. [pages.DeviceDetailProfile.deviceLogs]
 #. defaultMessage is:
 #. Device logs
@@ -2307,9 +2334,6 @@ msgstr "Discordante"
 msgid "Disease"
 msgstr "Doenças"
 
-#. [pages.common.state_MW]
-#. defaultMessage is:
-#. District
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
 #. District
@@ -2322,11 +2346,20 @@ msgstr "Doenças"
 #. [pages.common.lga_PK]
 #. defaultMessage is:
 #. District
+#. [pages.common.lga_BD]
+#. defaultMessage is:
+#. District
+#. [pages.common.lga_MW]
+#. defaultMessage is:
+#. District
 #: extracted_strings.json
 msgid "District"
 msgstr "Cidade"
 
 #. [pages.common.lga_CM]
+#. defaultMessage is:
+#. Division
+#. [pages.common.state_BD]
 #. defaultMessage is:
 #. Division
 #: extracted_strings.json
@@ -2402,6 +2435,9 @@ msgstr "Ebola"
 #. defaultMessage is:
 #. Edit
 #. [pages.RouterDetail.editTooltip]
+#. defaultMessage is:
+#. Edit
+#. [button_Edit]
 #. defaultMessage is:
 #. Edit
 #. [pages.DeviceDetail.edit]
@@ -2960,6 +2996,13 @@ msgstr "O campo não pode conter menos de {total} caracteres"
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "O campo não pode conter mais de {total} caracteres"
+
+#. [pages.Result.resultCategory1]
+#. defaultMessage is:
+#. Field is required
+#: extracted_strings.json
+msgid "Field is required"
+msgstr "O campo é obrigatório"
 
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
@@ -5594,10 +5637,10 @@ msgstr "Falha ao redefinir a senha"
 #. [pages.ClinicalHistory.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formSectionHeader.patient]
+#. [forms.formItem.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formItem.patient]
+#. [forms.formSectionHeader.patient]
 #. defaultMessage is:
 #. Patient
 #: extracted_strings.json
@@ -7626,6 +7669,9 @@ msgstr "Terminar Sessão"
 #. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
+#. [pages.resultEdit.site]
+#. defaultMessage is:
+#. Site
 #. [pages.DeviceDetailEdit.location]
 #. defaultMessage is:
 #. Site
@@ -7693,6 +7739,13 @@ msgstr "Nome do Site"
 msgid "Site contact"
 msgstr "Contato do site"
 
+#. [pages.Result.siteRequired]
+#. defaultMessage is:
+#. Site is required
+#: extracted_strings.json
+msgid "Site is required"
+msgstr "O site é necessário"
+
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
@@ -7743,6 +7796,13 @@ msgstr "A mensagem SMS não deve ter mais de 144 caracteres"
 #: extracted_strings.json
 msgid "Start Date"
 msgstr "Data de Início"
+
+#. [pages.Result.startedOnRequired]
+#. defaultMessage is:
+#. Start date is required
+#: extracted_strings.json
+msgid "Start date is required"
+msgstr "Data de início é necessária"
 
 #. [forms.formItem.state]
 #. defaultMessage is:
@@ -7838,6 +7898,9 @@ msgstr "Styleguide"
 #. defaultMessage is:
 #. Submit
 #. [pages.UpdateLoginDetails.submitCurrentPassword]
+#. defaultMessage is:
+#. Submit
+#. [button_Submit]
 #. defaultMessage is:
 #. Submit
 #. [pages.BaseDialog.submit]
@@ -7995,10 +8058,10 @@ msgstr "Lista de tarefas"
 msgid "Tasks"
 msgstr "Tarefas"
 
-#. [forms.formSectionHeader.technicalDetails]
+#. [forms.formItem.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
-#. [forms.formItem.technicalDetails]
+#. [forms.formSectionHeader.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
 #: extracted_strings.json
@@ -9554,6 +9617,13 @@ msgstr "CEP"
 #: extracted_strings.json
 msgid "Zip Code"
 msgstr "CEP"
+
+#. [pages.common.state_MW]
+#. defaultMessage is:
+#. Zones
+#: extracted_strings.json
+msgid "Zones"
+msgstr "Zonas"
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:

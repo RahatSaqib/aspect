@@ -4,14 +4,20 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    # Disable version updates. Security updates will still create PRs
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "npm"
     directory: "/api"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    # Disable version updates. Security updates will still create PRs
+    open-pull-requests-limit: 0
 
   - package-ecosystem: "npm"
     directory: "/web"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    # Disable version updates. Security updates will still create PRs
+    open-pull-requests-limit: 0
