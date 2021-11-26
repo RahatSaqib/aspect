@@ -519,7 +519,6 @@ describe('Truenat Result Upload Data Processor', () => {
             testName: _.get(request, 'payload.TestName'),
           }),
           sampleId: existingSampleId,
-          startedOn: parseDateOrDefault('2020-09-27T20:40:58.000Z'),
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
           senderOperator: _.get(request, 'payload.User'),
           notes: _.get(request, 'payload.Notes'),
