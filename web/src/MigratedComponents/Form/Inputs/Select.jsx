@@ -95,8 +95,10 @@ const AspectSelect = props => {
           updateField,
           showLabelWhenDisabled: true,
         }}
-        action={({ identifier, selectedOption }, dataSource) => {
-          const value = getValue(selectedOption, formik, id)
+        action={({ identifier, selectedOption, action }, dataSource) => {
+          const value =
+            action === 'clear' ? null : getValue(selectedOption, formik, id)
+
           updateField(identifier, value, { formik, toggleEdit })
 
           if (populateOnChange) {

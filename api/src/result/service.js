@@ -802,6 +802,7 @@ async function getResultByResultId(
       'r.resultCategory1',
       'r.resultCategory2',
       'stp.id as sampleTypeId',
+      'rso.externalId as resultSourceExternalId',
     ])
   let data = null
   // translate result data back to an object and get assay details
@@ -2681,7 +2682,8 @@ async function updateOrCreateResult(request, result = {}) {
   } = request
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const updating = result.id
+  const isCreating = !result.id
+  const isUpdating = !isCreating
   const now = new Date()
 
   // check that user has access to site
@@ -2712,7 +2714,7 @@ async function updateOrCreateResult(request, result = {}) {
 
   // deviceId is optional. if null and creating a result, it has to be an assay that is for manual entry only
   let { deviceId } = result
-  if (!updating) {
+  if (isCreating) {
     deviceId = await getDeviceIdForResultCreation(
       payload,
       partnerId,
@@ -2737,8 +2739,17 @@ async function updateOrCreateResult(request, result = {}) {
     )
   }
 
+  /**
+   * on updating - read current record from db to have all fields without default values
+   * for insert().onConflict() operation
+   */
+  if (isUpdating) {
+    const existingResult = await knex('Result').where({ id: result.id }).first()
+    result = { ...existingResult, ...result }
+  }
+
   // we can start filling in the result details now
-  if (!updating) {
+  if (isCreating) {
     result.assayId = assay.id
     result.partnerId = partnerId
     result.siteId = site.id
@@ -2751,30 +2762,45 @@ async function updateOrCreateResult(request, result = {}) {
     result.createdOn = now
     result.createdBy = userId
     result.resultData = '{}'
+    /**
+     * can set reportableSiteId only in Create mode, can't change it in Edit mode.
+     * Notice that reportableSiteId is auto-filled in Create mode after selecting Site
+     */
+    result.reportableSiteId =
+      payload.reportableSiteId || payload.sampleOriginSiteId
+    /**
+     * patientData
+     */
+    result.patientData = JSON.stringify({
+      id: payload.patientId,
+    })
   }
 
-  result.resultCategory1 = payload.resultCategory1
-  result.resultCategory2 = payload.resultCategory2
-  result.startedOn = payload.endedOn
+  result.resultCategory1 = payload.resultCategory1 // this is required field
+  result.resultCategory2 = payload.resultCategory2 || null
+  result.startedOn = payload.startedOn
   result.endedOn = payload.endedOn
   result.updatedOn = now
   result.updatedBy = userId
-  result.reportableSiteId = payload.sampleOriginSiteId || site.id
+
+  result.errorCode = payload.errorCode || null
+  result.notes = payload.notes
+  result.senderOperator = payload.senderOperator
 
   // create sample-entry or update it
   result.sampleId = await updateOrCreateSample(
     result.sampleId,
-    payload.sampleId,
-    payload.sampleTypeId,
-    payload.sampleCollectedOn,
-    payload.sampleOriginSiteId
+    payload.sampleId || null,
+    payload.sampleTypeId || null,
+    payload.sampleCollectedOn || null,
+    payload.sampleOriginSiteId || null
   )
 
   // create case entry or update it
-  if (payload.caseId && assay.diseaseId) {
+  if (payload.caseExternalId && assay.diseaseId) {
     result.patientCaseId = await getCaseId(
       {
-        externalId: payload.caseId,
+        externalId: payload.caseExternalId,
         diseaseId: assay.diseaseId,
         partnerId,
       },
@@ -2785,13 +2811,8 @@ async function updateOrCreateResult(request, result = {}) {
     result.patientCaseId = null
   }
 
-  // looks like all's well. create or update result now so we have a result id for tags, form data, etc.
   // TODO: Log any changes (see ASP-1371)
-  if (updating) {
-    await knex('Result').update(result).where('id', result.id)
-  } else {
-    ;[result.id] = await knex('Result').insert(result)
-  }
+  ;[result.id] = await knex('Result').insert(result).onConflict('id').merge()
 
   // update or insert tags
   await updateTagsById(result.id, 'result', payload.tags, auth)
@@ -2832,7 +2853,7 @@ async function updateOrCreateResult(request, result = {}) {
   )
 
   // insert treatment status (can't be changed manually, so only do on insert)
-  if (!updating) {
+  if (isCreating) {
     const resultTreatmentStatusId = await resultTreatmentStatusToId(
       'AwaitingTreatment'
     )
