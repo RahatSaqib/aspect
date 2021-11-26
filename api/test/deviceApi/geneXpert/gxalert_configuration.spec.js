@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const {
   setMilliseconds,
   subMinutes,
@@ -23,7 +24,6 @@ const {
 const { getLocalDateInUtc } = require('../../../src/shared/date')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
-const shared = require('../../utils/sharedToken')
 const {
   deviceSeen,
   deviceMaintenance,
@@ -33,10 +33,9 @@ const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
 const server = require('../../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device API routes for GxAlert Device', () => {
-  shared.checkToken(server, '/api/device')
   function createContext() {
     return createGxAlertTestContext(server)
   }

@@ -17,6 +17,10 @@ const context = createTestContext(server, {
 describe('Tag routes', () => {
   const path = '/api/tag'
 
+  before(() => {
+    shared.checkToken(server, `${path}/result`)
+  })
+
   describe('GET', () => {
     beforeEach(async () => {
       await context.createDeviceWithResult()
@@ -41,9 +45,6 @@ describe('Tag routes', () => {
     afterEach(async () => {
       await context.afterEach()
     })
-    // check the endpoint routes and authorizations
-    shared.checkToken(server, `${path}/result`)
-
     it('should return a list of tags when using valid token', async () => {
       const res = await server
         .get(`${path}/result`)

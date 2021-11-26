@@ -8,7 +8,10 @@ const { assert } = chai
 describe('Result Workflow Status Log', () => {
   const resultId = 1
   const path = `/api/result/workflow-status-logs/${resultId}`
-  shared.checkToken(server, path)
+
+  before(() => {
+    shared.checkToken(server, path)
+  })
 
   describe('GET', () => {
     it('should return a list of Result Workflow Status Logs (when using valid token)', async () => {

@@ -1,6 +1,7 @@
 const _ = require('lodash')
 
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const addYears = require('date-fns/addYears')
 const subDays = require('date-fns/subDays')
 const addHours = require('date-fns/addHours')
@@ -49,7 +50,7 @@ const { knex } = require('../../../src/db')
 
 const server = require('../../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'

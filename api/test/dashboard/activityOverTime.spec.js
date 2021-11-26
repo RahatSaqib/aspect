@@ -29,7 +29,6 @@ const { assert } = chai
 
 describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
   const path = '/api/dashboard/operational-data/activity-over-time'
-  shared.checkToken(server, path)
 
   const now = parseISO(new Date().toISOString())
   const previousMonth = subMonths(now, 1)
@@ -41,6 +40,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
   let assayGeneXpertMtbRif
   const weekDays = []
   before(async () => {
+    shared.checkToken(server, path)
     // -----------------------------
     // current id's in some touched tables - to delete all
     // new records in after()

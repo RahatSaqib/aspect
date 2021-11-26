@@ -12,7 +12,9 @@ describe('Result Follow Up', () => {
   describe('GET', () => {
     const path = '/api/result/follow-ups'
 
-    shared.checkToken(server, path)
+    before(async () => {
+      shared.checkToken(server, path)
+    })
 
     it('should return a list of possible result follow ups', async () => {
       await server

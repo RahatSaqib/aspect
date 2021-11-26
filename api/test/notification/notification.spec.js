@@ -499,8 +499,10 @@ describe('Notification routes', () => {
   let notificationType
   let personId
   let basePayload
-  beforeEach(async () => {
+  before(() => {
     shared.checkToken(server, path)
+  })
+  beforeEach(async () => {
     const messageType = await knex('MessageType').select().first()
     ;[personId] = await knex('Person').where({ name: 'Admin' }).pluck('id')
     ;[ntId] = await knex('NotificationType').insert({
@@ -617,7 +619,9 @@ describe('Notification routes', () => {
   })
 
   it('PUT - Unexisting person, should return error 400', async () => {
-    shared.checkToken(server, path)
+    before(() => {
+      shared.checkToken(server, path)
+    })
 
     const res = await server
       .put(`${path}/${ntId}`)

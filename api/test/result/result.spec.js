@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const {
   addMinutes,
@@ -32,7 +33,7 @@ const { getAdminId } = require('../utils/authUtils')
 const server = require('../utils/testUtils')
 const { addResultDownloadLog } = require('../../src/result/service')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 const getClinicianAccessToken = async () => {
   const res = await server.post('/api/auth').send({
@@ -56,12 +57,11 @@ describe('Result routes', () => {
 
   let clinicianAccessToken = ''
   before(async () => {
+    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     const validateResponse = res => {
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -873,7 +873,6 @@ describe('Result routes', () => {
       })
 
       describe.skip('COVID-19 Result Updates', () => {
-        shared.checkToken(server, path)
         const covidDeviceTypeDevices = {
           CepheidGeneXpert: null,
           Aspect: null,
@@ -892,6 +891,7 @@ describe('Result routes', () => {
           `${deviceTypeId} TEST-CASE-ID`
 
         before(async () => {
+          shared.checkToken(server, path)
           partnerId = (
             await knex('Partner').where('name', 'Partner One').first('id')
           ).id

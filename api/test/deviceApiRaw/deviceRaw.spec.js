@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const Promise = require('bluebird')
 const { knex } = require('../../src/db')
 const { decrypt } = require('../../src/shared/encryption')
@@ -8,7 +9,7 @@ const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device API Raw routes', () => {
   const deviceApiRawPath = '/device/raw'

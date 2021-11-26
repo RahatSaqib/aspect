@@ -21,8 +21,6 @@ describe('Issue Trigger', () => {
   const path = '/api/issue/trigger'
   const now = new Date()
 
-  shared.checkToken(server, '/api/device')
-
   it(`should trigger issue type NewResultsAvailable`, done => {
     const issueType = 'NewResultsAvailable'
     server
