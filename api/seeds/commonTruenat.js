@@ -13,34 +13,32 @@ async function upsertTruenatDeviceTypeAndAssays(
   defaultResultDataSchema = truenatResultDataSchema
 ) {
   const deviceTypeIds = {}
-  await Promise.each(truenatDeviceTypes, async truenatDeviceType => {
-    if (
-      !_.some(
-        assays,
-        assay => assay.deviceTypeId === truenatDeviceType.externalId
-      )
-    ) {
-      return Promise.resolve()
-    }
-    const { id: existingDeviceTypeId } =
-      (await knex('DeviceType')
-        .where('externalId', truenatDeviceType.externalId)
-        .first('id')) || {}
-    if (!existingDeviceTypeId) {
-      const { id: deviceTypeCategoryId } =
-        (await knex('DeviceTypeCategory')
-          .where('name', truenatDeviceType.deviceTypeCategoryId)
+  await Promise.each(
+    _.intersectionWith(
+      truenatDeviceTypes,
+      assays,
+      (deviceType, assay) => deviceType.externalId === assay.externalId
+    ),
+    async truenatDeviceType => {
+      const { id: existingDeviceTypeId } =
+        (await knex('DeviceType')
+          .where('externalId', truenatDeviceType.externalId)
           .first('id')) || {}
-      const [createdDeviceTypeId] = await knex('DeviceType').insert({
-        ...truenatDeviceType,
-        deviceTypeCategoryId,
-      })
-      deviceTypeIds[truenatDeviceType.externalId] = createdDeviceTypeId
-    } else {
-      deviceTypeIds[truenatDeviceType.externalId] = existingDeviceTypeId
+      if (!existingDeviceTypeId) {
+        const { id: deviceTypeCategoryId } =
+          (await knex('DeviceTypeCategory')
+            .where('name', truenatDeviceType.deviceTypeCategoryId)
+            .first('id')) || {}
+        const [createdDeviceTypeId] = await knex('DeviceType').insert({
+          ...truenatDeviceType,
+          deviceTypeCategoryId,
+        })
+        deviceTypeIds[truenatDeviceType.externalId] = createdDeviceTypeId
+      } else {
+        deviceTypeIds[truenatDeviceType.externalId] = existingDeviceTypeId
+      }
     }
-  })
-
+  )
   const assayIds = {}
   await Promise.each(assays, async truenatAssay => {
     const { id: existingAssayId } =
