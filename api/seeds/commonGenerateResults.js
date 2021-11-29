@@ -92,22 +92,19 @@ async function createDevicesForAllMissingTypes(
   devicesWithSameTypePerPartner = 5,
   deviceTypesToInsert // the array of externalIds for device types to insert
 ) {
-  let deviceTypes
   const existingDevicesType = await knex('Device')
     .whereIn('siteId', _.map(siteDatas, 'id'))
     .where('partnerId', partnerOneId)
     .select('Device.deviceTypeId')
     .distinct()
-  if (deviceTypesToInsert && deviceTypesToInsert.length > 1) {
-    deviceTypes = await knex('DeviceType as dt')
-      .whereIn('dt.externalId', deviceTypesToInsert)
-      .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
-      .select()
-  } else {
-    deviceTypes = await knex('DeviceType as dt')
-      .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
-      .select()
-  }
+  const deviceTypes = await knex('DeviceType as dt')
+    .modify(qb => {
+      if (!_.isEmpty(deviceTypesToInsert)) {
+        qb.whereIn('dt.externalId', deviceTypesToInsert)
+      }
+    })
+    .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
+    .select()
   const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
   if (deviceTypes.length > 0 && siteDatas.length > 0) {
@@ -140,7 +137,7 @@ async function createDevicesForAllMissingTypes(
 async function generateResults(
   knex,
   adminId,
-  partnerOneId,
+  partnerId,
   patients,
   errorCodes,
   countryAbbreviation = 'US',
@@ -155,7 +152,7 @@ async function generateResults(
   const siteDatas = await knex('Site as s')
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
-    .where('s.partnerId', partnerOneId)
+    .where('s.partnerId', partnerId)
     .where('c.abbreviation', countryAbbreviation)
     .select('s.*')
   const auditFields = {
@@ -183,14 +180,14 @@ async function generateResults(
     await createDevicesForAllMissingTypes(
       knex,
       siteDatas,
-      partnerOneId,
+      partnerId,
       auditFields,
       1,
       ['BDMGIT', 'CepheidGeneXpert', 'AspectResultEntry', 'molbioTruenat']
     )
   const devices = await knex('Device')
     .andWhere(qb => qb.whereIn('siteId', _.map(siteDatas, 'id')))
-    .andWhere('partnerId', partnerOneId)
+    .andWhere('partnerId', partnerId)
     .modify(queryBuilder => {
       if (deviceId) {
         queryBuilder.where('id', deviceId)
@@ -208,7 +205,7 @@ async function generateResults(
     patients,
     auditFields,
     siteDatas,
-    partnerOneId,
+    partnerId,
     errorCodes,
     tbDevices,
     resultCategories,
@@ -236,7 +233,7 @@ async function generateResults(
     patients,
     auditFields,
     siteDatas,
-    partnerOneId,
+    partnerId,
     errorCodes,
     ebolaDevices,
     [
@@ -271,7 +268,7 @@ async function generateResults(
     patients,
     auditFields,
     siteDatas,
-    partnerOneId,
+    partnerId,
     errorCodes,
     hivDevices,
     [
@@ -306,7 +303,7 @@ async function generateResults(
     covidAssays,
     auditFields,
     siteDatas,
-    partnerOneId,
+    partnerId,
     covidDevices,
     null,
     date
@@ -321,7 +318,7 @@ async function generateResults(
     covidAssays,
     auditFields,
     siteDatas,
-    partnerOneId,
+    partnerId,
     covidDevices,
     covidPositiveResults,
     date
