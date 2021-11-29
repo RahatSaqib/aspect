@@ -54,7 +54,9 @@ const routes = [
               descriptionI18nKey: Joi.string().max(255).allow('', null),
               dashboards: Joi.string().max(2048).allow('', null),
               linkParams: Joi.string().max(255).allow('', null),
-              options: Joi.string().max(255).allow('', null),
+              options: Joi.alternatives()
+                .try(Joi.string(), Joi.object())
+                .allow(null, ''),
               icon: Joi.string().max(50).allow('', null),
               statUnit: Joi.string().max(50).allow('', null),
               statUnitI18nKey: Joi.string().max(255).allow('', null),
@@ -65,9 +67,16 @@ const routes = [
               extraLabel: Joi.string().max(255).allow('', null),
               extraLabelI18nKey: Joi.string().max(255).allow('', null),
               dashboardWidgetId: Joi.number().integer().required(),
-              count: Joi.number().integer().required(),
-              unit: Joi.string().max(50).allow('', null),
+              count: Joi.alternatives()
+                .try(Joi.string().max(50), Joi.number())
+                .required(),
+              unit: Joi.alternatives()
+                .try(Joi.string().max(50), Joi.number())
+                .allow(null, ''),
               extra: Joi.string().max(1024).allow('', null),
+              alert: Joi.alternatives()
+                .try(Joi.string(), Joi.object())
+                .allow(null, ''),
             })
           ),
         },
