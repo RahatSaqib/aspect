@@ -104,7 +104,7 @@ async function upsertTruenatDeviceTypeAndAssays(
             .where(resultCategoryAssayTruenatMtb)
             .first()
           if (!existingResultCategoryAssayTruenatMtb) {
-            await knex('ResultCategoryAssay').insert({
+            return knex('ResultCategoryAssay').insert({
               ...resultCategoryAssayTruenatMtb,
               ...sharedTruenatMtbResultCategoryAssayProperties,
             })
@@ -138,7 +138,7 @@ async function upsertTruenatDeviceTypeAndAssays(
         .where(resultCategoryAssayTruenatMtbRifDx)
         .first()
       if (!existingResultCategoryAssayTruenatMtbRifDx) {
-        await knex('ResultCategoryAssay').insert({
+        return knex('ResultCategoryAssay').insert({
           ...resultCategoryAssayTruenatMtbRifDx,
           emphasize: truenatMtbRifDxResultCategory === 'Resistant',
           requiresTreatment: positiveResultCategories.includes(
