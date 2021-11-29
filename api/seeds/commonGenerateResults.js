@@ -87,38 +87,41 @@ function calculateDateForResult(
 async function createDevicesForAllMissingTypes(
   knex,
   siteDatas,
-  partnerOneId,
+  partnerId,
   auditFields,
   devicesWithSameTypePerPartner = 5,
   deviceTypesToInsert // the array of externalIds for device types to insert
 ) {
   const existingDevicesType = await knex('Device')
     .whereIn('siteId', _.map(siteDatas, 'id'))
-    .where('partnerId', partnerOneId)
+    .where('partnerId', partnerId)
     .select('Device.deviceTypeId')
     .distinct()
   const deviceTypes = await knex('DeviceType as dt')
+    .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
     .modify(qb => {
       if (!_.isEmpty(deviceTypesToInsert)) {
-        qb.whereIn('dt.externalId', deviceTypesToInsert)
+        qb.andWhere(qb => {
+          qb.whereIn('dt.externalId', deviceTypesToInsert)
+        })
       }
     })
-    .whereNotIn('dt.id', _.map(existingDevicesType, 'deviceTypeId'))
     .select()
+
   const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
 
-  if (deviceTypes.length > 0 && siteDatas.length > 0) {
+  if (!_.isEmpty(siteDatas)) {
     let i = 0
-    await Promise.each(deviceTypes, async elem => {
+    await Promise.each(deviceTypes, async deviceType => {
       _.each(_.range(devicesWithSameTypePerPartner), async () => {
         const siteData = _.sample(siteDatas)
         const deviceToInsert = {
           ...auditFields,
-          name: `${siteData.shortName} ${elem.name}`,
-          shortName: `${siteData.shortName} ${elem.name}`,
-          deviceTypeId: elem.id,
+          name: `${siteData.shortName} ${deviceType.name}`,
+          shortName: `${siteData.shortName} ${deviceType.name}`,
+          deviceTypeId: deviceType.id,
           deviceApprovalId: deviceApprovalApproved,
-          partnerId: siteData.partnerId,
+          partnerId,
           geographyId: siteData.geographyId,
           siteId: siteData.id,
           createdOn: new Date(+now - 3 * i * millisInHour),
@@ -127,7 +130,6 @@ async function createDevicesForAllMissingTypes(
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         }
         await knex('Device').insert(deviceToInsert)
-
         i += 1
       })
     })
