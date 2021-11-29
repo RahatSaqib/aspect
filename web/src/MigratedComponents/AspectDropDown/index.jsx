@@ -17,6 +17,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
 import intersectionWith from 'lodash/intersectionWith'
 import keys from 'lodash/keys'
+import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
 
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -534,9 +535,14 @@ const AspectDropDown = ({
     throw new Error(queryErrorMessage)
   }
 
-  const onChanged = ({ identifier, selectedOption }) => {
+  const onChanged = eventData => {
+    const actionData = pick(eventData, [
+      'identifier',
+      'selectedOption',
+      'action',
+    ])
     const { ok, data: dataSource } = responseFromQuery
-    action({ identifier, selectedOption }, ok ? dataSource : null)
+    action(actionData, ok ? dataSource : null)
   }
 
   const showUi = selectOptions && (!hideIfNoOptions || selectOptions.length > 0)

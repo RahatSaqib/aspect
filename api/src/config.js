@@ -76,6 +76,11 @@ module.exports = {
       fromNumber: process.env.twilioFromNumber,
       messagingServiceSid: process.env.twilioMessagingServiceSid,
     },
+    adn: {
+      api_key: process.env['adn.api_key'] || null,
+      api_secret: process.env['adn.api_secret'] || null,
+      url: process.env['adn.url'] || null,
+    },
   },
   admin: {
     email: process.env['admin.email'],

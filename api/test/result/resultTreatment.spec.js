@@ -9,9 +9,11 @@ const { assert } = chai
 const path = '/api/result/confirmed-treatment-tracking'
 
 describe('Result Treatment', () => {
-  describe('Status Tracking - POST', () => {
-    before(() => shared.checkToken(server, path))
+  before(() => {
+    shared.checkToken(server, path)
+  })
 
+  describe('Status Tracking - POST', () => {
     it('Should return percentages of OnTreatment and Unaccountable', async () => {
       const now = new Date()
       const maxDate = endOfMonth(subMonths(now, 1))

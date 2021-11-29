@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { format } = require('date-fns')
 
@@ -7,12 +8,10 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('/result/clinical-indicator-aggregations', () => {
   const path = '/api/result/clinical-indicator-aggregations'
-
-  shared.checkToken(server, path)
 
   let resultsForUser = null
   let reportableResultCategories = null
@@ -27,6 +26,7 @@ describe('/result/clinical-indicator-aggregations', () => {
 
   before(() =>
     runTestWithKnex(async knex => {
+      shared.checkToken(server, path)
       resultsForUser = await getResultsForUser()
       assays = await knex('Assay').select('id', 'externalId', 'i18nKey')
       reportableResultCategories = await knex('ResultCategoryAssay as rca')

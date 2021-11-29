@@ -7,7 +7,9 @@ const { assert } = chai
 
 describe('Result type routes', () => {
   const path = '/api/result/result-types'
-  shared.checkToken(server, path)
+  before(() => {
+    shared.checkToken(server, path)
+  })
   describe('GET', () => {
     it('should return a list of result types when using valid token', async () => {
       const res = await server

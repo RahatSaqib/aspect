@@ -190,7 +190,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
 
       // update timestamps as necessary for original device
       const originalDeviceId = context.device.id
-      await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+      await updateDeviceData(context, handlerOptions, remoteAddress)
 
       // invoke delegate handler
       response = await handler(context)
@@ -203,7 +203,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
           context,
           defaultHandlerOptions
         )
-        await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+        await updateDeviceData(context, handlerOptions, remoteAddress)
       }
 
       // Update DeviceLog with changes added to context when calling handler
@@ -220,12 +220,8 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
   })
 }
 
-async function updateDeviceTimestamps(
-  context,
-  handlerOptions = {},
-  remoteAddress
-) {
-  const { knex, pluginNames: plugins, device } = context
+async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
+  const { knex, pluginNames: plugins, device, payload } = context
   const { updatePing = false } = handlerOptions
 
   const deviceUpdates = {}
@@ -234,7 +230,7 @@ async function updateDeviceTimestamps(
   const deviceSeenOn = await getDeviceSeenOn(context)
   if (deviceSeenOn != null) {
     logger.debug('update deviceSeenOn', {
-      reLabel: 'deviceApi:updateDeviceTimestamps',
+      reLabel: 'deviceApi:updateDeviceData',
     })
 
     // flag as seen even if handler fails
@@ -244,7 +240,7 @@ async function updateDeviceTimestamps(
 
   if (updatePing) {
     logger.debug('update device ping on', {
-      reLabel: 'deviceApi:updateDeviceTimestamps',
+      reLabel: 'deviceApi:updateDeviceData',
     })
 
     const getDevicePingOn = await loadPlugin(plugins, 'getDevicePingOn')
@@ -254,6 +250,9 @@ async function updateDeviceTimestamps(
       deviceUpdates.lastPingFromIp = remoteAddress
     }
   }
+
+  const instrumentSerial = _.get(payload, 'result.instrument.serial', null)
+  if (instrumentSerial) deviceUpdates.lastInstrumentSerial = instrumentSerial
 
   if (!_.isEmpty(deviceUpdates)) {
     await knex('Device').where({ id: device.id }).update(deviceUpdates)
@@ -393,7 +392,16 @@ async function processGeneXpertLogs(context, data, now) {
   await Promise.each(data, async logItem => {
     try {
       const logItemId = await processLogItem(context, logItem, options)
-      processedLogIds = [...processedLogIds, logItemId]
+      /**
+       * Skip touching `processedLogIds` for Cepheid db-based system logs
+       * Notice that processedLogIds are needed in GxConnect to mark record in SQLite
+       * table `Logs` that it has been processed well in Aspect.
+       * We do not mark records in Cepheid db `system_log` but only keep
+       * `settings.LastProcessedSystemLogTimeForAspect` and store it in setting.jsn.
+       */
+      if (logItem.logFileName !== 'GeneXpert DB') {
+        processedLogIds = [...processedLogIds, logItemId]
+      }
     } catch (e) {
       /**
        * if error happened then we do not return this logId as processed,
@@ -451,7 +459,6 @@ async function processLogItem(context, logItem, options) {
     payload,
     deviceOperationId
   )
-
   // process 'calibration' log item
   await shouldLogDeviceCalibration(
     knex,
@@ -460,7 +467,7 @@ async function processLogItem(context, logItem, options) {
     calibrationDeviceMaintenanceTypeId
   )
 
-  return externalId
+  return logItem.externalId
 }
 
 async function getConnectionSettings(context) {

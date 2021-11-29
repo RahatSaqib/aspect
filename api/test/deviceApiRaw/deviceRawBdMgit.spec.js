@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const { knex } = require('../../src/db')
 const { parseDateOrDefault } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -7,7 +8,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 const {
   assayToId,

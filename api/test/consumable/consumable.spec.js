@@ -1,20 +1,23 @@
 const _ = require('lodash')
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const shared = require('../utils/sharedToken')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { run } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Assay Consumable Routes', () => {
   describe('Consumable Type Route', () => {
     const path = '/api/inventory/consumable-types'
 
-    describe('GET', () => {
+    before(() => {
       shared.checkToken(server, path)
+    })
 
+    describe('GET', () => {
       it('should return a list of consumable types when using valid token', done => {
         server
           .get(path)
@@ -42,9 +45,11 @@ describe('Assay Consumable Routes', () => {
   describe('Consumable Reason Route', () => {
     const path = '/api/inventory/consumable-reason'
 
-    describe('GET', () => {
+    before(() => {
       shared.checkToken(server, path)
+    })
 
+    describe('GET', () => {
       it('should return a list of consumable reasons when using valid token', done => {
         server
           .get(path)

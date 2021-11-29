@@ -41,8 +41,8 @@ async function analyzeWithQuery(
            * which happens when one of the bindings values is `undefined` - make sure params are
            * not `undefined`
            */
-          if (!consumableLot) builder.where({ consumableLot })
-          if (!assayId) builder.where({ assayId })
+          if (consumableLot) builder.where({ consumableLot })
+          if (assayId) builder.where({ assayId })
         } else if (moduleSerial) builder.where({ moduleSerial })
       },
       moduleSerial,
@@ -54,7 +54,6 @@ async function analyzeWithQuery(
     query.modify(queryBuilder)
   }
   const { resultsWithErrors, totalResults } = await query
-
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   return analyzeResultsWithErrors(
@@ -100,15 +99,32 @@ async function shouldSuppressTriggering(
 async function analyzeCategories(
   knex,
   action,
-  { categoryId, errorCodes, threshold, below, daysPeriod, minResults }
+  {
+    categoryId,
+    errorCodes,
+    threshold,
+    below,
+    daysPeriod,
+    minResults,
+    checkIfWillBeLotIssue,
+  }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-
+  const { resultId } = action
   const { resultCategoryId, resultErrorCode } = action.options.data
+  let existingIssue = false
+  if (checkIfWillBeLotIssue) {
+    existingIssue = await knex('Issue')
+      .where({ resultId })
+      .whereRaw('data->>"$.resultCategoryId" = ?', [resultCategoryId])
+      .first()
+  }
+
   if (
-    (!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
-    (!_.isNil(resultErrorCode) &&
-      _.includes(errorCodes, parseInt(resultErrorCode, 10)))
+    !existingIssue &&
+    ((!_.isNil(resultCategoryId) && resultCategoryId === categoryId) ||
+      (!_.isNil(resultErrorCode) &&
+        _.includes(errorCodes, parseInt(resultErrorCode, 10))))
   ) {
     action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
@@ -175,13 +191,25 @@ async function analyzeUnusedModules(
   )
 }
 
-async function analyzeErrors(
-  knex,
-  action,
-  { errorCodes, threshold, below, daysPeriod, minResults }
-) {
+async function analyzeErrors(knex, action, evaluationFilterParameters) {
   const { resultErrorCode } = action.options.data
-  if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
+  const {
+    errorCodes,
+    threshold,
+    below,
+    daysPeriod,
+    minResults,
+    checkIfWillBeLotIssue = false,
+  } = evaluationFilterParameters
+  const { resultId } = action
+  let existingIssue = false
+  if (checkIfWillBeLotIssue) {
+    existingIssue = await knex('Issue')
+      .where({ resultId })
+      .whereRaw('data->>"$.resultErrorCode" = ?', [resultErrorCode])
+      .first()
+  }
+  if (!existingIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
       knex,
@@ -209,18 +237,12 @@ async function analyzeDeviceHardwareError(
   { errorCodes, daysPeriod, minErrors }
 ) {
   const { resultErrorCode } = action.options.data
-
-  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
-  // the rest is of the entry is identical. Ignore those duplicates.
-  const errorCodesWithDuplicateLogEntries = ['2126']
-
   if (_.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     const [{ totalErrors }] = await hardwareErrors(
       knex,
       action.deviceId,
       daysPeriod,
-      errorCodes,
-      errorCodesWithDuplicateLogEntries
+      errorCodes
     )
     action.options.data.totalErrors = totalErrors
     action.options.data.errorCodes = errorCodes
@@ -229,37 +251,87 @@ async function analyzeDeviceHardwareError(
   return false
 }
 
-async function hardwareErrors(
+async function checkHardwareSuppression(
   knex,
-  deviceId,
-  daysPeriod,
-  errorCodes,
-  errorCodesWithDuplicateLogEntries
+  action,
+  { errorCodesToSuppress }
 ) {
-  return knex('DeviceOperation')
-    .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
-    .where('deviceId', deviceId)
-    .select(
-      knex.raw(
-        `
-      SUM(
-        CASE WHEN
-          IFNULL(data ->> '$.type', '') = 'gx-log'
-          AND
-          (data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
-            ','
-          )}) OR IFNULL(data ->> '$.logLevel', '') = 'INFO')
-          AND
-          CAST(IFNULL(data ->> '$.details.Errors[0].ErrorCode', 0) AS UNSIGNED ) in (${errorCodes.join(
-            ','
-          )})
-        THEN 1
-        ELSE 0
-        END
-      ) AS totalErrors
-      `
+  const { deviceId } = action
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
+  if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
+    const { totalIssues } = await knex('Issue')
+      .where({ deviceId })
+      .whereRaw(`data->>"$.details.Errors[0].SiteSerialNumber"=?`, moduleSerial)
+      .whereRaw(
+        `data->>'$.details.Errors[0].ErrorCode' in (${errorCodesToSuppress.join(
+          ','
+        )})`
       )
+      .count('id as totalIssues')
+      .first()
+    return totalIssues > 0
+  }
+  return false
+}
+
+async function hardwareErrors(knex, deviceId, daysPeriod, errorCodes) {
+  // Some error codes produce two log entries. One with log level "Info", the other with "Warn".
+  // the rest is of the entry is identical. Ignore those duplicates.
+  const errorCodesWithDuplicateLogEntries = [2126]
+
+  // Some error codes produce several log entries in a short time frame
+  // For those error codes, only count entries that are at least an hour apart
+  const errorCodesToDeduplicateIfWithinTimeFrame = [
+    1001, 1002, 2014, 4008, 4012, 4017,
+  ]
+
+  // note that currently all hardware based issues only contain one error code as
+  // the trigger condition. If we have to support multiple errorcodes, some of
+  // which are in the `errorCodesToDeduplicateIfWithinTimeFrame` array and others aren't,
+  // we may have to rethink this (though I'm not sure that's even possible to solve)
+  if (
+    errorCodes.some(e => errorCodesToDeduplicateIfWithinTimeFrame.includes(e))
+  ) {
+    // In this subquery, we're using the 'lag' function in MySQL to select the date of the previous row's log entry
+    // We can then use that subquery to only select entries that are at least 60 minutes apart from the previous one
+    const subquery = knex('DeviceOperation')
+      .where('deviceId', deviceId)
+      .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+      .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
+      .whereRaw(
+        `data->>'$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`
+      )
+      .select(
+        'id',
+        'startedOn',
+        knex.raw(
+          'lag(startedOn, 1) over (partition by deviceId order by startedOn) as previousStartedOn'
+        )
+      )
+      .as('logEntriesWithTimeSpan')
+
+    return knex
+      .count('id as totalErrors')
+      .from(subquery)
+      .whereRaw('timestampdiff(minute, previousStartedOn, startedOn) > 60')
+      .orWhere('previousStartedOn', null)
+  }
+
+  return knex('DeviceOperation')
+    .where('deviceId', deviceId)
+    .where('startedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
+    .whereRaw(`IFNULL(data ->> '$.type', '') = 'gx-log'`)
+    .whereRaw(
+      `data ->> '$.details.Errors[0].ErrorCode' in (${errorCodes.join(',')})`
     )
+    .where(qb => {
+      qb.whereRaw(
+        `data ->> '$.details.Errors[0].ErrorCode' not in (${errorCodesWithDuplicateLogEntries.join(
+          ','
+        )})`
+      ).orWhereRaw(`IFNULL(data ->> '$.logLevel', '') = 'INFO'`)
+    })
+    .count('id as totalErrors')
 }
 module.exports = {
   analyzeErrors,
@@ -269,4 +341,5 @@ module.exports = {
   hasUnusedModules,
   analyzeDeviceHardwareError,
   shouldSuppressTriggering,
+  checkHardwareSuppression,
 }

@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const { run } = require('../../src/db')
 
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -7,7 +8,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device API Raw routes for cobas', () => {
   // eslint-disable-next-line no-unused-vars

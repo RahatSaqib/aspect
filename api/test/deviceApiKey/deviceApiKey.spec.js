@@ -13,6 +13,7 @@ describe('Device API Key routes', () => {
   const deviceApiKeyIds = []
 
   before(async () => {
+    shared.checkToken(server, path)
     const now = new Date()
     const { id: partnerId } = await knex('Partner')
       .where('name', 'Partner One')
@@ -52,8 +53,6 @@ describe('Device API Key routes', () => {
   )
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     it('should return a list of deviceApiKeys when using valid token', async () => {
       const res = await server
         .get(path)
@@ -76,8 +75,6 @@ describe('Device API Key routes', () => {
     })
   })
   describe('POST', () => {
-    shared.checkToken(server, path)
-
     it('should generate deviceApiKeys token', async () => {
       const res = await server
         .post(`${path}/api-key`)

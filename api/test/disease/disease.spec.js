@@ -1,14 +1,17 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Disease routes', () => {
   const path = '/api/diseases'
-  shared.checkToken(server, path)
+  before(() => {
+    shared.checkToken(server, path)
+  })
   describe('GET', () => {
     it('should return a list of disease when using valid token', async () => {
       const diseaseResponse = await server

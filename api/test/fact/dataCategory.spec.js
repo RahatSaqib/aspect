@@ -1,6 +1,9 @@
 const _ = require('lodash')
 const { subDays, addMilliseconds, subMinutes } = require('date-fns')
-const { assert, expect } = require('chai')
+const chai = require('chai')
+const chaiSubset = require('chai-subset')
+
+const { assert, expect } = chai.use(chaiSubset)
 const Promise = require('bluebird')
 
 const { queuePurge } = require('../utils/mqUtils')
