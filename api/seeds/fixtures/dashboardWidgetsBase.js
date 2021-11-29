@@ -166,15 +166,9 @@ const dashboardWidgetTestsPerDayTitle = {
     INNER JOIN Partner p on s.partnerId = p.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE
-    YEAR(r.endedOn) = YEAR(NOW())
-    AND
-    MONTH(r.endedOn) = MONTH(NOW())
-    AND
-    DAYOFWEEK(r.endedOn) <> 1
-    AND
-    DAYOFWEEK(r.endedOn) <> 7
-    AND
-    dt.externalId = 'CepheidGeneXpert'`,
+    r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
+    AND DAYOFWEEK(r.endedOn) NOT IN (1,7)
+    AND dt.externalId = 'CepheidGeneXpert'`,
   sqlForStatUnit: `SELECT ROUND(COUNT(r.id)/GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'))) as cnt
   FROM Result as r
     INNER JOIN Device as d on d.id = r.deviceId
@@ -183,15 +177,10 @@ const dashboardWidgetTestsPerDayTitle = {
     INNER JOIN Partner p on s.partnerId = p.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE
-    YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-    AND
-    MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-    AND
-    DAYOFWEEK(r.endedOn) <> 1
-    AND
-    DAYOFWEEK(r.endedOn) <> 7
-    AND
-    dt.externalId = 'CepheidGeneXpert'`,
+    r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+    AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
+    AND DAYOFWEEK(r.endedOn) NOT IN (1,7)
+    AND dt.externalId = 'CepheidGeneXpert'`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
@@ -219,19 +208,15 @@ const dashboardWidgetValidResultsPc = {
   subTitleI18nKey: null,
   sqlForIndicator: `${partialValidResults}
     WHERE
-      YEAR(r.endedOn) = YEAR(NOW())
-      AND
-      MONTH(r.endedOn) = MONTH(NOW())
+      r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
       AND
       dt.externalId = 'CepheidGeneXpert'
     `,
   sqlForStatUnit: `${partialValidResults}
     WHERE
-      YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND
-      MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND
-      dt.externalId = 'CepheidGeneXpert'
+      r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+      AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
+      AND dt.externalId = 'CepheidGeneXpert'
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -361,8 +346,7 @@ const activeDevices = {
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
   WHERE dt.externalId = 'CepheidGeneXpert'
   AND ISNULL(dms2.id)
-  AND MONTH(dml.day) = MONTH(CURRENT_DATE)
-  AND YEAR(dml.day) = YEAR(CURRENT_DATE)
+  AND dml.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
   AND DAYOFWEEK(dml.day) <> 1
   AND DAYOFWEEK(dml.day) <> 7`,
   sqlForStatUnit: `SELECT CONCAT(ROUND(SUM(dms.active = 1) * 100 / COUNT(dms.id), 0), '%') AS cnt
@@ -376,8 +360,8 @@ const activeDevices = {
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
   WHERE dt.externalId = 'CepheidGeneXpert'
   AND ISNULL(dms2.id)
-  AND MONTH(dml.day) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-  AND YEAR(dml.day) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+  AND dml.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+  AND dml.day < DATE_FORMAT(NOW(),"%Y-%m-01")
   AND DAYOFWEEK(dml.day) <> 1
   AND DAYOFWEEK(dml.day) <> 7`,
   statUnit: '{unit} last month',
@@ -520,8 +504,7 @@ const deviceDaysActive = {
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dt.externalId = 'CepheidGeneXpert'
     AND ISNULL(dms2.id)
-    AND MONTH(dml.day) = MONTH(CURRENT_DATE)
-    AND YEAR(dml.day) = YEAR(CURRENT_DATE)
+    AND dml.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(dml.day) <> 1
     AND DAYOFWEEK(dml.day) <> 7
     GROUP BY dml.deviceId
@@ -540,8 +523,8 @@ const deviceDaysActive = {
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE dt.externalId = 'CepheidGeneXpert'
     AND ISNULL(dms2.id)
-    AND MONTH(dml.day) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-    AND YEAR(dml.day) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+    AND dml.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+    AND dml.day < DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(dml.day) <> 1
     AND DAYOFWEEK(dml.day) <> 7
     GROUP BY dml.deviceId
@@ -791,8 +774,7 @@ const gxPositiveResultsNotified = {
       LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
       WHERE rc.externalid IN ${positiveResults}
         AND dt.externalId = 'CepheidGeneXpert'
-        AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
-        AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+        AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
         AND (da.token = 'approved' OR ISNULL(da.token))
     GROUP BY r.id
   ) AS q
@@ -810,8 +792,8 @@ const gxPositiveResultsNotified = {
       LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
       WHERE rc.externalid IN ${positiveResults}
         AND dt.externalId = 'CepheidGeneXpert'
-        AND YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
-        AND MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+        AND r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+        AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
         AND (da.token = 'approved' OR ISNULL(da.token))
     GROUP BY r.id
   ) AS q
@@ -1055,8 +1037,7 @@ const instrumentsReplaced = {
           INNER JOIN IssueType AS it ON i.issueTypeId = it.id
           INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
           WHERE it.externalId = 'InstrumentReplaced'
-          AND YEAR(r.endedOn) = YEAR(NOW())
-          AND MONTH(r.endedOn) = MONTH(NOW())
+          AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND dt.externalId = 'CepheidGeneXpert'
         )
         AS issueData
@@ -1076,8 +1057,8 @@ const instrumentsReplaced = {
           INNER JOIN IssueType AS it ON i.issueTypeId = it.id
           INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
           WHERE it.externalId = 'InstrumentReplaced'
-          AND YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND  r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND dt.externalId = 'CepheidGeneXpert'
         )
         AS issueData
@@ -1133,8 +1114,7 @@ const averageRecipientsOfEmail = {
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
           WHERE rc.externalid IN ${positiveResults}
           AND dt.externalId = 'CepheidGeneXpert'
-          AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
-          AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+          AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND em.resultId IS NOT NULL
         GROUP BY em.resultId
@@ -1153,8 +1133,8 @@ const averageRecipientsOfEmail = {
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
         WHERE rc.externalid IN ${positiveResults}
           AND dt.externalId = 'CepheidGeneXpert'
-          AND YEAR(em.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND MONTH(em.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND em.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND em.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND em.resultId IS NOT NULL
         GROUP BY em.resultId
@@ -1195,8 +1175,7 @@ const averageRecipientsOfSms = {
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
           WHERE rc.externalid IN ${positiveResults}
           AND dt.externalId = 'CepheidGeneXpert'
-          AND YEAR(r.endedOn) = YEAR(CURRENT_DATE)
-          AND MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+          AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND sms.resultId IS NOT NULL
         GROUP BY sms.resultId
@@ -1215,8 +1194,8 @@ const averageRecipientsOfSms = {
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
         WHERE rc.externalid IN ${positiveResults}
           AND dt.externalId = 'CepheidGeneXpert'
-          AND YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          and sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND sms.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND sms.resultId IS NOT NULL
         GROUP BY sms.resultId
@@ -1253,8 +1232,7 @@ const averageLengthOfSms = {
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
   INNER JOIN Site AS s ON d.siteId = s.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE YEAR(sms.createdOn) = YEAR(NOW())
-  AND MONTH(sms.createdOn) = MONTH(NOW())
+  WHERE sms.createdOn >= DATE_FORMAT(NOW(),"%Y-%m-01")
   AND sms.resultId IS NOT NULL
   AND dt.externalId = 'CepheidGeneXpert'
   GROUP BY sms.resultId
@@ -1268,8 +1246,8 @@ const averageLengthOfSms = {
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
   INNER JOIN Site AS s ON d.siteId = s.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE YEAR(sms.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-  AND MONTH(sms.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+  WHERE sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+  AND sms.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
   AND sms.resultId IS NOT NULL
   AND dt.externalId = 'CepheidGeneXpert'
   GROUP BY sms.resultId
@@ -1315,8 +1293,7 @@ const smsSent = {
     INNER JOIN Site AS s ON d.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
   WHERE
-    YEAR(sms.createdOn) = YEAR(NOW())
-    AND MONTH(sms.createdOn) = MONTH(NOW())
+    sms.createdOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND sms.resultId IS NOT NULL
     AND dt.externalId = 'CepheidGeneXpert'`,
   sqlForStatUnit: `
@@ -1328,7 +1305,7 @@ const smsSent = {
     INNER JOIN Site AS s ON d.siteId = s.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE
-    YEAR(sms.createdOn) = YEAR(NOW())
+    sms.createdOn>= DATE_FORMAT(NOW(),"%Y-01-01")
     AND sms.resultId IS NOT NULL
     AND dt.externalId = 'CepheidGeneXpert'
   `,
@@ -1374,8 +1351,7 @@ const averageDaysModuleSwap = {
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           INNER JOIN IssueType AS it ON i.issueTypeId = it.id
           WHERE it.externalId = 'ModuleReplaced'
-          AND YEAR(r.endedOn) = YEAR(NOW())
-          AND MONTH(r.endedOn) = MONTH(NOW())
+          AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
         )
         AS issueData
     INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.replacedModuleName = r.moduleName AND issueData.replacedModuleSerial = r.moduleSerial AND r.endedOn < issueData.endedOn
@@ -1392,8 +1368,8 @@ const averageDaysModuleSwap = {
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
           INNER JOIN IssueType AS it ON i.issueTypeId = it.id
           WHERE it.externalId = 'ModuleReplaced'
-          AND YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+          AND r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
         )
         AS issueData
     INNER JOIN Result AS r on issueData.deviceId = r.deviceId AND issueData.replacedModuleName = r.moduleName AND issueData.replacedModuleSerial = r.moduleSerial AND r.endedOn <= issueData.endedOn
@@ -1463,8 +1439,7 @@ const averageTimeToModuleReplacement = {
     WHERE it.externalId = 'ModuleDisabled'
       AND isActive.externalId = 'Active'
       AND isResolved.externalId = 'Resolved'
-      AND YEAR(logResolved.createdOn) = YEAR(NOW())
-      AND MONTH(logResolved.createdOn) = MONTH(NOW())
+      AND logResolved.createdOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
   `,
   sqlForStatUnit: `
     SELECT
@@ -1498,8 +1473,8 @@ const averageTimeToModuleReplacement = {
   WHERE it.externalId = 'ModuleDisabled'
     AND isActive.externalId = 'Active'
     AND isResolved.externalId = 'Resolved'
-    AND YEAR(logResolved.createdOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-    AND MONTH(logResolved.createdOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+    AND logResolved.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+    AND logResolved.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -1549,9 +1524,8 @@ const numberOfDevicesExperiencingServiceInterruption = {
       DeviceType AS dt ON dt.id = d.deviceTypeId
   WHERE
       dms.externalId = 'inactiveDownForRepair'
-          AND YEAR(dmsl.day) = YEAR(CURRENT_DATE)
-          AND MONTH(dmsl.day) = MONTH(CURRENT_DATE)
-          AND dt.externalId = 'CepheidGeneXpert'
+      AND dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
+      AND dt.externalId = 'CepheidGeneXpert'
   `,
   sqlForStatUnit: `
   SELECT
@@ -1570,9 +1544,9 @@ const numberOfDevicesExperiencingServiceInterruption = {
       DeviceType AS dt ON dt.id = d.deviceTypeId
   WHERE
       dms.externalId = 'inactiveDownForRepair'
-          AND YEAR(dmsl.day) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
-          AND MONTH(dmsl.day) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
-          AND dt.externalId = 'CepheidGeneXpert'
+      and dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+      AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
+      AND dt.externalId = 'CepheidGeneXpert'
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -1624,12 +1598,10 @@ const averageDurationServiceInterruption = {
           FROM DeviceMaintenanceStatusLog AS dmsl
           LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
               LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
-          WHERE YEAR(dmsl.day) = YEAR(NOW())
-              AND MONTH(dmsl.day) = MONTH(NOW())
+          WHERE dmsl.day >= DATE_FORMAT(NOW(),"%Y-%m-01")
               AND dms.externalId = 'inactiveDownForRepair'
           GROUP BY dmsl.deviceId) AS o ON dmsl.deviceId = o.deviceId
-    WHERE YEAR(dmsl.day) = YEAR(NOW())
-    AND MONTH(dmsl.day) = MONTH(NOW())
+    WHERE dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
     AND dt.externalId = 'CepheidGeneXpert'
     GROUP BY deviceId
@@ -1654,12 +1626,12 @@ const averageDurationServiceInterruption = {
       FROM DeviceMaintenanceStatusLog AS dmsl
       LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
           LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
-      WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-          AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      WHERE dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+      AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
           AND dms.externalId = 'inactiveDownForRepair'
       GROUP BY dmsl.deviceId) AS o ON dmsl.deviceId = o.deviceId
-    WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-    AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+    WHERE dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+    AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
     AND dt.externalId = 'CepheidGeneXpert'
     GROUP BY deviceId
@@ -1724,8 +1696,7 @@ const percentageOfDaysWithServiceInterruption = {
         FROM DeviceMaintenanceStatusLog AS dmsl
         INNER JOIN Device AS d ON dmsl.deviceId = d.id
         INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
-        WHERE YEAR(dmsl.day) = YEAR(NOW())
-        AND MONTH(dmsl.day) = MONTH(NOW())
+        WHERE dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
         AND d.createdOn <= NOW()
         AND dms.externalId = 'inactiveDownForRepair'
         AND DAYOFWEEK(dmsl.day) <> 1
@@ -1760,8 +1731,8 @@ const percentageOfDaysWithServiceInterruption = {
       FROM DeviceMaintenanceStatusLog AS dmsl
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
-      WHERE YEAR(dmsl.day) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-      AND MONTH(dmsl.day) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+      WHERE dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+      AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
       AND d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
       AND dms.externalId = 'inactiveDownForRepair'
       AND DAYOFWEEK(dmsl.day) <> 1
@@ -2007,8 +1978,7 @@ sqlSnippets.deviceCalibratedWhenDue = {
     WHERE dt.externalId = 'CepheidGeneXpert'
     AND dmt.externalId = 'calibration'
     AND dm.current = 1
-    AND YEAR(dm.contextDate) = YEAR(NOW())
-    AND MONTH(dm.contextDate) = MONTH(NOW())
+    AND dm.contextDate>= DATE_FORMAT(NOW(),"%Y-%m-01")
   `,
 }
 const deviceCalibratedWhenDue = {
