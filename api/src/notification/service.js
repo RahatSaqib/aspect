@@ -177,6 +177,8 @@ async function listNotifications(request) {
             'one',
             CAST(jf.id as char)
           ) IS NOT NULL
+          OR
+          nt.jobFunctionId = jf.id
         `)
       )
     })

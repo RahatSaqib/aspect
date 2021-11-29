@@ -405,7 +405,7 @@ describe('Result Notifications triggers', () => {
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
       const filterConditions = {
         ...filterConditionWithAssay,
-        persons: [{ personId: adminId }],
+        persons: [{ personId: `${adminId}` }],
         jobFunctions: [
           { jobFunctionId: managerJobFunctionId },
           { jobFunctionId: adminJobFunctionId },
@@ -536,7 +536,7 @@ describe('Notification routes', () => {
       ],
       persons: [
         {
-          personId,
+          personId: `${personId}`,
           checked: true,
         },
       ],
@@ -548,7 +548,7 @@ describe('Notification routes', () => {
 
   afterEach(async () => knex('NotificationType').where('id', ntId).del())
 
-  it('GET', async () => {
+  it('GET - With filterConditions', async () => {
     const res = await server
       .get(path)
       .set('Authorization', `Bearer ${shared.token}`)
@@ -571,6 +571,27 @@ describe('Notification routes', () => {
     const [{ persons, personsCount }] = res.body.data.filter(n => n.id === ntId)
     assert.equal(persons, 'Admin')
     assert.equal(personsCount, 1)
+  })
+
+  it('GET - With jobFunctionId', async () => {
+    await knex('NotificationType')
+      .where({ id: ntId })
+      .update({ filterCondition: null, jobFunctionId: 1 })
+
+    const res = await server
+      .get(path)
+      .set('Authorization', `Bearer ${shared.token}`)
+
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+    assert.property(res.body, 'data')
+    assert.typeOf(res.body.data, 'array')
+    assert.isAtLeast(res.body.data.length, 1)
+    const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(
+      n => n.id === ntId
+    )
+    assert.equal(jobFunctions, 'Admin')
+    assert.equal(jobFunctionsCount, 1)
   })
 
   it('GET /id', async () => {
@@ -651,7 +672,7 @@ describe('Notification routes', () => {
         ...basePayload,
         persons: [
           {
-            personId: personWithoutJob.id,
+            personId: `${personWithoutJob.id}`,
             checked: true,
           },
         ],
@@ -678,7 +699,7 @@ describe('Notification routes', () => {
     assert.deepEqual(JSON.parse(filterCondition), {
       persons: [
         {
-          personId,
+          personId: `${personId}`,
           checked: true,
         },
       ],
