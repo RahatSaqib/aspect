@@ -44,6 +44,12 @@ const gxXdrPossibleResults = require('./fixtures/generateResultsSeed/gxXdrPossib
 const truenatMtbPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbPossibleResults.json')
 const truenatMtbPlusPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbPlusPossibleResults.json')
 const truenatMtbRifDxPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbRifDxPossibleResults.json')
+const gxMtbRifResultData = require('./fixtures/generateResultsSeed/gxMtbRifResultData.json')
+const gxMtbRifUltraResultData = require('./fixtures/generateResultsSeed/gxMtbRifUltraResultData.json')
+const gxXdrResultData = require('./fixtures/generateResultsSeed/gxXdrResultData.json')
+const truenatMtbResultData = require('./fixtures/generateResultsSeed/truenatMtbResultData.json')
+const truenatMtbPlusResultData = require('./fixtures/generateResultsSeed/truenatMtbPlusResultData.json')
+const truenatMtbRifDxResultData = require('./fixtures/generateResultsSeed/truenatMtbRifDxResultData.json')
 
 function calculateDateForResultForCovid(
   currentResult,
@@ -935,114 +941,12 @@ async function addTBResults(
     assayTruenatRif: truenatMtbRifDxPossibleResults,
   }
   const resultData = {
-    GxMtbRif: {
-      probes: {
-        probeA: 'NEG',
-        probeB: 'POS',
-        probeC: 'NO RESULT',
-        probeD: 'NEG',
-        probeE: 'POS',
-        probeSpc: 'NO RESULT',
-        qc1: 'YES',
-        qc2: 'No',
-        probeACt: 12.32,
-        probeBCt: 11.2,
-        probeCCt: 12.5,
-        probeDCt: 0.5,
-        probeECt: 1.2,
-        probeSpcCt: 5.78,
-        qc1Ct: 1,
-        qc2Ct: 0.007,
-        probeAEndpt: 1.6,
-        probeBEndpt: 2.33,
-        probeCEndpt: 457,
-        probeDEndpt: 12.43,
-        probeEEndpt: 3.14,
-        probeSpcEndpt: 8.9018,
-        qc1Endpt: 0.1234,
-        qc2Endpt: 1.22,
-      },
-    },
-    GxMtbRifUltra: {
-      probes: {
-        probeSpc: 'POS',
-        probeIS1081IS6110: 'POS',
-        probeRpoB1: 'NO RESULT',
-        probeRpoB2: 'NEG',
-        probeRpoB3: 'POS',
-        probeRpoB4: 'NO RESULT',
-        qc1: 'YES',
-        qc2: 'No',
-        probeSpcCt: 12.32,
-        probeIS1081IS6110Ct: 11.2,
-        probeRpoB1Ct: 12.5,
-        probeRpoB2Ct: 0.5,
-        probeRpoB3Ct: 1.2,
-        probeRpoB4Ct: 5.78,
-        qc1Ct: 1,
-        qc2Ct: 0.007,
-        probeSpcEndpt: 1.6,
-        probeIS1081IS6110Endpt: 2.33,
-        probeRpoB1Endpt: 457,
-        probeRpoB2Endpt: 12.43,
-        probeRpoB3Endpt: 3.14,
-        probeRpoB4Endpt: 8.9018,
-        qc1Endpt: 0.1234,
-        qc2Endpt: 1.22,
-      },
-    },
-    GxMtbXdr: {
-      detectedResistance:
-        '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
-    },
-    assayTruenatMtb: {
-      ct1: 20.2,
-      ct2: 16.0,
-      ct3: 9.3,
-      status: 'Complete',
-      labName: 'Village TB Lab',
-      ctLabel1: 'Control Ct',
-      ctLabel2: 'MTB',
-      ctLabel3: 'MTB',
-      testName: 'Truenat MTB',
-      ctResult1: 'Detected',
-      ctResult2: 'Detected',
-      ctResult3: 'Detected',
-      finalResult: 'Detected',
-      validityStatus: 'Valid',
-    },
-    assayTruenatMtbPlus: {
-      ct1: 29.0,
-      ct2: 12.1,
-      ct3: 19.8,
-      status: 'Complete',
-      labName: 'Town TB Lab',
-      ctLabel1: 'Control Ct',
-      ctLabel2: 'MTB Plus',
-      ctLabel3: 'MTB Plus',
-      testName: 'Truenat MTB',
-      ctResult1: 'Detected',
-      ctResult2: 'Detected',
-      ctResult3: 'Detected',
-      finalResult: 'Detected High',
-      validityStatus: 'Valid',
-    },
-    assayTruenatRif: {
-      ct1: 29.0,
-      ct2: 12.1,
-      ct3: 19.8,
-      status: 'Complete',
-      labName: 'City TB Lab',
-      ctLabel1: 'Control Ct',
-      ctLabel2: 'Rif Resistance',
-      ctLabel3: 'Rif Resistance',
-      testName: 'Truenat MTB',
-      ctResult1: 'Detected',
-      ctResult2: 'Detected',
-      ctResult3: 'Detected',
-      finalResult: 'Rif Resistance Detected',
-      validityStatus: 'Valid',
-    },
+    GxMtbRif: gxMtbRifResultData,
+    GxMtbRifUltra: gxMtbRifUltraResultData,
+    GxMtbXdr: gxXdrResultData,
+    assayTruenatMtb: truenatMtbResultData,
+    assayTruenatMtbPlus: truenatMtbPlusResultData,
+    assayTruenatRif: truenatMtbRifDxResultData,
   }
   const deviceTypeBDMGIT = _.find(
     deviceTypes,
