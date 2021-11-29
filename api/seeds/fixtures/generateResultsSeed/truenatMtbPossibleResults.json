@@ -1,0 +1,26 @@
+[
+  {
+    "resultText": "Detected",
+    "category1": "Detected",
+    "minLikelihood": 0,
+    "maxLikelihood": 50
+  },
+  {
+    "resultText": "Not Detected",
+    "category1": "NotDetected",
+    "minLikelihood": 51,
+    "maxLikelihood": 70
+  },
+  {
+    "resultText": "Invalid",
+    "category1": "Invalid",
+    "minLikelihood": 71,
+    "maxLikelihood": 90
+  },
+  {
+    "resultText": "Error",
+    "category1": "Error",
+    "minLikelihood": 91,
+    "maxLikelihood": 100
+  }
+]

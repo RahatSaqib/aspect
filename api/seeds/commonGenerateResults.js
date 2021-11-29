@@ -28,6 +28,7 @@ const {
   resultTreatmentStatusToId,
   resultWorkflowStatusToId,
   resultSourceToId,
+  sampleTypeToId,
 } = require('../src/shared/dictionary')
 const { addCase } = require('../src/case/service')
 const {
@@ -38,6 +39,11 @@ const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovi
 const {
   getDetectedResistanceCategoryTypes,
 } = require('../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
+const gxMtbRifPossibleResults = require('./fixtures/generateResultsSeed/gxMtbRifPossibleResults.json')
+const gxXdrPossibleResults = require('./fixtures/generateResultsSeed/gxXdrPossibleResults.json')
+const truenatMtbPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbPossibleResults.json')
+const truenatMtbPlusPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbPlusPossibleResults.json')
+const truenatMtbRifDxPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbRifDxPossibleResults.json')
 
 function calculateDateForResultForCovid(
   currentResult,
@@ -881,7 +887,7 @@ async function addTBResults(
   if (resultMtbNumber === 0) return []
   const deviceTypes = await knex('DeviceType').select()
 
-  const sampleTypeSputumId  = await sampleTypeToId('Sputum')
+  const sampleTypeSputumId = await sampleTypeToId('Sputum')
   // some TB Suspected Sputum samples:
   const samples = []
   await Promise.each(_.range(resultMtbNumber), async i => {
@@ -914,50 +920,6 @@ async function addTBResults(
   const resultIds = []
   // Results section
   // GeneXpert TB results:
-  const gxMtbRifPossibleResults = [
-    {
-      resultText: 'MTB Detected|Rif Resistance Not Detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryNotDetectedId,
-      minLikelihood: 0,
-      maxLikelihood: 20,
-    },
-    {
-      resultText: 'MTB Detected|Rif Resistance Detected',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryDetectedId,
-      minLikelihood: 21,
-      maxLikelihood: 26,
-    },
-    {
-      resultText: 'MTB Detected|Rif Indeterminate',
-      category1: resultCategories.resultCategoryDetectedId,
-      category2: resultCategories.resultCategoryIndeterminateId,
-      minLikelihood: 27,
-      maxLikelihood: 28,
-    },
-    {
-      resultText: 'ERROR',
-      category1: resultCategories.resultCategoryErrorId,
-      category2: null,
-      minLikelihood: 29,
-      maxLikelihood: 34,
-    },
-    {
-      resultText: 'Invalid',
-      category1: resultCategories.resultCategoryInvalidId,
-      category2: null,
-      minLikelihood: 35,
-      maxLikelihood: 38,
-    },
-    {
-      resultText: 'Not Detected',
-      category1: resultCategories.resultCategoryNotDetectedId,
-      category2: null,
-      minLikelihood: 39,
-      maxLikelihood: 100,
-    },
-  ]
   const gxAssayExternalIds = ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr']
   const truenatAssayExternalIds = [
     'assayTruenatMtb',
@@ -967,160 +929,10 @@ async function addTBResults(
   const possibleResults = {
     GxMtbRif: gxMtbRifPossibleResults,
     GxMtbRifUltra: gxMtbRifPossibleResults,
-    GxMtbXdr: [
-      {
-        resultText:
-          '|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        category2: resultCategories.resultCategoryNotDetectedId,
-        minLikelihood: 0,
-        maxLikelihood: 50,
-      },
-      {
-        resultText:
-          '|MTB @label_result_detected||INH Resistance @label_result_detected|Low FLQ Resistance @label_result_detected||AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_detected|ETH Resistance @label_result_detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        category2: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 51,
-        maxLikelihood: 60,
-      },
-      {
-        resultText:
-          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        category2: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 61,
-        maxLikelihood: 70,
-      },
-      {
-        resultText:
-          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        category2: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 71,
-        maxLikelihood: 80,
-      },
-      {
-        resultText:
-          '|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        category2: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 81,
-        maxLikelihood: 90,
-      },
-      {
-        resultText:
-          '|MTB @label_result_detected|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        category2: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 81,
-        maxLikelihood: 95,
-      },
-      {
-        resultText:
-          '|MTB @label_result_error|Low INH Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_detected',
-        category1: resultCategories.resultCategoryErrorId,
-        category2: null,
-        minLikelihood: 96,
-        maxLikelihood: 100,
-      },
-    ],
-    assayTruenatMtb: [
-      {
-        resultText: 'Detected',
-        category1: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 0,
-        maxLikelihood: 50,
-      },
-      {
-        resultText: 'Not Detected',
-        category1: resultCategories.resultCategoryNotDetectedId,
-        minLikelihood: 51,
-        maxLikelihood: 70,
-      },
-      {
-        resultText: 'Invalid',
-        category1: resultCategories.resultCategoryInvalidId,
-        minLikelihood: 71,
-        maxLikelihood: 90,
-      },
-      {
-        resultText: 'Error',
-        category1: resultCategories.resultCategoryErrorId,
-        minLikelihood: 91,
-        maxLikelihood: 100,
-      },
-    ],
-    assayTruenatMtbPlus: [
-      {
-        resultText: 'Detected High',
-        category1: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 0,
-        maxLikelihood: 20,
-      },
-      {
-        resultText: 'Detected Medium',
-        category1: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 21,
-        maxLikelihood: 30,
-      },
-      {
-        resultText: 'Detected Low',
-        category1: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 31,
-        maxLikelihood: 40,
-      },
-      {
-        resultText: 'Detected Very Low',
-        category1: resultCategories.resultCategoryDetectedId,
-        minLikelihood: 41,
-        maxLikelihood: 50,
-      },
-      {
-        resultText: 'Not Detected',
-        category1: resultCategories.resultCategoryNotDetectedId,
-        minLikelihood: 51,
-        maxLikelihood: 70,
-      },
-      {
-        resultText: 'Invalid',
-        category1: resultCategories.resultCategoryInvalidId,
-        minLikelihood: 71,
-        maxLikelihood: 90,
-      },
-      {
-        resultText: 'Error',
-        category1: resultCategories.resultCategoryErrorId,
-        minLikelihood: 91,
-        maxLikelihood: 100,
-      },
-    ],
-    assayTruenatRif: [
-      {
-        resultText: 'Detected',
-        category1: resultCategories.resultCategoryResistantId,
-        minLikelihood: 0,
-        maxLikelihood: 50,
-      },
-      {
-        resultText: 'Not Detected',
-        category1: resultCategories.resultCategorySusceptibleId,
-        minLikelihood: 51,
-        maxLikelihood: 70,
-      },
-      {
-        resultText: 'Invalid',
-        category1: resultCategories.resultCategoryInvalidId,
-        minLikelihood: 71,
-        maxLikelihood: 90,
-      },
-      {
-        resultText: 'Error',
-        category1: resultCategories.resultCategoryErrorId,
-        minLikelihood: 91,
-        maxLikelihood: 100,
-      },
-    ],
+    GxMtbXdr: gxXdrPossibleResults,
+    assayTruenatMtb: truenatMtbPossibleResults,
+    assayTruenatMtbPlus: truenatMtbPlusPossibleResults,
+    assayTruenatRif: truenatMtbRifDxPossibleResults,
   }
   const resultData = {
     GxMtbRif: {
@@ -1251,7 +1063,7 @@ async function addTBResults(
     const selectionConditionNoErrors = r =>
       rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     const selectionConditionWithErros = r =>
-      r.category1 === resultCategories.resultCategoryErrorId
+      r.category1 === "Error"
 
     const assay = _.sample(
       _.filter(
@@ -1278,6 +1090,16 @@ async function addTBResults(
         ? selectionConditionWithErros
         : selectionConditionNoErrors
     )
+    if (result.resultCategory1) {
+      result.resultCategory1 = resultCategories[result.resultCategory1]
+    } else {
+      result.resultCategory1 = null
+    }
+    if (result.resultCategory2) {
+      result.resultCategory2 = resultCategories[result.resultCategory2]
+    } else {
+      result.resultCategory2 = null
+    }
 
     const patientNumber = patients.length - 1
 
