@@ -948,10 +948,10 @@ FROM
       INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
       LEFT JOIN Geography AS g ON s.geographyId = g.id
       INNER JOIN Result AS r ON d.id = r.deviceId
-          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
       WHERE
           dc.hasResults = 1
-              AND dt.externalId = 'CepheidGeneXpert'
+          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+          AND dt.externalId = 'CepheidGeneXpert'
       GROUP BY d.id) AS q) AS q2`,
   sqlForStatUnit: `
   SELECT
@@ -990,10 +990,11 @@ FROM
   INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
   LEFT JOIN Geography AS g ON s.geographyId = g.id
   INNER JOIN Result AS r ON d.id = r.deviceId
-      AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+      
   WHERE
       dc.hasResults = 1
           AND dt.externalId = 'CepheidGeneXpert'
+          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
   GROUP BY d.id) AS q) AS q2
   `,
   statUnit: 'of {unit} total modules',
