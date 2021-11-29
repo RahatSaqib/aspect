@@ -881,7 +881,7 @@ async function addTBResults(
   if (resultMtbNumber === 0) return []
   const deviceTypes = await knex('DeviceType').select()
 
-  const { Sputum: sampleTypeSputumId } = await allSampleTypeToId()
+  const sampleTypeSputumId  = await sampleTypeToId('Sputum')
   // some TB Suspected Sputum samples:
   const samples = []
   await Promise.each(_.range(resultMtbNumber), async i => {
