@@ -506,7 +506,8 @@ async function addCovidResults(
     {}
   )
   await Promise.each(_.range(quantity), async i => {
-    const resultCapturedInAspect = i % 7 === 0 || _.isEmpty(devices)
+    const resultCapturedInAspect =
+      !!aspectDevice && (i % 7 === 0 || _.isEmpty(devices))
 
     const device = resultCapturedInAspect ? aspectDevice : _.sample(devices)
 
