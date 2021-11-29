@@ -978,6 +978,9 @@ async function addTBResults(
     const validDevices = tbDiagnosticDevices.filter(
       device => device.deviceTypeId === assay.deviceTypeId
     )
+    if (_.isEmpty(validDevices)) {
+      return
+    }
     const device = validDevices[i % validDevices.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
 
