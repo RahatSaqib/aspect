@@ -17,7 +17,7 @@ async function upsertTruenatDeviceTypeAndAssays(
     _.intersectionWith(
       truenatDeviceTypes,
       assays,
-      (deviceType, assay) => deviceType.externalId === assay.externalId
+      (deviceType, assay) => deviceType.externalId === assay.deviceTypeId
     ),
     async truenatDeviceType => {
       const { id: existingDeviceTypeId } =
