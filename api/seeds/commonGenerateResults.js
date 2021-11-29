@@ -39,17 +39,17 @@ const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovi
 const {
   getDetectedResistanceCategoryTypes,
 } = require('../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
-const gxMtbRifPossibleResults = require('./fixtures/generateResultsSeed/gxMtbRifPossibleResults.json')
-const gxXdrPossibleResults = require('./fixtures/generateResultsSeed/gxXdrPossibleResults.json')
-const truenatMtbPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbPossibleResults.json')
-const truenatMtbPlusPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbPlusPossibleResults.json')
-const truenatMtbRifDxPossibleResults = require('./fixtures/generateResultsSeed/truenatMtbRifDxPossibleResults.json')
-const gxMtbRifResultData = require('./fixtures/generateResultsSeed/gxMtbRifResultData.json')
-const gxMtbRifUltraResultData = require('./fixtures/generateResultsSeed/gxMtbRifUltraResultData.json')
-const gxXdrResultData = require('./fixtures/generateResultsSeed/gxXdrResultData.json')
-const truenatMtbResultData = require('./fixtures/generateResultsSeed/truenatMtbResultData.json')
-const truenatMtbPlusResultData = require('./fixtures/generateResultsSeed/truenatMtbPlusResultData.json')
-const truenatMtbRifDxResultData = require('./fixtures/generateResultsSeed/truenatMtbRifDxResultData.json')
+const gxMtbRifPossibleResults = require('./development/generateResultsSeed/gxMtbRifPossibleResults.json')
+const gxXdrPossibleResults = require('./development/generateResultsSeed/gxXdrPossibleResults.json')
+const truenatMtbPossibleResults = require('./development/generateResultsSeed/truenatMtbPossibleResults.json')
+const truenatMtbPlusPossibleResults = require('./development/generateResultsSeed/truenatMtbPlusPossibleResults.json')
+const truenatMtbRifDxPossibleResults = require('./development/generateResultsSeed/truenatMtbRifDxPossibleResults.json')
+const gxMtbRifResultData = require('./development/generateResultsSeed/gxMtbRifResultData.json')
+const gxMtbRifUltraResultData = require('./development/generateResultsSeed/gxMtbRifUltraResultData.json')
+const gxXdrResultData = require('./development/generateResultsSeed/gxXdrResultData.json')
+const truenatMtbResultData = require('./development/generateResultsSeed/truenatMtbResultData.json')
+const truenatMtbPlusResultData = require('./development/generateResultsSeed/truenatMtbPlusResultData.json')
+const truenatMtbRifDxResultData = require('./development/generateResultsSeed/truenatMtbRifDxResultData.json')
 
 function calculateDateForResultForCovid(
   currentResult,
@@ -165,20 +165,7 @@ async function generateResults(
     updatedBy: adminId,
   }
 
-  const {
-    Detected: resultCategoryDetectedId,
-    Positive: resultCategoryPositiveId,
-    'Trace Detected': resultCategoryTraceDetectedId,
-    NotDetected: resultCategoryNotDetectedId,
-    LessThan1000: resultCategoryLessThan1000,
-    MoreThan1000: resultCategoryMoreThan1000,
-    Susceptible: resultCategorySusceptibleId,
-    Resistant: resultCategoryResistantId,
-    Indeterminate: resultCategoryIndeterminateId,
-    Invalid: resultCategoryInvalidId,
-    NoResult: resultCategoryNoResultId,
-    Error: resultCategoryErrorId,
-  } = await allResultCategoryToId()
+  const resultCategories = await allResultCategoryToId()
 
   const diseases = await knex('Disease').select()
   const assayTypes = await knex('AssayType').select()
@@ -224,19 +211,7 @@ async function generateResults(
     partnerOneId,
     errorCodes,
     tbDevices,
-    {
-      resultCategoryDetectedId,
-      resultCategoryTraceDetectedId,
-      resultCategoryNotDetectedId,
-      resultCategoryLessThan1000,
-      resultCategoryMoreThan1000,
-      resultCategorySusceptibleId,
-      resultCategoryResistantId,
-      resultCategoryIndeterminateId,
-      resultCategoryInvalidId,
-      resultCategoryNoResultId,
-      resultCategoryErrorId,
-    },
+    resultCategories,
     date
   )
 
@@ -265,14 +240,14 @@ async function generateResults(
     errorCodes,
     ebolaDevices,
     [
-      resultCategoryDetectedId,
-      resultCategoryNotDetectedId,
-      resultCategoryLessThan1000,
-      resultCategoryMoreThan1000,
-      resultCategoryIndeterminateId,
-      resultCategoryInvalidId,
-      resultCategoryNoResultId,
-      resultCategoryErrorId,
+      resultCategories.Detected,
+      resultCategories.NotDetected,
+      resultCategories.LessThan1000,
+      resultCategories.MoreThan1000,
+      resultCategories.Indeterminate,
+      resultCategories.Invalid,
+      resultCategories.NoResult,
+      resultCategories.Error,
     ],
     date
   )
@@ -300,14 +275,14 @@ async function generateResults(
     errorCodes,
     hivDevices,
     [
-      resultCategoryDetectedId,
-      resultCategoryNotDetectedId,
-      resultCategoryLessThan1000,
-      resultCategoryMoreThan1000,
-      resultCategoryIndeterminateId,
-      resultCategoryInvalidId,
-      resultCategoryNoResultId,
-      resultCategoryErrorId,
+      resultCategories.Detected,
+      resultCategories.NotDetected,
+      resultCategories.LessThan1000,
+      resultCategories.MoreThan1000,
+      resultCategories.Indeterminate,
+      resultCategories.Invalid,
+      resultCategories.NoResult,
+      resultCategories.Error,
     ],
     date
   )
@@ -338,7 +313,7 @@ async function generateResults(
   )
   const covidPositiveResults = _.filter(
     covidResults,
-    result => result.resultCategory1 === resultCategoryPositiveId
+    result => result.resultCategory1 === resultCategories.Positive
   )
   await addCovidResults(
     knex,
@@ -966,8 +941,7 @@ async function addTBResults(
     const rnd = _.random(0, 100)
     const selectionConditionNoErrors = r =>
       rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    const selectionConditionWithErros = r =>
-      r.category1 === "Error"
+    const selectionConditionWithErros = r => r.category1 === 'Error'
 
     const assay = _.sample(
       _.filter(
@@ -994,15 +968,15 @@ async function addTBResults(
         ? selectionConditionWithErros
         : selectionConditionNoErrors
     )
-    if (result.resultCategory1) {
-      result.resultCategory1 = resultCategories[result.resultCategory1]
+    if (result.category1) {
+      result.category1 = resultCategories[result.category1]
     } else {
-      result.resultCategory1 = null
+      result.category1 = null
     }
-    if (result.resultCategory2) {
-      result.resultCategory2 = resultCategories[result.resultCategory2]
+    if (result.category2) {
+      result.category2 = resultCategories[result.category2]
     } else {
-      result.resultCategory2 = null
+      result.category2 = null
     }
 
     const patientNumber = patients.length - 1
@@ -1060,11 +1034,11 @@ async function addTBResults(
       )
       resultElement.senderVersion = '4.6b'
       resultElement.errorCode =
-        result.category1 === resultCategories.resultCategoryErrorId
+        result.category1 === resultCategories.Error
           ? _.sample(errorCodes)
           : null
       resultElement.errorNotes =
-        result.category1 === resultCategories.resultCategoryErrorId
+        result.category1 === resultCategories.Error
           ? 'Exceeded cycle threshold'
           : null
     }
@@ -1082,7 +1056,7 @@ async function addTBResults(
     const [resultId] = await knex('Result').insert(resultElement)
 
     if (
-      resultElement.category1 === resultCategories.resultCategoryDetectedId &&
+      resultElement.category1 === resultCategories.Detected &&
       rnd <= 80 &&
       devicesMGIT.length > 0 &&
       assayBdMgit &&
