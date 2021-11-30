@@ -215,7 +215,13 @@ async function createSite(knex, { partner, user, site }) {
 
 async function createDevice(
   knex,
-  { siteId, type = 'DaktariVirology', approval = 'approved', baseConfig = {} },
+  {
+    siteId,
+    type = 'DaktariVirology',
+    approval = 'approved',
+    instrumentSerial,
+    baseConfig = {},
+  },
   insertLog = false
 ) {
   const now = new Date()
@@ -243,6 +249,7 @@ async function createDevice(
     name: 'Test Device',
     shortName: 'Test Device',
     lastSeenOn: now,
+    lastInstrumentSerial: instrumentSerial,
   })
 
   await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
@@ -261,7 +268,13 @@ async function createDevice(
 
 async function createResult(
   knex,
-  { deviceId, userId, sampleType = 'DBS', assayName = 'DaktariHivVL' }
+  {
+    deviceId,
+    userId,
+    sampleType = 'DBS',
+    assayName = 'DaktariHivVL',
+    instrumentSerial,
+  }
 ) {
   const now = new Date()
 
@@ -299,6 +312,7 @@ async function createResult(
     startedOn: subHours(now, 2),
     endedOn: now,
     reportableSiteId: siteId,
+    instrumentSerial,
   })
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
@@ -334,6 +348,7 @@ class DeviceApiTestContext {
       type,
       site,
       approval = 'approved',
+      instrumentSerial = 'A-SERIAL-NUMBER-00001',
       baseConfig = {},
     }
   ) {
@@ -345,6 +360,7 @@ class DeviceApiTestContext {
     this.site = site
     this.approval = approval
     this.baseConfig = baseConfig
+    this.instrumentSerial = instrumentSerial
     this.now = new Date()
 
     this.siteIds = []
@@ -394,6 +410,7 @@ class DeviceApiTestContext {
           siteId,
           type: this.type,
           approval: this.approval,
+          instrumentSerial: this.instrumentSerial,
           baseConfig: this.baseConfig,
         },
         true
@@ -403,6 +420,7 @@ class DeviceApiTestContext {
 
       await createResult(knex, {
         deviceId,
+        instrumentSerial: this.instrumentSerial,
         userId,
       })
 

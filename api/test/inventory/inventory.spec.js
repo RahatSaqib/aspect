@@ -14,10 +14,11 @@ describe('Inventory Routes', () => {
   describe('Inventory List Route', () => {
     describe('/inventory', () => {
       const path = '/api/inventory'
+      before(() => {
+        shared.checkToken(server, path)
+      })
 
       describe('GET', () => {
-        shared.checkToken(server, path)
-
         it('should return a list of inventory items when using valid token', done => {
           server
             .get(path)
@@ -78,6 +79,9 @@ describe('Inventory Routes', () => {
 
     describe('/inventory/group-by-site', () => {
       const path = '/api/inventory/group-by-site'
+      before(() => {
+        shared.checkToken(server, path)
+      })
 
       const assertSite = site => {
         assert.property(site, 'siteId')
@@ -104,7 +108,6 @@ describe('Inventory Routes', () => {
       }
 
       describe('GET', () => {
-        shared.checkToken(server, path)
         const deviceIds = []
         const inventoryItemIds = []
         const siteIds = []
@@ -210,10 +213,11 @@ describe('Inventory Routes', () => {
 
     describe('/inventory/days-by-location', () => {
       const path = '/api/inventory/days-by-location'
+      before(() => {
+        shared.checkToken(server, path)
+      })
 
       describe('GET', () => {
-        shared.checkToken(server, path)
-
         const assertAggregatedItem = item => {
           assert.property(item, 'consumableId')
           assert.property(item, 'consumableName')

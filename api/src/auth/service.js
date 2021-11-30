@@ -27,13 +27,7 @@ async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
 
-const userProps = [
-  'u.lockedOut',
-  'u.failedPasswordAttempts',
-  'u.password',
-  'u.legacyPassword',
-  'u.id',
-  'u.name',
+const personProps = [
   'p.name as userName',
   'p.culture',
   'p.timezone',
@@ -43,6 +37,16 @@ const userProps = [
   'p.userId',
   'p.id as personId',
   'c.abbreviation as countryAbbreviation',
+]
+
+const userProps = [
+  'u.lockedOut',
+  'u.failedPasswordAttempts',
+  'u.password',
+  'u.legacyPassword',
+  'u.id',
+  'u.name',
+  ...personProps,
 ]
 
 function getUser(username) {
@@ -61,6 +65,14 @@ function getUserByPersonId(personId) {
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'p.id': personId })
     .first(userProps)
+}
+
+function getPersonByPersonId(personId) {
+  return query('Get user details for person')
+    .from('Person as p')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .where({ 'p.id': personId })
+    .first(personProps)
 }
 
 function getUserByUserId(userId) {
@@ -823,4 +835,5 @@ module.exports = {
   hasPermissions,
   clientTypes,
   getUserJobFunctions,
+  getPersonByPersonId,
 }

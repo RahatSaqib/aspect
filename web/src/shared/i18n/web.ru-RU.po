@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-10-29T09:11:26.140Z\n"
+"POT-Creation-Date: 2021-11-24T18:57:10.397Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -681,10 +681,10 @@ msgstr "Площадь"
 msgid "Aspect has Encountered a Problem."
 msgstr "Аспект столкнулся с проблемой."
 
-#. [forms.formSectionHeader.assay]
+#. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
-#. [forms.formItem.assay]
+#. [forms.formSectionHeader.assay]
 #. defaultMessage is:
 #. Assay
 #. [placeholder.result.Assay]
@@ -729,6 +729,13 @@ msgstr "Тип анализа"
 #: extracted_strings.json
 msgid "Assay Type:"
 msgstr "Тип анализа:"
+
+#. [pages.Result.assayRequired]
+#. defaultMessage is:
+#. Assay is required
+#: extracted_strings.json
+msgid "Assay is required"
+msgstr "Требуется анализ"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
 #. defaultMessage is:
@@ -960,6 +967,9 @@ msgstr "BD MGIT AST"
 msgid "BD MGIT GND"
 msgstr "BD MGIT GND"
 
+#. [button_Back]
+#. defaultMessage is:
+#. Back
 #. [pages.NotificationList.backButton]
 #. defaultMessage is:
 #. Back
@@ -1113,6 +1123,9 @@ msgstr "Невозможно редактировать"
 #. [pages.RouterDetail.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [button_Cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.BaseDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1251,6 +1264,13 @@ msgstr "Выбрать теги"
 #: extracted_strings.json
 msgid "City"
 msgstr "Город"
+
+#. [forms.formItem.clearValue]
+#. defaultMessage is:
+#. Clear Value
+#: extracted_strings.json
+msgid "Clear Value"
+msgstr "Четкое значение"
 
 #. [shared.EmptyList.clearFilters]
 #. defaultMessage is:
@@ -2219,6 +2239,13 @@ msgstr "Тип устройства"
 msgid "Device Warranty"
 msgstr "Гарантия на устройство"
 
+#. [pages.Result.deviceRequired]
+#. defaultMessage is:
+#. Device is required
+#: extracted_strings.json
+msgid "Device is required"
+msgstr "Требуется устройство"
+
 #. [pages.DeviceDetailProfile.deviceLogs]
 #. defaultMessage is:
 #. Device logs
@@ -2309,9 +2336,6 @@ msgstr "Несогласный"
 msgid "Disease"
 msgstr "Заболевание"
 
-#. [pages.common.state_MW]
-#. defaultMessage is:
-#. District
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
 #. District
@@ -2324,11 +2348,20 @@ msgstr "Заболевание"
 #. [pages.common.lga_PK]
 #. defaultMessage is:
 #. District
+#. [pages.common.lga_BD]
+#. defaultMessage is:
+#. District
+#. [pages.common.lga_MW]
+#. defaultMessage is:
+#. District
 #: extracted_strings.json
 msgid "District"
 msgstr "Район"
 
 #. [pages.common.lga_CM]
+#. defaultMessage is:
+#. Division
+#. [pages.common.state_BD]
 #. defaultMessage is:
 #. Division
 #: extracted_strings.json
@@ -2404,6 +2437,9 @@ msgstr "Эбола"
 #. defaultMessage is:
 #. Edit
 #. [pages.RouterDetail.editTooltip]
+#. defaultMessage is:
+#. Edit
+#. [button_Edit]
 #. defaultMessage is:
 #. Edit
 #. [pages.DeviceDetail.edit]
@@ -2961,6 +2997,13 @@ msgstr "Поле не может содержать менее {total} симв�
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Поле не может содержать более {total} символов"
+
+#. [pages.Result.resultCategory1]
+#. defaultMessage is:
+#. Field is required
+#: extracted_strings.json
+msgid "Field is required"
+msgstr "Обязательное поле"
 
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
@@ -5595,10 +5638,10 @@ msgstr "Сброс пароля"
 #. [pages.ClinicalHistory.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formSectionHeader.patient]
+#. [forms.formItem.patient]
 #. defaultMessage is:
 #. Patient
-#. [forms.formItem.patient]
+#. [forms.formSectionHeader.patient]
 #. defaultMessage is:
 #. Patient
 #: extracted_strings.json
@@ -7629,6 +7672,9 @@ msgstr "Выйти"
 #. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
+#. [pages.resultEdit.site]
+#. defaultMessage is:
+#. Site
 #. [pages.DeviceDetailEdit.location]
 #. defaultMessage is:
 #. Site
@@ -7696,6 +7742,13 @@ msgstr "Название сайта"
 msgid "Site contact"
 msgstr "Контакт на сайте"
 
+#. [pages.Result.siteRequired]
+#. defaultMessage is:
+#. Site is required
+#: extracted_strings.json
+msgid "Site is required"
+msgstr "Необходим участок"
+
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
@@ -7746,6 +7799,13 @@ msgstr "SMS-сообщение не должно быть длиннее 144 с�
 #: extracted_strings.json
 msgid "Start Date"
 msgstr "Дата начала"
+
+#. [pages.Result.startedOnRequired]
+#. defaultMessage is:
+#. Start date is required
+#: extracted_strings.json
+msgid "Start date is required"
+msgstr "Требуется дата начала"
 
 #. [forms.formItem.state]
 #. defaultMessage is:
@@ -7841,6 +7901,9 @@ msgstr "Стилегид"
 #. defaultMessage is:
 #. Submit
 #. [pages.UpdateLoginDetails.submitCurrentPassword]
+#. defaultMessage is:
+#. Submit
+#. [button_Submit]
 #. defaultMessage is:
 #. Submit
 #. [pages.BaseDialog.submit]
@@ -7998,10 +8061,10 @@ msgstr "Лист заданий"
 msgid "Tasks"
 msgstr "Задачи"
 
-#. [forms.formSectionHeader.technicalDetails]
+#. [forms.formItem.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
-#. [forms.formItem.technicalDetails]
+#. [forms.formSectionHeader.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
 #: extracted_strings.json
@@ -9560,6 +9623,13 @@ msgstr "Индекс"
 #: extracted_strings.json
 msgid "Zip Code"
 msgstr "Почтовый индекс"
+
+#. [pages.common.state_MW]
+#. defaultMessage is:
+#. Zones
+#: extracted_strings.json
+msgid "Zones"
+msgstr "Зоны"
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:

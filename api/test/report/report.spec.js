@@ -13,10 +13,11 @@ const { assert } = chai
 
 describe('Global reports', () => {
   const path = '/api/reports'
+  before(() => {
+    shared.checkToken(server, path)
+  })
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     let reportExternalId
 
     it('should return list of reports with minimum few global reports', () =>

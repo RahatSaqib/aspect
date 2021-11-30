@@ -43,24 +43,18 @@ const AspectResultDetail = () => {
   )
 
   const id = isNaN(resultId) ? undefined : Number(resultId)
+  const isNew = resultId === 'add' || !id
 
   const onSubmit = formik => {
-    const formConfig = getFormConfig(intl.formatMessage, false)
+    const formConfig = getFormConfig(intl.formatMessage, isNew)
     const values = sanitizeFormValues(formik.values, { formConfig })
-
-    /**
-     * TODO: remove below console.log after implementing submission of form in
-     * https://ops.systemone.id/browse/ASP-2344
-     */
-    // eslint-disable-next-line
-    console.log('>>>>>>>>>>>>>>>', JSON.stringify(values, null, 2))
 
     submitResult({ values, id })
   }
 
   return (
     <Fragment>
-      {resultId === 'add' || !id ? (
+      {isNew ? (
         <Create onSubmit={onSubmit} />
       ) : (
         <Update resultId={id} onSubmit={onSubmit} />

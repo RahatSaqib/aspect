@@ -85,26 +85,36 @@ const resultAggregationsResponseItem = {
     .description('The state that the count is grouped by'),
 }
 
+const optionalId = description => {
+  return Joi.number()
+    .integer()
+    .positive()
+    .allow(null, '')
+    .description(description)
+}
 const resultUpdatePayload = {
+  startedOn: Joi.date()
+    .iso()
+    .required()
+    .description('When the result was started'),
   endedOn: Joi.date().iso().required().description('When the result was ready'),
   sampleId: Joi.string().max(500).allow(null, '').description('Sample ID'),
-  sampleTypeId: Joi.number()
-    .allow(null)
-    .description('Sample type (Plasma, Sputum, etc.)'),
+  sampleTypeId: optionalId('Sample type (Plasma, Sputum, etc.)'),
   sampleCollectedOn: Joi.date()
     .iso()
-    .allow(null)
+    .allow(null, '')
     .description('When the sample was collected'),
-  sampleOriginSiteId: Joi.number()
-    .allow(null)
-    .description('Where the sample was collected'),
+  sampleOriginSiteId: optionalId('Where the sample was collected'),
   patientId: Joi.string().max(500).allow(null, '').description('Patient ID'),
-  caseId: Joi.string().max(500).allow(null, '').description('Case ID'),
+  caseExternalId: Joi.string()
+    .max(255)
+    .allow(null, '')
+    .description('Patient Case External ID'),
   resultCategory1: Joi.number()
     .required()
     .description('The result of the test'),
   resultCategory2: Joi.number()
-    .allow(null)
+    .allow(null, '') // keep empty string too to address missing value for new results
     .description('The result of the test'),
   tags: Joi.string()
     .max(500)
@@ -113,6 +123,22 @@ const resultUpdatePayload = {
   formData: Joi.object()
     .allow(null, '')
     .description('Form data to save along with the result'),
+
+  errorCode: Joi.number()
+    .integer()
+    .max(99999)
+    .min(1)
+    .allow(null, '')
+    .description('Error code for the result'),
+  notes: Joi.string().allow(null, '').description('Notes for the result'),
+  senderOperator: Joi.string()
+    .max(255)
+    .allow(null, '')
+    .description('Sender Operator for the result'),
+  reportableSiteId: optionalId('The id of reportable site'),
+
+  stateId: optionalId('The id of the State'),
+  lgaId: optionalId('The id of the Lga'),
 }
 
 const resultCreatePayload = {
@@ -187,6 +213,11 @@ const baseResultResponse = {
   diseaseExternalId: Joi.string()
     .required()
     .description('the external id of the disease'),
+
+  detectedResistance: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('CSV with detected resistances'),
 }
 
 function validateResultListResponse() {
@@ -504,6 +535,9 @@ function validateResultDetailResponse() {
       .description(
         "Is the result's assay configured to allow deleting of results?"
       ),
+    resultSourceExternalId: Joi.string()
+      .required() // resultSourceId is NOT NULL in Result table
+      .description('External ID of the result source'),
   }
 }
 

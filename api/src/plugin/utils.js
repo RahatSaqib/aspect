@@ -67,16 +67,7 @@ async function shouldTriggerResultErrorAnalysis(
     resultErrorCode,
   ])
 
-  // this one is for result base issue, only needs module serial.
-  // others data parameters are for filtering not for triggering the issue.
-  await messageContext.resultAnalyzeCategoriesAndErrors(
-    deviceId,
-    resultId,
-    resultCategory1, // <-- this is result category externalid
-    resultErrorCode,
-    { resultOutcome, moduleSerial, instrumentSerial }
-  )
-  // this 2nd one is for reagent base issue, it needs assayid and consumablelot.
+  // this one is for reagent base issue, it needs assayid and consumablelot.
   await messageContext.resultAnalyzeCategoriesAndErrors(
     deviceId,
     resultId,
@@ -89,6 +80,19 @@ async function shouldTriggerResultErrorAnalysis(
       instrumentSerial,
       moduleSerial,
     }
+  )
+  const timer = ms => new Promise(res => setTimeout(res, ms))
+
+  // this one is for result base issue, only needs module serial.
+  // others data parameters are for filtering not for triggering the issue.
+  timer(1000).then(async () =>
+    messageContext.resultAnalyzeCategoriesAndErrors(
+      deviceId,
+      resultId,
+      resultCategory1, // <-- this is result category externalid
+      resultErrorCode,
+      { resultOutcome, moduleSerial, instrumentSerial }
+    )
   )
 }
 
@@ -277,7 +281,9 @@ async function shouldTriggerHardwareErrorAnalysis(
     )
     if (errorForTriggering) {
       logger.debug(
-        `shouldTriggerHardwareErrorAnalysis error:${errorForTriggering}`
+        `shouldTriggerHardwareErrorAnalysis error:${JSON.stringify(
+          errorForTriggering
+        )}`
       )
       const options = {
         startedOn,

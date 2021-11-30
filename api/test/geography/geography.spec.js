@@ -10,10 +10,11 @@ const { assert } = chai
 describe('Geography routes', () => {
   describe('/api/geography/select-list', () => {
     const path = '/api/geography/select-list'
+    before(() => {
+      shared.checkToken(server, path)
+    })
 
     describe('GET', () => {
-      shared.checkToken(server, path)
-
       it('should return a list of countries, each with its nested set of states and LGAs, all ordered by name', done => {
         server
           .get(path)
@@ -79,10 +80,11 @@ describe('Geography routes', () => {
 
   describe('/geography/country-select-list', () => {
     const path = '/api/geography/country-select-list'
+    before(() => {
+      shared.checkToken(server, path)
+    })
 
     describe('GET', () => {
-      shared.checkToken(server, path)
-
       describe('with no selected country', () => {
         it('should return a list of country IDs and names ordered by name', done => {
           server

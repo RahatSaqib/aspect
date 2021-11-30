@@ -29,6 +29,7 @@ const FormItem = ({
   type,
   validate,
   visibleIf,
+  disabledIf,
   subRowIndex,
 }) => {
   const { formatMessage } = useI18n()
@@ -86,7 +87,10 @@ const FormItem = ({
         InputProps={{
           readOnly: !toggleEdit,
           // is used for TextField, TextArea, Select
-          disabled: !toggleEdit || type === 'readOnly',
+          disabled:
+            !toggleEdit ||
+            type === 'readOnly' ||
+            (disabledIf && disabledIf(formik.values, toggleEdit, subRowIndex)),
           disableUnderline: !toggleEdit || type === 'readOnly',
         }}
         InputLabelProps={{
@@ -114,6 +118,7 @@ FormItem.defaultProps = {
   type: 'text',
   validate: () => '',
   visibleIf: () => true,
+  disabledIf: () => false,
   subRowIndex: 0,
 }
 
@@ -136,6 +141,7 @@ FormItem.propTypes = {
   type: PropTypes.string,
   validate: PropTypes.oneOfType([PropTypes.func]),
   visibleIf: PropTypes.oneOfType([PropTypes.func]),
+  disabledIf: PropTypes.oneOfType([PropTypes.func]),
   subRowIndex: PropTypes.number,
 }
 

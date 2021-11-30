@@ -1,5 +1,6 @@
 const format = require('date-fns/format')
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const { addDays, subDays, subHours } = require('date-fns')
 const { run } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
@@ -39,7 +40,7 @@ const {
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 const USER_LU = 'myanmar_lab1'
 const USER_RO = 'myanmar_ro1'
 

@@ -1,6 +1,7 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 const subDays = require('date-fns/subDays')
 const subMonths = require('date-fns/subMonths')
 const Promise = require('bluebird')
@@ -127,7 +128,10 @@ describe('Maintenance Reports', () => {
   const lastFriday = getLastFriday()
   const monthAgo = subDays(lastFriday, 30)
 
+  const maintenanceOverTimePath = '/api/device/maintenance-over-time'
+
   before(async () => {
+    shared.checkToken(server, maintenanceOverTimePath)
     statuses = await allDeviceMaintenanceStatusToId()
     activeDeviceMaintenanceStatusExternalIds = await knex(
       'DeviceMaintenanceStatus'
@@ -162,9 +166,6 @@ describe('Maintenance Reports', () => {
   })
 
   afterEach(async () => context.cleanUp())
-
-  const maintenanceOverTimePath = '/api/device/maintenance-over-time'
-  shared.checkToken(server, maintenanceOverTimePath)
 
   describe('device/maintenance-over-time', () => {
     const assertionsForNotNegativeTz = [
@@ -262,11 +263,12 @@ describe('Maintenance Reports', () => {
       ))
   })
 
-  describe('maintenance-last-reported', () => {
-    const pathLastReported = '/api/device/maintenance-last-reported'
-
+  const pathLastReported = '/api/device/maintenance-last-reported'
+  before(() => {
     shared.checkToken(server, pathLastReported)
+  })
 
+  describe('maintenance-last-reported', () => {
     it('should get the correct current status', async () => {
       const lastReportedStatus = await server
         .get(`${pathLastReported}`)

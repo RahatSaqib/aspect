@@ -37,14 +37,13 @@ function queryResultFollowUpLastItems(knex, followUpTypes) {
 describe('Result Follow-Up Aggregations for reports', () => {
   const path = '/api/result/follow-up-aggregations'
 
-  shared.checkToken(server, path)
-
   const getValue = groupKey => {
     return groupKey === 'null' ? null : groupKey
   }
   let resultsForUser = null
 
   before(async () => {
+    shared.checkToken(server, path)
     // get actual username from shared token
     const { name } = jwtDecode(shared.token)
 

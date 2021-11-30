@@ -19,7 +19,9 @@ describe.skip('Forms routes', () => {
     'i18nKeyCaption',
     'controlType',
   ]
-  shared.checkToken(server, path)
+  before(() => {
+    shared.checkToken(server, path)
+  })
 
   async function getDiseaseId(externalId) {
     const { id: diseaseId } =

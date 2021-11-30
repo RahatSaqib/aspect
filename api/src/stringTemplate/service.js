@@ -99,6 +99,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
+        'd.lastInstrumentSerial as lastInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
         'r.patientData as resultPatientData',
@@ -386,6 +387,7 @@ async function getBaseDataSource(data) {
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
       serial: d.deviceSerial,
+      lastInstrumentSerial: d.lastInstrumentSerial,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},

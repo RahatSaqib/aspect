@@ -15,6 +15,28 @@ const routes = [
       description:
         "Get The Person Object Linked to the Logged In User's Profile",
       notes: 'Returns a person object',
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          data: {
+            id: Joi.number().integer().required(),
+            userId: Joi.number().integer().required(),
+            username: Joi.string().max(255).required(),
+            name: Joi.string().max(500).allow('', null),
+            title: Joi.string().max(255).allow('', null),
+            email: Joi.string().max(500).required(),
+            email2: Joi.string().max(500).allow('', null),
+            phone: Joi.string().max(45).allow('', null),
+            cell: Joi.string().max(45).allow('', null),
+            countryId: Joi.number().integer().required(),
+            stateId: Joi.string().max(255).allow('', null),
+            lgaId: Joi.string().max(255).allow('', null),
+            zip: Joi.string().max(45).allow('', null),
+            timezone: Joi.string().max(255).allow('', null),
+            culture: Joi.string().max(255).allow('', null),
+          },
+        },
+      },
     },
   },
   {

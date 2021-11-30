@@ -1,18 +1,22 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Person routes', () => {
   const path = '/api/person'
   let countryId
-  describe('GET /person', () => {
-    shared.checkToken(server, path)
 
+  before(async () => {
+    shared.checkToken(server, path)
+  })
+
+  describe('GET /person', () => {
     it('should return a list of persons when using valid token', async () => {
       const res = await server
         .get(path)

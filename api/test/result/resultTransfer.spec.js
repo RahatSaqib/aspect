@@ -22,7 +22,6 @@ const assertResult = response => {
 
 describe('Result Transfer', () => {
   const path = '/api/result'
-  shared.checkToken(server, path)
 
   describe('POST', () => {
     let result
@@ -35,6 +34,7 @@ describe('Result Transfer', () => {
     const timeStampNewest = new Date(2020, 1, 21).getTime()
 
     before(async () => {
+      shared.checkToken(server, path)
       // get list of results accessible for current user
       let response = await server
         .set('Authorization', `Bearer ${shared.token}`)

@@ -11,7 +11,6 @@ describe('Device route Job constraints', () => {
   const path = '/api/device'
 
   describe('Device Type based', () => {
-    shared.checkToken(server, path)
     const deviceTypeGeneXpertExternalId = 'CepheidGeneXpert'
     const gxClinicianUsername = 'gx_clinician'
     const gxClinicianPassword = 'gx-clinician-pass'
@@ -28,6 +27,7 @@ describe('Device route Job constraints', () => {
     let bothDeviceTypesClinicianAuthAccessToken
 
     before(async () => {
+      shared.checkToken(server, path)
       ;({ name: deviceTypeGeneXpertName } = await knex('DeviceType')
         .where('externalId', deviceTypeGeneXpertExternalId)
         .first('name'))

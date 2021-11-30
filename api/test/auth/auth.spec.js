@@ -71,6 +71,7 @@ describe('Authentication routes', () => {
     let isGxAlertAvailable
 
     before(async () => {
+      shared.checkToken(server, authPath)
       await gxAlertServer
         .get('')
         .then(() => {
@@ -303,8 +304,6 @@ describe('Authentication routes', () => {
     })
 
     describe('GET', () => {
-      shared.checkToken(server, authPath)
-
       it('should return 200 and welcome message when using valid token', async () => {
         await server
           .get(authPath)
