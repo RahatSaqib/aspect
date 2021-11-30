@@ -99,61 +99,53 @@ async function createDevicesForAllMissingTypes(
       }
     })
     .select()
-
   const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
   const existingDeviceTypesAtEachSite = await knex('Device')
     .whereIn('siteId', _.map(siteDatas, 'id'))
-    .where('partnerId', partnerId)
+    .andWhere('partnerId', partnerId)
     .select('siteId', 'deviceTypeId')
     .distinct()
   if (!_.isEmpty(siteDatas)) {
     let i = 0
-    await Promise.each(
-      _.intersectionWith(
-        deviceTypes,
-        siteDatas,
-        (deviceType, site) =>
-          !_.some(
-            existingDeviceTypesAtEachSite,
-            existingDeviceType =>
-              existingDeviceType.siteId === site.id &&
-              existingDeviceType.deviceTypeId === deviceType.id
+
+    await Promise.each(deviceTypes, async deviceType => {
+      const siteIdsWithoutDeviceType = _.uniq(
+        siteDatas.map(site => site.id)
+      ).filter(siteId =>
+        _.isEmpty(
+          existingDeviceTypesAtEachSite.filter(
+            deviceTypeAtSite =>
+              deviceTypeAtSite.siteId === siteId &&
+              deviceTypeAtSite.deviceTypeId === deviceType.id
           )
-      ),
-      async deviceType => {
-        const validSites = siteDatas.filter(
-          site =>
-            !_.some(
-              existingDeviceTypesAtEachSite,
-              existingDeviceType =>
-                existingDeviceType.siteId === site.id &&
-                existingDeviceType.deviceTypeId === deviceType.id
-            )
         )
-        return Promise.each(
-          _.range(devicesWithSameTypePerPartner),
-          async () => {
-            const siteData = _.sample(validSites)
-            const deviceToInsert = {
-              ...auditFields,
-              name: `${siteData.shortName} ${deviceType.name}`,
-              shortName: `${siteData.shortName} ${deviceType.name}`,
-              deviceTypeId: deviceType.id,
-              deviceApprovalId: deviceApprovalApproved,
-              partnerId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              createdOn: new Date(+now - 3 * i * millisInHour),
-              updatedOn: new Date(+now - i * millisInHour),
-              lastPingOn: new Date(+now - (i * millisInHour) / 3),
-              lastSeenOn: new Date(+now - (i * millisInHour) / 3),
-            }
-            await knex('Device').insert(deviceToInsert)
-            i += 1
-          }
-        )
+      )
+      const validSites = siteDatas.filter(site =>
+        siteIdsWithoutDeviceType.includes(site.id)
+      )
+      if (_.isEmpty(validSites)) {
+        return Promise.resolve()
       }
-    )
+      return Promise.each(_.range(devicesWithSameTypePerPartner), async () => {
+        const siteData = _.sample(validSites)
+        const deviceToInsert = {
+          ...auditFields,
+          name: `${siteData.shortName} ${deviceType.name}`,
+          shortName: `${siteData.shortName} ${deviceType.name}`,
+          deviceTypeId: deviceType.id,
+          deviceApprovalId: deviceApprovalApproved,
+          partnerId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          createdOn: new Date(+now - 3 * i * millisInHour),
+          updatedOn: new Date(+now - i * millisInHour),
+          lastPingOn: new Date(+now - (i * millisInHour) / 3),
+          lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        }
+        await knex('Device').insert(deviceToInsert)
+        i += 1
+      })
+    })
   }
 }
 
