@@ -42,7 +42,11 @@ const ContactsCell = ({ value }) => {
   ) {
     return <div>{valToArray.join(', ')}</div>
   }
-  return <div>{formatMessage(messages.notConfigured)}</div>
+  return (
+    <div className={cssClasses('message--not-configured')}>
+      {formatMessage(messages.notConfigured)}
+    </div>
+  )
 }
 
 ContactsCell.defaultProps = {

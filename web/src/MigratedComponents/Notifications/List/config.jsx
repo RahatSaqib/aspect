@@ -196,7 +196,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       format: NumberCell,
     },
     {
-      key: 'contacts',
+      key: 'jobFunctions',
       label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       disableHide: true,
       disableGroupBy: true,
@@ -204,6 +204,21 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       aggregate: totalItemCount,
       Aggregated: ({ value }) =>
         `${formatMessage(messages.notificationsTableJobFunctionsCount, {
+          itemCount: formatNumber(value),
+        })}`,
+      format: ContactsCell,
+    },
+    {
+      key: 'persons',
+      label: formatMessage(
+        messages.notificationsTableHeaderJobFunctionsPersons
+      ),
+      disableHide: true,
+      disableGroupBy: true,
+      width: 25,
+      aggregate: totalItemCount,
+      Aggregated: ({ value }) =>
+        `${formatMessage(messages.notificationsTableJobFunctionsCountPersons, {
           itemCount: formatNumber(value),
         })}`,
       format: ContactsCell,
