@@ -1,8 +1,8 @@
+import React from 'react'
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -81,6 +81,11 @@ const getInitialValues = (
     (partnerList && partnerList.length === 1
       ? partnerList[0].value
       : DEFAULT_VALUES.lastPartnerId),
+  country:
+    contactDetails.get('country') ||
+    (countries && countries.items.size === 1
+      ? countries.items.first().get('name')
+      : DEFAULT_VALUES.country),
   countryId:
     contactDetails.get('countryId') ||
     (countries && countries.items.size === 1
@@ -283,7 +288,7 @@ export const ContactDetailsForm = ({
   user,
 }) => {
   const { formatMessage } = i18nWrapper()
-  const { countryAbbreviation } = user.toJSON()
+
   return (
     <form onSubmit={handleSubmit} className={cssClasses('Form')}>
       <div className={cssClasses('Form__Content')}>
@@ -376,9 +381,10 @@ export const ContactDetailsForm = ({
           <div className={cssClasses('Form__Content__Arrange-field', '')}>
             <DialCodeDropdownInput
               name="phone"
-              countryId={countryAbbreviation}
+              country={values.country}
               label={formatMessage(messages.telephone)}
               value={values.phone}
+              values={values}
               onChange={onPhoneChange}
               disabled={loading}
               error={meta.phone.touched && meta.phone.error}
@@ -389,9 +395,9 @@ export const ContactDetailsForm = ({
               }}
               inputProps={{ maxLength: 40 }}
             />
-            <DialCodeDropdownInput
+            {/* <DialCodeDropdownInput
               name="cell"
-              countryId={countryAbbreviation}
+              country={values.country}
               label={formatMessage(messages.mobile)}
               value={values.cell}
               onChange={onCellChange}
@@ -403,7 +409,7 @@ export const ContactDetailsForm = ({
                 margin: 'dense',
               }}
               inputProps={{ maxLength: 40 }}
-            />
+            /> */}
           </div>
         </section>
         <section>
