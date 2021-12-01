@@ -266,6 +266,18 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayGXCovid19',
     defaultMessage: 'GeneXpert COVID-19',
   },
+  assayTruenatMtb: {
+    id: 'pages.ResultList.assayTruenatMtb',
+    defaultMessage: 'Truenat® MTB',
+  },
+  assayTruenatMtbPlus: {
+    id: 'pages.ResultList.assayTruenatMtbPlus',
+    defaultMessage: 'Truenat® MTB Plus',
+  },
+  assayTruenatRif: {
+    id: 'pages.ResultList.assayTruenatRif',
+    defaultMessage: 'Truenat® MTB-RIF Dx',
+  },
   assayLPA: {
     id: 'pages.ResultList.assayLPA',
     defaultMessage: 'LPA',

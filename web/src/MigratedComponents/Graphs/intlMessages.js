@@ -96,6 +96,18 @@ export const messages = {
       id: 'legends.Unknown.assayGeneXpertHcv',
       defaultMessage: 'GeneXpert HCV',
     },
+    assayTruenatMtb: {
+      id: 'legends.Unknown.assayTruenatMtb',
+      defaultMessage: 'Truenat® MTB',
+    },
+    assayTruenatMtbPlus: {
+      id: 'legends.Unknown.assayTruenatMtbPlus',
+      defaultMessage: 'Truenat® MTB Plus',
+    },
+    assayTruenatRif: {
+      id: 'legends.Unknown.assayTruenatRif',
+      defaultMessage: 'Truenat® MTB-RIF Dx',
+    },
     QHivVL: {
       id: 'legends.Unknown.QHivVL',
       defaultMessage: 'Q HIV VL',

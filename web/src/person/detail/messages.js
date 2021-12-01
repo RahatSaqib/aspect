@@ -509,6 +509,18 @@ export default {
       id: 'filter.AssaySelectField.assayGeneXpertUnknown',
       defaultMessage: 'GeneXpert Unknown',
     },
+    assayTruenatMtb: {
+      id: 'filter.AssaySelectField.assayTruenatMtb',
+      defaultMessage: 'Truenat® MTB',
+    },
+    assayTruenatMtbPlus: {
+      id: 'filter.AssaySelectField.assayTruenatMtbPlus',
+      defaultMessage: 'Truenat® MTB Plus',
+    },
+    assayTruenatRif: {
+      id: 'filter.AssaySelectField.assayTruenatRif',
+      defaultMessage: 'Truenat® MTB-RIF Dx',
+    },
     assayGenoTypeMTBCV1: {
       id: 'filter.AssaySelectField.assayGenoTypeMTBCV1',
       defaultMessage: 'GenoType MTBC VER 1.X',

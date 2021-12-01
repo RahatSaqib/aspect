@@ -1,0 +1,44 @@
+[
+  {
+    "resultText": "Detected High",
+    "category1": "Detected",
+    "minLikelihood": 0,
+    "maxLikelihood": 20
+  },
+  {
+    "resultText": "Detected Medium",
+    "category1": "Detected",
+    "minLikelihood": 21,
+    "maxLikelihood": 30
+  },
+  {
+    "resultText": "Detected Low",
+    "category1": "Detected",
+    "minLikelihood": 31,
+    "maxLikelihood": 40
+  },
+  {
+    "resultText": "Detected Very Low",
+    "category1": "Detected",
+    "minLikelihood": 41,
+    "maxLikelihood": 50
+  },
+  {
+    "resultText": "Not Detected",
+    "category1": "NotDetected",
+    "minLikelihood": 51,
+    "maxLikelihood": 70
+  },
+  {
+    "resultText": "Invalid",
+    "category1": "Invalid",
+    "minLikelihood": 71,
+    "maxLikelihood": 90
+  },
+  {
+    "resultText": "Error",
+    "category1": "Error",
+    "minLikelihood": 91,
+    "maxLikelihood": 100
+  }
+]
