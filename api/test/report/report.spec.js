@@ -82,7 +82,7 @@ describe('Global reports', () => {
     let deviceMaintenanceTypeId
 
     before(async () => {
-      context = createTestContext(server, {
+      context = createTestContext(knex, server, {
         user: 'admin',
         type: 'CepheidGeneXpert',
         partner: 'Partner One',
