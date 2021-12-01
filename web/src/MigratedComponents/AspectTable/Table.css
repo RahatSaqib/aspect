@@ -182,3 +182,7 @@
   height: 20px !important;
   width: 20px !important;
 }
+
+.message--not-configured {
+  color: #cccccc;
+}

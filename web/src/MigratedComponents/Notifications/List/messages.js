@@ -44,6 +44,10 @@ export const messages = defineMessages({
     id: 'pages.Notifications.table.jobFunctionsHeader',
     defaultMessage: 'Job Functions',
   },
+  notificationsTableHeaderJobFunctionsPersons: {
+    id: 'pages.Notifications.table.notificationsTableHeaderJobFunctionsPersons',
+    defaultMessage: 'Individual Persons',
+  },
   notificationsTableContactsCount: {
     id: 'pages.Notifications.notificationsTableContactsCount',
     defaultMessage: `{itemCount, plural,
@@ -56,6 +60,13 @@ export const messages = defineMessages({
     defaultMessage: `{itemCount, plural,
       one {# Job Function}
       other {# Job Functions}
+    }`,
+  },
+  notificationsTableJobFunctionsCountPersons: {
+    id: 'pages.Notifications.notificationsTableJobFunctionsCountPersons',
+    defaultMessage: `{itemCount, plural,
+      one {# Person}
+      other {# Persons}
     }`,
   },
 

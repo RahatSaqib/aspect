@@ -74,6 +74,11 @@ function getOptionByValue(data, requestedValue, idKey) {
 }
 
 function getSelectedOptions(data, someValue, idKey) {
+  // for grouped selects, pass it through
+  if (someValue && someValue[0]?.grouped) {
+    return someValue
+  }
+  // continue and format as normal
   if (!data || data.length === 0 || isNil(someValue)) {
     return false
   }
@@ -288,6 +293,7 @@ const SelectComponent = ({
     setInputValue({ selectedOption, action })
     dispatchFromRedux({ identifier, selectedOption, action })
   }
+
   return !busy ? (
     <div
       className={cssClasses('select__container', {
@@ -308,6 +314,7 @@ const SelectComponent = ({
         isMulti={isMulti}
         defaultValue={defaultOptionValue}
         options={data}
+        isOptionDisabled={option => option.disabled}
         placeholder={defaultOption || placeholder}
         styles={buildCustomStyles(theme)}
         onChange={onChange}
