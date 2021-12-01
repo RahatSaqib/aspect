@@ -757,17 +757,17 @@ async function addHivVlResults(
       date || calculateDateForResult(i, resultHivVlNumber, 6000)
 
     const rnd = _.random(0, 100)
-    const selectionConditionNoErrors = r =>
+    const selectionConditionWithNoErrors = r =>
       rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    const selectionConditionWithErros = r =>
+    const selectionConditionWithErrors = r =>
       r.category1 === resultCategories.resultCategoryErrorId
 
     // we make sure to have at least one error result if error codes are passed
     const result = _.find(
       possibleResults,
       errorCodes.length > 0 && i === 0
-        ? selectionConditionWithErros
-        : selectionConditionNoErrors
+        ? selectionConditionWithErrors
+        : selectionConditionWithNoErrors
     )
 
     let copies = 0
@@ -921,12 +921,14 @@ async function addTBResults(
     'assayTruenatRif',
   ]
   const possibleResults = {
-    GxMtbRif: gxMtbRifPossibleResults,
-    GxMtbRifUltra: gxMtbRifPossibleResults,
-    GxMtbXdr: gxXdrPossibleResults,
-    assayTruenatMtb: truenatMtbPossibleResults,
-    assayTruenatMtbPlus: truenatMtbPlusPossibleResults,
-    assayTruenatRif: truenatMtbRifDxPossibleResults,
+    GxMtbRif: JSON.parse(JSON.stringify(gxMtbRifPossibleResults)),
+    GxMtbRifUltra: JSON.parse(JSON.stringify(gxMtbRifPossibleResults)),
+    GxMtbXdr: JSON.parse(JSON.stringify(gxXdrPossibleResults)),
+    assayTruenatMtb: JSON.parse(JSON.stringify(truenatMtbPossibleResults)),
+    assayTruenatMtbPlus: JSON.parse(
+      JSON.stringify(truenatMtbPlusPossibleResults)
+    ),
+    assayTruenatRif: JSON.parse(JSON.stringify(truenatMtbRifDxPossibleResults)),
   }
   const resultData = {
     GxMtbRif: gxMtbRifResultData,
@@ -949,12 +951,12 @@ async function addTBResults(
   await Promise.each(_.range(resultMtbNumber), async i => {
     if (tbDiagnosticDevices.length === 0) return
     const sample = samples[i % samples.length]
-    const randomDate = date || subDays(new Date(), _.random(5))
+    const randomDate = date || subHours(subDays(new Date(), _.random(5)), 5)
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const rnd = _.random(0, 100)
-    const selectionConditionNoErrors = r =>
+    const selectionConditionWithNoErrors = r =>
       rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    const selectionConditionWithErros = r => r.category1 === 'Error'
+    const selectionConditionWithErrors = r => r.category1 === 'Error'
 
     const assay = _.sample(
       _.filter(
@@ -981,18 +983,18 @@ async function addTBResults(
     const result = _.find(
       possibleResults[assay.externalId],
       errorCodes.length > 0 && i === 0 && resultMtbNumber > 20
-        ? selectionConditionWithErros
-        : selectionConditionNoErrors
+        ? selectionConditionWithErrors
+        : selectionConditionWithNoErrors
     )
     if (result.category1) {
-      result.category1 = resultCategories[result.category1]
+      result.resultCategory1 = resultCategories[result.category1]
     } else {
-      result.category1 = null
+      result.resultCategory1 = null
     }
     if (result.category2) {
-      result.category2 = resultCategories[result.category2]
+      result.resultCategory2 = resultCategories[result.category2]
     } else {
-      result.category2 = null
+      result.resultCategory2 = null
     }
 
     const patientNumber = patients.length - 1
@@ -1026,7 +1028,7 @@ async function addTBResults(
       sampleId: sample.id,
       sampleRunNumber: `${(i % 2) + 1}`,
       sampleGroup: `GRP-TB-${i % 5}`,
-      resultCategory1: result.category1,
+      resultCategory1: result.resultCategory1,
       resultData: JSON.stringify(resultData[assay.externalId]),
       startedOn: randomDate,
       endedOn: addMinutes(randomDate, 100),
@@ -1041,7 +1043,7 @@ async function addTBResults(
       notes: 'This is a test... result',
     }
     if (gxAssayExternalIds.includes(assay.externalId)) {
-      resultElement.resultCategory2 = result.category2
+      resultElement.resultCategory2 = result.resultCategory2
       resultElement.assayVersion = '4'
       resultElement.moduleName = 'Module A'
       resultElement.moduleSerial = `M-1234-${i % 4}`
@@ -1050,11 +1052,11 @@ async function addTBResults(
       )
       resultElement.senderVersion = '4.6b'
       resultElement.errorCode =
-        result.category1 === resultCategories.Error
+        result.resultCategory1 === resultCategories.Error
           ? _.sample(errorCodes)
           : null
       resultElement.errorNotes =
-        result.category1 === resultCategories.Error
+        result.resultCategory1 === resultCategories.Error
           ? 'Exceeded cycle threshold'
           : null
     }
@@ -1072,7 +1074,7 @@ async function addTBResults(
     const [resultId] = await knex('Result').insert(resultElement)
 
     if (
-      resultElement.category1 === resultCategories.Detected &&
+      resultElement.resultCategory1 === resultCategories.Detected &&
       rnd <= 80 &&
       devicesMGIT.length > 0 &&
       assayBdMgit &&

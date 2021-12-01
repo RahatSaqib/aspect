@@ -2,7 +2,15 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { addDays, format, addHours, subMonths, parseISO } = require('date-fns')
+const {
+  addDays,
+  subDays,
+  format,
+  addHours,
+  subHours,
+  subMonths,
+  parseISO,
+} = require('date-fns')
 
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const patients = require('./fixtures/patients.json')
@@ -326,13 +334,11 @@ async function ensureResultExists(knex, deviceId, dayDate, userId, partnerId) {
   const resultIds = await getResultsOnDay(knex, deviceId, dayDate)
   if (resultIds.length === 0) {
     // add hours so the result doesn't have an endedOn date around midnight
-    await generateResultForDay(
-      knex,
-      deviceId,
-      addHours(dayDate, _.random(11, 13)),
-      userId,
-      partnerId
-    )
+    let resultDate = addHours(dayDate, _.random(11, 13))
+    if (resultDate > subHours(new Date(), 5)) {
+      resultDate = subDays(resultDate, 1)
+    }
+    await generateResultForDay(knex, deviceId, resultDate, userId, partnerId)
   }
 }
 
