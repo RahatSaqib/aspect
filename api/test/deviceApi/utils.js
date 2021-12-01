@@ -622,8 +622,8 @@ class DeviceApiTestContext {
     )
   }
 
-  runTest(test) {
-    return run(async knex => test(knex))
+  async runTest(test) {
+    return test(this.knex)
   }
 
   async cleanAll() {
