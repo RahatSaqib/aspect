@@ -187,9 +187,7 @@ describe('Parse nested queries', () => {
               INNER JOIN Partner p on s.partnerId = p.id
               LEFT OUTER JOIN Geography as g on s.geographyId = g.id
             WHERE
-              YEAR(r.endedOn) = YEAR(NOW())
-              AND
-              MONTH(r.endedOn) = MONTH(NOW())
+              r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
             GROUP BY DATE(r.endedOn)
           ) as t1
         ) as avgCurrentMonth,
@@ -203,9 +201,8 @@ describe('Parse nested queries', () => {
               INNER JOIN Partner p on s.partnerId = p.id
               LEFT OUTER JOIN Geography as g on s.geographyId = g.id
             WHERE
-              YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-              AND
-              MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+              r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+              AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
             GROUP BY DATE(r.endedOn)
           ) as t2
         ) as avgLastMonth
