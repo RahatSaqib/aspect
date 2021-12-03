@@ -56,7 +56,7 @@ async function getDashboardWidget({ id, partnerId }, options) {
         this.orWhereNull('w.dashboards')
       }
     })
-    .select(['w.*', 'sw.*'])
+    .distinct(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
   return widgets
 }
@@ -103,7 +103,6 @@ async function summaryDashboard(request) {
       return widget
     })
   )
-
   return { ok: true, data }
 }
 
