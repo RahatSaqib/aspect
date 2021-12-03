@@ -728,14 +728,13 @@ describe('Result routes', () => {
 
     describe('Form data', () => {
       describe('Basic functionality', () => {
-        const context = createTestContext(server, {
+        const context = createTestContext(knex, server, {
           user: 'gates_rdt',
           password: 'gates2018',
           type: 'CommCareApp',
           partner: 'GatesRDT',
           site: 'commcare',
         })
-        const { runTest } = context
         let resultId
         let result
         let apiKey
@@ -745,27 +744,24 @@ describe('Result routes', () => {
           await context.createSites(['commcare'])
           await context.createDeviceApiKey()
 
-          return runTest(async knex => {
-            apiKey = context.apiKey // eslint-disable-line prefer-destructuring
-            await server
-              .post(commcarePluginPath)
-              .auth('commcare_test', apiKey.token)
-              .send(
-                getCommCarePayload({
-                  resultText: 'negative',
-                  age: 28,
-                  gender: 'male',
-                })
-              )
-              .then(res => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
+          apiKey = context.apiKey // eslint-disable-line prefer-destructuring
+          const res = await server
+            .post(commcarePluginPath)
+            .auth('commcare_test', apiKey.token)
+            .send(
+              getCommCarePayload({
+                resultText: 'negative',
+                age: 28,
+                gender: 'male',
               })
-            const device = await getDeviceFromApiKey(knex, apiKey)
-            resultId = await getLastResultId(knex, device.id)
-            result = await getLastResult(knex, device.id)
-            assert.isNull(result.formData)
-          })
+            )
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          const device = await getDeviceFromApiKey(knex, apiKey)
+          resultId = await getLastResultId(knex, device.id)
+          result = await getLastResult(knex, device.id)
+          assert.isNull(result.formData)
         })
 
         afterEach(context.afterEach)

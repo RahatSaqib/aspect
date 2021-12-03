@@ -15,7 +15,7 @@ const pluginPath = '/device/plugin/commcare'
 
 describe.skip('CommCare Result API routes', () => {
   describe('Check patient phone normalization malawi', () => {
-    const context = createTestContext(server, {
+    const context = createTestContext(knex, server, {
       user: 'reporter_admin',
       password: 'test07',
       type: 'CommCareApp',
@@ -58,7 +58,7 @@ describe.skip('CommCare Result API routes', () => {
     })
   })
   describe('check patient phone normalization after payload transformation myanmar', () => {
-    const context = createTestContext(server, {
+    const context = createTestContext(knex, server, {
       user: 'myanmar_admin',
       password: 'test07',
       type: 'CommCareApp',
@@ -101,7 +101,7 @@ describe.skip('CommCare Result API routes', () => {
     })
   })
   describe('admin result updates', () => {
-    const context = createTestContext(server, {
+    const context = createTestContext(knex, server, {
       user: 'gates_rdt',
       password: 'gates2018',
       type: 'CommCareApp',

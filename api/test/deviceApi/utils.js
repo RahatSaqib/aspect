@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const chai = require('chai')
 const { subHours } = require('date-fns')
-const { run } = require('../../src/db')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
@@ -63,6 +62,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
   await knex('SmsMessage').whereIn('resultId', resultIds).delete()
   await knex('ResultFileReference').whereIn('resultId', resultIds).delete()
+  await knex('ResultNote').whereIn('resultId', resultIds).delete()
   await knex('Result').whereIn('id', resultIds).delete()
   await knex('DeviceOperation').whereIn('id', opIds).delete()
   await knex('DeviceApiKey')
@@ -269,27 +269,47 @@ async function createDevice(
 async function createResult(
   knex,
   {
+    /**
+     * all values have defaults in DeviceApiTestContext - see
+     * either constructor or getResultProps()
+     */
     deviceId,
     userId,
-    sampleType = 'DBS',
-    assayName = 'DaktariHivVL',
-    instrumentSerial,
+    sampleType, // see fallback value in DeviceApiTestContext's constructor
+    assayName, // see fallback value in DeviceApiTestContext's constructor
+    instrumentSerial, // see fallback value in DeviceApiTestContext's constructor
+    externalId,
+    resultSourceId,
+    resultTypeId,
+    resultCategory1,
+    resultData,
+    startedOn,
+    endedOn,
+    resultWorkflowStatusId,
   }
 ) {
   const now = new Date()
+  if (!resultSourceId) resultSourceId = await resultSourceToId('Generated')
+  if (!resultTypeId) resultTypeId = await resultTypeToId('Patient')
+  if (!resultCategory1) resultCategory1 = await resultCategoryToId('NoResult')
+  if (!resultData) resultData = JSON.stringify({})
+  if (!startedOn) startedOn = subHours(now, 2)
+  if (!endedOn) endedOn = now
+  if (!resultWorkflowStatusId)
+    resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
 
   const { siteId, partnerId, geographyId } = await knex('Device as d')
     .where({ id: deviceId })
     .first()
 
   const [sampleId] = await knex('Sample').insert({
-    externalId: `NEW SAMPLE ${new Date().getTime()}`,
+    externalId,
     collectedOn: now,
     sampleTypeId: await sampleTypeToId(sampleType),
     originSiteId: siteId,
   })
 
-  const { id: daktariHivVlId } = await knex('Assay')
+  const { id: assayId } = await knex('Assay')
     .where({ externalId: assayName })
     .first()
 
@@ -298,27 +318,27 @@ async function createResult(
     createdBy: userId,
     updatedOn: now,
     updatedBy: userId,
-    externalId: `NEW RESULT ${new Date().getTime()}`,
-    assayId: daktariHivVlId,
+    externalId,
+    assayId,
     partnerId,
     geographyId,
     siteId,
     deviceId,
-    resultSourceId: await resultSourceToId('Generated'),
-    resultTypeId: await resultTypeToId('Patient'),
+    resultSourceId,
+    resultTypeId,
     sampleId,
-    resultCategory1: await resultCategoryToId('NoResult'),
-    resultData: JSON.stringify({}),
-    startedOn: subHours(now, 2),
-    endedOn: now,
+    resultCategory1,
+    resultData,
+    startedOn,
+    endedOn,
     reportableSiteId: siteId,
     instrumentSerial,
   })
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
-    resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
+    resultWorkflowStatusId,
     resultId,
-    changedOn: subHours(now, 2),
-    createdOn: subHours(now, 2),
+    changedOn: startedOn,
+    createdOn: startedOn,
     createdBy: 1,
   })
   await knex('Result').where('id', resultId).update({
@@ -334,12 +354,13 @@ async function createResult(
   return resultId
 }
 
-function createTestContext(server, auth) {
-  return new DeviceApiTestContext(server, auth)
+function createTestContext(knex, server, auth) {
+  return new DeviceApiTestContext(knex, server, auth)
 }
 
 class DeviceApiTestContext {
   constructor(
+    knex,
     server,
     {
       user,
@@ -350,8 +371,12 @@ class DeviceApiTestContext {
       approval = 'approved',
       instrumentSerial = 'A-SERIAL-NUMBER-00001',
       baseConfig = {},
+      sampleType = 'DBS',
+      // TODO: replace to 'GxMtbRif' after getting rid of Daktari in all tests
+      assayName = 'DaktariHivVL',
     }
   ) {
+    this.knex = knex
     this.server = server
     this.user = user
     this.password = password
@@ -361,6 +386,8 @@ class DeviceApiTestContext {
     this.approval = approval
     this.baseConfig = baseConfig
     this.instrumentSerial = instrumentSerial
+    this.sampleType = sampleType
+    this.assayName = assayName
     this.now = new Date()
 
     this.siteIds = []
@@ -374,124 +401,160 @@ class DeviceApiTestContext {
     ])
   }
 
-  createDeviceWithResult() {
-    return run(async knex => {
-      const { userId } = await knex('User')
-        .where({ name: this.user })
-        .first('id as userId')
-      this.userId = userId
-
-      const clientToken = await this.requestClientToken({
-        user: this.user,
-        password: this.password,
-      })
-      const apiKey = await this.createApiKey(knex)
-      // save device id for the following tests
-      this.apiKey = apiKey
-      this.clientAuth = `Bearer ${clientToken}`
-      this.deviceAuth = `Bearer ${apiKey.token}`
-
-      const siteId = await createSite(knex, {
-        partner: this.partner,
-        user: this.user,
-        site: this.site,
-      })
-      // create second site for merge results
-      const site2Id = await createSite(knex, {
-        partner: this.partner,
-        user: this.user,
-      })
-      this.siteIds.push(siteId)
-      this.siteIds.push(site2Id)
-
-      const deviceId = await createDevice(
-        knex,
-        {
-          siteId,
-          type: this.type,
-          approval: this.approval,
-          instrumentSerial: this.instrumentSerial,
-          baseConfig: this.baseConfig,
-        },
-        true
-      )
-      this.deviceId = deviceId
-      this.deviceIds.push(deviceId)
-
-      await createResult(knex, {
-        deviceId,
-        instrumentSerial: this.instrumentSerial,
-        userId,
-      })
-
-      await knex('DeviceApiKey')
-        .where({ token: apiKey.token })
-        .update({ deviceId })
-    })
+  async getResultProps(props) {
+    const now = new Date()
+    let {
+      externalId,
+      resultSourceId,
+      resultTypeId,
+      resultCategory1,
+      resultData,
+      resultWorkflowStatusId,
+      startedOn,
+      endedOn,
+    } = props
+    if (!externalId) externalId = `NEW RESULT ${new Date().getTime()}`
+    if (!resultSourceId) resultSourceId = await resultSourceToId('Generated')
+    if (!resultTypeId) resultTypeId = await resultTypeToId('Patient')
+    if (!resultCategory1) resultCategory1 = await resultCategoryToId('NoResult')
+    if (!resultData) resultData = JSON.stringify({})
+    if (!startedOn) startedOn = subHours(now, 2)
+    if (!endedOn) endedOn = now
+    if (!resultWorkflowStatusId)
+      resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
+    return {
+      sampleType: this.sampleType,
+      assayName: this.assayName,
+      externalId,
+      resultSourceId,
+      resultTypeId,
+      resultCategory1,
+      resultData,
+      resultWorkflowStatusId,
+      startedOn,
+      endedOn,
+    }
   }
 
-  createDeviceApiKey() {
-    return run(async knex => {
-      const clientToken = await this.requestClientToken({
-        user: this.user,
-        password: this.password,
-      })
-      const apiKey = await this.createApiKey(knex, this.site)
-      // save device id for the following tests
-      this.apiKey = apiKey
-      this.clientAuth = `Bearer ${clientToken}`
-      this.deviceAuth = `Bearer ${apiKey.token}`
+  async createDeviceWithResult(props = {}) {
+    const { knex } = this
+    const { userId } = await knex('User')
+      .where({ name: this.user })
+      .first('id as userId')
+    this.userId = userId
+
+    const clientToken = await this.requestClientToken({
+      user: this.user,
+      password: this.password,
     })
-  }
+    const apiKey = await this.createApiKey(knex)
+    // save device id for the following tests
+    this.apiKey = apiKey
+    this.clientAuth = `Bearer ${clientToken}`
+    this.deviceAuth = `Bearer ${apiKey.token}`
 
-  createDeviceWithApiKey() {
-    return run(async knex => {
-      const { userId } = await knex('User')
-        .where({ name: this.user })
-        .first('id as userId')
-      this.userId = userId
+    const siteId = await createSite(knex, {
+      partner: this.partner,
+      user: this.user,
+      site: this.site,
+    })
+    // create second site for merge results
+    const site2Id = await createSite(knex, {
+      partner: this.partner,
+      user: this.user,
+    })
+    this.siteIds.push(siteId)
+    this.siteIds.push(site2Id)
 
-      const clientToken = await this.requestClientToken({
-        user: this.user,
-        password: this.password,
-      })
-      const siteId = await createSite(knex, {
-        partner: this.partner,
-        user: this.user,
-        site: this.site,
-      })
-      // create second site for merge results
-      const site2Id = await createSite(knex, {
-        partner: this.partner,
-        user: this.user,
-      })
-      this.siteIds.push(siteId)
-      this.siteIds.push(site2Id)
-
-      const deviceId = await createDevice(knex, {
+    const deviceId = await createDevice(
+      knex,
+      {
         siteId,
         type: this.type,
         approval: this.approval,
+        instrumentSerial: this.instrumentSerial,
         baseConfig: this.baseConfig,
-      })
-      this.deviceId = deviceId
-      this.deviceIds.push(deviceId)
-      this.siteId = siteId // device is assigned to this site
-      const apiKey = await this.createApiKey(knex, null, deviceId)
-      // save device id for the following tests
-      this.apiKey = apiKey
-      this.clientAuth = `Bearer ${clientToken}`
-      this.deviceAuth = `Bearer ${apiKey.token}`
+      },
+      true
+    )
+    this.deviceId = deviceId
+    this.deviceIds.push(deviceId)
 
-      await createResult(knex, {
-        deviceId,
-        userId,
-      })
-
-      await knex('DeviceApiKey')
-        .where({ token: apiKey.token })
-        .update({ deviceId })
+    const resultProps = await this.getResultProps(props)
+    this.resultId = await createResult(knex, {
+      deviceId,
+      instrumentSerial: this.instrumentSerial,
+      userId,
+      ...resultProps,
     })
+
+    await knex('DeviceApiKey')
+      .where({ token: apiKey.token })
+      .update({ deviceId })
+  }
+
+  async createDeviceApiKey() {
+    const { knex } = this
+    const clientToken = await this.requestClientToken({
+      user: this.user,
+      password: this.password,
+    })
+    const apiKey = await this.createApiKey(knex, this.site)
+    // save device id for the following tests
+    this.apiKey = apiKey
+    this.clientAuth = `Bearer ${clientToken}`
+    this.deviceAuth = `Bearer ${apiKey.token}`
+  }
+
+  async createDeviceWithApiKey(props = {}) {
+    const { knex } = this
+    const { userId } = await knex('User')
+      .where({ name: this.user })
+      .first('id as userId')
+    this.userId = userId
+
+    const clientToken = await this.requestClientToken({
+      user: this.user,
+      password: this.password,
+    })
+    const siteId = await createSite(knex, {
+      partner: this.partner,
+      user: this.user,
+      site: this.site,
+    })
+    // create second site for merge results
+    const site2Id = await createSite(knex, {
+      partner: this.partner,
+      user: this.user,
+    })
+    this.siteIds.push(siteId)
+    this.siteIds.push(site2Id)
+
+    const deviceId = await createDevice(knex, {
+      siteId,
+      type: this.type,
+      approval: this.approval,
+      baseConfig: this.baseConfig,
+    })
+    this.deviceId = deviceId
+    this.deviceIds.push(deviceId)
+    this.siteId = siteId // device is assigned to this site
+    const apiKey = await this.createApiKey(knex, null, deviceId)
+    // save device id for the following tests
+    this.apiKey = apiKey
+    this.clientAuth = `Bearer ${clientToken}`
+    this.deviceAuth = `Bearer ${apiKey.token}`
+
+    const resultProps = await this.getResultProps(props)
+    this.resultId = await createResult(knex, {
+      deviceId,
+      userId,
+      ...resultProps,
+    })
+
+    await knex('DeviceApiKey')
+      .where({ token: apiKey.token })
+      .update({ deviceId })
   }
 
   requestClientToken({ user, password = 'test07' }) {
@@ -545,41 +608,44 @@ class DeviceApiTestContext {
     return apiKey
   }
 
-  createSites(siteNames) {
-    return run(async knex => {
-      await Promise.all(
-        _.map(siteNames, async siteName => {
-          const siteId = await createSite(knex, {
-            partner: this.partner,
-            user: this.user,
-            site: siteName,
-          })
-          this.siteIds.push(siteId)
+  async createSites(siteNames) {
+    const { knex } = this
+    await Promise.all(
+      _.map(siteNames, async siteName => {
+        const siteId = await createSite(knex, {
+          partner: this.partner,
+          user: this.user,
+          site: siteName,
         })
-      )
-    })
+        this.siteIds.push(siteId)
+      })
+    )
   }
 
-  runTest(test) {
-    return run(async knex => test(knex))
+  async runTest(test) {
+    return test(this.knex)
   }
 
-  afterEach() {
-    return run(async knex => {
-      // Wait for queue to be idle so all created data
-      // that will be created can be cleared
-      await queuePurge()
+  async cleanAll() {
+    const { knex } = this
 
-      if (this.apiKeysWithoutDevice.length > 0) {
-        await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
-      }
+    // Wait for queue to be idle so all created data
+    // that will be created can be cleared
+    await queuePurge()
 
-      if (this.siteIds.length > 0) {
-        await knex('Sample').whereIn('originSiteId', this.siteIds).delete()
-        await knex('InventoryItem').whereIn('siteId', this.siteIds).delete()
-        await knex('Site').whereIn('id', this.siteIds).delete()
-      }
-    })
+    if (this.apiKeysWithoutDevice.length > 0) {
+      await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
+    }
+
+    if (this.siteIds.length > 0) {
+      await knex('Sample').whereIn('originSiteId', this.siteIds).delete()
+      await knex('InventoryItem').whereIn('siteId', this.siteIds).delete()
+      await knex('Site').whereIn('id', this.siteIds).delete()
+    }
+  }
+
+  async afterEach() {
+    return this.cleanAll()
   }
 }
 
@@ -675,6 +741,8 @@ module.exports = {
   getLastResultId,
   getLastResult,
   createSite,
+  // createDevice,
+  // createResult,
   postToDeviceApi,
   getMaxDeviceId,
   getDeviceType,

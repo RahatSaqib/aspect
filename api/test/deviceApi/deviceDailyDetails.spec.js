@@ -17,7 +17,7 @@ const baseConfig = {
   firmwareUpdateRequired: 'no',
 }
 
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
