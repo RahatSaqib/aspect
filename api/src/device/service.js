@@ -245,7 +245,11 @@ async function getListDevices(query, auth) {
         .innerJoin('AlertMessage as am', 'am.id', 'notif.alertMessageId')
         .join('IssueType as it', 'i1.issueTypeId', 'it.id')
         .join('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
-        .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+        .leftOuterJoin('IssueCategory as ic', leftBuilder =>
+          leftBuilder
+            .on('it.issueCategoryId', 'ic.id')
+            .andOn('it.hasTag', knex.raw('1'))
+        )
         .whereRaw('i1.deviceId = d.id')
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
         .modify(addConstraints, dataConstraints, {})

@@ -18,9 +18,9 @@ async function baseAlertMessagesQuery(request, query, queryBuilder) {
     .join('Notification as notif', 'am.id', 'notif.alertMessageId')
     .join('Issue as i', 'notif.issueId', 'i.id')
     .join('Site as site', 'i.siteId', 'site.id')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
-    .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .where(builder => {
       if (_.isString(query.issueCategory) && query.issueCategory !== 'all')
@@ -43,6 +43,7 @@ async function baseAlertMessagesQuery(request, query, queryBuilder) {
           OK_ISSUE_STATUS,
         ])
     })
+    .whereRaw('it.hasTag= 1')
     .modify(addConstraints, dataConstraints, { device: 'd', site: 'site' })
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
