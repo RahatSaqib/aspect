@@ -23,11 +23,9 @@ describe('Result Comments', () => {
   let clinicianAccessToken = ''
   let adminAccessToken = ''
   before(async () => {
-    // create device and result
+    // create device and result with default props
     await context.createDeviceWithResult()
     resultId = context.resultId
-
-    // await knex('ResultNote').where('resultId', resultId).delete()
 
     clinicianAccessToken = await getAccessToken(
       'clinician',
