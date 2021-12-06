@@ -1,5 +1,4 @@
 const chai = require('chai')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
@@ -100,19 +99,18 @@ describe('Result Transfer', () => {
       assert.equal(transferredOn.length, 24)
     })
 
-    it('should return an error if result does not exist', () =>
-      runTestWithKnex(async knex => {
-        // get max resultId
-        const [{ resultId }] = await knex('Result').max('id as resultId')
+    it('should return an error if result does not exist', async () => {
+      // get max resultId
+      const [{ resultId }] = await knex('Result').max('id as resultId')
 
-        // transfer unknown resultId
-        const response = await server
-          .set('Authorization', `Bearer ${shared.token}`)
-          .post(`${path}/transfer/${resultId + 1}`)
-          .send({ siteId: 1 })
+      // transfer unknown resultId
+      const response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .post(`${path}/transfer/${resultId + 1}`)
+        .send({ siteId: 1 })
 
-        assert.equal(response.statusCode, 404)
-      }))
+      assert.equal(response.statusCode, 404)
+    })
 
     it('Should NOT transfer result to newSite2 because of older timeStamp', async () => {
       const response = await server

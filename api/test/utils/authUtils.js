@@ -8,13 +8,13 @@ const config = require('../../src/config')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = require('./testUtils')
 
-async function getAccessToken(username, password) {
+async function getAccessToken(username, password, clientName = 'Mocha/Chai') {
   return server
     .post('/api/auth')
     .send({
       name: username,
       password,
-      clientName: 'Mocha/Chai',
+      clientName,
     })
     .then(res => res.body.access)
 }
