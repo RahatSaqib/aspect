@@ -1,18 +1,17 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { format } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('/result/clinical-indicator-aggregations', () => {
   const path = '/api/result/clinical-indicator-aggregations'
-
-  shared.checkToken(server, path)
 
   let resultsForUser = null
   let reportableResultCategories = null
@@ -25,18 +24,17 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => res.body.data)
 
-  before(() =>
-    runTestWithKnex(async knex => {
-      resultsForUser = await getResultsForUser()
-      assays = await knex('Assay').select('id', 'externalId', 'i18nKey')
-      reportableResultCategories = await knex('ResultCategoryAssay as rca')
-        .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
-        .where('rca.reportable', true)
-        .distinct('rc.externalId')
-        .pluck('externalId')
-      resultCategories = await knex('ResultCategory as rc').select('*')
-    })
-  )
+  before(async () => {
+    shared.checkToken(server, path)
+    resultsForUser = await getResultsForUser()
+    assays = await knex('Assay').select('id', 'externalId', 'i18nKey')
+    reportableResultCategories = await knex('ResultCategoryAssay as rca')
+      .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+      .where('rca.reportable', true)
+      .distinct('rc.externalId')
+      .pluck('externalId')
+    resultCategories = await knex('ResultCategory as rc').select('*')
+  })
 
   it('should return all reportable results grouped by the default (resultCategory1) if query string is empty', async () =>
     server

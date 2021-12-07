@@ -17,6 +17,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
 import intersectionWith from 'lodash/intersectionWith'
 import keys from 'lodash/keys'
+import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
 
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -73,6 +74,11 @@ function getOptionByValue(data, requestedValue, idKey) {
 }
 
 function getSelectedOptions(data, someValue, idKey) {
+  // for grouped selects, pass it through
+  if (someValue && someValue[0]?.grouped) {
+    return someValue
+  }
+  // continue and format as normal
   if (!data || data.length === 0 || isNil(someValue)) {
     return false
   }
@@ -287,6 +293,7 @@ const SelectComponent = ({
     setInputValue({ selectedOption, action })
     dispatchFromRedux({ identifier, selectedOption, action })
   }
+
   return !busy ? (
     <div
       className={cssClasses('select__container', {
@@ -307,6 +314,7 @@ const SelectComponent = ({
         isMulti={isMulti}
         defaultValue={defaultOptionValue}
         options={data}
+        isOptionDisabled={option => option.disabled}
         placeholder={defaultOption || placeholder}
         styles={buildCustomStyles(theme)}
         onChange={onChange}
@@ -527,9 +535,14 @@ const AspectDropDown = ({
     throw new Error(queryErrorMessage)
   }
 
-  const onChanged = ({ identifier, selectedOption }) => {
+  const onChanged = eventData => {
+    const actionData = pick(eventData, [
+      'identifier',
+      'selectedOption',
+      'action',
+    ])
     const { ok, data: dataSource } = responseFromQuery
-    action({ identifier, selectedOption }, ok ? dataSource : null)
+    action(actionData, ok ? dataSource : null)
   }
 
   const showUi = selectOptions && (!hideIfNoOptions || selectOptions.length > 0)

@@ -1,0 +1,28 @@
+{
+  "probes": {
+    "probeSpc": "POS",
+    "probeIS1081IS6110": "POS",
+    "probeRpoB1": "NO RESULT",
+    "probeRpoB2": "NEG",
+    "probeRpoB3": "POS",
+    "probeRpoB4": "NO RESULT",
+    "qc1": "YES",
+    "qc2": "No",
+    "probeSpcCt": 12.32,
+    "probeIS1081IS6110Ct": 11.2,
+    "probeRpoB1Ct": 12.5,
+    "probeRpoB2Ct": 0.5,
+    "probeRpoB3Ct": 1.2,
+    "probeRpoB4Ct": 5.78,
+    "qc1Ct": 1,
+    "qc2Ct": 0.007,
+    "probeSpcEndpt": 1.6,
+    "probeIS1081IS6110Endpt": 2.33,
+    "probeRpoB1Endpt": 457,
+    "probeRpoB2Endpt": 12.43,
+    "probeRpoB3Endpt": 3.14,
+    "probeRpoB4Endpt": 8.9018,
+    "qc1Endpt": 0.1234,
+    "qc2Endpt": 1.22
+  }
+}

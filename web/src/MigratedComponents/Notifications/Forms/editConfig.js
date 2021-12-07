@@ -3,11 +3,15 @@ import capitalize from 'lodash/capitalize'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import intersectionBy from 'lodash/intersectionBy'
+import filter from 'lodash/filter'
+import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 import union from 'lodash/union'
 import uniqWith from 'lodash/uniqWith'
+import xor from 'lodash/xor'
 
 import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
@@ -394,15 +398,14 @@ const getSectionsBase = formatMessage => [
   },
 ]
 
-const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
-  const validationBase = getBaseValidation(formatMessage, messages)
-  const jobFunctionsRows = {
+function buildJobFunctionsRows(jobFunctions) {
+  return {
     id: 'toAnyOfTheseJobFunctions',
     label: 'toAnyOfTheseJobFunctions',
     labelI18nKey: 'toAnyOfTheseJobFunctions',
     rows: [
       ...reduce(
-        jobFunctions,
+        [...jobFunctions],
         (acc, jf, index) => {
           acc = [
             ...acc,
@@ -427,7 +430,10 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
                   },
                   label: jf.name,
                   onAfterChange: formik => {
-                    formik.setFieldTouched(`jobFunctions[0].checked`, true)
+                    formik.setFieldTouched(
+                      `jobFunctions[${index}].checked`,
+                      true
+                    )
                   },
                 },
               ],
@@ -475,17 +481,112 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
               ],
             },
           ]
-
           return acc
         },
         []
       ),
     ],
   }
+}
+
+function buildSendToPersons(formatMessage) {
+  return {
+    id: 'sendToPersons',
+    label: 'sendToPersons',
+    labelI18nKey: 'personsSelectLabel',
+    rows: [
+      {
+        id: 81,
+        items: [
+          {
+            id: 'persons',
+            label: formatMessage(messages.selectPersonOption),
+            initialValue: [],
+            controlType: {
+              component: 'select',
+              endpoint: PERSON_LIST.ENDPOINT,
+              hideIfNoOptions: false,
+              isMulti: true,
+              isClearable: true,
+              queryKey: PERSON_LIST.KEY,
+              normalizeLoadedData: (response, formik) => {
+                const { values, setFieldValue } = formik
+                function makeLabel(name, state) {
+                  const stateLabel = isEmpty(state) ? '' : ` (${state})`
+                  return `${name} ${stateLabel}`
+                }
+                const { ok, data } = response
+                const options = [
+                  {
+                    label: formatMessage(messages.optionPersonRoleSet),
+                    options: [],
+                  },
+                  {
+                    label: formatMessage(messages.optionPersonRoleNotSet),
+                    options: [],
+                  },
+                ]
+                if (ok === true) {
+                  const selected = intersectionBy(data, values.persons, 'id')
+                  if (selected?.length) {
+                    const initialValues = []
+                    map(selected, ({ id, name, state }) =>
+                      initialValues.push({
+                        label: makeLabel(name, state),
+                        value: id,
+                        grouped: true,
+                      })
+                    )
+                    values.persons = initialValues
+                    setFieldValue('persons', initialValues)
+                  }
+                  const withJob = filter(data, item => !isEmpty(item.level))
+                  const withoutJob = xor(data, withJob)
+                  map(withJob, ({ id, name, state }) =>
+                    options[0].options.push({
+                      label: makeLabel(name, state),
+                      value: id,
+                      grouped: true,
+                    })
+                  )
+                  map(withoutJob, ({ name, state }) =>
+                    options[1].options.push({
+                      label: makeLabel(name, state),
+                      value: null,
+                      disabled: true,
+                      grouped: true,
+                    })
+                  )
+                }
+                return options?.length ? options : null
+              },
+            },
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            labelI18nKey: 'selectPersonOption',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const getFormConfig = (
+  formatMessage,
+  _notificationType,
+  jobFunctions,
+  isEdit
+) => {
+  const validationBase = getBaseValidation(formatMessage, messages)
   const sections = [
     ...getSectionsBase(formatMessage, validationBase),
-    jobFunctionsRows,
+    buildSendToPersons(formatMessage),
+    buildJobFunctionsRows(jobFunctions),
   ]
+
   return {
     title: isEdit
       ? formatMessage(messages.titleEdit, 'Edit Notification')
@@ -506,4 +607,4 @@ const getConfig = (formatMessage, notificationType, jobFunctions, isEdit) => {
   }
 }
 
-export default getConfig
+export default getFormConfig

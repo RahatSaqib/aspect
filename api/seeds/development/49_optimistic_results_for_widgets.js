@@ -90,15 +90,12 @@ async function seed(knex) {
       `
       (
         (
-          YEAR(r.endedOn) = YEAR(CURRENT_DATE) 
-          AND 
-          MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+          r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
         )
         OR
         (
-          YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
-          AND 
-          MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+          r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
         )
       )
       `

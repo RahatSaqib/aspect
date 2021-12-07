@@ -56,7 +56,9 @@ describe('Permissions', () => {
 
   describe('Get permissions', () => {
     const path = `/api/job-function/permissions/${personId}/${partner1}`
-    shared.checkToken(server, path)
+    before(() => {
+      shared.checkToken(server, path)
+    })
     it('should return 200 and list of permissions for current person and partner', done => {
       server
         .get(path)

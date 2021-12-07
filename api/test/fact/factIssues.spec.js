@@ -1,7 +1,8 @@
 const format = require('date-fns/format')
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const { addDays, subDays, subHours } = require('date-fns')
-const { run } = require('../../src/db')
+const { knex } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
   deviceOffline,
@@ -39,11 +40,11 @@ const {
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 const USER_LU = 'myanmar_lab1'
 const USER_RO = 'myanmar_ro1'
 
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: USER_LU,
   password: USER_LU,
   // We want to create a new device for this test, so use a type
@@ -58,18 +59,16 @@ describe('Fact based issues', () => {
   let siteName
 
   const { runTest } = context
-  before(() =>
-    run(async knex => {
-      const { siteId } = await knex('JobContext as jc')
-        .innerJoin('Job as j', 'jc.jobId', 'j.id')
-        .innerJoin('Person as p', 'j.personId', 'p.id')
-        .innerJoin('User as u', 'p.userId', 'u.id')
-        .where('u.name', USER_LU)
-        .first('jc.siteId')
-      const site = await knex('Site').where({ id: siteId }).first('name')
-      siteName = site.name
-    })
-  )
+  before(async () => {
+    const { siteId } = await knex('JobContext as jc')
+      .innerJoin('Job as j', 'jc.jobId', 'j.id')
+      .innerJoin('Person as p', 'j.personId', 'p.id')
+      .innerJoin('User as u', 'p.userId', 'u.id')
+      .where('u.name', USER_LU)
+      .first('jc.siteId')
+    const site = await knex('Site').where({ id: siteId }).first('name')
+    siteName = site.name
+  })
   beforeEach(async () => {
     await context.createDeviceApiKey()
   })
@@ -1091,25 +1090,23 @@ describe('Fact based issues', () => {
   describe('New results available', () => {
     let issueId = null
 
-    after(() =>
-      run(async knex => {
-        await waitForIdle()
+    after(async () => {
+      await waitForIdle()
 
-        // remove result and sample:
-        const { id: resultId, sampleId } = await knex('Result')
-          .where('externalId', 'AVAILABLE_RESULT_1')
-          .first('id', 'sampleId')
-        await knex('Result')
-          .update('treatmentStatusLogId', null)
-          .where('id', resultId)
-        await knex('ResultTreatmentStatusLog')
-          .where('resultId', resultId)
-          .delete()
-        await knex('Result').where('id', resultId).delete()
-        await knex('Sample').where('id', sampleId).delete()
-        await knex('Issue').where('id', issueId).delete()
-      })
-    )
+      // remove result and sample:
+      const { id: resultId, sampleId } = await knex('Result')
+        .where('externalId', 'AVAILABLE_RESULT_1')
+        .first('id', 'sampleId')
+      await knex('Result')
+        .update('treatmentStatusLogId', null)
+        .where('id', resultId)
+      await knex('ResultTreatmentStatusLog')
+        .where('resultId', resultId)
+        .delete()
+      await knex('Result').where('id', resultId).delete()
+      await knex('Sample').where('id', sampleId).delete()
+      await knex('Issue').where('id', issueId).delete()
+    })
 
     it('should create a new results available issue and resolve it when it is older than 24 hours', () =>
       runTest(async knex => {

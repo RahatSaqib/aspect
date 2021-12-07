@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const {
   addMinutes,
@@ -32,7 +33,7 @@ const { getAdminId } = require('../utils/authUtils')
 const server = require('../utils/testUtils')
 const { addResultDownloadLog } = require('../../src/result/service')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 const getClinicianAccessToken = async () => {
   const res = await server.post('/api/auth').send({
@@ -56,12 +57,11 @@ describe('Result routes', () => {
 
   let clinicianAccessToken = ''
   before(async () => {
+    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     const validateResponse = res => {
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -728,14 +728,13 @@ describe('Result routes', () => {
 
     describe('Form data', () => {
       describe('Basic functionality', () => {
-        const context = createTestContext(server, {
+        const context = createTestContext(knex, server, {
           user: 'gates_rdt',
           password: 'gates2018',
           type: 'CommCareApp',
           partner: 'GatesRDT',
           site: 'commcare',
         })
-        const { runTest } = context
         let resultId
         let result
         let apiKey
@@ -745,27 +744,24 @@ describe('Result routes', () => {
           await context.createSites(['commcare'])
           await context.createDeviceApiKey()
 
-          return runTest(async knex => {
-            apiKey = context.apiKey // eslint-disable-line prefer-destructuring
-            await server
-              .post(commcarePluginPath)
-              .auth('commcare_test', apiKey.token)
-              .send(
-                getCommCarePayload({
-                  resultText: 'negative',
-                  age: 28,
-                  gender: 'male',
-                })
-              )
-              .then(res => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
+          apiKey = context.apiKey // eslint-disable-line prefer-destructuring
+          const res = await server
+            .post(commcarePluginPath)
+            .auth('commcare_test', apiKey.token)
+            .send(
+              getCommCarePayload({
+                resultText: 'negative',
+                age: 28,
+                gender: 'male',
               })
-            const device = await getDeviceFromApiKey(knex, apiKey)
-            resultId = await getLastResultId(knex, device.id)
-            result = await getLastResult(knex, device.id)
-            assert.isNull(result.formData)
-          })
+            )
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          const device = await getDeviceFromApiKey(knex, apiKey)
+          resultId = await getLastResultId(knex, device.id)
+          result = await getLastResult(knex, device.id)
+          assert.isNull(result.formData)
         })
 
         afterEach(context.afterEach)
@@ -873,7 +869,6 @@ describe('Result routes', () => {
       })
 
       describe.skip('COVID-19 Result Updates', () => {
-        shared.checkToken(server, path)
         const covidDeviceTypeDevices = {
           CepheidGeneXpert: null,
           Aspect: null,
@@ -892,6 +887,7 @@ describe('Result routes', () => {
           `${deviceTypeId} TEST-CASE-ID`
 
         before(async () => {
+          shared.checkToken(server, path)
           partnerId = (
             await knex('Partner').where('name', 'Partner One').first('id')
           ).id

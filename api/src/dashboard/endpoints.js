@@ -38,6 +38,49 @@ const routes = [
             ),
         },
       },
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          data: Joi.array().items(
+            Joi.object().keys({
+              id: Joi.number().integer().required(),
+              title: Joi.string().max(255).required(),
+              titleI18nKey: Joi.string().max(255).allow('', null),
+              subTitle: Joi.string().max(255).allow('', null),
+              subTitleI18nKey: Joi.string().max(255).allow('', null),
+              link: Joi.string().max(500).allow('', null),
+              externalId: Joi.string().max(500).required(),
+              description: Joi.string().max(500).allow('', null),
+              descriptionI18nKey: Joi.string().max(255).allow('', null),
+              dashboards: Joi.string().max(2048).allow('', null),
+              linkParams: Joi.string().max(255).allow('', null),
+              options: Joi.alternatives()
+                .try(Joi.string(), Joi.object())
+                .allow(null, ''),
+              icon: Joi.string().max(50).allow('', null),
+              statUnit: Joi.string().max(50).allow('', null),
+              statUnitI18nKey: Joi.string().max(255).allow('', null),
+              statStatus: Joi.string().max(255).allow('', null),
+              statStatusI18nKey: Joi.string().max(255).allow('', null),
+              extraUnit: Joi.string().max(50).allow('', null),
+              extraUnitI18nKey: Joi.string().max(255).allow('', null),
+              extraLabel: Joi.string().max(255).allow('', null),
+              extraLabelI18nKey: Joi.string().max(255).allow('', null),
+              dashboardWidgetId: Joi.number().integer().required(),
+              count: Joi.alternatives()
+                .try(Joi.string().max(50), Joi.number())
+                .required(),
+              unit: Joi.alternatives()
+                .try(Joi.string().max(50), Joi.number())
+                .allow(null, ''),
+              extra: Joi.string().max(1024).allow('', null),
+              alert: Joi.alternatives()
+                .try(Joi.string(), Joi.object())
+                .allow(null, ''),
+            })
+          ),
+        },
+      },
     },
   },
   {

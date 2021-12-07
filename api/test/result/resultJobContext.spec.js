@@ -23,7 +23,6 @@ describe('Result route Job constraints', () => {
   })
 
   describe('Assay based', () => {
-    shared.checkToken(server, path)
     const bdMgitDeviceTypeExternalId = 'BDMGIT'
     const assayBdMgitGndAssayExternalId = 'assayBdMgitGnd'
     const bdMgitGndClinicianUsername = 'mgit_gnd_clinician'
@@ -52,6 +51,7 @@ describe('Result route Job constraints', () => {
     let bothAssaysClinicianAuthAccessToken
 
     before(async () => {
+      shared.checkToken(server, path)
       const { id: partnerId } = await knex('Partner')
         .where('name', partnerName)
         .first('id')
@@ -242,7 +242,6 @@ describe('Result route Job constraints', () => {
   })
 
   describe('Mixed disease and site based', () => {
-    shared.checkToken(server, path)
     const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
     const assayDaktariHivVlExternalId = 'DaktariHivVL'
     const diseaseHivExternalId = 'hiv'
@@ -258,6 +257,7 @@ describe('Result route Job constraints', () => {
     let covid19SiteExternalId
 
     before(async () => {
+      shared.checkToken(server, path)
       const { id: partnerId } = await knex('Partner')
         .where('name', partnerName)
         .first('id')

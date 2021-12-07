@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const {
@@ -43,7 +44,7 @@ const { createTestContext } = require('../deviceApi/utils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device routes', () => {
   const path = '/api/device'
@@ -51,8 +52,6 @@ describe('Device routes', () => {
   let deviceApprovals
   let issuesToDelete = []
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     const daktariVirologyDeviceTypeExternalId = 'DaktariVirology'
     const daktariManagerUsername = 'daktari_manager'
     const daktariManagerPassword = 'daktari-manager-pass'
@@ -64,6 +63,7 @@ describe('Device routes', () => {
     let theGreatestDeviceIEverCreated
 
     before(async () => {
+      shared.checkToken(server, path)
       deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
       deviceApprovals = await allDeviceApprovalToId()
       const issueStatus = await allIssueStatusToId()
@@ -673,8 +673,6 @@ describe('Device routes', () => {
   })
 
   describe('POST', () => {
-    shared.checkToken(server, path)
-
     describe('Device Maintenance - Calibration and Warranty', () => {
       let deviceMaintenanceIdsToRestore
       let deviceMaintenanceIdsToDelete = []
@@ -1168,7 +1166,7 @@ describe('Device routes', () => {
 
   describe('Message Queue', () => {
     describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
-      const context = createTestContext(server, {
+      const context = createTestContext(knex, server, {
         user: 'admin',
         type: 'DaktariVirology',
         partner: 'Partner One',

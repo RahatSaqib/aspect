@@ -149,7 +149,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
     {
       key: 'lastTriggeredOn',
       label: formatMessage(messages.notificationsTableHeaderLastTriggered),
-      width: 20,
+      width: 10,
       disableHide: true,
       disableGroupBy: true,
       aggregate: timeClassification,
@@ -164,7 +164,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       key: 'name',
       filterKey: 'notificationName',
       label: formatMessage(messages.notificationsTableHeaderName),
-      width: 35,
+      width: 30,
       disableHide: true,
       disableGroupBy: true,
       aggregate: 'count',
@@ -177,7 +177,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       key: 'typeCategory',
       filterKey: 'typeCategory',
       label: formatMessage(messages.notificationsTableHeaderCategory),
-      width: 20,
+      width: 15,
       disableHide: true,
       disableGroupBy: true,
       translate: translate(messages, formatMessage),
@@ -185,7 +185,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
     {
       key: 'totalTriggers',
       label: formatMessage(messages.notificationsTableHeaderTotalTriggers),
-      width: 20,
+      width: 5,
       disableHide: true,
       disableGroupBy: true,
       aggregate: 'sum',
@@ -196,7 +196,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       format: NumberCell,
     },
     {
-      key: 'contacts',
+      key: 'jobFunctions',
       label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       disableHide: true,
       disableGroupBy: true,
@@ -204,6 +204,21 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       aggregate: totalItemCount,
       Aggregated: ({ value }) =>
         `${formatMessage(messages.notificationsTableJobFunctionsCount, {
+          itemCount: formatNumber(value),
+        })}`,
+      format: ContactsCell,
+    },
+    {
+      key: 'persons',
+      label: formatMessage(
+        messages.notificationsTableHeaderJobFunctionsPersons
+      ),
+      disableHide: true,
+      disableGroupBy: true,
+      width: 25,
+      aggregate: totalItemCount,
+      Aggregated: ({ value }) =>
+        `${formatMessage(messages.notificationsTableJobFunctionsCountPersons, {
           itemCount: formatNumber(value),
         })}`,
       format: ContactsCell,

@@ -14,7 +14,9 @@ describe('Site routes', () => {
     let siteId = 1
 
     let siteData
-    shared.checkToken(server, path)
+    before(() => {
+      shared.checkToken(server, path)
+    })
 
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
@@ -230,26 +232,6 @@ describe('Site routes', () => {
       })
 
       describe('GET', () => {
-        it('should return a list of sites names and IDs when using valid token', async () => {
-          const res = await server
-            .get(`${path}/select-list`)
-            .set('Authorization', `Bearer ${shared.token}`)
-
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 2)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'name')
-          assert.property(res.body.data[0], 'partnerId')
-          assert.property(res.body.data[0], 'countryId')
-          assert.property(res.body.data[0], 'stateId')
-          assert.property(res.body.data[0], 'lgaId')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'externalId')
-        })
-
         it('should return a list of sites names and IDs when using valid token filtered by tags', async () => {
           const res = await server
             .get(`${path}/select-list`)

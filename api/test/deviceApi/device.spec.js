@@ -26,7 +26,7 @@ const baseConfig = {
   firmwareUpdateRequired: 'no',
 }
 
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
@@ -209,7 +209,7 @@ describe('Device API routes', () => {
   })
 
   describe('add new device', () => {
-    const newDeviceContext = createTestContext(server, {
+    const newDeviceContext = createTestContext(knex, server, {
       user: 'reporter_admin',
       partner: 'Reporter',
       type: 'DaktariInSight',

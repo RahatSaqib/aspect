@@ -8,6 +8,22 @@ const optionsForSendXXX = requiredMessage => ({
   otherwise: Yup.string().nullable(),
 })
 
+function ensurePersonOrJobFunction(yupThis, formatMessage) {
+  const {
+    parent: { persons, jobFunctions },
+  } = yupThis
+
+  if (jobFunctions.length > 0 || persons?.length > 0) {
+    return true
+  }
+
+  return new Yup.ValidationError(
+    formatMessage(messages.personOrJobFunctionRequired),
+    null,
+    'persons'
+  )
+}
+
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
@@ -51,19 +67,16 @@ const validationSchema = formatMessage =>
             .min(1, formatMessage(messages.geographyRequired)),
         }),
       jobFunctions: Yup.array()
-        .ensure()
-        .required()
-        .transform((value, originalValue) => {
+        .transform((_value, originalValue) => {
           const result = filter(originalValue, elem => elem.checked)
           return result
         })
-        .test('oneOfRequired', item => {
-          if (item.length > 0) return true
-          return new Yup.ValidationError(
-            formatMessage(messages.jobFunctionRequired),
-            null,
-            'jobFunctions[0].checked'
-          )
+        .test(function () {
+          /**
+           * vanilla js function `function ()` allows access to 'this'
+           * needed for this validation flow
+           */
+          return ensurePersonOrJobFunction(this, formatMessage)
         })
         .of(
           Yup.object().shape({
@@ -77,6 +90,7 @@ const validationSchema = formatMessage =>
             ),
           })
         ),
+      persons: Yup.array().required(),
       sendEmail: Yup.boolean(),
       sendSms: Yup.boolean(),
       sendWeb: Yup.boolean(),
@@ -112,7 +126,6 @@ const validationSchema = formatMessage =>
       if (item.sendEmail || item.sendSms || item.sendWeb) {
         return true // everything is fine
       }
-
       return new Yup.ValidationError(
         formatMessage(messages.notificationChannels),
         null,

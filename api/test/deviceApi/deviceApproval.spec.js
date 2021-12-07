@@ -4,11 +4,12 @@ const {
   getDeviceConfigurationData,
   getLastDeviceOperationData,
 } = require('./utils')
+const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
 const { assert } = chai
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
@@ -86,18 +87,6 @@ describe('Device API approval tests', () => {
           })
         const opPost2 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual({ shouldChangeThisOtherThing: 'e' }, opPost2)
-
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.isNotOk(res.body.configuration)
-            assert.isNotOk(res.body.operation)
-            assert.isNotOk(res.body.result)
-            assert.equal(res.body.approval.id, 'assigned')
-          })
       }))
   })
 })

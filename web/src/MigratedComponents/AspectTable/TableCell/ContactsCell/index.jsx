@@ -29,7 +29,7 @@ const ContactsCell = ({ value }) => {
         {tempContacts.join(', ')}
         <span className={cssClasses('contactsrow__more')}>
           {formatMessage(messages.moreContacts, {
-            contacts: value.length - CONTACTS.MAX_VISIBLE_COUNT,
+            contacts: valToArray.length - CONTACTS.MAX_VISIBLE_COUNT,
             name: 'contact',
           })}
         </span>
@@ -42,7 +42,11 @@ const ContactsCell = ({ value }) => {
   ) {
     return <div>{valToArray.join(', ')}</div>
   }
-  return <div>{formatMessage(messages.notConfigured)}</div>
+  return (
+    <div className={cssClasses('message--not-configured')}>
+      {formatMessage(messages.notConfigured)}
+    </div>
+  )
 }
 
 ContactsCell.defaultProps = {

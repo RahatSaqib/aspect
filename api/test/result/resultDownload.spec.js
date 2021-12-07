@@ -37,6 +37,7 @@ describe('Result download routes', () => {
   let totalResults
 
   before(async () => {
+    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
@@ -119,8 +120,6 @@ describe('Result download routes', () => {
   })
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     function assertReporterResultDownloadResponse(response) {
       expect(response).to.containSubset({
         status: 200,

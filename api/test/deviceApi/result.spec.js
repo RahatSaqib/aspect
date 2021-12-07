@@ -1,7 +1,8 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
-const { run } = require('../../src/db')
+const { knex } = require('../../src/db')
 const {
   parseDateOrDefault,
   getLocalDateInUtc,
@@ -20,7 +21,7 @@ const { waitForIdle } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 const devicePath = '/device'
 const devicePostResultPath = '/device/result'
@@ -79,7 +80,7 @@ describe('Device Result API routes', () => {
   }
 
   describe('admin result updates', () => {
-    const context = createTestContext(server, {
+    const context = createTestContext(knex, server, {
       user: 'admin',
       type: 'DaktariVirology',
       partner: 'Partner One',
@@ -1364,17 +1365,13 @@ describe('Device Result API routes', () => {
       const resultIds = []
 
       afterEach(async () => {
-        run(async knex => {
-          const inventoryItemIds = await knex('InventoryLog')
-            .whereIn('resultId', resultIds)
-            .pluck('inventoryItemId')
-          await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
-          await knex('InventoryLog').whereIn('resultId', resultIds).delete()
-          await knex('ResultWorkflowLog')
-            .whereIn('resultId', resultIds)
-            .delete()
-          await knex('Result').whereIn('id', resultIds).delete()
-        })
+        const inventoryItemIds = await knex('InventoryLog')
+          .whereIn('resultId', resultIds)
+          .pluck('inventoryItemId')
+        await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+        await knex('InventoryLog').whereIn('resultId', resultIds).delete()
+        await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+        await knex('Result').whereIn('id', resultIds).delete()
       })
 
       it('should be set to the site of the device if the result does not specify an origin site and the device does not have a default reportable site', () =>

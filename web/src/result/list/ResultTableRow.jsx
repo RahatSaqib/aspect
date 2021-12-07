@@ -41,6 +41,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell>
         {formatMessage(
           messages[result.get('assayI18nKey')],
+          null,
           result.get('assayName')
         )}
       </TableCell>
@@ -50,14 +51,28 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
             messages[result.get('resultCategory1Titlei18nKey')],
             null,
             result.get('resultCategory1Title')
-          )}:${formatMessage(messages[result.get('resultCategory1I18nKey')])}`}
+          )}:${formatMessage(
+            messages[result.get('resultCategory1I18nKey')],
+            null,
+            result.get('resultCategory1Name')
+          )}`}
           {result.get('resultCategory2I18nKey') &&
+            result.get('resultCategory2Titlei18nKey') &&
             ` | ${formatMessage(
               messages[result.get('resultCategory2Titlei18nKey')],
               null,
               result.get('resultCategory2Title')
             )}:${formatMessage(
-              messages[result.get('resultCategory2I18nKey')]
+              messages[result.get('resultCategory2I18nKey')],
+              null,
+              result.get('resultCategory2Name')
+            )}`}
+          {result.get('resultCategory2I18nKey') &&
+            !result.get('resultCategory2Titlei18nKey') &&
+            ` | ${formatMessage(
+              messages[result.get('resultCategory2I18nKey')],
+              null,
+              result.get('resultCategory2Name')
             )}`}
         </TableCell>
       ) : (
@@ -78,6 +93,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell hiddenOn="md">
         {formatMessage(
           messages[result.get('resultWorkflowStatusI18nkey')],
+          null,
           result.get('resultWorkflowStatus')
         )}
       </TableCell>
@@ -86,6 +102,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           <Tooltip
             title={formatMessage(
               messages[result.get('resultTreatmentStatusI18nKey')],
+              null,
               result.get('resultTreatmentStatus')
             )}
             disableInteractive

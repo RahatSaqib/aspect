@@ -1,6 +1,9 @@
 const _ = require('lodash')
 const { subDays, addMilliseconds, subMinutes } = require('date-fns')
-const { assert, expect } = require('chai')
+const chai = require('chai')
+const chaiSubset = require('chai-subset')
+
+const { assert, expect } = chai.use(chaiSubset)
 const Promise = require('bluebird')
 
 const { queuePurge } = require('../utils/mqUtils')
@@ -29,7 +32,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
-const { getRandomTBPatientData } = require('../../seeds/commonTbresults')
+const { getRandomGeneXpertPatientData } = require('../../seeds/commonTBResults')
 
 const totalPatients = patients.length
 
@@ -212,7 +215,10 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
           const sample = samples[i % samples.length]
 
           // get sample patient
-          const patient = getRandomTBPatientData(totalPatients - 1, patients)
+          const patient = getRandomGeneXpertPatientData(
+            totalPatients - 1,
+            patients
+          )
 
           // set values for all categories
           dataCategories.forEach(category => {
