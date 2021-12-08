@@ -2192,21 +2192,6 @@ function getBaseQueryForResults() {
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false } = query
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryGroup as rcg', function () {
-      this.on('r.assayId', 'rcg.assayId')
-        .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
-            'r.resultCategory1',
-            'rcg.resultCategory1Id'
-          )
-        })
-        .andOn(function () {
-          this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
-            'r.resultCategory2',
-            'rcg.resultCategory2Id'
-          )
-        })
-    })
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
         'r.resultCategory1',
@@ -2220,6 +2205,24 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       )
     })
     .modify(b => {
+      // this join is very expensive (doubles query time) and we're only using it for filtering, so only join on demand
+      if (query.resultCategoryGroupId) {
+        b.leftJoin('ResultCategoryGroup as rcg', function () {
+          this.on('r.assayId', 'rcg.assayId')
+            .andOn(function () {
+              this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
+                'r.resultCategory1',
+                'rcg.resultCategory1Id'
+              )
+            })
+            .andOn(function () {
+              this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
+                'r.resultCategory2',
+                'rcg.resultCategory2Id'
+              )
+            })
+        })
+      }
       if (query.reportableSiteId || query.reportableSiteName) {
         /**
          * onlyEverTransferred filter can only be applied if
