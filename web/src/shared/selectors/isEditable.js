@@ -1,7 +1,8 @@
-import { isImmutable } from 'immutable'
+import { isImmutable, Set } from 'immutable'
 
 export default function isEditable(user, module) {
+  const permissions = new Set(user.jwt.permissions)
   return isImmutable(user)
-    ? !user.jwt.permissions.intersect([`${module}:edit`]).isEmpty()
-    : user.jwt.permissions.includes(`${module}:edit`)
+    ? !permissions.intersect([`${module}:edit`]).isEmpty()
+    : permissions.includes(`${module}:edit`)
 }
