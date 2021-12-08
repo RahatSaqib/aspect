@@ -55,9 +55,7 @@ const enhance = compose(
   pure,
   reduxForm({
     form: 'siteDetail',
-    // asyncValidate: asyncValidate(schema),
     enableReinitialize: true,
-    // asyncValidating: true,
     validate,
   }),
   withHandlers({
