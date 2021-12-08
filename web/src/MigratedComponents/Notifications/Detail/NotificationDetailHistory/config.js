@@ -22,7 +22,8 @@ import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../../AspectTable/TableCell/NumberCell'
 
 const baseConfig = ({ formatMessage }) => ({
-  name: 'event',
+  name: formatMessage(messages.event),
+  namePlural: formatMessage(messages.events),
   columns: [
     {
       key: 'date',
