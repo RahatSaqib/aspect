@@ -64,18 +64,10 @@ async function getStatistics() {
       'nt.notificationTypeCategoryId',
       'ntc.id'
     )
-    .leftOuterJoin('Result as r', 'n.resultId', 'r.id')
-    .leftOuterJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
-    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
-    /**
-     * TODO:
-     * Now we have only resultBased notification type to process.
-     * But in case when notificationType doesn't depend on Result (i.e. reportBased)
-     * change below condition to be with OR to include condition for reportBased,
-     * or change `on` for joins in 'Result as r' above.
-     * And remove this comment.
-     */
+    .innerJoin('Result as r', 'n.resultId', 'r.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Country as c', 'g.countryId', 'c.id')
     .whereIn('ntc.externalId', ['resultBased'])
     .where(qb => {
       qb.whereNotNull('n.emailMessageId').orWhereNotNull('n.smsMessageId')
@@ -116,11 +108,6 @@ async function getStatistics() {
     .innerJoin('Country as c', 'g.countryId', 'c.id')
     .select([
       ...baseColumns,
-      /**
-       * TODO:
-       * ask Stefan if `endedOn` to use, or may be `createdOn`,
-       * because GxAlert uses `insertedOn` field here.
-       */
       knex.raw(`DATE_FORMAT(r.endedOn, '%Y-%m-1') AS Date`),
     ])
     .count({
@@ -152,22 +139,9 @@ async function getStatistics() {
      * from stored procedure `GetAdoptionConnectivity` in GxAlert
      */
     .innerJoin('Result as r0', 'd.id', 'r0.deviceId')
-    .leftOuterJoin('Result as r', qb => {
-      qb.on('d.id', 'r.deviceId').andOn(
-        'r.updatedOn',
-        '>',
-        knex.raw('DATE_SUB(NOW(), INTERVAL 30 DAY)')
-      )
-    })
     .select([
       ...baseColumns,
-      knex.raw(`
-        CASE 
-        WHEN d.lastPingOn IS NOT NULL AND d.lastPingOn > IFNULL(MAX(r.updatedOn), DATE_SUB(NOW(), INTERVAL 30 DAY))
-        THEN d.lastPingOn
-        ELSE IFNULL(MAX(r.updatedOn), DATE_SUB(NOW(), INTERVAL 30 DAY))
-        END AS Date
-      `),
+      knex.raw('GREATEST(d.lastPingOn, d.lastSeenOn) as Date'),
       'dms.id as MaintenanceStatusId',
       'dms.i18nKey as MaintenanceReasonId',
     ])

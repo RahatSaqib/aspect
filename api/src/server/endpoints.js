@@ -72,7 +72,7 @@ const routes = [
                     .description('Month date when first device was created'),
                   Total: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .required()
                     .description('Total number of devices per country'),
                 })
@@ -88,7 +88,7 @@ const routes = [
                     .description('Month date when device was created'),
                   Total: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .required()
                     .description(
                       'Total number of NEW devices per country-month'
@@ -106,7 +106,7 @@ const routes = [
                     .description('Month date of result'),
                   Total: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .required()
                     .description('Total number of results per country-month'),
                 })
@@ -125,7 +125,7 @@ const routes = [
                     ),
                   MaintenanceStatusId: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .allow(null)
                     .description(
                       'MaintenanceStatusId of last maintenance, per device'
@@ -146,21 +146,21 @@ const routes = [
                     .description('Month date of processed notifications'),
                   Total: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .required()
                     .description(
                       'Total notifications processed per country-month'
                     ),
                   Email: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .required()
                     .description(
                       `Total notifications' emails sent out per country-month`
                     ),
                   Sms: Joi.number()
                     .integer()
-                    .positive()
+                    .min(0)
                     .required()
                     .description(
                       `Total notifications' sms's sent out per country-month`
