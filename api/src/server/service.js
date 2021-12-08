@@ -36,6 +36,7 @@ async function getStatistics() {
       Total: knex.raw(`DISTINCT d.id`),
     })
     .orderBy(knex.raw('MIN(d.createdOn)'))
+
   /**
    * see stored procedure `GetAdoptionDeployments` in GxAlert
    */
@@ -52,6 +53,7 @@ async function getStatistics() {
     })
     .groupBy('c.name', 'Date')
     .orderBy('c.name', 'Date')
+
   /**
    * see stored procedure `GetAdoptionNotifications` in GxAlert
    */
@@ -104,6 +106,7 @@ async function getStatistics() {
     })
     .groupBy('c.name', 'Date')
     .orderBy('c.name', 'Date')
+
   /**
    * see stored procedure `GetAdoptionTests` in GxAlert
    */
