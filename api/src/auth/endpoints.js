@@ -42,7 +42,7 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          access: Joi.string().required(),
+          access: Joi.string().required().max(2048),
           refresh: Joi.string().required(),
           clientId: Joi.string().required(),
           countryId: Joi.number(),
