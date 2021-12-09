@@ -2190,7 +2190,7 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false } = query
+  const { showUnapprovedDevices = false, resultCategoryGroupId } = query
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -2204,22 +2204,21 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca2.resultCategoryId'
       )
     })
-    .modify(b => {
+    .modify(queryBuilder => {
       // this join is very expensive (doubles query time) and we're only using it for filtering, so only join on demand
-      if (query.resultCategoryGroupId) {
-        b.leftJoin('ResultCategoryGroup as rcg', function () {
-          this.on('r.assayId', 'rcg.assayId')
-            .andOn(function () {
-              this.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn(
-                'r.resultCategory1',
-                'rcg.resultCategory1Id'
-              )
+      if (resultCategoryGroupId) {
+        queryBuilder.leftJoin('ResultCategoryGroup as rcg', qbRcg => {
+          qbRcg
+            .on('r.assayId', 'rcg.assayId')
+            .andOn(qbAndOn => {
+              qbAndOn
+                .on(knex.raw('rcg.resultCategory1Id IS NULL'))
+                .orOn('r.resultCategory1', 'rcg.resultCategory1Id')
             })
-            .andOn(function () {
-              this.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn(
-                'r.resultCategory2',
-                'rcg.resultCategory2Id'
-              )
+            .andOn(qbAndOn => {
+              qbAndOn
+                .on(knex.raw('rcg.resultCategory2Id IS NULL'))
+                .orOn('r.resultCategory2', 'rcg.resultCategory2Id')
             })
         })
       }
@@ -2245,7 +2244,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
                 FROM Site s_transfer
                 WHERE s_transfer.name LIKE '%${query.reportableSiteName}%'
               )`
-          b.whereRaw(
+          queryBuilder.whereRaw(
             `EXISTS (
               SELECT rslog_transfer.resultId
               FROM ResultStatusLog as rslog_transfer
@@ -2262,9 +2261,13 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
            */
           // eslint-disable-next-line no-lonely-if
           if (query.reportableSiteId) {
-            b.where('sirep.id', query.reportableSiteId)
+            queryBuilder.where('sirep.id', query.reportableSiteId)
           } else {
-            b.where('sirep.name', 'LIKE', `%${query.reportableSiteName}%`)
+            queryBuilder.where(
+              'sirep.name',
+              'LIKE',
+              `%${query.reportableSiteName}%`
+            )
           }
         }
       }
