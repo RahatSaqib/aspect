@@ -369,14 +369,12 @@ async function getAccessToken(
     .then(data => data.map(p => `${p.module}:${p.activity}`))
 
   const applicableLicense = await getApplicableLicense(personId, partnerId)
-  const geography = await getGeographyAccess(personId, partnerId)
 
   // create a new token
   const token = jwt.sign(
     {
       name,
       permissions,
-      geography,
       hasToAcceptLicenseId:
         clientType.includes(clientTypes.app) ||
         !applicableLicense ||
@@ -834,6 +832,7 @@ module.exports = {
   lockedOutUser,
   hasPermissions,
   clientTypes,
+  getGeographyAccess,
   getUserJobFunctions,
   getPersonByPersonId,
 }
