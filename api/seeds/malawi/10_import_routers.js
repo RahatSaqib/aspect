@@ -19,7 +19,6 @@ async function seed(knex) {
   const deviceApprovalId = await getDeviceApprovalId(knex)
   const adminUserId = await getAdminUserId(knex)
   const defaultGeographyId = await getDafaultGeographyId(knex)
-  const defaultSiteId = await getDefaultSiteId(knex)
 
   await Promise.each(
     // temporary skip devices without Deployment Name (Site) provided!
@@ -29,7 +28,6 @@ async function seed(knex) {
         knex,
         device,
         defaultGeographyId,
-        defaultSiteId,
         partnerId
       )
       const device4save = {
@@ -83,8 +81,20 @@ const getDafaultGeographyId = async knex => {
   return geographyId
 }
 
-const getDefaultSiteId = async knex => {
-  const { id: siteId } = await knex('Site').where('name', 'Aspect').first('id')
+const insertSite = async (knex, device, defaultGeographyId, partnerId) => {
+  const site4Save = {
+    name: device.deploymentName,
+    shortName: device.deploymentName,
+    externalId: device.deploymentName,
+    street1: device.street,
+    street2: device.street2,
+    city: device.city,
+    longitude: device.longitude,
+    latitude: device.latitude,
+    geographyId: defaultGeographyId,
+    partnerId,
+  }
+  const [siteId] = await knex('Site').insert(site4Save)
   return siteId
 }
 
@@ -92,28 +102,12 @@ const getSiteAndGeography = async (
   knex,
   device,
   defaultGeographyId,
-  defaultSiteId,
   partnerId
 ) => {
-  if (!device.zone && !device.district) {
-    const site4Save = {
-      name: device.deploymentName,
-      shortName: device.deploymentName,
-      externalId: device.deploymentName,
-      street1: device.street,
-      street2: device.street2,
-      city: device.city,
-      longitude: device.longitude,
-      latitude: device.latitude,
-      geographyId: defaultGeographyId,
-      partnerId,
-    }
-    const [siteId] = await knex('Site').insert(site4Save)
-    return { siteId, geographyId: defaultGeographyId }
-  }
   const row = await knex('Site').where('name', device.deploymentName).first()
   if (!row) {
-    return { siteId: defaultSiteId, geographyId: defaultGeographyId }
+    const siteId = await insertSite(knex, device, defaultGeographyId, partnerId)
+    return { siteId, geographyId: defaultGeographyId }
   }
   return { siteId: row.id, geographyId: row.geographyId }
 }
