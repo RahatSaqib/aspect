@@ -3382,11 +3382,7 @@
 
 "@storybook/addon-backgrounds@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/addon-backgrounds/-/addon-backgrounds-6.3.7.tgz#b8ed464cf1000f77678570912640972c74129a2e"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/addon-backgrounds/-/addon-backgrounds-6.3.7.tgz#b8ed464cf1000f77678570912640972c74129a2e"
->>>>>>> develop
   integrity sha512-NH95pDNILgCXeegbckG+P3zxT5SPmgkAq29P+e3gX7YBOTc6885YCFMJLFpuDMwW4lA0ovXosp4PaUHLsBnLDg==
   dependencies:
     "@storybook/addons" "6.3.7"
@@ -3404,11 +3400,7 @@
 
 "@storybook/addon-controls@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/addon-controls/-/addon-controls-6.3.7.tgz#ac8fa5ec055f09fd5187998358b5188fed54a528"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/addon-controls/-/addon-controls-6.3.7.tgz#ac8fa5ec055f09fd5187998358b5188fed54a528"
->>>>>>> develop
   integrity sha512-VHOv5XZ0MQ45k6X7AUrMIxGkm7sgIiPwsvajnoeMe7UwS3ngbTb0Q0raLqI/L5jLM/jyQwfpUO9isA6cztGTEQ==
   dependencies:
     "@storybook/addons" "6.3.7"
@@ -3422,11 +3414,7 @@
 
 "@storybook/addon-docs@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/addon-docs/-/addon-docs-6.3.7.tgz#a7b8ff2c0baf85fc9cc1b3d71f481ec40499f3cc"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/addon-docs/-/addon-docs-6.3.7.tgz#a7b8ff2c0baf85fc9cc1b3d71f481ec40499f3cc"
->>>>>>> develop
   integrity sha512-cyuyoLuB5ELhbrXgnZneDCHqNq1wSdWZ4dzdHy1E5WwLPEhLlD6INfEsm8gnDIb4IncYuzMhK3XYBDd7d3ijOg==
   dependencies:
     "@babel/core" "^7.12.10"
@@ -3519,11 +3507,7 @@
 
 "@storybook/addon-toolbars@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/addon-toolbars/-/addon-toolbars-6.3.7.tgz#acd0c9eea7fad056d995a821e34abddd5b065b9b"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/addon-toolbars/-/addon-toolbars-6.3.7.tgz#acd0c9eea7fad056d995a821e34abddd5b065b9b"
->>>>>>> develop
   integrity sha512-UTIurbl2WXj/jSOj7ndqQ/WtG7kSpGp62T7gwEZTZ+h/3sJn+bixofBD/7+sXa4hWW07YgTXV547DMhzp5bygg==
   dependencies:
     "@storybook/addons" "6.3.7"
@@ -3536,11 +3520,7 @@
 
 "@storybook/addon-viewport@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/addon-viewport/-/addon-viewport-6.3.7.tgz#4dc5007e6c8e4d095814c34234429fe889e4014d"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/addon-viewport/-/addon-viewport-6.3.7.tgz#4dc5007e6c8e4d095814c34234429fe889e4014d"
->>>>>>> develop
   integrity sha512-Hdv2QoVVfe/YuMVQKVVnfCCuEoTqTa8Ck7AOKz31VSAliBFhXewP51oKhw9F6mTyvCozMHX6EBtBzN06KyrPyw==
   dependencies:
     "@storybook/addons" "6.3.7"
@@ -3638,11 +3618,7 @@
 
 "@storybook/builder-webpack4@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/builder-webpack4/-/builder-webpack4-6.3.7.tgz#1cc1a1184043be3f6ef840d0b43ba91a803105e2"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/builder-webpack4/-/builder-webpack4-6.3.7.tgz#1cc1a1184043be3f6ef840d0b43ba91a803105e2"
->>>>>>> develop
   integrity sha512-M5envblMzAUrNqP1+ouKiL8iSIW/90+kBRU2QeWlZoZl1ib+fiFoKk06cgbaC70Bx1lU8nOnI/VBvB5pLhXLaw==
   dependencies:
     "@babel/core" "^7.12.10"
@@ -3819,11 +3795,7 @@
 
 "@storybook/core-client@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/core-client/-/core-client-6.3.7.tgz#cfb75952e0e1d32f2aca92bca2786334ab589c40"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/core-client/-/core-client-6.3.7.tgz#cfb75952e0e1d32f2aca92bca2786334ab589c40"
->>>>>>> develop
   integrity sha512-M/4A65yV+Y4lsCQXX4BtQO/i3BcMPrU5FkDG8qJd3dkcx2fUlFvGWqQPkcTZE+MPVvMEGl/AsEZSADzah9+dAg==
   dependencies:
     "@storybook/addons" "6.3.7"
@@ -3846,11 +3818,7 @@
 
 "@storybook/core-common@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/core-common/-/core-common-6.3.7.tgz#9eedf3ff16aff870950e3372ab71ef846fa3ac52"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/core-common/-/core-common-6.3.7.tgz#9eedf3ff16aff870950e3372ab71ef846fa3ac52"
->>>>>>> develop
   integrity sha512-exLoqRPPsAefwyjbsQBLNFrlPCcv69Q/pclqmIm7FqAPR7f3CKP1rqsHY0PnemizTL/+cLX5S7mY90gI6wpNug==
   dependencies:
     "@babel/core" "^7.12.10"
@@ -3918,11 +3886,7 @@
 
 "@storybook/core-server@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/core-server/-/core-server-6.3.7.tgz#6f29ad720aafe4a97247b5e306eac4174d0931f2"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/core-server/-/core-server-6.3.7.tgz#6f29ad720aafe4a97247b5e306eac4174d0931f2"
->>>>>>> develop
   integrity sha512-m5OPD/rmZA7KFewkXzXD46/i1ngUoFO4LWOiAY/wR6RQGjYXGMhSa5UYFF6MNwSbiGS5YieHkR5crB1HP47AhQ==
   dependencies:
     "@storybook/builder-webpack4" "6.3.7"
@@ -3961,11 +3925,7 @@
 
 "@storybook/core@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/core/-/core-6.3.7.tgz#482228a270abc3e23fed10c7bc4df674da22ca19"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/core/-/core-6.3.7.tgz#482228a270abc3e23fed10c7bc4df674da22ca19"
->>>>>>> develop
   integrity sha512-YTVLPXqgyBg7TALNxQ+cd+GtCm/NFjxr/qQ1mss1T9GCMR0IjE0d0trgOVHHLAO8jCVlK8DeuqZCCgZFTXulRw==
   dependencies:
     "@storybook/core-client" "6.3.7"
@@ -3973,11 +3933,7 @@
 
 "@storybook/csf-tools@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/csf-tools/-/csf-tools-6.3.7.tgz#505514d211f8698c47ddb15662442098b4b00156"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/csf-tools/-/csf-tools-6.3.7.tgz#505514d211f8698c47ddb15662442098b4b00156"
->>>>>>> develop
   integrity sha512-A7yGsrYwh+vwVpmG8dHpEimX021RbZd9VzoREcILH56u8atssdh/rseljyWlRes3Sr4QgtLvDB7ggoJ+XDZH7w==
   dependencies:
     "@babel/generator" "^7.12.11"
@@ -4011,11 +3967,7 @@
 
 "@storybook/manager-webpack4@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/manager-webpack4/-/manager-webpack4-6.3.7.tgz#9ca604dea38d3c47eb38bf485ca6107861280aa8"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/manager-webpack4/-/manager-webpack4-6.3.7.tgz#9ca604dea38d3c47eb38bf485ca6107861280aa8"
->>>>>>> develop
   integrity sha512-cwUdO3oklEtx6y+ZOl2zHvflICK85emiXBQGgRcCsnwWQRBZOMh+tCgOSZj4jmISVpT52RtT9woG4jKe15KBig==
   dependencies:
     "@babel/core" "^7.12.10"
@@ -4058,11 +4010,7 @@
 
 "@storybook/node-logger@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/node-logger/-/node-logger-6.3.7.tgz#492469ea4749de8d984af144976961589a1ac382"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/node-logger/-/node-logger-6.3.7.tgz#492469ea4749de8d984af144976961589a1ac382"
->>>>>>> develop
   integrity sha512-YXHCblruRe6HcNefDOpuXJoaybHnnSryIVP9Z+gDv6OgLAMkyxccTIaQL9dbc/eI4ywgzAz4kD8t1RfVwXNVXw==
   dependencies:
     "@types/npmlog" "^4.1.2"
@@ -4073,11 +4021,7 @@
 
 "@storybook/postinstall@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/postinstall/-/postinstall-6.3.7.tgz#7d90c06131382a3cf1550a1f2c70df13b220d9d3"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/postinstall/-/postinstall-6.3.7.tgz#7d90c06131382a3cf1550a1f2c70df13b220d9d3"
->>>>>>> develop
   integrity sha512-HgTj7WdWo2cXrGfEhi5XYZA+G4vIzECtJHK22GEL9QxJth60Ah/dE94VqpTlyhSpzP74ZFUgr92+pP9o+j3CCw==
   dependencies:
     core-js "^3.8.2"
@@ -4167,11 +4111,7 @@
 
 "@storybook/source-loader@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/source-loader/-/source-loader-6.3.7.tgz#cc348305df3c2d8d716c0bab7830c9f537b859ff"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/source-loader/-/source-loader-6.3.7.tgz#cc348305df3c2d8d716c0bab7830c9f537b859ff"
->>>>>>> develop
   integrity sha512-0xQTq90jwx7W7MJn/idEBCGPOyxi/3No5j+5YdfJsSGJRuMFH3jt6pGgdeZ4XA01cmmIX6bZ+fB9al6yAzs91w==
   dependencies:
     "@storybook/addons" "6.3.7"
@@ -4223,11 +4163,7 @@
 
 "@storybook/ui@6.3.7":
   version "6.3.7"
-<<<<<<< HEAD
-  resolved "https://registry.npmjs.org/@storybook/ui/-/ui-6.3.7.tgz#d0caea50640670da3189bbbb67c43da30c90455a"
-=======
   resolved "https://registry.yarnpkg.com/@storybook/ui/-/ui-6.3.7.tgz#d0caea50640670da3189bbbb67c43da30c90455a"
->>>>>>> develop
   integrity sha512-PBeRO8qtwAbtHvxUgNtz/ChUR6qnN+R37dMaIs3Y96jbks1fS2K9Mt7W5s1HnUbWbg2KsZMv9D4VYPBasY+Isw==
   dependencies:
     "@emotion/core" "^10.1.1"

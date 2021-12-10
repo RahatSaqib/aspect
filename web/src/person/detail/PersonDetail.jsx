@@ -10,7 +10,10 @@ import { Helmet } from 'react-helmet'
 // Material-UI
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
+
+import ContactDetailsFormFormik from '../../MigratedComponents/Account/Details'
 import ContactDetailsForm from './ContactDetailsForm'
+
 import LoginDetailsForm from './LoginDetailsForm'
 import JobAssignmentForm from './JobAssignmentForm'
 import PersonDetailBackBar from './PersonDetailsBackBar'
@@ -265,7 +268,11 @@ export class PersonDetail extends PureComponent {
                     canUserLoggedIn={!isNew && canLogIn}
                   />
                   <Paper className={styles.ContactDetailsForm}>
-                    <ContactDetailsForm
+                    <ContactDetailsFormFormik
+                      data={{ contactDetails, userPreferences, loading }}
+                    />
+                    <hr />
+                    {/* <ContactDetailsForm
                       intl={intl}
                       loading={loading}
                       onEmailBlur={this.handleEmailBlur}
@@ -275,7 +282,7 @@ export class PersonDetail extends PureComponent {
                       onSubmit={this.saveContactDetails}
                       userPreferences={userPreferences}
                       saveUserPreferences={this.saveUserPreferences}
-                    />
+                    /> */}
                   </Paper>
                 </PermissionsProvider>
               </div>

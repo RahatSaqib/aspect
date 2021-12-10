@@ -171,7 +171,7 @@ export class AccountDetails extends PureComponent {
                 {...this.props}
               />
               <Paper className={styles.AddMargin}>
-                <ContactDetailsForm
+                {/* <ContactDetailsForm
                   intl={intl}
                   canModify={false}
                   loading={loading || saving}
@@ -179,7 +179,7 @@ export class AccountDetails extends PureComponent {
                   onSubmit={this.handleSaveContactDetails}
                   userPreferences={accountDetails.get('userPreferences')}
                   saveUserPreferences={this.handleSaveUserPreferences}
-                />
+                /> */}
               </Paper>
             </div>
           </Route>

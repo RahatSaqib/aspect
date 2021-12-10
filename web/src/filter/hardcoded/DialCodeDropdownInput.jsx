@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import filter from 'lodash/filter'
 import keyBy from 'lodash/keyBy'
 import map from 'lodash/map'
+import findIndex from 'lodash/findIndex'
 import classnames from 'classnames/bind'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import TextField from '@material-ui/core/TextField'
+import Select from 'react-select'
 import parsePhoneNumber, { AsYouType } from 'libphonenumber-js'
 
+import { getMuiTheme } from '../../MigratedComponents/AspectDropDown'
 import DialCodeDropdown from './DialCodeDropdown'
 import dialCodes from './dialCodes'
 import countries from './countries'
@@ -120,18 +123,74 @@ const enhance = compose(
 //   )
 // }
 
+const CountryCodeAndNumber = props => {
+  const { name, values, dialCodeOptions: options } = props
+  const { country } = values || 'United States'
+  const [selected, setSelected] = useState(false)
+  const [dialCode, setDialCode] = useState(false)
+  const [fullNumber, setFullNumber] = useState(false)
+
+  function handleChange(vals) {
+    console.log(vals, values)
+  }
+
+  useEffect(() => {
+    const code = getDialingByName(country, options)
+    if (code && !fullNumber) {
+      setFullNumber(code?.value)
+    }
+    if (code && !selected) {
+      const selectedIndex = findIndex(options, { value: code?.value })
+      setSelected(selectedIndex)
+    }
+    if (dialCode && code !== dialCode) {
+      console.log(code, dialCode)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values, options, country])
+
+  return selected ? (
+    <Fragment>
+      <div style={{ width: '350px', padding: '20px 0', marginRight: '30px' }}>
+        <Select
+          name={`${name}-country-code`}
+          isDisabled={false}
+          isLoading={false}
+          isMulti={false}
+          options={options}
+          defaultValue={options[selected]}
+          styles={getMuiTheme()}
+          // onChange={handleChange}
+          // noOptionsMessage={() => formatMessage(messagesBase.noOptionsMessage)}
+        />
+      </div>
+      <TextField
+        fullWidth
+        type="text"
+        // dialCodeOptions={dialCodeOptions}
+        // {...restProps}
+        className={cssClasses('Input')}
+        value={fullNumber || ''}
+        onChange={handleChange}
+        // onChange={val => onRawNumberChange({ fullNumber: val, dialCode })}
+      />
+    </Fragment>
+  ) : null
+}
+
 const DialCodeDropdownInput = props => {
   const {
-    dialCode,
-    numberPart,
-    onDialCodeChange,
-    onRawNumberChange,
-    fullNumber,
-    country,
-    value,
-    name,
+    // dialCode,
+    // numberPart,
+    // onDialCodeChange,
+    // onRawNumberChange,
+    // fullNumber,
+    // country,
+    // value,
+    // name,
+    className,
     dialCodeOptions,
-    ...restProps
+    // ...restProps
   } = props
 
   // const [dialCodeOptions, setDialCodeOptions] = useState(false)
@@ -150,24 +209,26 @@ const DialCodeDropdownInput = props => {
   //   }
   // }, [dialCodeOptions])
 
+  // console.log(fullNumber, dialCode, getDialingByName(country, dialCodeOptions))
+
   return dialCodeOptions ? (
-    <div className={cssClasses(restProps.className, 'Container')}>
-      <DialCodeDropdown
-        value={dialCode}
+    <div className={cssClasses(className, 'Container')}>
+      <CountryCodeAndNumber {...props} />
+      {/* <DialCodeDropdown
+        value={dialCode || getDialingByName(country, dialCodeOptions)?.value}
         options={dialCodeOptions}
         onChange={onDialCodeChange}
         country={country}
-        defaultValue={getDialingByName(country, dialCodeOptions)}
       />
-      {/* <TextField
+      <TextField
         fullWidth
         type="text"
-        dialCodeOptions={dialCodeOptions}
+        // dialCodeOptions={dialCodeOptions}
         {...restProps}
         className={cssClasses('Input')}
         value={fullNumber || getDialingByName(country, dialCodeOptions)?.value}
-        // onChange={onRawNumberChange}
-        onChange={val => onRawNumberChange({ fullNumber: val, dialCode })}
+        onChange={onRawNumberChange}
+        // onChange={val => onRawNumberChange({ fullNumber: val, dialCode })}
       /> */}
     </div>
   ) : null
