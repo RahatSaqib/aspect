@@ -3,9 +3,9 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const devices = require('./fixtures/SimCardsGxAlert.json')
 
-const DEVICE_TYPE_EXTERNAL_ID = 'MetacomRouter'
-const DEVICE_TYPE_NAME = 'Metacom Router'
-const DEVICE_TYPE_MANUFACTURER = 'Metacom'
+const DEVICE_TYPE_EXTERNAL_ID = 'VodafoneRouter'
+const DEVICE_TYPE_NAME = 'Vodafone Router'
+const DEVICE_TYPE_MANUFACTURER = 'Vodafone'
 
 async function seed(knex) {
   const deviceTypeId = await getDeviceTypeId(
