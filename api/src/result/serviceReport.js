@@ -40,7 +40,7 @@ async function exportResults(request, reply) {
   query.page = 0
   // do not export more than 1.000.000 records
   query.size = 10e6
-  const { data, extraColumns = [] } = await getResultsForExport(query, auth)
+  const { data, extraColumns = [] } = await getResultsForExport(auth, query)
 
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }

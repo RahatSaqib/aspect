@@ -194,7 +194,7 @@ function getResultTreatmentStatus(response) {
   }
 }
 
-async function getResultsForExport(query, auth) {
+async function getResultsForExport(auth, query) {
   const selectFields = [
     ...SELECT_COMMON_FIELDS,
     knex.raw(

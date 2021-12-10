@@ -14,6 +14,7 @@ const admin = {
     'module_swaps',
     'device_utilization',
     'genexpert_issues',
+    'allReports',
   ],
   permissions: [
     {

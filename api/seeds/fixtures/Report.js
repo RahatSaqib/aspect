@@ -21,7 +21,26 @@ const mtbDetectedRRDetected = {
     },
   ],
 }
-
+const allResults = {
+  name: 'All results',
+  description: 'All results',
+  i18nKey: 'all_results',
+  i18nKeyDescription: 'all_results_description',
+  externalId: 'all_results',
+  fileName: 'All_results',
+  sortOrder: 0,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/service',
+      functionName: 'getResultsForExport',
+      query: {
+        sortCol: 'endedOn',
+        sortDir: 'desc',
+      },
+    },
+  ],
+}
 const criticalErrorsByDevice = {
   name: 'Critical Errors By Device',
   description: 'Includes a list of devices that had at least 2 critical errors',
@@ -253,6 +272,7 @@ module.exports = {
   deviceUtilizationReport,
   deviceCalibrationReport,
   geneXpertIssues,
+  allResults,
   fixture: [
     mtbDetectedRRDetected,
     resultsHivNotSuppressed,

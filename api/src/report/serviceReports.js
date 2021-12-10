@@ -143,7 +143,7 @@ async function getAllSheetsData(request, sheets) {
 // ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
   const { auth, query, params } = request
-  const { externalId } = params
+  const { externalId, templateFolderPath } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   const { culture } = await getUser(auth.credentials.name)
 
@@ -156,7 +156,7 @@ async function createReport(request, reply) {
   }
   const dataBuffer = await renderExcelTemplate({
     culture,
-    templateFolderPath: externalId,
+    templateFolderPath: templateFolderPath || externalId,
     data,
     extension,
     replacements: [
