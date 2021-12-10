@@ -640,14 +640,14 @@ async function getNotifications(request) {
     .count({
       /**
        * see how we count `totalTriggers` in func `listNotifications()` in this file.
-       * Here we also count by resultId or issueId prefixed with typeCategory
+       * Here we also count by resultId or issueId
        */
       total: knex.raw(`
         DISTINCT
         CASE
           WHEN ntc.externalId = 'resultBased'
-          THEN CONCAT(ntc.externalId, '-', n.resultId)
-          ELSE CONCAT(ntc.externalId, '-', n.issueId)
+          THEN n.resultId
+          ELSE n.issueId
         END
       `),
     })
@@ -662,15 +662,14 @@ async function getNotifications(request) {
       'n.resultId',
       /**
        * `groupingParam` is a temporal field for grouping by it.
-       * We are grouping by `issueBased-NN` or `resultBased-NN` where NN is
-       * either n.issueId or n.resultId - to make sure all counts are per
-       * actual issue or result
+       * We are grouping by either n.issueId (`issueBased`)
+       * or n.resultId (`resultBased`)
        */
       knex.raw(`
         CASE
-          WHEN ntc.externalId = 'resultBased' 
-          THEN concat(ntc.externalId, '-', n.resultId)
-          ELSE concat(ntc.externalId, '-', n.issueId)
+          WHEN ntc.externalId = 'resultBased'
+          THEN n.resultId
+          ELSE n.issueId
         END as groupingParam
       `),
     ])
@@ -680,8 +679,8 @@ async function getNotifications(request) {
         CASE WHEN mswm.externalId = "Sent" 
         THEN (CASE
               WHEN ntc.externalId = 'resultBased' 
-              THEN concat(ntc.externalId, '-', n.resultId)
-              ELSE concat(ntc.externalId, '-', n.issueId)
+              THEN n.resultId
+              ELSE n.issueId
             END)
         ELSE null END
       `),
@@ -690,18 +689,17 @@ async function getNotifications(request) {
         CASE WHEN mssms.externalId = "Sent" 
         THEN (CASE
               WHEN ntc.externalId = 'resultBased' 
-              THEN concat(ntc.externalId, '-', n.resultId)
-              ELSE concat(ntc.externalId, '-', n.issueId)
+              THEN n.resultId
+              ELSE n.issueId
             END)
         ELSE null END
       `),
       emailSent: knex.raw(`
         DISTINCT
         CASE WHEN msem.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN concat(ntc.externalId, '-', n.resultId)
-              ELSE concat(ntc.externalId, '-', n.issueId)
+        THEN (CASE WHEN ntc.externalId = 'resultBased' 
+              THEN n.resultId
+              ELSE n.issueId
             END)
         ELSE null END
       `),
