@@ -32,11 +32,12 @@ const allResults = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/service',
-      functionName: 'getResultsForExport',
+      moduleName: 'result/serviceReport',
+      functionName: 'getAllResultsForExport',
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
+        templateFolderPath: 'export/results',
       },
     },
   ],
