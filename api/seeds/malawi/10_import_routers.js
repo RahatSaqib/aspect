@@ -1,5 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
+const _ = require('lodash')
 const Promise = require('bluebird')
 const devices = require('./fixtures/SimCardsGxAlert.json')
 
@@ -18,44 +19,45 @@ async function seed(knex) {
   const deviceApprovalId = await getDeviceApprovalId(knex)
   const adminUserId = await getAdminUserId(knex)
   const defaultGeographyId = await getDafaultGeographyId(knex)
+  const defaultSiteId = await getDefaultSiteId(knex)
 
-  await Promise.each(devices, async device => {
+  await Promise.each(
     // temporary skip devices without Deployment Name (Site) provided!
-    if (!device.deploymentName) {
-      return
-    }
+    _.filter(devices, device => device.deploymentName),
+    async device => {
+      const { siteId, geographyId } = await getSiteAndGeography(
+        knex,
+        device,
+        defaultGeographyId,
+        defaultSiteId,
+        partnerId
+      )
+      const device4save = {
+        name: device.deploymentName
+          ? `${device.deploymentName} - ${device.router}`
+          : device.router,
+        shortName: device.deploymentName,
+        deviceTypeId,
+        deviceApprovalId,
+        partnerId,
+        geographyId,
+        siteId,
+      }
+      const [deviceId] = await knex('Device').insert(device4save)
 
-    const { siteId, geographyId } = await getSiteAndGeography(
-      knex,
-      device,
-      defaultGeographyId,
-      partnerId
-    )
-    const device4save = {
-      name: device.deploymentName
-        ? `${device.deploymentName} - ${device.router}`
-        : device.router,
-      shortName: device.deploymentName,
-      deviceTypeId,
-      deviceApprovalId,
-      partnerId,
-      geographyId,
-      siteId,
+      const now = new Date()
+      const sim4save = {
+        deviceId,
+        serial: device.router,
+        number: device.sim1Number,
+        createdBy: adminUserId,
+        createdOn: now,
+        updatedBy: adminUserId,
+        updatedOn: now,
+      }
+      await knex('DeviceSim').insert(sim4save)
     }
-    const [deviceId] = await knex('Device').insert(device4save)
-
-    const now = new Date()
-    const sim4save = {
-      deviceId,
-      serial: device.router,
-      number: device.sim1Number,
-      createdBy: adminUserId,
-      createdOn: now,
-      updatedBy: adminUserId,
-      updatedOn: now,
-    }
-    await knex('DeviceSim').insert(sim4save)
-  })
+  )
 }
 
 const getDeviceTypeId = async (knex, externalId, name, manufacturer) => {
@@ -81,10 +83,16 @@ const getDafaultGeographyId = async knex => {
   return geographyId
 }
 
+const getDefaultSiteId = async knex => {
+  const { id: siteId } = await knex('Site').where('name', 'Aspect').first('id')
+  return siteId
+}
+
 const getSiteAndGeography = async (
   knex,
   device,
   defaultGeographyId,
+  defaultSiteId,
   partnerId
 ) => {
   if (!device.zone && !device.district) {
@@ -101,9 +109,12 @@ const getSiteAndGeography = async (
       partnerId,
     }
     const [siteId] = await knex('Site').insert(site4Save)
-    return { siteId, defaultGeographyId }
+    return { siteId, geographyId: defaultGeographyId }
   }
   const row = await knex('Site').where('name', device.deploymentName).first()
+  if (!row) {
+    return { siteId: defaultSiteId, geographyId: defaultGeographyId }
+  }
   return { siteId: row.id, geographyId: row.geographyId }
 }
 
