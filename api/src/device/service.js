@@ -239,57 +239,59 @@ async function getListDevices(query, auth) {
         'IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'
       ),
       knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
-      // get csv of issue types
-      knex('Issue as i1')
-        .innerJoin('Notification as notif', 'notif.issueId', 'i1.id')
-        .innerJoin('AlertMessage as am', 'am.id', 'notif.alertMessageId')
-        .join('IssueType as it', 'i1.issueTypeId', 'it.id')
-        .join('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+      knex.raw('count(distinct dmslActivity.day) as totalDays'),
+      knex.raw(
+        'count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'
+      ),
+      'issues.categories as issueCategories',
+    ])
+    .leftJoin(
+      knex('DeviceMaintenanceStatusLog as d')
+        .select('deviceId', 'day', knex.raw('max(s.active) as active'))
+        .innerJoin(
+          'DeviceMaintenanceStatus as s',
+          'd.deviceMaintenanceStatusId',
+          's.id'
+        )
+        .whereRaw('WEEKDAY(day) < 5') // 5 - Saturday, 6 - Sunday
+        .andWhere(
+          'day',
+          '>=',
+          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
+        )
+        .groupBy('deviceId', 'day')
+        .as('dmslActivity'),
+      'dmslActivity.deviceId',
+      'd.id'
+    )
+    .leftJoin(
+      knex('Issue as i')
+        .select(
+          'i.deviceId',
+          knex.raw('GROUP_CONCAT(DISTINCT ic.i18nKey) as categories')
+        )
+        .innerJoin('Notification as n', 'n.issueId', 'i.id')
+        .innerJoin('AlertMessage as a', 'a.id', 'n.alertMessageId')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .innerJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', leftBuilder =>
           leftBuilder
             .on('it.issueCategoryId', 'ic.id')
             .andOn('it.hasTag', knex.raw('1'))
         )
-        .whereRaw('i1.deviceId = d.id')
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
-        .modify(addConstraints, dataConstraints, {})
         .modify(queryBuilder => {
           if (query.issueTypeId)
             queryBuilder.whereIn('it.externalId', query.issueTypeId)
         })
-        .where('am.personId', accountDetails.id)
-        .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
-        .as('issueCategories'),
-      // Gets the count of days the device was logged
-      knex('DeviceMaintenanceStatusLog as dmsl_total')
-        .whereRaw('dmsl_total.deviceId = d.id')
-        .andWhereRaw('WEEKDAY(dmsl_total.day) < 5') // 5 - Saturday, 6 - Sunday
-        .andWhere(
-          'dmsl_total.day',
-          '>=',
-          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
-        )
-        .count(knex.raw('DISTINCT day'))
-        .as('totalDays'),
-      // Gets the count of days the device was in status 'Active'
-      knex('DeviceMaintenanceStatusLog as dmsl_active')
-        .innerJoin(
-          'DeviceMaintenanceStatus as dms_active',
-          'dmsl_active.deviceMaintenanceStatusId',
-          'dms_active.id'
-        )
-        .whereRaw('dmsl_active.deviceId = d.id')
-        .andWhereRaw('WEEKDAY(dmsl_active.day) < 5') // 5 - Saturday, 6 - Sunday
-        .andWhere(
-          'dmsl_active.day',
-          '>=',
-          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
-        )
-        .andWhere('dms_active.externalId', 'active')
-        .count(knex.raw('DISTINCT day'))
-        .as('activeDays'),
-    ])
+        .where('a.personId', accountDetails.id)
+        .groupBy('i.deviceId')
+        .as('issues'),
+      'issues.deviceId',
+      'd.id'
+    )
     .distinct()
+
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 

@@ -57,7 +57,7 @@ export const ExportListButton = ({
   anchorEl,
   downloadStarted,
 }) =>
-  visible && (
+  visible ? (
     <div>
       {downloadStarted && <LinearProgress />}
       <IconButton
@@ -114,6 +114,6 @@ export const ExportListButton = ({
         </ol>
       </Popover>
     </div>
-  )
+  ) : null
 
 export default enhance(ExportListButton)

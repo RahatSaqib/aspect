@@ -43,7 +43,7 @@ async function baseAlertMessagesQuery(request, query, queryBuilder) {
           OK_ISSUE_STATUS,
         ])
     })
-    .whereRaw('it.hasTag= 1')
+    .where('it.hasTag', 1)
     .modify(addConstraints, dataConstraints, { device: 'd', site: 'site' })
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
