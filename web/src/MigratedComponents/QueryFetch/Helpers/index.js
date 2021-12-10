@@ -24,9 +24,6 @@ function replaceRouteParams(route, routeParams) {
 
 const buildBodyParams = (endpoint, params) => {
   switch (endpoint) {
-    // case '/result/confirmed-treatment-tracking':
-    //   return JSON.stringify({})
-
     default:
       return JSON.stringify(params)
   }

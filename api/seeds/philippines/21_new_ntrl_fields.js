@@ -9,7 +9,7 @@ const mtbRifResultDataSchema = require('./fixtures/dataSchemas/geneXpertResultDa
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 const resultSignOffResultDataSchema = require('./fixtures/dataSchemas/resultSignOffResultDataSchema.json')
-const { upsertTbLampDeviceTypes } = require('../commonTbLamp')
+const { upsertTbLampDeviceTypes } = require('../commonTBLamp')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
 
 async function seed(knex) {

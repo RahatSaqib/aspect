@@ -1,7 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
+import reduce from 'lodash/reduce'
 import isNumber from 'lodash/isNumber'
+import unset from 'lodash/unset'
 import { useMutation, useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -37,8 +39,11 @@ const AspectNotificationDetails = () => {
   const [jobFunctions, setJobFunctions] = useState(undefined)
 
   useEffect(() => {
-    if (data) setJobFunctions(data[0].jobFunctions)
-  }, [data])
+    if (data) {
+      const mergedJobFunctions = [...data[0].jobFunctions]
+      setJobFunctions(mergedJobFunctions)
+    }
+  }, [data, intl])
 
   const { mutate: submitNotification } = useMutation(
     ({ values, id }) => {
@@ -69,13 +74,13 @@ const AspectNotificationDetails = () => {
   const id = isNaN(notificationId) ? undefined : Number(notificationId)
 
   const onSubmit = formik => {
+    const specificPersonId = 'specificPerson'
     const formConfig = getFormConfig(
       intl.formatMessage,
       formik.values.notificationType,
       jobFunctions,
       true
     )
-
     const values = sanitizeFormValues(formik.values, { formConfig })
     values.notificationType = formik.values.notificationType
     values.jobFunctions.map((jf, index) => {
@@ -85,9 +90,32 @@ const AspectNotificationDetails = () => {
       }
       return jf
     })
+    // sanitise persons for post endpoint
+    const sanitisedPersons = reduce(
+      formik.values.persons,
+      (acc, curr) => {
+        ;(acc || ((acc = []) && curr?.length)).push({
+          personId: curr?.value,
+          checked: true,
+        })
+        return acc
+      },
+      []
+    )
     // save only checked Job Functions
-    values.jobFunctions = values.jobFunctions.filter(({ checked }) => checked)
-
+    values.jobFunctions = values.jobFunctions.filter(
+      ({ checked, jobFunctionId }) =>
+        checked && jobFunctionId !== specificPersonId
+    )
+    if (sanitisedPersons?.length) {
+      values.persons = sanitisedPersons
+    }
+    if (!values?.jobFunctions?.length) {
+      unset(values, 'jobFunctions')
+    }
+    if (!values?.persons?.length) {
+      unset(values, 'persons')
+    }
     submitNotification({ values, id })
   }
 

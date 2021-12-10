@@ -8,7 +8,7 @@ const server = require('../utils/testUtils')
 
 const { assert } = chai
 
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',

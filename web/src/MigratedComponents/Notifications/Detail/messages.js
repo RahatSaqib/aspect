@@ -392,6 +392,26 @@ export default defineMessages({
     id: 'pages.NotificationDetail.fieldNoMatchTags',
     defaultMessage: 'Press enter to add tag',
   },
+  fieldPersonSendToSpecific: {
+    id: 'pages.Notifications.fieldPersonSendToSpecific',
+    defaultMessage: 'Send to a specific person',
+  },
+  optionPersonRoleSet: {
+    id: 'pages.Notifications.optionPersonRoleSet',
+    defaultMessage: 'Selectable',
+  },
+  optionPersonRoleNotSet: {
+    id: 'pages.Notifications.optionPersonRoleNotSet',
+    defaultMessage: 'Currently not selectable - missing role',
+  },
+  personsSelectLabel: {
+    id: 'pages.NotificationDetail.personsSelectLabel',
+    defaultMessage: 'To an individual person',
+  },
+  selectPersonOption: {
+    id: 'pages.NotificationDetail.selectPersonOption',
+    defaultMessage: 'Select the person or persons',
+  },
   actionAdd: {
     id: 'pages.NotificationDetail.actionAdd',
     defaultMessage: 'Add',

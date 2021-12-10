@@ -1166,7 +1166,7 @@ describe('Device routes', () => {
 
   describe('Message Queue', () => {
     describe('DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED', () => {
-      const context = createTestContext(server, {
+      const context = createTestContext(knex, server, {
         user: 'admin',
         type: 'DaktariVirology',
         partner: 'Partner One',

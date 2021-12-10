@@ -44,7 +44,12 @@ export default defineMessages({
   jobFunctionRequired: {
     id: 'pages.Notifications.jobFunctionRequired',
     defaultMessage:
-      'Should select at least one job function for this notification',
+      'Should select at least one job function or individiual person for this notification',
+  },
+  personOrJobFunctionRequired: {
+    id: 'pages.Notifications.personOrJobFunctionRequired',
+    defaultMessage:
+      'Should select at least one job function or individiual person for this notification',
   },
   invalidWebhookUrl: {
     id: 'pages.Notifications.invalidWebhookUrl',
