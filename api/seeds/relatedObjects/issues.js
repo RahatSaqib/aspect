@@ -355,6 +355,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'ResultReceived',
         i18nKey: 'issueTypeResultReceived',
         issueCategoryId: issueCategories.DataHealth,
+        hasTag: 0,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,

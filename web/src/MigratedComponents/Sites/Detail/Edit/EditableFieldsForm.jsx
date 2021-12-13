@@ -1,10 +1,10 @@
 // Imports from packages
 import PropTypes from 'prop-types'
 import React from 'react'
-
 import { compose, setPropTypes, pure, withHandlers } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
 import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -23,33 +23,27 @@ import styles from './EditableFieldsForm.css'
 
 const cssClasses = classnames.bind(styles)
 
-const renderTextField = ({ input, meta, ...restProps }) => (
-  <TextField
-    {...restProps}
-    {...input}
-    margin="normal"
-    fullWidth
-    // errorStyle={{
-    //   float: 'left',
-    //   whiteSpace: 'nowrap',
-    //   textOverflow: 'visible',
-    // }}
-    error={!!(meta.touched && meta.error)}
-    helperText={meta.touched && meta.error}
-  />
-)
-
-function validate(values) {
+function validate(field) {
+  const { name, value } = field
   const errors = {}
-  if (values) {
-    if (!values.get('name')) {
-      errors.name = 'Required'
-    }
-    if (!values.get('shortName')) {
-      errors.shortName = 'Required'
-    }
+  if (['shortName', 'name'].includes(name) && isEmpty(value)) {
+    errors[name] = `${name} is required`
   }
   return errors
+}
+
+const renderTextField = ({ input, meta, ...restProps }) => {
+  const errors = validate(input)
+  return (
+    <TextField
+      {...restProps}
+      {...input}
+      margin="normal"
+      fullWidth
+      error={!!(meta.touched && !isEmpty(errors[input.name]))}
+      helperText={meta.touched && meta.error}
+    />
+  )
 }
 
 const enhance = compose(
@@ -61,8 +55,8 @@ const enhance = compose(
   pure,
   reduxForm({
     form: 'siteDetail',
-    validate,
     enableReinitialize: true,
+    validate,
   }),
   withHandlers({
     onSetBasedAddressClick:
@@ -93,123 +87,126 @@ export const EditableFieldsForm = ({
   siteTags,
   onSiteTagChange,
   onSetBasedAddressClick,
-}) => (
-  <form onSubmit={handleSubmit}>
-    <div className={cssClasses('container')}>
-      <Field
-        className={cssClasses('container__field')}
-        name="name"
-        label={labels.name}
-        component={renderTextField}
-      />
-      <Field
-        className={cssClasses('container__field')}
-        name="shortName"
-        label={labels.shortName}
-        component={renderTextField}
-      />
-      <Field
-        className={cssClasses('container__field')}
-        name="externalId"
-        label={labels.facilityCode}
-        component={renderTextField}
-      />
-    </div>
-    <LocationSelector
-      loading={loading}
-      initialValues={initialValues}
-      formName="siteDetail"
-      countryIdFieldName="countryId"
-      stateIdFieldName="stateId"
-      lgaIdFieldName="lgaId"
-      onChangeSelectedState={onSetBasedAddressClick}
-    />
-    <div className={cssClasses('container')}>
-      <Field
-        className={cssClasses('container__field')}
-        name="address"
-        label={labels.address}
-        component={renderTextField}
-        onBlur={onSetBasedAddressClick}
-      />
-      <Field
-        className={cssClasses('container__field')}
-        name="address2"
-        label={labels.address2}
-        component={renderTextField}
-        onBlur={onSetBasedAddressClick}
-      />
-    </div>
-    <div className={cssClasses('container')}>
-      <Field
-        className={cssClasses('container__field')}
-        name="city"
-        label={labels.city}
-        component={renderTextField}
-        onBlur={onSetBasedAddressClick}
-      />
-      <Field
-        className={cssClasses('container__field')}
-        name="zip"
-        label={labels.zip}
-        component={renderTextField}
-        onBlur={onSetBasedAddressClick}
-      />
-    </div>
-    <div className={cssClasses('container', 'coordinate')}>
-      <Field
-        className={cssClasses('container__field')}
-        name="longitude"
-        label={labels.longitude}
-        component={renderTextField}
-      />
-      <Field
-        className={cssClasses('container__field')}
-        name="latitude"
-        label={labels.latitude}
-        component={renderTextField}
-      />
-      <div className={cssClasses('coordinate__button')}>
-        <AspectButton
-          color="primary"
-          variant="contained"
-          onClick={onSetBasedAddressClick}
-        >
-          {formatMessage(messages.buttonSetBasedonAddress)}
-        </AspectButton>
-      </div>
-    </div>
-    <TimezoneSelect
-      name="timezone"
-      label={labels.timezone}
-      disabled={loading || submitting}
-      fullWidth
-    />
-    <ReadOnlyField
-      label={labels.tags}
-      value={siteTags}
-      format={v => (
-        <ConnectedTagInput
-          qryId={initialValues.get('id')}
-          qryType="site"
-          allowCreate
-          onTagChange={onSiteTagChange}
-          value={v}
-          noMatch={labels.noMatch}
+  invalid,
+}) => {
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className={cssClasses('container')}>
+        <Field
+          className={cssClasses('container__field')}
+          name="name"
+          label={labels.name}
+          component={renderTextField}
         />
-      )}
-    />
-    <Button
-      disabled={pristine || submitting}
-      type="submit"
-      color="secondary"
-      variant="contained"
-    >
-      {formatMessage(messages.buttonUpdate)}
-    </Button>
-    {submitting && <LinearProgress />}
-  </form>
-)
+        <Field
+          className={cssClasses('container__field')}
+          name="shortName"
+          label={labels.shortName}
+          component={renderTextField}
+        />
+        <Field
+          className={cssClasses('container__field')}
+          name="externalId"
+          label={labels.facilityCode}
+          component={renderTextField}
+        />
+      </div>
+      <LocationSelector
+        loading={loading}
+        initialValues={initialValues}
+        formName="siteDetail"
+        countryIdFieldName="countryId"
+        stateIdFieldName="stateId"
+        lgaIdFieldName="lgaId"
+        onChangeSelectedState={onSetBasedAddressClick}
+      />
+      <div className={cssClasses('container')}>
+        <Field
+          className={cssClasses('container__field')}
+          name="address"
+          label={labels.address}
+          component={renderTextField}
+          onBlur={onSetBasedAddressClick}
+        />
+        <Field
+          className={cssClasses('container__field')}
+          name="address2"
+          label={labels.address2}
+          component={renderTextField}
+          onBlur={onSetBasedAddressClick}
+        />
+      </div>
+      <div className={cssClasses('container')}>
+        <Field
+          className={cssClasses('container__field')}
+          name="city"
+          label={labels.city}
+          component={renderTextField}
+          onBlur={onSetBasedAddressClick}
+        />
+        <Field
+          className={cssClasses('container__field')}
+          name="zip"
+          label={labels.zip}
+          component={renderTextField}
+          onBlur={onSetBasedAddressClick}
+        />
+      </div>
+      <div className={cssClasses('container', 'coordinate')}>
+        <Field
+          className={cssClasses('container__field')}
+          name="longitude"
+          label={labels.longitude}
+          component={renderTextField}
+        />
+        <Field
+          className={cssClasses('container__field')}
+          name="latitude"
+          label={labels.latitude}
+          component={renderTextField}
+        />
+        <div className={cssClasses('coordinate__button')}>
+          <AspectButton
+            color="primary"
+            variant="contained"
+            onClick={onSetBasedAddressClick}
+          >
+            {formatMessage(messages.buttonSetBasedonAddress)}
+          </AspectButton>
+        </div>
+      </div>
+      <TimezoneSelect
+        name="timezone"
+        label={labels.timezone}
+        disabled={loading || submitting}
+        fullWidth
+      />
+      <ReadOnlyField
+        label={labels.tags}
+        value={siteTags}
+        format={v => (
+          <ConnectedTagInput
+            qryId={initialValues.get('id')}
+            qryType="site"
+            allowCreate
+            onTagChange={onSiteTagChange}
+            value={v}
+            noMatch={labels.noMatch}
+          />
+        )}
+      />
+      <Button
+        disabled={invalid || pristine || submitting}
+        type="submit"
+        color="secondary"
+        variant="contained"
+      >
+        {formatMessage(messages.buttonUpdate)}
+      </Button>
+      {submitting && <LinearProgress />}
+    </form>
+  )
+}
 
 export const EditableFieldsFormContainer = enhance(EditableFieldsForm)
 

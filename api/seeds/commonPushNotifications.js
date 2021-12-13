@@ -15,6 +15,7 @@ async function insertNewResultPushTemplates(
       name: 'New Results Available',
       externalId: 'NewResultsAvailable',
       i18nKey: 'issueTypeNewResultsAvailable',
+      hasTag: 0,
     },
     notificationType: {
       name: 'New Results Available',

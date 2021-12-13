@@ -40,9 +40,15 @@ class TaskContextTest {
         .first('id')
       assert.isOk(alertTemplateId)
 
+      const { issueTypeId } = await knex('IssueType')
+        .where({
+          externalId: 'DataCategoryLowForOther',
+        })
+        .first('id as issueTypeId')
+
       // read 1st Result and corresponding siteId/deviceId
       const issues = _.times(100, () => ({
-        issueTypeId: 5,
+        issueTypeId,
         issueStatusId: 2,
         partnerId: 4,
         geographyId: 100,
