@@ -1671,6 +1671,42 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
+    describe('when the result text contains "ERROR"', () => {
+      it('should set the workflow status of the result to error', async () => {
+        const now = new Date()
+        const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
+
+        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: errorTestResultId,
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+                data: { resultText: 'ERROR' },
+              },
+            }
+          ),
+        })
+
+        const lastResult = await getLastResult()
+        expect(lastResult).to.containSubset({
+          resultCategory1: 'Error',
+          resultWorkflowStatus: 'Error',
+          resultData: {
+            geneXpertTestId: errorTestResultId,
+          },
+        })
+      })
+    })
+
     describe('when no workflow status has been specified in the result payload', () => {
       it('should default the workflow status to "Deliverable"', async () => {
         const now = new Date()
