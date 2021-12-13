@@ -144,6 +144,7 @@ const manager = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -229,6 +230,7 @@ const regionalOfficer = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -318,6 +320,7 @@ const labUser = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -407,6 +410,7 @@ const clinician = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -546,6 +550,7 @@ const ntp = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -723,6 +728,7 @@ const resultViewerYes = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -764,6 +770,7 @@ const remoteHealthWorker = {
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
+    'all_results',
   ],
   permissions: [
     {
@@ -841,6 +848,7 @@ const labManager = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -914,6 +922,7 @@ const labSupervisor = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -987,6 +996,7 @@ const medTech = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -1060,6 +1070,7 @@ const dataViewer = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {
@@ -1134,6 +1145,7 @@ const labAdmin = {
     'device_utilization',
     'device_activity_percent',
     'module_swaps',
+    'all_results',
   ],
   permissions: [
     {

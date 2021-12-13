@@ -22,8 +22,8 @@ const mtbDetectedRRDetected = {
   ],
 }
 const allResults = {
-  name: 'All results',
-  description: 'All results',
+  name: 'All Results',
+  description: 'All test results in the system. One row per result.',
   i18nKey: 'all_results',
   i18nKeyDescription: 'all_results_description',
   externalId: 'all_results',

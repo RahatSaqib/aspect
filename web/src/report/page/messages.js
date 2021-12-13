@@ -17,6 +17,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.Critical_Errors_By_Device',
     defaultMessage: 'Critical Errors By Device',
   },
+  all_results: {
+    id: 'pages.ReportIndex.all_results',
+    defaultMessage: 'All Results',
+  },
+  all_results_description: {
+    id: 'pages.ReportIndex.all_results_description',
+    defaultMessage: 'All test results in the system. One row per result.',
+  },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
     defaultMessage: 'MTB Detected RR Detected',
