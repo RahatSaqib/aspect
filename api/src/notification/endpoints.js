@@ -111,6 +111,12 @@ const routes = [
                 date: Joi.date().description(
                   'The date notification was sent or received'
                 ),
+                issueId: Joi.number()
+                  .allow(null)
+                  .description(`Notification's issueId`),
+                resultId: Joi.number()
+                  .allow(null)
+                  .description(`Notification's resultId`),
               })
             ),
         }),

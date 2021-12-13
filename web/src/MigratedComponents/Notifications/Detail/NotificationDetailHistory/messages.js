@@ -21,6 +21,14 @@ export const messages = defineMessages({
     id: 'pages.Notifications.table.smsSentHeader',
     defaultMessage: 'SMS Sent',
   },
+  event: {
+    id: 'pages.Notifications.table.event',
+    defaultMessage: 'event',
+  },
+  events: {
+    id: 'pages.Notifications.table.events',
+    defaultMessage: 'events',
+  },
 })
 
 export default messages
