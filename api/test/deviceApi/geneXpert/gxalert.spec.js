@@ -1186,8 +1186,8 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(devicesResponse.body.data.length, 1)
         devicesResponse.body.data[0].days.forEach(day => {
           if (
-            new Date(day.date) < startOfDayUtc(addDays(endedOnDateInUtc, 1)) &&
-            new Date(day.date) >= startOfDayUtc(endedOnDateInUtc)
+            new Date(day.date) < startOfDayUtc(addDays(endedOnDate, 1)) &&
+            new Date(day.date) >= startOfDayUtc(endedOnDate)
           ) {
             assert.equal(day.externalId, 'active')
           } else {
