@@ -16,6 +16,7 @@ import { useQuery } from 'react-query'
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
+import { gotoWithReturnUrl } from '../../shared/utils/browser'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -123,13 +124,8 @@ const onRowClick =
   }
 
 const gotoResultDetails = (navigate, location, resultId) => {
-  const searchParams = new URLSearchParams(location.search)
-
-  const q = new URLSearchParams({
-    returnUrl: `${location.pathname}?${searchParams.toString()}`,
-  })
-
-  navigate(`/browse/result/${resultId || 'add'}?${q.toString()}`)
+  const url = `/browse/result/${resultId || 'add'}`
+  gotoWithReturnUrl(url, navigate, location)
 }
 
 const searchSanitizer = makeSearchParamsSanitizer({
