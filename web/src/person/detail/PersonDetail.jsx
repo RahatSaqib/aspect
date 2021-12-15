@@ -12,7 +12,6 @@ import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 import ContactDetailsFormFormik from '../../MigratedComponents/Account/Details'
-import ContactDetailsForm from './ContactDetailsForm'
 
 import LoginDetailsForm from './LoginDetailsForm'
 import JobAssignmentForm from './JobAssignmentForm'
@@ -241,7 +240,6 @@ export class PersonDetail extends PureComponent {
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
-    const userPreferences = new UserPreferences(person)
     const loading = !isNew && (!person || person.get('loaded') !== true)
     const canLogIn = person && !!person.get('canLogIn')
     const shouldPrefill = !isNew && person && person.get('userId') == null
@@ -268,21 +266,7 @@ export class PersonDetail extends PureComponent {
                     canUserLoggedIn={!isNew && canLogIn}
                   />
                   <Paper className={styles.ContactDetailsForm}>
-                    <ContactDetailsFormFormik
-                      data={{ contactDetails, userPreferences, loading }}
-                    />
-                    <hr />
-                    {/* <ContactDetailsForm
-                      intl={intl}
-                      loading={loading}
-                      onEmailBlur={this.handleEmailBlur}
-                      contactDetails={contactDetails}
-                      showNotesField
-                      isUserChange={this.handlePersonCanLogIn}
-                      onSubmit={this.saveContactDetails}
-                      userPreferences={userPreferences}
-                      saveUserPreferences={this.saveUserPreferences}
-                    /> */}
+                    <ContactDetailsFormFormik />
                   </Paper>
                 </PermissionsProvider>
               </div>

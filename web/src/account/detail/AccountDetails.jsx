@@ -9,7 +9,6 @@ import { injectIntl } from 'react-intl'
 import Paper from '@material-ui/core/Paper'
 
 import NavTitle from '../../globals/components/NavTitle'
-import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import {
   fetchAccountDetails,
@@ -31,6 +30,7 @@ import {
   setTimezoneId,
   setCurrentCulture,
 } from '../../globals/sideEffects/LocalStorage'
+import ContactDetailsFormFormik from '../../MigratedComponents/Account/Details'
 
 const enhance = compose(
   injectIntl,
@@ -171,15 +171,7 @@ export class AccountDetails extends PureComponent {
                 {...this.props}
               />
               <Paper className={styles.AddMargin}>
-                {/* <ContactDetailsForm
-                  intl={intl}
-                  canModify={false}
-                  loading={loading || saving}
-                  contactDetails={accountDetails.get('contactDetails')}
-                  onSubmit={this.handleSaveContactDetails}
-                  userPreferences={accountDetails.get('userPreferences')}
-                  saveUserPreferences={this.handleSaveUserPreferences}
-                /> */}
+                <ContactDetailsFormFormik />
               </Paper>
             </div>
           </Route>
