@@ -6,7 +6,7 @@ module.exports = async knex => {
 
   // get timezones for all devices:
   const devices = await knex('Device as d')
-    .join('DeviceType as dt', 'd.deviceTypeId', 'td.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('TimeZone as tz', 'd.timezone', 'tz.id')
     .where('dt.externalId', 'CepheidGeneXpert')
     .select('d.id', 'tz.timeZone')
