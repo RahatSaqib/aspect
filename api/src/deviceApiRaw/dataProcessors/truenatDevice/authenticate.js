@@ -40,7 +40,6 @@ class TruenatLogin extends SynchronousDataProcessor {
         senderIp: getRemoteAddress(request),
         rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
-      console.log('processRequest', '1', deviceApiKeyAuthResult)
       this.messageContext.dispatch(deviceSeen(deviceId))
     }
     if (deviceApiKeyAuthResult.authenticated) {
