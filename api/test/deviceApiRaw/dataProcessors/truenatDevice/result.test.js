@@ -4,8 +4,6 @@ const Promise = require('bluebird')
 const sinon = require('sinon')
 const _ = require('lodash')
 
-const { parseDateOrDefault } = require('../../../../src/shared/date')
-
 const { assert, expect } = chai
 
 describe('Truenat Result Upload Data Processor', () => {
