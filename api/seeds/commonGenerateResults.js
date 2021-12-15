@@ -105,6 +105,7 @@ async function createDevicesForAllMissingTypes(
       }
     })
     .select()
+  const deviceTypesThatRequireDeviceApiKeyWithCredentials = ['molbioTruenat']
   const { approved: deviceApprovalApproved } = await allDeviceApprovalToId()
   const existingDeviceTypesAtEachSite = await knex('Device')
     .whereIn('siteId', _.map(siteDatas, 'id'))
@@ -113,7 +114,6 @@ async function createDevicesForAllMissingTypes(
     .distinct()
   if (!_.isEmpty(siteDatas)) {
     let i = 0
-
     await Promise.each(deviceTypes, async deviceType => {
       const siteIdsWithoutDeviceType = _.uniq(
         siteDatas.map(site => site.id)
@@ -151,7 +151,7 @@ async function createDevicesForAllMissingTypes(
         const [deviceId] = await knex('Device').insert(deviceToInsert)
         if (
           deviceTypesThatRequireDeviceApiKeyWithCredentials.includes(
-            elem.externalId
+            deviceType.externalId
           )
         ) {
           const password = await bcryptHash(
