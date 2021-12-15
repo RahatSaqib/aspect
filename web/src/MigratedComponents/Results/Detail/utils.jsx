@@ -8,7 +8,7 @@ import getValidationSchema from '../Forms/validation'
 import messages from './messages'
 
 export const getFormConfigWithData = (intl, isNew, values) => {
-  const formSchema = getFormConfig(intl.formatMessage, isNew)
+  const formSchema = getFormConfig(intl.formatMessage, isNew, values.assay)
   const validationSchema = getValidationSchema(intl.formatMessage)
   const initialValues = getInitialValuesFromFormConfig(formSchema, values)
 

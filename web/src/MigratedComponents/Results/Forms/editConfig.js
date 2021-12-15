@@ -12,7 +12,11 @@ import {
 
 import messages from '../Detail/messages'
 
-const getConfig = (formatMessage, isNew) => {
+const getConfig = (
+  formatMessage,
+  isNew,
+  { resultCategory1i18nKey, resultCategory2i18nKey } = {}
+) => {
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',
@@ -184,6 +188,7 @@ const getConfig = (formatMessage, isNew) => {
                 controlType: {
                   ...resultCategoryControlType(formatMessage),
                 },
+                labelI18nKey: resultCategory1i18nKey || 'resultCategory1',
                 label: 'resultCategory1Label',
                 disabledIf: values =>
                   !!values.resultSourceExternalId &&
@@ -195,6 +200,7 @@ const getConfig = (formatMessage, isNew) => {
                   ...resultCategoryControlType(formatMessage),
                   isClearable: true,
                 },
+                labelI18nKey: resultCategory2i18nKey || 'resultCategory2',
                 label: 'resultCategory2Label',
                 hideIfNull: true,
                 disabledIf: values =>
