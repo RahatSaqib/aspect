@@ -1,5 +1,4 @@
 const Boom = require('@hapi/boom')
-const _ = require('lodash')
 const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
@@ -70,10 +69,16 @@ async function authUsernameAndPassword(username, password) {
     username,
     password
   )
-  const token = _.get(deviceApiKeyAuthResult, 'data.token')
-  const deviceApiKeyId = _.get(deviceApiKeyAuthResult, 'data.id')
+  const { authenticated, data } = deviceApiKeyAuthResult || {}
+  if (!authenticated || !data) {
+    if (password) {
+      return authToken(password)
+    }
+    throw Boom.unauthorized('Cannot authorize API Key')
+  }
+  const { id, token } = data
   const scope = ['deviceApi']
-  const name = `(${deviceApiKeyId}) ${username || ''}`.trim()
+  const name = `(${id}) ${username || ''}`.trim()
   const credentials = { token, scope, name }
   return credentials
 }
