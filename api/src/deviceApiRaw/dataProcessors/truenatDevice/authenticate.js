@@ -34,12 +34,13 @@ class TruenatLogin extends SynchronousDataProcessor {
     )
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
-      await postPayloadFromDevice(
+      await postPayloadFromDevice({
         deviceId,
-        getRemoteAddress(request),
-        'Diagnostic Device POST',
-        request.plugins.rawPayload
-      )
+        source: 'Diagnostic Device POST',
+        senderIp: getRemoteAddress(request),
+        rawMessage: JSON.stringify(request.plugins.rawPayload),
+      })
+      console.log('processRequest', '1', deviceApiKeyAuthResult)
       this.messageContext.dispatch(deviceSeen(deviceId))
     }
     if (deviceApiKeyAuthResult.authenticated) {
