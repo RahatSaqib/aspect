@@ -11,6 +11,8 @@ import ptLocale from 'date-fns/locale/pt'
 import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
 import esLocale from 'date-fns/locale/es'
+import tgLocale from 'date-fns/locale/uz' // it doesn't exists TJ so i selected uzbekistan.
+import viLocale from 'date-fns/locale/vi'
 
 import translation from '../../shared/i18n/translation'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
@@ -33,6 +35,8 @@ export const dateFNSLocales = {
   'uk-UA': ukLocale,
   es: esLocale,
   'es-ES': esLocale,
+  tg: tgLocale,
+  vi: viLocale,
 }
 
 function timeZoneFallBack(timezone) {
