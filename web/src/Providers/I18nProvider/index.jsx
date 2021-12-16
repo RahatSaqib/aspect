@@ -36,6 +36,7 @@ export const dateFNSLocales = {
   es: esLocale,
   'es-ES': esLocale,
   tg: tgLocale,
+  'tg-TJ': tgLocale,
   vi: viLocale,
 }
 
