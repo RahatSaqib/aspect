@@ -108,10 +108,6 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-const onAddNewButtonClick = (navigate, location) => () => {
-  gotoResultDetails(navigate, location, 'add')
-}
-
 const onRowClick =
   (navigate, location) =>
   ({
@@ -274,17 +270,7 @@ export const ResultListWithProps = ({
       intl={intl}
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
-    >
-      <AddNewButton
-        type="button"
-        color="primary"
-        variant="contained"
-        browseButton
-        onClick={onAddNewButtonClick(navigate, location)}
-      >
-        {intl.formatMessage(messages.newResult)}
-      </AddNewButton>
-    </BrowseFilters>
+    />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
 
