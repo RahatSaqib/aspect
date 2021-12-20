@@ -586,7 +586,32 @@ const getFormConfig = (
     buildSendToPersons(formatMessage),
     buildJobFunctionsRows(jobFunctions),
   ]
-
+  if (isEdit)
+    sections.splice(0, 0, {
+      id: 'section_notificationType_disable',
+      label: 'Notification Type',
+      labelI18nKey: 'notificationTypeDisable',
+      rows: [
+        {
+          id: 0,
+          items: [
+            {
+              id: 'notificationTypeDisable',
+              visibleIf: () => false,
+            },
+            {
+              id: 'notificationTypeDisable',
+              controlType: {
+                component: 'checkbox',
+              },
+              classNames: checkboxClassNames,
+              initialValue: false,
+              labelI18nKey: 'disable',
+            },
+          ],
+        },
+      ],
+    })
   return {
     title: isEdit
       ? formatMessage(messages.titleEdit, 'Edit Notification')

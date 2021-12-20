@@ -27,6 +27,7 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -1025,6 +1026,30 @@ async function saveNotification(request) {
   return { ok: false, notificationTypeId: -1 }
 }
 
+async function deleteNotification(request) {
+  const {
+    params,
+    plugins: { messageContext },
+  } = request
+  const { notificationId: id } = params
+
+  try {
+    await knex('NotificationType').where({ id }).delete()
+    if (!messageContext.notificationTypeCreated)
+      messageContext.bindActionCreators({ notificationTypeCreated })
+    messageContext.notificationTypeCreated(id)
+  } catch (e) {
+    logger.info(
+      { info: `NotificationType ${id} cannot be deleted`, e },
+      { reLabel: 'aspect:api:notification:delete' }
+    )
+    return Boom.badData(
+      `Can not delete this notification type because it already triggered notifications`
+    )
+  }
+
+  return { ok: true }
+}
 module.exports = {
   listNotifications,
   getNotifications,
@@ -1034,4 +1059,5 @@ module.exports = {
   resultConditionsMet,
   getPeopleToNotify,
   saveNotification,
+  deleteNotification,
 }

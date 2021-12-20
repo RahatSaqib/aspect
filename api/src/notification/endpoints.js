@@ -6,6 +6,7 @@ const {
   getNotifications,
   getNotification,
   saveNotification,
+  deleteNotification,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
@@ -23,6 +24,7 @@ const routes = [
     config: {
       description: 'Notification List',
       notes: 'Pageable and sortable list of notifications',
+      auth: { scope: ['notification'] },
       ...listNotificationsBaseConfig(),
       response: {
         options: {
@@ -66,6 +68,7 @@ const routes = [
     handler: exportNotifications,
     config: {
       description: 'Export Notifications List into Excel or CSV',
+      auth: { scope: ['notification'] },
       notes: 'Filtered and sorted list of Notifications',
       ...listNotificationsBaseConfig(),
     },
@@ -77,6 +80,7 @@ const routes = [
     config: {
       description: 'Get all notification history',
       notes: 'Filtered and sorted list of Notifications',
+      auth: { scope: ['notification'] },
       validate: {
         params: {
           notificationTypeId: Joi.number().integer().positive().required(),
@@ -130,6 +134,7 @@ const routes = [
     config: {
       description: 'Get Notification',
       notes: 'Details of a Notification',
+      auth: { scope: ['notification'] },
       validate: {
         params: {
           id: Joi.number().integer().positive().required(),
@@ -168,6 +173,21 @@ const routes = [
         },
       },
       response: saveNotificationResponse,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/notification/{notificationId}',
+    handler: asyncHandler(deleteNotification),
+    config: {
+      description: "Deletes a notification type, only if it wasn't triggered",
+      notes: 'Returns ok: true when successfully deleted',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        params: {
+          notificationId: Joi.number().integer().positive().required(),
+        },
+      },
     },
   },
 ]
