@@ -2412,7 +2412,7 @@ async function clinicalIndicatorAggregations(request) {
     query
   )
 
-  const data = await processGroupedQuery(resultQuery, groupBy, 'r.endedOn')
+  const data = await processGroupedQuery(resultQuery, groupBy)
   return { data }
 }
 
@@ -2550,7 +2550,11 @@ function getClinicalIndicatorQueryForResultsTable(
     .count('r.id as cnt')
 }
 
-async function processGroupedQuery(resultQuery, groupBy, dateColumn) {
+async function processGroupedQuery(
+  resultQuery,
+  groupBy,
+  dateColumn = 'r.endedOn'
+) {
   // handle possible groups:
   const paramToDb = {
     resultCategory1: [
