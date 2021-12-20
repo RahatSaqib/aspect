@@ -593,7 +593,8 @@ async function getNotification(request) {
       'et.body as emailBody',
       'st.message as smsBody',
       'wt.url as webUrl',
-      'wt.payload as webBody'
+      'wt.payload as webBody',
+      'nt.enabled'
     )
     .from('NotificationType as nt')
     .innerJoin(
@@ -608,7 +609,6 @@ async function getNotification(request) {
     .where('nt.id', id)
     .andWhere('ntc.externalId', 'resultBased')
     .first()
-
   return { ok: true, data: notification }
 }
 
@@ -786,6 +786,7 @@ async function saveNotificationType({
     sendWeb,
     webBody,
     webUrl,
+    enabled,
   } = payload
   const now = new Date()
   const auditFields = {
@@ -875,6 +876,7 @@ async function saveNotificationType({
           name,
           updatedOn: now,
           updatedBy: userId,
+          enabled,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
@@ -974,6 +976,7 @@ async function saveNotificationType({
           sendEmail,
           sendSms,
           sendWeb,
+          enabled,
         }),
       })
       .where({ id: notificationTypeId })
@@ -1001,7 +1004,6 @@ async function saveNotification(request) {
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
   const { notificationType } = payload
-
   if (notificationType === 'resultBased') {
     const result = await saveNotificationType({
       id,
