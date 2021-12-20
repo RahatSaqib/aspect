@@ -582,36 +582,40 @@ const getFormConfig = (
 ) => {
   const validationBase = getBaseValidation(formatMessage, messages)
   const sections = [
-    ...getSectionsBase(formatMessage, validationBase),
-    buildSendToPersons(formatMessage),
-    buildJobFunctionsRows(jobFunctions),
-  ]
-  if (isEdit)
-    sections.splice(0, 0, {
+    {
       id: 'section_notificationType_disable',
       label: 'Notification Type',
-      labelI18nKey: 'notificationTypeDisable',
+      labelI18nKey: 'notificationTypeEnable',
+      visibleIf: () => isEdit,
       rows: [
         {
           id: 0,
           items: [
             {
-              id: 'notificationTypeDisable',
-              visibleIf: () => false,
+              id: 'notificationTypeEnable',
             },
             {
-              id: 'notificationTypeDisable',
+              id: 'enabled',
               controlType: {
                 component: 'checkbox',
               },
-              classNames: checkboxClassNames,
-              initialValue: false,
-              labelI18nKey: 'disable',
+              classNames: {
+                controlContainer: cssClasses('checkbox-container'),
+                itemContainer: cssClasses('max-width-100pcr'),
+              },
+              // classNames: checkboxClassNames,
+              initialValue: true,
+              labelI18nKey: 'enable',
             },
           ],
         },
       ],
-    })
+    },
+    ...getSectionsBase(formatMessage, validationBase),
+    buildSendToPersons(formatMessage),
+    buildJobFunctionsRows(jobFunctions),
+  ]
+
   return {
     title: isEdit
       ? formatMessage(messages.titleEdit, 'Edit Notification')
