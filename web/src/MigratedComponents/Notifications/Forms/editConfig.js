@@ -592,20 +592,20 @@ const getFormConfig = (
           id: 0,
           items: [
             {
-              id: 'notificationTypeEnable',
-            },
-            {
               id: 'enabled',
               controlType: {
                 component: 'checkbox',
               },
               classNames: {
                 controlContainer: cssClasses('checkbox-container'),
-                itemContainer: cssClasses('max-width-100pcr'),
+                itemContainer: cssClasses('checkbox-item-container'),
               },
               // classNames: checkboxClassNames,
               initialValue: true,
               labelI18nKey: 'enable',
+            },
+            {
+              id: 'notificationTypeEnable',
             },
           ],
         },
