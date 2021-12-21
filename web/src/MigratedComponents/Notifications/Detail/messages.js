@@ -15,6 +15,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.save',
     defaultMessage: 'Save',
   },
+  sendToPatient: {
+    id: 'pages.Notifications.sendToPatient',
+    defaultMessage: 'Send to patient',
+  },
 
   // --------------------------------------------------------------
   // Sections

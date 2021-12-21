@@ -490,88 +490,104 @@ function buildJobFunctionsRows(jobFunctions) {
 }
 
 function buildSendToPersons(formatMessage) {
-  return {
-    id: 'sendToPersons',
-    label: 'sendToPersons',
-    labelI18nKey: 'personsSelectLabel',
-    rows: [
-      {
-        id: 81,
-        items: [
-          {
-            id: 'persons',
-            label: formatMessage(messages.selectPersonOption),
-            initialValue: [],
-            controlType: {
-              component: 'select',
-              endpoint: PERSON_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              isMulti: true,
-              isClearable: true,
-              queryKey: PERSON_LIST.KEY,
-              normalizeLoadedData: (response, formik) => {
-                const { values, setFieldValue } = formik
-                function makeLabel(name, state) {
-                  const stateLabel = isEmpty(state) ? '' : ` (${state})`
-                  return `${name} ${stateLabel}`
-                }
-                const { ok, data } = response
-                const options = [
-                  {
-                    label: formatMessage(messages.optionPersonRoleSet),
-                    options: [],
-                  },
-                  {
-                    label: formatMessage(messages.optionPersonRoleNotSet),
-                    options: [],
-                  },
-                ]
-                if (ok === true) {
-                  const selected = intersectionBy(data, values.persons, 'id')
-                  if (selected?.length) {
-                    const initialValues = []
-                    map(selected, ({ id, name, state }) =>
-                      initialValues.push({
+  return [
+    {
+      id: 'sendToPersons',
+      label: 'sendToPersons',
+      labelI18nKey: 'personsSelectLabel',
+      rows: [
+        {
+          id: 81,
+          items: [
+            {
+              id: 'persons',
+              label: formatMessage(messages.selectPersonOption),
+              initialValue: [],
+              controlType: {
+                component: 'select',
+                endpoint: PERSON_LIST.ENDPOINT,
+                hideIfNoOptions: false,
+                isMulti: true,
+                isClearable: true,
+                queryKey: PERSON_LIST.KEY,
+                normalizeLoadedData: (response, formik) => {
+                  const { values, setFieldValue } = formik
+                  function makeLabel(name, state) {
+                    const stateLabel = isEmpty(state) ? '' : ` (${state})`
+                    return `${name} ${stateLabel}`
+                  }
+                  const { ok, data } = response
+                  const options = [
+                    {
+                      label: formatMessage(messages.optionPersonRoleSet),
+                      options: [],
+                    },
+                    {
+                      label: formatMessage(messages.optionPersonRoleNotSet),
+                      options: [],
+                    },
+                  ]
+                  if (ok === true) {
+                    const selected = intersectionBy(data, values.persons, 'id')
+                    if (selected?.length) {
+                      const initialValues = []
+                      map(selected, ({ id, name, state }) =>
+                        initialValues.push({
+                          label: makeLabel(name, state),
+                          value: id,
+                          grouped: true,
+                        })
+                      )
+                      values.persons = initialValues
+                      setFieldValue('persons', initialValues)
+                    }
+                    const withJob = filter(data, item => !isEmpty(item.level))
+                    const withoutJob = xor(data, withJob)
+                    map(withJob, ({ id, name, state }) =>
+                      options[0].options.push({
                         label: makeLabel(name, state),
                         value: id,
                         grouped: true,
                       })
                     )
-                    values.persons = initialValues
-                    setFieldValue('persons', initialValues)
+                    map(withoutJob, ({ name, state }) =>
+                      options[1].options.push({
+                        label: makeLabel(name, state),
+                        value: null,
+                        disabled: true,
+                        grouped: true,
+                      })
+                    )
                   }
-                  const withJob = filter(data, item => !isEmpty(item.level))
-                  const withoutJob = xor(data, withJob)
-                  map(withJob, ({ id, name, state }) =>
-                    options[0].options.push({
-                      label: makeLabel(name, state),
-                      value: id,
-                      grouped: true,
-                    })
-                  )
-                  map(withoutJob, ({ name, state }) =>
-                    options[1].options.push({
-                      label: makeLabel(name, state),
-                      value: null,
-                      disabled: true,
-                      grouped: true,
-                    })
-                  )
-                }
-                return options?.length ? options : null
+                  return options?.length ? options : null
+                },
               },
+              classNames: {
+                itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+                controlContainer: cssClasses('full-width-100pc'),
+                item: cssClasses('full-width-100pc'),
+              },
+              labelI18nKey: 'selectPersonOption',
             },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+          ],
+        },
+        {
+          id: 20,
+          items: [
+            {
+              id: 'sendToPatient',
+              labelI18nKey: 'sendToPatient',
+              controlType: {
+                component: 'checkbox',
+              },
+              classNames: checkboxClassNames,
+              initialValue: false,
             },
-            labelI18nKey: 'selectPersonOption',
-          },
-        ],
-      },
-    ],
-  }
+          ],
+        },
+      ],
+    },
+  ]
 }
 
 const getFormConfig = (
@@ -583,7 +599,7 @@ const getFormConfig = (
   const validationBase = getBaseValidation(formatMessage, messages)
   const sections = [
     ...getSectionsBase(formatMessage, validationBase),
-    buildSendToPersons(formatMessage),
+    ...buildSendToPersons(formatMessage),
     buildJobFunctionsRows(jobFunctions),
   ]
 
