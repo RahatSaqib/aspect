@@ -725,6 +725,7 @@ describe('Notification routes', () => {
       sendSms: true,
       sendWeb: false,
       result: baseFilterCondition.result,
+      enabled: true,
     })
   })
 })
