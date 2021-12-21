@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultCategoryXDR',
     defaultMessage: 'XDR',
   },
+  resultCategoryHiv: {
+    id: 'pages.ResultList.resultCategoryHiv',
+    defaultMessage: 'HIV',
+  },
   resultCategoryHivVl: {
     id: 'pages.ResultList.resultCategoryHivVl',
     defaultMessage: 'HIV',
