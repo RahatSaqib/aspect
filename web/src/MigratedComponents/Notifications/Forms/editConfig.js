@@ -584,7 +584,7 @@ const getFormConfig = (
   const sections = [
     {
       id: 'section_notificationType_disable',
-      label: 'Notification Type',
+      label: 'Enable',
       labelI18nKey: 'notificationTypeEnable',
       visibleIf: () => isEdit,
       rows: [
@@ -602,10 +602,7 @@ const getFormConfig = (
               },
               // classNames: checkboxClassNames,
               initialValue: true,
-              labelI18nKey: 'enable',
-            },
-            {
-              id: 'notificationTypeEnable',
+              label: '',
             },
           ],
         },

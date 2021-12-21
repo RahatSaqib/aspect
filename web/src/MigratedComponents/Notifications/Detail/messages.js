@@ -28,7 +28,7 @@ export default defineMessages({
     defaultMessage: 'Enable this notification',
   },
   enable: {
-    id: 'pages.NotificationDetail.disable',
+    id: 'pages.NotificationDetail.enable',
     defaultMessage: 'Enable',
   },
   whenResultIs: {
