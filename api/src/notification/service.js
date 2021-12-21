@@ -772,6 +772,7 @@ async function saveNotificationType({
     deviceLevelId,
     jobFunctions,
     persons,
+    sendToPatient,
     name,
     result,
     //
@@ -799,6 +800,7 @@ async function saveNotificationType({
     const filterConditionValidation = await validateFilterCondition({
       jobFunctions,
       persons,
+      sendToPatient,
     })
     if (filterConditionValidation !== true) return filterConditionValidation
 
@@ -972,6 +974,7 @@ async function saveNotificationType({
           result,
           sendEmail,
           sendSms,
+          sendToPatient,
           sendWeb,
         }),
       })
