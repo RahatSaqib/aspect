@@ -2,6 +2,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
 const { Promise } = require('bluebird')
+const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
@@ -9,49 +10,251 @@ const { knex } = require('../../src/db')
 
 const { assert } = chai
 const server = require('../utils/testUtils')
+const { startOfDayUtc } = require('../../src/shared/date')
 
 describe('Inventory Routes', () => {
+  const getScopedSites = async () => {
+    const dataConstraints = await getConstraints({ name: 'admin' })
+    const [site1, site2] = await knex('Site as s')
+      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+      .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
+      .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+      .modify(addConstraints, dataConstraints, {
+        site: 's',
+        geography: 'g',
+      })
+      .select('s.*')
+    await knex('Site').insert([
+      {
+        ..._.omit(site1, 'id'),
+        name: 'TEST SITE 1',
+        externalId: 'testSite1',
+      },
+      {
+        ..._.omit(site2, 'id'),
+        name: 'TEST SITE 2',
+        externalId: 'testSite2',
+      },
+    ])
+    const newSites = await knex('Site').whereIn('externalId', [
+      'testSite1',
+      'testSite2',
+    ])
+    return newSites
+  }
+
   describe('Inventory List Route', () => {
     describe('/inventory', () => {
       const path = '/api/inventory'
-      before(() => {
+      let site1Id
+      let site1Name
+      let site2Id
+      let inventoryItem1Id
+      let inventoryItem2Id
+      let inventoryItem3Id
+      let inventoryItemInTransitId
+      let consumableId
+      const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
+      const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
+      const expiresOn3 = startOfDayUtc(addDays(new Date(), 50))
+      before(async () => {
         shared.checkToken(server, path)
+        ;[{ id: site1Id, name: site1Name }, { id: site2Id }] =
+          await getScopedSites()
+        const { id } = await knex('Consumable')
+          .where('name', 'GeneXpert TB Cartridge')
+          .first('id')
+        consumableId = id
+        ;[inventoryItem1Id] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          lotNumber: '0000001',
+          expiresOn: expiresOn1,
+          quantityOnHand: 250,
+        })
+        ;[inventoryItem2Id] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          lotNumber: '0000002',
+          expiresOn: expiresOn2,
+          quantityOnHand: 350,
+        })
+        ;[inventoryItem3Id] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          lotNumber: '0000003',
+          expiresOn: expiresOn3,
+          quantityOnHand: 300,
+        })
+        ;[inventoryItemInTransitId] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          inTransitFromSiteId: site2Id,
+          lotNumber: '0000002',
+          expiresOn: expiresOn2,
+          quantityOnHand: 500,
+        })
+        await knex('FactInventoryConsumptionRate').insert({
+          siteId: site1Id,
+          consumableId,
+          days: 1,
+          rate: 200,
+          updatedOn: new Date(),
+        })
       })
 
-      describe('GET', () => {
-        it('should return a list of inventory items when using valid token', done => {
-          server
-            .get(path)
+      after(async () => {
+        await knex('InventoryItem')
+          .whereIn('id', [
+            inventoryItem1Id,
+            inventoryItem2Id,
+            inventoryItem3Id,
+            inventoryItemInTransitId,
+          ])
+          .delete()
+        await knex('FactInventoryConsumptionRate')
+          .whereIn('siteId', [site1Id, site2Id])
+          .delete()
+        await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
+      })
+
+      describe(/* .only */ 'GET', () => {
+        it('should return a list of inventory items broken out by lot', async () => {
+          const res = await server
+            .get(`${path}?breakOutByLot=true`)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'array')
-              assert.isAtLeast(res.body.data.length, 2)
-              res.body.data.forEach(inventoryItem => {
-                assert.property(inventoryItem, 'id')
-                assert.property(inventoryItem, 'consumableId')
-                assert.property(inventoryItem, 'siteId')
-                assert.property(inventoryItem, 'expiresOn')
-                assert.property(inventoryItem, 'canExpire')
-                assert.property(inventoryItem, 'lotNumber')
-                assert.property(inventoryItem, 'quantityOnHand')
-                assert.property(inventoryItem, 'consumableName')
-                assert.property(inventoryItem, 'manufacturer')
-                assert.property(inventoryItem, 'unitShortName')
-                assert.property(inventoryItem, 'siteName')
-                assert.property(inventoryItem, 'countryId')
-                assert.property(inventoryItem, 'stateId')
-                assert.property(inventoryItem, 'lgaId')
-                assert.property(inventoryItem, 'countryName')
-                assert.property(inventoryItem, 'stateName')
-                assert.property(inventoryItem, 'lgaName')
-                assert.property(inventoryItem, 'dailyConsumptionRate')
-              })
-              assert.property(res.body, 'total')
-              done()
-            })
+
+          // console.log(res.body)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 2)
+          res.body.data.forEach(inventoryItem => {
+            assert.property(inventoryItem, 'id')
+            assert.property(inventoryItem, 'consumableId')
+            assert.property(inventoryItem, 'siteId')
+            assert.property(inventoryItem, 'expiresOn')
+            assert.property(inventoryItem, 'canExpire')
+            assert.property(inventoryItem, 'lotNumber')
+            assert.property(inventoryItem, 'quantityOnHand')
+            assert.property(inventoryItem, 'consumableName')
+            assert.property(inventoryItem, 'manufacturer')
+            assert.property(inventoryItem, 'unitShortName')
+            assert.property(inventoryItem, 'siteName')
+            assert.property(inventoryItem, 'countryId')
+            assert.property(inventoryItem, 'stateId')
+            assert.property(inventoryItem, 'lgaId')
+            assert.property(inventoryItem, 'countryName')
+            assert.property(inventoryItem, 'stateName')
+            assert.property(inventoryItem, 'lgaName')
+            assert.property(inventoryItem, 'inTransitFromSiteId')
+            assert.property(inventoryItem, 'inTransitFromSiteName')
+            assert.notProperty(inventoryItem, 'stockLeft')
+            assert.notProperty(inventoryItem, 'dailyConsumptionRate')
+          })
+
+          const [inventoryItem1] = res.body.data.filter(
+            ii =>
+              ii.siteId === site1Id &&
+              ii.consumableId === consumableId &&
+              ii.lotNumber === '0000001' &&
+              ii.expiresOn === expiresOn1.toISOString()
+          )
+          assert.isNotNull(inventoryItem1)
+          assert.equal(inventoryItem1.quantityOnHand, 100)
+
+          const [inventoryItem2] = res.body.data.filter(
+            ii =>
+              ii.siteId === site1Id &&
+              ii.consumableId === consumableId &&
+              ii.lotNumber === '0000002' &&
+              ii.expiresOn === expiresOn2.toISOString() &&
+              ii.inTransitFromSiteId === null
+          )
+          assert.isNotNull(inventoryItem2)
+          assert.equal(inventoryItem2.quantityOnHand, 150)
+
+          const [inventoryItemInTransit] = res.body.data.filter(
+            ii =>
+              ii.siteId === site1Id &&
+              ii.consumableId === consumableId &&
+              ii.lotNumber === '0000002' &&
+              ii.expiresOn === expiresOn2.toISOString() &&
+              ii.inTransitFromSiteId !== null
+          )
+          assert.isNotNull(inventoryItemInTransit)
+          assert.equal(inventoryItemInTransit.quantityOnHand, 500)
+
+          assert.property(res.body, 'total')
+        })
+
+        it(/* .only */ 'should return a list of inventory items', async () => {
+          const res = await server
+            .get(`${path}?siteName=${site1Name}`)
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          // console.log(res.body)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 2)
+          res.body.data.forEach(inventoryItem => {
+            assert.property(inventoryItem, 'consumableId')
+            assert.property(inventoryItem, 'siteId')
+            assert.property(inventoryItem, 'canExpire')
+            assert.property(inventoryItem, 'consumableName')
+            assert.property(inventoryItem, 'manufacturer')
+            assert.property(inventoryItem, 'unitShortName')
+            assert.property(inventoryItem, 'siteName')
+            assert.property(inventoryItem, 'countryId')
+            assert.property(inventoryItem, 'stateId')
+            assert.property(inventoryItem, 'lgaId')
+            assert.property(inventoryItem, 'countryName')
+            assert.property(inventoryItem, 'stateName')
+            assert.property(inventoryItem, 'lgaName')
+            assert.property(inventoryItem, 'quantityOnHand')
+            assert.property(inventoryItem, 'dailyConsumptionRate')
+            assert.property(inventoryItem, 'daysStockLeft')
+            assert.property(inventoryItem, 'toBeWasted')
+            assert.notProperty(inventoryItem, 'inTransitFromSiteId')
+            assert.notProperty(inventoryItem, 'inTransitFromSiteName')
+            assert.notProperty(inventoryItem, 'expiresOn')
+            assert.notProperty(inventoryItem, 'lotNumber')
+          })
+
+          const inventoryItems = res.body.data.filter(
+            ii => ii.siteId === site1Id && ii.consumableId === consumableId
+          )
+
+          // Only one row per site and consumable
+          assert.equal(inventoryItems.length, 1)
+          assert.isNotNull(inventoryItems[0])
+
+          // console.log(inventoryItems[0])
+
+          // Exclude stock in transit
+          assert.equal(inventoryItems[0].quantityOnHand, 900)
+
+          // - We have 600 cartridges
+          // - 250 expiring tomorrow
+          // - 350 expiring in two days
+          // - 300 expiring in 50 days
+          // - The consumption rate is 200 cartridges/day
+          // So...
+          // Day 1 - We use 200 from expiring tomorrow ===> 50 wasted
+          // Day 2 - We use 200 from expiring in two days ===> 150 wasted
+          // Day 3 - We use 200 from expiring in 50 days
+          // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
+          // ===> 3.5 days of stock left
+          // ===> 200 cartridges to be wasted
+
+          assert.equal(inventoryItems[0].daysStockLeft, 3.5)
+          assert.equal(inventoryItems[0].toBeWasted, 200)
+
+          assert.property(res.body, 'total')
         })
 
         it('should accept consumableId and siteName as query string parameters', done => {

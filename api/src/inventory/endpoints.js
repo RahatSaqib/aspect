@@ -8,8 +8,8 @@ const {
   validateSortPageParams,
 } = require('../routes')
 const {
-  listInventoryItems,
-  listInventoryItemsGroupedBySite,
+  listInventory,
+  listInventoryGroupedBySite,
   addInventory,
   removeInventory,
   transferInventory,
@@ -27,6 +27,7 @@ const inventoryFilters = {
     .description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
   stockLeft: Joi.string().allow('', null),
+  breakOutByLot: Joi.bool().allow(null),
 }
 
 const adjustInventoryCommonPayloadFields = {
@@ -75,7 +76,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory',
-    handler: asyncHandler(listInventoryItems),
+    handler: asyncHandler(listInventory),
     config: {
       description: 'List of Consumables on Hand At Site',
       notes: 'Pageable and sortable list of inventory items',
@@ -104,7 +105,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/group-by-site',
-    handler: asyncHandler(listInventoryItemsGroupedBySite),
+    handler: asyncHandler(listInventoryGroupedBySite),
     config: {
       description: 'List of Consumables on Hand Grouped by Site',
       notes: 'Pageable and sortable list of inventory items grouped by site',
