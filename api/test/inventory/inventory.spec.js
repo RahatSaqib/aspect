@@ -58,6 +58,7 @@ describe('Inventory Routes', () => {
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
       const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
       const expiresOn3 = startOfDayUtc(addDays(new Date(), 50))
+
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
@@ -133,7 +134,7 @@ describe('Inventory Routes', () => {
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
       })
 
-      describe(/* .only */ 'GET', () => {
+      describe('GET', () => {
         it('should return a list of inventory items broken out by lot', async () => {
           const res = await server
             .get(`${path}?breakOutByLot=true`)
@@ -209,7 +210,34 @@ describe('Inventory Routes', () => {
             .get(`${path}`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          // console.log(res.body)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          res.body.data.forEach(inventoryItem => {
+            assert.property(inventoryItem, 'id')
+            assert.property(inventoryItem, 'consumableId')
+            assert.property(inventoryItem, 'siteId')
+            assert.property(inventoryItem, 'canExpire')
+            assert.property(inventoryItem, 'quantityOnHand')
+            assert.property(inventoryItem, 'consumableName')
+            assert.property(inventoryItem, 'manufacturer')
+            assert.property(inventoryItem, 'unitShortName')
+            assert.property(inventoryItem, 'siteName')
+            assert.property(inventoryItem, 'countryId')
+            assert.property(inventoryItem, 'stateId')
+            assert.property(inventoryItem, 'lgaId')
+            assert.property(inventoryItem, 'countryName')
+            assert.property(inventoryItem, 'stateName')
+            assert.property(inventoryItem, 'lgaName')
+            assert.property(inventoryItem, 'stockLeft')
+            assert.property(inventoryItem, 'dailyConsumptionRate')
+            assert.notProperty(inventoryItem, 'lotNumber')
+            assert.notProperty(inventoryItem, 'expiresOn')
+            assert.notProperty(inventoryItem, 'inTransitFromSiteId')
+            assert.notProperty(inventoryItem, 'inTransitFromSiteName')
+          })
+
           assert.equal(res.status, 200)
 
           const inventoryItems = res.body.data.filter(
@@ -275,6 +303,32 @@ describe('Inventory Routes', () => {
           assert.equal(res.body.data[0].siteId, site1Id)
           // Site 2 will have 50 cartridges wasted
           assert.equal(res.body.data[1].siteId, site2Id)
+        })
+
+        it('should return a list of inventory items, apply post-processing filtering by a range of days stock left', async () => {
+          const res = await server
+            .get(`${path}?daysStockLeft=upTo14`)
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          assert.equal(res.body.data.length, 1)
+          // Site 1 has 3.5 days stock left, so it's between 1 and 14
+          assert.equal(res.body.data[0].siteId, site1Id)
+        })
+
+        it('should return a list of inventory items, apply in-query filtering by never consumed inventory', async () => {
+          const res = await server
+            .get(`${path}?daysStockLeft=noConsumption`)
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          res.body.data.forEach(d => assert.equal(d.dailyConsumptionRate, 0))
+        })
+
+        it('should return a list of inventory items, apply in-query filtering by never recorded inventory', async () => {
+          const res = await server
+            .get(`${path}?daysStockLeft=notRecorded`)
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          res.body.data.forEach(d => assert.equal(d.quantityOnHand, null))
         })
 
         it('should accept consumableId and siteName as query string parameters', done => {

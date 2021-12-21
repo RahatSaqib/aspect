@@ -26,7 +26,7 @@ const inventoryFilters = {
     .allow('', null)
     .description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
-  stockLeft: Joi.string().allow('', null),
+  daysStockLeft: Joi.string().allow('', null),
   breakOutByLot: Joi.bool().allow(null),
 }
 
