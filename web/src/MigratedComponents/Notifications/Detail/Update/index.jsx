@@ -85,6 +85,7 @@ const AspectNotificationDetail = ({
           webUrl,
           webBody,
           sendWeb: filter.sendWeb,
+          sendToPatient: filter.sendToPatient,
           /**
            * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
            * to make sure all items in array are located in their positions
