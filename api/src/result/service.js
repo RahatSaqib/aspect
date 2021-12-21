@@ -2382,7 +2382,114 @@ async function clinicalIndicatorAggregations(request) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = knex('Result as r')
+  // if grouping only by month and assay, resultCategory1, resultCategory2 (the most common case),
+  // we can query the fact tables for much better performance
+  const factTableDataGroups = [
+    'month',
+    'assay',
+    'resultCategory1',
+    'resultCategory2',
+  ]
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+    const factTableQuery = getClinicalIndicatorQueryForFactTable(
+      dataConstraints,
+      assay,
+      groupBy,
+      query
+    )
+    const data = await processGroupedQuery(
+      factTableQuery,
+      groupBy,
+      'r.startedOn'
+    )
+    return { data }
+  }
+
+  const resultQuery = getClinicalIndicatorQueryForResultsTable(
+    dataConstraints,
+    assay,
+    groupBy,
+    query
+  )
+
+  const data = await processGroupedQuery(resultQuery, groupBy)
+  return { data }
+}
+
+function getClinicalIndicatorQueryForFactTable(
+  dataConstraints,
+  assay,
+  groupBy,
+  query
+) {
+  return knex('FactResultsDeviceByTimeFrame as r')
+    .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .innerJoin('Assay as a', 'a.id', 'r.assayId')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'st.id', 'g.stateId')
+    .innerJoin('ResultCategoryAssay as rca', function () {
+      this.on('r.assayId', 'rca.assayId').andOn(
+        'r.resultCategory1',
+        'rca.resultCategoryId'
+      )
+    })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
+      device: 'd',
+      site: 's',
+      geography: 'g',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      partnerId: 'g.partnerId',
+      siteName: 's.name',
+      deviceName: 'd.name',
+      deviceType: 'dt.externalId',
+    })
+    .modify(qb => {
+      if (query.minDate) {
+        qb.where('r.startedOn', '>=', query.minDate)
+      }
+      if (query.maxDate) {
+        qb.where('r.startedOn', '<=', query.maxDate)
+      }
+      if (assay) {
+        qb.whereIn('a.externalId', assay)
+      }
+      if (query.assayType) {
+        qb.where('at.externalId', '=', query.assayType)
+      }
+      if (query.resultCategory1) {
+        qb.where('rc1.externalId', '=', query.resultCategory1)
+      }
+      if (query.resultCategory2) {
+        qb.where('rc2.externalId', '=', query.resultCategory2)
+      }
+    })
+    .where('r.timeFrame', 'month')
+    .where(function () {
+      // skip filtering by 'rca.reportable' if grouping by 'assay'
+      if (!groupBy.includes('assay')) {
+        this.where('rca.reportable', true)
+      }
+    })
+    .orderBy('r.startedOn')
+    .sum('r.resultCount as cnt')
+}
+
+function getClinicalIndicatorQueryForResultsTable(
+  dataConstraints,
+  assay,
+  groupBy,
+  query
+) {
+  return knex('Result as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'r.siteId')
@@ -2415,10 +2522,10 @@ async function clinicalIndicatorAggregations(request) {
     })
     .modify(qb => {
       if (query.minDate) {
-        qb.where('r.endedOn', '>=', query.minDate)
+        qb.where('r.startedOn', '>=', query.minDate)
       }
       if (query.maxDate) {
-        qb.where('r.endedOn', '<=', query.maxDate)
+        qb.where('r.startedOn', '<=', query.maxDate)
       }
       if (assay) {
         qb.whereIn('a.externalId', assay)
@@ -2439,14 +2546,15 @@ async function clinicalIndicatorAggregations(request) {
         this.where('rca.reportable', true)
       }
     })
-    .orderBy('r.endedOn')
+    .orderBy('r.startedOn')
     .count('r.id as cnt')
-
-  const data = await processGroupedQuery(resultQuery, groupBy)
-  return { data }
 }
 
-async function processGroupedQuery(resultQuery, groupBy) {
+async function processGroupedQuery(
+  resultQuery,
+  groupBy,
+  dateColumn = 'r.endedOn'
+) {
   // handle possible groups:
   const paramToDb = {
     resultCategory1: [
@@ -2459,10 +2567,10 @@ async function processGroupedQuery(resultQuery, groupBy) {
     ],
     assay: ['a.externalId as assay', 'a.i18nKey as assayI18nKey'],
 
-    week: knex.raw('DATE_FORMAT(r.endedOn, "%x-%v") as week_value'),
-    month: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m") as month_value'),
-    year: knex.raw('DATE_FORMAT(r.endedOn, "%Y") as year_value'),
-    day: knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-%d") as day_value'),
+    week: knex.raw(`DATE_FORMAT(${dateColumn}, "%x-%v") as week_value`),
+    month: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m") as month_value`),
+    year: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y") as year_value`),
+    day: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m-%d") as day_value`),
 
     gender: knex.raw(
       'replace(r.patientData ->> "$.gender", "null", null) as gender'
