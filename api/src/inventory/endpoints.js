@@ -64,7 +64,7 @@ function listSuppliesBaseConfig() {
           'lgaName',
           'quantityOnHand',
           'expiresOn',
-          'stockLeft',
+          'daysStockLeft',
           'dailyConsumptionRate'
         ),
       },
@@ -95,7 +95,8 @@ const routes = [
             'lgaName',
             'quantityOnHand',
             'expiresOn',
-            'stockLeft',
+            'daysStockLeft',
+            'toBeWasted',
             'dailyConsumptionRate'
           ),
         },

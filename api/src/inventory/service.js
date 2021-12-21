@@ -484,61 +484,48 @@ function listInventoryLots(request, dataConstraints) {
 }
 
 function getInventorySites(constraints, request) {
-  return (
-    query('Search Inventory Sites')
-      .from('Site as s')
-      .innerJoin('Consumable as c')
-      .leftJoin('Unit as u', 'c.unit', 'u.id')
-      .leftJoin('Geography as g', 's.geographyId', 'g.id')
-      .leftJoin('Country as co', 'g.countryId', 'co.id')
-      .leftJoin('State as st', 'g.stateId', 'st.id')
-      .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-      .leftJoin('FactInventoryConsumptionRate as ficr', builder => {
-        builder
-          .on('s.id', 'ficr.siteId')
-          .andOn('c.id', 'ficr.consumableId')
-          .andOn(knex.raw('ficr.days = 1'))
-      })
-      .leftJoin('InventoryItem as ii', builder => {
-        builder
-          .on('s.id', 'ii.siteId')
-          .andOn('c.id', 'ii.consumableId')
-          .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
-      })
-      .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-      .modify(filterParams, request.query, {
-        ...INVENTORY_ITEM_SELECT_LIST_FIELDS,
-      })
-      // .modify(sortPageParams,
-      //   request.query,
-      //   INVENTORY_ITEM_SORT_FIELDS.siteName,
-      //   INVENTORY_ITEM_SORT_FIELDS
-      // )
-      .modify(
-        addConstraints,
-        constraints,
-        INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-      )
-      .groupBy(['s.id', 'c.id', 'ficr.days'])
-      .orderBy(['s.id', 'c.id'])
-      .select([
-        'c.id as consumableId',
-        'c.name as consumableName',
-        'c.manufacturer',
-        'c.canExpire',
-        'u.shortName as unitShortName',
-        's.id as siteId',
-        's.name as siteName',
-        'g.countryId',
-        'g.stateId',
-        'g.lgaId',
-        'co.name as countryName',
-        'st.name as stateName',
-        'l.name as lgaName',
-        'ficr.rate as dailyConsumptionRate',
-        knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
-      ])
-  )
+  return query('Search Inventory Sites')
+    .from('Site as s')
+    .innerJoin('Consumable as c')
+    .leftJoin('Unit as u', 'c.unit', 'u.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('FactInventoryConsumptionRate as ficr', builder => {
+      builder
+        .on('s.id', 'ficr.siteId')
+        .andOn('c.id', 'ficr.consumableId')
+        .andOn(knex.raw('ficr.days = 1'))
+    })
+    .leftJoin('InventoryItem as ii', builder => {
+      builder
+        .on('s.id', 'ii.siteId')
+        .andOn('c.id', 'ii.consumableId')
+        .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
+    })
+    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
+    .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+    .modify(addConstraints, constraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
+    .groupBy(['s.id', 'c.id', 'ficr.days'])
+    .orderBy(['s.id', 'c.id'])
+    .select([
+      'c.id as consumableId',
+      'c.name as consumableName',
+      'c.manufacturer',
+      'c.canExpire',
+      'u.shortName as unitShortName',
+      's.id as siteId',
+      's.name as siteName',
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      'co.name as countryName',
+      'st.name as stateName',
+      'l.name as lgaName',
+      'ficr.rate as dailyConsumptionRate',
+      knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
+    ])
 }
 
 async function listInventory(request) {
@@ -587,7 +574,24 @@ async function listInventory(request) {
     ;[{ count: total }, data] = await Promise.all([getCount, getItems])
   } else {
     inventoryQuery = getInventorySites(dataConstraints, request)
-    const inventorySites = await inventoryQuery.clone()
+    const { sortCol, sortDir, page, size } = query
+
+    // As the daysStockLeft and toBeWasted fields are calculated in memory, then we need to apply post-process ordering
+    const requirePostProcessOrdering =
+      sortCol === 'daysStockLeft' || sortCol === 'toBeWasted'
+
+    if (!requirePostProcessOrdering) {
+      // Apply ordering and paging - we only want to process the sites-consumables inside the requested page
+      inventoryQuery = inventoryQuery.modify(
+        sortPageParams,
+        request.query,
+        INVENTORY_ITEM_SORT_FIELDS.siteName,
+        INVENTORY_ITEM_SORT_FIELDS
+      )
+    }
+
+    let inventorySites = await inventoryQuery.clone()
+
     // For each inventory site, we need to calculate the days of stock
     const availableInventory = await knex('InventoryItem as ii')
       // Get all the not-expired
@@ -617,6 +621,7 @@ async function listInventory(request) {
 
     // Iterate over inventory sites - ordered by siteId, consumableId
     let availableInventoryIdx = 0
+    inventorySites = _.orderBy(inventorySites, ['siteId', 'consumableId'])
     inventorySites.forEach(inventorySite => {
       let toBeWasted = 0
       const now = startOfDayUtc(new Date())
@@ -668,6 +673,14 @@ async function listInventory(request) {
       inventorySite.daysStockLeft = differenceInHours(currentDay, now) / 24
       inventorySite.toBeWasted = toBeWasted
     })
+
+    // Re-order inventory-sites to match the request
+    inventorySites = _.orderBy(inventorySites, sortCol, sortDir)
+
+    // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging
+    if (requirePostProcessOrdering) {
+      inventorySites = inventorySites.slice(page * size, size)
+    }
 
     data = inventorySites
     total = inventorySites.length
