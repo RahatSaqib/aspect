@@ -130,16 +130,6 @@ const getConfig = (
                 },
                 type: 'readOnly',
               },
-              {
-                id: 'deviceSerial',
-                controlType: {
-                  component: 'textField',
-                },
-                label: 'Device Serial',
-                labelI18nKey: 'deviceSerial',
-                type: 'readOnly',
-                visibleIf: values => !!values.deviceId,
-              },
             ],
           },
         ],
