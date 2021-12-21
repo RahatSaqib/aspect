@@ -74,8 +74,8 @@ async function getAllResultsForExport(auth, query) {
 
   const dataset = {
     ok: true,
-    total: data.length,
-    length: data.length,
+    total: _.get(data, 'length', 0),
+    length: _.get(data, 'length', 0),
     data,
     dynamicColumns: columns,
     dataSelector: (
