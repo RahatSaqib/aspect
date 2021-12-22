@@ -214,7 +214,8 @@ const baseResultResponse = {
     .required()
     .description('the external id of the disease'),
 
-  detectedResistance: Joi.string()
+  detectedResistance: Joi.alternatives()
+    .try(Joi.string(), Joi.array())
     .optional()
     .allow(null, '')
     .description('CSV with detected resistances'),
