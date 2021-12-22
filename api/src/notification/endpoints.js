@@ -111,6 +111,31 @@ const routes = [
                 date: Joi.date().description(
                   'The date notification was sent or received'
                 ),
+                issueId: Joi.number()
+                  .allow(null)
+                  .description(`Notification's issueId`),
+                resultId: Joi.number()
+                  .allow(null)
+                  .description(`Notification's resultId`),
+
+                sampleId: Joi.alternatives()
+                  .allow(null, '')
+                  .try(Joi.number(), Joi.string())
+                  .description('Sample id'),
+                patientId: Joi.string()
+                  .allow(null, '')
+                  .description('The patient Id'),
+
+                emailRecipients: Joi.array()
+                  .allow(null)
+                  .description(
+                    'Comma-separated person names who get notification email'
+                  ),
+                smsRecipients: Joi.array()
+                  .allow(null)
+                  .description(
+                    'Comma-separated person names who get notification sms'
+                  ),
               })
             ),
         }),

@@ -1,4 +1,10 @@
-const { addDays, subDays } = require('date-fns')
+const {
+  addDays,
+  subDays,
+  startOfMonth,
+  endOfMonth,
+  parseISO,
+} = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
@@ -32,6 +38,7 @@ const { startOfDayUtc } = require('../shared/date')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
+const timeFramesToCalculate = ['month']
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
 async function onFactGenerateDeviceConnectivity(
@@ -152,12 +159,10 @@ async function onFactGenerateResultCounts(action, context) {
     // specialization if device id specified, otherwise query for devices below.
     return onFactGenerateResultCountsForDevice(action, context)
   }
-
   const messageContext = context.messageContext.bindActionCreators({
     factGenerateResultCounts,
   })
   return messageContext.run(async knex => {
-    // TODO do we really need to generate result counts for every device every hour?
     const items = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -236,7 +241,14 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const { deviceId, assayId, resultCategory1, resultCategory2, noResults } =
+    const {
+      deviceId,
+      assayId,
+      resultCategory1,
+      resultCategory2,
+      noResults,
+      endedOn,
+    } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
         .where({ id: resultId })
@@ -245,7 +257,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
           'r.assayId',
           'r.resultCategory1',
           'r.resultCategory2',
-          'fdf.noResults'
+          'fdf.noResults',
+          'r.endedOn'
         )) || {}
     if (!deviceId) {
       return
@@ -257,6 +270,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       assayId,
       resultCategory1,
       resultCategory2,
+      endedOn,
     })
   })
 }
@@ -265,7 +279,12 @@ async function onFactGenerateResultCountsForDevice(
   { deviceId, options = {} },
   { messageContext }
 ) {
-  const { assayId, resultCategory1, resultCategory2 } = options
+  const {
+    assayId,
+    resultCategory1,
+    resultCategory2,
+    endedOn: resultEndedOn,
+  } = options
   return messageContext.transact(async knex => {
     const now = new Date()
 
@@ -465,6 +484,77 @@ async function onFactGenerateResultCountsForDevice(
             days,
             resultCount: count.resultCount,
             calculatedOn: now,
+          })
+        }
+      })
+    })
+    await Promise.each(timeFramesToCalculate, async timeFrame => {
+      // ...grouped by assay, resultCategory 1 & 2
+      const countsByCategories = await query
+        .clone()
+        .whereNotNull('r.assayId')
+        .whereNotNull('r.resultCategory1')
+        .groupBy(
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          'startedOnTimeFrame'
+        )
+        .count('r.id as resultCount')
+        .modify(qb => {
+          if (resultEndedOn) {
+            // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
+            qb.whereBetween('r.endedOn', [
+              startOfMonth(parseISO(resultEndedOn)),
+              endOfMonth(parseISO(resultEndedOn)),
+            ])
+          }
+        })
+        .select(
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-01") as startedOnTimeFrame')
+        )
+
+      // if we didn't get an endedOn, generate all time frames since first result from device
+      await Promise.each(countsByCategories, async count => {
+        const factResultsDeviceByCategory1And2 = await knex(
+          'FactResultsDeviceByTimeFrame'
+        )
+          .where({
+            deviceId,
+            assayId: count.assayId,
+            resultCategory1: count.resultCategory1,
+            resultCategory2: count.resultCategory2,
+            timeFrame,
+            startedOn: count.startedOnTimeFrame,
+          })
+          .first()
+        if (factResultsDeviceByCategory1And2) {
+          await knex('FactResultsDeviceByTimeFrame')
+            .where({
+              deviceId,
+              assayId: count.assayId,
+              resultCategory1: count.resultCategory1,
+              resultCategory2: count.resultCategory2,
+              timeFrame,
+              startedOn: count.startedOnTimeFrame,
+            })
+            .update({
+              resultCount: count.resultCount,
+              calculatedOn: now,
+            })
+        } else {
+          await knex('FactResultsDeviceByTimeFrame').insert({
+            deviceId,
+            assayId: count.assayId,
+            resultCategory1: count.resultCategory1,
+            resultCategory2: count.resultCategory2,
+            timeFrame,
+            resultCount: count.resultCount,
+            calculatedOn: now,
+            startedOn: count.startedOnTimeFrame,
           })
         }
       })

@@ -18,13 +18,10 @@ const ConnectedTagInput = ({
   fetchPossibleTags,
   ...restProps
 }) => {
-  useEffect(
-    () => {
-      fetchPossibleTags(qryType)
-    },
+  useEffect(() => {
+    fetchPossibleTags(qryType)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [qryType]
-  )
+  }, [qryType])
   const possibleTags = tags.getIn([qryType, 'items'], Immutable.List()).toJS()
 
   const onChange = value => {
@@ -86,7 +83,7 @@ ConnectedTagInput.propTypes = {
   fetchPossibleTags: PropTypes.func.isRequired,
   qryId: PropTypes.string,
   qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
-  value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   onTagChange: PropTypes.func.isRequired,
   tags: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired,
   maxTags: PropTypes.number,

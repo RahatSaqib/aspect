@@ -73,7 +73,11 @@ async function mergeResult(
     resultWorkflowStatusId = await resultWorkflowStatusToId(
       _.get(payload, 'workflow.status.id', '')
     )
-  } else if (payload.error) {
+  } else if (
+    payload.error ||
+    (_.get(payload, 'data.resultText') &&
+      _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') !== -1)
+  ) {
     resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
     ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(

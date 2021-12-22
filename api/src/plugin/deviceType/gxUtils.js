@@ -12,12 +12,7 @@ const {
 } = require('../../inventory/service')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
-const {
-  getTimeZoneById,
-  parseDateOrDefault,
-  getLocalDateTimeStringInUtc,
-} = require('../../shared/date')
-const { allTimeZoneToId } = require('../../shared/dictionary')
+const { parseDateOrDefault } = require('../../shared/date')
 
 const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
@@ -134,28 +129,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
   const sampleId = _.get(payload, 'sample.id')
 
-  const convertedTimeZone = getTimeZoneById(
-    await allTimeZoneToId(),
-    device.timezone
-  )
-
-  // The start/end time from GeneXpert is reported with a time zone
-  // designator "Z" that indicates UTC, but it isn't. We have to disregard
-  // this designation and treat it as local time of the device and then translate it to UTC
-  if (payload.endedOn) {
-    payload.endedOn = getLocalDateTimeStringInUtc(
-      endedOn.toISOString().replace('Z', ''),
-      convertedTimeZone
-    )
-  }
-
-  if (payload.startedOn) {
-    payload.startedOn = getLocalDateTimeStringInUtc(
-      startedOn.toISOString().replace('Z', ''),
-      convertedTimeZone
-    )
-  }
-
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
   }
@@ -215,7 +188,12 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     await assignGxUnknownAssayIfNotExists(knex, payload)
 
     // Only set workflow status to "Deliverable" by default if result is new and not an error
-    if (!_.get(payload, 'workflow.status.id') && !payload.error) {
+    if (
+      !_.get(payload, 'workflow.status.id') &&
+      !payload.error &&
+      (!_.get(payload, 'data.resultText') ||
+        _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') === -1)
+    ) {
       _.set(payload, 'workflow.status.id', 'Deliverable')
     }
   } else {

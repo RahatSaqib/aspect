@@ -614,48 +614,143 @@ async function getNotification(request) {
 async function getNotifications(request) {
   const { auth, query, params } = request
 
+  const { externalId: category } = await knex('NotificationType as nt')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .where('nt.id', params.notificationTypeId)
+    .first('ntc.externalId')
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const notificationQuery = knex('Notification as n')
+  let notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
-    .leftJoin('Issue as iss', 'iss.Id', 'n.issueId')
-    .leftJoin('Result as r', 'r.Id', 'n.resultId')
-    .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
-    .leftJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
-    .leftJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
-    .leftJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
-    .leftJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
-    .leftJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
-    .leftJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .leftOuterJoin('Partner as p', 'nt.partnerId', 'p.id')
+    .leftOuterJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
+    .leftOuterJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
+    .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
+    .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
+    .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
+    .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
+    .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
+    .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
-    .modify(addConstraints, dataConstraints, { partner: 'p', result: 'r' })
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
-  const getCount = notificationQuery.clone().count('n.id as total').first()
+  if (category === 'resultBased') {
+    notificationQuery = notificationQuery.leftOuterJoin(
+      'Result as r',
+      'r.Id',
+      'n.resultId'
+    )
+  } else {
+    notificationQuery = notificationQuery
+      .leftOuterJoin('Issue as iss', 'iss.Id', 'n.issueId')
+      .leftOuterJoin('Result as r', 'iss.resultId', 'r.id')
+  }
+
+  const getCount = notificationQuery
+    .clone()
+    .count({
+      /**
+       * see how we count `totalTriggers` in func `listNotifications()` in this file.
+       * Here we also count by resultId or issueId
+       */
+      total: knex.raw(`
+        DISTINCT
+        CASE
+          WHEN ntc.externalId = 'resultBased'
+          THEN n.resultId
+          ELSE n.issueId
+        END
+      `),
+    })
+    .first()
 
   const getNotificationHistory = notificationQuery
     .clone()
     .modify(sortPageParams, query, 'n.createdOn')
     .select([
-      knex.raw(
-        'sum(case when mswm.externalId = "Sent" then 1 else 0 end) as webhookSent'
-      ),
-      knex.raw(
-        'sum(case when mssms.externalId = "Sent" then 1 else 0 end) as smsSent'
-      ),
-      knex.raw(
-        'sum(case when msem.externalId = "Sent" then 1 else 0 end) as emailSent'
-      ),
       'n.createdOn as date',
       'n.issueId',
+      'r.id as resultId',
+      'r.sampleId',
+      knex.raw(`
+        GROUP_CONCAT(DISTINCT pEm.name separator "|") as emailRecipients
+      `),
+      knex.raw(`
+        GROUP_CONCAT(DISTINCT pSm.name separator "|") as smsRecipients
+      `),
+      knex.raw(`
+        JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
+      `),
+      /**
+       * `groupingParam` is a temporal field for grouping by it.
+       * We are grouping by either n.issueId (`issueBased`)
+       * or n.resultId (`resultBased`)
+       */
+      knex.raw(`
+        CASE
+          WHEN ntc.externalId = 'resultBased'
+          THEN n.resultId
+          ELSE n.issueId
+        END as groupingParam
+      `),
     ])
-    .groupBy('n.issueId')
+    .count({
+      webhookSent: knex.raw(`
+        DISTINCT
+        CASE WHEN mswm.externalId = "Sent" 
+        THEN (CASE
+              WHEN ntc.externalId = 'resultBased' 
+              THEN n.resultId
+              ELSE n.issueId
+            END)
+        ELSE null END
+      `),
+      smsSent: knex.raw(`
+        DISTINCT
+        CASE WHEN mssms.externalId = "Sent" 
+        THEN (CASE
+              WHEN ntc.externalId = 'resultBased' 
+              THEN n.resultId
+              ELSE n.issueId
+            END)
+        ELSE null END
+      `),
+      emailSent: knex.raw(`
+        DISTINCT
+        CASE WHEN msem.externalId = "Sent" 
+        THEN (CASE WHEN ntc.externalId = 'resultBased' 
+              THEN n.resultId
+              ELSE n.issueId
+            END)
+        ELSE null END
+      `),
+    })
+    .groupBy('groupingParam')
 
   const [{ total }, data] = await Promise.all([
     getCount,
     getNotificationHistory,
   ])
 
-  return { ok: true, total, data }
+  const items = data.map(item => ({
+    ..._.omit(item, ['groupingParam']),
+    emailRecipients: item.emailRecipients
+      ? item.emailRecipients.split('|')
+      : null,
+    smsRecipients: item.smsRecipients ? item.emailRecipients.split('|') : null,
+  }))
+
+  return { ok: true, total, data: items }
 }
 
 /**

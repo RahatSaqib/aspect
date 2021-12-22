@@ -100,3 +100,7 @@
 .FaCircle {
   composes: FaCircle from '../../../task/list/TaskTableRow.css';
 }
+
+.logs-header {
+  padding: 20px 20px 25px;
+}
