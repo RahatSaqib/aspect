@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.expiresOn',
     defaultMessage: 'Expires On',
   },
+  lotNumber: {
+    id: 'pages.InventoryItemsList.lotNumber',
+    defaultMessage: 'Lot Number',
+  },
   expiresIn: {
     id: 'pages.InventoryItemsList.expiresIn',
     defaultMessage: 'Expires',

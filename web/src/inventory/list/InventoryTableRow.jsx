@@ -57,9 +57,8 @@ const InventoryTableRow = ({ inventoryItem }) => {
     },
   ]
 
-  // helper funcs
-  const hasProp = name => inventoryItem.get('visibleProperties').includes(name)
   const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
+  // helper funcs
   const hasQtyOnHand = qty =>
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
   const hasDailyConsumption = qty =>
@@ -67,45 +66,40 @@ const InventoryTableRow = ({ inventoryItem }) => {
 
   return (
     <TableRow className={cssClasses('TableRow')}>
-      {hasProp('siteName') ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('siteName')}
-        >
-          {inventoryItem.get('siteName')}
-        </TableCell>
-      ) : null}
-      {hasProp('consumableName') ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('consumableName')}
-        >
-          {inventoryItem.get('consumableName')}
-        </TableCell>
-      ) : null}
-      {hasProp('quantityOnHand') ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('quantityOnHand')}
-        >
-          {inventoryItem.get('inTransitFromSiteName') ? (
-            <span>
-              {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
-              &nbsp;
-              <small>
-                {formatMessage(messages.inTransitFromSiteName, {
-                  inTransitFromSiteName: inventoryItem.get(
-                    'inTransitFromSiteName'
-                  ),
-                })}
-              </small>
-            </span>
-          ) : (
-            hasQtyOnHand(inventoryItem.get('quantityOnHand'))
-          )}
-        </TableCell>
-      ) : null}
-      {hasProp('dailyConsumptionRate') ? (
+      <TableCell
+        className={cssClasses('TableCell')}
+        rowSpan={rowSpan('siteName')}
+      >
+        {inventoryItem.get('siteName')}
+      </TableCell>
+
+      <TableCell
+        className={cssClasses('TableCell')}
+        rowSpan={rowSpan('consumableName')}
+      >
+        {inventoryItem.get('consumableName')}
+      </TableCell>
+      <TableCell
+        className={cssClasses('TableCell')}
+        rowSpan={rowSpan('quantityOnHand')}
+      >
+        {inventoryItem.get('inTransitFromSiteName') ? (
+          <span>
+            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
+            &nbsp;
+            <small>
+              {formatMessage(messages.inTransitFromSiteName, {
+                inTransitFromSiteName: inventoryItem.get(
+                  'inTransitFromSiteName'
+                ),
+              })}
+            </small>
+          </span>
+        ) : (
+          hasQtyOnHand(inventoryItem.get('quantityOnHand'))
+        )}
+      </TableCell>
+      {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={rowSpan('dailyConsumptionRate')}
@@ -113,7 +107,15 @@ const InventoryTableRow = ({ inventoryItem }) => {
           {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
         </TableCell>
       ) : null}
-      {hasProp('expiresOn') ? (
+      {inventoryItem.get('lotNumber') !== undefined ? (
+        <TableCell
+          className={cssClasses('TableCell')}
+          rowSpan={rowSpan('lotNumber')}
+        >
+          {inventoryItem.get('lotNumber')}
+        </TableCell>
+      ) : null}
+      {inventoryItem.get('expiresOn') !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
           rowSpan={rowSpan('expiresOn')}
@@ -131,12 +133,12 @@ const InventoryTableRow = ({ inventoryItem }) => {
           </span>
         </TableCell>
       ) : null}
-      {hasProp('stockLeft') ? (
+      {inventoryItem.get('daysStockLeft') !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={rowSpan('stockLeft')}
+          rowSpan={rowSpan('daysStockLeft')}
         >
-          {inventoryItem.get('stockLeft')}
+          {inventoryItem.get('daysStockLeft')}
         </TableCell>
       ) : null}
       <TableCell className={cssClasses('TableCell')}>

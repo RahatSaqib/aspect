@@ -516,6 +516,7 @@ function getInventorySites(constraints, request) {
     .groupBy(['s.id', 'c.id', 'ficr.days'])
     .orderBy(['s.id', 'c.id'])
     .select([
+      knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
       'c.name as consumableName',
       'c.manufacturer',
@@ -603,6 +604,10 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     daysStockLeft: daysStockLeftFilter,
   } = query
 
+  const [{ total }] = await knex(inventoryQuery.clone().as('innerQuery')).count(
+    '* as total'
+  )
+
   // As the daysStockLeft and toBeWasted fields are calculated in memory, then we need to apply post-process ordering
   const requirePostProcessOrdering =
     sortCol === 'daysStockLeft' || sortCol === 'toBeWasted'
@@ -655,7 +660,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     inventorySites = inventorySites.slice(page * size, size)
   }
 
-  return { data: inventorySites, total: inventorySites.length }
+  return { data: inventorySites, total }
 }
 
 /**
@@ -724,7 +729,7 @@ function setCalculatedFields(
     const now = startOfDayUtc(new Date())
     let currentDay = now
     const { dailyConsumptionRate } = inventorySite
-
+    const hasConsumptionRate = dailyConsumptionRate && dailyConsumptionRate > 0
     // Iterate over inventory items - ordered by siteId, consumableId
     while (
       availableInventoryIdx < availableInventory.length &&
@@ -736,7 +741,7 @@ function setCalculatedFields(
         _.pick(inventorySite, ['siteId', 'consumableId'])
       )
     ) {
-      if (dailyConsumptionRate && dailyConsumptionRate > 0) {
+      if (hasConsumptionRate) {
         const { quantityOnHand, expiresOn } =
           availableInventory[availableInventoryIdx]
 
@@ -767,7 +772,9 @@ function setCalculatedFields(
       availableInventoryIdx += 1
     }
 
-    inventorySite.daysStockLeft = differenceInHours(currentDay, now) / 24
+    inventorySite.daysStockLeft = hasConsumptionRate
+      ? differenceInHours(currentDay, now) / 24
+      : null
     inventorySite.toBeWasted = toBeWasted
   })
 

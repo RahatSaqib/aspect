@@ -55,10 +55,7 @@ import {
 } from './InventoryDataTable'
 import requirePermissions from '../../components/shared/requirePermissions'
 import AspectButton from '../../components/shared/AspectButton'
-import {
-  INVENTORY_LIST,
-  INVENTORY_LIST_GROUP_BY_SITE,
-} from '../../MigratedComponents/QueryFetch/Inventory'
+import { INVENTORY_LIST } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 
 import styles from './InventoryItemsList.css'
@@ -77,7 +74,7 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
-  { stockLeft: true, requiredPermissions: [] },
+  { daysStockLeft: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -86,7 +83,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'consumableName',
     'quantityOnHand',
     'expiresOn',
-    'stockLeft',
+    'daysStockLeft',
     'dailyConsumptionRate',
   ],
 })
@@ -197,16 +194,25 @@ export const InventoryItemsListWithProps = ({
                   key: 'dailyConsumptionRate',
                   label: intl.formatMessage(messages.dailyConsumptionRate),
                   sortable: true,
+                  isHidden: !groupBySite,
+                },
+                {
+                  key: 'lotNumber',
+                  label: intl.formatMessage(messages.lotNumber),
+                  sortable: true,
+                  isHidden: groupBySite,
                 },
                 {
                   key: 'expiresOn',
                   label: intl.formatMessage(messages.expiresOn),
                   sortable: true,
+                  isHidden: groupBySite,
                 },
                 {
-                  key: 'stockLeft',
+                  key: 'daysStockLeft',
                   label: intl.formatMessage(messages.stockLeft),
                   sortable: true,
+                  isHidden: !groupBySite,
                 },
                 {
                   key: 'action',
@@ -365,23 +371,27 @@ export const InventoryItemsList = ({ navigate, location }) => {
   }
 
   // >>>>>> Defining queries <<<<<<
-  const endpointConfig = groupBySite
-    ? INVENTORY_LIST_GROUP_BY_SITE
-    : INVENTORY_LIST
-  const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
+  const params = {
+    sortCol,
+    sortDir,
+    page: pageAt,
+    size: pageSize,
+    breakOutByLot: !groupBySite,
+    ...filters,
+  }
   const {
     isError,
     isLoading,
     data = false,
     error,
-  } = useQuery([endpointConfig.KEY, params, filters], async () =>
-    fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
+  } = useQuery([INVENTORY_LIST.KEY, params, filters], async () =>
+    fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
 
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
-    queryClient.invalidateQueries(endpointConfig.KEY)
+    queryClient.invalidateQueries(INVENTORY_LIST.KEY)
     onAdjustInventorySucceeded()
   }
   // Remove
@@ -412,7 +422,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(endpointConfig.KEY)
+        queryClient.invalidateQueries(INVENTORY_LIST.KEY)
         onAdjustInventorySucceeded()
       },
     }
