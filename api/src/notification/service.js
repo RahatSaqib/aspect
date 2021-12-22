@@ -614,26 +614,47 @@ async function getNotification(request) {
 async function getNotifications(request) {
   const { auth, query, params } = request
 
+  const { externalId: category } = await knex('NotificationType as nt')
+    .innerJoin(
+      'NotificationTypeCategory as ntc',
+      'nt.notificationTypeCategoryId',
+      'ntc.id'
+    )
+    .where('nt.id', params.notificationTypeId)
+    .first('ntc.externalId')
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const notificationQuery = knex('Notification as n')
+  let notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .innerJoin(
       'NotificationTypeCategory as ntc',
       'nt.notificationTypeCategoryId',
       'ntc.id'
     )
-    .leftOuterJoin('Issue as iss', 'iss.Id', 'n.issueId')
-    .leftOuterJoin('Result as r', 'r.Id', 'n.resultId')
     .leftOuterJoin('Partner as p', 'nt.partnerId', 'p.id')
     .leftOuterJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
     .leftOuterJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
+    .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
     .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
+    .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
     .modify(addConstraints, dataConstraints, { partner: 'p' })
+
+  if (category === 'resultBased') {
+    notificationQuery = notificationQuery.leftOuterJoin(
+      'Result as r',
+      'r.Id',
+      'n.resultId'
+    )
+  } else {
+    notificationQuery = notificationQuery
+      .leftOuterJoin('Issue as iss', 'iss.Id', 'n.issueId')
+      .leftOuterJoin('Result as r', 'iss.resultId', 'r.id')
+  }
 
   const getCount = notificationQuery
     .clone()
@@ -659,7 +680,17 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'n.resultId',
+      'r.id as resultId',
+      'r.sampleId',
+      knex.raw(`
+        GROUP_CONCAT(DISTINCT pEm.name separator "|") as emailRecipients
+      `),
+      knex.raw(`
+        GROUP_CONCAT(DISTINCT pSm.name separator "|") as smsRecipients
+      `),
+      knex.raw(`
+        JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
+      `),
       /**
        * `groupingParam` is a temporal field for grouping by it.
        * We are grouping by either n.issueId (`issueBased`)
@@ -711,7 +742,13 @@ async function getNotifications(request) {
     getNotificationHistory,
   ])
 
-  const items = data.map(item => _.omit(item, ['groupingParam']))
+  const items = data.map(item => ({
+    ..._.omit(item, ['groupingParam']),
+    emailRecipients: item.emailRecipients
+      ? item.emailRecipients.split('|')
+      : null,
+    smsRecipients: item.smsRecipients ? item.emailRecipients.split('|') : null,
+  }))
 
   return { ok: true, total, data: items }
 }

@@ -11,18 +11,24 @@ const TableBodyRow = ({
   getToggleRowExpandedProps,
   isExpanded,
   subRows,
+  onClick,
 }) =>
   cells &&
   cells.map(
     ({
       getCellProps,
-      column: { format = false, translate = false },
+      column,
+      column: { format = false, translate = false, link = false },
       render,
       isGrouped,
       isAggregated,
       isPlaceholder,
       value,
+      row,
     }) => {
+      const onClickCell = () => {
+        onClick({ column, row, value })
+      }
       return (
         <TableCell {...getCellProps()}>
           {isGrouped ? (
@@ -33,6 +39,7 @@ const TableBodyRow = ({
               render={render}
               subRows={subRows}
               value={value}
+              column={column}
             />
           ) : isAggregated ? (
             render('Aggregated')
@@ -44,6 +51,8 @@ const TableBodyRow = ({
               format={format}
               value={value}
               translate={translate}
+              onClick={link ? onClickCell : null}
+              column={column}
             />
           )}
         </TableCell>

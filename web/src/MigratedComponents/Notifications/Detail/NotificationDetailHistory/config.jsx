@@ -16,10 +16,12 @@
  *  initialOrder: 'array' [self defined, optional]
  * contextualMenu: 'function|component' [self defined, optional]
  */
+import React, { Fragment } from 'react'
 
 import messages from './messages'
 import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
-import NumberCell from '../../../AspectTable/TableCell/NumberCell'
+import BooleanCell from '../../../AspectTable/TableCell/BooleanCell'
+import PopoverCell from '../../../AspectTable/TableCell/PopoverCell'
 
 const baseConfig = ({ formatMessage }) => ({
   name: formatMessage(messages.event),
@@ -34,28 +36,70 @@ const baseConfig = ({ formatMessage }) => ({
       format: DateTimeCell,
     },
     {
+      key: 'sampleId',
+      label: formatMessage(messages.sampleId),
+      width: 20,
+      disableHide: true,
+      disableGroupBy: true,
+    },
+    {
+      key: 'patientId',
+      label: formatMessage(messages.patientId),
+      width: 20,
+      disableHide: true,
+      disableGroupBy: true,
+      link: {
+        key: 'resultId',
+        url: '/browse/result/:resultId',
+      },
+    },
+    {
       key: 'webhookSent',
       label: formatMessage(messages.eventsTableWebhookSent),
-      width: 20,
+      width: 10,
       disableHide: true,
       disableGroupBy: true,
-      format: NumberCell,
+      format: BooleanCell,
     },
     {
-      key: 'emailSent',
+      key: 'emailRecipients',
       label: formatMessage(messages.eventsTableHeaderEmailSent),
-      width: 20,
+      width: 10,
       disableHide: true,
       disableGroupBy: true,
-      format: NumberCell,
+      format: ({ value }) =>
+        !value ? (
+          <div style={{ textAlign: 'center' }}>-</div>
+        ) : (
+          <PopoverCell label={value.length}>
+            <Fragment>
+              <h4>{formatMessage(messages.emailSentTo)}</h4>
+              {value.map(name => (
+                <div key={name}>- {name}</div>
+              ))}
+            </Fragment>
+          </PopoverCell>
+        ),
     },
     {
-      key: 'smsSent',
+      key: 'smsRecipients',
       label: formatMessage(messages.eventsTableSmsSent),
-      width: 20,
+      width: 10,
       disableHide: true,
       disableGroupBy: true,
-      format: NumberCell,
+      format: ({ value }) =>
+        !value ? (
+          <div style={{ textAlign: 'center' }}>-</div>
+        ) : (
+          <PopoverCell label={value.length}>
+            <Fragment>
+              <h4>{formatMessage(messages.smsSentTo)}</h4>
+              {value.map(name => (
+                <div key={name}>- {name}</div>
+              ))}
+            </Fragment>
+          </PopoverCell>
+        ),
     },
   ],
   columnOrder: {
