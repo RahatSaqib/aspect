@@ -456,7 +456,7 @@ function filteredInventoryItemsBase(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
-function listInventoryLots(request, dataConstraints) {
+function getInventoryLots(request, dataConstraints) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
     .innerJoin('Consumable as c')
@@ -534,27 +534,29 @@ function getInventorySites(constraints, request) {
     ])
 }
 
-function getDaysStockLeftRanges(daysStockLeftFilter) {
-  switch (daysStockLeftFilter) {
-    case 'outOfStock':
-      return { min: 0, max: 0 }
-    case 'upTo14':
-      return { min: 1, max: 14 }
-    case 'upTo30':
-      return { min: 15, max: 30 }
-    case 'upTo90':
-      return { min: 31, max: 90 }
-    case 'upTo180':
-      return { min: 91, max: 180 }
-    case 'moreThan180':
-      return { min: 181 }
-    default:
-      return null
+async function listInventory(request) {
+  const { auth, query } = request
+  const { breakOutByLot } = query
+
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  let data
+  let total
+
+  if (breakOutByLot) {
+    ;({ total, data } = await listInventoryByLot(request, dataConstraints))
+  } else {
+    ;({ total, data } = await listInventoryBySiteAndConsumable(
+      request,
+      dataConstraints
+    ))
   }
+
+  return { ok: true, total, length: data.length, data }
 }
 
-async function listInventoryByLot(inventoryQuery, request) {
-  inventoryQuery = inventoryQuery
+async function listInventoryByLot(request, dataConstraints) {
+  const inventoryQuery = getInventoryLots(request, dataConstraints)
     .clone()
     .modify(
       sortPageParams,
@@ -590,6 +592,77 @@ async function listInventoryByLot(inventoryQuery, request) {
   return { total, data }
 }
 
+async function listInventoryBySiteAndConsumable(request, dataConstraints) {
+  const { query } = request
+  let inventoryQuery = getInventorySites(dataConstraints, request)
+  const {
+    sortCol,
+    sortDir,
+    page,
+    size,
+    daysStockLeft: daysStockLeftFilter,
+  } = query
+
+  // As the daysStockLeft and toBeWasted fields are calculated in memory, then we need to apply post-process ordering
+  const requirePostProcessOrdering =
+    sortCol === 'daysStockLeft' || sortCol === 'toBeWasted'
+
+  if (!requirePostProcessOrdering) {
+    // Apply ordering and paging - we only want to process the sites-consumables inside the requested page
+    inventoryQuery = inventoryQuery.modify(
+      sortPageParams,
+      request.query,
+      INVENTORY_ITEM_SORT_FIELDS.siteName,
+      INVENTORY_ITEM_SORT_FIELDS
+    )
+  }
+
+  let inventorySites = await inventoryQuery.clone()
+
+  // Get the available lots for the scoped sites and consumables - only the sites-consumables with stock are needed
+  const availableInventory = await getAvailableLots(
+    inventorySites.filter(is => is.quantityOnHand > 0)
+  )
+
+  // Set daysStockLeft and toBeWasted fields - keep original ordering
+  inventorySites = setCalculatedFields(
+    inventorySites,
+    availableInventory,
+    sortCol,
+    sortDir
+  )
+
+  // If the daysStockLeft filter was set, then we need to filter the inventories in memory
+  if (daysStockLeftFilter) {
+    if (daysStockLeftFilter === 'noConsumption')
+      inventorySites = _.filter(
+        inventorySites,
+        is => is.dailyConsumptionRate === 0
+      )
+
+    const range = getDaysStockLeftRanges(daysStockLeftFilter)
+    if (range)
+      inventorySites = _.filter(
+        inventorySites,
+        is =>
+          is.daysStockLeft >= range.min &&
+          (!range.max || is.daysStockLeft <= range.max)
+      )
+  }
+
+  // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging
+  if (requirePostProcessOrdering) {
+    inventorySites = inventorySites.slice(page * size, size)
+  }
+
+  return { data: inventorySites, total: inventorySites.length }
+}
+
+/**
+ *
+ * @param {Array} inventorySites The collection of scoped sites and consumables. It should be formatted like [{ consumableId, siteId }]
+ * @returns
+ */
 function getAvailableLots(inventorySites) {
   return (
     knex('InventoryItem as ii')
@@ -602,12 +675,11 @@ function getAvailableLots(inventorySites) {
       // scoped in the paged list of inventory sites
       .andWhere(q => {
         inventorySites.forEach(inventorySite => {
-          if (inventorySite.quantityOnHand > 0)
-            q.orWhere(qOr =>
-              qOr
-                .where('ii.consumableId', inventorySite.consumableId)
-                .andWhere('ii.siteId', inventorySite.siteId)
-            )
+          q.orWhere(qOr =>
+            qOr
+              .where('ii.consumableId', inventorySite.consumableId)
+              .andWhere('ii.siteId', inventorySite.siteId)
+          )
         })
       })
       .orderBy(['ii.siteId', 'ii.consumableId', 'ii.expiresOn'])
@@ -618,6 +690,25 @@ function getAvailableLots(inventorySites) {
         'ii.expiresOn',
       ])
   )
+}
+
+function getDaysStockLeftRanges(key) {
+  switch (key) {
+    case 'outOfStock':
+      return { min: 0, max: 0 }
+    case 'upTo14':
+      return { min: 1, max: 14 }
+    case 'upTo30':
+      return { min: 15, max: 30 }
+    case 'upTo90':
+      return { min: 31, max: 90 }
+    case 'upTo180':
+      return { min: 91, max: 180 }
+    case 'moreThan180':
+      return { min: 181 }
+    default:
+      return null
+  }
 }
 
 function setCalculatedFields(
@@ -682,86 +773,6 @@ function setCalculatedFields(
 
   // Re-order inventory-sites to match the original ordering
   return _.orderBy(inventorySites, sortCol, sortDir)
-}
-
-async function listInventory(request) {
-  const { auth, query } = request
-  const { breakOutByLot } = query
-
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  let inventoryQuery = listInventoryLots(request, dataConstraints)
-
-  let data
-  let total
-
-  if (breakOutByLot) {
-    ;({ total, data } = await listInventoryByLot(inventoryQuery, request))
-  } else {
-    inventoryQuery = getInventorySites(dataConstraints, request)
-    const {
-      sortCol,
-      sortDir,
-      page,
-      size,
-      daysStockLeft: daysStockLeftFilter,
-    } = query
-
-    // As the daysStockLeft and toBeWasted fields are calculated in memory, then we need to apply post-process ordering
-    const requirePostProcessOrdering =
-      sortCol === 'daysStockLeft' || sortCol === 'toBeWasted'
-
-    if (!requirePostProcessOrdering) {
-      // Apply ordering and paging - we only want to process the sites-consumables inside the requested page
-      inventoryQuery = inventoryQuery.modify(
-        sortPageParams,
-        request.query,
-        INVENTORY_ITEM_SORT_FIELDS.siteName,
-        INVENTORY_ITEM_SORT_FIELDS
-      )
-    }
-
-    let inventorySites = await inventoryQuery.clone()
-
-    // Get the available lots for the scoped sites and consumables
-    const availableInventory = await getAvailableLots(inventorySites)
-
-    // Set daysStockLeft and toBeWasted fields - keep original ordering
-    inventorySites = setCalculatedFields(
-      inventorySites,
-      availableInventory,
-      sortCol,
-      sortDir
-    )
-
-    // If the daysStockLeft filter was set, then we need to filter the results
-    if (daysStockLeftFilter) {
-      if (daysStockLeftFilter === 'noConsumption')
-        inventorySites = _.filter(
-          inventorySites,
-          is => is.dailyConsumptionRate === 0
-        )
-
-      const ranges = getDaysStockLeftRanges(daysStockLeftFilter)
-      if (ranges)
-        inventorySites = _.filter(
-          inventorySites,
-          is =>
-            is.daysStockLeft >= ranges.min &&
-            (!ranges.max || is.daysStockLeft <= ranges.max)
-        )
-    }
-
-    // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging
-    if (requirePostProcessOrdering) {
-      inventorySites = inventorySites.slice(page * size, size)
-    }
-
-    data = inventorySites
-    total = inventorySites.length
-  }
-
-  return { ok: true, total, length: data.length, data }
 }
 
 const siteFields = [
