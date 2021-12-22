@@ -27,7 +27,7 @@ const PopoverCell = ({ column, value }) => {
   const open = Boolean(anchorEl)
 
   if (!value) {
-    return '-'
+    return <div style={{ textAlign: 'center' }}>-</div>
   }
 
   return (

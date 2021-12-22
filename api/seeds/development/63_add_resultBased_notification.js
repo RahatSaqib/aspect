@@ -7,11 +7,9 @@ const {
   messageStatusToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
-const {
-  adminName,
-  partnerName,
-  jobFunctionsToNotify,
-} = require('./fixtures/partnerVariables')
+const { partnerName } = require('./fixtures/partnerVariables')
+const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { getPeopleBase } = require('../../src/shared/utilsPerson')
 
 async function seed(knex) {
   const now = new Date()
@@ -31,16 +29,24 @@ async function seed(knex) {
     .whereNotNull('emailTemplateId')
     .whereNotNull('smsTemplateId')
     .first()
-  const { id: personId } = await knex('Person as p')
-    .innerJoin('User as u')
-    .where('u.name', adminName)
-    .first('p.id')
-  const jobFunctionIds = await knex('JobFunction')
-    .whereIn('externalId', jobFunctionsToNotify)
-    .where({
-      partnerId,
+  const credentials = {
+    scope: ['notification', 'person'],
+    name: 'admin',
+    permissions: ['notification', 'person'],
+  }
+  const dataConstraints = await getConstraints(credentials)
+  const { id: personId } = await getPeopleBase()
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
+    .where(qb => {
+      qb.whereNull('p.partnerId').orWhere('p.partnerId', partnerId)
     })
-    .pluck('id')
+    .first('p.id', 'p.name', 'st.name as stateName', 'st.id as stateId')
+  const jobFunctionIds = await knex('JobFunction as jf')
+    .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .pluck('jf.id')
+    .limit(2)
+
   const resultTypeId = await resultTypeToId('Patient')
   const assayId = await assayToId('assayBdMgitAst')
   const resultIds = await knex('Result')
@@ -54,14 +60,36 @@ async function seed(knex) {
         index === 0
           ? 'Result-based notification 1 - for concrete person'
           : 'Result-based notification 2 - for job functions'
+      const filterConditionBase = {
+        result: [
+          {
+            assayId: 'assayBdMgitAst',
+            resultCategoryId: [
+              {
+                label: 'Detected',
+                scope: 'ResultCategories',
+                value: 'Detected',
+              },
+            ],
+          },
+        ],
+        sendEmail: true,
+        sendSms: true,
+        sendWeb: false,
+        deviceLevelId: 'national',
+      }
       const filterCondition = JSON.stringify(
         index === 0
           ? {
+              ...filterConditionBase,
               persons: [{ personId: `${personId}`, checked: true }],
             }
           : {
+              ...filterConditionBase,
               jobFunctions: jobFunctionIds.map(jobFunctionId => ({
-                jobFunctionId,
+                tags: [],
+                checked: true,
+                jobFunctionId: `${jobFunctionId}`,
               })),
             }
       )
