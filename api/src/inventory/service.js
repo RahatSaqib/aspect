@@ -696,7 +696,7 @@ async function listInventory(request) {
   let total
 
   if (breakOutByLot) {
-    ;({ total, data } = listInventoryByLot(inventoryQuery, request))
+    ;({ total, data } = await listInventoryByLot(inventoryQuery, request))
   } else {
     inventoryQuery = getInventorySites(dataConstraints, request)
     const {
@@ -724,7 +724,7 @@ async function listInventory(request) {
     let inventorySites = await inventoryQuery.clone()
 
     // Get the available lots for the scoped sites and consumables
-    const availableInventory = getAvailableLots(inventorySites)
+    const availableInventory = await getAvailableLots(inventorySites)
 
     // Set daysStockLeft and toBeWasted fields - keep original ordering
     inventorySites = setCalculatedFields(
@@ -1114,7 +1114,7 @@ async function findInventoryItem(
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
   const matchingInventoryItems = await matchingInventoryItemsQuery.select(
-    INVENTORY_ITEM_SELECT_LIST_FIELDS
+    INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS
   )
   return (
     _.find(matchingInventoryItems, { lotNumber }) ||
@@ -1134,7 +1134,7 @@ function getInventoryItem(inventoryItemId) {
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
-    .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+    .first(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 }
 
 async function getInventoryItems(inventoryItemIds) {
