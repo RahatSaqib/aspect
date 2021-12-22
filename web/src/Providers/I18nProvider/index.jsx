@@ -3,7 +3,6 @@ import { createIntl, useIntl } from 'react-intl'
 import { DateTime } from 'luxon'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
-
 import deLocale from 'date-fns/locale/de'
 import usLocale from 'date-fns/locale/en-US'
 import frLocale from 'date-fns/locale/fr'
@@ -11,9 +10,9 @@ import ptLocale from 'date-fns/locale/pt'
 import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
 import esLocale from 'date-fns/locale/es'
-import tgLocale from 'date-fns/locale/uz' // it doesn't exists TJ so i selected uzbekistan.
 import viLocale from 'date-fns/locale/vi'
 
+import tgLocale from '../../date-fns-locales/tg-TJ'
 import translation from '../../shared/i18n/translation'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import { getCurrentCulture } from '../../globals/sideEffects/LocalStorage'
@@ -55,9 +54,12 @@ function timeZoneFallBack(timezone) {
 }
 
 function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
-  const userLocale = passedCulture || getCurrentCulture() || 'en'
+  const localStorageCulture = getCurrentCulture()
+
+  const userLocale = passedCulture || localStorageCulture || 'en'
+
   const intl = createIntl({
-    locale: userLocale,
+    locale: userLocale === 'tg-TJ' ? 'uz-Cyrl' : userLocale,
     messages: messages || translation[userLocale],
     onError: () => {}, // to not show console.error with MISSING_TRANSLATION
   })
@@ -66,10 +68,9 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
     passedTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone
 
   const { formatDate, formats, formatMessage, locale, ...rest } = intl
-  const dateFNSLocale = dateFNSLocales[locale]
+  const dateFNSLocale = dateFNSLocales[userLocale]
   const validTimeZone = timeZoneFallBack(timezone)
-
-  return {
+  const out = {
     culture: locale,
     dateFNSLocale,
     format: (dateIn, formatIn) =>
@@ -95,6 +96,7 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
     timezone: validTimeZone,
     ...rest,
   }
+  return out
 }
 
 const I18nProvider = ({ children }) => {
