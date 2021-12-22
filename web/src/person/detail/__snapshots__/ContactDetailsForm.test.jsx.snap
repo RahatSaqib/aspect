@@ -895,7 +895,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -907,7 +907,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -919,7 +919,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -931,7 +931,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -943,7 +943,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -955,7 +955,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -967,7 +967,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
@@ -1898,7 +1922,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -1910,7 +1934,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -1922,7 +1946,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -1934,7 +1958,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -1946,7 +1970,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -1958,7 +1982,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -1970,7 +1994,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
@@ -2901,7 +2949,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -2913,7 +2961,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -2925,7 +2973,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -2937,7 +2985,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -2949,7 +2997,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -2961,7 +3009,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -2973,7 +3021,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
@@ -3904,7 +3976,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -3916,7 +3988,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -3928,7 +4000,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -3940,7 +4012,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -3952,7 +4024,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -3964,7 +4036,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -3976,7 +4048,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
@@ -4907,7 +5003,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -4919,7 +5015,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -4931,7 +5027,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -4943,7 +5039,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -4955,7 +5051,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -4967,7 +5063,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -4979,7 +5075,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
@@ -5908,7 +6028,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -5920,7 +6040,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -5932,7 +6052,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -5944,7 +6064,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -5956,7 +6076,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -5968,7 +6088,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -5980,7 +6100,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>
@@ -6895,7 +7039,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="DE"
               withRightMargin={true}
             />
-            Deutsch (DE)
+             Deutsch (DE)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -6907,7 +7051,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="ES"
               withRightMargin={true}
             />
-            Spanish (ES)
+             Spanish (ES)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -6919,7 +7063,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="FR"
               withRightMargin={true}
             />
-            Française (FR)
+             Française (FR)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -6931,7 +7075,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="PT"
               withRightMargin={true}
             />
-            Português (PT)
+             Português (PT)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -6943,7 +7087,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="RU"
               withRightMargin={true}
             />
-            русский (RU)
+             русский (RU)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -6955,7 +7099,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="UA"
               withRightMargin={true}
             />
-            Український (UA)
+             Український (UA)
           </span>
         </ForwardRef(MenuItem)>
         <ForwardRef(MenuItem)
@@ -6967,7 +7111,31 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
               countryIsoAlpha2Code="US"
               withRightMargin={true}
             />
-            English (US)
+             English (US)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="tg-TJ"
+          value="tg-TJ"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="TJ"
+              withRightMargin={true}
+            />
+             тоҷикӣ, تاجیکی (TJ)
+          </span>
+        </ForwardRef(MenuItem)>
+        <ForwardRef(MenuItem)
+          key="vi"
+          value="vi"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="VN"
+              withRightMargin={true}
+            />
+             Tiếng Việt (VN)
           </span>
         </ForwardRef(MenuItem)>
       </ForwardRef(TextField)>

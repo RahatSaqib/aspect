@@ -27,7 +27,7 @@ const resultsTransmittedGraphs = () => ({
         state: 'resultsDateRange',
         component: AspectDropDown,
         identifier: 'currentMonth',
-        data: dateRanges,
+        data: dateRangeOptions('resultsDateRange'),
         sortByKeys: ['id'],
         isClearable: false,
         defaultSelectedOption: DATE_RANGE_OPTIONS.CURRENT_MONTH,
