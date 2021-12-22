@@ -1,17 +1,21 @@
-import React from 'react'
+import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
-import deleteConfirmation from './deleteConfirmation'
+import DeleteConfirmation from './DeleteConfirmation'
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
   const { id, typeCategory, totalTriggers } = item
 
+  const [modalConfiguration, setModalConfiguration] = useState({
+    showDialog: false,
+    notificationId: 0,
+  })
   const getItemActions = navigate => [
     {
       icon: 'FaEdit',
@@ -40,11 +44,20 @@ const NotificationsContextualMenu = ({ item }) => {
     {
       icon: 'FaTrash',
       text: formatMessage(messages.deleteTitle),
-      action: () => deleteConfirmation({}),
+      action: () =>
+        setModalConfiguration({ notificationId: id, showDialog: true }),
       disabled: totalTriggers > 0,
     },
   ]
-  return <AspectVertMenu actions={getItemActions(navigate)} />
+  return (
+    <Fragment>
+      <DeleteConfirmation
+        notificationId={modalConfiguration.notificationId}
+        showDialog={modalConfiguration.showDialog}
+      />
+      <AspectVertMenu actions={getItemActions(navigate)} />
+    </Fragment>
+  )
 }
 
 NotificationsContextualMenu.propTypes = {
