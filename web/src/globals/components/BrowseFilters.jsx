@@ -179,12 +179,6 @@ export const navigations = [
     requiredPermissions: ['result'],
   },
   {
-    value: '/browse/case',
-    label: 'Cases',
-    i18nKey: 'cases',
-    requiredPermissions: ['case'],
-  },
-  {
     value: '/browse/person',
     label: 'Contacts',
     i18nKey: 'contacts',
