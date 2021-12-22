@@ -67,16 +67,19 @@ const baseConfig = ({ formatMessage }) => ({
       width: 10,
       disableHide: true,
       disableGroupBy: true,
-      format: PopoverCell,
-      popoverLabel: ({ value }) => value.length,
-      popoverContent: ({ value }) => (
-        <Fragment>
-          <h4>{formatMessage(messages.emailSentTo)}</h4>
-          {value.map(name => (
-            <div key={name}>- {name}</div>
-          ))}
-        </Fragment>
-      ),
+      format: ({ value }) =>
+        !value ? (
+          <div style={{ textAlign: 'center' }}>-</div>
+        ) : (
+          <PopoverCell label={value.length}>
+            <Fragment>
+              <h4>{formatMessage(messages.emailSentTo)}</h4>
+              {value.map(name => (
+                <div key={name}>- {name}</div>
+              ))}
+            </Fragment>
+          </PopoverCell>
+        ),
     },
     {
       key: 'smsRecipients',
@@ -84,16 +87,19 @@ const baseConfig = ({ formatMessage }) => ({
       width: 10,
       disableHide: true,
       disableGroupBy: true,
-      format: PopoverCell,
-      popoverLabel: ({ value }) => value.length,
-      popoverContent: ({ value }) => (
-        <Fragment>
-          <h4>{formatMessage(messages.smsSentTo)}</h4>
-          {value.map(name => (
-            <div key={name}>- {name}</div>
-          ))}
-        </Fragment>
-      ),
+      format: ({ value }) =>
+        !value ? (
+          <div style={{ textAlign: 'center' }}>-</div>
+        ) : (
+          <PopoverCell label={value.length}>
+            <Fragment>
+              <h4>{formatMessage(messages.smsSentTo)}</h4>
+              {value.map(name => (
+                <div key={name}>- {name}</div>
+              ))}
+            </Fragment>
+          </PopoverCell>
+        ),
     },
   ],
   columnOrder: {

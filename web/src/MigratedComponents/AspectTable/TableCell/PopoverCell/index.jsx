@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { array, func, number, object, oneOfType, string } from 'prop-types'
+import { array, number, object, oneOfType, string } from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Popover from '@material-ui/core/Popover'
 import classnames from 'classnames/bind'
@@ -13,7 +13,7 @@ const cssClasses = classnames.bind(styles)
  * Component to render a popover cell
  */
 
-const PopoverCell = ({ column, value }) => {
+const PopoverCell = ({ children, label }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleClick = event => {
@@ -26,14 +26,10 @@ const PopoverCell = ({ column, value }) => {
 
   const open = Boolean(anchorEl)
 
-  if (!value) {
-    return <div style={{ textAlign: 'center' }}>-</div>
-  }
-
   return (
     <Fragment>
       <Button onClick={handleClick}>
-        {column.popoverLabel({ value })}
+        {label}
         <IconProvider
           icon="MdKeyboardArrowDown"
           className={cssClasses('popover-cell__icon')}
@@ -55,21 +51,19 @@ const PopoverCell = ({ column, value }) => {
           paper: cssClasses('popover-cell__paper'),
         }}
       >
-        {column.popoverContent({ value })}
+        {children}
       </Popover>
     </Fragment>
   )
 }
 
+PopoverCell.defaultProps = {
+  children: null,
+}
+
 PopoverCell.propTypes = {
-  /**
-    Definitions of cell column
-   */
-  column: oneOfType([object, func]).isRequired,
-  /**
-    Value for the cell to render
-  */
-  value: oneOfType([array, string, number]).isRequired,
+  children: oneOfType([array, string, number, object]),
+  label: oneOfType([array, string, number]).isRequired,
 }
 
 export default PopoverCell

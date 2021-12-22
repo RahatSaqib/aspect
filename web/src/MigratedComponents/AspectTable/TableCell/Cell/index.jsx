@@ -14,15 +14,9 @@ import Button from '@material-ui/core/Button'
  * Component to render a cell
  */
 
-const CellValue = ({
-  column,
-  format: FormatComp,
-  render,
-  translate,
-  value,
-}) => {
+const CellValue = ({ format: FormatComp, render, translate, value }) => {
   return FormatComp ? (
-    <FormatComp value={value} column={column} />
+    <FormatComp value={value} />
   ) : (
     <div>
       {translate ? render(({ value }) => translate(value)) : render('Cell')}
