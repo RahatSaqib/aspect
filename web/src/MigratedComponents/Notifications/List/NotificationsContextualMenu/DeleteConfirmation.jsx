@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button'
-import { useNavigate } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 
 import { useMutation } from 'react-query'
@@ -10,14 +9,17 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../../QueryFetch/index'
 import { NOTIFICATION_DELETE } from '../../../QueryFetch/Notification/index'
 
-const DeleteConfirmation = ({ notificationId, showDialog }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const navigate = useNavigate()
+const DeleteConfirmation = ({
+  notificationId,
+  notificationName = '',
+  showDialog,
+  onClose,
+}) => {
+  const [notificationData, setNotificationData] = useState({})
   const { formatMessage } = useIntl()
   const { mutate: deleteNotificationSubmit } = useMutation(
     ({ id }) => {
       const endpoint = `${NOTIFICATION_DELETE.ENDPOINT}${id}`
-
       return fetchWrapperForQueries({
         endpoint,
         method: 'DELETE',
@@ -25,35 +27,39 @@ const DeleteConfirmation = ({ notificationId, showDialog }) => {
     },
     {
       onSuccess: () => {
-        navigate(`/browse/notification`)
+        onClose()
       },
     }
   )
   useEffect(() => {
-    setIsOpen(showDialog)
-  }, [showDialog])
-  const onCancelConfirmation = () => {
-    setIsOpen(false)
-  }
+    setNotificationData({ notificationId, notificationName })
+  }, [notificationId, notificationName])
+  const onCancelConfirmation = () => {}
   return (
     <AspectDialog
       actions={[
-        <Button color="primary" onClick={onCancelConfirmation}>
+        <Button color="primary" onClick={onClose}>
           {formatMessage(messages.cancel)}
         </Button>,
         <Button
           color="primary"
           variant="contained"
-          onClick={() => deleteNotificationSubmit({ id: notificationId })}
+          onClick={() =>
+            deleteNotificationSubmit({ id: notificationData.notificationId })
+          }
         >
           {formatMessage(messages.yesDelete)}
         </Button>,
       ]}
-      maxWidth="sm"
+      title="Delete confirmation"
       onClose={onCancelConfirmation}
-      open={isOpen}
+      open={showDialog || false}
     >
-      <h3>Do you want to remove below assignment?</h3>
+      <h3>
+        {formatMessage(messages.areYouSureToDelete, {
+          notificationName: notificationData.notificationName,
+        })}
+      </h3>
     </AspectDialog>
   )
 }

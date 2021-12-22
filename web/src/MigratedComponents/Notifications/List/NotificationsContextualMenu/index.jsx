@@ -2,15 +2,20 @@ import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { useIntl } from 'react-intl'
-
+import { useQueryClient } from 'react-query'
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
 import DeleteConfirmation from './DeleteConfirmation'
+import { NOTIFICATION_LIST } from '../../../QueryFetch/Notification/index'
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
-  const { id, typeCategory, totalTriggers } = item
+  const { id, typeCategory, name, totalTriggers } = item
+  const queryClient = useQueryClient()
+  const refreshList = () => {
+    queryClient.invalidateQueries(NOTIFICATION_LIST.KEY)
+  }
 
   const [modalConfiguration, setModalConfiguration] = useState({
     showDialog: false,
@@ -45,15 +50,22 @@ const NotificationsContextualMenu = ({ item }) => {
       icon: 'FaTrash',
       text: formatMessage(messages.deleteTitle),
       action: () =>
-        setModalConfiguration({ notificationId: id, showDialog: true }),
+        setModalConfiguration({
+          notificationId: id,
+          notificationName: name,
+          showDialog: true,
+        }),
       disabled: totalTriggers > 0,
     },
   ]
   return (
     <Fragment>
       <DeleteConfirmation
-        notificationId={modalConfiguration.notificationId}
-        showDialog={modalConfiguration.showDialog}
+        {...modalConfiguration}
+        onClose={() => {
+          setModalConfiguration({})
+          refreshList()
+        }}
       />
       <AspectVertMenu actions={getItemActions(navigate)} />
     </Fragment>
@@ -64,6 +76,7 @@ NotificationsContextualMenu.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     typeCategory: PropTypes.string,
+    name: PropTypes.string,
     totalTriggers: PropTypes.number,
   }).isRequired,
 }
