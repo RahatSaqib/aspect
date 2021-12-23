@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
-import DeleteConfirmation from './DeleteConfirmation'
+import DeleteConfirmationModal from './DeleteConfirmationModal'
 import { NOTIFICATION_LIST } from '../../../QueryFetch/Notification/index'
 
 const NotificationsContextualMenu = ({ item }) => {
@@ -60,7 +60,7 @@ const NotificationsContextualMenu = ({ item }) => {
   ]
   return (
     <Fragment>
-      <DeleteConfirmation
+      <DeleteConfirmationModal
         {...modalConfiguration}
         onClose={() => {
           setModalConfiguration({})
