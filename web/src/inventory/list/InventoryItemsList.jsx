@@ -2,7 +2,7 @@ import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
@@ -74,7 +74,11 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['site:view'],
   },
   { date: true, requiredPermissions: [] },
-  { daysStockLeft: true, requiredPermissions: [] },
+  {
+    daysStockLeft: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => dependencies.groupBySite === true,
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -84,6 +88,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'quantityOnHand',
     'expiresOn',
     'daysStockLeft',
+    'toBeWasted',
     'dailyConsumptionRate',
   ],
 })
@@ -210,7 +215,13 @@ export const InventoryItemsListWithProps = ({
                 },
                 {
                   key: 'daysStockLeft',
-                  label: intl.formatMessage(messages.stockLeft),
+                  label: intl.formatMessage(messages.daysStockLeft),
+                  sortable: true,
+                  isHidden: !groupBySite,
+                },
+                {
+                  key: 'toBeWasted',
+                  label: intl.formatMessage(messages.toBeWasted),
                   sortable: true,
                   isHidden: !groupBySite,
                 },
@@ -325,6 +336,9 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const consumableReasons = useSelector(
     state => state.consumable.consumableReasons
   )
+  const [reducedFilters, setReducedFilters] = useState(
+    reduceFiltersConfig(FILTERS_CONFIG, userPermissions, { groupBySite })
+  )
 
   // >>>>>> Structuring data <<<<<<
   const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
@@ -333,13 +347,11 @@ export const InventoryItemsList = ({ navigate, location }) => {
     sortCol: 'siteName',
   })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const { value: searchParams } = searchSanitizer(location)
   const { value: filtersParams } = filtersSanitizer(
     searchParams.get('filters') || ''
   )
-  const filters = getFilters(filtersParams)
-
+  const filters = getFilters(filtersParams, reducedFilters)
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
     formatType => {
@@ -451,6 +463,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
         receiveInventoryItems(data, groupBySite ? ['inventoryItems'] : [])
       )
   }, [data, groupBySite, dispatch])
+
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const { sanitized: filtersSanitized, value: filtersParams } =
@@ -467,6 +480,12 @@ export const InventoryItemsList = ({ navigate, location }) => {
       )
     }
   }, [location, navigate, dispatch])
+
+  useEffect(() => {
+    setReducedFilters(
+      reduceFiltersConfig(FILTERS_CONFIG, userPermissions, { groupBySite })
+    )
+  }, [groupBySite, userPermissions])
 
   if (isError) throw new Error(error)
 

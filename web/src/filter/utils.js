@@ -195,7 +195,11 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
   return reducedNav
 }
 
-export const reduceFiltersConfig = (configObject, userPermissions) => {
+export const reduceFiltersConfig = (
+  configObject,
+  userPermissions,
+  dependencies
+) => {
   const reducedFilters = reduce(
     configObject,
     (result, source) => {
@@ -205,7 +209,8 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
       ])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
-      if (isPermitted) {
+      const isEnabled = !source.isEnabled || source.isEnabled(dependencies)
+      if (isPermitted && isEnabled) {
         mapKeys(source, (value, key) => {
           switch (key) {
             case 'assayAndResultCategory':
@@ -304,8 +309,8 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'onlyOpenIssues':
               result.onlyOpenIssues = true
               break
-            case 'stockLeft':
-              result.stockLeft = true
+            case 'daysStockLeft':
+              result.daysStockLeft = true
               break
             case 'consumable':
               result.consumable = true

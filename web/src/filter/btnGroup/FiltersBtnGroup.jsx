@@ -150,35 +150,35 @@ const messages = defineMessages({
     defaultMessage: 'Device Issue: {issueTypeId}',
   },
   outOfStock: {
-    id: 'filter.btnGroup.stockLeft.outOfStock',
+    id: 'filter.btnGroup.daysStockLeft.outOfStock',
     defaultMessage: 'Out of Stock',
   },
   upTo14: {
-    id: 'filter.btnGroup.stockLeft.upTo14',
+    id: 'filter.btnGroup.daysStockLeft.upTo14',
     defaultMessage: '1-14 Days',
   },
   upTo30: {
-    id: 'filter.btnGroup.stockLeft.upTo30',
+    id: 'filter.btnGroup.daysStockLeft.upTo30',
     defaultMessage: '15-30 Days',
   },
   upTo90: {
-    id: 'filter.btnGroup.stockLeft.upTo90',
+    id: 'filter.btnGroup.daysStockLeft.upTo90',
     defaultMessage: '1-3 Months',
   },
   upTo180: {
-    id: 'filter.btnGroup.stockLeft.upTo180',
+    id: 'filter.btnGroup.daysStockLeft.upTo180',
     defaultMessage: '4-6 Months',
   },
   moreThan180: {
-    id: 'filter.btnGroup.stockLeft.moreThan180',
+    id: 'filter.btnGroup.daysStockLeft.moreThan180',
     defaultMessage: '>6 Months',
   },
   notRecorded: {
-    id: 'filter.btnGroup.stockLeft.notRecorded',
+    id: 'filter.btnGroup.daysStockLeft.notRecorded',
     defaultMessage: 'Not Recorded',
   },
   noConsumption: {
-    id: 'filter.btnGroup.stockLeft.noConsumption',
+    id: 'filter.btnGroup.daysStockLeft.noConsumption',
     defaultMessage: 'No Consumption',
   },
   whereReportNameIncludes: {
@@ -255,7 +255,7 @@ const filtersOrdering = {
   onlyDownloadedByReporter: 35,
   onlyEverTransferred: 34,
   issueTypeId: 24,
-  stockLeft: 31,
+  daysStockLeft: 31,
   reportName: 32,
 }
 
@@ -588,7 +588,9 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       })
     ),
     assayOverride: () => false,
-    stockLeft: makeButton(stockLeft => formatMessage(messages[stockLeft])),
+    daysStockLeft: makeButton(daysStockLeft =>
+      formatMessage(messages[daysStockLeft])
+    ),
     reportName: makeButton(reportName =>
       formatMessage(messages.whereReportNameIncludes, {
         reportName,

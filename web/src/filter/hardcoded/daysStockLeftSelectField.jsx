@@ -3,7 +3,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import { useIntl } from 'react-intl'
 import SelectField from '../../components/shared/SelectField'
-import stockLeftOptions from './stockLeftOptions'
+import daysStockLeftOptions from './daysStockLeftOptions'
 import messages from './messages'
 
 export default ({ allItemText, onChange, value, ...restProps }) => {
@@ -18,7 +18,7 @@ export default ({ allItemText, onChange, value, ...restProps }) => {
       onChange={handleSelectFieldChange}
     >
       {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
-      {stockLeftOptions.map(({ externalId, name }) => (
+      {daysStockLeftOptions.map(({ externalId, name }) => (
         <MenuItem key={externalId} value={externalId}>
           {messages[externalId] ? formatMessage(messages[externalId]) : name}
         </MenuItem>

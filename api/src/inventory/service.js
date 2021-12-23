@@ -604,13 +604,9 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     sortCol,
     sortDir,
     page,
-    size,
+    size = 10,
     daysStockLeft: daysStockLeftFilter,
   } = query
-
-  const [{ total }] = await knex(inventoryQuery.clone().as('innerQuery')).count(
-    '* as total'
-  )
 
   // As the daysStockLeft and toBeWasted fields are calculated in memory, then we need to apply post-process ordering
   const requirePostProcessOrdering =
@@ -643,6 +639,9 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
 
   // If the daysStockLeft filter was set, then we need to filter the inventories in memory
   if (daysStockLeftFilter) {
+    if (daysStockLeftFilter === 'outOfStock')
+      inventorySites = _.filter(inventorySites, is => is.daysStockLeft === 0)
+
     if (daysStockLeftFilter === 'noConsumption')
       inventorySites = _.filter(
         inventorySites,
@@ -659,12 +658,20 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
       )
   }
 
+  const total = inventorySites.length
+
   // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging and ordering
   if (requirePostProcessOrdering) {
     if (sortCol)
-      inventorySites = _.orderBy(inventorySites, sortCol, sortDir || 'asc')
+      inventorySites = _.orderBy(
+        inventorySites,
+        item => {
+          return item[sortCol] || ''
+        },
+        sortDir || 'asc'
+      )
 
-    if (page && size) inventorySites = inventorySites.slice(page * size, size)
+    inventorySites = inventorySites.slice(page * size, size)
   }
 
   return { data: inventorySites, total }

@@ -84,9 +84,13 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
     defaultMessage: 'Inventory levels have been adjusted successfully',
   },
-  stockLeft: {
-    id: 'pages.InventoryItemsList.stockLeft',
+  daysStockLeft: {
+    id: 'pages.InventoryItemsList.daysStockLeft',
     defaultMessage: 'Days Stock Left',
+  },
+  toBeWasted: {
+    id: 'pages.InventoryItemsList.toBeWasted',
+    defaultMessage: 'Stock to Be Wasted',
   },
 })
 

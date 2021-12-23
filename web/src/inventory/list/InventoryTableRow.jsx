@@ -146,6 +146,16 @@ const InventoryTableRow = ({ inventoryItem }) => {
             : 'N/A'}
         </TableCell>
       ) : null}
+      {inventoryItem.get('toBeWasted') !== undefined ? (
+        <TableCell
+          className={cssClasses('TableCell')}
+          rowSpan={rowSpan('toBeWasted')}
+        >
+          {inventoryItem.get('toBeWasted') !== null
+            ? inventoryItem.get('toBeWasted')
+            : 'N/A'}
+        </TableCell>
+      ) : null}
       <TableCell className={cssClasses('TableCell')}>
         <AspectVertMenu
           params={{ inventoryItemId: inventoryItem.get('id') }}

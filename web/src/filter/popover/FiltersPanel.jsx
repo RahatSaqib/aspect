@@ -34,7 +34,7 @@ import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
 import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
-import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
+import DaysStockLeftSelectField from '../hardcoded/daysStockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -244,9 +244,9 @@ const enhance = compose(
         }),
     onStockLeftChange:
       ({ onChangeFilters }) =>
-      stockLeft =>
+      daysStockLeft =>
         onChangeFilters({
-          stockLeft,
+          daysStockLeft,
         }),
 
     onReportNameChange:
@@ -526,8 +526,8 @@ const messages = {
       id: 'filter.popover.selectStockLeft',
       defaultMessage: 'Select stock left...',
     },
-    stockLeft: {
-      id: 'filter.popover.stockLeft',
+    daysStockLeft: {
+      id: 'filter.popover.daysStockLeft',
       defaultMessage: 'Days Stock Left',
     },
     reportName: {
@@ -1191,15 +1191,15 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
-            {config.stockLeft && (
+            {config.daysStockLeft && (
               <div className={cssClasses('Control')}>
-                <StockLeftSelectField
+                <DaysStockLeftSelectField
                   allItemText={formatMessage(messages.all)}
                   onChange={onStockLeftChange}
-                  value={filters.stockLeft}
+                  value={filters.daysStockLeft}
                   floatingLabelFixed
                   hintText={formatMessage(messages.selectStockLeft)}
-                  floatingLabelText={formatMessage(messages.stockLeft)}
+                  floatingLabelText={formatMessage(messages.daysStockLeft)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>
