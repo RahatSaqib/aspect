@@ -27,6 +27,7 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -592,7 +593,8 @@ async function getNotification(request) {
       'et.body as emailBody',
       'st.message as smsBody',
       'wt.url as webUrl',
-      'wt.payload as webBody'
+      'wt.payload as webBody',
+      'nt.enabled'
     )
     .from('NotificationType as nt')
     .innerJoin(
@@ -607,7 +609,6 @@ async function getNotification(request) {
     .where('nt.id', id)
     .andWhere('ntc.externalId', 'resultBased')
     .first()
-
   return { ok: true, data: notification }
 }
 
@@ -822,6 +823,7 @@ async function saveNotificationType({
     sendWeb,
     webBody,
     webUrl,
+    enabled,
   } = payload
   const now = new Date()
   const auditFields = {
@@ -878,6 +880,7 @@ async function saveNotificationType({
         level: 1,
         canAcknowledge: 0,
         name,
+        enabled,
         ...auditFields,
       })
       /**
@@ -911,6 +914,7 @@ async function saveNotificationType({
           name,
           updatedOn: now,
           updatedBy: userId,
+          enabled,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
@@ -1010,6 +1014,7 @@ async function saveNotificationType({
           sendEmail,
           sendSms,
           sendWeb,
+          enabled,
         }),
       })
       .where({ id: notificationTypeId })
@@ -1037,7 +1042,6 @@ async function saveNotification(request) {
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
   const { notificationType } = payload
-
   if (notificationType === 'resultBased') {
     const result = await saveNotificationType({
       id,
@@ -1062,6 +1066,30 @@ async function saveNotification(request) {
   return { ok: false, notificationTypeId: -1 }
 }
 
+async function deleteNotification(request) {
+  const {
+    params,
+    plugins: { messageContext },
+  } = request
+  const { notificationId: id } = params
+
+  try {
+    await knex('NotificationType').where({ id }).delete()
+    if (!messageContext.notificationTypeCreated)
+      messageContext.bindActionCreators({ notificationTypeCreated })
+    messageContext.notificationTypeCreated(id)
+  } catch (e) {
+    logger.info(
+      { info: `NotificationType ${id} cannot be deleted`, e },
+      { reLabel: 'aspect:api:notification:delete' }
+    )
+    return Boom.badData(
+      `Can not delete this notification type because it already triggered notifications`
+    )
+  }
+
+  return { ok: true }
+}
 module.exports = {
   listNotifications,
   getNotifications,
@@ -1071,4 +1099,5 @@ module.exports = {
   resultConditionsMet,
   getPeopleToNotify,
   saveNotification,
+  deleteNotification,
 }

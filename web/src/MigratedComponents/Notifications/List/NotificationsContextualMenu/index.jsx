@@ -1,17 +1,26 @@
-import React from 'react'
+import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import { useIntl } from 'react-intl'
-
+import { useQueryClient } from 'react-query'
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
+import DeleteConfirmationModal from './DeleteConfirmationModal'
+import { NOTIFICATION_LIST } from '../../../QueryFetch/Notification/index'
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
+  const { id, typeCategory, name, totalTriggers } = item
+  const queryClient = useQueryClient()
+  const refreshList = () => {
+    queryClient.invalidateQueries(NOTIFICATION_LIST.KEY)
+  }
 
-  const { id, typeCategory } = item
-
+  const [modalConfiguration, setModalConfiguration] = useState({
+    showDialog: false,
+    notificationId: 0,
+  })
   const getItemActions = navigate => [
     {
       icon: 'FaEdit',
@@ -40,17 +49,35 @@ const NotificationsContextualMenu = ({ item }) => {
     {
       icon: 'FaTrash',
       text: formatMessage(messages.deleteTitle),
-      action: () => false,
-      disabled: true,
+      action: () =>
+        setModalConfiguration({
+          notificationId: id,
+          notificationName: name,
+          showDialog: true,
+        }),
+      disabled: totalTriggers > 0,
     },
   ]
-  return <AspectVertMenu actions={getItemActions(navigate)} />
+  return (
+    <Fragment>
+      <DeleteConfirmationModal
+        {...modalConfiguration}
+        onClose={() => {
+          setModalConfiguration({})
+          refreshList()
+        }}
+      />
+      <AspectVertMenu actions={getItemActions(navigate)} />
+    </Fragment>
+  )
 }
 
 NotificationsContextualMenu.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     typeCategory: PropTypes.string,
+    name: PropTypes.string,
+    totalTriggers: PropTypes.number,
   }).isRequired,
 }
 

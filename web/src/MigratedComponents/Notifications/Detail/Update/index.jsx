@@ -70,6 +70,7 @@ const AspectNotificationDetail = ({
           webUrl,
           webBody,
           filterCondition,
+          enabled,
         } = responseData
 
         const filter = JSON.parse(filterCondition)
@@ -85,6 +86,7 @@ const AspectNotificationDetail = ({
           webUrl,
           webBody,
           sendWeb: filter.sendWeb,
+          enabled: !!enabled,
           /**
            * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
            * to make sure all items in array are located in their positions
