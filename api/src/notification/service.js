@@ -247,6 +247,7 @@ async function createNotifications(knex, action, context) {
   let jobFunctionId = null
   let jobFunctionLevel = null
   const { jobFunctions = [], persons = [] } = filterCondition || {}
+  sendToPatient(action, policies, context, knex)
   await Promise.each(policies, async policy => {
     if (
       _.isNil(policy.jobFunctionId) &&
@@ -281,6 +282,16 @@ async function createNotifications(knex, action, context) {
       await sendNotificationsToPeople(knex, context, people, policy, action)
     }
   })
+}
+
+async function sendToPatient(action, policies, context, knex) {
+  const [policy] = policies
+  if (policy.patientCellphone)
+    await createNotificationIfNotCreatedAlready(
+      action,
+      { policy, now: new Date() },
+      { messageContext: context, knex }
+    )
 }
 
 async function getTagsByPolicy(txKnex, policy) {
