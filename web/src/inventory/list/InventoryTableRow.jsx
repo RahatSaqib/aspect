@@ -112,7 +112,9 @@ const InventoryTableRow = ({ inventoryItem }) => {
           className={cssClasses('TableCell')}
           rowSpan={rowSpan('lotNumber')}
         >
-          {inventoryItem.get('lotNumber')}
+          {inventoryItem.get('lotNumber')
+            ? inventoryItem.get('lotNumber')
+            : 'N/A'}
         </TableCell>
       ) : null}
       {inventoryItem.get('expiresOn') !== undefined ? (
@@ -122,6 +124,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
         >
           <span
             className={
+              inventoryItem.get('expiresOn') !== null &&
               new Date(inventoryItem.get('expiresOn')) < new Date()
                 ? cssClasses('alert')
                 : null
@@ -138,7 +141,9 @@ const InventoryTableRow = ({ inventoryItem }) => {
           className={cssClasses('TableCell')}
           rowSpan={rowSpan('daysStockLeft')}
         >
-          {inventoryItem.get('daysStockLeft')}
+          {inventoryItem.get('daysStockLeft') !== null
+            ? inventoryItem.get('daysStockLeft')
+            : 'N/A'}
         </TableCell>
       ) : null}
       <TableCell className={cssClasses('TableCell')}>

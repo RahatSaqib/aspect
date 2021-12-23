@@ -1,7 +1,6 @@
 const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
-const { Promise } = require('bluebird')
 const { addDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
@@ -230,7 +229,7 @@ describe('Inventory Routes', () => {
             assert.property(inventoryItem, 'lgaName')
             assert.property(inventoryItem, 'daysStockLeft')
             assert.property(inventoryItem, 'dailyConsumptionRate')
-            assert.notProperty(inventoryItem, 'id')
+            assert.property(inventoryItem, 'id')
             assert.notProperty(inventoryItem, 'lotNumber')
             assert.notProperty(inventoryItem, 'expiresOn')
             assert.notProperty(inventoryItem, 'inTransitFromSiteId')
@@ -284,13 +283,13 @@ describe('Inventory Routes', () => {
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {
           const res = await server
-            .get(`${path}?sortCol=daysStockLeft&sortDir=desc`)
+            .get(`${path}?sortCol=daysStockLeft&sortDir=asc`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          // Site 2 has 50 days of stock left
-          assert.equal(res.body.data[0].siteId, site2Id)
           // Site 1 has 3.5 days of stock left
-          assert.equal(res.body.data[1].siteId, site1Id)
+          assert.equal(res.body.data[0].siteId, site1Id)
+          // Site 2 has 50 days of stock left
+          assert.equal(res.body.data[1].siteId, site2Id)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by stock to be wasted', async () => {
@@ -353,139 +352,139 @@ describe('Inventory Routes', () => {
       })
     })
 
-    describe.skip('/inventory/group-by-site', () => {
-      const path = '/api/inventory/group-by-site'
-      before(() => {
-        shared.checkToken(server, path)
-      })
+    // describe.skip('/inventory/group-by-site', () => {
+    //   const path = '/api/inventory/group-by-site'
+    //   before(() => {
+    //     shared.checkToken(server, path)
+    //   })
 
-      const assertSite = site => {
-        assert.property(site, 'siteId')
-        assert.property(site, 'siteName')
-        assert.property(site, 'countryId')
-        assert.property(site, 'stateId')
-        assert.property(site, 'lgaId')
-        assert.property(site, 'countryName')
-        assert.property(site, 'stateName')
-        assert.property(site, 'lgaName')
-        assert.property(site, 'inventoryItems')
-      }
+    //   const assertSite = site => {
+    //     assert.property(site, 'siteId')
+    //     assert.property(site, 'siteName')
+    //     assert.property(site, 'countryId')
+    //     assert.property(site, 'stateId')
+    //     assert.property(site, 'lgaId')
+    //     assert.property(site, 'countryName')
+    //     assert.property(site, 'stateName')
+    //     assert.property(site, 'lgaName')
+    //     assert.property(site, 'inventoryItems')
+    //   }
 
-      const assertInventoryItem = inventoryItem => {
-        assert.property(inventoryItem, 'id')
-        assert.property(inventoryItem, 'consumableId')
-        assert.property(inventoryItem, 'expiresOn')
-        assert.property(inventoryItem, 'canExpire')
-        assert.property(inventoryItem, 'lotNumber')
-        assert.property(inventoryItem, 'quantityOnHand')
-        assert.property(inventoryItem, 'consumableName')
-        assert.property(inventoryItem, 'manufacturer')
-        assert.property(inventoryItem, 'unitShortName')
-      }
+    //   const assertInventoryItem = inventoryItem => {
+    //     assert.property(inventoryItem, 'id')
+    //     assert.property(inventoryItem, 'consumableId')
+    //     assert.property(inventoryItem, 'expiresOn')
+    //     assert.property(inventoryItem, 'canExpire')
+    //     assert.property(inventoryItem, 'lotNumber')
+    //     assert.property(inventoryItem, 'quantityOnHand')
+    //     assert.property(inventoryItem, 'consumableName')
+    //     assert.property(inventoryItem, 'manufacturer')
+    //     assert.property(inventoryItem, 'unitShortName')
+    //   }
 
-      describe('GET', () => {
-        const deviceIds = []
-        const inventoryItemIds = []
-        const siteIds = []
+    //   describe('GET', () => {
+    //     const deviceIds = []
+    //     const inventoryItemIds = []
+    //     const siteIds = []
 
-        // This before each ensures we have at least 2 devices with inventory items in each it()
-        beforeEach(async () => {
-          const { id: consumableId } = await knex('Consumable')
-            .where({ externalId: 'GxMtbRifCartridge' })
-            .first()
-          const { partner, country } = await getConstraints({ name: 'admin' })
-          const { id: geographyId } = await knex('Geography')
-            .where({ countryId: country.id })
-            .first()
-          const { id: gxDeviceTypeId } = await knex('DeviceType')
-            .where({ externalId: 'CepheidGeneXpert' })
-            .first()
-          const { id: deviceApprovedId } = await knex('DeviceApproval')
-            .where({ token: 'approved' })
-            .first()
-          const now = new Date()
-          await Promise.each(_.range(2), async n => {
-            const [siteId] = await knex('Site').insert({
-              partnerId: partner.id,
-              geographyId,
-              externalId: `Site ${n}`,
-              name: `Site ${n}`,
-              shortName: `Site ${n}`,
-            })
-            const [deviceId] = await knex('Device').insert({
-              name: `Device ${n}`,
-              shortName: `Device ${n}`,
-              deviceTypeId: gxDeviceTypeId,
-              deviceApprovalId: deviceApprovedId,
-              partnerId: partner.id,
-              geographyId,
-              siteId,
-              createdOn: now,
-              updatedOn: now,
-              lastPingOn: now,
-              lastSeenOn: now,
-            })
-            const [inventoryItemId] = await knex('InventoryItem').insert({
-              consumableId,
-              siteId,
-              lotNumber: '',
-              expiresOn: now,
-              quantityOnHand: 100,
-            })
-            siteIds.push(siteId)
-            deviceIds.push(deviceId)
-            inventoryItemIds.push(inventoryItemId)
-          })
-        })
+    //     // This before each ensures we have at least 2 devices with inventory items in each it()
+    //     beforeEach(async () => {
+    //       const { id: consumableId } = await knex('Consumable')
+    //         .where({ externalId: 'GxMtbRifCartridge' })
+    //         .first()
+    //       const { partner, country } = await getConstraints({ name: 'admin' })
+    //       const { id: geographyId } = await knex('Geography')
+    //         .where({ countryId: country.id })
+    //         .first()
+    //       const { id: gxDeviceTypeId } = await knex('DeviceType')
+    //         .where({ externalId: 'CepheidGeneXpert' })
+    //         .first()
+    //       const { id: deviceApprovedId } = await knex('DeviceApproval')
+    //         .where({ token: 'approved' })
+    //         .first()
+    //       const now = new Date()
+    //       await Promise.each(_.range(2), async n => {
+    //         const [siteId] = await knex('Site').insert({
+    //           partnerId: partner.id,
+    //           geographyId,
+    //           externalId: `Site ${n}`,
+    //           name: `Site ${n}`,
+    //           shortName: `Site ${n}`,
+    //         })
+    //         const [deviceId] = await knex('Device').insert({
+    //           name: `Device ${n}`,
+    //           shortName: `Device ${n}`,
+    //           deviceTypeId: gxDeviceTypeId,
+    //           deviceApprovalId: deviceApprovedId,
+    //           partnerId: partner.id,
+    //           geographyId,
+    //           siteId,
+    //           createdOn: now,
+    //           updatedOn: now,
+    //           lastPingOn: now,
+    //           lastSeenOn: now,
+    //         })
+    //         const [inventoryItemId] = await knex('InventoryItem').insert({
+    //           consumableId,
+    //           siteId,
+    //           lotNumber: '',
+    //           expiresOn: now,
+    //           quantityOnHand: 100,
+    //         })
+    //         siteIds.push(siteId)
+    //         deviceIds.push(deviceId)
+    //         inventoryItemIds.push(inventoryItemId)
+    //       })
+    //     })
 
-        it('should return a list of sites, each with a list of inventory items, when using valid token', async () => {
-          const res = await server
-            .get(path)
-            .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 2)
-          res.body.data.forEach(site => {
-            assertSite(site)
-            site.inventoryItems.forEach(inventoryItem =>
-              assertInventoryItem(inventoryItem)
-            )
-          })
-          assert.property(res.body, 'total')
-        })
+    //     it('should return a list of sites, each with a list of inventory items, when using valid token', async () => {
+    //       const res = await server
+    //         .get(path)
+    //         .set('Authorization', `Bearer ${shared.token}`)
+    //       assert.equal(res.status, 200)
+    //       assert.typeOf(res.body, 'Object')
+    //       assert.property(res.body, 'data')
+    //       assert.typeOf(res.body.data, 'array')
+    //       assert.isAtLeast(res.body.data.length, 2)
+    //       res.body.data.forEach(site => {
+    //         assertSite(site)
+    //         site.inventoryItems.forEach(inventoryItem =>
+    //           assertInventoryItem(inventoryItem)
+    //         )
+    //       })
+    //       assert.property(res.body, 'total')
+    //     })
 
-        it('should accept consumableId and siteName as query string parameters', done => {
-          const consumableId = 1
-          const siteNameFilter = 'lab'
-          server
-            .get(
-              `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
-            )
-            .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              res.body.data.forEach(site => {
-                assert.includes(
-                  site.siteName.toLowerCase(),
-                  siteNameFilter.toLowerCase()
-                )
-                site.inventoryItems.forEach(inventoryItem => {
-                  assert.equal(inventoryItem.consumableId, consumableId)
-                })
-              })
-              done()
-            })
-        })
+    //     it('should accept consumableId and siteName as query string parameters', done => {
+    //       const consumableId = 1
+    //       const siteNameFilter = 'lab'
+    //       server
+    //         .get(
+    //           `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
+    //         )
+    //         .set('Authorization', `Bearer ${shared.token}`)
+    //         .end((err, res) => {
+    //           assert.equal(res.status, 200)
+    //           res.body.data.forEach(site => {
+    //             assert.includes(
+    //               site.siteName.toLowerCase(),
+    //               siteNameFilter.toLowerCase()
+    //             )
+    //             site.inventoryItems.forEach(inventoryItem => {
+    //               assert.equal(inventoryItem.consumableId, consumableId)
+    //             })
+    //           })
+    //           done()
+    //         })
+    //     })
 
-        afterEach(async () => {
-          await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
-          await knex('Device').whereIn('id', deviceIds).delete()
-          await knex('Site').whereIn('id', siteIds).delete()
-        })
-      })
-    })
+    //     afterEach(async () => {
+    //       await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+    //       await knex('Device').whereIn('id', deviceIds).delete()
+    //       await knex('Site').whereIn('id', siteIds).delete()
+    //     })
+    //   })
+    // })
 
     describe('/inventory/days-by-location', () => {
       const path = '/api/inventory/days-by-location'
@@ -546,7 +545,7 @@ describe('Inventory Routes', () => {
     const quantityToAdjust = 11
     const initialQuantityOnHand = 500
     const testLotNumber = 'TEST-LOT'
-    const getAllInventoryPath = '/api/inventory/group-by-site'
+    // const getAllInventoryPath = '/api/inventory/group-by-site'
     const addInventoryPath = '/api/inventory/add'
     const removeInventoryPath = '/api/inventory/remove'
     const transferInventoryPath = '/api/inventory/transfer'
@@ -670,8 +669,8 @@ describe('Inventory Routes', () => {
             })
         })
 
-        it('should remove the inventory item from view quantity is zero', done => {
-          server
+        it('should remove the inventory item from view quantity is zero', async () => {
+          const res = await server
             .put(`${removeInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
@@ -684,22 +683,12 @@ describe('Inventory Routes', () => {
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              server
-                .get(getAllInventoryPath)
-                .set('Authorization', `Bearer ${shared.token}`)
-                .end((err, res) => {
-                  assert.isFalse(
-                    _.some(res.body.data, site =>
-                      _.some(site.inventoryItems, {
-                        id: inventoryItem.id,
-                      })
-                    )
-                  )
-                  done()
-                })
-            })
+
+          assert.equal(res.status, 200)
+          const { quantityOnHand } = await knex('InventoryItem')
+            .where({ id: inventoryItem.id })
+            .first()
+          assert.equal(quantityOnHand, 0)
         })
       })
     })

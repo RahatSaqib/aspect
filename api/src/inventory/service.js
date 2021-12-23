@@ -48,12 +48,7 @@ const INVENTORY_COMMON_FIELDS = [
   'l.name as lgaName',
 ]
 
-const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
-  ...INVENTORY_COMMON_FIELDS,
-  knex.raw('SUM(ii.quantityOnHand)'),
-]
-
-const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
+const INVENTORY_ITEM_SELECT = [
   ...INVENTORY_COMMON_FIELDS,
   'ii.quantityOnHand',
   'ii.id',
@@ -61,6 +56,18 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   'ii.lotNumber',
   'itfs.name as inTransitFromSiteName',
   'ii.inTransitFromSiteId',
+]
+
+// Select for inventory grouped by site and consumable
+const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
+  ...INVENTORY_COMMON_FIELDS,
+  knex.raw('SUM(ii.quantityOnHand)'),
+]
+
+// Select for inventory split by lot
+const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
+  ...INVENTORY_ITEM_SELECT.filter(field => field !== 'ii.id'),
+  knex.raw("CONCAT(c.id, '-', s.id, '-', IFNULL(ii.id, 'NA')) as id"),
 ]
 
 const INVENTORY_ITEM_SORT_FIELDS = {
@@ -558,17 +565,12 @@ async function listInventory(request) {
 
 async function listInventoryByLot(request, dataConstraints) {
   const inventoryQuery = getInventoryLots(request, dataConstraints)
-    .clone()
-    .modify(
-      sortPageParams,
-      request.query,
-      INVENTORY_ITEM_SORT_FIELDS.siteName,
-      INVENTORY_ITEM_SORT_FIELDS
-    )
-  const getCount = inventoryQuery
-    .clone()
-    .count({ count: knex.raw('ii.id') })
+
+  const getCount = knex
+    .from(inventoryQuery.clone().as('q'))
+    .count({ count: 'q.id' })
     .first()
+
   const requestQuery = request.query
   if (requestQuery.sortCol) {
     let sortCols = splitCsvWithTrim(requestQuery.sortCol)
@@ -581,12 +583,14 @@ async function listInventoryByLot(request, dataConstraints) {
     requestQuery.sortCol = sortCols.join(',')
   }
 
-  const getItems = inventoryQuery.modify(
-    sortPageParams,
-    requestQuery,
-    INVENTORY_ITEM_SORT_FIELDS.siteName,
-    INVENTORY_ITEM_SORT_FIELDS
-  )
+  const getItems = inventoryQuery
+    .clone()
+    .modify(
+      sortPageParams,
+      requestQuery,
+      INVENTORY_ITEM_SORT_FIELDS.siteName,
+      INVENTORY_ITEM_SORT_FIELDS
+    )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -655,9 +659,12 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
       )
   }
 
-  // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging
+  // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging and ordering
   if (requirePostProcessOrdering) {
-    inventorySites = inventorySites.slice(page * size, size)
+    if (sortCol)
+      inventorySites = _.orderBy(inventorySites, sortCol, sortDir || 'asc')
+
+    if (page && size) inventorySites = inventorySites.slice(page * size, size)
   }
 
   return { data: inventorySites, total }
@@ -1132,7 +1139,7 @@ async function findInventoryItem(
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
   const matchingInventoryItems = await matchingInventoryItemsQuery.select(
-    INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS
+    INVENTORY_ITEM_SELECT
   )
   return (
     _.find(matchingInventoryItems, { lotNumber }) ||
@@ -1152,7 +1159,7 @@ function getInventoryItem(inventoryItemId) {
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
-    .first(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
+    .first(INVENTORY_ITEM_SELECT)
 }
 
 async function getInventoryItems(inventoryItemIds) {
@@ -1170,7 +1177,7 @@ async function getInventoryItems(inventoryItemIds) {
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .whereIn('ii.id', inventoryItemIds)
-    .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+    .select(INVENTORY_ITEM_SELECT)
 }
 
 async function addInventory(request) {
