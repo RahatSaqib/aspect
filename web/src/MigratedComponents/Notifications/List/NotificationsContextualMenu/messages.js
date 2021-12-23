@@ -23,11 +23,11 @@ const messages = defineMessages({
   },
   yesDelete: {
     id: 'contextualMenu.notifications.yesDelete',
-    defaultMessage: 'yes, delete it',
+    defaultMessage: 'Yes, delete it',
   },
   cancel: {
     id: 'contextualMenu.notifications.cancel',
-    defaultMessage: 'cancel',
+    defaultMessage: 'Cancel',
   },
   areYouSureToDelete: {
     id: 'contextualMenu.notifications.areYouSureToDelete',

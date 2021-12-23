@@ -586,7 +586,6 @@ const getFormConfig = (
       id: 'section_notificationType_disable',
       label: 'Enable',
       labelI18nKey: 'notificationTypeEnable',
-      visibleIf: () => isEdit,
       rows: [
         {
           id: 0,
