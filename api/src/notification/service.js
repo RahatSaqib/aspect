@@ -361,7 +361,6 @@ async function getNotificationPolicy(
           .where({ 'i.id': issueId })
         aliases.issue = 'i'
       } else if (!_.isNil(resultId)) {
-        const { sendToPatient = false } = extraConditions
         extraFields = [
           'result.siteId as siteId',
           'result.deviceId as deviceId',
@@ -376,7 +375,6 @@ async function getNotificationPolicy(
             'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
           ),
         ]
-        if (sendToPatient) extraFields.push('result.patientCellphone')
         queryBuilder
           .crossJoin(
             knex('Result as r')
@@ -388,10 +386,7 @@ async function getNotificationPolicy(
                 'r.deviceId',
                 'r.id as resultId',
                 'r.resultCategory1',
-                'r.resultCategory2',
-                knex.raw(
-                  "coalesce(r.patientData->>'$.phone', r.patientData->>'$.cell') as patientCellphone"
-                )
+                'r.resultCategory2'
               )
               .as('result')
           )

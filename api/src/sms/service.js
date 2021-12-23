@@ -134,11 +134,6 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       'tmpl.message as messageTemplate',
       'tmpl.phoneNumber as phoneNumberTemplate'
     )
-  const templateProcessor = await processUsingDataSourceQuery(data, [
-    'messageTemplate',
-    'phoneNumberTemplate',
-  ])
-  console.log(templateProcessor)
   return processUsingDataSourceQuery(data, [
     'messageTemplate',
     'phoneNumberTemplate',
