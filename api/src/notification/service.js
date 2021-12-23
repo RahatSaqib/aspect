@@ -843,6 +843,7 @@ async function saveNotificationType({
         level: 1,
         canAcknowledge: 0,
         name,
+        enabled,
         ...auditFields,
       })
       /**
