@@ -1,10 +1,4 @@
-import React, {
-  Children,
-  cloneElement,
-  isValidElement,
-  useState,
-  useEffect,
-} from 'react'
+import React, { Children, cloneElement, isValidElement, useState } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import IconButton from '@material-ui/core/IconButton'
@@ -27,11 +21,8 @@ const styles = theme => ({
 
 const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
   const [anchorEl, setAnchorEl] = useState(null)
-  const [open, setOpen] = useState(Boolean(anchorEl))
+  const open = Boolean(anchorEl)
 
-  useEffect(() => {
-    setOpen(Boolean(anchorEl))
-  }, [anchorEl])
   const handleMenu = event => {
     event.stopPropagation()
     setAnchorEl(event.currentTarget)
@@ -46,7 +37,6 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
     if (onClick) {
       onClick(value)
     }
-    setOpen(false)
     handleClose()
   }
 
@@ -84,7 +74,7 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
                 menuItem.props.className,
                 classNameValues.menuItem
               ),
-              onClick: () => handleClick(menuItem),
+              onClick: handleClick(menuItem),
             })
           }
         })}
