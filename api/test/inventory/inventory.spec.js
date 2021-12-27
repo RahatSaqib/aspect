@@ -283,13 +283,13 @@ describe('Inventory Routes', () => {
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {
           const res = await server
-            .get(`${path}?sortCol=daysStockLeft&sortDir=asc`)
+            .get(`${path}?sortCol=daysStockLeft&sortDir=desc`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          // Site 1 has 3.5 days of stock left
-          assert.equal(res.body.data[0].siteId, site1Id)
           // Site 2 has 50 days of stock left
-          assert.equal(res.body.data[1].siteId, site2Id)
+          assert.equal(res.body.data[0].siteId, site2Id)
+          // Site 1 has 3.5 days of stock left
+          assert.equal(res.body.data[1].siteId, site1Id)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by stock to be wasted', async () => {
