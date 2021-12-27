@@ -58,6 +58,7 @@ import { INVENTORY_LIST } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 
 import styles from './InventoryItemsList.css'
+import AspectTooltip from '../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(styles)
 
@@ -231,13 +232,33 @@ export const InventoryItemsListWithProps = ({
                 },
                 {
                   key: 'daysStockLeft',
-                  label: intl.formatMessage(messages.daysStockLeft),
+                  label: (
+                    <div>
+                      <AspectTooltip
+                        title={intl.formatMessage(
+                          messages.daysStockLeftDescription
+                        )}
+                        showHelpIcon
+                      />
+                      {intl.formatMessage(messages.daysStockLeft)}
+                    </div>
+                  ),
                   sortable: true,
                   ishidden: breakOutByLot,
                 },
                 {
                   key: 'toBeWasted',
-                  label: intl.formatMessage(messages.toBeWasted),
+                  label: (
+                    <div>
+                      <AspectTooltip
+                        title={intl.formatMessage(
+                          messages.toBeWastedDescription
+                        )}
+                        showHelpIcon
+                      />
+                      {intl.formatMessage(messages.toBeWasted)}
+                    </div>
+                  ),
                   sortable: true,
                   ishidden: breakOutByLot,
                 },

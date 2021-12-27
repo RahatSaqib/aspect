@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
+  toBeWastedDescription: {
+    id: 'pages.InventoryItemsList.toBeWastedDescription',
+    defaultMessage:
+      'The stock to be wasted, assuming that the cartridges to be consumed are always the ones closer to their expiration',
+  },
+  daysStockLeftDescription: {
+    id: 'pages.InventoryItemsList.daysStockLeftDescription',
+    defaultMessage:
+      'The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration',
+  },
   inventoryItemsTitle: {
     id: 'pages.InventoryItemsList.inventoryItemsTitle',
     defaultMessage: 'Inventory on Hand',
