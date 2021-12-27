@@ -93,6 +93,8 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   consumableExternalId: 'c.externalId',
   siteName: 's.name',
   siteId: 's.id',
+  expiresOn: 'ii.expiresOn',
+  lotNumber: 'ii.lotNumber',
 }
 
 const STOCK_LEFT_FILTER_FIELDS = {
@@ -478,7 +480,7 @@ function getInventoryLots(request, dataConstraints) {
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
-      ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
+      ...INVENTORY_ITEM_FILTER_FIELDS,
     })
     .modify(
       addConstraints,
@@ -612,7 +614,12 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const requirePostProcessOrdering =
     sortCol === 'daysStockLeft' || sortCol === 'toBeWasted'
 
+  let total
+
   if (!requirePostProcessOrdering) {
+    ;[{ total }] = await knex
+      .from(inventoryQuery.as('q'))
+      .count('q.id as total')
     // Apply ordering and paging - we only want to process the sites-consumables inside the requested page
     inventoryQuery = inventoryQuery.modify(
       sortPageParams,
@@ -658,10 +665,10 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
       )
   }
 
-  const total = inventorySites.length
-
   // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging and ordering
   if (requirePostProcessOrdering) {
+    total = inventorySites.length
+
     if (sortCol)
       inventorySites = _.orderBy(
         inventorySites,

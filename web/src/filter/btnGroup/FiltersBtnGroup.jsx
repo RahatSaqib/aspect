@@ -185,6 +185,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereReportNameIncludes',
     defaultMessage: 'report name includes "{reportName}"',
   },
+  whereLotNumberIncludes: {
+    id: 'filter.btnGroup.whereLotNumberIncludes',
+    defaultMessage: 'lot number includes "{lotNumber}"',
+  },
 })
 const revokedOptions = [
   {
@@ -257,6 +261,7 @@ const filtersOrdering = {
   issueTypeId: 24,
   daysStockLeft: 31,
   reportName: 32,
+  lotNumber: 33,
 }
 
 const makeButton = labelFn => (filterKey, props, index) => {
@@ -594,6 +599,11 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     reportName: makeButton(reportName =>
       formatMessage(messages.whereReportNameIncludes, {
         reportName,
+      })
+    ),
+    lotNumber: makeButton(lotNumber =>
+      formatMessage(messages.whereLotNumberIncludes, {
+        lotNumber,
       })
     ),
   }

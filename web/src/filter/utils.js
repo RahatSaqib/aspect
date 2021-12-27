@@ -52,7 +52,7 @@ const groups = {
 }
 
 const findFilterConfigByKey = (config, key) =>
-  find(config, configObject => configObject[key]) && !config[key]
+  find(config, configObject => configObject[key]) // && !config[key]
 
 const defaultSanitizer = ({ a, k, config }) => {
   if (!a.value) a.value = new URLSearchParams()
@@ -118,22 +118,32 @@ const sanitizerByConfigKey = {
   onlyDownloadedByReporter: defaultSanitizer,
   onlyTreatmentRequired: defaultSanitizer,
   treatmentStatus: defaultSanitizer,
+  daysStockLeft: defaultSanitizer,
+  lotNumber: defaultSanitizer,
 }
 
-export const sanitizeFiltersStringBy = config => filtersString =>
-  reduce(
-    sanitizerByConfigKey,
-    (acc, sanitizer, key) => {
-      if (findFilterConfigByKey(config, key)) {
+export const sanitizeFiltersStringBy =
+  config => (filtersString, dependencies) =>
+    reduce(
+      sanitizerByConfigKey,
+      (acc, sanitizer, key) => {
+        const filterConfig = findFilterConfigByKey(config, key)
+        if (
+          !filterConfig ||
+          (filterConfig.isEnabled &&
+            dependencies &&
+            !filterConfig.isEnabled(dependencies))
+        ) {
+          return sanitizer({ a: acc, k: key, config })
+        }
+
         return acc
+      },
+      {
+        sanitized: false,
+        value: new URLSearchParams(filtersString),
       }
-      return sanitizer({ a: acc, k: key, config })
-    },
-    {
-      sanitized: false,
-      value: new URLSearchParams(filtersString),
-    }
-  )
+    )
 
 const sanitizeBrowseLink = userPermissions => {
   const permissions = []
@@ -320,6 +330,9 @@ export const reduceFiltersConfig = (
               break
             case 'reportName':
               result.reportName = true
+              break
+            case 'lotNumber':
+              result.lotNumber = true
               break
             case 'diseaseId':
               result.disease = true

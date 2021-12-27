@@ -5,9 +5,9 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.inventoryItemsTitle',
     defaultMessage: 'Inventory on Hand',
   },
-  groupBySite: {
-    id: 'pages.InventoryItemsList.groupBySite',
-    defaultMessage: 'Group by Site',
+  breakOutByLot: {
+    id: 'pages.InventoryItemsList.breakOutByLot',
+    defaultMessage: 'Break out by lot',
   },
   siteName: {
     id: 'pages.InventoryItemsList.siteName',

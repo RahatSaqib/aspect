@@ -10,28 +10,72 @@ export const makeSortPageSelector =
     pageAt: defaultPageAt = DEFAULT_PAGE_AT,
     pageSize: defaultPageSize = DEFAULT_PAGE_SIZE,
   } = {}) =>
-  ({ location }) => {
+  ({ location, availableSortCol, dependencies }) => {
     const searchParams = new URLSearchParams(location.search)
+    const sortCol = searchParams.get('sortCol')
+
+    let index = -1
+    let obj = null
+
+    if (availableSortCol) {
+      index = availableSortCol.indexOf(sortCol)
+      obj = availableSortCol.find(c => c.col === sortCol)
+    }
+
+    const pageAt = parseInt(searchParams.get('pageAt'), 10) || defaultPageAt
+    const pageSize =
+      parseInt(searchParams.get('pageSize'), 10) || defaultPageSize
+
+    if (
+      (index === -1 && !obj) ||
+      (dependencies &&
+        obj &&
+        obj.isEnabled &&
+        obj.isEnabled(dependencies) === false)
+    )
+      return {
+        sortCol: defaultSortCol,
+        sortDir: defaultSortDir,
+        pageAt,
+        pageSize,
+      }
+
     return {
       sortCol: searchParams.get('sortCol') || defaultSortCol,
       sortDir: searchParams.get('sortDir') || defaultSortDir,
-      pageAt: parseInt(searchParams.get('pageAt'), 10) || defaultPageAt,
-      pageSize: parseInt(searchParams.get('pageSize'), 10) || defaultPageSize,
+      pageAt,
+      pageSize,
     }
   }
 
 export const makeSearchParamsSanitizer =
   ({ availableSortCol = ['id'], availableSortDir = ['asc', 'desc'] } = {}) =>
-  location => {
+  (location, dependencies) => {
     const searchParams = new URLSearchParams(location.search)
     let sanitized = false
-    if (
-      searchParams.has('sortCol') &&
-      availableSortCol.indexOf(searchParams.get('sortCol')) === -1
-    ) {
-      sanitized = true
-      searchParams.delete('sortCol')
+    if (searchParams.has('sortCol')) {
+      let shouldDelete = false
+
+      const index = availableSortCol.indexOf(searchParams.get('sortCol'))
+      const obj = availableSortCol.find(
+        c => c.col === searchParams.get('sortCol')
+      )
+
+      if (index === -1 && !obj) shouldDelete = true
+      else if (
+        dependencies &&
+        obj &&
+        obj.isEnabled &&
+        obj.isEnabled(dependencies) === false
+      )
+        shouldDelete = true
+
+      if (shouldDelete) {
+        sanitized = true
+        searchParams.delete('sortCol')
+      }
     }
+
     if (
       searchParams.has('sortDir') &&
       availableSortDir.indexOf(searchParams.get('sortDir')) === -1

@@ -26,6 +26,7 @@ const inventoryFilters = {
     .allow('', null)
     .description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
+  lotNumber: Joi.string().allow('', null),
   daysStockLeft: Joi.string().allow('', null),
   breakOutByLot: Joi.bool().allow(null),
 }
@@ -62,6 +63,7 @@ function listSuppliesBaseConfig() {
           'countryName',
           'stateName',
           'lgaName',
+          'lotNumber',
           'quantityOnHand',
           'expiresOn',
           'daysStockLeft',
@@ -97,7 +99,8 @@ const routes = [
             'expiresOn',
             'daysStockLeft',
             'toBeWasted',
-            'dailyConsumptionRate'
+            'dailyConsumptionRate',
+            'lotNumber'
           ),
         },
       },

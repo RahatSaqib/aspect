@@ -2,7 +2,7 @@ import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useCallback, useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
@@ -38,7 +38,6 @@ import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
   types,
-  toggleGroupBySite,
   showNewInventoryDialog,
   hideAdjustInventoryDialog,
   addInventory,
@@ -73,24 +72,41 @@ const FILTERS_CONFIG = [
     siteName: true,
     requiredPermissions: ['site:view'],
   },
-  { date: true, requiredPermissions: [] },
+  {
+    date: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => dependencies.breakOutByLot,
+  },
+  {
+    lotNumber: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => dependencies.breakOutByLot,
+  },
   {
     daysStockLeft: true,
     requiredPermissions: [],
-    isEnabled: dependencies => dependencies.groupBySite === true,
+    isEnabled: dependencies => !dependencies.breakOutByLot,
   },
 ]
 
+const availableSortCol = [
+  'siteName',
+  'consumableName',
+  'quantityOnHand',
+  { col: 'expiresOn', isEnabled: dependencies => dependencies.breakOutByLot },
+  { col: 'lotNumber', isEnabled: dependencies => dependencies.breakOutByLot },
+  {
+    col: 'daysStockLeft',
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
+  { col: 'toBeWasted', isEnabled: dependencies => !dependencies.breakOutByLot },
+  {
+    col: 'dailyConsumptionRate',
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
+]
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'siteName',
-    'consumableName',
-    'quantityOnHand',
-    'expiresOn',
-    'daysStockLeft',
-    'toBeWasted',
-    'dailyConsumptionRate',
-  ],
+  availableSortCol,
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -111,8 +127,8 @@ export const InventoryItemsListWithProps = ({
   location,
   reducedFilters,
   dispatch,
-  groupBySite,
-  onGroupBySiteChange,
+  breakOutByLot,
+  setBreakOutByLot,
   isLoading,
   onExcelClick,
   items,
@@ -152,10 +168,10 @@ export const InventoryItemsListWithProps = ({
       <DataTableCard className={cssClasses('DataTableCard--action')}>
         <CheckboxField
           className={cssClasses('Checkbox')}
-          name="groupBySite"
-          checked={groupBySite}
-          label={intl.formatMessage(messages.groupBySite)}
-          onChange={onGroupBySiteChange}
+          name="breakOutByLot"
+          checked={breakOutByLot}
+          label={intl.formatMessage(messages.breakOutByLot)}
+          onChange={event => setBreakOutByLot(event.target.checked)}
         />
       </DataTableCard>
       <DataTableCard
@@ -199,31 +215,31 @@ export const InventoryItemsListWithProps = ({
                   key: 'dailyConsumptionRate',
                   label: intl.formatMessage(messages.dailyConsumptionRate),
                   sortable: true,
-                  isHidden: !groupBySite,
+                  ishidden: breakOutByLot,
                 },
                 {
                   key: 'lotNumber',
                   label: intl.formatMessage(messages.lotNumber),
                   sortable: true,
-                  isHidden: groupBySite,
+                  ishidden: !breakOutByLot,
                 },
                 {
                   key: 'expiresOn',
                   label: intl.formatMessage(messages.expiresOn),
                   sortable: true,
-                  isHidden: groupBySite,
+                  ishidden: !breakOutByLot,
                 },
                 {
                   key: 'daysStockLeft',
                   label: intl.formatMessage(messages.daysStockLeft),
                   sortable: true,
-                  isHidden: !groupBySite,
+                  ishidden: breakOutByLot,
                 },
                 {
                   key: 'toBeWasted',
                   label: intl.formatMessage(messages.toBeWasted),
                   sortable: true,
-                  isHidden: !groupBySite,
+                  ishidden: breakOutByLot,
                 },
                 {
                   key: 'action',
@@ -336,22 +352,36 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const consumableReasons = useSelector(
     state => state.consumable.consumableReasons
   )
-  const [reducedFilters, setReducedFilters] = useState(
-    reduceFiltersConfig(FILTERS_CONFIG, userPermissions, { groupBySite })
+  const [breakOutByLot, setBreakOutByLot] = useState(true)
+  const dependencies = useMemo(
+    () => ({
+      breakOutByLot,
+    }),
+    [breakOutByLot]
   )
 
   // >>>>>> Structuring data <<<<<<
-  const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
   const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
   })
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-  const { value: searchParams } = searchSanitizer(location)
-  const { value: filtersParams } = filtersSanitizer(
-    searchParams.get('filters') || ''
+  const reducedFilters = reduceFiltersConfig(
+    FILTERS_CONFIG,
+    userPermissions,
+    dependencies
   )
-  const filters = getFilters(filtersParams, reducedFilters)
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
+    location,
+    availableSortCol,
+    dependencies,
+  })
+  const { value: searchParams } = searchSanitizer(location, dependencies)
+  const { value: filtersParams } = filtersSanitizer(
+    searchParams.get('filters') || '',
+    dependencies
+  )
+  const filters = getFilters(filtersParams)
+
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
     formatType => {
@@ -378,9 +408,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
       title: messages.inventoryAdjustedSuccessfully,
     })
   }
-  const onGroupBySiteChange = event => {
-    dispatch(toggleGroupBySite(event.target.checked))
-  }
 
   // >>>>>> Defining queries <<<<<<
   const params = {
@@ -388,7 +415,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     sortDir,
     page: pageAt,
     size: pageSize,
-    breakOutByLot: !groupBySite,
+    breakOutByLot,
     ...filters,
   }
   const {
@@ -458,16 +485,16 @@ export const InventoryItemsList = ({ navigate, location }) => {
 
   // >>>>>> Lifecycle hooks <<<<<<
   useEffect(() => {
-    if (data)
-      dispatch(
-        receiveInventoryItems(data, groupBySite ? ['inventoryItems'] : [])
-      )
-  }, [data, groupBySite, dispatch])
+    if (data) dispatch(receiveInventoryItems(data))
+  }, [data, dispatch])
 
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const { sanitized, value: searchParams } = searchSanitizer(
+      location,
+      dependencies
+    )
     const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '')
+      filtersSanitizer(searchParams.get('filters') || '', dependencies)
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
@@ -479,13 +506,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
         { replace: true }
       )
     }
-  }, [location, navigate, dispatch])
-
-  useEffect(() => {
-    setReducedFilters(
-      reduceFiltersConfig(FILTERS_CONFIG, userPermissions, { groupBySite })
-    )
-  }, [groupBySite, userPermissions])
+  }, [location, navigate, breakOutByLot, dependencies, dispatch])
 
   if (isError) throw new Error(error)
 
@@ -495,8 +516,8 @@ export const InventoryItemsList = ({ navigate, location }) => {
     location,
     reducedFilters,
     dispatch,
-    groupBySite,
-    onGroupBySiteChange,
+    breakOutByLot,
+    setBreakOutByLot,
     isLoading,
     onExcelClick,
     items,

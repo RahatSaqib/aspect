@@ -80,7 +80,6 @@ const enhance = compose(
           stateId: undefined,
           lgaId: undefined,
         }),
-
     onStateIdChange:
       ({ onChangeFilters }) =>
       stateId =>
@@ -88,63 +87,54 @@ const enhance = compose(
           stateId,
           lgaId: undefined,
         }),
-
     onLgaIdChange:
       ({ onChangeFilters }) =>
       lgaId =>
         onChangeFilters({
           lgaId,
         }),
-
     onResultCategoryChange:
       ({ onChangeFilters }) =>
       resultCategoryId =>
         onChangeFilters({
           resultCategoryId,
         }),
-
     onResultCategoryGroupChange:
       ({ onChangeFilters }) =>
       resultCategoryGroupId =>
         onChangeFilters({
           resultCategoryGroupId,
         }),
-
     onTextFieldCommitValue:
       ({ onChangeFilters }) =>
       ({ target: { name, value } }) =>
         onChangeFilters({
           [name]: value,
         }),
-
     onConsumableIdChange:
       ({ onChangeFilters }) =>
       consumableId =>
         onChangeFilters({
           consumableId,
         }),
-
     onPartnerIdChange:
       ({ onChangeFilters }) =>
       partnerId =>
         onChangeFilters({
           partnerId,
         }),
-
     onSampleOriginSiteChange:
       ({ onChangeFilters }) =>
       sampleOriginSite =>
         onChangeFilters({
           sampleOriginSite,
         }),
-
     onSiteNameChange:
       ({ onChangeFilters }) =>
       siteName =>
         onChangeFilters({
           siteName,
         }),
-
     onReportableSiteChange:
       ({ onChangeFilters }) =>
       ({ id, name }) => {
@@ -153,28 +143,24 @@ const enhance = compose(
           reportableSiteId: id,
         })
       },
-
     onSiteIdChange:
       ({ onChangeFilters }) =>
       siteId =>
         onChangeFilters({
           siteId,
         }),
-
     onWorkflowStatusIdChange:
       ({ onChangeFilters }) =>
       workflowStatusId =>
         onChangeFilters({
           workflowStatusId,
         }),
-
     onTreatmentStatusChange:
       ({ onChangeFilters }) =>
       treatmentStatus =>
         onChangeFilters({
           treatmentStatus,
         }),
-
     onDeviceApprovalIdChange:
       ({ onChangeFilters }) =>
       deviceApprovalId =>
@@ -197,11 +183,9 @@ const enhance = compose(
         onChangeFilters({
           revoked,
         }),
-
     onExcelExport: props => () =>
       clickExport(props, props.exportFormatTypes.EXCEL),
     onCsvExport: props => () => clickExport(props, props.exportFormatTypes.CSV),
-
     onDisagreedConfirmation:
       ({ closeExportConfirmation }) =>
       () =>
@@ -248,7 +232,6 @@ const enhance = compose(
         onChangeFilters({
           daysStockLeft,
         }),
-
     onReportNameChange:
       ({ onChangeFilters }) =>
       reportName =>
@@ -537,6 +520,14 @@ const messages = {
     enterReportName: {
       id: 'filter.popover.enterReportName',
       defaultMessage: 'Enter report name...',
+    },
+    lotNumber: {
+      id: 'filter.popover.lotNumber',
+      defaultMessage: 'Lot Number',
+    },
+    enterLotNumber: {
+      id: 'filter.popover.enterLotNumber',
+      defaultMessage: 'Enter lot number...',
     },
   }),
 }
@@ -1213,6 +1204,21 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterReportName)}
                   floatingLabelText={formatMessage(messages.reportName)}
+                />
+              </div>
+            )}
+            {config.lotNumber && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="lotNumber"
+                  value={filters.lotNumber || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={formatMessage(messages.enterLotNumber)}
+                  label={formatMessage(messages.lotNumber)}
+                  margin="normal"
                 />
               </div>
             )}

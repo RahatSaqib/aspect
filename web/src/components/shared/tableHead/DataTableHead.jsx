@@ -56,7 +56,7 @@ const DataTableHead = ({
   <TableHead>
     <TableRow className={classNames({ [classes.compact]: compact })}>
       {columns
-        .filter(c => isNil(c.isHidden) || !c.isHidden)
+        .filter(c => isNil(c.ishidden) || !c.ishidden)
         .map(
           (
             {
