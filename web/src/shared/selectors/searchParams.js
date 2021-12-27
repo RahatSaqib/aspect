@@ -13,32 +13,33 @@ export const makeSortPageSelector =
   ({ location, availableSortCol, dependencies }) => {
     const searchParams = new URLSearchParams(location.search)
     const sortCol = searchParams.get('sortCol')
-
-    let index = -1
-    let obj = null
-
-    if (availableSortCol) {
-      index = availableSortCol.indexOf(sortCol)
-      obj = availableSortCol.find(c => c.col === sortCol)
-    }
-
     const pageAt = parseInt(searchParams.get('pageAt'), 10) || defaultPageAt
     const pageSize =
       parseInt(searchParams.get('pageSize'), 10) || defaultPageSize
 
-    if (
-      (index === -1 && !obj) ||
-      (dependencies &&
-        obj &&
-        obj.isEnabled &&
-        obj.isEnabled(dependencies) === false)
-    )
-      return {
-        sortCol: defaultSortCol,
-        sortDir: defaultSortDir,
-        pageAt,
-        pageSize,
-      }
+    let index = -1
+    let obj = null
+
+    // If the available columns are defined, then only sort and page by the allowed fields
+    if (availableSortCol) {
+      index = availableSortCol.indexOf(sortCol)
+      obj = availableSortCol.find(c => c.col === sortCol)
+
+      // If the sortCol is not defined as an available sorting col or it's disabled, then return the default ordering
+      if (
+        (index === -1 && !obj) ||
+        (dependencies &&
+          obj &&
+          obj.isEnabled &&
+          obj.isEnabled(dependencies) === false)
+      )
+        return {
+          sortCol: defaultSortCol,
+          sortDir: defaultSortDir,
+          pageAt,
+          pageSize,
+        }
+    }
 
     return {
       sortCol: searchParams.get('sortCol') || defaultSortCol,
