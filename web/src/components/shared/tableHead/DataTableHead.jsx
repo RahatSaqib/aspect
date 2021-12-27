@@ -8,7 +8,6 @@ import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
-import isNil from 'lodash/isNil'
 
 const styles = theme => {
   const style = {
@@ -55,21 +54,21 @@ const DataTableHead = ({
 }) => (
   <TableHead>
     <TableRow className={classNames({ [classes.compact]: compact })}>
-      {columns
-        .filter(c => isNil(c.ishidden) || !c.ishidden)
-        .map(
-          (
-            {
-              key = index,
-              colSpan,
-              label,
-              onClick,
-              sortable = false,
-              hiddenOn,
-              ...restProps
-            },
-            index
-          ) => (
+      {columns.map(
+        (
+          {
+            key = index,
+            colSpan,
+            label,
+            onClick,
+            sortable = false,
+            isHidden,
+            hiddenOn,
+            ...restProps
+          },
+          index
+        ) =>
+          !isHidden ? (
             <TableCell
               key={key}
               data-column={key}
@@ -104,8 +103,8 @@ const DataTableHead = ({
                 </TableSortLabel>
               )}
             </TableCell>
-          )
-        )}
+          ) : null
+      )}
     </TableRow>
   </TableHead>
 )

@@ -523,7 +523,6 @@ function getInventorySites(constraints, request) {
     })
     .modify(addConstraints, constraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
     .groupBy(['s.id', 'c.id', 'ficr.days'])
-    .orderBy(['s.id', 'c.id'])
     .select([
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
@@ -762,6 +761,7 @@ function setCalculatedFields(
         _.pick(inventorySite, ['siteId', 'consumableId'])
       )
     ) {
+      // All the calculations are based on the consumption rate - skip all inventories when it's null
       if (hasConsumptionRate) {
         const { quantityOnHand, expiresOn } =
           availableInventory[availableInventoryIdx]
@@ -793,10 +793,13 @@ function setCalculatedFields(
       availableInventoryIdx += 1
     }
 
-    inventorySite.daysStockLeft = hasConsumptionRate
-      ? differenceInHours(currentDay, now) / 24
-      : null
-    inventorySite.toBeWasted = toBeWasted
+    if (hasConsumptionRate) {
+      inventorySite.daysStockLeft = differenceInHours(currentDay, now) / 24
+      inventorySite.toBeWasted = toBeWasted
+    } else {
+      inventorySite.daysStockLeft = null
+      inventorySite.toBeWasted = null
+    }
   })
 
   // Re-order inventory-sites to match the original ordering

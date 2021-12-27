@@ -216,19 +216,19 @@ export const InventoryItemsListWithProps = ({
                   key: 'dailyConsumptionRate',
                   label: intl.formatMessage(messages.dailyConsumptionRate),
                   sortable: true,
-                  ishidden: breakOutByLot,
+                  isHidden: breakOutByLot,
                 },
                 {
                   key: 'lotNumber',
                   label: intl.formatMessage(messages.lotNumber),
                   sortable: true,
-                  ishidden: !breakOutByLot,
+                  isHidden: !breakOutByLot,
                 },
                 {
                   key: 'expiresOn',
                   label: intl.formatMessage(messages.expiresOn),
                   sortable: true,
-                  ishidden: !breakOutByLot,
+                  isHidden: !breakOutByLot,
                 },
                 {
                   key: 'daysStockLeft',
@@ -244,7 +244,7 @@ export const InventoryItemsListWithProps = ({
                     </div>
                   ),
                   sortable: true,
-                  ishidden: breakOutByLot,
+                  isHidden: breakOutByLot,
                 },
                 {
                   key: 'toBeWasted',
@@ -260,7 +260,7 @@ export const InventoryItemsListWithProps = ({
                     </div>
                   ),
                   sortable: true,
-                  ishidden: breakOutByLot,
+                  isHidden: breakOutByLot,
                 },
                 {
                   key: 'action',
