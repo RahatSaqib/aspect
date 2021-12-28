@@ -90,6 +90,7 @@ function hideAdjustInventoryDialog() {
 
 function exportSupplies(
   filtersParams,
+  breakOutByLot,
   sortCol,
   sortDir,
   page,
@@ -98,7 +99,8 @@ function exportSupplies(
   reportName,
   dispatch
 ) {
-  const filters = getFilters(filtersParams)
+  const filters = getFilters(filtersParams) || {}
+  filters.breakOutByLot = breakOutByLot
   return fetchWrapperForQueries({
     endpoint: '/inventory/export',
     params: {

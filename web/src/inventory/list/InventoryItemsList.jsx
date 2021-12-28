@@ -106,6 +106,7 @@ const availableSortCol = [
     isEnabled: dependencies => !dependencies.breakOutByLot,
   },
 ]
+
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol,
 })
@@ -144,6 +145,73 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
 }) => {
+  const columns = [
+    {
+      key: 'siteName',
+      label: intl.formatMessage(messages.siteName),
+      sortable: true,
+    },
+    {
+      key: 'consumableName',
+      label: intl.formatMessage(messages.consumableName),
+      sortable: true,
+    },
+    {
+      key: 'quantityOnHand',
+      label: intl.formatMessage(messages.quantityOnHand),
+      sortable: true,
+    },
+    {
+      key: 'dailyConsumptionRate',
+      label: intl.formatMessage(messages.dailyConsumptionRate),
+      sortable: true,
+      isHidden: breakOutByLot,
+    },
+    {
+      key: 'lotNumber',
+      label: intl.formatMessage(messages.lotNumber),
+      sortable: true,
+      isHidden: !breakOutByLot,
+    },
+    {
+      key: 'expiresOn',
+      label: intl.formatMessage(messages.expiresOn),
+      sortable: true,
+      isHidden: !breakOutByLot,
+    },
+    {
+      key: 'daysStockLeft',
+      label: (
+        <div>
+          <AspectTooltip
+            title={intl.formatMessage(messages.daysStockLeftDescription)}
+            showHelpIcon
+          />
+          {intl.formatMessage(messages.daysStockLeft)}
+        </div>
+      ),
+      sortable: true,
+      isHidden: breakOutByLot,
+    },
+    {
+      key: 'toBeWasted',
+      label: (
+        <div>
+          <AspectTooltip
+            title={intl.formatMessage(messages.toBeWastedDescription)}
+            showHelpIcon
+          />
+          {intl.formatMessage(messages.toBeWasted)}
+        </div>
+      ),
+      sortable: true,
+      isHidden: breakOutByLot,
+    },
+    {
+      key: 'action',
+    },
+  ]
+
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -196,76 +264,7 @@ export const InventoryItemsListWithProps = ({
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
-              columns={[
-                {
-                  key: 'siteName',
-                  label: intl.formatMessage(messages.siteName),
-                  sortable: true,
-                },
-                {
-                  key: 'consumableName',
-                  label: intl.formatMessage(messages.consumableName),
-                  sortable: true,
-                },
-                {
-                  key: 'quantityOnHand',
-                  label: intl.formatMessage(messages.quantityOnHand),
-                  sortable: true,
-                },
-                {
-                  key: 'dailyConsumptionRate',
-                  label: intl.formatMessage(messages.dailyConsumptionRate),
-                  sortable: true,
-                  isHidden: breakOutByLot,
-                },
-                {
-                  key: 'lotNumber',
-                  label: intl.formatMessage(messages.lotNumber),
-                  sortable: true,
-                  isHidden: !breakOutByLot,
-                },
-                {
-                  key: 'expiresOn',
-                  label: intl.formatMessage(messages.expiresOn),
-                  sortable: true,
-                  isHidden: !breakOutByLot,
-                },
-                {
-                  key: 'daysStockLeft',
-                  label: (
-                    <div>
-                      <AspectTooltip
-                        title={intl.formatMessage(
-                          messages.daysStockLeftDescription
-                        )}
-                        showHelpIcon
-                      />
-                      {intl.formatMessage(messages.daysStockLeft)}
-                    </div>
-                  ),
-                  sortable: true,
-                  isHidden: breakOutByLot,
-                },
-                {
-                  key: 'toBeWasted',
-                  label: (
-                    <div>
-                      <AspectTooltip
-                        title={intl.formatMessage(
-                          messages.toBeWastedDescription
-                        )}
-                        showHelpIcon
-                      />
-                      {intl.formatMessage(messages.toBeWasted)}
-                    </div>
-                  ),
-                  sortable: true,
-                  isHidden: breakOutByLot,
-                },
-                {
-                  key: 'action',
-                },
-              ]}
+              columns={columns}
             />
             <TableBody>
               {items.currentIdList
@@ -402,7 +401,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
     dependencies
   )
   const filters = getFilters(filtersParams)
-
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
     formatType => {
@@ -411,6 +409,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
       if (!sanitized) {
         exportSupplies(
           filtersParams,
+          breakOutByLot,
           sortCol,
           sortDir,
           pageAt,
@@ -422,7 +421,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location, sortCol, sortDir, pageAt, table]
+    [location, breakOutByLot, sortCol, sortDir, pageAt, table]
   )
   const onAdjustInventorySucceeded = () => {
     showAcknowledgement({
