@@ -71,10 +71,9 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     className="DataTableCard--action"
   >
     <WithStyles(CheckboxField)
-      checked={true}
       className="Checkbox"
-      label="Group by Site"
-      name="groupBySite"
+      label="Break out by lot"
+      name="breakOutByLot"
       onChange={[Function]}
     />
   </DataTableCard>
