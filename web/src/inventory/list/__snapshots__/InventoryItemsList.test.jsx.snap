@@ -99,7 +99,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       navigate={[Function]}
     />
   </DataTableCard>
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(lifecycle(InventoryAdjustmentDialogForm))))))))
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
     intl={
       Object {
         "defaultFormats": Object {},
