@@ -1,3 +1,4 @@
+import isNil from 'lodash/isNil'
 import identity from 'lodash/identity'
 import has from 'lodash/has'
 import Immutable from 'immutable'
@@ -7,7 +8,6 @@ import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { types } from '../InventoryRedux'
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
@@ -112,9 +112,6 @@ export const connectConsumableFromInventoryItem = connect(
       null,
       EMPTY_MAP
     ),
-    isReceiveInventoryDialog:
-      state.inventory.inventoryAdjustment.get('actionType') ===
-      types.SHOW_RECEIVE_INVENTORY_DIALOG,
   })
 )
 
@@ -126,6 +123,7 @@ export const InventoryAdjustmentDialogForm = ({
   consumable,
   consumableReason,
   dateFormat = 'yyyy-MM-dd',
+  currInventoryItem = null,
   labels,
   form,
   values,
@@ -142,183 +140,236 @@ export const InventoryAdjustmentDialogForm = ({
   onDateAdjustedChange,
   onNotesChange,
   handleSubmit,
-}) => (
-  <AspectDialog
-    actions={[
-      <Button color="primary" onClick={onCancel}>
-        {intl.formatMessage(messages.cancel)}
-      </Button>,
-      <Button
-        color="primary"
-        variant="contained"
-        disabled={!form.valid || form.submitting}
-        onClick={handleSubmit}
-      >
-        {intl.formatMessage(messages.submit)}
-      </Button>,
-    ]}
-    maxWidth="sm"
-    open={isDialogActive}
-    onClose={onCancel}
-    title={labels.dialogTitle}
-  >
-    <form className={cssClasses('Form')}>
-      <div className={cssClasses('Form__Content')}>
-        <section>
-          {has(values, 'consumableId') && (
-            <ConsumableSelectField
-              name="consumableId"
-              floatingLabelText={intl.formatMessage(messages.consumable)}
-              floatingLabelFixed
-              disabled={form.submitting}
-              value={values.consumableId}
-              onConsumableChange={onConsumableIdChange}
-              errorText={meta.consumableId.touched && meta.consumableId.error}
-              fullWidth
-              // style={formFieldStyle}
-            />
-          )}
-        </section>
-        <section>
-          <TextField
-            fullWidth
-            type="text"
-            name="lotNumber"
-            label={intl.formatMessage(messages.lotNumber)}
-            disabled={form.submitting}
-            value={values.lotNumber}
-            onChange={onLotNumberChange}
-            error={meta.lotNumber.touched && meta.lotNumber.error}
-            helperText={meta.lotNumber.touched && meta.lotNumber.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 500 }}
-          />
-          {values.canExpire && (
-            <FormGroup label={intl.formatMessage(messages.expiryDate)}>
-              <DateTimeInput
-                fullWidth
-                margin="normal"
-                disabled={form.submitting}
-                dateFormat={dateFormat}
-                intl={intl}
-                RootProps={{
-                  name: 'expiresOn',
-                  // style: formFieldStyle
-                }}
-                onChange={onExpiresOnChange}
-                value={values.expiresOn}
-                // container="inline"
-                // mode="landscape"
-                // autoOk
-              />
-            </FormGroup>
-          )}
-        </section>
-        <section>
-          {has(values, 'fromSiteId') && (
-            <SiteSelectField
-              name="fromSiteId"
-              floatingLabelText={intl.formatMessage(messages.fromSiteName)}
-              // style={formFieldStyle}
-              disabled={form.submitting}
-              value={values.fromSiteId}
-              onSiteChange={onFromSiteIdChange}
-              errorStyle={{
-                float: 'left',
-                whiteSpace: 'nowrap',
-                textOverflow: 'visible',
-              }}
-              errorText={meta.fromSiteId.touched && meta.fromSiteId.error}
-              fullWidth
-              tabIndex="0"
-              aria-haspopup
-            />
-          )}
-          {has(values, 'toSiteId') && (
-            <SiteSelectField
-              name="toSiteId"
-              floatingLabelText={intl.formatMessage(messages.toSiteName)}
-              // style={formFieldStyle}
-              disabled={form.submitting}
-              value={values.toSiteId}
-              onSiteChange={onToSiteIdChange}
-              errorStyle={{
-                float: 'left',
-                whiteSpace: 'nowrap',
-                textOverflow: 'visible',
-              }}
-              errorText={meta.toSiteId.touched && meta.toSiteId.error}
-              fullWidth
-              tabIndex="0"
-              aria-haspopup
-            />
-          )}
-        </section>
-        <section>
-          <TextField
-            fullWidth
-            type="text"
-            name="quantity"
-            label={labels.quantity}
-            disabled={form.submitting}
-            value={values.quantity}
-            onChange={onQuantityChange}
-            // style={formFieldStyle}
-            // inputStyle={{ textAlign: 'right' }}
-            error={meta.quantity.touched && meta.quantity.error}
-            helperText={meta.quantity.touched && meta.quantity.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 500 }}
-          />
-          <p className={cssClasses('Field__quantity--status')}>
-            <span>{consumable.get('unitShortName')}</span>
-            <span>{labels.nextQuantityStatus}</span>
-          </p>
-        </section>
-        {has(values, 'reasonId') && (
+}) => {
+  return (
+    <AspectDialog
+      actions={[
+        <Button color="primary" onClick={onCancel}>
+          {intl.formatMessage(messages.cancel)}
+        </Button>,
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={!form.valid || form.submitting}
+          onClick={handleSubmit}
+        >
+          {intl.formatMessage(messages.submit)}
+        </Button>,
+      ]}
+      maxWidth="sm"
+      open={isDialogActive}
+      onClose={onCancel}
+      title={labels.dialogTitle}
+    >
+      <form className={cssClasses('Form')}>
+        <div className={cssClasses('Form__Content')}>
           <section>
-            <ConsumableReasonSelectField
-              intl={intl}
-              name="reasonId"
-              floatingLabelText={intl.formatMessage(messages.reason)}
-              disabled={form.submitting}
-              // style={formFieldStyle}
-              value={values.reasonId}
-              onConsumableReasonIdChange={onReasonIdChange}
-              errorText={meta.reasonId.touched && meta.reasonId.error}
-              margin="normal"
-              fullWidth
-            />
+            {(!currInventoryItem || has(values, 'consumableId')) && (
+              <ConsumableSelectField
+                name="consumableId"
+                floatingLabelText={intl.formatMessage(messages.consumable)}
+                floatingLabelFixed
+                disabled={
+                  form.submitting ||
+                  (currInventoryItem &&
+                    !isNil(currInventoryItem.get('consumableId')))
+                }
+                value={values.consumableId}
+                onConsumableChange={onConsumableIdChange}
+                errorText={
+                  meta.consumableId &&
+                  meta.consumableId.touched &&
+                  meta.consumableId.error
+                }
+                fullWidth
+                // style={formFieldStyle}
+              />
+            )}
           </section>
-        )}
-        {consumableReason &&
-          consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
-            <section>
-              <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
+          <section>
+            <TextField
+              fullWidth
+              type="text"
+              name="lotNumber"
+              label={intl.formatMessage(messages.lotNumber)}
+              disabled={
+                form.submitting ||
+                (currInventoryItem &&
+                  !isNil(currInventoryItem.get('lotNumber')))
+              }
+              value={values.lotNumber}
+              onChange={onLotNumberChange}
+              error={meta.lotNumber.touched && meta.lotNumber.error}
+              helperText={meta.lotNumber.touched && meta.lotNumber.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 500 }}
+            />
+            {consumable.get('canExpire') && (
+              <FormGroup label={intl.formatMessage(messages.expiryDate)}>
                 <DateTimeInput
                   fullWidth
                   margin="normal"
-                  intl={intl}
-                  disabled={form.submitting}
+                  disabled={
+                    form.submitting ||
+                    (currInventoryItem &&
+                      !isNil(currInventoryItem.get('expiresOn')))
+                  }
                   dateFormat={dateFormat}
+                  intl={intl}
                   RootProps={{
-                    name: 'dateAdjustedFrom',
+                    name: 'expiresOn',
                     // style: formFieldStyle
                   }}
-                  value={values.dateAdjustedFrom}
-                  onChange={onDateAdjustedFromChange}
-                  // autoOk
+                  onChange={onExpiresOnChange}
+                  value={values.expiresOn}
                   // container="inline"
                   // mode="landscape"
+                  // autoOk
                 />
               </FormGroup>
-              <FormGroup label={intl.formatMessage(messages.and)}>
+            )}
+          </section>
+          <section>
+            {has(values, 'fromSiteId') && (
+              <SiteSelectField
+                name="fromSiteId"
+                floatingLabelText={intl.formatMessage(messages.fromSiteName)}
+                // style={formFieldStyle}
+                disabled={
+                  form.submitting ||
+                  (currInventoryItem &&
+                    (!isNil(currInventoryItem.get('toSiteId')) ||
+                      !isNil(currInventoryItem.get('siteId')) ||
+                      !isNil(currInventoryItem.get('fromSiteId'))))
+                }
+                value={values.fromSiteId}
+                onSiteChange={onFromSiteIdChange}
+                errorStyle={{
+                  float: 'left',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'visible',
+                }}
+                errorText={meta.fromSiteId.touched && meta.fromSiteId.error}
+                fullWidth
+                tabIndex="0"
+                aria-haspopup
+              />
+            )}
+            {has(values, 'toSiteId') && (
+              <SiteSelectField
+                name="toSiteId"
+                floatingLabelText={intl.formatMessage(messages.toSiteName)}
+                // style={formFieldStyle}
+                disabled={
+                  form.submitting ||
+                  (currInventoryItem &&
+                    (!isNil(currInventoryItem.get('toSiteId')) ||
+                      !isNil(currInventoryItem.get('siteId')) ||
+                      !isNil(currInventoryItem.get('fromSiteId'))))
+                }
+                value={values.toSiteId}
+                onSiteChange={onToSiteIdChange}
+                errorStyle={{
+                  float: 'left',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'visible',
+                }}
+                errorText={meta.toSiteId.touched && meta.toSiteId.error}
+                fullWidth
+                tabIndex="0"
+                aria-haspopup
+              />
+            )}
+          </section>
+          <section>
+            <TextField
+              fullWidth
+              type="text"
+              name="quantity"
+              label={labels.quantity}
+              disabled={form.submitting}
+              value={values.quantity}
+              onChange={onQuantityChange}
+              // style={formFieldStyle}
+              // inputStyle={{ textAlign: 'right' }}
+              error={meta.quantity.touched && meta.quantity.error}
+              helperText={meta.quantity.touched && meta.quantity.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 500 }}
+            />
+            {currInventoryItem !== null ? (
+              <p className={cssClasses('Field__quantity--status')}>
+                <span>{consumable.get('unitShortName')}</span>
+                <span>{labels.nextQuantityStatus}</span>
+              </p>
+            ) : null}
+          </section>
+          {has(values, 'reasonId') && (
+            <section>
+              <ConsumableReasonSelectField
+                intl={intl}
+                name="reasonId"
+                floatingLabelText={intl.formatMessage(messages.reason)}
+                disabled={form.submitting}
+                // style={formFieldStyle}
+                value={values.reasonId}
+                onConsumableReasonIdChange={onReasonIdChange}
+                errorText={meta.reasonId.touched && meta.reasonId.error}
+                margin="normal"
+                fullWidth
+              />
+            </section>
+          )}
+          {consumableReason &&
+            consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
+              <section>
+                <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
+                  <DateTimeInput
+                    fullWidth
+                    margin="normal"
+                    intl={intl}
+                    disabled={form.submitting}
+                    dateFormat={dateFormat}
+                    RootProps={{
+                      name: 'dateAdjustedFrom',
+                      // style: formFieldStyle
+                    }}
+                    value={values.dateAdjustedFrom}
+                    onChange={onDateAdjustedFromChange}
+                    // autoOk
+                    // container="inline"
+                    // mode="landscape"
+                  />
+                </FormGroup>
+                <FormGroup label={intl.formatMessage(messages.and)}>
+                  <DateTimeInput
+                    fullWidth
+                    margin="normal"
+                    disabled={form.submitting}
+                    dateFormat={dateFormat}
+                    intl={intl}
+                    RootProps={{
+                      name: 'dateAdjustedTo',
+                      // style: formFieldStyle
+                    }}
+                    value={values.dateAdjustedTo}
+                    onChange={onDateAdjustedToChange}
+                    // container="inline"
+                    // mode="landscape"
+                    // style={formFieldStyle}
+                  />
+                </FormGroup>
+              </section>
+            )}
+          {has(values, 'dateAdjusted') && (
+            <section>
+              <FormGroup label={labels.dateAdjusted}>
                 <DateTimeInput
                   fullWidth
                   margin="normal"
@@ -326,11 +377,11 @@ export const InventoryAdjustmentDialogForm = ({
                   dateFormat={dateFormat}
                   intl={intl}
                   RootProps={{
-                    name: 'dateAdjustedTo',
+                    name: 'dateAdjusted',
                     // style: formFieldStyle
                   }}
-                  value={values.dateAdjustedTo}
-                  onChange={onDateAdjustedToChange}
+                  value={values.dateAdjusted}
+                  onChange={onDateAdjustedChange}
                   // container="inline"
                   // mode="landscape"
                   // style={formFieldStyle}
@@ -338,50 +389,29 @@ export const InventoryAdjustmentDialogForm = ({
               </FormGroup>
             </section>
           )}
-        {has(values, 'dateAdjusted') && (
           <section>
-            <FormGroup label={labels.dateAdjusted}>
-              <DateTimeInput
-                fullWidth
-                margin="normal"
-                disabled={form.submitting}
-                dateFormat={dateFormat}
-                intl={intl}
-                RootProps={{
-                  name: 'dateAdjusted',
-                  // style: formFieldStyle
-                }}
-                value={values.dateAdjusted}
-                onChange={onDateAdjustedChange}
-                // container="inline"
-                // mode="landscape"
-                // style={formFieldStyle}
-              />
-            </FormGroup>
+            <TextField
+              fullWidth
+              type="notes"
+              name="quantity"
+              label={intl.formatMessage(messages.notes)}
+              disabled={form.submitting}
+              value={values.notes}
+              onChange={onNotesChange}
+              multiline
+              rows={2}
+              // style={formFieldStyle}
+              error={meta.notes.touched && meta.notes.error}
+              helperText={meta.notes.touched && meta.notes.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 2000 }}
+            />
           </section>
-        )}
-        <section>
-          <TextField
-            fullWidth
-            type="notes"
-            name="quantity"
-            label={intl.formatMessage(messages.notes)}
-            disabled={form.submitting}
-            value={values.notes}
-            onChange={onNotesChange}
-            multiline
-            rows={2}
-            // style={formFieldStyle}
-            error={meta.notes.touched && meta.notes.error}
-            helperText={meta.notes.touched && meta.notes.error}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 2000 }}
-          />
-        </section>
-      </div>
-    </form>
-  </AspectDialog>
-)
+        </div>
+      </form>
+    </AspectDialog>
+  )
+}

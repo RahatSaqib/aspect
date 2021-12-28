@@ -38,7 +38,6 @@ import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
   types,
-  showNewInventoryDialog,
   hideAdjustInventoryDialog,
   addInventory,
   removeInventory,
@@ -46,6 +45,7 @@ import {
   receiveInventory,
   exportSupplies,
   receiveInventoryItems,
+  showNewInventoryDialog,
 } from '../InventoryRedux'
 import {
   InventoryDataTable,
@@ -227,7 +227,7 @@ export const InventoryItemsListWithProps = ({
           type="button"
           color="primary"
           variant="contained"
-          onClick={() => dispatch(showNewInventoryDialog)}
+          onClick={() => dispatch(showNewInventoryDialog())}
           browseButton
         >
           {intl.formatMessage(messages.addInventory)}

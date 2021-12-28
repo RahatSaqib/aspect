@@ -90,21 +90,26 @@ const enhance = compose(
   lifecycle({
     UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
-
       this.setState({
         onChange,
         values: DEFAULT_VALUES,
       })
     },
-
     UNSAFE_componentWillReceiveProps(nextProps) {
-      const { today } = nextProps
+      const { inventoryItem, today } = nextProps
+      if (this.props.inventoryItem === inventoryItem) {
+        return
+      }
       // Re-initialize
-      // Create new inventoryItem (without associating to any existing inventoryItem)
+      // Add quantities to existing inventoryItem
       this.state.onChange({
         ...DEFAULT_VALUES,
-        canExpire: true,
-        expiresOn: today,
+        lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
+        canExpire: inventoryItem.get('canExpire') === 1,
+        expiresOn: inventoryItem.get('expiresOn')
+          ? new Date(inventoryItem.get('expiresOn'))
+          : null,
+        toSiteId: inventoryItem.get('siteId'),
         dateAdjusted: today,
       })
     },
@@ -116,7 +121,9 @@ const enhance = compose(
       EMPTY_MAP
     ),
   })),
-  withProps(({ intl, values, consumable }) => ({
+  withProps(({ intl, consumable }) => ({
+    currInventoryItem: null,
+    consumable,
     labels: {
       dialogTitle: intl.formatMessage(messages.dialogTitle, {
         consumableName:
@@ -125,10 +132,6 @@ const enhance = compose(
       }),
       quantity: intl.formatMessage(messages.quantity),
       dateAdjusted: intl.formatMessage(messages.dateAdjusted),
-      nextQuantityStatus: intl.formatMessage(messages.nextQuantityStatus, {
-        nextQuantity: 0 + values.quantity,
-        unitShortName: consumable.get('unitShortName'),
-      }),
     },
   })),
   recomposeForm({
@@ -146,22 +149,6 @@ const enhance = compose(
       sharedFields.notes,
     ],
     validate,
-  }),
-  lifecycle({
-    UNSAFE_componentWillReceiveProps({
-      today,
-      consumable,
-      values,
-      onCanExpireChange,
-      onExpiresOnChange,
-    }) {
-      if (this.props.values.consumableId !== values.consumableId) {
-        onCanExpireChange(consumable.get('canExpire') === 1)
-        onExpiresOnChange(
-          consumable.get('canExpire') === 1 ? today : values.expiresOn
-        )
-      }
-    },
   })
 )
 

@@ -121,6 +121,7 @@ const enhance = compose(
   }),
   connectConsumableFromInventoryItem,
   withProps(({ intl, values, inventoryItem, consumable }) => ({
+    currInventoryItem: inventoryItem,
     labels: {
       dialogTitle: intl.formatMessage(messages.dialogTitle, {
         consumableName: consumable.get('name'),
