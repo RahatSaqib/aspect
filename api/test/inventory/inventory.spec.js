@@ -200,7 +200,31 @@ describe('Inventory Routes', () => {
           assert.isNotNull(inventoryItemInTransit)
           assert.equal(inventoryItemInTransit.quantityOnHand, 500)
 
+          // We should not filter empty or negative inventories
+          const emptyInventoryItems = res.body.data.filter(
+            ii => ii.quantityOnHand <= 0
+          )
+          assert.isTrue(emptyInventoryItems.length > 0)
+
           assert.property(res.body, 'total')
+        })
+
+        it('should return a list of positive inventory items broken out by lot', async () => {
+          const res = await server
+            .get(`${path}?breakOutByLot=true&hasStock=true`)
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.isAtLeast(res.body.data.length, 2)
+
+          // We should not filter empty or negative inventories
+          const emptyInventoryItems = res.body.data.filter(
+            ii => ii.quantityOnHand <= 0
+          )
+          assert.isTrue(emptyInventoryItems.length === 0)
         })
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {

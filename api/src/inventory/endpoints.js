@@ -29,6 +29,7 @@ const inventoryFilters = {
   lotNumber: Joi.string().allow('', null),
   daysStockLeft: Joi.string().allow('', null),
   breakOutByLot: Joi.bool().allow(null),
+  hasStock: Joi.bool().allow(null),
 }
 
 const adjustInventoryCommonPayloadFields = {

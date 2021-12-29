@@ -95,6 +95,7 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   siteId: 's.id',
   expiresOn: 'ii.expiresOn',
   lotNumber: 'ii.lotNumber',
+  hasStock: knex.raw('ii.quantityOnHand > 0'),
 }
 
 const STOCK_LEFT_FILTER_FIELDS = {
