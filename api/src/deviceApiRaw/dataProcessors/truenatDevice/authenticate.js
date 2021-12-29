@@ -8,7 +8,9 @@ const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceSeen } = require('../../../device/actions')
 
 class TruenatLogin extends SynchronousDataProcessor {
-  static AllowUnauthenticatedRequests = true
+  static get AllowUnauthenticatedRequests() {
+    return true
+  }
 
   constructor(request, messageContext) {
     super(request, messageContext)
