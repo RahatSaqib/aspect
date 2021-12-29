@@ -322,14 +322,14 @@ async function lookupUsingCredentials(username, password) {
       data: deviceApiKey,
     }
   }
-  if (deviceApiKey.ttl < nowTime) {
+  if (deviceApiKey.expiresOn < nowTime) {
     const newToken = randomToken()
-    const newTTL = addMinutes(new Date(), 15)
+    const newExpiresOn = addMinutes(new Date(), 15)
     deviceApiKey.token = newToken
-    deviceApiKey.ttl = newTTL
+    deviceApiKey.expiresOn = newExpiresOn
     await knex('DeviceApiKey').where('id', deviceApiKey.id).update({
       token: newToken,
-      ttl: newTTL,
+      expiresOn: newExpiresOn,
     })
   }
   return {

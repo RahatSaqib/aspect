@@ -96,12 +96,12 @@ async function authToken(token) {
   const key = await knex('DeviceApiKey as k')
     .leftJoin('Device as d', 'd.id', 'k.deviceId')
     .where({ 'k.token': token, 'k.revoked': false })
-    .first('k.id as keyId', 'd.name as deviceName', 'k.ttl')
+    .first('k.id as keyId', 'd.name as deviceName', 'k.expiresOn')
   if (!key) {
     throw Boom.unauthorized('Cannot authorize API Key')
   }
-  if (!!key.ttl && key.ttl < new Date()) {
-    throw Boom.unauthorized('API Key TTL is Expired')
+  if (!!key.expiresOn && key.expiresOn < new Date()) {
+    throw Boom.unauthorized('API Key Token has Expired')
   }
 
   const scope = ['deviceApi']

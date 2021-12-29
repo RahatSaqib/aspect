@@ -29,7 +29,7 @@ describe('Truenat Authenticate Data Processor', () => {
         username: 'admin',
         password:
           '$1a$12$Te5t0/HaShed000000/PaSsW0rD01234567890123456789012345',
-        ttl: new Date().getTime() - 1000 * 10,
+        expiresOn: new Date().getTime() - 1000 * 10,
       },
     }
   ) {

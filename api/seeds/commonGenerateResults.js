@@ -165,7 +165,7 @@ async function createDevicesForAllMissingTypes(
             deviceId,
             username: `device-${deviceId}`,
             password,
-            ttl: addMinutes(new Date(), 15),
+            expiresOn: addMinutes(new Date(), 15),
             ...auditFields,
           })
         }
