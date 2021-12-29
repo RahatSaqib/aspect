@@ -1147,6 +1147,13 @@ async function findInventoryItem(
   } else {
     matchingInventoryItemsQuery.whereNull('ii.expiresOn')
   }
+
+  if (lotNumber) {
+    matchingInventoryItemsQuery.where('ii.lotNumber', lotNumber)
+  } else {
+    matchingInventoryItemsQuery.whereNull('ii.lotNumber')
+  }
+
   if (inTransitFromSiteId) {
     matchingInventoryItemsQuery.where(
       'ii.inTransitFromSiteId',
@@ -1158,10 +1165,7 @@ async function findInventoryItem(
   const matchingInventoryItems = await matchingInventoryItemsQuery.select(
     INVENTORY_ITEM_SELECT
   )
-  return (
-    _.find(matchingInventoryItems, { lotNumber }) ||
-    _.head(matchingInventoryItems)
-  )
+  return _.head(matchingInventoryItems)
 }
 
 function getInventoryItem(inventoryItemId) {
@@ -1770,10 +1774,7 @@ async function upsertInventoryItem({
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand: _.max([
-        _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
-        0,
-      ]),
+      quantityOnHand: _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
       updatedOn: now,
       updatedBy: userId,
       createdOn: now,
@@ -1786,8 +1787,8 @@ async function upsertInventoryItem({
       lotNumber,
       siteId,
       quantityOnHand: _.isUndefined(quantityOnHand)
-        ? knex.raw(`GREATEST(quantityOnHand + (${quantity}), 0)`)
-        : _.max([quantityOnHand, 0]),
+        ? knex.raw(`quantityOnHand + (${quantity})`)
+        : quantityOnHand,
       updatedOn: now,
       updatedBy: userId,
     })

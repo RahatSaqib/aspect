@@ -554,6 +554,7 @@ describe('Inventory Routes', () => {
     let destinationSite
     let siteId
     let transitItem
+    const inventoryItemsToRemove = []
 
     beforeEach(() =>
       run(async knex => {
@@ -582,6 +583,7 @@ describe('Inventory Routes', () => {
           expiresOn: expiryDate,
           quantityOnHand: initialQuantityOnHand,
         })
+        inventoryItemsToRemove.push(inventoryItemId)
         inventoryItem = await knex('InventoryItem')
           .where({ id: inventoryItemId })
           .first()
@@ -592,7 +594,7 @@ describe('Inventory Routes', () => {
     afterEach(async () =>
       run(async knex => {
         await knex('InventoryLog')
-          .where({ inventoryItemId: inventoryItem.id })
+          .whereIn('inventoryItemId', inventoryItemsToRemove)
           .orWhere(function () {
             if (transitItem != null) {
               this.where({ inventoryItemId: transitItem.id })
@@ -600,7 +602,7 @@ describe('Inventory Routes', () => {
           })
           .delete()
         await knex('InventoryItem')
-          .where({ id: inventoryItem.id })
+          .whereIn('id', inventoryItemsToRemove)
           .orWhere(function () {
             if (transitItem != null) {
               this.where({ id: transitItem.id })
@@ -642,53 +644,52 @@ describe('Inventory Routes', () => {
 
     describe('/inventory/remove', () => {
       describe('PUT', () => {
-        it('should update the quantity of an inventory item', done => {
-          server
-            .put(`${removeInventoryPath}`)
-            .send({
-              consumableId: inventoryItem.consumableId,
-              lotNumber: inventoryItem.lotNumber,
-              expiresOn: inventoryItem.expiresOn,
-              quantity: quantityToAdjust,
-              notes: 'Testing remove',
-              fromSiteId: inventoryItem.siteId,
-              reasonId: 1,
-              dateAdjusted: new Date().toISOString(),
-            })
-            .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.equal(
-                res.body.data.quantityOnHand,
-                _.max([0, inventoryItem.quantityOnHand - quantityToAdjust])
-              )
-              done()
-            })
-        })
-
-        it('should remove the inventory item from view quantity is zero', async () => {
+        it('should update the quantity of an inventory item', async () => {
           const res = await server
             .put(`${removeInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: inventoryItem.lotNumber,
               expiresOn: inventoryItem.expiresOn,
-              quantity: inventoryItem.quantityOnHand,
-              notes: 'Testing removal of all inventory on hand',
+              quantity: 510,
+              notes: 'Testing remove',
               fromSiteId: inventoryItem.siteId,
               reasonId: 1,
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
-
           assert.equal(res.status, 200)
-          const { quantityOnHand } = await knex('InventoryItem')
-            .where({ id: inventoryItem.id })
-            .first()
-          assert.equal(quantityOnHand, 0)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.equal(
+            res.body.data.quantityOnHand,
+            inventoryItem.quantityOnHand - 510
+          )
+        })
+
+        it('should create a new inventory item and set the quantity if the lot does not exist', async () => {
+          const res = await server
+            .put(`${removeInventoryPath}`)
+            .send({
+              consumableId: inventoryItem.consumableId,
+              lotNumber: 'ANOTHER LOT NUMBER',
+              expiresOn: inventoryItem.expiresOn,
+              quantity: 510,
+              notes: 'Testing remove',
+              fromSiteId: inventoryItem.siteId,
+              reasonId: 1,
+              dateAdjusted: new Date().toISOString(),
+            })
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.equal(res.body.data.quantityOnHand, -510)
+          inventoryItemsToRemove.push(
+            inventoryItemsToRemove.push(res.body.data.id)
+          )
         })
       })
     })
