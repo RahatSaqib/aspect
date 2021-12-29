@@ -97,21 +97,25 @@ const enhance = compose(
     },
     UNSAFE_componentWillReceiveProps(nextProps) {
       const { inventoryItem, today } = nextProps
-      if (this.props.inventoryItem === inventoryItem) {
-        return
+
+      // Every time the dialog opens or closes, we need to clean the form
+      if (this.props.isDialogActive !== nextProps.isDialogActive)
+        this.setState({ values: DEFAULT_VALUES })
+
+      if (this.props.inventoryItem !== inventoryItem) {
+        // Re-initialize
+        // Add quantities to existing inventoryItem
+        this.state.onChange({
+          ...DEFAULT_VALUES,
+          lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
+          canExpire: inventoryItem.get('canExpire') === 1,
+          expiresOn: inventoryItem.get('expiresOn')
+            ? new Date(inventoryItem.get('expiresOn'))
+            : null,
+          toSiteId: inventoryItem.get('siteId'),
+          dateAdjusted: today,
+        })
       }
-      // Re-initialize
-      // Add quantities to existing inventoryItem
-      this.state.onChange({
-        ...DEFAULT_VALUES,
-        lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
-        canExpire: inventoryItem.get('canExpire') === 1,
-        expiresOn: inventoryItem.get('expiresOn')
-          ? new Date(inventoryItem.get('expiresOn'))
-          : null,
-        toSiteId: inventoryItem.get('siteId'),
-        dateAdjusted: today,
-      })
     },
   }),
   connect((state, { values }) => ({
