@@ -232,6 +232,12 @@ const enhance = compose(
         onChangeFilters({
           daysStockLeft,
         }),
+    onHasStockChange:
+      ({ onChangeFilters }) =>
+      hasStock =>
+        onChangeFilters({
+          hasStock,
+        }),
     onReportNameChange:
       ({ onChangeFilters }) =>
       reportName =>
@@ -513,6 +519,10 @@ const messages = {
       id: 'filter.popover.daysStockLeft',
       defaultMessage: 'Days Stock Left',
     },
+    hasStock: {
+      id: 'filter.popover.hasStock',
+      defaultMessage: 'Has Stock',
+    },
     reportName: {
       id: 'filter.popover.reportName',
       defaultMessage: 'Report',
@@ -569,6 +579,7 @@ export const FiltersPanel = ({
   onOnlyEverTransferredBoolChange,
   onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
+  onHasStockChange,
   onReportNameChange,
   user,
   assays,
@@ -1061,7 +1072,37 @@ export const FiltersPanel = ({
                 autoOk
               />
             )}
-
+            {config.lotNumber && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="lotNumber"
+                  value={filters.lotNumber || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={formatMessage(messages.enterLotNumber)}
+                  label={formatMessage(messages.lotNumber)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.hasStock && (
+              <div className={cssClasses('Control', 'Control-checkbox')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(filters.hasStock)}
+                  onChange={event =>
+                    onHasStockChange(event.target.checked || null)
+                  }
+                  label={formatMessage(messages.hasStock)}
+                  name="onlyHasStock"
+                  autoWidth
+                />
+              </div>
+            )}
             {config.revoked && (
               <div className={cssClasses('Control')}>
                 <RevokedSelectField
@@ -1204,21 +1245,6 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterReportName)}
                   floatingLabelText={formatMessage(messages.reportName)}
-                />
-              </div>
-            )}
-            {config.lotNumber && (
-              <div className={cssClasses('Control')}>
-                <FocusBlurTextField
-                  name="lotNumber"
-                  value={filters.lotNumber || ''}
-                  onCommitValue={onTextFieldCommitValue}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  placeholder={formatMessage(messages.enterLotNumber)}
-                  label={formatMessage(messages.lotNumber)}
-                  margin="normal"
                 />
               </div>
             )}

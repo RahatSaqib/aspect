@@ -119,6 +119,7 @@ const sanitizerByConfigKey = {
   onlyTreatmentRequired: defaultSanitizer,
   treatmentStatus: defaultSanitizer,
   daysStockLeft: defaultSanitizer,
+  hasStock: defaultSanitizer,
   lotNumber: defaultSanitizer,
 }
 
@@ -321,6 +322,9 @@ export const reduceFiltersConfig = (
               break
             case 'daysStockLeft':
               result.daysStockLeft = true
+              break
+            case 'hasStock':
+              result.hasStock = true
               break
             case 'consumable':
               result.consumable = true

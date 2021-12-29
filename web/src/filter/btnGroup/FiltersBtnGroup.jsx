@@ -149,6 +149,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.deviceIssueType',
     defaultMessage: 'Device Issue: {issueTypeId}',
   },
+  hasStock: {
+    id: 'filter.btnGroup.hasStock',
+    defaultMessage: 'Only lots with stock',
+  },
   outOfStock: {
     id: 'filter.btnGroup.daysStockLeft.outOfStock',
     defaultMessage: 'Out of Stock',
@@ -262,6 +266,7 @@ const filtersOrdering = {
   daysStockLeft: 31,
   reportName: 32,
   lotNumber: 33,
+  hasStock: 34,
 }
 
 const makeButton = labelFn => (filterKey, props, index) => {
@@ -596,6 +601,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     daysStockLeft: makeButton(daysStockLeft =>
       formatMessage(messages[daysStockLeft])
     ),
+    hasStock: makeButton(() => formatMessage(messages.hasStock)),
     reportName: makeButton(reportName =>
       formatMessage(messages.whereReportNameIncludes, {
         reportName,

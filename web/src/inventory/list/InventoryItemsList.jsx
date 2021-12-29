@@ -88,6 +88,11 @@ const FILTERS_CONFIG = [
     requiredPermissions: [],
     isEnabled: dependencies => !dependencies.breakOutByLot,
   },
+  {
+    hasStock: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => dependencies.breakOutByLot,
+  },
 ]
 
 const availableSortCol = [
