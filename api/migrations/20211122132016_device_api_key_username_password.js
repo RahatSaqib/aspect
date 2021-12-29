@@ -6,10 +6,18 @@ async function up(knex) {
     dak.string('password', 128)
     dak.datetime('expiresOn')
   })
+
+  await knex.schema.alterTable('DeviceType', dt => {
+    dt.boolean('requiresApiCredentials').notNullable().defaultTo(0)
+  })
 }
 
 async function down(knex) {
   await knex.schema.table('DeviceApiKey', dak => {
     dak.dropColumns('username', 'password', 'expiresOn')
+  })
+
+  await knex.schema.alterTable('DeviceType', dt => {
+    dt.dropColumns('requiresApiCredentials')
   })
 }

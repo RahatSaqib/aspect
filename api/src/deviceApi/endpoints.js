@@ -25,7 +25,6 @@ const errorPayload = Joi.object()
     code: Joi.string().allow('', null).description('Error code'),
     notes: Joi.string().allow('', null).description('Description of the error'),
   })
-
 const logItem = {
   externalId: Joi.alternatives()
     .try(Joi.string(), Joi.number())
@@ -48,7 +47,6 @@ const logItem = {
     )
     .required(),
 }
-
 const logPayload = {
   source: Joi.string()
     .allow('', null)

@@ -2,5 +2,6 @@
   "externalId": "molbioTruenat",
   "name": "Molbio Truenat",
   "manufacturer": "Molbio",
-  "deviceTypeCategoryId": "Lab"
+  "deviceTypeCategoryId": "Lab",
+  "requiresApiCredentials": true
 }]
