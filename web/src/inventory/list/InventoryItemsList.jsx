@@ -365,8 +365,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const queryClient = useQueryClient()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
-  // const navigate = useNavigate()
-  // const location = useLocation()
   const intl = useIntl()
   const {
     jwt: { permissions: userPermissions },
