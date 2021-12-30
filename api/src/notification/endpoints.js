@@ -106,11 +106,29 @@ const routes = [
                 webhookSent: Joi.number().description(
                   'The number of webhook notification sent'
                 ),
+                webhookWithErrors: Joi.number().description(
+                  'The number of webhook notification sent but with errors'
+                ),
+                webhookPending: Joi.number().description(
+                  'The number of webhook notification pending to be sent'
+                ),
                 smsSent: Joi.number().description(
+                  'The number of sms notification sent'
+                ),
+                smsWithErrors: Joi.number().description(
+                  'The number of sms notification sent'
+                ),
+                smsPending: Joi.number().description(
                   'The number of sms notification sent'
                 ),
                 emailSent: Joi.number().description(
                   'The number of email notification sent'
+                ),
+                emailWithErrors: Joi.number().description(
+                  'The number of email notification sent with errors'
+                ),
+                emailPending: Joi.number().description(
+                  'The number of email notification pending to be send'
                 ),
                 date: Joi.date().description(
                   'The date notification was sent or received'
