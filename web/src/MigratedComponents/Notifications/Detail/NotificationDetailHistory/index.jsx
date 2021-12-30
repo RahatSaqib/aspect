@@ -1,19 +1,21 @@
 import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
-import { defineMessages, useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { defineMessages } from 'react-intl'
+import { useNavigate, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
+import get from 'lodash/get'
 
-import NavTitle from '../../../../globals/components/NavTitle'
-
+import { gotoWithReturnUrl } from '../../../../shared/utils/browser'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 import Shell from '../../../Shell'
+import ShellHeader from '../../../Shell/Header'
 import ShellContent from '../../../Shell/Content'
 import AspectTable from '../../../AspectTable'
 import { NOTIFICATION_HISTORY } from '../../../QueryFetch/Notification'
 import baseConfig from './config'
 
-import styles from '../../Notifications.css'
+import styles from '../NotificationDetail.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -29,37 +31,44 @@ const messages = defineMessages({
 })
 
 const NotificationList = () => {
-  const intl = useIntl()
+  const { formatMessage } = useI18n()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const onClickRow = ({ column, row }) => {
+    const url = column.link.url.replace(
+      `:${column.link.key}`,
+      get(row.original, column.link.key)
+    )
+    gotoWithReturnUrl(url, navigate, location)
+  }
+
   return (
     <Fragment>
-      <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
-      <div className={cssClasses('back-button__container')}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate('/browse/notification')}
+      <Helmet title={formatMessage(messages.notificationsTitle)} />
+      <Shell>
+        <ShellHeader
+          title={formatMessage(messages.notificationsTitle)}
+          // style={{ paddingTop: '2px', paddingBottom: '2px' }}
+          className={cssClasses('logs-header')}
         >
-          {intl.formatMessage(messages.backButton)}
-        </Button>
-      </div>
-      <div
-        /**
-         * TODO:temp fix before all tables are placed with
-         * the <Shell component />
-         */
-        style={{ marginTop: '-22px' }}
-      >
-        <Shell>
-          <ShellContent>
-            <AspectTable
-              baseConfig={baseConfig}
-              consts={NOTIFICATION_HISTORY}
-            />
-          </ShellContent>
-        </Shell>
-      </div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/browse/notification')}
+          >
+            {formatMessage(messages.backButton)}
+          </Button>
+        </ShellHeader>
+        <ShellContent>
+          <AspectTable
+            baseConfig={baseConfig}
+            consts={NOTIFICATION_HISTORY}
+            onClickRow={onClickRow}
+          />
+        </ShellContent>
+      </Shell>
+      {/* </div> */}
     </Fragment>
   )
 }

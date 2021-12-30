@@ -71,3 +71,13 @@ function getBrowserInfo() {
     return null
   }
 }
+
+export const gotoWithReturnUrl = (url, navigate, location) => {
+  const searchParams = new URLSearchParams(location.search)
+
+  const q = new URLSearchParams({
+    returnUrl: `${location.pathname}?${searchParams.toString()}`,
+  })
+
+  navigate(`${url}?${q.toString()}`)
+}

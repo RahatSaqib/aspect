@@ -34,10 +34,7 @@ const {
   deviceTypeToId,
   assayToId,
 } = require('../../../src/shared/dictionary')
-const {
-  getLocalDateTimeStringInUtc,
-  getLocalDateInUtc,
-} = require('../../../src/shared/date')
+const { getLocalDateInUtc } = require('../../../src/shared/date')
 const {
   gxEbola: gxEbolaMappings,
   gxHiv1Qual: gxHiv1QualMappings,
@@ -959,8 +956,6 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const afterResultDetails = await getLastResult()
 
-        // this device is located in the America/New_York time zone, so we have to
-        // convert testStartedOn to UTC in order to compare it to the value in the database
         expect(afterResultDetails).to.containSubset({
           deviceId: device.id,
           siteId: device.siteId,
@@ -979,10 +974,7 @@ describe('Device API routes for GxConnect Devices', () => {
           resultData: _.assign({}, basicResultPayload.result.data, {
             geneXpertTestId: basicResultPayload.result.id,
           }),
-          startedOn: getLocalDateTimeStringInUtc(
-            testStartedOn.toISOString().replace('Z', ''),
-            'America/New_York'
-          ),
+          startedOn: testStartedOn,
           endedOn: null,
           consumableSerial: null,
           consumableExpirationDate: null,
@@ -1657,63 +1649,6 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const secondResultId = await getLastResultId(knex, device.id)
         assert.notEqual(firstResultId, secondResultId)
-      }))
-
-    it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
-      runTest(async () => {
-        const { basicDevicePayload, deviceAuth } = context
-
-        const timezone = 'South Africa Standard Time'
-        const testStartedOn = '2020-08-10T14:00:00Z'
-        const testEndedOn = '2020-08-10T15:30:00Z'
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
-              result: _.assign({}, basicResultPayload.result, {
-                startedOn: testStartedOn,
-                endedOn: testEndedOn,
-                assay: _.assign({}, basicResultPayload.result.assay, {
-                  id: 'GxMtbRif',
-                }),
-                data: basicResultPayload.result.data,
-              }),
-              configuration: { data: { timezone } },
-            })
-          )
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-          .catch(assert.fail)
-
-        const resultDetails = await getLastResult()
-
-        expect(resultDetails.startedOn.getTime()).to.equal(
-          getLocalDateTimeStringInUtc(
-            testStartedOn.replace('Z', ''),
-            'Africa/Johannesburg'
-          ).getTime()
-        )
-
-        expect(resultDetails.endedOn.getTime()).to.equal(
-          getLocalDateTimeStringInUtc(
-            testEndedOn.replace('Z', ''),
-            'Africa/Johannesburg'
-          ).getTime()
-        )
-
-        expect(resultDetails.createdOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
-
-        expect(resultDetails.updatedOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
       }))
 
     it('should get the module name from a previous result on the same module serial if it is not included in the payload', () =>
@@ -2464,11 +2399,6 @@ describe('Device API routes for GxConnect Devices', () => {
                 startedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
               )
-              const startedOnDateInUtc = getLocalDateTimeStringInUtc(
-                startedOn.replace('Z', ''),
-                'America/New_York'
-              )
-
               const incompleteResultPayload = _.merge(
                 {},
                 basicDevicePayload,
@@ -2503,7 +2433,7 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(incompleteResult).to.containSubset({
                 resultCategory1: 'NoResult',
                 resultCategory2: null,
-                startedOn: startedOnDateInUtc,
+                startedOn: startedOnDate,
                 endedOn: null,
                 resultData: {
                   resultText: 'NO RESULT',
@@ -2514,10 +2444,6 @@ describe('Device API routes for GxConnect Devices', () => {
               const endedOn = dateFormat(
                 endedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              )
-              const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-                endedOn.replace('Z', ''),
-                'America/New_York'
               )
 
               const completeResultPayload = _.merge(
@@ -2544,8 +2470,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(completeResult).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'Indeterminate',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText: 'DETECTED MEDIUM|INDETERMINATE|',
                 },
@@ -2571,19 +2497,11 @@ describe('Device API routes for GxConnect Devices', () => {
                 startedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
               )
-              const startedOnDateInUtc = getLocalDateTimeStringInUtc(
-                startedOn.replace('Z', ''),
-                'America/New_York'
-              )
 
               const endedOnDate = addMinutes(startedOnDate, 103)
               const endedOn = dateFormat(
                 endedOnDate,
                 "yyyy-MM-dd'T'HH:mm:ss'Z'"
-              )
-              const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-                endedOn.replace('Z', ''),
-                'America/New_York'
               )
 
               const completeResultPayload = _.merge(
@@ -2621,8 +2539,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result1).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -2648,8 +2566,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result2).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -2675,8 +2593,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result3).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NotDetected',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText:
                     'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
@@ -2702,8 +2620,8 @@ describe('Device API routes for GxConnect Devices', () => {
               expect(result4).to.containSubset({
                 resultCategory1: 'Detected',
                 resultCategory2: 'NoResult',
-                startedOn: startedOnDateInUtc,
-                endedOn: endedOnDateInUtc,
+                startedOn: startedOnDate,
+                endedOn: endedOnDate,
                 resultData: {
                   resultText: 'MTB DETECTED MEDIUM|NO RESULT',
                 },

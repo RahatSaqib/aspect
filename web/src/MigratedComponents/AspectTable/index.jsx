@@ -32,7 +32,7 @@ const Loading = () => (
   </div>
 )
 
-const AspectTable = ({ baseConfig, consts: CONSTS }) => {
+const AspectTable = ({ baseConfig, consts: CONSTS, onClickRow }) => {
   const intl = useIntl()
   const config = baseConfig(intl)
   const navigate = useNavigate()
@@ -141,9 +141,14 @@ const AspectTable = ({ baseConfig, consts: CONSTS }) => {
           setSortDir,
           setPage,
         }}
+        onClickRow={onClickRow}
       />
     </ErrorBoundary>
   )
+}
+
+AspectTable.defaultProps = {
+  onClickRow: null,
 }
 
 AspectTable.propTypes = {
@@ -155,6 +160,8 @@ AspectTable.propTypes = {
    Consts required for data fetching
  */
   consts: oneOfType([object]).isRequired,
+
+  onClickRow: func,
 }
 
 export default AspectTable
