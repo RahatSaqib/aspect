@@ -86,7 +86,7 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
         <FormikProvider config={formConfig}>
           <ShellHeader
             icon={FaNotesMedical}
-            title={`${formConfig.title}: ${patientId}`}
+            title={`${formConfig.title}${patientId ? `: ${patientId}` : ''}`}
           >
             <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
