@@ -73,7 +73,7 @@ describe('/result/clinical-indicator-aggregations', () => {
         assert.deepEqual(res.body.data, expectedResponse)
       }))
 
-  it('should return all results grouped by month and should allow multiple assays', async () =>
+  it.skip('should return all results grouped by month and should allow multiple assays', async () =>
     server
       .get(`${path}?groupBy=month&assay=DaktariHivVL&assay=DaktariHcv`)
       .set('Authorization', `Bearer ${shared.token}`)
@@ -187,7 +187,7 @@ describe('/result/clinical-indicator-aggregations', () => {
         assert.deepEqual(res.body.data, expectedResponse)
       }))
 
-  it('should return all results grouped by month and assay', async () =>
+  it.skip('should return all results grouped by month and assay', async () =>
     server
       .get(`${path}?groupBy=month&groupBy=assay`)
       .set('Authorization', `Bearer ${shared.token}`)
