@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -1812,7 +1812,7 @@ msgstr "Daily Confirmed Cases"
 #. Daily Consumption
 #: extracted_strings.json
 msgid "Daily Consumption"
-msgstr "No Consumption"
+msgstr "Daily Consumption Rate"
 
 #. [pages.Status.covidGraphDailyMortalityAndrecovery.pie]
 #. defaultMessage is:
