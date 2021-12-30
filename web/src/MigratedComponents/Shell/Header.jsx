@@ -6,8 +6,12 @@ import styles from './Shell.css'
 
 const cssClasses = classnames.bind(styles)
 
-const ShellHeader = ({ children, icon: Icon, title }) => (
-  <div className={cssClasses('shell__header')}>
+const ShellHeader = ({ children, icon: Icon, title, className }) => (
+  <div
+    className={cssClasses('shell__header', {
+      [className]: !!className,
+    })}
+  >
     <div className={cssClasses('shell__headerTitle')}>
       {Icon ? (
         <div className={cssClasses('shell__headerIcon')}>
@@ -28,6 +32,7 @@ ShellHeader.defaultProps = {
   children: false,
   title: false,
   icon: false,
+  className: null,
 }
 
 ShellHeader.propTypes = {
@@ -38,6 +43,7 @@ ShellHeader.propTypes = {
   ]),
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   icon: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+  className: PropTypes.string,
 }
 
 export default ShellHeader

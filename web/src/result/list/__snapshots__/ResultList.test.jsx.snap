@@ -56,17 +56,7 @@ exports[`Result List component should shallow render correctly when filter for a
       }
     }
     navigate={[MockFunction]}
-  >
-    <Memo(requirePermissions(AspectButton))
-      browseButton={true}
-      color="primary"
-      onClick={[Function]}
-      type="button"
-      variant="contained"
-    >
-      New Result
-    </Memo(requirePermissions(AspectButton))>
-  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
+  />
   <DataTableCard
     key="DataTableCard--table-undefined"
   >

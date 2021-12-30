@@ -24,19 +24,6 @@ import styles from './DailyStatus.css'
 const cssClasses = classnames.bind(styles)
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
-const selectorModifiers = [
-  {
-    selectedValue: 'Date Range',
-    endpoint: false,
-    state: 'deviceDateRange',
-    component: AspectDropDown,
-    identifier: 'dateRange',
-    data: dateRangeOptions('deviceDateRange'),
-    sortByKeys: ['id'],
-    isClearable: false,
-    defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
-  },
-]
 
 const DailyStatus = () => {
   const [dialogState, setDialogState] = useState({ isOpen: false })
@@ -104,6 +91,20 @@ const DailyStatus = () => {
   if (deviceStatusesIsError) {
     throw new Error(deviceStatusesError)
   }
+
+  const selectorModifiers = [
+    {
+      selectedValue: 'Date Range',
+      endpoint: false,
+      state: 'deviceDateRange',
+      component: AspectDropDown,
+      identifier: 'dateRange',
+      data: dateRangeOptions('deviceDateRange'),
+      sortByKeys: ['id'],
+      isClearable: false,
+      defaultSelectedOption: DATE_RANGE_OPTIONS.LAST_MONTH,
+    },
+  ]
 
   return (
     <AspectCard

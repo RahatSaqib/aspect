@@ -598,6 +598,31 @@ const getFormConfig = (
 ) => {
   const validationBase = getBaseValidation(formatMessage, messages)
   const sections = [
+    {
+      id: 'section_notificationType_disable',
+      label: 'Enable',
+      labelI18nKey: 'notificationTypeEnable',
+      rows: [
+        {
+          id: 0,
+          items: [
+            {
+              id: 'enabled',
+              controlType: {
+                component: 'checkbox',
+              },
+              classNames: {
+                controlContainer: cssClasses('checkbox-container'),
+                itemContainer: cssClasses('checkbox-item-container'),
+              },
+              // classNames: checkboxClassNames,
+              initialValue: true,
+              label: '',
+            },
+          ],
+        },
+      ],
+    },
     ...getSectionsBase(formatMessage, validationBase),
     ...buildSendToPersons(formatMessage),
     buildJobFunctionsRows(jobFunctions),

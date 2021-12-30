@@ -27,6 +27,14 @@ export default defineMessages({
     id: 'pages.NotificationDetail.notificationType',
     defaultMessage: 'Notification Type',
   },
+  notificationTypeEnable: {
+    id: 'pages.NotificationDetail.notificationTypeEnable',
+    defaultMessage: 'Enable this notification',
+  },
+  enable: {
+    id: 'pages.NotificationDetail.enable',
+    defaultMessage: 'Enable',
+  },
   whenResultIs: {
     id: 'pages.NotificationDetail.whenResultIs',
     defaultMessage: 'When the result is',

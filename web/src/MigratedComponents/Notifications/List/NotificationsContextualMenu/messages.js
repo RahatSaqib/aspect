@@ -19,7 +19,19 @@ const messages = defineMessages({
   },
   deleteTitle: {
     id: 'contextualMenu.notifications.delete.title',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Delete (Only 0 triggers)',
+  },
+  yesDelete: {
+    id: 'contextualMenu.notifications.yesDelete',
+    defaultMessage: 'Yes, delete it',
+  },
+  cancel: {
+    id: 'contextualMenu.notifications.cancel',
+    defaultMessage: 'Cancel',
+  },
+  areYouSureToDelete: {
+    id: 'contextualMenu.notifications.areYouSureToDelete',
+    defaultMessage: 'Are you sure to delete notification {notificationName}?',
   },
 })
 

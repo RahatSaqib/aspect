@@ -109,6 +109,10 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.optional().allow('', null),
     })
     .description('To send over email'),
+  enabled: Joi.bool()
+    .optional()
+    .default(true)
+    .description('Disable for sending notifications'),
   sendSms: Joi.bool().description('To send over sms'),
   sendWeb: Joi.bool().description('To send over webhook'),
   emailSubject: Joi.string()

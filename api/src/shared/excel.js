@@ -183,7 +183,11 @@ async function renderExcelTemplate({
         cell.value = ''
       })
 
-      const { dataRows, defaultNoDataMessage } = data[sheetIndex]
+      const {
+        dataRows,
+        defaultNoDataMessage,
+        dataSelector: dataSelectorSheet,
+      } = data[sheetIndex]
       if (!dataRows) return
 
       // use 1st cell only (actually, should not be more than one)
@@ -235,7 +239,8 @@ async function renderExcelTemplate({
           let valuesInDynamicColumns = []
           if (dynamicColumns.length > 0) {
             let normalizedValues
-            if (dataSelector) normalizedValues = dataSelector(dataRow)
+            const normalizer = dataSelector || dataSelectorSheet
+            if (normalizer) normalizedValues = normalizer(dataRow)
             else normalizedValues = dataRow
             valuesInDynamicColumns = dynamicColumns.map(
               column => normalizedValues[column.key]

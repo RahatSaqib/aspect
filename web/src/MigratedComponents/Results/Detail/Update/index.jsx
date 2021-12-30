@@ -70,6 +70,9 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
         )
       }
 
+      // TODO: Remove this line when result edit functionality is ready (hides the "Edit" button)
+      config.actions.items.splice(2)
+
       setFormConfig(config)
       setValues(data)
     } else {
