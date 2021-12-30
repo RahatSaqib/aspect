@@ -9,7 +9,7 @@ const server = require('../../../utils/testUtils')
 
 const saltRounds = parseInt(passwordSaltRounds, 10)
 
-describe.only('Device API Raw routes for Truenat Authentication', () => {
+describe('Device API Raw routes for Truenat Authentication', () => {
   const deviceApiRawPath = '/device/raw/truelab/devices/login'
   const validApiKey = {
     token: randomToken(),
