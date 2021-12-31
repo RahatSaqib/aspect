@@ -263,7 +263,7 @@ describe('Truenat Result Upload Data Processor', () => {
       deviceTypeId: 15,
       resultSourceId: 1,
       resultCategory1Label: 'MTB',
-      resultCategory1i18nKey: 'resultCategoryMTB',
+      resultCategory1i18nKey: 'resultCategoryMtb',
       resultCategory2Label: null,
       resultCategory2i18nKey: null,
       resultDataSchema:
