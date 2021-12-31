@@ -47,6 +47,9 @@ class DefaultCOBAS extends SynchronousDataProcessor {
 
   static async canProcessRequest(request) {
     const { payload } = request
+    if (!payload) {
+      return false
+    }
     const sanitisedHeader = DefaultCOBAS.sanitisePayload(payload.header)
 
     return DefaultCOBAS.checkHeader(sanitisedHeader)

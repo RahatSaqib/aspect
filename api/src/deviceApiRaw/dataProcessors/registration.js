@@ -4,7 +4,9 @@ const {
   PhilippinesNtrlPmdt,
   PhilippinesNtrlRitm,
 } = require('./philippinesNtrlDatabases')
+
 const registeredDataProcessors = [
+  require('./truenatDevice/authenticate'),
   require('./abbottM2000'),
   PhilippinesNtrlPmdt,
   PhilippinesNtrlRitm,
@@ -14,7 +16,7 @@ const registeredDataProcessors = [
   require('./default'),
 ]
 
-async function loadRawDataProcessor(request, messageContext) {
+async function findRawDataProcessor(request) {
   let DataProcessorClass = null
   await Promise.each(registeredDataProcessors, async Registration => {
     if (!DataProcessorClass) {
@@ -25,9 +27,18 @@ async function loadRawDataProcessor(request, messageContext) {
     }
     return Promise.resolve()
   })
-  return new DataProcessorClass(request, messageContext)
+  return DataProcessorClass
+}
+
+async function loadRawDataProcessor(request, messageContext) {
+  const DataProcessorClass = await findRawDataProcessor(request)
+  if (DataProcessorClass) {
+    return new DataProcessorClass(request, messageContext)
+  }
+  return null
 }
 
 module.exports = {
+  findRawDataProcessor,
   loadRawDataProcessor,
 }
