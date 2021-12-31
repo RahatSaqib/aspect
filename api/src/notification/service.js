@@ -773,9 +773,8 @@ async function getNotifications(request) {
     emailRecipients: item.emailRecipients
       ? item.emailRecipients.split('|')
       : null,
-    smsRecipients: item.smsRecipients ? item.emailRecipients.split('|') : null,
+    smsRecipients: item.smsRecipients ? item.smsRecipients.split('|') : null,
   }))
-
   return { ok: true, total, data: items }
 }
 

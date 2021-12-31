@@ -106,7 +106,7 @@
 }
 
 .hasError {
-  color: var(--aspect-color-mandy);
+  color: var(--aspect-color-mandy) !important;
 }
 
 .details_statusIcon {

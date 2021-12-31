@@ -32,8 +32,6 @@ const NotificationDetailModal = ({
   useEffect(() => {
     setNotificationData(recipients)
   }, [recipients])
-
-  console.log(recipients)
   const colors = {
     Sent: '#34717c',
     Error: '#db3018',

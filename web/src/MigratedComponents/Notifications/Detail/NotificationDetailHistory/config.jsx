@@ -24,6 +24,7 @@ import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
 import styles from '../NotificationDetail.css'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import NotificationDetailModal from './NotificationDetailModal'
+import IconProvider from '../../../IconProvider/index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -63,10 +64,14 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients }) => {
           }}
         />
         <Button
-          className={cssClasses({ hasError: withErrors > 0 })}
+          className={cssClasses({ hasError: withErrors })}
           onClick={handleClick}
         >
           {sent}/{sent + withErrors + pending}
+          <IconProvider
+            icon="MdKeyboardArrowDown"
+            className={cssClasses('popover-cell__icon')}
+          />
         </Button>
       </AspectTooltip>
     </Fragment>
@@ -130,7 +135,7 @@ const baseConfig = ({ formatMessage }) => {
       {
         key: 'emailRecipients',
         label: formatMessage(messages.eventsTableHeaderEmailSent),
-        width: 10,
+        width: 5,
         disableHide: true,
         disableGroupBy: true,
         format: ({ item, value }) => {
@@ -153,7 +158,7 @@ const baseConfig = ({ formatMessage }) => {
       {
         key: 'smsRecipients',
         label: formatMessage(messages.eventsTableSmsSent),
-        width: 10,
+        width: 5,
         disableHide: true,
         disableGroupBy: true,
         format: ({
