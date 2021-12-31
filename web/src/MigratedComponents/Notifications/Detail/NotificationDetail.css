@@ -104,3 +104,31 @@
 .logs-header {
   padding: 20px 20px 25px;
 }
+
+.hasError {
+  color: var(--aspect-color-mandy);
+}
+
+.details_statusIcon {
+  color: rgb(252, 51, 22);
+  font-size: 10px;
+}
+
+.details_statusTooltip {
+  float: right;
+  margin-left: 5px;
+}
+
+.successfully_sent {
+  color: '#fff';
+  background-color: #0f3328;
+}
+.withErrors {
+  color: '#fff';
+  background-color: rgb(252, 51, 22);
+}
+
+.pending {
+  color: '#fff';
+  background-color: #dad741;
+}

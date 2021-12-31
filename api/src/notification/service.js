@@ -681,13 +681,13 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'r.id as resultId',
+      'n.resultId as resultId',
       'r.sampleId',
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pEm.name separator "|") as emailRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pSm.name separator "|") as smsRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
@@ -709,88 +709,55 @@ async function getNotifications(request) {
       webhookSent: knex.raw(`
         DISTINCT
         CASE WHEN mswm.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
       webhookWithErrors: knex.raw(`
       DISTINCT
       CASE WHEN mswm.externalId = "Error" 
-      THEN (CASE
-            WHEN ntc.externalId = 'resultBased' 
-            THEN n.resultId
-            ELSE n.issueId
-          END)
+      THEN n.id
       ELSE null END
     `),
       webhookPending: knex.raw(`
     DISTINCT
-    CASE WHEN mswm.externalId = "Error" 
-    THEN (CASE
-          WHEN ntc.externalId = 'resultBased' 
-          THEN n.resultId
-          ELSE n.issueId
-        END)
+    CASE WHEN mswm.externalId = "Pending" 
+    THEN n.id
     ELSE null END
   `),
       smsSent: knex.raw(`
         DISTINCT
         CASE WHEN mssms.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
       smsWithErrors: knex.raw(`
       DISTINCT
       CASE WHEN mssms.externalId = "Error" 
-      THEN (CASE
-            WHEN ntc.externalId = 'resultBased' 
-            THEN n.resultId
-            ELSE n.issueId
-          END)
+      THEN n.id
       ELSE null END
     `),
       smsPending: knex.raw(`
     DISTINCT
     CASE WHEN mssms.externalId = "Pending" 
-    THEN (CASE
-          WHEN ntc.externalId = 'resultBased' 
-          THEN n.resultId
-          ELSE n.issueId
-        END)
+    THEN n.id
     ELSE null END
   `),
       emailSent: knex.raw(`
         DISTINCT
         CASE WHEN msem.externalId = "Sent" 
-        THEN (CASE WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
       emailWithErrors: knex.raw(`
       DISTINCT
       CASE WHEN msem.externalId = "Error" 
-      THEN (CASE WHEN ntc.externalId = 'resultBased' 
-            THEN n.resultId
-            ELSE n.issueId
-          END)
+      THEN n.id
       ELSE null END
     `),
       emailPending: knex.raw(`
     DISTINCT
     CASE WHEN msem.externalId = "Pending" 
-    THEN (CASE WHEN ntc.externalId = 'resultBased' 
-          THEN n.resultId
-          ELSE n.issueId
-        END)
+    THEN n.id
     ELSE null END
   `),
     })
