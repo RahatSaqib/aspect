@@ -1866,6 +1866,10 @@ async function getDeviceCalibrationsForReport(auth, query) {
   return result
 }
 
+// Reusable method to create a device log and update lastSeenOn for a device
+// This method will sometimes be called in a context of a database transaction.
+//  In this case the transaction's knex instance can be passed as the optionalKnex
+//  parameter below.
 async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
   const now = new Date()
   const databaseTransaction = async inlineKnex => {
