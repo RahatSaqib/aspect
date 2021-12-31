@@ -112,7 +112,6 @@ async function createDevicesForAllMissingTypes(
     .select('siteId', 'deviceTypeId')
     .distinct()
   if (!_.isEmpty(siteDatas)) {
-    const deviceTypesThatRequireDeviceApiKeyWithCredentials = ['molbioTruenat']
     let i = 0
     await Promise.each(deviceTypes, async deviceType => {
       const siteIdsWithoutDeviceType = _.uniq(
