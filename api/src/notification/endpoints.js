@@ -158,6 +158,11 @@ const routes = [
                   .description(
                     'Comma-separated person names who get notification sms'
                   ),
+                webhookRecipients: Joi.array()
+                  .allow(null)
+                  .description(
+                    'Comma-separated url who get notification the webhook'
+                  ),
               })
             ),
         }),

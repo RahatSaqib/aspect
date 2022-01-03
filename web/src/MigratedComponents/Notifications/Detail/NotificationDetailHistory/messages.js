@@ -51,7 +51,7 @@ export const messages = defineMessages({
   },
   cancel: {
     id: 'pages.Notifications.table.cancel',
-    defaultMessage: 'Cancel:',
+    defaultMessage: 'Cancel',
   },
   sentDetails: {
     id: 'pages.Notifications.table.sentDetails',
@@ -59,7 +59,7 @@ export const messages = defineMessages({
   },
   sentSuccessfully: {
     id: 'pages.Notifications.table.sentSuccessfully',
-    defaultMessage: 'Sent Successfully',
+    defaultMessage: 'Successfully',
   },
   sentWithErrors: {
     id: 'pages.Notifications.table.sentWithErrors',

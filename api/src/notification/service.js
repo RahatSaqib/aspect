@@ -639,6 +639,11 @@ async function getNotifications(request) {
     .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
     .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
     .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
+    .leftOuterJoin(
+      'MessageStatus as mswebhook',
+      'mswebhook.id',
+      'wm.messageStatusId'
+    )
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
@@ -688,6 +693,9 @@ async function getNotifications(request) {
       `),
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
+      `),
+      knex.raw(`
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId

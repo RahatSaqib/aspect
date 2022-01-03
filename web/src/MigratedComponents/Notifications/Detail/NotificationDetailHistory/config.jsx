@@ -19,6 +19,7 @@
 import React, { Fragment, useState } from 'react'
 import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
+import PropTypes from 'prop-types'
 import messages from './messages'
 import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
 import styles from '../NotificationDetail.css'
@@ -28,7 +29,13 @@ import IconProvider from '../../../IconProvider/index'
 
 const cssClasses = classnames.bind(styles)
 
-const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients }) => {
+const ErrorCell = ({
+  sent = 0,
+  withErrors = 0,
+  pending = 0,
+  recipients,
+  formatMessage,
+}) => {
   const [modalConfiguration, setModalConfiguration] = useState({
     showDialog: false,
     sent,
@@ -50,9 +57,15 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients }) => {
       <AspectTooltip
         title={
           <>
-            <p>{sent} sent</p>
-            <p>{withErrors} with errors</p>
-            <p>{pending} pending</p>
+            <p>
+              {sent} {formatMessage(messages.sentSuccessfully)}
+            </p>
+            <p>
+              {withErrors} {formatMessage(messages.sentWithErrors)}
+            </p>
+            <p>
+              {pending} {formatMessage(messages.sentPending)}
+            </p>
           </>
         }
         className={cssClasses('details_statusTooltip')}
@@ -77,6 +90,21 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients }) => {
     </Fragment>
   )
 }
+
+ErrorCell.propTypes = {
+  sent: PropTypes.number,
+  withErrors: PropTypes.number,
+  pending: PropTypes.number,
+  recipients: PropTypes.arrayOf(PropTypes.string),
+  formatMessage: PropTypes.func.isRequired,
+}
+ErrorCell.defaultProps = {
+  sent: 0,
+  withErrors: 0,
+  pending: 0,
+  recipients: [],
+}
+
 const baseConfig = ({ formatMessage }) => {
   return {
     name: formatMessage(messages.event),
@@ -115,7 +143,12 @@ const baseConfig = ({ formatMessage }) => {
         disableHide: true,
         disableGroupBy: true,
         format: ({
-          item: { webhookSent, webhookWithErrors, webhookPending },
+          item: {
+            webhookSent,
+            webhookWithErrors,
+            webhookPending,
+            webhookRecipients,
+          },
           value,
         }) => {
           return !value ? (
@@ -126,7 +159,8 @@ const baseConfig = ({ formatMessage }) => {
                 sent={webhookSent}
                 withErrors={webhookWithErrors}
                 pending={webhookPending}
-                recipients={[]}
+                recipients={webhookRecipients}
+                formatMessage={formatMessage}
               />
             </Fragment>
           )
@@ -150,6 +184,7 @@ const baseConfig = ({ formatMessage }) => {
                 withErrors={emailWithErrors}
                 pending={emailPending}
                 recipients={emailRecipients}
+                formatMessage={formatMessage}
               />
             </Fragment>
           )
@@ -174,6 +209,7 @@ const baseConfig = ({ formatMessage }) => {
                 withErrors={smsWithErrors}
                 pending={smsPending}
                 recipients={smsRecipients}
+                formatMessage={formatMessage}
               />
             </Fragment>
           ),
