@@ -20,6 +20,7 @@ exports[`Result List component should shallow render correctly when filter for a
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "defaultRichTextElements": undefined,
+        "fallbackOnEmptyString": true,
         "formatDate": [Function],
         "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
