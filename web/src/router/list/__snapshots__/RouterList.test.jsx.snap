@@ -19,7 +19,6 @@ exports[`RouterList should render RouterList correctly without export button 1`]
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "defaultRichTextElements": undefined,
-        "fallbackOnEmptyString": true,
         "formatDate": [Function],
         "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
