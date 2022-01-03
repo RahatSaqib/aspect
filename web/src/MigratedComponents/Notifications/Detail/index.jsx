@@ -102,6 +102,18 @@ const AspectNotificationDetails = () => {
       },
       []
     )
+    // sanitise areaItems for post endpoint
+    const sanitisedLgas = reduce(
+      formik.values.areaItems,
+      (acc, curr) => {
+        ;(acc || ((acc = []) && curr?.length)).push({
+          label: curr?.label,
+          value: curr?.value,
+        })
+        return acc
+      },
+      []
+    )
     // save only checked Job Functions
     values.jobFunctions = values.jobFunctions.filter(
       ({ checked, jobFunctionId }) =>
@@ -109,6 +121,9 @@ const AspectNotificationDetails = () => {
     )
     if (sanitisedPersons?.length) {
       values.persons = sanitisedPersons
+    }
+    if (sanitisedLgas?.length) {
+      values.areaItems = sanitisedLgas
     }
     if (!values?.jobFunctions?.length) {
       unset(values, 'jobFunctions')
