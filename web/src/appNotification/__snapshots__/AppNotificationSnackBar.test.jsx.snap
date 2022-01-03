@@ -44,6 +44,7 @@ exports[`App Notification SnackBar component should shallow render correctly 1`]
       "defaultFormats": Object {},
       "defaultLocale": "en",
       "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
       "formatDate": [Function],
       "formatDateTimeRange": [Function],
       "formatDateToParts": [Function],
