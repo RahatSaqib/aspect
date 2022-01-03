@@ -205,6 +205,7 @@ async function listNotifications(request) {
       knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
       knex.raw('COUNT(DISTINCT per.id) as personsCount'),
       knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
+      knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')

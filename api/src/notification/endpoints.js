@@ -53,6 +53,7 @@ const routes = [
                 jobFunctionsCount: Joi.number(),
                 jobFunctions: Joi.string().allow(null),
                 persons: Joi.string().allow(null),
+                sendToPatient: Joi.boolean().allow(null),
                 personsCount: Joi.number(),
                 typeCategory: Joi.string(),
                 lastTriggeredOn: Joi.date().iso().allow(null),
