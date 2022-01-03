@@ -27,6 +27,151 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
+function buildFromThisDevice(formatMessage) {
+  return {
+    id: 'fromThisDevice',
+    label: 'fromThisDevice',
+    labelI18nKey: 'fromThisDevice',
+    rows: [
+      {
+        id: 10,
+        items: [
+          {
+            id: 'deviceLevelId',
+            controlType: {
+              component: 'select',
+              hideIfNoOptions: false,
+              options: [
+                {
+                  label: formatMessage(messages.AreaNational),
+                  value: 'national',
+                },
+                { label: formatMessage(messages.AreaState), value: 'state' },
+                {
+                  label: formatMessage(messages.AreaLGA),
+                  value: 'lga',
+                },
+                {
+                  label: formatMessage(messages.AreaLaboratory),
+                  value: 'lab',
+                },
+              ],
+              placeholder: formatMessage(messages.SelectAreaPlaceholder),
+            },
+            label: formatMessage(messages.SelectAreaTitle),
+          },
+          {
+            id: 'areaItems',
+            controlType: {
+              component: 'select',
+              endpoint: SITE_ALL.ENDPOINT,
+              hideIfNoOptions: false,
+              queryKey: SITE_ALL.KEY,
+              normalizeLoadedData: (response, formik) => {
+                let options = []
+                const { deviceLevelId, areaItems } = formik.values
+                if (deviceLevelId && deviceLevelId !== 'national') {
+                  const { ok, data } = response
+                  if (ok === true) {
+                    if (deviceLevelId === 'state') {
+                      const byStateId = reduce(
+                        data,
+                        (acc, item) => {
+                          const { stateId, stateName } = item
+                          const state = { label: stateName, value: stateId }
+                          acc[stateId] = acc[stateId] || state
+                          return acc
+                        },
+                        {}
+                      )
+                      options = sortBy(values(byStateId), ['label'])
+                    } else if (deviceLevelId === 'lga') {
+                      const selected = intersectionBy(data, areaItems, 'lgaId')
+                      if (selected?.length) {
+                        const initialValues = []
+                        map(selected, ({ lgaName, lgaId }) =>
+                          initialValues.push({
+                            label: lgaName,
+                            value: lgaId,
+                            grouped: true,
+                          })
+                        )
+                        values.areaItems = initialValues
+                      }
+                      const byStateId = reduce(
+                        data,
+                        (acc, item) => {
+                          const { stateId, stateName, lgaId, lgaName } = item
+                          const state = {
+                            label: stateName,
+                            value: stateId,
+                            lgaById: {},
+                            lgas: [],
+                          }
+                          const lga = {
+                            label: lgaName,
+                            value: lgaId,
+                            grouped: true,
+                          }
+                          acc[stateId] = acc[stateId] || state
+                          const { lgaById, lgas } = acc[stateId]
+                          if (!lgaById[lgaId]) {
+                            lgaById[lgaId] = lga
+                            lgas.push(lga)
+                          }
+                          return acc
+                        },
+                        {}
+                      )
+                      const states = values(byStateId).map(
+                        ({ label, lgas }) => {
+                          return {
+                            label,
+                            options: sortBy(lgas, ['label']),
+                          }
+                        }
+                      )
+                      options = states
+                    } else if (deviceLevelId === 'lab') {
+                      options = data.map(({ externalId, name }) => ({
+                        label: name,
+                        value: externalId,
+                      }))
+                    }
+                  }
+                }
+                return options
+              },
+              isMulti: true,
+              dependencies: ['deviceLevelId'],
+              placeholder: formik => {
+                const { deviceLevelId } = formik.values
+                return deviceLevelId
+                  ? formatMessage(
+                      messages[`Select${capitalize(deviceLevelId)}Placeholder`]
+                    )
+                  : '-'
+              },
+            },
+            label: formik => {
+              const { deviceLevelId } = formik.values
+              return deviceLevelId
+                ? formatMessage(
+                    messages[`Select${capitalize(deviceLevelId)}Title`]
+                  )
+                : '-'
+            },
+            visibleIf: values => {
+              const { deviceLevelId } = values
+              return deviceLevelId && deviceLevelId !== 'national'
+            },
+          },
+        ],
+      },
+    ],
+  }
+}
+
 const getSectionsBase = formatMessage => [
   {
     id: 'section_notificationType',
@@ -138,130 +283,10 @@ const getSectionsBase = formatMessage => [
       },
     ],
   },
-  {
-    id: 'fromThisDevice',
-    label: 'fromThisDevice',
-    labelI18nKey: 'fromThisDevice',
-    rows: [
-      {
-        id: 10,
-        items: [
-          {
-            id: 'deviceLevelId',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [
-                {
-                  label: formatMessage(messages.AreaNational),
-                  value: 'national',
-                },
-                { label: formatMessage(messages.AreaState), value: 'state' },
-                { label: formatMessage(messages.AreaLGA), value: 'lga' },
-                {
-                  label: formatMessage(messages.AreaLaboratory),
-                  value: 'lab',
-                },
-              ],
-              placeholder: formatMessage(messages.SelectAreaPlaceholder),
-            },
-            label: formatMessage(messages.SelectAreaTitle),
-          },
-          {
-            id: 'areaItems',
-            controlType: {
-              component: 'select',
-              endpoint: SITE_ALL.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: SITE_ALL.KEY,
-              normalizeLoadedData: (response, formik) => {
-                let options = []
-                const { deviceLevelId } = formik.values
-                if (deviceLevelId && deviceLevelId !== 'national') {
-                  const { ok, data } = response
-                  if (ok === true) {
-                    if (deviceLevelId === 'state') {
-                      const byStateId = reduce(
-                        data,
-                        (acc, item) => {
-                          const { stateId, stateName } = item
-                          const state = { label: stateName, value: stateId }
-                          acc[stateId] = acc[stateId] || state
-                          return acc
-                        },
-                        {}
-                      )
-                      options = sortBy(values(byStateId), ['label'])
-                    } else if (deviceLevelId === 'lga') {
-                      const byStateId = reduce(
-                        data,
-                        (acc, item) => {
-                          const { stateId, stateName, lgaId, lgaName } = item
-                          const state = {
-                            label: stateName,
-                            value: stateId,
-                            lgaById: {},
-                            lgas: [],
-                          }
-                          const lga = { label: lgaName, value: lgaId }
-                          acc[stateId] = acc[stateId] || state
-                          const { lgaById, lgas } = acc[stateId]
-                          if (!lgaById[lgaId]) {
-                            lgaById[lgaId] = lga
-                            lgas.push(lga)
-                          }
-                          return acc
-                        },
-                        {}
-                      )
-                      const states = values(byStateId).map(
-                        ({ label, lgas }) => {
-                          return {
-                            label,
-                            options: sortBy(lgas, ['label']),
-                          }
-                        }
-                      )
-                      options = states
-                    } else if (deviceLevelId === 'lab') {
-                      options = data.map(({ externalId, name }) => ({
-                        label: name,
-                        value: externalId,
-                      }))
-                    }
-                  }
-                }
-                return options
-              },
-              isMulti: true,
-              dependencies: ['deviceLevelId'],
-              placeholder: formik => {
-                const { deviceLevelId } = formik.values
-                return deviceLevelId
-                  ? formatMessage(
-                      messages[`Select${capitalize(deviceLevelId)}Placeholder`]
-                    )
-                  : '-'
-              },
-            },
-            label: formik => {
-              const { deviceLevelId } = formik.values
-              return deviceLevelId
-                ? formatMessage(
-                    messages[`Select${capitalize(deviceLevelId)}Title`]
-                  )
-                : '-'
-            },
-            visibleIf: values => {
-              const { deviceLevelId } = values
-              return deviceLevelId && deviceLevelId !== 'national'
-            },
-          },
-        ],
-      },
-    ],
-  },
-  {
+]
+
+function buildSendSection() {
+  return {
     id: 'send',
     label: 'send',
     labelI18nKey: 'send',
@@ -395,8 +420,8 @@ const getSectionsBase = formatMessage => [
         ],
       },
     ],
-  },
-]
+  }
+}
 
 function buildJobFunctionsRows(jobFunctions) {
   return {
@@ -581,36 +606,8 @@ const getFormConfig = (
   isEdit
 ) => {
   const validationBase = getBaseValidation(formatMessage, messages)
-  const sections = [
-    {
-      id: 'section_notificationType_disable',
-      label: 'Enable',
-      labelI18nKey: 'notificationTypeEnable',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'enabled',
-              controlType: {
-                component: 'checkbox',
-              },
-              classNames: {
-                controlContainer: cssClasses('checkbox-container'),
-                itemContainer: cssClasses('checkbox-item-container'),
-              },
-              // classNames: checkboxClassNames,
-              initialValue: true,
-              label: '',
-            },
-          ],
-        },
-      ],
-    },
-    ...getSectionsBase(formatMessage, validationBase),
-    buildSendToPersons(formatMessage),
-    buildJobFunctionsRows(jobFunctions),
-  ]
+  const sendToPersons = buildSendToPersons(formatMessage)
+  const fromThisDevice = buildFromThisDevice(formatMessage)
 
   return {
     title: isEdit
@@ -628,7 +625,37 @@ const getFormConfig = (
         },
       ],
     },
-    sections,
+    sections: [
+      {
+        id: 'section_notificationType_disable',
+        label: 'Enable',
+        labelI18nKey: 'notificationTypeEnable',
+        rows: [
+          {
+            id: 0,
+            items: [
+              {
+                id: 'enabled',
+                controlType: {
+                  component: 'checkbox',
+                },
+                classNames: {
+                  controlContainer: cssClasses('checkbox-container'),
+                  itemContainer: cssClasses('checkbox-item-container'),
+                },
+                initialValue: true,
+                label: '',
+              },
+            ],
+          },
+        ],
+      },
+      ...getSectionsBase(formatMessage, validationBase),
+      fromThisDevice,
+      buildSendSection(formatMessage),
+      sendToPersons,
+      buildJobFunctionsRows(jobFunctions),
+    ],
   }
 }
 
