@@ -23,9 +23,6 @@ const NotificationDetailModal = ({
   const [notificationData] = useState(recipients)
   const { formatMessage } = useIntl()
 
-  // useEffect(() => {
-  //   setNotificationData(recipients)
-  // }, [recipients])
   const colors = {
     Sent: '#34717c',
     Error: '#db3018',
