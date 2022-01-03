@@ -20,8 +20,6 @@ const PureSelect = props => {
     renderOption: RenderComponent,
   } = inputProps
   const { errors, touched, handleBlur, values, setFieldValue } = form
-  // console.log('here')
-
   return (
     <Autocomplete
       id={`select-${id}`}

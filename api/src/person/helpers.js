@@ -11,6 +11,7 @@ const ok = Joi.boolean()
   )
 // -------------------------------------------------------------------------------
 const contactDetailsPayload = {
+  id: Joi.number().required(),
   name: Joi.string().max(500).required(),
   title: Joi.string().max(255).allow('', null),
   email: Joi.string().max(500).allow('', null),
@@ -21,7 +22,11 @@ const contactDetailsPayload = {
   stateId: Joi.number().integer().positive().allow('', null),
   lgaId: Joi.number().integer().positive().allow('', null),
   zip: Joi.string().max(45).allow('', null),
+  timezone: Joi.string().optional().max(500).allow('', null),
+  culture: Joi.string().optional().max(500).allow('', null),
   notes: Joi.string().optional().max(1200).allow('', null),
+  tags: Joi.string().optional().allow('', null),
+  partnerId: Joi.number().integer().positive().allow('', null),
   lastPartnerId: Joi.number().integer().positive().allow('', null),
   canLogIn: [Joi.boolean(), Joi.number().valid(0, 1)],
 }
