@@ -114,7 +114,12 @@ const AspectNotificationDetail = ({
             id: `${personId}`, // should be string
           })),
           deviceLevelId: filter.deviceLevelId,
-          areaItems: filter.areaItems,
+          areaItems: map(filter?.areaItems, ({ label, value }) => ({
+            label,
+            value: `${value}`, // should be string
+            lgaId: `${value}`, // should be string
+            grouped: true,
+          })),
           result: filter.result,
         }
         if (!isEqual(newValues, values)) {
