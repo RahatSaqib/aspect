@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import List from '@material-ui/core/List'
@@ -8,14 +8,10 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
-import ImageIcon from '@material-ui/icons/Image'
-import WorkIcon from '@material-ui/icons/Work'
-import BeachAccessIcon from '@material-ui/icons/BeachAccess'
-import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import AspectDialog from '../../../../components/shared/AspectDialog'
-import styles from '../NotificationDetail.css'
+import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
 const NotificationDetailModal = ({
   sent,
   withErrors,
@@ -24,14 +20,12 @@ const NotificationDetailModal = ({
   onClose,
   recipients = [],
 }) => {
-  const [notificationData, setNotificationData] = useState([])
+  const [notificationData] = useState(recipients)
   const { formatMessage } = useIntl()
+
   // useEffect(() => {
-  //   setNotificationData({ notificationName })
-  // }, [notificationName])
-  useEffect(() => {
-    setNotificationData(recipients)
-  }, [recipients])
+  //   setNotificationData(recipients)
+  // }, [recipients])
   const colors = {
     Sent: '#34717c',
     Error: '#db3018',
@@ -43,12 +37,11 @@ const NotificationDetailModal = ({
     <AspectDialog
       actions={[
         <Button variant="contained" color="primary" onClick={onClose}>
-          {/* {formatMessage(messages.cancel)} */}
-          cancel
+          {formatMessage(messages.cancel)}
         </Button>,
       ]}
       modal
-      title="Delete confirmation"
+      title={formatMessage(messages.sentDetails)}
       onClose={onCancelConfirmation}
       open={showDialog || false}
     >
@@ -80,7 +73,7 @@ const NotificationDetailModal = ({
               >
                 {sent}
               </Avatar>
-              <span>Successfully sent</span>
+              <span>{formatMessage(messages.sentSuccessfully)}</span>
             </Grid>
             <Grid
               item
@@ -100,7 +93,7 @@ const NotificationDetailModal = ({
               >
                 {withErrors}
               </Avatar>
-              <span>with Errors</span>
+              <span>{formatMessage(messages.sentWithErrors)}</span>
             </Grid>
             <Grid
               item
@@ -120,12 +113,16 @@ const NotificationDetailModal = ({
               >
                 {pending}
               </Avatar>
-              <span>Pending</span>
+              <span>
+                <span>{formatMessage(messages.sentPending)}</span>
+              </span>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} md={6} style={{ margin: 10 }}>
-          <Typography variant="h7">Contacts details</Typography>
+          <Typography variant="h7">
+            {formatMessage(messages.contactDetails)}
+          </Typography>
           <List
             sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
           >
@@ -152,4 +149,20 @@ const NotificationDetailModal = ({
   )
 }
 
+NotificationDetailModal.propTypes = {
+  sent: PropTypes.number,
+  withErrors: PropTypes.number,
+  pending: PropTypes.number,
+  showDialog: PropTypes.bool,
+  onClose: PropTypes.func.isRequired,
+  recipients: PropTypes.arrayOf(PropTypes.string),
+}
+
+NotificationDetailModal.defaultProps = {
+  recipients: [],
+  showDialog: false,
+  sent: 0,
+  withErrors: 0,
+  pending: 0,
+}
 export default NotificationDetailModal
