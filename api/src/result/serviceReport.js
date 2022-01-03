@@ -28,11 +28,7 @@ const columnsDeviceErrorHistoryForAttachment = [
   { header: 'Error Code', key: 'errorCode' },
   { header: 'Error Message', key: 'errorMessage' },
 ]
-
-// ----------------------------------------------------------------------------------------------
-async function exportResults(request, reply) {
-  const { query, auth } = request
-
+async function getAllResultsForExport(auth, query) {
   const user = await getUser(auth.credentials.name)
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   // ---------------
@@ -40,8 +36,7 @@ async function exportResults(request, reply) {
   query.page = 0
   // do not export more than 1.000.000 records
   query.size = 10e6
-  const { data, extraColumns = [] } = await getResultsForExport(query, auth)
-
+  const { data, extraColumns = [] } = await getResultsForExport(auth, query)
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
@@ -74,18 +69,15 @@ async function exportResults(request, reply) {
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
   ]
-
   if (extraColumns.length === 0)
     columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
-  const sheetData = {
-    dataRows: data,
-    dynamicColumns: columns,
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
 
-  return exportData(request, reply, sheetData, 'results', {
-    replacements: getBaseReplacements(),
+  const dataset = {
+    ok: true,
+    total: _.get(data, 'length', 0),
+    length: _.get(data, 'length', 0),
+    data,
+    dynamicColumns: columns,
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
     ) =>
@@ -95,6 +87,29 @@ async function exportResults(request, reply) {
         resultData: JSON.parse(dataRow.resultData),
         formData: JSON.parse(dataRow.formData),
       }),
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+  return dataset
+}
+
+// ----------------------------------------------------------------------------------------------
+async function exportResults(request, reply) {
+  const { query, auth } = request
+  const { data, dynamicColumns, dataSelector } = await getAllResultsForExport(
+    auth,
+    query
+  )
+  const sheetData = {
+    dataRows: data,
+    dynamicColumns,
+    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
+    defaultNoDataMessage: 'No data',
+  }
+
+  return exportData(request, reply, sheetData, 'results', {
+    replacements: getBaseReplacements(),
+    dataSelector,
   })
 }
 
@@ -301,5 +316,6 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
 module.exports = {
   exportResults,
   getDeviceErrorHistoryForAttachment,
+  getAllResultsForExport,
   columnsDeviceErrorHistoryForAttachment,
 }

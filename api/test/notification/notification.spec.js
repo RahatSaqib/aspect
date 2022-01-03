@@ -725,6 +725,86 @@ describe('Notification routes', () => {
       sendSms: true,
       sendWeb: false,
       result: baseFilterCondition.result,
+      enabled: true,
     })
+  })
+})
+
+describe('Notification - View Logs', () => {
+  const now = new Date()
+  let resultId
+  let emailMessageId
+  let notificationTypeId
+  let notificationId
+  const partnerId = 1
+  beforeEach(async () => {
+    const messageType = await knex('MessageType').select().first()
+    const { id: messageStatusId } = await knex('MessageStatus')
+      .where('externalId', 'Sent')
+      .first()
+    ;[{ id: resultId }] = [await knex('Result').where({ partnerId }).first()]
+    const { id: emailTemplateId } = await knex('EmailTemplate').first()
+
+    /**
+     * insert testing data
+     */
+    ;[emailMessageId] = await knex('EmailMessage').insert({
+      emailTemplateId,
+      messageStatusId,
+      createdOn: now,
+      updatedOn: now,
+    })
+    ;[notificationTypeId] = await knex('NotificationType').insert({
+      partnerId,
+      name: 'A notification',
+      createdOn: now,
+      updatedOn: now,
+      notificationTypeCategoryId: await notificationTypeCategoryToId(
+        'resultBased'
+      ),
+      messageTypeId: messageType.id,
+    })
+    ;[notificationId] = await knex('Notification').insert({
+      notificationTypeId,
+      resultId,
+      emailMessageId,
+      createdOn: now,
+    })
+  })
+
+  afterEach(async () => {
+    /**
+     * delete testing data
+     */
+    await knex('Notification').where('id', notificationId).del()
+    await knex('NotificationType').where('id', notificationTypeId).del()
+    await knex('EmailMessage').where('id', emailMessageId).del()
+  })
+
+  it('GET - notification logs', async () => {
+    const path = `/api/notification/history/${notificationTypeId}`
+    const res = await server
+      .get(path)
+      .set('Authorization', `Bearer ${shared.token}`)
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+    assert.property(res.body, 'data')
+    assert.property(res.body, 'ok')
+    assert.equal(res.body.ok, true)
+
+    const { data } = res.body
+    assert.typeOf(data, 'array')
+    assert.equal(data.length, 1)
+
+    const [item] = data
+    assert.property(item, 'date')
+    assert.property(item, 'issueId')
+    assert.property(item, 'resultId')
+    assert.property(item, 'emailSent')
+    assert.property(item, 'smsSent')
+    assert.property(item, 'webhookSent')
+    assert.equal(item.emailSent, 1)
+    assert.equal(item.smsSent, 0)
+    assert.equal(item.webhookSent, 0)
   })
 })

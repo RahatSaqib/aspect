@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
+  resultCategory1: {
+    id: 'legends.Unknown.resultCategory1',
+    defaultMessage: 'Category 1',
+  },
+  resultCategory2: {
+    id: 'legends.Unknown.resultCategory2',
+    defaultMessage: 'Category 2',
+  },
   ResultCategoryDetected: {
     id: 'legends.Unknown.ResultCategoryDetected',
     defaultMessage: 'Detected',

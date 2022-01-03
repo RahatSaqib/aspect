@@ -71,7 +71,7 @@ const SelectField = ({
   useEffect(() => {
     const newValue = getSelectedValue(value, children, multiple)
     setSelectedValue(newValue)
-  }, [value]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [children, multiple, value])
 
   return (
     <TextField

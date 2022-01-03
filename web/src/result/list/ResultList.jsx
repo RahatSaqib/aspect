@@ -16,6 +16,7 @@ import { useQuery } from 'react-query'
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
+import { gotoWithReturnUrl } from '../../shared/utils/browser'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -108,10 +109,6 @@ const AddNewButton = requirePermissions({
   permissions: ['result:edit'],
 })(AspectButton)
 
-const onAddNewButtonClick = (navigate, location) => () => {
-  gotoResultDetails(navigate, location, 'add')
-}
-
 const onRowClick =
   (navigate, location) =>
   ({
@@ -123,13 +120,8 @@ const onRowClick =
   }
 
 const gotoResultDetails = (navigate, location, resultId) => {
-  const searchParams = new URLSearchParams(location.search)
-
-  const q = new URLSearchParams({
-    returnUrl: `${location.pathname}?${searchParams.toString()}`,
-  })
-
-  navigate(`/browse/result/${resultId || 'add'}?${q.toString()}`)
+  const url = `/browse/result/${resultId || 'add'}`
+  gotoWithReturnUrl(url, navigate, location)
 }
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -274,17 +266,7 @@ export const ResultListWithProps = ({
       intl={intl}
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
-    >
-      <AddNewButton
-        type="button"
-        color="primary"
-        variant="contained"
-        browseButton
-        onClick={onAddNewButtonClick(navigate, location)}
-      >
-        {intl.formatMessage(messages.newResult)}
-      </AddNewButton>
-    </BrowseFilters>
+    />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
 

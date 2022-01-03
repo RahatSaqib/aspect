@@ -1,11 +1,20 @@
 import React from 'react'
-import { array, bool, func, number, oneOfType, string } from 'prop-types'
+import {
+  array,
+  bool,
+  func,
+  object,
+  oneOfType,
+  number,
+  string,
+} from 'prop-types'
+import Button from '@material-ui/core/Button'
 
 /**
  * Component to render a cell
  */
 
-const Cell = ({ render, format: FormatComp, value, translate }) => {
+const CellValue = ({ format: FormatComp, render, translate, value }) => {
   return FormatComp ? (
     <FormatComp value={value} />
   ) : (
@@ -15,10 +24,22 @@ const Cell = ({ render, format: FormatComp, value, translate }) => {
   )
 }
 
+const Cell = ({ onClick, ...restProps }) => {
+  return onClick ? (
+    <Button onClick={onClick}>
+      <CellValue {...restProps} />
+    </Button>
+  ) : (
+    <CellValue {...restProps} />
+  )
+}
+
 Cell.defaultProps = {
   format: false,
   value: '',
   translate: false,
+  onClick: null,
+  column: null,
 }
 
 Cell.propTypes = {
@@ -38,6 +59,14 @@ Cell.propTypes = {
     Translate function
   */
   translate: oneOfType([bool, func]),
+  /**
+    Handler for clickable cell
+   */
+  onClick: func,
+  /**
+    Definitions of cell column
+   */
+  column: oneOfType([object, func]),
 }
 
 export default Cell

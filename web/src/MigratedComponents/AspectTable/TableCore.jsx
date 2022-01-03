@@ -36,6 +36,7 @@ const AspectTableCore = ({
   setters,
   manualPagination = true,
   pageCount: controlledPageCount,
+  onClickRow,
 }) => {
   const { handleClearParams, setSize, setSortCol, setSortDir, setPage } =
     setters
@@ -193,6 +194,7 @@ const AspectTableCore = ({
                   getToggleRowExpandedProps={getToggleRowExpandedProps}
                   isExpanded={isExpanded}
                   subRows={subRows}
+                  onClick={onClickRow}
                 />
                 {ContextualMenu ? (
                   <TableCell>

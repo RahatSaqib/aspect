@@ -6,6 +6,7 @@ const {
   getNotifications,
   getNotification,
   saveNotification,
+  deleteNotification,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
@@ -23,6 +24,7 @@ const routes = [
     config: {
       description: 'Notification List',
       notes: 'Pageable and sortable list of notifications',
+      auth: { scope: ['notification'] },
       ...listNotificationsBaseConfig(),
       response: {
         options: {
@@ -66,6 +68,7 @@ const routes = [
     handler: exportNotifications,
     config: {
       description: 'Export Notifications List into Excel or CSV',
+      auth: { scope: ['notification'] },
       notes: 'Filtered and sorted list of Notifications',
       ...listNotificationsBaseConfig(),
     },
@@ -77,6 +80,7 @@ const routes = [
     config: {
       description: 'Get all notification history',
       notes: 'Filtered and sorted list of Notifications',
+      auth: { scope: ['notification'] },
       validate: {
         params: {
           notificationTypeId: Joi.number().integer().positive().required(),
@@ -111,6 +115,31 @@ const routes = [
                 date: Joi.date().description(
                   'The date notification was sent or received'
                 ),
+                issueId: Joi.number()
+                  .allow(null)
+                  .description(`Notification's issueId`),
+                resultId: Joi.number()
+                  .allow(null)
+                  .description(`Notification's resultId`),
+
+                sampleId: Joi.alternatives()
+                  .allow(null, '')
+                  .try(Joi.number(), Joi.string())
+                  .description('Sample id'),
+                patientId: Joi.string()
+                  .allow(null, '')
+                  .description('The patient Id'),
+
+                emailRecipients: Joi.array()
+                  .allow(null)
+                  .description(
+                    'Comma-separated person names who get notification email'
+                  ),
+                smsRecipients: Joi.array()
+                  .allow(null)
+                  .description(
+                    'Comma-separated person names who get notification sms'
+                  ),
               })
             ),
         }),
@@ -124,10 +153,47 @@ const routes = [
     config: {
       description: 'Get Notification',
       notes: 'Details of a Notification',
+      auth: { scope: ['notification'] },
       validate: {
         params: {
           id: Joi.number().integer().positive().required(),
         },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          data: Joi.object()
+            .allow(null)
+            .keys({
+              notificationTypeName: Joi.string()
+                .required()
+                .description('Notification Type Category name'),
+              notificationType: Joi.string()
+                .required()
+                .description('Notification Type external Id'),
+              name: Joi.string()
+                .required()
+                .description('Name of the notification'),
+              filterCondition: Joi.string()
+                .allow(null)
+                .description('The condition Filters'),
+              emailSubject: Joi.string()
+                .allow(null)
+                .description('email subject'),
+              emailBody: Joi.string().allow(null).description('email body'),
+              smsBody: Joi.string().allow(null).description('sms body'),
+              webUrl: Joi.string().allow(null).description('Web url'),
+              webBody: Joi.string().allow(null).description('Web body'),
+              enabled: Joi.number()
+                .min(0)
+                .max(1)
+                .required()
+                .description('is the notification enable'),
+            }),
+        }),
       },
     },
   },
@@ -162,6 +228,21 @@ const routes = [
         },
       },
       response: saveNotificationResponse,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/notification/{notificationId}',
+    handler: asyncHandler(deleteNotification),
+    config: {
+      description: "Deletes a notification type, only if it wasn't triggered",
+      notes: 'Returns ok: true when successfully deleted',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        params: {
+          notificationId: Joi.number().integer().positive().required(),
+        },
+      },
     },
   },
 ]

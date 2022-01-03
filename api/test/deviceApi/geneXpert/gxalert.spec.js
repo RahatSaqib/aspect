@@ -246,10 +246,7 @@ describe('Device API routes for GxAlert Device', () => {
         resultData: _.assign({}, basicResultPayload.result.data, {
           geneXpertTestId: basicResultPayload.result.id,
         }),
-        startedOn: getLocalDateTimeStringInUtc(
-          testStartedOn.toISOString().replace('Z', ''),
-          'America/New_York'
-        ),
+        startedOn: testStartedOn,
         endedOn: null,
         consumableSerial: null,
         consumableExpirationDate: null,
@@ -951,64 +948,6 @@ describe('Device API routes for GxAlert Device', () => {
       )
     })
 
-    it('should convert the result start/end date into UTC and store created/updated on in UTC', async () => {
-      const beforeResultDetails = await getLastResult()
-
-      assert.isUndefined(beforeResultDetails)
-
-      const timezone = 'South Africa Standard Time'
-      const testStartedOn = '2020-08-10T14:00:00Z'
-      const testEndedOn = '2020-08-10T15:30:00Z'
-
-      const response = await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload: _.merge(
-          {},
-          basicDevicePayload,
-          {
-            configuration: { data: { timezone } },
-          },
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              sample: { id: 'new sample' },
-              instrument: { serial: 'new instrument' },
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-            },
-          }
-        ),
-        expectedStatusCode: 200,
-      })
-      assert.typeOf(response.body, 'Object')
-
-      const afterResultDetails = await getLastResult()
-      expect(afterResultDetails.startedOn.getTime()).to.equal(
-        getLocalDateTimeStringInUtc(
-          testStartedOn.replace('Z', ''),
-          'Africa/Johannesburg'
-        ).getTime()
-      )
-
-      expect(afterResultDetails.endedOn.getTime()).to.equal(
-        getLocalDateTimeStringInUtc(
-          testEndedOn.replace('Z', ''),
-          'Africa/Johannesburg'
-        ).getTime()
-      )
-
-      expect(afterResultDetails.createdOn.getTime()).to.be.closeTo(
-        Date.now(),
-        2000
-      )
-
-      expect(afterResultDetails.updatedOn.getTime()).to.be.closeTo(
-        Date.now(),
-        2000
-      )
-    })
-
     it('should get the module name from a previous result on the same module serial if it is not included in the payload', async () => {
       const now = new Date()
       const testStartedOn = setMilliseconds(
@@ -1247,8 +1186,8 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(devicesResponse.body.data.length, 1)
         devicesResponse.body.data[0].days.forEach(day => {
           if (
-            new Date(day.date) < startOfDayUtc(addDays(endedOnDateInUtc, 1)) &&
-            new Date(day.date) >= startOfDayUtc(endedOnDateInUtc)
+            new Date(day.date) < startOfDayUtc(addDays(endedOnDate, 1)) &&
+            new Date(day.date) >= startOfDayUtc(endedOnDate)
           ) {
             assert.equal(day.externalId, 'active')
           } else {
@@ -1671,6 +1610,42 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
+    describe('when the result text contains "ERROR"', () => {
+      it('should set the workflow status of the result to error', async () => {
+        const now = new Date()
+        const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
+
+        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: errorTestResultId,
+                startedOn: testStartedOn,
+                endedOn: testEndedOn,
+                data: { resultText: 'ERROR' },
+              },
+            }
+          ),
+        })
+
+        const lastResult = await getLastResult()
+        expect(lastResult).to.containSubset({
+          resultCategory1: 'Error',
+          resultWorkflowStatus: 'Error',
+          resultData: {
+            geneXpertTestId: errorTestResultId,
+          },
+        })
+      })
+    })
+
     describe('when no workflow status has been specified in the result payload', () => {
       it('should default the workflow status to "Deliverable"', async () => {
         const now = new Date()
@@ -1874,10 +1849,6 @@ describe('Device API routes for GxAlert Device', () => {
               startedOnDate,
               "yyyy-MM-dd'T'HH:mm:ss'Z'"
             )
-            const startedOnDateInUtc = getLocalDateTimeStringInUtc(
-              startedOn.replace('Z', ''),
-              'America/New_York'
-            )
 
             const incompleteResultPayload = _.merge(
               {},
@@ -1919,7 +1890,7 @@ describe('Device API routes for GxAlert Device', () => {
               externalId: incompleteResultExternalId,
               resultCategory1: 'NoResult',
               resultCategory2: null,
-              startedOn: startedOnDateInUtc,
+              startedOn: startedOnDate,
               endedOn: null,
               resultData: {
                 resultText: 'NO RESULT',
@@ -1928,10 +1899,6 @@ describe('Device API routes for GxAlert Device', () => {
 
             const endedOnDate = addMinutes(startedOnDate, 103)
             const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
-            const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-              endedOn.replace('Z', ''),
-              'America/New_York'
-            )
 
             const completeResultPayload = _.merge({}, incompleteResultPayload, {
               result: {
@@ -1959,8 +1926,8 @@ describe('Device API routes for GxAlert Device', () => {
               externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'Indeterminate',
-              startedOn: startedOnDateInUtc,
-              endedOn: endedOnDateInUtc,
+              startedOn: startedOnDate,
+              endedOn: endedOnDate,
               resultData: {
                 resultText: 'DETECTED MEDIUM|INDETERMINATE|',
               },
@@ -2050,17 +2017,9 @@ describe('Device API routes for GxAlert Device', () => {
               startedOnDate,
               "yyyy-MM-dd'T'HH:mm:ss'Z'"
             )
-            const startedOnDateInUtc = getLocalDateTimeStringInUtc(
-              startedOn.replace('Z', ''),
-              'America/New_York'
-            )
 
             const endedOnDate = addMinutes(startedOnDate, 103)
             const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
-            const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-              endedOn.replace('Z', ''),
-              'America/New_York'
-            )
 
             const completeResultPayload = _.merge(
               {},
@@ -2104,8 +2063,8 @@ describe('Device API routes for GxAlert Device', () => {
               externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
-              startedOn: startedOnDateInUtc,
-              endedOn: endedOnDateInUtc,
+              startedOn: startedOnDate,
+              endedOn: endedOnDate,
               resultData: {
                 resultText: 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
               },
@@ -2126,8 +2085,8 @@ describe('Device API routes for GxAlert Device', () => {
               externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
-              startedOn: startedOnDateInUtc,
-              endedOn: endedOnDateInUtc,
+              startedOn: startedOnDate,
+              endedOn: endedOnDate,
               resultData: {
                 resultText: 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
               },
@@ -2147,8 +2106,8 @@ describe('Device API routes for GxAlert Device', () => {
               externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
-              startedOn: startedOnDateInUtc,
-              endedOn: endedOnDateInUtc,
+              startedOn: startedOnDate,
+              endedOn: endedOnDate,
               resultData: {
                 resultText: 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
               },
@@ -2168,8 +2127,8 @@ describe('Device API routes for GxAlert Device', () => {
               externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NoResult',
-              startedOn: startedOnDateInUtc,
-              endedOn: endedOnDateInUtc,
+              startedOn: startedOnDate,
+              endedOn: endedOnDate,
               resultData: {
                 resultText: 'MTB DETECTED MEDIUM|NO RESULT',
               },
@@ -2215,8 +2174,6 @@ describe('Device API routes for GxAlert Device', () => {
       const afterResultDetails = await getLastResult()
       const currentGeneXpertDevice = await getCurrentGeneXpertDevice()
 
-      // this device is located in the America/New_York time zone, so we have to
-      // convert testStartedOn to UTC in order to compare it to the value in the database
       expect(afterResultDetails).to.containSubset({
         deviceId: currentGeneXpertDevice.id,
         siteId: currentGeneXpertDevice.siteId,
@@ -2235,10 +2192,7 @@ describe('Device API routes for GxAlert Device', () => {
         resultData: _.assign({}, basicResultPayload.result.data, {
           geneXpertTestId: basicResultPayload.result.id,
         }),
-        startedOn: getLocalDateTimeStringInUtc(
-          testStartedOn.toISOString().replace('Z', ''),
-          'America/New_York'
-        ),
+        startedOn: testStartedOn,
         endedOn: null,
         consumableSerial: null,
         consumableExpirationDate: null,

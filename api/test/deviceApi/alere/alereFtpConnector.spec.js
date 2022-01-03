@@ -510,43 +510,6 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         assert.deepEqual(deviceIdsInDeviceLogsForResult, [context.device.id])
       }))
 
-    it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
-      runTest(async () => {
-        const { deviceAuth, basicDevicePayload } = context
-        const testStartedOn = '2020-08-10T14:00:00'
-
-        const resultPayloadWithNewStartDate = _.merge({}, basicResultPayload, {
-          startedOn: testStartedOn,
-        })
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            result: resultPayloadWithNewStartDate,
-          }),
-        })
-
-        const afterResultDetails = await getLastResult()
-
-        // this device is located in the America/New_York time zone, so we have to
-        // convert testStartedOn to UTC in order to compare it to the value in the database
-        expect(afterResultDetails.startedOn.getTime()).to.equal(
-          getLocalDateTimeStringInUtc(
-            testStartedOn,
-            'America/New_York'
-          ).getTime()
-        )
-
-        expect(afterResultDetails.createdOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
-
-        expect(afterResultDetails.updatedOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
-      }))
-
     describe('when the assay in the result payload is unknown to Aspect', () => {
       it('should reject the data', () =>
         runTest(async () => {

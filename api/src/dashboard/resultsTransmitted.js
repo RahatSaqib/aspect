@@ -193,9 +193,9 @@ async function getResultQuery(
           WHEN
             r.resultCategory1 IN (${positiveResultCategories})
             AND (
-              em.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+              em.createdOn < DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
               OR
-              sm.createdOn BETWEEN r.endedOn AND DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+              sm.createdOn < DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
             )
           THEN r.id
           ELSE null
