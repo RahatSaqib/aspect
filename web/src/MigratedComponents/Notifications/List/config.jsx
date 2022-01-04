@@ -230,7 +230,8 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       disableGroupBy: true,
       width: 5,
       format: ({ value }) => {
-        if (value) return formatMessage(messages.yes)
+        if (value === true || value === 'true')
+          return formatMessage(messages.yes)
         return formatMessage(messages.no)
       },
     },
