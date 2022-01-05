@@ -2411,9 +2411,7 @@ async function clinicalIndicatorAggregations(request) {
     groupBy,
     query
   )
-  console.log(resultQuery.toString())
   const data = await processGroupedQuery(resultQuery, groupBy)
-  console.log(data)
   return { data }
 }
 

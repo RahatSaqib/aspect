@@ -175,7 +175,10 @@ async function upsertTruenatDeviceTypeAndAssays(
       const existingResultCategoryAssayTruenatUnknown = await knex(
         'ResultCategoryAssay'
       )
-        .where(resultCategoryAssayTruenatUnknown)
+        .where({
+          assayId: assayIds.assayTruenatUnknown,
+          resultCategoryId,
+        })
         .first()
       if (!existingResultCategoryAssayTruenatUnknown) {
         await knex('ResultCategoryAssay').insert(
