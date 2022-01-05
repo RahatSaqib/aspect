@@ -24,7 +24,7 @@ const routes = [
             username: Joi.string().max(255).required(),
             name: Joi.string().max(500).allow('', null),
             title: Joi.string().max(255).allow('', null),
-            email: Joi.string().max(500).required(),
+            email: Joi.string().max(500).allow('', null),
             email2: Joi.string().max(500).allow('', null),
             phone: Joi.string().max(45).allow('', null),
             cell: Joi.string().max(45).allow('', null),
