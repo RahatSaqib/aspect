@@ -170,7 +170,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           .first('id')
         await knex('DeviceApiKey')
           .where('id', deviceApiKeyId)
-          .update({ ttl: subSeconds(new Date(), 1) })
+          .update({ expiresOn: subSeconds(new Date(), 1) })
       })
 
       it('should return a 401 response', async () => {
