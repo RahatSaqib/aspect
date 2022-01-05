@@ -258,7 +258,7 @@ async function renderExcelTemplate({
       }
 
       // remove pattern row and insert rows from patternRowNumber
-      worksheet.spliceRows(patternRowNumber, 1, ...rows)
+      worksheet.spliceRows(patternRowNumber, 1, ..._.take(rows, 50000))
 
       if (extension === 'csv') {
         // get all header values from last item of array allHeaderRows
