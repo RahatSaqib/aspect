@@ -33,10 +33,13 @@ async function getAllResultsForExport(auth, query) {
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // do not export more than 1.000.000 records
-  query.size = 10e6
-  const { data, extraColumns = [] } = await getResultsForExport(auth, query)
+  query.page = query.page || 0
+  // For performance issues we are going to limit this report to max 50k results.
+  const {
+    data,
+    extraColumns = [],
+    total,
+  } = await getResultsForExport(auth, query)
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
@@ -74,7 +77,7 @@ async function getAllResultsForExport(auth, query) {
 
   const dataset = {
     ok: true,
-    total: _.get(data, 'length', 0),
+    total,
     length: _.get(data, 'length', 0),
     data,
     dynamicColumns: columns,
@@ -96,19 +99,42 @@ async function getAllResultsForExport(auth, query) {
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
   const { query, auth } = request
-  const { data, dynamicColumns, dataSelector } = await getAllResultsForExport(
-    auth,
-    query
-  )
+  const { data, dynamicColumns, dataSelector, total } =
+    await getAllResultsForExport(auth, query)
   const sheetData = {
     dataRows: data,
     dynamicColumns,
+    total,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
 
   return exportData(request, reply, sheetData, 'results', {
-    replacements: getBaseReplacements(),
+    replacements: [
+      ...getBaseReplacements(),
+      {
+        placeholder: '<PerformanceTotalRecordLimit>',
+        value: ({ dataRows: { length = 0 }, total = 0 }) => {
+          return total - length
+        },
+        condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
+          length === total,
+        action: (cell, worksheet) => {
+          if (cell) {
+            cell.value = ''
+            cell.style = null
+            worksheet.unMergeCells(cell.address)
+            worksheet.getRow(cell.row).height = 15.5 // Excel default height
+          }
+        },
+      },
+      {
+        placeholder: '<PerformanceQueryLimit>',
+        value: ({ dataRows: { length = 0 } }) => {
+          return length
+        },
+      },
+    ],
     dataSelector,
   })
 }

@@ -1,7 +1,6 @@
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { knex } = require('../db')
-
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
 const {
@@ -51,12 +50,13 @@ async function getSheetData(request, sheet) {
   const {
     ok,
     data,
+    total,
     errorMessage,
     dynamicColumns = {},
     dataSelector = null,
   } = result
   if (ok) {
-    return { data, dynamicColumns, dataSelector }
+    return { data, total, dynamicColumns, dataSelector }
   }
 
   return Boom.preconditionFailed(
@@ -126,6 +126,7 @@ async function getAllSheetsData(request, sheets) {
     const {
       data: dataRows,
       dynamicColumns,
+      total = null,
       dataSelector = null,
     } = await getSheetData(request, sheet)
     if (Boom.isBoom(dataRows)) {
@@ -137,6 +138,7 @@ async function getAllSheetsData(request, sheets) {
       dataRows,
       dynamicColumns,
       dataSelector,
+      total,
       // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
     }
@@ -180,6 +182,28 @@ async function createReport(request, reply) {
         placeholder: '<Lgas>',
         value: await getLgaNamesString(query),
       },
+      {
+        placeholder: '<PerformanceTotalRecordLimit>',
+        value: ({ dataRows: { length = 0 }, total = 0 }) => {
+          return total - length
+        },
+        condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
+          length === total,
+        action: (cell, worksheet) => {
+          if (cell) {
+            cell.value = ''
+            cell.style = null
+            worksheet.unMergeCells(cell.address)
+            worksheet.getRow(cell.row).height = 15.5 // Excel default height
+          }
+        },
+      },
+      {
+        placeholder: '<PerformanceQueryLimit>',
+        value: ({ dataRows: { length = 0 } }) => {
+          return length
+        },
+      },
     ],
   })
 
@@ -200,7 +224,29 @@ async function exportReports(request, reply) {
     defaultNoDataMessage: 'No data',
   }
   return exportData(request, reply, sheetData, 'reports', {
-    replacements: getBaseReplacements(),
+    replacements: [
+      ...getBaseReplacements(),
+      {
+        placeholder: '<PerformanceTotalRecordLimit>',
+        value: ({ dataRows: { length = 0 }, total = 0 }) => {
+          return total - length
+        },
+        condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
+          length === total,
+        action: (cell, worksheet) => {
+          if (cell) {
+            cell.value = ''
+            cell.style = null
+            worksheet.unMergeCells(cell.address)
+            worksheet.getRow(cell.row).height = 15.5 // Excel default height
+          }
+        },
+      },
+      {
+        placeholder: '<PerformanceQueryLimit>',
+        value: ({ dataRows: { length = 0 } }) => length,
+      },
+    ],
   })
 }
 module.exports = {
