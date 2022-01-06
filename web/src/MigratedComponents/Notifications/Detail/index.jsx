@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
 import reduce from 'lodash/reduce'
+import map from 'lodash/map'
 import isNumber from 'lodash/isNumber'
 import unset from 'lodash/unset'
 import { useMutation, useQuery } from 'react-query'
@@ -82,6 +83,7 @@ const AspectNotificationDetails = () => {
       true
     )
     const values = sanitizeFormValues(formik.values, { formConfig })
+    const { deviceLevelId } = formik.values
     values.notificationType = formik.values.notificationType
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
@@ -102,19 +104,6 @@ const AspectNotificationDetails = () => {
       },
       []
     )
-    // sanitise areaItems for post endpoint
-    const sanitisedLgas = reduce(
-      formik.values.areaItems,
-      (acc, curr) => {
-        ;(acc || ((acc = []) && curr?.length)).push({
-          label: curr?.label,
-          value: curr?.value,
-        })
-        return acc
-      },
-      []
-    )
-    // save only checked Job Functions
     values.jobFunctions = values.jobFunctions.filter(
       ({ checked, jobFunctionId }) =>
         checked && jobFunctionId !== specificPersonId
@@ -122,14 +111,30 @@ const AspectNotificationDetails = () => {
     if (sanitisedPersons?.length) {
       values.persons = sanitisedPersons
     }
-    if (sanitisedLgas?.length) {
-      values.areaItems = sanitisedLgas
-    }
     if (!values?.jobFunctions?.length) {
       unset(values, 'jobFunctions')
     }
     if (!values?.persons?.length) {
       unset(values, 'persons')
+    }
+    /**
+     * fun little excercise to sanitise three different
+     * areaItem fields (state|lga|lab) into a single DB field :)
+     */
+    if (deviceLevelId === 'state') {
+      values.areaItems = values.areaItemsState
+      delete values.areaItemsState
+    }
+    if (deviceLevelId === 'lga') {
+      values.areaItems = map(values.areaItemsLGA, ({ label, value }) => ({
+        label,
+        value,
+      }))
+      delete values.areaItemsLGA
+    }
+    if (deviceLevelId === 'lab') {
+      values.areaItems = values.areaItemsLab
+      delete values.areaItemsLab
     }
     submitNotification({ values, id })
   }
