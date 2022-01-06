@@ -3234,7 +3234,7 @@
     "pages.NotificationDetail.notificationTitle": "Notification Title",
     "pages.NotificationDetail.assayPlaceholder": "Select Assay ...",
     "pages.NotificationDetail.resultPlaceholder": "Select Result Category ...",
-    "pages.NotificationDetail.SelectAreaTitle": "Device Health",
+    "pages.NotificationDetail.SelectAreaTitle": "Device Area Level",
     "pages.NotificationDetail.SelectAreaPlaceholder": "Choose Device Level ...",
     "pages.NotificationDetail.Area.National": "National",
     "pages.NotificationDetail.Area.Laboratory": "Laboratory",
