@@ -27,6 +27,101 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
+function stateSelectOptions(data) {
+  const stateOptions = reduce(
+    data,
+    (acc, curr) => {
+      const { stateId, stateName } = curr
+      const state = { label: stateName, value: stateId }
+      acc[stateId] = acc[stateId] || state
+      return acc
+    },
+    {}
+  )
+  return sortBy(values(stateOptions), ['label'])
+}
+
+function lgaSelectOptions(data) {
+  const ByLGAId = reduce(
+    data,
+    (acc, item) => {
+      const { stateId, stateName, lgaId, lgaName } = item
+      const state = {
+        label: stateName,
+        value: stateId,
+        lgaById: {},
+        lgas: [],
+      }
+      const lga = {
+        label: lgaName,
+        value: lgaId,
+        grouped: true,
+      }
+      acc[stateId] = acc[stateId] || state
+      const { lgaById, lgas } = acc[stateId]
+      if (!lgaById[lgaId]) {
+        lgaById[lgaId] = lga
+        lgas.push(lga)
+      }
+      return acc
+    },
+    {}
+  )
+  const lgas = values(ByLGAId).map(({ label, lgas }) => {
+    return {
+      label,
+      options: sortBy(lgas, ['label']),
+    }
+  })
+  return lgas
+}
+
+function labSelectOptions(data) {
+  return data.map(({ externalId, name }) => ({
+    label: name,
+    value: externalId,
+  }))
+}
+
+function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
+  return {
+    controlType: {
+      component: 'select',
+      endpoint: SITE_ALL.ENDPOINT,
+      hideIfNoOptions: false,
+      queryKey: SITE_ALL.KEY,
+      normalizeLoadedData: response => {
+        let options = []
+        const { ok, data } = response
+        if (ok === true) {
+          options = optionsBuilder(data)
+        }
+        return options
+      },
+      isMulti: true,
+      dependencies: ['deviceLevelId'],
+      placeholder: formik => {
+        const { deviceLevelId } = formik.values
+        return deviceLevelId
+          ? formatMessage(
+              messages[`Select${capitalize(deviceLevelId)}Placeholder`]
+            )
+          : '-'
+      },
+    },
+    label: formik => {
+      const { deviceLevelId } = formik.values
+      return deviceLevelId
+        ? formatMessage(messages[`Select${capitalize(deviceLevelId)}Title`])
+        : '-'
+    },
+    visibleIf: values => {
+      const { deviceLevelId } = values
+      return deviceLevelId && deviceLevelId === key
+    },
+  }
+}
+
 function buildFromThisDevice(formatMessage) {
   return {
     id: 'fromThisDevice',
@@ -61,110 +156,20 @@ function buildFromThisDevice(formatMessage) {
             label: formatMessage(messages.SelectAreaTitle),
           },
           {
-            id: 'areaItems',
-            controlType: {
-              component: 'select',
-              endpoint: SITE_ALL.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: SITE_ALL.KEY,
-              normalizeLoadedData: (response, formik) => {
-                let options = []
-                const { deviceLevelId, areaItems } = formik.values
-                if (deviceLevelId && deviceLevelId !== 'national') {
-                  const { ok, data } = response
-                  if (ok === true) {
-                    if (deviceLevelId === 'state') {
-                      const byStateId = reduce(
-                        data,
-                        (acc, item) => {
-                          const { stateId, stateName } = item
-                          const state = { label: stateName, value: stateId }
-                          acc[stateId] = acc[stateId] || state
-                          return acc
-                        },
-                        {}
-                      )
-                      options = sortBy(values(byStateId), ['label'])
-                    } else if (deviceLevelId === 'lga') {
-                      const selected = intersectionBy(data, areaItems, 'lgaId')
-                      if (selected?.length) {
-                        const initialValues = []
-                        map(selected, ({ lgaName, lgaId }) =>
-                          initialValues.push({
-                            label: lgaName,
-                            value: lgaId,
-                            grouped: true,
-                          })
-                        )
-                        values.areaItems = initialValues
-                      }
-                      const byStateId = reduce(
-                        data,
-                        (acc, item) => {
-                          const { stateId, stateName, lgaId, lgaName } = item
-                          const state = {
-                            label: stateName,
-                            value: stateId,
-                            lgaById: {},
-                            lgas: [],
-                          }
-                          const lga = {
-                            label: lgaName,
-                            value: lgaId,
-                            grouped: true,
-                          }
-                          acc[stateId] = acc[stateId] || state
-                          const { lgaById, lgas } = acc[stateId]
-                          if (!lgaById[lgaId]) {
-                            lgaById[lgaId] = lga
-                            lgas.push(lga)
-                          }
-                          return acc
-                        },
-                        {}
-                      )
-                      const states = values(byStateId).map(
-                        ({ label, lgas }) => {
-                          return {
-                            label,
-                            options: sortBy(lgas, ['label']),
-                          }
-                        }
-                      )
-                      options = states
-                    } else if (deviceLevelId === 'lab') {
-                      options = data.map(({ externalId, name }) => ({
-                        label: name,
-                        value: externalId,
-                      }))
-                    }
-                  }
-                }
-                return options
-              },
-              isMulti: true,
-              dependencies: ['deviceLevelId'],
-              placeholder: formik => {
-                const { deviceLevelId } = formik.values
-                return deviceLevelId
-                  ? formatMessage(
-                      messages[`Select${capitalize(deviceLevelId)}Placeholder`]
-                    )
-                  : '-'
-              },
-            },
-            label: formik => {
-              const { deviceLevelId } = formik.values
-              return deviceLevelId
-                ? formatMessage(
-                    messages[`Select${capitalize(deviceLevelId)}Title`]
-                  )
-                : '-'
-            },
-            visibleIf: values => {
-              const { deviceLevelId } = values
-              return deviceLevelId && deviceLevelId !== 'national'
-            },
+            id: 'areaItemsState',
+            ...sharedAreaItemsConfig(
+              formatMessage,
+              stateSelectOptions,
+              'state'
+            ),
+          },
+          {
+            id: 'areaItemsLGA',
+            ...sharedAreaItemsConfig(formatMessage, lgaSelectOptions, 'lga'),
+          },
+          {
+            id: 'areaItemsLab',
+            ...sharedAreaItemsConfig(formatMessage, labSelectOptions, 'lab'),
           },
         ],
       },
@@ -606,8 +611,8 @@ const getFormConfig = (
   isEdit
 ) => {
   const validationBase = getBaseValidation(formatMessage, messages)
-  const sendToPersons = buildSendToPersons(formatMessage)
   const fromThisDevice = buildFromThisDevice(formatMessage)
+  const sendToPersons = buildSendToPersons(formatMessage)
 
   return {
     title: isEdit
