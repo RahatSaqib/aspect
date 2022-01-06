@@ -19,6 +19,19 @@ import fetchWrapperForQueries from '../../../QueryFetch'
 import { getFormConfigWithData } from '../utils'
 import validationSchema from '../../Forms/validation'
 
+function buildAreaItems(id, target, data) {
+  switch (true) {
+    case (id === target && id === 'state') || (id === target && id === 'lab'):
+      return map(data, ({ label, value }) => ({ label, value }))
+
+    case id === target && id === 'lga':
+      return map(data, ({ label, value }) => ({ label, value, grouped: true }))
+
+    default:
+      return []
+  }
+}
+
 const AspectNotificationDetail = ({
   notificationId,
   jobFunctions,
@@ -114,14 +127,24 @@ const AspectNotificationDetail = ({
             id: `${personId}`, // should be string
           })),
           deviceLevelId: filter.deviceLevelId,
-          areaItems: map(filter?.areaItems, ({ label, value }) => ({
-            label,
-            value: `${value}`, // should be string
-            lgaId: `${value}`, // should be string
-            grouped: true,
-          })),
+          areaItemsState: buildAreaItems(
+            filter.deviceLevelId,
+            'state',
+            filter.areaItems
+          ),
+          areaItemsLGA: buildAreaItems(
+            filter.deviceLevelId,
+            'lga',
+            filter.areaItems
+          ),
+          areaItemsLab: buildAreaItems(
+            filter.deviceLevelId,
+            'lab',
+            filter.areaItems
+          ),
           result: filter.result,
         }
+
         if (!isEqual(newValues, values)) {
           setValues(newValues)
           setIsLoading(false)
