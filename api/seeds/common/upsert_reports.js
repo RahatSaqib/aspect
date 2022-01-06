@@ -19,13 +19,17 @@ async function upsertSheets(knex, reportId, sheets) {
   )
 }
 
-module.exports = async function upsertReports(knex) {
+module.exports = async function upsertReports(knex, additionalReportFixture) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
 
+  const actualReports = {
+    ..._.omit(ReportFixture, 'fixture'),
+    ..._.omit(additionalReportFixture || {}, 'fixture'),
+  }
   const reportsById = {}
 
-  _.values(_.omit(ReportFixture, 'fixture')).forEach(report => {
+  _.values(actualReports).forEach(report => {
     const sheets = []
     report.sheets.forEach(({ query = {}, ...sheet }) => {
       // Replace externalIds with Ids
