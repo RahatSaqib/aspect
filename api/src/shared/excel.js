@@ -117,7 +117,7 @@ async function readTemplateFile(
 function getBaseReplacements() {
   const replacements = [
     {
-      placeholder: '<Dates>',
+      placeholder: '<date>',
       value: format(new Date(), 'yyyy-MM-dd'),
     },
   ]

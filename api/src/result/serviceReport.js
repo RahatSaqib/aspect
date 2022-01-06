@@ -1,11 +1,13 @@
 const flatten = require('flat')
 const _ = require('lodash')
+const { format } = require('date-fns')
 const { getResultsForExport } = require('./service')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { exportData, getBaseReplacements } = require('../shared/excel')
+const { exportData } = require('../shared/excel')
 
 const { getAllAssaySchemas } = require('../assay/service')
+
 /**
  * 'header' is for 1st row in CSV file,
  * 'key' is prop name in array 'items' in func getDeviceErrorHistoryForAttachment() below
@@ -35,6 +37,7 @@ async function getAllResultsForExport(auth, query) {
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = query.page || 0
   // For performance issues we are going to limit this report to max 50k results.
+  query.size = query.size || 50000
   const {
     data,
     extraColumns = [],
@@ -111,7 +114,10 @@ async function exportResults(request, reply) {
 
   return exportData(request, reply, sheetData, 'results', {
     replacements: [
-      ...getBaseReplacements(),
+      {
+        placeholder: '<Dates>',
+        value: format(new Date(), 'yyyy-MM-dd'),
+      },
       {
         placeholder: '<PerformanceTotalRecordLimit>',
         value: ({ dataRows: { length = 0 }, total = 0 }) => {
