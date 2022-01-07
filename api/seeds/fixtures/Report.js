@@ -38,6 +38,7 @@ const allResults = {
         sortCol: 'endedOn',
         sortDir: 'desc',
         templateFolderPath: 'export/results',
+        size: 50000,
       },
     },
   ],
