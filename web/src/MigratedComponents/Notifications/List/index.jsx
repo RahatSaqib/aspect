@@ -29,6 +29,11 @@ const messages = defineMessages({
   },
 })
 
+const FILTERS_CONFIG = [
+  { geography: true, requiredPermissions: [] },
+  { notificationName: true, requiredPermissions: [] },
+]
+
 const NotificationList = () => {
   const intl = useIntl()
   const navigate = useNavigate()
@@ -37,8 +42,7 @@ const NotificationList = () => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
-  const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
-  const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const notificationMenuProps = getCreateNotificationMenuProps(intl)
   return (
     <Fragment>
@@ -87,7 +91,11 @@ const NotificationList = () => {
       >
         <Shell>
           <ShellContent>
-            <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_LIST} />
+            <AspectTable
+              baseConfig={baseConfig}
+              consts={NOTIFICATION_LIST}
+              FILTERS_CONFIG={FILTERS_CONFIG}
+            />
           </ShellContent>
         </Shell>
       </div>

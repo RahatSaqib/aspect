@@ -163,12 +163,11 @@ async function listNotifications(request) {
     .where(builder => {
       builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
     })
-    .modify(filterParams, query, {})
+    .modify(filterParams, query, {
+      notificationName: 'nt.name',
+    })
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-
-  const getItems = notificationQuery
-    .clone()
     .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
     .leftOuterJoin('JobFunction as jf', qb => {
       qb.on(
@@ -208,11 +207,11 @@ async function listNotifications(request) {
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.name')
+    .groupBy('nt.id')
+
+  const getItems = notificationQuery
+    .clone()
     .modify(sortPageParams, query, 'nt.name')
-    .modify(filterParams, query, {
-      notificationName: 'nt.name',
-    })
 
   function columnCount(column) {
     return knex.raw(
@@ -225,7 +224,7 @@ async function listNotifications(request) {
 
   const getCount = knex
     .count('* as count')
-    .from(getItems.clone().as('mainQuery'))
+    .from(notificationQuery.clone().as('mainQuery'))
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
