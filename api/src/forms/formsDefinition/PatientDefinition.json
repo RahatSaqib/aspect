@@ -1,0 +1,67 @@
+{
+  "fields": [
+    {
+      "name": "Gender",
+      "title": "Gender",
+      "i18nKey": "Genderi18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "caption": "Gender",
+      "gxAlertDbColumn": "PatientGender",
+      "i18nKeyCaption": "Genderi18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 1,
+          "value": "Male",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "Female",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "name": "Age",
+      "title": "Age",
+      "i18nKey": "AgeFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "gxAlertDbColumn": "PatientAgeYears",
+      "caption": "Age",
+      "i18nKeyCaption": "Agei18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 0,
+          "max": 150,
+          "errorMessage": "The age should be a number between 1-150",
+          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "name": "PatientPhoneNumber",
+      "title": "Cellphone number",
+      "i18nKey": "PatientPhoneNumberi18nkey",
+      "fieldType": "tel",
+      "order": 2,
+      "caption": "Cellphone number",
+      "i18nKeyCaption": "PatientPhoneNumberi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 0,
+          "max": 150,
+          "errorMessage": "The age should be a number between 1-150",
+          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}
