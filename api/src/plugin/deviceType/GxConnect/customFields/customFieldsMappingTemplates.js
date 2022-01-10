@@ -33,7 +33,10 @@ const getGxAlertAssayId = {
 const map = aspectFields => {
   return {
     'fields[].id': 'CustomFields.Fields[].Id',
-    'fields[].name': 'CustomFields.Fields[].Name',
+    'fields[].name': [
+      { key: 'CustomFields.Fields[].Name', transform: value => value },
+      { key: 'CustomFields.Fields[].ExternalId', transform: value => value },
+    ],
     'fields[].assayExternalId': {
       key: 'CustomFields.Fields[].LimitToTestTypeIds[]',
       transform: value => getGxAlertAssayId[value] || null,

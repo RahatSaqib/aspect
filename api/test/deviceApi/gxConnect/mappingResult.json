@@ -4,6 +4,7 @@
       {
         "Id": 2,
         "Name": "PlainField",
+        "ExternalId": "PlainField",
         "Help": "PlainField value",
         "Control": "TextBox",
         "Type": "string",
@@ -12,6 +13,7 @@
       },
       {
         "Name": "ConditionalField",
+        "ExternalId": "ConditionalField",
         "Help": "ConditionalField value",
         "Control": "TextBox",
         "Type": "string",
@@ -30,6 +32,7 @@
       {
         "Id": 4,
         "Name": "ValidationField (Min 1 max 12)",
+        "ExternalId": "ValidationField (Min 1 max 12)",
         "Label": "ValidationField",
         "Help": "ValidationField value",
         "Control": "TextBox",
@@ -43,6 +46,7 @@
       {
         "Id": 5,
         "Name": "ProbeB",
+        "ExternalId": "ProbeB",
         "Label": "Probe B",
         "Help": "Probe B value",
         "Control": "TextBox",
@@ -53,6 +57,7 @@
       {
         "Id": 8,
         "Name": "ProbeSpc",
+        "ExternalId": "ProbeSpc",
         "Label": "Probe Spc",
         "Help": "Probe Spc value",
         "Control": "TextBox",
@@ -61,6 +66,7 @@
       },
       {
         "Name": "underlyingConditionsAndComorbidity",
+        "ExternalId": "underlyingConditionsAndComorbidity",
         "Label": "any Underlaying condition?",
         "Control": "RadioButton",
         "Type": "string",
@@ -86,6 +92,7 @@
       {
         "Id": 15,
         "Name": "probeDendpt",
+        "ExternalId": "probeDendpt",
         "Label": "Probe D Endpt",
         "Help": "Probe D Endpt value",
         "Control": "TextBox",

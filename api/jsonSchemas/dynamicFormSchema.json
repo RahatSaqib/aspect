@@ -44,8 +44,8 @@
           "name": {
             "$id": "#/properties/fields/items/properties/name",
             "type": "string",
-            "title": "Field name",
-            "description": "The name of the field"
+            "title": "Field name it should be used as externalId",
+            "description": "The name of the field and its externalId"
           },
           "title": {
             "$id": "#/properties/fields/items/properties/title",

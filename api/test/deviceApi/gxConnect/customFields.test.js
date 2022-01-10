@@ -38,6 +38,7 @@ describe('Custom field mapper', () => {
       {
         Id: 2,
         Name: 'PlainField',
+        ExternalId: 'PlainField',
         Help: 'PlainField value',
         Control: 'TextBox',
         Type: 'int',
@@ -69,6 +70,7 @@ describe('Custom field mapper', () => {
       {
         Id: 2,
         Name: 'PlainField',
+        ExternalId: 'PlainField',
         Help: 'PlainField value',
         Control: 'TextBox',
         Type: 'int',
@@ -99,6 +101,7 @@ describe('Custom field mapper', () => {
       {
         Id: 2,
         Name: 'Datepicker field',
+        ExternalId: 'Datepicker field',
         Help: 'Datepicker value',
         Control: 'DateTimePicker',
         Type: 'datetime',
@@ -147,6 +150,7 @@ describe('Custom field mapper', () => {
           {
             Id: 2,
             Name: 'PlainField',
+            ExternalId: 'PlainField',
             Help: 'PlainField value',
             Control: 'TextBox',
             Type: 'string',
@@ -155,6 +159,7 @@ describe('Custom field mapper', () => {
           },
           {
             Name: 'ConditionalField',
+            ExternalId: 'ConditionalField',
             Help: 'ConditionalField value',
             Control: 'TextBox',
             Type: 'string',
@@ -431,6 +436,7 @@ describe('Custom field mapper', () => {
           {
             Id: 1,
             Name: 'PlainField',
+            ExternalId: 'PlainField',
             Help: 'PlainField value',
             InputControlData: {
               optional: true,
@@ -444,6 +450,7 @@ describe('Custom field mapper', () => {
             Name: 'calculatedField',
             Help: 'calculatedField value',
             Control: 'Label',
+            ExternalId: 'calculatedField',
             Type: 'datetime',
             DisplayOrder: 0,
             InputControlData: {
@@ -467,6 +474,7 @@ describe('Custom field mapper', () => {
           {
             Id: 1,
             Name: 'PlainField',
+            ExternalId: 'PlainField',
             Help: 'PlainField value',
             InputControlData: {
               optional: true,
@@ -478,6 +486,7 @@ describe('Custom field mapper', () => {
           {
             Id: 1,
             Name: 'calculatedField',
+            ExternalId: 'calculatedField',
             Help: 'calculatedField value',
             Control: 'Label',
             Type: 'datetime',
