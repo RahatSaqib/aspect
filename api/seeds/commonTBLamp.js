@@ -30,7 +30,7 @@ async function upsertTbLampDeviceTypes(
     deviceTypeId,
     resultSourceId: await resultSourceToId('LIMS'),
     resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
+    resultCategory1i18nKey: 'resultCategoryMtb',
     resultDataSchema: JSON.stringify(resultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
