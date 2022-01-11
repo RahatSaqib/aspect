@@ -801,7 +801,7 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
   })
 
-  describe('results', () => {
+  describe.only('results', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,
@@ -921,7 +921,7 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.isUndefined(afterResultDetails)
       }))
 
-    it('should append a result if the sample ID, instrument serial and test dates are not known', () =>
+    it.only('should append a result if the sample ID, instrument serial and test dates are not known', () =>
       runTest(async () => {
         const { basicDevicePayload, deviceAuth, device, site, now } = context
 

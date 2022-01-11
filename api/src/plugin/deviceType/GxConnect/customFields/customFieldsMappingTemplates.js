@@ -35,7 +35,10 @@ const map = aspectFields => {
     'fields[].id': 'CustomFields.Fields[].Id',
     'fields[].name': [
       { key: 'CustomFields.Fields[].Name', transform: value => value },
-      { key: 'CustomFields.Fields[].ExternalId', transform: value => value },
+      {
+        key: 'CustomFields.Fields[].ExternalId',
+        transform: value => _.capitalize(value).replace(/\s/g, ''),
+      },
     ],
     'fields[].assayExternalId': {
       key: 'CustomFields.Fields[].LimitToTestTypeIds[]',
