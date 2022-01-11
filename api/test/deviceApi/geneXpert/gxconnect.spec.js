@@ -1391,7 +1391,7 @@ describe('Device API routes for GxConnect Devices', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '856-7909',
+          phone: '+18567909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'ABC',
@@ -1409,7 +1409,7 @@ describe('Device API routes for GxConnect Devices', () => {
             age: 72,
             dateOfBirth: '1903-05-29',
             address: '123 Main Street',
-            phone: '+18567909',
+            phone: '856-7909',
           },
           location: {
             longitude: -87.581222,
