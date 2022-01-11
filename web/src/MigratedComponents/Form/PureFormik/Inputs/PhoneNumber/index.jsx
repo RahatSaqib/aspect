@@ -1,10 +1,8 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import parsePhoneNumber, { AsYouType } from 'libphonenumber-js'
 import cloneDeep from 'lodash/cloneDeep'
 import isEmpty from 'lodash/isEmpty'
 import filter from 'lodash/filter'
-import sortBy from 'lodash/sortBy'
 import map from 'lodash/map'
 import { PureSelect, PureTextInput } from '../index'
 import useI18n from '../../../../../Hooks/i18n/useI18n'
@@ -12,38 +10,7 @@ import messages from '../../messages'
 import dialCodes from '../../../../../filter/hardcoded/dialCodes'
 import countries from '../../../../../filter/hardcoded/countries'
 
-const PurePhoneNumber = props => {
-  const { countryAbbreviation } = useSelector(({ user }) => user.toJS())
-  const { formatMessage } = useI18n()
-  const { inputProps, form } = props
-  const { id } = inputProps
-  const { values } = form
-  const dialCodeProps = cloneDeep(props)
-  const numberProps = cloneDeep(props)
-  const sortedDialCodes = sortBy(dialCodes, ({ isoAlpha2Code }) =>
-    isoAlpha2Code === countryAbbreviation ? 0 : 1
-  )
-  dialCodeProps.inputProps.label = formatMessage(messages.dialCode)
-  dialCodeProps.inputProps.options = map(
-    sortedDialCodes,
-    ({ dialCode, isoAlpha2Code }) => {
-      const country = filter(countries, { isoAlpha2Code })[0]?.name || 'US'
-      return {
-        label: `${dialCode} (${country})`,
-        value: dialCode,
-      }
-    }
-  )
-
-  if (!isEmpty(values[id])) {
-    const number = new AsYouType().input(values[id])
-    const { countryCallingCode } = parsePhoneNumber(number) || false
-    numberProps.form.values[id] = number
-    if (countryCallingCode) {
-      dialCodeProps.form.values[id] = `+${countryCallingCode}`
-    }
-  }
-
+const RenderPhoneNumber = ({ dialCodeProps, numberProps }) => {
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ flex: 2, marginRight: '20px' }}>
@@ -53,6 +20,44 @@ const PurePhoneNumber = props => {
         <PureTextInput {...numberProps} />
       </div>
     </div>
+  )
+}
+
+const PurePhoneNumber = props => {
+  const { formatMessage } = useI18n()
+  const {
+    inputProps: { id },
+    form: { values },
+  } = props
+  const numberProps = cloneDeep(props)
+  const dialCodeProps = cloneDeep(props)
+  const { form: numberForm } = numberProps
+  const { inputProps: dialCodeInputProps, form: dialCodeForm } = dialCodeProps
+
+  dialCodeInputProps.label = formatMessage(messages.dialCode)
+  dialCodeInputProps.options = map(dialCodes, ({ dialCode, isoAlpha2Code }) => {
+    const country = filter(countries, { isoAlpha2Code })[0]?.name || 'US'
+    return {
+      label: `${dialCode} (${country})`,
+      value: dialCode,
+    }
+  })
+
+  if (!isEmpty(values[id])) {
+    const number = new AsYouType().input(values[id])
+    const { countryCallingCode } = parsePhoneNumber(number) || false
+
+    numberForm.values[id] = number
+    if (countryCallingCode) {
+      dialCodeForm.values[id] = `+${countryCallingCode}`
+    }
+  }
+
+  return (
+    <RenderPhoneNumber
+      dialCodeProps={dialCodeProps}
+      numberProps={numberProps}
+    />
   )
 }
 

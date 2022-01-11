@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-// TODO - REMOVE ☝️
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useMutation, useQuery } from 'react-query'
@@ -10,34 +8,19 @@ import map from 'lodash/map'
 import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
 import replace from 'lodash/replace'
-// import Button from '@material-ui/core/Button'
 import itemsConfig from './config'
 import fetchWrapperForQueries from '../../QueryFetch'
 import AspectPureFormik from '../../Form/PureFormik'
 import { getInitialValues } from '../../Form/PureFormik/Helpers'
+import useI18n from '../../../Hooks/i18n/useI18n'
 import Loading from '../../../globals/components/Loading.jsx'
-
-// const FormSubmit = props => {
-//   const { label, type, color, action = () => false } = props
-//   console.log(action)
-
-//   return (
-//     <Button
-//       type={type}
-//       color={color}
-//       variant="contained"
-//       onClick={action}
-//       // disabled={loading || form.pristine || !form.valid || form.submitting}
-//     >
-//       {label}
-//       {/* {formatMessage(isNew ? messages.create : messages.save)} */}
-//     </Button>
-//   )
-// }
+import FormSubmit from './FormSubmit'
+import messages from './messages'
 
 const ContactDetailsFormFormik = () => {
   const { personId } = useParams()
   const navigate = useNavigate()
+  const { formatMessage } = useI18n()
   const editor = useSelector(({ user }) => user.toJS())
   const [type, setType] = useState()
   const [items, setItems] = useState()
@@ -59,7 +42,50 @@ const ContactDetailsFormFormik = () => {
     throw new Error(error)
   }
 
-  function buildItems() {
+  function handleSubmit(_e, formik) {
+    const baseOmitFields = ['country', 'userId', 'username']
+    const { setSubmitting, values } = formik
+    const { id } = values
+    const sanitisedValues = transformOutputValues(values, baseOmitFields)
+
+    setTimeout(() => {
+      if (type === 'add') {
+        mutation.mutate({
+          values: sanitisedValues,
+          endpoint: '/person',
+          method: 'POST',
+        })
+      }
+      if (type === 'update') {
+        mutation.mutate({
+          values: sanitisedValues,
+          endpoint: `/person/${id}`,
+          method: 'PUT',
+        })
+      }
+      if (type === 'self') {
+        mutation.mutate({
+          values: sanitisedValues,
+          endpoint: '/account-details/current-contact',
+          method: 'PUT',
+        })
+      }
+      setSubmitting(false)
+    }, 0)
+  }
+
+  const actions = [
+    {
+      id: 'submit',
+      type: 'submit',
+      color: 'primary',
+      label: formatMessage(type === 'add' ? messages.create : messages.save),
+      component: FormSubmit,
+      action: handleSubmit,
+    },
+  ]
+
+  function buildItems(action) {
     const tempItems = [
       formItemsConfig.row1,
       formItemsConfig.row2,
@@ -78,20 +104,19 @@ const ContactDetailsFormFormik = () => {
     if (personId) {
       tempItems.push(formItemsConfig.row8)
     }
-    return !isEqual(tempItems, items) ? setItems(tempItems) : items
+    return !isEqual(tempItems, items) ? action(tempItems) : items
   }
 
   useEffect(() => {
     switch (true) {
       case !!personId && personId !== 'add' && type !== 'update':
-        console.log(personId, type)
         setType('update')
         setQuery({
           key: [`get-user-${personId}`, personId],
           endpoint: `/person/${personId}`,
           enabled: true,
         })
-        buildItems()
+        buildItems(setItems)
         break
 
       case !personId && type !== 'self':
@@ -101,16 +126,16 @@ const ContactDetailsFormFormik = () => {
           endpoint: '/account-details/current',
           enabled: true,
         })
-        buildItems()
+        buildItems(setItems)
         break
 
       case personId === 'add':
         setType('add')
-        buildItems()
+        buildItems(setItems)
         break
 
       default:
-        buildItems()
+        buildItems(setItems)
         break
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,59 +191,8 @@ const ContactDetailsFormFormik = () => {
     newValues.canLogIn = values?.canLogIn === 1 || values?.canLogIn ? 1 : 0
     newValues.phone = replace(values.phone, / /g, '')
     newValues.cell = replace(values.cell, / /g, '')
-    console.log(values, newValues)
     return newValues
   }
-
-  function handleSubmit(_e, formik) {
-    const baseOmitFields = ['country', 'userId', 'username']
-    const { setSubmitting, values } = formik
-    const { id } = values
-    const sanitisedValues = transformOutputValues(values, baseOmitFields)
-
-    setTimeout(() => {
-      if (type === 'add') {
-        mutation.mutate({
-          values: sanitisedValues,
-          endpoint: '/person',
-          method: 'POST',
-        })
-      }
-      if (type === 'update') {
-        mutation.mutate({
-          values: sanitisedValues,
-          endpoint: `/person/${id}`,
-          method: 'PUT',
-        })
-      }
-      if (type === 'self') {
-        mutation.mutate({
-          values: sanitisedValues,
-          endpoint: '/account-details/current-contact',
-          method: 'PUT',
-        })
-      }
-
-      setSubmitting(false)
-    }, 0)
-  }
-
-  // const actions = [
-  //   {
-  //     id: 'submit',
-  //     type: 'submit',
-  //     color: 'primary',
-  //     label: 'Save',
-  //     component: FormSubmit,
-  //     action: handleSubmit,
-  //   },
-  // ]
-
-  // const items = useMemo(
-  //   () => buildItems(),
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   []
-  // )
 
   useEffect(() => {
     if (!isLoading && editor) {
@@ -241,7 +215,7 @@ const ContactDetailsFormFormik = () => {
 
   return !isLoading && !isEmpty(config) ? (
     <div style={{ padding: '20px' }}>
-      <AspectPureFormik config={config} action={handleSubmit} />
+      <AspectPureFormik config={config} actions={actions} />
     </div>
   ) : (
     <div
