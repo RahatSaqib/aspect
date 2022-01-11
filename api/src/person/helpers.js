@@ -10,14 +10,15 @@ const ok = Joi.boolean()
     `
   )
 // -------------------------------------------------------------------------------
-const contactDetailsPayload = {
-  id: Joi.number().required(),
+
+const sharedContactDetailsPayload = {
   name: Joi.string().max(500).required(),
   title: Joi.string().max(255).allow('', null),
   email: Joi.string().max(500).allow('', null),
   email2: Joi.string().max(500).allow('', null),
   phone: Joi.string().max(45).allow('', null),
   cell: Joi.string().max(45).allow('', null),
+  geogId: Joi.number().integer().positive().allow('', null),
   countryId: Joi.number().integer().positive().allow('', null),
   stateId: Joi.number().integer().positive().allow('', null),
   lgaId: Joi.number().integer().positive().allow('', null),
@@ -29,6 +30,13 @@ const contactDetailsPayload = {
   partnerId: Joi.number().integer().positive().allow('', null),
   lastPartnerId: Joi.number().integer().positive().allow('', null),
   canLogIn: [Joi.boolean(), Joi.number().valid(0, 1)],
+}
+const contactDetailsPayload = {
+  id: Joi.number().required(),
+  ...sharedContactDetailsPayload,
+}
+const newContactDetailsPayload = {
+  ...sharedContactDetailsPayload,
 }
 // -------------------------------------------------------------------------------
 const personDetailsResponse = {
@@ -50,13 +58,13 @@ const personDetailsResponse = {
         email2: Joi.string().allow(null, '').description('Person second email'),
         phone: Joi.string().allow(null, '').description('Person phone'),
         cell: Joi.string().allow(null, '').description('Person cell'),
-        countryId: Joi.number().required().description('Country id'),
+        countryId: Joi.number().allow(null, '').description('Country id'),
         geogId: Joi.number().allow(null).description('Person geographyId'),
         stateId: Joi.number().allow(null).description('State id'),
         lgaId: Joi.number().allow(null).description('Lga id'),
         zip: Joi.string().allow(null, '').description('Person zip'),
-        timezone: Joi.string().required().description('Person timezone'),
-        culture: Joi.string().required().description('Person culture'),
+        timezone: Joi.string().allow(null, '').description('Person timezone'),
+        culture: Joi.string().allow(null, '').description('Person culture'),
         notes: Joi.string().allow(null, '').description('Person notes'),
         lastPartnerId: Joi.number()
           .allow(null)
@@ -90,5 +98,6 @@ const personDetailsResponse = {
 
 module.exports = {
   contactDetailsPayload,
+  newContactDetailsPayload,
   personDetailsResponse,
 }

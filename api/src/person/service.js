@@ -399,12 +399,15 @@ async function updatePerson(request) {
     'email2',
     'phone',
     'cell',
+    'culture',
     'countryId',
     'stateId',
     'lgaId',
     'zip',
     'notes',
     'lastPartnerId',
+    'timezone',
+    'tags',
     'canLogIn',
   ])
 }
