@@ -8,12 +8,67 @@ const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
 const validate = require('../../../jsonSchemas/validate')
+const {
+  transformPayloadWithFormsDefinition,
+} = require('../../../src/plugin/deviceType/customFields')
 
 describe('Custom field mapper', () => {
   it('it generates the mapping between aspect dynamic forms and gxconnect expected json', () => {
     assert.isTrue(validate(schema, aspectFields))
     const mappingOutput = mapGxConnectCustomFields(aspectFields)
     assert.deepEqual(mappingOutput, mappingResult)
+  })
+  it('should Transform Payload fields', () => {
+    const payload = {
+      id: 'new instrument_109109_07bd96a5',
+      assay: { id: 'GxMtbRifUltra', version: '2' },
+      instrument: { serial: 'new instrument' },
+      sender: { version: '4.7b', operator: 'Big Boy Baumgartner' },
+      patient: {
+        id: '0833223622',
+        name: 'Peta J',
+        surname: 'McAllister',
+        address: '22 Marble Road, Greenstone Hill',
+        age: 25,
+        gender: 'Female',
+        phone: '0833243682',
+      },
+      sample: { id: 'new sample' },
+      data: {
+        probeData: {},
+        customFieldData: { 1: [Object], 2: [Object] },
+        geneXpertTestId: 'UNIQUE-RESULT-ID',
+      },
+      startedOn: '2022-01-11T05:41:09.000Z',
+      category: [],
+      workflow: { status: { id: 'Deliverable' } },
+    }
+    const forms = {
+      PatientDefinition: {
+        fields: [
+          {
+            name: 'PatientPhoneNumber',
+            title: 'Cellphone number',
+            i18nKey: 'PatientPhoneNumberi18nkey',
+            payloadOriginPath: 'patient.phone',
+            payloadDestinationPath: 'patient.phoneNumber',
+            fieldType: 'patientCellphone',
+          },
+          {
+            name: 'anotherField',
+            title: 'anotherField',
+            i18nKey: 'anotheri18nkey',
+            payloadOriginPath: 'data.geneXpertTestId',
+            payloadDestinationPath: 'newField',
+            fieldType: 'text',
+          },
+        ],
+        refForms: [],
+      },
+    }
+    transformPayloadWithFormsDefinition(forms, payload, 'US')
+    assert.equal(payload.newField, 'UNIQUE-RESULT-ID')
+    assert.equal(payload.patient.phoneNumber, '+10833243682')
   })
 
   it('should transform a number field', () => {

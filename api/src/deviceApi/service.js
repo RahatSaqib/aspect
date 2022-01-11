@@ -621,6 +621,8 @@ const getCustomFields = async context => {
       await customFields(knex, partnerId, deviceId),
       'CustomFields'
     )
+
+  console.log('------------CustomFields---------------\n', CustomFields)
   return { CustomFields }
 }
 

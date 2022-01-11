@@ -237,7 +237,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
-  console.log('-----------------before-------------------\n', payload.patient)
+  console.log(
+    '-----------------before-------------------\n',
+    payload.data.customFieldData
+  )
 
   processPatientPayload(payload, device.countryCode)
   console.log('-----------------after-------------------\n', payload.patient)
