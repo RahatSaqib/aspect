@@ -622,7 +622,6 @@ const getCustomFields = async context => {
       'CustomFields'
     )
 
-  console.log('------------CustomFields---------------\n', CustomFields)
   return { CustomFields }
 }
 

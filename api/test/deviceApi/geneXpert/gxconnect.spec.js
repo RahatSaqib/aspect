@@ -801,7 +801,7 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
   })
 
-  describe.only('results', () => {
+  describe('results', () => {
     const context = createGxConnectTestContext(server, {
       countryCode,
       adminUsername,
@@ -921,7 +921,7 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.isUndefined(afterResultDetails)
       }))
 
-    it.only('should append a result if the sample ID, instrument serial and test dates are not known', () =>
+    it('should append a result if the sample ID, instrument serial and test dates are not known', () =>
       runTest(async () => {
         const { basicDevicePayload, deviceAuth, device, site, now } = context
 
@@ -982,7 +982,10 @@ describe('Device API routes for GxConnect Devices', () => {
           instrumentSerial: 'new instrument',
           moduleName: null,
           moduleSerial: null,
-          patientData: basicResultPayload.result.patient,
+          patientData: {
+            ...basicResultPayload.result.patient,
+            phone: '+10833243682',
+          },
           senderVersion: basicResultPayload.result.sender.version,
           senderOperator: basicResultPayload.result.sender.operator,
           notes: null,
@@ -1406,7 +1409,7 @@ describe('Device API routes for GxConnect Devices', () => {
             age: 72,
             dateOfBirth: '1903-05-29',
             address: '123 Main Street',
-            phone: '856-7909',
+            phone: '+18567909',
           },
           location: {
             longitude: -87.581222,

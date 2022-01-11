@@ -19,12 +19,13 @@ async function mapPayloadWithCustomFields(
       'fschema.id'
     )
     .where('fd.partnerId', partnerId)
-    // .modify(filterParams, query, {
-    //   assayId: 'fd.assayId',
-    //   diseaseId: 'fd.diseaseId',
-    //   externalsId: 'fd.externalId',
-    //   formType: 'ft.externalId',
-    // })
+    .modify(builder => {
+      if (assayId)
+        builder.whereNull('fd.assayId').orWhere('fd.assayId', assayId)
+      if (diseaseId)
+        builder.whereNull('fd.diseaseId').orWhere('fd.diseaseId', diseaseId)
+    })
+    .where('ft.externalId', 'gxConnectForm')
     .distinct(
       'fd.externalId',
       'fd.assayId',
@@ -36,13 +37,14 @@ async function mapPayloadWithCustomFields(
     )
 
   const forms = createFormObject(queryForm)
+
+  transformPayloadWithFormsDefinition(forms, payload, countryCode)
 }
 
 function transformPayloadWithFormsDefinition(forms, payload, countryCode) {
   _.each(_.keys(forms), formKey => {
     _.each(forms[formKey].fields, prop => {
       const { payloadOriginPath, payloadDestinationPath, fieldType } = prop
-
       if (payloadOriginPath) {
         let value = _.get(payload, payloadOriginPath)
 

@@ -69,7 +69,7 @@
       "title": "Cellphone number",
       "i18nKey": "PatientPhoneNumberi18nkey",
       "payloadOriginPath": "patient.phone",
-      "destinationOriginPath": "patient.phone",
+      "payloadDestinationPath": "patient.phone",
       "fieldType": "patientCellphone",
       "gxAlertDbColumn": "PatientPhone",
       "order": 2,

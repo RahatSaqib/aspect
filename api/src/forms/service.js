@@ -14,6 +14,7 @@ function createFormObject(formQuery) {
       formTypeId: form.formTypeId,
     }
   })
+  return forms
 }
 
 async function getForms(request) {

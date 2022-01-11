@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "jsonSchemaFile": "TBCaseForm.json"
+    },
+    {
+      "jsonSchemaFile": "HIVCaseForm.json"
+    },
+    {
+      "jsonSchemaFile": "PatientDefinition.json"
+    }
+  ]
+}

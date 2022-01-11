@@ -27,7 +27,7 @@ const {
   splitResultTextValues,
   sanitizeResultTextValue,
 } = require('./GxConnect/resultCategories/utils')
-const { normalizePhoneNumber } = require('../../shared/phoneNormalization')
+const { mapPayloadWithCustomFields } = require('./customFields')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -237,21 +237,14 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
-  console.log(
-    '-----------------before-------------------\n',
-    payload.data.customFieldData
+
+  mapPayloadWithCustomFields(
+    payload,
+    device.countryCode,
+    device.partnerId,
+    _.get(existingResult, 'assayId'),
+    _.get(existingResult, 'diseaseId')
   )
-
-  processPatientPayload(payload, device.countryCode)
-  console.log('-----------------after-------------------\n', payload.patient)
-}
-
-function processPatientPayload(payload, countryCode) {
-  const { patient } = payload
-
-  const patientCellphone = _.get(patient, 'phone')
-  if (patientCellphone)
-    payload.patient.phone = normalizePhoneNumber(patientCellphone, countryCode)
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {
