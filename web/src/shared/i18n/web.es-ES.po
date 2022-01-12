@@ -7711,7 +7711,7 @@ msgid ""
 "device API key} other {# device API keys} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"device API key} other {# device API keys} }"
+"clave API del dispositivo} other {# claves API del dispositivo} }"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
@@ -7733,7 +7733,7 @@ msgid ""
 "other {# logs} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"log} other {# logs} }"
+"registro} other {# registros} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7755,7 +7755,7 @@ msgid ""
 "reporter} other {# reporters} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"reporter} other {# reporters} }"
+"reportero} other {# reporteros} }"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -7780,7 +7780,7 @@ msgid ""
 "router} other {# routers} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"router} other {# routers} }"
+"enrutador} other {# enrutadores} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:

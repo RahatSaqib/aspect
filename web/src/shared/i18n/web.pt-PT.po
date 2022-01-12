@@ -7720,7 +7720,7 @@ msgid ""
 "other {# logs} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"log} other {# logs} }"
+"registro} other {# histórico} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7778,7 +7778,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"site} other {# sites} }"
+"local} other {# sites} }"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:

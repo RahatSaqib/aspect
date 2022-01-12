@@ -7679,7 +7679,7 @@ msgid ""
 "other {# cases} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"case} other {# cases} }"
+"кейс} other {# случаи} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -7690,7 +7690,7 @@ msgid ""
 "contact} other {# contacts} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"contact} other {# contacts} }"
+"контакт} other {# контакты} }"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
@@ -7701,7 +7701,7 @@ msgid ""
 "device API key} other {# device API keys} }"
 msgstr ""
 "Показание {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"device API key} other {# device API keys} }"
+"ключ API устройства} other {# ключи API устройства} }"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
@@ -7712,7 +7712,7 @@ msgid ""
 "device} other {# devices} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"device} other {# devices} }"
+"устройство} other {# устройства} }"
 
 #. [pages.ResultWorkflowStatusLog.paginatorStatus]
 #. defaultMessage is:
@@ -7722,8 +7722,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
 "other {# logs} }"
 msgstr ""
-"Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
-"other {# logs} }"
+"Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"бревно} other {# журналы} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7734,7 +7734,7 @@ msgid ""
 "record} other {# records} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"record} other {# records} }"
+"записывать} other {# записи} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -7745,7 +7745,7 @@ msgid ""
 "reporter} other {# reporters} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"reporter} other {# reporters} }"
+"репортер} other {# репортеры} }"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -7759,7 +7759,7 @@ msgid ""
 "result} other {# results} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"result} other {# results} }"
+"результат} other {# Результаты} }"
 
 #. [pages.RouterList.paginatorStatus]
 #. defaultMessage is:
@@ -7770,7 +7770,7 @@ msgid ""
 "router} other {# routers} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"router} other {# routers} }"
+"маршрутизатор} other {# маршрутизаторы} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
@@ -7781,7 +7781,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"site} other {# sites} }"
+"сайт} other {# места} }"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
@@ -7792,7 +7792,7 @@ msgid ""
 "supply} other {# supplies} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"supply} other {# supplies} }"
+"поставка} other {# запасы} }"
 
 #. [pages.TaskList.paginatorStatus]
 #. defaultMessage is:
@@ -7803,7 +7803,7 @@ msgid ""
 "other {# tasks} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"task} other {# tasks} }"
+"задача} other {# задания} }"
 
 #. [pages.TablePagination.nowShowing]
 #. defaultMessage is:

@@ -7702,7 +7702,7 @@ msgid ""
 "contact} other {# contacts} }"
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# contact} other {# contacts}}"
+"{# prendre contact} other {# contacts}}"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
@@ -7746,7 +7746,7 @@ msgid ""
 "record} other {# records} }"
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# record} other {# records}}"
+"{# enregistrement} other {# enregistrements}}"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -7793,7 +7793,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# site} other {# sites}}"
+"{# site} other {# des sites}}"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
