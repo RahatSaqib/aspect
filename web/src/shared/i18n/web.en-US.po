@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-06T09:50:05.083Z\n"
+"POT-Creation-Date: 2022-01-12T20:24:57.129Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,10 +32,10 @@ msgstr "(New quantity on hand: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * in transit from {inTransitFromSiteName}
+#. * excluded {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* in transit from {inTransitFromSiteName}"
-msgstr "* in transit from {inTransitFromSiteName}"
+msgid "* excluded {pendingTransfers} lot/s in transit"
+msgstr ""
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -47,7 +47,7 @@ msgstr "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
-#. [filter.btnGroup.stockLeft.upTo14]
+#. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
 #: extracted_strings.json
@@ -57,7 +57,7 @@ msgstr "1-14 Days"
 #. [legends.Unknown.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
-#. [filter.btnGroup.stockLeft.upTo90]
+#. [filter.btnGroup.daysStockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
@@ -67,7 +67,7 @@ msgstr "1-3 Months"
 #. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#. [filter.btnGroup.stockLeft.upTo30]
+#. [filter.btnGroup.daysStockLeft.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
 #: extracted_strings.json
@@ -77,7 +77,7 @@ msgstr "15-30 Days"
 #. [legends.Unknown.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
-#. [filter.btnGroup.stockLeft.upTo180]
+#. [filter.btnGroup.daysStockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -115,7 +115,7 @@ msgstr "< 550 cp/mL"
 #. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
-#. [filter.btnGroup.stockLeft.moreThan180]
+#. [filter.btnGroup.daysStockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -477,10 +477,8 @@ msgstr "All HIV results where the virus is not suppressed"
 #. defaultMessage is:
 #. All Results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Results"
 msgid "All Results"
-msgstr "Results"
+msgstr "All Results"
 
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
@@ -685,10 +683,8 @@ msgstr "Approved"
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "notification name includes \"{notificationName}\""
 msgid "Are you sure to delete notification {notificationName}?"
-msgstr "notification name includes \"{notificationName}\""
+msgstr "Are you sure to delete notification {notificationName}?"
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -1005,6 +1001,13 @@ msgstr "Back"
 msgid "Back to Login Page"
 msgstr "Back to Login Page"
 
+#. [pages.InventoryItemsList.breakOutByLot]
+#. defaultMessage is:
+#. Break out by lot
+#: extracted_strings.json
+msgid "Break out by lot"
+msgstr ""
+
 #. [header.link.browse.title]
 #. defaultMessage is:
 #. Browse
@@ -1204,10 +1207,8 @@ msgstr "Category"
 #. defaultMessage is:
 #. Category 1
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Category 2"
 msgid "Category 1"
-msgstr "Category 2"
+msgstr "Category 1"
 
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
@@ -1388,10 +1389,8 @@ msgstr "Collected On:"
 #. defaultMessage is:
 #. CollectedOn date is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Start date is required"
 msgid "CollectedOn date is required"
-msgstr "Start date is required"
+msgstr "CollectedOn date is required"
 
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
@@ -2002,10 +2001,10 @@ msgstr "Date Transferred"
 msgid "Day"
 msgstr "Day"
 
-#. [filter.popover.stockLeft]
+#. [filter.popover.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
-#. [pages.InventoryItemsList.stockLeft]
+#. [pages.InventoryItemsList.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
 #: extracted_strings.json
@@ -2582,28 +2581,22 @@ msgstr "Email subject is required"
 #. defaultMessage is:
 #. Email was sent to:
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Email Sent"
 msgid "Email was sent to:"
-msgstr "Email Sent"
+msgstr "Email was sent to:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumable"
 msgid "Enable"
-msgstr "Consumable"
+msgstr "Enable"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
 #. Enable this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Edit Notification"
 msgid "Enable this notification"
-msgstr "Edit Notification"
+msgstr "Enable this notification"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2616,10 +2609,8 @@ msgstr "End Date"
 #. defaultMessage is:
 #. End date is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Start date is required"
 msgid "End date is required"
-msgstr "Start date is required"
+msgstr "End date is required"
 
 #. [pages.Result.endedOnCannotBeBeforeStartedOn]
 #. defaultMessage is:
@@ -2683,6 +2674,13 @@ msgstr "Enter device name..."
 #: extracted_strings.json
 msgid "Enter error code..."
 msgstr "Enter error code..."
+
+#. [filter.popover.enterLotNumber]
+#. defaultMessage is:
+#. Enter lot number...
+#: extracted_strings.json
+msgid "Enter lot number..."
+msgstr "Enter lot number..."
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -3590,13 +3588,6 @@ msgstr "Getting Report File Failed"
 msgid "Group By Column"
 msgstr "Group By Column"
 
-#. [pages.InventoryItemsList.groupBySite]
-#. defaultMessage is:
-#. Group by Site
-#: extracted_strings.json
-msgid "Group by Site"
-msgstr "Group by Site"
-
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
 #. HBV VL
@@ -3644,6 +3635,13 @@ msgstr "HIV VL"
 #: extracted_strings.json
 msgid "HIV/AIDS"
 msgstr "HIV/AIDS"
+
+#. [filter.popover.hasStock]
+#. defaultMessage is:
+#. Has Stock
+#: extracted_strings.json
+msgid "Has Stock"
+msgstr "Has Stock"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase]
 #. defaultMessage is:
@@ -4605,7 +4603,13 @@ msgstr "Lost"
 msgid "Lot"
 msgstr "Lot"
 
+#. [filter.popover.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #. [pages.InventoryAdjustmentDialogForm.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#. [pages.InventoryItemsList.lotNumber]
 #. defaultMessage is:
 #. Lot Number
 #: extracted_strings.json
@@ -5173,15 +5177,13 @@ msgstr "Next"
 #. defaultMessage is:
 #. No
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Now"
 msgid "No"
-msgstr "Now"
+msgstr "No"
 
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
-#. [filter.btnGroup.stockLeft.noConsumption]
+#. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
@@ -5367,7 +5369,7 @@ msgstr "Not Possible"
 #. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
-#. [filter.btnGroup.stockLeft.notRecorded]
+#. [filter.btnGroup.daysStockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
@@ -5610,6 +5612,13 @@ msgstr "Only Results Downloaded By Reporter"
 msgid "Only Results With Treatment Required"
 msgstr "Only Results With Treatment Required"
 
+#. [filter.btnGroup.hasStock]
+#. defaultMessage is:
+#. Only lots with stock
+#: extracted_strings.json
+msgid "Only lots with stock"
+msgstr ""
+
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
 #. Operation
@@ -5669,7 +5678,7 @@ msgstr "Out of Inventory"
 #. [legends.Unknown.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
-#. [filter.btnGroup.stockLeft.outOfStock]
+#. [filter.btnGroup.daysStockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -6309,6 +6318,13 @@ msgstr "Processing..."
 #: extracted_strings.json
 msgid "Profile"
 msgstr "Profile"
+
+#. [pages.InventoryItemsList.projectedWaste]
+#. defaultMessage is:
+#. Projected stock waste
+#: extracted_strings.json
+msgid "Projected stock waste"
+msgstr ""
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -7436,10 +7452,8 @@ msgstr "Select {entity}..."
 #. defaultMessage is:
 #. Selectable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select Job"
 msgid "Selectable"
-msgstr "Select Job"
+msgstr "Selectable"
 
 #. [legends.Unknown.senaiteSmearMicroscopy]
 #. defaultMessage is:
@@ -7621,12 +7635,12 @@ msgstr "ShortName"
 #. defaultMessage is:
 #. Should select at least one job function or individiual person for this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Should select at least one job function for this notification"
 msgid ""
 "Should select at least one job function or individiual person for this "
 "notification"
-msgstr "Should select at least one job function for this notification"
+msgstr ""
+"Should select at least one job function or individiual person for this "
+"notification"
 
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
@@ -8471,13 +8485,6 @@ msgstr ""
 "in the month and dividing that number by the total tests carried out of all "
 "devices."
 
-#. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can remove is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can remove is {currentQuantity}"
-msgstr "The most that you can remove is {currentQuantity}"
-
 #. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
 #. defaultMessage is:
 #. The most that you can transfer is {currentQuantity}
@@ -8514,6 +8521,15 @@ msgstr "The number of approved lab devices (excluding decommissioned devices)"
 #: extracted_strings.json
 msgid "The number of contacts in the system."
 msgstr "The number of contacts in the system."
+
+#. [pages.InventoryItemsList.daysStockLeftDescription]
+#. defaultMessage is:
+#. The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired stock, assuming that "
+"the cartridges to be consumed are always the ones closer to their expiration"
+msgstr ""
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -8702,6 +8718,15 @@ msgstr "The percentage of reported results that were reported via Email."
 #: extracted_strings.json
 msgid "The percentage of reported results that were reported via SMS."
 msgstr "The percentage of reported results that were reported via SMS."
+
+#. [pages.InventoryItemsList.projectedWasteDescription]
+#. defaultMessage is:
+#. The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration
+#: extracted_strings.json
+msgid ""
+"The projected stock waste, assuming that the cartridges to be consumed are "
+"always the ones closer to their expiration"
+msgstr ""
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -9649,10 +9674,8 @@ msgstr "Yes, delete"
 #. defaultMessage is:
 #. Yes, delete it
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Yes, delete"
 msgid "Yes, delete it"
-msgstr "Yes, delete"
+msgstr "Yes, delete it"
 
 #. [pages.dateRangeSelector.yesterday]
 #. defaultMessage is:
@@ -9848,10 +9871,8 @@ msgstr "Zip Code"
 #. defaultMessage is:
 #. Zone
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zones"
 msgid "Zone"
-msgstr "Zones"
+msgstr "Zone"
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:
@@ -9999,6 +10020,13 @@ msgstr "for {unit} Results"
 #: extracted_strings.json
 msgid "indicator"
 msgstr "indicator"
+
+#. [filter.btnGroup.whereLotNumberIncludes]
+#. defaultMessage is:
+#. lot number includes "{lotNumber}"
+#: extracted_strings.json
+msgid "lot number includes \"{lotNumber}\""
+msgstr "lot number includes \"{lotNumber}\""
 
 #. [filter.btnGroup.withDeviceMaintenanceStatus]
 #. defaultMessage is:
@@ -10391,10 +10419,8 @@ msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
-#, fuzzy
-#| msgid "{itemCount, plural, one {# Name} other {# Names} }"
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Name} other {# Names} }"
+msgstr "{itemCount, plural, one {# Person} other {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -10469,6 +10495,15 @@ msgstr "{unit} total calibrations"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{total, plural, one {# result} other {# results} })"
+
+#~ msgid "* in transit from {inTransitFromSiteName}"
+#~ msgstr "* in transit from {inTransitFromSiteName}"
+
+#~ msgid "Group by Site"
+#~ msgstr "Group by Site"
+
+#~ msgid "The most that you can remove is {currentQuantity}"
+#~ msgstr "The most that you can remove is {currentQuantity}"
 
 #~ msgid "Delete"
 #~ msgstr "Delete"
