@@ -96,7 +96,17 @@ const InventoryTableRow = ({ inventoryItem }) => {
             </small>
           </span>
         ) : (
-          hasQtyOnHand(inventoryItem.get('quantityOnHand'))
+          <span>
+            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
+            &nbsp;
+            <small>
+              {inventoryItem.get('pendingTransfers')
+                ? formatMessage(messages.excludedLotInTransit, {
+                    pendingTransfers: inventoryItem.get('pendingTransfers'),
+                  })
+                : null}
+            </small>
+          </span>
         )}
       </TableCell>
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (

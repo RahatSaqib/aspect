@@ -141,12 +141,13 @@ function addInventory(data, dispatch, inventoryState) {
     inventoryAdjustment: { inventoryItemId },
   } = inventoryState
 
-  const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+  if (!data.consumableId && inventoryItemId)
+    data.consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
   return fetchWrapperForQueries({
     endpoint: '/inventory/add',
     method: 'PUT',
-    params: { ...data, consumableId },
+    params: data,
     customErrorNotifications: {
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({

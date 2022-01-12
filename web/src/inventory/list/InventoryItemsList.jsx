@@ -91,7 +91,6 @@ const FILTERS_CONFIG = [
   {
     hasStock: true,
     requiredPermissions: [],
-    isEnabled: dependencies => dependencies.breakOutByLot,
   },
 ]
 
@@ -378,7 +377,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const consumableReasons = useSelector(
     state => state.consumable.consumableReasons
   )
-  const [breakOutByLot, setBreakOutByLot] = useState(true)
+  const [breakOutByLot, setBreakOutByLot] = useState(false)
   const dependencies = useMemo(
     () => ({
       breakOutByLot,

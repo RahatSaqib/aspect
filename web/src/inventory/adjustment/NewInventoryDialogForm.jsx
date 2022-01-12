@@ -71,7 +71,7 @@ export function validate(
 }
 
 const DEFAULT_VALUES = {
-  consumableId: '',
+  consumableId: null,
   ...pick(SHARED_DEFAULT_VALUES, [
     'lotNumber',
     'canExpire',

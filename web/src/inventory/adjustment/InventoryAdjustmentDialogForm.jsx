@@ -259,9 +259,7 @@ export const InventoryAdjustmentDialogForm = ({
                 disabled={
                   form.submitting ||
                   (currInventoryItem &&
-                    (!isNil(currInventoryItem.get('toSiteId')) ||
-                      !isNil(currInventoryItem.get('siteId')) ||
-                      !isNil(currInventoryItem.get('fromSiteId'))))
+                    !isNil(currInventoryItem.get('toSiteId')))
                 }
                 value={values.toSiteId}
                 onSiteChange={onToSiteIdChange}

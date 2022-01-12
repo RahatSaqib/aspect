@@ -514,6 +514,12 @@ function getInventorySites(constraints, request) {
         .andOn('c.id', 'ii.consumableId')
         .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
     })
+    .leftJoin('InventoryItem as ii_transfer', builder => {
+      builder
+        .on('s.id', 'ii_transfer.siteId')
+        .andOn('c.id', 'ii_transfer.consumableId')
+        .andOn(knex.raw('ii_transfer.inTransitFromSiteId IS NOT NULL'))
+    })
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(builder => {
@@ -541,6 +547,7 @@ function getInventorySites(constraints, request) {
       'l.name as lgaName',
       'ficr.rate as dailyConsumptionRate',
       knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
+      knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
     ])
 }
 
