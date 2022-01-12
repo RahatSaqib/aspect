@@ -11,7 +11,6 @@ const buildEndpointAndQueryString = (endpoint, params) => {
   }
   return endpoint
 }
-
 function replaceRouteParams(route, routeParams) {
   let newRoute = route
   map(

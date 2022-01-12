@@ -610,9 +610,9 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     daysStockLeft: daysStockLeftFilter,
   } = query
 
-  // As the daysStockLeft and toBeWasted fields are calculated in memory, then we need to apply post-process ordering
+  // As the daysStockLeft and projectedWaste fields are calculated in memory, then we need to apply post-process ordering
   const requirePostProcessOrdering =
-    sortCol === 'daysStockLeft' || sortCol === 'toBeWasted'
+    sortCol === 'daysStockLeft' || sortCol === 'projectedWaste'
 
   let total
 
@@ -636,7 +636,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     inventorySites.filter(is => is.quantityOnHand > 0)
   )
 
-  // Set daysStockLeft and toBeWasted fields - keep original ordering
+  // Set daysStockLeft and projectedWaste fields - keep original ordering
   inventorySites = setCalculatedFields(
     inventorySites,
     availableInventory,
@@ -665,7 +665,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
       )
   }
 
-  // If the sortCol is daysStockleft or toBeWasted, we need to apply post-process paging and ordering
+  // If the sortCol is daysStockleft or projectedWaste, we need to apply post-process paging and ordering
   if (requirePostProcessOrdering) {
     total = inventorySites.length
 
@@ -746,7 +746,7 @@ function setCalculatedFields(
   let availableInventoryIdx = 0
   inventorySites = _.orderBy(inventorySites, ['siteId', 'consumableId'])
   inventorySites.forEach(inventorySite => {
-    let toBeWasted = 0
+    let projectedWaste = 0
     const now = startOfDayUtc(new Date())
     let currentDay = now
     const { dailyConsumptionRate } = inventorySite
@@ -769,7 +769,7 @@ function setCalculatedFields(
 
         if (expiresOn < currentDay) {
           // Lot already expired - stock will be wasted
-          toBeWasted += quantityOnHand
+          projectedWaste += quantityOnHand
         } else {
           const daysLeftUnexpired =
             differenceInHours(expiresOn, currentDay) / 24
@@ -785,7 +785,7 @@ function setCalculatedFields(
               currentDay,
               differenceInHours(expiresOn, currentDay)
             )
-            toBeWasted +=
+            projectedWaste +=
               quantityOnHand - daysLeftUnexpired * dailyConsumptionRate
           }
         }
@@ -796,10 +796,10 @@ function setCalculatedFields(
 
     if (hasConsumptionRate) {
       inventorySite.daysStockLeft = differenceInHours(currentDay, now) / 24
-      inventorySite.toBeWasted = toBeWasted
+      inventorySite.projectedWaste = projectedWaste
     } else {
       inventorySite.daysStockLeft = null
-      inventorySite.toBeWasted = null
+      inventorySite.projectedWaste = null
     }
   })
 

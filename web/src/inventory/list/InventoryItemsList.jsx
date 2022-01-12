@@ -105,7 +105,10 @@ const availableSortCol = [
     col: 'daysStockLeft',
     isEnabled: dependencies => !dependencies.breakOutByLot,
   },
-  { col: 'toBeWasted', isEnabled: dependencies => !dependencies.breakOutByLot },
+  {
+    col: 'projectedWaste',
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
   {
     col: 'dailyConsumptionRate',
     isEnabled: dependencies => !dependencies.breakOutByLot,
@@ -199,14 +202,14 @@ export const InventoryItemsListWithProps = ({
       isHidden: breakOutByLot,
     },
     {
-      key: 'toBeWasted',
+      key: 'projectedWaste',
       label: (
         <div>
           <AspectTooltip
-            title={intl.formatMessage(messages.toBeWastedDescription)}
+            title={intl.formatMessage(messages.projectedWasteDescription)}
             showHelpIcon
           />
-          {intl.formatMessage(messages.toBeWasted)}
+          {intl.formatMessage(messages.projectedWaste)}
         </div>
       ),
       sortable: true,

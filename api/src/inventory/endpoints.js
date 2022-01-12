@@ -99,7 +99,7 @@ const routes = [
             'quantityOnHand',
             'expiresOn',
             'daysStockLeft',
-            'toBeWasted',
+            'projectedWaste',
             'dailyConsumptionRate',
             'lotNumber'
           ),

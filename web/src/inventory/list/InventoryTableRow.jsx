@@ -146,13 +146,13 @@ const InventoryTableRow = ({ inventoryItem }) => {
             : 'N/A'}
         </TableCell>
       ) : null}
-      {inventoryItem.get('toBeWasted') !== undefined ? (
+      {inventoryItem.get('projectedWaste') !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={rowSpan('toBeWasted')}
+          rowSpan={rowSpan('projectedWaste')}
         >
-          {inventoryItem.get('toBeWasted') !== null
-            ? inventoryItem.get('toBeWasted')
+          {inventoryItem.get('projectedWaste') !== null
+            ? inventoryItem.get('projectedWaste')
             : 'N/A'}
         </TableCell>
       ) : null}

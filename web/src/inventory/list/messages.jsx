@@ -1,10 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
-  toBeWastedDescription: {
-    id: 'pages.InventoryItemsList.toBeWastedDescription',
+  projectedWasteDescription: {
+    id: 'pages.InventoryItemsList.projectedWasteDescription',
     defaultMessage:
-      'The stock to be wasted, assuming that the cartridges to be consumed are always the ones closer to their expiration',
+      'The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration',
   },
   daysStockLeftDescription: {
     id: 'pages.InventoryItemsList.daysStockLeftDescription',
@@ -98,9 +98,9 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.daysStockLeft',
     defaultMessage: 'Days Stock Left',
   },
-  toBeWasted: {
-    id: 'pages.InventoryItemsList.toBeWasted',
-    defaultMessage: 'Stock to Be Wasted',
+  projectedWaste: {
+    id: 'pages.InventoryItemsList.projectedWaste',
+    defaultMessage: 'Projected stock waste',
   },
 })
 

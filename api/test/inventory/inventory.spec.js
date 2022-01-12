@@ -287,7 +287,7 @@ describe('Inventory Routes', () => {
           // ===> 200 cartridges to be wasted
 
           assert.equal(inventoryItems[0].daysStockLeft, 3.5)
-          assert.equal(inventoryItems[0].toBeWasted, 200)
+          assert.equal(inventoryItems[0].projectedWaste, 200)
         })
 
         it('should return a list of inventory items, apply in-query ordering by consumable name', async () => {
@@ -318,7 +318,7 @@ describe('Inventory Routes', () => {
 
         it('should return a list of inventory items, apply post-processing ordering by stock to be wasted', async () => {
           const res = await server
-            .get(`${path}?sortCol=toBeWasted&sortDir=desc`)
+            .get(`${path}?sortCol=projectedWaste&sortDir=desc`)
             .set('Authorization', `Bearer ${shared.token}`)
 
           // Site 1 will have 200 cartridges wasted
