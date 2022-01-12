@@ -47,6 +47,8 @@ describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
+  let clinicianAssayId = 1
+  let clinicianResultId = 1
   let initialResultWorkflowStatus = ''
   let initialResultWorkflowStatusName = ''
   const reason = 'testing'
@@ -59,6 +61,11 @@ describe('Result routes', () => {
   before(async () => {
     shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
+    const { body: { data: clinicianAccessibleResults } } = await server
+      .get(path)
+      .set('Authorization', `Bearer ${clinicianAccessToken}`)
+    clinicianAssayId = clinicianAccessibleResults[0].assayId
+    clinicianResultId = clinicianAccessibleResults[0].id
   })
 
   describe('GET', () => {
@@ -367,7 +374,7 @@ describe('Result routes', () => {
 
     it('should return a list of results that the clinician has access to via sample origin site', async () => {
       const res = await server
-        .get(`${path}?assayId=${assayId}`)
+        .get(`${path}?assayId=${clinicianAssayId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
       validateResponse(res)
 
@@ -379,7 +386,7 @@ describe('Result routes', () => {
 
     it('should return a single result that the clinician has access to via sample origin site', async () => {
       const res = await server
-        .get(`${path}/${resultId}`)
+        .get(`${path}/${clinicianResultId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
 
       assert.equal(res.status, 200)
