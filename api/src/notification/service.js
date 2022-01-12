@@ -247,9 +247,43 @@ async function createNotifications(knex, action, context) {
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
   let jobFunctionLevel = null
-  const { jobFunctions = [], persons = [] } = filterCondition || {}
+  const {
+    jobFunctions = [],
+    persons = [],
+    sendToClinitian,
+    sendToPatient,
+  } = filterCondition || {}
   const [firstPolicy] = policies
-  if (firstPolicy.sendToPatient || firstPolicy.sendToClinitian) {
+  if (sendToClinitian || sendToPatient) {
+    _.each(
+      _.compact([
+        {
+          notify: sendToPatient,
+          phone: firstPolicy.patientPhoneNumber,
+          email: firstPolicy.patientEmail,
+        },
+        {
+          notify: sendToClinitian,
+          phone: firstPolicy.clinitianPhoneNumber,
+          to: firstPolicy.clinitianEmail,
+        },
+      ]),
+      personToSend => {
+        const policy = {
+          policy: _.omit(firstPolicy, ['personId', 'jobFunctionId']),
+          now,
+        }
+        createNotificationIfNotCreatedAlready(
+          action,
+          policy,
+          {
+            messageContext: context,
+            knex,
+          },
+          personToSend
+        )
+      }
+    )
   }
   await Promise.each(policies, async policy => {
     if (
@@ -369,8 +403,10 @@ async function getNotificationPolicy(
           'result.siteId as siteId',
           'result.deviceId as deviceId',
           'result.resultId as resultId',
-          knex.raw('nt.filterCondition->>$.sendToPatient as sendToPatient'),
-          knex.raw('nt.filterCondition->>$.sendToClinitian as sendToClinitian'),
+          knex.raw('result.patientData->>"$.phone" as patientPhone'),
+          knex.raw('result.patientData->>"$.email" as patientEmail'),
+          knex.raw('result.patientData->>"$.clinitianPhone" as clinitianPhone'),
+          knex.raw('result.patientData->>"$.clinitianEmail" as clinitianPhone'),
           knex.raw(
             'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
           ),
@@ -392,7 +428,8 @@ async function getNotificationPolicy(
                 'r.deviceId',
                 'r.id as resultId',
                 'r.resultCategory1',
-                'r.resultCategory2'
+                'r.resultCategory2',
+                'r.patientData'
               )
               .as('result')
           )
@@ -511,8 +548,10 @@ async function shouldNotify(
 async function createNotificationIfNotCreatedAlready(
   { issueId = null, resultId = null },
   { personId = null, policy, now = new Date() },
-  { messageContext: context, knex }
+  { messageContext: context, knex },
+  personToSend = {}
 ) {
+  const { notify, to, phone } = personToSend
   context.bindActionCreators({
     notificationCreated,
     alertMessageCreated,
@@ -528,6 +567,12 @@ async function createNotificationIfNotCreatedAlready(
   }
   const existingNotification = await knex('Notification')
     .where(notification)
+    .modify(builder => {
+      if (notify) {
+        if (to) builder.whereRaw(`data->>to=?`, [to])
+        if (phone) builder.whereRaw(`data->>phone=?`, [phone])
+      }
+    })
     .first()
   if (!existingNotification) {
     notification.createdOn = now
@@ -541,7 +586,7 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-    if (personId) {
+    if (personId || notify) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
           alertTemplateId: policy.alertTemplateId,
@@ -556,6 +601,7 @@ async function createNotificationIfNotCreatedAlready(
       const [emailMessageId] = await knex('EmailMessage').insert({
         emailTemplateId: policy.emailTemplateId,
         ...sharedMessageProperties,
+        to,
       })
       notification.emailMessageId = emailMessageId
       context.emailMessageCreated(emailMessageId)
@@ -564,6 +610,7 @@ async function createNotificationIfNotCreatedAlready(
       const [smsMessageId] = await knex('SmsMessage').insert({
         smsTemplateId: policy.smsTemplateId,
         ...sharedMessageProperties,
+        phoneNumber: phone,
       })
       notification.smsMessageId = smsMessageId
       context.smsMessageCreated(smsMessageId)

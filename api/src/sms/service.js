@@ -104,7 +104,12 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
   const { personId } = await knex('SmsMessage')
     .where('id', smsMessageId)
     .first('personId')
-  const dataConstraints = await getConstraints({ personId })
+
+  let dataConstraints = {}
+  if (personId) {
+    dataConstraints = await getConstraints({ personId })
+  }
+
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
@@ -132,12 +137,14 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .where({ 'm.id': smsMessageId })
     .first(
       'tmpl.message as messageTemplate',
-      'tmpl.phoneNumber as phoneNumberTemplate'
+      'tmpl.phoneNumber as phoneNumberTemplate',
+      knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
-  return processUsingDataSourceQuery(data, [
+  const template = await processUsingDataSourceQuery(data, [
     'messageTemplate',
     'phoneNumberTemplate',
   ])
+  return template
 }
 
 module.exports = {
