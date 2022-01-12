@@ -182,7 +182,6 @@ export const InventoryAdjustmentDialogForm = ({
                   meta.consumableId.error
                 }
                 fullWidth
-                // style={formFieldStyle}
               />
             )}
           </section>
@@ -221,13 +220,9 @@ export const InventoryAdjustmentDialogForm = ({
                   intl={intl}
                   RootProps={{
                     name: 'expiresOn',
-                    // style: formFieldStyle
                   }}
                   onChange={onExpiresOnChange}
                   value={values.expiresOn}
-                  // container="inline"
-                  // mode="landscape"
-                  // autoOk
                 />
               </FormGroup>
             )}
@@ -237,7 +232,6 @@ export const InventoryAdjustmentDialogForm = ({
               <SiteSelectField
                 name="fromSiteId"
                 floatingLabelText={intl.formatMessage(messages.fromSiteName)}
-                // style={formFieldStyle}
                 disabled={
                   form.submitting ||
                   (currInventoryItem &&
@@ -262,7 +256,6 @@ export const InventoryAdjustmentDialogForm = ({
               <SiteSelectField
                 name="toSiteId"
                 floatingLabelText={intl.formatMessage(messages.toSiteName)}
-                // style={formFieldStyle}
                 disabled={
                   form.submitting ||
                   (currInventoryItem &&
@@ -293,8 +286,6 @@ export const InventoryAdjustmentDialogForm = ({
               disabled={form.submitting}
               value={values.quantity}
               onChange={onQuantityChange}
-              // style={formFieldStyle}
-              // inputStyle={{ textAlign: 'right' }}
               error={meta.quantity.touched && meta.quantity.error}
               helperText={meta.quantity.touched && meta.quantity.error}
               margin="normal"
@@ -317,7 +308,6 @@ export const InventoryAdjustmentDialogForm = ({
                 name="reasonId"
                 floatingLabelText={intl.formatMessage(messages.reason)}
                 disabled={form.submitting}
-                // style={formFieldStyle}
                 value={values.reasonId}
                 onConsumableReasonIdChange={onReasonIdChange}
                 errorText={meta.reasonId.touched && meta.reasonId.error}
@@ -338,13 +328,9 @@ export const InventoryAdjustmentDialogForm = ({
                     dateFormat={dateFormat}
                     RootProps={{
                       name: 'dateAdjustedFrom',
-                      // style: formFieldStyle
                     }}
                     value={values.dateAdjustedFrom}
                     onChange={onDateAdjustedFromChange}
-                    // autoOk
-                    // container="inline"
-                    // mode="landscape"
                   />
                 </FormGroup>
                 <FormGroup label={intl.formatMessage(messages.and)}>
@@ -378,13 +364,9 @@ export const InventoryAdjustmentDialogForm = ({
                   intl={intl}
                   RootProps={{
                     name: 'dateAdjusted',
-                    // style: formFieldStyle
                   }}
                   value={values.dateAdjusted}
                   onChange={onDateAdjustedChange}
-                  // container="inline"
-                  // mode="landscape"
-                  // style={formFieldStyle}
                 />
               </FormGroup>
             </section>
@@ -400,7 +382,6 @@ export const InventoryAdjustmentDialogForm = ({
               onChange={onNotesChange}
               multiline
               rows={2}
-              // style={formFieldStyle}
               error={meta.notes.touched && meta.notes.error}
               helperText={meta.notes.touched && meta.notes.error}
               margin="normal"

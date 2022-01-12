@@ -629,7 +629,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     )
   }
 
-  let inventorySites = await inventoryQuery.clone()
+  let inventorySites = await inventoryQuery
 
   // Get the available lots for the scoped sites and consumables - only the sites-consumables with stock are needed
   const availableInventory = await getAvailableLots(
