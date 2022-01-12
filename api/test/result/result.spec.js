@@ -61,7 +61,9 @@ describe('Result routes', () => {
   before(async () => {
     shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
-    const { body: { data: clinicianAccessibleResults } } = await server
+    const {
+      body: { data: clinicianAccessibleResults },
+    } = await server
       .get(path)
       .set('Authorization', `Bearer ${clinicianAccessToken}`)
     clinicianAssayId = clinicianAccessibleResults[0].assayId
