@@ -8,6 +8,7 @@ import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+import { types } from '../InventoryRedux'
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
@@ -112,6 +113,9 @@ export const connectConsumableFromInventoryItem = connect(
       null,
       EMPTY_MAP
     ),
+    isReceiveInventoryDialog:
+      state.inventory.inventoryAdjustment.get('actionType') ===
+      types.SHOW_RECEIVE_INVENTORY_DIALOG,
   })
 )
 
@@ -120,6 +124,7 @@ export const InventoryAdjustmentDialogForm = ({
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
+  isReceiveInventoryDialog,
   consumable,
   consumableReason,
   dateFormat = 'yyyy-MM-dd',
@@ -235,9 +240,8 @@ export const InventoryAdjustmentDialogForm = ({
                 disabled={
                   form.submitting ||
                   (currInventoryItem &&
-                    (!isNil(currInventoryItem.get('toSiteId')) ||
-                      !isNil(currInventoryItem.get('siteId')) ||
-                      !isNil(currInventoryItem.get('fromSiteId'))))
+                    (isReceiveInventoryDialog ||
+                      !isNil(currInventoryItem.get('siteId'))))
                 }
                 value={values.fromSiteId}
                 onSiteChange={onFromSiteIdChange}
@@ -256,11 +260,7 @@ export const InventoryAdjustmentDialogForm = ({
               <SiteSelectField
                 name="toSiteId"
                 floatingLabelText={intl.formatMessage(messages.toSiteName)}
-                disabled={
-                  form.submitting ||
-                  (currInventoryItem &&
-                    !isNil(currInventoryItem.get('toSiteId')))
-                }
+                disabled={form.submitting || isReceiveInventoryDialog}
                 value={values.toSiteId}
                 onSiteChange={onToSiteIdChange}
                 errorStyle={{
