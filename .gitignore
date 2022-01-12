@@ -49,3 +49,7 @@ web/dist
 
 # Example storybooks
 web/src/example-stories/
+
+# translations web
+web/diff.pot
+web/extracted_strings.json

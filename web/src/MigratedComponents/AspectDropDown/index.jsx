@@ -269,7 +269,9 @@ const SelectComponent = ({
       defaultSelectedOption !== currentSelectedOption
     ) {
       setDefaultOptionValue(
-        getSelectedOptions(data, defaultSelectedOption, idKey)
+        !identifier.includes('areaItems')
+          ? getSelectedOptions(data, defaultSelectedOption, idKey)
+          : defaultSelectedOption
       )
       setCurrentSelectedOption(defaultSelectedOption)
       setOptions(data)
@@ -416,7 +418,6 @@ const groupStyles = {
   color: '#444',
   fontWeight: 'bold',
   fontSize: '15px',
-  // opacity: 0.8,
   textTransform: 'none',
 }
 const GroupHeading = props => (
