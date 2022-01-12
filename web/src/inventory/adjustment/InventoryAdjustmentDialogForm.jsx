@@ -60,7 +60,7 @@ export const SHARED_DEFAULT_VALUES = {
   fromSiteId: undefined,
   toSiteId: undefined,
   quantity: '',
-  dateAdjusted: undefined,
+  dateAdjusted: new Date(),
   notes: '',
 }
 
