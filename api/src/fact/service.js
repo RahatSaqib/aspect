@@ -514,7 +514,9 @@ async function onFactGenerateResultCountsForDevice(
           'r.assayId',
           'r.resultCategory1',
           'r.resultCategory2',
-          knex.raw('DATE_FORMAT(r.startedOn, "%Y-%m-01") as startedOnTimeFrame')
+          knex.raw(
+            'DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame'
+          )
         )
       // if we didn't get an endedOn, generate all time frames since first result from device
       await Promise.each(countsByCategories, async count => {
