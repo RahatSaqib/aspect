@@ -27,6 +27,10 @@ const messages = defineMessages({
     id: 'pages.NotificationList.title',
     defaultMessage: 'Notifications',
   },
+  createLabel: {
+    id: 'pages.PersonDetails.create',
+    defaultMessage: 'Create',
+  },
 })
 
 const NotificationList = () => {
@@ -40,6 +44,7 @@ const NotificationList = () => {
   const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
   const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
   const notificationMenuProps = getCreateNotificationMenuProps(intl)
+  const createLabel = intl.formatMessage(messages.createLabel)
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -60,7 +65,7 @@ const NotificationList = () => {
               },
               state: 'createNotification',
               isClearable: false,
-              placeholder: 'Create...',
+              placeholder: createLabel,
               selectedValue: '',
             }}
             action={({ selectedOption }) => {
