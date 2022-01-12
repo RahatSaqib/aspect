@@ -248,6 +248,9 @@ async function createNotifications(knex, action, context) {
   let jobFunctionId = null
   let jobFunctionLevel = null
   const { jobFunctions = [], persons = [] } = filterCondition || {}
+  const [firstPolicy] = policies
+  if (firstPolicy.sendToPatient || firstPolicy.sendToClinitian) {
+  }
   await Promise.each(policies, async policy => {
     if (
       _.isNil(policy.jobFunctionId) &&
@@ -366,6 +369,8 @@ async function getNotificationPolicy(
           'result.siteId as siteId',
           'result.deviceId as deviceId',
           'result.resultId as resultId',
+          knex.raw('nt.filterCondition->>$.sendToPatient as sendToPatient'),
+          knex.raw('nt.filterCondition->>$.sendToClinitian as sendToClinitian'),
           knex.raw(
             'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
           ),
