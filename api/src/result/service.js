@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subDays, startOfMonth } = require('date-fns')
+const { subDays } = require('date-fns')
 const Promise = require('bluebird')
 const {
   SELECT_COMMON_FIELDS,
@@ -3049,35 +3049,6 @@ async function listSampleTypes() {
   return { ok: true, data }
 }
 
-async function getDataForReportDrTb10A(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate = startOfMonth(new Date()), maxDate = new Date() } = query
-
-  // get total results per each device per period
-  const data = await knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('Sample as s', 'r.sampleId', 's.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      result: 'r',
-      // sample: 's',
-    })
-    .whereBetween('r.endedOn', [minDate, maxDate])
-    .select(knex.raw('DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth'))
-    .groupBy('yearAndMonth')
-    .count({
-      cntResults: knex.raw('DISTINCT r.id'),
-    })
-
-  const dataset = {
-    ok: true,
-    // data: data.find(({ yearAndMonth }) => yearAndMonth === ``),
-    data: data[data.length - 1],
-    wayToFillInData: 'mapping',
-  }
-  return dataset
-}
-
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -3119,6 +3090,4 @@ module.exports = {
   getBaseQueryForResults,
   addResultDownloadLog,
   listSampleTypes,
-
-  getDataForReportDrTb10A,
 }

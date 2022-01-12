@@ -54,10 +54,9 @@ async function getSheetData(request, sheet) {
     errorMessage,
     dynamicColumns = {},
     dataSelector = null,
-    wayToFillInData = 'list',
   } = result
   if (ok) {
-    return { data, dynamicColumns, dataSelector, wayToFillInData }
+    return { data, dynamicColumns, dataSelector }
   }
 
   return Boom.preconditionFailed(
@@ -128,7 +127,6 @@ async function getAllSheetsData(request, sheets) {
       data: dataRows,
       dynamicColumns,
       dataSelector = null,
-      wayToFillInData,
     } = await getSheetData(request, sheet)
     if (Boom.isBoom(dataRows)) {
       boomError = dataRows
@@ -139,7 +137,6 @@ async function getAllSheetsData(request, sheets) {
       dataRows,
       dynamicColumns,
       dataSelector,
-      wayToFillInData,
       // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
     }

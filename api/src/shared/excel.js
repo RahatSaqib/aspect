@@ -25,6 +25,13 @@ const LANG_DEFAULT = 'en'
   For instance, `cell.type = 2` is `excel.ValueType.Number`
 */
 
+const valueCellTypes = [
+  excel.ValueType.String,
+  excel.ValueType.Number,
+  excel.ValueType.Date,
+  excel.ValueType.Boolean,
+]
+
 // ----------------------------------------------------------------------------------------------
 // getCellsByValue - helper function for getting all cells having requested value
 // ----------------------------------------------------------------------------------------------
@@ -49,7 +56,7 @@ const getCellsBySubstring = (sheet, value) => {
   if (sheet) {
     sheet.eachRow(row => {
       row.eachCell(cell => {
-        if (cell.text.includes(value)) {
+        if (valueCellTypes.includes(cell.type) && cell.text.includes(value)) {
           cells.push(cell)
         }
       })
@@ -243,8 +250,9 @@ async function renderExcelTemplate({
 
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
-    const { dynamicColumns = [], wayToFillInData } = data[sheetIndex] || {}
+    const { dataRows, dynamicColumns = [] } = data[sheetIndex] || {}
 
+    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
@@ -273,11 +281,8 @@ async function renderExcelTemplate({
         cell.value = ''
       })
 
-      const {
-        dataRows,
-        defaultNoDataMessage,
-        dataSelector: dataSelectorSheet,
-      } = data[sheetIndex]
+      const { defaultNoDataMessage, dataSelector: dataSelectorSheet } =
+        data[sheetIndex]
       if (!dataRows) return
 
       // use 1st cell only (actually, should not be more than one)

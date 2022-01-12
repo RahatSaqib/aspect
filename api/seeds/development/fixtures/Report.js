@@ -10,13 +10,8 @@ const resultsDrTb10A = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/service',
+      moduleName: 'result/serviceReport',
       functionName: 'getDataForReportDrTb10A',
-      query: {
-        assayId: 'GxMtbRif',
-        resultCategoryId: 'Detected',
-        resultCategory2Id: 'Detected',
-      },
     },
   ],
 }

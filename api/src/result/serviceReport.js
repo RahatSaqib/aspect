@@ -1,10 +1,21 @@
 const flatten = require('flat')
 const _ = require('lodash')
+const dateFormat = require('date-fns/format')
+const { endOfMonth, startOfMonth } = require('date-fns')
+
+const { addConstraints, getConstraints } = require('../auth/constraints')
 const { getResultsForExport } = require('./service')
-const { knex } = require('../db')
+const { knex, filterParams, filterDateRangeParams } = require('../db')
 const { getUser } = require('../auth/service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
-
+const {
+  formatDateOrDefault,
+  getWellFormattedDateStringWithTimezone,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
+const { allAssayToId, allResultCategoryToId } = require('../shared/dictionary')
+const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 const { getAllAssaySchemas } = require('../assay/service')
 /**
  * 'header' is for 1st row in CSV file,
@@ -313,9 +324,246 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
   }
 }
 
+async function getDataForReportDrTb10A(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const {
+    stateId,
+    lgaId,
+    siteName,
+    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
+      startOfMonth(new Date())
+    ),
+    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
+      endOfMonth(new Date())
+    ),
+  } = query
+  const dateFrom = startOfMonthUTC(minDateStr)
+  const dateTo = endOfMonthUTC(maxDateStr)
+
+  const assayIds = await allAssayToId()
+  const resultCategoryIds = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
+  )
+  const mtbDetected = `
+    r.resultCategory1 IN (${positiveResultCategories})
+  `
+  const rifDetected = `
+    r.resultCategory1 IN (${positiveResultCategories})
+    and
+    r.resultCategory2 IN (${positiveResultCategories})
+  `
+  const count = (id, condition) =>
+    knex.raw(`
+        DISTINCT
+        CASE
+          WHEN ${condition}
+          THEN ${id}
+          ELSE null
+        END
+      `)
+  const countCustomField = (condition, customFieldName, customFieldValue) =>
+    count(
+      'r.id',
+      `
+        ${condition}
+        ${condition ? ' and ' : ''}
+        IFNULL(r.patientData ->> '$.${customFieldName}', '') = '${customFieldValue}'
+      `
+    )
+
+  // get total results per each device per period
+  let data = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    /**
+     * join to `DeviceCapacity` to count number of modules per device
+     */
+    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
+    .leftJoin('ResultCategoryAssay as rca1', function () {
+      this.on('r.assayId', 'rca1.assayId').andOn(
+        'r.resultCategory1',
+        'rca1.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rca2', function () {
+      this.on('r.assayId', 'rca2.assayId').andOn(
+        'r.resultCategory2',
+        'rca2.resultCategoryId'
+      )
+    })
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+      result: 'r',
+    })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .select(
+      'r.deviceId',
+      knex.raw(`
+        DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
+      `),
+      /**
+       * Notice that we below group by `deviceId`
+       * only because we need to count number of modules
+       * for each device
+       */
+      knex.raw(`
+        ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
+      `)
+    )
+    .groupBy('yearAndMonth', 'r.deviceId')
+    .count({
+      cntAll: knex.raw('DISTINCT r.id'),
+      /**
+       * Block 1
+       */
+      cntInvalid: count(
+        'r.id',
+        `r.resultCategory1 = ${resultCategoryIds.Invalid}`
+      ),
+      cntNoResult: count(
+        'r.id',
+        `r.resultCategory1 = ${resultCategoryIds.NoResult}`
+      ),
+      cntError: count('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
+      cntMtbDetectedRifIndeterminate: count(
+        'r.id',
+        `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+        `
+      ),
+      /**
+       * Block 2
+       */
+      cntMtbRifUnknownHistory: countCustomField(
+        '',
+        'TBHistory',
+        'Unknown History'
+      ),
+      cntMtbRifNewTest: countCustomField('', 'TBHistory', 'New Test'),
+      cntMtbDetectedUnknownHistory: countCustomField(
+        mtbDetected,
+        'TBHistory',
+        'Unknown History'
+      ),
+      cntRifDetectedUnknownHistory: countCustomField(
+        rifDetected,
+        'TBHistory',
+        'Unknown History'
+      ),
+      cntMtbDetectedNewTest: countCustomField(
+        mtbDetected,
+        'TBHistory',
+        'New Test'
+      ),
+      cntRifDetectedNewTest: countCustomField(
+        rifDetected,
+        'TBHistory',
+        'New Test'
+      ),
+
+      cntModulesActive: knex.raw(`DISTINCT 
+        CONCAT(r.deviceId, '-',  r.moduleName)
+      `),
+    })
+
+  data = _.reduce(
+    data, // <-- this `data` is grouped by 'yearAndMonth' and 'deviceId'
+    (acc, { deviceId, yearAndMonth, ...rest }) => {
+      /**
+       * Notice that above prop `rest` contains counter props
+       * only, i.e. name starts with `cnt`
+       */
+      let item = acc[yearAndMonth]
+      const propNames = _.keys(rest) // i.e. all counters `cnt*`
+      if (!item) {
+        item = {
+          devices: {}, // this is a temporal prop to collect distinct deviceId's
+        }
+        propNames.forEach(propName => {
+          item[propName] = 0
+        })
+      }
+      /**
+       * increment all counters
+       */
+      propNames.forEach(propName => {
+        item[propName] += rest[propName]
+      })
+      /**
+       * keep `deviceId`, we need only object keys
+       */
+      item.devices[deviceId] = null
+
+      acc[yearAndMonth] = item
+      return acc
+    },
+    {}
+  )
+
+  const yymm = formatDateOrDefault(dateFrom, 'yyyy-MM-01') // same format as field `yearAndMonth` in query
+  /**
+   * set `data` to single object with all counters prepared
+   */
+  data = data[yymm] || {}
+  /**
+   * set `cntDevices` and remove temporal prop `devices`
+   */
+  if (!_.isEmpty(data)) {
+    data.cntDevices = _.keys(data.devices).length
+  }
+  delete data.devices
+  /**
+   * additional props
+   */
+  data.month = dateFormat(dateFrom, 'MMMM')
+  data.quarter = dateFormat(dateFrom, 'qo')
+  data.year = +dateFormat(dateFrom, 'yyyy')
+  data.today = formatDateOrDefault(new Date(), 'yyyy-MM-dd')
+
+  data.stateName = 'All'
+  data.lgaName = 'All'
+  data.siteName = siteName || 'All'
+  if (stateId) {
+    ;[{ name: data.stateName }] = await knex('State')
+      .where('id', stateId)
+      .select('name')
+  }
+  if (lgaId) {
+    ;[{ name: data.lgaName }] = await knex('Lga')
+      .where('id', lgaId)
+      .select('name')
+  }
+
+  return {
+    ok: true,
+    data,
+  }
+}
+
 module.exports = {
   exportResults,
   getDeviceErrorHistoryForAttachment,
   getAllResultsForExport,
   columnsDeviceErrorHistoryForAttachment,
+  getDataForReportDrTb10A,
 }
