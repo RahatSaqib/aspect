@@ -27,6 +27,9 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
 
   static async canProcessRequest(request) {
     const { auth } = request
+    if (!_.get(auth, 'credentials.token')) {
+      return false
+    }
     const { externalId: deviceTypeId } =
       (await knex('DeviceApiKey as dak')
         .join('Device as d', 'dak.deviceId', 'd.id')

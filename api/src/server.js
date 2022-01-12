@@ -22,6 +22,9 @@ const {
   plugin: deviceApiKeyPlugin,
   validateApiKeyAuthBasic,
 } = require('./deviceApi/deviceApiKeyPlugin')
+const {
+  plugin: deviceApiRawUnauthenticatedPlugin,
+} = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
 const { port } = config
@@ -113,9 +116,11 @@ const rawPayloadPlugin = {
     })
   },
 }
+
 const queueName = config.scheduler.enabled
   ? config.amqp.name
   : `${config.amqp.name}_for_testing`
+
 const messageQueuePlugin = {
   name: 'messageQueue',
   version,
@@ -156,6 +161,9 @@ const plugins = [
 
   // Basic authentication in Device API
   require('@hapi/basic'), // eslint-disable-line import/order
+
+  // Unauthenticated access to public Device API Raw Endpoints
+  deviceApiRawUnauthenticatedPlugin,
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
@@ -199,7 +207,6 @@ const start = async () => {
   // Authentication strategies and Authorization Scopes
   // ==========================================================================
   // ==========================================================================
-
   // use config: { auth: false } on route definition to disable authentication
   // Device API uses API Keys
   server.auth.strategy('deviceApiKey', 'deviceApiKey')
@@ -207,6 +214,10 @@ const start = async () => {
     allowEmptyUsername: true,
     ...validateApiKeyAuthBasic,
   })
+  server.auth.strategy(
+    'deviceApiRawUnauthenticated',
+    'deviceApiRawUnauthenticated'
+  )
 
   // Client API uses JWT
   server.auth.strategy('clientApi', 'jwt', {

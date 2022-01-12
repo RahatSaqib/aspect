@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-11-24T18:57:10.397Z\n"
+"POT-Creation-Date: 2022-01-06T09:50:05.083Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -470,6 +470,15 @@ msgstr ""
 msgid "All HIV results where the virus is not suppressed"
 msgstr ""
 
+#. [pages.ReportIndex.all_results]
+#. defaultMessage is:
+#. All Results
+#: extracted_strings.json
+#, fuzzy
+#| msgid "No Results"
+msgid "All Results"
+msgstr "No Results"
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -533,6 +542,13 @@ msgstr ""
 #. All states
 #: extracted_strings.json
 msgid "All states"
+msgstr ""
+
+#. [pages.ReportIndex.all_results_description]
+#. defaultMessage is:
+#. All test results in the system. One row per result.
+#: extracted_strings.json
+msgid "All test results in the system. One row per result."
 msgstr ""
 
 #. [pages.TaskList.taskListOptionsAllTopics]
@@ -658,6 +674,13 @@ msgstr ""
 #. Approved
 #: extracted_strings.json
 msgid "Approved"
+msgstr ""
+
+#. [contextualMenu.notifications.areYouSureToDelete]
+#. defaultMessage is:
+#. Are you sure to delete notification {notificationName}?
+#: extracted_strings.json
+msgid "Are you sure to delete notification {notificationName}?"
 msgstr ""
 
 #. [pages.LocationSelector.lga]
@@ -1128,6 +1151,9 @@ msgstr ""
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
 #: extracted_strings.json
 msgid "Cancel"
 msgstr ""
@@ -1166,7 +1192,17 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
+#. [legends.Unknown.resultCategory1]
+#. defaultMessage is:
+#. Category 1
+#: extracted_strings.json
+msgid "Category 1"
+msgstr ""
+
 #. [pages.ResultList.resultCategory1Name]
+#. defaultMessage is:
+#. Category 2
+#. [legends.Unknown.resultCategory2]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
@@ -1336,6 +1372,13 @@ msgstr ""
 #. Collected On:
 #: extracted_strings.json
 msgid "Collected On:"
+msgstr ""
+
+#. [pages.Result.collectedOnRequired]
+#. defaultMessage is:
+#. CollectedOn date is required
+#: extracted_strings.json
+msgid "CollectedOn date is required"
 msgstr ""
 
 #. [pages.ResultList.collectionOfResults]
@@ -1775,6 +1818,13 @@ msgstr ""
 msgid "Current Password"
 msgstr ""
 
+#. [pages.Notifications.optionPersonRoleNotSet]
+#. defaultMessage is:
+#. Currently not selectable - missing role
+#: extracted_strings.json
+msgid "Currently not selectable - missing role"
+msgstr ""
+
 #. [pages.dateRangeSelector.custom]
 #. defaultMessage is:
 #. Custom
@@ -1985,9 +2035,9 @@ msgstr ""
 
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
-#. Delete
+#. Delete (Only 0 triggers)
 #: extracted_strings.json
-msgid "Delete"
+msgid "Delete (Only 0 triggers)"
 msgstr ""
 
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
@@ -2506,11 +2556,46 @@ msgstr ""
 msgid "Email subject is required"
 msgstr ""
 
+#. [pages.Notifications.table.emailSentTo]
+#. defaultMessage is:
+#. Email was sent to:
+#: extracted_strings.json
+msgid "Email was sent to:"
+msgstr ""
+
+#. [pages.NotificationDetail.enable]
+#. defaultMessage is:
+#. Enable
+#: extracted_strings.json
+msgid "Enable"
+msgstr ""
+
+#. [pages.NotificationDetail.notificationTypeEnable]
+#. defaultMessage is:
+#. Enable this notification
+#: extracted_strings.json
+msgid "Enable this notification"
+msgstr ""
+
 #. [forms.formItem.endDate]
 #. defaultMessage is:
 #. End Date
 #: extracted_strings.json
 msgid "End Date"
+msgstr ""
+
+#. [pages.Result.endedOnRequired]
+#. defaultMessage is:
+#. End date is required
+#: extracted_strings.json
+msgid "End date is required"
+msgstr ""
+
+#. [pages.Result.endedOnCannotBeBeforeStartedOn]
+#. defaultMessage is:
+#. End time cannot be before Start time
+#: extracted_strings.json
+msgid "End time cannot be before Start time"
 msgstr ""
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
@@ -2681,6 +2766,13 @@ msgstr ""
 #. Error Code
 #: extracted_strings.json
 msgid "Error Code"
+msgstr ""
+
+#. [pages.Result.errorCode]
+#. defaultMessage is:
+#. Error Code must be a positive integer with max 5 digits
+#: extracted_strings.json
+msgid "Error Code must be a positive integer with max 5 digits"
 msgstr ""
 
 #. [queryFetch.errorResponseMessages.GET.default.title]
@@ -3758,6 +3850,13 @@ msgstr ""
 #. Indeterminate
 #: extracted_strings.json
 msgid "Indeterminate"
+msgstr ""
+
+#. [pages.Notifications.table.notificationsTableHeaderJobFunctionsPersons]
+#. defaultMessage is:
+#. Individual Persons
+#: extracted_strings.json
+msgid "Individual Persons"
 msgstr ""
 
 #. [placeholders.insert.placeholder.for]
@@ -5033,6 +5132,13 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#. [pages.NotificationList.no]
+#. defaultMessage is:
+#. No
+#: extracted_strings.json
+msgid "No"
+msgstr ""
+
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -5632,6 +5738,9 @@ msgstr ""
 #. defaultMessage is:
 #. Patient ID
 #. [pages.DeviceDetailProfile.patientId]
+#. defaultMessage is:
+#. Patient ID
+#. [pages.Notifications.table.patientId]
 #. defaultMessage is:
 #. Patient ID
 #: extracted_strings.json
@@ -6331,6 +6440,13 @@ msgstr ""
 msgid "Receiving Inventory Failed"
 msgstr ""
 
+#. [pages.Notifications.table.recipients]
+#. defaultMessage is:
+#. Recipients
+#: extracted_strings.json
+msgid "Recipients"
+msgstr ""
+
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
 #. Recovered cases
@@ -6773,6 +6889,13 @@ msgstr ""
 msgid "SMS Sent MTD"
 msgstr ""
 
+#. [pages.Notifications.table.smsSentTo]
+#. defaultMessage is:
+#. SMS was sent to:
+#: extracted_strings.json
+msgid "SMS was sent to:"
+msgstr ""
+
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
 #. Sample
@@ -6823,6 +6946,9 @@ msgstr ""
 #. defaultMessage is:
 #. Sample ID
 #. [pages.DeviceDetailProfile.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [pages.Notifications.table.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #: extracted_strings.json
@@ -7225,6 +7351,13 @@ msgstr ""
 msgid "Select stock left..."
 msgstr ""
 
+#. [pages.NotificationDetail.selectPersonOption]
+#. defaultMessage is:
+#. Select the person or persons
+#: extracted_strings.json
+msgid "Select the person or persons"
+msgstr ""
+
 #. [filter.popover.selectDeviceType]
 #. defaultMessage is:
 #. Select type...
@@ -7237,6 +7370,13 @@ msgstr ""
 #. Select {entity}...
 #: extracted_strings.json
 msgid "Select {entity}..."
+msgstr ""
+
+#. [pages.Notifications.optionPersonRoleSet]
+#. defaultMessage is:
+#. Selectable
+#: extracted_strings.json
+msgid "Selectable"
 msgstr ""
 
 #. [legends.Unknown.senaiteSmearMicroscopy]
@@ -7283,6 +7423,13 @@ msgstr ""
 #. Send
 #: extracted_strings.json
 msgid "Send"
+msgstr ""
+
+#. [pages.Notifications.fieldPersonSendToSpecific]
+#. defaultMessage is:
+#. Send to a specific person
+#: extracted_strings.json
+msgid "Send to a specific person"
 msgstr ""
 
 #. [forms.formItem.senderOperator]
@@ -7407,9 +7554,14 @@ msgstr ""
 
 #. [pages.Notifications.jobFunctionRequired]
 #. defaultMessage is:
-#. Should select at least one job function for this notification
+#. Should select at least one job function or individiual person for this notification
+#. [pages.Notifications.personOrJobFunctionRequired]
+#. defaultMessage is:
+#. Should select at least one job function or individiual person for this notification
 #: extracted_strings.json
-msgid "Should select at least one job function for this notification"
+msgid ""
+"Should select at least one job function or individiual person for this "
+"notification"
 msgstr ""
 
 #. [filter.btnGroup.onlyReportableResults]
@@ -7721,6 +7873,13 @@ msgstr ""
 #. Start date is required
 #: extracted_strings.json
 msgid "Start date is required"
+msgstr ""
+
+#. [pages.Result.startedOnCannotBeAfterEndedOn]
+#. defaultMessage is:
+#. Start time cannot be after End time
+#: extracted_strings.json
+msgid "Start time cannot be after End time"
 msgstr ""
 
 #. [forms.formItem.state]
@@ -8678,6 +8837,13 @@ msgstr ""
 msgid "Time Zone"
 msgstr ""
 
+#. [pages.Result.timeCannotBeGreaterThanNow]
+#. defaultMessage is:
+#. Time cannot be greater than current time
+#: extracted_strings.json
+msgid "Time cannot be greater than current time"
+msgstr ""
+
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
 #. Title
@@ -8697,6 +8863,13 @@ msgstr ""
 #. To Site
 #: extracted_strings.json
 msgid "To Site"
+msgstr ""
+
+#. [pages.NotificationDetail.personsSelectLabel]
+#. defaultMessage is:
+#. To an individual person
+#: extracted_strings.json
+msgid "To an individual person"
 msgstr ""
 
 #. [pages.NotificationDetail.toAnyOfTheseJobFunctions]
@@ -8894,6 +9067,45 @@ msgstr ""
 #. True
 #: extracted_strings.json
 msgid "True"
+msgstr ""
+
+#. [legends.Unknown.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
+#. [filter.AssaySelectField.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
+#. [pages.ResultList.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
+#: extracted_strings.json
+msgid "Truenat® MTB"
+msgstr ""
+
+#. [legends.Unknown.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
+#. [filter.AssaySelectField.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
+#. [pages.ResultList.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
+#: extracted_strings.json
+msgid "Truenat® MTB Plus"
+msgstr ""
+
+#. [legends.Unknown.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
+#. [filter.AssaySelectField.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
+#. [pages.ResultList.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
+#: extracted_strings.json
+msgid "Truenat® MTB-RIF Dx"
 msgstr ""
 
 #. [pages.caseRow.diseaseNameTuberculosis]
@@ -9265,11 +9477,25 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
+#. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#: extracted_strings.json
+msgid "Yes"
+msgstr ""
+
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:
 #. Yes, delete
 #: extracted_strings.json
 msgid "Yes, delete"
+msgstr ""
+
+#. [contextualMenu.notifications.yesDelete]
+#. defaultMessage is:
+#. Yes, delete it
+#: extracted_strings.json
+msgid "Yes, delete it"
 msgstr ""
 
 #. [pages.dateRangeSelector.yesterday]
@@ -9454,9 +9680,9 @@ msgstr ""
 
 #. [pages.common.state_MW]
 #. defaultMessage is:
-#. Zones
+#. Zone
 #: extracted_strings.json
-msgid "Zones"
+msgid "Zone"
 msgstr ""
 
 #. [pages.InventoryAdjustmentDialogForm.and]
@@ -9562,6 +9788,20 @@ msgstr ""
 #. error rate
 #: extracted_strings.json
 msgid "error rate"
+msgstr ""
+
+#. [pages.Notifications.table.event]
+#. defaultMessage is:
+#. event
+#: extracted_strings.json
+msgid "event"
+msgstr ""
+
+#. [pages.Notifications.table.events]
+#. defaultMessage is:
+#. events
+#: extracted_strings.json
+msgid "events"
 msgstr ""
 
 #. [pages.OperationalData.expiringTitle]
@@ -9978,6 +10218,13 @@ msgstr ""
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
 msgstr ""
 
+#. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
+#. defaultMessage is:
+#. {itemCount, plural, one {# Person} other {# Persons} }
+#: extracted_strings.json
+msgid "{itemCount, plural, one {# Person} other {# Persons} }"
+msgstr ""
+
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
 #. {itemCount} (total)
@@ -10053,9 +10300,6 @@ msgstr ""
 
 #~ msgid "Down For Repair"
 #~ msgstr "Down For Repair"
-
-#~ msgid "No Results"
-#~ msgstr "No Results"
 
 #~ msgid "Other Reasons"
 #~ msgstr "Other Reasons"
