@@ -2,6 +2,7 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
 import isNull from 'lodash/isNull'
+import round from 'lodash/round'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
@@ -62,7 +63,9 @@ const InventoryTableRow = ({ inventoryItem }) => {
   const hasQtyOnHand = qty =>
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
   const hasDailyConsumption = qty =>
-    isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(qty)
+    isNull(qty)
+      ? formatMessage(messages.noConsumption)
+      : formatNumber(round(qty, 2))
 
   return (
     <TableRow className={cssClasses('TableRow')}>
@@ -152,7 +155,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
           rowSpan={rowSpan('daysStockLeft')}
         >
           {inventoryItem.get('daysStockLeft') !== null
-            ? inventoryItem.get('daysStockLeft')
+            ? round(inventoryItem.get('daysStockLeft'), 2)
             : 'N/A'}
         </TableCell>
       ) : null}
@@ -162,7 +165,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
           rowSpan={rowSpan('projectedWaste')}
         >
           {inventoryItem.get('projectedWaste') !== null
-            ? inventoryItem.get('projectedWaste')
+            ? round(inventoryItem.get('projectedWaste'), 2)
             : 'N/A'}
         </TableCell>
       ) : null}
