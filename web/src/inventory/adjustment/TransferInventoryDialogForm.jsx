@@ -48,7 +48,7 @@ const messages = defineMessages({
 
 export function validate(
   { canExpire, expiresOn, fromSiteId, toSiteId, quantity, dateAdjusted },
-  { intl, inventoryItem }
+  { intl }
 ) {
   const errors = {}
   if (canExpire && !expiresOn) {
@@ -65,10 +65,6 @@ export function validate(
   }
   if (!quantity || quantity <= 0) {
     errors.quantity = intl.formatMessage(messages.quantityRequired)
-  } else if (inventoryItem && quantity > inventoryItem.get('quantityOnHand')) {
-    errors.quantity = intl.formatMessage(messages.positiveQuantityRequired, {
-      currentQuantity: inventoryItem.get('quantityOnHand'),
-    })
   }
   if (!dateAdjusted) {
     errors.dateAdjusted = intl.formatMessage(sharedMessages.dateRequired)

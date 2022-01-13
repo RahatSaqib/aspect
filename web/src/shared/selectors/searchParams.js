@@ -14,13 +14,14 @@ export const makeSortPageSelector =
   } = {}) =>
   ({ location, availableSortCol, dependencies }) => {
     const searchParams = new URLSearchParams(location.search)
-    
+
     const pageParamName = searchParams.has('pageAt') ? 'pageAt' : 'page'
     const sizeParamName = searchParams.has('pageSize') ? 'pageSize' : 'size'
     const page = parseInt(searchParams.get(pageParamName), 10) || defaultPageAt
-    const size = parseInt(searchParams.get(sizeParamName), 10) || defaultPageSize
+    const size =
+      parseInt(searchParams.get(sizeParamName), 10) || defaultPageSize
     const sortCol = searchParams.get('sortCol')
-    
+
     let index = -1
     let obj = null
 

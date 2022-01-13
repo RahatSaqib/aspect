@@ -1373,9 +1373,6 @@ async function transferInventory(request) {
     expiresOn,
     lotNumber
   )
-  if (_.isEmpty(sourceInventoryItem)) {
-    return Boom.notFound('Could not find source item')
-  }
 
   const destinationInventoryItem = await findInventoryItem(
     toSiteId,
@@ -1385,6 +1382,7 @@ async function transferInventory(request) {
     fromSiteId
   )
   let destinationInventoryItemId = -1
+  let sourceInventoryItemId = -1
   await transact(async knex => {
     destinationInventoryItemId = await upsertInventoryItem({
       knex,
@@ -1403,9 +1401,21 @@ async function transferInventory(request) {
       'Transfer Sent'
     )
 
+    sourceInventoryItemId = await upsertInventoryItem({
+      knex,
+      inventoryItem: sourceInventoryItem,
+      consumableId,
+      siteId: fromSiteId,
+      lotNumber,
+      expiresOn,
+      quantity: -quantity,
+      now,
+      userId: currentlyLoggedInUser.id,
+    })
+
     await logInventoryChange({
       knex,
-      inventoryItemId: sourceInventoryItem.id,
+      inventoryItemId: sourceInventoryItemId,
       consumableId,
       siteId: fromSiteId,
       consumableReasonId: transferSentConsumableReasonId,
@@ -1418,17 +1428,6 @@ async function transferInventory(request) {
       createdOn: now,
       createdBy: currentlyLoggedInUser.id,
     })
-
-    await knex('InventoryItem')
-      .where('id', sourceInventoryItem.id)
-      .update({
-        expiresOn,
-        lotNumber,
-        siteId: fromSiteId,
-        quantityOnHand: knex.raw(`quantityOnHand - ${quantity}`),
-        updatedOn: now,
-        updatedBy: currentlyLoggedInUser.id,
-      })
 
     // check both sites for Stockout/StockExpiring issues
     const props = {
@@ -1444,7 +1443,7 @@ async function transferInventory(request) {
   return {
     ok: true,
     data: {
-      existingInventoryItem: await getInventoryItem(sourceInventoryItem.id),
+      existingInventoryItem: await getInventoryItem(sourceInventoryItemId),
       newInventoryItem: await getInventoryItem(destinationInventoryItemId),
     },
   }

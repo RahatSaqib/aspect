@@ -577,9 +577,7 @@ describe('Inventory Routes', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
           assert.equal(res.body.data.quantityOnHand, -510)
-          inventoryItemsToRemove.push(
-            inventoryItemsToRemove.push(res.body.data.id)
-          )
+          inventoryItemsToRemove.push(res.body.data.id)
         })
       })
     })
@@ -610,6 +608,7 @@ describe('Inventory Routes', () => {
                 _.max([0, inventoryItem.quantityOnHand - quantityToAdjust])
               )
               transitItem = res.body.data.newInventoryItem
+              inventoryItemsToRemove.push(res.body.data.newInventoryItem.id)
               assert.deepEqual(transitItem, {
                 ...transitItem,
                 quantityOnHand: _.max([0, quantityToAdjust]),
@@ -659,6 +658,50 @@ describe('Inventory Routes', () => {
                   done()
                 })
             })
+        })
+
+        it('when transfering from a non-existing lot, should add an inventory item in transit to the destination and another with negative stock in the origin site', async () => {
+          const res = await server
+            .put(`${transferInventoryPath}`)
+            .send({
+              consumableId: inventoryItem.consumableId,
+              lotNumber: 'NON-EXISTING LOT',
+              expiresOn: inventoryItem.expiresOn,
+              quantity: quantityToAdjust,
+              notes: 'Testing transfer',
+              fromSiteId: inventoryItem.siteId,
+              toSiteId: destinationSite.id,
+              dateAdjusted: new Date().toISOString(),
+            })
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+
+          transitItem = res.body.data.newInventoryItem
+          inventoryItemsToRemove.push(res.body.data.newInventoryItem.id)
+
+          const sourceInventoryItem = res.body.data.existingInventoryItem
+          inventoryItemsToRemove.push(sourceInventoryItem.id)
+
+          assert.deepEqual(transitItem, {
+            ...transitItem,
+            quantityOnHand: quantityToAdjust,
+            inTransitFromSiteId: inventoryItem.siteId,
+            siteId: destinationSite.id,
+            lotNumber: 'NON-EXISTING LOT',
+            expiresOn: inventoryItem.expiresOn.toISOString(),
+          })
+
+          assert.deepEqual(sourceInventoryItem, {
+            ...sourceInventoryItem,
+            quantityOnHand: -quantityToAdjust,
+            siteId: inventoryItem.siteId,
+            lotNumber: 'NON-EXISTING LOT',
+            expiresOn: inventoryItem.expiresOn.toISOString(),
+          })
         })
       })
     })
