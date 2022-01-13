@@ -199,19 +199,21 @@ async function listNotifications(request) {
     })
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-    .leftOuterJoin(
-      subquery.as('filters'),
-      'nt.id',
-      'filters.notificationTypeId'
-    )
-    .select('nt.id as id', 'nt.name', 'ntc.externalId as typeCategory')
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.id')
 
   const getItems = notificationQuery
     .clone()
+    .leftOuterJoin(
+      subquery.as('filters'),
+      'nt.id',
+      'filters.notificationTypeId'
+    )
     .modify(sortPageParams, query, 'nt.name')
     .select(
+      'nt.id as id',
+      'nt.name',
+      'ntc.externalId as typeCategory',
       knex.raw(
         `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
       ),
