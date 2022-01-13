@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
 import { array, number, object, oneOfType, shape } from 'prop-types'
-import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 
 import {
   useColumnOrder,
@@ -90,6 +90,7 @@ const AspectTableCore = ({
     useExpanded,
     usePagination
   )
+  const [{ id: sortColumn = null, desc: isSortDescending = null } = {}] = sortBy
 
   const handleChangeRowsPerPage = val => {
     setPageSize(typeof val !== 'number' ? total : Number(val))
@@ -113,29 +114,33 @@ const AspectTableCore = ({
   }
 
   useEffect(() => {
-    const { pageSize: initialStatePageSize } = initialState
-    if (pageSize !== initialStatePageSize) {
-      setSize(pageSize)
-    }
-  }, [pageSize, setSize, initialState])
+    setSize(pageSize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageSize])
 
   useEffect(() => {
-    const { pageIndex: initialStatePageIndex } = initialState
-    if (pageIndex !== initialStatePageIndex) {
-      setPage(pageIndex)
-    }
-  }, [pageIndex, setPage, initialState])
+    setPage(pageIndex)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIndex])
 
   useEffect(() => {
-    const { sortBy: initialStateSortBy } = initialState
-    if (!sortBy.length && initialSortBy) {
-      setSortBy([initialSortBy])
+    if (initialSortBy) {
+      if (isNil(isSortDescending) || isNil(sortColumn)) {
+        setSortBy([initialSortBy])
+      } else {
+        setSortCol(sortColumn)
+        setSortDir(isSortDescending ? 'desc' : 'asc')
+      }
+    } else {
+      let sortDir = null
+      if (!isNil(isSortDescending)) {
+        sortDir = isSortDescending ? 'desc' : 'asc'
+      }
+      setSortCol(sortColumn)
+      setSortDir(sortDir)
     }
-    if (sortBy.length && !isEqual(sortBy, initialStateSortBy)) {
-      setSortCol(sortBy[0].id)
-      setSortDir(sortBy[0].desc ? 'desc' : 'asc')
-    }
-  }, [sortBy, setSortBy, initialSortBy, initialState, setSortCol, setSortDir])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortColumn, isSortDescending])
 
   useEffect(() => {
     if (visibleColumns && !columnOrder.length) {

@@ -46,6 +46,7 @@ const enhance = compose(
         )
         searchParams.set('filters', filtersParams)
         searchParams.delete('pageAt')
+        searchParams.delete('page')
         navigate(
           {
             ...location,
