@@ -58,7 +58,7 @@ export const ClinicalHistory = props => {
     // everything with this if clause will only run once
     if (once.current === false) {
       once.current = true
-      setPatientId(params.patientId)
+      setPatientId(params?.patientId || '')
       fetchResultsByPatient(params.patientId)
       // clean up after componentDidMount
       return () => {}
