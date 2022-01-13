@@ -10,26 +10,30 @@ const { waitForIdle } = require('../utils/mqUtils')
 // ------------------------------------------------------
 // sms context
 // ------------------------------------------------------
-function createSmsTestContext(auth) {
-  return new SmsTestContext(auth)
+function createSmsTestContext(auth, fixedPhoneNumber = null) {
+  return new SmsTestContext(auth, fixedPhoneNumber)
 }
 
 class SmsTestContext {
-  constructor(auth) {
+  constructor(auth, fixedPhoneNumber) {
     this.auth = auth
+    this.userId = null
+    this.fixedPhoneNumber = fixedPhoneNumber
 
     _.bindAll(this, ['afterEach', 'beforeEach'])
   }
 
   async beforeEach() {
-    const {
-      auth: { user },
-    } = this
-    const { userId } = await knex('User')
-      .where({ name: user })
-      .first('id as userId')
-    assert.isOk(userId, `Cannot find user ${user}`)
-    this.userId = userId
+    if (!_.isEmpty(this.auth)) {
+      const {
+        auth: { user },
+      } = this
+      const { userId } = await knex('User')
+        .where({ name: user })
+        .first('id as userId')
+      assert.isOk(userId, `Cannot find user ${user}`)
+      this.userId = userId
+    }
 
     // read 1st sms template
     const { id: smsTemplateId } = await knex('SmsTemplate').first('id')
@@ -49,12 +53,13 @@ class SmsTestContext {
     ;[this.messageId] = await knex('SmsMessage').insert({
       smsTemplateId,
       messageStatusId,
-      personId: userId,
+      personId: this.userId,
       siteId,
       deviceId,
       resultId,
       createdOn: now,
       updatedOn: now,
+      phoneNumber: this.fixedPhoneNumber,
     })
 
     assert.isOk(this.messageId)

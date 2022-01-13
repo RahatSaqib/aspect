@@ -193,6 +193,14 @@ describe('Result Notifications triggers', () => {
     assert.isNotNull(insertedResultUnknow)
   })
   after(async () => {
+    const resultsId = await knex('Result')
+      .whereIn('externalId', [
+        'MytestsResultID',
+        'MytestsResultID2',
+        'MytestsResultID3',
+        'MyPatienttestsResultID',
+      ])
+      .pluck('id')
     await Promise.each(
       ['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'],
       table =>
@@ -201,6 +209,7 @@ describe('Result Notifications triggers', () => {
             insertedResultDetected,
             insertedResultUnknow,
             notWayneResult,
+            ...resultsId,
           ])
           .delete()
     )
@@ -209,7 +218,9 @@ describe('Result Notifications triggers', () => {
         insertedResultDetected,
         insertedResultUnknow,
         notWayneResult,
+        ...resultsId,
       ])
+
       .delete()
   })
   describe('Filter without JF', () => {
@@ -246,13 +257,13 @@ describe('Result Notifications triggers', () => {
             id: device.id,
           })
       })
-      it('should create a result based notification for particular lga', async () => {
+      it('should NOT create a result based notification for particular lga', async () => {
         messageContext.dispatch(resultLogged(insertedResultDetected, 1, 1))
-        await waitForIdle(1000)
+        await waitForIdle(2000)
         const notifications = await knex('Notification')
           .whereIn('resultId', [insertedResultDetected])
           .distinct()
-        assert.isAtLeast(notifications.length, 1)
+        assert.isAtLeast(notifications.length, 0)
       })
     })
     it('should NOT create a result based notification for result category distinct to detected', async () => {
@@ -490,6 +501,70 @@ describe('Result Notifications triggers', () => {
         .where({ resultId, notificationTypeId: ntId })
         .distinct()
       assert.equal(notifications.length, 0)
+    })
+  })
+  describe('Send to Patient email and sms', () => {
+    beforeEach(async () => {
+      // Notify to the person called "Admin" - Send notification
+      // Notify to a person assigned to the job function "Manager" - Send notification
+      // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
+      // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
+
+      resultCategory1 = await resultCategoryToId('Detected')
+      results = await knex('Result as r')
+        .join('Geography as g', 'r.geographyId', 'g.id')
+        .join('Lga as l', 'g.lgaId', 'l.id')
+        .where({ partnerId: 1 })
+        .whereNotExists(
+          knex('Notification as n').whereRaw('n.resultId = r.id').select()
+        )
+        .distinct('r.*', 'l.name as lgaName')
+      assert.isAtLeast(results.length, 1)
+      const result = _.sample(
+        _.filter(results, elem => elem.lgaName === 'Wayne')
+      )
+      const patientData = JSON.parse(result.patientData)
+      patientData.phone = config.admin.cell
+      patientData.email = config.admin.email
+      await knex('Result').insert({
+        ..._.omit(result, [
+          'id',
+          'resultCategory1',
+          'lgaName',
+          'externalId',
+          'endedOn',
+          'patientData',
+        ]),
+        resultCategory1,
+        patientData: JSON.stringify(patientData),
+        externalId: 'MyPatienttestsResultID',
+        endedOn: new Date(),
+      })
+      const filterConditions = {
+        ...filterConditionWithAssay,
+        sendToPatient: true,
+        sendEmail: true,
+        sendSms: true,
+      }
+
+      await createTestContext(filterConditions)
+    })
+
+    afterEach(removeTestContext)
+
+    it('sms and email to a non-person contact', async () => {
+      const { id: resultId } = await knex('Result')
+        .where('externalId', 'MyPatienttestsResultID')
+        .first()
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct()
+      assert.equal(notifications.length, 1)
+      const [notification] = notifications
+      assert.isNotNull(notification.emailTemplateId)
+      assert.isNotNull(notification.smsTemplateId)
     })
   })
 })

@@ -41,6 +41,7 @@ async function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
   const { subject, body, htmlBody, to, attachments } =
     await createEmailFieldsFromTemplate(knex, emailMessageId)
+
   const pendingMessageStatusId = await messageStatusToId('Pending')
   // store generated email message into the same record and set messageStatusId
   await knex('EmailMessage')
@@ -127,30 +128,39 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
 }
 
 async function createEmailFieldsFromTemplate(knex, emailMessageId) {
-  const { personId, email, email2 } = await knex('EmailMessage as m')
+  const {
+    personId,
+    to = null,
+    email,
+    email2,
+  } = await knex('EmailMessage as m')
     .leftJoin('Person as p', 'm.personId', 'p.id')
     .where({ 'm.id': emailMessageId })
-    .first('m.personId', 'p.email', 'p.email2')
-  const dataConstraints = await getConstraints({ personId })
+    .first('m.personId', 'm.to', 'p.email', 'p.email2')
+  let dataConstraints = {}
+  if (personId) dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      partner: 'pr',
-      device: 'd',
-      deviceType: 'dt',
-      person: 'p',
-      /*
-      result: 'r',
-      ^^^ Leaving this commented out to  highlight the fact that adding these
-          constraints will break the RO notifications configured for Myanmar
-      */
-      sample: 'sample',
-      site: 's',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
+    .modify(builder => {
+      if (!_.isEmpty(dataConstraints))
+        builder.modify(addConstraints, dataConstraints, {
+          assay: 'a',
+          partner: 'pr',
+          device: 'd',
+          deviceType: 'dt',
+          person: 'p',
+          /*
+          result: 'r',
+          ^^^ Leaving this commented out to  highlight the fact that adding these
+              constraints will break the RO notifications configured for Myanmar
+          */
+          sample: 'sample',
+          site: 's',
+          showUnapprovedDevices: true,
+          showDecommissionedDevices: true,
+        })
     })
     .where({ 'm.id': emailMessageId })
     .first(
@@ -178,12 +188,11 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   ])
   if (!processedTemplateFields.to) {
     processedTemplateFields.to = _.uniq(
-      [email, email2]
+      _.compact([to, email, email2])
         .filter(address => !!address && !!address.trim())
         .map(address => address.toLowerCase().trim())
     ).join(',')
   }
-
   const attachmentProps = JSON.parse((data && data.attachments) || '[]')
 
   if (!_.isEmpty(attachmentProps)) {
