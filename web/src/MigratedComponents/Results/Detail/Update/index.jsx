@@ -56,7 +56,7 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
         data.resultCategory2 = `${data.resultCategory2}`
       }
 
-      setPatientId(data.patientId)
+      setPatientId(data?.patientId ? `: ${data.patientId}` : '')
 
       const config = getFormConfigWithData(intl, false, data)
 
@@ -86,7 +86,7 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
         <FormikProvider config={formConfig}>
           <ShellHeader
             icon={FaNotesMedical}
-            title={`${formConfig.title}${patientId ? `: ${patientId}` : ''}`}
+            title={`${formConfig.title}${patientId}`}
           >
             <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
