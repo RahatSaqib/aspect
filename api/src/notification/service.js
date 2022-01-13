@@ -180,7 +180,6 @@ async function listNotifications(request) {
       'jf.name AS jfName'
     )
 
-  // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
   const notificationQuery = knex('NotificationType as nt')
@@ -205,9 +204,14 @@ async function listNotifications(request) {
       'nt.id',
       'filters.notificationTypeId'
     )
+    .select('nt.id as id', 'nt.name', 'ntc.externalId as typeCategory')
+    .max('n.createdOn as lastTriggeredOn')
+    .groupBy('nt.id')
+
+  const getItems = notificationQuery
+    .clone()
+    .modify(sortPageParams, query, 'nt.name')
     .select(
-      'nt.id as id',
-      'nt.name',
       knex.raw(
         `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
       ),
@@ -219,15 +223,8 @@ async function listNotifications(request) {
       knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
       knex.raw(
         `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
-      ),
-      'ntc.externalId as typeCategory'
+      )
     )
-    .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.id')
-
-  const getItems = notificationQuery
-    .clone()
-    .modify(sortPageParams, query, 'nt.name')
 
   function columnCount(column) {
     return knex.raw(
