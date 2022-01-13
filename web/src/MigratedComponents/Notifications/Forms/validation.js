@@ -53,18 +53,44 @@ const validationSchema = formatMessage =>
       deviceLevelId: Yup.string()
         .required()
         .oneOf(['national', 'state', 'lga', 'lab']),
-      areaItems: Yup.array()
+      areaItemsState: Yup.array()
         .of(
           Yup.object().shape({
             value: Yup.string().required(),
           })
         )
         .when('deviceLevelId', {
-          is: 'national',
-          then: Yup.array().min(0),
-          otherwise: Yup.array()
+          is: 'state',
+          then: Yup.array()
             .required(formatMessage(messages.geographyRequired))
             .min(1, formatMessage(messages.geographyRequired)),
+          otherwise: Yup.array().min(0),
+        }),
+      areaItemsLGA: Yup.array()
+        .of(
+          Yup.object().shape({
+            value: Yup.string().required(),
+          })
+        )
+        .when('deviceLevelId', {
+          is: 'lga',
+          then: Yup.array()
+            .required(formatMessage(messages.geographyRequired))
+            .min(1, formatMessage(messages.geographyRequired)),
+          otherwise: Yup.array().min(0),
+        }),
+      areaItemsLab: Yup.array()
+        .of(
+          Yup.object().shape({
+            value: Yup.string().required(),
+          })
+        )
+        .when('deviceLevelId', {
+          is: 'lab',
+          then: Yup.array()
+            .required(formatMessage(messages.geographyRequired))
+            .min(1, formatMessage(messages.geographyRequired)),
+          otherwise: Yup.array().min(0),
         }),
       jobFunctions: Yup.array()
         .transform((_value, originalValue) => {
