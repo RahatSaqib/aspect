@@ -1,7 +1,9 @@
-const DEFAULT_SORT_COL = 'id'
-const DEFAULT_SORT_DIR = 'asc'
-const DEFAULT_PAGE_AT = 0
-const DEFAULT_PAGE_SIZE = 10
+import isNaN from 'lodash/isNaN'
+
+export const DEFAULT_SORT_COL = 'id'
+export const DEFAULT_SORT_DIR = 'asc'
+export const DEFAULT_PAGE_AT = 0
+export const DEFAULT_PAGE_SIZE = 10
 
 export const makeSortPageSelector =
   ({
@@ -12,11 +14,13 @@ export const makeSortPageSelector =
   } = {}) =>
   ({ location, availableSortCol, dependencies }) => {
     const searchParams = new URLSearchParams(location.search)
+    
+    const pageParamName = searchParams.has('pageAt') ? 'pageAt' : 'page'
+    const sizeParamName = searchParams.has('pageSize') ? 'pageSize' : 'size'
+    const page = parseInt(searchParams.get(pageParamName), 10) || defaultPageAt
+    const size = parseInt(searchParams.get(sizeParamName), 10) || defaultPageSize
     const sortCol = searchParams.get('sortCol')
-    const pageAt = parseInt(searchParams.get('pageAt'), 10) || defaultPageAt
-    const pageSize =
-      parseInt(searchParams.get('pageSize'), 10) || defaultPageSize
-
+    
     let index = -1
     let obj = null
 
@@ -36,16 +40,16 @@ export const makeSortPageSelector =
         return {
           sortCol: defaultSortCol,
           sortDir: defaultSortDir,
-          pageAt,
-          pageSize,
+          pageAt: page,
+          pageSize: size,
         }
     }
 
     return {
       sortCol: searchParams.get('sortCol') || defaultSortCol,
       sortDir: searchParams.get('sortDir') || defaultSortDir,
-      pageAt,
-      pageSize,
+      pageAt: isNaN(page) ? defaultPageAt : page,
+      pageSize: isNaN(size) ? defaultPageSize : size,
     }
   }
 
@@ -79,7 +83,7 @@ export const makeSearchParamsSanitizer =
 
     if (
       searchParams.has('sortDir') &&
-      availableSortDir.indexOf(searchParams.get('sortDir')) === -1
+      !availableSortDir.includes(searchParams.get('sortDir'))
     ) {
       sanitized = true
       searchParams.delete('sortDir')
