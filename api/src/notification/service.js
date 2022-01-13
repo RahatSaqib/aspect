@@ -148,6 +148,38 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
 async function listNotifications(request) {
   const { query, auth } = request
 
+  const subquery = knex('NotificationType as nti')
+    .leftOuterJoin('JobFunction AS jf', leftBuilder =>
+      leftBuilder
+        .on(
+          knex.raw(
+            `JSON_SEARCH(
+              nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
+              'one',
+              jf.id
+            ) IS NOT NULL
+          `
+          )
+        )
+        .orOn('nti.jobFunctionId', 'jf.id')
+    )
+    .leftOuterJoin('Person AS per', leftBuilder =>
+      leftBuilder.on(
+        knex.raw(
+          ` JSON_SEARCH(
+            nti.filterCondition->>'$.persons[*].personId',
+            'one',
+            per.id
+          ) IS NOT NULL`
+        )
+      )
+    )
+    .distinct(
+      'nti.id AS notificationTypeId',
+      'per.name AS personName',
+      'jf.name AS jfName'
+    )
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -168,31 +200,11 @@ async function listNotifications(request) {
     })
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftOuterJoin('JobFunction as jf', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
-            'one',
-            CAST(jf.id as char)
-          ) IS NOT NULL
-          OR
-          nt.jobFunctionId = jf.id
-        `)
-      )
-    })
-    .leftOuterJoin('Person as per', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.persons[*].personId',
-            'one',
-            CAST(per.id as char)
-          ) IS NOT NULL
-        `)
-      )
-    })
+    .leftOuterJoin(
+      subquery.as('filters'),
+      'nt.id',
+      'filters.notificationTypeId'
+    )
     .select(
       'nt.id as id',
       'nt.name',
@@ -200,10 +212,14 @@ async function listNotifications(request) {
         `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
       ),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
-      knex.raw('COUNT(DISTINCT per.id) as personsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
+      knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.jfName SEPARATOR ', ') as jobFunctions`
+      ),
+      knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
+      ),
       'ntc.externalId as typeCategory'
     )
     .max('n.createdOn as lastTriggeredOn')
@@ -215,10 +231,9 @@ async function listNotifications(request) {
 
   function columnCount(column) {
     return knex.raw(
-      `CASE
-        WHEN m.${column}TemplateId IS NULL
-        THEN null
-        ELSE SUM(CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END) END as ${column}Count`
+      `SUM(CASE
+        WHEN m.${column}TemplateId IS NULL THEN 0
+        ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
     )
   }
 
