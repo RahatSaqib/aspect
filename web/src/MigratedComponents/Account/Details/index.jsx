@@ -9,7 +9,6 @@ import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
 import replace from 'lodash/replace'
 import itemsConfig from './config'
-// import { fetchTags, updateTags } from '../../../tag/TagRedux.js'
 import fetchWrapperForQueries from '../../QueryFetch'
 import AspectPureFormik from '../../Form/PureFormik'
 import { getInitialValues } from '../../Form/PureFormik/Helpers'
@@ -61,31 +60,29 @@ const ContactDetailsFormFormik = () => {
     const { id } = values
     const sanitisedValues = transformOutputValues(values, baseOmitFields)
 
-    console.log(values)
-
     setTimeout(() => {
-      // if (type === 'add') {
-      //   mutation.mutate({
-      //     values: sanitisedValues,
-      //     endpoint: '/person',
-      //     method: 'POST',
-      //   })
-      // }
-      // if (type === 'update') {
-      //   mutation.mutate({
-      //     values: sanitisedValues,
-      //     endpoint: `/person/${id}`,
-      //     method: 'PUT',
-      //   })
-      // }
-      // if (type === 'self') {
-      //   mutation.mutate({
-      //     values: sanitisedValues,
-      //     endpoint: '/account-details/current-contact',
-      //     method: 'PUT',
-      //   })
-      // }
-      // setSubmitting(false)
+      if (type === 'add') {
+        mutation.mutate({
+          values: sanitisedValues,
+          endpoint: '/person',
+          method: 'POST',
+        })
+      }
+      if (type === 'update') {
+        mutation.mutate({
+          values: sanitisedValues,
+          endpoint: `/person/${id}`,
+          method: 'PUT',
+        })
+      }
+      if (type === 'self') {
+        mutation.mutate({
+          values: sanitisedValues,
+          endpoint: '/account-details/current-contact',
+          method: 'PUT',
+        })
+      }
+      setSubmitting(false)
     }, 0)
   }
 
@@ -111,10 +108,14 @@ const ContactDetailsFormFormik = () => {
     ]
     if (type === 'update') {
       tempItems.unshift(formItemsConfig.row0)
-      tempItems.push(formItemsConfig.row7)
+      // disabling tag input until we refactor tags
+      // (https://ops.systemone.id/browse/ASP-2591)
+      // tempItems.push(formItemsConfig.row7)
     }
     if (type === 'self') {
-      tempItems.push(formItemsConfig.row7)
+      // disabling tag input until we refactor tags
+      /// (https://ops.systemone.id/browse/ASP-2591)
+      // tempItems.push(formItemsConfig.row7)
     }
     if (personId) {
       tempItems.push(formItemsConfig.row8)
