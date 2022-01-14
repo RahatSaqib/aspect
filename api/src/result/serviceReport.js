@@ -35,9 +35,9 @@ async function getAllResultsForExport(auth, query) {
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = query.page || 0
+  query.page = 0
   // For performance issues we are going to limit this report to max 50k results.
-  query.size = query.size || 50000
+  query.size = query.maxNumberOfRecords || 50000
   const {
     data,
     extraColumns = [],
