@@ -277,10 +277,8 @@ async function renderExcelTemplate({
       }
 
       // remove pattern row and insert rows from patternRowNumber
-      const fillRows = r =>
-        new Promise(() => {
-          worksheet.spliceRows(patternRowNumber, 1, ...r)
-        })
+      const fillRows = async rows =>
+        worksheet.spliceRows(patternRowNumber, 1, ...rows)
       await fillRows(rows)
       if (extension === 'csv') {
         // get all header values from last item of array allHeaderRows

@@ -431,9 +431,9 @@ const ResultList = () => {
         Math.min(total, 50000),
         'results'
       )
-        .then(({ elem, fileFormat, reportName }) => {
+        .then(response => {
           setIsLoading(false)
-          return { elem, fileFormat, reportName }
+          return response
         })
         .catch(error => {
           setIsLoading(false)
