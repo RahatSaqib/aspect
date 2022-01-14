@@ -7,6 +7,7 @@ const {
 
 const registeredDataProcessors = [
   require('./truenatDevice/authenticate'),
+  require('./truenatDevice/result'),
   require('./abbottM2000'),
   PhilippinesNtrlPmdt,
   PhilippinesNtrlRitm,

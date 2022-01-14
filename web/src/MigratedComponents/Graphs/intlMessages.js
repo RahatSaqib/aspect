@@ -108,6 +108,10 @@ export const messages = {
       id: 'legends.Unknown.assayTruenatRif',
       defaultMessage: 'Truenat® MTB-RIF Dx',
     },
+    assayTruenatUnknown: {
+      id: 'legends.Unknown.assayTruenatUnknown',
+      defaultMessage: 'Truenat® Unknown Test Type',
+    },
     QHivVL: {
       id: 'legends.Unknown.QHivVL',
       defaultMessage: 'Q HIV VL',

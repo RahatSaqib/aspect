@@ -307,7 +307,9 @@ async function lookupUsingCredentials(username, password) {
     .where('username', username)
     .first()
   const pwResult = deviceApiKey
-    ? await bcryptCompare(password, _.get(deviceApiKey, 'password'))
+    ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(
+        () => false
+      )
     : false
   if (!deviceApiKey || !pwResult) {
     return {

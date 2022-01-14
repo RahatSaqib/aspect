@@ -99,6 +99,7 @@ describe('Result download routes', () => {
         'r.id',
         results.map(({ id }) => id)
       )
+      .andWhere('dt.externalId', 'CepheidGeneXpert')
       .pluck('r.id')
     /**
      * leave only valid results
