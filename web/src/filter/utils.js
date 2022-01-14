@@ -53,19 +53,27 @@ const groups = {
 const findFilterConfigByKey = (config, key) =>
   find(config, configObject => configObject[key])
 
-const defaultSanitizer = ({ a, k, config }) => {
+const defaultSanitizer = ({ a, k, config, dependencies }) => {
   if (!a.value) a.value = new URLSearchParams()
   const { value } = a
   const filterGroupsContainingKey = filter(Object.keys(groups), groupKey =>
     groups[groupKey].includes(k)
   )
+
+  const filterConfigKey = find(filterGroupsContainingKey, groupKey =>
+    findFilterConfigByKey(config, groupKey)
+  )
+
   if (
-    !find(filterGroupsContainingKey, groupKey =>
-      findFilterConfigByKey(config, groupKey)
-    ) &&
+    (!filterConfigKey ||
+      !config[filterConfigKey] ||
+      (config[filterConfigKey].isEnabled &&
+        !config[filterConfigKey].isEnabled(dependencies))) &&
     nonEmptyFilterValue(value.get(k))
   ) {
-    // If there isn't any filter group configured that contains the specified key and the value is set, then remove the key from filters
+    // If there isn't any filter group configured that contains the specified key and the value is set,
+    // or the key was configured, but should be enabled,
+    // then remove the key from filters
     value.delete(k)
     return {
       sanitized: true,
@@ -108,8 +116,8 @@ const sanitizerByConfigKey = {
   revoked: defaultSanitizer,
   reportableSiteName: defaultSanitizer,
   reportableSiteId: defaultSanitizer,
-  consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
+  consumable: makeKeySanitizer('consumableId'),
   deviceApproval: makeKeySanitizer('deviceApprovalId'),
   deviceMaintenanceStatus: makeKeySanitizer('deviceMaintenanceStatusId'),
   onlyEverTransferred: defaultSanitizer,
@@ -128,13 +136,14 @@ export const sanitizeFiltersStringBy =
       sanitizerByConfigKey,
       (acc, sanitizer, key) => {
         const filterConfig = findFilterConfigByKey(config, key)
+
         if (
           !filterConfig ||
           (filterConfig.isEnabled &&
             dependencies &&
             !filterConfig.isEnabled(dependencies))
         ) {
-          return sanitizer({ a: acc, k: key, config })
+          return sanitizer({ a: acc, k: key, config, dependencies })
         }
 
         return acc
