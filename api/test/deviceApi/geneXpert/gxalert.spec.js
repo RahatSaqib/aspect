@@ -1045,17 +1045,12 @@ describe('Device API routes for GxAlert Device', () => {
           endedOnDate,
           "yyyy-MM-dd'T'HH:mm:ss'Z'"
         )
-        const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-          endedOn.replace('Z', ''),
-          'America/New_York'
-        )
-
         const [deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId: geneXpertDevice.id,
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
-          day: startOfDay(endedOnDateInUtc),
+          day: startOfDay(endedOnDate),
           data: '{}',
           createdOn: new Date(),
         })
@@ -1090,12 +1085,12 @@ describe('Device API routes for GxAlert Device', () => {
           .orderByRaw('createdOn desc, id desc')
           .first()
         expect(latestMaintenanceStatusLog).to.containSubset({
-          day: getLocalDateInUtc(startOfDay(endedOnDateInUtc)),
+          day: getLocalDateInUtc(startOfDay(endedOnDate)),
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
         })
         assert.equal(
           latestMaintenanceStatusLog.day.toISOString(),
-          startOfDayUtc(endedOnDateInUtc).toISOString()
+          startOfDayUtc(endedOnDate).toISOString()
         )
       })
 
