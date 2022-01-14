@@ -16,7 +16,7 @@ const AspectPureFormik = ({
   return (
     <Formik
       initialValues={initialValues}
-      validateOnChange={false}
+      validateOnChange
       enableReinitialize
       validationSchema={object().shape(getValidation(rows))}
     >
