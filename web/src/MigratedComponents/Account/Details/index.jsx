@@ -9,6 +9,7 @@ import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
 import replace from 'lodash/replace'
 import itemsConfig from './config'
+// import { fetchTags, updateTags } from '../../../tag/TagRedux.js'
 import fetchWrapperForQueries from '../../QueryFetch'
 import AspectPureFormik from '../../Form/PureFormik'
 import { getInitialValues } from '../../Form/PureFormik/Helpers'
@@ -32,7 +33,12 @@ const ContactDetailsFormFormik = () => {
   const [config, setConfig] = useState(false)
   const formItemsConfig = itemsConfig(editor)
 
-  const { isLoading, isError, data, error } = useQuery(
+  const {
+    isLoading,
+    isError,
+    data: queryData,
+    error,
+  } = useQuery(
     query?.key,
     async () => fetchWrapperForQueries({ endpoint: query?.endpoint }),
     { enabled: query?.enabled || false }
@@ -43,34 +49,43 @@ const ContactDetailsFormFormik = () => {
   }
 
   function handleSubmit(_e, formik) {
-    const baseOmitFields = ['country', 'userId', 'username']
+    const baseOmitFields = [
+      'country',
+      'jobId',
+      'jobFunctions',
+      'stateName',
+      'userId',
+      'username',
+    ]
     const { setSubmitting, values } = formik
     const { id } = values
     const sanitisedValues = transformOutputValues(values, baseOmitFields)
 
+    console.log(values)
+
     setTimeout(() => {
-      if (type === 'add') {
-        mutation.mutate({
-          values: sanitisedValues,
-          endpoint: '/person',
-          method: 'POST',
-        })
-      }
-      if (type === 'update') {
-        mutation.mutate({
-          values: sanitisedValues,
-          endpoint: `/person/${id}`,
-          method: 'PUT',
-        })
-      }
-      if (type === 'self') {
-        mutation.mutate({
-          values: sanitisedValues,
-          endpoint: '/account-details/current-contact',
-          method: 'PUT',
-        })
-      }
-      setSubmitting(false)
+      // if (type === 'add') {
+      //   mutation.mutate({
+      //     values: sanitisedValues,
+      //     endpoint: '/person',
+      //     method: 'POST',
+      //   })
+      // }
+      // if (type === 'update') {
+      //   mutation.mutate({
+      //     values: sanitisedValues,
+      //     endpoint: `/person/${id}`,
+      //     method: 'PUT',
+      //   })
+      // }
+      // if (type === 'self') {
+      //   mutation.mutate({
+      //     values: sanitisedValues,
+      //     endpoint: '/account-details/current-contact',
+      //     method: 'PUT',
+      //   })
+      // }
+      // setSubmitting(false)
     }, 0)
   }
 
@@ -150,7 +165,8 @@ const ContactDetailsFormFormik = () => {
         throw new Error(error)
       },
       onSuccess: ({ data: response, ok }) => {
-        const updatedLogin = data?.data?.canLogIn !== response.canLogIn
+        const updatedLogin =
+          response.canLogIn && queryData?.data?.canLogIn !== response.canLogIn
         switch (true) {
           case type === 'add' && ok:
             navigate(`/browse/person/${response?.id}`)
@@ -158,6 +174,7 @@ const ContactDetailsFormFormik = () => {
 
           case type === 'update' && updatedLogin && ok:
             navigate(`/browse/person/${response?.id}/system-access-control`)
+            window.location.reload()
             break
 
           case type === 'update' && !updatedLogin && ok:
@@ -203,7 +220,7 @@ const ContactDetailsFormFormik = () => {
         initialValues: transformInputValues({
           ...getInitialValues(items, false),
           countryId: editor.countryId,
-          ...data?.data,
+          ...queryData?.data,
         }),
       }
 
@@ -211,7 +228,7 @@ const ContactDetailsFormFormik = () => {
         setConfig(newConfig)
       }
     }
-  }, [isLoading, config, data, items, editor])
+  }, [isLoading, config, queryData, items, editor])
 
   return !isLoading && !isEmpty(config) ? (
     <div style={{ padding: '20px' }}>
