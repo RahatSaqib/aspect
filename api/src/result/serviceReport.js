@@ -4,7 +4,7 @@ const { format } = require('date-fns')
 const { getResultsForExport } = require('./service')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { exportData } = require('../shared/excel')
+const { exportData, getMaxLimitPlaceHolders } = require('../shared/excel')
 
 const { getAllAssaySchemas } = require('../assay/service')
 
@@ -118,28 +118,7 @@ async function exportResults(request, reply) {
         placeholder: '<Dates>',
         value: format(new Date(), 'yyyy-MM-dd'),
       },
-      {
-        placeholder: '<PerformanceTotalRecordLimit>',
-        value: ({ dataRows: { length = 0 }, total = 0 }) => {
-          return total - length
-        },
-        condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
-          length === total,
-        action: (cell, worksheet) => {
-          if (cell) {
-            cell.value = ''
-            cell.style = null
-            worksheet.unMergeCells(cell.address)
-            worksheet.getRow(cell.row).height = 15.5 // Excel default height
-          }
-        },
-      },
-      {
-        placeholder: '<PerformanceQueryLimit>',
-        value: ({ dataRows: { length = 0 } }) => {
-          return length
-        },
-      },
+      ...getMaxLimitPlaceHolders(),
     ],
     dataSelector,
   })

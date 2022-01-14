@@ -40,6 +40,30 @@ const getCellsBySubstring = (sheet, value) => {
   return cells
 }
 
+const getMaxLimitPlaceHolders = () => [
+  {
+    placeholder: '<PerformanceTotalRecordLimit>',
+    value: ({ dataRows: { length = 0 }, total = 0 }) => {
+      return total - length
+    },
+    condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
+      length === total,
+    action: (cell, worksheet) => {
+      if (cell) {
+        cell.value = ''
+        cell.style = null
+        worksheet.unMergeCells(cell.address)
+        worksheet.getRow(cell.row).height = 15.5 // Excel default height
+      }
+    },
+  },
+  {
+    placeholder: '<PerformanceQueryLimit>',
+    value: ({ dataRows: { length = 0 } }) => {
+      return length
+    },
+  },
+]
 // ----------------------------------------------------------------------------------------------
 // read/write Excel file - 'exceljs' API returns Promise for readFile and writeFile
 // ----------------------------------------------------------------------------------------------
@@ -406,6 +430,7 @@ function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
 module.exports = {
   exportData,
   getBaseReplacements,
+  getMaxLimitPlaceHolders,
   getCellsBySubstring,
   getCellsByValue,
   readExcelFile,
