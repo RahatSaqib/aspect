@@ -242,7 +242,7 @@ function getPersonDetails(personId) {
       'p.phone',
       'p.cell',
       'g.countryId',
-      'g.id as geogId',
+      'g.id as geographyId',
       'g.stateId',
       'g.lgaId',
       'p.zip',
