@@ -15,6 +15,7 @@ import { getInitialValues } from '../../Form/PureFormik/Helpers'
 import useI18n from '../../../Hooks/i18n/useI18n'
 import Loading from '../../../globals/components/Loading.jsx'
 import FormSubmit from './FormSubmit'
+import mutationSuccess from './mutationSuccess'
 import messages from './messages'
 
 const ContactDetailsFormFormik = () => {
@@ -53,6 +54,7 @@ const ContactDetailsFormFormik = () => {
       'jobId',
       'jobFunctions',
       'stateName',
+      'lgaName',
       'userId',
       'username',
     ]
@@ -165,31 +167,8 @@ const ContactDetailsFormFormik = () => {
       onError: error => {
         throw new Error(error)
       },
-      onSuccess: ({ data: response, ok }) => {
-        const updatedLogin =
-          response.canLogIn && queryData?.data?.canLogIn !== response.canLogIn
-        switch (true) {
-          case type === 'add' && ok:
-            navigate(`/browse/person/${response?.id}`)
-            break
-
-          case type === 'update' && updatedLogin && ok:
-            navigate(`/browse/person/${response?.id}/system-access-control`)
-            window.location.reload()
-            break
-
-          case type === 'update' && !updatedLogin && ok:
-            navigate('/browse/person')
-            break
-
-          default:
-            throw new Error(
-              `Could not complete the operation. Type: ${type} | Status: ${
-                ok ? 'true' : 'false'
-              }`
-            )
-        }
-      },
+      onSuccess: ({ data: response, ok }) =>
+        mutationSuccess(queryData, response, navigate, type, ok),
     }
   )
 
