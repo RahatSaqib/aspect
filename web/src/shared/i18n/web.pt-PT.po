@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-12T07:53:39.753Z\n"
+"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1090,6 +1090,9 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Calibrado quando devido"
 
+#. [pages.RouterDetail.detailCalibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.Notification.type.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1565,6 +1568,9 @@ msgstr "Nome/email de contato"
 #. defaultMessage is:
 #. Contacts
 #. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#. [pages.RouterDetail.detailContacts]
 #. defaultMessage is:
 #. Contacts
 #. [pages.Notifications.table.contactsHeader]
@@ -2912,6 +2918,13 @@ msgstr "Estados de Carregamento de Erro para {countryName}"
 msgid "Error Rate"
 msgstr "Taxa de erro"
 
+#. [pages.RouterDetail.detailErrorOverTime]
+#. defaultMessage is:
+#. Error Rates Over Time
+#: extracted_strings.json
+msgid "Error Rates Over Time"
+msgstr "Taxas de erro ao longo do tempo"
+
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
 #. Error Saving New Password
@@ -2974,6 +2987,13 @@ msgstr "Expira"
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Expira em"
+
+#. [pages.RouterDetail.detailWarrantyExpire]
+#. defaultMessage is:
+#. Expires {date}
+#: extracted_strings.json
+msgid "Expires {date}"
+msgstr "Expira em {date}"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -4251,6 +4271,13 @@ msgstr "Última semana"
 #: extracted_strings.json
 msgid "Last Year"
 msgstr "Último ano"
+
+#. [pages.RouterDetail.detailCalibrationDate]
+#. defaultMessage is:
+#. Last calibrated {date}
+#: extracted_strings.json
+msgid "Last calibrated {date}"
+msgstr "Última calibragem {date}"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -8264,6 +8291,13 @@ msgstr "Tarefas"
 msgid "Technical Details"
 msgstr "Detalhes técnicos"
 
+#. [pages.RouterDetail.detailTechInfo]
+#. defaultMessage is:
+#. Technical information
+#: extracted_strings.json
+msgid "Technical information"
+msgstr "Informação técnica"
+
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
 #. Telephone
@@ -9390,6 +9424,13 @@ msgstr "Nome de usuário"
 msgid "Utilization Rate"
 msgstr "Taxa de utilização"
 
+#. [pages.RouterDetail.detailUtilOverTime]
+#. defaultMessage is:
+#. Utilization Rate Over Time
+#: extracted_strings.json
+msgid "Utilization Rate Over Time"
+msgstr "Taxa de utilização ao longo do tempo"
+
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
 #. VL Results
@@ -9464,6 +9505,9 @@ msgid "Voltage"
 msgstr "Tensão"
 
 #. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-12T07:53:39.753Z\n"
+"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1088,6 +1088,9 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Дата калібрування"
 
+#. [pages.RouterDetail.detailCalibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.Notification.type.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1563,6 +1566,9 @@ msgstr "Ім'я / електронна адреса контакту"
 #. defaultMessage is:
 #. Contacts
 #. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#. [pages.RouterDetail.detailContacts]
 #. defaultMessage is:
 #. Contacts
 #. [pages.Notifications.table.contactsHeader]
@@ -2906,6 +2912,13 @@ msgstr "Помилка завантаження станів для {countryName
 msgid "Error Rate"
 msgstr "Частота помилок"
 
+#. [pages.RouterDetail.detailErrorOverTime]
+#. defaultMessage is:
+#. Error Rates Over Time
+#: extracted_strings.json
+msgid "Error Rates Over Time"
+msgstr "Частота помилок з часом"
+
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
 #. Error Saving New Password
@@ -2968,6 +2981,13 @@ msgstr "Завершується"
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Термін дії закінчується"
+
+#. [pages.RouterDetail.detailWarrantyExpire]
+#. defaultMessage is:
+#. Expires {date}
+#: extracted_strings.json
+msgid "Expires {date}"
+msgstr "Термін дії закінчується {date}"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -4244,6 +4264,13 @@ msgstr "Останній тиждень"
 #: extracted_strings.json
 msgid "Last Year"
 msgstr "В минулому році"
+
+#. [pages.RouterDetail.detailCalibrationDate]
+#. defaultMessage is:
+#. Last calibrated {date}
+#: extracted_strings.json
+msgid "Last calibrated {date}"
+msgstr "Останнє калібрування {date}"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -8256,6 +8283,13 @@ msgstr "Завдання"
 msgid "Technical Details"
 msgstr "Технічні дані"
 
+#. [pages.RouterDetail.detailTechInfo]
+#. defaultMessage is:
+#. Technical information
+#: extracted_strings.json
+msgid "Technical information"
+msgstr "Технічна інформація"
+
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
 #. Telephone
@@ -9380,6 +9414,13 @@ msgstr "Ім'я користувача"
 msgid "Utilization Rate"
 msgstr "Коефіцієнт використання"
 
+#. [pages.RouterDetail.detailUtilOverTime]
+#. defaultMessage is:
+#. Utilization Rate Over Time
+#: extracted_strings.json
+msgid "Utilization Rate Over Time"
+msgstr "Коефіцієнт використання в часі"
+
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
 #. VL Results
@@ -9454,6 +9495,9 @@ msgid "Voltage"
 msgstr "Напруга"
 
 #. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]
