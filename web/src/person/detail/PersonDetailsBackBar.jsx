@@ -1,19 +1,20 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation, matchPath } from 'react-router-dom'
+import isEmpty from 'lodash/isEmpty'
 import messages from './messages'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
 
 const PersonDetailBackBar = ({
+  canLogIn = false,
   formatMessage,
-  canUserLoggedIn = true,
   navigate,
-  location,
   title,
-  isNew,
   disabled,
 }) => {
   const params = useParams()
+  const location = useLocation()
+
   const onBackClick = () => {
     navigate(`/browse/person`)
   }
@@ -28,26 +29,20 @@ const PersonDetailBackBar = ({
         {
           label: formatMessage(messages.contactDetails),
           path: `/browse/person/:personId`,
+          enabled: true,
         },
         {
           label: formatMessage(messages.systemAccessControl),
           path: `/browse/person/:personId/system-access-control`,
+          enabled: canLogIn,
         },
         {
           label: formatMessage(messages.jobAssignment),
           path: `/browse/person/:personId/job-assignment`,
-          disabled,
+          enabled: canLogIn,
         },
-      ].map(({ label, path, disabled = false }) => {
-        if (
-          (!canUserLoggedIn &&
-            [formatMessage(messages.systemAccessControl)].includes(label)) ||
-          isNew
-        ) {
-          return null
-        }
-
-        return (
+      ].map(({ label, path, enabled }) => {
+        return enabled ? (
           <AspectButton
             key={path}
             onClick={({
@@ -59,11 +54,11 @@ const PersonDetailBackBar = ({
             data-path={path}
             color="primary"
             variant="contained"
-            inverse={location.pathname !== path && !disabled}
+            inverse={isEmpty(matchPath({ path }, location.pathname))}
           >
             {label}
           </AspectButton>
-        )
+        ) : null
       })}
     </DetailBackBar>
   )
