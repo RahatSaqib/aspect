@@ -157,6 +157,37 @@ async function upsertTruenatDeviceTypeAndAssays(
     }
   )
 
+  const assayTruenatUnknownResultCategories = ['Unknown', 'Missing']
+  await Promise.each(
+    assayTruenatUnknownResultCategories,
+    async assayTruenatUnknownResultCategory => {
+      const { id: resultCategoryId } =
+        (await knex('ResultCategory')
+          .where('externalId', assayTruenatUnknownResultCategory)
+          .first('id')) || {}
+      const resultCategoryAssayTruenatUnknown = {
+        assayId: assayIds.assayTruenatUnknown,
+        resultCategoryId,
+        emphasize: false,
+        requiresTreatment: false,
+        reportable: false,
+      }
+      const existingResultCategoryAssayTruenatUnknown = await knex(
+        'ResultCategoryAssay'
+      )
+        .where({
+          assayId: assayIds.assayTruenatUnknown,
+          resultCategoryId,
+        })
+        .first()
+      if (!existingResultCategoryAssayTruenatUnknown) {
+        await knex('ResultCategoryAssay').insert(
+          resultCategoryAssayTruenatUnknown
+        )
+      }
+    }
+  )
+
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
 }
