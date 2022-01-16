@@ -133,6 +133,10 @@ export default defineMessages({
     id: 'filter.AssaySelectField.assayTruenatRif',
     defaultMessage: 'Truenat® MTB-RIF Dx',
   },
+  assayTruenatUnknown: {
+    id: 'filter.AssaySelectField.assayTruenatUnknown',
+    defaultMessage: 'Truenat® Unknown Test Type',
+  },
   assayGenoTypeMTBCV1: {
     id: 'filter.AssaySelectField.assayGenoTypeMTBCV1',
     defaultMessage: 'GenoType MTBC VER 1.X',

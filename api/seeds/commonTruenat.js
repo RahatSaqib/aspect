@@ -26,17 +26,23 @@ async function upsertTruenatDeviceTypeAndAssays(
       (await knex('DeviceType')
         .where('externalId', truenatDeviceType.externalId)
         .first('id')) || {}
+    const { id: deviceTypeCategoryId } =
+      (await knex('DeviceTypeCategory')
+        .where('name', truenatDeviceType.deviceTypeCategoryId)
+        .first('id')) || {}
     if (!existingDeviceTypeId) {
-      const { id: deviceTypeCategoryId } =
-        (await knex('DeviceTypeCategory')
-          .where('name', truenatDeviceType.deviceTypeCategoryId)
-          .first('id')) || {}
       const [createdDeviceTypeId] = await knex('DeviceType').insert({
         ...truenatDeviceType,
         deviceTypeCategoryId,
       })
       deviceTypeIds[truenatDeviceType.externalId] = createdDeviceTypeId
     } else {
+      await knex('DeviceType')
+        .where('id', existingDeviceTypeId)
+        .update({
+          ...truenatDeviceType,
+          deviceTypeCategoryId,
+        })
       deviceTypeIds[truenatDeviceType.externalId] = existingDeviceTypeId
     }
   })
@@ -147,6 +153,37 @@ async function upsertTruenatDeviceTypeAndAssays(
           ),
           reportable: true,
         })
+      }
+    }
+  )
+
+  const assayTruenatUnknownResultCategories = ['Unknown', 'Missing']
+  await Promise.each(
+    assayTruenatUnknownResultCategories,
+    async assayTruenatUnknownResultCategory => {
+      const { id: resultCategoryId } =
+        (await knex('ResultCategory')
+          .where('externalId', assayTruenatUnknownResultCategory)
+          .first('id')) || {}
+      const resultCategoryAssayTruenatUnknown = {
+        assayId: assayIds.assayTruenatUnknown,
+        resultCategoryId,
+        emphasize: false,
+        requiresTreatment: false,
+        reportable: false,
+      }
+      const existingResultCategoryAssayTruenatUnknown = await knex(
+        'ResultCategoryAssay'
+      )
+        .where({
+          assayId: assayIds.assayTruenatUnknown,
+          resultCategoryId,
+        })
+        .first()
+      if (!existingResultCategoryAssayTruenatUnknown) {
+        await knex('ResultCategoryAssay').insert(
+          resultCategoryAssayTruenatUnknown
+        )
       }
     }
   )

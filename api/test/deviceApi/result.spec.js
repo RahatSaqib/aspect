@@ -1,7 +1,7 @@
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
 const _ = require('lodash')
-const { subDays, addDays, startOfDay } = require('date-fns')
+const { subDays, addDays, startOfDay, addHours } = require('date-fns')
 const { knex } = require('../../src/db')
 const {
   parseDateOrDefault,
@@ -3017,7 +3017,8 @@ describe('Device Result API routes', () => {
                 { id: resultDetails.resultCategory1ExternalId },
                 { id: resultDetails.resultCategory2ExternalId },
               ],
-              endedOn: new Date(),
+              startedOn: new Date(),
+              endedOn: addHours(new Date(), 2),
             })
             .then(res => {
               assert.equal(res.status, 200)

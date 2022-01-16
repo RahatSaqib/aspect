@@ -31,5 +31,15 @@
     "resultSourceId": "DiagnosticDevice",
     "resultCategory1Label": "Rif",
     "resultCategory1i18nKey": "resultCategoryRif"
+  }, {
+    "name": "Truenat Unknown",
+    "abbreviation": "TNU",
+    "i18nKey": "assayTruenatUnknown",
+    "externalId": "assayTruenatUnknown",
+    "assayTypeId": "assayTypeUnknown",
+    "deviceTypeId": "molbioTruenat",
+    "resultSourceId": "DiagnosticDevice",
+    "resultCategory1Label": "Result",
+    "resultCategory1i18nKey": "resultText"
   }
 ]
