@@ -53,34 +53,54 @@ const followUpAggregationsValidGroups = [
 const resultAggregationsResponseItem = {
   cnt: Joi.number().required().description('The count of results in the group'),
   resultCategory1: Joi.string()
+    .optional()
     .allow(null, '')
     .description('Result Category 1 that the count is grouped by'),
   resultCategory1I18nKey: Joi.string()
+    .optional()
     .allow(null, '')
     .description('Result Category 1 intl key that the count is grouped by'),
   resultCategory2: Joi.string()
+    .optional()
     .allow(null, '')
     .description('Result Category 2 that the count is grouped by'),
   resultCategory2I18nKey: Joi.string()
+    .optional()
     .allow(null, '')
     .description('Result Category 2 intl key that the count is grouped by'),
   assay: Joi.string()
     .allow(null, '')
     .description('Assay name that the count is grouped by'),
   assayI18nKey: Joi.string()
+    .optional()
     .allow(null, '')
     .description('Assay name that the count is grouped by'),
-  week: Joi.string().description('The week that the count is grouped by'),
-  month: Joi.string().description('The month that the count is grouped by'),
-  year: Joi.string().description('The year that the count is grouped by'),
-  day: Joi.string().description('The day that the count is grouped by'),
+  week: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The week that the count is grouped by'),
+  month: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The month that the count is grouped by'),
+  year: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The year that the count is grouped by'),
+  day: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The day that the count is grouped by'),
   gender: Joi.string()
+    .optional()
     .allow(null, '')
     .description('The gender that the count is grouped by'),
   age: Joi.number()
+    .optional()
     .allow(null)
     .description('The age that the count is grouped by'),
   state: Joi.string()
+    .optional()
     .allow(null, '')
     .description('The state that the count is grouped by'),
 }

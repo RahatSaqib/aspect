@@ -20,6 +20,7 @@ const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { formatMessage, formatNumber } = useI18n()
+  const patientId = result?.get('patientId') || 'N/A'
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
@@ -113,7 +114,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           </Tooltip>
         )}
       </TableCell>
-      <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
+      <TableCell hiddenOn="xs">{patientId}</TableCell>
     </TableRow>
   )
 }

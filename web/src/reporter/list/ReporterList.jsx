@@ -1,4 +1,5 @@
 import flowRight from 'lodash/flowRight'
+import isEmpty from 'lodash/isEmpty'
 import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
@@ -260,7 +261,8 @@ const ReporterList = () => {
       fetchWrapperForQueries({
         endpoint: REPORTERS_LIST.ENDPOINT,
         params,
-      })
+      }),
+    { enabled: !isEmpty(params) }
   )
 
   useEffect(() => {

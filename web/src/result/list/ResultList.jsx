@@ -6,6 +6,7 @@ import without from 'lodash/without'
 import partial from 'lodash/partial'
 import filter from 'lodash/filter'
 import identity from 'lodash/identity'
+import isEmpty from 'lodash/isEmpty'
 import Immutable from 'immutable'
 import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -363,7 +364,8 @@ const ResultList = () => {
       fetchWrapperForQueries({
         endpoint: RESULT_LIST.ENDPOINT,
         params,
-      })
+      }),
+    { enabled: !isEmpty(params) }
   )
 
   useEffect(() => {

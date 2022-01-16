@@ -8,9 +8,11 @@ import isUndefined from 'lodash/isUndefined'
 
 import isWeekend from 'date-fns/isWeekend'
 import addDays from 'date-fns/addDays'
-import format from 'date-fns/format'
 import getWeek from 'date-fns/getWeek'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import { i18nWrapper } from '../../../../Providers/I18nProvider'
+
+const { format } = i18nWrapper()
 
 function groupDateRanges(data) {
   const output = []

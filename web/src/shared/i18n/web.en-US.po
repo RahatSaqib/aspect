@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-06T09:50:05.083Z\n"
+"POT-Creation-Date: 2022-01-16T09:23:14.742Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1088,6 +1088,9 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Calibrated When Due"
 
+#. [pages.RouterDetail.detailCalibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.Notification.type.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1563,6 +1566,9 @@ msgstr "Contact name/email"
 #. defaultMessage is:
 #. Contacts
 #. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#. [pages.RouterDetail.detailContacts]
 #. defaultMessage is:
 #. Contacts
 #. [pages.Notifications.table.contactsHeader]
@@ -2906,6 +2912,13 @@ msgstr "Error Loading States for {countryName}"
 msgid "Error Rate"
 msgstr "Error Rate"
 
+#. [pages.RouterDetail.detailErrorOverTime]
+#. defaultMessage is:
+#. Error Rates Over Time
+#: extracted_strings.json
+msgid "Error Rates Over Time"
+msgstr "Error Rates Over Time"
+
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
 #. Error Saving New Password
@@ -2968,6 +2981,13 @@ msgstr "Expires"
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Expires On"
+
+#. [pages.RouterDetail.detailWarrantyExpire]
+#. defaultMessage is:
+#. Expires {date}
+#: extracted_strings.json
+msgid "Expires {date}"
+msgstr "Error Rates Over Time"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -4244,6 +4264,13 @@ msgstr "Last Week"
 #: extracted_strings.json
 msgid "Last Year"
 msgstr "Last Year"
+
+#. [pages.RouterDetail.detailCalibrationDate]
+#. defaultMessage is:
+#. Last calibrated {date}
+#: extracted_strings.json
+msgid "Last calibrated {date}"
+msgstr "Last calibrated {date}"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -8236,6 +8263,13 @@ msgstr "Tasks"
 msgid "Technical Details"
 msgstr "Technical Details"
 
+#. [pages.RouterDetail.detailTechInfo]
+#. defaultMessage is:
+#. Technical information
+#: extracted_strings.json
+msgid "Technical information"
+msgstr "Technical information"
+
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
 #. Telephone
@@ -9256,6 +9290,19 @@ msgstr ""
 msgid "Truenat® MTB-RIF Dx"
 msgstr ""
 
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr ""
+
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
 #. Tuberculosis
@@ -9356,6 +9403,13 @@ msgstr "Username"
 msgid "Utilization Rate"
 msgstr "Utilization Rate"
 
+#. [pages.RouterDetail.detailUtilOverTime]
+#. defaultMessage is:
+#. Utilization Rate Over Time
+#: extracted_strings.json
+msgid "Utilization Rate Over Time"
+msgstr "Utilization Rate Over Time"
+
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
 #. VL Results
@@ -9430,6 +9484,9 @@ msgid "Voltage"
 msgstr "Voltage"
 
 #. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]
