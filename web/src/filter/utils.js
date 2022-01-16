@@ -2,7 +2,6 @@ import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
 import isUndefined from 'lodash/isUndefined'
 import reduce from 'lodash/reduce'
-import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import intersection from 'lodash/intersection'
 import flowRight from 'lodash/flowRight'
@@ -93,8 +92,8 @@ const sanitizerByConfigKey = {
   assayId: defaultSanitizer,
   assayAndResultCategory: makeArraySanitizer(groups.assayAndResultCategory),
   geography: makeArraySanitizer(groups.geography),
-  state: identity,
-  lga: identity,
+  state: defaultSanitizer,
+  lga: defaultSanitizer,
   date: makeArraySanitizer(groups.date),
   patientOrResearchId: defaultSanitizer,
   partnerId: defaultSanitizer,

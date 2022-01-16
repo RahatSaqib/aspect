@@ -282,6 +282,10 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayTruenatRif',
     defaultMessage: 'Truenat® MTB-RIF Dx',
   },
+  assayTruenatUnknown: {
+    id: 'pages.ResultList.assayTruenatUnknown',
+    defaultMessage: 'Truenat® Unknown Test Type',
+  },
   assayLPA: {
     id: 'pages.ResultList.assayLPA',
     defaultMessage: 'LPA',
