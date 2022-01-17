@@ -10,6 +10,7 @@ const {
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
+const { normalizePhoneNumber } = require('../shared/phoneNormalization')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -29,11 +30,13 @@ async function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
 // prepareSmsMessageForSending
 // -----------------------------
 async function prepareSmsMessageForSending(context, knex, smsMessageId) {
-  const { message, phoneNumber } = await createSmsMessageFromTemplate(
-    knex,
-    smsMessageId
-  )
+  const {
+    message,
+    phoneNumber: phone,
+    countryAbbreviation: countryCode,
+  } = await createSmsMessageFromTemplate(knex, smsMessageId)
   const messageStatusId = await messageStatusToId('Pending')
+  const phoneNumber = normalizePhoneNumber(phone, countryCode)
 
   // store generated sms message into the same record and set messageStatusId
   await knex('SmsMessage').where({ id: smsMessageId }).update({
@@ -143,6 +146,7 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
   const template = await processUsingDataSourceQuery(data, [
     'messageTemplate',
     'phoneNumberTemplate',
+    'countryAbbreviation',
   ])
   return template
 }
