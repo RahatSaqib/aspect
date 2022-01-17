@@ -143,12 +143,11 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       'tmpl.phoneNumber as phoneNumberTemplate',
       knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
-  const template = await processUsingDataSourceQuery(data, [
+  return processUsingDataSourceQuery(data, [
     'messageTemplate',
     'phoneNumberTemplate',
     'countryAbbreviation',
   ])
-  return template
 }
 
 module.exports = {
