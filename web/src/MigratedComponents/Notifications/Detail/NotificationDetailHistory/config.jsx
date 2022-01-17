@@ -16,94 +16,10 @@
  *  initialOrder: 'array' [self defined, optional]
  * contextualMenu: 'function|component' [self defined, optional]
  */
-import React, { Fragment, useState } from 'react'
-import classnames from 'classnames/bind'
-import Button from '@material-ui/core/Button'
-import PropTypes from 'prop-types'
+import React from 'react'
 import messages from './messages'
 import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
-import styles from '../NotificationDetail.css'
-import AspectTooltip from '../../../../components/shared/AspectTooltip'
-import NotificationDetailModal from './NotificationDetailModal'
-import IconProvider from '../../../IconProvider/index'
-
-const cssClasses = classnames.bind(styles)
-
-const ErrorCell = ({
-  sent = 0,
-  withErrors = 0,
-  pending = 0,
-  recipients,
-  formatMessage,
-}) => {
-  const [modalConfiguration, setModalConfiguration] = useState({
-    showDialog: false,
-    sent,
-    withErrors,
-    pending,
-    recipients,
-  })
-  const handleClick = () => {
-    setModalConfiguration({
-      showDialog: !modalConfiguration.showDialog,
-      sent,
-      withErrors,
-      pending,
-      recipients,
-    })
-  }
-  return (
-    <Fragment>
-      <AspectTooltip
-        title={
-          <>
-            <p>
-              {sent} {formatMessage(messages.sentSuccessfully)}
-            </p>
-            <p>
-              {withErrors} {formatMessage(messages.sentWithErrors)}
-            </p>
-            <p>
-              {pending} {formatMessage(messages.sentPending)}
-            </p>
-          </>
-        }
-        className={cssClasses('details_statusTooltip')}
-      >
-        <NotificationDetailModal
-          {...modalConfiguration}
-          onClose={() => {
-            setModalConfiguration({})
-          }}
-        />
-        <Button
-          className={cssClasses({ hasError: withErrors })}
-          onClick={handleClick}
-        >
-          {sent}/{sent + withErrors + pending}
-          <IconProvider
-            icon="MdKeyboardArrowDown"
-            className={cssClasses('popover-cell__icon')}
-          />
-        </Button>
-      </AspectTooltip>
-    </Fragment>
-  )
-}
-
-ErrorCell.propTypes = {
-  sent: PropTypes.number,
-  withErrors: PropTypes.number,
-  pending: PropTypes.number,
-  recipients: PropTypes.arrayOf(PropTypes.string),
-  formatMessage: PropTypes.func.isRequired,
-}
-ErrorCell.defaultProps = {
-  sent: 0,
-  withErrors: 0,
-  pending: 0,
-  recipients: [],
-}
+import ErrorCell from '../../../AspectTable/TableCell/ErrorCell/index'
 
 const baseConfig = ({ formatMessage }) => {
   return {
@@ -151,18 +67,16 @@ const baseConfig = ({ formatMessage }) => {
           },
           value,
         }) => {
-          return !value ? (
-            <div style={{ textAlign: 'center' }}>-</div>
-          ) : (
-            <Fragment>
-              <ErrorCell
-                sent={webhookSent}
-                withErrors={webhookWithErrors}
-                pending={webhookPending}
-                recipients={webhookRecipients}
-                formatMessage={formatMessage}
-              />
-            </Fragment>
+          return (
+            <ErrorCell
+              sent={webhookSent}
+              withErrors={webhookWithErrors}
+              pending={webhookPending}
+              recipients={webhookRecipients}
+              formatMessage={formatMessage}
+              messages={messages}
+              value={value}
+            />
           )
         },
       },
@@ -175,18 +89,16 @@ const baseConfig = ({ formatMessage }) => {
         format: ({ item, value }) => {
           const { emailSent, emailWithErrors, emailPending, emailRecipients } =
             item
-          return !value ? (
-            <div style={{ textAlign: 'center' }}>-</div>
-          ) : (
-            <Fragment>
-              <ErrorCell
-                sent={emailSent}
-                withErrors={emailWithErrors}
-                pending={emailPending}
-                recipients={emailRecipients}
-                formatMessage={formatMessage}
-              />
-            </Fragment>
+          return (
+            <ErrorCell
+              sent={emailSent}
+              withErrors={emailWithErrors}
+              pending={emailPending}
+              recipients={emailRecipients}
+              formatMessage={formatMessage}
+              messages={messages}
+              value={value}
+            />
           )
         },
       },
@@ -199,20 +111,17 @@ const baseConfig = ({ formatMessage }) => {
         format: ({
           value,
           item: { smsSent, smsWithErrors, smsPending, smsRecipients },
-        }) =>
-          !value ? (
-            <div style={{ textAlign: 'center' }}>-</div>
-          ) : (
-            <Fragment>
-              <ErrorCell
-                sent={smsSent}
-                withErrors={smsWithErrors}
-                pending={smsPending}
-                recipients={smsRecipients}
-                formatMessage={formatMessage}
-              />
-            </Fragment>
-          ),
+        }) => (
+          <ErrorCell
+            sent={smsSent}
+            withErrors={smsWithErrors}
+            pending={smsPending}
+            recipients={smsRecipients}
+            formatMessage={formatMessage}
+            messages={messages}
+            value={value}
+          />
+        ),
       },
     ],
     columnOrder: {
