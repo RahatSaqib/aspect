@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-12T08:41:44.825Z\n"
+"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -554,7 +554,7 @@ msgstr "Todos os estados"
 #. All test results in the system. One row per result.
 #: extracted_strings.json
 msgid "All test results in the system. One row per result."
-msgstr ""
+msgstr "Todos os resultados dos testes no sistema. Uma linha por resultado."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -1849,7 +1849,7 @@ msgstr "Senha Atual"
 #. Currently not selectable - missing role
 #: extracted_strings.json
 msgid "Currently not selectable - missing role"
-msgstr ""
+msgstr "Atualmente não selecionável - função ausente"
 
 #. [pages.dateRangeSelector.custom]
 #. defaultMessage is:
@@ -2064,7 +2064,7 @@ msgstr "Desmantelados"
 #. Delete (Only 0 triggers)
 #: extracted_strings.json
 msgid "Delete (Only 0 triggers)"
-msgstr ""
+msgstr "Excluir (apenas 0 gatilhos)"
 
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
@@ -2636,7 +2636,7 @@ msgstr "Data de início é necessária"
 #. End time cannot be before Start time
 #: extracted_strings.json
 msgid "End time cannot be before Start time"
-msgstr ""
+msgstr "A hora de término não pode ser anterior à hora de início"
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
 #. defaultMessage is:
@@ -2814,6 +2814,7 @@ msgstr "Código de erro"
 #: extracted_strings.json
 msgid "Error Code must be a positive integer with max 5 digits"
 msgstr ""
+"O código de erro deve ser um número inteiro positivo com no máximo 5 dígitos"
 
 #. [queryFetch.errorResponseMessages.GET.default.title]
 #. defaultMessage is:
@@ -3919,7 +3920,7 @@ msgstr "Indeterminado"
 #. Individual Persons
 #: extracted_strings.json
 msgid "Individual Persons"
-msgstr ""
+msgstr "Pessoas Individuais"
 
 #. [placeholders.insert.placeholder.for]
 #. defaultMessage is:
@@ -5863,6 +5864,13 @@ msgstr "Porcentagem Positiva"
 msgid "Percent Reported"
 msgstr "Porcentagem relatada"
 
+#. [pages.DeviceDetailProfile.percentageLegend]
+#. defaultMessage is:
+#. Percentage (%)
+#: extracted_strings.json
+msgid "Percentage (%)"
+msgstr "Porcentagem (%)"
+
 #. [pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle]
 #. defaultMessage is:
 #. Percentage of Days with Service Interruption
@@ -5888,6 +5896,15 @@ msgstr ""
 "Porcentagem de resultados válidos relatados este mês. Os resultados válidos "
 "incluem todos os resultados que não resultaram em \"Erro\", \"Nenhum "
 "resultado\" ou \"Inválido\"."
+
+#. [pages.DeviceDetailProfile.performanceTitle]
+#. defaultMessage is:
+#. Performance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tests Performed"
+msgid "Performance"
+msgstr "Testes Realizados"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -6538,7 +6555,7 @@ msgstr "Recebimento de inventário falhado"
 #. Recipients
 #: extracted_strings.json
 msgid "Recipients"
-msgstr ""
+msgstr "Destinatários"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -6991,7 +7008,7 @@ msgstr "SMS Enviado MTD"
 #. SMS was sent to:
 #: extracted_strings.json
 msgid "SMS was sent to:"
-msgstr ""
+msgstr "O SMS foi enviado para:"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -7453,7 +7470,7 @@ msgstr "Selecione o estoque restante..."
 #. Select the person or persons
 #: extracted_strings.json
 msgid "Select the person or persons"
-msgstr ""
+msgstr "Selecione a pessoa ou pessoas"
 
 #. [filter.popover.selectDeviceType]
 #. defaultMessage is:
@@ -7529,7 +7546,7 @@ msgstr "Enviar"
 #. Send to a specific person
 #: extracted_strings.json
 msgid "Send to a specific person"
-msgstr ""
+msgstr "Enviar para uma pessoa específica"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -8008,7 +8025,7 @@ msgstr "Data de início é necessária"
 #. Start time cannot be after End time
 #: extracted_strings.json
 msgid "Start time cannot be after End time"
-msgstr ""
+msgstr "A hora de início não pode ser posterior à hora de término"
 
 #. [forms.formItem.state]
 #. defaultMessage is:
@@ -9041,7 +9058,7 @@ msgstr "Fuso horário"
 #. Time cannot be greater than current time
 #: extracted_strings.json
 msgid "Time cannot be greater than current time"
-msgstr ""
+msgstr "A hora não pode ser maior que a hora atual"
 
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
@@ -9069,7 +9086,7 @@ msgstr "Para o site"
 #. To an individual person
 #: extracted_strings.json
 msgid "To an individual person"
-msgstr ""
+msgstr "A uma pessoa singular"
 
 #. [pages.NotificationDetail.toAnyOfTheseJobFunctions]
 #. defaultMessage is:
@@ -9279,7 +9296,7 @@ msgstr "Verdadeiro"
 #. Truenat® MTB
 #: extracted_strings.json
 msgid "Truenat® MTB"
-msgstr ""
+msgstr "Truenat® MTB"
 
 #. [legends.Unknown.assayTruenatMtbPlus]
 #. defaultMessage is:
@@ -9292,7 +9309,7 @@ msgstr ""
 #. Truenat® MTB Plus
 #: extracted_strings.json
 msgid "Truenat® MTB Plus"
-msgstr ""
+msgstr "Truenat® MTB Plus"
 
 #. [legends.Unknown.assayTruenatRif]
 #. defaultMessage is:
@@ -9305,7 +9322,7 @@ msgstr ""
 #. Truenat® MTB-RIF Dx
 #: extracted_strings.json
 msgid "Truenat® MTB-RIF Dx"
-msgstr ""
+msgstr "Truenat® MTB-RIF Dx"
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
@@ -9699,7 +9716,7 @@ msgstr "Ano"
 #. Yes
 #: extracted_strings.json
 msgid "Yes"
-msgstr ""
+msgstr "sim"
 
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:
@@ -10029,14 +10046,14 @@ msgstr "taxa de erro"
 #. event
 #: extracted_strings.json
 msgid "event"
-msgstr ""
+msgstr "evento"
 
 #. [pages.Notifications.table.events]
 #. defaultMessage is:
 #. events
 #: extracted_strings.json
 msgid "events"
-msgstr ""
+msgstr "eventos"
 
 #. [pages.OperationalData.expiringTitle]
 #. defaultMessage is:
