@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
+"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1782,6 +1782,9 @@ msgstr "Covid 19"
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
+#. [pages.Contacts.create]
+#. defaultMessage is:
+#. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Criar"
@@ -2365,6 +2368,15 @@ msgstr "Dispositivos com Interrupção de Serviço"
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
 msgstr "Dispositivos com Módulos Não Usados"
+
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "CEP"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -6292,6 +6304,12 @@ msgstr "Positivos"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -7107,6 +7125,9 @@ msgstr "Local de coleta de amostras"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Contacts.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -7764,7 +7785,7 @@ msgid ""
 "other {# logs} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"log} other {# logs} }"
+"registro} other {# histórico} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7822,7 +7843,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"site} other {# sites} }"
+"local} other {# sites} }"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
@@ -9323,6 +9344,19 @@ msgstr "Truenat® MTB Plus"
 #: extracted_strings.json
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
+
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr ""
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:

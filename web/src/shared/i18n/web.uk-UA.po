@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
+"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1779,6 +1779,9 @@ msgstr "COVID 19"
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
+#. [pages.Contacts.create]
+#. defaultMessage is:
+#. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Створити"
@@ -2362,6 +2365,15 @@ msgstr "Пристрої, що переживають переривання с�
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
 msgstr "Пристрої з невикористовуваними модулями"
+
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "ЗІП код"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -6285,6 +6297,12 @@ msgstr "Позитиви"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -7100,6 +7118,9 @@ msgstr "Сайт збору зразків"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Contacts.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -7712,7 +7733,7 @@ msgid ""
 "other {# cases} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"case} інша {# case}}"
+"випадок} інша {# випадків}}"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -7723,7 +7744,7 @@ msgid ""
 "contact} other {# contacts} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"contact} інша {# contacts}}"
+"контакт} інша {# контакти}}"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
@@ -7734,7 +7755,7 @@ msgid ""
 "device API key} other {# device API keys} }"
 msgstr ""
 "Відображається {firstItemIndex} - {lastItemIndex} з {itemCount, множини, "
-"один {# device API key} інший {# device API keys}}"
+"один {# ключ API пристрою} інший {# ключі API пристрою}}"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
@@ -7745,7 +7766,7 @@ msgid ""
 "device} other {# devices} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"device} інша {# devices}}"
+"пристрій} інша {# пристроїв}}"
 
 #. [pages.ResultWorkflowStatusLog.paginatorStatus]
 #. defaultMessage is:
@@ -7756,7 +7777,7 @@ msgid ""
 "other {# logs} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"log} інша {# журнали}}"
+"журнал} інша {# журнали}}"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7778,7 +7799,7 @@ msgid ""
 "reporter} other {# reporters} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"reporter} інша {# reporter}}"
+"репортер} інша {# репортери}}"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -7792,7 +7813,7 @@ msgid ""
 "result} other {# results} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"result} інша {# results}}"
+"результат} інша {# результати}}"
 
 #. [pages.RouterList.paginatorStatus]
 #. defaultMessage is:
@@ -7814,7 +7835,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Відображається {firstItemIndex} - {lastItemIndex} з {itemCount, множина, "
-"одна {# site} інша {# sites}}"
+"одна {# сайт} інша {# сайти}}"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
@@ -7825,7 +7846,7 @@ msgid ""
 "supply} other {# supplies} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"supply} інша {# supplies}}"
+"постачання} інша {# припаси}}"
 
 #. [pages.TaskList.paginatorStatus]
 #. defaultMessage is:
@@ -7836,7 +7857,7 @@ msgid ""
 "other {# tasks} }"
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, множина, одна {# "
-"task} інша {# task}}"
+"завдання} інша {# завдання}}"
 
 #. [pages.TablePagination.nowShowing]
 #. defaultMessage is:
@@ -9313,6 +9334,19 @@ msgstr "Truenat® MTB Plus"
 #: extracted_strings.json
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
+
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr ""
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:

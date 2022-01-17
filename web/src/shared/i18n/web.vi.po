@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-16T11:21:01.390Z\n"
+"POT-Creation-Date: 2022-01-17T11:30:09.079Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.0.1\n"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
@@ -552,7 +551,7 @@ msgstr "Tất cả các trạng thái"
 #. All test results in the system. One row per result.
 #: extracted_strings.json
 msgid "All test results in the system. One row per result."
-msgstr ""
+msgstr "Tất cả các kết quả kiểm tra trong hệ thống. Một hàng cho mỗi kết quả."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -2063,7 +2062,7 @@ msgstr "Ngừng hoạt động"
 #. Delete (Only 0 triggers)
 #: extracted_strings.json
 msgid "Delete (Only 0 triggers)"
-msgstr ""
+msgstr "Xóa (Chỉ 0 trình kích hoạt)"
 
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
@@ -4283,7 +4282,7 @@ msgstr "Năm trước"
 #. Last calibrated {date}
 #: extracted_strings.json
 msgid "Last calibrated {date}"
-msgstr ""
+msgstr "Hiệu chỉnh lần cuối {date}"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -5869,6 +5868,13 @@ msgstr "Phần trăm tích cực"
 msgid "Percent Reported"
 msgstr "Phần trăm được báo cáo"
 
+#. [pages.DeviceDetailProfile.percentageLegend]
+#. defaultMessage is:
+#. Percentage (%)
+#: extracted_strings.json
+msgid "Percentage (%)"
+msgstr "Phần trăm (%)"
+
 #. [pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle]
 #. defaultMessage is:
 #. Percentage of Days with Service Interruption
@@ -5894,6 +5900,15 @@ msgstr ""
 "Phần trăm kết quả hợp lệ được báo cáo trong tháng này. Kết quả hợp lệ bao "
 "gồm tất cả các kết quả không dẫn đến \"Lỗi\", \"Không có kết quả\" hoặc "
 "\"Không hợp lệ\"."
+
+#. [pages.DeviceDetailProfile.performanceTitle]
+#. defaultMessage is:
+#. Performance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tests Performed"
+msgid "Performance"
+msgstr "Các thử nghiệm đã thực hiện"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -7007,7 +7022,7 @@ msgstr "SMS đã gửi MTD"
 #. SMS was sent to:
 #: extracted_strings.json
 msgid "SMS was sent to:"
-msgstr ""
+msgstr "SMS đã được gửi tới:"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -9329,7 +9344,7 @@ msgstr "Truenat® MTB-RIF Dx"
 #. Truenat® Unknown Test Type
 #: extracted_strings.json
 msgid "Truenat® Unknown Test Type"
-msgstr ""
+msgstr "Truenat® Unknown Test Type"
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
@@ -9725,7 +9740,7 @@ msgstr "Năm"
 #. Yes
 #: extracted_strings.json
 msgid "Yes"
-msgstr ""
+msgstr "Đúng"
 
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
+"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1788,6 +1788,9 @@ msgstr "Covid 19"
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
+#. [pages.Contacts.create]
+#. defaultMessage is:
+#. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Crear"
@@ -2371,6 +2374,15 @@ msgstr "Dispositivos con el servicio interrumpido"
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
 msgstr "Dispositivos con módulos no utilizados"
+
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "Código postal"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -6303,6 +6315,12 @@ msgstr "Positivos"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -7118,6 +7136,9 @@ msgstr "Lugar de recolección de la muestra"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Contacts.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -7756,7 +7777,7 @@ msgid ""
 "device API key} other {# device API keys} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"device API key} other {# device API keys} }"
+"clave API del dispositivo} other {# claves API del dispositivo} }"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
@@ -7778,7 +7799,7 @@ msgid ""
 "other {# logs} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"log} other {# logs} }"
+"registro} other {# registros} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7800,7 +7821,7 @@ msgid ""
 "reporter} other {# reporters} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"reporter} other {# reporters} }"
+"reportero} other {# reporteros} }"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -7825,7 +7846,7 @@ msgid ""
 "router} other {# routers} }"
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"router} other {# routers} }"
+"enrutador} other {# enrutadores} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
@@ -9348,6 +9369,19 @@ msgstr "Truenat® MTB Plus"
 #: extracted_strings.json
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
+
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr "Truenat® Unknown Test Type"
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
