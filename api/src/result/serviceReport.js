@@ -1,10 +1,13 @@
 const flatten = require('flat')
 const _ = require('lodash')
-const { format } = require('date-fns')
 const { getResultsForExport } = require('./service')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { exportData, getMaxLimitPlaceHolders } = require('../shared/excel')
+const {
+  exportData,
+  getMaxLimitPlaceHolders,
+  getBaseReplacements,
+} = require('../shared/excel')
 
 const { getAllAssaySchemas } = require('../assay/service')
 
@@ -113,13 +116,7 @@ async function exportResults(request, reply) {
   }
 
   return exportData(request, reply, sheetData, 'results', {
-    replacements: [
-      {
-        placeholder: '<Dates>',
-        value: format(new Date(), 'yyyy-MM-dd'),
-      },
-      ...getMaxLimitPlaceHolders(),
-    ],
+    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
     dataSelector,
   })
 }

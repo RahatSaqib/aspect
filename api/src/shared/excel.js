@@ -144,6 +144,10 @@ function getBaseReplacements() {
       placeholder: '<date>',
       value: format(new Date(), 'yyyy-MM-dd'),
     },
+    {
+      placeholder: '<Dates>',
+      value: format(new Date(), 'yyyy-MM-dd'),
+    },
   ]
   return replacements
 }
