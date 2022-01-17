@@ -90,6 +90,7 @@ function hideAdjustInventoryDialog() {
 
 function exportSupplies(
   filtersParams,
+  breakOutByLot,
   sortCol,
   sortDir,
   page,
@@ -98,7 +99,8 @@ function exportSupplies(
   reportName,
   dispatch
 ) {
-  const filters = getFilters(filtersParams)
+  const filters = getFilters(filtersParams) || {}
+  filters.breakOutByLot = breakOutByLot
   return fetchWrapperForQueries({
     endpoint: '/inventory/export',
     params: {
@@ -139,12 +141,13 @@ function addInventory(data, dispatch, inventoryState) {
     inventoryAdjustment: { inventoryItemId },
   } = inventoryState
 
-  const consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+  if (!data.consumableId && inventoryItemId)
+    data.consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
   return fetchWrapperForQueries({
     endpoint: '/inventory/add',
     method: 'PUT',
-    params: { ...data, consumableId },
+    params: data,
     customErrorNotifications: {
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({

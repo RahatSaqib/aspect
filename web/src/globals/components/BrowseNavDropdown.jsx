@@ -109,6 +109,14 @@ const enhance = compose(
         setFiltersForLast30Days(searchParams)
       }
 
+      if (value === '/browse/inventory') {
+        const filtersParams = new URLSearchParams(searchParams.get('filters'))
+        if (!filtersParams.has('hasStock')) {
+          filtersParams.set('hasStock', true)
+          searchParams.set('filters', filtersParams)
+        }
+      }
+
       navigate({
         pathname: value,
         search: `?${searchParams.toString()}`,
