@@ -203,7 +203,9 @@ const ResultTransferModal = ({
       open={isOpen}
       onRequestClose={onRequestClose}
       showCrossIcon
-      title={`${formatMessage(messages.header)}: ${patientId}`}
+      title={`${formatMessage(messages.header)}${
+        patientId ? `: ${patientId}` : ''
+      }`}
       disableEscapeKeyDown
     >
       <div>

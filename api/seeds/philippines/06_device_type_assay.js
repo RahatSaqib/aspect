@@ -199,7 +199,7 @@ async function seed(knex) {
     deviceTypeId: deviceTypeNTRLDatabaseId,
     resultSourceId: await resultSourceToId('LIMS'),
     resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
+    resultCategory1i18nKey: 'resultCategoryMtb',
     resultCategory2Label: 'Resistance',
     resultCategory2i18nKey: 'resultCategoryResistance',
     resultDataSchema: JSON.stringify({

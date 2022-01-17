@@ -100,7 +100,7 @@ const styleOptionBase = {
     margin: '0 5px 0',
   },
 }
-const getAspectTheme = () => {
+export const getAspectTheme = () => {
   return {
     option: (provided, state) => {
       const { isSelected, isFocused } = state
@@ -150,7 +150,7 @@ const getAspectTheme = () => {
     }),
   }
 }
-const getMuiTheme = () => {
+export const getMuiTheme = () => {
   return {
     option: provided => ({
       ...provided,
