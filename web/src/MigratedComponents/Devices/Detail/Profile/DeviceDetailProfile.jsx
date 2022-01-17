@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
-import { ResponsiveBar } from '@nivo/bar'
 import resultMessages from '../../../../result/list/messages.js'
 import {
   makeSortPageSelector,
@@ -38,6 +37,7 @@ import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import messages from './messages'
 import useI18n from '../../../../Hooks/i18n/useI18n'
+import PerformanceReport from './PerformanceReport'
 
 import styles from '../DeviceDetail.css'
 
@@ -238,258 +238,6 @@ const enhance = compose(
     },
   })
 )
-
-const PerformanceBarChart = ({
-  data,
-  series,
-  color,
-  avgValue,
-  maxValue,
-  info,
-}) => (
-  <ResponsiveBar
-    data={data}
-    indexBy="period"
-    keys={series.map(x => x.key)}
-    margin={{ top: 10, right: 0, bottom: 90, left: 50 }}
-    padding={0.01} // between stacks, (ratio)
-    innerPadding={1} // between bars in a stack, (px)
-    enableGridY={false}
-    enableLabel={false}
-    defs={[
-      {
-        id: 'lines',
-        type: 'patternLines',
-        background: 'inherit',
-        color: process.env[color],
-        rotation: 45,
-        lineWidth: 7,
-        spacing: 8,
-      },
-    ]}
-    fill={[
-      {
-        match: {
-          id: 'exceededErrorRate',
-        },
-        id: 'lines',
-      },
-      {
-        match: {
-          id: 'exceededUtilizationRate',
-        },
-        id: 'lines',
-      },
-    ]}
-    axisLeft={{
-      tickRotation: 0,
-      legend: 'Percentage(%)',
-      legendPosition: 'middle',
-      legendOffset: -40,
-    }}
-    colors={bar => series.find(x => x.key === bar.id).color}
-    animate
-    markers={[
-      {
-        axis: 'y',
-        value: avgValue,
-        lineStyle: {
-          stroke: process.env['--aspect-color-ship-cove'],
-          strokeWidth: 2,
-        },
-        legendOrientation: 'vertical',
-      },
-    ]}
-    tooltip={({ color, indexValue }) => {
-      const periodData = data.find(x => x.period === indexValue)
-      const value =
-        info === 'Error Rate'
-          ? periodData.errorRate + periodData.exceededErrorRate
-          : periodData.utilizationRate + periodData.exceededUtilizationRate
-
-      return (
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div
-              className={cssClasses('Performance--graph-tooltip-color')}
-              style={{ backgroundColor: color }}
-            />
-            {`% ${info} `}
-          </div>
-          <div>
-            {`${indexValue}: `}
-            <strong>{value}</strong>%
-          </div>
-        </div>
-      )
-    }}
-    maxValue={maxValue}
-    motionStiffness={90}
-    motionDamping={15}
-  />
-)
-
-PerformanceBarChart.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  series: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  color: PropTypes.string.isRequired,
-  avgValue: PropTypes.number.isRequired,
-  maxValue: PropTypes.number.isRequired,
-  info: PropTypes.string.isRequired,
-}
-
-const PerformanceReport = ({ performanceReport, culture }) => {
-  const payload = performanceReport.toJS()
-  let maxUtilizationRate = 0
-  let maxErrorRate = 0
-  const { formatMessage } = useI18n()
-  if (payload.data) {
-    payload.data.forEach(item => {
-      const date = new Date(item.monthTested)
-      const monthName = date.toLocaleString(culture, {
-        month: 'short',
-        timeZone: 'UTC',
-      })
-      item.period = monthName
-      item.exceededErrorRate =
-        item.errorRate > payload.errorRateAvg
-          ? item.errorRate - payload.errorRateAvg
-          : 0
-      item.errorRate =
-        item.errorRate > payload.errorRateAvg
-          ? payload.errorRateAvg
-          : item.errorRate
-      item.exceededUtilizationRate =
-        item.utilizationRate > payload.utilizationRateAvg
-          ? item.utilizationRate - payload.utilizationRateAvg
-          : 0
-      item.utilizationRate =
-        item.utilizationRate > payload.utilizationRateAvg
-          ? payload.utilizationRateAvg
-          : item.utilizationRate
-    })
-    maxUtilizationRate = payload.data.reduce(
-      (prev, current) =>
-        prev > current.utilizationRate + current.exceededUtilizationRate
-          ? prev
-          : current.utilizationRate + current.exceededUtilizationRate,
-      payload.utilizationRateAvg
-    )
-    maxErrorRate = payload.data.reduce(
-      (prev, current) =>
-        prev > current.errorRate + current.exceededErrorRate
-          ? prev
-          : current.errorRate + current.exceededErrorRate,
-      payload.errorRateAvg
-    )
-
-    maxErrorRate = maxErrorRate === 100 ? maxErrorRate : maxErrorRate + 10
-    maxUtilizationRate += 10
-  }
-
-  const avgUtilizationRate = payload.utilizationRateAvg
-  const avgErrorRate = payload.errorRateAvg
-  const { data } = payload
-  const { '--aspect-color-white': colorWhite } = process.env
-  const utilizationRateSeries = [
-    {
-      label: 'Utilization Rate',
-      key: 'utilizationRate',
-      color: process.env['--aspect-color-shakespeare'],
-    },
-    {
-      label: 'Above Target Utilization Rate',
-      key: 'exceededUtilizationRate',
-      color: colorWhite,
-    },
-  ]
-  const errorRateSeries = [
-    {
-      label: 'Error Rate',
-      key: 'errorRate',
-      color: process.env['--aspect-color-mandy'], // green
-    },
-    {
-      label: 'Above Average Error Rate',
-      key: 'exceededErrorRate',
-      color: colorWhite,
-    },
-  ]
-
-  return (
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section')}>
-        <p data-panel-title>Performance</p>
-        <div data-graph-container>
-          {data && data[0].utilizationRate !== null && (
-            <div
-              className={cssClasses('Graph_Container')}
-              data-utilization-graph
-            >
-              {data && (
-                <div>
-                  <p>{formatMessage(messages.utilizationRate)}</p>
-                  <PerformanceBarChart
-                    data={data}
-                    series={utilizationRateSeries}
-                    color="--aspect-color-shakespeare"
-                    avgValue={avgUtilizationRate}
-                    maxValue={maxUtilizationRate}
-                    info={formatMessage(messages.utilizationRate)}
-                  />
-                  <div className={cssClasses('Graph_Legend')}>
-                    <div data-utilization-rate-legend>
-                      <div />
-                      <span>{formatMessage(messages.utilizationRate)}</span>
-                    </div>
-                    <div data-utilization-rate-average-legend>
-                      <div /> <span> {formatMessage(messages.target)} </span>
-                    </div>
-                    <div data-utilization-rate-above-average-legend>
-                      <div /> <span>{formatMessage(messages.aboveTarget)}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          <div className={cssClasses('Graph_Container')}>
-            {data && (
-              <div>
-                <p>Error Rate</p>
-                <PerformanceBarChart
-                  data={data}
-                  series={errorRateSeries}
-                  color="--aspect-color-mandy"
-                  avgValue={avgErrorRate}
-                  maxValue={maxErrorRate}
-                  info="Error Rate"
-                />
-                <div className={cssClasses('Graph_Legend')}>
-                  <div data-error-rate-legend>
-                    <div /> <span>{formatMessage(messages.errorRate)} </span>
-                  </div>
-                  <div data-error-rate-average-legend>
-                    <div />
-                    <span> {formatMessage(messages.countryAverage)}</span>
-                  </div>
-                  <div data-error-rate-above-average-legend>
-                    <div /> <span>{formatMessage(messages.aboveAverage)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </Card>
-    </section>
-  )
-}
-
-PerformanceReport.propTypes = {
-  performanceReport: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  culture: PropTypes.string.isRequired,
-}
 
 const DeviceDetailProfile = ({
   navigate,
@@ -870,7 +618,6 @@ const DeviceDetailProfile = ({
 DeviceDetailProfile.propTypes = {
   navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  // ma-tch: PropTypes.oneOfType([PropTypes.object]).isRequired,
   device: PropTypes.oneOfType([PropTypes.object]).isRequired,
   disabled: PropTypes.bool.isRequired,
   devicePerformance: PropTypes.oneOfType([PropTypes.object]).isRequired,

@@ -54,6 +54,10 @@ const routes = [
               descriptionI18nKey: Joi.string().max(255).allow('', null),
               dashboards: Joi.string().max(2048).allow('', null),
               linkParams: Joi.string().max(255).allow('', null),
+              percentage: Joi.string()
+                .optional()
+                .allow('', null)
+                .description('returns the percetage with the format ##%'),
               options: Joi.alternatives()
                 .try(Joi.string(), Joi.object())
                 .allow(null, ''),

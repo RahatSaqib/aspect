@@ -2,13 +2,10 @@ import isFinite from 'lodash/isFinite'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-
-// Material-UI
-
 import LinearProgress from '@material-ui/core/LinearProgress'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -20,8 +17,6 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
-
-// Our own imports
 import AspectDialog from '../../components/shared/AspectDialog'
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/isEditable'
@@ -33,84 +28,7 @@ import RouterDetailModalForm from './RouterDetailModalForm'
 import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './RouterDetail.css'
 
-const messages = defineMessages({
-  title: {
-    id: 'pages.RouterDetail.title',
-    defaultMessage: 'Router Detail',
-  },
-  editTooltip: {
-    id: 'pages.RouterDetail.editTooltip',
-    defaultMessage: 'Edit',
-  },
-  cancel: {
-    id: 'pages.RouterDetail.cancel',
-    defaultMessage: 'Cancel',
-  },
-  update: {
-    id: 'pages.RouterDetail.update',
-    defaultMessage: 'Update',
-  },
-  approved: {
-    id: 'pages.RouterDetail.approved',
-    defaultMessage: 'Approved',
-  },
-  fieldName: {
-    id: 'pages.RouterDetail.fieldName',
-    defaultMessage: 'Name',
-  },
-  fieldShortName: {
-    id: 'pages.RouterDetail.fieldShortName',
-    defaultMessage: 'ShortName',
-  },
-  fieldNotes: {
-    id: 'pages.RouterDetail.fieldNotes',
-    defaultMessage: 'Notes',
-  },
-  fieldSiteId: {
-    id: 'pages.RouterDetail.fieldSiteId',
-    defaultMessage: 'Site',
-  },
-  fieldConfiguration: {
-    id: 'pages.RouterDetail.fieldConfiguration',
-    defaultMessage: 'Configuration',
-  },
-  fieldFirstApprovedOn: {
-    id: 'pages.RouterDetail.fieldFirstApprovedOn',
-    defaultMessage: 'First Approved On',
-  },
-  fieldFirstApprovedBy: {
-    id: 'pages.RouterDetail.fieldFirstApprovedBy',
-    defaultMessage: 'First Approved By',
-  },
-  fieldHostId: {
-    id: 'pages.RouterDetail.fieldHostId',
-    defaultMessage: 'Host Id',
-  },
-  fieldSerial: {
-    id: 'pages.RouterDetail.fieldSerial',
-    defaultMessage: 'Serial',
-  },
-  fieldLastSeen: {
-    id: 'pages.RouterDetail.fieldLastSeen',
-    defaultMessage: 'Last Seen',
-  },
-  fieldFirstConnected: {
-    id: 'pages.RouterDetail.fieldFirstConnected',
-    defaultMessage: 'Connected',
-  },
-  fieldStatus: {
-    id: 'pages.RouterDetail.fieldStatus',
-    defaultMessage: 'Status',
-  },
-  fieldTotalNumberOfTests: {
-    id: 'pages.RouterDetail.fieldTotalNumberOfTests',
-    defaultMessage: 'Tests',
-  },
-  nestedDataSubtitle: {
-    id: 'pages.RouterDetail.nestedDataSubtitle',
-    defaultMessage: '{count} fields',
-  },
-})
+import messages from './messages'
 
 const enhance = compose(
   injectIntl,
@@ -135,8 +53,6 @@ const enhance = compose(
     editable: PropTypes.bool.isRequired,
     router: PropTypes.shape({
       has: PropTypes.func.isRequired,
-      // see /api/src/device/endPoint.js, path: '/device'
-      // see /api/src/device/service.js, const SELECT_SHOW_FIELDS
       id: PropTypes.number,
       name: PropTypes.string,
       shortName: PropTypes.string,
@@ -302,7 +218,6 @@ export class RouterDetail extends PureComponent {
 
     return (
       <div>
-        {/* IDs and site/results */}
         <Card>
           <CardContent>
             <Unit sm="5-6" md="11-12">
@@ -343,7 +258,6 @@ export class RouterDetail extends PureComponent {
               />
             </Unit>
             <Unit sm="1-6" md="1-12">
-              {/* Dialog for DeviceDetailModalForm */}
               {this.renderEditButtonWithDialog()}
             </Unit>
           </CardContent>
@@ -353,11 +267,13 @@ export class RouterDetail extends PureComponent {
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Unit sm="1-1" md="1-2">
               <Typography variant="subtitle1">
-                Utilization Rate Over Time
+                {formatMessage(messages.detailUtilOverTime)}
               </Typography>
             </Unit>
             <Unit sm="1-1" md="1-2">
-              <Typography variant="subtitle1">Error Rates Over Time</Typography>
+              <Typography variant="subtitle1">
+                {formatMessage(messages.detailErrorOverTime)}
+              </Typography>
             </Unit>
           </AccordionSummary>
           <AccordionDetails>
@@ -389,7 +305,6 @@ export class RouterDetail extends PureComponent {
             </Unit>
           </AccordionDetails>
         </Accordion>
-        {/* Dialog for demo purpose */}
         <AspectDialog
           modal={false}
           open={this.state.isDemoDialogOpen}
@@ -397,10 +312,11 @@ export class RouterDetail extends PureComponent {
         >
           Not yet implemented
         </AspectDialog>
-        {/* Contacts */}
         <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">Contacts</Typography>
+            <Typography variant="subtitle1">
+              {formatMessage(messages.detailContacts)}
+            </Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography variant="body2">
@@ -420,22 +336,34 @@ export class RouterDetail extends PureComponent {
             </Typography>
           </AccordionDetails>
         </Accordion>
-        {/* Calibration */}
+        {/* Contacts */}
         <Accordion expanded onClick={this.handleToggleDialog}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">Calibration</Typography>
+            <Typography variant="subtitle1">
+              {formatMessage(messages.detailCalibration)}
+            </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body2">Last calibrated 12/1/2016</Typography>
+            <Typography variant="body2">
+              {formatMessage(messages.detailCalibrationDate, {
+                date: '12/1/2016',
+              })}
+            </Typography>
           </AccordionDetails>
         </Accordion>
         {/* Warranty */}
         <Accordion expanded onClick={this.handleToggleDialog}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">Warranty</Typography>
+            <Typography variant="subtitle1">
+              {formatMessage(messages.detailWarranty)}
+            </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography variant="body2">Expires 12/31/2018</Typography>
+            <Typography variant="body2">
+              {formatMessage(messages.detailWarrantyExpire, {
+                date: '12/31/2018',
+              })}
+            </Typography>
           </AccordionDetails>
         </Accordion>
         {/* Configuration */}
@@ -450,7 +378,9 @@ export class RouterDetail extends PureComponent {
         {/* Technical information */}
         <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">Technical information</Typography>
+            <Typography variant="subtitle1">
+              {formatMessage(messages.detailTechInfo)}
+            </Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Typography
