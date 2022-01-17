@@ -1,7 +1,9 @@
-[{
-  "externalId": "molbioTruenat",
-  "name": "Molbio Truenat",
-  "manufacturer": "Molbio",
-  "deviceTypeCategoryId": "Lab",
-  "requiresApiCredentials": true
-}]
+[
+  {
+    "externalId": "molbioTruenat",
+    "name": "Molbio Truenat",
+    "manufacturer": "Molbio",
+    "deviceTypeCategoryId": "Lab",
+    "requiresApiCredentials": true
+  }
+]

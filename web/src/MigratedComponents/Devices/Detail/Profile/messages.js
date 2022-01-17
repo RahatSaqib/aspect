@@ -10,6 +10,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.deviceType',
       defaultMessage: 'Device type',
     },
+    performanceTitle: {
+      id: 'pages.DeviceDetailProfile.performanceTitle',
+      defaultMessage: 'Performance',
+    },
     deviceLogs: {
       id: 'pages.DeviceDetailProfile.deviceLogs',
       defaultMessage: 'Device logs',
@@ -55,6 +59,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.utilizationRateExplain',
       defaultMessage:
         'Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days',
+    },
+    percentageLegend: {
+      id: 'pages.DeviceDetailProfile.percentageLegend',
+      defaultMessage: 'Percentage (%)',
     },
     errorRate: {
       id: 'pages.DeviceDetailProfile.errorRate',
