@@ -16,6 +16,11 @@ function mutationSuccess(queryData, response, navigate, type, outcome) {
       navigate('/browse/person')
       break
 
+    case type === 'self' && ok:
+      navigate('/dashboard')
+      window.location.reload()
+      break
+
     default:
       throw new Error(
         `Could not complete the operation. Type: ${type} | Status: ${
