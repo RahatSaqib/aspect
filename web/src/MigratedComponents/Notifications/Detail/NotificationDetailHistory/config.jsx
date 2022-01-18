@@ -105,6 +105,24 @@ ErrorCell.defaultProps = {
   recipients: [],
 }
 
+const WebhookCell = ({
+  item: { webhookSent, webhookWithErrors, webhookPending, webhookRecipients },
+  value,
+}) => {
+  const { formatMessage } = useI18n()
+  return !value ? (
+    <div style={{ textAlign: 'center' }}>-</div>
+  ) : (
+    <ErrorCell
+      sent={webhookSent}
+      withErrors={webhookWithErrors}
+      pending={webhookPending}
+      recipients={webhookRecipients}
+      formatMessage={formatMessage}
+    />
+  )
+}
+
 const baseConfig = ({ formatMessage }) => {
   return {
     name: formatMessage(messages.event),
@@ -142,29 +160,30 @@ const baseConfig = ({ formatMessage }) => {
         width: 10,
         disableHide: true,
         disableGroupBy: true,
-        format: ({
-          item: {
-            webhookSent,
-            webhookWithErrors,
-            webhookPending,
-            webhookRecipients,
-          },
-          value,
-        }) => {
-          return !value ? (
-            <div style={{ textAlign: 'center' }}>-</div>
-          ) : (
-            <Fragment>
-              <ErrorCell
-                sent={webhookSent}
-                withErrors={webhookWithErrors}
-                pending={webhookPending}
-                recipients={webhookRecipients}
-                formatMessage={formatMessage}
-              />
-            </Fragment>
-          )
-        },
+        format: WebhookCell,
+        // format: ({
+        //   item: {
+        //     webhookSent,
+        //     webhookWithErrors,
+        //     webhookPending,
+        //     webhookRecipients,
+        //   },
+        //   value,
+        // }) => {
+        //   return !value ? (
+        //     <div style={{ textAlign: 'center' }}>-</div>
+        //   ) : (
+        //     <Fragment>
+        //       <ErrorCell
+        //         sent={webhookSent}
+        //         withErrors={webhookWithErrors}
+        //         pending={webhookPending}
+        //         recipients={webhookRecipients}
+        //         formatMessage={formatMessage}
+        //       />
+        //     </Fragment>
+        //   )
+        // },
       },
       {
         key: 'emailRecipients',
