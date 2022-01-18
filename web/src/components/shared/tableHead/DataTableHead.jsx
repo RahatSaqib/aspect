@@ -62,46 +62,48 @@ const DataTableHead = ({
             label,
             onClick,
             sortable = false,
+            isHidden,
             hiddenOn,
             ...restProps
           },
           index
-        ) => (
-          <TableCell
-            key={key}
-            data-column={key}
-            colSpan={colSpan}
-            sortDirection={sortColumnKey === key ? sortColumnDir : false}
-            onClick={onClick}
-            {...restProps}
-            className={classNames(
-              restProps.className,
-              classes.cell,
-              classes[`hidden${hiddenOn}Down`],
-              {
-                [classes.centerAlignedCell]: !!colSpan,
-                [classes.clickable]: isFunction(onClick) || sortable,
-                [classes.compact]: compact,
-              }
-            )}
-          >
-            {!sortable ? (
-              label
-            ) : (
-              <TableSortLabel
-                active={sortColumnKey === key}
-                direction={sortColumnDir}
-                onClick={() => onHeadColumnClick(key)}
-                IconComponent={KeyboardArrowDown}
-                classes={{
-                  icon: classes.sortIcon,
-                }}
-              >
-                {label}
-              </TableSortLabel>
-            )}
-          </TableCell>
-        )
+        ) =>
+          !isHidden ? (
+            <TableCell
+              key={key}
+              data-column={key}
+              colSpan={colSpan}
+              sortDirection={sortColumnKey === key ? sortColumnDir : false}
+              onClick={onClick}
+              {...restProps}
+              className={classNames(
+                restProps.className,
+                classes.cell,
+                classes[`hidden${hiddenOn}Down`],
+                {
+                  [classes.centerAlignedCell]: !!colSpan,
+                  [classes.clickable]: isFunction(onClick) || sortable,
+                  [classes.compact]: compact,
+                }
+              )}
+            >
+              {!sortable ? (
+                label
+              ) : (
+                <TableSortLabel
+                  active={sortColumnKey === key}
+                  direction={sortColumnDir}
+                  onClick={() => onHeadColumnClick(key)}
+                  IconComponent={KeyboardArrowDown}
+                  classes={{
+                    icon: classes.sortIcon,
+                  }}
+                >
+                  {label}
+                </TableSortLabel>
+              )}
+            </TableCell>
+          ) : null
       )}
     </TableRow>
   </TableHead>

@@ -1,13 +1,23 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
+  projectedWasteDescription: {
+    id: 'pages.InventoryItemsList.projectedWasteDescription',
+    defaultMessage:
+      'The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration',
+  },
+  daysStockLeftDescription: {
+    id: 'pages.InventoryItemsList.daysStockLeftDescription',
+    defaultMessage:
+      'The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration',
+  },
   inventoryItemsTitle: {
     id: 'pages.InventoryItemsList.inventoryItemsTitle',
     defaultMessage: 'Inventory on Hand',
   },
-  groupBySite: {
-    id: 'pages.InventoryItemsList.groupBySite',
-    defaultMessage: 'Group by Site',
+  breakOutByLot: {
+    id: 'pages.InventoryItemsList.breakOutByLot',
+    defaultMessage: 'Break out by lot',
   },
   siteName: {
     id: 'pages.InventoryItemsList.siteName',
@@ -36,6 +46,10 @@ const messages = defineMessages({
   expiresOn: {
     id: 'pages.InventoryItemsList.expiresOn',
     defaultMessage: 'Expires On',
+  },
+  lotNumber: {
+    id: 'pages.InventoryItemsList.lotNumber',
+    defaultMessage: 'Lot Number',
   },
   expiresIn: {
     id: 'pages.InventoryItemsList.expiresIn',
@@ -72,6 +86,10 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.inTransitFromSiteName',
     defaultMessage: '* in transit from {inTransitFromSiteName}',
   },
+  excludedLotInTransit: {
+    id: 'pages.InventoryItemsList.inTransitFromSiteName',
+    defaultMessage: '* excluded {pendingTransfers} lot/s in transit',
+  },
   never: {
     id: 'pages.InventoryItemsList.never',
     defaultMessage: 'Never',
@@ -80,9 +98,13 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.inventoryAdjustedSuccessfully',
     defaultMessage: 'Inventory levels have been adjusted successfully',
   },
-  stockLeft: {
-    id: 'pages.InventoryItemsList.stockLeft',
+  daysStockLeft: {
+    id: 'pages.InventoryItemsList.daysStockLeft',
     defaultMessage: 'Days Stock Left',
+  },
+  projectedWaste: {
+    id: 'pages.InventoryItemsList.projectedWaste',
+    defaultMessage: 'Projected stock waste',
   },
 })
 

@@ -45,7 +45,7 @@ const inventoryGraphs = {
         clickThrough: {
           allow: true,
           baseUrl: '/browse/inventory?filters=',
-          keys: ['stockLeft', 'consumableId'],
+          keys: ['daysStockLeft', 'consumableId'],
         },
       },
     ],

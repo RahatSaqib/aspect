@@ -1,20 +1,30 @@
 const { format } = require('date-fns')
-const { listInventoryItems } = require('./service')
+const { listInventory } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 
 async function exportSupplies(request, reply) {
-  const { data } = await listInventoryItems(request)
-  const sheetData = {
-    dataRows: data.map(item => ({
+  const { query } = request
+  const { data } = await listInventory(request)
+
+  let dataRows = data
+  if (query.breakOutByLot)
+    dataRows = data.map(item => ({
       ...item,
       expires: item.canExpire,
       expiresOn: format(new Date(item.expiresOn), 'yyyy-MM-dd'),
-    })),
+    }))
+
+  const sheetData = {
+    dataRows,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
 
-  return exportData(request, reply, sheetData, 'supplies', {
+  const scope = query.breakOutByLot
+    ? 'supplies-by-lot'
+    : 'supplies-by-site-and-consumable'
+
+  return exportData(request, reply, sheetData, scope, {
     replacements: getBaseReplacements(),
   })
 }
