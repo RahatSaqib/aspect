@@ -32,7 +32,6 @@ async function getAccountDetailsForLoggedInUser(request) {
   const accountDetails = await getAccountDetailsForUsername(
     request.auth.credentials.name
   )
-
   return { ok: true, data: accountDetails }
 }
 
@@ -95,6 +94,9 @@ async function saveContactDetailsForLoggedInUser(request) {
     'countryId',
     'stateId',
     'lgaId',
+    'timezone',
+    'culture',
+    'tags',
     'zip',
   ])
   return response

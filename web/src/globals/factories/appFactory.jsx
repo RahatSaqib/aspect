@@ -22,6 +22,13 @@ import { I18nProvider } from '../../Providers/I18nProvider'
 
 const queryClient = new QueryClient()
 
+if (process.env.NODE_ENV === 'development') {
+  const whyDidYouRender = require('@welldone-software/why-did-you-render')
+  whyDidYouRender(React, {
+    trackAllPureComponents: false,
+  })
+}
+
 const formatsByTimezoneId = timezoneId => {
   const formats = {}
 

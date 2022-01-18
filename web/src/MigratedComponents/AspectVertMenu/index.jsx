@@ -20,12 +20,22 @@ const AspectVertMenuItem = ({
   action,
   params,
   separator = false,
+  onClick,
 }) => (
   <Fragment>
     <MenuItem
       disabled={disabled}
       onClick={() => {
-        action(params)
+        if (onClick) {
+          // when passing-in props have onClick - run it
+          onClick({
+            innerHandler: () => {
+              action(params)
+            },
+          })
+        } else {
+          action(params)
+        }
       }}
       className={cssClasses('menu-item')}
     >
@@ -58,6 +68,7 @@ AspectVertMenuItem.defaultProps = {
   disabled: false,
   separator: false,
   params: null,
+  onClick: null,
 }
 
 AspectVertMenuItem.propTypes = {
@@ -65,6 +76,7 @@ AspectVertMenuItem.propTypes = {
   disabled: PropTypes.bool,
   text: PropTypes.string.isRequired,
   action: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
   params: PropTypes.oneOfType([PropTypes.object]),
   separator: PropTypes.bool,
 }

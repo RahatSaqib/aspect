@@ -36,6 +36,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
 
   static async canProcessRequest(request) {
     const { payload } = request
+    if (!payload) {
+      return false
+    }
     const payloadKeys = Object.keys(payload)
     return (
       expectedKeys.every(expectedKey => payloadKeys.includes(expectedKey)) &&

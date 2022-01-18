@@ -1,5 +1,8 @@
 const Joi = require('@hapi/joi')
 const { validateSortPageParams } = require('../routes')
+const {
+  validateAllGeographyFilterParams,
+} = require('../geography/requestValidation')
 
 function listNotificationsBaseConfig() {
   return {
@@ -12,12 +15,15 @@ function listNotificationsBaseConfig() {
         notificationName: Joi.string()
           .allow('')
           .description('Filter for notification name'),
+        ...validateAllGeographyFilterParams(),
         ...validateSortPageParams(
           'name',
           'lastTriggeredOn',
           'alertCount',
           'totalTriggers',
-          'typeCategory'
+          'typeCategory',
+          'persons',
+          'jobFunctions'
         ),
       },
     },
@@ -109,6 +115,10 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.optional().allow('', null),
     })
     .description('To send over email'),
+  enabled: Joi.bool()
+    .optional()
+    .default(true)
+    .description('Disable for sending notifications'),
   sendSms: Joi.bool().description('To send over sms'),
   sendWeb: Joi.bool().description('To send over webhook'),
   emailSubject: Joi.string()

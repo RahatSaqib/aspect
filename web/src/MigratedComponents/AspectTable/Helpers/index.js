@@ -96,7 +96,20 @@ function buildColumnsFromData({
   contextualMenu = false,
 }) {
   const output = []
-  const { key, intitalSortBy } = filter(columns, 'intitalSortBy')[0] || false
+  /**
+   * When `initialSortBy` is defined for any column in table config then
+   * AspectTable will run in 2-direction mode - 
+   * only `asc` and `desc` but not `undefined`.
+   * Pattern of `initialSortBy` is `{ desc: BOOLEAN }`, i.e.
+      columns: [
+        ...
+        {
+          ...
+          initialSortBy: { desc: false },
+        }
+      ]
+    */
+  const { key, initialSortBy } = filter(columns, 'initialSortBy')[0] || false
   if (columns) {
     map(columns, ({ key, label, ...rest }) =>
       output.push({ Header: label, accessor: key, ...rest })
@@ -104,7 +117,7 @@ function buildColumnsFromData({
   }
   return {
     columns: output,
-    initialSortBy: intitalSortBy ? { id: key, ...intitalSortBy } : false,
+    initialSortBy: initialSortBy ? { id: key, ...initialSortBy } : false,
     columnOrder,
     contextualMenu,
   }

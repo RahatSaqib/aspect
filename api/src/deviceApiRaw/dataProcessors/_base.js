@@ -45,7 +45,9 @@ class DataProcessor {
       credentials: { token },
     } = auth
     const now = new Date()
-    const deviceApiKey = await knex('DeviceApiKey').where({ token }).first()
+    const deviceApiKey = token
+      ? await knex('DeviceApiKey').where({ token }).first()
+      : null
     let salt = null
     let rawData = JSON.stringify(
       _.pick(
@@ -72,7 +74,7 @@ class DataProcessor {
     const [deviceApiRawId] = await knex('DeviceApiRaw').insert({
       rawData,
       salt,
-      deviceApiKeyId: deviceApiKey.id,
+      deviceApiKeyId: _.get(deviceApiKey, 'id'),
       deviceApiKeySnapshot: JSON.stringify(deviceApiKey),
       deviceApiRawStatusId: await deviceApiRawStatusToId('Ready'),
       dataProcessor: this.name,

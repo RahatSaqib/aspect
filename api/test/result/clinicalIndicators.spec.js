@@ -29,10 +29,10 @@ describe('/result/clinical-indicator-aggregations', () => {
     resultsForUser = await getResultsForUser()
     assays = await knex('Assay').select('id', 'externalId', 'i18nKey')
     reportableResultCategories = await knex('ResultCategoryAssay as rca')
+      .join('Assay as a', 'rca.assayId', 'a.id')
       .join('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
       .where('rca.reportable', true)
-      .distinct('rc.externalId')
-      .pluck('externalId')
+      .distinct('rc.externalId', 'rc.name', 'a.name as assayName')
     resultCategories = await knex('ResultCategory as rc').select('*')
   })
 
@@ -50,7 +50,12 @@ describe('/result/clinical-indicator-aggregations', () => {
             resultCategory1I18nKey: o.resultCategory1I18nKey,
           }))
           .filter(function (o) {
-            return reportableResultCategories.indexOf(o.resultCategory1) > -1
+            return _.some(
+              reportableResultCategories,
+              reportableResultCategory =>
+                reportableResultCategory.assayName === o.assayName &&
+                reportableResultCategory.name === o.resultCategory1Name
+            )
           })
           .map(
             ({ resultCategory1, resultCategory1I18nKey }) =>
@@ -75,11 +80,11 @@ describe('/result/clinical-indicator-aggregations', () => {
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(function (o) {
-            return (
-              // only reportable should be included
-              reportableResultCategories.indexOf(
-                o.resultCategory1Name.replace(' ', '')
-              ) > -1
+            return _.some(
+              reportableResultCategories,
+              reportableResultCategory =>
+                reportableResultCategory.assayName === o.assayName &&
+                reportableResultCategory.name === o.resultCategory1Name
             )
           })
           .map(o => ({
@@ -102,10 +107,11 @@ describe('/result/clinical-indicator-aggregations', () => {
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(function (o) {
-            return (
-              reportableResultCategories.indexOf(
-                o.resultCategory1Name.replace(' ', '')
-              ) > -1
+            return _.some(
+              reportableResultCategories,
+              reportableResultCategory =>
+                reportableResultCategory.assayName === o.assayName &&
+                reportableResultCategory.name === o.resultCategory1Name
             )
           })
           .map(o => ({
@@ -132,10 +138,11 @@ describe('/result/clinical-indicator-aggregations', () => {
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(function (o) {
-            return (
-              reportableResultCategories.indexOf(
-                o.resultCategory1Name.replace(' ', '')
-              ) > -1
+            return _.some(
+              reportableResultCategories,
+              reportableResultCategory =>
+                reportableResultCategory.assayName === o.assayName &&
+                reportableResultCategory.name === o.resultCategory1Name
             )
           })
           .map(o => ({ day: format(new Date(o.endedOn), 'yyyy-MM-dd') }))
@@ -154,10 +161,12 @@ describe('/result/clinical-indicator-aggregations', () => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(function (o) {
             return (
-              // only reportable should be included
-              reportableResultCategories.indexOf(
-                o.resultCategory1Name.replace(' ', '')
-              ) > -1 && o.siteName.indexOf('Cuyahoga') >= 0
+              _.some(
+                reportableResultCategories,
+                reportableResultCategory =>
+                  reportableResultCategory.assayName === o.assayName &&
+                  reportableResultCategory.name === o.resultCategory1Name
+              ) && o.siteName.indexOf('Cuyahoga') >= 0
             )
           })
           .map(o => ({

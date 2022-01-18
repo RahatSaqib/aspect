@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-24T18:57:10.397Z\n"
+"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -474,6 +474,15 @@ msgstr "Tout"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Tous les résultats du VIH où le virus n'est pas supprimé"
 
+#. [pages.ReportIndex.all_results]
+#. defaultMessage is:
+#. All Results
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Results"
+msgid "All Results"
+msgstr "Résultats"
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -540,6 +549,13 @@ msgstr "Tous les sites"
 #: extracted_strings.json
 msgid "All states"
 msgstr "Tous les États"
+
+#. [pages.ReportIndex.all_results_description]
+#. defaultMessage is:
+#. All test results in the system. One row per result.
+#: extracted_strings.json
+msgid "All test results in the system. One row per result."
+msgstr "Tous les résultats des tests dans le système. Une ligne par résultat."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -677,6 +693,15 @@ msgstr "Statut d'Approbation"
 #: extracted_strings.json
 msgid "Approved"
 msgstr "Approuvé"
+
+#. [contextualMenu.notifications.areYouSureToDelete]
+#. defaultMessage is:
+#. Are you sure to delete notification {notificationName}?
+#: extracted_strings.json
+#, fuzzy
+#| msgid "notification name includes \"{notificationName}\""
+msgid "Are you sure to delete notification {notificationName}?"
+msgstr "le nom de la notification comprend \"{notificationName}\""
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -1078,6 +1103,9 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Calibré à l'échéance"
 
+#. [pages.RouterDetail.detailCalibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.Notification.type.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1149,6 +1177,9 @@ msgstr "Ne peut pas être modifié"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Annuler"
@@ -1187,7 +1218,19 @@ msgstr "Cas"
 msgid "Category"
 msgstr "Catégorie"
 
+#. [legends.Unknown.resultCategory1]
+#. defaultMessage is:
+#. Category 1
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Category 2"
+msgid "Category 1"
+msgstr "Catégorie 2"
+
 #. [pages.ResultList.resultCategory1Name]
+#. defaultMessage is:
+#. Category 2
+#. [legends.Unknown.resultCategory2]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
@@ -1359,6 +1402,15 @@ msgstr "Collecté le"
 msgid "Collected On:"
 msgstr "Créé sur:"
 
+#. [pages.Result.collectedOnRequired]
+#. defaultMessage is:
+#. CollectedOn date is required
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Start date is required"
+msgid "CollectedOn date is required"
+msgstr "La date de début est requise"
+
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
 #. Collection of Results
@@ -1529,6 +1581,9 @@ msgstr "Nom du contact / email"
 #. defaultMessage is:
 #. Contacts
 #. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#. [pages.RouterDetail.detailContacts]
 #. defaultMessage is:
 #. Contacts
 #. [pages.Notifications.table.contactsHeader]
@@ -1740,6 +1795,9 @@ msgstr "COVID 19"
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
+#. [pages.Contacts.create]
+#. defaultMessage is:
+#. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Créer"
@@ -1801,6 +1859,13 @@ msgstr "État actuel du réseau"
 #: extracted_strings.json
 msgid "Current Password"
 msgstr "Mot de passe actuel"
+
+#. [pages.Notifications.optionPersonRoleNotSet]
+#. defaultMessage is:
+#. Currently not selectable - missing role
+#: extracted_strings.json
+msgid "Currently not selectable - missing role"
+msgstr "Actuellement non sélectionnable - rôle manquant"
 
 #. [pages.dateRangeSelector.custom]
 #. defaultMessage is:
@@ -2012,10 +2077,10 @@ msgstr "Déclassé"
 
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
-#. Delete
+#. Delete (Only 0 triggers)
 #: extracted_strings.json
-msgid "Delete"
-msgstr "Supprimer"
+msgid "Delete (Only 0 triggers)"
+msgstr "Supprimer (seulement 0 déclencheurs)"
 
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
@@ -2317,6 +2382,15 @@ msgstr "Appareils avec interruption de service"
 msgid "Devices with Unused Modules"
 msgstr "Appareils avec modules inutilisés"
 
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "Code postal"
+
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
 #. Discard
@@ -2539,12 +2613,55 @@ msgstr "Le corps de l'e-mail est requis"
 msgid "Email subject is required"
 msgstr "L'objet de l'e-mail est requis"
 
+#. [pages.Notifications.table.emailSentTo]
+#. defaultMessage is:
+#. Email was sent to:
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Email Sent"
+msgid "Email was sent to:"
+msgstr "Mail envoyé"
+
+#. [pages.NotificationDetail.enable]
+#. defaultMessage is:
+#. Enable
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Consumable"
+msgid "Enable"
+msgstr "Consommable"
+
+#. [pages.NotificationDetail.notificationTypeEnable]
+#. defaultMessage is:
+#. Enable this notification
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Edit Notification"
+msgid "Enable this notification"
+msgstr "Modifier la notification"
+
 #. [forms.formItem.endDate]
 #. defaultMessage is:
 #. End Date
 #: extracted_strings.json
 msgid "End Date"
 msgstr "Date de fin"
+
+#. [pages.Result.endedOnRequired]
+#. defaultMessage is:
+#. End date is required
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Start date is required"
+msgid "End date is required"
+msgstr "La date de début est requise"
+
+#. [pages.Result.endedOnCannotBeBeforeStartedOn]
+#. defaultMessage is:
+#. End time cannot be before Start time
+#: extracted_strings.json
+msgid "End time cannot be before Start time"
+msgstr "L’heure de fin ne peut pas être antérieure à l’heure de début"
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
 #. defaultMessage is:
@@ -2716,6 +2833,14 @@ msgstr "Erreur"
 msgid "Error Code"
 msgstr "Code d'Erreur"
 
+#. [pages.Result.errorCode]
+#. defaultMessage is:
+#. Error Code must be a positive integer with max 5 digits
+#: extracted_strings.json
+msgid "Error Code must be a positive integer with max 5 digits"
+msgstr ""
+"Le code d’erreur doit être un entier positif avec un maximum de 5 chiffres"
+
 #. [queryFetch.errorResponseMessages.GET.default.title]
 #. defaultMessage is:
 #. Error Fetching Endpoint
@@ -2818,6 +2943,13 @@ msgstr "Erreur de chargement des états pour {countryName}"
 msgid "Error Rate"
 msgstr "Taux d'erreur"
 
+#. [pages.RouterDetail.detailErrorOverTime]
+#. defaultMessage is:
+#. Error Rates Over Time
+#: extracted_strings.json
+msgid "Error Rates Over Time"
+msgstr "Taux d’erreur au fil du temps"
+
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
 #. Error Saving New Password
@@ -2880,6 +3012,13 @@ msgstr "Expire"
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Expire le"
+
+#. [pages.RouterDetail.detailWarrantyExpire]
+#. defaultMessage is:
+#. Expires {date}
+#: extracted_strings.json
+msgid "Expires {date}"
+msgstr "Expire le {date}"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -3801,6 +3940,13 @@ msgstr "Nom d'utilisateur ou mot de passe incorrect"
 msgid "Indeterminate"
 msgstr "Indéterminé"
 
+#. [pages.Notifications.table.notificationsTableHeaderJobFunctionsPersons]
+#. defaultMessage is:
+#. Individual Persons
+#: extracted_strings.json
+msgid "Individual Persons"
+msgstr "Personnes individuelles"
+
 #. [placeholders.insert.placeholder.for]
 #. defaultMessage is:
 #. Insert Placeholder For
@@ -4150,6 +4296,13 @@ msgstr "La semaine dernière"
 #: extracted_strings.json
 msgid "Last Year"
 msgstr "L'année dernière"
+
+#. [pages.RouterDetail.detailCalibrationDate]
+#. defaultMessage is:
+#. Last calibrated {date}
+#: extracted_strings.json
+msgid "Last calibrated {date}"
+msgstr "Dernier calage {date}"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -5076,6 +5229,15 @@ msgstr "Plus récent"
 msgid "Next"
 msgstr "Suivant"
 
+#. [pages.NotificationList.no]
+#. defaultMessage is:
+#. No
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Now"
+msgid "No"
+msgstr "Maintenant"
+
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -5682,6 +5844,9 @@ msgstr "Données du patient"
 #. [pages.DeviceDetailProfile.patientId]
 #. defaultMessage is:
 #. Patient ID
+#. [pages.Notifications.table.patientId]
+#. defaultMessage is:
+#. Patient ID
 #: extracted_strings.json
 msgid "Patient ID"
 msgstr "ID patient"
@@ -5724,6 +5889,13 @@ msgstr "Pourcentage positif"
 msgid "Percent Reported"
 msgstr "Pourcentage déclaré"
 
+#. [pages.DeviceDetailProfile.percentageLegend]
+#. defaultMessage is:
+#. Percentage (%)
+#: extracted_strings.json
+msgid "Percentage (%)"
+msgstr "Pourcentage (%)"
+
 #. [pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle]
 #. defaultMessage is:
 #. Percentage of Days with Service Interruption
@@ -5749,6 +5921,15 @@ msgstr ""
 "Pourcentage de résultats valides signalés ce mois-ci. Les résultats valides "
 "incluent tous les résultats qui n'ont pas abouti à \"Erreur\", \"Aucun "
 "résultat\" ou \"Invalide\"."
+
+#. [pages.DeviceDetailProfile.performanceTitle]
+#. defaultMessage is:
+#. Performance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tests Performed"
+msgid "Performance"
+msgstr "Tests effectués"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -6139,6 +6320,12 @@ msgstr "Positifs"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -6396,6 +6583,13 @@ msgstr "Recevez {nom_consommable}"
 #: extracted_strings.json
 msgid "Receiving Inventory Failed"
 msgstr "Échec de la réception de l'inventaire"
+
+#. [pages.Notifications.table.recipients]
+#. defaultMessage is:
+#. Recipients
+#: extracted_strings.json
+msgid "Recipients"
+msgstr "Destinataires"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -6843,6 +7037,13 @@ msgstr "SMS envoyés"
 msgid "SMS Sent MTD"
 msgstr "SMS envoyés ce mois"
 
+#. [pages.Notifications.table.smsSentTo]
+#. defaultMessage is:
+#. SMS was sent to:
+#: extracted_strings.json
+msgid "SMS was sent to:"
+msgstr "SMS a été envoyé à:"
+
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
 #. Sample
@@ -6895,6 +7096,9 @@ msgstr "Site de prélèvement des échantillons :"
 #. [pages.DeviceDetailProfile.sampleId]
 #. defaultMessage is:
 #. Sample ID
+#. [pages.Notifications.table.sampleId]
+#. defaultMessage is:
+#. Sample ID
 #: extracted_strings.json
 msgid "Sample ID"
 msgstr "ID échantillon"
@@ -6935,6 +7139,9 @@ msgid "Sample collection site"
 msgstr "Lieu de prélèvement des échantillons"
 
 #. [pages.PersonDetails.save]
+#. defaultMessage is:
+#. Save
+#. [pages.Contacts.save]
 #. defaultMessage is:
 #. Save
 #. [pages.NotificationDetail.save]
@@ -7295,6 +7502,13 @@ msgstr "Choisir l'état…"
 msgid "Select stock left..."
 msgstr "Sélectionnez le stock restant..."
 
+#. [pages.NotificationDetail.selectPersonOption]
+#. defaultMessage is:
+#. Select the person or persons
+#: extracted_strings.json
+msgid "Select the person or persons"
+msgstr "Sélectionnez la ou les personnes"
+
 #. [filter.popover.selectDeviceType]
 #. defaultMessage is:
 #. Select type...
@@ -7308,6 +7522,15 @@ msgstr "Sélectionner le genre..."
 #: extracted_strings.json
 msgid "Select {entity}..."
 msgstr "Sélectionnez {entity}..."
+
+#. [pages.Notifications.optionPersonRoleSet]
+#. defaultMessage is:
+#. Selectable
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Select Job"
+msgid "Selectable"
+msgstr "Sélectionnez une emploi"
 
 #. [legends.Unknown.senaiteSmearMicroscopy]
 #. defaultMessage is:
@@ -7354,6 +7577,13 @@ msgstr "Senaite LIMS Inconnu"
 #: extracted_strings.json
 msgid "Send"
 msgstr "Envoyer"
+
+#. [pages.Notifications.fieldPersonSendToSpecific]
+#. defaultMessage is:
+#. Send to a specific person
+#: extracted_strings.json
+msgid "Send to a specific person"
+msgstr "Envoyer à une personne spécifique"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -7477,9 +7707,16 @@ msgstr "Nom court"
 
 #. [pages.Notifications.jobFunctionRequired]
 #. defaultMessage is:
-#. Should select at least one job function for this notification
+#. Should select at least one job function or individiual person for this notification
+#. [pages.Notifications.personOrJobFunctionRequired]
+#. defaultMessage is:
+#. Should select at least one job function or individiual person for this notification
 #: extracted_strings.json
-msgid "Should select at least one job function for this notification"
+#, fuzzy
+#| msgid "Should select at least one job function for this notification"
+msgid ""
+"Should select at least one job function or individiual person for this "
+"notification"
 msgstr "Doit sélectionner au moins une fonction pour cette notification"
 
 #. [filter.btnGroup.onlyReportableResults]
@@ -7530,7 +7767,7 @@ msgid ""
 "contact} other {# contacts} }"
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# contact} other {# contacts}}"
+"{# prendre contact} other {# contacts}}"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
@@ -7574,7 +7811,7 @@ msgid ""
 "record} other {# records} }"
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# record} other {# records}}"
+"{# enregistrement} other {# enregistrements}}"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -7621,7 +7858,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Affichage de {firstItemIndex} - {lastItemIndex} sur {itemCount, plural, one "
-"{# site} other {# sites}}"
+"{# site} other {# des sites}}"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
@@ -7818,6 +8055,13 @@ msgstr "Date de début"
 #: extracted_strings.json
 msgid "Start date is required"
 msgstr "La date de début est requise"
+
+#. [pages.Result.startedOnCannotBeAfterEndedOn]
+#. defaultMessage is:
+#. Start time cannot be after End time
+#: extracted_strings.json
+msgid "Start time cannot be after End time"
+msgstr "L’heure de début ne peut pas être postérieure à l’heure de fin"
 
 #. [forms.formItem.state]
 #. defaultMessage is:
@@ -8082,6 +8326,13 @@ msgstr "Les tâches"
 #: extracted_strings.json
 msgid "Technical Details"
 msgstr "Détails techniques"
+
+#. [pages.RouterDetail.detailTechInfo]
+#. defaultMessage is:
+#. Technical information
+#: extracted_strings.json
+msgid "Technical information"
+msgstr "Informations techniques"
 
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
@@ -8847,6 +9098,13 @@ msgstr "Temps"
 msgid "Time Zone"
 msgstr "Fuseau horaire"
 
+#. [pages.Result.timeCannotBeGreaterThanNow]
+#. defaultMessage is:
+#. Time cannot be greater than current time
+#: extracted_strings.json
+msgid "Time cannot be greater than current time"
+msgstr "L’heure ne peut pas être supérieure à l’heure actuelle"
+
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
 #. Title
@@ -8867,6 +9125,13 @@ msgstr "Au Reporter"
 #: extracted_strings.json
 msgid "To Site"
 msgstr "Vers le site"
+
+#. [pages.NotificationDetail.personsSelectLabel]
+#. defaultMessage is:
+#. To an individual person
+#: extracted_strings.json
+msgid "To an individual person"
+msgstr "A une personne physique"
 
 #. [pages.NotificationDetail.toAnyOfTheseJobFunctions]
 #. defaultMessage is:
@@ -9067,6 +9332,58 @@ msgstr "Méthode de traitement :"
 msgid "True"
 msgstr "Vrai"
 
+#. [legends.Unknown.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
+#. [filter.AssaySelectField.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
+#. [pages.ResultList.assayTruenatMtb]
+#. defaultMessage is:
+#. Truenat® MTB
+#: extracted_strings.json
+msgid "Truenat® MTB"
+msgstr "Truenat® MTB"
+
+#. [legends.Unknown.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
+#. [filter.AssaySelectField.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
+#. [pages.ResultList.assayTruenatMtbPlus]
+#. defaultMessage is:
+#. Truenat® MTB Plus
+#: extracted_strings.json
+msgid "Truenat® MTB Plus"
+msgstr "Truenat® MTB Plus"
+
+#. [legends.Unknown.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
+#. [filter.AssaySelectField.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
+#. [pages.ResultList.assayTruenatRif]
+#. defaultMessage is:
+#. Truenat® MTB-RIF Dx
+#: extracted_strings.json
+msgid "Truenat® MTB-RIF Dx"
+msgstr "Truenat® MTB-RIF Dx"
+
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr ""
+
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
 #. Tuberculosis
@@ -9167,6 +9484,13 @@ msgstr "Nom d'utilisateur"
 msgid "Utilization Rate"
 msgstr "Taux d'utilisation"
 
+#. [pages.RouterDetail.detailUtilOverTime]
+#. defaultMessage is:
+#. Utilization Rate Over Time
+#: extracted_strings.json
+msgid "Utilization Rate Over Time"
+msgstr "Taux d’utilisation dans le temps"
+
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
 #. VL Results
@@ -9241,6 +9565,9 @@ msgid "Voltage"
 msgstr "Tension"
 
 #. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]
@@ -9445,11 +9772,27 @@ msgstr "Cartouche de charge virale Xpert HIV-1"
 msgid "Year"
 msgstr "Année"
 
+#. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#: extracted_strings.json
+msgid "Yes"
+msgstr "Oui"
+
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:
 #. Yes, delete
 #: extracted_strings.json
 msgid "Yes, delete"
+msgstr "Oui, supprimer"
+
+#. [contextualMenu.notifications.yesDelete]
+#. defaultMessage is:
+#. Yes, delete it
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Yes, delete"
+msgid "Yes, delete it"
 msgstr "Oui, supprimer"
 
 #. [pages.dateRangeSelector.yesterday]
@@ -9656,9 +9999,11 @@ msgstr "Code postal"
 
 #. [pages.common.state_MW]
 #. defaultMessage is:
-#. Zones
+#. Zone
 #: extracted_strings.json
-msgid "Zones"
+#, fuzzy
+#| msgid "Zones"
+msgid "Zone"
 msgstr "Zones"
 
 #. [pages.InventoryAdjustmentDialogForm.and]
@@ -9765,6 +10110,22 @@ msgstr "le code d'erreur comprend \"{errorCode}\""
 #: extracted_strings.json
 msgid "error rate"
 msgstr "taux d'erreur"
+
+#. [pages.Notifications.table.event]
+#. defaultMessage is:
+#. event
+#: extracted_strings.json
+msgid "event"
+msgstr "un événement"
+
+#. [pages.Notifications.table.events]
+#. defaultMessage is:
+#. events
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Reagents"
+msgid "events"
+msgstr "Réactifs"
 
 #. [pages.OperationalData.expiringTitle]
 #. defaultMessage is:
@@ -10186,6 +10547,15 @@ msgstr ""
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
 msgstr "{itemCount, pluriel, un {# Nom} autre {# Noms} }"
 
+#. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
+#. defaultMessage is:
+#. {itemCount, plural, one {# Person} other {# Persons} }
+#: extracted_strings.json
+#, fuzzy
+#| msgid "{itemCount, plural, one {# Name} other {# Names} }"
+msgid "{itemCount, plural, one {# Person} other {# Persons} }"
+msgstr "{itemCount, pluriel, un {# Nom} autre {# Noms} }"
+
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
 #. {itemCount} (total)
@@ -10260,6 +10630,9 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+
+#~ msgid "Delete"
+#~ msgstr "Supprimer"
 
 #~ msgid "Connectivity issues"
 #~ msgstr "Problèmes de connectivité"
@@ -10481,12 +10854,6 @@ msgstr ""
 
 #~ msgid "Raw Data"
 #~ msgstr "Données brutes"
-
-#~ msgid "Reagents"
-#~ msgstr "Réactifs"
-
-#~ msgid "Recipients"
-#~ msgstr "Destinataires"
 
 #~ msgid "Regional Progress Indicators"
 #~ msgstr "Indicateurs de progrès régionaux"

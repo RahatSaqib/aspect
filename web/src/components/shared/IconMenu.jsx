@@ -32,13 +32,18 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
     setAnchorEl(null)
   }
 
-  const handleClick = item => () => {
-    const { value, onClick } = item.props
-    if (onClick) {
-      onClick(value)
+  const handleClick =
+    item =>
+    ({ innerHandler }) => {
+      const { value, onClick } = item.props
+
+      if (innerHandler) {
+        innerHandler()
+      } else if (onClick) {
+        onClick(value)
+      }
+      handleClose()
     }
-    handleClose()
-  }
 
   return (
     <div>

@@ -74,6 +74,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
 
   static async canProcessRequest(request) {
     const { payload } = request
+    if (!payload) {
+      return false
+    }
     const sanitisedPayload = DefaultAbbottM2000.sanitisePayload(payload)
     return DefaultAbbottM2000.containsM2000AstmLineHeader(sanitisedPayload)
   }

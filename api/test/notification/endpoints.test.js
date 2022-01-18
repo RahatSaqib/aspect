@@ -133,6 +133,7 @@ describe('notification endpoints', () => {
           tags: [],
         },
       ],
+      enabled: true,
     }
     const payloadGood = {
       ...payloadRaw,

@@ -27,6 +27,7 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
+const logger = require('../shared/logger')
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -147,7 +148,38 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
 async function listNotifications(request) {
   const { query, auth } = request
 
-  // get data constraints
+  const subquery = knex('NotificationType as nti')
+    .leftOuterJoin('JobFunction AS jf', leftBuilder =>
+      leftBuilder
+        .on(
+          knex.raw(
+            `JSON_SEARCH(
+              nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
+              'one',
+              jf.id
+            ) IS NOT NULL
+          `
+          )
+        )
+        .orOn('nti.jobFunctionId', 'jf.id')
+    )
+    .leftOuterJoin('Person AS per', leftBuilder =>
+      leftBuilder.on(
+        knex.raw(
+          ` JSON_SEARCH(
+            nti.filterCondition->>'$.persons[*].personId',
+            'one',
+            per.id
+          ) IS NOT NULL`
+        )
+      )
+    )
+    .distinct(
+      'nti.id AS notificationTypeId',
+      'per.name AS personName',
+      'jf.name AS jfName'
+    )
+
   const dataConstraints = await getConstraints(auth.credentials)
 
   const notificationQuery = knex('NotificationType as nt')
@@ -162,69 +194,49 @@ async function listNotifications(request) {
     .where(builder => {
       builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
     })
-    .modify(filterParams, query, {})
-    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
-
-  const getItems = notificationQuery
-    .clone()
-    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftOuterJoin('JobFunction as jf', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
-            'one',
-            CAST(jf.id as char)
-          ) IS NOT NULL
-          OR
-          nt.jobFunctionId = jf.id
-        `)
-      )
-    })
-    .leftOuterJoin('Person as per', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.persons[*].personId',
-            'one',
-            CAST(per.id as char)
-          ) IS NOT NULL
-        `)
-      )
-    })
-    .select(
-      'nt.id as id',
-      'nt.name',
-      knex.raw(
-        `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
-      ),
-      columnCount('alert'),
-      knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
-      knex.raw('COUNT(DISTINCT per.id) as personsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
-      'ntc.externalId as typeCategory'
-    )
-    .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.name')
-    .modify(sortPageParams, query, 'nt.name')
     .modify(filterParams, query, {
       notificationName: 'nt.name',
     })
+    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .max('n.createdOn as lastTriggeredOn')
+    .groupBy('nt.id')
+
+  const getItems = notificationQuery
+    .clone()
+    .leftOuterJoin(
+      subquery.as('filters'),
+      'nt.id',
+      'filters.notificationTypeId'
+    )
+    .modify(sortPageParams, query, 'nt.name')
+    .select(
+      'nt.id as id',
+      'nt.name',
+      knex.raw(`count(distinct n.id) as totalTriggers`),
+      columnCount('alert'),
+      knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.jfName SEPARATOR ', ') as jobFunctions`
+      ),
+      knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
+      ),
+      'ntc.externalId as typeCategory'
+    )
 
   function columnCount(column) {
     return knex.raw(
-      `CASE
-        WHEN m.${column}TemplateId IS NULL
-        THEN null
-        ELSE SUM(CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END) END as ${column}Count`
+      `SUM(CASE
+        WHEN m.${column}TemplateId IS NULL THEN 0
+        ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
     )
   }
 
   const getCount = knex
     .count('* as count')
-    .from(getItems.clone().as('mainQuery'))
+    .from(notificationQuery.clone().as('mainQuery'))
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -592,7 +604,8 @@ async function getNotification(request) {
       'et.body as emailBody',
       'st.message as smsBody',
       'wt.url as webUrl',
-      'wt.payload as webBody'
+      'wt.payload as webBody',
+      'nt.enabled'
     )
     .from('NotificationType as nt')
     .innerJoin(
@@ -607,7 +620,6 @@ async function getNotification(request) {
     .where('nt.id', id)
     .andWhere('ntc.externalId', 'resultBased')
     .first()
-
   return { ok: true, data: notification }
 }
 
@@ -822,6 +834,7 @@ async function saveNotificationType({
     sendWeb,
     webBody,
     webUrl,
+    enabled,
   } = payload
   const now = new Date()
   const auditFields = {
@@ -878,6 +891,7 @@ async function saveNotificationType({
         level: 1,
         canAcknowledge: 0,
         name,
+        enabled,
         ...auditFields,
       })
       /**
@@ -911,6 +925,7 @@ async function saveNotificationType({
           name,
           updatedOn: now,
           updatedBy: userId,
+          enabled,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
@@ -1010,6 +1025,7 @@ async function saveNotificationType({
           sendEmail,
           sendSms,
           sendWeb,
+          enabled,
         }),
       })
       .where({ id: notificationTypeId })
@@ -1037,7 +1053,6 @@ async function saveNotification(request) {
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
   const { notificationType } = payload
-
   if (notificationType === 'resultBased') {
     const result = await saveNotificationType({
       id,
@@ -1062,6 +1077,30 @@ async function saveNotification(request) {
   return { ok: false, notificationTypeId: -1 }
 }
 
+async function deleteNotification(request) {
+  const {
+    params,
+    plugins: { messageContext },
+  } = request
+  const { notificationId: id } = params
+
+  try {
+    await knex('NotificationType').where({ id }).delete()
+    if (!messageContext.notificationTypeCreated)
+      messageContext.bindActionCreators({ notificationTypeCreated })
+    messageContext.notificationTypeCreated(id)
+  } catch (e) {
+    logger.info(
+      { info: `NotificationType ${id} cannot be deleted`, e },
+      { reLabel: 'aspect:api:notification:delete' }
+    )
+    return Boom.badData(
+      `Can not delete this notification type because it already triggered notifications`
+    )
+  }
+
+  return { ok: true }
+}
 module.exports = {
   listNotifications,
   getNotifications,
@@ -1071,4 +1110,5 @@ module.exports = {
   resultConditionsMet,
   getPeopleToNotify,
   saveNotification,
+  deleteNotification,
 }
