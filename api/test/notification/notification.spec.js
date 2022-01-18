@@ -20,6 +20,7 @@ const {
   resultCategoryToId,
   deviceApprovalToId,
   issueStatusToId,
+  issueTypeToId,
 } = require('../../src/shared/dictionary')
 
 const { assert } = chai
@@ -33,7 +34,6 @@ const {
 describe('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
-    const issueTypes = await knex('IssueType').pluck('id')
     const resultSample = await knex('Result').first()
     const messageTypes = await knex('MessageType')
       .whereNotNull('smsTemplateId')
@@ -44,8 +44,9 @@ describe('Issue based Notifications triggers', () => {
     )
     const createdOn = new Date()
     const updatedOn = new Date()
-    const issueTypeId = _.sample(issueTypes)
-
+    const issueTypeId = await issueTypeToId(
+      'SignalLossDetectedInAmplificationCurveModule'
+    )
     await knex('NotificationType').insert({
       partnerId: resultSample.partnerId,
       name: 'Random issue based notification',
@@ -55,7 +56,9 @@ describe('Issue based Notifications triggers', () => {
       issueTypeId,
       messageTypeId: _.sample(messageTypes).id,
     })
+
     const issueStatusId = await issueStatusToId('Active')
+
     ;[insertedIssueId] = await knex('Issue').insert({
       partnerId: resultSample.partnerId,
       deviceId: resultSample.deviceId,
@@ -505,11 +508,6 @@ describe('Result Notifications triggers', () => {
   })
   describe('Send to Patient email and sms', () => {
     beforeEach(async () => {
-      // Notify to the person called "Admin" - Send notification
-      // Notify to a person assigned to the job function "Manager" - Send notification
-      // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
-      // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
-
       resultCategory1 = await resultCategoryToId('Detected')
       results = await knex('Result as r')
         .join('Geography as g', 'r.geographyId', 'g.id')

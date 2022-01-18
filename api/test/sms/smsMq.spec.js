@@ -60,7 +60,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
     )
   })
 })
-describe('Sending SMS via Message Queue to Patient, clinititian or any other contact type', () => {
+describe('Sending SMS via Message Queue to Patient, clinician or any other contact type', () => {
   const context = createSmsTestContext(null, config.admin.cell)
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)

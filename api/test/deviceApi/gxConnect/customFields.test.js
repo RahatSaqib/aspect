@@ -156,7 +156,7 @@ describe('Custom field mapper', () => {
       {
         Id: 2,
         Name: 'Datepicker field',
-        ExternalId: 'Datepicker field',
+        ExternalId: 'DatepickerField',
         Help: 'Datepicker value',
         Control: 'DateTimePicker',
         Type: 'datetime',
@@ -505,7 +505,7 @@ describe('Custom field mapper', () => {
             Name: 'calculatedField',
             Help: 'calculatedField value',
             Control: 'Label',
-            ExternalId: 'calculatedField',
+            ExternalId: 'CalculatedField',
             Type: 'datetime',
             DisplayOrder: 0,
             InputControlData: {

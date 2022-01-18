@@ -261,12 +261,12 @@ async function createNotifications(knex, action, context) {
   const {
     jobFunctions = [],
     persons = [],
-    sendToClinitian,
+    sendToClinician,
     sendToPatient,
   } = filterCondition || {}
   const [firstPolicy] = policies
-  if (sendToClinitian || sendToPatient) {
-    const personsToNotify = _.filter(
+  if (sendToClinician || sendToPatient) {
+    const nonPersonsToNotify = _.filter(
       [
         {
           notify: sendToPatient,
@@ -274,16 +274,16 @@ async function createNotifications(knex, action, context) {
           email: firstPolicy.patientEmail,
         },
         {
-          notify: sendToClinitian,
-          phone: firstPolicy.clinitianPhone,
-          to: firstPolicy.clinitianEmail,
+          notify: sendToClinician,
+          phone: firstPolicy.clinicianPhone,
+          to: firstPolicy.clinicianEmail,
         },
       ],
       elem => elem.notify
     )
-    _.each(personsToNotify, personToSend => {
+    _.each(nonPersonsToNotify, personToSend => {
       const policy = {
-        policy: _.omit(firstPolicy, ['personId', 'jobFunctionId']),
+        policy: _.omit(firstPolicy, ['jobFunctionId']),
         now,
       }
       createNotificationIfNotCreatedAlready(
@@ -394,7 +394,12 @@ async function getNotificationPolicy(
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .modify((queryBuilder, { resultId, issueId }) => {
       if (!_.isNil(issueId)) {
-        extraFields = ['i.siteId', 'i.deviceId', 'i.resultId']
+        extraFields = [
+          'i.siteId',
+          'i.deviceId',
+          'i.resultId',
+          'i.id as issueId',
+        ]
         queryBuilder
           .join('Issue as i', joinBuilder =>
             // If issue is escalated past configured level, send again
@@ -414,8 +419,8 @@ async function getNotificationPolicy(
           'result.resultId as resultId',
           knex.raw('result.patientData->>"$.phone" as patientPhone'),
           knex.raw('result.patientData->>"$.email" as patientEmail'),
-          knex.raw('result.patientData->>"$.clinitianPhone" as clinitianPhone'),
-          knex.raw('result.patientData->>"$.clinitianEmail" as clinitianPhone'),
+          knex.raw('result.patientData->>"$.clinicianPhone" as clinicianPhone'),
+          knex.raw('result.patientData->>"$.clinicianEmail" as clinicianPhone'),
           knex.raw(
             'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
           ),
@@ -505,6 +510,7 @@ async function sendNotificationsToPeople(
   action
 ) {
   const now = new Date()
+
   // Issue notification to every person assigned, (subscriber will create as necessary)
   await Promise.all(
     people.map(async person => {
@@ -547,7 +553,7 @@ async function shouldNotify(
   return txKnex(table)
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'i.siteId', 's.id')
-    .leftJoin('Geography as g', 'i.geographyId', 'g.id')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
     .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
@@ -558,9 +564,9 @@ async function createNotificationIfNotCreatedAlready(
   { issueId = null, resultId = null },
   { personId = null, policy, now = new Date() },
   { messageContext: context, knex },
-  personToSend = {}
+  nonPersonToSend = {}
 ) {
-  const { notify, email: to, phone } = personToSend
+  const { notify: notifyANonPerson, email: to, phone } = nonPersonToSend
 
   context.bindActionCreators({
     notificationCreated,
@@ -575,12 +581,12 @@ async function createNotificationIfNotCreatedAlready(
     resultId,
     notificationTypeId: policy.id,
     personId,
-    data: notify ? JSON.stringify({ to, phone }) : null,
+    data: notifyANonPerson ? JSON.stringify({ to, phone }) : null,
   }
   const existingNotification = await knex('Notification')
-    .where(_.omit(notification, 'data'))
+    .where(_.omit(notification, ['data']))
     .modify(builder => {
-      if (notify) {
+      if (notifyANonPerson) {
         if (to) builder.whereRaw(`data->>"$.to"=?`, [to])
         if (phone) builder.whereRaw(`data->>"$.phone"=?`, [phone])
       }
@@ -599,8 +605,7 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-
-    if (personId || notify) {
+    if (personId || !!notifyANonPerson) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
           alertTemplateId: policy.alertTemplateId,
@@ -609,7 +614,6 @@ async function createNotificationIfNotCreatedAlready(
         notification.alertMessageId = alertMessageId
         context.alertMessageCreated(alertMessageId)
       }
-
       if (policy.emailTemplateId != null) {
         const [emailMessageId] = await knex('EmailMessage').insert({
           emailTemplateId: policy.emailTemplateId,
