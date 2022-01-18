@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
+"POT-Creation-Date: 2022-01-18T09:02:11.346Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -549,9 +549,13 @@ msgstr "All states"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
-#. All test results in the system. One row per result.
+#. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-msgid "All test results in the system. One row per result."
+#, fuzzy
+#| msgid "All test results in the system. One row per result."
+msgid ""
+"All test results in the system (up to 50.000 records). One row per result "
+"with all the fields needed."
 msgstr "All test results in the system. One row per result."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
@@ -1778,6 +1782,9 @@ msgstr "Covid 19"
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
+#. [pages.Contacts.create]
+#. defaultMessage is:
+#. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Create"
@@ -2361,6 +2368,15 @@ msgstr "Devices With Service Interruption"
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
 msgstr "Devices with Unused Modules"
+
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "Zip Code"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -6291,6 +6307,12 @@ msgstr "Positives"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -7110,6 +7132,9 @@ msgid "Sample collection site"
 msgstr "Sample collection site"
 
 #. [pages.PersonDetails.save]
+#. defaultMessage is:
+#. Save
+#. [pages.Contacts.save]
 #. defaultMessage is:
 #. Save
 #. [pages.NotificationDetail.save]
@@ -9330,6 +9355,19 @@ msgstr "Truenat® MTB Plus"
 #: extracted_strings.json
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
+
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr "Truenat® Unknown Test Type"
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:

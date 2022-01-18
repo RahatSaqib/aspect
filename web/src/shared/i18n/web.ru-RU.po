@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-14T10:54:36.782Z\n"
+"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1784,6 +1784,9 @@ msgstr "COVID 19"
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
 #. Create
+#. [pages.Contacts.create]
+#. defaultMessage is:
+#. Create
 #: extracted_strings.json
 msgid "Create"
 msgstr "Создать"
@@ -2367,6 +2370,15 @@ msgstr "Устройства с перебоями в обслуживании"
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
 msgstr "Устройства с неиспользуемыми модулями"
+
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "Почтовый индекс"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -6297,6 +6309,12 @@ msgstr "Положительных"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -7112,6 +7130,9 @@ msgstr "Место сбора проб"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Contacts.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -7724,7 +7745,7 @@ msgid ""
 "other {# cases} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"case} other {# cases} }"
+"кейс} other {# случаи} }"
 
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
@@ -7735,7 +7756,7 @@ msgid ""
 "contact} other {# contacts} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"contact} other {# contacts} }"
+"контакт} other {# контакты} }"
 
 #. [pages.DeviceApiKeyList.paginatorStatus]
 #. defaultMessage is:
@@ -7746,7 +7767,7 @@ msgid ""
 "device API key} other {# device API keys} }"
 msgstr ""
 "Показание {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"device API key} other {# device API keys} }"
+"ключ API устройства} other {# ключи API устройства} }"
 
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
@@ -7757,7 +7778,7 @@ msgid ""
 "device} other {# devices} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"device} other {# devices} }"
+"устройство} other {# устройства} }"
 
 #. [pages.ResultWorkflowStatusLog.paginatorStatus]
 #. defaultMessage is:
@@ -7767,8 +7788,8 @@ msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
 "other {# logs} }"
 msgstr ""
-"Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
-"other {# logs} }"
+"Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"бревно} other {# журналы} }"
 
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
@@ -7779,7 +7800,7 @@ msgid ""
 "record} other {# records} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"record} other {# records} }"
+"записывать} other {# записи} }"
 
 #. [pages.ReporterList.paginatorStatus]
 #. defaultMessage is:
@@ -7790,7 +7811,7 @@ msgid ""
 "reporter} other {# reporters} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"reporter} other {# reporters} }"
+"репортер} other {# репортеры} }"
 
 #. [pages.ResultList.paginatorStatus]
 #. defaultMessage is:
@@ -7804,7 +7825,7 @@ msgid ""
 "result} other {# results} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"result} other {# results} }"
+"результат} other {# Результаты} }"
 
 #. [pages.RouterList.paginatorStatus]
 #. defaultMessage is:
@@ -7815,7 +7836,7 @@ msgid ""
 "router} other {# routers} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"router} other {# routers} }"
+"маршрутизатор} other {# маршрутизаторы} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
@@ -7826,7 +7847,7 @@ msgid ""
 "other {# sites} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"site} other {# sites} }"
+"сайт} other {# места} }"
 
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
@@ -7837,7 +7858,7 @@ msgid ""
 "supply} other {# supplies} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"supply} other {# supplies} }"
+"поставка} other {# запасы} }"
 
 #. [pages.TaskList.paginatorStatus]
 #. defaultMessage is:
@@ -7848,7 +7869,7 @@ msgid ""
 "other {# tasks} }"
 msgstr ""
 "Показать {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"task} other {# tasks} }"
+"задача} other {# задания} }"
 
 #. [pages.TablePagination.nowShowing]
 #. defaultMessage is:
@@ -9326,6 +9347,19 @@ msgstr "Truenat® MTB Plus"
 #: extracted_strings.json
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
+
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr "Truenat® Unknown Test Type"
 
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
