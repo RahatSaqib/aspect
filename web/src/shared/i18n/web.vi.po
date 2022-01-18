@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-17T11:30:09.079Z\n"
+"POT-Creation-Date: 2022-01-18T08:49:40.908Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -887,14 +887,14 @@ msgstr "Tỷ lệ ngăn chặn trung bình hàng tháng"
 #. Average Monthly TB Detected Rate
 #: extracted_strings.json
 msgid "Average Monthly TB Detected Rate"
-msgstr "Tỷ lệ phát hiện TB hàng tháng trung bình"
+msgstr "Tỷ lệ phát hiện lao trung bình hàng tháng"
 
 #. [pages.Status.testsOverTimeAvgTitle.graph]
 #. defaultMessage is:
 #. Average Monthly Tests Performed
 #: extracted_strings.json
 msgid "Average Monthly Tests Performed"
-msgstr "Các bài kiểm tra trung bình hàng tháng được thực hiện"
+msgstr "Các xét nghiệm trung bình hàng tháng"
 
 #. [component.Widget.averageRecipientsOfSms]
 #. defaultMessage is:
@@ -2343,6 +2343,13 @@ msgstr "Loại thiết bị"
 msgid "Devices"
 msgstr "Thiết bị"
 
+#. [pages.shared.deviceStatus.devicesActive]
+#. defaultMessage is:
+#. Devices Active
+#: extracted_strings.json
+msgid "Devices Active"
+msgstr "Thiết bị hoạt động"
+
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
 #. Devices Experiencing Service Interruption
@@ -2440,7 +2447,7 @@ msgstr "Bộ môn"
 #. Down for Repair
 #: extracted_strings.json
 msgid "Down for Repair"
-msgstr "Xuống để sửa chữa"
+msgstr "Đang sửa chữa"
 
 #. [pages.DeviceDetailProfile.deviceLogsTooltip]
 #. defaultMessage is:
@@ -5146,7 +5153,7 @@ msgstr "Cần sửa chữa"
 #. Negative
 #: extracted_strings.json
 msgid "Negative"
-msgstr "Âm Hóa"
+msgstr "Âm tính"
 
 #. [pages.InventoryItemsList.never]
 #. defaultMessage is:
@@ -5534,7 +5541,7 @@ msgstr "Số lượng thiết bị"
 #. Number of Locations
 #: extracted_strings.json
 msgid "Number of Locations"
-msgstr "Số vị trí"
+msgstr "Số lượng địa điểm"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -5905,10 +5912,8 @@ msgstr ""
 #. defaultMessage is:
 #. Performance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests Performed"
 msgid "Performance"
-msgstr "Các thử nghiệm đã thực hiện"
+msgstr "Hiệu suất"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -6207,7 +6212,7 @@ msgstr ""
 #. Positive
 #: extracted_strings.json
 msgid "Positive"
-msgstr "Tích cực"
+msgstr "Dương tính"
 
 #. [pages.deviceDetail.resultCategoryPositive1]
 #. defaultMessage is:
@@ -6276,7 +6281,7 @@ msgstr "MTB tích cực"
 #. Positive Results Notified
 #: extracted_strings.json
 msgid "Positive Results Notified"
-msgstr "Kết quả tích cực được thông báo"
+msgstr "Kết quả Dương tính được thông báo"
 
 #. [pages.OperationalData.resultsTransmittedTitle]
 #. defaultMessage is:
@@ -6322,7 +6327,7 @@ msgstr "Nhấn enter để thêm thẻ"
 #. Presumptive Positive
 #: extracted_strings.json
 msgid "Presumptive Positive"
-msgstr "Giả định là Tích cực"
+msgstr "Dương tính giả"
 
 #. [contextualMenu.notifications.preview.title]
 #. defaultMessage is:
@@ -7986,7 +7991,7 @@ msgstr "Trang web là bắt buộc"
 #. Sites
 #: extracted_strings.json
 msgid "Sites"
-msgstr "Các đơn vị"
+msgstr "Các đơn vị (cơ sở)"
 
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
@@ -8177,7 +8182,7 @@ msgstr "Vật tư"
 #. Supply in Stock
 #: extracted_strings.json
 msgid "Supply in Stock"
-msgstr "Cung cấp trong kho"
+msgstr "Sinh phẩm trong kho"
 
 #. [legends.Unknown.resultCategorySusceptible]
 #. defaultMessage is:
@@ -8235,7 +8240,7 @@ msgstr "Kết quả lao"
 #. TB Rif Resistance
 #: extracted_strings.json
 msgid "TB Rif Resistance"
-msgstr "Kháng Rif TB"
+msgstr "Lao kháng Rif"
 
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
@@ -8285,7 +8290,7 @@ msgstr "Tác vụ"
 #. Task List
 #: extracted_strings.json
 msgid "Task List"
-msgstr "Danh sach cong viec"
+msgstr "Danh sách công việc"
 
 #. [pages.TaskList.title]
 #. defaultMessage is:
@@ -8370,7 +8375,7 @@ msgstr "Đã cập nhật kiểm tra"
 #. Test failures
 #: extracted_strings.json
 msgid "Test failures"
-msgstr "Kiểm tra thất bại"
+msgstr "Xét nghiệm thất bại"
 
 #. [pages.DeviceDetailProfile.testHistory]
 #. defaultMessage is:
@@ -8397,14 +8402,14 @@ msgstr "Bài kiểm tra"
 #. Tests Per Day
 #: extracted_strings.json
 msgid "Tests Per Day"
-msgstr "Kiểm tra mỗi ngày"
+msgstr "Số xét nghiệm trên ngày"
 
 #. [pages.Status.testsOverTimeTitle.graph]
 #. defaultMessage is:
 #. Tests Performed
 #: extracted_strings.json
 msgid "Tests Performed"
-msgstr "Các thử nghiệm đã thực hiện"
+msgstr "Các xét nghiệm đã thực hiện"
 
 #. [pages.InventoryAdjustmentDialogForm.testsRunBetween]
 #. defaultMessage is:
