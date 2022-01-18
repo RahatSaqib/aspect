@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
+"POT-Creation-Date: 2022-01-17T11:30:09.079Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.0.1\n"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
@@ -291,7 +290,7 @@ msgstr "Xác nhận vấn đề không thành công"
 #. Active
 #: extracted_strings.json
 msgid "Active"
-msgstr "Kích hoạt"
+msgstr "Hoạt động"
 
 #. [component.Widget.dashboardWidgetTitleTotalActiveCases]
 #. defaultMessage is:
@@ -322,7 +321,7 @@ msgstr "Thêm"
 #. Add Inventory
 #: extracted_strings.json
 msgid "Add Inventory"
-msgstr "Thêm khoảng không quảng cáo"
+msgstr "Thêm sinh phẩm"
 
 #. [pages.resultTreatmentPanel.addNote]
 #. defaultMessage is:
@@ -477,10 +476,8 @@ msgstr "Tất cả các kết quả HIV trong đó vi rút không bị ức ch�
 #. defaultMessage is:
 #. All Results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Results"
 msgid "All Results"
-msgstr "Kết quả"
+msgstr "Tất cả kết quả"
 
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
@@ -1013,7 +1010,7 @@ msgstr "Quay lại Trang đăng nhập"
 #. Browse
 #: extracted_strings.json
 msgid "Browse"
-msgstr "Duyệt"
+msgstr "Tìm kiếm"
 
 #. [results.categoryTypeCAPResistanceI18nKey]
 #. defaultMessage is:
@@ -1102,7 +1099,7 @@ msgstr "Hiệu chỉnh khi đến hạn"
 #. Calibration
 #: extracted_strings.json
 msgid "Calibration"
-msgstr "Sự định cỡ"
+msgstr "Hiệu chuẩn"
 
 #. [pages.CalibrationDialog.calibrationDate]
 #. defaultMessage is:
@@ -1516,7 +1513,7 @@ msgstr "Tình trạng kết nối"
 #. Consumable
 #: extracted_strings.json
 msgid "Consumable"
-msgstr "Có thể tiêu thụ"
+msgstr "Vật tư tiêu hao"
 
 #. [forms.formItem.consumableSerial]
 #. defaultMessage is:
@@ -3630,7 +3627,7 @@ msgstr "Nhóm theo cột"
 #. Group by Site
 #: extracted_strings.json
 msgid "Group by Site"
-msgstr "Nhóm theo trang web"
+msgstr "Nhóm theo đơn vị"
 
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
@@ -4084,7 +4081,7 @@ msgstr "Dựa trên vấn đề"
 #. Issues
 #: extracted_strings.json
 msgid "Issues"
-msgstr "Phát hành"
+msgstr "Vấn đề phát sinh"
 
 #. [errorResponseMessages.common.notFound.message]
 #. defaultMessage is:
@@ -6454,7 +6451,7 @@ msgstr "Số lượng nhận vào"
 #. Quantity on Hand
 #: extracted_strings.json
 msgid "Quantity on Hand"
-msgstr "Số lượng trên tay"
+msgstr "Số lượng tồn kho hiện tại"
 
 #. [pages.AddInventoryDialogForm.quantity]
 #. defaultMessage is:
@@ -6499,7 +6496,7 @@ msgstr "RIF kháng"
 #. RIF Resistance Rate (%positive results)
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
-msgstr "Tỷ lệ kháng RIF (%p kết quả khả quan)"
+msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
 
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
@@ -7912,7 +7909,7 @@ msgstr "Đăng xuất"
 #. Site
 #: extracted_strings.json
 msgid "Site"
-msgstr "Trang"
+msgstr "Đơn vị"
 
 #. [pages.NotificationDetail.fieldContact]
 #. defaultMessage is:
@@ -7989,7 +7986,7 @@ msgstr "Trang web là bắt buộc"
 #. Sites
 #: extracted_strings.json
 msgid "Sites"
-msgstr "Các trang web"
+msgstr "Các đơn vị"
 
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
