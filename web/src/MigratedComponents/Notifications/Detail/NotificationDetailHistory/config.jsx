@@ -16,10 +16,13 @@
  *  initialOrder: 'array' [self defined, optional]
  * contextualMenu: 'function|component' [self defined, optional]
  */
-import React from 'react'
 import messages from './messages'
 import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
-import ErrorCell from '../../../AspectTable/TableCell/ErrorCell/index'
+import {
+  EmailCell,
+  SMSCell,
+  WebhookCell,
+} from '../../../AspectTable/TableCell/ErrorCell/NotificationCells.jsx'
 
 const baseConfig = ({ formatMessage }) => {
   return {
@@ -58,27 +61,7 @@ const baseConfig = ({ formatMessage }) => {
         width: 10,
         disableHide: true,
         disableGroupBy: true,
-        format: ({
-          item: {
-            webhookSent,
-            webhookWithErrors,
-            webhookPending,
-            webhookRecipients,
-          },
-          value,
-        }) => {
-          return (
-            <ErrorCell
-              sent={webhookSent}
-              withErrors={webhookWithErrors}
-              pending={webhookPending}
-              recipients={webhookRecipients}
-              formatMessage={formatMessage}
-              messages={messages}
-              value={value}
-            />
-          )
-        },
+        format: WebhookCell,
       },
       {
         key: 'emailRecipients',
@@ -86,21 +69,7 @@ const baseConfig = ({ formatMessage }) => {
         width: 5,
         disableHide: true,
         disableGroupBy: true,
-        format: ({ item, value }) => {
-          const { emailSent, emailWithErrors, emailPending, emailRecipients } =
-            item
-          return (
-            <ErrorCell
-              sent={emailSent}
-              withErrors={emailWithErrors}
-              pending={emailPending}
-              recipients={emailRecipients}
-              formatMessage={formatMessage}
-              messages={messages}
-              value={value}
-            />
-          )
-        },
+        format: EmailCell,
       },
       {
         key: 'smsRecipients',
@@ -108,20 +77,7 @@ const baseConfig = ({ formatMessage }) => {
         width: 5,
         disableHide: true,
         disableGroupBy: true,
-        format: ({
-          value,
-          item: { smsSent, smsWithErrors, smsPending, smsRecipients },
-        }) => (
-          <ErrorCell
-            sent={smsSent}
-            withErrors={smsWithErrors}
-            pending={smsPending}
-            recipients={smsRecipients}
-            formatMessage={formatMessage}
-            messages={messages}
-            value={value}
-          />
-        ),
+        format: SMSCell,
       },
     ],
     columnOrder: {
