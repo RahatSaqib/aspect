@@ -60,26 +60,28 @@ const ContactDetailsFormFormik = () => {
     ]
     const { setSubmitting, values } = formik
     const { id } = values
-    const sanitisedValues = transformOutputValues(values, baseOmitFields)
 
     setTimeout(() => {
       if (type === 'add') {
         mutation.mutate({
-          values: sanitisedValues,
+          values: transformOutputValues(values, baseOmitFields),
           endpoint: '/person',
           method: 'POST',
         })
       }
       if (type === 'update') {
         mutation.mutate({
-          values: sanitisedValues,
+          values: transformOutputValues(values, baseOmitFields),
           endpoint: `/person/${id}`,
           method: 'PUT',
         })
       }
       if (type === 'self') {
         mutation.mutate({
-          values: sanitisedValues,
+          values: transformOutputValues(values, [
+            ...baseOmitFields,
+            'canLogIn',
+          ]),
           endpoint: '/account-details/current-contact',
           method: 'PUT',
         })
@@ -180,14 +182,14 @@ const ContactDetailsFormFormik = () => {
 
   function transformOutputValues(values, omitValues) {
     const newValues = cloneDeep(values)
+    newValues.canLogIn = values?.canLogIn === 1 || values?.canLogIn ? 1 : 0
+    newValues.phone = replace(values.phone, / /g, '')
+    newValues.cell = replace(values.cell, / /g, '')
     map(newValues, (value, key) =>
       isEmpty(value) || includes(omitValues, key)
         ? delete newValues[key]
         : false
     )
-    newValues.canLogIn = values?.canLogIn === 1 || values?.canLogIn ? 1 : 0
-    newValues.phone = replace(values.phone, / /g, '')
-    newValues.cell = replace(values.cell, / /g, '')
     return newValues
   }
 
