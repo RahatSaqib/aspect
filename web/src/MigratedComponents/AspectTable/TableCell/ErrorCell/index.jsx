@@ -1,11 +1,13 @@
 import React, { Fragment, useState } from 'react'
 import Button from '@material-ui/core/Button'
-import PropTypes from 'prop-types'
+import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import NotificationDetailModal from '../../../Notifications/Detail/NotificationDetailHistory/NotificationDetailModal'
 import IconProvider from '../../../IconProvider/index'
 import styles from './ErrorCell.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
+import messages from '../../../Notifications/Detail/NotificationDetailHistory/messages'
 
 const cssClasses = classnames.bind(styles)
 const ErrorCell = ({
@@ -13,10 +15,9 @@ const ErrorCell = ({
   withErrors = 0,
   pending = 0,
   recipients,
-  formatMessage,
-  messages,
   value,
 }) => {
+  const { formatMessage } = useI18n()
   const [modalConfiguration, setModalConfiguration] = useState({
     showDialog: false,
     sent,
@@ -35,6 +36,7 @@ const ErrorCell = ({
       value,
     })
   }
+
   return (
     <Fragment>
       {!modalConfiguration.value ? (
@@ -79,14 +81,13 @@ const ErrorCell = ({
 }
 
 ErrorCell.propTypes = {
-  sent: PropTypes.number,
-  value: PropTypes.string,
-  withErrors: PropTypes.number,
-  pending: PropTypes.number,
-  recipients: PropTypes.arrayOf(PropTypes.string),
-  formatMessage: PropTypes.func.isRequired,
-  messages: PropTypes.objectOf(PropTypes.shape).isRequired,
+  sent: number,
+  value: oneOfType([array, number]),
+  withErrors: number,
+  pending: number,
+  recipients: arrayOf(string),
 }
+
 ErrorCell.defaultProps = {
   sent: 0,
   withErrors: 0,
