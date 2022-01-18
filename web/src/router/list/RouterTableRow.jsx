@@ -29,7 +29,9 @@ const RouterTableRow = ({ router, ...restProps }) => {
         {formatDistance(new Date(router.get('createdOn')), new Date(), true)}
       </TableCell>
       <TableCell>
-        {formatDistance(new Date(router.get('lastSeen')), new Date(), true)}
+        {router.get('lastSeen')
+          ? formatDistance(new Date(router.get('lastSeen')), new Date(), true)
+          : 'N/A'}
       </TableCell>
     </TableRow>
   )

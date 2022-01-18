@@ -40,6 +40,30 @@ const getCellsBySubstring = (sheet, value) => {
   return cells
 }
 
+const getMaxLimitPlaceHolders = () => [
+  {
+    placeholder: '<PerformanceTotalRecordLimit>',
+    value: ({ dataRows: { length = 0 }, total = 0 }) => {
+      return total - length
+    },
+    condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
+      length === total,
+    action: (cell, worksheet) => {
+      if (cell) {
+        cell.value = ''
+        cell.style = null
+        worksheet.unMergeCells(cell.address)
+        worksheet.getRow(cell.row).height = 15.5 // Excel default height
+      }
+    },
+  },
+  {
+    placeholder: '<PerformanceQueryLimit>',
+    value: ({ dataRows: { length = 0 } }) => {
+      return length
+    },
+  },
+]
 // ----------------------------------------------------------------------------------------------
 // read/write Excel file - 'exceljs' API returns Promise for readFile and writeFile
 // ----------------------------------------------------------------------------------------------
@@ -120,6 +144,10 @@ function getBaseReplacements() {
       placeholder: '<date>',
       value: format(new Date(), 'yyyy-MM-dd'),
     },
+    {
+      placeholder: '<Dates>',
+      value: format(new Date(), 'yyyy-MM-dd'),
+    },
   ]
   return replacements
 }
@@ -149,7 +177,6 @@ async function renderExcelTemplate({
   dataSelector,
 }) {
   const lang = culture.split('-')[0].toLowerCase()
-
   // read file into workbook as ExcelWorkbook
   const workbook = await readTemplateFile(
     templateFolderPath,
@@ -170,9 +197,34 @@ async function renderExcelTemplate({
     }
     const { dynamicColumns = [] } = data[sheetIndex] || {}
     // replace placeholders, i.e. <Dates>, <States>, etc in the header
-    _.each(replacements, ({ placeholder, value }) => {
-      replaceSubstringInCell(worksheet, placeholder, value)
-    })
+    const {
+      dataRows = [],
+      defaultNoDataMessage,
+      dataSelector: dataSelectorSheet,
+    } = data[sheetIndex] || {}
+    _.each(
+      replacements,
+      ({
+        placeholder,
+        value,
+        condition = () => false,
+        action = () => true,
+      }) => {
+        if (data[sheetIndex]) {
+          if (condition(data[sheetIndex])) {
+            const [conditionalCell] = getCellsBySubstring(
+              worksheet,
+              placeholder
+            )
+            action(conditionalCell, worksheet)
+          }
+          if (_.isFunction(value)) {
+            value = value(data[sheetIndex])
+          }
+        }
+        replaceSubstringInCell(worksheet, placeholder, value)
+      }
+    )
 
     // position cell where data table begins
     const tableTokenCells = getCellsByValue(worksheet, '<Table>')
@@ -183,11 +235,6 @@ async function renderExcelTemplate({
         cell.value = ''
       })
 
-      const {
-        dataRows,
-        defaultNoDataMessage,
-        dataSelector: dataSelectorSheet,
-      } = data[sheetIndex]
       if (!dataRows) return
 
       // use 1st cell only (actually, should not be more than one)
@@ -258,8 +305,9 @@ async function renderExcelTemplate({
       }
 
       // remove pattern row and insert rows from patternRowNumber
-      worksheet.spliceRows(patternRowNumber, 1, ...rows)
-
+      const fillRows = async rows =>
+        worksheet.spliceRows(patternRowNumber, 1, ...rows)
+      await fillRows(rows)
       if (extension === 'csv') {
         // get all header values from last item of array allHeaderRows
         const headerRow = allHeaderRows[allHeaderRows.length - 1]
@@ -386,6 +434,7 @@ function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
 module.exports = {
   exportData,
   getBaseReplacements,
+  getMaxLimitPlaceHolders,
   getCellsBySubstring,
   getCellsByValue,
   readExcelFile,

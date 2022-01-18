@@ -346,6 +346,7 @@ const ResultList = () => {
     })
   )
   const [total, setTotal] = useState()
+  const [isLoading, setIsLoading] = useState(false)
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
@@ -358,7 +359,12 @@ const ResultList = () => {
   delete params.assayOverride
 
   // >>>>>> Queries <<<<<<
-  const { isLoading, isError, data, error } = useQuery(
+  const {
+    isLoading: tableLoading,
+    isError,
+    data,
+    error,
+  } = useQuery(
     [RESULT_LIST.KEY, { params }],
     async () =>
       fetchWrapperForQueries({
@@ -368,6 +374,9 @@ const ResultList = () => {
     { enabled: !isEmpty(params) }
   )
 
+  useEffect(() => {
+    setIsLoading(tableLoading)
+  }, [tableLoading])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const { sanitized: filtersSanitized, value: filtersParams } =
@@ -416,15 +425,24 @@ const ResultList = () => {
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
+      setIsLoading(true)
       return getExportableFile(
         filtersParams,
         formatType,
         sortCol,
         sortDir,
         0,
-        total,
+        Math.min(total, 50000),
         'results'
       )
+        .then(response => {
+          setIsLoading(false)
+          return response
+        })
+        .catch(error => {
+          setIsLoading(false)
+          throw error
+        })
     }
   }
   const baseProps = {
