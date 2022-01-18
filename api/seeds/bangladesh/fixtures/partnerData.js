@@ -21,6 +21,10 @@ module.exports = {
     'GxHiv1Qual',
     'GxEbola',
     'assayGXCovid19',
+    'assayTruenatMtb',
+    'assayTruenatMtbPlus',
+    'assayTruenatRif',
+    'assayTruenatUnknown',
   ],
   fixtures: {
     jobFunctions,

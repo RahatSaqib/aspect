@@ -1,12 +1,12 @@
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { knex } = require('../db')
-
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
 const {
   exportData,
   getBaseReplacements,
+  getMaxLimitPlaceHolders,
   renderExcelTemplate,
   respondFile,
 } = require('../shared/excel')
@@ -51,12 +51,13 @@ async function getSheetData(request, sheet) {
   const {
     ok,
     data,
+    total,
     errorMessage,
     dynamicColumns = {},
     dataSelector = null,
   } = result
   if (ok) {
-    return { data, dynamicColumns, dataSelector }
+    return { data, total, dynamicColumns, dataSelector }
   }
 
   return Boom.preconditionFailed(
@@ -126,6 +127,7 @@ async function getAllSheetsData(request, sheets) {
     const {
       data: dataRows,
       dynamicColumns,
+      total = null,
       dataSelector = null,
     } = await getSheetData(request, sheet)
     if (Boom.isBoom(dataRows)) {
@@ -137,6 +139,7 @@ async function getAllSheetsData(request, sheets) {
       dataRows,
       dynamicColumns,
       dataSelector,
+      total,
       // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
     }
@@ -180,6 +183,7 @@ async function createReport(request, reply) {
         placeholder: '<Lgas>',
         value: await getLgaNamesString(query),
       },
+      ...getMaxLimitPlaceHolders(),
     ],
   })
 
@@ -200,7 +204,7 @@ async function exportReports(request, reply) {
     defaultNoDataMessage: 'No data',
   }
   return exportData(request, reply, sheetData, 'reports', {
-    replacements: getBaseReplacements(),
+    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
   })
 }
 module.exports = {

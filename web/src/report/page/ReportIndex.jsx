@@ -26,6 +26,7 @@ import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
 
 import styles from './ReportIndex.css'
+import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 
 const cssClasses = classnames.bind(styles)
 
@@ -59,6 +60,7 @@ const ReportIndex = () => {
     jwt: { permissions: userPermissions },
   } = useAuthState()
   const [items, setItems] = useState()
+  const [showProgressBar, setShowProgressBar] = useState(false)
   const [filters, setFilters] = useState([])
 
   const { data: { data } = false } = useQuery(
@@ -75,13 +77,17 @@ const ReportIndex = () => {
     setFilters({ ...filters, format: fileExtension })
     filtersFromLocation.format = fileExtension
     if (!filtersFromLocation.maxDate) filtersFromLocation.maxDate = new Date()
+    setShowProgressBar(true)
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
       params: { ...filtersFromLocation },
-    }).then(async resp => {
-      const file = await resp.blob
-      safeDownloadFile(file, resp.fileName)
     })
+      .then(async resp => {
+        setShowProgressBar(false)
+        const file = await resp.blob
+        safeDownloadFile(file, resp.fileName)
+      })
+      .catch(() => setShowProgressBar(false))
   }
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
@@ -112,6 +118,7 @@ const ReportIndex = () => {
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
+      <DataTableProgressBar disabled={!showProgressBar} />
       {filters && (
         <BrowseFilters
           navigate={navigate}

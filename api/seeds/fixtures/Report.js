@@ -23,7 +23,8 @@ const mtbDetectedRRDetected = {
 }
 const allResults = {
   name: 'All Results',
-  description: 'All test results in the system. One row per result.',
+  description:
+    'All test results in the system (Limited in 50k results for avoid delays and performance issues). One row per result with all the fields needed.',
   i18nKey: 'all_results',
   i18nKeyDescription: 'all_results_description',
   externalId: 'all_results',
@@ -38,6 +39,7 @@ const allResults = {
         sortCol: 'endedOn',
         sortDir: 'desc',
         templateFolderPath: 'export/results',
+        maxNumberOfRecords: 50000,
       },
     },
   ],
