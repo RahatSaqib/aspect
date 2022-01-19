@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-18T17:42:25.862Z\n"
+"POT-Creation-Date: 2022-01-19T08:05:08.382Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,7 +35,7 @@ msgstr "(Số lượng mới có trong tay: {nextQuantity} {unitShortName})"
 #. * excluded {pendingTransfers} lot/s in transit
 #: extracted_strings.json
 msgid "* excluded {pendingTransfers} lot/s in transit"
-msgstr ""
+msgstr "* lô / s {pendingTransfers} bị loại trừ đang được vận chuyển"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -1014,7 +1014,7 @@ msgstr "Quay lại Trang đăng nhập"
 #. Break out by lot
 #: extracted_strings.json
 msgid "Break out by lot"
-msgstr ""
+msgstr "Bứt phá theo lô"
 
 #. [header.link.browse.title]
 #. defaultMessage is:
@@ -2210,6 +2210,13 @@ msgstr "Hoạt động thiết bị (Phần trăm)"
 #: extracted_strings.json
 msgid "Device Area Level"
 msgstr "Mức khu vực thiết bị"
+
+#. [pages.ReportIndex."deviceUtilizationReport"]
+#. defaultMessage is:
+#. Device Average Utilization per Month
+#: extracted_strings.json
+msgid "Device Average Utilization per Month"
+msgstr "Mức độ sử dụng thiết bị trung bình hàng tháng"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -5690,7 +5697,7 @@ msgstr "Chỉ có kết quả khi cần điều trị"
 #. Only lots with stock
 #: extracted_strings.json
 msgid "Only lots with stock"
-msgstr ""
+msgstr "Chỉ có rất nhiều với kho"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -5784,7 +5791,7 @@ msgstr "Tỷ lệ hoạt động tổng thể"
 #. Overall Network Health Daily
 #: extracted_strings.json
 msgid "Overall Network Health Daily"
-msgstr "Tổng thể mạng lưới sức khỏe hàng ngày"
+msgstr "Tình trạng tổng thể hệ thống hàng ngày"
 
 #. [pages.TaskList.issueStatusOverdue]
 #. defaultMessage is:
@@ -6420,7 +6427,7 @@ msgstr "Hồ sơ"
 #. Projected stock waste
 #: extracted_strings.json
 msgid "Projected stock waste"
-msgstr ""
+msgstr "Chất thải dự kiến"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -8645,6 +8652,8 @@ msgid ""
 "The number of days left with available and not-expired stock, assuming that "
 "the cartridges to be consumed are always the ones closer to their expiration"
 msgstr ""
+"Số ngày còn lại trong kho có sẵn và chưa hết hạn, giả sử rằng các hộp mực sẽ "
+"được tiêu thụ luôn là những hộp gần hết hạn"
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -8836,6 +8845,8 @@ msgid ""
 "The projected stock waste, assuming that the cartridges to be consumed are "
 "always the ones closer to their expiration"
 msgstr ""
+"Chất thải dự trữ trong kho dự kiến, giả sử rằng các hộp mực sẽ được tiêu thụ "
+"luôn là những hộp gần hết hạn sử dụng"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -9090,6 +9101,17 @@ msgid ""
 msgstr ""
 "Báo cáo này hiển thị phần trăm hoạt động mỗi tháng của các thiết bị trong "
 "khoảng thời gian đã chọn. (Theo mặc định trong 12 tháng qua)"
+
+#. [pages.ReportIndex.device_utilization_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
+msgstr ""
+"Báo cáo này hiển thị tỷ lệ sử dụng của các thiết bị trong khoảng thời gian "
+"đã chọn, chia nhỏ theo tháng (Theo mặc định là 12 tháng qua)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
