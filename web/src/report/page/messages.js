@@ -93,5 +93,14 @@ const messages = defineMessages({
     defaultMessage:
       'This report shows all issues that apply to GeneXpert devices',
   },
+  deviceUtilizationReport: {
+    id: 'pages.ReportIndex."deviceUtilizationReport"',
+    defaultMessage: 'Device Average Utilization per Month',
+  },
+  device_utilization_description: {
+    id: 'pages.ReportIndex.device_utilization_description',
+    defaultMessage:
+      'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)',
+  },
 })
 export default messages
