@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-17T11:04:46.665Z\n"
+"POT-Creation-Date: 2022-01-19T08:14:10.980Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,10 +32,10 @@ msgstr "(Новое количество на руках: {nextQuantity} {unitSh
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * in transit from {inTransitFromSiteName}
+#. * excluded {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* in transit from {inTransitFromSiteName}"
-msgstr "* в пути из {inTransitFromSiteName}"
+msgid "* excluded {pendingTransfers} lot/s in transit"
+msgstr "* исключено {pendingTransfers} лот/с в пути"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -49,7 +49,7 @@ msgstr ""
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
-#. [filter.btnGroup.stockLeft.upTo14]
+#. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
 #: extracted_strings.json
@@ -59,7 +59,7 @@ msgstr "1-14 дней"
 #. [legends.Unknown.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
-#. [filter.btnGroup.stockLeft.upTo90]
+#. [filter.btnGroup.daysStockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
@@ -69,7 +69,7 @@ msgstr "1-3 Месяца"
 #. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#. [filter.btnGroup.stockLeft.upTo30]
+#. [filter.btnGroup.daysStockLeft.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
 #: extracted_strings.json
@@ -79,7 +79,7 @@ msgstr "15-30 дней"
 #. [legends.Unknown.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
-#. [filter.btnGroup.stockLeft.upTo180]
+#. [filter.btnGroup.daysStockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -117,7 +117,7 @@ msgstr "< 550 cp/mL"
 #. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
-#. [filter.btnGroup.stockLeft.moreThan180]
+#. [filter.btnGroup.daysStockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -553,9 +553,13 @@ msgstr "Все государства"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
-#. All test results in the system. One row per result.
+#. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-msgid "All test results in the system. One row per result."
+#, fuzzy
+#| msgid "All test results in the system. One row per result."
+msgid ""
+"All test results in the system (up to 50.000 records). One row per result "
+"with all the fields needed."
 msgstr "Все результаты тестирования в системе. Одна строка на результат."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
@@ -1008,6 +1012,13 @@ msgstr "Назад"
 #: extracted_strings.json
 msgid "Back to Login Page"
 msgstr "Назад на страницу входа"
+
+#. [pages.InventoryItemsList.breakOutByLot]
+#. defaultMessage is:
+#. Break out by lot
+#: extracted_strings.json
+msgid "Break out by lot"
+msgstr "Вырваться по жребию"
 
 #. [header.link.browse.title]
 #. defaultMessage is:
@@ -2016,10 +2027,10 @@ msgstr "Дата Переведена"
 msgid "Day"
 msgstr "День"
 
-#. [filter.popover.stockLeft]
+#. [filter.popover.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
-#. [pages.InventoryItemsList.stockLeft]
+#. [pages.InventoryItemsList.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
 #: extracted_strings.json
@@ -2207,6 +2218,13 @@ msgstr "Активность устройства (в процентах)"
 msgid "Device Area Level"
 msgstr "Состояние устройства"
 
+#. [pages.ReportIndex."deviceUtilizationReport"]
+#. defaultMessage is:
+#. Device Average Utilization per Month
+#: extracted_strings.json
+msgid "Device Average Utilization per Month"
+msgstr "Среднее использование устройства в месяц"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
@@ -2349,6 +2367,15 @@ msgstr "Тип устройства"
 #: extracted_strings.json
 msgid "Devices"
 msgstr "Устройства"
+
+#. [pages.shared.deviceStatus.devicesActive]
+#. defaultMessage is:
+#. Devices Active
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device Activity"
+msgid "Devices Active"
+msgstr "Тип устройства"
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -2707,6 +2734,15 @@ msgstr "Введите имя устройства..."
 #: extracted_strings.json
 msgid "Enter error code..."
 msgstr "Введите код ошибки..."
+
+#. [filter.popover.enterLotNumber]
+#. defaultMessage is:
+#. Enter lot number...
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Enter report name..."
+msgid "Enter lot number..."
+msgstr "Введите имя отчета..."
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -3630,13 +3666,6 @@ msgstr "Получение файла отчёта о неудаче"
 msgid "Group By Column"
 msgstr "Группировка по колонкам"
 
-#. [pages.InventoryItemsList.groupBySite]
-#. defaultMessage is:
-#. Group by Site
-#: extracted_strings.json
-msgid "Group by Site"
-msgstr "Группировка по сайтам"
-
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
 #. HBV VL
@@ -3684,6 +3713,15 @@ msgstr "ВИЧ-ИНФЕКЦИЯ ВЛ"
 #: extracted_strings.json
 msgid "HIV/AIDS"
 msgstr "ВИЧ/СПИД"
+
+#. [filter.popover.hasStock]
+#. defaultMessage is:
+#. Has Stock
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Days Stock Left"
+msgid "Has Stock"
+msgstr "Дни Запасы налево"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase]
 #. defaultMessage is:
@@ -4654,7 +4692,13 @@ msgstr "Проигрыш"
 msgid "Lot"
 msgstr "Ло"
 
+#. [filter.popover.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #. [pages.InventoryAdjustmentDialogForm.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#. [pages.InventoryItemsList.lotNumber]
 #. defaultMessage is:
 #. Lot Number
 #: extracted_strings.json
@@ -5230,7 +5274,7 @@ msgstr "Сейчас"
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
-#. [filter.btnGroup.stockLeft.noConsumption]
+#. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
@@ -5416,7 +5460,7 @@ msgstr "Невозможно"
 #. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
-#. [filter.btnGroup.stockLeft.notRecorded]
+#. [filter.btnGroup.daysStockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
@@ -5660,6 +5704,13 @@ msgstr "Только результаты, загруженные репорте
 msgid "Only Results With Treatment Required"
 msgstr "Только результаты при необходимости лечения"
 
+#. [filter.btnGroup.hasStock]
+#. defaultMessage is:
+#. Only lots with stock
+#: extracted_strings.json
+msgid "Only lots with stock"
+msgstr "Только лоты в наличии"
+
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
 #. Operation
@@ -5719,7 +5770,7 @@ msgstr "Нет на складе"
 #. [legends.Unknown.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
-#. [filter.btnGroup.stockLeft.outOfStock]
+#. [filter.btnGroup.daysStockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -6385,6 +6436,13 @@ msgstr "Обработка..."
 #: extracted_strings.json
 msgid "Profile"
 msgstr "Профиль"
+
+#. [pages.InventoryItemsList.projectedWaste]
+#. defaultMessage is:
+#. Projected stock waste
+#: extracted_strings.json
+msgid "Projected stock waste"
+msgstr "Прогнозируемые складские отходы"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -8561,13 +8619,6 @@ msgstr ""
 "проведенных за месяц, и деления этого числа на общее количество тестов, "
 "проведенных для всех устройств."
 
-#. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can remove is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can remove is {currentQuantity}"
-msgstr "Самое большее, что вы можете удалить, это {currentQuantity}"
-
 #. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
 #. defaultMessage is:
 #. The most that you can transfer is {currentQuantity}
@@ -8605,6 +8656,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "The number of contacts in the system."
 msgstr "Количество контактов в системе."
+
+#. [pages.InventoryItemsList.daysStockLeftDescription]
+#. defaultMessage is:
+#. The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired stock, assuming that "
+"the cartridges to be consumed are always the ones closer to their expiration"
+msgstr ""
+"Количество дней, оставшихся с доступными и неистекшими запасами, при "
+"условии, что расходуются картриджи, срок годности которых ближе к концу."
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -8792,6 +8854,17 @@ msgstr "Процент результатов, о которых было соо
 #: extracted_strings.json
 msgid "The percentage of reported results that were reported via SMS."
 msgstr "Процентная доля результатов, которые были сообщены с помощью SMS."
+
+#. [pages.InventoryItemsList.projectedWasteDescription]
+#. defaultMessage is:
+#. The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration
+#: extracted_strings.json
+msgid ""
+"The projected stock waste, assuming that the cartridges to be consumed are "
+"always the ones closer to their expiration"
+msgstr ""
+"Прогнозируемый расход запасов при условии, что расходуются всегда те "
+"картриджи, срок годности которых истекает ближе к концу."
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -9048,6 +9121,17 @@ msgid ""
 msgstr ""
 "В этом отчете отображается процент активности устройств в месяц за выбранный "
 "период времени. (По умолчанию последние 12 месяцев)"
+
+#. [pages.ReportIndex.device_utilization_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
+msgstr ""
+"В этом отчете показан коэффициент использования устройств за выбранный "
+"период времени с разбивкой по месяцам (по умолчанию за последние 12 месяцев)."
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
@@ -10124,6 +10208,15 @@ msgstr "за {unit} результаты"
 msgid "indicator"
 msgstr "показатель"
 
+#. [filter.btnGroup.whereLotNumberIncludes]
+#. defaultMessage is:
+#. lot number includes "{lotNumber}"
+#: extracted_strings.json
+#, fuzzy
+#| msgid "report name includes \"{reportName}\""
+msgid "lot number includes \"{lotNumber}\""
+msgstr "название отчета включает \"{reportName}\""
+
 #. [filter.btnGroup.withDeviceMaintenanceStatus]
 #. defaultMessage is:
 #. maintenance status is {deviceMaintenanceStatusName}
@@ -10597,6 +10690,15 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid "* in transit from {inTransitFromSiteName}"
+#~ msgstr "* в пути из {inTransitFromSiteName}"
+
+#~ msgid "Group by Site"
+#~ msgstr "Группировка по сайтам"
+
+#~ msgid "The most that you can remove is {currentQuantity}"
+#~ msgstr "Самое большее, что вы можете удалить, это {currentQuantity}"
 
 #~ msgid "Delete"
 #~ msgstr "Удалить"
