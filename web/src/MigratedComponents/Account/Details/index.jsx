@@ -58,6 +58,7 @@ const ContactDetailsFormFormik = () => {
       'lgaName',
       'userId',
       'username',
+      'userLockedOut',
     ]
     const { setSubmitting, values } = formik
     const { id } = values
