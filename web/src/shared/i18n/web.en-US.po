@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-18T13:10:09.698Z\n"
+"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,7 +35,7 @@ msgstr "(New quantity on hand: {nextQuantity} {unitShortName})"
 #. * excluded {pendingTransfers} lot/s in transit
 #: extracted_strings.json
 msgid "* excluded {pendingTransfers} lot/s in transit"
-msgstr ""
+msgstr "* excluded {pendingTransfers} lot/s in transit"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -1010,7 +1010,7 @@ msgstr "Back to Login Page"
 #. Break out by lot
 #: extracted_strings.json
 msgid "Break out by lot"
-msgstr ""
+msgstr "Break out by lot"
 
 #. [header.link.browse.title]
 #. defaultMessage is:
@@ -2205,6 +2205,13 @@ msgstr "Device Activity (Percent)"
 msgid "Device Area Level"
 msgstr "Device Health"
 
+#. [pages.ReportIndex."deviceUtilizationReport"]
+#. defaultMessage is:
+#. Device Average Utilization per Month
+#: extracted_strings.json
+msgid "Device Average Utilization per Month"
+msgstr "Device Average Utilization per Month"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
@@ -2347,6 +2354,15 @@ msgstr "Device type"
 #: extracted_strings.json
 msgid "Devices"
 msgstr "Devices"
+
+#. [pages.shared.deviceStatus.devicesActive]
+#. defaultMessage is:
+#. Devices Active
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device Activity"
+msgid "Devices Active"
+msgstr "Device Activity"
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -5660,7 +5676,7 @@ msgstr "Only Results With Treatment Required"
 #. Only lots with stock
 #: extracted_strings.json
 msgid "Only lots with stock"
-msgstr ""
+msgstr "Only lots with stock"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -6389,7 +6405,7 @@ msgstr "Profile"
 #. Projected stock waste
 #: extracted_strings.json
 msgid "Projected stock waste"
-msgstr ""
+msgstr "Projected stock waste"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -8605,6 +8621,8 @@ msgid ""
 "The number of days left with available and not-expired stock, assuming that "
 "the cartridges to be consumed are always the ones closer to their expiration"
 msgstr ""
+"The number of days left with available and not-expired stock, assuming that "
+"the cartridges to be consumed are always the ones closer to their expiration"
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -8802,6 +8820,8 @@ msgid ""
 "The projected stock waste, assuming that the cartridges to be consumed are "
 "always the ones closer to their expiration"
 msgstr ""
+"The projected stock waste, assuming that the cartridges to be consumed are "
+"always the ones closer to their expiration"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -9057,6 +9077,17 @@ msgid ""
 msgstr ""
 "This report shows the activity percentage, per month, of the devices during "
 "the selected period of time. (By default last 12 months)"
+
+#. [pages.ReportIndex.device_utilization_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
+msgstr ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
