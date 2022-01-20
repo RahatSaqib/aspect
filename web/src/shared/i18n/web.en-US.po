@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:36:24.661Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -551,7 +551,6 @@ msgstr "All states"
 #. defaultMessage is:
 #. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-#| msgid "All test results in the system. One row per result."
 msgid ""
 "All test results in the system (up to 50.000 records). One row per result "
 "with all the fields needed."
@@ -2206,6 +2205,13 @@ msgstr "Device Activity (Percent)"
 msgid "Device Area Level"
 msgstr "Device Health"
 
+#. [pages.ReportIndex."deviceUtilizationReport"]
+#. defaultMessage is:
+#. Device Average Utilization per Month
+#: extracted_strings.json
+msgid "Device Average Utilization per Month"
+msgstr "Device Average Utilization per Month"
+
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Calibration
@@ -2349,6 +2355,13 @@ msgstr "Device type"
 msgid "Devices"
 msgstr "Devices"
 
+#. [pages.shared.deviceStatus.devicesActive]
+#. defaultMessage is:
+#. Devices Active
+#: extracted_strings.json
+msgid "Devices Active"
+msgstr "Devices Active"
+
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
 #. Devices Experiencing Service Interruption
@@ -2374,7 +2387,6 @@ msgstr "Devices with Unused Modules"
 #. defaultMessage is:
 #. Dial Code
 #: extracted_strings.json
-#| msgid "Zip Code"
 msgid "Dial Code"
 msgstr "Dial Code"
 
@@ -5916,7 +5928,6 @@ msgstr ""
 #. defaultMessage is:
 #. Performance
 #: extracted_strings.json
-#| msgid "Tests Performed"
 msgid "Performance"
 msgstr "Performance"
 
@@ -9060,6 +9071,17 @@ msgid ""
 msgstr ""
 "This report shows the activity percentage, per month, of the devices during "
 "the selected period of time. (By default last 12 months)"
+
+#. [pages.ReportIndex.device_utilization_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
+msgstr ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
