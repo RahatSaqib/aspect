@@ -31,7 +31,8 @@
     "resultSourceId": "DiagnosticDevice",
     "resultCategory1Label": "Rif",
     "resultCategory1i18nKey": "resultCategoryRif"
-  }, {
+  },
+  {
     "name": "Truenat Unknown",
     "abbreviation": "TNU",
     "i18nKey": "assayTruenatUnknown",

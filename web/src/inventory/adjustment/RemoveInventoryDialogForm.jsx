@@ -25,10 +25,6 @@ const messages = defineMessages({
     id: 'pages.RemoveInventoryDialogForm.quantityRequired',
     defaultMessage: 'Please specify the quantity to remove',
   },
-  positiveQuantityRequired: {
-    id: 'pages.RemoveInventoryDialogForm.positiveQuantityRequired',
-    defaultMessage: 'The most that you can remove is {currentQuantity}',
-  },
   dialogTitle: {
     id: 'pages.RemoveInventoryDialogForm.dialogTitle',
     defaultMessage: 'Remove {consumableName}',
@@ -58,7 +54,7 @@ export function validate(
     quantity,
     dateAdjusted,
   },
-  { intl, inventoryItem, consumableReason }
+  { intl, consumableReason }
 ) {
   const errors = {}
   if (canExpire && !expiresOn) {
@@ -69,10 +65,6 @@ export function validate(
   }
   if (!quantity || quantity <= 0) {
     errors.quantity = intl.formatMessage(messages.quantityRequired)
-  } else if (inventoryItem && quantity > inventoryItem.get('quantityOnHand')) {
-    errors.quantity = intl.formatMessage(messages.positiveQuantityRequired, {
-      currentQuantity: inventoryItem.get('quantityOnHand'),
-    })
   }
   if (!reasonId) {
     errors.reasonId = intl.formatMessage(sharedMessages.reasonRequired)
@@ -159,6 +151,7 @@ const enhance = compose(
     ),
   })),
   withProps(({ intl, inventoryItem, values, consumable }) => ({
+    currInventoryItem: inventoryItem,
     labels: {
       dialogTitle: intl.formatMessage(messages.dialogTitle, {
         consumableName: consumable.get('name'),

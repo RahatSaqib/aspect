@@ -12,12 +12,40 @@ export const makeSortPageSelector =
     pageAt: defaultPageAt = DEFAULT_PAGE_AT,
     pageSize: defaultPageSize = DEFAULT_PAGE_SIZE,
   } = {}) =>
-  ({ location }) => {
+  ({ location, availableSortCol, dependencies }) => {
     const searchParams = new URLSearchParams(location.search)
+
     const pageParamName = searchParams.has('pageAt') ? 'pageAt' : 'page'
     const sizeParamName = searchParams.has('pageSize') ? 'pageSize' : 'size'
-    const page = parseInt(searchParams.get(pageParamName), 10)
-    const size = parseInt(searchParams.get(sizeParamName), 10)
+    const page = parseInt(searchParams.get(pageParamName), 10) || defaultPageAt
+    const size =
+      parseInt(searchParams.get(sizeParamName), 10) || defaultPageSize
+    const sortCol = searchParams.get('sortCol')
+
+    let index = -1
+    let obj = null
+
+    // If the available columns are defined, then only sort and page by the allowed fields
+    if (availableSortCol) {
+      index = availableSortCol.indexOf(sortCol)
+      obj = availableSortCol.find(c => c.col === sortCol)
+
+      // If the sortCol is not defined as an available sorting col or it's disabled, then return the default ordering
+      if (
+        (index === -1 && !obj) ||
+        (dependencies &&
+          obj &&
+          obj.isEnabled &&
+          obj.isEnabled(dependencies) === false)
+      )
+        return {
+          sortCol: defaultSortCol,
+          sortDir: defaultSortDir,
+          pageAt: page,
+          pageSize: size,
+        }
+    }
+
     return {
       sortCol: searchParams.get('sortCol') || defaultSortCol,
       sortDir: searchParams.get('sortDir') || defaultSortDir,
@@ -28,16 +56,32 @@ export const makeSortPageSelector =
 
 export const makeSearchParamsSanitizer =
   ({ availableSortCol = ['id'], availableSortDir = ['asc', 'desc'] } = {}) =>
-  location => {
+  (location, dependencies) => {
     const searchParams = new URLSearchParams(location.search)
     let sanitized = false
-    if (
-      searchParams.has('sortCol') &&
-      !availableSortCol.includes(searchParams.get('sortCol'))
-    ) {
-      sanitized = true
-      searchParams.delete('sortCol')
+    if (searchParams.has('sortCol')) {
+      let shouldDelete = false
+
+      const index = availableSortCol.indexOf(searchParams.get('sortCol'))
+      const obj = availableSortCol.find(
+        c => c.col === searchParams.get('sortCol')
+      )
+
+      if (index === -1 && !obj) shouldDelete = true
+      else if (
+        dependencies &&
+        obj &&
+        obj.isEnabled &&
+        obj.isEnabled(dependencies) === false
+      )
+        shouldDelete = true
+
+      if (shouldDelete) {
+        sanitized = true
+        searchParams.delete('sortCol')
+      }
     }
+
     if (
       searchParams.has('sortDir') &&
       !availableSortDir.includes(searchParams.get('sortDir'))

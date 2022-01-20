@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-12-15T16:52:32.193Z\n"
+"POT-Creation-Date: 2022-01-17T11:30:09.079Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.0.1\n"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
@@ -291,7 +290,7 @@ msgstr "Xác nhận vấn đề không thành công"
 #. Active
 #: extracted_strings.json
 msgid "Active"
-msgstr "Kích hoạt"
+msgstr "Hoạt động"
 
 #. [component.Widget.dashboardWidgetTitleTotalActiveCases]
 #. defaultMessage is:
@@ -322,7 +321,7 @@ msgstr "Thêm"
 #. Add Inventory
 #: extracted_strings.json
 msgid "Add Inventory"
-msgstr "Thêm khoảng không quảng cáo"
+msgstr "Thêm sinh phẩm"
 
 #. [pages.resultTreatmentPanel.addNote]
 #. defaultMessage is:
@@ -473,6 +472,13 @@ msgstr "Tất cả các"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Tất cả các kết quả HIV trong đó vi rút không bị ức chế"
 
+#. [pages.ReportIndex.all_results]
+#. defaultMessage is:
+#. All Results
+#: extracted_strings.json
+msgid "All Results"
+msgstr "Tất cả kết quả"
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -539,6 +545,13 @@ msgstr "Tất cả các trang web"
 #: extracted_strings.json
 msgid "All states"
 msgstr "Tất cả các trạng thái"
+
+#. [pages.ReportIndex.all_results_description]
+#. defaultMessage is:
+#. All test results in the system. One row per result.
+#: extracted_strings.json
+msgid "All test results in the system. One row per result."
+msgstr "Tất cả các kết quả kiểm tra trong hệ thống. Một hàng cho mỗi kết quả."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -664,6 +677,15 @@ msgstr "Trạng Thái Phê Duyệt"
 #: extracted_strings.json
 msgid "Approved"
 msgstr "Tán thành"
+
+#. [contextualMenu.notifications.areYouSureToDelete]
+#. defaultMessage is:
+#. Are you sure to delete notification {notificationName}?
+#: extracted_strings.json
+#, fuzzy
+#| msgid "notification name includes \"{notificationName}\""
+msgid "Are you sure to delete notification {notificationName}?"
+msgstr "tên thông báo bao gồm \"{notificationName}\""
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -988,7 +1010,7 @@ msgstr "Quay lại Trang đăng nhập"
 #. Browse
 #: extracted_strings.json
 msgid "Browse"
-msgstr "Duyệt"
+msgstr "Tìm kiếm"
 
 #. [results.categoryTypeCAPResistanceI18nKey]
 #. defaultMessage is:
@@ -1066,6 +1088,9 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Hiệu chỉnh khi đến hạn"
 
+#. [pages.RouterDetail.detailCalibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.Notification.type.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1074,7 +1099,7 @@ msgstr "Hiệu chỉnh khi đến hạn"
 #. Calibration
 #: extracted_strings.json
 msgid "Calibration"
-msgstr "Sự định cỡ"
+msgstr "Hiệu chuẩn"
 
 #. [pages.CalibrationDialog.calibrationDate]
 #. defaultMessage is:
@@ -1137,6 +1162,9 @@ msgstr "Không thể chỉnh sửa"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Hủy"
@@ -1175,7 +1203,19 @@ msgstr "Trường hợp"
 msgid "Category"
 msgstr "Danh mục"
 
+#. [legends.Unknown.resultCategory1]
+#. defaultMessage is:
+#. Category 1
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Category 2"
+msgid "Category 1"
+msgstr "Hạng mục 2"
+
 #. [pages.ResultList.resultCategory1Name]
+#. defaultMessage is:
+#. Category 2
+#. [legends.Unknown.resultCategory2]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
@@ -1473,7 +1513,7 @@ msgstr "Tình trạng kết nối"
 #. Consumable
 #: extracted_strings.json
 msgid "Consumable"
-msgstr "Có thể tiêu thụ"
+msgstr "Vật tư tiêu hao"
 
 #. [forms.formItem.consumableSerial]
 #. defaultMessage is:
@@ -1524,6 +1564,9 @@ msgstr "Tên liên hệ / email"
 #. defaultMessage is:
 #. Contacts
 #. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#. [pages.RouterDetail.detailContacts]
 #. defaultMessage is:
 #. Contacts
 #. [pages.Notifications.table.contactsHeader]
@@ -1732,6 +1775,9 @@ msgid "Covid 19"
 msgstr "Covid-19"
 
 #. [pages.PersonDetails.create]
+#. defaultMessage is:
+#. Create
+#. [pages.Contacts.create]
 #. defaultMessage is:
 #. Create
 #: extracted_strings.json
@@ -2013,10 +2059,10 @@ msgstr "Ngừng hoạt động"
 
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
-#. Delete
+#. Delete (Only 0 triggers)
 #: extracted_strings.json
-msgid "Delete"
-msgstr "Xóa"
+msgid "Delete (Only 0 triggers)"
+msgstr "Xóa (Chỉ 0 trình kích hoạt)"
 
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
@@ -2318,6 +2364,15 @@ msgstr "Thiết bị bị gián đoạn dịch vụ"
 msgid "Devices with Unused Modules"
 msgstr "Thiết bị có mô-đun không sử dụng"
 
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Zip Code"
+msgid "Dial Code"
+msgstr "Mã bưu chính"
+
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
 #. Discard
@@ -2538,6 +2593,33 @@ msgstr "Nội dung email là bắt buộc"
 #: extracted_strings.json
 msgid "Email subject is required"
 msgstr "Chủ đề email là bắt buộc"
+
+#. [pages.Notifications.table.emailSentTo]
+#. defaultMessage is:
+#. Email was sent to:
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Email Sent"
+msgid "Email was sent to:"
+msgstr "Email đã gửi"
+
+#. [pages.NotificationDetail.enable]
+#. defaultMessage is:
+#. Enable
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Consumable"
+msgid "Enable"
+msgstr "Có thể tiêu thụ"
+
+#. [pages.NotificationDetail.notificationTypeEnable]
+#. defaultMessage is:
+#. Enable this notification
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Edit Notification"
+msgid "Enable this notification"
+msgstr "Chỉnh sửa thông báo"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2838,6 +2920,15 @@ msgstr "Lỗi khi tải các tiểu bang cho {countryName}"
 msgid "Error Rate"
 msgstr "Tỷ lệ lỗi"
 
+#. [pages.RouterDetail.detailErrorOverTime]
+#. defaultMessage is:
+#. Error Rates Over Time
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Error Rate"
+msgid "Error Rates Over Time"
+msgstr "Tỷ lệ lỗi"
+
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
 #. Error Saving New Password
@@ -2900,6 +2991,15 @@ msgstr "Hết hạn"
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Hết hạn vào"
+
+#. [pages.RouterDetail.detailWarrantyExpire]
+#. defaultMessage is:
+#. Expires {date}
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Expiry Date"
+msgid "Expires {date}"
+msgstr "Ngày hết hạn"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -3527,7 +3627,7 @@ msgstr "Nhóm theo cột"
 #. Group by Site
 #: extracted_strings.json
 msgid "Group by Site"
-msgstr "Nhóm theo trang web"
+msgstr "Nhóm theo đơn vị"
 
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
@@ -3744,7 +3844,7 @@ msgstr ""
 #. Imported
 #: extracted_strings.json
 msgid "Imported"
-msgstr "Đã nhập"
+msgstr "Đã nhập"
 
 #. [pages.ResultList.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
@@ -3981,7 +4081,7 @@ msgstr "Dựa trên vấn đề"
 #. Issues
 #: extracted_strings.json
 msgid "Issues"
-msgstr "Phát hành"
+msgstr "Vấn đề phát sinh"
 
 #. [errorResponseMessages.common.notFound.message]
 #. defaultMessage is:
@@ -4176,6 +4276,13 @@ msgstr "Tuần trước"
 #: extracted_strings.json
 msgid "Last Year"
 msgstr "Năm trước"
+
+#. [pages.RouterDetail.detailCalibrationDate]
+#. defaultMessage is:
+#. Last calibrated {date}
+#: extracted_strings.json
+msgid "Last calibrated {date}"
+msgstr "Hiệu chỉnh lần cuối {date}"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -5102,6 +5209,15 @@ msgstr "Mới nhất"
 msgid "Next"
 msgstr "Tiếp"
 
+#. [pages.NotificationList.no]
+#. defaultMessage is:
+#. No
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Now"
+msgid "No"
+msgstr "Bây giờ"
+
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -5707,6 +5823,9 @@ msgstr "Dữ liệu bệnh nhân"
 #. [pages.DeviceDetailProfile.patientId]
 #. defaultMessage is:
 #. Patient ID
+#. [pages.Notifications.table.patientId]
+#. defaultMessage is:
+#. Patient ID
 #: extracted_strings.json
 msgid "Patient ID"
 msgstr "ID của Bệnh Nhân"
@@ -5749,6 +5868,13 @@ msgstr "Phần trăm tích cực"
 msgid "Percent Reported"
 msgstr "Phần trăm được báo cáo"
 
+#. [pages.DeviceDetailProfile.percentageLegend]
+#. defaultMessage is:
+#. Percentage (%)
+#: extracted_strings.json
+msgid "Percentage (%)"
+msgstr "Phần trăm (%)"
+
 #. [pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle]
 #. defaultMessage is:
 #. Percentage of Days with Service Interruption
@@ -5774,6 +5900,15 @@ msgstr ""
 "Phần trăm kết quả hợp lệ được báo cáo trong tháng này. Kết quả hợp lệ bao "
 "gồm tất cả các kết quả không dẫn đến \"Lỗi\", \"Không có kết quả\" hoặc "
 "\"Không hợp lệ\"."
+
+#. [pages.DeviceDetailProfile.performanceTitle]
+#. defaultMessage is:
+#. Performance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tests Performed"
+msgid "Performance"
+msgstr "Các thử nghiệm đã thực hiện"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -6158,9 +6293,15 @@ msgstr "Kết quả kiểm tra dương tính được truyền đi"
 #. Positives
 #: extracted_strings.json
 msgid "Positives"
-msgstr "Ưu điểm"
+msgstr "Ưu điểm"
 
 #. [pages.UserPreferences.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
 #. defaultMessage is:
 #. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
@@ -6310,7 +6451,7 @@ msgstr "Số lượng nhận vào"
 #. Quantity on Hand
 #: extracted_strings.json
 msgid "Quantity on Hand"
-msgstr "Số lượng trên tay"
+msgstr "Số lượng tồn kho hiện tại"
 
 #. [pages.AddInventoryDialogForm.quantity]
 #. defaultMessage is:
@@ -6355,7 +6496,7 @@ msgstr "RIF kháng"
 #. RIF Resistance Rate (%positive results)
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
-msgstr "Tỷ lệ kháng RIF (%p kết quả khả quan)"
+msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
 
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
@@ -6420,6 +6561,15 @@ msgstr "Nhận {consumableName}"
 #: extracted_strings.json
 msgid "Receiving Inventory Failed"
 msgstr "Nhận được khoảng không quảng cáo không thành công"
+
+#. [pages.Notifications.table.recipients]
+#. defaultMessage is:
+#. Recipients
+#: extracted_strings.json
+#, fuzzy
+#| msgid "events"
+msgid "Recipients"
+msgstr "sự kiện"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -6867,6 +7017,13 @@ msgstr "Đã gửi SMS"
 msgid "SMS Sent MTD"
 msgstr "SMS đã gửi MTD"
 
+#. [pages.Notifications.table.smsSentTo]
+#. defaultMessage is:
+#. SMS was sent to:
+#: extracted_strings.json
+msgid "SMS was sent to:"
+msgstr "SMS đã được gửi tới:"
+
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
 #. Sample
@@ -6919,6 +7076,9 @@ msgstr "Trang web thu thập mẫu:"
 #. [pages.DeviceDetailProfile.sampleId]
 #. defaultMessage is:
 #. Sample ID
+#. [pages.Notifications.table.sampleId]
+#. defaultMessage is:
+#. Sample ID
 #: extracted_strings.json
 msgid "Sample ID"
 msgstr "ID mẫu"
@@ -6959,6 +7119,9 @@ msgid "Sample collection site"
 msgstr "Trang web thu thập mẫu"
 
 #. [pages.PersonDetails.save]
+#. defaultMessage is:
+#. Save
+#. [pages.Contacts.save]
 #. defaultMessage is:
 #. Save
 #. [pages.NotificationDetail.save]
@@ -7746,7 +7909,7 @@ msgstr "Đăng xuất"
 #. Site
 #: extracted_strings.json
 msgid "Site"
-msgstr "Trang"
+msgstr "Đơn vị"
 
 #. [pages.NotificationDetail.fieldContact]
 #. defaultMessage is:
@@ -7823,7 +7986,7 @@ msgstr "Trang web là bắt buộc"
 #. Sites
 #: extracted_strings.json
 msgid "Sites"
-msgstr "Các trang web"
+msgstr "Các đơn vị"
 
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
@@ -8139,6 +8302,15 @@ msgstr "Nhiệm vụ"
 #. Technical Details
 #: extracted_strings.json
 msgid "Technical Details"
+msgstr "Chi tiết kỹ thuật"
+
+#. [pages.RouterDetail.detailTechInfo]
+#. defaultMessage is:
+#. Technical information
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Technical Details"
+msgid "Technical information"
 msgstr "Chi tiết kỹ thuật"
 
 #. [pages.ContactDetails.phone]
@@ -9161,6 +9333,19 @@ msgstr "Truenat® MTB Plus"
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
 
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr "Truenat® Unknown Test Type"
+
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
 #. Tuberculosis
@@ -9261,6 +9446,15 @@ msgstr "Tên đăng nhập"
 msgid "Utilization Rate"
 msgstr "Tỷ lệ sử dụng"
 
+#. [pages.RouterDetail.detailUtilOverTime]
+#. defaultMessage is:
+#. Utilization Rate Over Time
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Utilization Rate"
+msgid "Utilization Rate Over Time"
+msgstr "Tỷ lệ sử dụng"
+
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
 #. VL Results
@@ -9335,6 +9529,9 @@ msgid "Voltage"
 msgstr "Vôn"
 
 #. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]
@@ -9538,11 +9735,27 @@ msgstr "Hộp mực nạp virut Xpert HIV-1"
 msgid "Year"
 msgstr "Năm"
 
+#. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#: extracted_strings.json
+msgid "Yes"
+msgstr "Đúng"
+
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:
 #. Yes, delete
 #: extracted_strings.json
 msgid "Yes, delete"
+msgstr "Vâng, vui lòng xóa bỏ"
+
+#. [contextualMenu.notifications.yesDelete]
+#. defaultMessage is:
+#. Yes, delete it
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Yes, delete"
+msgid "Yes, delete it"
 msgstr "Vâng, vui lòng xóa bỏ"
 
 #. [pages.dateRangeSelector.yesterday]
@@ -10368,3 +10581,6 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
+
+#~ msgid "Delete"
+#~ msgstr "Xóa"
