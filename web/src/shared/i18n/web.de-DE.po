@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-19T08:14:10.980Z\n"
+"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3717,10 +3717,8 @@ msgstr "HIV/AIDS"
 #. defaultMessage is:
 #. Has Stock
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Days Stock Left"
 msgid "Has Stock"
-msgstr "Tage Restbestand"
+msgstr "Hat Lager"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase]
 #. defaultMessage is:
@@ -10241,10 +10239,8 @@ msgstr "Indikator"
 #. defaultMessage is:
 #. lot number includes "{lotNumber}"
 #: extracted_strings.json
-#, fuzzy
-#| msgid "report name includes \"{reportName}\""
 msgid "lot number includes \"{lotNumber}\""
-msgstr "Der Berichtsname enthält \"{reportName}\"."
+msgstr "Chargennummer enthält “{lotNumber}”"
 
 #. [filter.btnGroup.withDeviceMaintenanceStatus]
 #. defaultMessage is:
