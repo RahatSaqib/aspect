@@ -8,6 +8,7 @@ import map from 'lodash/map'
 import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
 import replace from 'lodash/replace'
+import isNil from 'lodash/isNil'
 import itemsConfig from './config'
 import fetchWrapperForQueries from '../../QueryFetch'
 import AspectPureFormik from '../../Form/PureFormik'
@@ -57,6 +58,7 @@ const ContactDetailsFormFormik = () => {
       'lgaName',
       'userId',
       'username',
+      'userLockedOut',
     ]
     const { setSubmitting, values } = formik
     const { id } = values
@@ -186,7 +188,7 @@ const ContactDetailsFormFormik = () => {
     newValues.phone = replace(values.phone, / /g, '')
     newValues.cell = replace(values.cell, / /g, '')
     map(newValues, (value, key) =>
-      isEmpty(value) || includes(omitValues, key)
+      value === '' || isNil(value) || includes(omitValues, key)
         ? delete newValues[key]
         : false
     )
