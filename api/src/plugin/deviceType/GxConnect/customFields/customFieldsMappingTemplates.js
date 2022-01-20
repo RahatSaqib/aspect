@@ -109,50 +109,7 @@ const baseMapper = aspectFields => {
     },
     'fields[].items[]': {
       key: 'CustomFields.Fields[].InputControlData.options[]',
-      transform: (source, sourceObject, destinationValue) => {
-        /**
-         * - get 1st item with defined array `items`
-         * - get item with same `items` as `source`
-         * - if they differ - exit
-         */
-        const srcFirst = sourceObject.fields.find(({ items }) => !!items)
-        const srcThis = sourceObject.fields.find(({ items }) =>
-          _.isEqual(items, source)
-        )
-        if (srcFirst !== srcThis) {
-          return null
-        }
-
-        /**
-         * Above `if` makes sure we process below code only once
-         */
-        _.forEach(destinationValue, customField => {
-          const { Id, InputControlData: { options } = {} } = customField
-          const src = sourceObject.fields.find(({ id }) => id === Id)
-          if (options) {
-            /**
-             * if `options` defined then corresponding array
-             * `items` is also defined in source - so we may
-             * use same `index` to map entries in both arrays
-             */
-            _.forEach(src.items, (item, index) => {
-              // eslint-disable-next-line no-unused-vars
-              const { key, value, order, ...rest } = item
-              /**
-               * skip above base props (key, value, order)
-               * to append props from `rest`.
-               * Make sure that props from `option` override
-               * props from `rest` - need this to use actual
-               * props mapped above (they are in
-               * `option`) - `text`, `value`, `displayOrder`.
-               */
-              options[index] = { ...rest, ...options[index] }
-            })
-          }
-        })
-
-        return null
-      },
+      transform: transformItemsToOptions,
     },
     'fields[].optionSource': 'CustomFields.Fields[].optionSource',
 
@@ -164,6 +121,52 @@ const baseMapper = aspectFields => {
     },
   }
 }
+
+const transformItemsToOptions = (source, sourceObject, destinationValue) => {
+  /**
+   * - get 1st item with defined array `items`
+   * - get item with same `items` as `source`
+   * - if they differ - exit
+   */
+  const srcFirst = sourceObject.fields.find(({ items }) => !!items)
+  const srcThis = sourceObject.fields.find(({ items }) =>
+    _.isEqual(items, source)
+  )
+  if (srcFirst !== srcThis) {
+    return null
+  }
+
+  /**
+   * Above `if` makes sure we process below code only once
+   */
+  _.forEach(destinationValue, customField => {
+    const { Id, InputControlData: { options } = {} } = customField
+    const src = sourceObject.fields.find(({ id }) => id === Id)
+    if (options) {
+      /**
+       * if `options` defined then corresponding array
+       * `items` is also defined in source - so we may
+       * use same `index` to map entries in both arrays
+       */
+      _.forEach(src.items, (item, index) => {
+        // eslint-disable-next-line no-unused-vars
+        const { key, value, order, ...rest } = item
+        /**
+         * skip above base props (key, value, order)
+         * to append props from `rest`.
+         * Make sure that props from `option` override
+         * props from `rest` - need this to use actual
+         * props mapped above (they are in
+         * `option`) - `text`, `value`, `displayOrder`.
+         */
+        options[index] = { ...rest, ...options[index] }
+      })
+    }
+  })
+
+  return null
+}
+
 const propertyToNumber = sourceValue => {
   return _.isArray(sourceValue) && _.isNumber(sourceValue[0])
     ? sourceValue[0]
