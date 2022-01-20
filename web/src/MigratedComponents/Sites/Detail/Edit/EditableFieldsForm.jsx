@@ -107,7 +107,7 @@ export const EditableFieldsForm = ({
         <Field
           className={cssClasses('container__field')}
           name="externalId"
-          label={labels.facilityCode}
+          label={labels.externalId}
           component={renderTextField}
         />
       </div>
