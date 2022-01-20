@@ -5,6 +5,7 @@ const {
 const aspectFields = require('./customFieldsForm.json')
 const mappingResult = require('./mappingResult.json')
 const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
+const cascadeFieldsOutputWithArray = require('./cascadeFieldsOutputWithArray.json')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
 const validate = require('../../../jsonSchemas/validate')
@@ -196,7 +197,7 @@ describe('Custom field mapper', () => {
           items: [
             {
               key: 'Punjab',
-              text: 'Punjab',
+              value: 'Punjab',
               order: 0,
             },
             {
@@ -506,5 +507,107 @@ describe('Custom field mapper', () => {
   it('should validate the GxConnect form to have the field CustomFields', () => {
     const form = {}
     assert.isFalse(validate(gxConnectSchema, form))
+  })
+
+  it('should render field with extra prop of Array in items', () => {
+    const listCustomFields = {
+      fields: [
+        {
+          id: 117,
+          name: 'ReferringHealthFacilityProvince',
+          title: 'Referring Health Facility Province',
+          i18nKey: 'outcomei18nKey',
+          fieldType: 'text',
+          order: 40,
+          controlType: 'autoComplete',
+          required: true,
+          typeOfOptionSource: 'fixedList',
+          items: [
+            {
+              key: 'Punjab',
+              value: 'Punjab',
+              order: 0,
+            },
+            {
+              key: 'Sindh',
+              value: 'Sindh',
+              order: 1,
+            },
+            {
+              key: 'Balochistan',
+              value: 'Balochistan',
+              order: 3,
+            },
+            {
+              key: 'Khyber Pakhtunkhwa',
+              value: 'Khyber Pakhtunkhwa',
+              order: 4,
+            },
+            {
+              key: 'FATA',
+              value: 'FATA',
+              order: 5,
+            },
+            {
+              key: 'Azad Jammu & Kahmir',
+              value: 'Azad Jammu & Kahmir',
+              order: 6,
+            },
+            {
+              key: 'Gilgit Baltistan',
+              value: 'Gilgit Baltistan',
+              order: 7,
+            },
+            {
+              key: 'Islamabad & CT',
+              value: 'Islamabad & CT',
+              order: 8,
+            },
+          ],
+        },
+        {
+          id: 118,
+          name: 'ReferringHealthFacilityDistrict',
+          title: 'Referring Health Facility District',
+          i18nKey: 'outcomei18nKey',
+          fieldType: 'text',
+          order: 45,
+          controlType: 'autoComplete',
+          required: false,
+          typeOfOptionSource: 'fixedList',
+          filters: [
+            {
+              propToCompare: 'ReferringHealthFacilityProvince',
+              fieldToCompare: 'state',
+              operator: 'in',
+            },
+          ],
+          items: [
+            {
+              key: 'Attock',
+              value: 'Attock',
+              order: 0,
+              state: ['Punjab', 'Sindh'],
+            },
+            {
+              key: 'Bahawalnagar',
+              value: 'Bahawalnagar',
+              order: 1,
+              state: ['Punjab', 'FATA'],
+            },
+            {
+              key: 'Bahawalpur',
+              value: 'Bahawalpur',
+              order: 2,
+              state: ['Balochistan', 'KP'],
+            },
+          ],
+        },
+      ],
+    }
+    assert.isTrue(validate(schema, listCustomFields))
+
+    const mappingOutput = mapGxConnectCustomFields(listCustomFields)
+    assert.deepEqual(mappingOutput, cascadeFieldsOutputWithArray)
   })
 })
