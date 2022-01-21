@@ -264,74 +264,76 @@ async function createNotifications(knex, action, context) {
     sendToClinician,
     sendToPatient,
   } = filterCondition || {}
-  const [firstPolicy] = policies
-  if (sendToClinician || sendToPatient) {
-    const nonPersonsToNotify = _.filter(
-      [
-        {
-          notify: sendToPatient,
-          phone: firstPolicy.patientPhone,
-          email: firstPolicy.patientEmail,
-        },
-        {
-          notify: sendToClinician,
-          phone: firstPolicy.clinicianPhone,
-          to: firstPolicy.clinicianEmail,
-        },
-      ],
-      elem => elem.notify
-    )
-    _.each(nonPersonsToNotify, personToSend => {
-      const policy = {
-        policy: _.omit(firstPolicy, ['jobFunctionId']),
-        now,
-      }
-      createNotificationIfNotCreatedAlready(
-        action,
-        policy,
-        {
-          messageContext: context,
-          knex,
-        },
-        personToSend
+  if (policies) {
+    const [firstPolicy] = policies
+    if (sendToClinician || sendToPatient) {
+      const nonPersonsToNotify = _.filter(
+        [
+          {
+            notify: sendToPatient,
+            phone: firstPolicy.patientPhone,
+            email: firstPolicy.patientEmail,
+          },
+          {
+            notify: sendToClinician,
+            phone: firstPolicy.clinicianPhone,
+            to: firstPolicy.clinicianEmail,
+          },
+        ],
+        elem => elem.notify
       )
+      _.each(nonPersonsToNotify, personToSend => {
+        const policy = {
+          policy: _.omit(firstPolicy, ['jobFunctionId']),
+          now,
+        }
+        createNotificationIfNotCreatedAlready(
+          action,
+          policy,
+          {
+            messageContext: context,
+            knex,
+          },
+          personToSend
+        )
+      })
+    }
+
+    await Promise.each(policies, async policy => {
+      if (
+        _.isNil(policy.jobFunctionId) &&
+        _.isEmpty(jobFunctions) &&
+        _.isEmpty(persons)
+      ) {
+        await createNotificationIfNotCreatedAlready(
+          action,
+          { policy, now },
+          { messageContext: context, knex }
+        )
+      } else {
+        if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
+          if (policy.jobFunctionId !== jobFunctionId) {
+            ;({ jobFunctionId, level: jobFunctionLevel } = policy)
+          } else if (policy.level !== jobFunctionLevel) {
+            // This is a lower level for this particular job function
+            // continue until we get to end of list or new job function
+            /* eslint-disable no-continue */
+            return Promise.resolve()
+          }
+        }
+
+        const tags = await getTagsByPolicy(knex, policy)
+        const people = await getPeopleToNotify(
+          knex,
+          policy,
+          tags,
+          jobFunctions,
+          persons
+        )
+        await sendNotificationsToPeople(knex, context, people, policy, action)
+      }
     })
   }
-
-  await Promise.each(policies, async policy => {
-    if (
-      _.isNil(policy.jobFunctionId) &&
-      _.isEmpty(jobFunctions) &&
-      _.isEmpty(persons)
-    ) {
-      await createNotificationIfNotCreatedAlready(
-        action,
-        { policy, now },
-        { messageContext: context, knex }
-      )
-    } else {
-      if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
-        if (policy.jobFunctionId !== jobFunctionId) {
-          ;({ jobFunctionId, level: jobFunctionLevel } = policy)
-        } else if (policy.level !== jobFunctionLevel) {
-          // This is a lower level for this particular job function
-          // continue until we get to end of list or new job function
-          /* eslint-disable no-continue */
-          return Promise.resolve()
-        }
-      }
-
-      const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(
-        knex,
-        policy,
-        tags,
-        jobFunctions,
-        persons
-      )
-      await sendNotificationsToPeople(knex, context, people, policy, action)
-    }
-  })
 }
 
 async function getTagsByPolicy(txKnex, policy) {

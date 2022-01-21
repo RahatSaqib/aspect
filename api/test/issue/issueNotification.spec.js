@@ -81,7 +81,7 @@ const beforeEachForPerson = async (
   issueToDeleteId.push(issueId)
   return person
 }
-describe('Issue Notification', () => {
+describe.only('Issue Notification', () => {
   after(async () => {
     await knex('Issue').whereIn('id', issueToDeleteId).delete()
   })

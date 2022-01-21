@@ -31,7 +31,7 @@ const {
   baseFilterCondition,
 } = require('./fitlerCondtions')
 
-describe('Issue based Notifications triggers', () => {
+describe.only('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const resultSample = await knex('Result').first()
@@ -90,7 +90,7 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe('Result Notifications triggers', () => {
+describe.only('Result Notifications triggers', () => {
   let results = []
   let ntId
   let messageContext

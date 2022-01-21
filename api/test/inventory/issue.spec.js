@@ -41,7 +41,7 @@ const {
 const USER_LU_NAME_PREFIX = 'myanmar_lab'
 const USER_RO_NAME_PREFIX = 'myanmar_ro'
 
-describe('Inventory Stock Issues Endpoint', () => {
+describe.only('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
 
@@ -107,7 +107,9 @@ describe('Inventory Stock Issues Endpoint', () => {
       const sampleIds = await knex('Result')
         .whereIn('id', resultIds)
         .pluck('sampleId')
-      await knex('Consumable').where({ name: 'Test Cartridge' })
+      await knex('Consumable')
+        .where({ externalId: 'DaktariCartridge' })
+        .delete()
       await knex('Result').whereIn('id', resultIds).delete()
       await knex('Sample').whereIn('id', sampleIds).delete()
       await knex('Device').whereIn('id', deviceIds).delete()
