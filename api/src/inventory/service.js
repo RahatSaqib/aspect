@@ -1156,10 +1156,12 @@ async function findInventoryItem(
     matchingInventoryItemsQuery.whereNull('ii.expiresOn')
   }
 
-  if (lotNumber) {
+  if (!_.isEmpty(lotNumber)) {
     matchingInventoryItemsQuery.where('ii.lotNumber', lotNumber)
   } else {
-    matchingInventoryItemsQuery.whereNull('ii.lotNumber')
+    matchingInventoryItemsQuery.where(builder =>
+      builder.whereNull('ii.lotNumber').orWhere('ii.lotNumber', '')
+    )
   }
 
   if (inTransitFromSiteId) {
@@ -1170,6 +1172,10 @@ async function findInventoryItem(
   } else {
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
+  console.log(
+    matchingInventoryItemsQuery.select(INVENTORY_ITEM_SELECT).toString()
+  )
+
   const matchingInventoryItems = await matchingInventoryItemsQuery.select(
     INVENTORY_ITEM_SELECT
   )
@@ -1300,7 +1306,7 @@ async function removeInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-
+  console.log('decrease item')
   const inventoryItemId = await decreaseInventory({
     siteId: fromSite.id,
     consumableId,
@@ -1575,6 +1581,7 @@ async function changeInventoryQuantity({
     lotNumber
   )
   let inventoryItemId = -1
+  console.log('inventoryItem', inventoryItem)
   await transact(async knex => {
     inventoryItemId = await upsertInventoryItem({
       knex,
@@ -1774,6 +1781,7 @@ async function upsertInventoryItem({
   inTransitFromSiteId,
 }) {
   let inventoryItemId = -1
+  console.log('inventoryItem', inventoryItem)
   if (_.isEmpty(inventoryItem)) {
     ;[inventoryItemId] = await insertInventoryItem(knex, {
       consumableId,
@@ -1825,6 +1833,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   if (typeof inventoryItemValues.updatedBy !== 'undefined') {
     updateValues.updatedBy = inventoryItemValues.updatedBy
   }
+  console.log('updateValues', updateValues)
   await knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
 }
 
