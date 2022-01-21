@@ -35,19 +35,21 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
     phoneNumber: phone,
     countryAbbreviation: countryCode,
   } = await createSmsMessageFromTemplate(knex, smsMessageId)
-  const messageStatusId = await messageStatusToId('Pending')
-  const phoneNumber = normalizePhoneNumber(phone, countryCode)
+  if (!_.isEmpty(phone)) {
+    const messageStatusId = await messageStatusToId('Pending')
+    const phoneNumber = normalizePhoneNumber(phone, countryCode)
 
-  // store generated sms message into the same record and set messageStatusId
-  await knex('SmsMessage').where({ id: smsMessageId }).update({
-    message,
-    phoneNumber,
-    messageStatusId,
-    updatedOn: new Date(),
-  })
+    // store generated sms message into the same record and set messageStatusId
+    await knex('SmsMessage').where({ id: smsMessageId }).update({
+      message,
+      phoneNumber,
+      messageStatusId,
+      updatedOn: new Date(),
+    })
 
-  // dispatch SMS_MESSAGE_READY_FOR_SENDING to MQ
-  context.smsMessageReadyForSending(smsMessageId)
+    // dispatch SMS_MESSAGE_READY_FOR_SENDING to MQ
+    context.smsMessageReadyForSending(smsMessageId)
+  }
 }
 
 // -----------------------------

@@ -20,7 +20,6 @@ const {
   resultCategoryToId,
   deviceApprovalToId,
   issueStatusToId,
-  issueTypeToId,
 } = require('../../src/shared/dictionary')
 
 const { assert } = chai
@@ -31,7 +30,7 @@ const {
   baseFilterCondition,
 } = require('./fitlerCondtions')
 
-describe.only('Issue based Notifications triggers', () => {
+describe('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const resultSample = await knex('Result').first()
@@ -42,11 +41,10 @@ describe.only('Issue based Notifications triggers', () => {
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'issueBased'
     )
+    const issueTypes = await knex('IssueType').pluck('id')
     const createdOn = new Date()
     const updatedOn = new Date()
-    const issueTypeId = await issueTypeToId(
-      'SignalLossDetectedInAmplificationCurveModule'
-    )
+    const issueTypeId = _.sample(issueTypes)
     await knex('NotificationType').insert({
       partnerId: resultSample.partnerId,
       name: 'Random issue based notification',
@@ -63,6 +61,7 @@ describe.only('Issue based Notifications triggers', () => {
       partnerId: resultSample.partnerId,
       deviceId: resultSample.deviceId,
       siteId: resultSample.siteId,
+      geographyId: resultSample.geographyId,
       issueStatusId,
       issueTypeId,
       createdOn,
@@ -90,7 +89,7 @@ describe.only('Issue based Notifications triggers', () => {
   })
 })
 
-describe.only('Result Notifications triggers', () => {
+describe('Result Notifications triggers', () => {
   let results = []
   let ntId
   let messageContext

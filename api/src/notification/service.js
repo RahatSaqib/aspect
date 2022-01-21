@@ -266,7 +266,7 @@ async function createNotifications(knex, action, context) {
   } = filterCondition || {}
   if (policies) {
     const [firstPolicy] = policies
-    if (sendToClinician || sendToPatient) {
+    if (firstPolicy && (sendToClinician || sendToPatient)) {
       const nonPersonsToNotify = _.filter(
         [
           {
@@ -298,7 +298,6 @@ async function createNotifications(knex, action, context) {
         )
       })
     }
-
     await Promise.each(policies, async policy => {
       if (
         _.isNil(policy.jobFunctionId) &&
@@ -555,7 +554,13 @@ async function shouldNotify(
   return txKnex(table)
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'i.siteId', 's.id')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .modify(builder => {
+      if (!_.isNil(issueId)) {
+        builder.leftJoin('Geography as g', 'i.geographyId', 'g.id')
+      } else {
+        builder.leftJoin('Geography as g', 'd.geographyId', 'g.id')
+      }
+    })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
     .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
@@ -616,6 +621,7 @@ async function createNotificationIfNotCreatedAlready(
         notification.alertMessageId = alertMessageId
         context.alertMessageCreated(alertMessageId)
       }
+
       if (policy.emailTemplateId != null) {
         const [emailMessageId] = await knex('EmailMessage').insert({
           emailTemplateId: policy.emailTemplateId,
