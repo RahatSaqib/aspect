@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -551,12 +551,12 @@ msgstr "All states"
 #. defaultMessage is:
 #. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "All test results in the system. One row per result."
 msgid ""
 "All test results in the system (up to 50.000 records). One row per result "
 "with all the fields needed."
-msgstr "All test results in the system. One row per result."
+msgstr ""
+"All test results in the system (up to 50.000 records). One row per result "
+"with all the fields needed."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -2359,10 +2359,8 @@ msgstr "Devices"
 #. defaultMessage is:
 #. Devices Active
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Activity"
 msgid "Devices Active"
-msgstr "Device Activity"
+msgstr "Devices Active"
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -2389,10 +2387,8 @@ msgstr "Devices with Unused Modules"
 #. defaultMessage is:
 #. Dial Code
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zip Code"
 msgid "Dial Code"
-msgstr "Zip Code"
+msgstr "Dial Code"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -5932,10 +5928,8 @@ msgstr ""
 #. defaultMessage is:
 #. Performance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests Performed"
 msgid "Performance"
-msgstr "Tests Performed"
+msgstr "Performance"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:

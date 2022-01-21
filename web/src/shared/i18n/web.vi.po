@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -550,12 +550,12 @@ msgstr "Tất cả các trạng thái"
 #. defaultMessage is:
 #. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "All test results in the system. One row per result."
 msgid ""
 "All test results in the system (up to 50.000 records). One row per result "
 "with all the fields needed."
-msgstr "Tất cả các kết quả kiểm tra trong hệ thống. Một hàng cho mỗi kết quả."
+msgstr ""
+"Tất cả các kết quả kiểm tra trong hệ thống (lên đến 50.000 bản ghi). Một "
+"hàng cho mỗi kết quả với tất cả các trường cần thiết."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -686,10 +686,8 @@ msgstr "Tán thành"
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "notification name includes \"{notificationName}\""
 msgid "Are you sure to delete notification {notificationName}?"
-msgstr "tên thông báo bao gồm \"{notificationName}\""
+msgstr "Bạn có chắc chắn muốn xóa thông báo {notificationName} không?"
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -1218,10 +1216,8 @@ msgstr "Danh mục"
 #. defaultMessage is:
 #. Category 1
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Category 2"
 msgid "Category 1"
-msgstr "Hạng mục 2"
+msgstr "Loại 1"
 
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
@@ -2393,10 +2389,8 @@ msgstr "Thiết bị có mô-đun không sử dụng"
 #. defaultMessage is:
 #. Dial Code
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zip Code"
 msgid "Dial Code"
-msgstr "Mã bưu chính"
+msgstr "Quay số mã"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2623,28 +2617,22 @@ msgstr "Chủ đề email là bắt buộc"
 #. defaultMessage is:
 #. Email was sent to:
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Email Sent"
 msgid "Email was sent to:"
-msgstr "Email đã gửi"
+msgstr "Email đã được gửi đến:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumable"
 msgid "Enable"
-msgstr "Có thể tiêu thụ"
+msgstr "Cho phép"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
 #. Enable this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Edit Notification"
 msgid "Enable this notification"
-msgstr "Chỉnh sửa thông báo"
+msgstr "Bật thông báo này"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2727,10 +2715,8 @@ msgstr "Nhập mã lỗi ..."
 #. defaultMessage is:
 #. Enter lot number...
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Enter report name..."
 msgid "Enter lot number..."
-msgstr "Nhập tên báo cáo ..."
+msgstr "Nhập số lô …"
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -2958,10 +2944,8 @@ msgstr "Tỷ lệ lỗi"
 #. defaultMessage is:
 #. Error Rates Over Time
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Rate"
 msgid "Error Rates Over Time"
-msgstr "Tỷ lệ lỗi"
+msgstr "Tỷ lệ lỗi theo thời gian"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -3030,10 +3014,8 @@ msgstr "Hết hạn vào"
 #. defaultMessage is:
 #. Expires {date}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Expiry Date"
 msgid "Expires {date}"
-msgstr "Ngày hết hạn"
+msgstr "Hết hạn vào {date}"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -5253,10 +5235,8 @@ msgstr "Tiếp"
 #. defaultMessage is:
 #. No
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Now"
 msgid "No"
-msgstr "Bây giờ"
+msgstr "Không"
 
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
@@ -6618,10 +6598,8 @@ msgstr "Nhận được khoảng không quảng cáo không thành công"
 #. defaultMessage is:
 #. Recipients
 #: extracted_strings.json
-#, fuzzy
-#| msgid "events"
 msgid "Recipients"
-msgstr "sự kiện"
+msgstr "Người nhận"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -8360,10 +8338,8 @@ msgstr "Chi tiết kỹ thuật"
 #. defaultMessage is:
 #. Technical information
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Technical Details"
 msgid "Technical information"
-msgstr "Chi tiết kỹ thuật"
+msgstr "Thông tin kĩ thuật"
 
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
@@ -9528,10 +9504,8 @@ msgstr "Tỷ lệ sử dụng"
 #. defaultMessage is:
 #. Utilization Rate Over Time
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Utilization Rate"
 msgid "Utilization Rate Over Time"
-msgstr "Tỷ lệ sử dụng"
+msgstr "Tỷ lệ sử dụng theo thời gian"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -9831,10 +9805,8 @@ msgstr "Vâng, vui lòng xóa bỏ"
 #. defaultMessage is:
 #. Yes, delete it
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Yes, delete"
 msgid "Yes, delete it"
-msgstr "Vâng, vui lòng xóa bỏ"
+msgstr "Có, xóa nó đi"
 
 #. [pages.dateRangeSelector.yesterday]
 #. defaultMessage is:

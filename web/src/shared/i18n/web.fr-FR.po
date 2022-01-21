@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -478,10 +478,8 @@ msgstr "Tous les résultats du VIH où le virus n'est pas supprimé"
 #. defaultMessage is:
 #. All Results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Results"
 msgid "All Results"
-msgstr "Résultats"
+msgstr "Tous les résultats"
 
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
@@ -554,12 +552,12 @@ msgstr "Tous les États"
 #. defaultMessage is:
 #. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "All test results in the system. One row per result."
 msgid ""
 "All test results in the system (up to 50.000 records). One row per result "
 "with all the fields needed."
-msgstr "Tous les résultats des tests dans le système. Une ligne par résultat."
+msgstr ""
+"Tous les résultats des tests dans le système (jusqu’à 50 000 "
+"enregistrements). Une ligne par résultat avec tous les champs nécessaires."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -702,10 +700,8 @@ msgstr "Approuvé"
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "notification name includes \"{notificationName}\""
 msgid "Are you sure to delete notification {notificationName}?"
-msgstr "le nom de la notification comprend \"{notificationName}\""
+msgstr "Voulez-vous vraiment supprimer la notification {notificationName} ?"
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -1233,10 +1229,8 @@ msgstr "Catégorie"
 #. defaultMessage is:
 #. Category 1
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Category 2"
 msgid "Category 1"
-msgstr "Catégorie 2"
+msgstr "Catégorie 1"
 
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
@@ -1417,10 +1411,8 @@ msgstr "Créé sur:"
 #. defaultMessage is:
 #. CollectedOn date is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Start date is required"
 msgid "CollectedOn date is required"
-msgstr "La date de début est requise"
+msgstr "La date CollectedOn est requise"
 
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
@@ -2383,10 +2375,8 @@ msgstr "Dispositifs"
 #. defaultMessage is:
 #. Devices Active
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Activity"
 msgid "Devices Active"
-msgstr "Type d'appareil"
+msgstr "Appareils actifs"
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -2413,10 +2403,8 @@ msgstr "Appareils avec modules inutilisés"
 #. defaultMessage is:
 #. Dial Code
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zip Code"
 msgid "Dial Code"
-msgstr "Code postal"
+msgstr "Composez le code"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2644,28 +2632,22 @@ msgstr "L'objet de l'e-mail est requis"
 #. defaultMessage is:
 #. Email was sent to:
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Email Sent"
 msgid "Email was sent to:"
-msgstr "Mail envoyé"
+msgstr "L’e-mail a été envoyé à :"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumable"
 msgid "Enable"
-msgstr "Consommable"
+msgstr "Activer"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
 #. Enable this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Edit Notification"
 msgid "Enable this notification"
-msgstr "Modifier la notification"
+msgstr "Activer cette notification"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2678,10 +2660,8 @@ msgstr "Date de fin"
 #. defaultMessage is:
 #. End date is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Start date is required"
 msgid "End date is required"
-msgstr "La date de début est requise"
+msgstr "La date de fin est requise"
 
 #. [pages.Result.endedOnCannotBeBeforeStartedOn]
 #. defaultMessage is:
@@ -2750,10 +2730,8 @@ msgstr "Entrez le code d'erreur..."
 #. defaultMessage is:
 #. Enter lot number...
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Enter report name..."
 msgid "Enter lot number..."
-msgstr "Entrez le nom du rapport..."
+msgstr "Entrez le numéro de lot…"
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -5275,10 +5253,8 @@ msgstr "Suivant"
 #. defaultMessage is:
 #. No
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Now"
 msgid "No"
-msgstr "Maintenant"
+msgstr "Non"
 
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
@@ -5975,10 +5951,8 @@ msgstr ""
 #. defaultMessage is:
 #. Performance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests Performed"
 msgid "Performance"
-msgstr "Tests effectués"
+msgstr "Performance"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -7583,10 +7557,8 @@ msgstr "Sélectionnez {entity}..."
 #. defaultMessage is:
 #. Selectable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select Job"
 msgid "Selectable"
-msgstr "Sélectionnez une emploi"
+msgstr "Sélectionnable"
 
 #. [legends.Unknown.senaiteSmearMicroscopy]
 #. defaultMessage is:
@@ -7768,12 +7740,12 @@ msgstr "Nom court"
 #. defaultMessage is:
 #. Should select at least one job function or individiual person for this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Should select at least one job function for this notification"
 msgid ""
 "Should select at least one job function or individiual person for this "
 "notification"
-msgstr "Doit sélectionner au moins une fonction pour cette notification"
+msgstr ""
+"Devrait sélectionner au moins une fonction ou une personne individuelle pour "
+"cette notification"
 
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
@@ -9873,10 +9845,8 @@ msgstr "Oui, supprimer"
 #. defaultMessage is:
 #. Yes, delete it
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Yes, delete"
 msgid "Yes, delete it"
-msgstr "Oui, supprimer"
+msgstr "Oui, supprimez-le"
 
 #. [pages.dateRangeSelector.yesterday]
 #. defaultMessage is:
@@ -10084,10 +10054,8 @@ msgstr "Code postal"
 #. defaultMessage is:
 #. Zone
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zones"
 msgid "Zone"
-msgstr "Zones"
+msgstr "Zone"
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:
@@ -10205,10 +10173,8 @@ msgstr "un événement"
 #. defaultMessage is:
 #. events
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Reagents"
 msgid "events"
-msgstr "Réactifs"
+msgstr "événements"
 
 #. [pages.OperationalData.expiringTitle]
 #. defaultMessage is:
@@ -10641,10 +10607,8 @@ msgstr "{itemCount, pluriel, un {# Nom} autre {# Noms} }"
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
-#, fuzzy
-#| msgid "{itemCount, plural, one {# Name} other {# Names} }"
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, pluriel, un {# Nom} autre {# Noms} }"
+msgstr "{itemCount, plural, one {# Personne} other {# Personnes} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:

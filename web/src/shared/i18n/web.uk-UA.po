@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -477,10 +477,8 @@ msgstr "Усі результати ВІЛ виникають там, де ві�
 #. defaultMessage is:
 #. All Results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Results"
 msgid "All Results"
-msgstr "Результати"
+msgstr "Усі результати"
 
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
@@ -553,12 +551,12 @@ msgstr "Всі штати"
 #. defaultMessage is:
 #. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "All test results in the system. One row per result."
 msgid ""
 "All test results in the system (up to 50.000 records). One row per result "
 "with all the fields needed."
-msgstr "Всі результати тестування в системі. Один рядок на результат."
+msgstr ""
+"Усі результати тестування в системі (до 50 000 записів). Один рядок на "
+"результат з усіма необхідними полями."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -689,10 +687,8 @@ msgstr "Затверджений"
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "notification name includes \"{notificationName}\""
 msgid "Are you sure to delete notification {notificationName}?"
-msgstr "назва сповіщення включає \"{notificationName}\""
+msgstr "Ви впевнені, що видалити сповіщення {notificationName}?"
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -1218,10 +1214,8 @@ msgstr "Категорія"
 #. defaultMessage is:
 #. Category 1
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Category 2"
 msgid "Category 1"
-msgstr "Категорія 2"
+msgstr "Категорія 1"
 
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
@@ -1402,10 +1396,8 @@ msgstr "Зібрано:"
 #. defaultMessage is:
 #. CollectedOn date is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Start date is required"
 msgid "CollectedOn date is required"
-msgstr "Необхідна дата початку"
+msgstr "Дата CollectedOn обов’язкова"
 
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
@@ -2367,10 +2359,8 @@ msgstr "Пристрої"
 #. defaultMessage is:
 #. Devices Active
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Activity"
 msgid "Devices Active"
-msgstr "Загальний показник активності"
+msgstr "Активні пристрої"
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -2397,10 +2387,8 @@ msgstr "Пристрої з невикористовуваними модуля�
 #. defaultMessage is:
 #. Dial Code
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zip Code"
 msgid "Dial Code"
-msgstr "ЗІП код"
+msgstr "Код набору номера"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2627,28 +2615,22 @@ msgstr "Тема електронного листа обов’язкова"
 #. defaultMessage is:
 #. Email was sent to:
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Email Sent"
 msgid "Email was sent to:"
-msgstr "Листа відправлено"
+msgstr "Електронний лист надіслано на адресу:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumable"
 msgid "Enable"
-msgstr "Витратні"
+msgstr "Увімкнути"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
 #. Enable this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Edit Notification"
 msgid "Enable this notification"
-msgstr "Редагувати сповіщення"
+msgstr "Увімкніть це сповіщення"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2661,10 +2643,8 @@ msgstr "Кінцева дата"
 #. defaultMessage is:
 #. End date is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Start date is required"
 msgid "End date is required"
-msgstr "Необхідна дата початку"
+msgstr "Необхідна дата завершення"
 
 #. [pages.Result.endedOnCannotBeBeforeStartedOn]
 #. defaultMessage is:
@@ -2733,10 +2713,8 @@ msgstr "Введіть код помилки ..."
 #. defaultMessage is:
 #. Enter lot number...
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Enter report name..."
 msgid "Enter lot number..."
-msgstr "Введіть назву звіту ..."
+msgstr "Введіть номер партії…"
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -5255,10 +5233,8 @@ msgstr "Далі"
 #. defaultMessage is:
 #. No
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Now"
 msgid "No"
-msgstr "Зараз"
+msgstr "Немає"
 
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
@@ -5955,10 +5931,8 @@ msgstr ""
 #. defaultMessage is:
 #. Performance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests Performed"
 msgid "Performance"
-msgstr "Виконані тести"
+msgstr "Продуктивність"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -7560,10 +7534,8 @@ msgstr "Виберіть {entity} ..."
 #. defaultMessage is:
 #. Selectable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select Job"
 msgid "Selectable"
-msgstr "Виберіть Job"
+msgstr "Можливий вибір"
 
 #. [legends.Unknown.senaiteSmearMicroscopy]
 #. defaultMessage is:
@@ -7745,12 +7717,11 @@ msgstr "Коротке ім'я"
 #. defaultMessage is:
 #. Should select at least one job function or individiual person for this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Should select at least one job function for this notification"
 msgid ""
 "Should select at least one job function or individiual person for this "
 "notification"
-msgstr "Для цього сповіщення слід вибрати принаймні одну роботу"
+msgstr ""
+"Для цього сповіщення слід вибрати принаймні одну посаду або окрему особу"
 
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
@@ -9835,10 +9806,8 @@ msgstr "Так, видалити"
 #. defaultMessage is:
 #. Yes, delete it
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Yes, delete"
 msgid "Yes, delete it"
-msgstr "Так, видалити"
+msgstr "Так, видаліть"
 
 #. [pages.dateRangeSelector.yesterday]
 #. defaultMessage is:
@@ -10039,10 +10008,8 @@ msgstr "ЗІП код"
 #. defaultMessage is:
 #. Zone
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zones"
 msgid "Zone"
-msgstr "Зон"
+msgstr "Зона"
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:
@@ -10591,10 +10558,8 @@ msgstr "{itemCount, plural, one {# Name} other {# Names} }"
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
-#, fuzzy
-#| msgid "{itemCount, plural, one {# Name} other {# Names} }"
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# Name} other {# Names} }"
+msgstr "{itemCount, plural, one {# Особа} other {# Особи} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:

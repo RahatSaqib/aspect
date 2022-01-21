@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:20:01.057Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -476,10 +476,8 @@ msgstr "Ҳама натиҷаҳое ба вуҷуд меоянд, ки виру�
 #. defaultMessage is:
 #. All Results
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Results"
 msgid "All Results"
-msgstr "Натиҷаҳо"
+msgstr "Ҳама натиҷаҳо"
 
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
@@ -552,12 +550,12 @@ msgstr "Хамаи штатхо"
 #. defaultMessage is:
 #. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "All test results in the system. One row per result."
 msgid ""
 "All test results in the system (up to 50.000 records). One row per result "
 "with all the fields needed."
-msgstr "Ҳама натиҷаҳои санҷиш дар система. Як сатр барои як натиҷа."
+msgstr ""
+"Ҳама натиҷаҳои санҷиш дар система (то 50.000 сабт). Як сатр барои як натиҷа "
+"бо тамоми майдонҳои зарурӣ."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -688,10 +686,8 @@ msgstr "тасдик карда шуд"
 #. defaultMessage is:
 #. Are you sure to delete notification {notificationName}?
 #: extracted_strings.json
-#, fuzzy
-#| msgid "notification name includes \"{notificationName}\""
 msgid "Are you sure to delete notification {notificationName}?"
-msgstr "номи огоҳинома дорои \"{notificationName}\""
+msgstr "Оё мутмаин ҳастед, ки огоҳиномаи {notificationName}-ро нест кунед?"
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -1218,10 +1214,8 @@ msgstr "Категория"
 #. defaultMessage is:
 #. Category 1
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Category 2"
 msgid "Category 1"
-msgstr "Категорияи 2"
+msgstr "Категорияи 1"
 
 #. [pages.ResultList.resultCategory1Name]
 #. defaultMessage is:
@@ -2366,10 +2360,8 @@ msgstr "Дастгоҳҳо"
 #. defaultMessage is:
 #. Devices Active
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Activity"
 msgid "Devices Active"
-msgstr "Фаъолияти дастгоҳ"
+msgstr "Дастгоҳҳо фаъол"
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
@@ -2396,10 +2388,8 @@ msgstr "Дастгоҳҳо бо модулҳои истифоданашуда"
 #. defaultMessage is:
 #. Dial Code
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Zip Code"
 msgid "Dial Code"
-msgstr "Индекси почта"
+msgstr "Рақами рақам"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2627,28 +2617,22 @@ msgstr "Мавзӯи почтаи электронӣ лозим аст"
 #. defaultMessage is:
 #. Email was sent to:
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Email Sent"
 msgid "Email was sent to:"
-msgstr "Почтаи электронӣ фиристода шуд"
+msgstr "Почтаи электронӣ ба суроғаи:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Consumable"
 msgid "Enable"
-msgstr "Истеъмолшаванда"
+msgstr "Фаъол кардан"
 
 #. [pages.NotificationDetail.notificationTypeEnable]
 #. defaultMessage is:
 #. Enable this notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Edit Notification"
 msgid "Enable this notification"
-msgstr "Таҳрири огоҳинома"
+msgstr "Ин огоҳиномаро фаъол созед"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2731,10 +2715,8 @@ msgstr "Рамзи хаторо ворид кунед..."
 #. defaultMessage is:
 #. Enter lot number...
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Enter report name..."
 msgid "Enter lot number..."
-msgstr "Номи гузоришро ворид кунед..."
+msgstr "Рақами лотро ворид кунед…"
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -2962,10 +2944,8 @@ msgstr "Сатҳи хатогиҳо"
 #. defaultMessage is:
 #. Error Rates Over Time
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Rate"
 msgid "Error Rates Over Time"
-msgstr "Сатҳи хатогиҳо"
+msgstr "Сатҳи хатогиҳо бо мурури замон"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -3034,10 +3014,8 @@ msgstr "Ба охир мерасад"
 #. defaultMessage is:
 #. Expires {date}
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Expiry Date"
 msgid "Expires {date}"
-msgstr "Санаи поёни бақо"
+msgstr "Мӯҳлати анҷоми {date}"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -5258,10 +5236,8 @@ msgstr "Баъдӣ"
 #. defaultMessage is:
 #. No
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Now"
 msgid "No"
-msgstr "Ҳозир"
+msgstr "Не"
 
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
@@ -5958,10 +5934,8 @@ msgstr ""
 #. defaultMessage is:
 #. Performance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests Performed"
 msgid "Performance"
-msgstr "Санҷишҳо гузаронида шуданд"
+msgstr "Намоиш"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -6628,10 +6602,8 @@ msgstr "Қабули инвентаризатсия ноком шуд"
 #. defaultMessage is:
 #. Recipients
 #: extracted_strings.json
-#, fuzzy
-#| msgid "events"
 msgid "Recipients"
-msgstr "рӯйдодҳо"
+msgstr "Гирандагон"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -8371,10 +8343,8 @@ msgstr "Тафсилоти техникӣ"
 #. defaultMessage is:
 #. Technical information
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Technical Details"
 msgid "Technical information"
-msgstr "Тафсилоти техникӣ"
+msgstr "Маълумоти техникӣ"
 
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
@@ -9554,10 +9524,8 @@ msgstr "Меъёри истифода"
 #. defaultMessage is:
 #. Utilization Rate Over Time
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Utilization Rate"
 msgid "Utilization Rate Over Time"
-msgstr "Меъёри истифода"
+msgstr "Меъёри истифода бо мурури замон"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -9858,8 +9826,6 @@ msgstr "Бале, нест кунед"
 #. defaultMessage is:
 #. Yes, delete it
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Yes, delete"
 msgid "Yes, delete it"
 msgstr "Бале, нест кунед"
 
