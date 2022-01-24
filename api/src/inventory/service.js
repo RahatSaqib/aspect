@@ -70,7 +70,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
     field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
   ),
   knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ii.lotNumber) as id"
+    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ii.lotNumber,'-', ii.inTransitFromSiteId) as id"
   ),
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
@@ -494,17 +494,13 @@ function getInventoryLots(request, dataConstraints) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
     .groupBy([
-      knex.raw(`CONCAT(
-      c.id,
-      '-',
-      s.id,
-      '-',
-      'itfs.id'
-    )`),
+      knex.raw(
+        `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ii.lotNumber,'-', ii.inTransitFromSiteId)`
+      ),
       's.name',
       'ii.expiresOn',
       'ii.lotNumber',
-      'itfs.name',
+      'ii.inTransitFromSiteId',
     ])
     .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
@@ -566,6 +562,9 @@ function getInventorySites(constraints, request) {
       'ficr.rate as dailyConsumptionRate',
       knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
+      knex.raw(
+        'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
+      ),
     ])
 }
 
