@@ -5,7 +5,7 @@
       "name": "Repeat Test",
       "i18nKey": "RepeatTesti18nKey",
       "fieldType": "number",
-      "order": 31,
+      "order": 201,
       "title": "Repeat Test",
       "caption": "Repeat Test",
       "gxAlertDbColumn": "RepeatTest",

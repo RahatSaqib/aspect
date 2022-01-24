@@ -30,7 +30,7 @@ const getGxAlertAssayId = {
   assayQS7Covid19: 15,
   assayGXCovid19: 15,
 }
-const map = aspectFields => {
+const baseMapper = aspectFields => {
   return {
     'fields[].id': 'CustomFields.Fields[].Id',
     'fields[].name': 'CustomFields.Fields[].Name',
@@ -75,13 +75,21 @@ const map = aspectFields => {
     'fields[].migrateFromId': 'CustomFields.Fields[].MigrateFromId',
     'fields[].order': 'CustomFields.Fields[].DisplayOrder',
     'fields[].gxAlertDbColumn': 'CustomFields.Fields[].DbColumn',
+    /**
+     * items - base 3 props, mapping from `source` (in form definition JSON)
+     * to `target` (custom field options)
+     * `source`  `target`
+     *  key    ->  value
+     *  value  ->  text
+     *  order  ->  displayOrder
+     */
     'fields[].items[].key':
       'CustomFields.Fields[].InputControlData.options[].value',
     'fields[].items[].value':
       'CustomFields.Fields[].InputControlData.options[].text',
-
     'fields[].items[].order':
       'CustomFields.Fields[].InputControlData.options[].displayOrder',
+
     'fields[].validation[].min': {
       key: 'CustomFields.Fields[].InputControlData.minValue',
       transform: sourceValue => propertyToNumber(sourceValue),
@@ -101,36 +109,7 @@ const map = aspectFields => {
     },
     'fields[].items[]': {
       key: 'CustomFields.Fields[].InputControlData.options[]',
-      transform: (source, sourceObject, destinationValue) => {
-        _.each(destinationValue, customField => {
-          if (
-            _.get(customField, 'InputControlData.filters') &&
-            customField.InputControlData.filters.length > 0
-          ) {
-            const [{ propName }] = customField.InputControlData.filters
-            const { Id } = customField
-            const { options } = _.find(
-              destinationValue,
-              elem => elem.Id === Id
-            ).InputControlData
-            // eslint-disable-next-line no-return-assign
-            _.forEach(
-              options,
-              // eslint-disable-next-line no-return-assign
-              option => {
-                const selectedElem = _.find(
-                  source,
-                  elem => elem.key === option.value
-                )
-                if (selectedElem && selectedElem[propName])
-                  option[propName] = selectedElem[propName]
-              }
-            )
-          }
-        })
-
-        return null
-      },
+      transform: transformItemsToOptions,
     },
     'fields[].optionSource': 'CustomFields.Fields[].optionSource',
 
@@ -142,6 +121,52 @@ const map = aspectFields => {
     },
   }
 }
+
+const transformItemsToOptions = (source, sourceObject, destinationValue) => {
+  /**
+   * - get 1st item with defined array `items`
+   * - get item with same `items` as `source`
+   * - if they differ - exit
+   */
+  const srcFirst = sourceObject.fields.find(({ items }) => !!items)
+  const srcThis = sourceObject.fields.find(({ items }) =>
+    _.isEqual(items, source)
+  )
+  if (srcFirst !== srcThis) {
+    return null
+  }
+
+  /**
+   * Above `if` makes sure we process below code only once
+   */
+  _.forEach(destinationValue, customField => {
+    const { Id, InputControlData: { options } = {} } = customField
+    const src = sourceObject.fields.find(({ id }) => id === Id)
+    if (options) {
+      /**
+       * if `options` defined then corresponding array
+       * `items` is also defined in source - so we may
+       * use same `index` to map entries in both arrays
+       */
+      _.forEach(src.items, (item, index) => {
+        // eslint-disable-next-line no-unused-vars
+        const { key, value, order, ...rest } = item
+        /**
+         * skip above base props (key, value, order)
+         * to append props from `rest`.
+         * Make sure that props from `option` override
+         * props from `rest` - need this to use actual
+         * props mapped above (they are in
+         * `option`) - `text`, `value`, `displayOrder`.
+         */
+        options[index] = { ...rest, ...options[index] }
+      })
+    }
+  })
+
+  return null
+}
+
 const propertyToNumber = sourceValue => {
   return _.isArray(sourceValue) && _.isNumber(sourceValue[0])
     ? sourceValue[0]
@@ -181,9 +206,9 @@ const translateCondition = (sourceValue, aspectFields) => {
 }
 
 const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
-  const maped = objectMapper(aspectFields, mapper || map(aspectFields))
+  const mapped = objectMapper(aspectFields, mapper || baseMapper(aspectFields))
 
-  return maped
+  return mapped
 }
 
 const mapGxConnectCustomFieldsWithDataSources = async (

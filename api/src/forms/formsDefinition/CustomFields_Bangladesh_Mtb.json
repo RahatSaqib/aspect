@@ -6,7 +6,7 @@
       "title": "Patient Name",
       "i18nKey": "PatientNameI18nKey",
       "fieldType": "text",
-      "order": 1,
+      "order": 110,
       "gxAlertDbColumn": "PatientName",
       "caption": "Patient Name",
       "i18nKeyCaption": "PatientNameI18nCaptionKey",
@@ -18,7 +18,7 @@
       "title": "Age",
       "i18nKey": "AgeFieldi18nKey",
       "fieldType": "number",
-      "order": 2,
+      "order": 120,
       "gxAlertDbColumn": "PatientAge",
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
@@ -40,7 +40,7 @@
       "title": "Gender",
       "i18nKey": "GenderI18nKey",
       "fieldType": "number",
-      "order": 3,
+      "order": 130,
       "gxAlertDbColumn": "PatientGender",
       "caption": "Gender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
@@ -65,7 +65,7 @@
       "title": "Address",
       "i18nKey": "AddressI18nKey",
       "fieldType": "text",
-      "order": 10,
+      "order": 140,
       "gxAlertDbColumn": "PatientStreet",
       "caption": "Address",
       "i18nKeyCaption": "AddressI18nCaptionKey",
@@ -77,7 +77,7 @@
       "title": "Mobile Number",
       "i18nKey": "MobileNumberI18nkey",
       "fieldType": "text",
-      "order": 11,
+      "order": 150,
       "gxAlertDbColumn": "PatientPhone",
       "caption": "Mobile Number",
       "i18nKeyCaption": "MobileNumberI18nKeyCaption",
@@ -88,7 +88,7 @@
       "name": "Referring Facility",
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
-      "order": 12,
+      "order": 160,
       "gxAlertDbColumn": "ReferringFacility",
       "title": "Referring Facility",
       "caption": "Referring Facility",
@@ -102,31 +102,228 @@
     },
 
     {
-      "id": 1201,
-      "name": "TB History",
-      "i18nKey": "TBHistoryI18nKey",
+      "id": 12011,
+      "name": "TypeOfPatient",
+      "i18nKey": "TypeOfPatientI18nKey",
       "fieldType": "text",
-      "order": 30,
-      "gxAlertDbColumn": "TBHistory",
-      "title": "TB History",
-      "caption": "TB History",
-      "i18nKeyCaption": "TBHistoryI8nCaptionKey",
+      "order": 180,
+      "gxAlertDbColumn": "TypeOfPatient",
+      "title": "Type of Patient",
+      "caption": "Type of Patient",
+      "i18nKeyCaption": "TypeOfPatientI8nCaptionKey",
       "controlType": "comboBox",
       "items": [
         {
-          "key": "unknown",
-          "value": "Unknown History",
+          "key": "Failures_of_Category_I",
+          "value": "Failures of Category I",
+          "description": "remain positive at month 5 or later and smear negative patients who become smear positive at month 2",
           "order": 0
         },
         {
-          "key": "new",
-          "value": "New Test",
+          "key": "Non_converters_of_Category_I",
+          "value": "Non converters of Category I",
+          "description": "remain positive at month 2",
           "order": 10
         },
         {
-          "key": "treated",
-          "value": "Previously Treated",
+          "key": "Failures_of_Retreatment",
+          "value": "Failures of Retreatment",
+          "description": "remain positive at month 5 or later",
           "order": 20
+        },
+        {
+          "key": "Non_converters_of_Retreatment",
+          "value": "Non converters of Retreatment",
+          "description": "remain positive at month 2",
+          "order": 30
+        },
+        {
+          "key": "Relapses",
+          "value": "Relapses",
+          "order": 40
+        },
+        {
+          "key": "Treatment_after_loss_to_follow_up",
+          "value": "Treatment after loss to follow up",
+          "order": 50
+        },
+        {
+          "key": "Close_contacts_of_DR_TB_patient_with_symptoms",
+          "value": "Close contacts of DR TB patient with symptoms",
+          "order": 60
+        },
+        {
+          "key": "HIV_infected_person_with_TB_SS",
+          "value": "HIV infected person, with TB S/S",
+          "order": 70
+        },
+        {
+          "key": "Others_Pulmonary_clinically_diagnosed",
+          "value": "Others - Pulmonary, clinically diagnosed",
+          "order": 80
+        },
+        {
+          "key": "Others_Extra_Pulmonary",
+          "value": "Others - Extra Pulmonary",
+          "order": 81
+        },
+        {
+          "key": "Others_Pulmonary_Bacteriologically_Confirmed",
+          "value": "Others - Pulmonary, Bacteriologically Confirmed",
+          "order": 82
+        },
+        {
+          "key": "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+          "value": "Presumptive Pulmonary Smear Negative TB Cases",
+          "order": 90
+        },
+        {
+          "key": "Presumptive_TB",
+          "value": "Presumptive TB",
+          "order": 95
+        }
+      ]
+    },
+    {
+      "id": 12012,
+      "name": "PatientHistory",
+      "i18nKey": "PatientHistoryI18nKey",
+      "fieldType": "text",
+      "order": 190,
+      "gxAlertDbColumn": "PatientHistory",
+      "title": "Patient History",
+      "caption": "Patient History",
+      "i18nKeyCaption": "PatientHistoryI8nCaptionKey",
+      "controlType": "comboBox",
+      "condition": [
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Close_contacts_of_DR_TB_patient_with_symptoms",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "HIV_infected_person_with_TB_SS",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Others_Pulmonary_clinically_diagnosed",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Others_Extra_Pulmonary",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Others_Pulmonary_Bacteriologically_Confirmed",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Presumptive_TB",
+          "operator": "=",
+          "conjunction": "OR"
+        }
+      ],
+      "filters": [
+        {
+          "propToCompare": "TypeOfPatient",
+          "fieldToCompare": "scope",
+          "operator": "in"
+        }
+      ],
+      "items": [
+        {
+          "key": "unknown",
+          "value": "Unknown history",
+          "order": 0,
+          "scope": [
+            "Close_contacts_of_DR_TB_patient_with_symptoms",
+            "HIV_infected_person_with_TB_SS",
+            "Others_Pulmonary_clinically_diagnosed",
+            "Others_Extra_Pulmonary",
+            "Others_Pulmonary_Bacteriologically_Confirmed",
+            "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+            "Presumptive_TB"
+          ]
+        },
+        {
+          "key": "new",
+          "value": "New",
+          "order": 10,
+          "scope": [
+            "Close_contacts_of_DR_TB_patient_with_symptoms",
+            "HIV_infected_person_with_TB_SS",
+            "Others_Pulmonary_clinically_diagnosed",
+            "Others_Extra_Pulmonary",
+            "Others_Pulmonary_Bacteriologically_Confirmed",
+            "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+            "Presumptive_TB"
+          ]
+        },
+        {
+          "key": "treated",
+          "value": "Previously treated",
+          "order": 20,
+          "scope": [
+            "Close_contacts_of_DR_TB_patient_with_symptoms",
+            "HIV_infected_person_with_TB_SS",
+            "Others_Pulmonary_clinically_diagnosed",
+            "Others_Extra_Pulmonary",
+            "Presumptive_Pulmonary_Smear_Negative_TB_Cases"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12013,
+      "name": "PatientRetreatment",
+      "i18nKey": "PatientRetreatmentI18nKey",
+      "fieldType": "text",
+      "order": 200,
+      "gxAlertDbColumn": "PatientRetreatment",
+      "title": "Patient Retreatment",
+      "caption": "Patient Retreatment",
+      "i18nKeyCaption": "PatientRetreatmentI8nCaptionKey",
+      "controlType": "comboBox",
+      "condition": [
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Relapses",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Treatment_after_loss_to_follow_up",
+          "operator": "=",
+          "conjunction": "OR"
+        }
+      ],
+      "items": [
+        {
+          "key": "Category-I",
+          "value": "Category I",
+          "order": 0
+        },
+        {
+          "key": "Retreatment",
+          "text": "Retreatment",
+          "order": 10
         }
       ]
     },
@@ -136,7 +333,7 @@
       "name": "HIV Status",
       "i18nKey": "HIVStatusI18nKey",
       "fieldType": "text",
-      "order": 35,
+      "order": 210,
       "gxAlertDbColumn": "HIVStatus",
       "title": "HIV Status",
       "caption": "HIV Status",
@@ -165,7 +362,7 @@
       "name": "Sample Type",
       "i18nKey": "SampleTypeI18nKey",
       "fieldType": "text",
-      "order": 36,
+      "order": 220,
       "gxAlertDbColumn": "SampleType",
       "title": "Sample Type",
       "caption": "Sample Type",
@@ -190,7 +387,7 @@
       "title": "TB Registration Number - Previous (if any)",
       "i18nKey": "TBRegistrationNumberPreviousI18nKey",
       "fieldType": "text",
-      "order": 40,
+      "order": 230,
       "gxAlertDbColumn": "TBRegistrationNumberPrevious",
       "caption": "TB Registration Number - Previous (if any)",
       "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
@@ -202,7 +399,7 @@
       "title": "TB Registration Number - Current",
       "i18nKey": "TBRegistrationNumberCurrentI18nKey",
       "fieldType": "text",
-      "order": 41,
+      "order": 240,
       "gxAlertDbColumn": "TBRegistrationNumberCurrent",
       "caption": "TB Registration Number - Current",
       "i18nKeyCaption": "TBRegistrationNumberCurrentI18nCaptionKey",
