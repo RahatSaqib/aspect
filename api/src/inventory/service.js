@@ -497,11 +497,14 @@ function getInventoryLots(request, dataConstraints) {
       knex.raw(`CONCAT(
       c.id,
       '-',
-      s.id
+      s.id,
+      '-',
+      'itfs.id'
     )`),
       's.name',
       'ii.expiresOn',
       'ii.lotNumber',
+      'itfs.name',
     ])
     .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
