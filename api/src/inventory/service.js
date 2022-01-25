@@ -495,7 +495,7 @@ function getInventoryLots(request, dataConstraints) {
     )
     .groupBy([
       knex.raw(
-        `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ii.lotNumber,'-', ii.inTransitFromSiteId)`
+        `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,''))`
       ),
       's.name',
       'ii.expiresOn',
