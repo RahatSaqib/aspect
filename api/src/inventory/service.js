@@ -66,11 +66,11 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
 
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
+  knex.raw(
+    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
+  ),
   ...INVENTORY_ITEM_SELECT.filter(
     field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
-  ),
-  knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ii.lotNumber,'-', ii.inTransitFromSiteId) as id"
   ),
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
