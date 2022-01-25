@@ -10,7 +10,7 @@ const resultsDrTb10A = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReport',
+      moduleName: 'result/serviceReport_DR_TB_10A_Bangladesh',
       functionName: 'getDataForReportDrTb10A',
     },
   ],
