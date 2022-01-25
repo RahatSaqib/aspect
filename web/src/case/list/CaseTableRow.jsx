@@ -13,12 +13,13 @@ const cssClasses = classnames.bind(styles)
 
 const CaseTableRow = ({ _case, ...restProps }) => {
   const { formatDate, formatMessage } = useI18n()
+  const patientId = _case?.get('patientId') || 'N/A'
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{formatDate(_case.get('createdOn'))}</TableCell>
       <TableCell>{_case.get('externalId')}</TableCell>
       <TableCell>{_case.get('sampleOriginSite')}</TableCell>
-      <TableCell>{_case.get('patientId')}</TableCell>
+      <TableCell>{patientId}</TableCell>
       <TableCell>
         {formatMessage(
           messages[_case.get('diseaseI18nKey')],

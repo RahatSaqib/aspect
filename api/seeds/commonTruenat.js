@@ -1,10 +1,21 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
+const bcrypt = require('bcrypt')
+const { promisify } = require('util')
+const { addMinutes } = require('date-fns')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
 const truenatResultDataSchema = require('./fixtures/truenatDevice/ResultDataSchema.json')
 const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
+const {
+  deviceTypeToId,
+  deviceApprovalToId,
+} = require('../src/shared/dictionary')
+const { randomToken } = require('../src/deviceApi/apiKey')
+const { passwordSaltRounds } = require('../src/config')
+
+const bcryptHash = promisify(bcrypt.hash)
 
 async function upsertTruenatDeviceTypeAndAssays(
   knex,
@@ -157,10 +168,151 @@ async function upsertTruenatDeviceTypeAndAssays(
     }
   )
 
+  const assayTruenatUnknownResultCategories = ['Unknown', 'Missing']
+  await Promise.each(
+    assayTruenatUnknownResultCategories,
+    async assayTruenatUnknownResultCategory => {
+      const { id: resultCategoryId } =
+        (await knex('ResultCategory')
+          .where('externalId', assayTruenatUnknownResultCategory)
+          .first('id')) || {}
+      const resultCategoryAssayTruenatUnknown = {
+        assayId: assayIds.assayTruenatUnknown,
+        resultCategoryId,
+        emphasize: false,
+        requiresTreatment: false,
+        reportable: false,
+      }
+      const existingResultCategoryAssayTruenatUnknown = await knex(
+        'ResultCategoryAssay'
+      )
+        .where({
+          assayId: assayIds.assayTruenatUnknown,
+          resultCategoryId,
+        })
+        .first()
+      if (!existingResultCategoryAssayTruenatUnknown) {
+        await knex('ResultCategoryAssay').insert(
+          resultCategoryAssayTruenatUnknown
+        )
+      }
+    }
+  )
+
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
 }
 
+async function upsertTruenatDevices(
+  knex,
+  truenatDevices,
+  partnerName,
+  adminUserName,
+  countryAbbreviation
+) {
+  await upsertTruenatDeviceTypeAndAssays(knex)
+  // Initial Test Truenat Device
+  const now = new Date()
+  const { id: partnerId } = await knex('Partner')
+    .where('name', partnerName)
+    .first('id')
+  const { id: adminId } = await knex('User')
+    .where('name', adminUserName)
+    .first('id')
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+  await Promise.each(truenatDevices, async truenatDevice => {
+    const { id: geographyId } = await knex('Country as c')
+      .join('Geography as g', 'c.id', 'g.countryId')
+      .join('State as s', 'g.stateId', 's.id')
+      .join('Lga as l', 'g.lgaId', 'l.id')
+      .where('c.abbreviation', countryAbbreviation)
+      .andWhere('s.name', truenatDevice.stateName)
+      .andWhere('l.name', truenatDevice.lgaName)
+      .first('g.id')
+
+    let truenatLab = await knex('Site')
+      .where('externalId', truenatDevice.siteExternalId)
+      .andWhere('partnerId', partnerId)
+      .andWhere('geographyId', geographyId)
+      .first()
+    if (!truenatLab) {
+      const [truenatLabId] = await knex('Site').insert({
+        ...auditFields,
+        name: truenatDevice.siteName,
+        shortName: truenatDevice.siteShortName,
+        externalId: truenatDevice.siteExternalId,
+        partnerId,
+        geographyId,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+      })
+      truenatLab = await knex('Site').where('id', truenatLabId).first()
+    }
+    const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
+    const deviceApprovalApprovedId = await deviceApprovalToId('approved')
+    let existingTruenatDevice = await knex('Device')
+      .where('siteId', truenatLab.id)
+      .andWhere('deviceTypeId', truenatDeviceTypeId)
+      .first()
+    if (!existingTruenatDevice) {
+      const [newTruenatDeviceId] = await knex('Device').insert({
+        ...auditFields,
+        name: truenatDevice.deviceName,
+        shortName: truenatDevice.deviceShortName,
+        deviceTypeId: truenatDeviceTypeId,
+        deviceApprovalId: deviceApprovalApprovedId,
+        partnerId,
+        geographyId,
+        siteId: truenatLab.id,
+        defaultReportableSiteId: truenatLab.id,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+        lastPingOn: new Date(),
+        lastSeenOn: new Date(),
+      })
+      existingTruenatDevice = await knex('Device')
+        .where('id', newTruenatDeviceId)
+        .first()
+      if (existingTruenatDevice.deviceApprovalId !== deviceApprovalApprovedId) {
+        await knex('Device').where('id', newTruenatDeviceId).update({
+          deviceApprovalId: deviceApprovalApprovedId,
+          updatedOn: new Date(),
+        })
+      }
+    }
+    const truenatDeviceApiKey = await knex('DeviceApiKey')
+      .where('deviceId', existingTruenatDevice.id)
+      .whereNotNull('username')
+      .whereNotNull('password')
+      .andWhere('revoked', 0)
+      .first()
+    if (!truenatDeviceApiKey) {
+      const password = await bcryptHash(
+        truenatDevice.password,
+        parseInt(passwordSaltRounds, 10)
+      )
+      await knex('DeviceApiKey').insert({
+        token: randomToken(),
+        revoked: 0,
+        partnerId,
+        geographyId,
+        siteId: truenatLab.id,
+        deviceId: existingTruenatDevice.id,
+        username: truenatDevice.username,
+        password,
+        expiresOn: addMinutes(new Date(), 15),
+        ...auditFields,
+      })
+    }
+  })
+}
+
 module.exports = {
   upsertTruenatDeviceTypeAndAssays,
+  upsertTruenatDevices,
 }

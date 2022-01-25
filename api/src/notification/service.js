@@ -148,7 +148,38 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
 async function listNotifications(request) {
   const { query, auth } = request
 
-  // get data constraints
+  const subquery = knex('NotificationType as nti')
+    .leftOuterJoin('JobFunction AS jf', leftBuilder =>
+      leftBuilder
+        .on(
+          knex.raw(
+            `JSON_SEARCH(
+              nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
+              'one',
+              jf.id
+            ) IS NOT NULL
+          `
+          )
+        )
+        .orOn('nti.jobFunctionId', 'jf.id')
+    )
+    .leftOuterJoin('Person AS per', leftBuilder =>
+      leftBuilder.on(
+        knex.raw(
+          ` JSON_SEARCH(
+            nti.filterCondition->>'$.persons[*].personId',
+            'one',
+            per.id
+          ) IS NOT NULL`
+        )
+      )
+    )
+    .distinct(
+      'nti.id AS notificationTypeId',
+      'per.name AS personName',
+      'jf.name AS jfName'
+    )
+
   const dataConstraints = await getConstraints(auth.credentials)
 
   const notificationQuery = knex('NotificationType as nt')
@@ -163,69 +194,49 @@ async function listNotifications(request) {
     .where(builder => {
       builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
     })
-    .modify(filterParams, query, {})
-    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
-
-  const getItems = notificationQuery
-    .clone()
-    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftOuterJoin('JobFunction as jf', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
-            'one',
-            CAST(jf.id as char)
-          ) IS NOT NULL
-          OR
-          nt.jobFunctionId = jf.id
-        `)
-      )
-    })
-    .leftOuterJoin('Person as per', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.persons[*].personId',
-            'one',
-            CAST(per.id as char)
-          ) IS NOT NULL
-        `)
-      )
-    })
-    .select(
-      'nt.id as id',
-      'nt.name',
-      knex.raw(
-        `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
-      ),
-      columnCount('alert'),
-      knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
-      knex.raw('COUNT(DISTINCT per.id) as personsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
-      'ntc.externalId as typeCategory'
-    )
-    .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.name')
-    .modify(sortPageParams, query, 'nt.name')
     .modify(filterParams, query, {
       notificationName: 'nt.name',
     })
+    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .max('n.createdOn as lastTriggeredOn')
+    .groupBy('nt.id')
+
+  const getItems = notificationQuery
+    .clone()
+    .leftOuterJoin(
+      subquery.as('filters'),
+      'nt.id',
+      'filters.notificationTypeId'
+    )
+    .modify(sortPageParams, query, 'nt.name')
+    .select(
+      'nt.id as id',
+      'nt.name',
+      knex.raw(`count(distinct n.id) as totalTriggers`),
+      columnCount('alert'),
+      knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.jfName SEPARATOR ', ') as jobFunctions`
+      ),
+      knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
+      ),
+      'ntc.externalId as typeCategory'
+    )
 
   function columnCount(column) {
     return knex.raw(
-      `CASE
-        WHEN m.${column}TemplateId IS NULL
-        THEN null
-        ELSE SUM(CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END) END as ${column}Count`
+      `SUM(CASE
+        WHEN m.${column}TemplateId IS NULL THEN 0
+        ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
     )
   }
 
   const getCount = knex
     .count('* as count')
-    .from(getItems.clone().as('mainQuery'))
+    .from(notificationQuery.clone().as('mainQuery'))
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -639,6 +650,11 @@ async function getNotifications(request) {
     .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
     .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
     .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
+    .leftOuterJoin(
+      'MessageStatus as mswebhook',
+      'mswebhook.id',
+      'wm.messageStatusId'
+    )
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
@@ -681,13 +697,16 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'r.id as resultId',
+      'n.resultId as resultId',
       'r.sampleId',
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pEm.name separator "|") as emailRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pSm.name separator "|") as smsRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
+      `),
+      knex.raw(`
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
@@ -709,32 +728,57 @@ async function getNotifications(request) {
       webhookSent: knex.raw(`
         DISTINCT
         CASE WHEN mswm.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      webhookWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN mswm.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      webhookPending: knex.raw(`
+    DISTINCT
+    CASE WHEN mswm.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
       smsSent: knex.raw(`
         DISTINCT
         CASE WHEN mssms.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      smsWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN mssms.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      smsPending: knex.raw(`
+    DISTINCT
+    CASE WHEN mssms.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
       emailSent: knex.raw(`
         DISTINCT
         CASE WHEN msem.externalId = "Sent" 
-        THEN (CASE WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      emailWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN msem.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      emailPending: knex.raw(`
+    DISTINCT
+    CASE WHEN msem.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
     })
     .groupBy('groupingParam')
 
@@ -748,9 +792,8 @@ async function getNotifications(request) {
     emailRecipients: item.emailRecipients
       ? item.emailRecipients.split('|')
       : null,
-    smsRecipients: item.smsRecipients ? item.emailRecipients.split('|') : null,
+    smsRecipients: item.smsRecipients ? item.smsRecipients.split('|') : null,
   }))
-
   return { ok: true, total, data: items }
 }
 

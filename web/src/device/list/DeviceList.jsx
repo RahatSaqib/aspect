@@ -1,4 +1,5 @@
 import flowRight from 'lodash/flowRight'
+import isEmpty from 'lodash/isEmpty'
 import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
@@ -270,11 +271,14 @@ export const DeviceList = () => {
     isError,
     error,
     isLoading,
-  } = useQuery([DEVICE_LIST.KEY, { params }], async () =>
-    fetchWrapperForQueries({
-      endpoint: DEVICE_LIST.ENDPOINT,
-      params: { ...params, hasResults: 1 },
-    })
+  } = useQuery(
+    [DEVICE_LIST.KEY, { params }],
+    async () =>
+      fetchWrapperForQueries({
+        endpoint: DEVICE_LIST.ENDPOINT,
+        params: { ...params, hasResults: 1 },
+      }),
+    { enabled: !isEmpty(params) }
   )
 
   // >>>>>> Lifecycles <<<<<<

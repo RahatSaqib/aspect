@@ -543,7 +543,7 @@ const DateTimeInput = props => {
     className,
     onChange,
     onBlur,
-    value: valueRaw,
+    value: valueRaw = null,
     defaultValue,
     dateFormat,
     timeFormat,

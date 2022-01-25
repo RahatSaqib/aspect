@@ -27,7 +27,16 @@ const messages = defineMessages({
     id: 'pages.NotificationList.title',
     defaultMessage: 'Notifications',
   },
+  createLabel: {
+    id: 'pages.PersonDetails.create',
+    defaultMessage: 'Create',
+  },
 })
+
+const FILTERS_CONFIG = [
+  { geography: true, requiredPermissions: [] },
+  { notificationName: true, requiredPermissions: [] },
+]
 
 const NotificationList = () => {
   const intl = useIntl()
@@ -37,9 +46,9 @@ const NotificationList = () => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
-  const filtersConfig = [{ notificationName: true, requiredPermissions: [] }]
-  const reducedFilters = reduceFiltersConfig(filtersConfig, userPermissions)
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const notificationMenuProps = getCreateNotificationMenuProps(intl)
+  const createLabel = intl.formatMessage(messages.createLabel)
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -60,7 +69,7 @@ const NotificationList = () => {
               },
               state: 'createNotification',
               isClearable: false,
-              placeholder: 'Create...',
+              placeholder: createLabel,
               selectedValue: '',
             }}
             action={({ selectedOption }) => {
@@ -87,7 +96,11 @@ const NotificationList = () => {
       >
         <Shell>
           <ShellContent>
-            <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_LIST} />
+            <AspectTable
+              baseConfig={baseConfig}
+              consts={NOTIFICATION_LIST}
+              FILTERS_CONFIG={FILTERS_CONFIG}
+            />
           </ShellContent>
         </Shell>
       </div>

@@ -21,7 +21,11 @@ const {
 } = require('./service')
 
 const { exportContacts } = require('./serviceReports')
-const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
+const {
+  contactDetailsPayload,
+  newContactDetailsPayload,
+  personDetailsResponse,
+} = require('./helpers')
 
 function listContactBaseConfig() {
   return {
@@ -325,7 +329,7 @@ const routes = [
       notes: 'Details of a person',
       auth: { scope: ['person:edit'] },
       validate: {
-        payload: contactDetailsPayload,
+        payload: newContactDetailsPayload,
       },
       response: personDetailsResponse,
     },

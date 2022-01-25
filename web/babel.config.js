@@ -35,7 +35,19 @@ const plugins = [
 module.exports = {
   env: {
     webpack: {
-      presets: ['@babel/preset-env', '@babel/preset-react'],
+      presets: [
+        '@babel/preset-env',
+        '@babel/preset-react',
+        /** 
+         * If you want to see why your component constantly
+         * rerender, uncomment this and us "why-did-you-render"
+         * Leaving this in for dev
+        {
+          runtime: 'automatic',
+          development: process.env.NODE_ENV === 'development',
+          importSource: '@welldone-software/why-did-you-render',
+        }, */
+      ],
       plugins: ['@babel/transform-runtime'],
     },
     test: {

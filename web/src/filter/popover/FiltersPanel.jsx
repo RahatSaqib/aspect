@@ -34,7 +34,7 @@ import AspectButton from '../../components/shared/AspectButton'
 import RevokedSelectField from '../resource/RevokedSelectField'
 import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
-import StockLeftSelectField from '../hardcoded/StockLeftSelectField'
+import DaysStockLeftSelectField from '../hardcoded/daysStockLeftSelectField'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -80,7 +80,6 @@ const enhance = compose(
           stateId: undefined,
           lgaId: undefined,
         }),
-
     onStateIdChange:
       ({ onChangeFilters }) =>
       stateId =>
@@ -88,63 +87,54 @@ const enhance = compose(
           stateId,
           lgaId: undefined,
         }),
-
     onLgaIdChange:
       ({ onChangeFilters }) =>
       lgaId =>
         onChangeFilters({
           lgaId,
         }),
-
     onResultCategoryChange:
       ({ onChangeFilters }) =>
       resultCategoryId =>
         onChangeFilters({
           resultCategoryId,
         }),
-
     onResultCategoryGroupChange:
       ({ onChangeFilters }) =>
       resultCategoryGroupId =>
         onChangeFilters({
           resultCategoryGroupId,
         }),
-
     onTextFieldCommitValue:
       ({ onChangeFilters }) =>
       ({ target: { name, value } }) =>
         onChangeFilters({
           [name]: value,
         }),
-
     onConsumableIdChange:
       ({ onChangeFilters }) =>
       consumableId =>
         onChangeFilters({
           consumableId,
         }),
-
     onPartnerIdChange:
       ({ onChangeFilters }) =>
       partnerId =>
         onChangeFilters({
           partnerId,
         }),
-
     onSampleOriginSiteChange:
       ({ onChangeFilters }) =>
       sampleOriginSite =>
         onChangeFilters({
           sampleOriginSite,
         }),
-
     onSiteNameChange:
       ({ onChangeFilters }) =>
       siteName =>
         onChangeFilters({
           siteName,
         }),
-
     onReportableSiteChange:
       ({ onChangeFilters }) =>
       ({ id, name }) => {
@@ -153,28 +143,24 @@ const enhance = compose(
           reportableSiteId: id,
         })
       },
-
     onSiteIdChange:
       ({ onChangeFilters }) =>
       siteId =>
         onChangeFilters({
           siteId,
         }),
-
     onWorkflowStatusIdChange:
       ({ onChangeFilters }) =>
       workflowStatusId =>
         onChangeFilters({
           workflowStatusId,
         }),
-
     onTreatmentStatusChange:
       ({ onChangeFilters }) =>
       treatmentStatus =>
         onChangeFilters({
           treatmentStatus,
         }),
-
     onDeviceApprovalIdChange:
       ({ onChangeFilters }) =>
       deviceApprovalId =>
@@ -197,11 +183,9 @@ const enhance = compose(
         onChangeFilters({
           revoked,
         }),
-
     onExcelExport: props => () =>
       clickExport(props, props.exportFormatTypes.EXCEL),
     onCsvExport: props => () => clickExport(props, props.exportFormatTypes.CSV),
-
     onDisagreedConfirmation:
       ({ closeExportConfirmation }) =>
       () =>
@@ -244,11 +228,16 @@ const enhance = compose(
         }),
     onStockLeftChange:
       ({ onChangeFilters }) =>
-      stockLeft =>
+      daysStockLeft =>
         onChangeFilters({
-          stockLeft,
+          daysStockLeft,
         }),
-
+    onHasStockChange:
+      ({ onChangeFilters }) =>
+      hasStock =>
+        onChangeFilters({
+          hasStock,
+        }),
     onReportNameChange:
       ({ onChangeFilters }) =>
       reportName =>
@@ -526,9 +515,13 @@ const messages = {
       id: 'filter.popover.selectStockLeft',
       defaultMessage: 'Select stock left...',
     },
-    stockLeft: {
-      id: 'filter.popover.stockLeft',
+    daysStockLeft: {
+      id: 'filter.popover.daysStockLeft',
       defaultMessage: 'Days Stock Left',
+    },
+    hasStock: {
+      id: 'filter.popover.hasStock',
+      defaultMessage: 'Has Stock',
     },
     reportName: {
       id: 'filter.popover.reportName',
@@ -537,6 +530,14 @@ const messages = {
     enterReportName: {
       id: 'filter.popover.enterReportName',
       defaultMessage: 'Enter report name...',
+    },
+    lotNumber: {
+      id: 'filter.popover.lotNumber',
+      defaultMessage: 'Lot Number',
+    },
+    enterLotNumber: {
+      id: 'filter.popover.enterLotNumber',
+      defaultMessage: 'Enter lot number...',
     },
   }),
 }
@@ -578,6 +579,7 @@ export const FiltersPanel = ({
   onOnlyEverTransferredBoolChange,
   onOnlyTreatmentRequiredBoolChange,
   onStockLeftChange,
+  onHasStockChange,
   onReportNameChange,
   user,
   assays,
@@ -1070,7 +1072,37 @@ export const FiltersPanel = ({
                 autoOk
               />
             )}
-
+            {config.lotNumber && (
+              <div className={cssClasses('Control')}>
+                <FocusBlurTextField
+                  name="lotNumber"
+                  value={filters.lotNumber || ''}
+                  onCommitValue={onTextFieldCommitValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder={formatMessage(messages.enterLotNumber)}
+                  label={formatMessage(messages.lotNumber)}
+                  margin="normal"
+                />
+              </div>
+            )}
+            {config.hasStock && (
+              <div className={cssClasses('Control', 'Control-checkbox')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(filters.hasStock)}
+                  onChange={event =>
+                    onHasStockChange(event.target.checked || null)
+                  }
+                  label={formatMessage(messages.hasStock)}
+                  name="onlyHasStock"
+                  autoWidth
+                />
+              </div>
+            )}
             {config.revoked && (
               <div className={cssClasses('Control')}>
                 <RevokedSelectField
@@ -1191,15 +1223,15 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
-            {config.stockLeft && (
+            {config.daysStockLeft && (
               <div className={cssClasses('Control')}>
-                <StockLeftSelectField
+                <DaysStockLeftSelectField
                   allItemText={formatMessage(messages.all)}
                   onChange={onStockLeftChange}
-                  value={filters.stockLeft}
+                  value={filters.daysStockLeft}
                   floatingLabelFixed
                   hintText={formatMessage(messages.selectStockLeft)}
-                  floatingLabelText={formatMessage(messages.stockLeft)}
+                  floatingLabelText={formatMessage(messages.daysStockLeft)}
                   style={{ verticalAlign: 'bottom' }}
                 />
               </div>

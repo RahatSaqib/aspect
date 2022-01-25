@@ -23,7 +23,8 @@ const messages = defineMessages({
   },
   all_results_description: {
     id: 'pages.ReportIndex.all_results_description',
-    defaultMessage: 'All test results in the system. One row per result.',
+    defaultMessage:
+      'All test results in the system (up to 50.000 records). One row per result with all the fields needed.',
   },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
@@ -91,6 +92,15 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.geneXpertIssues_description',
     defaultMessage:
       'This report shows all issues that apply to GeneXpert devices',
+  },
+  deviceUtilizationReport: {
+    id: 'pages.ReportIndex."deviceUtilizationReport"',
+    defaultMessage: 'Device Average Utilization per Month',
+  },
+  device_utilization_description: {
+    id: 'pages.ReportIndex.device_utilization_description',
+    defaultMessage:
+      'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)',
   },
 })
 export default messages

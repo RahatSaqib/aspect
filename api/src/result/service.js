@@ -239,14 +239,19 @@ async function getResultsForExport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-  const data = await resultQuery
+  const getCount = resultQuery.clone().count('r.id as total').first()
+
+  const getData = resultQuery
+    .clone()
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
 
+  const [{ total }, data] = await Promise.all([getCount, getData])
   const result = {
     ok: true,
     data,
+    total,
     extraColumns: assayColumns,
   }
 
@@ -2411,7 +2416,6 @@ async function clinicalIndicatorAggregations(request) {
     groupBy,
     query
   )
-
   const data = await processGroupedQuery(resultQuery, groupBy)
   return { data }
 }
@@ -2546,14 +2550,14 @@ function getClinicalIndicatorQueryForResultsTable(
         this.where('rca.reportable', true)
       }
     })
-    .orderBy('r.startedOn')
+    .orderBy('r.startedOn', 'r.endedOn')
     .count('r.id as cnt')
 }
 
 async function processGroupedQuery(
   resultQuery,
   groupBy,
-  dateColumn = 'r.endedOn'
+  dateColumn = 'IFNULL(r.endedOn, r.startedOn)'
 ) {
   // handle possible groups:
   const paramToDb = {

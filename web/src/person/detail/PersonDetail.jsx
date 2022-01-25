@@ -10,7 +10,9 @@ import { Helmet } from 'react-helmet'
 // Material-UI
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import ContactDetailsForm from './ContactDetailsForm'
+
+import ContactDetailsFormFormik from '../../MigratedComponents/Account/Details'
+
 import LoginDetailsForm from './LoginDetailsForm'
 import JobAssignmentForm from './JobAssignmentForm'
 import PersonDetailBackBar from './PersonDetailsBackBar'
@@ -25,7 +27,6 @@ import {
   updateSinglePersonUserPreferences,
   ContactDetails,
   LoginDetails,
-  UserPreferences,
   personCanLogIn,
   emailValueBlur,
   addPersonAssignment,
@@ -135,44 +136,10 @@ export class PersonDetail extends PureComponent {
     })
   }
 
-  handlePersonCanLogIn = canLogin => {
-    const { person } = this.props
-    this.props.personCanLogIn(canLogin, person.get('id'))
-  }
-
-  handleEmailBlur = value => {
-    const { person } = this.props
-    if (person.get('id')) {
-      this.props.emailValueBlur(value, person.get('id'))
-    }
-  }
-
   handleFetchPartnersAndJobFunctions = ({
     fetchPartnersAndJobFunctionsForSelectList,
   }) => {
     fetchPartnersAndJobFunctionsForSelectList()
-  }
-
-  saveContactDetails = values => {
-    const { person, updateSinglePerson, isNew, createPerson } = this.props
-
-    if (isNew) {
-      return createPerson(values).then(person => {
-        this.props.showAcknowledgement({
-          title: messages.detailsCreatedSuccessfully,
-          message: messages.contactDetailsCreatedMessage,
-        })
-        // replace current url to show just added contact for editing other tabs
-        this.props.navigate(`/browse/person/${person.id}`, { replace: true })
-      })
-    }
-    const contactDetails = new ContactDetails(person)
-    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
-      this.props.showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.contactDetailsUpdatedMessage,
-      })
-    })
   }
 
   saveLoginDetails = ({ username, newPassword, userLockedOut }) => {
@@ -186,20 +153,6 @@ export class PersonDetail extends PureComponent {
       this.props.showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
         message: messages.loginDetailsUpdatedMessage,
-      })
-    })
-  }
-
-  saveUserPreferences = values => {
-    const { person, updateSinglePersonUserPreferences } = this.props
-    const userPreferences = new UserPreferences(person)
-    return updateSinglePersonUserPreferences(
-      userPreferences.get('id'),
-      values
-    ).then(() => {
-      this.props.showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.userPreferencesUpdatedMessage,
       })
     })
   }
@@ -238,7 +191,6 @@ export class PersonDetail extends PureComponent {
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
-    const userPreferences = new UserPreferences(person)
     const loading = !isNew && (!person || person.get('loaded') !== true)
     const canLogIn = person && !!person.get('canLogIn')
     const shouldPrefill = !isNew && person && person.get('userId') == null
@@ -265,17 +217,7 @@ export class PersonDetail extends PureComponent {
                     canUserLoggedIn={!isNew && canLogIn}
                   />
                   <Paper className={styles.ContactDetailsForm}>
-                    <ContactDetailsForm
-                      intl={intl}
-                      loading={loading}
-                      onEmailBlur={this.handleEmailBlur}
-                      contactDetails={contactDetails}
-                      showNotesField
-                      isUserChange={this.handlePersonCanLogIn}
-                      onSubmit={this.saveContactDetails}
-                      userPreferences={userPreferences}
-                      saveUserPreferences={this.saveUserPreferences}
-                    />
+                    <ContactDetailsFormFormik />
                   </Paper>
                 </PermissionsProvider>
               </div>

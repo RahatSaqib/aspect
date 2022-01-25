@@ -79,42 +79,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
         <ForwardRef(Paper)
           className="AddMargin"
         >
-          <pure(Connect(withHandlers(lifecycle(recomposeForm(withHandlers(ContactDetailsForm))))))
-            canModify={false}
-            contactDetails={
-              Immutable.Record {
-                "id": null,
-                "name": null,
-                "title": null,
-                "email": null,
-                "email2": null,
-                "phone": null,
-                "cell": null,
-                "countryId": null,
-                "stateId": null,
-                "lgaId": null,
-                "zip": null,
-                "notes": null,
-                "lastPartnerId": null,
-                "canLogIn": false,
-              }
-            }
-            intl={
-              Object {
-                "formatMessage": [Function],
-              }
-            }
-            loading={false}
-            onSubmit={[Function]}
-            saveUserPreferences={[Function]}
-            userPreferences={
-              Immutable.Record {
-                "id": null,
-                "timezone": null,
-                "culture": null,
-              }
-            }
-          />
+          <ContactDetailsFormFormik />
         </ForwardRef(Paper)>
       </div>
     </Route>

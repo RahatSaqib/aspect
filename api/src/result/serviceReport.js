@@ -7,7 +7,11 @@ const { addConstraints, getConstraints } = require('../auth/constraints')
 const { getResultsForExport } = require('./service')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const { getUser } = require('../auth/service')
-const { exportData, getBaseReplacements } = require('../shared/excel')
+const {
+  exportData,
+  getMaxLimitPlaceHolders,
+  getBaseReplacements,
+} = require('../shared/excel')
 const {
   formatDateOrDefault,
   getWellFormattedDateStringWithTimezone,
@@ -17,6 +21,7 @@ const {
 const { allAssayToId, allResultCategoryToId } = require('../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 const { getAllAssaySchemas } = require('../assay/service')
+
 /**
  * 'header' is for 1st row in CSV file,
  * 'key' is prop name in array 'items' in func getDeviceErrorHistoryForAttachment() below
@@ -45,9 +50,13 @@ async function getAllResultsForExport(auth, query) {
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
-  // do not export more than 1.000.000 records
-  query.size = 10e6
-  const { data, extraColumns = [] } = await getResultsForExport(auth, query)
+  // For performance issues we are going to limit this report to max 50k results.
+  query.size = query.maxNumberOfRecords || 50000
+  const {
+    data,
+    extraColumns = [],
+    total,
+  } = await getResultsForExport(auth, query)
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
@@ -85,7 +94,7 @@ async function getAllResultsForExport(auth, query) {
 
   const dataset = {
     ok: true,
-    total: _.get(data, 'length', 0),
+    total,
     length: _.get(data, 'length', 0),
     data,
     dynamicColumns: columns,
@@ -107,19 +116,18 @@ async function getAllResultsForExport(auth, query) {
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
   const { query, auth } = request
-  const { data, dynamicColumns, dataSelector } = await getAllResultsForExport(
-    auth,
-    query
-  )
+  const { data, dynamicColumns, dataSelector, total } =
+    await getAllResultsForExport(auth, query)
   const sheetData = {
     dataRows: data,
     dynamicColumns,
+    total,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
 
   return exportData(request, reply, sheetData, 'results', {
-    replacements: getBaseReplacements(),
+    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
     dataSelector,
   })
 }
