@@ -32,6 +32,7 @@ const PopoverCell = ({ children, label }) => {
         {label}
         <IconProvider
           icon="MdKeyboardArrowDown"
+          title=""
           className={cssClasses('popover-cell__icon')}
         />
       </Button>

@@ -382,7 +382,7 @@
                   "title": "The Operator Schema",
                   "description": "An explanation about the purpose of this instance.",
                   "default": "=",
-                  "enum": ["===", "!==", ">=", "<=", "not-selected"]
+                  "enum": ["===", "!==", ">=", "<=", "not-selected", "in"]
                 },
                 "fieldToCompare": {
                   "$id": "#/properties/fields/items/properties/filters/items/properties/fieldToCompare",

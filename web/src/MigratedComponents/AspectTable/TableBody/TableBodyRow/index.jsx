@@ -53,6 +53,7 @@ const TableBodyRow = ({
               translate={translate}
               onClick={link ? onClickCell : null}
               column={column}
+              row={row.original}
             />
           )}
         </TableCell>
