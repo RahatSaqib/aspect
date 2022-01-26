@@ -66,8 +66,13 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
 
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
-  ...INVENTORY_ITEM_SELECT.filter(field => field !== 'ii.id'),
-  knex.raw("CONCAT(c.id, '-', s.id, '-', IFNULL(ii.id, 'NA')) as id"),
+  knex.raw(
+    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
+  ),
+  ...INVENTORY_ITEM_SELECT.filter(
+    field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
+  ),
+  knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
 const INVENTORY_ITEM_SORT_FIELDS = {
@@ -488,6 +493,15 @@ function getInventoryLots(request, dataConstraints) {
       dataConstraints,
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
+    .groupBy([
+      knex.raw(
+        `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,''))`
+      ),
+      's.name',
+      'ii.expiresOn',
+      'ii.lotNumber',
+      'ii.inTransitFromSiteId',
+    ])
     .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
 
   return inventoryItemsQuery
@@ -548,6 +562,9 @@ function getInventorySites(constraints, request) {
       'ficr.rate as dailyConsumptionRate',
       knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
+      knex.raw(
+        'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
+      ),
     ])
 }
 
@@ -1156,10 +1173,12 @@ async function findInventoryItem(
     matchingInventoryItemsQuery.whereNull('ii.expiresOn')
   }
 
-  if (lotNumber) {
+  if (!_.isEmpty(lotNumber)) {
     matchingInventoryItemsQuery.where('ii.lotNumber', lotNumber)
   } else {
-    matchingInventoryItemsQuery.whereNull('ii.lotNumber')
+    matchingInventoryItemsQuery.where(builder =>
+      builder.whereNull('ii.lotNumber').orWhere('ii.lotNumber', '')
+    )
   }
 
   if (inTransitFromSiteId) {
@@ -1170,6 +1189,7 @@ async function findInventoryItem(
   } else {
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
+
   const matchingInventoryItems = await matchingInventoryItemsQuery.select(
     INVENTORY_ITEM_SELECT
   )
@@ -1300,7 +1320,6 @@ async function removeInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-
   const inventoryItemId = await decreaseInventory({
     siteId: fromSite.id,
     consumableId,

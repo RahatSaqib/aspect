@@ -106,6 +106,9 @@ const InventoryTableRow = ({ inventoryItem }) => {
               {inventoryItem.get('pendingTransfers')
                 ? formatMessage(messages.excludedLotInTransit, {
                     pendingTransfers: inventoryItem.get('pendingTransfers'),
+                    pendingTransfersQuantityOnHand: inventoryItem.get(
+                      'pendingTransfersQuantityOnHand'
+                    ),
                   })
                 : null}
             </small>
