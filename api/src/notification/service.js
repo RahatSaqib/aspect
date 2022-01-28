@@ -717,6 +717,11 @@ async function getNotifications(request) {
     .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
     .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
     .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
+    .leftOuterJoin(
+      'MessageStatus as mswebhook',
+      'mswebhook.id',
+      'wm.messageStatusId'
+    )
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
@@ -759,13 +764,16 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'r.id as resultId',
+      'n.resultId as resultId',
       'r.sampleId',
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pEm.name separator "|") as emailRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pSm.name separator "|") as smsRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
+      `),
+      knex.raw(`
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
@@ -787,32 +795,57 @@ async function getNotifications(request) {
       webhookSent: knex.raw(`
         DISTINCT
         CASE WHEN mswm.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      webhookWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN mswm.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      webhookPending: knex.raw(`
+    DISTINCT
+    CASE WHEN mswm.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
       smsSent: knex.raw(`
         DISTINCT
         CASE WHEN mssms.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      smsWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN mssms.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      smsPending: knex.raw(`
+    DISTINCT
+    CASE WHEN mssms.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
       emailSent: knex.raw(`
         DISTINCT
         CASE WHEN msem.externalId = "Sent" 
-        THEN (CASE WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      emailWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN msem.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      emailPending: knex.raw(`
+    DISTINCT
+    CASE WHEN msem.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
     })
     .groupBy('groupingParam')
 
@@ -826,9 +859,8 @@ async function getNotifications(request) {
     emailRecipients: item.emailRecipients
       ? item.emailRecipients.split('|')
       : null,
-    smsRecipients: item.smsRecipients ? item.emailRecipients.split('|') : null,
+    smsRecipients: item.smsRecipients ? item.smsRecipients.split('|') : null,
   }))
-
   return { ok: true, total, data: items }
 }
 

@@ -15,10 +15,6 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldShortName',
     defaultMessage: 'ShortName',
   },
-  fieldFacilityCode: {
-    id: 'pages.SiteDetail.fieldFacilityCode',
-    defaultMessage: 'Facility Code',
-  },
   fieldExternalId: {
     id: 'pages.SiteDetail.fieldExternalId',
     defaultMessage: 'Site ID',
