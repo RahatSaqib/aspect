@@ -188,9 +188,9 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   ])
   if (!processedTemplateFields.to) {
     processedTemplateFields.to = _.uniq(
-      _.compact([to, email, email2])
-        .filter(address => !!address && !!address.trim())
-        .map(address => address.toLowerCase().trim())
+      _.compact(
+        [to, email, email2].map(address => address?.toLowerCase().trim())
+      )
     ).join(',')
   }
   const attachmentProps = JSON.parse((data && data.attachments) || '[]')

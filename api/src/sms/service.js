@@ -110,10 +110,7 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .where('id', smsMessageId)
     .first('personId')
 
-  let dataConstraints = {}
-  if (personId) {
-    dataConstraints = await getConstraints({ personId })
-  }
+  const dataConstraints = await getConstraints({ personId })
 
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')

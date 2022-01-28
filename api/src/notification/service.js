@@ -261,8 +261,8 @@ async function createNotifications(knex, action, context) {
   const {
     jobFunctions = [],
     persons = [],
-    sendToClinician,
-    sendToPatient,
+    sendToClinician = false,
+    sendToPatient = false,
   } = filterCondition || {}
   if (policies) {
     const [firstPolicy] = policies
@@ -280,7 +280,7 @@ async function createNotifications(knex, action, context) {
             to: firstPolicy.clinicianEmail,
           },
         ],
-        elem => elem.notify
+        elem => !!elem.notify
       )
       _.each(nonPersonsToNotify, personToSend => {
         const policy = {
@@ -573,7 +573,7 @@ async function createNotificationIfNotCreatedAlready(
   { messageContext: context, knex },
   nonPersonToSend = {}
 ) {
-  const { notify: notifyANonPerson, email: to, phone } = nonPersonToSend
+  const { notify: notifyANonPerson = false, email: to, phone } = nonPersonToSend
 
   context.bindActionCreators({
     notificationCreated,
