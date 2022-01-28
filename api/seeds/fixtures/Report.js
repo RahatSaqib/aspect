@@ -276,16 +276,4 @@ module.exports = {
   deviceCalibrationReport,
   geneXpertIssues,
   allResults,
-  fixture: [
-    mtbDetectedRRDetected,
-    resultsHivNotSuppressed,
-    rifResistanceRate,
-    criticalErrorsByDevice,
-    deviceActivity,
-    deviceActivityPercent,
-    moduleSwaps,
-    deviceCalibrationReport,
-    deviceUtilizationReport,
-    geneXpertIssues,
-  ],
 }

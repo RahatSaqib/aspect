@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const ReportFixture = require('../fixtures/Report')
+const commonReportFixture = require('../fixtures/Report')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -21,14 +21,14 @@ async function upsertSheets(knex, reportId, sheets) {
 
 module.exports = async function upsertReports(
   knex,
-  countrySpecificReportFixture
+  countrySpecificReportFixture = {}
 ) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
 
   const actualReports = {
-    ..._.omit(ReportFixture, 'fixture'),
-    ..._.omit(countrySpecificReportFixture || {}, 'fixture'),
+    ...commonReportFixture,
+    ...countrySpecificReportFixture,
   }
   const reportsById = {}
 

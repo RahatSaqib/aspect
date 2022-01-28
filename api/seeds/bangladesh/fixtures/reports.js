@@ -18,5 +18,4 @@ const resultsDrTb10A = {
 
 module.exports = {
   resultsDrTb10A,
-  fixture: [resultsDrTb10A],
 }
