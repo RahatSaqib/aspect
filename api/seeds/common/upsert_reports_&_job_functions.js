@@ -8,11 +8,11 @@ module.exports = async function upsertReportsAndJobFunctions(
   knex,
   jobFunctionFixture,
   partnerName,
-  { additionalReportFixture } = {}
+  { countrySpecificReportFixture } = {}
 ) {
   const [partnerId] = await knex('Partner')
     .where({ name: partnerName })
     .pluck('id')
-  await upsertReports(knex, additionalReportFixture)
+  await upsertReports(knex, countrySpecificReportFixture)
   await upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId)
 }

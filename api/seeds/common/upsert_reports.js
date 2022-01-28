@@ -19,13 +19,16 @@ async function upsertSheets(knex, reportId, sheets) {
   )
 }
 
-module.exports = async function upsertReports(knex, additionalReportFixture) {
+module.exports = async function upsertReports(
+  knex,
+  countrySpecificReportFixture
+) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
 
   const actualReports = {
     ..._.omit(ReportFixture, 'fixture'),
-    ..._.omit(additionalReportFixture || {}, 'fixture'),
+    ..._.omit(countrySpecificReportFixture || {}, 'fixture'),
   }
   const reportsById = {}
 
