@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const {
   admin,
   clinician,
@@ -11,18 +10,13 @@ const {
   technician,
 } = require('../../fixtures/jobFunctionBase')
 
-const withNewReports = jobFunction => ({
-  ...jobFunction,
-  reports: _.uniq([...jobFunction.reports, 'results_dr_tb_10a']),
-})
-
 module.exports = [
-  withNewReports(admin),
+  admin,
   clinician,
   deviceMaker,
   donor,
-  withNewReports(manager),
-  withNewReports(ntp),
+  manager,
+  ntp,
   resultViewerNo,
   resultViewerYes,
   technician,

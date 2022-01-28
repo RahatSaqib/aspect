@@ -1,6 +1,5 @@
 const flatten = require('flat')
 const _ = require('lodash')
-
 const { getResultsForExport } = require('./service')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
@@ -9,6 +8,7 @@ const {
   getMaxLimitPlaceHolders,
   getBaseReplacements,
 } = require('../shared/excel')
+
 const { getAllAssaySchemas } = require('../assay/service')
 
 /**
