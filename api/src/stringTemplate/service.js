@@ -70,6 +70,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Geography as rg', `r.geographyId`, 'rg.id')
+      .leftJoin('Country as rc', `rg.countryId`, 'rc.id')
       .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
       .leftJoin('Assay as a', `r.assayId`, 'a.id')
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
@@ -93,7 +95,10 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
-        'c.countryCode as countryCode',
+        knex.raw('coalesce(c.countryCode,rc.countryCode) as countryCode'),
+        knex.raw(
+          'coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'
+        ),
         'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',

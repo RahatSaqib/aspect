@@ -254,7 +254,10 @@ describe('Device API routes for GxAlert Device', () => {
         instrumentSerial: 'new instrument',
         moduleName: basicResultPayload.result.instrument.module.name,
         moduleSerial: basicResultPayload.result.instrument.module.serial,
-        patientData: basicResultPayload.result.patient,
+        patientData: {
+          ...basicResultPayload.result.patient,
+          phone: '+10833243682',
+        },
         senderVersion: basicResultPayload.result.sender.version,
         senderOperator: basicResultPayload.result.sender.operator,
         notes: null,
@@ -592,7 +595,7 @@ describe('Device API routes for GxAlert Device', () => {
         age: 72,
         dateOfBirth: '1903-05-29T00:00:00.000Z',
         address: '123 Main Street',
-        phone: '856-7909',
+        phone: '+18567909',
       })
       assert.deepEqual(JSON.parse(result2.oemData), {
         maker: 'ABC',
@@ -2195,7 +2198,10 @@ describe('Device API routes for GxAlert Device', () => {
         instrumentSerial: 'new instrument',
         moduleName: null,
         moduleSerial: basicResultPayload.result.instrument.module.serial,
-        patientData: basicResultPayload.result.patient,
+        patientData: {
+          ...basicResultPayload.result.patient,
+          phone: '+10833243682',
+        },
         senderVersion: basicResultPayload.result.sender.version,
         senderOperator: basicResultPayload.result.sender.operator,
         notes: null,

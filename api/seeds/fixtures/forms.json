@@ -22,6 +22,16 @@
       "diseaseExternalId": "hiv"
     }
   },
+  "PatientDefinition": {
+    "fileName": "PatientDefinition.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Patient Definition",
+      "i18nKeyTitle": "PatientDefinitioni18nkey",
+      "externalId": "PatientGenericDefinition",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  },
   "CustomFieldsExample": {
     "fileName": "CustomFieldsExample.json",
     "formDefinition": {

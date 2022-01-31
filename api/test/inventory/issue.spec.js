@@ -51,9 +51,9 @@ describe('Inventory Stock Issues Endpoint', () => {
   }
   let issueIds = []
   const resultIds = []
-
+  let partner = null
   before(async () => {
-    const partner = await getPartner(knex, partnerName)
+    partner = await getPartner(knex, partnerName)
     assert.isOk(partner, `Cannot find Partner ${partnerName}`)
     const {
       s: { id: siteId, geographyId },
@@ -107,7 +107,22 @@ describe('Inventory Stock Issues Endpoint', () => {
       const sampleIds = await knex('Result')
         .whereIn('id', resultIds)
         .pluck('sampleId')
-      await knex('Consumable').where({ name: 'Test Cartridge' })
+      const { consumableId } = await knex('Consumable')
+        .where({ externalId: 'DaktariCartridge' })
+        .first('id as consumableId')
+      await knex('InventoryItem').where({ consumableId }).delete()
+      await knex('FactInventoryConsumptionRate')
+        .where({ consumableId })
+        .delete()
+      await knex('ConsumableAssay').where({ consumableId }).delete()
+      await knex('PartnerConsumable')
+        .where({ consumableId, partnerId: partner.id })
+        .delete()
+      const issuesId = await knex('Issue').where({ consumableId }).pluck('id')
+      await knex('Notification').whereIn('issueId', issuesId).delete()
+      await knex('Issue').whereIn('id', issuesId).delete()
+      await knex('Consumable').where({ id: consumableId }).delete()
+
       await knex('Result').whereIn('id', resultIds).delete()
       await knex('Sample').whereIn('id', sampleIds).delete()
       await knex('Device').whereIn('id', deviceIds).delete()

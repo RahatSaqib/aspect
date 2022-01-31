@@ -1,0 +1,88 @@
+{
+  "fields": [
+    {
+      "name": "Name",
+      "title": "Name",
+      "i18nKey": "NameFieldi18nKey",
+      "fieldType": "text",
+      "order": 2,
+      "gxAlertDbColumn": "PatientName",
+      "caption": "Name",
+      "i18nKeyCaption": "Namei18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "Surename",
+      "title": "Surename",
+      "i18nKey": "SurenameFieldi18nKey",
+      "fieldType": "text",
+      "order": 2,
+      "caption": "Name",
+      "i18nKeyCaption": "Namei18nCaptionKey",
+      "controlType": "textBox"
+    },
+    {
+      "name": "Gender",
+      "title": "Gender",
+      "i18nKey": "Genderi18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "caption": "Gender",
+      "gxAlertDbColumn": "PatientGender",
+      "i18nKeyCaption": "Genderi18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 1,
+          "value": "Male",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "Female",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "name": "Age",
+      "title": "Age",
+      "i18nKey": "AgeFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "gxAlertDbColumn": "PatientAge",
+      "caption": "Age",
+      "i18nKeyCaption": "Agei18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 0,
+          "max": 150,
+          "errorMessage": "The age should be a number between 1-150",
+          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "name": "PatientPhoneNumber",
+      "title": "Cellphone number",
+      "i18nKey": "PatientPhoneNumberi18nkey",
+      "payloadOriginPath": "patient.phone",
+      "payloadDestinationPath": "patient.phone",
+      "fieldType": "patientCellphone",
+      "gxAlertDbColumn": "PatientPhone",
+      "order": 2,
+      "caption": "Cellphone number",
+      "i18nKeyCaption": "PatientPhoneNumberi18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "regex",
+          "regex": "\\(?([0-9]{3})\\)?([ .-]?)([0-9]{3})\\2([0-9]{4})"
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}
