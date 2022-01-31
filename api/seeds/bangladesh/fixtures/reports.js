@@ -3,7 +3,7 @@ const resultsDrTb10A = {
   description:
     'DR-TB 10A reporting format for the Monthly report on Xpert MTB/RIF Results',
   i18nKey: 'reportDrTb10a',
-  externalId: 'reportDrTb10a',
+  externalId: 'report_dr_tb_10a', // folder name in /templates
   i18nKeyDescription: 'reportDrTb10aDescription',
   fileName: 'ReportDrTb10a',
   sortOrder: 11,
