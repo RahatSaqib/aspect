@@ -437,7 +437,7 @@ const getConfig = (
               {
                 id: 'consumableExpirationDate',
                 controlType: {
-                  component: 'datePicker',
+                  component: 'datePickerNoTimezone',
                 },
                 label: 'Consumable Expiration Date',
                 labelI18nKey: 'consumableExpirationDate',
