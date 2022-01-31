@@ -4,6 +4,7 @@
       {
         "Id": 117,
         "Name": "ReferringHealthFacilityProvince",
+        "ExternalId": "ReferringHealthFacilityProvince",
         "Label": "Referring Health Facility Province",
         "Control": "AutoComplete",
         "Type": "string",
@@ -57,6 +58,7 @@
       {
         "Id": 118,
         "Name": "ReferringHealthFacilityDistrict",
+        "ExternalId": "ReferringHealthFacilityDistrict",
         "Label": "Referring Health Facility District",
         "Control": "AutoComplete",
         "Type": "string",
