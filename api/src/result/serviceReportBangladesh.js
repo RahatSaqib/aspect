@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { endOfMonth, startOfMonth } = require('date-fns')
+const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 
 const { addConstraints, getConstraints } = require('../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
@@ -126,8 +126,12 @@ async function getDataForReportDrTb10A(auth, query) {
       endOfMonth(new Date())
     ),
   } = query
-  const dateFrom = startOfMonthUTC(minDateStr)
+
+  let dateFrom = startOfMonthUTC(minDateStr)
   const dateTo = endOfMonthUTC(maxDateStr)
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
