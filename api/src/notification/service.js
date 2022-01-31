@@ -660,8 +660,8 @@ async function getNotifications(request) {
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-
-  if (category === 'resultBased') {
+  const isResultBased = category === 'resultBased'
+  if (isResultBased) {
     notificationQuery = notificationQuery.leftOuterJoin(
       'Result as r',
       'r.Id',
@@ -697,7 +697,6 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'n.resultId as resultId',
       'r.sampleId',
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
@@ -780,6 +779,12 @@ async function getNotifications(request) {
     ELSE null END
   `),
     })
+    .modify((builder, resultBased) => {
+      if (resultBased) {
+        builder.select('r.id as resultId')
+      } else
+        builder.join('Issue as i', 'i.id', 'n.issueId').select('i.resultId')
+    }, isResultBased)
     .groupBy('groupingParam')
 
   const [{ total }, data] = await Promise.all([
