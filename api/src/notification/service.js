@@ -177,6 +177,7 @@ async function listNotifications(request) {
     .distinct(
       'nti.id AS notificationTypeId',
       'per.name AS personName',
+      'per.id as personId',
       'jf.name AS jfName'
     )
 
@@ -224,10 +225,6 @@ async function listNotifications(request) {
         `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
       ),
       columnCount('alert'),
-      knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT jf.name SEPARATOR ', ') as jobFunctions`),
-      knex.raw('COUNT(DISTINCT per.id) as personsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT per.name SEPARATOR ', ') as persons`),
       knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
       'ntc.externalId as typeCategory'
     )

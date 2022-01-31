@@ -520,104 +520,102 @@ function buildJobFunctionsRows(jobFunctions) {
 }
 
 function buildSendToPersons(formatMessage) {
-  return [
-    {
-      id: 'sendToPersons',
-      label: 'sendToPersons',
-      labelI18nKey: 'personsSelectLabel',
-      rows: [
-        {
-          id: 81,
-          items: [
-            {
-              id: 'persons',
-              label: formatMessage(messages.selectPersonOption),
-              initialValue: [],
-              controlType: {
-                component: 'select',
-                endpoint: PERSON_LIST.ENDPOINT,
-                hideIfNoOptions: false,
-                isMulti: true,
-                isClearable: true,
-                queryKey: PERSON_LIST.KEY,
-                normalizeLoadedData: (response, formik) => {
-                  const { values, setFieldValue } = formik
-                  function makeLabel(name, state) {
-                    const stateLabel = isEmpty(state) ? '' : ` (${state})`
-                    return `${name} ${stateLabel}`
-                  }
-                  const { ok, data } = response
-                  const options = [
-                    {
-                      label: formatMessage(messages.optionPersonRoleSet),
-                      options: [],
-                    },
-                    {
-                      label: formatMessage(messages.optionPersonRoleNotSet),
-                      options: [],
-                    },
-                  ]
-                  if (ok === true) {
-                    const selected = intersectionBy(data, values.persons, 'id')
-                    if (selected?.length) {
-                      const initialValues = []
-                      map(selected, ({ id, name, state }) =>
-                        initialValues.push({
-                          label: makeLabel(name, state),
-                          value: id,
-                          grouped: true,
-                        })
-                      )
-                      values.persons = initialValues
-                      setFieldValue('persons', initialValues)
-                    }
-                    const withJob = filter(data, item => !isEmpty(item.level))
-                    const withoutJob = xor(data, withJob)
-                    map(withJob, ({ id, name, state }) =>
-                      options[0].options.push({
+  return {
+    id: 'sendToPersons',
+    label: 'sendToPersons',
+    labelI18nKey: 'personsSelectLabel',
+    rows: [
+      {
+        id: 81,
+        items: [
+          {
+            id: 'persons',
+            label: formatMessage(messages.selectPersonOption),
+            initialValue: [],
+            controlType: {
+              component: 'select',
+              endpoint: PERSON_LIST.ENDPOINT,
+              hideIfNoOptions: false,
+              isMulti: true,
+              isClearable: true,
+              queryKey: PERSON_LIST.KEY,
+              normalizeLoadedData: (response, formik) => {
+                const { values, setFieldValue } = formik
+                function makeLabel(name, state) {
+                  const stateLabel = isEmpty(state) ? '' : ` (${state})`
+                  return `${name} ${stateLabel}`
+                }
+                const { ok, data } = response
+                const options = [
+                  {
+                    label: formatMessage(messages.optionPersonRoleSet),
+                    options: [],
+                  },
+                  {
+                    label: formatMessage(messages.optionPersonRoleNotSet),
+                    options: [],
+                  },
+                ]
+                if (ok === true) {
+                  const selected = intersectionBy(data, values.persons, 'id')
+                  if (selected?.length) {
+                    const initialValues = []
+                    map(selected, ({ id, name, state }) =>
+                      initialValues.push({
                         label: makeLabel(name, state),
                         value: id,
                         grouped: true,
                       })
                     )
-                    map(withoutJob, ({ name, state }) =>
-                      options[1].options.push({
-                        label: makeLabel(name, state),
-                        value: null,
-                        disabled: true,
-                        grouped: true,
-                      })
-                    )
+                    values.persons = initialValues
+                    setFieldValue('persons', initialValues)
                   }
-                  return options?.length ? options : null
-                },
+                  const withJob = filter(data, item => !isEmpty(item.level))
+                  const withoutJob = xor(data, withJob)
+                  map(withJob, ({ id, name, state }) =>
+                    options[0].options.push({
+                      label: makeLabel(name, state),
+                      value: id,
+                      grouped: true,
+                    })
+                  )
+                  map(withoutJob, ({ name, state }) =>
+                    options[1].options.push({
+                      label: makeLabel(name, state),
+                      value: null,
+                      disabled: true,
+                      grouped: true,
+                    })
+                  )
+                }
+                return options?.length ? options : null
               },
-              classNames: {
-                itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-                controlContainer: cssClasses('full-width-100pc'),
-                item: cssClasses('full-width-100pc'),
-              },
-              labelI18nKey: 'selectPersonOption',
             },
-          ],
-        },
-        {
-          id: 20,
-          items: [
-            {
-              id: 'sendToPatient',
-              labelI18nKey: 'sendToPatient',
-              controlType: {
-                component: 'checkbox',
-              },
-              classNames: checkboxClassNames,
-              initialValue: false,
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
             },
-          ],
-        },
-      ],
-    },
-  ]
+            labelI18nKey: 'selectPersonOption',
+          },
+        ],
+      },
+      {
+        id: 20,
+        items: [
+          {
+            id: 'sendToPatient',
+            labelI18nKey: 'sendToPatient',
+            controlType: {
+              component: 'checkbox',
+            },
+            classNames: checkboxClassNames,
+            initialValue: false,
+          },
+        ],
+      },
+    ],
+  }
 }
 
 const getFormConfig = (
@@ -627,36 +625,6 @@ const getFormConfig = (
   isEdit
 ) => {
   const validationBase = getBaseValidation(formatMessage, messages)
-  const sections = [
-    {
-      id: 'section_notificationType_disable',
-      label: 'Enable',
-      labelI18nKey: 'notificationTypeEnable',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'enabled',
-              controlType: {
-                component: 'checkbox',
-              },
-              classNames: {
-                controlContainer: cssClasses('checkbox-container'),
-                itemContainer: cssClasses('checkbox-item-container'),
-              },
-              // classNames: checkboxClassNames,
-              initialValue: true,
-              label: '',
-            },
-          ],
-        },
-      ],
-    },
-    ...getSectionsBase(formatMessage, validationBase),
-    ...buildSendToPersons(formatMessage),
-    buildJobFunctionsRows(jobFunctions),
-  ]
   const fromThisDevice = buildFromThisDevice(formatMessage)
   const sendToPersons = buildSendToPersons(formatMessage)
 
