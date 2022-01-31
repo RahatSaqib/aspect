@@ -982,7 +982,10 @@ describe('Device API routes for GxConnect Devices', () => {
           instrumentSerial: 'new instrument',
           moduleName: null,
           moduleSerial: null,
-          patientData: basicResultPayload.result.patient,
+          patientData: {
+            ...basicResultPayload.result.patient,
+            phone: '+10833243682',
+          },
           senderVersion: basicResultPayload.result.sender.version,
           senderOperator: basicResultPayload.result.sender.operator,
           notes: null,
@@ -1388,7 +1391,7 @@ describe('Device API routes for GxConnect Devices', () => {
           age: 72,
           dateOfBirth: '1903-05-29T00:00:00.000Z',
           address: '123 Main Street',
-          phone: '856-7909',
+          phone: '+18567909',
         })
         assert.deepEqual(JSON.parse(result2.oemData), {
           maker: 'ABC',

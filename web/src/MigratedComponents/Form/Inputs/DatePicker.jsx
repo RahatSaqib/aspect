@@ -11,9 +11,6 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
 import { useFormikContext } from 'formik'
-
-import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
-
 import useI18n from '../../../Hooks/i18n/useI18n'
 import {
   formatDate,
@@ -23,6 +20,7 @@ import {
 import { useAuthState } from '../../../Providers/AuthProvider'
 import messages from '../messages'
 import styles from './DatePicker.css'
+import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -35,7 +33,7 @@ const getDisplayValue = (value, showTimeSelect) => {
 }
 
 const AspectDatePickerBase = props => {
-  const { formatMessage } = useI18n()
+  const { formatMessage, formatDate } = useI18n()
   const {
     className,
     culture,
@@ -44,10 +42,20 @@ const AspectDatePickerBase = props => {
     onChange,
     placeholder,
     showTimeSelect,
+    transformTimezone = true,
     value,
   } = props
   registerLocale(culture, enUS)
-  const [selectedDate, setSelectedDate] = useState(getDateObject(value))
+  const [selectedDate, setSelectedDate] = useState(
+    getDateObject(
+      transformTimezone
+        ? value
+        : formatDate(
+            new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' }),
+            'yyyy-MM-dd'
+          )
+    )
+  )
 
   // skip all 'null' and 'undefined' props
   const optionalProps = omitBy(
@@ -209,4 +217,9 @@ const AspectDateTimePicker = props => {
   return <AspectDatePicker {...mergedProps} />
 }
 
-export { AspectDatePicker, AspectDateTimePicker }
+const AspectDatePickerNoTimezone = props => {
+  const mergedProps = { ...props, transformTimezone: false }
+  return <AspectDatePicker {...mergedProps} />
+}
+
+export { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone }

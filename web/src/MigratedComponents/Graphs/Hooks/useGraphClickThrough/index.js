@@ -124,8 +124,8 @@ function getQueryParameters(
       params.set('diseaseId', diseaseId)
     }
 
-    if (key === 'stockLeft') {
-      params.set('stockLeft', id)
+    if (key === 'daysStockLeft') {
+      params.set('daysStockLeft', id)
     }
 
     if (key === 'consumableId') {

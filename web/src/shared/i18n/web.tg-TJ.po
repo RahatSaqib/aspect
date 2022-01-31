@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-12-16T18:19:52.696Z\n"
+"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,10 +32,10 @@ msgstr "(Миқдори нав дар даст: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * in transit from {inTransitFromSiteName}
+#. * excluded {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* in transit from {inTransitFromSiteName}"
-msgstr "* дар интиқол аз {inTransitFromSiteName}"
+msgid "* excluded {pendingTransfers} lot/s in transit"
+msgstr "* {pendingTransfers} лот/с дар транзит хориҷ карда шудааст"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -47,7 +47,7 @@ msgstr "...{тамос, ҷамъ, як {# дигар {name}} дигар {# ди�
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
-#. [filter.btnGroup.stockLeft.upTo14]
+#. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
 #: extracted_strings.json
@@ -57,7 +57,7 @@ msgstr "1-14 рӯз"
 #. [legends.Unknown.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
-#. [filter.btnGroup.stockLeft.upTo90]
+#. [filter.btnGroup.daysStockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
@@ -67,7 +67,7 @@ msgstr "1-3 моҳ"
 #. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#. [filter.btnGroup.stockLeft.upTo30]
+#. [filter.btnGroup.daysStockLeft.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
 #: extracted_strings.json
@@ -77,7 +77,7 @@ msgstr "15-30 руз"
 #. [legends.Unknown.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
-#. [filter.btnGroup.stockLeft.upTo180]
+#. [filter.btnGroup.daysStockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -115,7 +115,7 @@ msgstr "< 550 cp/ml"
 #. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
-#. [filter.btnGroup.stockLeft.moreThan180]
+#. [filter.btnGroup.daysStockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -472,6 +472,13 @@ msgstr "Ҳама"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Ҳама натиҷаҳое ба вуҷуд меоянд, ки вируси ВНМО пахш карда намешавад"
 
+#. [pages.ReportIndex.all_results]
+#. defaultMessage is:
+#. All Results
+#: extracted_strings.json
+msgid "All Results"
+msgstr "Ҳама натиҷаҳо"
+
 #. [pages.JobAssignments.allAreas]
 #. defaultMessage is:
 #. All areas
@@ -538,6 +545,17 @@ msgstr "Ҳама сайтҳо"
 #: extracted_strings.json
 msgid "All states"
 msgstr "Хамаи штатхо"
+
+#. [pages.ReportIndex.all_results_description]
+#. defaultMessage is:
+#. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
+#: extracted_strings.json
+msgid ""
+"All test results in the system (up to 50.000 records). One row per result "
+"with all the fields needed."
+msgstr ""
+"Ҳама натиҷаҳои санҷиш дар система (то 50.000 сабт). Як сатр барои як натиҷа "
+"бо тамоми майдонҳои зарурӣ."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -663,6 +681,13 @@ msgstr "Ҳолати тасдиқ"
 #: extracted_strings.json
 msgid "Approved"
 msgstr "тасдик карда шуд"
+
+#. [contextualMenu.notifications.areYouSureToDelete]
+#. defaultMessage is:
+#. Are you sure to delete notification {notificationName}?
+#: extracted_strings.json
+msgid "Are you sure to delete notification {notificationName}?"
+msgstr "Оё мутмаин ҳастед, ки огоҳиномаи {notificationName}-ро нест кунед?"
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -980,6 +1005,13 @@ msgstr "Бозгашт"
 msgid "Back to Login Page"
 msgstr "Бозгашт ба Саҳифаи воридшавӣ"
 
+#. [pages.InventoryItemsList.breakOutByLot]
+#. defaultMessage is:
+#. Break out by lot
+#: extracted_strings.json
+msgid "Break out by lot"
+msgstr "Аз рӯи қуръа ҷудо кунед"
+
 #. [header.link.browse.title]
 #. defaultMessage is:
 #. Browse
@@ -1063,6 +1095,9 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Калибрчендашуда ҳангоми мӯҳлат"
 
+#. [pages.RouterDetail.detailCalibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.Notification.type.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1134,6 +1169,9 @@ msgstr "Таҳрир кардан мумкин нест"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
 #: extracted_strings.json
 msgid "Cancel"
 msgstr "Бекор кардан"
@@ -1172,7 +1210,17 @@ msgstr "Ҳодисаҳо"
 msgid "Category"
 msgstr "Категория"
 
+#. [legends.Unknown.resultCategory1]
+#. defaultMessage is:
+#. Category 1
+#: extracted_strings.json
+msgid "Category 1"
+msgstr "Категорияи 1"
+
 #. [pages.ResultList.resultCategory1Name]
+#. defaultMessage is:
+#. Category 2
+#. [legends.Unknown.resultCategory2]
 #. defaultMessage is:
 #. Category 2
 #: extracted_strings.json
@@ -1523,6 +1571,9 @@ msgstr "Номи тамос/почтаи электронӣ"
 #. [pages.PersonList.title]
 #. defaultMessage is:
 #. Contacts
+#. [pages.RouterDetail.detailContacts]
+#. defaultMessage is:
+#. Contacts
 #. [pages.Notifications.table.contactsHeader]
 #. defaultMessage is:
 #. Contacts
@@ -1730,6 +1781,9 @@ msgid "Covid 19"
 msgstr "Ковид - 19"
 
 #. [pages.PersonDetails.create]
+#. defaultMessage is:
+#. Create
+#. [pages.Contacts.create]
 #. defaultMessage is:
 #. Create
 #: extracted_strings.json
@@ -1961,10 +2015,10 @@ msgstr "Санаи интиқол"
 msgid "Day"
 msgstr "рӯз"
 
-#. [filter.popover.stockLeft]
+#. [filter.popover.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
-#. [pages.InventoryItemsList.stockLeft]
+#. [pages.InventoryItemsList.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
 #: extracted_strings.json
@@ -2011,10 +2065,10 @@ msgstr "Ба кор андохта шуд"
 
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
-#. Delete
+#. Delete (Only 0 triggers)
 #: extracted_strings.json
-msgid "Delete"
-msgstr "Нобуд кунед"
+msgid "Delete (Only 0 triggers)"
+msgstr "Нест кардан (танҳо 0 триггер)"
 
 #. [pages.ResultList.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
@@ -2151,6 +2205,13 @@ msgstr "Фаъолияти дастгоҳ (фоиз)"
 #: extracted_strings.json
 msgid "Device Area Level"
 msgstr "Сатҳи майдони дастгоҳ"
+
+#. [pages.ReportIndex."deviceUtilizationReport"]
+#. defaultMessage is:
+#. Device Average Utilization per Month
+#: extracted_strings.json
+msgid "Device Average Utilization per Month"
+msgstr "Истифодаи миёнаи дастгоҳ дар як моҳ"
 
 #. [pages.CalibrationDialog.dialogTitle]
 #. defaultMessage is:
@@ -2295,6 +2356,13 @@ msgstr "Навъи дастгоҳ"
 msgid "Devices"
 msgstr "Дастгоҳҳо"
 
+#. [pages.shared.deviceStatus.devicesActive]
+#. defaultMessage is:
+#. Devices Active
+#: extracted_strings.json
+msgid "Devices Active"
+msgstr "Дастгоҳҳо фаъол"
+
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionTitle]
 #. defaultMessage is:
 #. Devices Experiencing Service Interruption
@@ -2315,6 +2383,13 @@ msgstr "Таҷҳизот бо қатъи хидмат"
 #: extracted_strings.json
 msgid "Devices with Unused Modules"
 msgstr "Дастгоҳҳо бо модулҳои истифоданашуда"
+
+#. [forms.PhoneNumber.dialCode]
+#. defaultMessage is:
+#. Dial Code
+#: extracted_strings.json
+msgid "Dial Code"
+msgstr "Рақами рақам"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2538,6 +2613,27 @@ msgstr "Ҳадафи почтаи электронӣ лозим аст"
 msgid "Email subject is required"
 msgstr "Мавзӯи почтаи электронӣ лозим аст"
 
+#. [pages.Notifications.table.emailSentTo]
+#. defaultMessage is:
+#. Email was sent to:
+#: extracted_strings.json
+msgid "Email was sent to:"
+msgstr "Почтаи электронӣ ба суроғаи:"
+
+#. [pages.NotificationDetail.enable]
+#. defaultMessage is:
+#. Enable
+#: extracted_strings.json
+msgid "Enable"
+msgstr "Фаъол кардан"
+
+#. [pages.NotificationDetail.notificationTypeEnable]
+#. defaultMessage is:
+#. Enable this notification
+#: extracted_strings.json
+msgid "Enable this notification"
+msgstr "Ин огоҳиномаро фаъол созед"
+
 #. [forms.formItem.endDate]
 #. defaultMessage is:
 #. End Date
@@ -2614,6 +2710,13 @@ msgstr "Номи дастгоҳро ворид кунед..."
 #: extracted_strings.json
 msgid "Enter error code..."
 msgstr "Рамзи хаторо ворид кунед..."
+
+#. [filter.popover.enterLotNumber]
+#. defaultMessage is:
+#. Enter lot number...
+#: extracted_strings.json
+msgid "Enter lot number..."
+msgstr "Рақами лотро ворид кунед…"
 
 #. [filter.popover.selectNotificationName]
 #. defaultMessage is:
@@ -2837,6 +2940,13 @@ msgstr "Хатогӣ ҳангоми боркунии давлатҳо барои
 msgid "Error Rate"
 msgstr "Сатҳи хатогиҳо"
 
+#. [pages.RouterDetail.detailErrorOverTime]
+#. defaultMessage is:
+#. Error Rates Over Time
+#: extracted_strings.json
+msgid "Error Rates Over Time"
+msgstr "Сатҳи хатогиҳо бо мурури замон"
+
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
 #. Error Saving New Password
@@ -2899,6 +3009,13 @@ msgstr "Ба охир мерасад"
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Ба охир мерасад"
+
+#. [pages.RouterDetail.detailWarrantyExpire]
+#. defaultMessage is:
+#. Expires {date}
+#: extracted_strings.json
+msgid "Expires {date}"
+msgstr "Мӯҳлати анҷоми {date}"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -3521,13 +3638,6 @@ msgstr "Гирифтани файли гузориш ноком шуд"
 msgid "Group By Column"
 msgstr "Гурӯҳ аз рӯи сутун"
 
-#. [pages.InventoryItemsList.groupBySite]
-#. defaultMessage is:
-#. Group by Site
-#: extracted_strings.json
-msgid "Group by Site"
-msgstr "Гурӯҳ аз рӯи сайт"
-
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
 #. HBV VL
@@ -3575,6 +3685,13 @@ msgstr "ВИЧ ВЛ"
 #: extracted_strings.json
 msgid "HIV/AIDS"
 msgstr "ВИЧ/СПИД"
+
+#. [filter.popover.hasStock]
+#. defaultMessage is:
+#. Has Stock
+#: extracted_strings.json
+msgid "Has Stock"
+msgstr "Захира дорад"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase]
 #. defaultMessage is:
@@ -4177,6 +4294,13 @@ msgstr "Ҳафтаи гузашта"
 msgid "Last Year"
 msgstr "Соли гузашта"
 
+#. [pages.RouterDetail.detailCalibrationDate]
+#. defaultMessage is:
+#. Last calibrated {date}
+#: extracted_strings.json
+msgid "Last calibrated {date}"
+msgstr "Калибровкаи охирин {date}"
+
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
 #. Last seen {lastSeen}
@@ -4538,7 +4662,13 @@ msgstr "гумшуда"
 msgid "Lot"
 msgstr "лот"
 
+#. [filter.popover.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #. [pages.InventoryAdjustmentDialogForm.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#. [pages.InventoryItemsList.lotNumber]
 #. defaultMessage is:
 #. Lot Number
 #: extracted_strings.json
@@ -5102,10 +5232,17 @@ msgstr "Навтар"
 msgid "Next"
 msgstr "Баъдӣ"
 
+#. [pages.NotificationList.no]
+#. defaultMessage is:
+#. No
+#: extracted_strings.json
+msgid "No"
+msgstr "Не"
+
 #. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
-#. [filter.btnGroup.stockLeft.noConsumption]
+#. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
@@ -5291,7 +5428,7 @@ msgstr "Мумкин нест"
 #. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
-#. [filter.btnGroup.stockLeft.notRecorded]
+#. [filter.btnGroup.daysStockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
@@ -5535,6 +5672,13 @@ msgstr "Танҳо натиҷаҳое, ки аз ҷониби хабарниго
 msgid "Only Results With Treatment Required"
 msgstr "Танҳо натиҷаҳое, ки табобат лозим аст"
 
+#. [filter.btnGroup.hasStock]
+#. defaultMessage is:
+#. Only lots with stock
+#: extracted_strings.json
+msgid "Only lots with stock"
+msgstr "Танҳо лотҳо бо захираҳо"
+
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
 #. Operation
@@ -5594,7 +5738,7 @@ msgstr "Аз инвентаризатсия"
 #. [legends.Unknown.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
-#. [filter.btnGroup.stockLeft.outOfStock]
+#. [filter.btnGroup.daysStockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -5708,6 +5852,9 @@ msgstr "Маълумоти беморон"
 #. [pages.DeviceDetailProfile.patientId]
 #. defaultMessage is:
 #. Patient ID
+#. [pages.Notifications.table.patientId]
+#. defaultMessage is:
+#. Patient ID
 #: extracted_strings.json
 msgid "Patient ID"
 msgstr "ID бемор"
@@ -5750,6 +5897,13 @@ msgstr "Фоизи мусбат"
 msgid "Percent Reported"
 msgstr "Фоизи гузориш дода шудааст"
 
+#. [pages.DeviceDetailProfile.percentageLegend]
+#. defaultMessage is:
+#. Percentage (%)
+#: extracted_strings.json
+msgid "Percentage (%)"
+msgstr "Фоиз (%)"
+
 #. [pages.OperationalData.percentageOfDaysWithServiceInterruptionTitle]
 #. defaultMessage is:
 #. Percentage of Days with Service Interruption
@@ -5775,6 +5929,13 @@ msgstr ""
 "Фоизи натиҷаҳои дурусти ин моҳ гузориш дода шуд. Натиҷаҳои дуруст ҳама "
 "натиҷаҳоро дар бар мегиранд, ки дар натиҷа \"Хато\", \"Натиҷа нест\" ё "
 "\"Беэътибор\" нашудаанд."
+
+#. [pages.DeviceDetailProfile.performanceTitle]
+#. defaultMessage is:
+#. Performance
+#: extracted_strings.json
+msgid "Performance"
+msgstr "Намоиш"
 
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
@@ -6166,6 +6327,12 @@ msgstr "мусбат"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
+#. [pages.Contacts.editContact]
+#. defaultMessage is:
+#. Press enter to add tag
+#. [forms.Chips.createTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -6236,6 +6403,13 @@ msgstr "Коркард..."
 #: extracted_strings.json
 msgid "Profile"
 msgstr "Профил"
+
+#. [pages.InventoryItemsList.projectedWaste]
+#. defaultMessage is:
+#. Projected stock waste
+#: extracted_strings.json
+msgid "Projected stock waste"
+msgstr "Партовҳои захираҳои пешбинишуда"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -6423,6 +6597,13 @@ msgstr "Гирифтани {consumableName}"
 #: extracted_strings.json
 msgid "Receiving Inventory Failed"
 msgstr "Қабули инвентаризатсия ноком шуд"
+
+#. [pages.Notifications.table.recipients]
+#. defaultMessage is:
+#. Recipients
+#: extracted_strings.json
+msgid "Recipients"
+msgstr "Гирандагон"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -6869,6 +7050,13 @@ msgstr "SMS фиристода шуд"
 msgid "SMS Sent MTD"
 msgstr "SMS фиристода MTD"
 
+#. [pages.Notifications.table.smsSentTo]
+#. defaultMessage is:
+#. SMS was sent to:
+#: extracted_strings.json
+msgid "SMS was sent to:"
+msgstr "SMS фиристода шуд:"
+
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
 #. Sample
@@ -6921,6 +7109,9 @@ msgstr "Сайти ҷамъоварии намуна:"
 #. [pages.DeviceDetailProfile.sampleId]
 #. defaultMessage is:
 #. Sample ID
+#. [pages.Notifications.table.sampleId]
+#. defaultMessage is:
+#. Sample ID
 #: extracted_strings.json
 msgid "Sample ID"
 msgstr "Намунаи ID"
@@ -6961,6 +7152,9 @@ msgid "Sample collection site"
 msgstr "Сайти ҷамъоварии намуна"
 
 #. [pages.PersonDetails.save]
+#. defaultMessage is:
+#. Save
+#. [pages.Contacts.save]
 #. defaultMessage is:
 #. Save
 #. [pages.NotificationDetail.save]
@@ -8145,6 +8339,13 @@ msgstr "Вазифахо"
 msgid "Technical Details"
 msgstr "Тафсилоти техникӣ"
 
+#. [pages.RouterDetail.detailTechInfo]
+#. defaultMessage is:
+#. Technical information
+#: extracted_strings.json
+msgid "Technical information"
+msgstr "Маълумоти техникӣ"
+
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
 #. Telephone
@@ -8384,13 +8585,6 @@ msgstr ""
 "гузаронидашуда ва тақсими ин рақам ба санҷишҳои умумии ҳамаи дастгоҳҳо ҳисоб "
 "карда мешавад."
 
-#. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can remove is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can remove is {currentQuantity}"
-msgstr "Бештаре, ки шумо метавонед нест кунед, ин аст: {currentQuantity}"
-
 #. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
 #. defaultMessage is:
 #. The most that you can transfer is {currentQuantity}
@@ -8431,6 +8625,18 @@ msgstr ""
 #: extracted_strings.json
 msgid "The number of contacts in the system."
 msgstr "Шумораи алоқаҳо дар система."
+
+#. [pages.InventoryItemsList.daysStockLeftDescription]
+#. defaultMessage is:
+#. The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration
+#: extracted_strings.json
+msgid ""
+"The number of days left with available and not-expired stock, assuming that "
+"the cartridges to be consumed are always the ones closer to their expiration"
+msgstr ""
+"Шумораи рӯзҳои боқимондаи захираҳои мавҷуда ва мӯҳлати истифоданашуда, бо "
+"назардошти он, ки картриджҳои истеъмолшаванда ҳамеша ба анҷоми мӯҳлати "
+"истифодаашон наздиктаранд."
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -8620,6 +8826,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "The percentage of reported results that were reported via SMS."
 msgstr "Фоизи натиҷаҳои гузоришшуда, ки тавассути SMS хабар дода шудаанд."
+
+#. [pages.InventoryItemsList.projectedWasteDescription]
+#. defaultMessage is:
+#. The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration
+#: extracted_strings.json
+msgid ""
+"The projected stock waste, assuming that the cartridges to be consumed are "
+"always the ones closer to their expiration"
+msgstr ""
+"Партовҳои пешбинишудаи саҳҳомӣ бо назардошти он ки картриджҳои "
+"истеъмолшаванда ҳамеша ба мӯҳлати истифодаашон наздиктаранд"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -8878,6 +9095,17 @@ msgid ""
 msgstr ""
 "Ин гузориш фоизи фаъолияти дастгоҳҳоро дар як моҳ дар давраи интихобшуда "
 "нишон медиҳад. (Бо нобаёнӣ 12 моҳи охир)"
+
+#. [pages.ReportIndex.device_utilization_description]
+#. defaultMessage is:
+#. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
+#: extracted_strings.json
+msgid ""
+"This report shows the utilization rate of the devices during the selected "
+"period of time, breaking it down by months (By default last 12 months)"
+msgstr ""
+"Ин гузориш сатҳи истифодаи дастгоҳҳоро дар тӯли давраи интихобшуда нишон "
+"медиҳад ва онро ба моҳҳо тақсим мекунад (Ба таври нобаёнӣ 12 моҳи охир)"
 
 #. [pages.UpdateLoginDetails.usernameUnavailable]
 #. defaultMessage is:
@@ -9179,6 +9407,19 @@ msgstr "Truenat® MTB Plus"
 msgid "Truenat® MTB-RIF Dx"
 msgstr "Truenat® MTB-RIF Dx"
 
+#. [legends.Unknown.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [filter.AssaySelectField.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#. [pages.ResultList.assayTruenatUnknown]
+#. defaultMessage is:
+#. Truenat® Unknown Test Type
+#: extracted_strings.json
+msgid "Truenat® Unknown Test Type"
+msgstr "Truenat® Unknown Test Type"
+
 #. [pages.caseRow.diseaseNameTuberculosis]
 #. defaultMessage is:
 #. Tuberculosis
@@ -9279,6 +9520,13 @@ msgstr "Номи корбар"
 msgid "Utilization Rate"
 msgstr "Меъёри истифода"
 
+#. [pages.RouterDetail.detailUtilOverTime]
+#. defaultMessage is:
+#. Utilization Rate Over Time
+#: extracted_strings.json
+msgid "Utilization Rate Over Time"
+msgstr "Меъёри истифода бо мурури замон"
+
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
 #. VL Results
@@ -9353,6 +9601,9 @@ msgid "Voltage"
 msgstr "Шиддат"
 
 #. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]
@@ -9557,11 +9808,25 @@ msgstr "Картриджи вирусии Xpert HIV-1"
 msgid "Year"
 msgstr "Соли"
 
+#. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#: extracted_strings.json
+msgid "Yes"
+msgstr "Бале"
+
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:
 #. Yes, delete
 #: extracted_strings.json
 msgid "Yes, delete"
+msgstr "Бале, нест кунед"
+
+#. [contextualMenu.notifications.yesDelete]
+#. defaultMessage is:
+#. Yes, delete it
+#: extracted_strings.json
+msgid "Yes, delete it"
 msgstr "Бале, нест кунед"
 
 #. [pages.dateRangeSelector.yesterday]
@@ -9913,6 +10178,13 @@ msgstr "барои {unit} Натиҷаҳо"
 #: extracted_strings.json
 msgid "indicator"
 msgstr "нишондиҳанда"
+
+#. [filter.btnGroup.whereLotNumberIncludes]
+#. defaultMessage is:
+#. lot number includes "{lotNumber}"
+#: extracted_strings.json
+msgid "lot number includes \"{lotNumber}\""
+msgstr "рақами лот дорои “{lotNumber}”"
 
 #. [filter.btnGroup.withDeviceMaintenanceStatus]
 #. defaultMessage is:
@@ -10383,3 +10655,15 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, ҷамъ, як {# натиҷа} дигар {# натиҷа} })"
+
+#~ msgid "* in transit from {inTransitFromSiteName}"
+#~ msgstr "* дар интиқол аз {inTransitFromSiteName}"
+
+#~ msgid "Group by Site"
+#~ msgstr "Гурӯҳ аз рӯи сайт"
+
+#~ msgid "The most that you can remove is {currentQuantity}"
+#~ msgstr "Бештаре, ки шумо метавонед нест кунед, ин аст: {currentQuantity}"
+
+#~ msgid "Delete"
+#~ msgstr "Нобуд кунед"
