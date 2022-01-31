@@ -571,20 +571,20 @@ function buildSendToPersons(formatMessage) {
             },
           ],
         },
-        // {
-        //   id: 20,
-        //   items: [
-        //     {
-        //       id: 'sendToPatient',
-        //       labelI18nKey: 'sendToPatient',
-        //       controlType: {
-        //         component: 'checkbox',
-        //       },
-        //       classNames: checkboxClassNames,
-        //       initialValue: false,
-        //     },
-        //   ],
-        // },
+        {
+          id: 20,
+          items: [
+            {
+              id: 'sendToPatient',
+              labelI18nKey: 'sendToPatient',
+              controlType: {
+                component: 'checkbox',
+              },
+              classNames: checkboxClassNames,
+              initialValue: false,
+            },
+          ],
+        },
       ],
     },
   ]
