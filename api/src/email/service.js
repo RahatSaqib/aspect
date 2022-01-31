@@ -137,8 +137,8 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     .leftJoin('Person as p', 'm.personId', 'p.id')
     .where({ 'm.id': emailMessageId })
     .first('m.personId', 'm.to', 'p.email', 'p.email2')
-  let dataConstraints = {}
-  if (personId) dataConstraints = await getConstraints({ personId })
+
+  const dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
