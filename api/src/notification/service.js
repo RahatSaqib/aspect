@@ -148,7 +148,38 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
 async function listNotifications(request) {
   const { query, auth } = request
 
-  // get data constraints
+  const subquery = knex('NotificationType as nti')
+    .leftOuterJoin('JobFunction AS jf', leftBuilder =>
+      leftBuilder
+        .on(
+          knex.raw(
+            `JSON_SEARCH(
+              nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
+              'one',
+              jf.id
+            ) IS NOT NULL
+          `
+          )
+        )
+        .orOn('nti.jobFunctionId', 'jf.id')
+    )
+    .leftOuterJoin('Person AS per', leftBuilder =>
+      leftBuilder.on(
+        knex.raw(
+          ` JSON_SEARCH(
+            nti.filterCondition->>'$.persons[*].personId',
+            'one',
+            per.id
+          ) IS NOT NULL`
+        )
+      )
+    )
+    .distinct(
+      'nti.id AS notificationTypeId',
+      'per.name AS personName',
+      'jf.name AS jfName'
+    )
+
   const dataConstraints = await getConstraints(auth.credentials)
 
   const notificationQuery = knex('NotificationType as nt')
@@ -163,42 +194,34 @@ async function listNotifications(request) {
     .where(builder => {
       builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
     })
-    .modify(filterParams, query, {})
+    .modify(filterParams, query, {
+      notificationName: 'nt.name',
+    })
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .max('n.createdOn as lastTriggeredOn')
+    .groupBy('nt.id')
 
   const getItems = notificationQuery
     .clone()
-    .leftJoin('Job as j', 'nt.jobFunctionId', 'j.JobfunctionId')
-    .leftOuterJoin('JobFunction as jf', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.jobFunctions[*].jobFunctionId',
-            'one',
-            CAST(jf.id as char)
-          ) IS NOT NULL
-          OR
-          nt.jobFunctionId = jf.id
-        `)
-      )
-    })
-    .leftOuterJoin('Person as per', qb => {
-      qb.on(
-        knex.raw(`
-          JSON_SEARCH(
-            nt.filterCondition -> '$.persons[*].personId',
-            'one',
-            CAST(per.id as char)
-          ) IS NOT NULL
-        `)
-      )
-    })
+    .leftOuterJoin(
+      subquery.as('filters'),
+      'nt.id',
+      'filters.notificationTypeId'
+    )
+    .modify(sortPageParams, query, 'nt.name')
     .select(
       'nt.id as id',
       'nt.name',
+      knex.raw(`count(distinct n.id) as totalTriggers`),
+      columnCount('alert'),
+      knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
       knex.raw(
-        `case ntc.externalId when 'resultBased' then count(distinct n.resultId) else count(distinct n.issueId) end as totalTriggers`
+        `GROUP_CONCAT(DISTINCT filters.jfName SEPARATOR ', ') as jobFunctions`
+      ),
+      knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
+      knex.raw(
+        `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
       ),
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT jf.name) as jobFunctionsCount'),
@@ -208,25 +231,18 @@ async function listNotifications(request) {
       knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
       'ntc.externalId as typeCategory'
     )
-    .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.name')
-    .modify(sortPageParams, query, 'nt.name')
-    .modify(filterParams, query, {
-      notificationName: 'nt.name',
-    })
 
   function columnCount(column) {
     return knex.raw(
-      `CASE
-        WHEN m.${column}TemplateId IS NULL
-        THEN null
-        ELSE SUM(CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END) END as ${column}Count`
+      `SUM(CASE
+        WHEN m.${column}TemplateId IS NULL THEN 0
+        ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
     )
   }
 
   const getCount = knex
     .count('* as count')
-    .from(getItems.clone().as('mainQuery'))
+    .from(notificationQuery.clone().as('mainQuery'))
     .first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -248,41 +264,81 @@ async function createNotifications(knex, action, context) {
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
   let jobFunctionLevel = null
-  const { jobFunctions = [], persons = [] } = filterCondition || {}
-  await Promise.each(policies, async policy => {
-    if (
-      _.isNil(policy.jobFunctionId) &&
-      _.isEmpty(jobFunctions) &&
-      _.isEmpty(persons)
-    ) {
-      await createNotificationIfNotCreatedAlready(
-        action,
-        { policy, now },
-        { messageContext: context, knex }
+  const {
+    jobFunctions = [],
+    persons = [],
+    sendToClinician = false,
+    sendToPatient = false,
+  } = filterCondition || {}
+  if (policies) {
+    const [firstPolicy] = policies
+    if (firstPolicy && (sendToClinician || sendToPatient)) {
+      const nonPersonsToNotify = _.filter(
+        [
+          {
+            notify: sendToPatient,
+            phone: firstPolicy.patientPhone,
+            email: firstPolicy.patientEmail,
+          },
+          {
+            notify: sendToClinician,
+            phone: firstPolicy.clinicianPhone,
+            to: firstPolicy.clinicianEmail,
+          },
+        ],
+        elem => !!elem.notify
       )
-    } else {
-      if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
-        if (policy.jobFunctionId !== jobFunctionId) {
-          ;({ jobFunctionId, level: jobFunctionLevel } = policy)
-        } else if (policy.level !== jobFunctionLevel) {
-          // This is a lower level for this particular job function
-          // continue until we get to end of list or new job function
-          /* eslint-disable no-continue */
-          return Promise.resolve()
+      _.each(nonPersonsToNotify, personToSend => {
+        const policy = {
+          policy: _.omit(firstPolicy, ['jobFunctionId']),
+          now,
         }
-      }
-
-      const tags = await getTagsByPolicy(knex, policy)
-      const people = await getPeopleToNotify(
-        knex,
-        policy,
-        tags,
-        jobFunctions,
-        persons
-      )
-      await sendNotificationsToPeople(knex, context, people, policy, action)
+        createNotificationIfNotCreatedAlready(
+          action,
+          policy,
+          {
+            messageContext: context,
+            knex,
+          },
+          personToSend
+        )
+      })
     }
-  })
+    await Promise.each(policies, async policy => {
+      if (
+        _.isNil(policy.jobFunctionId) &&
+        _.isEmpty(jobFunctions) &&
+        _.isEmpty(persons)
+      ) {
+        await createNotificationIfNotCreatedAlready(
+          action,
+          { policy, now },
+          { messageContext: context, knex }
+        )
+      } else {
+        if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
+          if (policy.jobFunctionId !== jobFunctionId) {
+            ;({ jobFunctionId, level: jobFunctionLevel } = policy)
+          } else if (policy.level !== jobFunctionLevel) {
+            // This is a lower level for this particular job function
+            // continue until we get to end of list or new job function
+            /* eslint-disable no-continue */
+            return Promise.resolve()
+          }
+        }
+
+        const tags = await getTagsByPolicy(knex, policy)
+        const people = await getPeopleToNotify(
+          knex,
+          policy,
+          tags,
+          jobFunctions,
+          persons
+        )
+        await sendNotificationsToPeople(knex, context, people, policy, action)
+      }
+    })
+  }
 }
 
 async function getTagsByPolicy(txKnex, policy) {
@@ -330,6 +386,9 @@ async function getNotificationPolicy(
     'g.stateId',
     'g.lgaId',
     'mt.alertTemplateId',
+    'mt.emailTemplateId',
+    'mt.smsTemplateId',
+    'mt.webhookTemplateId',
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
@@ -346,9 +405,7 @@ async function getNotificationPolicy(
           'i.siteId',
           'i.deviceId',
           'i.resultId',
-          'mt.emailTemplateId',
-          'mt.smsTemplateId',
-          'mt.webhookTemplateId',
+          'i.id as issueId',
         ]
         queryBuilder
           .join('Issue as i', joinBuilder =>
@@ -367,6 +424,10 @@ async function getNotificationPolicy(
           'result.siteId as siteId',
           'result.deviceId as deviceId',
           'result.resultId as resultId',
+          knex.raw('result.patientData->>"$.phone" as patientPhone'),
+          knex.raw('result.patientData->>"$.email" as patientEmail'),
+          knex.raw('result.patientData->>"$.clinicianPhone" as clinicianPhone'),
+          knex.raw('result.patientData->>"$.clinicianEmail" as clinicianPhone'),
           knex.raw(
             'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
           ),
@@ -388,7 +449,8 @@ async function getNotificationPolicy(
                 'r.deviceId',
                 'r.id as resultId',
                 'r.resultCategory1',
-                'r.resultCategory2'
+                'r.resultCategory2',
+                'r.patientData'
               )
               .as('result')
           )
@@ -455,6 +517,7 @@ async function sendNotificationsToPeople(
   action
 ) {
   const now = new Date()
+
   // Issue notification to every person assigned, (subscriber will create as necessary)
   await Promise.all(
     people.map(async person => {
@@ -497,7 +560,13 @@ async function shouldNotify(
   return txKnex(table)
     .leftJoin('Device as d', 'i.deviceId', 'd.id')
     .leftJoin('Site as s', 'i.siteId', 's.id')
-    .leftJoin('Geography as g', 'i.geographyId', 'g.id')
+    .modify(builder => {
+      if (!_.isNil(issueId)) {
+        builder.leftJoin('Geography as g', 'i.geographyId', 'g.id')
+      } else {
+        builder.leftJoin('Geography as g', 'd.geographyId', 'g.id')
+      }
+    })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
     .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
@@ -507,8 +576,11 @@ async function shouldNotify(
 async function createNotificationIfNotCreatedAlready(
   { issueId = null, resultId = null },
   { personId = null, policy, now = new Date() },
-  { messageContext: context, knex }
+  { messageContext: context, knex },
+  nonPersonToSend = {}
 ) {
+  const { notify: notifyANonPerson = false, email: to, phone } = nonPersonToSend
+
   context.bindActionCreators({
     notificationCreated,
     alertMessageCreated,
@@ -516,15 +588,24 @@ async function createNotificationIfNotCreatedAlready(
     smsMessageCreated,
     webhookMessageCreated,
   })
+
   const notification = {
     issueId,
     resultId,
     notificationTypeId: policy.id,
     personId,
+    data: notifyANonPerson ? JSON.stringify({ to, phone }) : null,
   }
   const existingNotification = await knex('Notification')
-    .where(notification)
+    .where(_.omit(notification, ['data']))
+    .modify(builder => {
+      if (notifyANonPerson) {
+        if (to) builder.whereRaw(`data->>"$.to"=?`, [to])
+        if (phone) builder.whereRaw(`data->>"$.phone"=?`, [phone])
+      }
+    })
     .first()
+
   if (!existingNotification) {
     notification.createdOn = now
     const messageStatusId = await messageStatusToId('Initial')
@@ -537,7 +618,7 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-    if (personId) {
+    if (personId || !!notifyANonPerson) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
           alertTemplateId: policy.alertTemplateId,
@@ -546,37 +627,39 @@ async function createNotificationIfNotCreatedAlready(
         notification.alertMessageId = alertMessageId
         context.alertMessageCreated(alertMessageId)
       }
-    }
 
-    if (policy.emailTemplateId != null) {
-      const [emailMessageId] = await knex('EmailMessage').insert({
-        emailTemplateId: policy.emailTemplateId,
-        ...sharedMessageProperties,
-      })
-      notification.emailMessageId = emailMessageId
-      context.emailMessageCreated(emailMessageId)
-    }
-    if (policy.smsTemplateId != null) {
-      const [smsMessageId] = await knex('SmsMessage').insert({
-        smsTemplateId: policy.smsTemplateId,
-        ...sharedMessageProperties,
-      })
-      notification.smsMessageId = smsMessageId
-      context.smsMessageCreated(smsMessageId)
-    }
+      if (policy.emailTemplateId != null) {
+        const [emailMessageId] = await knex('EmailMessage').insert({
+          emailTemplateId: policy.emailTemplateId,
+          ...sharedMessageProperties,
+          to,
+        })
+        notification.emailMessageId = emailMessageId
+        context.emailMessageCreated(emailMessageId)
+      }
+      if (policy.smsTemplateId != null) {
+        const [smsMessageId] = await knex('SmsMessage').insert({
+          smsTemplateId: policy.smsTemplateId,
+          ...sharedMessageProperties,
+          phoneNumber: phone,
+        })
+        notification.smsMessageId = smsMessageId
+        context.smsMessageCreated(smsMessageId)
+      }
 
-    if (policy.webhookTemplateId != null) {
-      const [webhookMessageId] = await knex('WebhookMessage').insert({
-        webhookTemplateId: policy.webhookTemplateId,
-        ...sharedMessageProperties,
-      })
-      notification.webhookMessageId = webhookMessageId
-      context.webhookMessageCreated(webhookMessageId)
+      if (policy.webhookTemplateId != null) {
+        const [webhookMessageId] = await knex('WebhookMessage').insert({
+          webhookTemplateId: policy.webhookTemplateId,
+          ...sharedMessageProperties,
+        })
+        notification.webhookMessageId = webhookMessageId
+        context.webhookMessageCreated(webhookMessageId)
+      }
+
+      const [notificationId] = await knex('Notification').insert(notification)
+
+      context.notificationCreated(notificationId)
     }
-
-    const [notificationId] = await knex('Notification').insert(notification)
-
-    context.notificationCreated(notificationId)
   }
 }
 
@@ -640,13 +723,18 @@ async function getNotifications(request) {
     .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
     .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
     .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
+    .leftOuterJoin(
+      'MessageStatus as mswebhook',
+      'mswebhook.id',
+      'wm.messageStatusId'
+    )
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .where('n.notificationTypeId', params.notificationTypeId)
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-
-  if (category === 'resultBased') {
+  const isResultBased = category === 'resultBased'
+  if (isResultBased) {
     notificationQuery = notificationQuery.leftOuterJoin(
       'Result as r',
       'r.Id',
@@ -682,13 +770,15 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'r.id as resultId',
       'r.sampleId',
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pEm.name separator "|") as emailRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
       knex.raw(`
-        GROUP_CONCAT(DISTINCT pSm.name separator "|") as smsRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
+      `),
+      knex.raw(`
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
@@ -710,33 +800,64 @@ async function getNotifications(request) {
       webhookSent: knex.raw(`
         DISTINCT
         CASE WHEN mswm.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      webhookWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN mswm.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      webhookPending: knex.raw(`
+    DISTINCT
+    CASE WHEN mswm.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
       smsSent: knex.raw(`
         DISTINCT
         CASE WHEN mssms.externalId = "Sent" 
-        THEN (CASE
-              WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      smsWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN mssms.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      smsPending: knex.raw(`
+    DISTINCT
+    CASE WHEN mssms.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
       emailSent: knex.raw(`
         DISTINCT
         CASE WHEN msem.externalId = "Sent" 
-        THEN (CASE WHEN ntc.externalId = 'resultBased' 
-              THEN n.resultId
-              ELSE n.issueId
-            END)
+        THEN n.id
         ELSE null END
       `),
+      emailWithErrors: knex.raw(`
+      DISTINCT
+      CASE WHEN msem.externalId = "Error" 
+      THEN n.id
+      ELSE null END
+    `),
+      emailPending: knex.raw(`
+    DISTINCT
+    CASE WHEN msem.externalId = "Pending" 
+    THEN n.id
+    ELSE null END
+  `),
     })
+    .modify((builder, resultBased) => {
+      if (resultBased) {
+        builder.select('r.id as resultId')
+      } else
+        builder.join('Issue as i', 'i.id', 'n.issueId').select('i.resultId')
+    }, isResultBased)
     .groupBy('groupingParam')
 
   const [{ total }, data] = await Promise.all([
@@ -749,9 +870,8 @@ async function getNotifications(request) {
     emailRecipients: item.emailRecipients
       ? item.emailRecipients.split('|')
       : null,
-    smsRecipients: item.smsRecipients ? item.emailRecipients.split('|') : null,
+    smsRecipients: item.smsRecipients ? item.smsRecipients.split('|') : null,
   }))
-
   return { ok: true, total, data: items }
 }
 

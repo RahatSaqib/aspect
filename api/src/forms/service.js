@@ -3,15 +3,10 @@ const { getConstraints } = require('../auth/constraints')
 const { knex, filterParams } = require('../db')
 const formDictionary = require('./formsFileDictionary')
 
-async function getForms(request) {
-  const { auth, query } = request
-  const {
-    partner: { id: partnerId },
-  } = await getConstraints(auth.credentials)
-  const formQuery = getFormsBaseQuery(partnerId, query)
+function createFormObject(formQuery) {
   const forms = {}
   // eslint-disable-next-line no-return-assign
-  _.each(await formQuery, form => {
+  _.each(formQuery, form => {
     forms[form.externalId] = {
       ...formDictionary[form.jsonSchemaFileName],
       assayId: form.assayId,
@@ -20,6 +15,16 @@ async function getForms(request) {
     }
   })
   return forms
+}
+
+async function getForms(request) {
+  const { auth, query } = request
+  const {
+    partner: { id: partnerId },
+  } = await getConstraints(auth.credentials)
+  const formQuery = await getFormsBaseQuery(partnerId, query)
+
+  return createFormObject(formQuery)
 }
 const getCustomFields = async (partnerId, deviceId) => {
   const formQuery = await getFormsBaseQuery(partnerId, {
@@ -83,4 +88,5 @@ function getFormsBaseQuery(partnerId, query) {
 module.exports = {
   getForms,
   getCustomFields,
+  createFormObject,
 }

@@ -6,6 +6,10 @@ export default defineMessages({
     id: 'pages.shared.deviceStatus.active',
     defaultMessage: 'Active',
   },
+  devicesActive: {
+    id: 'pages.shared.deviceStatus.devicesActive',
+    defaultMessage: 'Devices Active',
+  },
   reportedActive: {
     id: 'pages.shared.deviceStatus.reportedActive',
     defaultMessage: 'Reported Active',

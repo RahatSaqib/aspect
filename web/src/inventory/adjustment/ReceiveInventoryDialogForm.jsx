@@ -114,7 +114,7 @@ const enhance = compose(
     },
   }),
   connectConsumableFromInventoryItem,
-  withProps(({ intl, values, consumable, items }) => {
+  withProps(({ intl, values, consumable, items, inventoryItem }) => {
     // Get the destination inventory item
     const destination = items.byId.findEntry(
       o =>
@@ -131,6 +131,7 @@ const enhance = compose(
       : 0
 
     return {
+      currInventoryItem: inventoryItem,
       labels: {
         dialogTitle: intl.formatMessage(messages.dialogTitle, {
           consumableName: consumable.get('name'),

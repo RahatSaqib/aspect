@@ -230,6 +230,7 @@ export const PersonList = ({
     permissions: ['person:edit'],
   })(AspectButton)
   const { formatMessage } = i18nWrapper()
+
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.contactsTitle)} />
@@ -258,7 +259,7 @@ export const PersonList = ({
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
           visible={!items.currentIdList.isEmpty()}
-          reportName="Contacts"
+          reportName={formatMessage(messages.contactsTitle)}
         />
 
         {!items.currentIdList.isEmpty() && (

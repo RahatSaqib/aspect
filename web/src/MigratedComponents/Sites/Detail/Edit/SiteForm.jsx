@@ -53,7 +53,6 @@ const SiteForm = props => {
   const labels = {
     name: formatMessage(messages.fieldName),
     shortName: formatMessage(messages.fieldShortName),
-    facilityCode: formatMessage(messages.fieldFacilityCode),
     externalId: formatMessage(messages.fieldExternalId),
     timezone: formatMessage(messages.fieldTimeZone),
     address: formatMessage(messages.fieldAddress),

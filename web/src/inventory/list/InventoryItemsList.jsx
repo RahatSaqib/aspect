@@ -2,7 +2,7 @@ import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
@@ -38,8 +38,6 @@ import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
   types,
-  toggleGroupBySite,
-  showNewInventoryDialog,
   hideAdjustInventoryDialog,
   addInventory,
   removeInventory,
@@ -47,6 +45,7 @@ import {
   receiveInventory,
   exportSupplies,
   receiveInventoryItems,
+  showNewInventoryDialog,
 } from '../InventoryRedux'
 import {
   InventoryDataTable,
@@ -55,13 +54,11 @@ import {
 } from './InventoryDataTable'
 import requirePermissions from '../../components/shared/requirePermissions'
 import AspectButton from '../../components/shared/AspectButton'
-import {
-  INVENTORY_LIST,
-  INVENTORY_LIST_GROUP_BY_SITE,
-} from '../../MigratedComponents/QueryFetch/Inventory'
+import { INVENTORY_LIST } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 
 import styles from './InventoryItemsList.css'
+import AspectTooltip from '../../components/shared/AspectTooltip'
 
 const cssClasses = classnames.bind(styles)
 
@@ -76,19 +73,49 @@ const FILTERS_CONFIG = [
     siteName: true,
     requiredPermissions: ['site:view'],
   },
-  { date: true, requiredPermissions: [] },
-  { stockLeft: true, requiredPermissions: [] },
+  {
+    date: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => dependencies.breakOutByLot,
+  },
+  {
+    lotNumber: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => dependencies.breakOutByLot,
+  },
+  {
+    daysStockLeft: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
+  {
+    hasStock: true,
+    requiredPermissions: [],
+  },
+]
+
+const availableSortCol = [
+  'siteName',
+  'consumableName',
+  'quantityOnHand',
+  { col: 'expiresOn', isEnabled: dependencies => dependencies.breakOutByLot },
+  { col: 'lotNumber', isEnabled: dependencies => dependencies.breakOutByLot },
+  {
+    col: 'daysStockLeft',
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
+  {
+    col: 'projectedWaste',
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
+  {
+    col: 'dailyConsumptionRate',
+    isEnabled: dependencies => !dependencies.breakOutByLot,
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'siteName',
-    'consumableName',
-    'quantityOnHand',
-    'expiresOn',
-    'stockLeft',
-    'dailyConsumptionRate',
-  ],
+  availableSortCol,
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -109,8 +136,8 @@ export const InventoryItemsListWithProps = ({
   location,
   reducedFilters,
   dispatch,
-  groupBySite,
-  onGroupBySiteChange,
+  breakOutByLot,
+  setBreakOutByLot,
   isLoading,
   onExcelClick,
   items,
@@ -125,6 +152,73 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
 }) => {
+  const columns = [
+    {
+      key: 'siteName',
+      label: intl.formatMessage(messages.siteName),
+      sortable: true,
+    },
+    {
+      key: 'consumableName',
+      label: intl.formatMessage(messages.consumableName),
+      sortable: true,
+    },
+    {
+      key: 'quantityOnHand',
+      label: intl.formatMessage(messages.quantityOnHand),
+      sortable: true,
+    },
+    {
+      key: 'dailyConsumptionRate',
+      label: intl.formatMessage(messages.dailyConsumptionRate),
+      sortable: true,
+      isHidden: breakOutByLot,
+    },
+    {
+      key: 'lotNumber',
+      label: intl.formatMessage(messages.lotNumber),
+      sortable: true,
+      isHidden: !breakOutByLot,
+    },
+    {
+      key: 'expiresOn',
+      label: intl.formatMessage(messages.expiresOn),
+      sortable: true,
+      isHidden: !breakOutByLot,
+    },
+    {
+      key: 'daysStockLeft',
+      label: (
+        <div>
+          <AspectTooltip
+            title={intl.formatMessage(messages.daysStockLeftDescription)}
+            showHelpIcon
+          />
+          {intl.formatMessage(messages.daysStockLeft)}
+        </div>
+      ),
+      sortable: true,
+      isHidden: breakOutByLot,
+    },
+    {
+      key: 'projectedWaste',
+      label: (
+        <div>
+          <AspectTooltip
+            title={intl.formatMessage(messages.projectedWasteDescription)}
+            showHelpIcon
+          />
+          {intl.formatMessage(messages.projectedWaste)}
+        </div>
+      ),
+      sortable: true,
+      isHidden: breakOutByLot,
+    },
+    {
+      key: 'action',
+    },
+  ]
+
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -140,7 +234,7 @@ export const InventoryItemsListWithProps = ({
           type="button"
           color="primary"
           variant="contained"
-          onClick={() => dispatch(showNewInventoryDialog)}
+          onClick={() => dispatch(showNewInventoryDialog())}
           browseButton
         >
           {intl.formatMessage(messages.addInventory)}
@@ -150,10 +244,10 @@ export const InventoryItemsListWithProps = ({
       <DataTableCard className={cssClasses('DataTableCard--action')}>
         <CheckboxField
           className={cssClasses('Checkbox')}
-          name="groupBySite"
-          checked={groupBySite}
-          label={intl.formatMessage(messages.groupBySite)}
-          onChange={onGroupBySiteChange}
+          name="breakOutByLot"
+          checked={breakOutByLot}
+          label={intl.formatMessage(messages.breakOutByLot)}
+          onChange={event => setBreakOutByLot(event.target.checked)}
         />
       </DataTableCard>
       <DataTableCard
@@ -177,41 +271,7 @@ export const InventoryItemsListWithProps = ({
               location={location}
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
-              columns={[
-                {
-                  key: 'siteName',
-                  label: intl.formatMessage(messages.siteName),
-                  sortable: true,
-                },
-                {
-                  key: 'consumableName',
-                  label: intl.formatMessage(messages.consumableName),
-                  sortable: true,
-                },
-                {
-                  key: 'quantityOnHand',
-                  label: intl.formatMessage(messages.quantityOnHand),
-                  sortable: true,
-                },
-                {
-                  key: 'dailyConsumptionRate',
-                  label: intl.formatMessage(messages.dailyConsumptionRate),
-                  sortable: true,
-                },
-                {
-                  key: 'expiresOn',
-                  label: intl.formatMessage(messages.expiresOn),
-                  sortable: true,
-                },
-                {
-                  key: 'stockLeft',
-                  label: intl.formatMessage(messages.stockLeft),
-                  sortable: true,
-                },
-                {
-                  key: 'action',
-                },
-              ]}
+              columns={columns}
             />
             <TableBody>
               {items.currentIdList
@@ -307,8 +367,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const queryClient = useQueryClient()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
-  // const navigate = useNavigate()
-  // const location = useLocation()
   const intl = useIntl()
   const {
     jwt: { permissions: userPermissions },
@@ -319,21 +377,35 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const consumableReasons = useSelector(
     state => state.consumable.consumableReasons
   )
+  const [breakOutByLot, setBreakOutByLot] = useState(false)
+  const dependencies = useMemo(
+    () => ({
+      breakOutByLot,
+    }),
+    [breakOutByLot]
+  )
 
   // >>>>>> Structuring data <<<<<<
-  const groupBySite = inventory.getIn(['table', 'groupBy']).includes('siteId')
   const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
   })
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-  const { value: searchParams } = searchSanitizer(location)
+  const reducedFilters = reduceFiltersConfig(
+    FILTERS_CONFIG,
+    userPermissions,
+    dependencies
+  )
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
+    location,
+    availableSortCol,
+    dependencies,
+  })
+  const { value: searchParams } = searchSanitizer(location, dependencies)
   const { value: filtersParams } = filtersSanitizer(
-    searchParams.get('filters') || ''
+    searchParams.get('filters') || '',
+    dependencies
   )
   const filters = getFilters(filtersParams)
-
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
     formatType => {
@@ -342,6 +414,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
       if (!sanitized) {
         exportSupplies(
           filtersParams,
+          breakOutByLot,
           sortCol,
           sortDir,
           pageAt,
@@ -353,35 +426,36 @@ export const InventoryItemsList = ({ navigate, location }) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location, sortCol, sortDir, pageAt, table]
+    [location, breakOutByLot, sortCol, sortDir, pageAt, table]
   )
   const onAdjustInventorySucceeded = () => {
     showAcknowledgement({
       title: messages.inventoryAdjustedSuccessfully,
     })
   }
-  const onGroupBySiteChange = event => {
-    dispatch(toggleGroupBySite(event.target.checked))
-  }
 
   // >>>>>> Defining queries <<<<<<
-  const endpointConfig = groupBySite
-    ? INVENTORY_LIST_GROUP_BY_SITE
-    : INVENTORY_LIST
-  const params = { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }
+  const params = {
+    sortCol,
+    sortDir,
+    page: pageAt,
+    size: pageSize,
+    breakOutByLot,
+    ...filters,
+  }
   const {
     isError,
     isLoading,
     data = false,
     error,
-  } = useQuery([endpointConfig.KEY, params, filters], async () =>
-    fetchWrapperForQueries({ endpoint: endpointConfig.ENDPOINT, params })
+  } = useQuery([INVENTORY_LIST.KEY, params, filters], async () =>
+    fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
 
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
-    queryClient.invalidateQueries(endpointConfig.KEY)
+    queryClient.invalidateQueries(INVENTORY_LIST.KEY)
     onAdjustInventorySucceeded()
   }
   // Remove
@@ -412,7 +486,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(endpointConfig.KEY)
+        queryClient.invalidateQueries(INVENTORY_LIST.KEY)
         onAdjustInventorySucceeded()
       },
     }
@@ -436,15 +510,16 @@ export const InventoryItemsList = ({ navigate, location }) => {
 
   // >>>>>> Lifecycle hooks <<<<<<
   useEffect(() => {
-    if (data)
-      dispatch(
-        receiveInventoryItems(data, groupBySite ? ['inventoryItems'] : [])
-      )
-  }, [data, groupBySite, dispatch])
+    if (data) dispatch(receiveInventoryItems(data))
+  }, [data, dispatch])
+
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const { sanitized, value: searchParams } = searchSanitizer(
+      location,
+      dependencies
+    )
     const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '')
+      filtersSanitizer(searchParams.get('filters') || '', dependencies)
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
@@ -456,7 +531,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
         { replace: true }
       )
     }
-  }, [location, navigate, dispatch])
+  }, [location, navigate, breakOutByLot, dependencies, dispatch])
 
   if (isError) throw new Error(error)
 
@@ -466,8 +541,8 @@ export const InventoryItemsList = ({ navigate, location }) => {
     location,
     reducedFilters,
     dispatch,
-    groupBySite,
-    onGroupBySiteChange,
+    breakOutByLot,
+    setBreakOutByLot,
     isLoading,
     onExcelClick,
     items,

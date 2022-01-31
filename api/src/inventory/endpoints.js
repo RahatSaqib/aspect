@@ -8,8 +8,8 @@ const {
   validateSortPageParams,
 } = require('../routes')
 const {
-  listInventoryItems,
-  listInventoryItemsGroupedBySite,
+  listInventory,
+  listInventoryGroupedBySite,
   addInventory,
   removeInventory,
   transferInventory,
@@ -26,7 +26,10 @@ const inventoryFilters = {
     .allow('', null)
     .description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
-  stockLeft: Joi.string().allow('', null),
+  lotNumber: Joi.string().allow('', null),
+  daysStockLeft: Joi.string().allow('', null),
+  breakOutByLot: Joi.bool().allow(null),
+  hasStock: Joi.bool().allow(null),
 }
 
 const adjustInventoryCommonPayloadFields = {
@@ -61,9 +64,10 @@ function listSuppliesBaseConfig() {
           'countryName',
           'stateName',
           'lgaName',
+          'lotNumber',
           'quantityOnHand',
           'expiresOn',
-          'stockLeft',
+          'daysStockLeft',
           'dailyConsumptionRate'
         ),
       },
@@ -75,7 +79,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory',
-    handler: asyncHandler(listInventoryItems),
+    handler: asyncHandler(listInventory),
     config: {
       description: 'List of Consumables on Hand At Site',
       notes: 'Pageable and sortable list of inventory items',
@@ -94,8 +98,10 @@ const routes = [
             'lgaName',
             'quantityOnHand',
             'expiresOn',
-            'stockLeft',
-            'dailyConsumptionRate'
+            'daysStockLeft',
+            'projectedWaste',
+            'dailyConsumptionRate',
+            'lotNumber'
           ),
         },
       },
@@ -104,7 +110,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/group-by-site',
-    handler: asyncHandler(listInventoryItemsGroupedBySite),
+    handler: asyncHandler(listInventoryGroupedBySite),
     config: {
       description: 'List of Consumables on Hand Grouped by Site',
       notes: 'Pageable and sortable list of inventory items grouped by site',

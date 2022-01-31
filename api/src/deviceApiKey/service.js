@@ -1,5 +1,8 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const bcrypt = require('bcrypt')
+const addMinutes = require('date-fns/addMinutes')
+const { promisify } = require('util')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const {
@@ -10,6 +13,8 @@ const {
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
+
+const bcryptCompare = promisify(bcrypt.compare)
 
 const SELECT_LIST_FIELDS = [
   'dak.id',
@@ -296,6 +301,45 @@ async function revokeDeviceApiKey(request) {
   }
 }
 
+async function lookupUsingCredentials(username, password) {
+  const nowTime = new Date().getTime()
+  const deviceApiKey = await knex('DeviceApiKey')
+    .where('username', username)
+    .first()
+  const pwResult = deviceApiKey
+    ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(
+        () => false
+      )
+    : false
+  if (!deviceApiKey || !pwResult) {
+    return {
+      authenticated: false,
+      reason: 'invalid',
+    }
+  }
+  if (deviceApiKey.revoked) {
+    return {
+      authenticated: false,
+      reason: 'revoked',
+      data: deviceApiKey,
+    }
+  }
+  if (deviceApiKey.expiresOn < nowTime) {
+    const newToken = randomToken()
+    const newExpiresOn = addMinutes(new Date(), 15)
+    deviceApiKey.token = newToken
+    deviceApiKey.expiresOn = newExpiresOn
+    await knex('DeviceApiKey').where('id', deviceApiKey.id).update({
+      token: newToken,
+      expiresOn: newExpiresOn,
+    })
+  }
+  return {
+    authenticated: true,
+    data: deviceApiKey,
+  }
+}
+
 module.exports = {
   listDeviceApiKeys,
   exportDeviceApiKeys,
@@ -303,4 +347,5 @@ module.exports = {
   createDeviceApiKey,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
+  lookupUsingCredentials,
 }

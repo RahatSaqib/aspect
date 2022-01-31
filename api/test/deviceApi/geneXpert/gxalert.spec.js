@@ -254,7 +254,10 @@ describe('Device API routes for GxAlert Device', () => {
         instrumentSerial: 'new instrument',
         moduleName: basicResultPayload.result.instrument.module.name,
         moduleSerial: basicResultPayload.result.instrument.module.serial,
-        patientData: basicResultPayload.result.patient,
+        patientData: {
+          ...basicResultPayload.result.patient,
+          phone: '+10833243682',
+        },
         senderVersion: basicResultPayload.result.sender.version,
         senderOperator: basicResultPayload.result.sender.operator,
         notes: null,
@@ -592,7 +595,7 @@ describe('Device API routes for GxAlert Device', () => {
         age: 72,
         dateOfBirth: '1903-05-29T00:00:00.000Z',
         address: '123 Main Street',
-        phone: '856-7909',
+        phone: '+18567909',
       })
       assert.deepEqual(JSON.parse(result2.oemData), {
         maker: 'ABC',
@@ -1042,17 +1045,12 @@ describe('Device API routes for GxAlert Device', () => {
           endedOnDate,
           "yyyy-MM-dd'T'HH:mm:ss'Z'"
         )
-        const endedOnDateInUtc = getLocalDateTimeStringInUtc(
-          endedOn.replace('Z', ''),
-          'America/New_York'
-        )
-
         const [deviceMaintenanceStatusLogId] = await knex(
           'DeviceMaintenanceStatusLog'
         ).insert({
           deviceId: geneXpertDevice.id,
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
-          day: startOfDay(endedOnDateInUtc),
+          day: startOfDay(endedOnDate),
           data: '{}',
           createdOn: new Date(),
         })
@@ -1087,12 +1085,12 @@ describe('Device API routes for GxAlert Device', () => {
           .orderByRaw('createdOn desc, id desc')
           .first()
         expect(latestMaintenanceStatusLog).to.containSubset({
-          day: getLocalDateInUtc(startOfDay(endedOnDateInUtc)),
+          day: getLocalDateInUtc(startOfDay(endedOnDate)),
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
         })
         assert.equal(
           latestMaintenanceStatusLog.day.toISOString(),
-          startOfDayUtc(endedOnDateInUtc).toISOString()
+          startOfDayUtc(endedOnDate).toISOString()
         )
       })
 
@@ -2200,7 +2198,10 @@ describe('Device API routes for GxAlert Device', () => {
         instrumentSerial: 'new instrument',
         moduleName: null,
         moduleSerial: basicResultPayload.result.instrument.module.serial,
-        patientData: basicResultPayload.result.patient,
+        patientData: {
+          ...basicResultPayload.result.patient,
+          phone: '+10833243682',
+        },
         senderVersion: basicResultPayload.result.sender.version,
         senderOperator: basicResultPayload.result.sender.operator,
         notes: null,

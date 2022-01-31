@@ -27,6 +27,7 @@ const {
   splitResultTextValues,
   sanitizeResultTextValue,
 } = require('./GxConnect/resultCategories/utils')
+const { mapPayloadWithCustomFields } = require('./customFields')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -115,6 +116,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       'd.siteId',
       'd.partnerId',
       'd.deviceTypeId',
+      'c.abbreviation as countryCode',
       knex.raw('coalesce(d.timezone, s.timezoneId, c.timezone) as timezone')
     )
   if (_.isEmpty(device)) {
@@ -235,6 +237,14 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
+
+  mapPayloadWithCustomFields(
+    payload,
+    device.countryCode,
+    device.partnerId,
+    _.get(existingResult, 'assayId'),
+    _.get(existingResult, 'diseaseId')
+  )
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {

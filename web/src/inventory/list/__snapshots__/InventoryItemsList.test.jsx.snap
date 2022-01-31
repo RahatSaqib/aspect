@@ -71,10 +71,9 @@ exports[`InventoryItemList module InventoryItemList component should render corr
     className="DataTableCard--action"
   >
     <WithStyles(CheckboxField)
-      checked={true}
       className="Checkbox"
-      label="Group by Site"
-      name="groupBySite"
+      label="Break out by lot"
+      name="breakOutByLot"
       onChange={[Function]}
     />
   </DataTableCard>
@@ -100,7 +99,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       navigate={[Function]}
     />
   </DataTableCard>
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(lifecycle(InventoryAdjustmentDialogForm))))))))
+  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
     intl={
       Object {
         "defaultFormats": Object {},
