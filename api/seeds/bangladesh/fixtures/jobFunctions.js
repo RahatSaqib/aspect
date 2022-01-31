@@ -10,7 +10,7 @@ const {
 
 const withNewReports = jobFunction => ({
   ...jobFunction,
-  reports: _.uniq([...jobFunction.reports, 'reportDrTb10a']), // add externalId of report
+  reports: _.uniq([...jobFunction.reports, 'results_dr_tb_10a']), // add externalId of report
 })
 
 module.exports = [
