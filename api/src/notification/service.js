@@ -177,6 +177,7 @@ async function listNotifications(request) {
     .distinct(
       'nti.id AS notificationTypeId',
       'per.name AS personName',
+      'per.id as personId',
       'jf.name AS jfName'
     )
 
@@ -223,6 +224,8 @@ async function listNotifications(request) {
       knex.raw(
         `GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`
       ),
+      columnCount('alert'),
+      knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
       'ntc.externalId as typeCategory'
     )
 
@@ -925,6 +928,7 @@ async function saveNotificationType({
     deviceLevelId,
     jobFunctions,
     persons,
+    sendToPatient,
     name,
     result,
     //
@@ -953,6 +957,7 @@ async function saveNotificationType({
     const filterConditionValidation = await validateFilterCondition({
       jobFunctions,
       persons,
+      sendToPatient,
     })
     if (filterConditionValidation !== true) return filterConditionValidation
 
@@ -1128,6 +1133,7 @@ async function saveNotificationType({
           result,
           sendEmail,
           sendSms,
+          sendToPatient,
           sendWeb,
           enabled,
         }),

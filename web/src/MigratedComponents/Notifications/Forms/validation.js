@@ -10,10 +10,10 @@ const optionsForSendXXX = requiredMessage => ({
 
 function ensurePersonOrJobFunction(yupThis, formatMessage) {
   const {
-    parent: { persons, jobFunctions },
+    parent: { persons, jobFunctions, sendToPatient },
   } = yupThis
 
-  if (jobFunctions.length > 0 || persons?.length > 0) {
+  if (sendToPatient || jobFunctions.length > 0 || persons?.length > 0) {
     return true
   }
 
@@ -92,6 +92,7 @@ const validationSchema = formatMessage =>
             .min(1, formatMessage(messages.geographyRequired)),
           otherwise: Yup.array().min(0),
         }),
+      sendToPatient: Yup.boolean(),
       jobFunctions: Yup.array()
         .transform((_value, originalValue) => {
           const result = filter(originalValue, elem => elem.checked)

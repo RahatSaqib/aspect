@@ -223,6 +223,18 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
         })}`,
       format: ContactsCell,
     },
+    {
+      key: 'sendToPatient',
+      label: formatMessage(messages.sendToPatient),
+      disableHide: true,
+      disableGroupBy: true,
+      width: 5,
+      format: ({ value }) => {
+        if (value === true || value === 'true')
+          return formatMessage(messages.yes)
+        return formatMessage(messages.no)
+      },
+    },
   ],
   columnOrder: {
     allow: false,

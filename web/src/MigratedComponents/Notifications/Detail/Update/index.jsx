@@ -99,6 +99,7 @@ const AspectNotificationDetail = ({
           webUrl,
           webBody,
           sendWeb: filter.sendWeb,
+          sendToPatient: filter.sendToPatient,
           enabled: !!enabled,
           /**
            * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
