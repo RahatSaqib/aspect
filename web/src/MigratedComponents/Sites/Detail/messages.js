@@ -103,4 +103,9 @@ export default defineMessages({
     id: 'pages.SiteDetail.actionChange',
     defaultMessage: 'Change',
   },
+  siteWithoutLocation: {
+    id: 'pages.SiteDetail.siteWithoutLocation',
+    defaultMessage:
+      ' No location set to this site - Please, edit to assign the latitude and longitude fields.',
+  },
 })

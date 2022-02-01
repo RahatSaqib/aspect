@@ -7,6 +7,7 @@ import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
 import { injectIntl, defineMessages, useIntl } from 'react-intl'
+import isNil from 'lodash/isNil'
 
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -98,8 +99,7 @@ export const SiteDetail = props => {
   }
 
   const hasSiteWithLocation = () =>
-    site && site.has('longitude') && site.has('latitude')
-
+    site && !isNil(site.get('longitude')) && !isNil(site.get('latitude'))
   return (
     <Shell>
       <ShellHeader title={(site && site.get('name')) || 'Site'}>
@@ -137,8 +137,8 @@ export const SiteDetail = props => {
       </ShellHeader>
       <ShellContent>
         <Helmet title={intl.formatMessage(messages.title)} />
-        {!hasSiteWithLocation() ? <LinearProgress /> : null}
-        {hasSiteWithLocation() ? (
+        {isNil(site) ? <LinearProgress /> : null}
+        {!isNil(site) ? (
           <Routes>
             <Route path="">
               <SiteDetailProfile
@@ -180,9 +180,15 @@ export const SiteDetail = props => {
           </Routes>
         ) : null}
         <section className={cssClasses('Section', 'Section--first')}>
-          <Paper>
-            {hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}
-          </Paper>
+          {hasSiteWithLocation() ? (
+            <Paper>
+              <SiteLocationFormMap site={site} />
+            </Paper>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <span>{intl.formatMessage(messages.siteWithoutLocation)}</span>
+            </div>
+          )}
         </section>
       </ShellContent>
     </Shell>
