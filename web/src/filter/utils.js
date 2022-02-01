@@ -150,7 +150,7 @@ const sanitizerByConfigKey = {
     assayId: true,
     requiredPermissions: ['assay:view'],
   }]
- * @returns 
+ * @returns the function to sanitize filters, based on the provided configuration
  */
 export const sanitizeFiltersStringBy =
   config => (filtersString, dependencies) =>
