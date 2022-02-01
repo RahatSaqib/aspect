@@ -39889,6 +39889,21 @@
       "shortName": "HC TAKALFIYA ",
       "stateName": "Kaduna",
       "tags": ["Clinic", "Primary"]
+    },
+    {
+      "city": "Keffi",
+      "externalId": "Keffi GH",
+      "latitude": 7.86210,
+      "longitude": 8.84418,
+      "lgaName": "Keffi",
+      "name": "General Hospital, Keffi",
+      "shortName": "Keffi GH",
+      "stateName": "Nasarawa",
+      "street1": "",
+      "street2": "",
+      "timeZoneId": "W. Central Africa Standard Time",
+      "zip": "",
+      "tags": ["Lab","Clinic", "Primary"]
     }
   ]
 }
