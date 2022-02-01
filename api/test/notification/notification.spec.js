@@ -41,7 +41,9 @@ describe('Issue based Notifications triggers', () => {
     const notificationTypeCategoryId = await notificationTypeCategoryToId(
       'issueBased'
     )
-    const issueTypes = await knex('IssueType').pluck('id')
+    const issueTypes = await knex('IssueType')
+      .where({ externalId: 'HardwareCartridgeIntegrityTestFailure' })
+      .pluck('id')
     const createdOn = new Date()
     const updatedOn = new Date()
     const issueTypeId = _.sample(issueTypes)
