@@ -135,6 +135,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'patientId',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
+    'resultText',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
