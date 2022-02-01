@@ -1,5 +1,6 @@
 import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
+import isNil from 'lodash/isNil'
 import isUndefined from 'lodash/isUndefined'
 import reduce from 'lodash/reduce'
 import filter from 'lodash/filter'
@@ -53,12 +54,24 @@ const groups = {
 const findFilterConfigByKey = (config, key) =>
   find(config, configObject => configObject[key])
 
+const getFilterGroupsContainingKey = filterKey =>
+  filter(Object.keys(groups), groupKey => groups[groupKey].includes(filterKey))
+
+const isFilterKeyInGroupedFilter = (filtersConfig, filterKey) => {
+  const filterGroupsContainingKey = getFilterGroupsContainingKey(filterKey)
+  const anyGroupsSetInFiltersConfig =
+    filter(
+      filterGroupsContainingKey,
+      filterGroupKey =>
+        !isNil(findFilterConfigByKey(filtersConfig, filterGroupKey))
+    ).length > 0
+  return anyGroupsSetInFiltersConfig
+}
+
 const defaultSanitizer = ({ a, k, config, dependencies }) => {
   if (!a.value) a.value = new URLSearchParams()
   const { value } = a
-  const filterGroupsContainingKey = filter(Object.keys(groups), groupKey =>
-    groups[groupKey].includes(k)
-  )
+  const filterGroupsContainingKey = getFilterGroupsContainingKey(k)
 
   const filterConfigKey = find(filterGroupsContainingKey, groupKey =>
     findFilterConfigByKey(config, groupKey)
@@ -130,19 +143,35 @@ const sanitizerByConfigKey = {
   lotNumber: defaultSanitizer,
 }
 
+/**
+ * Creates a function, which receives the current filters string from URL, and the external dependencies used for enabling and disabling filters, 
+ * and then returns the filter string after cleaning it all the filters that were not included in the configuration or that should be disabled based on their dependencies.
+ * @param {object} config The collection of filter configurations. Ex.: [{
+    assayId: true,
+    requiredPermissions: ['assay:view'],
+  }]
+ * @returns 
+ */
 export const sanitizeFiltersStringBy =
   config => (filtersString, dependencies) =>
     reduce(
       sanitizerByConfigKey,
       (acc, sanitizer, key) => {
         const filterConfig = findFilterConfigByKey(config, key)
-
         if (
-          !filterConfig ||
-          (filterConfig.isEnabled &&
+          // if...
+          // the filter key was not configured...
+          (!filterConfig &&
+            // and it is not included in a group of keys (like assayId is included in assayAndResultCategory)...
+            !isFilterKeyInGroupedFilter(config, key)) ||
+          // or the filter key was configured...
+          (filterConfig &&
+            // and the filter key should be enabled based on the provided dependencies...
+            filterConfig.isEnabled &&
             dependencies &&
             !filterConfig.isEnabled(dependencies))
         ) {
+          // then evaluate the sanitization and return the updated collection of filters
           return sanitizer({ a: acc, k: key, config, dependencies })
         }
 
