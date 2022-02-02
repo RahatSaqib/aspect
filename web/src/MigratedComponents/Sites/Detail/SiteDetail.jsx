@@ -100,6 +100,9 @@ export const SiteDetail = props => {
 
   const hasSiteWithLocation = () =>
     site && !isNil(site.get('longitude')) && !isNil(site.get('latitude'))
+
+  const hasSite = () => site && site.has('longitude') && site.has('latitude')
+
   return (
     <Shell>
       <ShellHeader title={(site && site.get('name')) || 'Site'}>
@@ -137,8 +140,8 @@ export const SiteDetail = props => {
       </ShellHeader>
       <ShellContent>
         <Helmet title={intl.formatMessage(messages.title)} />
-        {isNil(site) ? <LinearProgress /> : null}
-        {!isNil(site) ? (
+        {!hasSite() ? <LinearProgress /> : null}
+        {hasSite() ? (
           <Routes>
             <Route path="">
               <SiteDetailProfile
