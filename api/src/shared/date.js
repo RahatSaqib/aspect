@@ -206,6 +206,10 @@ function dayOfYear(date) {
   return parseInt(format(date, 'D', { useAdditionalDayOfYearTokens: true }), 10)
 }
 
+function getWellFormattedDateStringWithTimezone(dateTime) {
+  return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -227,4 +231,5 @@ module.exports = {
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
   dayOfYear,
+  getWellFormattedDateStringWithTimezone,
 }
