@@ -10,6 +10,7 @@ const {
 } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
+const { normalizePhoneNumber } = require('../shared/phoneNormalization')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -29,22 +30,26 @@ async function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
 // prepareSmsMessageForSending
 // -----------------------------
 async function prepareSmsMessageForSending(context, knex, smsMessageId) {
-  const { message, phoneNumber } = await createSmsMessageFromTemplate(
-    knex,
-    smsMessageId
-  )
-  const messageStatusId = await messageStatusToId('Pending')
-
-  // store generated sms message into the same record and set messageStatusId
-  await knex('SmsMessage').where({ id: smsMessageId }).update({
+  const {
     message,
-    phoneNumber,
-    messageStatusId,
-    updatedOn: new Date(),
-  })
+    phoneNumber: phone,
+    countryAbbreviation: countryCode,
+  } = await createSmsMessageFromTemplate(knex, smsMessageId)
+  if (!_.isEmpty(phone)) {
+    const messageStatusId = await messageStatusToId('Pending')
+    const phoneNumber = normalizePhoneNumber(phone, countryCode)
 
-  // dispatch SMS_MESSAGE_READY_FOR_SENDING to MQ
-  context.smsMessageReadyForSending(smsMessageId)
+    // store generated sms message into the same record and set messageStatusId
+    await knex('SmsMessage').where({ id: smsMessageId }).update({
+      message,
+      phoneNumber,
+      messageStatusId,
+      updatedOn: new Date(),
+    })
+
+    // dispatch SMS_MESSAGE_READY_FOR_SENDING to MQ
+    context.smsMessageReadyForSending(smsMessageId)
+  }
 }
 
 // -----------------------------
@@ -104,7 +109,9 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
   const { personId } = await knex('SmsMessage')
     .where('id', smsMessageId)
     .first('personId')
+
   const dataConstraints = await getConstraints({ personId })
+
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
@@ -132,11 +139,13 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .where({ 'm.id': smsMessageId })
     .first(
       'tmpl.message as messageTemplate',
-      'tmpl.phoneNumber as phoneNumberTemplate'
+      'tmpl.phoneNumber as phoneNumberTemplate',
+      knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
   return processUsingDataSourceQuery(data, [
     'messageTemplate',
     'phoneNumberTemplate',
+    'countryAbbreviation',
   ])
 }
 

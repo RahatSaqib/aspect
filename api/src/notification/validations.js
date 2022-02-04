@@ -149,6 +149,7 @@ const resultBasedNotificationPayload = Joi.object({
       })
     )
     .min(1),
+  sendToPatient: Joi.bool().description("Send to the result's patient"),
   jobFunctions: Joi.array()
     .items(
       Joi.object().keys({
@@ -173,7 +174,7 @@ const resultBasedNotificationPayload = Joi.object({
     )
     .min(1)
     .description('Checked job functions'),
-}).or('jobFunctions', 'persons')
+}).or('sendToPatient', 'jobFunctions', 'persons')
 
 const saveNotificationResponse = {
   options: {

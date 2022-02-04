@@ -1,4 +1,5 @@
 const flatten = require('flat')
+const { subDays } = require('date-fns')
 const _ = require('lodash')
 const { getResultsForExport } = require('./service')
 const { knex } = require('../db')
@@ -41,6 +42,14 @@ async function getAllResultsForExport(auth, query) {
   query.page = 0
   // For performance issues we are going to limit this report to max 50k results.
   query.size = query.maxNumberOfRecords || 50000
+
+  // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
+  if (_.isNil(query.minDate))
+    query.minDate = subDays(
+      new Date(query.maxDate),
+      query.daysToSubstract || 360
+    )
+
   const {
     data,
     extraColumns = [],

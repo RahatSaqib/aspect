@@ -246,7 +246,6 @@ async function getResultsForExport(auth, query) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
-
   const [{ total }, data] = await Promise.all([getCount, getData])
   const result = {
     ok: true,
@@ -2149,10 +2148,10 @@ function getBaseQueryForResults() {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
+    .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin('PartnerAssay as pa', function () {
       this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })

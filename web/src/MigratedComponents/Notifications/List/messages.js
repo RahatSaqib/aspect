@@ -69,7 +69,18 @@ export const messages = defineMessages({
       other {# Persons}
     }`,
   },
-
+  yes: {
+    id: 'pages.Notifications.table.createButton.group.yes',
+    defaultMessage: 'Yes',
+  },
+  no: {
+    id: 'pages.Notifications.table.createButton.group.no',
+    defaultMessage: 'No',
+  },
+  sendToPatient: {
+    id: 'pages.Notifications.table.createButton.group.sendToPatient',
+    defaultMessage: 'Send to patient',
+  },
   notificationCreateGroupForResults: {
     id: 'pages.Notifications.table.createButton.group.forResults',
     defaultMessage: 'Notification for Results',
