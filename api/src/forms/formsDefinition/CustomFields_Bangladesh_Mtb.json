@@ -122,7 +122,7 @@
         {
           "key": "Non_converters_of_Category_I",
           "value": "Non converters of Category I",
-          "description": "remain positive at month 2",
+          "description": "remain positive at month 2-3",
           "order": 10
         },
         {
@@ -134,7 +134,7 @@
         {
           "key": "Non_converters_of_Retreatment",
           "value": "Non converters of Retreatment",
-          "description": "remain positive at month 2",
+          "description": "remain positive at month 2-3",
           "order": 30
         },
         {

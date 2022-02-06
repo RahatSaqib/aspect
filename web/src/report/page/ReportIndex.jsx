@@ -61,7 +61,7 @@ const ReportIndex = () => {
   } = useAuthState()
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
-  const [filters, setFilters] = useState([])
+  const [visibleFilters, setVisibleFilters] = useState([])
 
   const { data: { data } = false } = useQuery(
     [REPORT_LIST.KEY, location.search],
@@ -74,13 +74,14 @@ const ReportIndex = () => {
     }
   )
   const onClickDownload = (externalId, fileExtension = 'xlsx') => {
-    setFilters({ ...filters, format: fileExtension })
-    filtersFromLocation.format = fileExtension
-    if (!filtersFromLocation.maxDate) filtersFromLocation.maxDate = new Date()
+    const { value: filtersParams } = filtersFromLocation(location)
+    const params = { ...fromPairs([...filtersParams.entries()]) }
+    params.format = fileExtension
+    if (!params.maxDate) params.maxDate = new Date()
     setShowProgressBar(true)
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
-      params: { ...filtersFromLocation },
+      params,
     })
       .then(async resp => {
         setShowProgressBar(false)
@@ -105,8 +106,19 @@ const ReportIndex = () => {
       )
     }
     const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-    setFilters(fromPairs([...Object.entries(reducedFilters)]))
-  }, [location, navigate, userPermissions])
+
+    setVisibleFilters(fromPairs([...Object.entries(reducedFilters)]))
+
+    /**
+     * Do not include `userPermissions` into dependency array below.
+     * Because `userPermissions` has new reference on every rendering cycle because
+     * AuthProvider does `user.toJS()` in `web/src/Providers/AuthProvider/index.jsx`
+     * TODO: change it in AuthProvider and use only `user` object
+     * like  `useSelector(({ user }) => user)` there. After change - remove
+     * this comment and add `userPermissions` into dependency array below.
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location, navigate])
 
   useEffect(() => {
     if (data) {
@@ -119,12 +131,12 @@ const ReportIndex = () => {
       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       <DataTableProgressBar disabled={!showProgressBar} />
-      {filters && (
+      {visibleFilters && (
         <BrowseFilters
           navigate={navigate}
           location={location}
           intl={intl}
-          config={filters}
+          config={visibleFilters}
           showBrowseDropdown={false}
         />
       )}
