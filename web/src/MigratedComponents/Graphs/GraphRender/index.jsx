@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import { oneOfType, array, object, bool, string, func } from 'prop-types'
 import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -162,12 +162,12 @@ GraphRender.defaultProps = {
 }
 
 GraphRender.propTypes = {
-  assays: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  clientSideFilter: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-  id: PropTypes.string.isRequired,
-  updatedParams: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-  formatMessage: PropTypes.func.isRequired,
+  assays: oneOfType([array, object]).isRequired,
+  config: oneOfType([object]).isRequired,
+  clientSideFilter: oneOfType([object, bool]),
+  id: string.isRequired,
+  updatedParams: oneOfType([object, bool]),
+  formatMessage: func.isRequired,
 }
 
 export default GraphRender
