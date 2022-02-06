@@ -22,7 +22,8 @@ const FilterByAssayDropDown = props => {
     props: { actionComponentProps: config, action },
   } = props
   const { selectorModifiers, data } = config
-  const { isClearable, isSearchable } = selectorModifiers[0] || false
+  const { identifier, isClearable, isSearchable } =
+    selectorModifiers[0] || false
   const [options, setOptions] = useState(false)
 
   const handleChange = (val, type) => {
@@ -53,7 +54,7 @@ const FilterByAssayDropDown = props => {
         marginBottom: '20px',
       }}
     >
-      <div style={{ width: '250px' }}>
+      <div style={{ minWidth: '250px', maxWidth: '500px' }}>
         <Select
           placeholder={formatMessage(messages.selectAssay)}
           className="basic-single"
@@ -63,7 +64,7 @@ const FilterByAssayDropDown = props => {
           isClearable={isClearable}
           isSearchable={isSearchable}
           onChange={handleChange}
-          name="color"
+          name={identifier}
           options={options}
           styles={getAspectTheme()}
         />
