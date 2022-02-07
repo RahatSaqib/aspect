@@ -8,6 +8,31 @@ const logger = require('./logger')
 const LANG_DEFAULT = 'en'
 const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
 
+/**
+  Notice that `cell.type` and `cell.effectiveType` are set to global constant `excel.ValueType`:
+  excel.ValueType = {
+    Null: 0,
+    Merge: 1,
+    Number: 2,
+    String: 3,
+    Date: 4,
+    Hyperlink: 5,
+    Formula: 6,
+    SharedString: 7,
+    RichText: 8,
+    Boolean: 9,
+    Error: 10
+  }
+  For instance, `cell.type = 2` is `excel.ValueType.Number`
+*/
+
+const valueCellTypes = [
+  excel.ValueType.String,
+  excel.ValueType.Number,
+  excel.ValueType.Date,
+  excel.ValueType.Boolean,
+]
+
 // ----------------------------------------------------------------------------------------------
 // getCellsByValue - helper function for getting all cells having requested value
 // ----------------------------------------------------------------------------------------------
@@ -32,7 +57,7 @@ const getCellsBySubstring = (sheet, value) => {
   if (sheet) {
     sheet.eachRow(row => {
       row.eachCell(cell => {
-        if (cell.text.includes(value)) {
+        if (valueCellTypes.includes(cell.type) && cell.text.includes(value)) {
           cells.push(cell)
         }
       })
@@ -168,6 +193,66 @@ function setCellStyle(cell, style) {
 }
 
 // ----------------------------------------------------------------------------------------------
+function fillInSheetWithMap({
+  templateFolderPath,
+  sheetIndex,
+  data,
+  worksheet,
+}) {
+  let mapping
+  try {
+    mapping = require(`../../templates/${templateFolderPath}/mapping`) //eslint-disable-line
+  } catch (error) {
+    //
+  }
+
+  if (!mapping) return
+
+  /**
+   * sheetMap is an object with pattern { `cellAddress`: `fieldName` },
+   * where `cellAddress` is cell address in general format like `B15` and
+   * `fieldName` is a prop name in data object
+   */
+  const sheetMap = mapping[sheetIndex]
+
+  if (sheetMap) {
+    const { dataRows: dat } = data[sheetIndex]
+    if (!dat) return
+
+    _.keys(sheetMap).forEach(cellAddress => {
+      const fieldName = sheetMap[cellAddress]
+      const cell = worksheet.getCell(cellAddress)
+      if (!cell) return
+
+      /**
+       * If report sheet has setting to set values only for empty cells, then
+       * wrap below line with `if (cell.type === excel.ValueType.Null)`.
+       *
+       * Notice that `cell.type` may differ from `cell.effectiveType`. For instance,
+       * for `cell.type = 6` (excel.ValueType.Formula) after setting numeric
+       * value to depending cell
+       * (which match possible Data Validation Rule defined for that depending cell in Excel)
+       * actual `cell.effectiveType = 2` (excel.ValueType.Number)
+       */
+      cell.value = dat[fieldName]
+    })
+
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (cell.type === excel.ValueType.Formula) {
+          /**
+           * TODO: find some way to calculate formulas and set value to `cell.result`.
+           * Otherwise - inform customers that when they open Excel file with formulas
+           * which didn't calculate they should press Ctrl-Alt-F9 to auto-calculate all
+           * such cells
+           */
+        }
+      })
+    })
+  }
+}
+
+// ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
   culture,
   data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
@@ -192,22 +277,52 @@ async function renderExcelTemplate({
 
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
-    if (extension === 'csv' && sheetIndex > 0) {
+    const {
+      dataRows,
+      dynamicColumns = [],
+      defaultNoDataMessage,
+      dataSelector: dataSelectorSheet,
+    } = data[sheetIndex] || {}
+
+    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
+    if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
 
-    const worksheetData = data[sheetIndex]
-    const {
-      dataRows = [],
-      defaultNoDataMessage,
-      dataSelector: dataSelectorSheet,
-      dynamicColumns = [],
-    } = worksheetData || {}
+    if (wayToFillInData === 'mapping') {
+      // populate worksheet and exit this loop
+      return fillInSheetWithMap({
+        templateFolderPath,
+        sheetIndex,
+        data,
+        worksheet,
+      })
+    }
 
-    /**
-     * replace base placeholders, i.e. <Dates>, <States>, etc in the header
-     */
-    replaceBasePlaceholders(replacements, worksheet, worksheetData)
+    // replace placeholders, i.e. <Dates>, <States>, etc in the header
+    _.each(
+      replacements,
+      ({
+        placeholder,
+        value,
+        condition = () => false,
+        action = () => true,
+      }) => {
+        if (data[sheetIndex]) {
+          if (condition(data[sheetIndex])) {
+            const [conditionalCell] = getCellsBySubstring(
+              worksheet,
+              placeholder
+            )
+            action(conditionalCell, worksheet)
+          }
+          if (_.isFunction(value)) {
+            value = value(data[sheetIndex])
+          }
+        }
+        replaceSubstringInCell(worksheet, placeholder, value)
+      }
+    )
 
     // position cell where data table begins
     const tableTokenCells = getCellsByValue(worksheet, '<Table>')
