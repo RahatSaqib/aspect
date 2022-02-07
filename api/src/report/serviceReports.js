@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
+const Stream = require('stream')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
@@ -7,10 +8,22 @@ const {
   exportData,
   getBaseReplacements,
   getMaxLimitPlaceHolders,
-  renderExcelTemplate,
+  renderExcelTemplateToCsv,
+  streamExcelTemplate,
   respondFile,
+  respondStream,
+  RELABEL_EXCEL,
 } = require('../shared/excel')
 const { formatDateOrDefault } = require('../shared/date')
+const logger = require('../shared/logger')
+
+/**
+ * constants for statuses of report processing
+ */
+const REPORT_NOT_STARTED = 'REPORT_NOT_STARTED'
+const REPORT_PROCESSING = 'REPORT_PROCESSING'
+const REPORT_FAILED = 'REPORT_FAILED'
+const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
 async function getSheetData(request, sheet) {
@@ -47,6 +60,12 @@ async function getSheetData(request, sheet) {
       `Can not find function ${functionName} in module ${moduleName}`
     )
   }
+
+  logger.info(
+    `Report moduleName='${moduleName}', functionName='${functionName}'`,
+    RELABEL_EXCEL
+  )
+
   const result = await dataFunc(auth, query)
   const {
     ok,
@@ -56,6 +75,12 @@ async function getSheetData(request, sheet) {
     dynamicColumns = {},
     dataSelector = null,
   } = result
+
+  logger.info(
+    `Worksheet data - total=${total}, list size=${data?.length}'`,
+    RELABEL_EXCEL
+  )
+
   if (ok) {
     return { data, total, dynamicColumns, dataSelector }
   }
@@ -165,30 +190,77 @@ async function createReport(request, reply) {
   if (Boom.isBoom(data)) {
     throw data
   }
-  const dataBuffer = await renderExcelTemplate({
-    culture,
-    templateFolderPath: templateFolderPath || externalId,
-    data,
-    extension,
-    replacements: [
-      {
-        placeholder: '<Dates>',
-        value: getDateRangeString(query),
-      },
-      {
-        placeholder: '<States>',
-        value: await getStateNames(query),
-      },
-      {
-        placeholder: '<Lgas>',
-        value: await getLgaNamesString(query),
-      },
-      ...getMaxLimitPlaceHolders(),
-    ],
-  })
 
-  return respondFile({
-    dataBuffer,
+  const replacements = [
+    {
+      placeholder: '<Dates>',
+      value: getDateRangeString(query),
+    },
+    {
+      placeholder: '<States>',
+      value: await getStateNames(query),
+    },
+    {
+      placeholder: '<Lgas>',
+      value: await getLgaNamesString(query),
+    },
+    ...getMaxLimitPlaceHolders(),
+  ]
+
+  if (extension === 'csv') {
+    const dataBuffer = await renderExcelTemplateToCsv({
+      culture,
+      templateFolderPath: templateFolderPath || externalId,
+      data,
+      replacements,
+    })
+
+    return respondFile({
+      dataBuffer,
+      extension,
+      fileNamePrefix: fileName,
+      reply,
+    })
+  }
+
+  const stream = new Stream.PassThrough()
+
+  /**
+   * process in another thread with `setInterval`
+   */
+  let status = REPORT_NOT_STARTED
+  const intervalId = setInterval(() => {
+    if (status === REPORT_NOT_STARTED) {
+      status = REPORT_PROCESSING
+      // call async func in chaining mode - with then/catch
+      streamExcelTemplate({
+        stream,
+        culture,
+        templateFolderPath: templateFolderPath || externalId,
+        data,
+        replacements,
+      })
+        .then(workbook => {
+          status = REPORT_FINISHED
+          /**
+           * All data written, now the very last step is to commit workbook.
+           * Notice that `commit()` in `workbook` is async func, but we run it
+           * without `await` to not delay/block thread to let clear interval
+           */
+          workbook.commit()
+        })
+        .catch(ex => {
+          status = REPORT_FAILED
+          logger.error(ex, RELABEL_EXCEL)
+        })
+    }
+    if (status === REPORT_FINISHED || status === REPORT_FAILED) {
+      clearInterval(intervalId)
+    }
+  }, 1000)
+
+  return respondStream({
+    stream,
     extension,
     fileNamePrefix: fileName,
     reply,
