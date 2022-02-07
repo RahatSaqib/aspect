@@ -584,14 +584,31 @@ async function streamExcelTemplate({
      */
     worksheet.columns = worksheetTemplate.columns
 
-    /**
-     * prepare table in worksheet, i.e.
-     * append dynamic columns, get all predefined field names, get pattern row number
-     */
-    const { patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(
-      worksheetTemplate,
-      dynamicColumns
-    )
+    let patternRowNumber = -1
+    let fieldNames = []
+    let dynamicMerges = []
+
+    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
+    if (wayToFillInData === 'list') {
+      /**
+       * prepare table in worksheet, i.e.
+       * append dynamic columns, get all predefined field names, get pattern row number
+       */
+      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(
+        worksheetTemplate,
+        dynamicColumns
+      ))
+    } else if (wayToFillInData === 'mapping') {
+      /**
+       * for mapping mode - populate worksheet template
+       */
+      fillInSheetWithMap({
+        templateFolderPath,
+        sheetIndex, // is needed to get correct item from `mapping` array
+        data,
+        worksheet: worksheetTemplate,
+      })
+    }
 
     /**
      * set all merges - for original cells on worksheetTemplate and for
@@ -606,13 +623,16 @@ async function streamExcelTemplate({
      * 'rowsValues' is array of array, i.e. array of rows, and each array item is
      * array of cell values
      */
-    const rowsValues = getNormalizedData({
-      dataRows,
-      fieldNames,
-      normalizer: dataSelector || dataSelectorSheet,
-      dynamicColumns,
-      defaultNoDataMessage,
-    })
+    let rowsValues = []
+    if (wayToFillInData === 'list') {
+      rowsValues = getNormalizedData({
+        dataRows,
+        fieldNames,
+        normalizer: dataSelector || dataSelectorSheet,
+        dynamicColumns,
+        defaultNoDataMessage,
+      })
+    }
 
     /**
      * Notice that `worksheet.rowCount` and `worksheet.actualRowCount` may differ
@@ -653,7 +673,7 @@ async function streamExcelTemplate({
         rowModel: { ...rowTemplate.model, number: rowNumber },
       }
 
-      if (rowNumber === patternRowNumber) {
+      if (wayToFillInData === 'list' && rowNumber === patternRowNumber) {
         /**
          * insert all data rows to the streamed worksheet
          */
