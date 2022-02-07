@@ -15,6 +15,7 @@ const admin = {
     'device_utilization',
     'genexpert_issues',
     'all_results',
+    'xpert_test_activities_report',
   ],
   permissions: [
     {
