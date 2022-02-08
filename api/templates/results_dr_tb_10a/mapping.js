@@ -24,7 +24,8 @@ module.exports = [
     P18: 'cnt_Presumptive_DR_TB_Cases_NoResult',
     Q18: 'cnt_Presumptive_DR_TB_Cases_Error',
 
-    D19: 'cntMtbDetectedRifIndeterminate',
+    D19: 'cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate',
+    E19: 'cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate',
 
     /**
      * Block 2
