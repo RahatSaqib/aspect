@@ -39,16 +39,16 @@ async function getGeneXpertM4B2ActivitiesReport(auth, query) {
         "SUM(CASE WHEN rc1.externalId = 'NotDetected' THEN 1 ELSE 0 END) as mtbNotDetected"
       ),
       knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'HotDetected' THEN 1 ELSE 0 END) as mtbDetectedRifNotDetected"
+        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END) as mtbDetectedRifNotDetected"
       ),
       knex.raw(
         "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END) as mtbDetectedRifDetected"
       ),
       knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId IS NULL THEN 1 ELSE 0 END) as mtbDetectedNoRif"
+        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END) as mtbDetectedNoRif"
       ),
       knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Trace Detected' AND rc2.externalId IS NULL THEN 1 ELSE 0 END) as mtbTraceNoRif"
+        "SUM(CASE WHEN rc1.externalId = 'Trace Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END) as mtbTraceNoRif"
       ),
       knex.raw(
         "SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END) as noResult"
@@ -84,7 +84,7 @@ async function getGeneXpertM4B2ActivitiesReport(auth, query) {
         "SUM(CASE WHEN r.errorCode IN ('5001', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END) as error_5001_5002_5003_5004_5005"
       ),
       knex.raw(
-        "SUM(CASE WHEN r.errorCode NOT IN ('5006', '5007', '5017', '5001', '1001', '1002', '2014', '4009', '4010', '4017', '2008', '2005', '2006', '2016','2035', '5011', '2037', '2126', '2127', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END) as error_other"
+        "SUM(CASE WHEN r.errorCode IS NOT NULL AND r.errorCode NOT IN ('5006', '5007', '5017', '5001', '1001', '1002', '2014', '4009', '4010', '4017', '2008', '2005', '2006', '2016','2035', '5011', '2037', '2126', '2127', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END) as error_other"
       ),
       knex.raw('GROUP_CONCAT(DISTINCT s.name ORDER BY s.name) as laboratories'),
     ])
