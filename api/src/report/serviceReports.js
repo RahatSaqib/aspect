@@ -61,7 +61,7 @@ async function getSheetData(request, sheet) {
     )
   }
 
-  logger.info(
+  logger.debug(
     `Report moduleName='${moduleName}', functionName='${functionName}'`,
     RELABEL_EXCEL
   )
@@ -76,7 +76,7 @@ async function getSheetData(request, sheet) {
     dataSelector = null,
   } = result
 
-  logger.info(
+  logger.debug(
     `Worksheet data - total=${total}, list size=${data?.length}'`,
     RELABEL_EXCEL
   )

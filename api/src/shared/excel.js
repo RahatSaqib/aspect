@@ -683,7 +683,7 @@ async function streamExcelTemplate({
           writeRowToStream(payload)
           // for big data sources log checkpoint after each 500 inserted rows
           if (rowNumber % 500 === 0) {
-            logger.info(`processed Excel rows: ${rowNumber}`, RELABEL_EXCEL)
+            logger.debug(`processed Excel rows: ${rowNumber}`, RELABEL_EXCEL)
           }
           rowNumber += 1
         })
