@@ -45,7 +45,7 @@ import {
   groupForPie,
   groupForPieRow,
   groupForDivergent,
-  groupForInvetoryStatusAPI,
+  groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
@@ -407,7 +407,7 @@ const formatDataByGraphType = (
       break
 
     case 'barInventory':
-      grouped = groupForInvetoryStatusAPI(
+      grouped = groupForInventoryStatusAPI(
         data,
         i18nKeys,
         formatMessage,
