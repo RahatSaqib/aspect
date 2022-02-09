@@ -37,6 +37,9 @@ const personProps = [
   'p.userId',
   'p.id as personId',
   'c.abbreviation as countryAbbreviation',
+  'p.phone',
+  'p.cell',
+  'p.email',
 ]
 
 const userProps = [
@@ -49,12 +52,16 @@ const userProps = [
   ...personProps,
 ]
 
-function getUser(username) {
+function getUser(username, options = {}) {
+  const { partnerId = false } = options
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.name': username })
+    .modify(q => {
+      if (partnerId) q.where('p.lastPartnerId', partnerId)
+    })
     .first(userProps)
 }
 
