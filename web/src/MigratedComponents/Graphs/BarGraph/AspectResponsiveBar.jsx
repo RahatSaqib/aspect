@@ -1,5 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import every from 'lodash/every'
+import first from 'lodash/first'
+import filter from 'lodash/filter'
+import sortBy from 'lodash/sortBy'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
 
@@ -48,7 +52,14 @@ const AspectResponsiveBar = ({
     'stackedDeviceActivity',
     'barLegacyTreatment',
   ]
-
+  const { sortByKeys } = baseConfig
+  let filteredData = data
+  if (sortByKeys?.length) {
+    const firstDataItem = first(sortBy(data, sortByKeys))
+    filteredData = filter(data, d =>
+      every(sortByKeys, k => d[k] === firstDataItem[k])
+    )
+  }
   const generateConfig = (type, data) => {
     switch (true) {
       case type === 'divergent':
@@ -199,7 +210,7 @@ const AspectResponsiveBar = ({
     xTickValues,
     ylegend,
     yTickValues,
-  } = generateConfig(type, data)
+  } = generateConfig(type, filteredData)
   const baseLegend =
     displayLegend && !graphsToHaveCustomLegend.includes(type)
       ? [
@@ -242,7 +253,7 @@ const AspectResponsiveBar = ({
       <div className={cssClasses('aspectresponsivebar__chart__container')}>
         <ResponsiveBar
           style={{ flex: 1 }}
-          data={data}
+          data={filteredData}
           keys={keys}
           indexBy={indexBy}
           colorBy="index"
