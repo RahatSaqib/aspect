@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import every from 'lodash/every'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
-import max from 'lodash/max'
 import sortBy from 'lodash/sortBy'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
@@ -110,8 +109,8 @@ const AspectResponsiveBar = ({
           itemWidth: 120,
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
-          padding: 1,
-          margin: { top: 50, right: 0, bottom: 60, left: 100 },
+          padding: 0.3,
+          margin: { top: 60, right: 0, bottom: 60, left: 100 },
           markers: [],
         }
       }
