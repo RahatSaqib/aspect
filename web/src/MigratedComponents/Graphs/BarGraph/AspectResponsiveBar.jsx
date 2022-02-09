@@ -110,7 +110,7 @@ const AspectResponsiveBar = ({
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
           padding: 0.3,
-          margin: { top: 60, right: 0, bottom: 60, left: 100 },
+          margin: { top: 30, right: 0, bottom: 60, left: 100 },
           markers: [],
         }
       }
