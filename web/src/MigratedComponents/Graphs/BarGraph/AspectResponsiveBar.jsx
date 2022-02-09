@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import every from 'lodash/every'
-import first from 'lodash/first'
 import filter from 'lodash/filter'
+import first from 'lodash/first'
+import max from 'lodash/max'
 import sortBy from 'lodash/sortBy'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
@@ -98,18 +99,18 @@ const AspectResponsiveBar = ({
         return {
           legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
           ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
-          yTickValues: yAxisValues,
           gridYValues: yAxisValues,
+          enableGridY: true,
+          yTickValues: yAxisValues,
+          enableGridX: true,
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
-          extraConfig: {},
-          padding: 0.3,
           translateX: -25,
+          layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
+          extraConfig: {},
           itemWidth: 120,
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
-          enableGridY: true,
-          enableGridX: true,
-          layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
+          padding: 1,
           margin: { top: 50, right: 0, bottom: 60, left: 100 },
           markers: [],
         }
@@ -193,23 +194,23 @@ const AspectResponsiveBar = ({
     }
   }
   const {
-    enableGridX,
     enableGridY,
-    extraConfig,
+    ylegend,
+    yTickValues,
     gridYValues,
+    enableGridX,
+    translateX,
+    xTickValues,
+    extraConfig,
     itemDirection,
     itemWidth,
     layers,
     legend,
-    margin,
     markers,
+    margin,
     padding,
     symbolShape,
     theme,
-    translateX,
-    xTickValues,
-    ylegend,
-    yTickValues,
   } = generateConfig(type, filteredData)
   const baseLegend =
     displayLegend && !graphsToHaveCustomLegend.includes(type)
