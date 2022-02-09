@@ -32,13 +32,17 @@ const ReportCard = ({
   i18nKeyDescription,
 }) => {
   const { formatMessage } = useI18n()
+  const reportName = messages[i18nKey]
+    ? formatMessage(messages[i18nKey])
+    : title
+
   return (
     <Grid item xs={12} sm={6} lg={3} style={{ padding: 8 }}>
       <Card style={styles.formatCard}>
         <CardActionArea onClick={() => onClick('xlsx')}>
           <CardContent>
             <Typography gutterBottom variant="h6" component="h4">
-              {messages[i18nKey] ? formatMessage(messages[i18nKey]) : title}
+              {reportName}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
               {messages[i18nKeyDescription]
@@ -48,10 +52,18 @@ const ReportCard = ({
           </CardContent>
         </CardActionArea>
         <CardActions style={styles.actions}>
-          <Button size="small" color="primary" onClick={() => onClick('xlsx')}>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => onClick('xlsx', reportName)}
+          >
             Excel
           </Button>
-          <Button size="small" color="primary" onClick={() => onClick('csv')}>
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => onClick('csv', reportName)}
+          >
             CSV
           </Button>
         </CardActions>

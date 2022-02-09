@@ -252,6 +252,15 @@ async function createReport(request, reply) {
         .catch(ex => {
           status = REPORT_FAILED
           logger.error(ex, RELABEL_EXCEL)
+          if (status === REPORT_FAILED) {
+            /**
+             * when stream is destroyed with specifying error object
+             * (see https://nodejs.org/api/stream.html#writabledestroyerror for details),
+             * then in UI a `catch` block triggers (yes, for Status Code 200) of the download
+             * request because responded blob contains rejected Promise
+             */
+            stream.destroy(ex)
+          }
         })
     }
     if (status === REPORT_FINISHED || status === REPORT_FAILED) {
