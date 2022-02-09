@@ -69,11 +69,10 @@ const getCellsBySubstring = (sheet, value) => {
 const getMaxLimitPlaceHolders = () => [
   {
     placeholder: '<PerformanceTotalRecordLimit>',
-    value: ({ dataRows: { length = 0 }, total = 0 }) => {
+    value: ({ data: { length = 0 }, total = 0 }) => {
       return total - length
     },
-    condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
-      length === total,
+    condition: ({ data: { length = 0 } = [], total = 0 }) => length === total,
     action: (cell, worksheet) => {
       if (cell) {
         cell.value = ''
@@ -85,7 +84,7 @@ const getMaxLimitPlaceHolders = () => [
   },
   {
     placeholder: '<PerformanceQueryLimit>',
-    value: ({ dataRows: { length = 0 } }) => {
+    value: ({ data: { length = 0 } }) => {
       return length
     },
   },
@@ -216,7 +215,7 @@ function fillInSheetWithMap({
   const sheetMap = mapping[sheetIndex]
 
   if (sheetMap) {
-    const { dataRows: dat } = data[sheetIndex]
+    const { data: dat } = data[sheetIndex]
     if (!dat) return
 
     _.keys(sheetMap).forEach(cellAddress => {
@@ -255,7 +254,7 @@ function fillInSheetWithMap({
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   extension, // xlsx
   replacements = [],
   templateFolderPath,
@@ -278,20 +277,20 @@ async function renderExcelTemplate({
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
     const {
-      dataRows,
+      data,
       dynamicColumns = [],
       defaultNoDataMessage,
       dataSelector: dataSelectorSheet,
-    } = data[sheetIndex] || {}
+    } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
+    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
 
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
-      return fillInSheetWithMap({
+      fillInSheetWithMap({
         templateFolderPath,
         sheetIndex,
         data,
@@ -308,8 +307,8 @@ async function renderExcelTemplate({
         condition = () => false,
         action = () => true,
       }) => {
-        if (data[sheetIndex]) {
-          if (condition(data[sheetIndex])) {
+        if (dataSet[sheetIndex]) {
+          if (condition(dataSet[sheetIndex])) {
             const [conditionalCell] = getCellsBySubstring(
               worksheet,
               placeholder
@@ -317,7 +316,7 @@ async function renderExcelTemplate({
             action(conditionalCell, worksheet)
           }
           if (_.isFunction(value)) {
-            value = value(data[sheetIndex])
+            value = value(dataSet[sheetIndex])
           }
         }
         replaceSubstringInCell(worksheet, placeholder, value)
@@ -333,7 +332,7 @@ async function renderExcelTemplate({
         cell.value = ''
       })
 
-      if (!dataRows) return
+      if (!data) return
 
       // use 1st cell only (actually, should not be more than one)
       const cellTableToken = tableTokenCells[0]
@@ -364,10 +363,15 @@ async function renderExcelTemplate({
           allHeaderRows.length
         )
       }
+
+      let dataRows = data
+      // If way to fill in data is mapping, then we need to get the rows inside the object, if they exist
+      if (wayToFillInData === 'mapping') dataRows = data.rows
+
       // fill in array 'rows'
       let rows = []
-      if (dataRows.length > 0) {
-        rows = dataRows.map((dataRow, rowIndex) => {
+      if (dataRows && dataRows.length > 0) {
+        rows = data.map((dataRow, rowIndex) => {
           const valuesInPredefinedColumns = fieldNames.map(fieldName => {
             if (fieldName === '#') {
               return rowIndex + 1
@@ -432,7 +436,7 @@ async function renderExcelTemplate({
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplateToCsv({
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
   templateFolderPath,
   dataSelector,
@@ -446,9 +450,9 @@ async function renderExcelTemplateToCsv({
   )
 
   const worksheet = workbook.worksheets[0]
-  const worksheetData = data[0]
+  const worksheetData = dataSet[0]
   const {
-    dataRows = [],
+    data = [],
     defaultNoDataMessage,
     dataSelector: dataSelectorSheet,
     dynamicColumns = [],
@@ -479,7 +483,7 @@ async function renderExcelTemplateToCsv({
    * array of cell values
    */
   const rowsValues = getNormalizedData({
-    dataRows,
+    data,
     fieldNames,
     normalizer: dataSelector || dataSelectorSheet,
     dynamicColumns,
@@ -518,7 +522,7 @@ async function streamExcelTemplate({
   stream,
   templateFolderPath,
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
   dataSelector,
 }) {
@@ -558,9 +562,9 @@ async function streamExcelTemplate({
    * process all sheets
    */
   _.each(templateWorksheets, (worksheetTemplate, sheetIndex) => {
-    const worksheetData = data[sheetIndex]
+    const worksheetData = dataSet[sheetIndex]
     const {
-      dataRows = [],
+      data = [],
       defaultNoDataMessage,
       dataSelector: dataSelectorSheet,
       dynamicColumns = [],
@@ -588,7 +592,7 @@ async function streamExcelTemplate({
     let fieldNames = []
     let dynamicMerges = []
 
-    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
+    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
     if (wayToFillInData === 'list') {
       /**
        * prepare table in worksheet, i.e.
@@ -605,7 +609,7 @@ async function streamExcelTemplate({
       fillInSheetWithMap({
         templateFolderPath,
         sheetIndex, // is needed to get correct item from `mapping` array
-        data,
+        dataSet,
         worksheet: worksheetTemplate,
       })
     }
@@ -626,7 +630,7 @@ async function streamExcelTemplate({
     let rowsValues = []
     if (wayToFillInData === 'list') {
       rowsValues = getNormalizedData({
-        dataRows,
+        data,
         fieldNames,
         normalizer: dataSelector || dataSelectorSheet,
         dynamicColumns,
@@ -823,7 +827,7 @@ function prepareWorksheet(worksheetTemplate, dynamicColumns) {
 
 // ----------------------------------------------------------------------------------------------
 function getNormalizedData({
-  dataRows,
+  data,
   fieldNames,
   normalizer,
   dynamicColumns,
@@ -834,8 +838,8 @@ function getNormalizedData({
    * of array (cell values for current row)
    */
   let rowsValues = []
-  if (dataRows.length > 0) {
-    rowsValues = dataRows.map((dataRow, rowIndex) => {
+  if (data.length > 0) {
+    rowsValues = data.map((dataRow, rowIndex) => {
       const valuesInPredefinedColumns = fieldNames.map(fieldName => {
         if (fieldName === '#') {
           return rowIndex + 1
@@ -854,7 +858,7 @@ function getNormalizedData({
         let normalizedValues
         // const normalizer = dataSelector || dataSelectorSheet
         if (normalizer) normalizedValues = normalizer(dataRow)
-        else normalizedValues = dataRow
+        else normalizedValues = data
         valuesInDynamicColumns = dynamicColumns.map(
           column => normalizedValues[column.key] || null
         )
