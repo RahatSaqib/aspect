@@ -81,7 +81,7 @@
     "deep-equal-in-any-order": "^1.1.10",
     "dotenv-safe": "^8.2.0",
     "email-templates": "8.0.7",
-    "exceljs": "^4.2.1",
+    "exceljs": "^4.3.0",
     "firebase-admin": "^10.0.0",
     "flat": "^5.0.2",
     "fs-extra": "^10.0.0",

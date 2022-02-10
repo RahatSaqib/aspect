@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { oneOfType, array, object, bool, string, func } from 'prop-types'
 import reduce from 'lodash/reduce'
+import sortBy from 'lodash/sortBy'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
@@ -46,6 +47,7 @@ const GraphRender = ({
     filterBy = false,
     formatDate,
     id,
+    sortByKeys,
     indexBy,
     keyToConsume,
     i18nKey,
@@ -68,7 +70,10 @@ const GraphRender = ({
         method,
         params: mergedParams,
       }),
-    { onSuccess: ({ data }) => setRawData(data) }
+    {
+      onSuccess: ({ data }) =>
+        setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data),
+    }
   )
   if (isError) {
     throw new Error(`Graph data fetch failed: ${error.message}`)

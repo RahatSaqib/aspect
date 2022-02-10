@@ -62,15 +62,15 @@ const counter = (id, condition) =>
       END
     `)
 // ----------------
-const inTypeOfPatient = (typeOfPatientValues, resultCategory1) => {
+const inTypeOfPatient = (typeOfPatientValues, moreConditions) => {
   const typeOfPatient = _.trim(JSON.stringify(typeOfPatientValues), '[ ]')
   let condition = `
     IFNULL(r.patientData ->> '$.TypeOfPatient', '') IN (${typeOfPatient})
   `
-  if (resultCategory1) {
+  if (moreConditions) {
     condition += `
       and
-      r.resultCategory1 = ${resultCategory1}
+      ${moreConditions}
     `
   }
   return counter('r.id', condition)
@@ -220,32 +220,40 @@ async function getDataForReportDrTb10A(auth, query) {
        */
       cnt_Presumptive_TB_Cases_Invalid: inTypeOfPatient(
         presumptiveTbCases,
-        resultCategoryIds.Invalid
+        `r.resultCategory1 = ${resultCategoryIds.Invalid}`
       ),
       cnt_Presumptive_TB_Cases_NoResult: inTypeOfPatient(
         presumptiveTbCases,
-        resultCategoryIds.NoResult
+        `r.resultCategory1 = ${resultCategoryIds.NoResult}`
       ),
       cnt_Presumptive_TB_Cases_Error: inTypeOfPatient(
         presumptiveTbCases,
-        resultCategoryIds.Error
+        `r.resultCategory1 = ${resultCategoryIds.Error}`
       ),
 
       cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
         presumptiveDrTbCases,
-        resultCategoryIds.Invalid
+        `r.resultCategory1 = ${resultCategoryIds.Invalid}`
       ),
       cnt_Presumptive_DR_TB_Cases_NoResult: inTypeOfPatient(
         presumptiveDrTbCases,
-        resultCategoryIds.NoResult
+        `r.resultCategory1 = ${resultCategoryIds.NoResult}`
       ),
       cnt_Presumptive_DR_TB_Cases_Error: inTypeOfPatient(
         presumptiveDrTbCases,
-        resultCategoryIds.Error
+        `r.resultCategory1 = ${resultCategoryIds.Error}`
       ),
 
-      cntMtbDetectedRifIndeterminate: counter(
-        'r.id',
+      cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
+        presumptiveTbCases,
+        `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+        `
+      ),
+      cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
+        presumptiveDrTbCases,
         `
           r.resultCategory1 IN (${positiveResultCategories})
           and

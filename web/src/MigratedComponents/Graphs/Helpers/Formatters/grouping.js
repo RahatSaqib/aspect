@@ -412,7 +412,12 @@ const groupForDeviceStatusAPI = (
   return normaliseKeys(grouped)
 }
 
-const groupForInvetoryStatusAPI = (data, i18nKeys, formatMessage, messages) => {
+const groupForInventoryStatusAPI = (
+  data,
+  i18nKeys,
+  formatMessage,
+  messages
+) => {
   const grouped = []
   map(data, ({ consumableId, consumableName, ...rest }) =>
     map(rest, (val, key) => {
@@ -435,7 +440,7 @@ export {
   groupForPie,
   groupForPieRow,
   groupForDivergent,
-  groupForInvetoryStatusAPI,
+  groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,

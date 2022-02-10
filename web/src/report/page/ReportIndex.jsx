@@ -2,11 +2,12 @@ import flowRight from 'lodash/flowRight'
 import fromPairs from 'lodash/fromPairs'
 import React, { useState, useEffect } from 'react'
 
-import { useIntl } from 'react-intl'
+import { useIntl, defineMessages } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { safeDownloadFile } from '../../shared/utils/files'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
@@ -23,6 +24,7 @@ import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
 import { useAuthState } from '../../Providers/AuthProvider'
+import { showError } from '../../appNotification/AppNotificationRedux'
 import messages from './messages'
 
 import styles from './ReportIndex.css'
@@ -62,6 +64,7 @@ const ReportIndex = () => {
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [visibleFilters, setVisibleFilters] = useState([])
+  const dispatch = useDispatch()
 
   const { data: { data } = false } = useQuery(
     [REPORT_LIST.KEY, location.search],
@@ -73,7 +76,7 @@ const ReportIndex = () => {
       })
     }
   )
-  const onClickDownload = (externalId, fileExtension = 'xlsx') => {
+  const onClickDownload = (externalId, fileExtension = 'xlsx', reportName) => {
     const { value: filtersParams } = filtersFromLocation(location)
     const params = { ...fromPairs([...filtersParams.entries()]) }
     params.format = fileExtension
@@ -88,8 +91,55 @@ const ReportIndex = () => {
         const file = await resp.blob
         safeDownloadFile(file, resp.fileName)
       })
-      .catch(() => setShowProgressBar(false))
+      .catch(error => {
+        setShowProgressBar(false)
+        processError(error, fileExtension, reportName)
+      })
   }
+
+  const processError = (error, fileExtension, reportName) => {
+    /**
+     * When API endpoint responds Boom error before streaming started
+     * then `error.statusCode` has some value (i.e. 4xx or 5xx) and this is
+     * handled in catch block in func `handleFetchResponseOrError` in `shared/utils/fetch.js`,
+     * and above catch block in onClickDownload is executing as well.
+     *
+     * But after Hapi started transmitting writable stream with
+     * some committed data and then stream gets destroyed by some reason - then Hapi
+     * can not change already transmitted headers, i.e. to set StatusCode from 200 to 5xx.
+     * And destroyed on API stream with emitted error passes `then` block in `handleFetchResponseOrError`
+     * (because Status Code is 200) but throws error in `then` in above `onClickDownload`
+     * because response blob is having rejected Promise which throws error
+     * on `await resp.blob`, and such error doesn't have prop `statusCode`.
+     * So, to show error panel for such stream-related error (with response header StatusCode 200)
+     * we analyze `error.statusCode` here.
+     */
+    if (error.statusCode === undefined) {
+      const errorNotification = {
+        severity: 'error',
+        ...defineMessages({
+          resolution: {
+            id: 'errorResponseMessages.reportStream.tryAgainLater.resolution',
+            defaultMessage: `Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}".
+            Please, try again in a few minutes. If the error persists, contact your administrator for support.
+            `,
+          },
+          // this is same `title` as in `default` in `MigratedComponents/QueryFetch/errors.js`
+          title: {
+            id: 'queryFetch.errorResponseMessages.GET.default.title',
+            defaultMessage: 'Error Fetching Endpoint',
+          },
+        }),
+      }
+      const messageValues = {
+        reportName,
+        errorMessage: error.message,
+        fileType: fileExtension === 'xlsx' ? 'Excel' : fileExtension,
+      }
+      dispatch(showError(errorNotification, messageValues))
+    }
+  }
+
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const { sanitized: filtersSanitized, value: filtersParams } =
@@ -156,8 +206,8 @@ const ReportIndex = () => {
               i18nKey={i18nKey}
               i18nKeyDescription={i18nKeyDescription}
               key={externalId}
-              onClick={fileExtension =>
-                onClickDownload(externalId, fileExtension)
+              onClick={(fileExtension, reportName) =>
+                onClickDownload(externalId, fileExtension, reportName)
               }
               navigate={navigate}
             />
