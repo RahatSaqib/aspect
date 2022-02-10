@@ -292,7 +292,7 @@ const messages = {
       defaultMessage: 'Enter contact name/email...',
     },
     site: {
-      id: 'filter.popover.site',
+      id: 'filter.popover.siteName',
       defaultMessage: 'Site',
     },
     reportableSite: {

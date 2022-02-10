@@ -5,6 +5,8 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { formatDateOrDefault } = require('./date')
 
+const LANG_DEFAULT = 'en'
+
 // ---------------------------------
 // create missing directories in the path and return path back
 // Notice - path should NOT start with /
@@ -230,6 +232,30 @@ function getContentType(fileExt) {
   }
 }
 
+// ----------------------------------------------------------------------------------------------
+async function readTemplateFile(
+  templateFolderPath,
+  lang,
+  langDefault = LANG_DEFAULT
+) {
+  // TODO: think how to differ files for the same language but different partners
+  // TODO: see Jira task - https://ops.systemone.id/browse/ASP-1451
+  let filePath = `templates/${templateFolderPath}/${lang}.xlsx`
+  // check if file exists, fallback to default language, throw error if no file found
+  let exists = fs.existsSync(filePath)
+  if (!exists && lang !== langDefault) {
+    filePath = `templates/${templateFolderPath}/${langDefault}.xlsx`
+    exists = fs.existsSync(filePath)
+  }
+  // throw exception if no file found
+  if (!exists) {
+    throw new Error(`File ${filePath} is missing`)
+  }
+
+  // return promise with file content
+  return readExcelFile(filePath)
+}
+
 module.exports = {
   createDirectory,
   generateCsvFile,
@@ -241,4 +267,5 @@ module.exports = {
   getExportDirectory,
   readExcelFile,
   readTextFile,
+  readTemplateFile,
 }
