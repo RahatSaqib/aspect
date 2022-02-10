@@ -1,5 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import every from 'lodash/every'
+import filter from 'lodash/filter'
+import first from 'lodash/first'
+import sortBy from 'lodash/sortBy'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
 
@@ -48,8 +52,15 @@ const AspectResponsiveBar = ({
     'stackedDeviceActivity',
     'barLegacyTreatment',
   ]
-
-  const config = (type, data) => {
+  const { sortByKeys } = baseConfig
+  let filteredData = data
+  if (sortByKeys?.length) {
+    const firstDataItem = first(sortBy(data, sortByKeys))
+    filteredData = filter(data, d =>
+      every(sortByKeys, k => d[k] === firstDataItem[k])
+    )
+  }
+  const generateConfig = (type, data) => {
     switch (true) {
       case type === 'divergent':
         return {
@@ -76,38 +87,33 @@ const AspectResponsiveBar = ({
           markers: [],
         }
 
-      case type === 'barInventory':
+      case type === 'barInventory': {
+        const yAxisValues = generateTickValues(
+          data,
+          tickValuesYShape,
+          keys,
+          'Y',
+          true
+        )
         return {
           legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
           ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
-          yTickValues: generateTickValues(
-            data,
-            tickValuesYShape,
-            keys,
-            'Y',
-            true
-          ),
-          gridYValues: generateTickValues(
-            data,
-            tickValuesYShape,
-            keys,
-            'Y',
-            true
-          ),
+          gridYValues: yAxisValues,
+          enableGridY: true,
+          yTickValues: yAxisValues,
+          enableGridX: true,
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
-          extraConfig: {},
-          padding: 0.3,
           translateX: -25,
+          layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
+          extraConfig: {},
           itemWidth: 120,
           itemDirection: 'right-to-left',
           symbolShape: 'circle',
-          enableGridY: true,
-          enableGridX: true,
-          layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
-          margin: { top: 50, right: 0, bottom: 60, left: 100 },
+          padding: 0.3,
+          margin: { top: 30, right: 0, bottom: 60, left: 100 },
           markers: [],
         }
-
+      }
       case type === 'stackedDeviceActivity':
         return {
           legend: false,
@@ -186,6 +192,25 @@ const AspectResponsiveBar = ({
         }
     }
   }
+  const {
+    enableGridY,
+    ylegend,
+    yTickValues,
+    gridYValues,
+    enableGridX,
+    translateX,
+    xTickValues,
+    extraConfig,
+    itemDirection,
+    itemWidth,
+    layers,
+    legend,
+    markers,
+    margin,
+    padding,
+    symbolShape,
+    theme,
+  } = generateConfig(type, filteredData)
   const baseLegend =
     displayLegend && !graphsToHaveCustomLegend.includes(type)
       ? [
@@ -205,15 +230,15 @@ const AspectResponsiveBar = ({
             anchor: 'bottom-right',
             direction: 'row',
             justify: false,
-            translateX: config(type, data, displayMethod).translateX,
+            translateX,
             translateY: 60,
             itemsSpacing: 2,
-            itemWidth: config(type, data, displayMethod).itemWidth,
+            itemWidth,
             itemHeight: 20,
-            itemDirection: config(type, data, displayMethod).itemDirection,
+            itemDirection,
             itemOpacity: 0.85,
             symbolSize: 20,
-            symbolShape: config(type, data, displayMethod).symbolShape,
+            symbolShape,
             effects: [{ on: 'hover', style: { itemOpacity: 1 } }],
           },
         ]
@@ -228,17 +253,17 @@ const AspectResponsiveBar = ({
       <div className={cssClasses('aspectresponsivebar__chart__container')}>
         <ResponsiveBar
           style={{ flex: 1 }}
-          data={data}
+          data={filteredData}
           keys={keys}
           indexBy={indexBy}
           colorBy="index"
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
           enableLabel={false}
-          enableGridY={config(type, data, displayMethod).enableGridY}
-          enableGridX={config(type, data, displayMethod).enableGridX}
-          gridYValues={config(type, data, displayMethod).gridYValues}
-          {...config(type, data, displayMethod).extraConfig}
-          padding={config(type, data, displayMethod).padding}
+          enableGridY={enableGridY}
+          enableGridX={enableGridX}
+          gridYValues={gridYValues}
+          {...extraConfig}
+          padding={padding}
           borderWidth={0}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           axisTop={null}
@@ -248,9 +273,9 @@ const AspectResponsiveBar = ({
           animate
           motionStiffness={90}
           motionDamping={15}
-          layers={config(type, data, displayMethod).layers}
+          layers={layers}
           colors={v => generateColorForValue(v)}
-          margin={config(type, data, displayMethod).margin}
+          margin={margin}
           tooltip={v =>
             v && legendsNotToRender.includes(v.id) ? (
               <EmptyTooltip title={v.id} />
@@ -273,17 +298,17 @@ const AspectResponsiveBar = ({
           }
           axisLeft={{
             tickSize: 5,
-            tickValues: config(type, data, displayMethod).yTickValues,
+            tickValues: yTickValues,
             format: v =>
               formatValuesForGraphs(v, displayMethod, intlFormatNumber),
             legendPosition: 'middle',
             legendOffset: -60,
-            legend: config(type, data, displayMethod).legend,
+            legend,
           }}
           axisBottom={{
-            legend: config(type, data, displayMethod).ylegend,
+            legend: ylegend,
             tickSize: 5,
-            tickValues: config(type, data, displayMethod).xTickValues,
+            tickValues: xTickValues,
             tickPadding: 10,
             tickRotation: 0,
             legendPosition: 'middle',
@@ -294,8 +319,8 @@ const AspectResponsiveBar = ({
                 : formatAxisLabel(v, formatDate),
           }}
           legends={baseLegend}
-          theme={config(type, data, displayMethod).theme}
-          markers={config(type, data, displayMethod).markers}
+          theme={theme}
+          markers={markers}
         />
       </div>
       {displayLegend && graphsToHaveCustomLegend.includes(type) ? (
@@ -306,7 +331,7 @@ const AspectResponsiveBar = ({
           i18nKeys={i18nKeys}
           assaysFromState={assaysFromState}
           type={type}
-          symbolShape={config(type, data, displayMethod).symbolShape}
+          symbolShape={symbolShape}
           legendsNotToRender={legendsNotToRender}
           legendsToPopover={legendsToPopover}
         />
