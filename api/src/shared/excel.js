@@ -195,7 +195,7 @@ function setCellStyle(cell, style) {
 function fillInSheetWithMap({
   templateFolderPath,
   sheetIndex,
-  data,
+  dataSet,
   worksheet,
 }) {
   let mapping
@@ -215,8 +215,8 @@ function fillInSheetWithMap({
   const sheetMap = mapping[sheetIndex]
 
   if (sheetMap) {
-    const { data: dat } = data[sheetIndex]
-    if (!dat) return
+    const { data } = dataSet[sheetIndex]
+    if (!data) return
 
     _.keys(sheetMap).forEach(cellAddress => {
       const fieldName = sheetMap[cellAddress]
@@ -233,7 +233,7 @@ function fillInSheetWithMap({
        * (which match possible Data Validation Rule defined for that depending cell in Excel)
        * actual `cell.effectiveType = 2` (excel.ValueType.Number)
        */
-      cell.value = dat[fieldName]
+      cell.value = data[fieldName]
     })
 
     worksheet.eachRow(row => {
@@ -293,7 +293,7 @@ async function renderExcelTemplate({
       fillInSheetWithMap({
         templateFolderPath,
         sheetIndex,
-        data,
+        dataSet,
         worksheet,
       })
     }
@@ -593,16 +593,10 @@ async function streamExcelTemplate({
     let dynamicMerges = []
 
     const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
-    if (wayToFillInData === 'list') {
-      /**
-       * prepare table in worksheet, i.e.
-       * append dynamic columns, get all predefined field names, get pattern row number
-       */
-      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(
-        worksheetTemplate,
-        dynamicColumns
-      ))
-    } else if (wayToFillInData === 'mapping') {
+
+    const dataRows = wayToFillInData === 'list' ? data : data.rows
+
+    if (wayToFillInData === 'mapping') {
       /**
        * for mapping mode - populate worksheet template
        */
@@ -612,6 +606,17 @@ async function streamExcelTemplate({
         dataSet,
         worksheet: worksheetTemplate,
       })
+    }
+
+    if (dataRows) {
+      /**
+       * prepare table in worksheet, i.e.
+       * append dynamic columns, get all predefined field names, get pattern row number
+       */
+      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(
+        worksheetTemplate,
+        dynamicColumns
+      ))
     }
 
     /**
@@ -628,9 +633,9 @@ async function streamExcelTemplate({
      * array of cell values
      */
     let rowsValues = []
-    if (wayToFillInData === 'list') {
+    if (dataRows) {
       rowsValues = getNormalizedData({
-        data,
+        data: dataRows,
         fieldNames,
         normalizer: dataSelector || dataSelectorSheet,
         dynamicColumns,
@@ -677,7 +682,7 @@ async function streamExcelTemplate({
         rowModel: { ...rowTemplate.model, number: rowNumber },
       }
 
-      if (wayToFillInData === 'list' && rowNumber === patternRowNumber) {
+      if (dataRows && rowNumber === patternRowNumber) {
         /**
          * insert all data rows to the streamed worksheet
          */
