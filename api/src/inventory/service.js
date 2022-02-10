@@ -952,7 +952,7 @@ async function listInventoryGroupedBySite(request) {
 function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
   // group by siteId and consumableId, and return different counts
   const baseWithCalculatedFields =
-    getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+    getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
       request,
       dataConstraints
     )
@@ -973,7 +973,7 @@ function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
  * @param {*} request
  * @param {*} dataConstraints
  */
-function getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
   request,
   dataConstraints
 ) {
@@ -1127,7 +1127,7 @@ async function getDaysByLocation(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const baseWithCalculatedFields =
-    getInventoryItemsBySiteGeographyWithCalculatedFIeldsBase(
+    getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
       request,
       dataConstraints
     )

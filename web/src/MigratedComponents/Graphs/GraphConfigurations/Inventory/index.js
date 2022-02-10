@@ -34,6 +34,7 @@ const inventoryGraphs = {
         api: {
           endpoint: '/inventory/days-by-location',
         },
+        sortByKeys: ['consumableName'],
         indexBy: 'increment',
         keyToConsume: 'count',
         filterBy: {},
