@@ -1,6 +1,7 @@
 import pick from 'lodash/pick'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
 
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
@@ -24,7 +25,12 @@ const filterMonthlyByAssaysPie = (data, props) => {
   const newData = []
   const keys = []
   map(props, ({ value }) => keys.push(value))
-  map(keys, key => newData.push({ ...filter(data, { id: key })[0] }))
+  map(keys, key => {
+    const found = filter(data, { id: key })[0]
+    if (!isEmpty(found)) {
+      return newData.push(found)
+    }
+  })
   return newData
 }
 
@@ -41,6 +47,8 @@ const testsPerFormedGraphs = {
         identifier: 'assayId',
         isClearable: true,
         isClientSide: true,
+        initByCountryDefault: true,
+        initByCountryDefaultGroup: 'TB',
         filterFunctions: [
           {
             id: 'testPerformedMonthlyPercentage',

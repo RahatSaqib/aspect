@@ -14,18 +14,18 @@ function handleClientSideFilterState(
     clientSideFilterOptions,
     setClientSideFilterOptions,
   } = clientSideFilter
-  const { id, i18nKeys, graphData } = graphState
+  const { id, i18nKeys, graphData, assaysFromState } = graphState
   const { formatRawData, setNewData } = graphActions
 
   if (isClientSide) {
+    const { filterFunctions } = selectorModifiers[0] || false
+    const { filterFunction } = filter(filterFunctions, { id })[0] || false
+    const { val, selectAction } = clientSideFilters
     if (!isEmpty(i18nKeys) && !clientSideFilterOptions) {
-      setClientSideFilterOptions(i18nKeys)
+      setClientSideFilterOptions({ keys: i18nKeys, assays: assaysFromState })
     }
     if (!!clientSideFilters && graphData) {
       let newData
-      const { filterFunctions } = selectorModifiers[0] || false
-      const { filterFunction } = filter(filterFunctions, { id })[0] || false
-      const { val, selectAction } = clientSideFilters
       switch (true) {
         case selectAction === 'select-option':
           newData = filterFunction(formatRawData(), val)
