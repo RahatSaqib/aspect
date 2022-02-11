@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
+const Range = require('exceljs/lib/doc/range')
 const { getContentType, readExcelFile, readTemplateFile } = require('./io')
 const { getUser } = require('../auth/service')
 const logger = require('./logger')
@@ -176,10 +177,10 @@ function getBaseReplacements() {
 
 // ----------------------------------------------------------------------------------------------
 function getCellStyle(cell) {
-  if (cell.master) {
+  if (cell?.master) {
     return cell.master.style
   }
-  return cell.style
+  return cell?.style
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -620,14 +621,6 @@ async function streamExcelTemplate({
     }
 
     /**
-     * set all merges - for original cells on worksheetTemplate and for
-     * dynamically appended cells if table header consists of more than 1 row
-     */
-    _.forEach([...worksheetTemplate.model.merges, ...dynamicMerges], range => {
-      worksheet.mergeCells(range)
-    })
-
-    /**
      * * get data to populate rows
      * 'rowsValues' is array of array, i.e. array of rows, and each array item is
      * array of cell values
@@ -640,6 +633,40 @@ async function streamExcelTemplate({
         normalizer: dataSelector || dataSelectorSheet,
         dynamicColumns,
         defaultNoDataMessage,
+      })
+    }
+
+    /**
+     * all ranges for merged cells
+     */
+    const allRanges = [...worksheetTemplate.model.merges, ...dynamicMerges].map(
+      rng => {
+        const range = new Range(rng)
+        // shift down all ranges below table
+        if (patternRowNumber !== -1 && range.top > patternRowNumber) {
+          range.top += rowsValues.length - 1
+          range.bottom += rowsValues.length - 1
+        }
+        return range
+      }
+    )
+
+    /**
+     * set all merges - for original cells on worksheetTemplate and for
+     * dynamically appended cells if table header consists of more than 1 row
+     */
+    _.forEach(allRanges, range => {
+      worksheet.mergeCells(range)
+    })
+
+    /**
+     * need to clear pattern row because by default we copy values from any template cells
+     * to new row in destination streamed worksheet, and in case when data is empty for the table
+     * we don't want to see pattern tokens
+     */
+    if (patternRowNumber !== -1) {
+      worksheetTemplate.getRow(patternRowNumber).eachCell(cell => {
+        cell.value = null
       })
     }
 
@@ -665,21 +692,11 @@ async function streamExcelTemplate({
         rowNumber += 1 // point to the next row
         return
       }
-      let templateCells = []
-      rowTemplate.eachCell(cellTemplate => {
-        templateCells = [...templateCells, cellTemplate]
-      })
-      const payload = {
+
+      let payload = {
+        rowNumber,
+        rowTemplate,
         worksheet,
-        templateCells,
-        /**
-         * overwrite model.number because when we assign
-         * template model to new row model `row.model = rowModel`
-         * later in `writeRowToStream()`, row numbers should be equal
-         * (row.model.number === rowModel.number)
-         * otherwise exceljs throws error 'Invalid row number in model'
-         */
-        rowModel: { ...rowTemplate.model, number: rowNumber },
       }
 
       if (dataRows && rowNumber === patternRowNumber) {
@@ -687,8 +704,11 @@ async function streamExcelTemplate({
          * insert all data rows to the streamed worksheet
          */
         _.each(rowsValues, values => {
-          payload.rowModel.number = rowNumber
-          payload.rowValues = values
+          payload = {
+            ...payload,
+            rowNumber,
+            rowValues: values,
+          }
           writeRowToStream(payload)
           // for big data sources log checkpoint after each 500 inserted rows
           if (rowNumber % 500 === 0) {
@@ -714,31 +734,39 @@ async function streamExcelTemplate({
 }
 
 // ----------------------------------------------------------------------------------------------
-function writeRowToStream({ worksheet, templateCells, rowModel, rowValues }) {
+function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
   /**
    * get/create row
    */
-  const row = worksheet.getRow(rowModel.number)
+  const row = worksheet.getRow(rowNumber)
   /**
-   * when template row model contains cells -
-   * set all cells in target row with their styles and values
+   * set row props and style
    */
-  if (rowModel.cells) {
-    row.model = rowModel
-  }
+  row.height = rowTemplate.height
+  row.hidden = rowTemplate.hidden
+  row.outlineLevel = rowTemplate.outlineLevel || 0
+  row.style = rowTemplate.style
+  /**
+   * create cells
+   */
+  rowTemplate.eachCell(cellTemplate => {
+    const cell = row.getCell(cellTemplate.col)
+    if (!cellTemplate.isMerged || cellTemplate === cellTemplate.master) {
+      cell.value = cellTemplate.value
+    }
+    /**
+     * set new cell directly to the same style as template cell
+     * In case of possible failing use
+     * setCellStyle(cell, getCellStyle(cellTemplate))
+     */
+    cell.style = cellTemplate.style
+  })
   /**
    * overwrite values in cells if specified
    */
   if (rowValues) {
     row.values = rowValues
   }
-  /**
-   * style cells
-   */
-  _.each(templateCells, cellTemplate => {
-    const cell = row.getCell(cellTemplate.col)
-    setCellStyle(cell, getCellStyle(cellTemplate))
-  })
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
