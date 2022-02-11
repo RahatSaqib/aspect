@@ -141,9 +141,6 @@ export const getAspectTheme = () => {
       color: aspectWhite,
       padding: '8px 0 8px 8px',
     }),
-    groupHeading: provided => ({
-      ...provided,
-    }),
     input: provided => ({
       ...provided,
       color: aspectWhite,
