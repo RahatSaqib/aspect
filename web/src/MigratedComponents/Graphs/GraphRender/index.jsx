@@ -132,7 +132,7 @@ const GraphRender = ({
   useEffect(() => {
     return handleClientSideFilterState(
       clientSideFilter,
-      { id, i18nKeys, graphData },
+      { id, i18nKeys, graphData, assaysFromState },
       { formatRawData, setNewData }
     )
   }, [clientSideFilter, graphData])
