@@ -101,6 +101,7 @@ async function getListRResistantTestReport(auth, query) {
       ),
       knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
       knex.raw('endedOn as xpertResultDate'),
+      knex.raw('r.notes'),
     ])
 
   return {

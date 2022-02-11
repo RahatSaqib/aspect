@@ -208,7 +208,7 @@ async function createReport(request, reply) {
     },
     {
       placeholder: '<Sites>',
-      value: query.siteName,
+      value: query.siteName ?? '',
     },
     {
       placeholder: '<UserEmail>',
