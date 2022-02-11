@@ -1,6 +1,4 @@
 const { knex } = require('../db')
-const { getUser } = require('../auth/service')
-const { formatDateOrDefault } = require('../shared/date')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
 
@@ -30,12 +28,6 @@ function getBaseQuery(dataConstraints, query) {
 
 async function getGeneXpertM4B2ActivitiesReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { id: partnerId } = dataConstraints.partner
-  const {
-    userName: reporter,
-    cell: mobilePhone,
-    email,
-  } = await getUser(auth.credentials.name, { partnerId })
   const categoriesCnt = await getBaseQuery(dataConstraints, query)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select([
@@ -94,17 +86,7 @@ async function getGeneXpertM4B2ActivitiesReport(auth, query) {
     ])
     .first()
 
-  const data = {
-    monthYear: `${query.minDate ? formatDateOrDefault(query.minDate) : ''} — ${
-      query.maxDate ? formatDateOrDefault(query.maxDate) : ''
-    }`,
-    reporter,
-    mobilePhone,
-    email,
-    ...categoriesCnt,
-  }
-
-  return { ok: true, data }
+  return { ok: true, data: categoriesCnt }
 }
 
 async function getListRResistantTestReport(auth, query) {

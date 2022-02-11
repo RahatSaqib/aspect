@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-02-07T20:54:07.983Z\n"
+"POT-Creation-Date: 2022-02-11T19:30:42.698Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3125,6 +3125,22 @@ msgstr "Kháng FLQ"
 msgid "Facility Code"
 msgstr "Mã cơ sở"
 
+#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Please, try again in a few minutes. If the error persists, contact your "
+#| "administrator for support."
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Vui lòng thử lại trong vài phút. Nếu lỗi vẫn còn, hãy liên hệ với quản trị "
+"viên của bạn để được hỗ trợ."
+
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
 #. False
@@ -4379,6 +4395,13 @@ msgstr "Liên quan đến điều trị"
 #: extracted_strings.json
 msgid "Lipid Panel"
 msgstr "Bảng lipid"
+
+#. [pages.ReportIndex.listRResistantTestReport]
+#. defaultMessage is:
+#. List-R Resistant Test Report
+#: extracted_strings.json
+msgid "List-R Resistant Test Report"
+msgstr "Báo cáo kiểm tra kháng List-R"
 
 #. [pages.ReportIndex.RIF_Resistance_Rate_description]
 #. defaultMessage is:
@@ -5886,7 +5909,7 @@ msgstr "ID bệnh nhân / trường hợp"
 #. Pending
 #: extracted_strings.json
 msgid "Pending"
-msgstr ""
+msgstr "Đang chờ xử lý"
 
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
@@ -7953,6 +7976,9 @@ msgstr "Đăng xuất"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [filter.popover.siteName]
+#. defaultMessage is:
+#. Site
 #. [pages.JobAssignments.site]
 #. defaultMessage is:
 #. Site
@@ -9116,6 +9142,13 @@ msgid ""
 msgstr ""
 "Báo cáo này hiển thị phần trăm hoạt động mỗi tháng của các thiết bị trong "
 "khoảng thời gian đã chọn. (Theo mặc định trong 12 tháng qua)"
+
+#. [pages.ReportIndex.listRResistantTestReport_description]
+#. defaultMessage is:
+#. This report shows the list of resistant tests
+#: extracted_strings.json
+msgid "This report shows the list of resistant tests"
+msgstr "Báo cáo này cho thấy danh sách các thử nghiệm kháng thuốc"
 
 #. [pages.ReportIndex.xpertTestActivitiesReport_description]
 #. defaultMessage is:
