@@ -44,6 +44,7 @@ const defaultSelectedOptionPropType = PropTypes.oneOfType([
 ])
 
 const {
+  '--ming': aspectPrimary,
   '--aspect-color-chill-blue-1': aspectChillBlue1,
   '--aspect-color-chill-blue-3': aspectChillBlue3,
   '--aspect-color-white': aspectWhite,
@@ -140,11 +141,23 @@ export const getAspectTheme = () => {
       color: aspectWhite,
       padding: '8px 0 8px 8px',
     }),
+    groupHeading: provided => ({
+      ...provided,
+    }),
     input: provided => ({
       ...provided,
       color: aspectWhite,
     }),
     singleValue: provided => ({
+      ...provided,
+      color: aspectWhite,
+    }),
+    multiValue: provided => ({
+      ...provided,
+      backgroundColor: 'transparent',
+      color: aspectPrimary,
+    }),
+    multiValueLabel: provided => ({
       ...provided,
       color: aspectWhite,
     }),
