@@ -181,7 +181,9 @@ async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture, email, cell, userName } = await getUser(
+    auth.credentials.name
+  )
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format || 'xlsx'
@@ -203,6 +205,22 @@ async function createReport(request, reply) {
     {
       placeholder: '<Lgas>',
       value: await getLgaNamesString(query),
+    },
+    {
+      placeholder: '<Sites>',
+      value: query.siteName,
+    },
+    {
+      placeholder: '<UserEmail>',
+      value: email,
+    },
+    {
+      placeholder: '<UserMobilePhone>',
+      value: cell,
+    },
+    {
+      placeholder: '<UserFullName>',
+      value: userName,
     },
     ...getMaxLimitPlaceHolders(),
   ]

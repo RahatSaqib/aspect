@@ -114,10 +114,10 @@ async function getListRResistantTestReport(auth, query) {
     .andWhere('rc2.externalId', 'Detected')
     .select([
       knex.raw("IFNULL(patientData->>'$.name', '-') as fullName"),
-      knex.raw("IFNULL(patientData->>'$.age', '-') as age"),
       knex.raw(
-        "CONCAT(IFNULL(patientData->>'$.address', '-'), ', ', IFNULL(patientData->>'$.city', '-'), IFNULL(patientData->>'$.state', '-')) as address"
+        "CASE WHEN IFNULL(patientData->>'$.age', '-') = 'null' THEN '-' ELSE IFNULL(patientData->>'$.age', '-') END as age"
       ),
+      knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
       knex.raw('endedOn as xpertResultDate'),
     ])
 
@@ -126,7 +126,6 @@ async function getListRResistantTestReport(auth, query) {
     data: {
       rows,
       total: rows.length,
-      dateRange: 'jaja muy bueno',
     },
   }
 }
