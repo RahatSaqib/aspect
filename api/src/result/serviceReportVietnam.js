@@ -1,18 +1,9 @@
 const { knex } = require('../db')
-const { getUser } = require('../auth/service')
-const { formatDateOrDefault } = require('../shared/date')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
 
-async function getGeneXpertM4B2ActivitiesReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { id: partnerId } = dataConstraints.partner
-  const {
-    userName: reporter,
-    cell: mobilePhone,
-    email,
-  } = await getUser(auth.credentials.name, { partnerId })
-  const categoriesCnt = await knex('Result as r')
+function getBaseQuery(dataConstraints, query) {
+  return knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
@@ -33,6 +24,11 @@ async function getGeneXpertM4B2ActivitiesReport(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+}
+
+async function getGeneXpertM4B2ActivitiesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const categoriesCnt = await getBaseQuery(dataConstraints, query)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select([
       knex.raw(
@@ -90,19 +86,34 @@ async function getGeneXpertM4B2ActivitiesReport(auth, query) {
     ])
     .first()
 
-  const data = {
-    monthYear: `${query.minDate ? formatDateOrDefault(query.minDate) : ''} — ${
-      query.maxDate ? formatDateOrDefault(query.maxDate) : ''
-    }`,
-    reporter,
-    mobilePhone,
-    email,
-    ...categoriesCnt,
-  }
+  return { ok: true, data: categoriesCnt }
+}
 
-  return { ok: true, data }
+async function getListRResistantTestReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rows = await getBaseQuery(dataConstraints, query)
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .andWhere('rc2.externalId', 'Detected')
+    .select([
+      knex.raw("IFNULL(patientData->>'$.name', '-') as fullName"),
+      knex.raw(
+        "CASE WHEN IFNULL(patientData->>'$.age', '-') = 'null' THEN '-' ELSE IFNULL(patientData->>'$.age', '-') END as age"
+      ),
+      knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
+      'r.endedOn as xpertResultDate',
+      'r.notes',
+    ])
+
+  return {
+    ok: true,
+    data: {
+      rows,
+      total: rows.length,
+    },
+  }
 }
 
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
+  getListRResistantTestReport,
 }

@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
+const Range = require('exceljs/lib/doc/range')
 const { getContentType, readExcelFile, readTemplateFile } = require('./io')
 const { getUser } = require('../auth/service')
 const logger = require('./logger')
@@ -69,11 +70,10 @@ const getCellsBySubstring = (sheet, value) => {
 const getMaxLimitPlaceHolders = () => [
   {
     placeholder: '<PerformanceTotalRecordLimit>',
-    value: ({ dataRows: { length = 0 }, total = 0 }) => {
+    value: ({ data: { length = 0 }, total = 0 }) => {
       return total - length
     },
-    condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
-      length === total,
+    condition: ({ data: { length = 0 } = [], total = 0 }) => length === total,
     action: (cell, worksheet) => {
       if (cell) {
         cell.value = ''
@@ -85,7 +85,7 @@ const getMaxLimitPlaceHolders = () => [
   },
   {
     placeholder: '<PerformanceQueryLimit>',
-    value: ({ dataRows: { length = 0 } }) => {
+    value: ({ data: { length = 0 } }) => {
       return length
     },
   },
@@ -177,10 +177,10 @@ function getBaseReplacements() {
 
 // ----------------------------------------------------------------------------------------------
 function getCellStyle(cell) {
-  if (cell.master) {
+  if (cell?.master) {
     return cell.master.style
   }
-  return cell.style
+  return cell?.style
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ function setCellStyle(cell, style) {
 function fillInSheetWithMap({
   templateFolderPath,
   sheetIndex,
-  data,
+  dataSet,
   worksheet,
 }) {
   let mapping
@@ -216,8 +216,8 @@ function fillInSheetWithMap({
   const sheetMap = mapping[sheetIndex]
 
   if (sheetMap) {
-    const { dataRows: dat } = data[sheetIndex]
-    if (!dat) return
+    const { data } = dataSet[sheetIndex]
+    if (!data) return
 
     _.keys(sheetMap).forEach(cellAddress => {
       const fieldName = sheetMap[cellAddress]
@@ -234,7 +234,7 @@ function fillInSheetWithMap({
        * (which match possible Data Validation Rule defined for that depending cell in Excel)
        * actual `cell.effectiveType = 2` (excel.ValueType.Number)
        */
-      cell.value = dat[fieldName]
+      cell.value = data[fieldName]
     })
 
     worksheet.eachRow(row => {
@@ -255,7 +255,7 @@ function fillInSheetWithMap({
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   extension, // xlsx
   replacements = [],
   templateFolderPath,
@@ -278,23 +278,23 @@ async function renderExcelTemplate({
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
     const {
-      dataRows,
+      data,
       dynamicColumns = [],
       defaultNoDataMessage,
       dataSelector: dataSelectorSheet,
-    } = data[sheetIndex] || {}
+    } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
+    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
 
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
-      return fillInSheetWithMap({
+      fillInSheetWithMap({
         templateFolderPath,
         sheetIndex,
-        data,
+        dataSet,
         worksheet,
       })
     }
@@ -308,8 +308,8 @@ async function renderExcelTemplate({
         condition = () => false,
         action = () => true,
       }) => {
-        if (data[sheetIndex]) {
-          if (condition(data[sheetIndex])) {
+        if (dataSet[sheetIndex]) {
+          if (condition(dataSet[sheetIndex])) {
             const [conditionalCell] = getCellsBySubstring(
               worksheet,
               placeholder
@@ -317,7 +317,7 @@ async function renderExcelTemplate({
             action(conditionalCell, worksheet)
           }
           if (_.isFunction(value)) {
-            value = value(data[sheetIndex])
+            value = value(dataSet[sheetIndex])
           }
         }
         replaceSubstringInCell(worksheet, placeholder, value)
@@ -333,7 +333,7 @@ async function renderExcelTemplate({
         cell.value = ''
       })
 
-      if (!dataRows) return
+      if (!data) return
 
       // use 1st cell only (actually, should not be more than one)
       const cellTableToken = tableTokenCells[0]
@@ -364,10 +364,15 @@ async function renderExcelTemplate({
           allHeaderRows.length
         )
       }
+
+      let dataRows = data
+      // If way to fill in data is mapping, then we need to get the rows inside the object, if they exist
+      if (wayToFillInData === 'mapping') dataRows = data.rows
+
       // fill in array 'rows'
       let rows = []
-      if (dataRows.length > 0) {
-        rows = dataRows.map((dataRow, rowIndex) => {
+      if (dataRows && dataRows.length > 0) {
+        rows = data.map((dataRow, rowIndex) => {
           const valuesInPredefinedColumns = fieldNames.map(fieldName => {
             if (fieldName === '#') {
               return rowIndex + 1
@@ -432,7 +437,7 @@ async function renderExcelTemplate({
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplateToCsv({
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
   templateFolderPath,
   dataSelector,
@@ -446,9 +451,9 @@ async function renderExcelTemplateToCsv({
   )
 
   const worksheet = workbook.worksheets[0]
-  const worksheetData = data[0]
+  const worksheetData = dataSet[0]
   const {
-    dataRows = [],
+    data = [],
     defaultNoDataMessage,
     dataSelector: dataSelectorSheet,
     dynamicColumns = [],
@@ -479,7 +484,7 @@ async function renderExcelTemplateToCsv({
    * array of cell values
    */
   const rowsValues = getNormalizedData({
-    dataRows,
+    data,
     fieldNames,
     normalizer: dataSelector || dataSelectorSheet,
     dynamicColumns,
@@ -518,7 +523,7 @@ async function streamExcelTemplate({
   stream,
   templateFolderPath,
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
   dataSelector,
 }) {
@@ -558,9 +563,9 @@ async function streamExcelTemplate({
    * process all sheets
    */
   _.each(templateWorksheets, (worksheetTemplate, sheetIndex) => {
-    const worksheetData = data[sheetIndex]
+    const worksheetData = dataSet[sheetIndex]
     const {
-      dataRows = [],
+      data = [],
       defaultNoDataMessage,
       dataSelector: dataSelectorSheet,
       dynamicColumns = [],
@@ -588,8 +593,23 @@ async function streamExcelTemplate({
     let fieldNames = []
     let dynamicMerges = []
 
-    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
-    if (wayToFillInData === 'list') {
+    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+
+    const dataRows = wayToFillInData === 'list' ? data : data.rows
+
+    if (wayToFillInData === 'mapping') {
+      /**
+       * for mapping mode - populate worksheet template
+       */
+      fillInSheetWithMap({
+        templateFolderPath,
+        sheetIndex, // is needed to get correct item from `mapping` array
+        dataSet,
+        worksheet: worksheetTemplate,
+      })
+    }
+
+    if (dataRows) {
       /**
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
@@ -598,25 +618,7 @@ async function streamExcelTemplate({
         worksheetTemplate,
         dynamicColumns
       ))
-    } else if (wayToFillInData === 'mapping') {
-      /**
-       * for mapping mode - populate worksheet template
-       */
-      fillInSheetWithMap({
-        templateFolderPath,
-        sheetIndex, // is needed to get correct item from `mapping` array
-        data,
-        worksheet: worksheetTemplate,
-      })
     }
-
-    /**
-     * set all merges - for original cells on worksheetTemplate and for
-     * dynamically appended cells if table header consists of more than 1 row
-     */
-    _.forEach([...worksheetTemplate.model.merges, ...dynamicMerges], range => {
-      worksheet.mergeCells(range)
-    })
 
     /**
      * * get data to populate rows
@@ -624,13 +626,47 @@ async function streamExcelTemplate({
      * array of cell values
      */
     let rowsValues = []
-    if (wayToFillInData === 'list') {
+    if (dataRows) {
       rowsValues = getNormalizedData({
-        dataRows,
+        data: dataRows,
         fieldNames,
         normalizer: dataSelector || dataSelectorSheet,
         dynamicColumns,
         defaultNoDataMessage,
+      })
+    }
+
+    /**
+     * all ranges for merged cells
+     */
+    const allRanges = [...worksheetTemplate.model.merges, ...dynamicMerges].map(
+      rng => {
+        const range = new Range(rng)
+        // shift down all ranges below table
+        if (patternRowNumber !== -1 && range.top > patternRowNumber) {
+          range.top += rowsValues.length - 1
+          range.bottom += rowsValues.length - 1
+        }
+        return range
+      }
+    )
+
+    /**
+     * set all merges - for original cells on worksheetTemplate and for
+     * dynamically appended cells if table header consists of more than 1 row
+     */
+    _.forEach(allRanges, range => {
+      worksheet.mergeCells(range)
+    })
+
+    /**
+     * need to clear pattern row because by default we copy values from any template cells
+     * to new row in destination streamed worksheet, and in case when data is empty for the table
+     * we don't want to see pattern tokens
+     */
+    if (patternRowNumber !== -1) {
+      worksheetTemplate.getRow(patternRowNumber).eachCell(cell => {
+        cell.value = null
       })
     }
 
@@ -656,30 +692,23 @@ async function streamExcelTemplate({
         rowNumber += 1 // point to the next row
         return
       }
-      let templateCells = []
-      rowTemplate.eachCell(cellTemplate => {
-        templateCells = [...templateCells, cellTemplate]
-      })
-      const payload = {
+
+      let payload = {
+        rowNumber,
+        rowTemplate,
         worksheet,
-        templateCells,
-        /**
-         * overwrite model.number because when we assign
-         * template model to new row model `row.model = rowModel`
-         * later in `writeRowToStream()`, row numbers should be equal
-         * (row.model.number === rowModel.number)
-         * otherwise exceljs throws error 'Invalid row number in model'
-         */
-        rowModel: { ...rowTemplate.model, number: rowNumber },
       }
 
-      if (wayToFillInData === 'list' && rowNumber === patternRowNumber) {
+      if (dataRows && rowNumber === patternRowNumber) {
         /**
          * insert all data rows to the streamed worksheet
          */
         _.each(rowsValues, values => {
-          payload.rowModel.number = rowNumber
-          payload.rowValues = values
+          payload = {
+            ...payload,
+            rowNumber,
+            rowValues: values,
+          }
           writeRowToStream(payload)
           // for big data sources log checkpoint after each 500 inserted rows
           if (rowNumber % 500 === 0) {
@@ -705,31 +734,39 @@ async function streamExcelTemplate({
 }
 
 // ----------------------------------------------------------------------------------------------
-function writeRowToStream({ worksheet, templateCells, rowModel, rowValues }) {
+function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
   /**
    * get/create row
    */
-  const row = worksheet.getRow(rowModel.number)
+  const row = worksheet.getRow(rowNumber)
   /**
-   * when template row model contains cells -
-   * set all cells in target row with their styles and values
+   * set row props and style
    */
-  if (rowModel.cells) {
-    row.model = rowModel
-  }
+  row.height = rowTemplate.height
+  row.hidden = rowTemplate.hidden
+  row.outlineLevel = rowTemplate.outlineLevel || 0
+  row.style = rowTemplate.style
+  /**
+   * create cells
+   */
+  rowTemplate.eachCell(cellTemplate => {
+    const cell = row.getCell(cellTemplate.col)
+    if (!cellTemplate.isMerged || cellTemplate === cellTemplate.master) {
+      cell.value = cellTemplate.value
+    }
+    /**
+     * set new cell directly to the same style as template cell
+     * In case of possible failing use
+     * setCellStyle(cell, getCellStyle(cellTemplate))
+     */
+    cell.style = cellTemplate.style
+  })
   /**
    * overwrite values in cells if specified
    */
   if (rowValues) {
     row.values = rowValues
   }
-  /**
-   * style cells
-   */
-  _.each(templateCells, cellTemplate => {
-    const cell = row.getCell(cellTemplate.col)
-    setCellStyle(cell, getCellStyle(cellTemplate))
-  })
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
@@ -823,7 +860,7 @@ function prepareWorksheet(worksheetTemplate, dynamicColumns) {
 
 // ----------------------------------------------------------------------------------------------
 function getNormalizedData({
-  dataRows,
+  data,
   fieldNames,
   normalizer,
   dynamicColumns,
@@ -834,8 +871,8 @@ function getNormalizedData({
    * of array (cell values for current row)
    */
   let rowsValues = []
-  if (dataRows.length > 0) {
-    rowsValues = dataRows.map((dataRow, rowIndex) => {
+  if (data.length > 0) {
+    rowsValues = data.map((dataRow, rowIndex) => {
       const valuesInPredefinedColumns = fieldNames.map(fieldName => {
         if (fieldName === '#') {
           return rowIndex + 1
@@ -854,7 +891,7 @@ function getNormalizedData({
         let normalizedValues
         // const normalizer = dataSelector || dataSelectorSheet
         if (normalizer) normalizedValues = normalizer(dataRow)
-        else normalizedValues = dataRow
+        else normalizedValues = data
         valuesInDynamicColumns = dynamicColumns.map(
           column => normalizedValues[column.key] || null
         )

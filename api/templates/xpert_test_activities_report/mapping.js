@@ -1,11 +1,5 @@
 module.exports = [
   {
-    B5: 'monthYear',
-    B6: 'laboratories',
-    B7: 'reporter',
-    B8: 'mobilePhone',
-    E8: 'email',
-  
     F11: 'mtbNotDetected',
     F12: 'mtbDetectedRifNotDetected',
     F13: 'mtbDetectedRifDetected',

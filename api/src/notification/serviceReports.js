@@ -7,7 +7,7 @@ async function exportNotifications(request, reply) {
   const { data } = await listNotifications(request)
   const issueCategories = await issueCategoryIntlToShortname()
   const sheetData = {
-    dataRows: data.map(item => ({
+    data: data.map(item => ({
       ...item,
       // TODO: update func listNotifications() to include column issueCategories
       // replace array of `issueCategories` with csv-string of IssueCategory shortNames

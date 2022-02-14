@@ -111,5 +111,13 @@ const messages = defineMessages({
     defaultMessage:
       'This report shows the number of GeneXpert MTB tests performed categorized by result',
   },
+  listRResistantTestReport: {
+    id: 'pages.ReportIndex.listRResistantTestReport',
+    defaultMessage: 'List-R Resistant Test Report',
+  },
+  listRResistantTestReport_description: {
+    id: 'pages.ReportIndex.listRResistantTestReport_description',
+    defaultMessage: 'This report shows the list of resistant tests',
+  },
 })
 export default messages
