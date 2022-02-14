@@ -276,16 +276,47 @@ module.exports = {
   deviceCalibrationReport,
   geneXpertIssues,
   allResults,
-  fixture: [
-    mtbDetectedRRDetected,
-    resultsHivNotSuppressed,
-    rifResistanceRate,
-    criticalErrorsByDevice,
-    deviceActivity,
-    deviceActivityPercent,
-    moduleSwaps,
-    deviceCalibrationReport,
-    deviceUtilizationReport,
-    geneXpertIssues,
-  ],
+  m4b2Activities: {
+    name: 'Xpert Test Activities Report',
+    description:
+      'This report shows the number of GeneXpert MTB tests performed categorized by result',
+    i18nKey: 'xpertTestActivitiesReport',
+    i18nKeyDescription: 'xpertTestActivitiesReport_description',
+    externalId: 'xpert_test_activities_report',
+    fileName: 'm4b2Activities',
+    sortOrder: 20,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getGeneXpertM4B2ActivitiesReport',
+        query: {
+          sortCol: 'triggeredOn',
+          sortDir: 'asc',
+          hasResults: 1,
+        },
+      },
+    ],
+  },
+  listRResistantTest: {
+    name: 'List-R Resistant Test Report',
+    description: 'This report shows the list of resistant tests',
+    i18nKey: 'listRResistantTestReport',
+    i18nKeyDescription: 'listRResistantTestReport_description',
+    externalId: 'list_r_resistant_test',
+    fileName: 'listRResistantTest',
+    sortOrder: 30,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getListRResistantTestReport',
+        // query: {
+        //   sortCol: 'triggeredOn',
+        //   sortDir: 'asc',
+        //   hasResults: 1,
+        // },
+      },
+    ],
+  },
 }

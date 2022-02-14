@@ -105,11 +105,12 @@ async function listAssays(request) {
 
   // get all assays that have results that user has access to
   const dataConstraints = await getConstraints(auth.credentials)
-  const usedAssayIds = await knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
-    .distinct('r.assayId')
+  const usedAssayIds = await knex('FactResultsDeviceByAssay as f')
+    .innerJoin('Device as d', 'f.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'f.assayId', 'a.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', assay: 'a' })
+    .where('f.resultCount', '>', 0)
+    .groupBy('f.assayId')
     .pluck('assayId')
 
   // no get the assays with a field for hasResults

@@ -1,12 +1,38 @@
+import pick from 'lodash/pick'
+import map from 'lodash/map'
+import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
+
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
-
+import FilterByAssayDropDown from '../../../AspectDropDown/FilterByAssayDropDown'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
+
+const filterMonthlyByAssaysBar = (data, props) => {
+  const newData = []
+  const keys = ['month']
+  map(props, ({ value }) => keys.push(value))
+  map(data, row => newData.push(pick(row, keys)))
+  return newData
+}
+
+const filterMonthlyByAssaysPie = (data, props) => {
+  const newData = []
+  const keys = []
+  map(props, ({ value }) => keys.push(value))
+  map(keys, key => {
+    const found = filter(data, { id: key })[0]
+    if (!isEmpty(found)) {
+      return newData.push(found)
+    }
+  })
+  return newData
+}
 
 const testsPerFormedGraphs = {
   testsOverTime: {
@@ -15,7 +41,26 @@ const testsPerFormedGraphs = {
     componentSize: 'full',
     group: 'assaysNotNeeded',
     assays: [],
-    selectorModifiers: [],
+    selectorModifiers: [
+      {
+        component: FilterByAssayDropDown,
+        identifier: 'assayId',
+        isClearable: true,
+        isClientSide: true,
+        initByCountryDefault: true,
+        initByCountryDefaultGroup: 'TB',
+        filterFunctions: [
+          {
+            id: 'testPerformedMonthlyPercentage',
+            filterFunction: filterMonthlyByAssaysBar,
+          },
+          {
+            id: 'testPerformedMonthlytotal',
+            filterFunction: filterMonthlyByAssaysPie,
+          },
+        ],
+      },
+    ],
     graphRenderPermissions: ['dashboard'],
     graphType: [
       {

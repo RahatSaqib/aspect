@@ -9,7 +9,7 @@ async function exportSites(request, reply) {
   const { data } = await listSites(request)
   const issueCategories = await issueCategoryIntlToShortname()
   const sheetData = {
-    dataRows: data.map(item => ({
+    data: data.map(item => ({
       ...item,
       // replace array of `siteIssues` with csv-string of IssueCategory shortNames
       siteIssues: _.map(item.siteIssues, key => issueCategories[key]).join(
@@ -27,7 +27,7 @@ async function exportSites(request, reply) {
 async function exportReporters(request, reply) {
   const { data } = await listSitesWithReporters(request)
   const sheetData = {
-    dataRows: data.map(item => ({
+    data: data.map(item => ({
       ...item,
     })),
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated

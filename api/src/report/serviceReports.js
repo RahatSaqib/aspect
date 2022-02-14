@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
+const Stream = require('stream')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
@@ -7,10 +8,22 @@ const {
   exportData,
   getBaseReplacements,
   getMaxLimitPlaceHolders,
-  renderExcelTemplate,
+  renderExcelTemplateToCsv,
+  streamExcelTemplate,
   respondFile,
+  respondStream,
+  RELABEL_EXCEL,
 } = require('../shared/excel')
 const { formatDateOrDefault } = require('../shared/date')
+const logger = require('../shared/logger')
+
+/**
+ * constants for statuses of report processing
+ */
+const REPORT_NOT_STARTED = 'REPORT_NOT_STARTED'
+const REPORT_PROCESSING = 'REPORT_PROCESSING'
+const REPORT_FAILED = 'REPORT_FAILED'
+const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
 async function getSheetData(request, sheet) {
@@ -47,6 +60,12 @@ async function getSheetData(request, sheet) {
       `Can not find function ${functionName} in module ${moduleName}`
     )
   }
+
+  logger.debug(
+    `Report moduleName='${moduleName}', functionName='${functionName}'`,
+    RELABEL_EXCEL
+  )
+
   const result = await dataFunc(auth, query)
   const {
     ok,
@@ -56,6 +75,12 @@ async function getSheetData(request, sheet) {
     dynamicColumns = {},
     dataSelector = null,
   } = result
+
+  logger.debug(
+    `Worksheet data - total=${total}, list size=${data?.length}'`,
+    RELABEL_EXCEL
+  )
+
   if (ok) {
     return { data, total, dynamicColumns, dataSelector }
   }
@@ -118,25 +143,25 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
 
 async function getAllSheetsData(request, sheets) {
   let boomError
-  const data = []
+  const dataSet = []
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
     if (!sheet || boomError) return
 
     // get data for this sheet
     const {
-      data: dataRows,
+      data,
       dynamicColumns,
       total = null,
       dataSelector = null,
     } = await getSheetData(request, sheet)
-    if (Boom.isBoom(dataRows)) {
-      boomError = dataRows
+    if (Boom.isBoom(data)) {
+      boomError = data
       return
     }
 
-    data[sheetIndex] = {
-      dataRows,
+    dataSet[sheetIndex] = {
+      data,
       dynamicColumns,
       dataSelector,
       total,
@@ -148,7 +173,7 @@ async function getAllSheetsData(request, sheets) {
   if (boomError) {
     return boomError
   }
-  return data
+  return dataSet
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -156,7 +181,9 @@ async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture, email, cell, userName } = await getUser(
+    auth.credentials.name
+  )
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format || 'xlsx'
@@ -165,30 +192,101 @@ async function createReport(request, reply) {
   if (Boom.isBoom(data)) {
     throw data
   }
-  const dataBuffer = await renderExcelTemplate({
-    culture,
-    templateFolderPath: templateFolderPath || externalId,
-    data,
-    extension,
-    replacements: [
-      {
-        placeholder: '<Dates>',
-        value: getDateRangeString(query),
-      },
-      {
-        placeholder: '<States>',
-        value: await getStateNames(query),
-      },
-      {
-        placeholder: '<Lgas>',
-        value: await getLgaNamesString(query),
-      },
-      ...getMaxLimitPlaceHolders(),
-    ],
-  })
 
-  return respondFile({
-    dataBuffer,
+  const replacements = [
+    {
+      placeholder: '<Dates>',
+      value: getDateRangeString(query),
+    },
+    {
+      placeholder: '<States>',
+      value: await getStateNames(query),
+    },
+    {
+      placeholder: '<Lgas>',
+      value: await getLgaNamesString(query),
+    },
+    {
+      placeholder: '<Sites>',
+      value: query.siteName ?? '',
+    },
+    {
+      placeholder: '<UserEmail>',
+      value: email,
+    },
+    {
+      placeholder: '<UserMobilePhone>',
+      value: cell,
+    },
+    {
+      placeholder: '<UserFullName>',
+      value: userName,
+    },
+    ...getMaxLimitPlaceHolders(),
+  ]
+
+  if (extension === 'csv') {
+    const dataBuffer = await renderExcelTemplateToCsv({
+      culture,
+      templateFolderPath: templateFolderPath || externalId,
+      data,
+      replacements,
+    })
+
+    return respondFile({
+      dataBuffer,
+      extension,
+      fileNamePrefix: fileName,
+      reply,
+    })
+  }
+
+  const stream = new Stream.PassThrough()
+
+  /**
+   * process in another thread with `setInterval`
+   */
+  let status = REPORT_NOT_STARTED
+  const intervalId = setInterval(() => {
+    if (status === REPORT_NOT_STARTED) {
+      status = REPORT_PROCESSING
+      // call async func in chaining mode - with then/catch
+      streamExcelTemplate({
+        stream,
+        culture,
+        templateFolderPath: templateFolderPath || externalId,
+        data,
+        replacements,
+      })
+        .then(workbook => {
+          status = REPORT_FINISHED
+          /**
+           * All data written, now the very last step is to commit workbook.
+           * Notice that `commit()` in `workbook` is async func, but we run it
+           * without `await` to not delay/block thread to let clear interval
+           */
+          workbook.commit()
+        })
+        .catch(ex => {
+          status = REPORT_FAILED
+          logger.error(ex, RELABEL_EXCEL)
+
+          /**
+           * when stream is destroyed with specifying error object
+           * (see https://nodejs.org/api/stream.html#writabledestroyerror for details),
+           * then in UI a `catch` block triggers (yes, for Status Code 200) of the download
+           * request because responded blob contains rejected Promise
+           */
+          stream.destroy(ex)
+        })
+    }
+    if (status === REPORT_FINISHED || status === REPORT_FAILED) {
+      clearInterval(intervalId)
+    }
+  }, 1000)
+
+  return respondStream({
+    stream,
     extension,
     fileNamePrefix: fileName,
     reply,
@@ -199,7 +297,7 @@ async function createReport(request, reply) {
 async function exportReports(request, reply) {
   const { data } = await listReports(request)
   const sheetData = {
-    dataRows: data,
+    data,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }

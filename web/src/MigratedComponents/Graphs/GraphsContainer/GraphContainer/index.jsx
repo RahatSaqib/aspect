@@ -20,13 +20,21 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
   const { graphType, graphRenderPermissions } = config
   const { innerSize, outerSize } = size
+  const { isClientSide, component: ClientSideFilter } =
+    selectorModifiers[0] || false
   const [graphParams, setGraphParams] = useState(false)
+  const [clientSideFilters, setClientSideFilters] = useState(false)
+  const [clientSideFilterOptions, setClientSideFilterOptions] = useState(false)
   const permissions = whiteListed
     ? [...whiteListed, ...graphRenderPermissions]
     : graphRenderPermissions
 
   const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setGraphParams(extractOptionValue(identifier, selectedOption))
+
+  const updateGraphClientSide = props => {
+    setClientSideFilters(props)
+  }
 
   return (
     <PermissionsProvider permissions={permissions}>
@@ -37,11 +45,25 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
               title={intlFormatMessage(messages[title])}
               innerSize={innerSize}
               justify="center"
-              action={params => updateFromActionComponent({ ...params })}
-              actionComponent={{
-                component: CardSelectors,
-                props: selectorModifiers,
-              }}
+              action={params =>
+                isClientSide
+                  ? updateGraphClientSide(params)
+                  : updateFromActionComponent({ ...params })
+              }
+              actionComponent={
+                isClientSide
+                  ? {
+                      component: ClientSideFilter,
+                      props: {
+                        selectorModifiers,
+                        data: clientSideFilterOptions,
+                      },
+                    }
+                  : {
+                      component: CardSelectors,
+                      props: selectorModifiers,
+                    }
+              }
               name={id}
             >
               <Grid
@@ -58,6 +80,13 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
                       id={graph.id}
                       updatedParams={graphParams}
                       formatMessage={intlFormatMessage}
+                      clientSideFilter={{
+                        isClientSide,
+                        selectorModifiers,
+                        clientSideFilters,
+                        clientSideFilterOptions,
+                        setClientSideFilterOptions,
+                      }}
                     />
                   ))}
               </Grid>

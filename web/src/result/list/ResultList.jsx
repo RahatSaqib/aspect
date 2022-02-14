@@ -135,6 +135,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'patientId',
     'resultWorkflowStatus',
     'treatmentStatusInfo',
+    'resultText',
+    'assayName',
     /* --- table.extraColumns BEGIN --- */
     'resultCategory1Name',
     'resultCategory2Name',
@@ -202,7 +204,7 @@ const getBaseColumns = (extraColumns = []) => {
           sortable: true,
         },
         ...map(extraColumns, column => ({
-          key: column?.db,
+          key: column?.fieldName,
           label: messageByI18nKey(column?.i18nKey)(
             column?.title,
             formatMessage

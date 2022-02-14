@@ -1,6 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const ReportFixture = require('../fixtures/Report')
+const commonReportFixture = require('../fixtures/Report')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -19,13 +19,20 @@ async function upsertSheets(knex, reportId, sheets) {
   )
 }
 
-module.exports = async function upsertReports(knex) {
+module.exports = async function upsertReports(
+  knex,
+  countrySpecificReportFixture = {}
+) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
 
+  const actualReports = {
+    ...commonReportFixture,
+    ...countrySpecificReportFixture,
+  }
   const reportsById = {}
 
-  _.values(_.omit(ReportFixture, 'fixture')).forEach(report => {
+  _.values(actualReports).forEach(report => {
     const sheets = []
     report.sheets.forEach(({ query = {}, ...sheet }) => {
       // Replace externalIds with Ids

@@ -117,7 +117,7 @@ async function exportResults(request, reply) {
   const { data, dynamicColumns, dataSelector, total } =
     await getAllResultsForExport(auth, query)
   const sheetData = {
-    dataRows: data,
+    data,
     dynamicColumns,
     total,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
