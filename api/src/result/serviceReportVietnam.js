@@ -100,8 +100,8 @@ async function getListRResistantTestReport(auth, query) {
         "CASE WHEN IFNULL(patientData->>'$.age', '-') = 'null' THEN '-' ELSE IFNULL(patientData->>'$.age', '-') END as age"
       ),
       knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
-      knex.raw('endedOn as xpertResultDate'),
-      knex.raw('r.notes'),
+      'r.endedOn as xpertResultDate',
+      'r.notes',
     ])
 
   return {
