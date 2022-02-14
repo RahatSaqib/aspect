@@ -41,8 +41,10 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 }
 
 class APIApplicationError extends Error {
-  constructor(...args) {
+  constructor(data, ...args) {
     super(...args)
+    // We need to pass here the new errorKeyCode prop.
+    this.data = data
     // make `instanceof APIApplicationError` work in ES5 for Jest
     this.constructor = APIApplicationError
     this.__proto__ = APIApplicationError.prototype // eslint-disable-line no-proto
@@ -101,7 +103,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         }
         // HTTP Status !== 2xx
         return resp.json().then(data => {
-          const error = new APIApplicationError(data.message)
+          const error = new APIApplicationError(data.data || {}, data.message)
           error.statusCode =
             data.statusCode /* HAPI always responds with statusCode */
           throw error
@@ -115,7 +117,6 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         `errorNotifications.${err.statusCode}`,
         get(options, 'errorNotifications.default')
       )
-
       if (errorNotification) {
         if (errorNotification[err.message]) {
           errorNotification = errorNotification[err.message]
@@ -137,7 +138,14 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         }
         // Only if statusCode isn't unauthorized or message isn't Expired Token, we should show the error as notification. For 401 errors of type Expired Token, the user will be logged out.
         if (err.statusCode !== 401 || err.message !== 'Expired token') {
-          store.dispatch(showError(errorNotification, err))
+          let customErrorNotification = null
+          if (typeof errorNotification === 'function') {
+            customErrorNotification = errorNotification(err.data, true)
+          }
+          // Maybe dont dispatch always the message? in case we need to do something else with the response.
+          store.dispatch(
+            showError(customErrorNotification || errorNotification, err)
+          )
         }
       }
       return Promise.reject(err)
