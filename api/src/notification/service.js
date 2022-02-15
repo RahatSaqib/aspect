@@ -862,8 +862,7 @@ async function getNotifications(request) {
     getCount,
     getNotificationHistory,
   ])
-  console.log('>>>>>>>>>>>>')
-  console.log(getNotificationHistory.toString())
+
   const items = data.map(item => ({
     ..._.omit(item, ['groupingParam']),
     emailRecipients: item.emailRecipients
