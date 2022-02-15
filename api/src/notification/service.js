@@ -767,7 +767,7 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'r.externalId as sampleId',
+      's.externalId as sampleId',
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
@@ -793,6 +793,7 @@ async function getNotifications(request) {
         END as groupingParam
       `),
     ])
+    .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .count({
       webhookSent: knex.raw(`
         DISTINCT
@@ -861,7 +862,8 @@ async function getNotifications(request) {
     getCount,
     getNotificationHistory,
   ])
-
+  console.log('>>>>>>>>>>>>')
+  console.log(getNotificationHistory.toString())
   const items = data.map(item => ({
     ..._.omit(item, ['groupingParam']),
     emailRecipients: item.emailRecipients
