@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
+"POT-Creation-Date: 2022-02-11T19:30:42.698Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,10 +32,14 @@ msgstr "(Số lượng mới có trong tay: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * excluded {pendingTransfers} lot/s in transit
+#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* excluded {pendingTransfers} lot/s in transit"
-msgstr "* lô / s {pendingTransfers} bị loại trừ đang được vận chuyển"
+msgid ""
+"* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
+"s in transit"
+msgstr ""
+"* không bao gồm các mặt hàng {pendingTransfersQuantityOnHand} trong lô / s "
+"{pendingTransfers} quá cảnh"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -1171,6 +1175,9 @@ msgstr "Không thể chỉnh sửa"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.Notifications.table.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [contextualMenu.notifications.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1537,6 +1544,9 @@ msgid "Contact Created Successfully"
 msgstr "Liên hệ được tạo thành công"
 
 #. [pages.PersonDetails.contactDetails]
+#. defaultMessage is:
+#. Contact Details
+#. [pages.Notifications.table.contactDetails]
 #. defaultMessage is:
 #. Contact Details
 #: extracted_strings.json
@@ -3111,12 +3121,25 @@ msgstr "Kháng FLQ"
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
-#. [pages.SiteDetail.fieldFacilityCode]
-#. defaultMessage is:
-#. Facility Code
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Mã cơ sở"
+
+#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Please, try again in a few minutes. If the error persists, contact your "
+#| "administrator for support."
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Vui lòng thử lại trong vài phút. Nếu lỗi vẫn còn, hãy liên hệ với quản trị "
+"viên của bạn để được hỗ trợ."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -4373,6 +4396,13 @@ msgstr "Liên quan đến điều trị"
 msgid "Lipid Panel"
 msgstr "Bảng lipid"
 
+#. [pages.ReportIndex.listRResistantTestReport]
+#. defaultMessage is:
+#. List-R Resistant Test Report
+#: extracted_strings.json
+msgid "List-R Resistant Test Report"
+msgstr "Báo cáo kiểm tra kháng List-R"
+
 #. [pages.ReportIndex.RIF_Resistance_Rate_description]
 #. defaultMessage is:
 #. Listing RIF Resistance Rate for all facilities, ranked highest to lowest
@@ -5231,6 +5261,9 @@ msgstr "Mới nhất"
 msgid "Next"
 msgstr "Tiếp"
 
+#. [pages.Notifications.table.createButton.group.no]
+#. defaultMessage is:
+#. No
 #. [pages.NotificationList.no]
 #. defaultMessage is:
 #. No
@@ -5870,6 +5903,13 @@ msgstr "ID của Bệnh Nhân"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "ID bệnh nhân / trường hợp"
+
+#. [pages.Notifications.table.sentPending]
+#. defaultMessage is:
+#. Pending
+#: extracted_strings.json
+msgid "Pending"
+msgstr "Đang chờ xử lý"
 
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
@@ -7593,12 +7633,29 @@ msgstr "Gửi"
 msgid "Send to a specific person"
 msgstr "Gửi cho một người cụ thể"
 
+#. [pages.Notifications.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#. [pages.Notifications.table.createButton.group.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#: extracted_strings.json
+msgid "Send to patient"
+msgstr "Gửi cho bệnh nhân"
+
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
 #. Sender Operator
 #: extracted_strings.json
 msgid "Sender Operator"
 msgstr "Nhà điều hành người gửi"
+
+#. [pages.Notifications.table.sentDetails]
+#. defaultMessage is:
+#. Sent details
+#: extracted_strings.json
+msgid "Sent details"
+msgstr "Chi tiết đã gửi"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -7919,6 +7976,9 @@ msgstr "Đăng xuất"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [filter.popover.siteName]
+#. defaultMessage is:
+#. Site
 #. [pages.JobAssignments.site]
 #. defaultMessage is:
 #. Site
@@ -8190,6 +8250,13 @@ msgstr "Gửi"
 #. Success
 #: extracted_strings.json
 msgid "Success"
+msgstr "Thành công"
+
+#. [pages.Notifications.table.sentSuccessfully]
+#. defaultMessage is:
+#. Successfully
+#: extracted_strings.json
+msgid "Successfully"
 msgstr "Thành công"
 
 #. [browsePage.browseDropdown.supplies]
@@ -9076,6 +9143,24 @@ msgstr ""
 "Báo cáo này hiển thị phần trăm hoạt động mỗi tháng của các thiết bị trong "
 "khoảng thời gian đã chọn. (Theo mặc định trong 12 tháng qua)"
 
+#. [pages.ReportIndex.listRResistantTestReport_description]
+#. defaultMessage is:
+#. This report shows the list of resistant tests
+#: extracted_strings.json
+msgid "This report shows the list of resistant tests"
+msgstr "Báo cáo này cho thấy danh sách các thử nghiệm kháng thuốc"
+
+#. [pages.ReportIndex.xpertTestActivitiesReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result"
+msgstr ""
+"Báo cáo này cho thấy số lượng xét nghiệm GeneXpert MTB được thực hiện phân "
+"loại theo kết quả"
+
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
 #. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
@@ -9729,6 +9814,13 @@ msgstr "Tuần hoặc ngày lễ"
 msgid "When the result is"
 msgstr "Khi kết quả là"
 
+#. [pages.Notifications.table.sentWithErrors]
+#. defaultMessage is:
+#. With errors
+#: extracted_strings.json
+msgid "With errors"
+msgstr "Với lỗi"
+
 #. [pages.OperationalData.withinTwoHoursOfTesting]
 #. defaultMessage is:
 #. Within 2 hours of testing
@@ -9777,6 +9869,13 @@ msgstr "Hộp mực Xpert HIV-1 Qual"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Hộp mực nạp virut Xpert HIV-1"
 
+#. [pages.ReportIndex."xpertTestActivitiesReport"]
+#. defaultMessage is:
+#. Xpert Test Activities Report
+#: extracted_strings.json
+msgid "Xpert Test Activities Report"
+msgstr "Báo cáo hoạt động thử nghiệm Xpert"
+
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
 #. Year
@@ -9787,6 +9886,9 @@ msgstr "Hộp mực nạp virut Xpert HIV-1"
 msgid "Year"
 msgstr "Năm"
 
+#. [pages.Notifications.table.createButton.group.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes

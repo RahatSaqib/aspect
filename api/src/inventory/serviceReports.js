@@ -4,18 +4,17 @@ const { exportData, getBaseReplacements } = require('../shared/excel')
 
 async function exportSupplies(request, reply) {
   const { query } = request
-  const { data } = await listInventory(request)
+  let { data } = await listInventory(request)
 
-  let dataRows = data
   if (query.breakOutByLot)
-    dataRows = data.map(item => ({
+    data = data.map(item => ({
       ...item,
       expires: item.canExpire,
       expiresOn: format(new Date(item.expiresOn), 'yyyy-MM-dd'),
     }))
 
   const sheetData = {
-    dataRows,
+    data,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }

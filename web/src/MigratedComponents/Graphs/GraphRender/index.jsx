@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import { oneOfType, array, object, bool, string, func } from 'prop-types'
 import reduce from 'lodash/reduce'
+import sortBy from 'lodash/sortBy'
 import { useQuery } from 'react-query'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
@@ -19,6 +20,7 @@ import {
 
 import EmptyGraph from '../EmptyData'
 import { useAuthState } from '../../../Providers/AuthProvider'
+import handleClientSideFilterState from './ClientSideFilters'
 import styles from './GraphRender.css'
 
 const cssClasses = classnames.bind(styles)
@@ -34,6 +36,7 @@ const GraphRender = ({
   config,
   updatedParams = {},
   formatMessage,
+  clientSideFilter = false,
 }) => {
   const {
     api: { endpoint, params, method } = false,
@@ -44,15 +47,16 @@ const GraphRender = ({
     filterBy = false,
     formatDate,
     id,
+    sortByKeys,
     indexBy,
     keyToConsume,
     i18nKey,
     type,
   } = config
+
   const { culture } = useAuthState()
   const assayParams = prepAssaysForParams(whiteListed, method)
   const endpointParams = prepParamsForEndPoint(params, updatedParams)
-
   const mergedParams = [...assayParams, ...endpointParams]
   const [rawData, setRawData] = useState(false)
   const [i18nKeys, setI18nKeys] = useState([])
@@ -66,48 +70,72 @@ const GraphRender = ({
         method,
         params: mergedParams,
       }),
-    { onSuccess: ({ data }) => setRawData(data) }
+    {
+      onSuccess: ({ data }) =>
+        setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data),
+    }
   )
   if (isError) {
     throw new Error(`Graph data fetch failed: ${error.message}`)
   }
 
-  useEffect(() => {
+  function buildI18nKeys() {
     let i18nKeysCollection = {}
+    if (i18nKey) {
+      if (isObject(i18nKey)) i18nKeysCollection = i18nKey
+      else
+        i18nKeysCollection = reduce(
+          rawData,
+          (acc, curr) => {
+            acc[curr[keyToConsume]] = curr[i18nKey]
+            return acc
+          },
+          {}
+        )
+      setI18nKeys(i18nKeysCollection)
+      return i18nKeysCollection
+    }
+  }
+
+  function formatRawData() {
+    const i18nKeysCollection = buildI18nKeys()
+    return formatDataByGraphType(
+      rawData,
+      displayMethod,
+      filterBy,
+      formatDate,
+      indexBy,
+      keyToConsume,
+      i18nKeysCollection,
+      type,
+      mergedParams,
+      formatMessage,
+      messages
+    )
+  }
+
+  function setNewData(grouped) {
+    const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
+    setGraphData(grouped)
+    setGraphKeys(keysFromGrouped)
+  }
+
+  useEffect(() => {
     if (rawData && !isLoading) {
-      if (i18nKey) {
-        if (isObject(i18nKey)) i18nKeysCollection = i18nKey
-        else
-          i18nKeysCollection = reduce(
-            rawData,
-            (acc, curr) => {
-              acc[curr[keyToConsume]] = curr[i18nKey]
-              return acc
-            },
-            {}
-          )
-        setI18nKeys(i18nKeysCollection)
-      }
-      const grouped = formatDataByGraphType(
-        rawData,
-        displayMethod,
-        filterBy,
-        formatDate,
-        indexBy,
-        keyToConsume,
-        i18nKeysCollection,
-        type,
-        mergedParams,
-        formatMessage,
-        messages
-      )
+      const grouped = formatRawData()
       if (grouped) {
-        const keysFromGrouped = getGraphKeysFromResults(grouped, indexBy)
-        setGraphData(grouped)
-        setGraphKeys(keysFromGrouped)
+        setNewData(grouped)
       }
     }
   }, [rawData])
+
+  useEffect(() => {
+    return handleClientSideFilterState(
+      clientSideFilter,
+      { id, i18nKeys, graphData, assaysFromState },
+      { formatRawData, setNewData }
+    )
+  }, [clientSideFilter, graphData])
 
   return (
     <Grid item xs={12} md={size} lg={size}>
@@ -135,14 +163,16 @@ const GraphRender = ({
 
 GraphRender.defaultProps = {
   updatedParams: {},
+  clientSideFilter: false,
 }
 
 GraphRender.propTypes = {
-  assays: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  id: PropTypes.string.isRequired,
-  updatedParams: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-  formatMessage: PropTypes.func.isRequired,
+  assays: oneOfType([array, object]).isRequired,
+  config: oneOfType([object]).isRequired,
+  clientSideFilter: oneOfType([object, bool]),
+  id: string.isRequired,
+  updatedParams: oneOfType([object, bool]),
+  formatMessage: func.isRequired,
 }
 
 export default GraphRender

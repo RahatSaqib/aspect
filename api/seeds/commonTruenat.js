@@ -8,10 +8,7 @@ const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
 const truenatResultDataSchema = require('./fixtures/truenatDevice/ResultDataSchema.json')
 const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
-const {
-  deviceTypeToId,
-  deviceApprovalToId,
-} = require('../src/shared/dictionary')
+const { deviceApprovalToId } = require('../src/shared/dictionary')
 const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
 
@@ -253,7 +250,9 @@ async function upsertTruenatDevices(
       })
       truenatLab = await knex('Site').where('id', truenatLabId).first()
     }
-    const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
+    const [truenatDeviceTypeId] = await knex('DeviceType')
+      .where({ externalId: 'molbioTruenat' })
+      .pluck('id')
     const deviceApprovalApprovedId = await deviceApprovalToId('approved')
     let existingTruenatDevice = await knex('Device')
       .where('siteId', truenatLab.id)

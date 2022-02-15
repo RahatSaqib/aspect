@@ -1,11 +1,13 @@
 const _ = require('lodash')
-const fs = require('fs')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
-const { getContentType } = require('./io')
+const Range = require('exceljs/lib/doc/range')
+const { getContentType, readExcelFile, readTemplateFile } = require('./io')
 const { getUser } = require('../auth/service')
+const logger = require('./logger')
 
 const LANG_DEFAULT = 'en'
+const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
 
 /**
   Notice that `cell.type` and `cell.effectiveType` are set to global constant `excel.ValueType`:
@@ -68,11 +70,10 @@ const getCellsBySubstring = (sheet, value) => {
 const getMaxLimitPlaceHolders = () => [
   {
     placeholder: '<PerformanceTotalRecordLimit>',
-    value: ({ dataRows: { length = 0 }, total = 0 }) => {
+    value: ({ data: { length = 0 }, total = 0 }) => {
       return total - length
     },
-    condition: ({ dataRows: { length = 0 } = [], total = 0 }) =>
-      length === total,
+    condition: ({ data: { length = 0 } = [], total = 0 }) => length === total,
     action: (cell, worksheet) => {
       if (cell) {
         cell.value = ''
@@ -84,19 +85,11 @@ const getMaxLimitPlaceHolders = () => [
   },
   {
     placeholder: '<PerformanceQueryLimit>',
-    value: ({ dataRows: { length = 0 } }) => {
+    value: ({ data: { length = 0 } }) => {
       return length
     },
   },
 ]
-// ----------------------------------------------------------------------------------------------
-// read/write Excel file - 'exceljs' API returns Promise for readFile and writeFile
-// ----------------------------------------------------------------------------------------------
-// read Excel file and return workbook
-async function readExcelFile(fileName) {
-  const ExcelWorkbook = new excel.Workbook()
-  return ExcelWorkbook.xlsx.readFile(fileName)
-}
 
 // ----------------------------------------------------------------------------------------------
 function replaceSubstringInCell(worksheet, token, value) {
@@ -124,13 +117,24 @@ function getHeaderRows(sheet, cellTableToken) {
 }
 
 // ----------------------------------------------------------------------------------------------
+function getContentDispositionFilename(fileNamePrefix, extension) {
+  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(
+    /:/g,
+    '-'
+  )
+}
+
+// ----------------------------------------------------------------------------------------------
 async function respondFile({
   reply,
   dataBuffer,
   extension = 'xlsx',
   fileNamePrefix = 'report',
 }) {
-  const reportFileName = `${fileNamePrefix}_${new Date().toISOString()}.${extension}`
+  const reportFileName = getContentDispositionFilename(
+    fileNamePrefix,
+    extension
+  )
   return reply
     .response(dataBuffer)
     .encoding('binary')
@@ -139,27 +143,21 @@ async function respondFile({
 }
 
 // ----------------------------------------------------------------------------------------------
-async function readTemplateFile(
-  templateFolderPath,
-  lang,
-  langDefault = LANG_DEFAULT
-) {
-  // TODO: think how to differ files for the same language but different partners
-  // TODO: see Jira task - https://ops.systemone.id/browse/ASP-1451
-  let filePath = `templates/${templateFolderPath}/${lang}.xlsx`
-  // check if file exists, fallback to default language, throw error if no file found
-  let exists = fs.existsSync(filePath)
-  if (!exists && lang !== langDefault) {
-    filePath = `templates/${templateFolderPath}/${langDefault}.xlsx`
-    exists = fs.existsSync(filePath)
-  }
-  // throw exception if no file found
-  if (!exists) {
-    throw new Error(`File ${filePath} is missing`)
-  }
-
-  // return promise with file content
-  return readExcelFile(filePath)
+async function respondStream({
+  reply,
+  stream,
+  extension = 'xlsx',
+  fileNamePrefix = 'report',
+}) {
+  const reportFileName = getContentDispositionFilename(
+    fileNamePrefix,
+    extension
+  )
+  return reply
+    .response(stream)
+    .encoding('binary')
+    .type(getContentType(extension))
+    .header('content-disposition', `attachment; filename=${reportFileName};`)
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -179,24 +177,26 @@ function getBaseReplacements() {
 
 // ----------------------------------------------------------------------------------------------
 function getCellStyle(cell) {
-  if (cell.master) {
+  if (cell?.master) {
     return cell.master.style
   }
-  return cell.style
+  return cell?.style
 }
 
 // ----------------------------------------------------------------------------------------------
 function setCellStyle(cell, style) {
-  _.forEach(style, (styleValue, styleName) => {
-    cell[styleName] = styleValue
-  })
+  if (!_.isEmpty(style)) {
+    _.forEach(style, (styleValue, styleName) => {
+      cell[styleName] = styleValue
+    })
+  }
 }
 
 // ----------------------------------------------------------------------------------------------
 function fillInSheetWithMap({
   templateFolderPath,
   sheetIndex,
-  data,
+  dataSet,
   worksheet,
 }) {
   let mapping
@@ -216,8 +216,8 @@ function fillInSheetWithMap({
   const sheetMap = mapping[sheetIndex]
 
   if (sheetMap) {
-    const { dataRows: dat } = data[sheetIndex]
-    if (!dat) return
+    const { data } = dataSet[sheetIndex]
+    if (!data) return
 
     _.keys(sheetMap).forEach(cellAddress => {
       const fieldName = sheetMap[cellAddress]
@@ -234,7 +234,7 @@ function fillInSheetWithMap({
        * (which match possible Data Validation Rule defined for that depending cell in Excel)
        * actual `cell.effectiveType = 2` (excel.ValueType.Number)
        */
-      cell.value = dat[fieldName]
+      cell.value = data[fieldName]
     })
 
     worksheet.eachRow(row => {
@@ -255,7 +255,7 @@ function fillInSheetWithMap({
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
   culture,
-  data, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   extension, // xlsx
   replacements = [],
   templateFolderPath,
@@ -278,23 +278,23 @@ async function renderExcelTemplate({
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
     const {
-      dataRows,
+      data,
       dynamicColumns = [],
       defaultNoDataMessage,
       dataSelector: dataSelectorSheet,
-    } = data[sheetIndex] || {}
+    } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = _.isPlainObject(dataRows) ? 'mapping' : 'list'
+    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
 
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
-      return fillInSheetWithMap({
+      fillInSheetWithMap({
         templateFolderPath,
         sheetIndex,
-        data,
+        dataSet,
         worksheet,
       })
     }
@@ -308,8 +308,8 @@ async function renderExcelTemplate({
         condition = () => false,
         action = () => true,
       }) => {
-        if (data[sheetIndex]) {
-          if (condition(data[sheetIndex])) {
+        if (dataSet[sheetIndex]) {
+          if (condition(dataSet[sheetIndex])) {
             const [conditionalCell] = getCellsBySubstring(
               worksheet,
               placeholder
@@ -317,7 +317,7 @@ async function renderExcelTemplate({
             action(conditionalCell, worksheet)
           }
           if (_.isFunction(value)) {
-            value = value(data[sheetIndex])
+            value = value(dataSet[sheetIndex])
           }
         }
         replaceSubstringInCell(worksheet, placeholder, value)
@@ -333,7 +333,7 @@ async function renderExcelTemplate({
         cell.value = ''
       })
 
-      if (!dataRows) return
+      if (!data) return
 
       // use 1st cell only (actually, should not be more than one)
       const cellTableToken = tableTokenCells[0]
@@ -364,10 +364,15 @@ async function renderExcelTemplate({
           allHeaderRows.length
         )
       }
+
+      let dataRows = data
+      // If way to fill in data is mapping, then we need to get the rows inside the object, if they exist
+      if (wayToFillInData === 'mapping') dataRows = data.rows
+
       // fill in array 'rows'
       let rows = []
-      if (dataRows.length > 0) {
-        rows = dataRows.map((dataRow, rowIndex) => {
+      if (dataRows && dataRows.length > 0) {
+        rows = data.map((dataRow, rowIndex) => {
           const valuesInPredefinedColumns = fieldNames.map(fieldName => {
             if (fieldName === '#') {
               return rowIndex + 1
@@ -427,6 +432,481 @@ async function renderExcelTemplate({
   return extension === 'csv'
     ? workbook.csv.writeBuffer()
     : workbook.xlsx.writeBuffer()
+}
+
+// ----------------------------------------------------------------------------------------------
+async function renderExcelTemplateToCsv({
+  culture,
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  replacements = [],
+  templateFolderPath,
+  dataSelector,
+}) {
+  const lang = culture.split('-')[0].toLowerCase()
+  // read file into workbook as ExcelWorkbook
+  const workbook = await readTemplateFile(
+    templateFolderPath,
+    lang,
+    LANG_DEFAULT
+  )
+
+  const worksheet = workbook.worksheets[0]
+  const worksheetData = dataSet[0]
+  const {
+    data = [],
+    defaultNoDataMessage,
+    dataSelector: dataSelectorSheet,
+    dynamicColumns = [],
+  } = worksheetData || {}
+
+  /**
+   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+   */
+  replaceBasePlaceholders(replacements, worksheet, worksheetData)
+
+  /**
+   * prepare table in worksheet, i.e.
+   * append dynamic columns, get all predefined field names, get pattern row number
+   */
+  const { patternRowNumber, fieldNames, dynamicMerges, allHeaderRows } =
+    prepareWorksheet(worksheet, dynamicColumns)
+
+  /**
+   * merge dynamically appended cells
+   */
+  _.forEach(dynamicMerges, range => {
+    worksheet.mergeCells(range)
+  })
+
+  /**
+   * get data to populate rows
+   * 'rowsValues' is array of array, i.e. array of rows, and each array item is
+   * array of cell values
+   */
+  const rowsValues = getNormalizedData({
+    data,
+    fieldNames,
+    normalizer: dataSelector || dataSelectorSheet,
+    dynamicColumns,
+    defaultNoDataMessage,
+  })
+
+  /**
+   * put headers in 1st row
+   */
+  if (allHeaderRows.length > 0) {
+    // get all header values from last item of array allHeaderRows
+    const headerRow = allHeaderRows[allHeaderRows.length - 1]
+    const headerValues = []
+    headerRow.eachCell(cell => {
+      headerValues.push(cell.value)
+    })
+    worksheet.getRow(1).values = headerValues
+  }
+  /**
+   * insert data
+   */
+  if (patternRowNumber !== -1) {
+    // remove pattern row and insert data rows starting from row number `patternRowNumber`
+    worksheet.spliceRows(patternRowNumber, 1, ...rowsValues)
+
+    // remove all rows between 1st row and table body (remove table headers too)
+    worksheet.spliceRows(2, patternRowNumber - 1 - 1)
+  }
+
+  // return binary buffer
+  return workbook.csv.writeBuffer()
+}
+
+// ----------------------------------------------------------------------------------------------
+async function streamExcelTemplate({
+  stream,
+  templateFolderPath,
+  culture,
+  data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
+  replacements = [],
+  dataSelector,
+}) {
+  const lang = culture.split('-')[0].toLowerCase()
+
+  /**
+   * read file into workbook as ExcelWorkbook
+   */
+  const workbookTemplate = await readTemplateFile(
+    templateFolderPath,
+    lang,
+    LANG_DEFAULT
+  )
+
+  /**
+   * create Excel Workbook which will write to `stream`
+   */
+  const workbook = new excel.stream.xlsx.WorkbookWriter({
+    stream,
+    useStyles: true,
+    useSharedStrings: true,
+  })
+
+  /**
+   * get all sheets
+   * Notice that we can not loop `workbookTemplate.eachSheet` directly, because
+   * `iteratee` in `eachSheet` runs as `iteratee(sheet, sheet.id)` in exceljs,
+   * but we need sheet index as 2nd param, not `sheet.id`.
+   * `sheetIndex` is needed for `const worksheetData = data[sheetIndex]`, see below
+   */
+  const templateWorksheets = []
+  workbookTemplate.eachSheet(worksheet => {
+    templateWorksheets.push(worksheet)
+  })
+
+  /**
+   * process all sheets
+   */
+  _.each(templateWorksheets, (worksheetTemplate, sheetIndex) => {
+    const worksheetData = dataSet[sheetIndex]
+    const {
+      data = [],
+      defaultNoDataMessage,
+      dataSelector: dataSelectorSheet,
+      dynamicColumns = [],
+    } = worksheetData || {}
+
+    /**
+     * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+     */
+    replaceBasePlaceholders(replacements, worksheetTemplate, worksheetData)
+
+    /**
+     * create worksheet with same model as in template
+     */
+    const worksheet = workbook.addWorksheet(
+      worksheetTemplate.name,
+      worksheetTemplate.model
+    )
+
+    /**
+     * set width and formatting for columns
+     */
+    worksheet.columns = worksheetTemplate.columns
+
+    let patternRowNumber = -1
+    let fieldNames = []
+    let dynamicMerges = []
+
+    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+
+    const dataRows = wayToFillInData === 'list' ? data : data.rows
+
+    if (wayToFillInData === 'mapping') {
+      /**
+       * for mapping mode - populate worksheet template
+       */
+      fillInSheetWithMap({
+        templateFolderPath,
+        sheetIndex, // is needed to get correct item from `mapping` array
+        dataSet,
+        worksheet: worksheetTemplate,
+      })
+    }
+
+    if (dataRows) {
+      /**
+       * prepare table in worksheet, i.e.
+       * append dynamic columns, get all predefined field names, get pattern row number
+       */
+      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(
+        worksheetTemplate,
+        dynamicColumns
+      ))
+    }
+
+    /**
+     * * get data to populate rows
+     * 'rowsValues' is array of array, i.e. array of rows, and each array item is
+     * array of cell values
+     */
+    let rowsValues = []
+    if (dataRows) {
+      rowsValues = getNormalizedData({
+        data: dataRows,
+        fieldNames,
+        normalizer: dataSelector || dataSelectorSheet,
+        dynamicColumns,
+        defaultNoDataMessage,
+      })
+    }
+
+    /**
+     * all ranges for merged cells
+     */
+    const allRanges = [...worksheetTemplate.model.merges, ...dynamicMerges].map(
+      rng => {
+        const range = new Range(rng)
+        // shift down all ranges below table
+        if (patternRowNumber !== -1 && range.top > patternRowNumber) {
+          range.top += rowsValues.length - 1
+          range.bottom += rowsValues.length - 1
+        }
+        return range
+      }
+    )
+
+    /**
+     * set all merges - for original cells on worksheetTemplate and for
+     * dynamically appended cells if table header consists of more than 1 row
+     */
+    _.forEach(allRanges, range => {
+      worksheet.mergeCells(range)
+    })
+
+    /**
+     * need to clear pattern row because by default we copy values from any template cells
+     * to new row in destination streamed worksheet, and in case when data is empty for the table
+     * we don't want to see pattern tokens
+     */
+    if (patternRowNumber !== -1) {
+      worksheetTemplate.getRow(patternRowNumber).eachCell(cell => {
+        cell.value = null
+      })
+    }
+
+    /**
+     * Notice that `worksheet.rowCount` and `worksheet.actualRowCount` may differ
+     * (rowCount >= actualRowCount) when worksheet has some gaps in rows definitions.
+     * Because of that do not use `worksheet.eachRow` which iterates only
+     * through actual rows - i.e. row3.number=3 and next actual row4 may have number=5
+     * because real row4 was not defined (and is empty in Excel) and `eachRow`
+     * returned array with only actually defined rows.
+     * We need here all rows to correctly
+     * increment `rowNumber` and make sure it is in line with rowTemplate.number.
+     */
+    let rowNumber = 1
+    _.range(worksheetTemplate.rowCount).forEach(templateRowIndex => {
+      /**
+       * use `findRow` to get either actual row or `undefined`.
+       * do not use `getRow` because it creates row if it doesn't exist
+       * and we don't need to create new rows in `worksheetTemplate` here.
+       */
+      const rowTemplate = worksheetTemplate.findRow(templateRowIndex + 1)
+      if (!rowTemplate) {
+        rowNumber += 1 // point to the next row
+        return
+      }
+
+      let payload = {
+        rowNumber,
+        rowTemplate,
+        worksheet,
+      }
+
+      if (dataRows && rowNumber === patternRowNumber) {
+        /**
+         * insert all data rows to the streamed worksheet
+         */
+        _.each(rowsValues, values => {
+          payload = {
+            ...payload,
+            rowNumber,
+            rowValues: values,
+          }
+          writeRowToStream(payload)
+          // for big data sources log checkpoint after each 500 inserted rows
+          if (rowNumber % 500 === 0) {
+            logger.debug(`processed Excel rows: ${rowNumber}`, RELABEL_EXCEL)
+          }
+          rowNumber += 1
+        })
+      } else {
+        writeRowToStream(payload)
+        rowNumber += 1
+      }
+    })
+
+    /**
+     * must commit to flush worksheet to the stream
+     */
+    worksheet.commit()
+  })
+  /**
+   * return uncommitted workbook - it will be committed in caller func
+   */
+  return workbook
+}
+
+// ----------------------------------------------------------------------------------------------
+function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
+  /**
+   * get/create row
+   */
+  const row = worksheet.getRow(rowNumber)
+  /**
+   * set row props and style
+   */
+  row.height = rowTemplate.height
+  row.hidden = rowTemplate.hidden
+  row.outlineLevel = rowTemplate.outlineLevel || 0
+  row.style = rowTemplate.style
+  /**
+   * create cells
+   */
+  rowTemplate.eachCell(cellTemplate => {
+    const cell = row.getCell(cellTemplate.col)
+    if (!cellTemplate.isMerged || cellTemplate === cellTemplate.master) {
+      cell.value = cellTemplate.value
+    }
+    /**
+     * set new cell directly to the same style as template cell
+     * In case of possible failing use
+     * setCellStyle(cell, getCellStyle(cellTemplate))
+     */
+    cell.style = cellTemplate.style
+  })
+  /**
+   * overwrite values in cells if specified
+   */
+  if (rowValues) {
+    row.values = rowValues
+  }
+  /**
+   * must commit all row changes to move it to the stream.
+   * Notice that no changes possible in row and it's cells after commit.
+   */
+  row.commit()
+}
+
+// ----------------------------------------------------------------------------------------------
+function replaceBasePlaceholders(
+  replacements,
+  worksheetTemplate,
+  worksheetData
+) {
+  _.each(
+    replacements,
+    ({ placeholder, value, condition = () => false, action = () => true }) => {
+      if (worksheetData) {
+        if (condition(worksheetData)) {
+          const [conditionalCell] = getCellsBySubstring(
+            worksheetTemplate,
+            placeholder
+          )
+          action(conditionalCell, worksheetTemplate)
+        }
+        if (_.isFunction(value)) {
+          value = value(worksheetData)
+        }
+      }
+      replaceSubstringInCell(worksheetTemplate, placeholder, value)
+    }
+  )
+}
+
+// ----------------------------------------------------------------------------------------------
+function prepareWorksheet(worksheetTemplate, dynamicColumns) {
+  let patternRowNumber = -1
+  const fieldNames = []
+  let dynamicMerges = []
+  let allHeaderRows = []
+
+  // position cell where data table begins
+  const tableTokenCells = getCellsByValue(worksheetTemplate, '<Table>')
+  if (tableTokenCells.length > 0) {
+    // empty cells with value '<Table>'
+    tableTokenCells.forEach(cell => {
+      cell.value = ''
+    })
+
+    // use 1st cell only (actually, should not be more than one)
+    const cellTableToken = tableTokenCells[0]
+
+    allHeaderRows = getHeaderRows(worksheetTemplate, cellTableToken)
+    const headerRow = allHeaderRows[0]
+
+    patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
+
+    /**
+     * define field names for data table for each column
+     */
+    const patternRow = worksheetTemplate.getRow(patternRowNumber)
+    patternRow.eachCell(cell => {
+      let v = _.trim(cell.value)
+      if (v[0] === '<' && v[v.length - 1] === '>') {
+        v = _.trim(v, '< >')
+        fieldNames.push(v)
+      } else {
+        fieldNames.push('')
+      }
+    })
+
+    /**
+     * when specified - append dynamic columns to template worksheet
+     */
+    if (dynamicColumns.length > 0) {
+      dynamicMerges = appendColumnsToHeader(
+        worksheetTemplate,
+        dynamicColumns,
+        headerRow,
+        allHeaderRows.length
+      )
+    }
+  }
+
+  return {
+    patternRowNumber,
+    fieldNames,
+    dynamicMerges,
+    allHeaderRows,
+  }
+}
+
+// ----------------------------------------------------------------------------------------------
+function getNormalizedData({
+  data,
+  fieldNames,
+  normalizer,
+  dynamicColumns,
+  defaultNoDataMessage,
+}) {
+  /**
+   * fill in array 'rowsValues' - this is an array (item for each row)
+   * of array (cell values for current row)
+   */
+  let rowsValues = []
+  if (data.length > 0) {
+    rowsValues = data.map((dataRow, rowIndex) => {
+      const valuesInPredefinedColumns = fieldNames.map(fieldName => {
+        if (fieldName === '#') {
+          return rowIndex + 1
+        }
+        let value = fieldName && dataRow[fieldName]
+        value = _.isNil(value) ? '' : value
+        // TODO: think on a better generic way to handle such replacements in dataset
+        // TODO: see Jira task for this - https://ops.systemone.id/browse/ASP-1450
+        if (fieldName === 'patientAge' && value === 'null') {
+          value = ''
+        }
+        return value
+      })
+      let valuesInDynamicColumns = []
+      if (dynamicColumns.length > 0) {
+        let normalizedValues
+        // const normalizer = dataSelector || dataSelectorSheet
+        if (normalizer) normalizedValues = normalizer(dataRow)
+        else normalizedValues = data
+        valuesInDynamicColumns = dynamicColumns.map(
+          column => normalizedValues[column.key] || null
+        )
+      }
+      return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
+    })
+  } else {
+    rowsValues = [
+      fieldNames.map((fieldName, fieldIndex) => {
+        const value = fieldIndex === 0 ? defaultNoDataMessage : ''
+        return value
+      }),
+    ]
+  }
+  return rowsValues
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -529,6 +1009,47 @@ function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
 }
 
 // ----------------------------------------------------------------------------------------------
+function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
+  const getRowInfo = row => {
+    const lastCellNumber = row.cellCount
+    const lastCellStyle = getCellStyle(row.getCell(lastCellNumber))
+    return {
+      lastCellNumber,
+      lastCellStyle,
+    }
+  }
+  const patternRow = worksheet.getRow(headerRow.number + totalHeaderRows)
+  const headerInfo = getRowInfo(headerRow)
+  const patternInfo = getRowInfo(patternRow)
+  const merges = []
+  columns.forEach((column, index) => {
+    const columnNumber = headerInfo.lastCellNumber + 1 + index
+    const cell = headerRow.getCell(columnNumber)
+    cell.value = column.header
+    /**
+     * style cell in main header row
+     */
+    setCellStyle(cell, headerInfo.lastCellStyle)
+    /**
+     * set other rows/cells in a header if it has more than 1 row
+     */
+    for (let j = 1; j < totalHeaderRows; j++) {
+      const row2 = worksheet.getRow(cell.row + j)
+      const cell2 = row2.getCell(cell.col)
+      merges.push(`${cell.address}:${cell2.address}`)
+      setCellStyle(cell2, headerInfo.lastCellStyle)
+    }
+    /**
+     * style cell in pattern row (with field name placeholders)
+     */
+    const cellPattern = patternRow.getCell(columnNumber)
+    setCellStyle(cellPattern, patternInfo.lastCellStyle)
+  })
+
+  return merges
+}
+
+// ----------------------------------------------------------------------------------------------
 module.exports = {
   exportData,
   getBaseReplacements,
@@ -537,5 +1058,10 @@ module.exports = {
   getCellsByValue,
   readExcelFile,
   renderExcelTemplate,
+  renderExcelTemplateToCsv,
+  streamExcelTemplate,
   respondFile,
+  respondStream,
+  getContentDispositionFilename,
+  RELABEL_EXCEL,
 }

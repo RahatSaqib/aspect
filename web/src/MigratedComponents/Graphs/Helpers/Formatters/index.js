@@ -1,25 +1,24 @@
 import first from 'lodash/first'
-import findIndex from 'lodash/findIndex'
 import forOwn from 'lodash/forOwn'
+import get from 'lodash/get'
 import includes from 'lodash/includes'
-import keys from 'lodash/keys'
-import last from 'lodash/last'
 import isArray from 'lodash/isArray'
 import isNull from 'lodash/isNull'
-import get from 'lodash/get'
+import keys from 'lodash/keys'
+import last from 'lodash/last'
 import map from 'lodash/map'
+import nth from 'lodash/nth'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
-import nth from 'lodash/nth'
 import sortBy from 'lodash/sortBy'
-import startCase from 'lodash/startCase'
 import split from 'lodash/split'
+import startCase from 'lodash/startCase'
 import sum from 'lodash/sum'
-import values from 'lodash/values'
-import valuesIn from 'lodash/valuesIn'
+import times from 'lodash/times'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
-import times from 'lodash/times'
+import values from 'lodash/values'
+import valuesIn from 'lodash/valuesIn'
 
 import {
   dateRangeOptions,
@@ -45,7 +44,7 @@ import {
   groupForPie,
   groupForPieRow,
   groupForDivergent,
-  groupForInvetoryStatusAPI,
+  groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
@@ -68,15 +67,6 @@ const filterByMultiple = (data, filterBy) => {
   return data.filter(d =>
     keys(filterBy).every(f => includes(filterBy[f].values, d[f]))
   )
-}
-
-const findArrayIndexByStringPartial = (array, key, string) => {
-  const formattedSearchString = string.toLowerCase()
-  const index = findIndex(
-    array,
-    i => i[key].toLowerCase() === formattedSearchString
-  )
-  return index !== -1 ? index : 0
 }
 
 const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
@@ -407,7 +397,7 @@ const formatDataByGraphType = (
       break
 
     case 'barInventory':
-      grouped = groupForInvetoryStatusAPI(
+      grouped = groupForInventoryStatusAPI(
         data,
         i18nKeys,
         formatMessage,
@@ -529,7 +519,6 @@ export {
   extractOptionValue,
   filterByMultiple,
   filterColour,
-  findArrayIndexByStringPartial,
   formatDataByGraphType,
   formatValuesForGraphs,
   generateColorForLegend,
