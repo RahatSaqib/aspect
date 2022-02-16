@@ -1,6 +1,8 @@
 module.exports = [
   /**
+   * ********************************************************
    * 1st sheet 'DT-TB 10A'
+   * ********************************************************
    */
   {
     C6: 'stateName',
@@ -153,5 +155,13 @@ module.exports = [
     O41: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_all',
     R41: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb',
     U41: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif',
+  },
+  /**
+   * ********************************************************
+   * 2nd sheet 'DT-TB 10B'
+   * ********************************************************
+   */
+  {
+    F9: 'total',
   },
 ]

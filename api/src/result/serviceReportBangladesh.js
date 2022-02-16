@@ -3,7 +3,12 @@ const dateFormat = require('date-fns/format')
 const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 
 const { addConstraints, getConstraints } = require('../auth/constraints')
-const { knex, filterParams, filterDateRangeParams } = require('../db')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const {
   formatDateOrDefault,
   getWellFormattedDateStringWithTimezone,
@@ -12,6 +17,8 @@ const {
 } = require('../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
+const logger = require('../shared/logger')
+const { RELABEL_EXCEL } = require('../shared/constants')
 
 /**
  * **************************************
@@ -879,6 +886,155 @@ async function getDataForReportDrTb10A(auth, query) {
   }
 }
 
+async function getDataForReportDrTb10B(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  // ---------------
+  // change query page/size values to get whole dataset (not only currently paged items)
+  query.page = 0
+  // For performance issues we are going to limit this report to max 50k results.
+  query.size = query.maxNumberOfRecords || 10000
+
+  const {
+    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
+      startOfMonth(new Date())
+    ),
+    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
+      endOfMonth(new Date())
+    ),
+  } = query
+
+  let dateFrom = startOfMonthUTC(minDateStr)
+  const dateTo = endOfMonthUTC(maxDateStr)
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+
+  const assayIds = await allAssayToId()
+  const resultCategoryIds = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
+  )
+
+  const data = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+      result: 'r',
+    })
+    .modify(sortPageParams, query, 'r.endedOn')
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    // .whereIn('r.resultCategory1', positiveResultCategories)
+    // .whereIn('r.resultCategory2', positiveResultCategories)
+    .select(
+      knex.raw(
+        `COALESCE(
+          r.patientData ->> '$.PatientName',
+          r.patientData ->> '$.name'
+        ) as patientName`
+      ),
+      knex.raw(
+        `COALESCE(
+          r.patientData ->> '$.PatientAge',
+          r.patientData ->> '$.age'
+        ) as patientAge`
+      ),
+      knex.raw(
+        `
+        CASE 
+          COALESCE(
+            r.patientData ->> '$.PatientGender',
+            r.patientData ->> '$.gender'
+          )
+        WHEN 'Male' THEN 'M'
+        WHEN 'Female' THEN 'F'
+        ELSE '-'
+        END as gender
+        `
+      ),
+      knex.raw(
+        `CONCAT(
+          IFNULL(r.patientData ->> '$.address', ''),
+          ' ',
+          IFNULL(
+            COALESCE(
+              r.patientData ->> '$.PatientStreet',
+              r.patientData ->> '$.street'
+            ),
+            ''
+          ),
+          ' ',
+          IFNULL(
+            COALESCE(
+              r.patientData ->> '$.PatientPhone',
+              r.patientData ->> '$.phone'
+            ),
+            ''
+          )
+        ) as patientAddressAndCell`
+      ),
+      knex.raw(
+        `CONCAT(
+          IFNULL(r.patientData ->> '$.TBRegistrationNumberCurrent', ''),
+          ' ',
+          IFNULL(r.patientData ->> '$.TBRegistrationNumberPrevious', '')
+        ) as tbRegistrationNumber`
+      ),
+
+      // **Result of Xpert MTB/RIF: T = MTB detected, Rif resistance not detected, RR = MTB detected, Rif resistance detected, TI =  MTB detected, Rif resistance indeterminate, N  = MTB not detected, I = invalid/ no result/ error
+      knex.raw(`
+          CASE
+          WHEN r.resultCategory1 IN (${positiveResultCategories})
+                AND 
+                r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
+          WHEN r.resultCategory1 IN (${positiveResultCategories})
+                AND 
+                r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
+          WHEN r.resultCategory1 IN (${positiveResultCategories}) 
+                AND 
+                r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
+          WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
+          WHEN r.resultCategory1 IN (
+                  ${resultCategoryIds.Invalid},
+                  ${resultCategoryIds.Error},
+                  ${resultCategoryIds.NoResult}
+                ) THEN 'I'
+          ELSE '-'
+          END as resultMtbRif
+      `)
+    )
+
+  logger.debug(`Total records: ${data.length}`, RELABEL_EXCEL)
+
+  return {
+    ok: true,
+    total: data.length,
+    data: {
+      total: data.length,
+      rows: data,
+    },
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
+  getDataForReportDrTb10B,
 }

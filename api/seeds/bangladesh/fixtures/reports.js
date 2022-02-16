@@ -1,11 +1,11 @@
-const resultsDrTb10A = {
-  name: 'Monthly report on Xpert MTB/RIF',
+const resultsDrTb10A10BCovid = {
+  name: 'Monthly report on Xpert MTB/RIF and Covid',
   description:
-    'DR-TB 10A reporting format for the Monthly report on Xpert MTB/RIF Results',
-  i18nKey: 'reportDrTb10a',
-  externalId: 'results_dr_tb_10a', // folder name in /templates
-  i18nKeyDescription: 'reportDrTb10aDescription',
-  fileName: 'ReportDrTb10a',
+    'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results',
+  i18nKey: 'reportDrTb10a10bCovid',
+  externalId: 'results_10a_10b_covid', // folder name in /templates
+  i18nKeyDescription: 'reportDrTb10a10bCovidDescription',
+  fileName: 'ReportDrTb10a10bCovid',
   sortOrder: 11,
   sheets: [
     {
@@ -13,9 +13,14 @@ const resultsDrTb10A = {
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportDrTb10A',
     },
+    {
+      sortOrder: 1,
+      moduleName: 'result/serviceReportBangladesh',
+      functionName: 'getDataForReportDrTb10B',
+    },
   ],
 }
 
 module.exports = {
-  resultsDrTb10A,
+  resultsDrTb10A10BCovid,
 }
