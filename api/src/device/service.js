@@ -137,7 +137,7 @@ async function getListDevices(query, auth) {
         .andOn('frd30Errors.days', 30)
         .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
     })
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -560,7 +560,8 @@ async function listDevicesForSelectList(request) {
 
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -687,7 +688,8 @@ async function getDevicePerformance(request) {
     .groupBy('monthTested')
 
   const [deviceCountry] = await knex('Device as d')
-    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('d.id', deviceId)
@@ -984,9 +986,9 @@ function getDeviceByIdBaseQuery(
   showDecommissionedDevices = false
 ) {
   const query = knex('Device as d')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
       geography: 'g',
