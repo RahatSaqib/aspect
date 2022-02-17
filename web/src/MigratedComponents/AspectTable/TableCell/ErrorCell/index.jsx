@@ -61,7 +61,10 @@ const ErrorCell = ({
           <NotificationDetailModal
             {...modalConfiguration}
             onClose={() => {
-              setModalConfiguration({})
+              setModalConfiguration({
+                ...modalConfiguration,
+                showDialog: false,
+              })
             }}
           />
           <Button
