@@ -3469,7 +3469,7 @@ msgstr "GeneXpert MTB / Rif Ultra"
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
 msgid "GeneXpert MTB/XDR"
-msgstr "GeneXpert MTB / Rif"
+msgstr "GeneXpert MTB / XDR"
 
 #. [consumable.gxMtbXdrCartridge]
 #. defaultMessage is:
