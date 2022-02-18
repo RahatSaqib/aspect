@@ -1826,7 +1826,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   const updateValues = {}
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     updateValues.expiresOn = inventoryItemValues.expiresOn
-      ? inventoryItemValues.expiresOn
+      ? parseDateOrDefault(inventoryItemValues.expiresOn)
       : null
   }
   if (typeof inventoryItemValues.lotNumber !== 'undefined') {
@@ -1838,13 +1838,12 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
     updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
   }
-  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
-    updateValues.updatedOn = inventoryItemValues.updatedOn
-  }
+  updateValues.updatedOn = new Date()
   if (typeof inventoryItemValues.updatedBy !== 'undefined') {
     updateValues.updatedBy = inventoryItemValues.updatedBy
   }
-  await knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
+
+  return knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
 }
 
 async function insertInventoryItem(knex, inventoryItemValues) {
