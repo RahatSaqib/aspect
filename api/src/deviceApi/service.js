@@ -1234,6 +1234,10 @@ async function getHealthState(context) {
   return result
 }
 
+const getResultPakistanHandler = deviceApiHandler(res => res.query, {
+  deviceLogType: DEVICE_LOG_TYPE_RESULT,
+})
+
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -1248,4 +1252,5 @@ module.exports = {
   onResultLogged,
   getHealthStatsHandler,
   getCustomFields,
+  getResultPakistanHandler,
 }

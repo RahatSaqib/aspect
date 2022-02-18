@@ -17,6 +17,7 @@ const {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
+  getResultPakistanHandler,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -742,7 +743,31 @@ const routes = [
       },
     },
   },
+  {
+    method: 'GET',
+    path: '/result/pakistan',
+    // handler: getResultPakistanHandler,
+    handler: getResultPakistanHandler,
+    config: {
+      description: 'TODO',
+      notes: 'TODO',
+      // auth: { scope: ['result:view'] },
+      validate: {
+        query: {
+          dateFrom: Joi.date().required().description('Date from (included)'),
+          dateTo: Joi.date().required().description('Date to (included)'),
+          state: Joi.array().description(
+            'String array of states codes (Assumes whole country if it not present)'
+          ),
+        },
+      },
+    },
+  },
 ]
+
+// function getResultsForPaquistan() {
+//   return 'tpth'
+// }
 
 const subscriptions = [
   {
