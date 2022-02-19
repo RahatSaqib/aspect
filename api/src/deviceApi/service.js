@@ -1234,9 +1234,92 @@ async function getHealthState(context) {
   return result
 }
 
-const getResultPakistanHandler = deviceApiHandler(res => res.query, {
-  deviceLogType: DEVICE_LOG_TYPE_RESULT,
-})
+const getResultPakistanHandler = deviceApiHandler(
+  getResultPakistanWithContext,
+  {
+    deviceLogType: DEVICE_LOG_TYPE_RESULT,
+  }
+)
+
+async function getResultPakistanWithContext(context) {
+  const { knex, now, device, deviceLog, deviceLogType } = context
+
+  const response = await knex('Assay as a')
+    .join('AssayType as at', 'at.id', 'a.assayTypeId')
+    .join('Result as r', 'r.assayId', 'a.id')
+    .join('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .join('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .join('Disease as d', 'd.id', 'at.diseaseId')
+    .select(
+      'd.name as disease',
+      'd.externalId as diseaseCode',
+      'a.name as assayName',
+      'a.externalId as assayId',
+      'rc1.name as resultCategory1',
+      'rc2.name as resultCategory2'
+    )
+    .whereRaw('r.endedOn >= ?', '2022-01-01')
+    .whereRaw('r.endedOn <= ?', '2022-01-23')
+    .count('r.id as Total')
+    .groupBy('at.diseaseId', 'a.id')
+
+  // .orderBy('Date', 'asc')
+
+  // .first()
+  // 'c.abbreviation as A2',
+  //   'c.a3 as A3',
+  //   'c.name as Country',
+
+  // include fields based on device log type configured in endpoints
+  // const includeAll = deviceLogType === DEVICE_LOG_TYPE_OPTIONAL
+  // const includeDevice = includeAll
+  // const includeSite = includeAll
+
+  // // only include device data if approved
+  // const deviceApproved = device.approval === 'approved'
+  // const includeConfig = deviceApproved && includeAll
+  // const includeOp =
+  //   deviceApproved &&
+  //   (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
+
+  // const response = { requestedOn: now.toISOString() }
+  // if (includeDevice) {
+  //   response.name = device.name
+  //   response.approval = { id: device.approval }
+  // }
+
+  // if (includeSite) {
+  //   const site = await getSite(knex, context.device.id)
+  //   if (site != null) {
+  //     response.site = site
+  //   }
+  // }
+
+  // if (deviceLog != null) {
+  //   response.log = { createdOn: deviceLog.createdOn }
+  //   if (deviceLog.source != null) {
+  //     response.log.source = deviceLog.source
+  //   }
+
+  //   if (includeConfig) {
+  //     const config = await getDeviceConfigurationFromDeviceLog(
+  //       knex,
+  //       deviceLog.id
+  //     )
+  //     if (config != null) {
+  //       response.configuration = config
+  //     }
+  //   }
+
+  //   if (includeOp) {
+  //     const op = await getDeviceOperationWithContext(context)
+  //     if (op != null) {
+  //       response.operation = op
+  //     }
+  //   }
+  // }
+  return response
+}
 
 module.exports = {
   getDeviceDataHandler,

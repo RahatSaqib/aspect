@@ -746,7 +746,6 @@ const routes = [
   {
     method: 'GET',
     path: '/result/pakistan',
-    // handler: getResultPakistanHandler,
     handler: getResultPakistanHandler,
     config: {
       description: 'TODO',
@@ -754,7 +753,6 @@ const routes = [
       // auth: { scope: ['result:view'] },
       validate: {
         query: {
-          dateFrom: Joi.date().required().description('Date from (included)'),
           dateTo: Joi.date().required().description('Date to (included)'),
           state: Joi.array().description(
             'String array of states codes (Assumes whole country if it not present)'
