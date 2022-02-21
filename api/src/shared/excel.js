@@ -579,10 +579,10 @@ async function streamExcelTemplate({
     /**
      * create worksheet with same model as in template
      */
-    const worksheet = workbook.addWorksheet(
-      worksheetTemplate.name,
-      worksheetTemplate.model
-    )
+    const worksheet = workbook.addWorksheet(worksheetTemplate.name, {
+      ...worksheetTemplate.model,
+      useSharedStrings: true,
+    })
 
     /**
      * set width and formatting for columns

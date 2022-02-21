@@ -886,12 +886,15 @@ async function getDataForReportDrTb10A(auth, query) {
   }
 }
 
+/**
+ * getDataForReportDrTb10B
+ */
 async function getDataForReportDrTb10B(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
-  // For performance issues we are going to limit this report to max 50k results.
+  // For performance issues we are going to limit this report to max 10k results.
   query.size = query.maxNumberOfRecords || 10000
 
   const {
@@ -942,8 +945,8 @@ async function getDataForReportDrTb10B(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-    // .whereIn('r.resultCategory1', positiveResultCategories)
-    // .whereIn('r.resultCategory2', positiveResultCategories)
+    .whereIn('r.resultCategory1', positiveResultCategories) // MTB Detected
+    .whereIn('r.resultCategory2', positiveResultCategories) // RIF Detected
     .select(
       knex.raw(
         `COALESCE(
@@ -998,8 +1001,13 @@ async function getDataForReportDrTb10B(auth, query) {
           IFNULL(r.patientData ->> '$.TBRegistrationNumberPrevious', '')
         ) as tbRegistrationNumber`
       ),
-
-      // **Result of Xpert MTB/RIF: T = MTB detected, Rif resistance not detected, RR = MTB detected, Rif resistance detected, TI =  MTB detected, Rif resistance indeterminate, N  = MTB not detected, I = invalid/ no result/ error
+      /**
+       * T = MTB detected, Rif resistance not detected,
+       * RR = MTB detected, Rif resistance detected,
+       * TI = MTB detected, Rif resistance indeterminate,
+       * N  = MTB not detected,
+       * I = invalid/ no result/ error
+       */
       knex.raw(`
           CASE
           WHEN r.resultCategory1 IN (${positiveResultCategories})
@@ -1034,7 +1042,208 @@ async function getDataForReportDrTb10B(auth, query) {
   }
 }
 
+/**
+ * getDataForReportCovid19
+ */
+async function getDataForReportCovid19(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const {
+    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
+      startOfMonth(new Date())
+    ),
+    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
+      endOfMonth(new Date())
+    ),
+  } = query
+
+  let dateFrom = startOfMonthUTC(minDateStr)
+  const dateTo = endOfMonthUTC(maxDateStr)
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+
+  const assayIds = await allAssayToId()
+  const resultCategoryIds = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
+  )
+  const negativeResultCategories = _.values(
+    _.pick(resultCategoryIds, ['NotDetected', 'Negative'])
+  )
+
+  const conditionBase = (typeOfTest, gender, extraCondition) => {
+    let condition = `
+      COALESCE(
+        r.patientData ->> '$.PatientGender',
+        r.patientData ->> '$.gender'
+      ) = '${gender}'
+      and
+      (r.patientData ->> '$.PatientHistory') = '${typeOfTest}'
+    `
+    if (extraCondition) {
+      condition += ` and ${extraCondition} `
+    }
+    return condition
+  }
+
+  const fields = {
+    cntAll: knex.raw('DISTINCT r.id'),
+
+    cnt_Invalid: counter(
+      'r.id',
+      `r.resultCategory1 = ${resultCategoryIds.Invalid}`
+    ),
+    cnt_NoResult: counter(
+      'r.id',
+      `r.resultCategory1 = ${resultCategoryIds.NoResult}`
+    ),
+    cnt_Error: counter(
+      'r.id',
+      `r.resultCategory1 = ${resultCategoryIds.Error}`
+    ),
+    /**
+     * column C - Type of Test : New, Male
+     */
+    cnt_new_male_all: counter('r.id', conditionBase('new', 'Male')),
+    cnt_new_male_positive: counter(
+      'r.id',
+      conditionBase(
+        'new',
+        'Male',
+        `r.resultCategory1 IN (${positiveResultCategories})`
+      )
+    ),
+    cnt_new_male_negative: counter(
+      'r.id',
+      conditionBase(
+        'new',
+        'Male',
+        `r.resultCategory1 IN (${negativeResultCategories})`
+      )
+    ),
+    /**
+     * column D - Type of Test : New, Female
+     */
+    cnt_new_female_all: counter('r.id', conditionBase('new', 'Female')),
+    cnt_new_female_positive: counter(
+      'r.id',
+      conditionBase(
+        'new',
+        'Female',
+        `r.resultCategory1 IN (${positiveResultCategories})`
+      )
+    ),
+    cnt_new_female_negative: counter(
+      'r.id',
+      conditionBase(
+        'new',
+        'Female',
+        `r.resultCategory1 IN (${negativeResultCategories})`
+      )
+    ),
+    /**
+     * column F - Type of Test : Follow up, Female
+     */
+    cnt_treated_male_all: counter('r.id', conditionBase('treated', 'Male')),
+    cnt_treated_male_positive: counter(
+      'r.id',
+      conditionBase(
+        'treated',
+        'Male',
+        `r.resultCategory1 IN (${positiveResultCategories})`
+      )
+    ),
+    cnt_treated_male_negative: counter(
+      'r.id',
+      conditionBase(
+        'treated',
+        'Male',
+        `r.resultCategory1 IN (${negativeResultCategories})`
+      )
+    ),
+    /**
+     * column H - Type of Test : Follow up, Male
+     */
+    cnt_treated_female_all: counter('r.id', conditionBase('treated', 'Female')),
+    cnt_treated_female_positive: counter(
+      'r.id',
+      conditionBase(
+        'treated',
+        'Female',
+        `r.resultCategory1 IN (${positiveResultCategories})`
+      )
+    ),
+    cnt_treated_female_negative: counter(
+      'r.id',
+      conditionBase(
+        'treated',
+        'Female',
+        `r.resultCategory1 IN (${negativeResultCategories})`
+      )
+    ),
+  }
+  const fieldsAllZero = _.mapValues(fields, () => 0)
+
+  let data = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('ResultCategoryAssay as rca1', function () {
+      this.on('r.assayId', 'rca1.assayId').andOn(
+        'r.resultCategory1',
+        'rca1.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rca2', function () {
+      this.on('r.assayId', 'rca2.assayId').andOn(
+        'r.resultCategory2',
+        'rca2.resultCategoryId'
+      )
+    })
+    .whereIn('a.id', [assayIds.assayGXCovid19])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+      result: 'r',
+    })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .select(
+      knex.raw(`
+        DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
+      `)
+    )
+    .groupBy('yearAndMonth')
+    .count(fields)
+
+  const yymm = formatDateOrDefault(dateFrom, 'yyyy-MM-01') // same format as field `yearAndMonth` in query
+
+  /**
+   * set `data` to single object with all counters prepared
+   */
+  data = data[yymm] || fieldsAllZero
+
+  return {
+    ok: true,
+    data,
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
   getDataForReportDrTb10B,
+  getDataForReportCovid19,
 }

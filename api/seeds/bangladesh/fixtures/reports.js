@@ -18,6 +18,11 @@ const resultsDrTb10A10BCovid = {
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportDrTb10B',
     },
+    {
+      sortOrder: 2,
+      moduleName: 'result/serviceReportBangladesh',
+      functionName: 'getDataForReportCovid19',
+    },
   ],
 }
 

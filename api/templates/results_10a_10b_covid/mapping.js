@@ -164,4 +164,30 @@ module.exports = [
   {
     F9: 'total',
   },
+  /**
+   * ********************************************************
+   * 3rd sheet 'Covid 19'
+   * ********************************************************
+   */
+  {
+    L14: 'cnt_Invalid',
+    M14: 'cnt_NoResult',
+    N14: 'cnt_Error',
+
+    C20: 'cnt_new_male_all',
+    C23: 'cnt_new_male_positive',
+    C26: 'cnt_new_male_negative',
+
+    D20: 'cnt_new_female_all',
+    D23: 'cnt_new_female_positive',
+    D26: 'cnt_new_female_negative',
+
+    F20: 'cnt_treated_male_all',
+    F23: 'cnt_treated_male_positive',
+    F26: 'cnt_treated_male_negative',
+
+    H20: 'cnt_treated_female_all',
+    H23: 'cnt_treated_female_positive',
+    H26: 'cnt_treated_female_negative',
+  },
 ]
