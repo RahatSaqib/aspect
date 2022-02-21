@@ -143,25 +143,25 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
 
 async function getAllSheetsData(request, sheets) {
   let boomError
-  const data = []
+  const dataSet = []
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
     if (!sheet || boomError) return
 
     // get data for this sheet
     const {
-      data: dataRows,
+      data,
       dynamicColumns,
       total = null,
       dataSelector = null,
     } = await getSheetData(request, sheet)
-    if (Boom.isBoom(dataRows)) {
-      boomError = dataRows
+    if (Boom.isBoom(data)) {
+      boomError = data
       return
     }
 
-    data[sheetIndex] = {
-      dataRows,
+    dataSet[sheetIndex] = {
+      data,
       dynamicColumns,
       dataSelector,
       total,
@@ -173,7 +173,7 @@ async function getAllSheetsData(request, sheets) {
   if (boomError) {
     return boomError
   }
-  return data
+  return dataSet
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -181,7 +181,9 @@ async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture, email, cell, userName } = await getUser(
+    auth.credentials.name
+  )
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format || 'xlsx'
@@ -203,6 +205,22 @@ async function createReport(request, reply) {
     {
       placeholder: '<Lgas>',
       value: await getLgaNamesString(query),
+    },
+    {
+      placeholder: '<Sites>',
+      value: query.siteName ?? '',
+    },
+    {
+      placeholder: '<UserEmail>',
+      value: email,
+    },
+    {
+      placeholder: '<UserMobilePhone>',
+      value: cell,
+    },
+    {
+      placeholder: '<UserFullName>',
+      value: userName,
     },
     ...getMaxLimitPlaceHolders(),
   ]
@@ -279,7 +297,7 @@ async function createReport(request, reply) {
 async function exportReports(request, reply) {
   const { data } = await listReports(request)
   const sheetData = {
-    dataRows: data,
+    data,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }

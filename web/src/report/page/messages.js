@@ -102,5 +102,22 @@ const messages = defineMessages({
     defaultMessage:
       'This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)',
   },
+  xpertTestActivitiesReport: {
+    id: 'pages.ReportIndex."xpertTestActivitiesReport"',
+    defaultMessage: 'Xpert Test Activities Report',
+  },
+  xpertTestActivitiesReport_description: {
+    id: 'pages.ReportIndex.xpertTestActivitiesReport_description',
+    defaultMessage:
+      'This report shows the number of GeneXpert MTB tests performed categorized by result',
+  },
+  listRResistantTestReport: {
+    id: 'pages.ReportIndex.listRResistantTestReport',
+    defaultMessage: 'List-R Resistant Test Report',
+  },
+  listRResistantTestReport_description: {
+    id: 'pages.ReportIndex.listRResistantTestReport_description',
+    defaultMessage: 'This report shows the list of resistant tests',
+  },
 })
 export default messages

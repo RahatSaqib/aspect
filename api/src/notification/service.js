@@ -767,7 +767,7 @@ async function getNotifications(request) {
     .select([
       'n.createdOn as date',
       'n.issueId',
-      'r.sampleId',
+      's.externalId as sampleId',
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
@@ -793,58 +793,59 @@ async function getNotifications(request) {
         END as groupingParam
       `),
     ])
+    .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .count({
       webhookSent: knex.raw(`
         DISTINCT
-        CASE WHEN mswm.externalId = "Sent" 
+        CASE WHEN mswm.externalId = "Sent"
         THEN n.id
         ELSE null END
       `),
       webhookWithErrors: knex.raw(`
       DISTINCT
-      CASE WHEN mswm.externalId = "Error" 
+      CASE WHEN mswm.externalId = "Error"
       THEN n.id
       ELSE null END
     `),
       webhookPending: knex.raw(`
     DISTINCT
-    CASE WHEN mswm.externalId = "Pending" 
+    CASE WHEN mswm.externalId = "Pending"
     THEN n.id
     ELSE null END
   `),
       smsSent: knex.raw(`
         DISTINCT
-        CASE WHEN mssms.externalId = "Sent" 
+        CASE WHEN mssms.externalId = "Sent"
         THEN n.id
         ELSE null END
       `),
       smsWithErrors: knex.raw(`
       DISTINCT
-      CASE WHEN mssms.externalId = "Error" 
+      CASE WHEN mssms.externalId = "Error"
       THEN n.id
       ELSE null END
     `),
       smsPending: knex.raw(`
     DISTINCT
-    CASE WHEN mssms.externalId = "Pending" 
+    CASE WHEN mssms.externalId = "Pending"
     THEN n.id
     ELSE null END
   `),
       emailSent: knex.raw(`
         DISTINCT
-        CASE WHEN msem.externalId = "Sent" 
+        CASE WHEN msem.externalId = "Sent"
         THEN n.id
         ELSE null END
       `),
       emailWithErrors: knex.raw(`
       DISTINCT
-      CASE WHEN msem.externalId = "Error" 
+      CASE WHEN msem.externalId = "Error"
       THEN n.id
       ELSE null END
     `),
       emailPending: knex.raw(`
     DISTINCT
-    CASE WHEN msem.externalId = "Pending" 
+    CASE WHEN msem.externalId = "Pending"
     THEN n.id
     ELSE null END
   `),
