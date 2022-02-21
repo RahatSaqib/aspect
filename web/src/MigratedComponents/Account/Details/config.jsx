@@ -125,7 +125,7 @@ const itemsConfig = user => {
         label: formatMessage(messages.partner),
         type: 'select',
         component: PartnerSelect,
-        validation: string().nullable(),
+        validation: string().required('Required'),
       },
     ],
     row6: [
