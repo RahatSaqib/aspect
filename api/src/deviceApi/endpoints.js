@@ -17,8 +17,9 @@ const {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
-  getResultPakistanHandler,
 } = require('./service')
+
+const { getResultPakistanHandler } = require('./pakistan/pakistanTbService')
 
 const errorPayload = Joi.object()
   .allow(null)
@@ -748,8 +749,9 @@ const routes = [
     path: '/result/pakistan',
     handler: getResultPakistanHandler,
     config: {
-      description: 'TODO',
-      notes: 'TODO',
+      description: 'Get Tb Stats',
+      notes:
+        'Returns stats for total TB tests, TB cases and DRTB cases. Accepts last 24hs or from 2022-01-01 start and a especific state or whole country.',
       // auth: { scope: ['result:view'] },
       validate: {
         query: {
