@@ -1,9 +1,11 @@
-
 const service = require('../service')
 
 const FIXED_DATE_FROM = '2022-01-01'
 
 const RESULT_CATEGORY_DETECTED_ID = 1
+const TB_TESTS = 'TB Tests'
+const TB_CASES = 'TB Cases'
+const DRTB_CASES = 'DRTB Cases'
 
 const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
   deviceLogType: service.DEVICE_LOG_TYPE_RESULT,
@@ -46,7 +48,7 @@ async function getTbResultsStats(context) {
     ...tbCasesQueriesByState24,
     ...drTbCasesQueriesByState24,
   ]
-  
+
   const result = await Promise.all(promises)
 
   return { lastUpdated: now, result: result.flat() }
@@ -57,7 +59,9 @@ function getCountryStats(knex) {
     getCountryStatsQueries(knex)
 
   tbTestsQuery.modify(filterFromFixedDateFrom)
+
   tbCasesQuery.modify(filterFromFixedDateFrom)
+
   drTbCasesQuery.modify(filterFromFixedDateFrom)
 
   const {
@@ -81,8 +85,8 @@ function getCountryStats(knex) {
 }
 
 async function getStatesStats(knex) {
-  let states = await getStates(knex)
-  states = [{ id: 43 }, { id: 26 }] // TODO: Remove this
+  let  states = await getStates(knex)
+   states = [{ id: 43 }, { id: 26 }] // TODO: Remove this
 
   const tbQueriesByState = states.map(state =>
     getTbTestsQuery(knex)
@@ -169,22 +173,26 @@ async function getStates(knex) {
 }
 
 function getTbTestsQuery(knex) {
-  return buildBaseResultClause(knex).modify(applyProyection)
+  return buildBaseResultClause(knex)
+    .modify(applyProjection)
+    .modify(qb => qb.select(knex.raw(`'${TB_TESTS}' as "resultType"`)))
 }
 
 function getTbCasesQuery(knex) {
   return buildBaseResultClause(knex)
+    .modify(qb => qb.select(knex.raw(`'${TB_CASES}' as "resultType"`)))
     .modify(addResultCategories)
     .where('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
-    .modify(applyProyection)
+    .modify(applyProjection)
 }
 
 function getDrTbCasesQuery(knex) {
   return buildBaseResultClause(knex)
+    .modify(qb => qb.select(knex.raw(`'${DRTB_CASES}' as "resultType"`)))
     .modify(addResultCategories)
     .where('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
     .where('r.resultCategory2', RESULT_CATEGORY_DETECTED_ID)
-    .modify(applyProyection)
+    .modify(applyProjection)
 }
 
 function filterLast24Hs(queryBuilder) {
@@ -199,31 +207,33 @@ function filterFromFixedDateFrom(queryBuilder) {
   return queryBuilder
 }
 
-function applyProyection(queryBuilder) {
+function applyProjection(queryBuilder) {
   return queryBuilder
-    .select(
-      'd.name as disease',
-      'd.externalId as diseaseCode',
-      'a.name as assayName',
-      'a.externalId as assayId'
-    )
+    .select
+    // 'd.name as disease',
+    // 'd.externalId as diseaseCode'
+    // 'a.name as assayName',
+    // 'a.externalId as assayId'
+    ()
     .count('r.id as total')
 }
 
 function buildBaseResultClause(knex) {
-  return knex('Assay as a')
-    .join('AssayType as at', 'at.id', 'a.assayTypeId')
-    .leftJoin('Result as r', 'r.assayId', 'a.id')
-    .join('Disease as d', 'd.id', 'at.diseaseId')
-    .where('d.externalId', 'tb')
-    .groupBy('at.diseaseId', 'a.id')
+  return (
+    knex('Assay as a')
+      // .join('AssayType as at', 'at.id', 'a.assayTypeId')
+      // .join('Disease as d', 'd.id', 'at.diseaseId')
+      .leftJoin('Result as r', 'r.assayId', 'a.id')
+      // .where('d.externalId', 'tb')
+  )
+  // .groupBy('at.diseaseId', 'a.id')
 }
 
 function includeState(queryBuilder) {
   queryBuilder
     .join('Geography as g', 'g.id', 'r.geographyId')
     // .join('Country as c', 'c.id', 'g.countryId')
-    .join('State as s', 's.id', 'g.stateId')
+    .leftJoin('State as s', 's.id', 'g.stateId')
     // .where('c.abbreviation', 'PK')
     .select('s.abbreviation as stateCode', 's.name as state')
     .groupBy('s.id')
@@ -232,8 +242,8 @@ function includeState(queryBuilder) {
 
 function addResultCategories(queryBuilder) {
   queryBuilder
-    .join('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .join('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
   return queryBuilder
 }
 
