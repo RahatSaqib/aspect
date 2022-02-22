@@ -894,7 +894,7 @@ async function getDataForReportDrTb10B(auth, query) {
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
   query.page = 0
-  // For performance issues we are going to limit this report to max 10k results.
+  // for the sake of performance gain - limit to max of 10k results
   query.size = query.maxNumberOfRecords || 10000
 
   const {
@@ -925,6 +925,7 @@ async function getDataForReportDrTb10B(auth, query) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    // scope Mtb and Mtb-Ultra assays
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -934,11 +935,13 @@ async function getDataForReportDrTb10B(auth, query) {
       result: 'r',
     })
     .modify(sortPageParams, query, 'r.endedOn')
+    // apply date range filter
     .modify(
       filterDateRangeParams,
       { minDate: dateFrom, maxDate: dateTo },
       'r.endedOn'
     )
+    // apply remaining filters
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -1086,6 +1089,9 @@ async function getDataForReportCovid19(auth, query) {
     return condition
   }
 
+  /**
+   * define all returned counts
+   */
   const fields = {
     cntAll: knex.raw('DISTINCT r.id'),
 
@@ -1182,6 +1188,9 @@ async function getDataForReportCovid19(auth, query) {
       )
     ),
   }
+  /**
+   * define single entry with all zero's when no data matches filter condition in query
+   */
   const fieldsAllZero = _.mapValues(fields, () => 0)
 
   let data = await knex('Result as r')
@@ -1202,6 +1211,7 @@ async function getDataForReportCovid19(auth, query) {
         'rca2.resultCategoryId'
       )
     })
+    // scope Covid19 assay
     .whereIn('a.id', [assayIds.assayGXCovid19])
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -1210,17 +1220,20 @@ async function getDataForReportCovid19(auth, query) {
       assay: 'a',
       result: 'r',
     })
+    // apply date range filter
     .modify(
       filterDateRangeParams,
       { minDate: dateFrom, maxDate: dateTo },
       'r.endedOn'
     )
+    // apply remaining filters
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+    // define field for grouping by it
     .select(
       knex.raw(`
         DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
