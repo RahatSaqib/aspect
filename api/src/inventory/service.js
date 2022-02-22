@@ -1862,7 +1862,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   }
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     insertValues.expiresOn = inventoryItemValues.expiresOn
-      ? inventoryItemValues.expiresOn
+      ? parseDateOrDefault(inventoryItemValues.expiresOn)
       : null
   }
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {

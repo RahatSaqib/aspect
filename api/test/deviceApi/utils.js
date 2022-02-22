@@ -389,7 +389,7 @@ class DeviceApiTestContext {
     this.sampleType = sampleType
     this.assayName = assayName
     this.now = new Date()
-
+    this.partnerId = null
     this.siteIds = []
     this.deviceIds = []
     this.apiKeysWithoutDevice = []
@@ -578,7 +578,7 @@ class DeviceApiTestContext {
     const { id: partnerId } = await knex('Partner')
       .where({ name: this.partner })
       .first('id')
-
+    this.partnerId = partnerId
     const { userId } = await knex('User')
       .where({ name: this.user })
       .first('id as userId')
