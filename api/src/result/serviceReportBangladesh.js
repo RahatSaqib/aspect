@@ -807,7 +807,7 @@ async function getDataForReportDrTb10A(auth, query) {
        * TODO: change below value and count modules that haven’t sent results
        * for several days in the given time frame (>5)
        */
-      cntModulesActive: knex.raw(`DISTINCT 
+      cntModulesActive: knex.raw(`DISTINCT
         CONCAT(r.deviceId, '-',  r.moduleName)
       `),
     })
@@ -965,7 +965,7 @@ async function getDataForReportDrTb10B(auth, query) {
       ),
       knex.raw(
         `
-        CASE 
+        CASE
           COALESCE(
             r.patientData ->> '$.PatientGender',
             r.patientData ->> '$.gender'
@@ -1014,13 +1014,13 @@ async function getDataForReportDrTb10B(auth, query) {
       knex.raw(`
           CASE
           WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND 
+                AND
                 r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
           WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND 
+                AND
                 r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
-          WHEN r.resultCategory1 IN (${positiveResultCategories}) 
-                AND 
+          WHEN r.resultCategory1 IN (${positiveResultCategories})
+                AND
                 r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
           WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
           WHEN r.resultCategory1 IN (
@@ -1247,7 +1247,10 @@ async function getDataForReportCovid19(auth, query) {
   /**
    * set `data` to single object with all counters prepared
    */
-  data = data[yymm] || fieldsAllZero
+  data =
+    {
+      ...data?.find(d => d.yearAndMonth === yymm),
+    } || fieldsAllZero
 
   return {
     ok: true,
