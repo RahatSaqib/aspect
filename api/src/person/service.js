@@ -87,6 +87,8 @@ async function listPeople(request) {
     .select(
       'p.id',
       'p.name',
+      'p.disabled',
+      'p.disabledAt',
       getJobFunctionNames,
       'st.name as state',
       'l.name as lga',
@@ -548,6 +550,27 @@ async function updateRefreshToken(request) {
     },
   }
 }
+
+async function disablePerson(request) {
+  const {
+    params: { personId },
+  } = request
+  const person = await knex('Person')
+    .where('id', personId)
+    .update({ disabled: true, disabledAt: new Date() })
+  return { ok: true, data: person }
+}
+
+async function enablePerson(request) {
+  const {
+    params: { personId },
+  } = request
+  const person = await knex('Person')
+    .where('id', personId)
+    .update({ disabled: false, disabledAt: null })
+  return { ok: true, data: person }
+}
+
 module.exports = {
   listPeople,
   listRefreshTokens,
@@ -559,4 +582,6 @@ module.exports = {
   createPerson,
   updatePersonUserPreferences,
   updateRefreshToken,
+  disablePerson,
+  enablePerson,
 }

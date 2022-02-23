@@ -18,6 +18,8 @@ const {
   updateRefreshToken,
   assignContact,
   unAssignContact,
+  disablePerson,
+  enablePerson,
 } = require('./service')
 
 const { exportContacts } = require('./serviceReports')
@@ -349,6 +351,36 @@ const routes = [
         payload: {
           timezone: Joi.string().max(255).allow('', null),
           culture: Joi.string().max(45).allow('', null),
+        },
+      },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/person/{personId}',
+    handler: asyncHandler(disablePerson),
+    config: {
+      description: 'Soft Delete Person',
+      notes: 'Id of a person to disable',
+      auth: { scope: ['person:edit'] },
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/enable/{personId}',
+    handler: asyncHandler(enablePerson),
+    config: {
+      description: 'Enable Person',
+      notes: 'Id of a person to enable',
+      auth: { scope: ['person:edit'] },
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required(),
         },
       },
     },
