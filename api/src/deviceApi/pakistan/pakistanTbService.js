@@ -1,249 +1,130 @@
 const service = require('../service')
 
-const FIXED_DATE_FROM = '2022-01-01'
-
 const RESULT_CATEGORY_DETECTED_ID = 1
 const TB_TESTS = 'TB Tests'
 const TB_CASES = 'TB Cases'
 const DRTB_CASES = 'DRTB Cases'
+
+let knex
+let from
+let to
+let states
 
 const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
   deviceLogType: service.DEVICE_LOG_TYPE_RESULT,
 })
 
 async function getTbResultsStats(context) {
-  // const { knex, now, device, deviceLog, deviceLogType } = context
+  const { now, query } = context
 
-  const { knex, now } = context
+  ;({ knex } = context)
+  ;({ from, to, states } = query)
 
-  const {
-    tbTestsQuery,
-    tbCasesQuery,
-    drTbCasesQuery,
-    tbTestsQuery24,
-    tbCasesQuery24,
-    drTbCasesQuery24,
-  } = getCountryStats(knex)
+  const queries = await getStatsQueries()
 
-  const {
-    tbQueriesByState,
-    tbCasesQueriesByState,
-    drTbCasesQueriesByState,
-    tbQueriesByState24,
-    tbCasesQueriesByState24,
-    drTbCasesQueriesByState24,
-  } = await getStatesStats(knex)
+  const result = await Promise.all(queries)
 
-  const promises = [
-    tbTestsQuery,
-    tbCasesQuery,
-    drTbCasesQuery,
-    tbTestsQuery24,
-    tbCasesQuery24,
-    drTbCasesQuery24,
-    ...tbQueriesByState,
-    ...tbCasesQueriesByState,
-    ...drTbCasesQueriesByState,
-    ...tbQueriesByState24,
-    ...tbCasesQueriesByState24,
-    ...drTbCasesQueriesByState24,
-  ]
-
-  const result = await Promise.all(promises)
-
-  return { lastUpdated: now, result: result.flat() }
+  return { from, to, states, result: result.flat() }
 }
 
-function getCountryStats(knex) {
-  const { tbTestsQuery, tbCasesQuery, drTbCasesQuery } =
-    getCountryStatsQueries(knex)
+async function getStatsQueries() {
+  let queries = []
 
-  tbTestsQuery.modify(filterFromFixedDateFrom)
-
-  tbCasesQuery.modify(filterFromFixedDateFrom)
-
-  drTbCasesQuery.modify(filterFromFixedDateFrom)
-
-  const {
-    tbTestsQuery: tbTestsQuery24,
-    tbCasesQuery: tbCasesQuery24,
-    drTbCasesQuery: drTbCasesQuery24,
-  } = getCountryStatsQueries(knex)
-
-  tbTestsQuery24.modify(filterLast24Hs)
-  tbCasesQuery24.modify(filterLast24Hs)
-  drTbCasesQuery24.modify(filterLast24Hs)
-
-  return {
-    tbTestsQuery,
-    tbCasesQuery,
-    drTbCasesQuery,
-    tbTestsQuery24,
-    tbCasesQuery24,
-    drTbCasesQuery24,
+  if (!states) {
+    getCountryStats()
+  } else {
+    await getStatesStats()
   }
-}
 
-async function getStatesStats(knex) {
-  let  states = await getStates(knex)
-   states = [{ id: 43 }, { id: 26 }] // TODO: Remove this
+  return queries
 
-  const tbQueriesByState = states.map(state =>
-    getTbTestsQuery(knex)
-      .modify(includeState)
-      .modify(qb => qb.where('s.id', state.id))
-      .modify(filterFromFixedDateFrom)
-  )
-
-  const tbCasesQueriesByState = states.map(state =>
-    getTbCasesQuery(knex)
-      .modify(includeState)
-      .modify(qb => qb.where('s.id', state.id))
-      .modify(filterFromFixedDateFrom)
-  )
-
-  const drTbCasesQueriesByState = states.map(state =>
-    getDrTbCasesQuery(knex)
-      .modify(includeState)
-      .modify(qb => qb.where('s.id', state.id))
-      .modify(filterFromFixedDateFrom)
-  )
-
-  const tbQueriesByState24 = states.map(state =>
-    getTbTestsQuery(knex)
-      .modify(includeState)
-      .modify(qb => qb.where('s.id', state.id))
-      .modify(filterLast24Hs)
-  )
-
-  const tbCasesQueriesByState24 = states.map(state =>
-    getTbCasesQuery(knex)
-      .modify(includeState)
-      .modify(qb => qb.where('s.id', state.id))
-      .modify(filterLast24Hs)
-  )
-
-  const drTbCasesQueriesByState24 = states.map(state =>
-    getDrTbCasesQuery(knex)
-      .modify(includeState)
-      .modify(qb => qb.where('s.id', state.id))
-      .modify(filterLast24Hs)
-  )
-
-  return {
-    tbQueriesByState,
-    tbCasesQueriesByState,
-    drTbCasesQueriesByState,
-    tbQueriesByState24,
-    tbCasesQueriesByState24,
-    drTbCasesQueriesByState24,
+  function getCountryStats() {
+    const tbTestsQuery = buildStatsQueryByCountry().modify(qb =>
+      qb.select(knex.raw(`'${TB_TESTS}' as "resultType"`))
+    )
+    const tbCasesQuery = buildStatsQueryByCountry().modify(qb =>
+      qb.select(knex.raw(`'${TB_CASES}' as "resultType"`))
+    )
+    const drTbCasesQuery = buildStatsQueryByCountry().modify(qb =>
+      qb.select(knex.raw(`'${DRTB_CASES}' as "resultType"`))
+    )
+    queries.push(tbTestsQuery, tbCasesQuery, drTbCasesQuery)
   }
-}
 
-function getCountryStatsQueries(knex) {
-  const tbTestsQuery = getTbTestsQuery(knex).modify(qb =>
-    addCoutryAsStateToProjection(qb)
-  )
-
-  const tbCasesQuery = getTbCasesQuery(knex).modify(qb =>
-    addCoutryAsStateToProjection(qb)
-  )
-
-  const drTbCasesQuery = getDrTbCasesQuery(knex).modify(qb =>
-    addCoutryAsStateToProjection(qb)
-  )
-
-  return { tbTestsQuery, tbCasesQuery, drTbCasesQuery }
-
-  function addCoutryAsStateToProjection(qb) {
-    return qb.select(
-      // knex.raw('? as ??', ['', 'stateCode'])
-      knex.raw(`"" as "stateCode"`),
-      knex.raw(`"whole country" as "state"`)
+  async function getStatesStats() {
+    const statesIds = await knex('State as s')
+      .whereIn('abbreviation', states)
+      .select('id as id')
+    queries = queries.concat(
+      ...statesIds.map(state =>
+        buildStatsQueryByState(state.id, false, false).modify(qb =>
+          qb.select(knex.raw(`'${TB_TESTS}' as "resultType"`))
+        )
+      )
+    )
+    queries = queries.concat(
+      ...statesIds.map(state =>
+        buildStatsQueryByState(state.id, true, false).modify(qb =>
+          qb.select(knex.raw(`'${TB_CASES}' as "resultType"`))
+        )
+      )
+    )
+    queries = queries.concat(
+      ...statesIds.map(state =>
+        buildStatsQueryByState(state.id, true, true).modify(qb =>
+          qb.select(knex.raw(`'${DRTB_CASES}' as "resultType"`))
+        )
+      )
     )
   }
 }
 
-async function getStates(knex) {
-  return knex('State as s')
-    .join('Geography as g', 'g.stateId', 's.id')
-    .join('Country as c', 'c.id', 'g.countryId')
-    .where('c.abbreviation', 'MW')
-    .select('s.id', 's.abbreviation')
-}
-
-function getTbTestsQuery(knex) {
-  return buildBaseResultClause(knex)
-    .modify(applyProjection)
-    .modify(qb => qb.select(knex.raw(`'${TB_TESTS}' as "resultType"`)))
-}
-
-function getTbCasesQuery(knex) {
-  return buildBaseResultClause(knex)
-    .modify(qb => qb.select(knex.raw(`'${TB_CASES}' as "resultType"`)))
-    .modify(addResultCategories)
-    .where('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
-    .modify(applyProjection)
-}
-
-function getDrTbCasesQuery(knex) {
-  return buildBaseResultClause(knex)
-    .modify(qb => qb.select(knex.raw(`'${DRTB_CASES}' as "resultType"`)))
-    .modify(addResultCategories)
-    .where('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
-    .where('r.resultCategory2', RESULT_CATEGORY_DETECTED_ID)
-    .modify(applyProjection)
-}
-
-function filterLast24Hs(queryBuilder) {
-  queryBuilder.whereRaw('r.endedOn >= ?', FIXED_DATE_FROM)
-  queryBuilder.whereRaw('r.endedOn <= ?', '2022-01-23')
-  return queryBuilder
-}
-
-function filterFromFixedDateFrom(queryBuilder) {
-  queryBuilder.whereRaw('r.endedOn >= ?', FIXED_DATE_FROM)
-  queryBuilder.whereRaw('r.endedOn <= ?', '2022-01-23')
-  return queryBuilder
-}
-
-function applyProjection(queryBuilder) {
-  return queryBuilder
-    .select
-    // 'd.name as disease',
-    // 'd.externalId as diseaseCode'
-    // 'a.name as assayName',
-    // 'a.externalId as assayId'
-    ()
+function buildStatsQueryByCountry() {
+  return knex('Assay as a')
+    .join('Result as r', 'r.assayId', 'a.id')
+    .join('AssayType as at', 'at.id', 'a.assayTypeId')
+    .join('Disease as d', 'd.id', 'at.diseaseId')
+    .where('d.externalId', 'tb')
+    .modify(filterByDateTimeRange)
+    .select(
+      knex.raw(`"" as "stateCode"`),
+      knex.raw(`"whole country" as "state"`)
+    )
     .count('r.id as total')
 }
 
-function buildBaseResultClause(knex) {
-  return (
-    knex('Assay as a')
-      // .join('AssayType as at', 'at.id', 'a.assayTypeId')
-      // .join('Disease as d', 'd.id', 'at.diseaseId')
-      .leftJoin('Result as r', 'r.assayId', 'a.id')
-      // .where('d.externalId', 'tb')
-  )
-  // .groupBy('at.diseaseId', 'a.id')
-}
-
-function includeState(queryBuilder) {
-  queryBuilder
-    .join('Geography as g', 'g.id', 'r.geographyId')
-    // .join('Country as c', 'c.id', 'g.countryId')
-    .leftJoin('State as s', 's.id', 'g.stateId')
-    // .where('c.abbreviation', 'PK')
+function buildStatsQueryByState(stateId, onlyCases, onlyDrCases) {
+  const a = knex('State as s')
+    .join('Geography as g', 'g.stateId', 's.id')
+    .join('Country as c', 'c.id', 'g.countryId')
+    .leftJoin('Result as r', function () {
+      this.on('r.geographyId', 'g.id')
+      this.andOn('r.endedOn', '>=', knex.raw('?', from))
+      this.andOn('r.endedOn', '<', knex.raw('?', to))
+      if (onlyCases) {
+        this.andOn('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
+      }
+      if (onlyDrCases) {
+        this.andOn('r.resultCategory2', RESULT_CATEGORY_DETECTED_ID)
+      }
+    })
+    .leftJoin('Assay as a', 'a.id', 'r.assayId')
+    .leftJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .leftJoin('Disease as d', function () {
+      this.on('d.id', 'at.diseaseId')
+      // this.on('d.externalId', knex.raw('tb'))
+    })
+    .where('s.id', knex.raw('?', stateId))
+    // .where('c.abbreviation', 'PK') //TODO: If is ok, move to the country join
     .select('s.abbreviation as stateCode', 's.name as state')
-    .groupBy('s.id')
-  return queryBuilder
+    .count('r.id as total')
+
+  return a
 }
 
-function addResultCategories(queryBuilder) {
-  queryBuilder
-    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+function filterByDateTimeRange(queryBuilder) {
+  queryBuilder.whereRaw('r.endedOn >= ?', from)
+  queryBuilder.whereRaw('r.endedOn < ?', to)
   return queryBuilder
 }
 

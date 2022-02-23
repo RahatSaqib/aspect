@@ -755,10 +755,18 @@ const routes = [
       // auth: { scope: ['result:view'] },
       validate: {
         query: {
-          dateTo: Joi.date().required().description('Date to (included)'),
-          state: Joi.array().description(
-            'String array of states codes (Assumes whole country if it not present)'
-          ),
+          from: Joi.date()
+            .required()
+            .description('DateTime from, with ISO8601 time offset'),
+          to: Joi.date()
+            .required()
+            .description('DateTime to, with ISO8601 time offset'),
+          states: Joi.array()
+            .items(Joi.string())
+            .single()
+            .description(
+              'String array of states codes (Assumes whole country if it not present)'
+            ),
         },
       },
     },
