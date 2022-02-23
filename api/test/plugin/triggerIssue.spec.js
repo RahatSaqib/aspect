@@ -197,8 +197,8 @@ describe('This test suite is for testing different triggers conditions', async (
       {
         result: {
           id: `Error-${errorCode}-result${_.random(1, 10000, false)}`,
-          startedOn: subDays(new Date(), _.random(1, 10, false)),
-          endedOn: subDays(new Date(), _.random(1, 10, false)),
+          startedOn: subDays(new Date(), _.random(1, 6, false)),
+          endedOn: subDays(new Date(), _.random(1, 6, false)),
           assay: { id: 'GxMtbRif' },
           consumable: {
             lot: !excludeLot ? 'Lot 0' : null,

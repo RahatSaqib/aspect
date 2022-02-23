@@ -156,7 +156,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -186,7 +186,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -216,7 +216,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -247,7 +247,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -276,7 +276,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -306,7 +306,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           },
           "suppressingConditions": {
             "evaluationMethod": "plugin-function",
@@ -380,7 +380,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -410,7 +410,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -455,7 +455,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -484,7 +484,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -513,7 +513,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -543,7 +543,7 @@
             "threshold": 0.03,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
