@@ -361,7 +361,7 @@ async function createPerson(request) {
   // if user with specified 'name' exists - return Boom
   const person = await knex('Person').where({ name }).first()
   if (person) {
-    const err = Boom.badRequest('Person with requested name already exists', {
+    const err = Boom.conflict('Person with requested name already exists', {
       errorKeyCode: 'personNameExist',
     })
     err.output.payload.data = err.data
