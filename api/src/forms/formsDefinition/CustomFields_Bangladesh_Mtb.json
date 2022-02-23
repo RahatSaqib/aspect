@@ -81,7 +81,7 @@
       "i18nKeyCaption": "MobileNumberI18nKeyCaption",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1105.value",
-      "payloadDestinationPath": "patient.cell"
+      "payloadDestinationPath": "patient.PatientPhone"
     },
     {
       "id": 1106,
