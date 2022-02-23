@@ -5,20 +5,15 @@ const TB_TESTS = 'TB Tests'
 const TB_CASES = 'TB Cases'
 const DRTB_CASES = 'DRTB Cases'
 
-let knex
-let from
-let to
-let states
-
 const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
   deviceLogType: service.DEVICE_LOG_TYPE_RESULT,
 })
 
 async function getTbResultsStats(context) {
-  ;({ knex } = context)
-  ;({ from, to, states } = context.query)
+  const { knex } = context
+  const { from, to, states } = context.query
 
-  const queries = getStatsQueries()
+  const queries = getStatsQueries({ knex, from, to, states })
 
   const result = await Promise.all(queries)
 
@@ -32,9 +27,9 @@ async function getTbResultsStats(context) {
   }
 }
 
-function getStatsQueries() {
+function getStatsQueries(context) {
   const queries = []
-
+  const { knex, from, to, states } = context
   if (!states) {
     addCountryStats()
   } else {
@@ -44,13 +39,13 @@ function getStatsQueries() {
   return queries
 
   function addCountryStats() {
-    const tbTestsQuery = buildStatsQueryByCountry().modify(qb =>
+    const tbTestsQuery = buildStatsQueryByCountry(knex, from, to).modify(qb =>
       qb.select(knex.raw(`'${TB_TESTS}' as "resultType"`))
     )
-    const tbCasesQuery = buildStatsQueryByCountry().modify(qb =>
+    const tbCasesQuery = buildStatsQueryByCountry(knex, from, to).modify(qb =>
       qb.select(knex.raw(`'${TB_CASES}' as "resultType"`))
     )
-    const drTbCasesQuery = buildStatsQueryByCountry().modify(qb =>
+    const drTbCasesQuery = buildStatsQueryByCountry(knex, from, to).modify(qb =>
       qb.select(knex.raw(`'${DRTB_CASES}' as "resultType"`))
     )
     queries.push(tbTestsQuery, tbCasesQuery, drTbCasesQuery)
@@ -58,38 +53,45 @@ function getStatsQueries() {
 
   function addStatesStats() {
     queries.push(
-      buildStatsQueryByState(states, false, false).modify(qb =>
+      buildStatsQueryByState(knex, from, to, states, false, false).modify(qb =>
         qb.select(knex.raw(`'${TB_TESTS}' as "resultType"`))
       )
     )
     queries.push(
-      buildStatsQueryByState(states, true, false).modify(qb =>
+      buildStatsQueryByState(knex, from, to, states, false, false).modify(qb =>
         qb.select(knex.raw(`'${TB_CASES}' as "resultType"`))
       )
     )
     queries.push(
-      buildStatsQueryByState(states, true, true).modify(qb =>
+      buildStatsQueryByState(knex, from, to, states, false, false).modify(qb =>
         qb.select(knex.raw(`'${DRTB_CASES}' as "resultType"`))
       )
     )
   }
 }
 
-function buildStatsQueryByCountry() {
+function buildStatsQueryByCountry(knex, from, to) {
   return knex('Assay as a')
     .join('Result as r', 'r.assayId', 'a.id')
     .join('AssayType as at', 'at.id', 'a.assayTypeId')
     .join('Disease as d', 'd.id', 'at.diseaseId')
     .where('d.externalId', 'tb')
-    .modify(filterByDateTimeRange)
+    .modify(filterByDateTimeRange, from, to)
     .select(
       knex.raw(`"" as "stateCode"`),
-      knex.raw(`"whole country" as "state"`)
+      knex.raw(`"Whole country" as "state"`)
     )
     .count('r.id as total')
 }
 
-function buildStatsQueryByState(states, onlyCases, onlyDrCases) {
+function buildStatsQueryByState(
+  knex,
+  from,
+  to,
+  states,
+  onlyCases,
+  onlyDrCases
+) {
   return (
     knex('State as s')
       .join('Geography as g', 'g.stateId', 's.id')
@@ -112,7 +114,7 @@ function buildStatsQueryByState(states, onlyCases, onlyDrCases) {
         this.on('d.externalId', '=', knex.raw("'tb'"))
       })
       .whereIn('s.abbreviation', states)
-      // .where('c.abbreviation', 'PK') //TODO: If it's ok, move to the country join
+      // .where('c.abbreviation', 'PK') // TODO: If it's ok, move to the country join
       .select('s.abbreviation as stateCode', 's.name as state')
       .groupBy('s.abbreviation')
       .orderByRaw('s.abbreviation asc, at.id asc')
@@ -120,7 +122,7 @@ function buildStatsQueryByState(states, onlyCases, onlyDrCases) {
   )
 }
 
-function filterByDateTimeRange(queryBuilder) {
+function filterByDateTimeRange(queryBuilder, from, to) {
   queryBuilder.whereRaw('r.endedOn >= ?', from)
   queryBuilder.whereRaw('r.endedOn < ?', to)
   return queryBuilder
