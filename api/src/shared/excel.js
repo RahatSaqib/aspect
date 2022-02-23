@@ -891,7 +891,7 @@ function getNormalizedData({
         let normalizedValues
         // const normalizer = dataSelector || dataSelectorSheet
         if (normalizer) normalizedValues = normalizer(dataRow)
-        else normalizedValues = data
+        else normalizedValues = dataRow
         valuesInDynamicColumns = dynamicColumns.map(
           column => normalizedValues[column.key] || null
         )
