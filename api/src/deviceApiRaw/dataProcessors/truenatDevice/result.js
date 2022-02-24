@@ -22,8 +22,8 @@ const { resultLogged } = require('../../../result/actions')
 const sampleTypeMappings = { Sputum: 'Sputum' }
 
 class TruenatResult extends SynchronousDataProcessor {
-  constructor(request, messageContext, h) {
-    super(request, messageContext, h)
+  constructor(request, messageContext) {
+    super(request, messageContext)
     this.encryptRawData = false
     this.timeoutMilliseconds = 60000
     this.processRequest = this.processRequest.bind(this)
@@ -220,7 +220,6 @@ class TruenatResult extends SynchronousDataProcessor {
         this.response.resultExternalId = resultExternalId
       })
       this.response.success = true
-      this.h.response(this.response).code(201)
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(JSON.stringify(payload))

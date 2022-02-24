@@ -17,11 +17,11 @@ const registeredDataProcessors = [
   require('./default'),
 ]
 
-async function findRawDataProcessor(request, h) {
+async function findRawDataProcessor(request) {
   let DataProcessorClass = null
   await Promise.each(registeredDataProcessors, async Registration => {
     if (!DataProcessorClass) {
-      const canProcessRequest = await Registration.canProcessRequest(request, h)
+      const canProcessRequest = await Registration.canProcessRequest(request)
       if (canProcessRequest) {
         DataProcessorClass = Registration
       }
@@ -31,10 +31,10 @@ async function findRawDataProcessor(request, h) {
   return DataProcessorClass
 }
 
-async function loadRawDataProcessor(request, messageContext, h) {
-  const DataProcessorClass = await findRawDataProcessor(request, h)
+async function loadRawDataProcessor(request, messageContext) {
+  const DataProcessorClass = await findRawDataProcessor(request)
   if (DataProcessorClass) {
-    return new DataProcessorClass(request, messageContext, h)
+    return new DataProcessorClass(request, messageContext)
   }
   return null
 }
