@@ -220,6 +220,7 @@ class TruenatResult extends SynchronousDataProcessor {
         this.response.resultExternalId = resultExternalId
       })
       this.response.success = true
+      this.responseStatusCode = 201
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(JSON.stringify(payload))
