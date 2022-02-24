@@ -193,9 +193,10 @@ describe('Truenat Result Upload Data Processor', () => {
       {
         '../_base': {
           SynchronousDataProcessor: class {
-            constructor(request, messageContext) {
+            constructor(request, messageContext, h) {
               this.request = request
               this.messageContext = messageContext
+              this.h = h
             }
           },
         },
@@ -215,6 +216,24 @@ describe('Truenat Result Upload Data Processor', () => {
         },
       }
     )
+  }
+
+  function createResponseToolkitSpy() {
+    const responseToolkitResponseCodeSpy = sinon.spy()
+    const responseToolkitResponseSpy = sinon.spy()
+    const responseToolkitResponse = { code: responseToolkitResponseCodeSpy }
+    const responseToolkit = {
+      response: () => {
+        responseToolkitResponseSpy()
+        return responseToolkitResponse
+      },
+    }
+    sinon.spy(responseToolkit, 'response')
+    return {
+      responseToolkit,
+      responseToolkitResponseSpy,
+      responseToolkitResponseCodeSpy,
+    }
   }
 
   describe('canProcessRequest', () => {
@@ -350,10 +369,17 @@ describe('Truenat Result Upload Data Processor', () => {
         const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
           .withDeviceApiKeyDetails({})
           .build()
-        const truenatResultInstance = new TruenatResult(request, messageContext)
+        const { responseToolkit: h, responseToolkitResponseSpy } =
+          createResponseToolkitSpy()
+        const truenatResultInstance = new TruenatResult(
+          request,
+          messageContext,
+          h
+        )
         try {
           await truenatResultInstance.processRequest()
           assert.fail('400 Response not returned!')
+          assert.isNotOk(responseToolkitResponseSpy.called())
         } catch (e) {
           expect(e).to.containSubset({
             output: {
@@ -373,7 +399,16 @@ describe('Truenat Result Upload Data Processor', () => {
       it('will create a new sample', async () => {
         const TruenatResult =
           fluentMockTruenatResultUploadDataProcessor().build()
-        const truenatResultInstance = new TruenatResult(request, messageContext)
+        const {
+          responseToolkit: h,
+          responseToolkitResponseSpy,
+          responseToolkitResponseCodeSpy,
+        } = createResponseToolkitSpy()
+        const truenatResultInstance = new TruenatResult(
+          request,
+          messageContext,
+          h
+        )
         await truenatResultInstance.processRequest()
         const {
           deviceTypeExternalId,
@@ -398,6 +433,8 @@ describe('Truenat Result Upload Data Processor', () => {
             originSiteId: deviceDefaultReportableSiteId,
           })
         )
+        assert.isOk(responseToolkitResponseSpy.calledOnce)
+        assert.isOk(responseToolkitResponseCodeSpy.calledWith(201))
       })
     })
 
@@ -455,7 +492,16 @@ describe('Truenat Result Upload Data Processor', () => {
           })
           .withSampleId(existingSampleId)
           .build()
-        const truenatResultInstance = new TruenatResult(request, messageContext)
+        const {
+          responseToolkit: h,
+          responseToolkitResponseSpy,
+          responseToolkitResponseCodeSpy,
+        } = createResponseToolkitSpy()
+        const truenatResultInstance = new TruenatResult(
+          request,
+          messageContext,
+          h
+        )
         await truenatResultInstance.processRequest()
         const {
           partnerId,
@@ -522,6 +568,8 @@ describe('Truenat Result Upload Data Processor', () => {
           notes: _.get(request, 'payload.Notes'),
           reportableSiteId: deviceDefaultReportableSiteId,
         })
+        assert.isOk(responseToolkitResponseSpy.calledOnce)
+        assert.isOk(responseToolkitResponseCodeSpy.calledWith(201))
       })
 
       it("will NOT overwrite the result's reportable site ID", async () => {
@@ -578,7 +626,12 @@ describe('Truenat Result Upload Data Processor', () => {
           })
           .withSampleId(existingSampleId)
           .build()
-        const truenatResultInstance = new TruenatResult(request, messageContext)
+        const { responseToolkit: h } = createResponseToolkitSpy()
+        const truenatResultInstance = new TruenatResult(
+          request,
+          messageContext,
+          h
+        )
         await truenatResultInstance.processRequest()
         assert.notEqual(
           knexUpdateSpies.Result.lastCall.args[0].reportableSiteId,
@@ -599,7 +652,12 @@ describe('Truenat Result Upload Data Processor', () => {
             deviceDefaultReportableSiteId: null,
           })
           .build()
-        const truenatResultInstance = new TruenatResult(request, messageContext)
+        const { responseToolkit: h } = createResponseToolkitSpy()
+        const truenatResultInstance = new TruenatResult(
+          request,
+          messageContext,
+          h
+        )
         await truenatResultInstance.processRequest()
         expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
           reportableSiteId: defaultDeviceApiKeyDetails.siteId,
@@ -611,7 +669,12 @@ describe('Truenat Result Upload Data Processor', () => {
       it("will assign the result's reportable site ID", async () => {
         const TruenatResult =
           fluentMockTruenatResultUploadDataProcessor().build()
-        const truenatResultInstance = new TruenatResult(request, messageContext)
+        const { responseToolkit: h } = createResponseToolkitSpy()
+        const truenatResultInstance = new TruenatResult(
+          request,
+          messageContext,
+          h
+        )
         await truenatResultInstance.processRequest()
         expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
           reportableSiteId:
