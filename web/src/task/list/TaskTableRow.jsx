@@ -54,7 +54,10 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
               task.get('issueCategoryExternalId').toString().toLowerCase() ===
               'connectivityhealth'
             }
-            label={formatMessage(messages[task.get('issueCategoryI18nKey')])}
+            label={
+              task.get('issueCategoryI18nKey') &&
+              formatMessage(messages[task.get('issueCategoryI18nKey')])
+            }
           />
           <span className={cssClasses('Message__Subject')}>
             {addEllipsis(task.get('title'))}
