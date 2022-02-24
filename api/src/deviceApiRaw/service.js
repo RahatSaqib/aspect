@@ -7,12 +7,12 @@ const { deviceApiRawStatusToId } = require('../shared/dictionary')
 const { knex } = require('../db')
 const { decrypt } = require('../shared/encryption')
 
-const addDeviceRawDataHandler = asyncHandler(async request => {
+const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
   const {
     plugins: { messageContext },
   } = request
 
-  const dataProcessor = await loadRawDataProcessor(request, messageContext)
+  const dataProcessor = await loadRawDataProcessor(request, messageContext, h)
   await dataProcessor.saveRequestAsReady()
 
   const responseReady = dataProcessor.responseReadyPromise()

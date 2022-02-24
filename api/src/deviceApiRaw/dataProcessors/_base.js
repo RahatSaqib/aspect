@@ -13,13 +13,14 @@ const {
 } = require('../actions')
 
 class DataProcessor {
-  constructor(request, messageContext) {
+  constructor(request, messageContext, h) {
     this.name = this.constructor.name
     this.id = null
     this.timeoutMilliseconds = 60000
     this.timeoutMessage = 'Timeout waiting for raw message to be handled'
     this.request = request
     this.messageContext = messageContext
+    this.h = h
     this.encryptRawData = true
     this.saveRequestAsReady = this.saveRequestAsReady.bind(this)
     this.populateFromDeviceApiRawRecord =
@@ -319,8 +320,8 @@ class DataProcessor {
 }
 
 class SynchronousDataProcessor extends DataProcessor {
-  constructor(request, messageContext) {
-    super(request, messageContext)
+  constructor(request, messageContext, h) {
+    super(request, messageContext, h)
     this.handlerFunction = this.handlerFunction.bind(this)
     this.onDeviceRawMessageProcessed =
       this.onDeviceRawMessageProcessed.bind(this)
@@ -349,8 +350,8 @@ class SynchronousDataProcessor extends DataProcessor {
 }
 
 class AsynchronousDataProcessor extends DataProcessor {
-  constructor(request, messageContext) {
-    super(request, messageContext)
+  constructor(request, messageContext, h) {
+    super(request, messageContext, h)
     this.handlerFunction = this.handlerFunction.bind(this)
     this.onDeviceRawMessageProcessed =
       this.onDeviceRawMessageProcessed.bind(this)
