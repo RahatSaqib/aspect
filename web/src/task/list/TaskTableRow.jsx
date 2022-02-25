@@ -55,8 +55,9 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
               'connectivityhealth'
             }
             label={
-              task.get('issueCategoryI18nKey') &&
-              formatMessage(messages[task.get('issueCategoryI18nKey')])
+              task.get('issueCategoryI18nKey')
+                ? formatMessage(messages[task.get('issueCategoryI18nKey')])
+                : false
             }
           />
           <span className={cssClasses('Message__Subject')}>
