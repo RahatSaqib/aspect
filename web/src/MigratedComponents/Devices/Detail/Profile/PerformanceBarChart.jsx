@@ -14,6 +14,7 @@ const PerformanceBarChart = ({
   avgValue,
   maxValue,
   info,
+  dailyCapacity,
 }) => (
   <ResponsiveBar
     data={data}
@@ -70,11 +71,16 @@ const PerformanceBarChart = ({
     ]}
     tooltip={({ color, indexValue }) => {
       const periodData = data.find(x => x.period === indexValue)
+      // debugger
       const value =
         info === 'Error Rate'
           ? periodData.errorRate + periodData.exceededErrorRate
           : periodData.utilizationRate + periodData.exceededUtilizationRate
-
+      const totalResultsLabel = `Total Results: ${periodData.totalResult}`
+      const errorsCapacityLabel =
+        info === 'Error Rate'
+          ? `Total errors: ${periodData.errorCount}`
+          : `Daily Capacity: ${dailyCapacity}`
       return (
         <div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -88,6 +94,9 @@ const PerformanceBarChart = ({
             {`${indexValue}: `}
             <strong>{value}</strong>%
           </div>
+
+          <div>{errorsCapacityLabel}</div>
+          <div>{totalResultsLabel}</div>
         </div>
       )
     }}
@@ -105,6 +114,7 @@ PerformanceBarChart.propTypes = {
   avgValue: number.isRequired,
   maxValue: number.isRequired,
   info: string.isRequired,
+  dailyCapacity: number.isRequired,
 }
 
 export default PerformanceBarChart
