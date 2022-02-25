@@ -286,7 +286,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.cleanUp()
         })
 
-        it(`should not create issue when it has less than 3 results for the last 30 days ${
+        it(`should NOT create MODULE or LOT issues when it has less than 4 results for the last 30 days ${
           errorCode
             ? `error ${errorCode}`
             : `category${resultCategoryExternalId}`
@@ -296,7 +296,7 @@ describe('This test suite is for testing different triggers conditions', async (
            * 1) issueFilter function for this testCondition (With error 5007)
            * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
            * 3) the creation of the issue
-           * 4) check if the different noifications were generated.
+           * 4) check if the different notifications were generated.
            */
 
           const { deviceAuth } = context
@@ -399,11 +399,11 @@ describe('This test suite is for testing different triggers conditions', async (
           await anotherDeviceContext.cleanUp()
         })
 
-        it(`should only create one issue LOT and not module based per device ${
+        it(`should only create one issue LOT and NOT module based per device ${
           errorCode
             ? `error ${errorCode}`
             : `category${resultCategoryExternalId}`
-        }`, async () => {
+        } because it has the same module number  `, async () => {
           /**
            * in this testcase we are testing:
            * 1) issueFilter function for this testCondition (With error 5007)
@@ -593,7 +593,7 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe('Invalid results', () => {
+  describe.only('Invalid results', () => {
     testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
@@ -634,7 +634,7 @@ describe('This test suite is for testing different triggers conditions', async (
       true
     )
   })
-  describe('error 5011 issue', () => {
+  describe.only('error 5011 issue', () => {
     testCategoriesAndErrorCodes(
       'Signal Loss Detected in the Amplification Curve',
       5011,

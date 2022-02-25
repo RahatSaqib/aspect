@@ -41,7 +41,14 @@ async function analyzeWithQuery(
            * which happens when one of the bindings values is `undefined` - make sure params are
            * not `undefined`
            */
-          if (consumableLot) builder.where({ consumableLot })
+          if (consumableLot) {
+            builder.where({ consumableLot })
+            builder.sum(
+              knex.raw(
+                `case when moduleSerial=${moduleSerial} then 1 else 0 end as qtyOnSameModule`
+              )
+            )
+          }
           if (assayId) builder.where({ assayId })
         } else if (moduleSerial) builder.where({ moduleSerial })
       },
@@ -53,9 +60,18 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-  const { resultsWithErrors = 0, totalResults = 0 } = await query
+  const {
+    resultsWithErrors = 0,
+    totalResults = 0,
+    qtyOnSameModule = 0,
+  } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
+  if (qtyOnSameModule >= minResults) {
+    action.options.qtyOnSameModule = qtyOnSameModule
+    action.options.moduleSerial = moduleSerial
+  }
+
   return analyzeResultsWithErrors(
     resultsWithErrors,
     totalResults,
@@ -110,13 +126,14 @@ async function analyzeCategories(
   }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-  const { resultId } = action
+  const { resultId, moduleSerial } = action
   const { resultCategoryId, resultErrorCode } = action.options.data
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
       .where({ resultId })
       .whereRaw('data->>"$.resultCategoryId" = ?', [resultCategoryId])
+      .whereRaw('data->>"$.moduleSerial" = ?', [moduleSerial])
       .first()
   }
 
@@ -201,12 +218,13 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
     minResults,
     checkIfWillBeLotIssue = false,
   } = evaluationFilterParameters
-  const { resultId } = action
+  const { resultId, moduleSerial } = action
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
       .where({ resultId })
       .whereRaw('data->>"$.resultErrorCode" = ?', [resultErrorCode])
+      .whereRaw('data->>"$.moduleSerial" = ?', [moduleSerial])
       .first()
   }
   if (!existingIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
