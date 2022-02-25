@@ -43,11 +43,6 @@ async function analyzeWithQuery(
            */
           if (consumableLot) {
             builder.where({ consumableLot })
-            builder.sum(
-              knex.raw(
-                `case when moduleSerial=${moduleSerial} then 1 else 0 end as qtyOnSameModule`
-              )
-            )
           }
           if (assayId) builder.where({ assayId })
         } else if (moduleSerial) builder.where({ moduleSerial })
@@ -126,8 +121,9 @@ async function analyzeCategories(
   }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-  const { resultId, moduleSerial } = action
+  const { resultId } = action
   const { resultCategoryId, resultErrorCode } = action.options.data
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
@@ -160,6 +156,9 @@ async function analyzeCategories(
                 : ``
             } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
             categoryToCompare
+          ),
+          knex.raw(
+            `sum(case when moduleSerial='${moduleSerial}' then 1 else 0 end) as qtyOnSameModule`
           )
         )
     )
@@ -218,7 +217,8 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
     minResults,
     checkIfWillBeLotIssue = false,
   } = evaluationFilterParameters
-  const { resultId, moduleSerial } = action
+  const { resultId } = action
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
@@ -242,6 +242,9 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
             `sum(case when errorcode in (${errorCodes.join(
               ','
             )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
+          ),
+          knex.raw(
+            `sum(case when moduleSerial='${moduleSerial}' then 1 else 0 end) as qtyOnSameModule`
           )
         )
     )
