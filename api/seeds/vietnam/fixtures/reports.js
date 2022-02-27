@@ -21,4 +21,21 @@ module.exports = {
       },
     ],
   },
+  resultCountsByHIVStatus: {
+    name: 'Kết quả tính theo tình trạng HIV',
+    description:
+      'Số lượng kết quả lao được nhóm theo tình trạng HIV của bệnh nhân',
+    i18nKey: 'resultCountsByHIVStatus',
+    i18nKeyDescription: 'resultCountsByHIVStatus_description',
+    externalId: 'result_counts_by_hiv_status',
+    fileName: 'resultCountsByHIVStatus',
+    sortOrder: 30,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getResultCountsByHIVStatus',
+      },
+    ],
+  },
 }

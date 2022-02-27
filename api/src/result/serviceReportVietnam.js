@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
@@ -113,7 +115,47 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
+async function getResultCountsByHIVStatus(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  let data = await getBaseQuery(dataConstraints, query)
+    .whereIn('a.externalId', [
+      'GxMtbRif',
+      'GxMtbRifUltra',
+      'GxHiv1Vl',
+      'GxHiv1Qual',
+    ])
+    .select(
+      knex.raw(`
+        LOWER(IFNULL(r.patientData ->> '$.HIVStatus', 'null')) as hivStatus
+      `),
+      'rc1.name as resultCategory1',
+      'rc2.name as resultCategory2'
+    )
+    .groupBy('hivStatus', 'r.resultCategory1', 'r.resultCategory2')
+    .count({
+      cntAll: knex.raw('DISTINCT r.id'),
+    })
+
+  data = _.map(data, item => {
+    if (item.hivStatus === 'null') {
+      item.hivStatus = '- Unspecified -'
+    } else {
+      item.hivStatus = _.capitalize(item.hivStatus)
+    }
+    return item
+  })
+  data = _.orderBy(data, ['hivStatus'])
+
+  return {
+    ok: true,
+    data,
+    total: data.length,
+  }
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
+  getResultCountsByHIVStatus,
 }
