@@ -94,7 +94,6 @@ const PerformanceBarChart = ({
             {`${indexValue}: `}
             <strong>{value}</strong>%
           </div>
-
           <div>{errorsCapacityLabel}</div>
           <div>{totalResultsLabel}</div>
         </div>
