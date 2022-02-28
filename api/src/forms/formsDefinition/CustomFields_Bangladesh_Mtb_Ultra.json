@@ -11,6 +11,8 @@
       "gxAlertDbColumn": "RepeatTest",
       "i18nKeyCaption": "RepeatTesti18nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1202.value",
+      "payloadDestinationPath": "patient.RepeatTest",
       "items": [
         {
           "key": 0,
