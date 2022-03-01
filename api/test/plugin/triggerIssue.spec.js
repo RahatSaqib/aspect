@@ -143,7 +143,8 @@ const evaluateIssues = async (
   response,
   issueTypeId,
   qtyIssuesExpected = 1,
-  issueStatus = 'Active'
+  issueStatus = 'Active',
+  moduleCheck = null
 ) => {
   assert.equal(response.status, 200)
   assert.typeOf(response.body, 'Object')
@@ -154,6 +155,10 @@ const evaluateIssues = async (
     assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
     if (issueStatus === 'Active')
       await checkNotificationsForIssue(issues[0].id, issueTypeId)
+  }
+  if (moduleCheck) {
+    const data = JSON.parse(issues[0].data)
+    assert.containSubset(data, moduleCheck)
   }
 }
 let qtyOfRuns = 0
@@ -341,7 +346,7 @@ describe('This test suite is for testing different triggers conditions', async (
         })
       })
 
-      describe('With results in the period of evaluation', () => {
+      describe.only('With results in the period of evaluation', () => {
         let context
         let anotherDeviceContext
 
@@ -471,8 +476,140 @@ describe('This test suite is for testing different triggers conditions', async (
           await evaluateIssues(anotherDeviceResponse, issueTypeModuleId, 0)
           await evaluateIssues(
             anotherDeviceResponse,
-            await issueTypeToId(issueTypeLot)
+            await issueTypeToId(issueTypeLot),
+            1,
+            'Active',
+            { moduleSerial: 'M-ANOTHERSERIAL-0' }
           )
+        })
+        it(`should create one issue LOT and one MODULE based issue per device ${
+          errorCode
+            ? `error ${errorCode}`
+            : `category${resultCategoryExternalId}`
+        } because their have the different module numbers `, async () => {
+          /**
+           Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
+           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
+           The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
+           */
+
+          const consumableLot = 'Lot 0'
+          const { deviceAuth } = context
+
+          let resp
+          // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
+          await Promise.each(_.range(0, 10), async i => {
+            const firstPayload = await getPayload(
+              context,
+              errorCode,
+              resultCategoryExternalId
+            )
+
+            resp = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(firstPayload, {
+                assay: { id: 'GxMtbRif' },
+                result: {
+                  id: `Error-${errorCode || `category${i}`}-result${i}`,
+                  startedOn: subDays(new Date(), i),
+                  endedOn: subDays(new Date(), i),
+                  consumable: {
+                    lot: consumableLot,
+                  },
+                  instrument: {
+                    module: {
+                      serial:
+                        i > 5
+                          ? 'THE-ONE-WHICH-TRIGGERS-MODULE'
+                          : `M-123456-0-${_.random(1, 9999999999)}`,
+                    },
+                  },
+                  patient: {
+                    id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
+                  },
+                  sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+                },
+                data: {
+                  resultText: resultCategoryExternalId
+                    ? resultCategoryExternalId.toUpperCase()
+                    : null,
+                },
+              }),
+            })
+          })
+
+          await evaluateIssues(resp, issueTypeLotId)
+          await waitForIdle(3000)
+          await evaluateIssues(resp, issueTypeModuleId, 1, 'Active', {
+            moduleSerial: 'THE-ONE-WHICH-TRIGGERS-MODULE',
+          })
+        })
+        it(`should create one issue LOT and NOT MODULE based issue per device ${
+          errorCode
+            ? `error ${errorCode}`
+            : `category${resultCategoryExternalId}`
+        } because their have the same module number and the most important one is the LOT `, async () => {
+          /**
+           Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
+           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
+           The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
+           */
+
+          const consumableLot = 'Lot 0'
+          const {
+            deviceAuth,
+            device: { id: deviceId },
+          } = context
+
+          let resp
+          const issues = await getIssues(deviceId, issueTypeLotId)
+          assert.equal(issues.length, 0)
+          // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
+          await Promise.each(_.range(0, 10), async i => {
+            const firstPayload = await getPayload(
+              context,
+              errorCode,
+              resultCategoryExternalId
+            )
+
+            resp = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(firstPayload, {
+                assay: { id: 'GxMtbRif' },
+                result: {
+                  id: `Error-${errorCode || `category${i}`}-result${i}`,
+                  startedOn: subDays(new Date(), i),
+                  endedOn: subDays(new Date(), i),
+                  consumable: {
+                    lot: consumableLot,
+                  },
+                  instrument: {
+                    module: {
+                      serial:
+                        i <= 5
+                          ? 'THE-ONE-WHICH-TRIGGERS-LOT'
+                          : `M-123456-0-${_.random(1, 9999999999)}`,
+                    },
+                  },
+                  patient: {
+                    id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
+                  },
+                  sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+                },
+                data: {
+                  resultText: resultCategoryExternalId
+                    ? resultCategoryExternalId.toUpperCase()
+                    : null,
+                },
+              }),
+            })
+          })
+
+          await evaluateIssues(resp, issueTypeLotId, 1, 'Active', {
+            moduleSerialWithSameLot: 'THE-ONE-WHICH-TRIGGERS-LOT',
+          })
+          await waitForIdle(3000)
+          await evaluateIssues(resp, issueTypeModuleId, 0)
         })
         it(`should only create one issue per device MODULE based ${
           errorCode
@@ -603,7 +740,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('error 5006 issue', () => {
+  describe.only('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
@@ -613,35 +750,35 @@ describe('This test suite is for testing different triggers conditions', async (
       true
     )
   })
-  describe('error 5007 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Probes check Too Low',
-      5007,
-      'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot',
-      null,
-      true
-    )
-  })
+  // describe('error 5007 issue', () => {
+  //   testCategoriesAndErrorCodes(
+  //     'Probes check Too Low',
+  //     5007,
+  //     'ProbeCheckFailedModule',
+  //     'ProbeCheckFailedLot',
+  //     null,
+  //     true
+  //   )
+  // })
 
-  describe('error 5017 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Probes Check Failed',
-      5017,
-      'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot',
-      null,
-      true
-    )
-  })
-  describe.only('error 5011 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Signal Loss Detected in the Amplification Curve',
-      5011,
-      'SignalLossDetectedInAmplificationCurveModule',
-      'SignalLossDetectedInAmplificationCurveLot'
-    )
-  })
+  // describe('error 5017 issue', () => {
+  //   testCategoriesAndErrorCodes(
+  //     'Probes Check Failed',
+  //     5017,
+  //     'ProbeCheckFailedModule',
+  //     'ProbeCheckFailedLot',
+  //     null,
+  //     true
+  //   )
+  // })
+  // describe.only('error 5011 issue', () => {
+  //   testCategoriesAndErrorCodes(
+  //     'Signal Loss Detected in the Amplification Curve',
+  //     5011,
+  //     'SignalLossDetectedInAmplificationCurveModule',
+  //     'SignalLossDetectedInAmplificationCurveLot'
+  //   )
+  // })
 
   describe('unused modules', () => {
     let deviceContextForUnusedModules

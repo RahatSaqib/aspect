@@ -28,10 +28,10 @@ async function analyzeWithQuery(
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   const consumableLot = _.get(action, 'options.data.consumableLot')
   const assayId = _.get(action, 'options.data.assayId')
-
+  const { deviceId } = action
   const query = knex('Result')
     .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
-    .andWhere('deviceId', action.deviceId)
+    .andWhere({ deviceId })
     .modify(
       (builder, moduleSerial, consumableLot, assayId) => {
         if (consumableLot || assayId) {
@@ -62,11 +62,10 @@ async function analyzeWithQuery(
   } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
-  if (qtyOnSameModule >= minResults) {
+  if (!_.isNil(consumableLot) && qtyOnSameModule >= minResults) {
     action.options.qtyOnSameModule = qtyOnSameModule
-    action.options.moduleSerial = moduleSerial
+    action.options.moduleSerialWithSameLot = moduleSerial
   }
-
   return analyzeResultsWithErrors(
     resultsWithErrors,
     totalResults,
@@ -121,15 +120,16 @@ async function analyzeCategories(
   }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-  const { resultId } = action
+  const { deviceId } = action
   const { resultCategoryId, resultErrorCode } = action.options.data
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
-      .where({ resultId })
-      .whereRaw('data->>"$.resultCategoryId" = ?', [resultCategoryId])
-      .whereRaw('data->>"$.moduleSerial" = ?', [moduleSerial])
+      .where({ deviceId })
+      .whereRaw('data->>"$.resultOutcome" = ?', [resultCategoryId])
+      .whereRaw('data->>"$.moduleSerialWithSameLot" = ?', [moduleSerial])
+      .orderBy('createdOn', 'desc')
       .first()
   }
 
@@ -140,6 +140,7 @@ async function analyzeCategories(
         _.includes(errorCodes, parseInt(resultErrorCode, 10))))
   ) {
     action.options.data.errorCodes = errorCodes
+    action.options.data.resultCategoryId = resultCategoryId
     return analyzeWithQuery(
       knex,
       action,
@@ -217,14 +218,14 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
     minResults,
     checkIfWillBeLotIssue = false,
   } = evaluationFilterParameters
-  const { resultId } = action
+  const { deviceId } = action
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
-      .where({ resultId })
+      .where({ deviceId })
       .whereRaw('data->>"$.resultErrorCode" = ?', [resultErrorCode])
-      .whereRaw('data->>"$.moduleSerial" = ?', [moduleSerial])
+      .whereRaw('data->>"$.moduleSerialWithSameLot" = ?', [moduleSerial])
       .first()
   }
   if (!existingIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
