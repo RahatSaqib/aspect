@@ -387,7 +387,7 @@ class GxConnectApiTestContext {
   }) {
     const daysToSubtract = Math.ceil(Math.random() ** 4 * 60)
     const randomDate = subDays(new Date(), daysToSubtract)
-    const randomNumber = subDays(new Date(), daysToSubtract).getTime()
+    const randomNumber = Math.floor(Math.random() * 10000000000)
 
     const { partnerId } = this.device
     const sampleTypeId = await sampleTypeToId('assayTypeMtbRif')
