@@ -1,10 +1,10 @@
+const { parseISO } = require('date-fns')
 const service = require('../service')
 
 const RESULT_CATEGORY_DETECTED_ID = 1
 const TB_TESTS = 'TB Tests'
 const TB_CASES = 'TB Cases'
 const DRTB_CASES = 'DRTB Cases'
-
 const testsQueryType = {
   queryDescription: TB_TESTS,
   onlyCases: false,
@@ -29,8 +29,10 @@ const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
 
 async function getTbResultsStats(context) {
   const { knex } = context
-  const { from, to, states } = context.query
-
+  let { from, to } = context.query
+  const { states } = context.query
+  from = parseISO(from)
+  to = parseISO(to)
   const queries = getStatsQueries({ knex, from, to, states })
 
   const result = await Promise.all(queries)

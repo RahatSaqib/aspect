@@ -3,7 +3,6 @@ const chaiSubset = require('chai-subset')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { subDays } = require('date-fns')
-const { getLocalDateTimeStringInUtc } = require('../../../src/shared/date')
 const { createTestContext } = require('../utils')
 const { allResultCategoryToId } = require('../../../src/shared/dictionary')
 
@@ -25,7 +24,16 @@ const testExternalId = 'Pakistan Api TEST GeneXpert'
 const deviceSerialNumber = String(_.random(1, 99999999, false)).padStart(8, '0')
 const hostId = 'BLH-Expert'
 const partnerName = 'Partner One'
-
+const errorCode = null
+const baseResultDetails = {
+  consumableLot: 'Lot 0',
+  moduleName: 'Module J',
+  moduleSerial: 'M-123456-0',
+  instrumentSerial: 'S-1234-0',
+  errorCode,
+  errorNotes: errorCode ? 'Some error notes' : null,
+}
+const alaskavalidGeographyId = 39
 describe('Pakistan stats api', async () => {
   const from = '2022-02-03T21:00:00'
   const fromUtc = '2022-02-04T00:00:00.000Z'
@@ -58,9 +66,7 @@ describe('Pakistan stats api', async () => {
       baseApiConfig,
     })
 
-    await ntpContext.createSites([
-      'Query test site, maybe differ from Result device site',
-    ])
+    await ntpContext.createSites(['pakistanTbService.spec query site'])
     await ntpContext.createDeviceApiKey()
     await ntpContext.createDeviceWithApiKey()
   })
@@ -78,71 +84,84 @@ describe('Pakistan stats api', async () => {
     const siteId = seedSite.id
     await knex('Device')
       .where('macAddress', macAddress)
-      .update({ siteId, geographyId: 39 })
-    await knex('Site').where('id', siteId).update({ geographyId: 39 })
-    contextAlaskaDevice.device.geographyId = 39
+      .update({ siteId, geographyId: alaskavalidGeographyId })
+    await knex('Site')
+      .where('id', siteId)
+      .update({ geographyId: alaskavalidGeographyId })
+    contextAlaskaDevice.device.geographyId = alaskavalidGeographyId
     contextAlaskaDevice.device.siteId = siteId
-    contextAlaskaDevice.site.geographyId = 39
+    contextAlaskaDevice.site.geographyId = alaskavalidGeographyId
   })
 
   before('Create Results', async () => {
-    const errorCode = null
     const { Detected, NotDetected } = await allResultCategoryToId()
-    // Post 4 new results
-    await Promise.each(_.range(0, 3), async i => {
-      const daysForSubstracting = 1 // _.random(200, 300, false)
 
-      contextAlaskaDevice.createResultForThisDevice({
+    const tests = Promise.each(_.range(0, 2), async () => {
+      await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
-          consumableLot: 'Lot 0',
-          moduleName: 'Module J',
-          moduleSerial: 'M-123456-0',
-          instrumentSerial: 'S-1234-0',
-          errorCode,
-          startedOn: subDays(new Date(), daysForSubstracting),
-          endedOn: subDays(new Date(), daysForSubstracting),
-          errorNotes: errorCode ? 'Some error notes' : null,
-          resultCategory1: Detected,
-          resultCategory2: NotDetected,
+          ...baseResultDetails,
+          ...{
+            startedOn: subDays(new Date(), -1),
+            endedOn: subDays(new Date(), -1),
+            resultCategory1: NotDetected,
+            resultCategory2: NotDetected,
+          },
         },
       })
     })
-    await Promise.each(_.range(0, 3), async i => {
-      const daysForSubstracting = 1 // _.random(200, 300, false)
 
-      contextAlaskaDevice.createResultForThisDevice({
+    const cases = Promise.each(_.range(0, 2), async () => {
+      await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
-          consumableLot: 'Lot 0',
-          moduleName: 'Module J',
-          moduleSerial: 'M-123456-0',
-          instrumentSerial: 'S-1234-0',
-          errorCode,
-          startedOn: subDays(new Date(), daysForSubstracting),
-          endedOn: subDays(new Date(), daysForSubstracting),
-          errorNotes: errorCode ? 'Some error notes' : null,
-          resultCategory1: Detected,
-          resultCategory2: Detected,
+          ...baseResultDetails,
+          ...{
+            startedOn: subDays(new Date(), -1),
+            endedOn: subDays(new Date(), -1),
+            resultCategory1: Detected,
+            resultCategory2: NotDetected,
+          },
         },
       })
     })
+
+    const drcases = Promise.each(_.range(0, 2), async () => {
+      await contextAlaskaDevice.createResultForThisDevice({
+        resultDetails: {
+          ...baseResultDetails,
+          ...{
+            startedOn: subDays(new Date(), -1),
+            endedOn: subDays(new Date(), -1),
+            resultCategory1: Detected,
+            resultCategory2: Detected,
+          },
+        },
+      })
+    })
+    const ids = await Promise.all([tests, cases, drcases].flat())
   })
 
   after(async () => {
     knex('ResultFollowUp').del()
     knex('ResultStatusLog').del()
+    knex('Sample').del()
     knex('Result').del()
     await contextAlaskaDevice.cleanUp()
     await ntpContext.afterEach()
   })
 
-  it.only('Get correct stats by state', async () => {
-    const path = `/device/result/pakistan?from=${from}&to=${to}&states=AK`
+  it('Get correct stats by state', async () => {
+    const path = `/device/result/pakistan`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
 
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
+      .query({
+        from,
+        to,
+        states: 'AK',
+      })
     if (res.status !== 200) {
       console.log(res.body)
     }
@@ -158,13 +177,13 @@ describe('Pakistan stats api', async () => {
           stateCode: 'AK',
           state: 'Alaska',
           resultType: 'DRTB Cases',
-          total: 3,
+          total: 2,
         },
         {
           stateCode: 'AK',
           state: 'Alaska',
           resultType: 'TB Cases',
-          total: 6,
+          total: 4,
         },
         {
           stateCode: 'AK',
@@ -176,7 +195,7 @@ describe('Pakistan stats api', async () => {
     })
   })
 
-  it.only('Get correct stats for country', async () => {
+  it('Get correct stats for country', async () => {
     const path = `/device/result/pakistan?from=${from}&to=${to}`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
@@ -199,13 +218,13 @@ describe('Pakistan stats api', async () => {
           stateCode: '',
           state: 'Whole country',
           resultType: 'DRTB Cases',
-          total: 3,
+          total: 2,
         },
         {
           stateCode: '',
           state: 'Whole country',
           resultType: 'TB Cases',
-          total: 6,
+          total: 4,
         },
         {
           stateCode: '',
