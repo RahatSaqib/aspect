@@ -6,6 +6,7 @@ const resultsDrTb10A10BCovid = {
   externalId: 'results_10a_10b_covid', // folder name in /templates
   i18nKeyDescription: 'reportDrTb10a10bCovidDescription',
   fileName: 'ReportDrTb10a10bCovid',
+  exportCsv: false,
   sortOrder: 11,
   sheets: [
     {
