@@ -319,7 +319,7 @@ class GxConnectApiTestContext {
       .post('/api/deviceApiKey/api-key')
       .set('Authorization', `Bearer ${clientAccessToken}`)
       .then(res => {
-        assert.equal(res.statusCode, 200)
+        assert.equal(res.statusCode, 200, 'Post Api-key')
         assert.isOk(res.body.token)
         return res.body.token
       })
