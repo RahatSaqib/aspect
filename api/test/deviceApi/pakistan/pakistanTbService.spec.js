@@ -33,7 +33,7 @@ const baseResultDetails = {
   errorCode,
   errorNotes: errorCode ? 'Some error notes' : null,
 }
-const alaskavalidGeographyId = 39
+const ALASKA_VALID_GEOGRAPHY_ID = 39
 describe('Pakistan stats api', async () => {
   const encodedFrom = encodeURIComponent('2022-02-03T00:00:00+05:00')
   const fromUtc = '2022-02-02T19:00:00.000Z'
@@ -84,13 +84,13 @@ describe('Pakistan stats api', async () => {
     const siteId = seedSite.id
     await knex('Device')
       .where('macAddress', macAddress)
-      .update({ siteId, geographyId: alaskavalidGeographyId })
+      .update({ siteId, geographyId: ALASKA_VALID_GEOGRAPHY_ID })
     await knex('Site')
       .where('id', siteId)
-      .update({ geographyId: alaskavalidGeographyId })
-    contextAlaskaDevice.device.geographyId = alaskavalidGeographyId
+      .update({ geographyId: ALASKA_VALID_GEOGRAPHY_ID })
+    contextAlaskaDevice.device.geographyId = ALASKA_VALID_GEOGRAPHY_ID
     contextAlaskaDevice.device.siteId = siteId
-    contextAlaskaDevice.site.geographyId = alaskavalidGeographyId
+    contextAlaskaDevice.site.geographyId = ALASKA_VALID_GEOGRAPHY_ID
   })
 
   before('Create Results', async () => {
