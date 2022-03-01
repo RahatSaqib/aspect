@@ -29,10 +29,8 @@ const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
 
 async function getTbResultsStats(context) {
   const { knex } = context
-  let { from, to } = context.query
-  const { states } = context.query
-  from = parseISO(from)
-  to = parseISO(to)
+  const { from, to, states } = context.query
+    
   const queries = getStatsQueries({ knex, from, to, states })
 
   const result = await Promise.all(queries)

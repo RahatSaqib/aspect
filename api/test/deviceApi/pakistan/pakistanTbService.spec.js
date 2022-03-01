@@ -35,10 +35,10 @@ const baseResultDetails = {
 }
 const alaskavalidGeographyId = 39
 describe('Pakistan stats api', async () => {
-  const from = '2022-02-03T21:00:00'
-  const fromUtc = '2022-02-04T00:00:00.000Z'
-  const to = '2022-03-15T21:00:00.00'
-  const toUtc = '2022-03-16T00:00:00.000Z'
+  const encodedFrom = encodeURIComponent('2022-02-03T00:00:00+05:00')
+  const fromUtc = '2022-02-02T19:00:00.000Z'
+  const to = encodeURIComponent('2022-03-15T00:00:00.00+05:00')
+  const toUtc = '2022-03-14T19:00:00.000Z'
 
   const contextAlaskaDevice = createGxConnectTestContext(server, {
     countryCode,
@@ -137,7 +137,7 @@ describe('Pakistan stats api', async () => {
         },
       })
     })
-    const ids = await Promise.all([tests, cases, drcases].flat())
+    await Promise.all([tests, cases, drcases].flat())
   })
 
   after(async () => {
@@ -149,19 +149,15 @@ describe('Pakistan stats api', async () => {
     await ntpContext.afterEach()
   })
 
-  it('Get correct stats by state', async () => {
-    const path = `/device/result/pakistan`
+  it('Should return correct stats by state', async () => {
+    // const path = `/device/result/pakistan`
+    const path = `/device/result/pakistan?from=${encodedFrom}&to=${to}&states=AK`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
 
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
-      .query({
-        from,
-        to,
-        states: 'AK',
-      })
     if (res.status !== 200) {
       console.log(res.body)
     }
@@ -195,8 +191,8 @@ describe('Pakistan stats api', async () => {
     })
   })
 
-  it('Get correct stats for country', async () => {
-    const path = `/device/result/pakistan?from=${from}&to=${to}`
+  it('Shourld return correct stats for country, including from', async () => {
+    const path = `/device/result/pakistan?from=${encodedFrom}&to=${to}`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
 
@@ -231,6 +227,46 @@ describe('Pakistan stats api', async () => {
           state: 'Whole country',
           resultType: 'TB Tests',
           total: 6,
+        },
+      ],
+    })
+  })
+
+  it('Should exclude Results by date', async () => {
+    const path = `/device/result/pakistan?from=${to}&to=${to}&states=AK`
+    assert.isDefined(ntpContext, 'context')
+    assert.isDefined(ntpContext.deviceAuth)
+    const res = await server
+      .get(path)
+      .set('Authorization', ntpContext.deviceAuth)
+    if (res.status !== 200) {
+      console.log(res.body)
+    }
+    assert.equal(res.status, 200)
+    assert.typeOf(res.body, 'Object')
+
+    res.body.should.to.containSubset({
+      from: toUtc,
+      to: toUtc,
+      states: ['AK'],
+      result: [
+        {
+          stateCode: 'AK',
+          state: 'Alaska',
+          resultType: 'DRTB Cases',
+          total: 0,
+        },
+        {
+          stateCode: 'AK',
+          state: 'Alaska',
+          resultType: 'TB Cases',
+          total: 0,
+        },
+        {
+          stateCode: 'AK',
+          state: 'Alaska',
+          resultType: 'TB Tests',
+          total: 0,
         },
       ],
     })
