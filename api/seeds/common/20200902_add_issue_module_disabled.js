@@ -1,23 +1,20 @@
-module.exports = require('../utils').seed(seed, __filename)
-
 const {
   seedIssueType,
   seedIssueEventTriggersForPartner,
   upsertIssueResolutionTrigger,
 } = require('../utils')
 
-async function seed(knex) {
-  const { partnerId } = await knex('User as u')
-    .join('Person as p', 'p.userId', 'u.id')
-    .where({ 'u.name': 'admin' })
-    .first('p.lastPartnerId as partnerId')
+module.exports = async (knex, partnerData) => {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partnerData.partnerName })
+    .first()
 
   await seedIssueType(knex, 'ModuleDisabled', {
-    userName: 'admin',
+    userName: partnerData.adminUserName || 'admin',
   })
 
   await seedIssueType(knex, 'ModuleReplaced', {
-    userName: 'admin',
+    userName: partnerData.adminUserName || 'admin',
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
@@ -38,4 +35,3 @@ async function seed(knex) {
     updatedOn: now,
   })
 }
-module.exports = seed
