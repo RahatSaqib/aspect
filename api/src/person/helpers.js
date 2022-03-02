@@ -16,7 +16,7 @@ const customBoolean = description => [
     Joi.number().optional().valid(0, 1).allow(null).description(description),
     Joi.string()
       .optional()
-      .valid('False', 'True', 'false', 'true', '0', '1')
+      .valid('false', 'true', '0', '1')
       .allow(null)
       .description(description),
   ],
