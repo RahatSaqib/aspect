@@ -9,6 +9,18 @@ const ok = Joi.boolean()
     FYI - breakable error is when returning Boom.
     `
   )
+
+const customBoolean = description => [
+  [
+    Joi.boolean().optional().allow(null).description(description),
+    Joi.number().optional().valid(0, 1).allow(null).description(description),
+    Joi.string()
+      .optional()
+      .valid('False', 'True', 'false', 'true', '0', '1')
+      .allow(null)
+      .description(description),
+  ],
+]
 // -------------------------------------------------------------------------------
 
 const sharedContactDetailsPayload = {
@@ -29,7 +41,10 @@ const sharedContactDetailsPayload = {
   tags: Joi.string().optional().allow('', null),
   partnerId: Joi.number().integer().positive().allow('', null),
   lastPartnerId: Joi.number().integer().positive().allow('', null),
-  canLogIn: [Joi.boolean(), Joi.number().valid(0, 1)],
+  canLogIn: customBoolean('Person canLogIn'),
+  hidePatientId: customBoolean('Person hidePatientId'),
+  hideSampleId: customBoolean('Person hideSampleId'),
+  hideNotes: customBoolean('Person hideNotes'),
 }
 const contactDetailsPayload = {
   id: Joi.number().required(),
@@ -69,21 +84,14 @@ const personDetailsResponse = {
         lastPartnerId: Joi.number()
           .allow(null)
           .description('Person lastPartnerId'),
-        hidePatientId: Joi.number()
-          .allow(null)
-          .description('Person hidePatientId'),
-        hideSampleId: Joi.number()
-          .allow(null)
-          .description('Person hideSampleId'),
-        hideNotes: Joi.number().allow(null).description('Person hideNotes'),
+        hidePatientId: customBoolean('Person hidePatientId'),
+        hideSampleId: customBoolean('Person hideSampleId'),
+        hideNotes: customBoolean('Person hideNotes'),
         country: Joi.string().allow(null).description('Country name'),
         stateName: Joi.string().allow(null).description('State name'),
         lgaName: Joi.string().allow(null).description('Lga name'),
-        userLockedOut: Joi.number()
-          .valid(0, 1)
-          .allow(null)
-          .description('User lockedOut'),
-        canLogIn: Joi.number().allow(null).description('Person canLogIn'),
+        userLockedOut: customBoolean('User userLockedOut'),
+        canLogIn: customBoolean('Person canLogIn'),
         jobId: Joi.number().allow(null).description('Id of first Job'),
         jobFunctions: Joi.array()
           .items(Joi.number())
