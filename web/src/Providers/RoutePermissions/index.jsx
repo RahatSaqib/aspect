@@ -22,7 +22,7 @@ function extractPermissionsFromRoutes(routes, path) {
       // })
     )
     if (foundRoute.length) {
-      const permissions = get(foundRoute[0], 'props.permissions')
+      const permissions = get(foundRoute[0], 'props.element.props.permissions')
       if (permissions) {
         output = permissions
       }
