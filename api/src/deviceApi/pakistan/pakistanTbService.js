@@ -1,4 +1,3 @@
-const { parseISO } = require('date-fns')
 const service = require('../service')
 
 const RESULT_CATEGORY_DETECTED_ID = 1

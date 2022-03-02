@@ -158,9 +158,7 @@ describe('Pakistan stats api', async () => {
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
-    if (res.status !== 200) {
-      console.log(res.body)
-    }
+
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
 
@@ -199,9 +197,7 @@ describe('Pakistan stats api', async () => {
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
-    if (res.status !== 200) {
-      console.log(res.body)
-    }
+
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
 
@@ -239,9 +235,7 @@ describe('Pakistan stats api', async () => {
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
-    if (res.status !== 200) {
-      console.log(res.body)
-    }
+
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
 
