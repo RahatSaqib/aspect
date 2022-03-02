@@ -66,20 +66,7 @@ async function analyzeWithQuery(
     action.options.qtyOnSameModule = qtyOnSameModule
     action.options.moduleSerialWithSameLot = moduleSerial
   }
-  console.log(
-    'entre',
-    action,
-    !_.isNil(consumableLot) && qtyOnSameModule >= minResults,
-    resultsWithErrors,
-    totalResults,
-    analyzeResultsWithErrors(
-      resultsWithErrors,
-      totalResults,
-      threshold,
-      below,
-      minResults
-    )
-  )
+
   return analyzeResultsWithErrors(
     resultsWithErrors,
     totalResults,
@@ -95,16 +82,21 @@ async function shouldSuppressTriggering(
   { errorCodesToSuppress, suppressionDays, issueType }
 ) {
   const { deviceId } = action
-
+  const { resultCategoryId } = action.options.data
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
     const { totalIssues } = await knex('Issue as i')
       .join('IssueType as it', 'i.issueTypeId', 'it.id')
       .where({ deviceId })
       .andWhere('it.externalId', issueType)
-      .whereRaw(
-        `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
-      )
+      .andWhere(builder => {
+        builder
+          .whereRaw('data->>"$.resultOutcome" = ?', [resultCategoryId])
+          .orWhereRaw(
+            `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
+          )
+      })
+
       .modify((builder, days) => {
         if (days) {
           builder.where(
@@ -118,6 +110,7 @@ async function shouldSuppressTriggering(
       .first()
     return totalIssues > 0
   }
+
   return false
 }
 
