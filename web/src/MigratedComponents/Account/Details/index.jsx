@@ -18,6 +18,7 @@ import Loading from '../../../globals/components/Loading.jsx'
 import FormSubmit from './FormSubmit'
 import mutationSuccess from './mutationSuccess'
 import messages from './messages'
+import { badRequestBuilder } from '../../../error/CommonErrorNotifications'
 
 const ContactDetailsFormFormik = () => {
   const { personId } = useParams()
@@ -69,6 +70,9 @@ const ContactDetailsFormFormik = () => {
           values: transformOutputValues(values, baseOmitFields),
           endpoint: '/person',
           method: 'POST',
+          customErrorNotifications: {
+            400: badRequestBuilder(messages),
+          },
         })
       }
       if (type === 'update') {
@@ -164,8 +168,13 @@ const ContactDetailsFormFormik = () => {
   }, [personId, type])
 
   const mutation = useMutation(
-    ({ values, endpoint, method }) => {
-      return fetchWrapperForQueries({ endpoint, method, params: { ...values } })
+    ({ values, endpoint, method, customErrorNotifications }) => {
+      return fetchWrapperForQueries({
+        endpoint,
+        method,
+        params: { ...values },
+        customErrorNotifications,
+      })
     },
     {
       onError: error => {

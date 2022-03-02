@@ -1,6 +1,7 @@
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const Stream = require('stream')
+const _ = require('lodash')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
@@ -76,8 +77,9 @@ async function getSheetData(request, sheet) {
     dataSelector = null,
   } = result
 
+  const listSize = _.isPlainObject(data) ? data?.rows?.length : data?.length
   logger.debug(
-    `Worksheet data - total=${total}, list size=${data?.length}'`,
+    `Worksheet data - total=${total}, list size=${listSize}'`,
     RELABEL_EXCEL
   )
 

@@ -199,12 +199,22 @@ const ReportIndex = () => {
         }}
       >
         {items?.map(
-          ({ externalId, name, description, i18nKey, i18nKeyDescription }) => (
+          ({
+            externalId,
+            name,
+            description,
+            i18nKey,
+            i18nKeyDescription,
+            exportExcel,
+            exportCsv,
+          }) => (
             <ReportCard
               title={name}
               description={description}
               i18nKey={i18nKey}
               i18nKeyDescription={i18nKeyDescription}
+              exportExcel={exportExcel}
+              exportCsv={exportCsv}
               key={externalId}
               onClick={(fileExtension, reportName) =>
                 onClickDownload(externalId, fileExtension, reportName)

@@ -5,9 +5,9 @@ const Range = require('exceljs/lib/doc/range')
 const { getContentType, readExcelFile, readTemplateFile } = require('./io')
 const { getUser } = require('../auth/service')
 const logger = require('./logger')
+const { RELABEL_EXCEL } = require('./constants')
 
 const LANG_DEFAULT = 'en'
-const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
 
 /**
   Notice that `cell.type` and `cell.effectiveType` are set to global constant `excel.ValueType`:
@@ -579,10 +579,10 @@ async function streamExcelTemplate({
     /**
      * create worksheet with same model as in template
      */
-    const worksheet = workbook.addWorksheet(
-      worksheetTemplate.name,
-      worksheetTemplate.model
-    )
+    const worksheet = workbook.addWorksheet(worksheetTemplate.name, {
+      ...worksheetTemplate.model,
+      useSharedStrings: true,
+    })
 
     /**
      * set width and formatting for columns
@@ -747,19 +747,42 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
   row.outlineLevel = rowTemplate.outlineLevel || 0
   row.style = rowTemplate.style
   /**
-   * create cells
+   * create streaming cells from template row.
+   * Notice that we are getting all cells from template, including
+   * undefined (empty) - need this to correctly set styles
    */
-  rowTemplate.eachCell(cellTemplate => {
+  rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
     const cell = row.getCell(cellTemplate.col)
     if (!cellTemplate.isMerged || cellTemplate === cellTemplate.master) {
-      cell.value = cellTemplate.value
+      if (cellTemplate.type === excel.ValueType.Formula) {
+        /**
+         * when exceljs sets `cell.value = cellTemplate.value` with formula
+         * then Excel may show error on opening such worksheet when
+         * formula in cellTemplate.value is typed as shared and
+         * has `formula` prop because formula is in merged cell, like
+         * `{ formula: 'C23+F23', ref: 'L23', shareType: 'shared' }`.
+         * For ordinal cells we have only `formula` prop, like `{ formula: 'C23+F23' }`.
+         * Below we explicitly set cell.value only to `formula` prop for `master` cell
+         * and skip using any other props from cellTemplate.value
+         */
+        const { formula } = cellTemplate
+        if (formula) {
+          cell.value = { formula }
+        }
+      } else {
+        cell.value = cellTemplate.value
+      }
     }
     /**
-     * set new cell directly to the same style as template cell
-     * In case of possible failing use
-     * setCellStyle(cell, getCellStyle(cellTemplate))
+     * set style
      */
-    cell.style = cellTemplate.style
+    const cellStyle = _.merge(
+      {},
+      rowTemplate.style,
+      cellTemplate.master?.style,
+      cellTemplate.style
+    )
+    cell.style = cellStyle
   })
   /**
    * overwrite values in cells if specified
