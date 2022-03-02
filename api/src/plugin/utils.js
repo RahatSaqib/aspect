@@ -95,15 +95,15 @@ async function shouldTriggerResultErrorAnalysis(
 
     // this one is for result base issue, only needs module serial.
     // others data parameters are for filtering not for triggering the issue.
-    timer(2000).then(async () =>
-      messageContext.resultAnalyzeCategoriesAndErrors(
+    timer(1000).then(async () => {
+      return messageContext.resultAnalyzeCategoriesAndErrors(
         deviceId,
         resultId,
         resultCategory1, // <-- this is result category externalid
         resultErrorCode,
         { resultOutcome, moduleSerial, instrumentSerial }
       )
-    )
+    })
   }
 }
 

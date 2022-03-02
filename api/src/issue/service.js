@@ -92,17 +92,23 @@ function onIssueEvent(actionParametersList) {
             triggerConditions,
             filterIssueCondition = null,
           } = actionParameters
+          const { suppressingConditions = null } = JSON.parse(triggerConditions)
 
-          const shouldSuppressEventTriggering = JSON.parse(triggerConditions)
-            .suppressingConditions
+          const shouldSuppressEventTriggering = !_.isNil(suppressingConditions)
             ? await actionConditionsMet(
                 knex,
                 action,
                 partnerId,
-                JSON.parse(triggerConditions).suppressingConditions || {}
+                _.merge(suppressingConditions, {
+                  evaluationFilterParameters: { issueType },
+                }) || {}
               )
             : false
-
+          console.log(
+            'shouldSuppressEventTriggering',
+            action,
+            shouldSuppressEventTriggering
+          )
           if (!shouldSuppressEventTriggering) {
             const shouldTriggerEvent = await actionConditionsMet(
               knex,

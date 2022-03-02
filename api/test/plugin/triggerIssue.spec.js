@@ -482,64 +482,106 @@ describe('This test suite is for testing different triggers conditions', async (
             { moduleSerial: 'M-ANOTHERSERIAL-0' }
           )
         })
-        it(`should create one issue LOT and one MODULE based issue per device ${
+        it.only(`should create one issue LOT for random module and one LOT issue for fixed module repeated in the same device ${
           errorCode
             ? `error ${errorCode}`
             : `category${resultCategoryExternalId}`
-        } because their have the different module numbers `, async () => {
+        } and should passover the module issue `, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
            The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
+          const firstPayload = await getPayload(
+            context,
+            errorCode,
+            resultCategoryExternalId
+          )
 
-          const consumableLot = 'Lot 0'
+          const consumableLot = 'The super Lot 0'
           const { deviceAuth } = context
 
           let resp
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-          await Promise.each(_.range(0, 10), async i => {
-            const firstPayload = await getPayload(
-              context,
-              errorCode,
-              resultCategoryExternalId
-            )
-
-            resp = await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload: _.merge(firstPayload, {
-                assay: { id: 'GxMtbRif' },
-                result: {
-                  id: `Error-${errorCode || `category${i}`}-result${i}`,
-                  startedOn: subDays(new Date(), i),
-                  endedOn: subDays(new Date(), i),
-                  consumable: {
-                    lot: consumableLot,
-                  },
-                  instrument: {
-                    module: {
-                      serial:
-                        i > 5
-                          ? 'THE-ONE-WHICH-TRIGGERS-MODULE'
-                          : `M-123456-0-${_.random(1, 9999999999)}`,
-                    },
-                  },
-                  patient: {
-                    id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
-                  },
-                  sample: { id: `The-sample-${_.random(1, 999999999999)}` },
-                },
-                data: {
-                  resultText: resultCategoryExternalId
-                    ? resultCategoryExternalId.toUpperCase()
-                    : null,
-                },
-              }),
+          await Promise.each(_.range(1, 8), i =>
+            context.createResultForThisDevice({
+              assayExternalId: 'GxMtbRif',
+              resultDetails: {
+                startedOn: subDays(new Date(), i),
+                endedOn: subDays(new Date(), i),
+                consumableLot,
+                errorCode,
+                resultCategory1: resultCategoryId,
+                moduleSerial:
+                  i > 4
+                    ? 'THE-ONE-WHICH-TRIGGERS-MODULE'
+                    : `M-123456-0-${_.random(1, 9999999999)}`,
+              },
             })
+          )
+          resp = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(firstPayload, {
+              assay: { id: 'GxMtbRif' },
+              result: {
+                id: `Error-${_.random(999999999)}`,
+                startedOn: subDays(new Date(), 7),
+                endedOn: subDays(new Date(), 7),
+                consumable: {
+                  lot: consumableLot,
+                },
+                instrument: {
+                  module: {
+                    serial: `M${_.random(1, 9999999999)}`,
+                  },
+                },
+                patient: {
+                  id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
+                },
+                sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
+              },
+            }),
+          })
+          await waitForIdle(2000)
+          await evaluateIssues(resp, issueTypeLotId)
+
+          resp = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(firstPayload, {
+              assay: { id: 'GxMtbRif' },
+              result: {
+                id: `Error${_.random(999999999)}`,
+                startedOn: subDays(new Date(), _.random(1, 6)),
+                endedOn: subDays(new Date(), _.random(1, 6)),
+                consumable: {
+                  lot: consumableLot,
+                },
+                instrument: {
+                  module: {
+                    serial: 'THE-ONE-WHICH-TRIGGERS-MODULE',
+                  },
+                },
+                patient: {
+                  id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
+                },
+                sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
+              },
+            }),
           })
 
-          await evaluateIssues(resp, issueTypeLotId)
-          await waitForIdle(3000)
+          // Post anotherone for triggering module issue
+
+          await waitForIdle(2000)
           await evaluateIssues(resp, issueTypeModuleId, 1, 'Active', {
             moduleSerial: 'THE-ONE-WHICH-TRIGGERS-MODULE',
           })
@@ -555,7 +597,7 @@ describe('This test suite is for testing different triggers conditions', async (
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
 
-          const consumableLot = 'Lot 0'
+          const consumableLot = 'The super Lot 1'
           const {
             deviceAuth,
             device: { id: deviceId },
@@ -730,15 +772,15 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe.only('Invalid results', () => {
-    testCategoriesAndErrorCodes(
-      'Too Many Invalid Results',
-      null,
-      'TooManyInvalidResultsModule',
-      'TooManyInvalidResultsLot',
-      'Invalid'
-    )
-  })
+  // describe('Invalid results', () => {
+  //   testCategoriesAndErrorCodes(
+  //     'Too Many Invalid Results',
+  //     null,
+  //     'TooManyInvalidResultsModule',
+  //     'TooManyInvalidResultsLot',
+  //     'Invalid'
+  //   )
+  // })
 
   describe.only('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
