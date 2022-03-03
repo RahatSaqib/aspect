@@ -3,6 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subDays } = require('date-fns')
 const Promise = require('bluebird')
+const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
   SELECT_COMMON_FIELDS,
   SELECT_SHOW_FIELDS,
@@ -52,6 +53,13 @@ const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
+  const receivedMaxDateTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+  const dateProjectedToUserTZ = knex.raw(
+    `CONVERT_TZ(endedOn, '+00:00', '${receivedMaxDateTimeOffset}') as endedOn`
+  )
+
+  fields.push(dateProjectedToUserTZ)
+
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
