@@ -76,7 +76,7 @@ async function shouldTriggerResultErrorAnalysis(
       resultCategory1, // <-- this is result category externalid
       resultErrorCode,
     ])
-    // this one is for reagent base issue, it needs assayid and consumablelot.
+
     await messageContext.resultAnalyzeCategoriesAndErrors(
       deviceId,
       resultId,
@@ -92,8 +92,7 @@ async function shouldTriggerResultErrorAnalysis(
     )
     const timer = ms => new Promise(res => setTimeout(res, ms))
 
-    // this one is for result base issue, only needs module serial.
-    // others data parameters are for filtering not for triggering the issue.
+    // We need to postpone at least 1 sec the analysis of the Module base issue, because if the lot was generated for the same module, this one should be suppressed.
     timer(1000).then(async () => {
       await messageContext.resultAnalyzeCategoriesAndErrors(
         deviceId,

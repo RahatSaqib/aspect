@@ -90,13 +90,12 @@ async function shouldSuppressTriggering(
       .where({ deviceId })
       .andWhere('it.externalId', issueType)
       .andWhere(builder => {
-        builder
-          .whereRaw('data->>"$.resultOutcome" = ?', [resultCategoryId])
-          .orWhereRaw(
-            `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
-          )
+        builder.whereRaw(
+          `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
+        )
+        if (resultCategoryId)
+          builder.orWhereRaw('data->>"$.resultOutcome" = ?', [resultCategoryId])
       })
-
       .modify((builder, days) => {
         if (days) {
           builder.where(
