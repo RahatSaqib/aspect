@@ -113,7 +113,29 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
+async function getReasonForTestingReport(auth) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rows = await knex('Result as r')
+    .whereRaw("r.resultData LIKE '%Lý do xét nghiệm%'")
+    .select([
+      knex.raw(
+        `IF(resultData->>'$.customFieldData."251".value' = 'null', 'N/A', resultData->>'$.customFieldData."251".value') AS fields`
+      ),
+      knex.raw(`count(resultData->>'$.customFieldData."251".value') AS total`),
+    ])
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+    })
+    .groupBy(knex.raw(`resultData->>'$.customFieldData."251".value'`))
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
+  getReasonForTestingReport,
 }
