@@ -2193,7 +2193,7 @@ describe('Device Result API routes', () => {
           )
         }))
 
-      it('should update lot number if null and exact match of expiresOn', async () => {
+      it.skip('should update lot number if null and exact match of expiresOn', async () => {
         const { deviceId, deviceAuth, now, user, partnerId } = context
         const { siteId } = await knex('Device')
           .where({ id: deviceId })

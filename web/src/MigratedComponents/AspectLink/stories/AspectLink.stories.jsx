@@ -51,6 +51,8 @@ export default {
   component: AspectLink,
 }
 
+const RenderTo = () => <div />
+
 const Template = ({ to, Permissions: permissions, ...rest }) => {
   const User = Immutable.Record({
     jwt: { permissions: permissions.replace(/ /g, '').split(',') },
@@ -62,19 +64,23 @@ const Template = ({ to, Permissions: permissions, ...rest }) => {
       <MemoryRouter>
         <RoutesPermissionProvider>
           <Fragment>
-            <Route exact path="/browse/site" permissions={['browse', 'site']} />
+            <Route
+              exact
+              path="/browse/site"
+              element={<RenderTo permissions={['browse', 'site']} />}
+            />
             <Route
               path="/browse/site/:siteId"
-              permissions={['browse', 'site:edit']}
+              element={<RenderTo permissions={['browse', 'site:edit']} />}
             />
             <Route
               exact
               path="/browse/person"
-              permissions={['browse', 'person']}
+              element={<RenderTo permissions={['browse', 'person']} />}
             />
             <Route
               path="/browse/person/:personId"
-              permissions={['browse', 'person:edit']}
+              element={<RenderTo permissions={['browse', 'person:edit']} />}
             />
             <AspectLink {...rest} to={to}>
               Link

@@ -15,14 +15,9 @@ function extractPermissionsFromRoutes(routes, path) {
       routes,
       ({ props: { path: routePath = false } }) =>
         routePath && matchPath(routePath, path)
-      // return matchPath(path, {
-      //   path: routePath,
-      //   exact: true,
-      //   strict: false,
-      // })
     )
     if (foundRoute.length) {
-      const permissions = get(foundRoute[0], 'props.permissions')
+      const permissions = get(foundRoute[0], 'props.element.props.permissions')
       if (permissions) {
         output = permissions
       }
