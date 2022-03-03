@@ -1,5 +1,9 @@
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
+import startOfMonth from 'date-fns/startOfMonth'
+import endOfMonth from 'date-fns/endOfMonth'
+import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
+import parseISO from 'date-fns/parseISO'
 import { ResponsiveBar } from '@nivo/bar'
 import { oneOfType, object, array, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
@@ -89,7 +93,6 @@ const PerformanceBarChart = ({
       ]}
       tooltip={({ color, indexValue }) => {
         const periodData = data.find(x => x.period === indexValue)
-        // debugger
         const value =
           info === 'Error Rate'
             ? periodData.errorRate + periodData.exceededErrorRate
@@ -97,12 +100,19 @@ const PerformanceBarChart = ({
         const totalResultsLabel = `${intl.formatMessage(
           messages.totalResults
         )} ${periodData.totalResult}`
+        const isoDate = parseISO(periodData.monthTested)
+        const businessDays = differenceInBusinessDays(
+          endOfMonth(isoDate),
+          startOfMonth(isoDate)
+        )
         const errorsCapacityLabel =
           info === 'Error Rate'
             ? `${intl.formatMessage(messages.totalErrors)}: ${
                 periodData.errorCount
               }`
-            : `${intl.formatMessage(messages.totalCapacity)}: ${dailyCapacity}`
+            : `${intl.formatMessage(messages.totalCapacity)}: ${
+                dailyCapacity * businessDays
+              }`
         return (
           <div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
