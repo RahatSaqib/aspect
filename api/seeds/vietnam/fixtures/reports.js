@@ -21,4 +21,21 @@ module.exports = {
       },
     ],
   },
+  m4b1Patients: {
+    name: 'Xpert Patients Report',
+    description:
+      'This report shows the number of GeneXpert MTB tests performed categorized by result and patients types',
+    i18nKey: 'xpertPatientsReport',
+    i18nKeyDescription: 'xpertPatientsReport_description',
+    externalId: 'xpert_m4b1_patients',
+    fileName: 'm4b1Patients',
+    sortOrder: 20,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getGeneXpertM4B1PatientsReport',
+      },
+    ],
+  },
 }
