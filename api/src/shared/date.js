@@ -40,6 +40,9 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
     LPAD(CAST(MONTH(${field}) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
 
+const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
+  knex.raw(`CONVERT_TZ(${field}, '+00:00', '${offset}') as ${alias ?? field}`)
+
 const getISODateUserTimeZoneField = (
   knex,
   field,
@@ -227,6 +230,7 @@ module.exports = {
   getMonthYearField,
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
+  getDateTimeProjectionInUserTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
 }
