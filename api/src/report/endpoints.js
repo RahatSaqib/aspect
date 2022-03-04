@@ -74,6 +74,12 @@ function responseBaseReports() {
             i18nKeyDescription: Joi.string()
               .allow(null)
               .description('the i18n key of the report description'),
+            exportExcel: Joi.number()
+              .allow(null)
+              .description('Flag to allow export to excel'),
+            exportCsv: Joi.number()
+              .allow(null)
+              .description('Flag to allow export to csv'),
           })
         ),
     }),

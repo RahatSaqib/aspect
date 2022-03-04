@@ -9,7 +9,7 @@ import { buildURL } from '../helpers'
 
 describe('AspectLink', () => {
   describe('Helpers', () => {
-    it.only('buildURL should build a URL with parameter sections', () => {
+    it('buildURL should build a URL with parameter sections', () => {
       const url = buildURL('base/url', {
         filters: {
           a: 1,
@@ -20,7 +20,7 @@ describe('AspectLink', () => {
       expect(url).toBe('base/url?filters=a%3D1%26b%3DB%26&c=C&')
     })
 
-    it.only('buildURL should build a URL without parameter sections', () => {
+    it('buildURL should build a URL without parameter sections', () => {
       const url = buildURL('base/url', {
         a: 1,
         b: 'B',

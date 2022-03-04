@@ -30,6 +30,8 @@ const ReportCard = ({
   title,
   i18nKey,
   i18nKeyDescription,
+  exportExcel,
+  exportCsv,
 }) => {
   const { formatMessage } = useI18n()
   const reportName = messages[i18nKey]
@@ -52,20 +54,24 @@ const ReportCard = ({
           </CardContent>
         </CardActionArea>
         <CardActions style={styles.actions}>
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => onClick('xlsx', reportName)}
-          >
-            Excel
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => onClick('csv', reportName)}
-          >
-            CSV
-          </Button>
+          {exportExcel === 1 && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => onClick('xlsx', reportName)}
+            >
+              Excel
+            </Button>
+          )}
+          {exportCsv === 1 && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => onClick('csv', reportName)}
+            >
+              CSV
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Grid>
