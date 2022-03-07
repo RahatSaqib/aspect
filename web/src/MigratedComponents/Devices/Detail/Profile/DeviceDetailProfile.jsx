@@ -341,7 +341,6 @@ const DeviceDetailProfile = ({
 
   const formatMaintenanceDate = date =>
     date ? formatDate(date) : formatMessage(messages.undefinedValue)
-
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
@@ -592,6 +591,7 @@ const DeviceDetailProfile = ({
       <PerformanceReport
         performanceReport={devicePerformance}
         // ma-tch={m-atch}
+        dailyCapacity={dailyCapacity || 0}
         location={location}
         culture={culture}
       />
