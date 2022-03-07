@@ -183,13 +183,17 @@ async function getListRResistantTestReport(auth, query) {
     .select([
       knex.raw("IFNULL(patientData->>'$.name', '-') as fullName"),
       knex.raw(
-        "CASE WHEN IFNULL(patientData->>'$.age', '-') = 'null' THEN '-' ELSE IFNULL(patientData->>'$.age', '-') END as age"
+        "CASE WHEN IFNULL(patientData->>'$.age', 'null') = 'null' THEN '-' ELSE patientData->>'$.age' END as age"
       ),
-      knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
+      knex.raw(
+        "CASE WHEN IFNULL(patientData->>'$.address', 'null') = 'null' THEN '-' ELSE patientData->>'$.address' END as address"
+      ),
+      knex.raw(
+        `CASE WHEN IFNULL(r.resultData->>'$.customFieldData."257".value', 'null') = 'null' THEN '-' ELSE r.resultData->>'$.customFieldData."257".value' END as targetGroup`
+      ),
       'r.endedOn as xpertResultDate',
       'r.notes',
     ])
-
   return {
     ok: true,
     data: {
