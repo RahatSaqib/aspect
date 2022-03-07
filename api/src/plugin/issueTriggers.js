@@ -63,8 +63,8 @@ async function analyzeWithQuery(
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
   if (!_.isNil(consumableLot) && qtyOnSameModule >= minResults) {
-    action.options.qtyOnSameModule = qtyOnSameModule
-    action.options.moduleSerialWithSameLot = moduleSerial
+    action.options.data.qtyOnSameModule = qtyOnSameModule
+    action.options.data.moduleSerialWithSameLot = moduleSerial
   }
 
   return analyzeResultsWithErrors(
@@ -94,7 +94,9 @@ async function shouldSuppressTriggering(
           `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
         )
         if (resultCategoryId)
-          builder.orWhereRaw('data->>"$.resultOutcome" = ?', [resultCategoryId])
+          builder.orWhereRaw('data->>"$.resultCategoryId" = ?', [
+            resultCategoryId,
+          ])
       })
       .modify((builder, days) => {
         if (days) {
@@ -134,7 +136,7 @@ async function analyzeCategories(
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
       .where({ deviceId })
-      .whereRaw('data->>"$.resultOutcome" = ?', [resultCategoryId])
+      .whereRaw('data->>"$.resultCategoryId" = ?', [resultCategoryId])
       .whereRaw('data->>"$.moduleSerialWithSameLot" = ?', [moduleSerial])
       .where('createdOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
       .orderBy('createdOn', 'desc')

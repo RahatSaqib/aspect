@@ -296,7 +296,7 @@ describe('This test suite is for testing different triggers conditions', async (
         it(`should NOT create MODULE or LOT issues when it has less than 4 results for the last 30 days ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            * in this testcase we are testing:
@@ -411,7 +411,7 @@ describe('This test suite is for testing different triggers conditions', async (
         it(`should only create one issue LOT and NOT module based per device ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         } because it has the same module number  `, async () => {
           /**
            * in this testcase we are testing:
@@ -489,7 +489,7 @@ describe('This test suite is for testing different triggers conditions', async (
         it(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
@@ -595,7 +595,7 @@ describe('This test suite is for testing different triggers conditions', async (
         it(`should create one issue LOT and NOT MODULE based issue per device ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         } because their have the same module number and the most important one is the LOT `, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
@@ -674,7 +674,7 @@ describe('This test suite is for testing different triggers conditions', async (
         it(`should only create one issue per device MODULE based ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            * in this testcase we are testing:
