@@ -13,19 +13,25 @@ const PureSelect = props => {
   const { inputProps, form } = props
   const {
     id,
+    disabled,
     label,
     type,
     variant,
     options,
+    initialValue,
     renderOption: RenderComponent,
   } = inputProps
   const { errors, touched, handleBlur, values, setFieldValue } = form
+  const value = filter(options, { value: values[id] })[0] || {}
   return (
     <Autocomplete
       id={`select-${id}`}
+      disabled={disabled}
+      autoSelect
       options={options || []}
       getOptionLabel={option => option?.label || ''}
-      value={filter(options, { value: values[id] })[0] || {}}
+      defaultValue={initialValue}
+      value={value}
       onChange={(_e, selected) => setFieldValue(id, selected?.value || '')}
       onBlur={handleBlur}
       renderOption={(props, option) =>

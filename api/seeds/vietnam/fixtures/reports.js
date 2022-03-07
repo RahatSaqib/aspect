@@ -7,6 +7,7 @@ module.exports = {
     i18nKeyDescription: 'xpertTestActivitiesReport_description',
     externalId: 'xpert_test_activities_report',
     fileName: 'm4b2Activities',
+    exportCsv: false,
     sortOrder: 20,
     sheets: [
       {
@@ -30,11 +31,29 @@ module.exports = {
     externalId: 'xpert_m4b1_patients',
     fileName: 'm4b1Patients',
     sortOrder: 20,
+    exportCsv: false,
     sheets: [
       {
         sortOrder: 0,
         moduleName: 'result/serviceReportVietnam',
         functionName: 'getGeneXpertM4B1PatientsReport',
+      },
+    ],
+  },
+  listRResistantTest: {
+    name: 'List-R Resistant Test Report',
+    description: 'This report shows the list of resistant tests',
+    i18nKey: 'listRResistantTestReport',
+    i18nKeyDescription: 'listRResistantTestReport_description',
+    externalId: 'list_r_resistant_test',
+    fileName: 'listRResistantTest',
+    exportCsv: false,
+    sortOrder: 30,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getListRResistantTestReport',
       },
     ],
   },

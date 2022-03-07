@@ -100,3 +100,19 @@ export function filterFieldsRejectedError(messageDescriptors) {
     ...messageDescriptors,
   }
 }
+// Should we dispatch the show message notification here?
+// Need more arguments, eg title: {...}?
+export function badRequestBuilder(messages) {
+  return errorData => {
+    const { errorKeyCode } = errorData
+    const title = messages[`${errorKeyCode}Title`] || {
+      id: 'queryFetch.errorResponseMessages.GET.default.title',
+      defaultMessage: 'Error Fetching Endpoint',
+    }
+    return {
+      severity: 'error',
+      resolution: { ...messages[errorKeyCode] },
+      title,
+    }
+  }
+}

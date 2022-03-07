@@ -3367,7 +3367,7 @@ msgstr ""
 #. GeneXpert MTB/Rif
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif"
-msgstr ""
+msgstr "GeneXpert MTB/Rif"
 
 #. [legends.Unknown.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
@@ -3380,7 +3380,7 @@ msgstr ""
 #. GeneXpert MTB/Rif Ultra
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif Ultra"
-msgstr ""
+msgstr "GeneXpert MTB/Rif Ultra"
 
 #. [legends.Unknown.assayGeneXpertMtbXdr]
 #. defaultMessage is:
@@ -4811,7 +4811,7 @@ msgstr ""
 #. MTB/Rif
 #: extracted_strings.json
 msgid "MTB/Rif"
-msgstr ""
+msgstr "MTB/Rif"
 
 #. [legends.Unknown.assayMP96Covid19]
 #. defaultMessage is:

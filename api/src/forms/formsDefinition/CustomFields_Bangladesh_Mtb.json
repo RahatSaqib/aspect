@@ -33,7 +33,6 @@
         }
       ]
     },
-
     {
       "id": 1103,
       "name": "Gender",
@@ -58,7 +57,6 @@
         }
       ]
     },
-
     {
       "id": 1104,
       "name": "Address",
@@ -81,7 +79,9 @@
       "gxAlertDbColumn": "PatientPhone",
       "caption": "Mobile Number",
       "i18nKeyCaption": "MobileNumberI18nKeyCaption",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1105.value",
+      "payloadDestinationPath": "patient.PatientPhone"
     },
     {
       "id": 1106,
@@ -94,13 +94,14 @@
       "caption": "Referring Facility",
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "autoComplete",
+      "payloadOriginPath": "data.customFieldData.1106.value",
+      "payloadDestinationPath": "patient.ReferringFacility",
       "optionSource": "all-sites",
       "customUrlMappingFields": {
         "key": "externalId",
         "value": "name"
       }
     },
-
     {
       "id": 12011,
       "name": "TypeOfPatient",
@@ -112,6 +113,8 @@
       "caption": "Type of Patient",
       "i18nKeyCaption": "TypeOfPatientI8nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.12011.value",
+      "payloadDestinationPath": "patient.TypeOfPatient",
       "items": [
         {
           "key": "Failures_of_Category_I",
@@ -195,6 +198,8 @@
       "caption": "Patient History",
       "i18nKeyCaption": "PatientHistoryI8nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.12012.value",
+      "payloadDestinationPath": "patient.PatientHistory",
       "condition": [
         {
           "propToCompare": "TypeOfPatient",
@@ -300,6 +305,8 @@
       "caption": "Patient Retreatment",
       "i18nKeyCaption": "PatientRetreatmentI8nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.12013.value",
+      "payloadDestinationPath": "patient.PatientRetreatment",
       "condition": [
         {
           "propToCompare": "TypeOfPatient",
@@ -327,7 +334,6 @@
         }
       ]
     },
-
     {
       "id": 1210,
       "name": "HIV Status",
@@ -339,6 +345,8 @@
       "caption": "HIV Status",
       "i18nKeyCaption": "HIVStatusI8nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1210.value",
+      "payloadDestinationPath": "patient.HIVStatus",
       "items": [
         {
           "key": "positive",
@@ -368,6 +376,8 @@
       "caption": "Sample Type",
       "i18nKeyCaption": "SampleTypeI8nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1211.value",
+      "payloadDestinationPath": "patient.SampleType",
       "items": [
         {
           "key": "pulmonary",
@@ -391,7 +401,9 @@
       "gxAlertDbColumn": "TBRegistrationNumberPrevious",
       "caption": "TB Registration Number - Previous (if any)",
       "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1301.value",
+      "payloadDestinationPath": "patient.TBRegistrationNumberPrevious"
     },
     {
       "id": 1302,
@@ -403,7 +415,9 @@
       "gxAlertDbColumn": "TBRegistrationNumberCurrent",
       "caption": "TB Registration Number - Current",
       "i18nKeyCaption": "TBRegistrationNumberCurrentI18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1302.value",
+      "payloadDestinationPath": "patient.TBRegistrationNumberCurrent"
     }
   ],
   "refForms": []
