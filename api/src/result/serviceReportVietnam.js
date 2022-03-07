@@ -119,12 +119,7 @@ async function getResultCountsByHIVStatus(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   let data = await getBaseQuery(dataConstraints, query)
-    .whereIn('a.externalId', [
-      'GxMtbRif',
-      'GxMtbRifUltra',
-      'GxHiv1Vl',
-      'GxHiv1Qual',
-    ])
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select(
       knex.raw(`
         LOWER(IFNULL(r.patientData ->> '$.HIVStatus', 'null')) as hivStatus
