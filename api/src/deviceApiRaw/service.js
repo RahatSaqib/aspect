@@ -7,7 +7,7 @@ const { deviceApiRawStatusToId } = require('../shared/dictionary')
 const { knex } = require('../db')
 const { decrypt } = require('../shared/encryption')
 
-const addDeviceRawDataHandler = asyncHandler(async request => {
+const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
   const {
     plugins: { messageContext },
   } = request
@@ -20,15 +20,24 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
 
   await dataProcessor.start()
 
-  return Promise.race([responseReady, error]).catch(error => {
-    if (_.get(error, 'message') === dataProcessor.timeoutMessage) {
-      throw Boom.gatewayTimeout(dataProcessor.timeoutMessage, {
-        deviceApiRawId: dataProcessor.id,
-        timeoutMilliseconds: dataProcessor.timeoutMilliseconds,
-      })
-    }
-    throw error
-  })
+  return Promise.race([responseReady, error])
+    .then(async responseContent => {
+      if (dataProcessor.responseStatusCode) {
+        return h
+          .response(responseContent)
+          .code(dataProcessor.responseStatusCode)
+      }
+      return responseContent
+    })
+    .catch(async error => {
+      if (_.get(error, 'message') === dataProcessor.timeoutMessage) {
+        throw Boom.gatewayTimeout(dataProcessor.timeoutMessage, {
+          deviceApiRawId: dataProcessor.id,
+          timeoutMilliseconds: dataProcessor.timeoutMilliseconds,
+        })
+      }
+      throw error
+    })
 })
 
 async function continueUnprocessedRawData(queue) {

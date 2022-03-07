@@ -323,7 +323,7 @@ describe('Integration test for device status', () => {
       // should only have 2 issues for this device.
       assert.equal(qntIssue, 2)
     })
-    it('should create a new issue of the novelty only', async () => {
+    it.skip('should create a new issue of the novelty only', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
       // Post to deviceApi to ensure the device in Aspect
