@@ -81,7 +81,11 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
           reportItem.resultCategory2 || 'NA'
         }_${typeOfPatient}`
       } else if (reportItem.resultCategory2 === 'Indeterminate')
-        fieldName = `Detected_Indeterminate_${typeOfPatient}`
+        fieldName = `${
+          reportItem.resultCategory1 === 'Trace Detected'
+            ? reportItem.resultCategory1
+            : 'Other'
+        }_Indeterminate_${typeOfPatient}`
       else if (
         reportItem.resultCategory1 === 'Detected' &&
         includes(['NotDetected', 'Detected'], reportItem.resultCategory2)
