@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
@@ -118,11 +116,14 @@ async function getListRResistantTestReport(auth, query) {
 async function getResultCountsByHIVStatus(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  let data = await getBaseQuery(dataConstraints, query)
+  const data = await getBaseQuery(dataConstraints, query)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select(
       knex.raw(`
-        LOWER(IFNULL(r.patientData ->> '$.HIVStatus', 'null')) as hivStatus
+        CASE IFNULL(UPPER(r.patientData ->> '$.HIVStatus'), 'NULL')
+        WHEN 'NULL' THEN '- Unspecified -'
+        ELSE UPPER(r.patientData ->> '$.HIVStatus')
+        END as hivStatus
       `),
       'rc1.name as resultCategory1',
       'rc2.name as resultCategory2'
@@ -131,16 +132,7 @@ async function getResultCountsByHIVStatus(auth, query) {
     .count({
       cntAll: knex.raw('DISTINCT r.id'),
     })
-
-  data = _.map(data, item => {
-    if (item.hivStatus === 'null') {
-      item.hivStatus = '- Unspecified -'
-    } else {
-      item.hivStatus = _.capitalize(item.hivStatus)
-    }
-    return item
-  })
-  data = _.orderBy(data, ['hivStatus'])
+    .orderBy('hivStatus')
 
   return {
     ok: true,
