@@ -85,10 +85,10 @@ const FilterByAssayDropDown = props => {
         const grouped = groupBy(data?.assays, 'assayTypeAbbreviation')
         map(grouped, (val, key) => {
           const tempOptions = []
-          map(val, ({ i18nKey }) =>
+          map(val, ({ i18nKey, externalId }) =>
             tempOptions.push({
               label: formatMessage(assayTranslations[i18nKey]),
-              value: i18nKey,
+              value: externalId,
               group: key,
             })
           )
