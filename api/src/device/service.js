@@ -1860,9 +1860,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
 async function getDeviceCalibrationsForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  console.table(query)
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-  console.log(getSelectListFields(userTimeOffset))
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
 
