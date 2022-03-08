@@ -6,12 +6,13 @@ const Promise = require('bluebird')
 const {
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
+  // getOffsetFromTimeZone,
 } = require('../shared/date')
 const {
-  SELECT_COMMON_FIELDS,
-  SELECT_SHOW_FIELDS,
+  getSelectCommonListFields,
+  getReportCommonFields,
+  getSelectShowFields,
   SORT_FIELDS,
-  REPORT_COMMON_FIELDS,
   LIST_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./querySelectors')
@@ -56,11 +57,11 @@ const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
-  const receivedMaxDateTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   const dateProjectedToUserTZ = getDateTimeProjectionInUserTimeZone(
     knex,
     'endedOn',
-    receivedMaxDateTimeOffset
+    userTimeOffset
   )
 
   fields.push(dateProjectedToUserTZ)
@@ -208,8 +209,9 @@ function getResultTreatmentStatus(response) {
 }
 
 async function getResultsForExport(auth, query) {
+  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   const selectFields = [
-    ...SELECT_COMMON_FIELDS,
+    ...getSelectCommonListFields(userTimeOffset),
     knex.raw(
       `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
     ),
@@ -781,13 +783,16 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultByResultId(
-  auth,
-  resultId,
-  fields = SELECT_SHOW_FIELDS
-) {
+async function getResultByResultId(auth, resultId, fields) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
+  // const { userName, timezone } = await getUser(auth.credentials.name)
+
+  if (!fields) {
+    // const userOffset = getOffsetFromTimeZone(timezone)
+    // fields = getSelectShowFields(userOffset)
+    fields = getSelectShowFields('+00:00') // This field list has been altered to use in reports, here is choosed to show userTimezone, as this is not a report.
+  }
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -2368,8 +2373,9 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
 }
 
 async function getResultsForReport(auth, query) {
+  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth, REPORT_COMMON_FIELDS)
+  return getListResults(query, auth, getReportCommonFields(userTimeOffset))
 }
 
 async function clinicalIndicatorAggregations(request) {

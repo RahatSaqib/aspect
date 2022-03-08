@@ -40,8 +40,36 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
     LPAD(CAST(MONTH(${field}) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
 
+/**
+ * - Generate knex code to project a datetime field in the specified timezone.
+ * @param {*} knex - Knex ref.
+ * @param {string} field - Name of the field to select.
+ * @param {string} offset - Time offset in ISO format (e.g. +05:00)
+ * @param {string=} alias - Optional. name to be returned if you don't want the field name.
+ * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
+ * @example
+ * e.g.:
+ * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
+ * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
+ */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, '+00:00', '${offset}') as ${alias ?? field}`)
+  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") as ${alias ?? field}`)
+
+function selectDateTimeProjectionInUserTimeZone(
+  queryBuilder,
+  knex,
+  expression,
+  offset,
+  alias
+) {
+  queryBuilder.select(
+    knex.raw(
+      `CONVERT_TZ(${expression}, "+00:00", "${offset}") as ${
+        alias ?? expression
+      }`
+    )
+  )
+}
 
 const getISODateUserTimeZoneField = (
   knex,
@@ -127,6 +155,41 @@ function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
   if (!dateString || typeof dateString !== 'string') return null
 
   return convertToLocalTime(dateString, { timeZone })
+}
+
+/**
+ * Convert a Timezone name in a timeOffset
+ * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
+ * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
+ * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
+ */
+function getOffsetFromTimeZone(timeZone, date = new Date()) {
+  // Starting from https://stackoverflow.com/questions/20712419/get-utc-offset-from-timezone-in-javascript
+  const tz = date
+    .toLocaleString('en', { timeZone, timeStyle: 'long' })
+    .split(' ')
+    .slice(-1)[0]
+  const dateString = date.toString()
+  let offset =
+    Date.parse(`${dateString} UTC`) - Date.parse(`${dateString} ${tz}`)
+
+  if (Number.isNaN(offset)) {
+    // If the time zone cannot be processed by javascript, use +00:00 (America/Jumeau, Canada/Atlantic and Pacific/Honolulu to this date.)
+    offset = 0
+  }
+
+  return milliseconsToTimeOffset(offset)
+
+  function milliseconsToTimeOffset(offset) {
+    const offsetNum = parseInt(offset / 10 / 60 / 60, 10)
+    const hourString = Math.floor(Math.abs(offsetNum / 100))
+      .toString()
+      .padStart(2, '0')
+    const offsetString = `${
+      (offsetNum >= 0 ? '+' : '-') + hourString
+    }:${offsetNum.toString().padStart(2, '0').slice(-2)}`
+    return offsetString
+  }
 }
 
 function getLocalDateInUtc(dateTime) {
@@ -231,6 +294,8 @@ module.exports = {
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
   getDateTimeProjectionInUserTimeZone,
+  selectDateTimeProjectionInUserTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
+  getOffsetFromTimeZone,
 }
