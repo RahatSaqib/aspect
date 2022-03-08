@@ -88,45 +88,10 @@ module.exports = async (knex, countryId) => {
         .map(g => g.id)
     )
 
-    await knex('Device')
+   await Promise.each([ 'Device','Target', 'Site', 'Result', 'Person', 'JobContext', 'Issue', 'DeviceConfiguration', 'DeviceApiKey' ], table => knex(table)
       .whereIn('geographyId', duplicateGeographIds)
       .update({ geographyId: geography.originalId })
-
-    await knex('DeviceApiKey')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('DeviceConfiguration')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('Issue')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('JobContext')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('Device')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('Person')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('Result')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('Site')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-
-    await knex('Target')
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
+)
 
     await knex('Geography').whereIn('id', duplicateGeographIds).delete()
   })
