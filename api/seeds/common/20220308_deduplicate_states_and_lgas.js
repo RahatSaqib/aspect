@@ -63,7 +63,7 @@ module.exports = async (knex, countryId) => {
     .having('numberOfIds', '>', 1)
 
   await Promise.each(duplicateGeographies, async geography => {
-    const duplicateGeographIds = _.uniq(
+    const duplicateGeographyIds = _.uniq(
       duplicateGeographies
         .filter(
           g =>
@@ -88,10 +88,10 @@ module.exports = async (knex, countryId) => {
       ],
       table =>
         knex(table)
-          .whereIn('geographyId', duplicateGeographIds)
+          .whereIn('geographyId', duplicateGeographyIds)
           .update({ geographyId: geography.originalId })
     )
 
-    await knex('Geography').whereIn('id', duplicateGeographIds).delete()
+    await knex('Geography').whereIn('id', duplicateGeographyIds).delete()
   })
 }
