@@ -24,20 +24,11 @@ const testExternalId = 'Pakistan Api TEST GeneXpert'
 const deviceSerialNumber = String(_.random(1, 99999999, false)).padStart(8, '0')
 const hostId = 'BLH-Expert'
 const partnerName = 'Partner One'
-const errorCode = null
-const baseResultDetails = {
-  consumableLot: 'Lot 0',
-  moduleName: 'Module J',
-  moduleSerial: 'M-123456-0',
-  instrumentSerial: 'S-1234-0',
-  errorCode,
-  errorNotes: errorCode ? 'Some error notes' : null,
-}
 const ALASKA_VALID_GEOGRAPHY_ID = 39
-describe('Pakistan stats api', async () => {
+describe.only('Pakistan stats api', async () => {
   const encodedFrom = encodeURIComponent('2022-02-03T00:00:00+05:00')
   const fromUtc = '2022-02-02T19:00:00.000Z'
-  const to = encodeURIComponent('2022-03-15T00:00:00.00+05:00')
+  const encodedTo = encodeURIComponent('2022-03-15T00:00:00.00+05:00')
   const toUtc = '2022-03-14T19:00:00.000Z'
 
   const contextAlaskaDevice = createGxConnectTestContext(server, {
@@ -52,18 +43,11 @@ describe('Pakistan stats api', async () => {
 
   let ntpContext
 
-  const baseApiConfig = {
-    requirePrinter: 'yes',
-    adminPassword: 'pwd123',
-    firmwareUpdateRequired: 'no',
-  }
-
   before('Create the context to query the Api', async () => {
     ntpContext = createTestContext(knex, server, {
       user: adminUsername,
       type: 'GxAlert',
       partner: partnerName,
-      baseApiConfig,
     })
 
     await ntpContext.createSites(['pakistanTbService.spec query site'])
@@ -75,9 +59,10 @@ describe('Pakistan stats api', async () => {
     await contextAlaskaDevice.beforeRegisterAndSetDevice()
     // This is a hack: To create a device, createGxConnectTestContext makes Api Requests,
     // then the system sets the site and geography from the user authenticated, but in
-    // order to create a device, the user has to have permissions, wich admin user has, but
-    // he has no state, so the device is created without state and the results it's generate too.
-    // Here the state and geography of the device is changed.
+    // order to create a device, the user has to have permissions, wich the admin user has, but
+    // he has no state, so the device is created without state, and therefore the results are
+    // generated without state too.
+    // This hack force the state and geography of the newly created device.
     const seedSite = await knex('Site as s')
       .where({ externalId: testExternalId })
       .first('s.id')
@@ -99,7 +84,6 @@ describe('Pakistan stats api', async () => {
     const tests = Promise.each(_.range(0, 2), async () => {
       await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
-          ...baseResultDetails,
           ...{
             startedOn: subDays(new Date(), -1),
             endedOn: subDays(new Date(), -1),
@@ -113,7 +97,6 @@ describe('Pakistan stats api', async () => {
     const cases = Promise.each(_.range(0, 2), async () => {
       await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
-          ...baseResultDetails,
           ...{
             startedOn: subDays(new Date(), -1),
             endedOn: subDays(new Date(), -1),
@@ -127,7 +110,6 @@ describe('Pakistan stats api', async () => {
     const drcases = Promise.each(_.range(0, 2), async () => {
       await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
-          ...baseResultDetails,
           ...{
             startedOn: subDays(new Date(), -1),
             endedOn: subDays(new Date(), -1),
@@ -137,21 +119,17 @@ describe('Pakistan stats api', async () => {
         },
       })
     })
-    await Promise.all([tests, cases, drcases].flat())
+    await Promise.all([tests, cases, drcases])
   })
 
   after(async () => {
-    knex('ResultFollowUp').del()
-    knex('ResultStatusLog').del()
-    knex('Sample').del()
-    knex('Result').del()
     await contextAlaskaDevice.cleanUp()
     await ntpContext.afterEach()
   })
 
   it('Should return correct stats by state', async () => {
     // const path = `/device/result/pakistan`
-    const path = `/device/result/pakistan?from=${encodedFrom}&to=${to}&states=AK`
+    const path = `/device/result/pakistan?from=${encodedFrom}&to=${encodedTo}&states=AK`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
 
@@ -189,11 +167,10 @@ describe('Pakistan stats api', async () => {
     })
   })
 
-  it('Shourld return correct stats for country, including from', async () => {
-    const path = `/device/result/pakistan?from=${encodedFrom}&to=${to}`
+  it('Should return correct stats for country', async () => {
+    const path = `/device/result/pakistan?from=${encodedFrom}&to=${encodedTo}`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
-
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
@@ -229,7 +206,7 @@ describe('Pakistan stats api', async () => {
   })
 
   it('Should exclude Results by date', async () => {
-    const path = `/device/result/pakistan?from=${to}&to=${to}&states=AK`
+    const path = `/device/result/pakistan?from=${encodedTo}&to=${encodedTo}&states=AK`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
     const res = await server

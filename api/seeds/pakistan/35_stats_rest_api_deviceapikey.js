@@ -16,12 +16,13 @@ module.exports = require('../utils').seed(async knex => {
     .where('name', partnerData.partnerName)
     .first('id as partnerId')
 
-  const { geographyId } = await knex('Geography')
-    .where({ stateId: null, countryId: 1 })
-    .first('id as geographyId')
+  const { geographyId } = await knex('Geography as g')
+    .join('Country as c', 'c.id', 'g.countryId')
+    .where({ stateId: null, 'c.abbreviation': 'PK' })
+    .first('g.id as geographyId')
 
   await knex('DeviceApiKey').insert({
-    token: 'kcf2ve9wy96pp800kdk0',
+    token: partnerData.statsQueryDeviceApiToken,
     revoked: 0,
     partnerId,
     geographyId,

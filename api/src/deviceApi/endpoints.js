@@ -749,6 +749,22 @@ const routes = [
     path: '/result/pakistan',
     handler: getResultPakistanHandler,
     config: {
+      response: {
+        schema: {
+          from: Joi.date().iso(),
+          to: Joi.date().iso(),
+          states: Joi.array().items(Joi.string()),
+          result: Joi.array()
+            .length(3)
+            .items({
+              stateCode: Joi.string().empty(''),
+              state: Joi.string().empty(''),
+              resultType: Joi.string(),
+              total: Joi.number(),
+            }),
+        },
+        failAction: 'error',
+      },
       description: 'Get Tb Stats',
       notes:
         'Returns stats for total TB tests, TB cases and DRTB cases. Accepts last 24hs or from 2022-01-01 start and a especific state or whole country.',
@@ -774,10 +790,6 @@ const routes = [
     },
   },
 ]
-
-// function getResultsForPaquistan() {
-//   return 'tpth'
-// }
 
 const subscriptions = [
   {
