@@ -22,13 +22,7 @@ module.exports = async (knex, countryId) => {
       .select('g.id', 'g.stateId')
 
     await knex('Geography')
-      .whereIn(
-        'id',
-        _.uniq(
-          duplicateStateGeographies
-            .map(g => g.id)
-        )
-      )
+      .whereIn('id', _.uniq(duplicateStateGeographies.map(g => g.id)))
       .update({ siteId: state.originalId })
   })
 
@@ -53,13 +47,7 @@ module.exports = async (knex, countryId) => {
       .select('g.id', 'g.lgaId')
 
     await knex('Geography')
-      .whereIn(
-        'id',
-        _.uniq(
-          duplicateLgaGeographies
-            .map(g => g.id)
-        )
-      )
+      .whereIn('id', _.uniq(duplicateLgaGeographies.map(g => g.id)))
       .update({ lgaId: lga.originalId })
   })
 
@@ -86,10 +74,23 @@ module.exports = async (knex, countryId) => {
         .map(g => g.id)
     )
 
-   await Promise.each([ 'Device','Target', 'Site', 'Result', 'Person', 'JobContext', 'Issue', 'DeviceConfiguration', 'DeviceApiKey' ], table => knex(table)
-      .whereIn('geographyId', duplicateGeographIds)
-      .update({ geographyId: geography.originalId })
-)
+    await Promise.each(
+      [
+        'Device',
+        'Target',
+        'Site',
+        'Result',
+        'Person',
+        'JobContext',
+        'Issue',
+        'DeviceConfiguration',
+        'DeviceApiKey',
+      ],
+      table =>
+        knex(table)
+          .whereIn('geographyId', duplicateGeographIds)
+          .update({ geographyId: geography.originalId })
+    )
 
     await knex('Geography').whereIn('id', duplicateGeographIds).delete()
   })
