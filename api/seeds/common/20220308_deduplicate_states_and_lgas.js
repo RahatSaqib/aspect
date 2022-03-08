@@ -26,7 +26,6 @@ module.exports = async (knex, countryId) => {
         'id',
         _.uniq(
           duplicateStateGeographies
-            .filter(g => g.stateId !== state.originalId)
             .map(g => g.id)
         )
       )
@@ -58,7 +57,6 @@ module.exports = async (knex, countryId) => {
         'id',
         _.uniq(
           duplicateLgaGeographies
-            .filter(g => g.lgaId !== lga.originalId)
             .map(g => g.id)
         )
       )
