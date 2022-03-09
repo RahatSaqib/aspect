@@ -2472,7 +2472,7 @@ async function setCapacityForExistingDevices(knex) {
         dc.defaultForDeviceType === 1
     )
     if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
-      await knex('Device')
+      return knex('Device')
         .where({ partnerId })
         .where({ deviceTypeId })
         .update({ deviceCapacityId: deviceCapacityByPartnerId.id })
