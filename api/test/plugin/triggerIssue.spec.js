@@ -144,7 +144,8 @@ const evaluateIssues = async (
   issueTypeId,
   qtyIssuesExpected = 1,
   issueStatus = 'Active',
-  moduleCheck = null
+  moduleCheck = null,
+  resultId
 ) => {
   assert.equal(response.status, 200)
   assert.typeOf(response.body, 'Object')
@@ -157,7 +158,11 @@ const evaluateIssues = async (
       await checkNotificationsForIssue(issues[0].id, issueTypeId)
   }
   if (moduleCheck) {
-    const data = JSON.parse(issues[0].data)
+    let issueSelected = issues[0].data
+    if (resultId) {
+      issueSelected = _.find(issues, i => i.resultId === resultId)
+    }
+    const data = JSON.parse(issueSelected)
     assert.containSubset(data, moduleCheck)
   }
 }
@@ -664,10 +669,19 @@ describe('This test suite is for testing different triggers conditions', async (
               },
             }),
           })
+          const { id: resultId } = context.getLastResult()
+
           await waitForIdle(2000)
-          await evaluateIssues(resp, issueTypeLotId, 1, 'Active', {
-            moduleSerialWithSameLot: 'THE-ONE-WHICH-TRIGGERS-LOT',
-          })
+          await evaluateIssues(
+            resp,
+            issueTypeLotId,
+            1,
+            'Active',
+            {
+              moduleSerialWithSameLot: 'THE-ONE-WHICH-TRIGGERS-LOT',
+            },
+            resultId
+          )
 
           await evaluateIssues(resp, issueTypeModuleId, 0)
         })
