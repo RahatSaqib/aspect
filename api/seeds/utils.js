@@ -2493,7 +2493,7 @@ async function setCapacityForExistingDevices(knex) {
 
   await Promise.each(
     genexpertDevicesWithModules,
-    async ({ partnerId, deviceTypeId, deviceId, modules }) => {
+    ({ partnerId, deviceTypeId, deviceId, modules }) => {
       const deviceCapacityByPartnerId = _.find(
         deviceCapacities,
         dc =>
@@ -2504,7 +2504,7 @@ async function setCapacityForExistingDevices(knex) {
             (dc.name === '32 modules' && modules > 16 && modules <= 32))
       )
       if (deviceCapacityByPartnerId && deviceCapacityByPartnerId.id) {
-        await knex('Device')
+        return knex('Device')
           .where({ id: deviceId })
           .update({ deviceCapacityId: deviceCapacityByPartnerId.id })
       }
