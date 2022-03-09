@@ -1,17 +1,13 @@
+import React from 'react'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import React, { useState } from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import Button from '@material-ui/core/Button'
-import { useMutation } from 'react-query'
-import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 
-import AspectDialog from '../../components/shared/AspectDialog'
 import {
   getCustomMessage,
   commonDefinitions,
@@ -23,7 +19,6 @@ import {
 } from '../../shared/selectors/searchParams'
 import requirePermissions, {
   isPermittedUser,
-  getPermissions,
 } from '../../components/shared/requirePermissions'
 
 import AspectButton from '../../components/shared/AspectButton'
@@ -98,6 +93,10 @@ const messages = {
       id: 'pages.PersonList.cancel',
       defaultMessage: 'Cancel',
     },
+    enableDisable: {
+      id: 'pages.PersonList.enableDisable',
+      defaultMessage: 'Enable/Disable User',
+    },
   }),
 }
 
@@ -105,6 +104,7 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
+  { actions: true, requiredPermissions: [] },
   {
     contactNameOrEmail: true,
     requiredPermissions: [],
@@ -255,64 +255,12 @@ export const PersonList = ({
   })(AspectButton)
   const { formatMessage } = i18nWrapper()
 
-  const dispatch = useDispatch()
   const { permissions: userPermissions } = useSelector(
     ({ user }) => user.toJS().jwt
   )
   const isEditAllow = isPermittedUser(userPermissions, {
     required: ['person:edit'],
   })
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [personName, setPersonName] = useState('')
-  const [personId, setPersonId] = useState()
-  const [personDisabled, setPersonDisabled] = useState(0)
-
-  const showDeleteAlert = person => {
-    setPersonName(person.get('name'))
-    setPersonId(person.get('id'))
-    setPersonDisabled(person.get('disabled'))
-    setShowConfirmation(true)
-  }
-  const handleEnableDisable = async () => {
-    setShowConfirmation(false)
-    let payload = {
-      endpoint: `/person/enable/${personId}`,
-      method: 'PUT',
-    }
-    if (personDisabled === 0) {
-      payload = {
-        endpoint: `/person/${personId}`,
-        method: 'DELETE',
-      }
-    }
-    try {
-      mutation.mutate(payload)
-    } catch (err) {
-      console.log(err) // eslint-disable-line
-    }
-  }
-
-  const mutation = useMutation(
-    ({ values, endpoint, method }) => {
-      return fetchWrapperForQueries({ endpoint, method, params: { ...values } })
-    },
-    {
-      onError: error => {
-        throw new Error(error)
-      },
-      onSuccess: ({ ok }) => {
-        if (ok) {
-          const searchParams = new URLSearchParams(location.search)
-          const filtersParams = new URLSearchParams(
-            searchParams.get('filters') || ''
-          )
-          dispatch(
-            fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
-          )
-        }
-      },
-    }
-  )
 
   return (
     <div className={cssClasses('Container')}>
@@ -380,7 +328,7 @@ export const PersonList = ({
                 },
                 isEditAllow && {
                   key: 'actions',
-                  label: 'Actions',
+                  label: formatMessage(messages.enableDisable),
                   sortable: false,
                 },
               ]}
@@ -393,7 +341,6 @@ export const PersonList = ({
                     key={person.get('id')}
                     person={person}
                     onClick={onRowClick}
-                    onClickEnableDisable={() => showDeleteAlert(person)}
                     data-person-id={person.get('id')}
                     personEditPermission={isEditAllow}
                   />
@@ -412,30 +359,6 @@ export const PersonList = ({
           />
         )}
       </DataTableCard>
-      <AspectDialog
-        actions={[
-          <Button color="primary" onClick={() => setShowConfirmation(false)}>
-            {formatMessage(messages.cancel)}
-          </Button>,
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleEnableDisable}
-          >
-            {formatMessage(messages.yes)}
-          </Button>,
-        ]}
-        maxWidth="sm"
-        open={showConfirmation}
-        onClose={() => setShowConfirmation(false)}
-      >
-        <h3>
-          {personDisabled
-            ? formatMessage(messages.enable)
-            : formatMessage(messages.disable)}{' '}
-          - <b>{personName}</b>?
-        </h3>
-      </AspectDialog>
     </div>
   )
 }

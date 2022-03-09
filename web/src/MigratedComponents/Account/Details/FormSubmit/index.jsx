@@ -10,10 +10,19 @@ const FormSubmit = ({ label, type, color, action, formik }) => {
       variant="contained"
       onClick={e => action(e, formik)}
       disabled={!isValid || isSubmitting}
+      sx={{ marginRight: '10px' }}
     >
       {label}
     </Button>
   )
 }
 
-export default FormSubmit
+const FormAction = ({ label, color, action, sx }) => {
+  return (
+    <Button color={color} variant="contained" onClick={e => action(e)} sx={sx}>
+      {label}
+    </Button>
+  )
+}
+
+export { FormSubmit, FormAction }

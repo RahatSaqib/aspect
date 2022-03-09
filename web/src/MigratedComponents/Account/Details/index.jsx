@@ -15,8 +15,9 @@ import AspectPureFormik from '../../Form/PureFormik'
 import { getInitialValues } from '../../Form/PureFormik/Helpers'
 import useI18n from '../../../Hooks/i18n/useI18n'
 import Loading from '../../../globals/components/Loading.jsx'
-import FormSubmit from './FormSubmit'
+import { FormSubmit } from './FormSubmit'
 import mutationSuccess from './mutationSuccess'
+import AccountEnableDisable from '../AccountEnableDisable'
 import messages from './messages'
 
 const ContactDetailsFormFormik = () => {
@@ -102,6 +103,18 @@ const ContactDetailsFormFormik = () => {
       action: handleSubmit,
     },
   ]
+
+  if (type !== 'add' && actions?.length) {
+    actions.push({
+      id: 'delete',
+      type: 'button',
+      color: 'error',
+      label: 'Disable',
+      // label: formatMessage(type === 'add' ? messages.create : messages.save),
+      component: AccountEnableDisable,
+      sx: { backgroundColor: 'red' },
+    })
+  }
 
   function buildItems(action) {
     const tempItems = [
