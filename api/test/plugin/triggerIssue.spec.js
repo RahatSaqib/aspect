@@ -511,7 +511,6 @@ describe('This test suite is for testing different triggers conditions', async (
            The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
-          this.retries(3)
           const firstPayload = await getPayload(
             context,
             errorCode,
@@ -709,7 +708,7 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe.only('Invalid results', () => {
+  describe('Invalid results', () => {
     testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
@@ -719,7 +718,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe.only('error 5006 issue', () => {
+  describe.skip('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
