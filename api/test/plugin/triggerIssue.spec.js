@@ -671,7 +671,7 @@ describe('This test suite is for testing different triggers conditions', async (
           })
           const { id: resultId } = context.getLastResult()
 
-          await waitForIdle(2000)
+          await waitForIdle(4000)
           await evaluateIssues(
             resp,
             issueTypeLotId,
@@ -804,7 +804,7 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe('Invalid results', () => {
+  describe.only('Invalid results', () => {
     testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
@@ -814,7 +814,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('error 5006 issue', () => {
+  describe.only('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
