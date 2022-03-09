@@ -2463,7 +2463,7 @@ async function setCapacityForExistingDevices(knex) {
     'name'
   )
 
-  await Promise.each(devices, async ({ partnerId, deviceTypeId }) => {
+  await Promise.each(devices, ({ partnerId, deviceTypeId }) => {
     const deviceCapacityByPartnerId = _.find(
       deviceCapacities,
       dc =>
