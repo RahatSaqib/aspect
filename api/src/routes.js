@@ -188,7 +188,7 @@ function decorateAPI({ scope, strategies }) {
 
 function asyncHandler(handler) {
   return (request, reply) =>
-    handler(request)
+    handler(request, reply)
       .then(reply)
       .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500

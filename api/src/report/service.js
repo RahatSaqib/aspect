@@ -43,9 +43,10 @@ async function getReports(request) {
       'r.externalId',
       'r.sortOrder',
       'r.i18nKey',
-      'r.i18nKeyDescription'
+      'r.i18nKeyDescription',
+      'r.exportExcel',
+      'r.exportCsv'
     )
-
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, data }
