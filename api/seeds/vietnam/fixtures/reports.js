@@ -39,4 +39,21 @@ module.exports = {
       },
     ],
   },
+  globalFundInventoryReport: {
+    name: 'Global Fund Inventory Report',
+    description: 'This report shows the Global Fund Inventory',
+    i18nKey: 'globalFundInventoryReport',
+    i18nKeyDescription: 'globalFundInventoryReport_description',
+    externalId: 'global_fund_inventory_report',
+    fileName: 'globalFundInventoryReport',
+    exportCsv: false,
+    sortOrder: 50,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getGlobalFundInventoryReport',
+      },
+    ],
+  },
 }

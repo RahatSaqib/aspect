@@ -113,7 +113,52 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
+async function getGlobalFundInventoryReport(auth) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rows = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 's.id', 'ii.siteId')
+    .leftJoin('InventoryLog as il', 'il.inventoryItemId', 'ii.id')
+    .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
+    .select([
+      's.name as siteName',
+      'ii.lotNumber',
+      'ii.expiresOn',
+      knex.raw(
+        `    ii.quantityOnHand + IFNULL(SUM(CASE
+        WHEN
+            IFNULL(cr.decrease, 0) = 1
+        THEN
+            il.quantity
+        ELSE - il.quantity
+    END), 0) AS 'stockLastMonth'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), 0) as 'receiveTo'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), 0) as 'use'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), 0) as 'damage'`
+      ),
+      'ii.quantityOnHand',
+    ])
+    .modify(addConstraints, dataConstraints, {
+      result: 'ii',
+    })
+    .groupBy(['ii.lotNumber', 'il.siteId'])
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
+  getGlobalFundInventoryReport,
 }
