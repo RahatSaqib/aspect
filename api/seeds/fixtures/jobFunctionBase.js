@@ -17,7 +17,6 @@ const admin = {
     'all_results',
     'list_r_resistant_test',
     'xpert_test_activities_report',
-    'reason_for_testing_report',
   ],
   permissions: [
     {
