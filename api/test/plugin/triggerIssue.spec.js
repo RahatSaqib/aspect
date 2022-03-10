@@ -143,7 +143,9 @@ const evaluateIssues = async (
   response,
   issueTypeId,
   qtyIssuesExpected = 1,
-  issueStatus = 'Active'
+  issueStatus = 'Active',
+  moduleCheck = null,
+  resultId
 ) => {
   assert.equal(response.status, 200)
   assert.typeOf(response.body, 'Object')
@@ -154,6 +156,14 @@ const evaluateIssues = async (
     assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
     if (issueStatus === 'Active')
       await checkNotificationsForIssue(issues[0].id, issueTypeId)
+  }
+  if (moduleCheck) {
+    let issueSelected = issues[0].data
+    if (resultId) {
+      issueSelected = _.find(issues, i => i.resultId === resultId)
+    }
+    const data = JSON.parse(issueSelected)
+    assert.containSubset(data, moduleCheck)
   }
 }
 let qtyOfRuns = 0
@@ -197,8 +207,8 @@ describe('This test suite is for testing different triggers conditions', async (
       {
         result: {
           id: `Error-${errorCode}-result${_.random(1, 10000, false)}`,
-          startedOn: subDays(new Date(), _.random(1, 10, false)),
-          endedOn: subDays(new Date(), _.random(1, 10, false)),
+          startedOn: subDays(new Date(), _.random(1, 6, false)),
+          endedOn: subDays(new Date(), _.random(1, 6, false)),
           assay: { id: 'GxMtbRif' },
           consumable: {
             lot: !excludeLot ? 'Lot 0' : null,
@@ -283,20 +293,22 @@ describe('This test suite is for testing different triggers conditions', async (
         })
 
         afterEach(async () => {
+          await waitForIdle()
+
           await context.cleanUp()
         })
 
-        it(`should not create issue when it has less than 3 results for the last 30 days ${
+        it(`should NOT create MODULE or LOT issues when it has less than 4 results for the last 30 days ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            * in this testcase we are testing:
            * 1) issueFilter function for this testCondition (With error 5007)
            * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
            * 3) the creation of the issue
-           * 4) check if the different noifications were generated.
+           * 4) check if the different notifications were generated.
            */
 
           const { deviceAuth } = context
@@ -343,7 +355,6 @@ describe('This test suite is for testing different triggers conditions', async (
 
       describe('With results in the period of evaluation', () => {
         let context
-        let anotherDeviceContext
 
         beforeEach(async () => {
           const contextBaseProps = {
@@ -358,16 +369,8 @@ describe('This test suite is for testing different triggers conditions', async (
             hostId: `2nd${hostId}`,
             deviceSerialNumber: `2nd${deviceSerialNumber}`,
           })
-          anotherDeviceContext = createGxConnectTestContext(server, {
-            ...contextBaseProps,
-            deviceName: `3nd${deviceName}`,
-            macAddress: `3nd${macAddress}`,
-            hostId: `3nd${hostId}`,
-            deviceSerialNumber: `3nd${deviceSerialNumber}`,
-          })
 
           await context.beforeRegisterAndSetDevice()
-          await anotherDeviceContext.beforeRegisterAndSetDevice()
 
           await Promise.each(_.range(0, 7), async i => {
             const resultCategory1 = i % 2 === 0 ? resultCategoryId : null
@@ -384,100 +387,212 @@ describe('This test suite is for testing different triggers conditions', async (
             await context.createResultForThisDevice({
               resultDetails,
             })
-            await anotherDeviceContext.createResultForThisDevice({
-              resultDetails: {
-                ...resultDetails,
-                moduleSerial: 'M-ANOTHERSERIAL-0',
-                instrumentSerial: 'S-ANOTHERSERIAL-0',
-              },
-            })
           })
         })
 
         afterEach(async () => {
+          await waitForIdle()
           await context.cleanUp()
-          await anotherDeviceContext.cleanUp()
         })
 
-        it(`should only create one issue LOT and not module based per device ${
+        it(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
-           * in this testcase we are testing:
-           * 1) issueFilter function for this testCondition (With error 5007)
-           * 2) Trigger condition based on a function ( Evaluate the number of test with error this module/lot has)
-           * 3) the creation of the issue
-           * 4) check if the different noifications were generated.
+           Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
+           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
+           The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
-
-          const consumableLot = 'Lot 0'
-          const { deviceAuth } = context
-
           const firstPayload = await getPayload(
             context,
             errorCode,
             resultCategoryExternalId
           )
 
-          const anotherDevicePayload = await getPayload(
-            anotherDeviceContext,
+          const consumableLot = 'The super Lot 0'
+          const { deviceAuth } = context
+
+          let resp
+          // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
+          await Promise.each(_.range(1, 9), i =>
+            context.createResultForThisDevice({
+              assayExternalId: 'GxMtbRif',
+              resultDetails: {
+                startedOn: subDays(new Date(), _.random(1, 6)),
+                endedOn: subDays(new Date(), _.random(1, 6)),
+                consumableLot,
+                errorCode,
+                resultCategory1: resultCategoryId,
+                moduleSerial:
+                  i > 5
+                    ? 'THE-ONE-WHICH-TRIGGERS-MODULE'
+                    : `M-123456-0-${_.random(1, 9999999999)}`,
+              },
+            })
+          )
+          await waitForIdle()
+
+          resp = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(firstPayload, {
+              assay: { id: 'GxMtbRif' },
+              result: {
+                id: `Error-${_.random(999999999)}`,
+                startedOn: subDays(new Date(), _.random(1, 6)),
+                endedOn: subDays(new Date(), _.random(1, 6)),
+                consumable: {
+                  lot: consumableLot,
+                },
+                instrument: {
+                  module: {
+                    serial: `M${_.random(1, 9999999999)}`,
+                  },
+                },
+                patient: {
+                  id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
+                },
+                sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
+              },
+            }),
+          })
+          await waitForIdle(2000)
+          await evaluateIssues(resp, issueTypeLotId)
+
+          resp = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(firstPayload, {
+              assay: { id: 'GxMtbRif' },
+              result: {
+                id: `Error${_.random(999999999)}`,
+                startedOn: subDays(new Date(), _.random(1, 6)),
+                endedOn: subDays(new Date(), _.random(1, 6)),
+                consumable: {
+                  lot: consumableLot,
+                },
+                instrument: {
+                  module: {
+                    serial: 'THE-ONE-WHICH-TRIGGERS-MODULE',
+                  },
+                },
+                patient: {
+                  id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
+                },
+                sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
+              },
+            }),
+          })
+
+          // Post anotherone for triggering module issue
+
+          await waitForIdle(2000)
+          await evaluateIssues(resp, issueTypeModuleId, 1, 'Active', {
+            moduleSerial: 'THE-ONE-WHICH-TRIGGERS-MODULE',
+          })
+        })
+        it(`should create one issue LOT and NOT MODULE based issue per device ${
+          errorCode
+            ? `error ${errorCode}`
+            : `category ${resultCategoryExternalId}`
+        } because their have the same module number and the most important one is the LOT `, async () => {
+          /**
+           Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
+           The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
+           The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
+           */
+          const firstPayload = await getPayload(
+            context,
             errorCode,
             resultCategoryExternalId
           )
+          const consumableLot = 'The super Lot 1'
+          const {
+            deviceAuth,
+            device: { id: deviceId },
+          } = context
 
-          // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
-          const response = await postToDeviceApi({
-            authHeader: deviceAuth,
-            payload: firstPayload,
-          })
-          await waitForIdle(1500)
-          await evaluateIssues(response, issueTypeLotId)
-          await evaluateIssues(response, issueTypeModuleId, 0)
+          const issues = await getIssues(deviceId, issueTypeLotId)
+          assert.equal(issues.length, 0)
+
+          await Promise.each(_.range(1, 8), i =>
+            context.createResultForThisDevice({
+              assayExternalId: 'GxMtbRif',
+              resultDetails: {
+                startedOn: subDays(new Date(), i),
+                endedOn: subDays(new Date(), i),
+                consumableLot,
+                errorCode,
+                resultCategory1: resultCategoryId,
+                moduleSerial:
+                  i <= 4
+                    ? 'THE-ONE-WHICH-TRIGGERS-LOT'
+                    : `M-123456-0-${_.random(1, 9999999999)}`,
+              },
+            })
+          )
+          await waitForIdle()
 
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-          await Promise.each(_.range(0, 8), async i => {
-            const resp = await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload: _.merge(firstPayload, {
-                assay: { id: 'GxMtbRif' },
-                result: {
-                  id: `Error-${errorCode || `category${i}`}-result${i}`,
-                  startedOn: subDays(new Date(), i),
-                  endedOn: subDays(new Date(), i),
-                  consumable: {
-                    lot: consumableLot,
+
+          const resp = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(firstPayload, {
+              assay: { id: 'GxMtbRif' },
+              result: {
+                id: `Error-${_.random(999999999)}`,
+                startedOn: subDays(new Date(), _.random(1, 6)),
+                endedOn: subDays(new Date(), _.random(1, 6)),
+                consumable: {
+                  lot: consumableLot,
+                },
+                instrument: {
+                  module: {
+                    serial: 'THE-ONE-WHICH-TRIGGERS-LOT',
                   },
                 },
-                data: {
-                  resultText: resultCategoryExternalId
-                    ? resultCategoryExternalId.toUpperCase()
-                    : null,
+                patient: {
+                  id: `THE PATIENT-ID${_.random(1, 999999999999)}`,
                 },
-              }),
-            })
-            await waitForIdle()
-            await evaluateIssues(resp, issueTypeLotId)
+                sample: { id: `The-sample-${_.random(1, 999999999999)}` },
+              },
+              data: {
+                resultText: resultCategoryExternalId
+                  ? resultCategoryExternalId.toUpperCase()
+                  : null,
+              },
+            }),
           })
-          /**
-           * We are going to push the same lot for a different device and we are going to expect to create a new issue
-           */
-          const anotherDeviceResponse = await postToDeviceApi({
-            authHeader: anotherDeviceContext.deviceAuth,
-            payload: anotherDevicePayload,
-          })
-          await waitForIdle(1500)
-          await evaluateIssues(anotherDeviceResponse, issueTypeModuleId, 0)
+          const { id: resultId } = context.getLastResult()
+
+          await waitForIdle(4000)
           await evaluateIssues(
-            anotherDeviceResponse,
-            await issueTypeToId(issueTypeLot)
+            resp,
+            issueTypeLotId,
+            1,
+            'Active',
+            {
+              moduleSerialWithSameLot: 'THE-ONE-WHICH-TRIGGERS-LOT',
+            },
+            resultId
           )
+
+          await evaluateIssues(resp, issueTypeModuleId, 0)
         })
         it(`should only create one issue per device MODULE based ${
           errorCode
             ? `error ${errorCode}`
-            : `category${resultCategoryExternalId}`
+            : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            * in this testcase we are testing:
@@ -603,7 +718,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('error 5006 issue', () => {
+  describe.skip('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
@@ -611,35 +726,6 @@ describe('This test suite is for testing different triggers conditions', async (
       'ProbeCheckTooHighLot',
       null,
       true
-    )
-  })
-  describe('error 5007 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Probes check Too Low',
-      5007,
-      'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot',
-      null,
-      true
-    )
-  })
-
-  describe('error 5017 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Probes Check Failed',
-      5017,
-      'ProbeCheckFailedModule',
-      'ProbeCheckFailedLot',
-      null,
-      true
-    )
-  })
-  describe('error 5011 issue', () => {
-    testCategoriesAndErrorCodes(
-      'Signal Loss Detected in the Amplification Curve',
-      5011,
-      'SignalLossDetectedInAmplificationCurveModule',
-      'SignalLossDetectedInAmplificationCurveLot'
     )
   })
 

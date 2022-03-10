@@ -78,6 +78,7 @@ async function onResultLogged(
         instrumentSerial,
         resultModuleName,
         resultStartedOn,
+        resultEndedOn,
       } = result
       await shouldTriggerModuleReplaced(
         knex,
@@ -100,6 +101,7 @@ async function onResultLogged(
           moduleSerial: resultModuleSerial,
           assayId,
           consumableLot,
+          resultEndedOn,
           instrumentSerial,
         }
       )
