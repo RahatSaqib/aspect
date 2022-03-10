@@ -1,5 +1,5 @@
 import React from 'react'
-import { oneOfType, object, string } from 'prop-types'
+import { oneOfType, object, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 import useI18n from '../../../../Hooks/i18n/useI18n'
@@ -9,7 +9,7 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
-const PerformanceReport = ({ performanceReport, culture }) => {
+const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
   const payload = performanceReport.toJS()
   let maxUtilizationRate = 0
   let maxErrorRate = 0
@@ -86,7 +86,6 @@ const PerformanceReport = ({ performanceReport, culture }) => {
       color: colorWhite,
     },
   ]
-
   return (
     <section className={cssClasses('Section')}>
       <Card className={cssClasses('Section')}>
@@ -102,6 +101,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
                   <p>{formatMessage(messages.utilizationRate)}</p>
                   <PerformanceBarChart
                     data={data}
+                    dailyCapacity={dailyCapacity}
                     series={utilizationRateSeries}
                     color="--aspect-color-shakespeare"
                     legend={formatMessage(messages.percentageLegend)}
@@ -131,6 +131,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
                 <p>{formatMessage(messages.errorRate)}</p>
                 <PerformanceBarChart
                   data={data}
+                  dailyCapacity={dailyCapacity}
                   series={errorRateSeries}
                   color="--aspect-color-mandy"
                   legend={formatMessage(messages.percentageLegend)}
@@ -162,6 +163,7 @@ const PerformanceReport = ({ performanceReport, culture }) => {
 PerformanceReport.propTypes = {
   performanceReport: oneOfType([object]).isRequired,
   culture: string.isRequired,
+  dailyCapacity: number.isRequired,
 }
 
 export default PerformanceReport

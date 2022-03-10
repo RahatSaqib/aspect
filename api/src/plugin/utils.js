@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const subDays = require('date-fns/subDays')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -16,6 +17,7 @@ const {
 } = require('../shared/dictionary')
 const logger = require('../shared/logger')
 
+const DAYS_TO_DISCARD_NOTIFICATIONS = 7
 async function getPartnerPluginName({ partnerId, caseId }) {
   let partnerPluginName = ''
   if (caseId) {
@@ -54,46 +56,53 @@ async function shouldTriggerResultErrorAnalysis(
   resultId,
   resultCategory1, // <-- this is result category externalid
   resultErrorCode,
-  { resultOutcome, moduleSerial, assayId, consumableLot, instrumentSerial }
-) {
-  if (!messageContext.resultAnalyzeCategoriesAndErrors) {
-    messageContext = messageContext.bindActionCreators({
-      resultAnalyzeCategoriesAndErrors,
-    })
+  {
+    resultOutcome,
+    moduleSerial,
+    assayId,
+    consumableLot,
+    instrumentSerial,
+    resultEndedOn,
   }
-  logger.debug([
-    `shouldTriggerResultErrorAnalysis resultid:${resultId}`,
-    resultCategory1, // <-- this is result category externalid
-    resultErrorCode,
-  ])
-
-  // this one is for reagent base issue, it needs assayid and consumablelot.
-  await messageContext.resultAnalyzeCategoriesAndErrors(
-    deviceId,
-    resultId,
-    resultCategory1, // <-- this is result category externalid
-    resultErrorCode,
-    {
-      resultOutcome,
-      assayId,
-      consumableLot,
-      instrumentSerial,
-      moduleSerial,
+) {
+  if (resultEndedOn >= subDays(new Date(), DAYS_TO_DISCARD_NOTIFICATIONS)) {
+    if (!messageContext.resultAnalyzeCategoriesAndErrors) {
+      messageContext = messageContext.bindActionCreators({
+        resultAnalyzeCategoriesAndErrors,
+      })
     }
-  )
-  const timer = ms => new Promise(res => setTimeout(res, ms))
+    logger.debug([
+      `shouldTriggerResultErrorAnalysis resultid:${resultId}`,
+      resultCategory1, // <-- this is result category externalid
+      resultErrorCode,
+    ])
 
-  // this one is for result base issue, only needs module serial.
-  // others data parameters are for filtering not for triggering the issue.
-  timer(1000).then(async () =>
-    messageContext.resultAnalyzeCategoriesAndErrors(
+    await messageContext.resultAnalyzeCategoriesAndErrors(
       deviceId,
       resultId,
       resultCategory1, // <-- this is result category externalid
       resultErrorCode,
-      { resultOutcome, moduleSerial, instrumentSerial }
+      {
+        resultOutcome,
+        assayId,
+        consumableLot,
+        instrumentSerial,
+        moduleSerial,
+      }
     )
-  )
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    // We need to postpone at least 1 sec the analysis of the Module base issue, because if the lot was generated for the same module, this one should be suppressed.
+    timer(1000).then(async () => {
+      await messageContext.resultAnalyzeCategoriesAndErrors(
+        deviceId,
+        resultId,
+        resultCategory1, // <-- this is result category externalid
+        resultErrorCode,
+        { resultOutcome, moduleSerial, instrumentSerial }
+      )
+    })
+  }
 }
 
 async function shouldTriggerModuleReplaced(
