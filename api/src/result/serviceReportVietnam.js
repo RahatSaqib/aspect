@@ -116,7 +116,6 @@ async function getListRResistantTestReport(auth, query) {
 async function getReasonForTestingReport(auth) {
   const dataConstraints = await getConstraints(auth.credentials)
   const rows = await knex('Result as r')
-    .whereRaw("r.resultData LIKE '%Lý do xét nghiệm%'")
     .select([
       knex.raw(
         `IF(resultData->>'$.customFieldData."251".value' = 'null', 'N/A', resultData->>'$.customFieldData."251".value') AS fields`
