@@ -801,7 +801,8 @@ async function createDeviceApiContext(
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory',
-      'c.abbreviation as countryAbbreviation'
+      'c.abbreviation as countryAbbreviation',
+      'dak.token'
     )
   if (handlerOptions.transformInitialPayload && request.params.pluginName) {
     logger.debug('Set up transforminitialpayload plugin function', {

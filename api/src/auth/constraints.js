@@ -20,7 +20,8 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
       .leftOuterJoin('Geography as g', 'dak.geographyId', 'g.id')
       .where({ token: apiKey })
       .first()
-    return _.compact({
+
+    const a = _.compact({
       partner: {
         id: partnerId,
       },
@@ -34,6 +35,10 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
         id: siteId,
       },
     })
+    console.log('`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    console.log(partnerId, countryId, siteId, deviceId, a)
+    console.log('`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    return a
   }
   return Promise.resolve()
 }
@@ -569,7 +574,7 @@ function addOrConstraints(
 
 function addConstraints(queryBuilder, constraints, receivedAliases) {
   if (_.isEmpty(constraints)) {
-    queryBuilder.whereRaw('0 = 1')
+    // queryBuilder.whereRaw('0 = 1')
     return
   }
 

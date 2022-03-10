@@ -5,151 +5,94 @@ const {
 const service = require('../service')
 
 const RESULT_CATEGORY_DETECTED_ID = 1
-const TB_TESTS = 'TB Tests'
-const TB_CASES = 'TB Cases'
-const DRTB_CASES = 'DRTB Cases'
-const testsQueryType = {
-  queryDescription: TB_TESTS,
-  onlyCases: false,
-  onlyDrCases: false,
-}
-
-const casesQueryType = {
-  queryDescription: TB_CASES,
-  onlyCases: true,
-  onlyDrCases: false,
-}
-
-const drCasesQueryType = {
-  queryDescription: DRTB_CASES,
-  onlyCases: true,
-  onlyDrCases: true,
-}
 
 const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
   deviceLogType: service.DEVICE_LOG_TYPE_NONE,
 })
 
 async function getTbResultsStats(context) {
-  const { knex } = context
-  const { from, to, states } = context.query
-  const result = await Promise.all(getStatsQueries(knex, from, to, states))
+  const {
+    knex,
+    device: { token: apiKey },
+  } = context
 
-  return {
-    from,
-    to,
-    states: states || [],
-    result: result
-      .flat()
-      .sort((r1, r2) => (r1.stateCode > r2.stateCode ? 1 : -1)),
-  }
+  const { from, to } = context.query
+  const constraints = await getConstraintsByDeviceAPIKey(apiKey)
+  // console.log('**************************************')
+  // const dak = await knex('DeviceApiKey as dak')
+  //   .leftOuterJoin('Geography as g', 'dak.geographyId', 'g.id')
+  //   .where({ token: apiKey })
+  //   .first()
+  // console.log(dak)
+  // console.log('**************************************')
+
+  const countryQuery = getTbResultsStatsQuery(knex, constraints, from, to)
+  const statesQuery = getTbResultsStatsQueryByState(knex, constraints, from, to)
+
+  const [country, states] = await Promise.all([countryQuery, statesQuery])
+
+  return { from, to, total: country[0], states }
 }
 
-function getStatsQueries(knex, from, to, states) {
-  const queries = []
+function getTbResultsStatsQueryByState(knex, constraints, from, to) {
+  const baseQuery = getTbResultsStatsQuery(knex, constraints, from, to)
 
-  if (!states) {
-    addCountryStatsQueries()
-  } else {
-    addStatesStatsQueries()
-  }
-
-  return queries
-
-  function addCountryStatsQueries() {
-    const tbTestsQuery = buildStatsQueryByCountry(
-      knex,
-      from,
-      to,
-      testsQueryType
+  const query = knex('State as s')
+    .leftJoin(
+      knex('Geography as g').distinct('countryId', 'stateId').as('g'),
+      function () {
+        this.on({ 'g.stateId': 's.id' })
+      }
     )
-
-    const tbCasesQuery = buildStatsQueryByCountry(
-      knex,
-      from,
-      to,
-      casesQueryType
+    .leftJoin(
+      baseQuery.as('b').groupBy('g.stateId').select('g.stateId'),
+      function () {
+        this.on({ 'b.stateId': 's.id' })
+      }
     )
+    .where({ countryId: 3 })
 
-    const drTbCasesQuery = buildStatsQueryByCountry(
-      knex,
-      from,
-      to,
-      drCasesQueryType
+    // .modify(addConstraints, constraints, {
+    //   result: 'r',
+    //   geography: 'g',
+    // })
+    .select(
+      knex.raw(`coalesce(s.abbreviation,'') as stateCode`),
+      's.name as state',
+      knex.raw('coalesce(b.tests,0) as tests'),
+      knex.raw('coalesce(b.cases, 0) as cases'),
+      knex.raw('coalesce(b.drCases, 0) as drCases')
     )
-
-    queries.push(tbTestsQuery, tbCasesQuery, drTbCasesQuery)
-  }
-
-  function addStatesStatsQueries() {
-    queries.push(buildStatsQueryByState(knex, from, to, states, testsQueryType))
-    queries.push(buildStatsQueryByState(knex, from, to, states, casesQueryType))
-    queries.push(
-      buildStatsQueryByState(knex, from, to, states, drCasesQueryType)
-    )
-  }
+  // console.log('**************************************')
+  // console.log(query.toString())
+  // console.log('**************************************')
+  return query
 }
 
-function buildStatsQueryByCountry(knex, from, to, queryParams) {
-  return knex('Country as c')
-    .join('Geography as g', 'g.countryId', 'c.id')
-    .leftJoin('Result as r', function () {
-      this.on('r.geographyId', 'g.id')
-      this.on('r.endedOn', '>=', knex.raw('?', from))
-      this.andOn('r.endedOn', '<', knex.raw('?', to))
-      if (queryParams.onlyCases) {
-        this.andOn('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
-      }
-      if (queryParams.onlyDrCases) {
-        this.andOn('r.resultCategory2', RESULT_CATEGORY_DETECTED_ID)
-      }
-    })
+function getTbResultsStatsQuery(knex, constraints, from, to) {
+  const q = knex('Result as r')
     .join('Assay as a', 'a.id', 'r.assayId')
     .join('AssayType as at', 'at.id', 'a.assayTypeId')
-    .join('Disease as d', function () {
-      this.on('d.id', 'at.diseaseId')
-      this.on('d.externalId', '=', knex.raw("'tb'"))
-    })
-    .select(knex.raw(`'${queryParams.queryDescription}' as "resultType"`))
+    .join('Disease as d', 'd.id', 'at.diseaseId')
+    .join('Geography as g', 'g.id', 'r.geographyId')
+    .where({ countryId: 3 })
+    .where({ 'd.externalId': knex.raw("'tb'") })
+    .where('r.endedOn', '>=', knex.raw('?', from))
+    .where('r.endedOn', '<', knex.raw('?', to))
     .select(
-      knex.raw(`"" as "stateCode"`),
-      knex.raw(`"Whole country" as "state"`)
+      knex.raw('count(r.id) as tests'),
+      knex.raw(
+        `coalesce(sum(case coalesce(r.resultcategory1,-1) when ${RESULT_CATEGORY_DETECTED_ID} then 1 else 0 end),0) as cases`
+      ),
+      knex.raw(
+        `coalesce(sum(case 
+              when coalesce(r.resultcategory1,-1) = ${RESULT_CATEGORY_DETECTED_ID} 
+                   and coalesce(r.resultcategory2,-1) = ${RESULT_CATEGORY_DETECTED_ID} 
+                then 1 else 0 
+              end),0) as drCases`
+      )
     )
-    .count('r.id as total')
-}
-
-async function buildStatsQueryByState(knex, from, to, states, queryParams) {
-  const constraints = await getConstraintsByDeviceAPIKey('apikey')
-  return knex('State as s')
-    .join('Geography as g', 'g.stateId', 's.id')
-    .join('Country as c', 'c.id', 'g.countryId')
-    .leftJoin('Result as r', function () {
-      this.on('r.geographyId', 'g.id')
-      this.andOn('r.endedOn', '>=', knex.raw('?', from))
-      this.andOn('r.endedOn', '<', knex.raw('?', to))
-      if (queryParams.onlyCases) {
-        this.andOn('r.resultCategory1', RESULT_CATEGORY_DETECTED_ID)
-      }
-      if (queryParams.onlyDrCases) {
-        this.andOn('r.resultCategory2', RESULT_CATEGORY_DETECTED_ID)
-      }
-    })
-    .leftJoin('Assay as a', 'a.id', 'r.assayId')
-    .leftJoin('AssayType as at', 'at.id', 'a.assayTypeId')
-    .leftJoin('Disease as d', function () {
-      this.on('d.id', 'at.diseaseId')
-      this.on('d.externalId', '=', knex.raw("'tb'"))
-    })
-    .whereIn('s.abbreviation', states)
-    .select('s.abbreviation as stateCode', 's.name as state')
-    .select(knex.raw(`'${queryParams.queryDescription}' as "resultType"`))
-    .groupBy('s.abbreviation')
-    .modify(addConstraints, constraints, {
-      result: 'r',
-      geography: 'g',
-    })
-    .orderByRaw('s.abbreviation asc, at.id asc')
-    .count('r.id as total')
+  return q
 }
 
 module.exports = {

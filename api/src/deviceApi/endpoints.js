@@ -748,42 +748,37 @@ const routes = [
     method: 'GET',
     path: '/result/pakistan',
     handler: getResultPakistanHandler,
-    description: 'Get Tb Stats',
-    notes:
-      'Returns stats for total TB tests, TB cases and DRTB cases. Accepts last 24hs or from 2022-01-01 start and a especific state or whole country.',
     // auth: { scope: ['result:view'] },
-    validate: {
-      query: {
-        from: Joi.date()
-          .iso()
-          .required()
-          .description('DateTime from, with ISO8601 time offset'),
-        to: Joi.date()
-          .iso()
-          .required()
-          .description('DateTime to, with ISO8601 time offset'),
-        states: Joi.array()
-          .items(Joi.string())
-          .single()
-          .description(
-            'String array of states codes (Assumes whole country if it not present)'
-          ),
-      },
-    },
     config: {
+      description: 'Get Tb Stats',
+      notes:
+        'Returns stats for total TB tests, TB cases and DRTB cases. Accepts last 24hs or from 2022-01-01 start and a especific state or whole country.',
+      validate: {
+        query: {
+          from: Joi.date()
+            .iso()
+            .required()
+            .description('DateTime from, with ISO8601 time offset'),
+          to: Joi.date()
+            .iso()
+            .required()
+            .description('DateTime to, with ISO8601 time offset'),
+        },
+      },
       response: {
         schema: {
           from: Joi.date().iso(),
           to: Joi.date().iso(),
-          states: Joi.array().items(Joi.string()),
-          result: Joi.array()
-            .length(3)
-            .items({
+          total: Joi.object(),
+          states: Joi.array().items(
+            Joi.object().keys({
               stateCode: Joi.string().empty(''),
               state: Joi.string().empty(''),
-              resultType: Joi.string(),
-              total: Joi.number(),
-            }),
+              tests: Joi.number(),
+              cases: Joi.number(),
+              drCases: Joi.number(),
+            })
+          ),
         },
         failAction: 'error',
       },

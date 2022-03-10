@@ -3,6 +3,7 @@ const chaiSubset = require('chai-subset')
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { subDays } = require('date-fns')
+const parseISO = require('date-fns/parseISO')
 const { createTestContext } = require('../utils')
 const { allResultCategoryToId } = require('../../../src/shared/dictionary')
 
@@ -10,7 +11,7 @@ const { knex } = require.main.require('../../../src/db')
 const server = require('../../utils/testUtils')
 const { createGxConnectTestContext } = require('../geneXpert/gxconnect_utils')
 
-const { assert } = chai.use(chaiSubset)
+const { assert, expect } = chai.use(chaiSubset)
 
 const adminUsername = 'admin'
 const adminPassword = 'test07'
@@ -25,11 +26,12 @@ const deviceSerialNumber = String(_.random(1, 99999999, false)).padStart(8, '0')
 const hostId = 'BLH-Expert'
 const partnerName = 'Partner One'
 const ALASKA_VALID_GEOGRAPHY_ID = 39
-describe('Pakistan stats api', async () => {
+describe.only('Pakistan stats api', async () => {
   const encodedFrom = encodeURIComponent('2022-02-03T00:00:00+05:00')
-  const fromUtc = '2022-02-02T19:00:00.000Z'
+  const fromUtcString = '2022-02-02T19:00:00.000Z'
+  const fromUtc = parseISO(fromUtcString)
   const encodedTo = encodeURIComponent('2022-03-15T00:00:00.00+05:00')
-  const toUtc = '2022-03-14T19:00:00.000Z'
+  const toUtcString = '2022-03-14T19:00:00.000Z'
 
   const contextAlaskaDevice = createGxConnectTestContext(server, {
     countryCode,
@@ -85,8 +87,8 @@ describe('Pakistan stats api', async () => {
       await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
           ...{
-            startedOn: subDays(new Date(), -1),
-            endedOn: subDays(new Date(), -1),
+            startedOn: subDays(fromUtc, -1),
+            endedOn: subDays(fromUtc, -2),
             resultCategory1: NotDetected,
             resultCategory2: NotDetected,
           },
@@ -98,8 +100,8 @@ describe('Pakistan stats api', async () => {
       await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
           ...{
-            startedOn: subDays(new Date(), -1),
-            endedOn: subDays(new Date(), -1),
+            startedOn: subDays(fromUtc, -1),
+            endedOn: subDays(fromUtc, -2),
             resultCategory1: Detected,
             resultCategory2: NotDetected,
           },
@@ -111,8 +113,8 @@ describe('Pakistan stats api', async () => {
       await contextAlaskaDevice.createResultForThisDevice({
         resultDetails: {
           ...{
-            startedOn: subDays(new Date(), -1),
-            endedOn: subDays(new Date(), -1),
+            startedOn: subDays(fromUtc, -1),
+            endedOn: subDays(fromUtc, -2),
             resultCategory1: Detected,
             resultCategory2: Detected,
           },
@@ -128,49 +130,10 @@ describe('Pakistan stats api', async () => {
   })
 
   it('Should return correct stats by state', async () => {
-    // const path = `/device/result/pakistan`
-    const path = `/device/result/pakistan?from=${encodedFrom}&to=${encodedTo}&states=AK`
-    assert.isDefined(ntpContext, 'context')
-    assert.isDefined(ntpContext.deviceAuth)
-
-    const res = await server
-      .get(path)
-      .set('Authorization', ntpContext.deviceAuth)
-
-    assert.equal(res.status, 200)
-    assert.typeOf(res.body, 'Object')
-
-    res.body.should.to.containSubset({
-      from: fromUtc,
-      to: toUtc,
-      states: ['AK'],
-      result: [
-        {
-          stateCode: 'AK',
-          state: 'Alaska',
-          resultType: 'DRTB Cases',
-          total: 2,
-        },
-        {
-          stateCode: 'AK',
-          state: 'Alaska',
-          resultType: 'TB Cases',
-          total: 4,
-        },
-        {
-          stateCode: 'AK',
-          state: 'Alaska',
-          resultType: 'TB Tests',
-          total: 6,
-        },
-      ],
-    })
-  })
-
-  it('Should return correct stats for country', async () => {
     const path = `/device/result/pakistan?from=${encodedFrom}&to=${encodedTo}`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
+
     const res = await server
       .get(path)
       .set('Authorization', ntpContext.deviceAuth)
@@ -179,34 +142,26 @@ describe('Pakistan stats api', async () => {
     assert.typeOf(res.body, 'Object')
 
     res.body.should.to.containSubset({
-      from: fromUtc,
-      to: toUtc,
-      states: [],
-      result: [
-        {
-          stateCode: '',
-          state: 'Whole country',
-          resultType: 'DRTB Cases',
-          total: 2,
-        },
-        {
-          stateCode: '',
-          state: 'Whole country',
-          resultType: 'TB Cases',
-          total: 4,
-        },
-        {
-          stateCode: '',
-          state: 'Whole country',
-          resultType: 'TB Tests',
-          total: 6,
-        },
-      ],
+      from: fromUtcString,
+      to: toUtcString,
     })
+    res.body.should.to.containSubset({
+      total: { tests: 6, cases: 4, drCases: 2 },
+    })
+    expect(res.body.states.length).to.equal(51)
+    res.body.states.should.to.containSubset([
+      {
+        stateCode: 'AK',
+        state: 'Alaska',
+        tests: 6,
+        cases: 4,
+        drCases: 2,
+      },
+    ])
   })
 
   it('Should exclude Results by date', async () => {
-    const path = `/device/result/pakistan?from=${encodedTo}&to=${encodedTo}&states=AK`
+    const path = `/device/result/pakistan?from=${encodedTo}&to=${encodedTo}`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
     const res = await server
@@ -215,29 +170,19 @@ describe('Pakistan stats api', async () => {
 
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
+    expect(res.body.states.length, 'Returned states count').to.equal(51)
 
     res.body.should.to.containSubset({
-      from: toUtc,
-      to: toUtc,
-      states: ['AK'],
-      result: [
+      from: toUtcString,
+      to: toUtcString,
+      total: { tests: 0, cases: 0, drCases: 0 },
+      states: [
         {
           stateCode: 'AK',
           state: 'Alaska',
-          resultType: 'DRTB Cases',
-          total: 0,
-        },
-        {
-          stateCode: 'AK',
-          state: 'Alaska',
-          resultType: 'TB Cases',
-          total: 0,
-        },
-        {
-          stateCode: 'AK',
-          state: 'Alaska',
-          resultType: 'TB Tests',
-          total: 0,
+          tests: 0,
+          cases: 0,
+          drCases: 0,
         },
       ],
     })
