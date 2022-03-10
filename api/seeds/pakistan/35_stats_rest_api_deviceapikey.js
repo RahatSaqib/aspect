@@ -1,4 +1,7 @@
-const partnerData = require('./fixtures/partnerData')
+const {
+  partnerName,
+  statsQueryDeviceApiToken,
+} = require('./fixtures/partnerData')
 module.exports = require('../utils').seed(async knex => {
   const now = new Date()
 
@@ -13,7 +16,7 @@ module.exports = require('../utils').seed(async knex => {
   }
 
   const { partnerId } = await knex('Partner')
-    .where('name', partnerData.partnerName)
+    .where('name', partnerName)
     .first('id as partnerId')
 
   const { geographyId } = await knex('Geography as g')
@@ -22,7 +25,7 @@ module.exports = require('../utils').seed(async knex => {
     .first('g.id as geographyId')
 
   await knex('DeviceApiKey').insert({
-    token: partnerData.statsQueryDeviceApiToken,
+    token: statsQueryDeviceApiToken,
     revoked: 0,
     partnerId,
     geographyId,

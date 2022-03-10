@@ -1,3 +1,7 @@
+const {
+  getConstraintsByDeviceAPIKey,
+  addConstraints,
+} = require('../../auth/constraints')
 const service = require('../service')
 
 const RESULT_CATEGORY_DETECTED_ID = 1
@@ -114,7 +118,8 @@ function buildStatsQueryByCountry(knex, from, to, queryParams) {
     .count('r.id as total')
 }
 
-function buildStatsQueryByState(knex, from, to, states, queryParams) {
+async function buildStatsQueryByState(knex, from, to, states, queryParams) {
+  const constraints = await getConstraintsByDeviceAPIKey('apikey')
   return knex('State as s')
     .join('Geography as g', 'g.stateId', 's.id')
     .join('Country as c', 'c.id', 'g.countryId')
@@ -139,6 +144,10 @@ function buildStatsQueryByState(knex, from, to, states, queryParams) {
     .select('s.abbreviation as stateCode', 's.name as state')
     .select(knex.raw(`'${queryParams.queryDescription}' as "resultType"`))
     .groupBy('s.abbreviation')
+    .modify(addConstraints, constraints, {
+      result: 'r',
+      geography: 'g',
+    })
     .orderByRaw('s.abbreviation asc, at.id asc')
     .count('r.id as total')
 }
