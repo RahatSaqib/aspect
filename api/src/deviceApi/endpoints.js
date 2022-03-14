@@ -768,7 +768,11 @@ const routes = [
         schema: {
           from: Joi.date().iso(),
           to: Joi.date().iso(),
-          countryTotals: Joi.object(),
+          countryTotals: Joi.object().keys({
+            tests: Joi.number(),
+            cases: Joi.number(),
+            drCases: Joi.number(),
+          }),
           stateTotals: Joi.array().items(
             Joi.object().keys({
               stateCode: Joi.string().empty(''),
