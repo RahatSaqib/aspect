@@ -21,24 +21,24 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
       .where({ token: apiKey })
       .first()
 
-    const a = _.compact({
-      partner: {
-        id: partnerId,
+    const constraints = _.pickBy(
+      {
+        partner: {
+          id: partnerId,
+        },
+        country: {
+          id: countryId,
+        },
+        device: {
+          id: deviceId,
+        },
+        site: {
+          id: siteId,
+        },
       },
-      country: {
-        id: countryId,
-      },
-      device: {
-        id: deviceId,
-      },
-      site: {
-        id: siteId,
-      },
-    })
-    console.log('`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    console.log(partnerId, countryId, siteId, deviceId, a)
-    console.log('`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    return a
+      k => k.id // only keep the ones with values
+    )
+    return constraints
   }
   return Promise.resolve()
 }
@@ -574,7 +574,7 @@ function addOrConstraints(
 
 function addConstraints(queryBuilder, constraints, receivedAliases) {
   if (_.isEmpty(constraints)) {
-    // queryBuilder.whereRaw('0 = 1')
+    queryBuilder.whereRaw('0 = 1')
     return
   }
 

@@ -26,6 +26,7 @@ const deviceSerialNumber = String(_.random(1, 99999999, false)).padStart(8, '0')
 const hostId = 'BLH-Expert'
 const partnerName = 'Partner One'
 const ALASKA_VALID_GEOGRAPHY_ID = 39
+const US_GEOGRAPHY_ID_WITHOUT_STATE = 38
 describe.only('Pakistan stats api', async () => {
   const encodedFrom = encodeURIComponent('2022-02-03T00:00:00+05:00')
   const fromUtcString = '2022-02-02T19:00:00.000Z'
@@ -52,9 +53,12 @@ describe.only('Pakistan stats api', async () => {
       partner: partnerName,
     })
 
-    await ntpContext.createSites(['pakistanTbService.spec query site'])
+    // await ntpContext.createSites(['pakistanTbService.spec query site'])
     await ntpContext.createDeviceApiKey()
     await ntpContext.createDeviceWithApiKey()
+    await knex('DeviceApiKey')
+      .where({ token: ntpContext.deviceAuth.split(' ')[1] })
+      .update({ geographyId: US_GEOGRAPHY_ID_WITHOUT_STATE })
   })
 
   before('Change test device site and geography', async () => {
@@ -69,6 +73,7 @@ describe.only('Pakistan stats api', async () => {
       .where({ externalId: testExternalId })
       .first('s.id')
     const siteId = seedSite.id
+
     await knex('Device')
       .where('macAddress', macAddress)
       .update({ siteId, geographyId: ALASKA_VALID_GEOGRAPHY_ID })
@@ -141,23 +146,32 @@ describe.only('Pakistan stats api', async () => {
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
 
-    res.body.should.to.containSubset({
-      from: fromUtcString,
-      to: toUtcString,
-    })
-    res.body.should.to.containSubset({
-      total: { tests: 6, cases: 4, drCases: 2 },
-    })
-    expect(res.body.states.length).to.equal(51)
-    res.body.states.should.to.containSubset([
+    res.body.should.to.containSubset(
       {
-        stateCode: 'AK',
-        state: 'Alaska',
-        tests: 6,
-        cases: 4,
-        drCases: 2,
+        from: fromUtcString,
+        to: toUtcString,
       },
-    ])
+      'returned date range'
+    )
+    res.body.should.to.containSubset(
+      {
+        total: { tests: 6, cases: 4, drCases: 2 },
+      },
+      'totals'
+    )
+    expect(res.body.states.length).to.equal(51)
+    res.body.states.should.to.containSubset(
+      [
+        {
+          stateCode: 'AK',
+          state: 'Alaska',
+          tests: 6,
+          cases: 4,
+          drCases: 2,
+        },
+      ],
+      'queried state'
+    )
   })
 
   it('Should exclude Results by date', async () => {

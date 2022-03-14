@@ -18,13 +18,6 @@ async function getTbResultsStats(context) {
 
   const { from, to } = context.query
   const constraints = await getConstraintsByDeviceAPIKey(apiKey)
-  // console.log('**************************************')
-  // const dak = await knex('DeviceApiKey as dak')
-  //   .leftOuterJoin('Geography as g', 'dak.geographyId', 'g.id')
-  //   .where({ token: apiKey })
-  //   .first()
-  // console.log(dak)
-  // console.log('**************************************')
 
   const countryQuery = getTbResultsStatsQuery(knex, constraints, from, to)
   const statesQuery = getTbResultsStatsQueryByState(knex, constraints, from, to)
@@ -50,12 +43,9 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
         this.on({ 'b.stateId': 's.id' })
       }
     )
-    .where({ countryId: 3 })
-
-    // .modify(addConstraints, constraints, {
-    //   result: 'r',
-    //   geography: 'g',
-    // })
+    .modify(addConstraints, constraints, {
+      geography: 'g',
+    })
     .select(
       knex.raw(`coalesce(s.abbreviation,'') as stateCode`),
       's.name as state',
@@ -63,19 +53,21 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
       knex.raw('coalesce(b.cases, 0) as cases'),
       knex.raw('coalesce(b.drCases, 0) as drCases')
     )
-  // console.log('**************************************')
-  // console.log(query.toString())
-  // console.log('**************************************')
   return query
 }
 
 function getTbResultsStatsQuery(knex, constraints, from, to) {
-  const q = knex('Result as r')
+  return knex('Result as r')
+    .join('Device as dev', 'dev.id', 'r.deviceId')
     .join('Assay as a', 'a.id', 'r.assayId')
     .join('AssayType as at', 'at.id', 'a.assayTypeId')
     .join('Disease as d', 'd.id', 'at.diseaseId')
     .join('Geography as g', 'g.id', 'r.geographyId')
-    .where({ countryId: 3 })
+    .modify(addConstraints, constraints, {
+      result: 'r',
+      geography: 'g',
+      device: 'dev',
+    })
     .where({ 'd.externalId': knex.raw("'tb'") })
     .where('r.endedOn', '>=', knex.raw('?', from))
     .where('r.endedOn', '<', knex.raw('?', to))
@@ -92,7 +84,6 @@ function getTbResultsStatsQuery(knex, constraints, from, to) {
               end),0) as drCases`
       )
     )
-  return q
 }
 
 module.exports = {
