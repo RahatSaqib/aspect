@@ -25,9 +25,12 @@ async function getTbResultsStats(context) {
   )
   const statesQuery = getTbResultsStatsQueryByState(knex, constraints, from, to)
 
-  const [[country], states] = await Promise.all([countryQuery, statesQuery])
+  const [[countryTotals], stateTotals] = await Promise.all([
+    countryQuery,
+    statesQuery,
+  ])
 
-  return { from, to, countryTotals: country[0], stateTotals: states }
+  return { from, to, countryTotals, stateTotals }
 }
 
 function getTbResultsStatsQueryByState(knex, constraints, from, to) {
@@ -35,9 +38,7 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
 
   const query = knex('State as s')
     .leftJoin('Geography as g', 'g.stateId', 's.id')
-    .leftJoin(baseQuery.as('b'), builder =>
-      builder.on({ 'b.stateId': 's.id' })
-    })
+    .leftJoin(baseQuery.as('b'), builder => builder.on({ 'b.stateId': 's.id' }))
     .modify(addConstraints, constraints, {
       geography: 'g',
     })
