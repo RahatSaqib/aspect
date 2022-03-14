@@ -35,8 +35,8 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
 
   const query = knex('State as s')
     .leftJoin('Geography as g', 'g.stateId', 's.id')
-    .leftJoin(baseQuery.as('b'), function () {
-      this.on({ 'b.stateId': 's.id' })
+    .leftJoin(baseQuery.as('b'), builder =>
+      builder.on({ 'b.stateId': 's.id' })
     })
     .modify(addConstraints, constraints, {
       geography: 'g',
