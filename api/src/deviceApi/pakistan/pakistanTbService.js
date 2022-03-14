@@ -86,7 +86,7 @@ function getTbResultsStatsQuery(knex, constraints, from, to) {
       device: 'dev',
     })
     .where({ 'd.externalId': knex.raw("'tb'") })
-    .where('r.endedOn', '>=', knex.raw('?', from))
+    .where('r.endedOn', '>=', from)
     .where('r.endedOn', '<', knex.raw('?', to))
     .select(
       'g.stateId',
