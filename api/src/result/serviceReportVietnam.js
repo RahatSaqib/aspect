@@ -113,12 +113,13 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
-async function getGlobalFundInventoryReport(auth) {
+async function getGlobalFundInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', 'il.inventoryItemId', 'ii.id')
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
     .select([
       's.name as siteName',
       'ii.lotNumber',
@@ -147,7 +148,15 @@ async function getGlobalFundInventoryReport(auth) {
       'ii.quantityOnHand',
     ])
     .modify(addConstraints, dataConstraints, {
-      result: 'ii',
+      site: 's',
+      geography: 'g',
+      InventoryItem: 'ii',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
     })
     .groupBy(['ii.lotNumber', 'il.siteId'])
   return {
