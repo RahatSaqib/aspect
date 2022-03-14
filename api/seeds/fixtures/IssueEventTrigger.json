@@ -153,10 +153,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5006],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -183,10 +183,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5006],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -213,10 +213,10 @@
           "evaluationFilterParameters": {
             "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
             "categoryId": "Invalid",
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -244,10 +244,10 @@
           "evaluationFilterParameters": {
             "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
             "categoryId": "Invalid",
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -273,10 +273,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5017, 5007],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -303,10 +303,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5017, 5007],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           },
           "suppressingConditions": {
             "evaluationMethod": "plugin-function",
@@ -377,10 +377,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5011],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -407,10 +407,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [5011],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -452,10 +452,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [2008],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -481,10 +481,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [2008],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
@@ -510,10 +510,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [2096, 2097],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3,
+            "minResults": 4,
             "checkIfWillBeLotIssue": true
           }
         },
@@ -540,10 +540,10 @@
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
             "errorCodes": [2096, 2097],
-            "threshold": 0.03,
+            "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
-            "minResults": 3
+            "minResults": 4
           }
         },
         "suppressingConditions": {
