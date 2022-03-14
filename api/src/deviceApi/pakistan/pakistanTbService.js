@@ -25,7 +25,7 @@ async function getTbResultsStats(context) {
   )
   const statesQuery = getTbResultsStatsQueryByState(knex, constraints, from, to)
 
-  const [country, states] = await Promise.all([countryQuery, statesQuery])
+  const [[country], states] = await Promise.all([countryQuery, statesQuery])
 
   return { from, to, countryTotals: country[0], stateTotals: states }
 }
