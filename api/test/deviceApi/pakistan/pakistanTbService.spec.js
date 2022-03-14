@@ -155,12 +155,12 @@ describe.only('Pakistan stats api', async () => {
     )
     res.body.should.to.containSubset(
       {
-        total: { tests: 6, cases: 4, drCases: 2 },
+        countryTotals: { tests: 6, cases: 4, drCases: 2 },
       },
-      'totals'
+      'country totals'
     )
-    expect(res.body.states.length).to.equal(51)
-    res.body.states.should.to.containSubset(
+    expect(res.body.stateTotals.length).to.equal(51)
+    res.body.stateTotals.should.to.containSubset(
       [
         {
           stateCode: 'AK',
@@ -184,13 +184,13 @@ describe.only('Pakistan stats api', async () => {
 
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
-    expect(res.body.states.length, 'Returned states count').to.equal(51)
+    expect(res.body.stateTotals.length, 'Returned states count').to.equal(51)
 
     res.body.should.to.containSubset({
       from: toUtcString,
       to: toUtcString,
-      total: { tests: 0, cases: 0, drCases: 0 },
-      states: [
+      countryTotals: { tests: 0, cases: 0, drCases: 0 },
+      stateTotals: [
         {
           stateCode: 'AK',
           state: 'Alaska',

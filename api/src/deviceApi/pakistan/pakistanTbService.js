@@ -4,8 +4,6 @@ const {
 } = require('../../auth/constraints')
 const service = require('../service')
 
-const RESULT_CATEGORY_DETECTED_ID = 1
-
 const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
   deviceLogType: service.DEVICE_LOG_TYPE_NONE,
 })
@@ -19,30 +17,27 @@ async function getTbResultsStats(context) {
   const { from, to } = context.query
   const constraints = await getConstraintsByDeviceAPIKey(apiKey)
 
-  const countryQuery = getTbResultsStatsQuery(knex, constraints, from, to)
+  const countryQuery = getTbResultsQueryWholeCountry(
+    knex,
+    constraints,
+    from,
+    to
+  )
   const statesQuery = getTbResultsStatsQueryByState(knex, constraints, from, to)
 
   const [country, states] = await Promise.all([countryQuery, statesQuery])
 
-  return { from, to, total: country[0], states }
+  return { from, to, countryTotals: country[0], stateTotals: states }
 }
 
 function getTbResultsStatsQueryByState(knex, constraints, from, to) {
-  const baseQuery = getTbResultsStatsQuery(knex, constraints, from, to)
+  const baseQuery = getTbResultsStatsQuery(knex, constraints, from, to).clone()
 
   const query = knex('State as s')
-    .leftJoin(
-      knex('Geography as g').distinct('countryId', 'stateId').as('g'),
-      function () {
-        this.on({ 'g.stateId': 's.id' })
-      }
-    )
-    .leftJoin(
-      baseQuery.as('b').groupBy('g.stateId').select('g.stateId'),
-      function () {
-        this.on({ 'b.stateId': 's.id' })
-      }
-    )
+    .leftJoin('Geography as g', 'g.stateId', 's.id')
+    .leftJoin(baseQuery.as('b'), function () {
+      this.on({ 'b.stateId': 's.id' })
+    })
     .modify(addConstraints, constraints, {
       geography: 'g',
     })
@@ -52,6 +47,26 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
       knex.raw('coalesce(b.tests,0) as tests'),
       knex.raw('coalesce(b.cases, 0) as cases'),
       knex.raw('coalesce(b.drCases, 0) as drCases')
+    )
+    .groupBy('s.name')
+  return query
+}
+
+function getTbResultsQueryWholeCountry(knex, constraints, from, to) {
+  const baseQuery = getTbResultsStatsQuery(knex, constraints, from, to).clone()
+
+  const query = knex('State as s')
+    .leftJoin('Geography as g', 'g.stateId', 's.id')
+    .leftJoin(baseQuery.as('b'), function () {
+      this.on({ 'b.stateId': 's.id' })
+    })
+    .modify(addConstraints, constraints, {
+      geography: 'g',
+    })
+    .select(
+      knex.raw('sum(coalesce(b.tests,0)) as tests'),
+      knex.raw('sum(coalesce(b.cases, 0)) as cases'),
+      knex.raw('sum(coalesce(b.drCases, 0)) as drCases')
     )
   return query
 }
@@ -63,6 +78,8 @@ function getTbResultsStatsQuery(knex, constraints, from, to) {
     .join('AssayType as at', 'at.id', 'a.assayTypeId')
     .join('Disease as d', 'd.id', 'at.diseaseId')
     .join('Geography as g', 'g.id', 'r.geographyId')
+    .join('ResultCategory as rcDetected', 'rcDetected.id', 'r.resultCategory1')
+    .leftJoin('ResultCategory as rcDr', 'rcDr.id', 'r.resultCategory2')
     .modify(addConstraints, constraints, {
       result: 'r',
       geography: 'g',
@@ -72,18 +89,20 @@ function getTbResultsStatsQuery(knex, constraints, from, to) {
     .where('r.endedOn', '>=', knex.raw('?', from))
     .where('r.endedOn', '<', knex.raw('?', to))
     .select(
+      'g.stateId',
       knex.raw('count(r.id) as tests'),
       knex.raw(
-        `coalesce(sum(case coalesce(r.resultcategory1,-1) when ${RESULT_CATEGORY_DETECTED_ID} then 1 else 0 end),0) as cases`
+        `coalesce(sum(case coalesce(rcDetected.externalId,-1) when 'Detected' then 1 else 0 end),0) as cases`
       ),
       knex.raw(
         `coalesce(sum(case 
-              when coalesce(r.resultcategory1,-1) = ${RESULT_CATEGORY_DETECTED_ID} 
-                   and coalesce(r.resultcategory2,-1) = ${RESULT_CATEGORY_DETECTED_ID} 
+              when rcDetected.externalId = 'Detected' 
+                   and rcDr.externalId = 'Detected'
                 then 1 else 0 
               end),0) as drCases`
       )
     )
+    .groupBy('g.stateId')
 }
 
 module.exports = {

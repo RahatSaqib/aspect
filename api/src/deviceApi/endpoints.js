@@ -748,7 +748,6 @@ const routes = [
     method: 'GET',
     path: '/result/pakistan',
     handler: getResultPakistanHandler,
-    // auth: { scope: ['result:view'] },
     config: {
       description: 'Get Tb Stats',
       notes:
@@ -769,8 +768,8 @@ const routes = [
         schema: {
           from: Joi.date().iso(),
           to: Joi.date().iso(),
-          total: Joi.object(),
-          states: Joi.array().items(
+          countryTotals: Joi.object(),
+          stateTotals: Joi.array().items(
             Joi.object().keys({
               stateCode: Joi.string().empty(''),
               state: Joi.string().empty(''),
