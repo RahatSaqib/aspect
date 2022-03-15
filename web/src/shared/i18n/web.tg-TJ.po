@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
+"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,9 +32,13 @@ msgstr "(Миқдори нав дар даст: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * excluded {pendingTransfers} lot/s in transit
+#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* excluded {pendingTransfers} lot/s in transit"
+#, fuzzy
+#| msgid "* excluded {pendingTransfers} lot/s in transit"
+msgid ""
+"* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
+"s in transit"
 msgstr "* {pendingTransfers} лот/с дар транзит хориҷ карда шудааст"
 
 #. [pages.TableCell.moreContacts]
@@ -149,6 +153,13 @@ msgstr ">= 40 cp/mL"
 #: extracted_strings.json
 msgid ">= 550 cp/mL"
 msgstr ">= 550 кп/мл"
+
+#. [pages.Contacts.person.name.exist]
+#. defaultMessage is:
+#. A person with the same name exists. Please use a different name.
+#: extracted_strings.json
+msgid "A person with the same name exists. Please use a different name."
+msgstr "Шахсе бо ҳамон ном вуҷуд дорад. Лутфан номи дигарро истифода баред."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -449,6 +460,9 @@ msgstr "Alere Q HIV-1/2 VL плазма"
 msgid "Alerts"
 msgstr "Огоҳӣ"
 
+#. [filter.clientSideFilterSelect.selectAll]
+#. defaultMessage is:
+#. All
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
@@ -1169,6 +1183,9 @@ msgstr "Таҳрир кардан мумкин нест"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.Notifications.table.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [contextualMenu.notifications.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1535,6 +1552,9 @@ msgid "Contact Created Successfully"
 msgstr "Тамос бомуваффақият эҷод карда шуд"
 
 #. [pages.PersonDetails.contactDetails]
+#. defaultMessage is:
+#. Contact Details
+#. [pages.Notifications.table.contactDetails]
 #. defaultMessage is:
 #. Contact Details
 #: extracted_strings.json
@@ -2968,6 +2988,15 @@ msgstr "Хатогӣ дар ирсоли почтаи электронии па�
 msgid "Error Transferring Result"
 msgstr "Хатогӣ дар интиқоли натиҷа"
 
+#. [pages.Contacts.person.name.exist.title]
+#. defaultMessage is:
+#. Error creating person
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Error Fetching Endpoint"
+msgid "Error creating person"
+msgstr "Хатогӣ ҳангоми гирифтани нуқтаи ниҳоӣ"
+
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
 #. Excel
@@ -3111,12 +3140,25 @@ msgstr "Муқовимат ба FLQ"
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
-#. [pages.SiteDetail.fieldFacilityCode]
-#. defaultMessage is:
-#. Facility Code
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Кодекси иншоот"
+
+#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Please, try again in a few minutes. If the error persists, contact your "
+#| "administrator for support."
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Лутфан, пас аз чанд дақиқа бори дигар кӯшиш кунед. Агар хатогӣ идома ёбад, "
+"барои дастгирӣ бо маъмури худ тамос гиред."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -4226,6 +4268,9 @@ msgstr "Охирин"
 #. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last 30 Days
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
@@ -4243,9 +4288,6 @@ msgstr "30 рӯзи охир"
 msgid "Last 7 Days"
 msgstr "7 рӯзи охир"
 
-#. [pages.DeviceList.lastMonth]
-#. defaultMessage is:
-#. Last Month
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
 #. Last Month
@@ -4373,6 +4415,13 @@ msgstr "Бо табобат алоқаманд аст"
 #: extracted_strings.json
 msgid "Lipid Panel"
 msgstr "Панели липидҳо"
+
+#. [pages.ReportIndex.listRResistantTestReport]
+#. defaultMessage is:
+#. List-R Resistant Test Report
+#: extracted_strings.json
+msgid "List-R Resistant Test Report"
+msgstr "Ҳисоботи санҷиши тобовар List-R"
 
 #. [pages.ReportIndex.RIF_Resistance_Rate_description]
 #. defaultMessage is:
@@ -5232,6 +5281,9 @@ msgstr "Навтар"
 msgid "Next"
 msgstr "Баъдӣ"
 
+#. [pages.Notifications.table.createButton.group.no]
+#. defaultMessage is:
+#. No
 #. [pages.NotificationList.no]
 #. defaultMessage is:
 #. No
@@ -5310,6 +5362,17 @@ msgstr "Ягон санҷиш гузаронида нашудааст"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Ягон алоқа ба сайт таъин нашудааст"
+
+#. [pages.SiteDetail.siteWithoutLocation]
+#. defaultMessage is:
+#. No location set to this site - Please, edit to assign the latitude and longitude fields.
+#: extracted_strings.json
+msgid ""
+"No location set to this site - Please, edit to assign the latitude and "
+"longitude fields."
+msgstr ""
+"Ягон маконе барои ин сайт таъин нашудааст - Лутфан, барои таъин кардани "
+"майдонҳои арз ва тулӣ таҳрир кунед."
 
 #. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
 #. defaultMessage is:
@@ -5556,6 +5619,15 @@ msgstr "Шумораи Дастгоҳҳо"
 #: extracted_strings.json
 msgid "Number of Locations"
 msgstr "Шумораи ҷойҳо"
+
+#. [pages.ReportIndex.resultCountsByHIVStatus_description]
+#. defaultMessage is:
+#. Number of TB results grouped by patient HIV status
+#: extracted_strings.json
+#, fuzzy
+#| msgid "The number of results that belong to a patient that died"
+msgid "Number of TB results grouped by patient HIV status"
+msgstr "Шумораи натиҷаҳое, ки ба бемори фавтида тааллуқ доранд"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -5872,6 +5944,13 @@ msgstr "ID бемор"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Бемор/Идентификатсияи парванда"
+
+#. [pages.Notifications.table.sentPending]
+#. defaultMessage is:
+#. Pending
+#: extracted_strings.json
+msgid "Pending"
+msgstr "Дар интизорӣ"
 
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
@@ -6323,6 +6402,13 @@ msgstr "Натиҷаҳои санҷиши мусбӣ интиқол дода ш�
 #: extracted_strings.json
 msgid "Positives"
 msgstr "мусбат"
+
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. Preceding 30 Days
+#: extracted_strings.json
+msgid "Preceding 30 Days"
+msgstr "30 рӯзи пеш"
 
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
@@ -6883,6 +6969,13 @@ msgstr "Натиҷаи 2"
 msgid "Result Based"
 msgstr "Дар асоси натиҷа"
 
+#. [pages.ReportIndex.resultCountsByHIVStatus]
+#. defaultMessage is:
+#. Result Counts by HIV status
+#: extracted_strings.json
+msgid "Result Counts by HIV status"
+msgstr "Ҳисобкунии натиҷаҳо аз рӯи ҳолати ВНМО"
+
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
 #. Result Details
@@ -7435,6 +7528,15 @@ msgstr "Ҳафтаро интихоб кунед..."
 msgid "Select Year..."
 msgstr "Солро интихоб кунед..."
 
+#. [filter.clientSideFilterSelect.selectAssay]
+#. defaultMessage is:
+#. Select an Assay
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Select assay..."
+msgid "Select an Assay"
+msgstr "Таҳлилро интихоб кунед..."
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -7596,12 +7698,33 @@ msgstr "Фиристодан"
 msgid "Send to a specific person"
 msgstr "Ба шахси мушаххас фиристед"
 
+#. [pages.Notifications.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#. [pages.Notifications.table.createButton.group.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Linked to treatment"
+msgid "Send to patient"
+msgstr "Бо табобат алоқаманд аст"
+
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
 #. Sender Operator
 #: extracted_strings.json
 msgid "Sender Operator"
 msgstr "Оператори ирсолкунанда"
+
+#. [pages.Notifications.table.sentDetails]
+#. defaultMessage is:
+#. Sent details
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Site Detail"
+msgid "Sent details"
+msgstr "Тафсилоти сайт"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -7924,6 +8047,9 @@ msgstr "Баромадан"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [filter.popover.siteName]
+#. defaultMessage is:
+#. Site
 #. [pages.JobAssignments.site]
 #. defaultMessage is:
 #. Site
@@ -8195,6 +8321,15 @@ msgstr "Пешниҳод кунед"
 #. Success
 #: extracted_strings.json
 msgid "Success"
+msgstr "Муваффакият"
+
+#. [pages.Notifications.table.sentSuccessfully]
+#. defaultMessage is:
+#. Successfully
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Success"
+msgid "Successfully"
 msgstr "Муваффакият"
 
 #. [browsePage.browseDropdown.supplies]
@@ -8976,9 +9111,6 @@ msgstr ""
 msgid "These passwords don't match"
 msgstr "Ин паролҳо мувофиқат намекунанд"
 
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. This Month
 #. [pages.dateRangeSelector.thisMonth]
 #. defaultMessage is:
 #. This Month
@@ -9095,6 +9227,24 @@ msgid ""
 msgstr ""
 "Ин гузориш фоизи фаъолияти дастгоҳҳоро дар як моҳ дар давраи интихобшуда "
 "нишон медиҳад. (Бо нобаёнӣ 12 моҳи охир)"
+
+#. [pages.ReportIndex.listRResistantTestReport_description]
+#. defaultMessage is:
+#. This report shows the list of resistant tests
+#: extracted_strings.json
+msgid "This report shows the list of resistant tests"
+msgstr "Ин гузориш рӯйхати санҷишҳои тобоварро нишон медиҳад"
+
+#. [pages.ReportIndex.xpertTestActivitiesReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result"
+msgstr ""
+"Ин гузориш шумораи санҷишҳои GeneXpert MTB-ро, ки аз рӯи натиҷаҳо гурӯҳбандӣ "
+"шудаанд, нишон медиҳад"
 
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
@@ -9213,12 +9363,30 @@ msgstr "Ҳамаро иваз кунед"
 msgid "Topic"
 msgstr "Мавзӯъ"
 
+#. [performance.barChart.capacity]
+#. defaultMessage is:
+#. Total Capacity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Total Cases"
+msgid "Total Capacity"
+msgstr "Ҳодисаҳои умумӣ"
+
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
 #. Total Cases
 #: extracted_strings.json
 msgid "Total Cases"
 msgstr "Ҳодисаҳои умумӣ"
+
+#. [performance.barChart.errors]
+#. defaultMessage is:
+#. Total Errors
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Critical Error"
+msgid "Total Errors"
+msgstr "Хатогии интиқодӣ"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9227,6 +9395,9 @@ msgstr "Ҳодисаҳои умумӣ"
 #. defaultMessage is:
 #. Total Results
 #. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
+#. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
@@ -9750,6 +9921,13 @@ msgstr "Ҳафта ё истироҳат"
 msgid "When the result is"
 msgstr "Вақте ки натиҷа"
 
+#. [pages.Notifications.table.sentWithErrors]
+#. defaultMessage is:
+#. With errors
+#: extracted_strings.json
+msgid "With errors"
+msgstr "Бо хатогиҳо"
+
 #. [pages.OperationalData.withinTwoHoursOfTesting]
 #. defaultMessage is:
 #. Within 2 hours of testing
@@ -9798,6 +9976,13 @@ msgstr "Картриджи Qual Xpert HIV-1"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Картриджи вирусии Xpert HIV-1"
 
+#. [pages.ReportIndex."xpertTestActivitiesReport"]
+#. defaultMessage is:
+#. Xpert Test Activities Report
+#: extracted_strings.json
+msgid "Xpert Test Activities Report"
+msgstr "Ҳисобот оид ба фаъолияти санҷиши Xpert"
+
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
 #. Year
@@ -9808,6 +9993,9 @@ msgstr "Картриджи вирусии Xpert HIV-1"
 msgid "Year"
 msgstr "Соли"
 
+#. [pages.Notifications.table.createButton.group.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes
