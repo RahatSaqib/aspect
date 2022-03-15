@@ -203,8 +203,37 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
+async function getResultCountsByHIVStatus(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const data = await getBaseQuery(dataConstraints, query)
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .select(
+      knex.raw(`
+        CASE IFNULL(UPPER(r.patientData ->> '$.HIVStatus'), 'NULL')
+        WHEN 'NULL' THEN '- Unspecified -'
+        ELSE UPPER(r.patientData ->> '$.HIVStatus')
+        END as hivStatus
+      `),
+      'rc1.name as resultCategory1',
+      'rc2.name as resultCategory2'
+    )
+    .groupBy('hivStatus', 'r.resultCategory1', 'r.resultCategory2')
+    .count({
+      cntAll: knex.raw('DISTINCT r.id'),
+    })
+    .orderBy('hivStatus')
+
+  return {
+    ok: true,
+    data,
+    total: data.length,
+  }
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
   getGeneXpertM4B1PatientsReport,
+  getResultCountsByHIVStatus,
 }
