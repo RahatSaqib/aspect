@@ -1,6 +1,12 @@
+const { endOfMonth, startOfMonth } = require('date-fns')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
+const {
+  getWellFormattedDateStringWithTimezone,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
 
 function getBaseQuery(dataConstraints, query) {
   return knex('Result as r')
@@ -115,6 +121,21 @@ async function getListRResistantTestReport(auth, query) {
 
 async function getReasonForTestingReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
+  let {
+    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
+      startOfMonth(new Date())
+    ),
+  } = query
+  const {
+    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
+      endOfMonth(new Date())
+    ),
+  } = query
+  if (typeof minDateStr !== 'string') {
+    minDateStr = minDateStr.toISOString()
+  }
+  const dateFrom = startOfMonthUTC(minDateStr)
+  const dateTo = endOfMonthUTC(maxDateStr)
   const rows = await knex('Result as r')
     .leftJoin('Site as s', 's.id', 'r.siteId')
     .leftJoin('Geography as g', 'g.id', 'r.geographyId')
@@ -136,6 +157,14 @@ async function getReasonForTestingReport(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    // Keeping this to the Pr approve, if the dates are wrong filtred (now it takes 1 month), maybe it should bounded to the current day only)
+    // .andWhere('r.endedOn', '>=', dateFrom)
+    // .andWhere('r.endedOn', '<=', dateTo)
     .groupBy(knex.raw(`resultData->>'$.customFieldData."251".value'`))
   return {
     ok: true,
