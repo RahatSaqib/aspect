@@ -17,9 +17,8 @@ const {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
+  getResultPakistanHandler,
 } = require('./service')
-
-const { getResultPakistanHandler } = require('./pakistan/pakistanTbService')
 
 const errorPayload = Joi.object()
   .allow(null)

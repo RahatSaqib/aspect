@@ -232,5 +232,4 @@ module.exports = {
   getISODateUserTimeZoneField,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
-  addDays,
 }

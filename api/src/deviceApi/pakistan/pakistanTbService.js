@@ -2,11 +2,6 @@ const {
   getConstraintsByDeviceAPIKey,
   addConstraints,
 } = require('../../auth/constraints')
-const service = require('../service')
-
-const getResultPakistanHandler = service.deviceApiHandler(getTbResultsStats, {
-  deviceLogType: service.DEVICE_LOG_TYPE_NONE,
-})
 
 async function getTbResultsStats(context) {
   const {
@@ -107,5 +102,5 @@ function getTbResultsStatsQuery(knex, constraints, from, to) {
 }
 
 module.exports = {
-  getResultPakistanHandler,
+  getTbResultsStats,
 }
