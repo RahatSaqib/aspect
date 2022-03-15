@@ -82,7 +82,7 @@ async function shouldSuppressTriggering(
   { errorCodesToSuppress, suppressionDays, issueType }
 ) {
   const { deviceId } = action
-  const { resultCategoryId } = action.options.data
+  const resultCategoryId = _.get(action, 'options.data.resultCategoryId')
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
     const { totalIssues } = await knex('Issue as i')
