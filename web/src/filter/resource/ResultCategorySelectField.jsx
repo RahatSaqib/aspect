@@ -63,16 +63,17 @@ export class ResultCategorySelectField extends PureComponent {
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {resultCategories.map(a => (
-          <MenuItem key={a.get('id')} value={a.get('id')}>
-            {formatI18nMessage(
-              messages,
-              formatMessage,
-              a.get('i18nKey'),
-              a.get('name')
-            )}
-          </MenuItem>
-        ))}
+        {resultCategories &&
+          resultCategories.map(a => (
+            <MenuItem key={a.get('id')} value={a.get('id')}>
+              {formatI18nMessage(
+                messages,
+                formatMessage,
+                a.get('i18nKey'),
+                a.get('name')
+              )}
+            </MenuItem>
+          ))}
       </SelectField>
     )
   }
