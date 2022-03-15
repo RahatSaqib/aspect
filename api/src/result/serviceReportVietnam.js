@@ -113,17 +113,28 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
-async function getReasonForTestingReport(auth) {
+async function getReasonForTestingReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const rows = await knex('Result as r')
+    .leftJoin('Site as s', 's.id', 'r.siteId')
+    .leftJoin('Geography as g', 'g.id', 'r.geographyId')
     .select([
       knex.raw(
         `IF(resultData->>'$.customFieldData."251".value' = 'null', 'N/A', resultData->>'$.customFieldData."251".value') AS fields`
       ),
       knex.raw(`count(resultData->>'$.customFieldData."251".value') AS total`),
     ])
+    .andWhere(
+      knex.raw(`resultData->>'$.customFieldData."251".value' is not null`)
+    )
     .modify(addConstraints, dataConstraints, {
       result: 'r',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
     })
     .groupBy(knex.raw(`resultData->>'$.customFieldData."251".value'`))
   return {
