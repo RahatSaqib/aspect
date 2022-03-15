@@ -113,11 +113,21 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
+const joinCurrontMonthInventoryLog = joinQuery => {
+  joinQuery
+    .on('il.inventoryItemId', 'ii.id')
+    .andOn(
+      knex.raw(
+        `IFNULL(il.adjustedFrom, il.createdOn) > CAST(DATE_FORMAT(NOW() ,'%Y-%m-01') AS Date)`
+      )
+    )
+}
+
 async function getGlobalFundInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
-    .leftJoin('InventoryLog as il', 'il.inventoryItemId', 'ii.id')
+    .leftJoin('InventoryLog as il', joinCurrontMonthInventoryLog)
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
     .select([
