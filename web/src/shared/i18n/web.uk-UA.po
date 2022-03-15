@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
+"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,9 +32,13 @@ msgstr "(Нова кількість на руках: {nextQuantity} {unitShortN
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * excluded {pendingTransfers} lot/s in transit
+#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* excluded {pendingTransfers} lot/s in transit"
+#, fuzzy
+#| msgid "* excluded {pendingTransfers} lot/s in transit"
+msgid ""
+"* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
+"s in transit"
 msgstr "* виключено {pendingTransfers} лот/с в дорозі"
 
 #. [pages.TableCell.moreContacts]
@@ -149,6 +153,13 @@ msgstr ">= 40 cp/mL"
 #: extracted_strings.json
 msgid ">= 550 cp/mL"
 msgstr ">= 550 cp/mL"
+
+#. [pages.Contacts.person.name.exist]
+#. defaultMessage is:
+#. A person with the same name exists. Please use a different name.
+#: extracted_strings.json
+msgid "A person with the same name exists. Please use a different name."
+msgstr "Існує людина з таким же ім'ям. Будь ласка, використовуйте іншу назву."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -450,6 +461,9 @@ msgstr "Alere Q ВІЛ-1/2 VL плазма"
 msgid "Alerts"
 msgstr "Сповіщення"
 
+#. [filter.clientSideFilterSelect.selectAll]
+#. defaultMessage is:
+#. All
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
@@ -1169,6 +1183,9 @@ msgstr "Не можна редагувати"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.Notifications.table.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [contextualMenu.notifications.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1535,6 +1552,9 @@ msgid "Contact Created Successfully"
 msgstr "Контакт створено успішно"
 
 #. [pages.PersonDetails.contactDetails]
+#. defaultMessage is:
+#. Contact Details
+#. [pages.Notifications.table.contactDetails]
 #. defaultMessage is:
 #. Contact Details
 #: extracted_strings.json
@@ -2966,6 +2986,15 @@ msgstr "Помилка надсилання електронної пошти д
 msgid "Error Transferring Result"
 msgstr "Помилка передачі результату"
 
+#. [pages.Contacts.person.name.exist.title]
+#. defaultMessage is:
+#. Error creating person
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Error Fetching Endpoint"
+msgid "Error creating person"
+msgstr "Помилка отримання кінцевої точки"
+
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
 #. Excel
@@ -3109,12 +3138,25 @@ msgstr "Опір FLQ"
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
-#. [pages.SiteDetail.fieldFacilityCode]
-#. defaultMessage is:
-#. Facility Code
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Код об'єкта"
+
+#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Please, try again in a few minutes. If the error persists, contact your "
+#| "administrator for support."
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Будь ласка, спробуйте ще раз за кілька хвилин. Якщо помилка не зникає, "
+"зверніться до адміністратора для отримання підтримки."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -4223,6 +4265,9 @@ msgstr "Останній"
 #. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last 30 Days
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
@@ -4240,9 +4285,6 @@ msgstr "Останні 30 днів"
 msgid "Last 7 Days"
 msgstr "Останні 7 днів"
 
-#. [pages.DeviceList.lastMonth]
-#. defaultMessage is:
-#. Last Month
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
 #. Last Month
@@ -4370,6 +4412,13 @@ msgstr "Пов’язане з лікуванням"
 #: extracted_strings.json
 msgid "Lipid Panel"
 msgstr "Ліпідна панель"
+
+#. [pages.ReportIndex.listRResistantTestReport]
+#. defaultMessage is:
+#. List-R Resistant Test Report
+#: extracted_strings.json
+msgid "List-R Resistant Test Report"
+msgstr "Звіт про стійкість до списку R"
 
 #. [pages.ReportIndex.RIF_Resistance_Rate_description]
 #. defaultMessage is:
@@ -5229,6 +5278,9 @@ msgstr "Новіші"
 msgid "Next"
 msgstr "Далі"
 
+#. [pages.Notifications.table.createButton.group.no]
+#. defaultMessage is:
+#. No
 #. [pages.NotificationList.no]
 #. defaultMessage is:
 #. No
@@ -5307,6 +5359,17 @@ msgstr "Тестів не проводилось"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Жодним контактам не призначено сайт"
+
+#. [pages.SiteDetail.siteWithoutLocation]
+#. defaultMessage is:
+#. No location set to this site - Please, edit to assign the latitude and longitude fields.
+#: extracted_strings.json
+msgid ""
+"No location set to this site - Please, edit to assign the latitude and "
+"longitude fields."
+msgstr ""
+"Для цього сайту не встановлено місцезнаходження. Будь ласка, відредагуйте, "
+"щоб призначити поля широти та довготи."
 
 #. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
 #. defaultMessage is:
@@ -5553,6 +5616,15 @@ msgstr "Кількість пристроїв"
 #: extracted_strings.json
 msgid "Number of Locations"
 msgstr "Кількість місць розташування"
+
+#. [pages.ReportIndex.resultCountsByHIVStatus_description]
+#. defaultMessage is:
+#. Number of TB results grouped by patient HIV status
+#: extracted_strings.json
+#, fuzzy
+#| msgid "The number of results that belong to a patient that died"
+msgid "Number of TB results grouped by patient HIV status"
+msgstr "Кількість результатів, які належать пацієнту, який помер"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -5869,6 +5941,13 @@ msgstr "ID пацієнта"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Ідентифікатор пацієнта / випадку"
+
+#. [pages.Notifications.table.sentPending]
+#. defaultMessage is:
+#. Pending
+#: extracted_strings.json
+msgid "Pending"
+msgstr "Очікується"
 
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
@@ -6316,6 +6395,13 @@ msgstr "Передано позитивні результати тесту"
 #: extracted_strings.json
 msgid "Positives"
 msgstr "Позитиви"
+
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. Preceding 30 Days
+#: extracted_strings.json
+msgid "Preceding 30 Days"
+msgstr "Попередні 30 днів"
 
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
@@ -6876,6 +6962,13 @@ msgstr "Результат 2"
 msgid "Result Based"
 msgstr "На основі результатів"
 
+#. [pages.ReportIndex.resultCountsByHIVStatus]
+#. defaultMessage is:
+#. Result Counts by HIV status
+#: extracted_strings.json
+msgid "Result Counts by HIV status"
+msgstr "Результат Розраховується за ВІЛ-статусом"
+
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
 #. Result Details
@@ -7429,6 +7522,15 @@ msgstr "Виберіть тиждень…"
 msgid "Select Year..."
 msgstr "Виберіть рік…"
 
+#. [filter.clientSideFilterSelect.selectAssay]
+#. defaultMessage is:
+#. Select an Assay
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Select assay..."
+msgid "Select an Assay"
+msgstr "Виберіть аналіз ..."
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -7590,12 +7692,33 @@ msgstr "Відправити"
 msgid "Send to a specific person"
 msgstr "Надіслати конкретній особі"
 
+#. [pages.Notifications.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#. [pages.Notifications.table.createButton.group.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Linked to treatment"
+msgid "Send to patient"
+msgstr "Пов’язане з лікуванням"
+
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
 #. Sender Operator
 #: extracted_strings.json
 msgid "Sender Operator"
 msgstr "Оператор відправника"
+
+#. [pages.Notifications.table.sentDetails]
+#. defaultMessage is:
+#. Sent details
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Site Detail"
+msgid "Sent details"
+msgstr "Детальна інформація про сайт"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -7916,6 +8039,9 @@ msgstr "Вийти"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [filter.popover.siteName]
+#. defaultMessage is:
+#. Site
 #. [pages.JobAssignments.site]
 #. defaultMessage is:
 #. Site
@@ -8187,6 +8313,15 @@ msgstr "Відправити"
 #. Success
 #: extracted_strings.json
 msgid "Success"
+msgstr "Успіху"
+
+#. [pages.Notifications.table.sentSuccessfully]
+#. defaultMessage is:
+#. Successfully
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Success"
+msgid "Successfully"
 msgstr "Успіху"
 
 #. [browsePage.browseDropdown.supplies]
@@ -8963,9 +9098,6 @@ msgstr ""
 msgid "These passwords don't match"
 msgstr "Ці паролі не збігаються"
 
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. This Month
 #. [pages.dateRangeSelector.thisMonth]
 #. defaultMessage is:
 #. This Month
@@ -9080,6 +9212,24 @@ msgid ""
 msgstr ""
 "Цей звіт відображає відсоток активності пристроїв за місяць протягом "
 "обраного періоду часу. (За замовчуванням останні 12 місяців)"
+
+#. [pages.ReportIndex.listRResistantTestReport_description]
+#. defaultMessage is:
+#. This report shows the list of resistant tests
+#: extracted_strings.json
+msgid "This report shows the list of resistant tests"
+msgstr "У цьому звіті наведено список резистентних тестів"
+
+#. [pages.ReportIndex.xpertTestActivitiesReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result"
+msgstr ""
+"У цьому звіті показано кількість проведених тестів GeneXpert MTB за "
+"категоріями за результатами"
 
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
@@ -9196,12 +9346,30 @@ msgstr "Вибрати все"
 msgid "Topic"
 msgstr "Тема"
 
+#. [performance.barChart.capacity]
+#. defaultMessage is:
+#. Total Capacity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Total Cases"
+msgid "Total Capacity"
+msgstr "Загальна кількість інцидентів"
+
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
 #. Total Cases
 #: extracted_strings.json
 msgid "Total Cases"
 msgstr "Загальна кількість інцидентів"
+
+#. [performance.barChart.errors]
+#. defaultMessage is:
+#. Total Errors
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Critical Error"
+msgid "Total Errors"
+msgstr "Критична помилка"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9210,6 +9378,9 @@ msgstr "Загальна кількість інцидентів"
 #. defaultMessage is:
 #. Total Results
 #. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
+#. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
@@ -9730,6 +9901,13 @@ msgstr "Тиждень або свято"
 msgid "When the result is"
 msgstr "Коли результат є"
 
+#. [pages.Notifications.table.sentWithErrors]
+#. defaultMessage is:
+#. With errors
+#: extracted_strings.json
+msgid "With errors"
+msgstr "З помилками"
+
 #. [pages.OperationalData.withinTwoHoursOfTesting]
 #. defaultMessage is:
 #. Within 2 hours of testing
@@ -9778,6 +9956,13 @@ msgstr "Картридж Xpert HIV-1 Qual"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Касета для вірусного навантаження Xpert HIV-1"
 
+#. [pages.ReportIndex."xpertTestActivitiesReport"]
+#. defaultMessage is:
+#. Xpert Test Activities Report
+#: extracted_strings.json
+msgid "Xpert Test Activities Report"
+msgstr "Звіт про діяльність Xpert Test"
+
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
 #. Year
@@ -9788,6 +9973,9 @@ msgstr "Касета для вірусного навантаження Xpert HI
 msgid "Year"
 msgstr "Рік"
 
+#. [pages.Notifications.table.createButton.group.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes
