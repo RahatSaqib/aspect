@@ -46,9 +46,23 @@ When Uri encoded:
 |--- |--- |--- |
 |from|ISO 8601 datetime UTC|Datetime from in UTC|
 |to|ISO 8601 datetime UTC|Datetime to in UTC|
-|countryTotals|Object|Total count of Tests, Cases and DrCases
-|stateTotals|Array of Objects|List of states with count of Tests, Cases and DrCases|
+|countryTotals|Object: countryTotals|Total count of Tests, Cases and DrCases
+|stateTotals|Array of Object: stateTotals|List of states with count of Tests, Cases and DrCases|
+#### countryTotals
+|Field|Type|Value|
+|--- |--- |--- |
+|tests|integer|Count of Tests performed|
+|cases|integer|Count of Cases detected|
+|drCases|integer|Count of Drug Resistance Cases detected|
 
+#### stateTotals
+|Field|Type|Value|
+|--- |--- |--- |
+|stateCode|string|State Abbreviation|
+|state|string|State Name|
+|tests|integer|Count of Tests performed|
+|cases|integer|Count of Cases detected|
+|drCases|integer|Count of Drug Resistance Cases detected|
 
 ### Response Example
 ``` lang: json
