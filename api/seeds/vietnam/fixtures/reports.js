@@ -64,7 +64,7 @@ module.exports = {
     i18nKeyDescription: 'globalFundInventoryReport_description',
     externalId: 'global_fund_inventory_report',
     fileName: 'globalFundInventoryReport',
-    exportCsv: false,
+    exportCsv: true,
     sortOrder: 50,
     sheets: [
       {
