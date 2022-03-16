@@ -124,8 +124,6 @@ describe('Issue Trigger', () => {
           .whereRaw(`IFNULL(data->>"$.deviceId", 0) = ${deviceId}`)
           .pluck('id')
         assert.equal(newIssueEventIds.length, 1)
-
-        // await checkIssues(issueType, deviceId)
       })
     })
   })
