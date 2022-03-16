@@ -5,7 +5,6 @@ const { subDays } = require('date-fns')
 const Promise = require('bluebird')
 const {
   getOffsetFromIsoDateString,
-  getDateTimeProjectionInUserTimeZone,
   // getOffsetFromTimeZone,
 } = require('../shared/date')
 const {
@@ -57,15 +56,15 @@ const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
 async function getListResults(query, auth, fields = LIST_FIELDS) {
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-  const dateProjectedToUserTZ = getDateTimeProjectionInUserTimeZone(
-    knex,
-    'endedOn',
-    userTimeOffset
-  )
-
-  fields.push(dateProjectedToUserTZ)
-
+  if (query.maxDate) {
+    const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+    fields = getSelectCommonListFields(
+      query,
+      auth,
+      getReportCommonFields(userTimeOffset)
+    )
+  }
+  // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
@@ -164,7 +163,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
-
+  console.log(resultQuery.toString())
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -209,7 +208,9 @@ function getResultTreatmentStatus(response) {
 }
 
 async function getResultsForExport(auth, query) {
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+  const userTimeOffset = query.maxDate
+    ? getOffsetFromIsoDateString(query.maxDate)
+    : '+00:00'
   const selectFields = [
     ...getSelectCommonListFields(userTimeOffset),
     knex.raw(
@@ -786,12 +787,9 @@ async function downloadFileAsync({ auth, params }) {
 async function getResultByResultId(auth, resultId, fields) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-  // const { userName, timezone } = await getUser(auth.credentials.name)
 
   if (!fields) {
-    // const userOffset = getOffsetFromTimeZone(timezone)
-    // fields = getSelectShowFields(userOffset)
-    fields = getSelectShowFields('+00:00') // This field list has been altered to use in reports, here is choosed to show userTimezone, as this is not a report.
+    fields = getSelectShowFields('+00:00') // This field list has been altered to use in reports showing dates in requested timezone, here is in GMT (as in the DB), because this is not meanted to use in a report.
   }
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {

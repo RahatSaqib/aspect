@@ -249,9 +249,12 @@ const SELECT_COMMON_FIELDS = [
 ]
 
 function getSelectShowFields(userTimeZone) {
-  return [...getSelectCommonFields(userTimeZone), ...SELECT_SHOW_FIELDS]
+  return [
+    ...getSelectCommonFields(userTimeZone),
+    ...SELECT_SHOW_FIELDS_TIMEZONE_SAFE,
+  ]
 }
-const SELECT_SHOW_FIELDS = [
+const SELECT_SHOW_FIELDS_TIMEZONE_SAFE = [
   'rf.formSchema',
   knex.raw('IFNULL(pa.canEdit, 0) AS canEdit'),
   knex.raw('IFNULL(pa.canDelete, 0) AS canDelete'),
