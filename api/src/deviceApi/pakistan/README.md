@@ -22,7 +22,7 @@ The parameters accepted are these:
 |to|Date and Time to|Must be in ISO 8601 format. Must include time zone offset.|to=2022-02-22T16:04:17+05:00|Value must include time offset. A result with the exact date and time, will be excluded from the results.|
 
 ### Important
-The request dates must be URI encoded, as the standard does not accepts literals  `:` and `+` used in ISO8601 dates.
+The request dates must be URI encoded, as the standard does not accept literals  `:` and `+` used in ISO8601 dates.
  An example en javascript:
 ``` lang:javascript
 encodeURIComponent('2022-02-03T00:00:00+05:00')
