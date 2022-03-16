@@ -1,4 +1,11 @@
-const { endOfMonth, startOfMonth, format, parseISO } = require('date-fns')
+const {
+  endOfMonth,
+  startOfMonth,
+  format,
+  parseISO,
+  differenceInDays,
+  addDays,
+} = require('date-fns')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
@@ -115,12 +122,22 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
-const joinMonthInventoryLogByDates = (joinQuery, dateFrom, dateTo) => {
+const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
   joinQuery
     .on('il.inventoryItemId', 'ii.id')
     .andOn(
       knex.raw(
-        `IFNULL(il.adjustedFrom, il.createdOn) >= DATE(${dateFrom}) and IFNULL(il.adjustedFrom, il.createdOn) <= DATE(${dateTo})`
+        `IFNULL(il.adjustedFrom, il.createdOn) >= DATE('${dateFrom}') and IFNULL(il.adjustedFrom, il.createdOn) <= DATE('${dateTo}')`
+      )
+    )
+}
+
+const joinPreviousPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
+  joinQuery
+    .on('ilp.inventoryItemId', 'ii.id')
+    .andOn(
+      knex.raw(
+        `IFNULL(ilp.adjustedFrom, ilp.createdOn) >= DATE('${dateFrom}') and IFNULL(ilp.adjustedFrom, ilp.createdOn) <= DATE('${dateTo}')`
       )
     )
 }
@@ -140,12 +157,26 @@ async function getGlobalFundInventoryReport(auth, query) {
   if (typeof minDateStr !== 'string') {
     minDateStr = minDateStr.toISOString()
   }
-  const dateFrom = format(parseISO(minDateStr), 'yyyy-mm-dd')
-  const dateTo = format(parseISO(maxDateStr), 'yyyy-mm-dd')
+  const dateFormat = 'yyyy-MM-dd'
+  const days = differenceInDays(parseISO(minDateStr), parseISO(maxDateStr))
+  const currentPeriodDateFrom = format(parseISO(minDateStr), dateFormat)
+  const currentPeriodDateTo = format(parseISO(maxDateStr), dateFormat)
+  const pastPeriodDateFrom = format(
+    addDays(parseISO(minDateStr), days),
+    dateFormat
+  )
+  const pastPeriodDateTo = format(addDays(parseISO(minDateStr), -1), dateFormat)
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', q =>
-      joinMonthInventoryLogByDates(q, dateFrom, dateTo)
+      joinCurrentPeriodInventoryLog(
+        q,
+        currentPeriodDateFrom,
+        currentPeriodDateTo
+      )
+    )
+    .leftJoin('InventoryLog as ilp', q =>
+      joinPreviousPeriodInventoryLog(q, pastPeriodDateFrom, pastPeriodDateTo)
     )
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
