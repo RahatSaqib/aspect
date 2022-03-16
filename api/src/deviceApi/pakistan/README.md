@@ -32,7 +32,7 @@ Produces the URI valid output:
 2022-02-03T00%3A00%3A00%2B05%3A00
 ```
 ### Request Examples
-This query ask for data between February 1st, 2022 and February 22, 2022 in Pakistan Standard Time:
+This query asks for data between February 1st, 2022 and February 22, 2022 in Pakistan Standard Time:
 
 `{{ baseUrl }}/device/result/pakistan?from=2022-02-01T00:00:00+05:00&to=2022-02-22T00:00:00+05:00&token=0tkh-vn27-hnhy-q46a-mxe0`
 
