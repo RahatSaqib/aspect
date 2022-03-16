@@ -34,15 +34,10 @@ const valueCellTypes = [
   excel.ValueType.Boolean,
 ]
 
-/**
- * Gets the way to fill in data, depending on data being an object or an array
- * @param {*} data The report data
- * @returns 'mapping' or 'list'
- */
-const getWayToFillInData = data => {
+const isDataAList = data => {
   if (typeof data === 'object' && !Array.isArray(data) && data !== null)
-    return 'mapping'
-  return 'list'
+    return false
+  return true
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -295,7 +290,7 @@ async function renderExcelTemplate({
       dataSelector: dataSelectorSheet,
     } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = getWayToFillInData(data)
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
 
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
@@ -605,7 +600,7 @@ async function streamExcelTemplate({
     let fieldNames = []
     let dynamicMerges = []
 
-    const wayToFillInData = getWayToFillInData(data)
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
 
     const dataRows = wayToFillInData === 'list' ? data : data.rows
 
