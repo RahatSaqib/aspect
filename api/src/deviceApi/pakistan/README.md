@@ -4,7 +4,7 @@
 ## Description
 This document describes how to consume TB Stats - Rest Api
 
-This Api returns a summary of TB tests, TB cases and DRTB cases. It allows filtering by date range and returns totals results for whole country, as well as totals by each states.
+This API returns a summary of TB tests, TB (Tuberculosis) cases, and DRTB (Drug resistance TB) cases. It allows filtering by date range and returns totals results for the whole country, as well as totals by each state.
 
 ## Endpoint
 The endpoint is located at: [aspect url]/device/result/pakistan
