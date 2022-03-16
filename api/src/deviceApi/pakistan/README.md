@@ -10,7 +10,7 @@ This API returns a summary of TB tests, TB (Tuberculosis) cases, and DRTB (Drug 
 The endpoint is located at: [aspect url]/device/result/pakistan (For example pakistan.aspect.id/device/result/pakistan)
 
 ## Authentication
-The authentication is made over the deviceApiKey feature on Aspect. That implies that the caller must have a existent valid deviceApiKey.
+The authentication is made over the deviceApiKey feature on Aspect. That implies that the caller must have an existent valid deviceApiKey.
 
 The deviceApiKey must be sent as a query param called token.
 
