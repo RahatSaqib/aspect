@@ -1,14 +1,14 @@
 const _ = require('lodash')
 const {
+  addMonths,
+  differenceInMonths,
   format,
   parseISO,
-  addMonths,
   subMonths,
-  differenceInMonths,
 } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery } = require('../device/service')
-const { deviceStatusByDayQuery } = require('./service')
+const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
 const { knex, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const {
@@ -170,6 +170,74 @@ async function getDeviceActivityPercentReport(auth, query) {
   return dataset
 }
 
+async function getUtilizationPerInstrumentDayReport(auth, query) {
+  const { maxDate, minDate } = query
+  if (!minDate) {
+    query.minDate = subMonths(maxDate, 1).toISOString()
+  }
+  if (_.isDate(query.minDate)) {
+    query.minDate = query.minDate.toISOString()
+  }
+
+  let data = await getDeviceStatusOverTime(auth, query)
+  // const { culture } = await getUser(auth.credentials.name)
+  // const locale = culture.split('-')[0].toLowerCase()
+  /**
+   * define dynamic columns which are all day dates
+   */
+  let dateFields = []
+  const [{ maintenanceStatusHistory = [] } = {}] = data || []
+  dateFields = maintenanceStatusHistory.map(({ day }) => {
+    const date = new Date(day)
+    return {
+      key: day,
+      header: format(date, 'yyyy-MM-dd'),
+      /**
+       * `locale` is not needed for 'yyyy-MM-dd', but may be better to
+       * use formatting for `Long localized date` to have something
+       * like `Apr 29, 1453` (`PP`) or `April 29th, 1453` (`PPP`)
+       */
+      // header: format(date, 'PP', {
+      //   locale: locales[locale],
+      // }),
+    }
+  })
+  data = data.map(device => {
+    const { name, maintenanceStatusHistory } = device
+    const dynamicFields = _.reduce(
+      maintenanceStatusHistory,
+      (acc, { day, totalResults }) => {
+        acc[day] = {
+          value: totalResults,
+          style: {
+            // fill: {
+            //   type: 'pattern',
+            //   pattern: 'solid',
+            //   fgColor: { argb: 'FFFFFF00' },
+            //   bgColor: { argb: 'FF0000FF' },
+            // },
+          },
+        }
+        return acc
+      },
+      {}
+    )
+    return {
+      name,
+      ...dynamicFields,
+    }
+  })
+
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+    dynamicColumns: dateFields,
+  }
+}
+
 module.exports = {
   getDeviceActivityPercentReport,
+  getUtilizationPerInstrumentDayReport,
 }

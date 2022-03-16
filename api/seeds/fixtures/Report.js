@@ -264,6 +264,24 @@ const geneXpertIssues = {
   ],
 }
 
+const utilizationPerInstrumentDayReport = {
+  name: 'Utilization per instrument/day',
+  description:
+    'Calculated daily utilization rates based on the number of functional modules, ranked lowest to highest',
+  i18nKey: 'utilizationPerInstrumentDayReport',
+  externalId: 'utilization_per_instrument_day',
+  i18nKeyDescription: 'utilizationPerInstrumentDayDescription',
+  fileName: 'utilizationPerInstrumentDay',
+  sortOrder: 11,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
+      functionName: 'getUtilizationPerInstrumentDayReport',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -276,4 +294,5 @@ module.exports = {
   deviceCalibrationReport,
   geneXpertIssues,
   allResults,
+  utilizationPerInstrumentDayReport,
 }
