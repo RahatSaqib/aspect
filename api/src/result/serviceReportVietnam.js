@@ -1,6 +1,8 @@
+const { endOfMonth, startOfMonth, format, parseISO } = require('date-fns')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
+const { getWellFormattedDateStringWithTimezone } = require('../shared/date')
 
 function getBaseQuery(dataConstraints, query) {
   return knex('Result as r')
@@ -113,21 +115,38 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
-const joinCurrontMonthInventoryLog = joinQuery => {
+const joinMonthInventoryLogByDates = (joinQuery, dateFrom, dateTo) => {
   joinQuery
     .on('il.inventoryItemId', 'ii.id')
     .andOn(
       knex.raw(
-        `IFNULL(il.adjustedFrom, il.createdOn) > CAST(DATE_FORMAT(NOW() ,'%Y-%m-01') AS Date)`
+        `IFNULL(il.adjustedFrom, il.createdOn) >= DATE(${dateFrom}) and IFNULL(il.adjustedFrom, il.createdOn) <= DATE(${dateTo})`
       )
     )
 }
 
 async function getGlobalFundInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
+  let {
+    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
+      startOfMonth(new Date())
+    ),
+  } = query
+  const {
+    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
+      endOfMonth(new Date())
+    ),
+  } = query
+  if (typeof minDateStr !== 'string') {
+    minDateStr = minDateStr.toISOString()
+  }
+  const dateFrom = format(parseISO(minDateStr), 'yyyy-mm-dd')
+  const dateTo = format(parseISO(maxDateStr), 'yyyy-mm-dd')
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
-    .leftJoin('InventoryLog as il', joinCurrontMonthInventoryLog)
+    .leftJoin('InventoryLog as il', q =>
+      joinMonthInventoryLogByDates(q, dateFrom, dateTo)
+    )
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
     .select([
