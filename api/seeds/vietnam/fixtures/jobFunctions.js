@@ -7,30 +7,36 @@ const {
   technician,
 } = require('../../fixtures/jobFunctionBase')
 
+const countryReports = [
+  'xpert_test_activities_report',
+  'result_counts_by_hiv_status',
+  'reason_for_testing_report',
+]
+
 module.exports = [
   {
     ...admin,
-    reports: [...admin.reports, 'xpert_test_activities_report'],
+    reports: [...admin.reports, ...countryReports],
   },
   {
     ...regionalOfficer,
-    reports: [...regionalOfficer.reports, 'xpert_test_activities_report'],
+    reports: [...regionalOfficer.reports, ...countryReports],
   },
   {
     ...labUser,
-    reports: [...labUser.reports, 'xpert_test_activities_report'],
+    reports: [...labUser.reports, ...countryReports],
   },
   {
     ...clinician,
-    reports: [...clinician.reports, 'xpert_test_activities_report'],
+    reports: [...clinician.reports, ...countryReports],
   },
   {
     ...remoteHealthWorker,
-    reports: [...remoteHealthWorker.reports, 'xpert_test_activities_report'],
+    reports: [...remoteHealthWorker.reports, ...countryReports],
   },
   {
     ...technician,
-    reports: [...technician.reports, 'xpert_test_activities_report'],
+    reports: [...technician.reports, ...countryReports],
   },
   technician,
 ]

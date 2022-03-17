@@ -10,7 +10,7 @@ const analyzeResultsWithErrors = (
   below,
   minResults
 ) => {
-  const percentage = resultsWithErrors / parseFloat(totalResults)
+  const percentage = resultsWithErrors / Math.max(parseFloat(totalResults), 1)
   return (
     resultsWithErrors >= minResults &&
     (below ? percentage <= threshold : percentage >= threshold)
@@ -28,10 +28,10 @@ async function analyzeWithQuery(
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   const consumableLot = _.get(action, 'options.data.consumableLot')
   const assayId = _.get(action, 'options.data.assayId')
-
+  const { deviceId } = action
   const query = knex('Result')
     .where('endedOn', '>=', startOfDayUtc(subDays(new Date(), daysPeriod)))
-    .andWhere('deviceId', action.deviceId)
+    .andWhere({ deviceId })
     .modify(
       (builder, moduleSerial, consumableLot, assayId) => {
         if (consumableLot || assayId) {
@@ -41,7 +41,9 @@ async function analyzeWithQuery(
            * which happens when one of the bindings values is `undefined` - make sure params are
            * not `undefined`
            */
-          if (consumableLot) builder.where({ consumableLot })
+          if (consumableLot) {
+            builder.where({ consumableLot })
+          }
           if (assayId) builder.where({ assayId })
         } else if (moduleSerial) builder.where({ moduleSerial })
       },
@@ -53,9 +55,18 @@ async function analyzeWithQuery(
   if (queryBuilder) {
     query.modify(queryBuilder)
   }
-  const { resultsWithErrors, totalResults } = await query
+  const {
+    resultsWithErrors = 0,
+    totalResults = 0,
+    qtyOnSameModule = 0,
+  } = await query
   action.options.data.resultsWithErrors = resultsWithErrors
   action.options.totalResults = totalResults
+  if (!_.isNil(consumableLot) && qtyOnSameModule >= minResults) {
+    action.options.data.qtyOnSameModule = qtyOnSameModule
+    action.options.data.moduleSerialWithSameLot = moduleSerial
+  }
+
   return analyzeResultsWithErrors(
     resultsWithErrors,
     totalResults,
@@ -68,31 +79,39 @@ async function analyzeWithQuery(
 async function shouldSuppressTriggering(
   knex,
   action,
-  { errorCodesToSuppress, suppressionDays }
+  { errorCodesToSuppress, suppressionDays, issueType }
 ) {
   const { deviceId } = action
-
+  const resultCategoryId = _.get(action, 'options.data.resultCategoryId')
   const moduleSerial = _.get(action, 'options.data.moduleSerial')
   if (!_.isNil(errorCodesToSuppress) && moduleSerial) {
-    const { totalIssues } = await knex('Issue')
+    const { totalIssues } = await knex('Issue as i')
+      .join('IssueType as it', 'i.issueTypeId', 'it.id')
       .where({ deviceId })
-      .whereRaw(`data->>"$.moduleSerial"=?`, moduleSerial)
-      .whereRaw(
-        `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
-      )
+      .andWhere('it.externalId', issueType)
+      .andWhere(builder => {
+        builder.whereRaw(
+          `data->>"$.resultErrorCode" in(${errorCodesToSuppress.join(',')})`
+        )
+        if (resultCategoryId)
+          builder.orWhereRaw('data->>"$.resultCategoryId" = ?', [
+            resultCategoryId,
+          ])
+      })
       .modify((builder, days) => {
         if (days) {
           builder.where(
-            'createdOn',
+            'i.createdOn',
             '>=',
             startOfDayUtc(subDays(new Date(), days))
           )
         }
       }, suppressionDays)
-      .count('id as totalIssues')
+      .count('i.id as totalIssues')
       .first()
     return totalIssues > 0
   }
+
   return false
 }
 
@@ -110,13 +129,17 @@ async function analyzeCategories(
   }
 ) {
   const categoryToCompare = await resultCategoryToId(categoryId)
-  const { resultId } = action
+  const { deviceId } = action
   const { resultCategoryId, resultErrorCode } = action.options.data
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
-      .where({ resultId })
+      .where({ deviceId })
       .whereRaw('data->>"$.resultCategoryId" = ?', [resultCategoryId])
+      .whereRaw('data->>"$.moduleSerialWithSameLot" = ?', [moduleSerial])
+      .where('createdOn', '>=', startOfDayUtc(subDays(new Date(), 30)))
+      .orderBy('createdOn', 'desc')
       .first()
   }
 
@@ -127,6 +150,7 @@ async function analyzeCategories(
         _.includes(errorCodes, parseInt(resultErrorCode, 10))))
   ) {
     action.options.data.errorCodes = errorCodes
+    action.options.data.resultCategoryId = resultCategoryId
     return analyzeWithQuery(
       knex,
       action,
@@ -143,6 +167,9 @@ async function analyzeCategories(
                 : ``
             } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
             categoryToCompare
+          ),
+          knex.raw(
+            `sum(case when moduleSerial='${moduleSerial}' then 1 else 0 end) as qtyOnSameModule`
           )
         )
     )
@@ -201,14 +228,17 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
     minResults,
     checkIfWillBeLotIssue = false,
   } = evaluationFilterParameters
-  const { resultId } = action
+  const { deviceId } = action
+  const moduleSerial = _.get(action, 'options.data.moduleSerial')
   let existingIssue = false
   if (checkIfWillBeLotIssue) {
     existingIssue = await knex('Issue')
-      .where({ resultId })
-      .whereRaw('data->>"$.resultErrorCode" = ?', [resultErrorCode])
+      .where({ deviceId })
+      .whereRaw(`data->>"$.resultErrorCode" in(${errorCodes.join(',')})`)
+      .whereRaw('data->>"$.moduleSerialWithSameLot" = ?', [moduleSerial])
       .first()
   }
+
   if (!existingIssue && _.includes(errorCodes, parseInt(resultErrorCode, 10))) {
     action.options.data.errorCodes = errorCodes
     return analyzeWithQuery(
@@ -224,6 +254,9 @@ async function analyzeErrors(knex, action, evaluationFilterParameters) {
             `sum(case when errorcode in (${errorCodes.join(
               ','
             )}) then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`
+          ),
+          knex.raw(
+            `sum(case when moduleSerial='${moduleSerial}' then 1 else 0 end) as qtyOnSameModule`
           )
         )
     )

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-02-11T19:30:42.698Z\n"
+"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -153,6 +153,13 @@ msgstr "> = 40 cp / mL"
 #: extracted_strings.json
 msgid ">= 550 cp/mL"
 msgstr "> = 550 cp / mL"
+
+#. [pages.Contacts.person.name.exist]
+#. defaultMessage is:
+#. A person with the same name exists. Please use a different name.
+#: extracted_strings.json
+msgid "A person with the same name exists. Please use a different name."
+msgstr "Một người có cùng tên tồn tại. Vui lòng sử dụng một tên khác."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -453,6 +460,9 @@ msgstr "Alere Q HIV-1/2 VL huyết tương"
 msgid "Alerts"
 msgstr "Cảnh báo"
 
+#. [filter.clientSideFilterSelect.selectAll]
+#. defaultMessage is:
+#. All
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
@@ -2978,6 +2988,15 @@ msgstr "Lỗi khi gửi Email Đặt lại Mật khẩu"
 msgid "Error Transferring Result"
 msgstr "Lỗi khi chuyển kết quả"
 
+#. [pages.Contacts.person.name.exist.title]
+#. defaultMessage is:
+#. Error creating person
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Error Fetching Endpoint"
+msgid "Error creating person"
+msgstr "Lỗi khi tìm nạp điểm cuối"
+
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
 #. Excel
@@ -4248,6 +4267,9 @@ msgstr "Cuối cùng"
 #. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last 30 Days
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
@@ -4265,9 +4287,6 @@ msgstr "30 ngày qua"
 msgid "Last 7 Days"
 msgstr "7 ngày qua"
 
-#. [pages.DeviceList.lastMonth]
-#. defaultMessage is:
-#. Last Month
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
 #. Last Month
@@ -5343,6 +5362,17 @@ msgstr "Không có thử nghiệm nào được thực hiện"
 msgid "No contacts assigned to site"
 msgstr "Không có địa chỉ liên hệ nào được chỉ định cho trang web"
 
+#. [pages.SiteDetail.siteWithoutLocation]
+#. defaultMessage is:
+#. No location set to this site - Please, edit to assign the latitude and longitude fields.
+#: extracted_strings.json
+msgid ""
+"No location set to this site - Please, edit to assign the latitude and "
+"longitude fields."
+msgstr ""
+"Không có vị trí nào được đặt cho trang web này - Vui lòng chỉnh sửa để gán "
+"các trường kinh độ và vĩ độ."
+
 #. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
 #. defaultMessage is:
 #. No logs for this result.
@@ -5588,6 +5618,13 @@ msgstr "Số lượng thiết bị"
 #: extracted_strings.json
 msgid "Number of Locations"
 msgstr "Số lượng địa điểm"
+
+#. [pages.ReportIndex.resultCountsByHIVStatus_description]
+#. defaultMessage is:
+#. Number of TB results grouped by patient HIV status
+#: extracted_strings.json
+msgid "Number of TB results grouped by patient HIV status"
+msgstr "Số lượng kết quả lao được nhóm theo tình trạng HIV của bệnh nhân"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -6360,6 +6397,13 @@ msgstr "Kết quả kiểm tra dương tính được truyền đi"
 msgid "Positives"
 msgstr "Ưu điểm"
 
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. Preceding 30 Days
+#: extracted_strings.json
+msgid "Preceding 30 Days"
+msgstr "30 ngày qua"
+
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -6919,6 +6963,13 @@ msgstr "Kết quả 2"
 msgid "Result Based"
 msgstr "Dựa trên kết quả"
 
+#. [pages.ReportIndex.resultCountsByHIVStatus]
+#. defaultMessage is:
+#. Result Counts by HIV status
+#: extracted_strings.json
+msgid "Result Counts by HIV status"
+msgstr "Kết quả tính theo tình trạng HIV"
+
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
 #. Result Details
@@ -7471,6 +7522,15 @@ msgstr "Chọn Tuần ..."
 #: extracted_strings.json
 msgid "Select Year..."
 msgstr "Chọn năm ..."
+
+#. [filter.clientSideFilterSelect.selectAssay]
+#. defaultMessage is:
+#. Select an Assay
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Select assay..."
+msgid "Select an Assay"
+msgstr "Chọn xét nghiệm ..."
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -9024,9 +9084,6 @@ msgstr ""
 msgid "These passwords don't match"
 msgstr "Các mật khẩu này không khớp"
 
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. This Month
 #. [pages.dateRangeSelector.thisMonth]
 #. defaultMessage is:
 #. This Month
@@ -9278,12 +9335,30 @@ msgstr "Chuyển đổi tất cả"
 msgid "Topic"
 msgstr "Chủ đề"
 
+#. [performance.barChart.capacity]
+#. defaultMessage is:
+#. Total Capacity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Total Cases"
+msgid "Total Capacity"
+msgstr "Tổng số trường hợp"
+
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
 #. Total Cases
 #: extracted_strings.json
 msgid "Total Cases"
 msgstr "Tổng số trường hợp"
+
+#. [performance.barChart.errors]
+#. defaultMessage is:
+#. Total Errors
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Critical Error"
+msgid "Total Errors"
+msgstr "Lỗi nghiêm trọng"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9292,6 +9367,9 @@ msgstr "Tổng số trường hợp"
 #. defaultMessage is:
 #. Total Results
 #. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
+#. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
