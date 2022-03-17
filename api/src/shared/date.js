@@ -84,7 +84,10 @@ const getISODateUserTimeZoneField = (
   field,
   alias = 'isoDate',
   offset = '+00:00'
-) => knex.raw(`CONVERT_TZ(${field}, '+00:00', '${offset}') as ${alias}`)
+) =>
+  knex.raw(
+    `CONCAT(DATE_FORMAT(CONVERT_TZ(${field}, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as ${alias}`
+  )
 
 function parseDateOrDefault(
   date,
