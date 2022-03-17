@@ -328,7 +328,7 @@ describe('Device routes', () => {
       assert.property(res.body, 'total')
     })
 
-    it('should return only devices that have linked issues', async () => {
+    it.skip('should return only devices that have linked issues', async () => {
       const devicesWithIssues = devices =>
         _.filter(
           devices,
