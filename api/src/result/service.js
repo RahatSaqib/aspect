@@ -52,8 +52,8 @@ const { getRemoteAddress } = require('../shared/request')
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
-async function getListResults(query, auth, fields = LIST_FIELDS) {
-  if (query.maxDate) {
+async function getListResults(query, auth, fields) {
+  if (!fields) {
     const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
     fields = getSelectCommonListFields(
       query,

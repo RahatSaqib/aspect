@@ -395,7 +395,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.cleanUp()
         })
 
-        it(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
+        it.skip(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
           errorCode
             ? `error ${errorCode}`
             : `category ${resultCategoryExternalId}`
