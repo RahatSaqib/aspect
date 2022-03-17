@@ -172,7 +172,7 @@ describe('Site routes', () => {
     })
 
     describe('/select-list', () => {
-      let siteTags = null
+      let siteTags = []
       const sites = []
       const tags = []
       const clinicTag = { title: '!*Clinic' }
@@ -187,9 +187,7 @@ describe('Site routes', () => {
       }
 
       before(async () => {
-        const { geographyId } = await knex('Person')
-          .where({ name: 'Admin' })
-          .first()
+        const { geographyId } = await knex('Person').orderBy('id').first()
         const { id: partnerId } = await knex('Partner').first()
         clinicTag.partnerId = partnerId
         labTag.partnerId = partnerId
