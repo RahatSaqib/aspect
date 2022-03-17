@@ -1084,10 +1084,6 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   const patternRow = worksheet.getRow(headerRow.number + totalHeaderRows)
   const headerInfo = getRowInfo(headerRow)
   const patternInfo = getRowInfo(patternRow)
-  if (patternInfo.lastCellStyle?.numFmt) {
-    // reset any formatting for dynamic cells in pattern row
-    delete patternInfo.lastCellStyle.numFmt
-  }
   const merges = []
   columns.forEach((column, index) => {
     const columnNumber = headerInfo.lastCellNumber + 1 + index
@@ -1110,7 +1106,10 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
      * style cell in pattern row (with field name placeholders)
      */
     const cellPattern = patternRow.getCell(columnNumber)
-    setCellStyle(cellPattern, patternInfo.lastCellStyle)
+    const cellStyle = patternInfo.lastCellStyle
+      ? { ...patternInfo.lastCellStyle, numFmt: null }
+      : null
+    setCellStyle(cellPattern, cellStyle)
   })
 
   return merges

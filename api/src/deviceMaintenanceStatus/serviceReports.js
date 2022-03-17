@@ -170,6 +170,126 @@ async function getDeviceActivityPercentReport(auth, query) {
   return dataset
 }
 
+/**
+ * helper func to return Excel styling for cells to colorize them the same
+ * way as in Daily Status chart.
+ * See `web/src/MigratedComponents/Graphs/DailyStatus/DailyStatusClinicDay/index.jsx`
+ * for details how `dayModifier` is defined for css styling days
+ */
+function getCellStyle({ isWeekend, maintenanceStatusExternalId }) {
+  const filleSolid = {
+    type: 'pattern',
+    pattern: 'solid',
+  }
+  const isActive =
+    maintenanceStatusExternalId === 'active' ||
+    maintenanceStatusExternalId === 'reportedActive'
+  const status = isActive
+    ? maintenanceStatusExternalId
+    : isWeekend
+    ? 'weekend'
+    : maintenanceStatusExternalId
+
+  switch (status) {
+    case 'weekend':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FFF4F4F4' },
+        },
+      }
+    case 'active':
+    case 'reportedActive':
+      return {
+        font: {
+          color: {
+            argb: 'FF333333',
+          },
+        },
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FF99D25D' },
+        },
+      }
+
+    case 'inactiveNoTestsPerformed':
+      return {
+        font: {
+          color: {
+            argb: 'FF77ffff',
+          },
+        },
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FF6d6f7d' },
+        },
+      }
+    case 'inactiveUnknown':
+      return {
+        font: {
+          color: {
+            argb: 'FFffffff',
+          },
+        },
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FF454545' },
+        },
+      }
+    case 'inactiveOutOfInventory':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FF0088aa' },
+        },
+      }
+    case 'inactiveDownForRepair':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FFDB3018' },
+        },
+      }
+    case 'inactiveDecommissioned':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FF7d96bb' },
+        },
+      }
+    case 'inactiveNoStaff':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FFF7B500' },
+        },
+      }
+    case 'inactiveNoPower':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FFffbe7d' },
+        },
+      }
+    case 'inactiveOther':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FFbf01c5' },
+        },
+      }
+    case 'inactiveNoSamples':
+      return {
+        fill: {
+          ...filleSolid,
+          fgColor: { argb: 'FFF7B500' },
+        },
+      }
+    default:
+      return {}
+  }
+}
+
 async function getUtilizationPerInstrumentDayReport(auth, query) {
   const { maxDate, minDate } = query
   if (!minDate) {
@@ -180,10 +300,8 @@ async function getUtilizationPerInstrumentDayReport(auth, query) {
   }
 
   let data = await getDeviceStatusOverTime(auth, query)
-  // const { culture } = await getUser(auth.credentials.name)
-  // const locale = culture.split('-')[0].toLowerCase()
   /**
-   * define dynamic columns which are all day dates
+   * define dynamic columns which are day dates in period
    */
   let dateFields = []
   const [{ maintenanceStatusHistory = [] } = {}] = data || []
@@ -192,38 +310,46 @@ async function getUtilizationPerInstrumentDayReport(auth, query) {
     return {
       key: day,
       header: format(date, 'yyyy-MM-dd'),
-      /**
-       * `locale` is not needed for 'yyyy-MM-dd', but may be better to
-       * use formatting for `Long localized date` to have something
-       * like `Apr 29, 1453` (`PP`) or `April 29th, 1453` (`PPP`)
-       */
-      // header: format(date, 'PP', {
-      //   locale: locales[locale],
-      // }),
     }
   })
+
   data = data.map(device => {
     const { name, maintenanceStatusHistory } = device
+    let totals = 0
+    let cntWorkingDays = 0
+    let deviceCapacity = 0
     const dynamicFields = _.reduce(
       maintenanceStatusHistory,
-      (acc, { day, totalResults }) => {
+      (acc, item) => {
+        const { day, isWeekend, totalResults } = item
+        totals += totalResults
+        if (!isWeekend || totalResults > 0) {
+          cntWorkingDays += 1
+        }
+        if (totalResults > deviceCapacity) {
+          deviceCapacity = totalResults
+        }
+        /**
+         * cell value is plain object which must have 1 mandatory prop `value`
+         * and may have 1 optional prop `style`
+         */
         acc[day] = {
           value: totalResults,
-          style: {
-            // fill: {
-            //   type: 'pattern',
-            //   pattern: 'solid',
-            //   fgColor: { argb: 'FFFFFF00' },
-            //   bgColor: { argb: 'FF0000FF' },
-            // },
-          },
+          style: getCellStyle(item),
         }
         return acc
       },
       {}
     )
+    const utilizationRate =
+      cntWorkingDays > 0 && deviceCapacity > 0
+        ? totals / (deviceCapacity * cntWorkingDays)
+        : 0
     return {
       name,
+      totalResults: totals,
+      deviceCapacity,
+      utilizationRate,
       ...dynamicFields,
     }
   })
