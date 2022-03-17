@@ -222,7 +222,9 @@ const REGEX_ISODATESTRING =
   /^\d{4}-[01]\d-[0-3]\dT[0-2]\d(:|%3A)[0-5]\d(:|%3A)[0-5]\d(\.\d{3})?(Z|[-+]|%2B)?(([0-2]\d)(:|%3A)([0-5]\d))?$/
 
 function getOffsetFromIsoDateString(time) {
-  return time && time.slice(-1) !== 'Z' && REGEX_ISODATESTRING.test(time)
+  return typeof time === 'string' &&
+    REGEX_ISODATESTRING.test(time) &&
+    time.slice(-1) !== 'Z'
     ? time.slice(-6)
     : '+00:00'
 }
