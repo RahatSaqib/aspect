@@ -144,7 +144,12 @@ function configureOptional(config) {
   // set knex seeds
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
-    config.seeds = { directory: seedsDirectory }
+    if (
+      seedsDirectory.indexOf('test') < 0 &&
+      seedsDirectory.indexOf('development') < 0
+    )
+      config.seeds = { directory: [seedsDirectory, './seeds/zz_shared/'] }
+    else config.seeds = { directory: [seedsDirectory] }
   }
 
   // plugin data
