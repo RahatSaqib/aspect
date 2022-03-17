@@ -76,8 +76,6 @@ module.exports = async function upsertReports(
       reportId = reportToUpdate.id
     } else {
       // Create
-      console.log(omitFields, report)
-      console.log(_.omit(report, omitFields))
       await knex('Report').insert({
         sortOrder: 0, // defaults to 0 if sortOrder is missing in 'report', need because 'sortOrder' is NOT NULL field
         ..._.omit(report, omitFields),
