@@ -255,14 +255,14 @@ async function getListDevices(query, auth) {
     })
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
-
+  const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
   // get rows
   const getItems = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...SELECT_LIST_FIELDS,
+      ...getSelectListFields(userTimeOffset),
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',

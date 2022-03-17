@@ -15,7 +15,7 @@ function getReportCommonFields(userTimeOffset) {
   return fields
 }
 
-function getSelectCommonFields(userTimeOffset) {
+function getSelectCommonListFields(userTimeOffset) {
   const fields = SELECT_COMMON_FIELDS
   fields.push(
     getDateTimeProjectionInUserTimeZone(
@@ -172,8 +172,6 @@ const REPORT_COMMON_FIELDS = [
 const SELECT_COMMON_FIELDS = [
   'r.id',
   'r.externalId',
-  // 'r.startedOn',
-  // 'r.endedOn',
   'r.deviceId',
   'd.name as deviceName',
   'd.serial as deviceSerial',
@@ -187,7 +185,6 @@ const SELECT_COMMON_FIELDS = [
   'rs.id as resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
-  // 'rsl.changedOn as resultWorkflowChangedOn',
   'rts.id as resultTreatmentStatusId',
   'rts.externalId as resultTreatmentStatus',
   'r.resultData',
@@ -197,7 +194,6 @@ const SELECT_COMMON_FIELDS = [
   'r.assayVersion',
   'r.consumableSerial',
   'r.consumableLot',
-  // 'r.consumableExpirationDate',
   'r.instrumentSerial',
   'r.moduleName',
   'r.moduleSerial',
@@ -208,13 +204,10 @@ const SELECT_COMMON_FIELDS = [
   'r.errorCode',
   'r.errorNotes',
   'a.name as assayName',
-  // 'r.createdOn',
-  // 'r.updatedOn',
   'r.assayId',
   'sp.externalId as sampleId',
   'r.sampleGroup',
   'sp.originSiteId as sampleOriginSiteId',
-  // 'sp.collectedOn as sampleCollectedOn',
   'so.name as sampleOriginSiteName',
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
@@ -227,20 +220,13 @@ const SELECT_COMMON_FIELDS = [
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
   'rsl.operator as resultWorkflowLogOperator',
-  // 'rsl.createdOn as resultWorkflowLogCreatedOn',
-  // 'rsl.changedOn as resultWorkflowLogChangedOn',
   'rtsl.method as resultTreatmentMethod',
   'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
-  // 'rtsl.changedOn as resultTreatmentStatusChangedOn',
-  // 'rtsl.createdOn as resultTreatmentStatusCreatedOn',
-  // transfer result
   'r.reportableSiteId',
   'sirep.name as reportableSiteName',
-  // 'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
   'r.resultStatusLogId',
-  // 'r.firstViewedOn',
   'r.patientCaseId',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
@@ -250,7 +236,7 @@ const SELECT_COMMON_FIELDS = [
 
 function getSelectShowFields(userTimeZone) {
   return [
-    ...getSelectCommonFields(userTimeZone),
+    ...getSelectCommonListFields(userTimeZone),
     ...SELECT_SHOW_FIELDS_TIMEZONE_SAFE,
   ]
 }
@@ -327,7 +313,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
 
 module.exports = {
   LIST_FIELDS,
-  getSelectCommonListFields: getSelectCommonFields,
+  getSelectCommonListFields,
   getReportCommonFields,
   getSelectShowFields,
   SORT_FIELDS,

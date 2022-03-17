@@ -3,10 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subDays } = require('date-fns')
 const Promise = require('bluebird')
-const {
-  getOffsetFromIsoDateString,
-  // getOffsetFromTimeZone,
-} = require('../shared/date')
+const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
   getSelectCommonListFields,
   getReportCommonFields,
@@ -163,7 +160,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
-  console.log(resultQuery.toString())
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -209,8 +205,7 @@ function getResultTreatmentStatus(response) {
 
 async function getResultsForExport(auth, query) {
   const userTimeOffset = query.maxDate
-    ? getOffsetFromIsoDateString(query.maxDate)
-    : '+00:00'
+  getOffsetFromIsoDateString(query.maxDate)
   const selectFields = [
     ...getSelectCommonListFields(userTimeOffset),
     knex.raw(
