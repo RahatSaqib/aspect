@@ -32,6 +32,9 @@ const {
   shouldLogDeviceCalibration,
 } = require('../plugin/utils')
 const logger = require('../shared/logger')
+const { getTbResultsStats } = require('./pakistan/pakistanTbService')
+
+const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -801,7 +804,8 @@ async function createDeviceApiContext(
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory',
-      'c.abbreviation as countryAbbreviation'
+      'c.abbreviation as countryAbbreviation',
+      'dak.token'
     )
   if (handlerOptions.transformInitialPayload && request.params.pluginName) {
     logger.debug('Set up transforminitialpayload plugin function', {
@@ -1248,4 +1252,5 @@ module.exports = {
   onResultLogged,
   getHealthStatsHandler,
   getCustomFields,
+  getResultPakistanHandler,
 }

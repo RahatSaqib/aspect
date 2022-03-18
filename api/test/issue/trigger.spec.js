@@ -3,10 +3,10 @@ const { subDays } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
-const { issueTypeToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
 const server = require('../utils/testUtils')
+const { waitForIdle } = require('../utils/mqUtils')
 
 const baseAssert = (res, issueType) => {
   assert.equal(res.status, 200)
@@ -21,19 +21,16 @@ describe('Issue Trigger', () => {
   const path = '/api/issue/trigger'
   const now = new Date()
 
-  it(`should trigger issue type NewResultsAvailable`, done => {
+  it(`should trigger issue type NewResultsAvailable`, async () => {
     const issueType = 'NewResultsAvailable'
-    server
+    const res = await server
       .post(path)
       .set('Authorization', `Bearer ${shared.token}`)
       .send({
         issueType,
       })
-      .end(async (err, res) => {
-        baseAssert(res, issueType)
 
-        done()
-      })
+    baseAssert(res, issueType)
   })
 
   describe('For Device', () => {
@@ -77,25 +74,9 @@ describe('Issue Trigger', () => {
         await knex('Issue').whereNotIn('id', oldIssueIds).del()
       })
 
-      // helper funcs
-      // eslint-disable-next-line no-unused-vars
-      async function checkIssues(issueType, deviceId) {
-        // check records added to Issue table
-        const issueTypeId = await issueTypeToId(issueType)
-        const newIssues = await knex('Issue')
-          .whereNotIn('id', oldIssueIds)
-          .where({ issueTypeId, deviceId })
-          .select('id', 'level')
-        // may have few records created for level=1 and =2 during timeout,
-        // so check at least one record exists
-        assert.isAtLeast(newIssues.length, 1)
-        // has issue with level=1
-        assert.equal(newIssues.filter(x => x.level === 1).length, 1)
-      }
-
-      it(`should trigger issue type DeviceOffline`, done => {
+      it(`should trigger issue type DeviceOffline`, async () => {
         const issueType = 'DeviceOffline'
-        server
+        const res = await server
           .post(path)
           .set('Authorization', `Bearer ${shared.token}`)
           .send({
@@ -106,28 +87,23 @@ describe('Issue Trigger', () => {
               lastPingOn: maxLastDateOffline,
             },
           })
-          .end(async (err, res) => {
-            baseAssert(res, issueType)
 
-            setTimeout(async () => {
-              // check records added to IssueEvent table
-              const newIssueEventIds = await knex('IssueEvent')
-                .whereNotIn('id', oldIssueEventIds)
-                .whereRaw(`IFNULL(data->>"$.type", '') = 'DEVICE_OFFLINE'`)
-                .whereRaw(`IFNULL(data->>"$.deviceId", 0) = ${deviceId}`)
-                .pluck('id')
-              assert.equal(newIssueEventIds.length, 1)
+        baseAssert(res, issueType)
 
-              // await checkIssues(issueType, deviceId)
+        await waitForIdle(2000)
 
-              done()
-            }, 2000)
-          })
+        // check records added to IssueEvent table
+        const newIssueEventIds = await knex('IssueEvent')
+          .whereNotIn('id', oldIssueEventIds)
+          .whereRaw(`IFNULL(data->>"$.type", '') = 'DEVICE_OFFLINE'`)
+          .whereRaw(`IFNULL(data->>"$.deviceId", 0) = ${deviceId}`)
+          .pluck('id')
+        assert.equal(newIssueEventIds.length, 1)
       })
 
-      it(`should trigger issue type DeviceNoResults`, done => {
+      it(`should trigger issue type DeviceNoResults`, async () => {
         const issueType = 'DeviceNoResults'
-        server
+        const res = await server
           .post(path)
           .set('Authorization', `Bearer ${shared.token}`)
           .send({
@@ -137,23 +113,17 @@ describe('Issue Trigger', () => {
               lastResultOn: maxLastDateNoResult,
             },
           })
-          .end(async (err, res) => {
-            baseAssert(res, issueType)
 
-            setTimeout(async () => {
-              // check that record created
-              const newIssueEventIds = await knex('IssueEvent')
-                .whereNotIn('id', oldIssueEventIds)
-                .whereRaw(`IFNULL(data->>"$.type", '') = 'DEVICE_NO_RESULTS'`)
-                .whereRaw(`IFNULL(data->>"$.deviceId", 0) = ${deviceId}`)
-                .pluck('id')
-              assert.equal(newIssueEventIds.length, 1)
+        baseAssert(res, issueType)
+        await waitForIdle(2000)
 
-              // await checkIssues(issueType, deviceId)
-
-              done()
-            }, 2000)
-          })
+        // check that record created
+        const newIssueEventIds = await knex('IssueEvent')
+          .whereNotIn('id', oldIssueEventIds)
+          .whereRaw(`IFNULL(data->>"$.type", '') = 'DEVICE_NO_RESULTS'`)
+          .whereRaw(`IFNULL(data->>"$.deviceId", 0) = ${deviceId}`)
+          .pluck('id')
+        assert.equal(newIssueEventIds.length, 1)
       })
     })
   })

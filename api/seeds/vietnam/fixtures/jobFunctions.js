@@ -11,6 +11,7 @@ const countryReports = [
   'xpert_test_activities_report',
   'result_counts_by_hiv_status',
   'xpert_m4b1_patients',
+  'reason_for_testing_report',
 ]
 
 module.exports = [
