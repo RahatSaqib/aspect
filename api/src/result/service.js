@@ -8,8 +8,8 @@ const {
   getSelectCommonListFields,
   getReportCommonFields,
   getSelectShowFields,
+  getListFields,
   SORT_FIELDS,
-  LIST_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./querySelectors')
 const {
@@ -55,12 +55,10 @@ const logger = require('../shared/logger')
 async function getListResults(query, auth, fields) {
   if (!fields) {
     const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-    fields = getSelectCommonListFields(
-      query,
-      auth,
-      getReportCommonFields(userTimeOffset)
-    )
+
+    fields = getListFields(userTimeOffset)
   }
+
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)

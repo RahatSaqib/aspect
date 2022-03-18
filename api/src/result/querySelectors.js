@@ -117,10 +117,24 @@ function getSelectCommonListFields(userTimeOffset) {
   return fields
 }
 
-const LIST_FIELDS = [
+function getListFields(userTimeOffset) {
+  const fields = LIST_FIELDS_TIMEZONE_SAFE
+
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      knex.raw('IFNULL(r.endedOn, r.startedOn)'),
+      userTimeOffset,
+      'endedOn'
+    )
+  )
+  return fields
+}
+
+const LIST_FIELDS_TIMEZONE_SAFE = [
   'r.id',
   'r.externalId',
-  knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
+  // knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
@@ -312,7 +326,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
 ]
 
 module.exports = {
-  LIST_FIELDS,
+  getListFields,
   getSelectCommonListFields,
   getReportCommonFields,
   getSelectShowFields,
