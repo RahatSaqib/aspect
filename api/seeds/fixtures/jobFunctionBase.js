@@ -17,7 +17,6 @@ const admin = {
     'all_results',
     'list_r_resistant_test',
     'xpert_test_activities_report',
-    'upsert_global_fund_inventory_report',
   ],
   permissions: [
     {

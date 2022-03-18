@@ -189,8 +189,8 @@ async function getGlobalFundInventoryReport(auth, query) {
         WHEN
             IFNULL(cr.decrease, 0) = 1
         THEN
-            il.quantity
-        ELSE - il.quantity
+            ilp.quantity
+        ELSE - ilp.quantity
     END), 0) AS 'stockLastMonth'`
       ),
       knex.raw(
