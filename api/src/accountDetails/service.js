@@ -91,13 +91,15 @@ async function saveContactDetailsForLoggedInUser(request) {
     'email2',
     'phone',
     'cell',
+    'culture',
     'countryId',
     'stateId',
     'lgaId',
-    'timezone',
-    'culture',
-    'tags',
     'zip',
+    'timezone',
+
+    'lastPartnerId',
+    'tags',
   ])
   return response
 }
