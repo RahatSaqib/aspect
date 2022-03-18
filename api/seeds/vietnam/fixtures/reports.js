@@ -68,7 +68,7 @@ module.exports = {
     sortOrder: 50,
     sheets: {
       sortOrder: 0,
-      moduleName: 'result/getGlobalFundInventoryReport',
+      moduleName: 'result/serviceReportVietnam',
       functionName: 'getGlobalFundInventoryReport',
     },
   },
