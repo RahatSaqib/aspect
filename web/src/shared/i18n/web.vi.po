@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-02-27T10:06:45.584Z\n"
+"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -48,40 +48,40 @@ msgstr ""
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
 msgstr "... {danh bạ, số nhiều, một {# nữa {name}} khác {# nữa {name} s}}"
 
-#. [filter.btnGroup.daysStockLeft.upTo14]
+#. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
-#. [legends.Unknown.upTo14]
+#. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
 #: extracted_strings.json
 msgid "1-14 Days"
 msgstr "1-14 ngày"
 
-#. [filter.btnGroup.daysStockLeft.upTo90]
+#. [legends.Unknown.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
-#. [legends.Unknown.upTo90]
+#. [filter.btnGroup.daysStockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
 msgid "1-3 Months"
 msgstr "1-3 tháng"
 
-#. [filter.btnGroup.daysStockLeft.upTo30]
+#. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#. [legends.Unknown.upTo30]
+#. [filter.btnGroup.daysStockLeft.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
 #: extracted_strings.json
 msgid "15-30 Days"
 msgstr "15-30 ngày"
 
-#. [filter.btnGroup.daysStockLeft.upTo180]
+#. [legends.Unknown.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
-#. [legends.Unknown.upTo180]
+#. [filter.btnGroup.daysStockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -116,10 +116,10 @@ msgstr "<40 cp / mL"
 msgid "< 550 cp/mL"
 msgstr "<550 cp / mL"
 
-#. [filter.btnGroup.daysStockLeft.moreThan180]
+#. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
-#. [legends.Unknown.moreThan180]
+#. [filter.btnGroup.daysStockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -159,7 +159,7 @@ msgstr "> = 550 cp / mL"
 #. A person with the same name exists. Please use a different name.
 #: extracted_strings.json
 msgid "A person with the same name exists. Please use a different name."
-msgstr ""
+msgstr "Một người có cùng tên tồn tại. Vui lòng sử dụng một tên khác."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -287,10 +287,10 @@ msgstr "Thừa nhận"
 msgid "Acknowledging Issue Failed"
 msgstr "Xác nhận vấn đề không thành công"
 
-#. [pages.DeviceList.availabilityRate]
+#. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [component.Widget.activeDevicesTitle]
+#. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
 #. [pages.shared.deviceStatus.active]
@@ -460,13 +460,13 @@ msgstr "Alere Q HIV-1/2 VL huyết tương"
 msgid "Alerts"
 msgstr "Cảnh báo"
 
+#. [filter.clientSideFilterSelect.selectAll]
+#. defaultMessage is:
+#. All
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
 #. [filter.popover.all]
-#. defaultMessage is:
-#. All
-#. [filter.clientSideFilterSelect.selectAll]
 #. defaultMessage is:
 #. All
 #. [pages.PersonDetails.all]
@@ -717,9 +717,6 @@ msgstr "Khu vực"
 msgid "Aspect has Encountered a Problem."
 msgstr "Aspect đã gặp vấn đề."
 
-#. [filter.popover.assay]
-#. defaultMessage is:
-#. Assay
 #. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
@@ -727,6 +724,9 @@ msgstr "Aspect đã gặp vấn đề."
 #. defaultMessage is:
 #. Assay
 #. [placeholder.result.Assay]
+#. defaultMessage is:
+#. Assay
+#. [filter.popover.assay]
 #. defaultMessage is:
 #. Assay
 #. [pages.JobAssignments.assay]
@@ -860,10 +860,10 @@ msgstr "Số ngày trung bình để thay thế dụng cụ"
 msgid "Average Delay to Upload"
 msgstr "Độ trễ trung bình để tải lên"
 
-#. [pages.OperationalData.averageDurationServiceInterruptionTitle]
+#. [component.Widget.averageDurationServiceInterruptionTitle]
 #. defaultMessage is:
 #. Average Duration of Service Interruption
-#. [component.Widget.averageDurationServiceInterruptionTitle]
+#. [pages.OperationalData.averageDurationServiceInterruptionTitle]
 #. defaultMessage is:
 #. Average Duration of Service Interruption
 #: extracted_strings.json
@@ -958,10 +958,10 @@ msgstr ""
 "Số lượng bài kiểm tra trung bình mỗi ngày trong tuần được thực hiện trong "
 "tháng này."
 
-#. [pages.OperationalData.averageTimeToModuleReplacementTitle]
+#. [component.Widget.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
 #. Average time to replace disabled module
-#. [component.Widget.averageTimeToModuleReplacementTitle]
+#. [pages.OperationalData.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
 #. Average time to replace disabled module
 #: extracted_strings.json
@@ -1202,10 +1202,10 @@ msgstr "Hủy"
 msgid "Captured"
 msgstr "Đã chụp"
 
-#. [pages.CasesList.caseId]
+#. [forms.formItem.caseId]
 #. defaultMessage is:
 #. Case ID
-#. [forms.formItem.caseId]
+#. [pages.CasesList.caseId]
 #. defaultMessage is:
 #. Case ID
 #: extracted_strings.json
@@ -1494,13 +1494,13 @@ msgstr "Các trường hợp xác nhận"
 msgid "Connected"
 msgstr "Đã kết nối"
 
+#. [pages.Status.summaryWidgetGroup.connectivity]
+#. defaultMessage is:
+#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.shared.deviceStatus.inactiveConnectivity]
@@ -1584,10 +1584,10 @@ msgstr "Chi tiết liên hệ đã được tạo thành công"
 msgid "Contact name/email"
 msgstr "Tên liên hệ / email"
 
-#. [browsePage.browseDropdown.contacts]
+#. [component.Widget.personTitle]
 #. defaultMessage is:
 #. Contacts
-#. [component.Widget.personTitle]
+#. [browsePage.browseDropdown.contacts]
 #. defaultMessage is:
 #. Contacts
 #. [pages.PersonList.title]
@@ -1721,6 +1721,9 @@ msgstr "Đếm (1-100)"
 msgid "Counting only {ASSAY} assays {RESULT}{DATE}."
 msgstr "Chỉ đếm {ASSAY} xét nghiệm {RESULT} {DATE}."
 
+#. [forms.formItem.country]
+#. defaultMessage is:
+#. Country
 #. [pages.LocationSelector.country]
 #. defaultMessage is:
 #. Country
@@ -1731,9 +1734,6 @@ msgstr "Chỉ đếm {ASSAY} xét nghiệm {RESULT} {DATE}."
 #. defaultMessage is:
 #. Country
 #. [filter.popover.country]
-#. defaultMessage is:
-#. Country
-#. [forms.formItem.country]
 #. defaultMessage is:
 #. Country
 #. [pages.PersonDetails.country]
@@ -1966,13 +1966,13 @@ msgstr "Dữ liệu"
 msgid "Data Health"
 msgstr "Tình trạng dữ liệu"
 
+#. [forms.formSectionHeader.date]
+#. defaultMessage is:
+#. Date
 #. [pages.CaseList.createdOn]
 #. defaultMessage is:
 #. Date
 #. [filter.popover.date]
-#. defaultMessage is:
-#. Date
-#. [forms.formSectionHeader.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Milestones.date]
@@ -2149,6 +2149,15 @@ msgstr "Chi tiết..."
 msgid "Detected"
 msgstr "Đã phát hiện"
 
+#. [forms.formSectionHeader.device]
+#. defaultMessage is:
+#. Device
+#. [legends.Unknown.device]
+#. defaultMessage is:
+#. Device
+#. [placeholder.device]
+#. defaultMessage is:
+#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
@@ -2162,15 +2171,6 @@ msgstr "Đã phát hiện"
 #. defaultMessage is:
 #. Device
 #. [filter.popover.deviceName]
-#. defaultMessage is:
-#. Device
-#. [forms.formSectionHeader.device]
-#. defaultMessage is:
-#. Device
-#. [legends.Unknown.device]
-#. defaultMessage is:
-#. Device
-#. [placeholder.device]
 #. defaultMessage is:
 #. Device
 #. [pages.ResultList.deviceName]
@@ -2311,10 +2311,10 @@ msgstr "Serial thiết bị"
 msgid "Device State"
 msgstr "Trạng thái thiết bị"
 
-#. [filter.popover.deviceType]
+#. [forms.formItem.deviceType]
 #. defaultMessage is:
 #. Device Type
-#. [forms.formItem.deviceType]
+#. [filter.popover.deviceType]
 #. defaultMessage is:
 #. Device Type
 #. [pages.JobAssignments.deviceType]
@@ -2352,12 +2352,6 @@ msgstr "Nhật ký thiết bị"
 msgid "Device type"
 msgstr "Loại thiết bị"
 
-#. [pages.DeviceList.devicesTitle]
-#. defaultMessage is:
-#. Devices
-#. [browsePage.browseDropdown.devices]
-#. defaultMessage is:
-#. Devices
 #. [pages.Status.summaryWidgetGroup.devices]
 #. defaultMessage is:
 #. Devices
@@ -2365,6 +2359,12 @@ msgstr "Loại thiết bị"
 #. defaultMessage is:
 #. Devices
 #. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
+#. [pages.DeviceList.devicesTitle]
+#. defaultMessage is:
+#. Devices
+#. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.NotificationDetail.fieldDevices]
@@ -2820,26 +2820,26 @@ msgstr "Nhập tên trang web ..."
 #. [resultCategoryGroup.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
+#. [pages.filters.gxEbolaGPError]
+#. defaultMessage is:
+#. Error
 #. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
-#. defaultMessage is:
-#. Error
 #: extracted_strings.json
 msgid "Error"
 msgstr "Lỗi"
 
-#. [filter.popover.errorCode]
-#. defaultMessage is:
-#. Error Code
 #. [forms.formItem.errorCode]
 #. defaultMessage is:
 #. Error Code
 #. [placeholder.result.error.code]
+#. defaultMessage is:
+#. Error Code
+#. [filter.popover.errorCode]
 #. defaultMessage is:
 #. Error Code
 #. [pages.ResultList.errorCode]
@@ -4264,10 +4264,13 @@ msgstr "Ngôn ngữ & Múi giờ"
 msgid "Last"
 msgstr "Cuối cùng"
 
-#. [pages.dateRangeSelector.last30Days]
+#. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
-#. [component.Widget.last30Days]
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last 30 Days
+#. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
 #. [component.DateTimeInput.Last30Days]
@@ -4284,9 +4287,6 @@ msgstr "30 ngày qua"
 msgid "Last 7 Days"
 msgstr "7 ngày qua"
 
-#. [pages.DeviceList.lastMonth]
-#. defaultMessage is:
-#. Last Month
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
 #. Last Month
@@ -4488,10 +4488,10 @@ msgstr "Tải Danh bạ Không thành công"
 msgid "Loading Device Approval Statuses Failed"
 msgstr "Tải trạng thái phê duyệt thiết bị không thành công"
 
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
+#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title]
 #. defaultMessage is:
 #. Loading Device Maintenance Status Failed
-#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title]
+#. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
 #. defaultMessage is:
 #. Loading Device Maintenance Status Failed
 #: extracted_strings.json
@@ -5290,13 +5290,13 @@ msgstr "Tiếp"
 msgid "No"
 msgstr "Không"
 
+#. [legends.Unknown.noConsumption]
+#. defaultMessage is:
+#. No Consumption
 #. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
-#. defaultMessage is:
-#. No Consumption
-#. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #: extracted_strings.json
@@ -5370,6 +5370,8 @@ msgid ""
 "No location set to this site - Please, edit to assign the latitude and "
 "longitude fields."
 msgstr ""
+"Không có vị trí nào được đặt cho trang web này - Vui lòng chỉnh sửa để gán "
+"các trường kinh độ và vĩ độ."
 
 #. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
 #. defaultMessage is:
@@ -5485,13 +5487,13 @@ msgstr "Không tìm thấy"
 msgid "Not Possible"
 msgstr "Không thể"
 
+#. [legends.Unknown.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
 #. [filter.btnGroup.daysStockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
-#. defaultMessage is:
-#. Not Recorded
-#. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #: extracted_strings.json
@@ -5519,13 +5521,13 @@ msgstr "Chưa được xác nhận về điều trị"
 msgid "Note"
 msgstr "Ghi chú"
 
-#. [pages.InventoryAdjustmentDialogForm.notes]
-#. defaultMessage is:
-#. Notes
 #. [forms.formItem.notes]
 #. defaultMessage is:
 #. Notes
 #. [placeholder.result.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.InventoryAdjustmentDialogForm.notes]
 #. defaultMessage is:
 #. Notes
 #. [pages.ContactDetails.notes]
@@ -5652,10 +5654,10 @@ msgstr ""
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
+#. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
-#. [pages.transferResult.successOk]
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
 #: extracted_strings.json
@@ -5801,10 +5803,10 @@ msgstr ""
 msgid "Out of Inventory"
 msgstr "Hết hàng tồn kho"
 
-#. [filter.btnGroup.daysStockLeft.outOfStock]
+#. [legends.Unknown.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
-#. [legends.Unknown.outOfStock]
+#. [filter.btnGroup.daysStockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -5903,13 +5905,13 @@ msgstr "Bệnh nhân"
 msgid "Patient Data"
 msgstr "Dữ liệu bệnh nhân"
 
+#. [forms.formItem.patientId]
+#. defaultMessage is:
+#. Patient ID
 #. [pages.CasesList.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [filter.popover.patientOrResearchId]
-#. defaultMessage is:
-#. Patient ID
-#. [forms.formItem.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [pages.ResultList.patientId]
@@ -6395,6 +6397,13 @@ msgstr "Kết quả kiểm tra dương tính được truyền đi"
 msgid "Positives"
 msgstr "Ưu điểm"
 
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. Preceding 30 Days
+#: extracted_strings.json
+msgid "Preceding 30 Days"
+msgstr "30 ngày qua"
+
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -6635,10 +6644,10 @@ msgstr "Thuốc thử"
 msgid "Reagent Health"
 msgstr "Sức khỏe thuốc thử"
 
-#. [pages.InventoryAdjustmentDialogForm.reason]
+#. [forms.formItem.reason]
 #. defaultMessage is:
 #. Reason
-#. [forms.formItem.reason]
+#. [pages.InventoryAdjustmentDialogForm.reason]
 #. defaultMessage is:
 #. Reason
 #. [pages.DailyStatusDialog.reason]
@@ -6759,10 +6768,10 @@ msgstr "Xóa khoảng không quảng cáo không thành công"
 msgid "Report"
 msgstr "Báo cáo"
 
-#. [filter.popover.site]
+#. [forms.formItem.reportableSite]
 #. defaultMessage is:
 #. Reportable Site
-#. [forms.formItem.reportableSite]
+#. [filter.popover.site]
 #. defaultMessage is:
 #. Reportable Site
 #: extracted_strings.json
@@ -6905,13 +6914,13 @@ msgstr "Kháng cự"
 msgid "Resolved"
 msgstr "Giải quyết"
 
-#. [filter.popover.result]
-#. defaultMessage is:
-#. Result
 #. [forms.formSectionHeader.result]
 #. defaultMessage is:
 #. Result
 #. [placeholder.result]
+#. defaultMessage is:
+#. Result
+#. [filter.popover.result]
 #. defaultMessage is:
 #. Result
 #. [pages.Milestones.resultNotes]
@@ -7020,10 +7029,10 @@ msgstr ""
 "Kết quả cho bệnh nhân \"{patientId}\" đã được chuyển từ \"{oldSiteName}\" "
 "sang \"{newSiteName}\""
 
-#. [browsePage.browseDropdown.results]
+#. [component.Widget.resultsTitle]
 #. defaultMessage is:
 #. Results
-#. [component.Widget.resultsTitle]
+#. [browsePage.browseDropdown.results]
 #. defaultMessage is:
 #. Results
 #. [pages.ResultList.title]
@@ -7119,10 +7128,10 @@ msgstr "Nội dung SMS"
 msgid "SMS Sent"
 msgstr "Đã gửi SMS"
 
-#. [pages.Status.dashboardWidgetSmsSentTitle]
+#. [component.Widget.dashboardWidgetSmsSentTitle]
 #. defaultMessage is:
 #. SMS Sent MTD
-#. [component.Widget.dashboardWidgetSmsSentTitle]
+#. [pages.Status.dashboardWidgetSmsSentTitle]
 #. defaultMessage is:
 #. SMS Sent MTD
 #: extracted_strings.json
@@ -7153,10 +7162,10 @@ msgstr "Bản mẫu"
 msgid "Sample Collected Date"
 msgstr "Ngày thu thập mẫu"
 
-#. [pages.CasesList.sampleOriginSite]
+#. [forms.formItem.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
-#. [forms.formItem.sampleCollectionSite]
+#. [pages.CasesList.sampleOriginSite]
 #. defaultMessage is:
 #. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
@@ -7176,10 +7185,10 @@ msgstr "Trang web thu thập mẫu"
 msgid "Sample Collection Site:"
 msgstr "Trang web thu thập mẫu:"
 
-#. [filter.popover.sampleId]
+#. [forms.formItem.sampleId]
 #. defaultMessage is:
 #. Sample ID
-#. [forms.formItem.sampleId]
+#. [filter.popover.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -7326,10 +7335,10 @@ msgstr "Tìm kiếm Danh bạ Không thành công"
 msgid "Searching Device Approvals Failed"
 msgstr "Tìm kiếm Phê duyệt thiết bị không thành công"
 
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
+#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title]
 #. defaultMessage is:
 #. Searching Device Maintenance status Failed
-#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title]
+#. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
 #. defaultMessage is:
 #. Searching Device Maintenance status Failed
 #: extracted_strings.json
@@ -8015,6 +8024,12 @@ msgstr ""
 msgid "Sign Out"
 msgstr "Đăng xuất"
 
+#. [forms.formSectionHeader.site]
+#. defaultMessage is:
+#. Site
+#. [placeholder.site]
+#. defaultMessage is:
+#. Site
 #. [pages.DeviceApiKeyList.siteId]
 #. defaultMessage is:
 #. Site
@@ -8022,12 +8037,6 @@ msgstr "Đăng xuất"
 #. defaultMessage is:
 #. Site
 #. [filter.popover.siteName]
-#. defaultMessage is:
-#. Site
-#. [forms.formSectionHeader.site]
-#. defaultMessage is:
-#. Site
-#. [placeholder.site]
 #. defaultMessage is:
 #. Site
 #. [pages.JobAssignments.site]
@@ -8092,10 +8101,10 @@ msgstr "ID Site"
 msgid "Site Id"
 msgstr "Số địa chỉ"
 
-#. [pages.InventoryItemsList.siteName]
+#. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
-#. [forms.formItem.siteName]
+#. [pages.InventoryItemsList.siteName]
 #. defaultMessage is:
 #. Site Name
 #: extracted_strings.json
@@ -8116,10 +8125,10 @@ msgstr "Địa chỉ liên hệ"
 msgid "Site is required"
 msgstr "Trang web là bắt buộc"
 
-#. [browsePage.browseDropdown.sites]
+#. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
-#. [component.Widget.sitesTitle]
+#. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
 #. Sites
 #. [pages.SiteList.title]
@@ -8181,10 +8190,10 @@ msgstr "Ngày bắt đầu được yêu cầu"
 msgid "Start time cannot be after End time"
 msgstr "Thời gian bắt đầu không được sau Thời gian kết thúc"
 
-#. [pages.LocationSelector.state]
+#. [forms.formItem.state]
 #. defaultMessage is:
 #. State
-#. [forms.formItem.state]
+#. [pages.LocationSelector.state]
 #. defaultMessage is:
 #. State
 #. [pages.common.state]
@@ -8644,10 +8653,10 @@ msgid "The average number of email recipients per positive GeneXpert result."
 msgstr ""
 "Số lượng người nhận email trung bình trên mỗi kết quả GeneXpert dương tính."
 
-#. [pages.OperationalData.averageTimeToModuleReplacementDescription]
+#. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
 #. The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.
-#. [component.Widget.averageTimeToModuleReplacementDescription]
+#. [pages.OperationalData.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
 #. The average time (in days) between when a module was disabled and a different module serial being detected in the same slot.
 #: extracted_strings.json
@@ -8747,10 +8756,10 @@ msgstr ""
 "Số ngày còn lại trong kho có sẵn và chưa hết hạn, giả sử rằng các hộp mực sẽ "
 "được tiêu thụ luôn là những hộp gần hết hạn"
 
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month.
-#. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month.
 #: extracted_strings.json
@@ -8855,10 +8864,10 @@ msgstr "Mật khẩu bạn đã nhập không hợp lệ"
 msgid "The password you entered is incorrect"
 msgstr "Mật khẩu bạn nhập không đúng"
 
-#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
+#. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
-#. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
@@ -8991,10 +9000,10 @@ msgstr ""
 "Phần trăm tồn kho được tính bằng cách đếm tất cả các trang web có vấn đề về "
 "hàng tồn trong tháng và chia cho tất cả các trang đang hoạt động."
 
-#. [pages.Status.dashboardWidgetSmsSentDescription]
+#. [component.Widget.dashboardWidgetSmsSentDescription]
 #. defaultMessage is:
 #. The total number of text messages sent in the month
-#. [component.Widget.dashboardWidgetSmsSentDescription]
+#. [pages.Status.dashboardWidgetSmsSentDescription]
 #. defaultMessage is:
 #. The total number of text messages sent in the month
 #: extracted_strings.json
@@ -9075,9 +9084,6 @@ msgstr ""
 msgid "These passwords don't match"
 msgstr "Các mật khẩu này không khớp"
 
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. This Month
 #. [pages.dateRangeSelector.thisMonth]
 #. defaultMessage is:
 #. This Month
@@ -9329,12 +9335,30 @@ msgstr "Chuyển đổi tất cả"
 msgid "Topic"
 msgstr "Chủ đề"
 
+#. [performance.barChart.capacity]
+#. defaultMessage is:
+#. Total Capacity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Total Cases"
+msgid "Total Capacity"
+msgstr "Tổng số trường hợp"
+
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
 #. Total Cases
 #: extracted_strings.json
 msgid "Total Cases"
 msgstr "Tổng số trường hợp"
+
+#. [performance.barChart.errors]
+#. defaultMessage is:
+#. Total Errors
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Critical Error"
+msgid "Total Errors"
+msgstr "Lỗi nghiêm trọng"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9343,6 +9367,9 @@ msgstr "Tổng số trường hợp"
 #. defaultMessage is:
 #. Total Results
 #. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
+#. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
@@ -9570,10 +9597,10 @@ msgstr "Không thể đặt lại mật khẩu"
 msgid "Ungroup Column"
 msgstr "Bỏ nhóm cột"
 
-#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [legends.Unknown.resultCategoryUnknown]
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]

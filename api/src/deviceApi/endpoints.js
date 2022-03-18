@@ -17,6 +17,7 @@ const {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
+  getResultPakistanHandler,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -739,6 +740,49 @@ const routes = [
             )
             .description('Notifications stats'),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/pakistan',
+    handler: getResultPakistanHandler,
+    config: {
+      description: 'Get Tb Stats',
+      notes:
+        'Returns stats for total TB tests, TB cases and DRTB cases. Accepts last 24hs or from 2022-01-01 start and a especific state or whole country.',
+      validate: {
+        query: {
+          from: Joi.date()
+            .iso()
+            .required()
+            .description('DateTime from, with ISO8601 time offset'),
+          to: Joi.date()
+            .iso()
+            .required()
+            .description('DateTime to, with ISO8601 time offset'),
+        },
+      },
+      response: {
+        schema: {
+          from: Joi.date().iso(),
+          to: Joi.date().iso(),
+          countryTotals: Joi.object().keys({
+            tests: Joi.number(),
+            cases: Joi.number(),
+            drCases: Joi.number(),
+          }),
+          stateTotals: Joi.array().items(
+            Joi.object().keys({
+              stateCode: Joi.string().empty(''),
+              state: Joi.string().empty(''),
+              tests: Joi.number(),
+              cases: Joi.number(),
+              drCases: Joi.number(),
+            })
+          ),
+        },
+        failAction: 'error',
       },
     },
   },

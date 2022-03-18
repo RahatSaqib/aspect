@@ -66,11 +66,26 @@ module.exports = {
     fileName: 'globalFundInventoryReport',
     exportCsv: true,
     sortOrder: 50,
+    sheets: {
+      sortOrder: 0,
+      moduleName: 'result/getGlobalFundInventoryReport',
+      functionName: 'getGlobalFundInventoryReport',
+    },
+  },
+  reasonForTestingReport: {
+    name: 'Reason for Testing Report',
+    description: 'This report shows the reason for testing',
+    i18nKey: 'reasonForTestingReport',
+    i18nKeyDescription: 'reasonForTestingReport_description',
+    externalId: 'reason_for_testing_report',
+    fileName: 'reasonForTestingReport',
+    exportCsv: false,
+    sortOrder: 40,
     sheets: [
       {
         sortOrder: 0,
         moduleName: 'result/serviceReportVietnam',
-        functionName: 'getGlobalFundInventoryReport',
+        functionName: 'getReasonForTestingReport',
       },
     ],
   },
