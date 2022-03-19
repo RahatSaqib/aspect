@@ -17,7 +17,7 @@ const admin = {
     'all_results',
     'list_r_resistant_test',
     'xpert_test_activities_report',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -148,7 +148,7 @@ const manager = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -235,7 +235,7 @@ const regionalOfficer = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -326,7 +326,7 @@ const labUser = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -417,7 +417,7 @@ const clinician = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -516,7 +516,7 @@ const deviceMaker = {
     'device_utilization',
     'device_activity_percent',
     'genexpert_issues',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -559,7 +559,7 @@ const ntp = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -585,7 +585,7 @@ const ntpNoResults = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -611,7 +611,7 @@ const technician = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -661,7 +661,7 @@ const donor = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -699,7 +699,7 @@ const resultViewerNo = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -742,7 +742,7 @@ const resultViewerYes = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -863,7 +863,7 @@ const labManager = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -938,7 +938,7 @@ const labSupervisor = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -1013,7 +1013,7 @@ const medTech = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -1088,7 +1088,7 @@ const dataViewer = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {
@@ -1164,7 +1164,7 @@ const labAdmin = {
     'device_activity_percent',
     'module_swaps',
     'all_results',
-    'utilization_per_instrument_day',
+    'device_utilization_per_day',
   ],
   permissions: [
     {

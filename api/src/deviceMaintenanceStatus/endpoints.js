@@ -52,6 +52,9 @@ const routes = [
               totalResults: Joi.number().description(
                 'The number of results performed by the device in the date range'
               ),
+              deviceCapacity: Joi.number().description(
+                'Daily capacity of the device'
+              ),
               maintenanceStatusHistory: Joi.array()
                 .items(
                   Joi.object().keys({

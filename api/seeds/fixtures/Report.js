@@ -265,19 +265,24 @@ const geneXpertIssues = {
 }
 
 const utilizationPerInstrumentDayReport = {
-  name: 'Utilization per instrument/day',
+  name: 'Device Utilization per Day',
   description:
-    'Calculated daily utilization rates based on the number of functional modules, ranked lowest to highest',
-  i18nKey: 'utilizationPerInstrumentDayReport',
-  externalId: 'utilization_per_instrument_day',
-  i18nKeyDescription: 'utilizationPerInstrumentDayDescription',
-  fileName: 'utilizationPerInstrumentDay',
+    'This report shows the daily utilization of devices in the selected time period per day. The first sheet displays raw numbers, while the second sheet shows the utilization rate based on the device capacity',
+  i18nKey: 'deviceUtilizationPerDayReport',
+  externalId: 'device_utilization_per_day',
+  i18nKeyDescription: 'deviceUtilizationPerDayDescription',
+  fileName: 'deviceUtilizationPerDay',
   sortOrder: 11,
   sheets: [
     {
       sortOrder: 0,
       moduleName: 'deviceMaintenanceStatus/serviceReports',
-      functionName: 'getUtilizationPerInstrumentDayReport',
+      functionName: 'getDeviceUtilizationPerDayReport',
+    },
+    {
+      sortOrder: 0,
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
+      functionName: 'getDeviceUtilizationPerDayReportPercentage',
     },
   ],
 }

@@ -5,6 +5,7 @@ const {
   format,
   parseISO,
   subMonths,
+  subDays,
 } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery } = require('../device/service')
@@ -170,133 +171,16 @@ async function getDeviceActivityPercentReport(auth, query) {
   return dataset
 }
 
-/**
- * helper func to return Excel styling for cells to colorize them the same
- * way as in Daily Status chart.
- * See `web/src/MigratedComponents/Graphs/DailyStatus/DailyStatusClinicDay/index.jsx`
- * for details how `dayModifier` is defined for css styling days
- */
-function getCellStyle({ isWeekend, maintenanceStatusExternalId }) {
-  const filleSolid = {
-    type: 'pattern',
-    pattern: 'solid',
-  }
-  const isActive =
-    maintenanceStatusExternalId === 'active' ||
-    maintenanceStatusExternalId === 'reportedActive'
-  const status = isActive
-    ? maintenanceStatusExternalId
-    : isWeekend
-    ? 'weekend'
-    : maintenanceStatusExternalId
-
-  switch (status) {
-    case 'weekend':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FFF4F4F4' },
-        },
-      }
-    case 'active':
-    case 'reportedActive':
-      return {
-        font: {
-          color: {
-            argb: 'FF333333',
-          },
-        },
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FF99D25D' },
-        },
-      }
-
-    case 'inactiveNoTestsPerformed':
-      return {
-        font: {
-          color: {
-            argb: 'FF77ffff',
-          },
-        },
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FF6d6f7d' },
-        },
-      }
-    case 'inactiveUnknown':
-      return {
-        font: {
-          color: {
-            argb: 'FFffffff',
-          },
-        },
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FF454545' },
-        },
-      }
-    case 'inactiveOutOfInventory':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FF0088aa' },
-        },
-      }
-    case 'inactiveDownForRepair':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FFDB3018' },
-        },
-      }
-    case 'inactiveDecommissioned':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FF7d96bb' },
-        },
-      }
-    case 'inactiveNoStaff':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FFF7B500' },
-        },
-      }
-    case 'inactiveNoPower':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FFffbe7d' },
-        },
-      }
-    case 'inactiveOther':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FFbf01c5' },
-        },
-      }
-    case 'inactiveNoSamples':
-      return {
-        fill: {
-          ...filleSolid,
-          fgColor: { argb: 'FFF7B500' },
-        },
-      }
-    default:
-      return {}
-  }
-}
-
-async function getUtilizationPerInstrumentDayReport(auth, query) {
-  const { maxDate, minDate } = query
+async function getDeviceUtilizationPerDayReport(auth, query, mode) {
+  const { maxDate = new Date(), minDate } = query
   if (!minDate) {
-    query.minDate = subMonths(maxDate, 1).toISOString()
+    query.minDate = subDays(maxDate, 30).toISOString()
   }
   if (_.isDate(query.minDate)) {
     query.minDate = query.minDate.toISOString()
+  }
+  if (_.isDate(query.maxDate)) {
+    query.maxDate = query.maxDate.toISOString()
   }
 
   let data = await getDeviceStatusOverTime(auth, query)
@@ -314,10 +198,9 @@ async function getUtilizationPerInstrumentDayReport(auth, query) {
   })
 
   data = data.map(device => {
-    const { name, maintenanceStatusHistory } = device
+    const { deviceCapacity = 12, name, maintenanceStatusHistory } = device
     let totals = 0
     let cntWorkingDays = 0
-    let deviceCapacity = 0
     const dynamicFields = _.reduce(
       maintenanceStatusHistory,
       (acc, item) => {
@@ -326,16 +209,17 @@ async function getUtilizationPerInstrumentDayReport(auth, query) {
         if (!isWeekend || totalResults > 0) {
           cntWorkingDays += 1
         }
-        if (totalResults > deviceCapacity) {
-          deviceCapacity = totalResults
-        }
-        /**
-         * cell value is plain object which must have 1 mandatory prop `value`
-         * and may have 1 optional prop `style`
-         */
-        acc[day] = {
-          value: totalResults,
-          style: getCellStyle(item),
+        if (mode === 'percent') {
+          /**
+           * cell value is plain object which must have 1 mandatory prop `value`
+           * and may have 1 optional prop `style`
+           */
+          acc[day] = {
+            value: totalResults / deviceCapacity,
+            style: { numFmt: '0.00%' },
+          }
+        } else {
+          acc[day] = totalResults
         }
         return acc
       },
@@ -363,7 +247,12 @@ async function getUtilizationPerInstrumentDayReport(auth, query) {
   }
 }
 
+async function getDeviceUtilizationPerDayReportPercentage(auth, query) {
+  return getDeviceUtilizationPerDayReport(auth, query, 'percent')
+}
+
 module.exports = {
   getDeviceActivityPercentReport,
-  getUtilizationPerInstrumentDayReport,
+  getDeviceUtilizationPerDayReport,
+  getDeviceUtilizationPerDayReportPercentage,
 }

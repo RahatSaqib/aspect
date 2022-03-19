@@ -133,6 +133,7 @@ async function getDeviceStatusOverTime(auth, query) {
         .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
         .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
+    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
       geography: 'g',
@@ -147,6 +148,7 @@ async function getDeviceStatusOverTime(auth, query) {
       'd.id',
       'd.name',
       'd.shortName',
+      'dcap.dailyCapacity as deviceCapacity',
       's.longitude',
       's.latitude',
       knex.raw('COUNT(r.id) as totalResults')
