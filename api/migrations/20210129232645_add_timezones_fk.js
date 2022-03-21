@@ -1,9 +1,8 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const config = require('../src/config')
 
 // eslint-disable-next-line import/no-dynamic-require
-const geography = require(`..${config.seeds.directory.substring(
+const geography = require(`../${process.env['seeds.directory'].substring(
   1
 )}/fixtures/geography.json`)
 

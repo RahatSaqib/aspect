@@ -30,6 +30,8 @@ const allResults = {
   externalId: 'all_results',
   fileName: 'All_results',
   sortOrder: 0,
+  exportCsv: true,
+  exportExcel: false,
   sheets: [
     {
       sortOrder: 0,
