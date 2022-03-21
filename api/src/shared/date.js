@@ -16,6 +16,11 @@ const {
 
 const { convertToLocalTime } = require('date-fns-timezone')
 
+function dateIsWeekend(date) {
+  const dayOfWeek = date.getDay()
+  return dayOfWeek === 6 || dayOfWeek === 0
+}
+
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
@@ -105,17 +110,24 @@ function dateEqual(date1, date2) {
 // Returns an array of dates formatted as "yyyy-MM-dd" in the given range
 // If initialProperties is passed in, returns an array of objects with "date" containing
 // the day's date and initial properties set to the passed in object
-function getArrayOfDaysInRange(minDate, maxDate, initialProperties = null) {
+function getArrayOfDaysInRange(
+  minDate,
+  maxDate,
+  initialProperties = null,
+  includeWeekends = true
+) {
   const dates = []
   let typeSafeMinDate = minDate instanceof Date ? minDate : parseISO(minDate)
   const typeSafeMaxDate = maxDate instanceof Date ? maxDate : parseISO(maxDate)
 
   while (typeSafeMinDate <= typeSafeMaxDate) {
-    dates.push(
-      initialProperties
-        ? { date: typeSafeMinDate, ...initialProperties }
-        : typeSafeMinDate
-    )
+    if (includeWeekends || !dateIsWeekend(typeSafeMinDate)) {
+      dates.push(
+        initialProperties
+          ? { date: typeSafeMinDate, ...initialProperties }
+          : typeSafeMinDate
+      )
+    }
     typeSafeMinDate = addDays(typeSafeMinDate, 1)
   }
   return dates
