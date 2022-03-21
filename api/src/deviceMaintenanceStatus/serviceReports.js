@@ -215,7 +215,10 @@ async function getDeviceUtilizationPerDayReport(auth, query, mode) {
            * and may have 1 optional prop `style`
            */
           acc[day] = {
-            value: totalResults / deviceCapacity,
+            value:
+              deviceCapacity && deviceCapacity > 0
+                ? totalResults / deviceCapacity
+                : 'N/A',
             style: { numFmt: '0.00%' },
           }
         } else {
