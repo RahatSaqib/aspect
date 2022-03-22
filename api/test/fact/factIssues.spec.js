@@ -1108,7 +1108,7 @@ describe('Fact based issues', () => {
       await knex('Issue').where('id', issueId).delete()
     })
 
-    it('should create a new results available issue and resolve it when it is older than 24 hours', () =>
+    it.skip('should create a new results available issue and resolve it when it is older than 24 hours', () =>
       runTest(async knex => {
         const now = new Date()
         const issueTypeId = await issueTypeToId('NewResultsAvailable')
