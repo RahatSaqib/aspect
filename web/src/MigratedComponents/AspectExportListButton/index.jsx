@@ -20,6 +20,8 @@ export const AspectExportListButtonWithProps = ({
   setDownloadStarted,
   anchorEl,
   setAnchorEl,
+  disableCSV,
+  disableExcel,
 }) => {
   const onExportTo = format => event => {
     event.preventDefault()
@@ -69,14 +71,23 @@ export const AspectExportListButtonWithProps = ({
           root: cssClasses('export-menu-root'),
         }}
       >
-        <MenuItem onClick={onExportTo('xlsx')}>Excel</MenuItem>
-        <MenuItem onClick={onExportTo('csv')}>CSV</MenuItem>
+        <MenuItem disabled={disableExcel} onClick={onExportTo('xlsx')}>
+          Excel
+        </MenuItem>
+        <MenuItem disabled={disableCSV} onClick={onExportTo('csv')}>
+          CSV
+        </MenuItem>
       </Menu>
     </div>
   )
 }
 
-const AspectExportListButton = ({ onExport, visible }) => {
+const AspectExportListButton = ({
+  onExport,
+  visible,
+  disableCSV,
+  disableExcel,
+}) => {
   const [downloadStarted, setDownloadStarted] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -87,6 +98,8 @@ const AspectExportListButton = ({ onExport, visible }) => {
     setDownloadStarted,
     anchorEl,
     setAnchorEl,
+    disableCSV,
+    disableExcel,
   }
 
   return <AspectExportListButtonWithProps {...props} />
@@ -94,11 +107,15 @@ const AspectExportListButton = ({ onExport, visible }) => {
 
 AspectExportListButton.defaultProps = {
   visible: true,
+  disableCSV: false,
+  disableExcel: false,
 }
 
 AspectExportListButton.propTypes = {
   onExport: PropTypes.func.isRequired,
   visible: PropTypes.bool,
+  disableCSV: PropTypes.bool,
+  disableExcel: PropTypes.bool,
 }
 
 export default AspectExportListButton
