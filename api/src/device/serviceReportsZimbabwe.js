@@ -1,4 +1,4 @@
-const { merge, orderBy, keyBy, keys } = require('lodash')
+const { merge, orderBy, keyBy, keys, min } = require('lodash')
 const Promise = require('bluebird')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -6,15 +6,17 @@ const { filterDateRangeParams, filterParams } = require('../db')
 const { getArrayOfDaysInRange } = require('../shared/date')
 
 function getResultsBaseQuery(dataConstraints, query) {
-  const days = getArrayOfDaysInRange(query.minDate, query.maxDate)
+  const now = new Date()
+  const days = getArrayOfDaysInRange(
+    query.minDate,
+    min([query.maxDate, now.toISOString()]),
+    null,
+    false
+  )
   return knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftOuterJoin('Result as r', 'd.id', 'r.deviceId')
-    .leftOuterJoin('DeviceCapacity as dc', joinQuery => {
-      joinQuery
-        .on('d.deviceTypeId', 'dc.deviceTypeId')
-        .andOn('d.partnerId', 'dc.partnerId')
-    })
+    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
     .leftOuterJoin('Site as s', 's.id', 'd.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
@@ -49,10 +51,10 @@ function getResultsBaseQuery(dataConstraints, query) {
         `ROUND(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END) * 100 / COUNT(r.id), 2) as errorRate`
       ),
       knex.raw(
-        `ROUND(COUNT(r.id) * 100 / (${days.length} * dc.dailyCapacity), 2) as utilizationRate`
+        `IFNULL(ROUND(COUNT(r.id) * 100 / (${days.length} * dc.dailyCapacity), 2), 0) as utilizationRate`
       ),
       knex.raw(
-        `ROUND(SUM(TIMESTAMPDIFF(MINUTE, r.endedOn, r.createdOn)) / 60 / COUNT(r.id), 2) as averageDelayToUpload`
+        `IFNULL(ROUND(SUM(TIMESTAMPDIFF(MINUTE, r.endedOn, r.createdOn)) / 60 / COUNT(r.id), 2), 0) as averageDelayToUpload`
       ),
       knex.raw('COUNT(r.id) as totalTests'),
     ])
@@ -140,9 +142,6 @@ async function getDevicePerformanceReport(auth, query) {
       'deviceName',
     ]),
   ])
-
-  // console.log(getResultsBaseQuery(dataConstraints, query).orderBy(['state', 'lga', 'deviceName']).toString())
-  // console.log(getMaintenanceBaseQuery(dataConstraints, query).orderBy(['state', 'lga', 'deviceName']).toString())
 
   // Group by deviceId
   const resultBasedDataByDevice = keyBy(resultBasedData, 'deviceId')
