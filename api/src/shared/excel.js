@@ -34,6 +34,12 @@ const valueCellTypes = [
   excel.ValueType.Boolean,
 ]
 
+const isDataAList = data => {
+  if (typeof data === 'object' && !Array.isArray(data) && data !== null)
+    return false
+  return true
+}
+
 // ----------------------------------------------------------------------------------------------
 // getCellsByValue - helper function for getting all cells having requested value
 // ----------------------------------------------------------------------------------------------
@@ -284,7 +290,8 @@ async function renderExcelTemplate({
       dataSelector: dataSelectorSheet,
     } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
+
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
@@ -593,7 +600,7 @@ async function streamExcelTemplate({
     let fieldNames = []
     let dynamicMerges = []
 
-    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
 
     const dataRows = wayToFillInData === 'list' ? data : data.rows
 
