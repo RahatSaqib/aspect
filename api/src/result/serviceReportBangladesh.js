@@ -122,17 +122,14 @@ const andByRetreatment = (
  */
 async function getDataForReportDrTb10A(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const {
-    stateId,
-    lgaId,
-    siteName,
-    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
-      startOfMonth(new Date())
-    ),
-    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
-      endOfMonth(new Date())
-    ),
-  } = query
+  const { stateId, lgaId, siteName, minDate, maxDate } = query
+
+  const minDateStr = getWellFormattedDateStringWithTimezone(
+    minDate ? new Date(minDate) : startOfMonth(new Date())
+  )
+  const maxDateStr = getWellFormattedDateStringWithTimezone(
+    maxDate ? new Date(maxDate) : endOfMonth(new Date())
+  )
 
   let dateFrom = startOfMonthUTC(minDateStr)
   const dateTo = endOfMonthUTC(maxDateStr)
@@ -897,14 +894,14 @@ async function getDataForReportDrTb10B(auth, query) {
   // for the sake of performance gain - limit to max of 10k results
   query.size = query.maxNumberOfRecords || 10000
 
-  const {
-    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
-      startOfMonth(new Date())
-    ),
-    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
-      endOfMonth(new Date())
-    ),
-  } = query
+  const { minDate, maxDate } = query
+
+  const minDateStr = getWellFormattedDateStringWithTimezone(
+    minDate ? new Date(minDate) : startOfMonth(new Date())
+  )
+  const maxDateStr = getWellFormattedDateStringWithTimezone(
+    maxDate ? new Date(maxDate) : endOfMonth(new Date())
+  )
 
   let dateFrom = startOfMonthUTC(minDateStr)
   const dateTo = endOfMonthUTC(maxDateStr)
@@ -1050,14 +1047,14 @@ async function getDataForReportDrTb10B(auth, query) {
  */
 async function getDataForReportCovid19(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const {
-    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
-      startOfMonth(new Date())
-    ),
-    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
-      endOfMonth(new Date())
-    ),
-  } = query
+  const { minDate, maxDate } = query
+
+  const minDateStr = getWellFormattedDateStringWithTimezone(
+    minDate ? new Date(minDate) : startOfMonth(new Date())
+  )
+  const maxDateStr = getWellFormattedDateStringWithTimezone(
+    maxDate ? new Date(maxDate) : endOfMonth(new Date())
+  )
 
   let dateFrom = startOfMonthUTC(minDateStr)
   const dateTo = endOfMonthUTC(maxDateStr)
