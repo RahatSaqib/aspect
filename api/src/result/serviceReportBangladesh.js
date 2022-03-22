@@ -9,12 +9,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const {
-  formatDateOrDefault,
-  getWellFormattedDateStringWithTimezone,
-  startOfMonthUTC,
-  endOfMonthUTC,
-} = require('../shared/date')
+const { formatDateOrDefault } = require('../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 const logger = require('../shared/logger')
@@ -122,17 +117,18 @@ const andByRetreatment = (
  */
 async function getDataForReportDrTb10A(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { stateId, lgaId, siteName, minDate, maxDate } = query
+  const now = new Date()
+  const {
+    stateId,
+    lgaId,
+    siteName,
+    minDate = startOfMonth(now),
+    maxDate = endOfMonth(now),
+  } = query
 
-  const minDateStr = getWellFormattedDateStringWithTimezone(
-    minDate ? new Date(minDate) : startOfMonth(new Date())
-  )
-  const maxDateStr = getWellFormattedDateStringWithTimezone(
-    maxDate ? new Date(maxDate) : endOfMonth(new Date())
-  )
+  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
+  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
 
-  let dateFrom = startOfMonthUTC(minDateStr)
-  const dateTo = endOfMonthUTC(maxDateStr)
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
@@ -894,17 +890,12 @@ async function getDataForReportDrTb10B(auth, query) {
   // for the sake of performance gain - limit to max of 10k results
   query.size = query.maxNumberOfRecords || 10000
 
-  const { minDate, maxDate } = query
+  const now = new Date()
+  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
 
-  const minDateStr = getWellFormattedDateStringWithTimezone(
-    minDate ? new Date(minDate) : startOfMonth(new Date())
-  )
-  const maxDateStr = getWellFormattedDateStringWithTimezone(
-    maxDate ? new Date(maxDate) : endOfMonth(new Date())
-  )
+  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
+  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
 
-  let dateFrom = startOfMonthUTC(minDateStr)
-  const dateTo = endOfMonthUTC(maxDateStr)
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
@@ -1047,17 +1038,12 @@ async function getDataForReportDrTb10B(auth, query) {
  */
 async function getDataForReportCovid19(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate } = query
+  const now = new Date()
+  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
 
-  const minDateStr = getWellFormattedDateStringWithTimezone(
-    minDate ? new Date(minDate) : startOfMonth(new Date())
-  )
-  const maxDateStr = getWellFormattedDateStringWithTimezone(
-    maxDate ? new Date(maxDate) : endOfMonth(new Date())
-  )
+  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
+  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
 
-  let dateFrom = startOfMonthUTC(minDateStr)
-  const dateTo = endOfMonthUTC(maxDateStr)
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
