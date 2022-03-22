@@ -12,6 +12,7 @@ const {
   getBaseReplacements,
   getMaxLimitPlaceHolders,
   renderExcelTemplateToCsv,
+  renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
   respondStream,
@@ -249,56 +250,96 @@ async function createReport(request, reply) {
     })
   }
 
-  const stream = new Stream.PassThrough()
+  if (fileName !== 'DeviceCalibrationReport') {
+    return renderExcelStream()
+  }
 
-  /**
-   * process in another thread with `setInterval`
-   */
-  let status = REPORT_NOT_STARTED
-  const intervalId = setInterval(() => {
-    if (status === REPORT_NOT_STARTED) {
-      status = REPORT_PROCESSING
-      // call async func in chaining mode - with then/catch
-      streamExcelTemplate({
-        stream,
-        culture,
-        templateFolderPath: templateFolderPath || externalId,
-        data,
-        replacements,
-      })
-        .then(workbook => {
-          status = REPORT_FINISHED
-          /**
-           * All data written, now the very last step is to commit workbook.
-           * Notice that `commit()` in `workbook` is async func, but we run it
-           * without `await` to not delay/block thread to let clear interval
-           */
-          workbook.commit()
+  return renderExcelFile()
+
+  function renderExcelStream() {
+    const stream = new Stream.PassThrough()
+
+    /**
+     * process in another thread with `setInterval`
+     */
+    let status = REPORT_NOT_STARTED
+    const intervalId = setInterval(() => {
+      if (status === REPORT_NOT_STARTED) {
+        status = REPORT_PROCESSING
+        // call async func in chaining mode - with then/catch
+        streamExcelTemplate({
+          stream,
+          culture,
+          templateFolderPath: templateFolderPath || externalId,
+          data,
+          replacements,
         })
-        .catch(ex => {
-          status = REPORT_FAILED
-          logger.error(ex, RELABEL_EXCEL)
+          .then(workbook => {
+            status = REPORT_FINISHED
+            /**
+             * All data written, now the very last step is to commit workbook.
+             * Notice that `commit()` in `workbook` is async func, but we run it
+             * without `await` to not delay/block thread to let clear interval
+             */
+            workbook.commit()
+          })
+          .catch(ex => {
+            status = REPORT_FAILED
+            logger.error(ex, RELABEL_EXCEL)
 
-          /**
-           * when stream is destroyed with specifying error object
-           * (see https://nodejs.org/api/stream.html#writabledestroyerror for details),
-           * then in UI a `catch` block triggers (yes, for Status Code 200) of the download
-           * request because responded blob contains rejected Promise
-           */
-          stream.destroy(ex)
-        })
-    }
-    if (status === REPORT_FINISHED || status === REPORT_FAILED) {
-      clearInterval(intervalId)
-    }
-  }, 1000)
+            /**
+             * when stream is destroyed with specifying error object
+             * (see https://nodejs.org/api/stream.html#writabledestroyerror for details),
+             * then in UI a `catch` block triggers (yes, for Status Code 200) of the download
+             * request because responded blob contains rejected Promise
+             */
+            stream.destroy(ex)
+          })
+      }
+      if (status === REPORT_FINISHED || status === REPORT_FAILED) {
+        clearInterval(intervalId)
+      }
+    }, 1000)
 
-  return respondStream({
-    stream,
-    extension,
-    fileNamePrefix: fileName,
-    reply,
-  })
+    return respondStream({
+      stream,
+      extension,
+      fileNamePrefix: fileName,
+      reply,
+    })
+  }
+
+  async function renderExcelFile() {
+    const dataBuffer = await renderExcelTemplate({
+      culture,
+      templateFolderPath: templateFolderPath || externalId,
+      data,
+      extension,
+      replacements: [
+        {
+          placeholder: '<Dates>',
+          value: getDateRangeString(query),
+        },
+        {
+          placeholder: '<States>',
+          value: await getStateNames(query),
+        },
+        {
+          placeholder: '<Lgas>',
+          value: await getLgaNamesString(query),
+        },
+        ...getMaxLimitPlaceHolders(),
+      ],
+    })
+
+    return respondFile({
+      dataBuffer,
+      extension,
+      fileNamePrefix: fileName,
+      reply,
+    })
+  }
+  //
 }
 
 // ----------------------------------------------------------------------------------------------
