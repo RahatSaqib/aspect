@@ -218,51 +218,17 @@ const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
     )
 }
 
-const joinPreviousPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
-  joinQuery
-    .on('ilp.inventoryItemId', 'ii.id')
-    .andOn(
-      knex.raw(
-        `IFNULL(ilp.adjustedFrom, ilp.createdOn) >= DATE('${dateFrom}') and IFNULL(ilp.adjustedFrom, ilp.createdOn) <= DATE('${dateTo}')`
-      )
-    )
-}
-
 async function getGlobalFundInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  let {
-    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
-      startOfMonth(new Date())
-    ),
-  } = query
-  const {
-    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
-      endOfMonth(new Date())
-    ),
-  } = query
-  if (typeof minDateStr !== 'string') {
-    minDateStr = minDateStr.toISOString()
-  }
-  const dateFormat = 'yyyy-MM-dd'
-  const days = differenceInDays(parseISO(minDateStr), parseISO(maxDateStr))
-  const currentPeriodDateFrom = format(parseISO(minDateStr), dateFormat)
-  const currentPeriodDateTo = format(parseISO(maxDateStr), dateFormat)
-  const pastPeriodDateFrom = format(
-    addDays(parseISO(minDateStr), days),
-    dateFormat
-  )
-  const pastPeriodDateTo = format(addDays(parseISO(minDateStr), -1), dateFormat)
+
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', q =>
       joinCurrentPeriodInventoryLog(
         q,
-        currentPeriodDateFrom,
-        currentPeriodDateTo
+        query.minDate, // currentPeriodDateFrom,
+        query.maxDate // currentPeriodDateTo
       )
-    )
-    .leftJoin('InventoryLog as ilp', q =>
-      joinPreviousPeriodInventoryLog(q, pastPeriodDateFrom, pastPeriodDateTo)
     )
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
@@ -270,15 +236,7 @@ async function getGlobalFundInventoryReport(auth, query) {
       's.name as siteName',
       'ii.lotNumber',
       'ii.expiresOn',
-      knex.raw(
-        `    ii.quantityOnHand + IFNULL(SUM(CASE
-        WHEN
-            IFNULL(cr.decrease, 0) = 1
-        THEN
-            ilp.quantity
-        ELSE - ilp.quantity
-    END), 0) AS 'stockLastMonth'`
-      ),
+
       knex.raw(
         `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
       ),
@@ -309,6 +267,19 @@ async function getGlobalFundInventoryReport(auth, query) {
     ok: true,
     data: rows,
     total: rows.length,
+    dataSelector: (
+      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
+    ) => {
+      return {
+        ...dataRow,
+        stockLastMonth:
+          dataRow.quantityOnHand -
+          dataRow.transferFrom +
+          dataRow.receiveTo +
+          dataRow.use +
+          dataRow.damage,
+      }
+    },
   }
 }
 
