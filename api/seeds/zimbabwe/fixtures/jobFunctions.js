@@ -14,6 +14,7 @@ const {
 
 module.exports = [
   mergeJobFunctions(admin, {
+    reports: [...admin.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -74,6 +75,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(clinician, {
+    reports: [...clinician.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -146,6 +148,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(donor, {
+    reports: [...donor.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -174,6 +177,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(labUser, {
+    reports: [...labUser.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -230,6 +234,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(ntp, {
+    reports: [...ntp.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -274,6 +279,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(ntpNoResults, {
+    reports: [...ntpNoResults.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -314,6 +320,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(regionalOfficer, {
+    reports: [...regionalOfficer.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -369,8 +376,11 @@ module.exports = [
       },
     ],
   }),
-  systemOne,
+  mergeJobFunctions(systemOne, {
+    reports: [systemOne.reports, 'zw_device_performance'],
+  }),
   mergeJobFunctions(technician, {
+    reports: [...technician.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
@@ -411,6 +421,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(deviceMaker, {
+    reports: [...deviceMaker.reports, 'zw_device_performance'],
     permissions: [
       {
         module: 'account',
