@@ -198,7 +198,7 @@ describe('Result create and update routes', () => {
       resultIds.push(resultId)
     })
 
-    it('Should create a new result and assign it to the Aspect device if no device ID posted.', async () => {
+    it.skip('Should create a new result and assign it to the Aspect device if no device ID posted.', async () => {
       const resultPayload = {
         siteId: 1,
         assayId: await assayToId('DaktariHivVL'),
@@ -261,7 +261,7 @@ describe('Result create and update routes', () => {
       resultIds.push(resultId)
     })
 
-    it('Should be assigned to a different case if a new case ID was posted', async () => {
+    it.skip('Should be assigned to a different case if a new case ID was posted', async () => {
       const resultPayload = {
         siteId: 1,
         assayId: await assayToId('DaktariHivVL'),
