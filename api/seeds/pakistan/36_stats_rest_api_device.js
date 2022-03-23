@@ -26,16 +26,16 @@ module.exports = require('../utils').seed(async knex => {
 
   const { geographyId } = await knex('Geography as g')
     .join('Country as c', 'c.id', 'g.countryId')
-    .where({ stateId: null, 'c.abbreviation': 'PK' })
+    .where({ stateId: null, lgaId:null, 'c.abbreviation': 'PK' })
     .first('g.id as geographyId')
 
   const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
     'Information System'
   )
   const [deviceTypeId] = await knex('DeviceType').insert({
-    externalId: 'authentication',
-    name: 'authentication',
-    manufacturer: 'authentication',
+    externalId: 'APIConsumer',
+    name: 'API Consumer',
+    manufacturer: 'SystemOne',
     plugin: null,
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
@@ -45,7 +45,7 @@ module.exports = require('../utils').seed(async knex => {
     .first('s.id as siteId')
 
   const [deviceId] = await knex('Device').insert({
-    name: 'Stats api access',
+    name: 'API Consumer',
     deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
     geographyId,
