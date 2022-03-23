@@ -6,6 +6,7 @@ const {
   assayToId,
   resultSourceToId,
   resultCategoryToId,
+  deviceTypeToId,
 } = require('../src/shared/dictionary')
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
@@ -44,12 +45,15 @@ async function upsertMGITDeviceTypeAndAssays(
   assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
-  const [deviceTypeBDMGITId] = await knex('DeviceType').insert({
-    externalId: 'BDMGIT',
-    name: 'BD MGIT',
-    manufacturer: 'Becton Dickinson',
-    deviceTypeCategoryId: labDeviceTypeCategoryId,
-  })
+  let deviceTypeBDMGITId = await deviceTypeToId('BDMGIT')
+  if (!deviceTypeBDMGITId) {
+    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
+      externalId: 'BDMGIT',
+      name: 'BD MGIT',
+      manufacturer: 'Becton Dickinson',
+      deviceTypeCategoryId: labDeviceTypeCategoryId,
+    })
+  }
 
   const assayBdMgitAst = {
     name: 'BD MGIT AST',
@@ -66,6 +70,7 @@ async function upsertMGITDeviceTypeAndAssays(
   let { id: assayBdMgitAstId } =
     (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) ||
     {}
+
   if (!assayBdMgitAstId) {
     ;[assayBdMgitAstId] = await knex('Assay').insert({
       ...assayBdMgitAst,
