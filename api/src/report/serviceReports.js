@@ -250,6 +250,7 @@ async function createReport(request, reply) {
     })
   }
 
+  // TODO: Refactor this
   if (fileName !== 'DeviceCalibrationReport') {
     return renderExcelStream()
   }
