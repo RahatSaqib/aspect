@@ -250,12 +250,12 @@ async function createReport(request, reply) {
     })
   }
 
-  // TODO: Refactor this
-  if (fileName !== 'DeviceCalibrationReport') {
-    return renderExcelStream()
+  // Response entire file if template has formats and formulae.
+  if (_.some(sheets, s => s.query.avoidStreaming)) {
+    return renderExcelFile()
   }
-
-  return renderExcelFile()
+  // Stream the response unless report has formats or formulae.
+  return renderExcelStream()
 
   function renderExcelStream() {
     const stream = new Stream.PassThrough()
