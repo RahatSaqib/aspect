@@ -7,7 +7,6 @@ const { getContentType, readExcelFile, readTemplateFile } = require('./io')
 const { getUser } = require('../auth/service')
 const logger = require('./logger')
 const { RELABEL_EXCEL } = require('./constants')
-const { get } = require('http')
 
 const LANG_DEFAULT = 'en'
 
@@ -437,12 +436,6 @@ async function renderExcelTemplate({
           }:${masterCell._address.replace(/[^a-zA-Z]+/g, '')}${
             rows.length + masterCell._row._number - 1
           }`
-
-          console.table({
-            rangeToFillFormula,
-            formula: f.formula,
-            passThrough: 'passThrough',
-          })
 
           worksheet.fillFormula(rangeToFillFormula, f.formula)
         })
