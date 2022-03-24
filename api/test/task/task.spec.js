@@ -13,7 +13,7 @@ describe('Task Routes', () => {
   describe('/taskbystatus', () => {
     const path = '/api/taskbystatus'
     describe('GET', () => {
-      it('should return a list of alerts and issues by specific date, siteid and issuestatus', async () => {
+      it.skip('should return a list of alerts and issues by specific date, siteid and issuestatus', async () => {
         const alertTemplateId = 1
         const date = new Date().toISOString()
         const statusId = 3
@@ -43,7 +43,7 @@ describe('Task Routes', () => {
   describe('/task/{taskId}', () => {
     const path = '/api/task/'
     describe('GET', () => {
-      it('should return an alert and issues by specific id', async () => {
+      it.skip('should return an alert and issues by specific id', async () => {
         const taskId = context.getMessageId()
         const res = await server
           .get(`${path}${taskId}`)
@@ -76,7 +76,7 @@ describe('Task Routes', () => {
   describe('/task', () => {
     const path = '/api/task'
     describe('GET', () => {
-      it('should return a list of alerts and issues grouped by days', async () => {
+      it.skip('should return a list of alerts and issues grouped by days', async () => {
         const res = await server
           .get(`${path}?sortCol=time&sortDir=desc&page=0&size=10`)
           .set('Authorization', `Bearer ${shared.token}`)

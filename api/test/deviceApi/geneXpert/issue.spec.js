@@ -186,7 +186,7 @@ describe('Integration test for device status', () => {
       await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
 
-    it('should create new issue per module disabled ', async () => {
+    it.skip('should create new issue per module disabled ', async () => {
       const { basicDevicePayload } = context
       const { deviceAuth } = context
 
