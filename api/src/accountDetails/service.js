@@ -97,8 +97,6 @@ async function saveContactDetailsForLoggedInUser(request) {
     'lgaId',
     'zip',
     'timezone',
-
-    'lastPartnerId',
     'tags',
   ])
   return response
