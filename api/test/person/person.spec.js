@@ -111,6 +111,35 @@ describe('Person routes', () => {
         assert.equal(res.status, 200)
       })
     })
+
+    describe('/person/{personId}', () => {
+      it('Should update the person record', async () => {
+        const personObject = {
+          id: person.id,
+          name: 'Test Contact',
+        }
+        let {
+          body: { data: updatedPerson },
+        } = await server
+          .put(`${path}/${person.id}`)
+          .send({
+            ...personObject,
+            hidePatientId: '0',
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isNotOk(updatedPerson.hidePatientId)
+        ;({
+          body: { data: updatedPerson },
+        } = await server
+          .put(`${path}/${person.id}`)
+          .send({
+            ...personObject,
+            hidePatientId: 'true',
+          })
+          .set('Authorization', `Bearer ${shared.token}`))
+        assert.isOk(updatedPerson.hidePatientId)
+      })
+    })
   })
 
   describe('POST', () => {
