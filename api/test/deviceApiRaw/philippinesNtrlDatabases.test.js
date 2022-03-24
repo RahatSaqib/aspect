@@ -6931,10 +6931,7 @@ describe('Device API Raw Philippines NTRL', () => {
         let age = null
         let sex = null
         if (ageSex) {
-          const ageSexRegex = new RegExp(
-            '(\\d*)(\\s?[|m|o|s]*)(\\/|\\?)(m|f)',
-            'gi'
-          )
+          const ageSexRegex = /(\d*)(\s?[|m|o|s]*)(\/|\?)(m|f)/gi
           const ageSexRegexMatch = ageSexRegex.exec(ageSex)
           if (ageSexRegexMatch) {
             age = convertStringToFloat(ageSexRegexMatch[1])

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
@@ -2487,15 +2488,10 @@ L|1`,
               )}` +
               `/PATIENT_AGE/${
                 _.isNil(resultPatientData.age) ||
-                _.isNil(
-                  resultPatientData.age
-                    .toString()
-                    .match(new RegExp(/^(\d*)(.*)$/, 'g'))
-                )
+                _.isNil(resultPatientData.age.toString().match(/^(\d*)(.*)$/g))
                   ? 'NULL'
-                  : new RegExp(/^(\d*)(.*)$/, 'g').exec(
-                      resultPatientData.age.toString()
-                    )[1] || 'NULL'
+                  : /^(\d*)(.*)$/g.exec(resultPatientData.age.toString())[1] ||
+                    'NULL'
               }` +
               `/PATIENT_ADDRESS/${encodeURIComponent(
                 resultPatientData.address || 'NULL'
