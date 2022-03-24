@@ -15,7 +15,7 @@ const relativeReportPath = `../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
 )}fixtures/reports.js`
-const absolutePath = `${__dirname}${+relativeReportPath.substring(2)}`.replace(
+const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace(
   '/zz_shared',
   ''
 )
