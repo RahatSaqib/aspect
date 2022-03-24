@@ -1,14 +1,15 @@
 const _ = require('lodash')
 const {
+  addMonths,
+  differenceInMonths,
   format,
   parseISO,
-  addMonths,
   subMonths,
-  differenceInMonths,
+  subDays,
 } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery } = require('../device/service')
-const { deviceStatusByDayQuery } = require('./service')
+const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
 const { knex, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const {
@@ -170,6 +171,91 @@ async function getDeviceActivityPercentReport(auth, query) {
   return dataset
 }
 
+async function getDeviceUtilizationPerDayReport(auth, query, mode) {
+  const { maxDate = new Date(), minDate } = query
+  if (!minDate) {
+    query.minDate = subDays(maxDate, 30).toISOString()
+  }
+  if (_.isDate(query.minDate)) {
+    query.minDate = query.minDate.toISOString()
+  }
+  if (_.isDate(query.maxDate)) {
+    query.maxDate = query.maxDate.toISOString()
+  }
+
+  let data = await getDeviceStatusOverTime(auth, query)
+  /**
+   * define dynamic columns which are day dates in period
+   */
+  let dateFields = []
+  const [{ maintenanceStatusHistory = [] } = {}] = data || []
+  dateFields = maintenanceStatusHistory.map(({ day }) => {
+    const date = new Date(day)
+    return {
+      key: day,
+      header: format(date, 'yyyy-MM-dd'),
+    }
+  })
+
+  data = data.map(device => {
+    const { deviceCapacity = 12, name, maintenanceStatusHistory } = device
+    let totals = 0
+    let cntWorkingDays = 0
+    const dynamicFields = _.reduce(
+      maintenanceStatusHistory,
+      (acc, item) => {
+        const { day, isWeekend, totalResults } = item
+        totals += totalResults
+        if (!isWeekend || totalResults > 0) {
+          cntWorkingDays += 1
+        }
+        if (mode === 'percent') {
+          /**
+           * cell value is plain object which must have 1 mandatory prop `value`
+           * and may have 1 optional prop `style`
+           */
+          acc[day] = {
+            value:
+              deviceCapacity && deviceCapacity > 0
+                ? totalResults / deviceCapacity
+                : 'N/A',
+            style: { numFmt: '0.00%' },
+          }
+        } else {
+          acc[day] = totalResults
+        }
+        return acc
+      },
+      {}
+    )
+    const utilizationRate =
+      cntWorkingDays > 0 && deviceCapacity > 0
+        ? totals / (deviceCapacity * cntWorkingDays)
+        : 0
+    return {
+      name,
+      totalResults: totals,
+      deviceCapacity,
+      utilizationRate,
+      ...dynamicFields,
+    }
+  })
+
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+    dynamicColumns: dateFields,
+  }
+}
+
+async function getDeviceUtilizationPerDayReportPercentage(auth, query) {
+  return getDeviceUtilizationPerDayReport(auth, query, 'percent')
+}
+
 module.exports = {
   getDeviceActivityPercentReport,
+  getDeviceUtilizationPerDayReport,
+  getDeviceUtilizationPerDayReportPercentage,
 }
