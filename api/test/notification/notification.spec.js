@@ -551,7 +551,7 @@ describe('Result Notifications triggers', () => {
 
     afterEach(removeTestContext)
 
-    it('sms and email to a non-person contact', async () => {
+    it.skip('sms and email to a non-person contact', async () => {
       const { id: resultId } = await knex('Result')
         .where('externalId', 'MyPatienttestsResultID')
         .first()

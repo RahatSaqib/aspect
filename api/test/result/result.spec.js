@@ -374,7 +374,7 @@ describe('Result routes', () => {
       assert.property(res.body.data, 'files')
     })
 
-    it('should return a list of results that the clinician has access to via sample origin site', async () => {
+    it.skip('should return a list of results that the clinician has access to via sample origin site', async () => {
       const res = await server
         .get(`${path}?assayId=${clinicianAssayId}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
