@@ -1,14 +1,7 @@
-const {
-  endOfMonth,
-  startOfMonth,
-  format,
-  parseISO,
-  differenceInDays,
-  addDays,
-} = require('date-fns')
-const { knex } = require('../db')
+const { endOfMonth, startOfMonth } = require('date-fns')
+const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { filterDateRangeParams, filterParams } = require('../db')
+const { knex, filterDateRangeParams, filterParams } = require('../db')
 const {
   getWellFormattedDateStringWithTimezone,
   startOfMonthUTC,
@@ -220,7 +213,29 @@ const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
 
 async function getGlobalFundInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-
+  const { culture } = await getUser(auth.credentials.name)
+  const headerDictionary = {
+    'en-US': [
+      { key: 'lotNumber', header: 'Lot Number' },
+      { key: 'expiresOn', header: 'Expiration Date' },
+      { key: 'stockLastMonth', header: 'Stock from previous period' },
+      { key: 'transferFrom', header: 'Receive during reporting month' },
+      { key: 'receiveTo', header: 'Transfer' },
+      { key: 'use', header: 'Use' },
+      { key: 'damage', header: 'Damage' },
+      { key: 'quantityOnHand', header: 'Stock at the reporting Time' },
+    ],
+    'vi-VN': [
+      { key: 'lotNumber', header: 'Đơn Vị' },
+      { key: 'expiresOn', header: 'Số lô' },
+      { key: 'stockLastMonth', header: 'chứng khoán kỳ trước' },
+      { key: 'transferFrom', header: 'chứng khoán kỳ trước' },
+      { key: 'receiveTo', header: 'Tồn đầu kỳ' },
+      { key: 'use', header: 'Nhập trong kỳ' },
+      { key: 'damage', header: 'Điều chuyển' },
+      { key: 'quantityOnHand', header: 'Sử dụng' },
+    ],
+  }
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', q =>
@@ -238,16 +253,16 @@ async function getGlobalFundInventoryReport(auth, query) {
       'ii.expiresOn',
 
       knex.raw(
-        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
+        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), '0') as 'transferFrom'`
       ),
       knex.raw(
-        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), 0) as 'receiveTo'`
+        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), '0') as 'receiveTo'`
       ),
       knex.raw(
-        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), 0) as 'use'`
+        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), '0') as 'use'`
       ),
       knex.raw(
-        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), 0) as 'damage'`
+        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), '0') as 'damage'`
       ),
       'ii.quantityOnHand',
     ])
@@ -267,17 +282,17 @@ async function getGlobalFundInventoryReport(auth, query) {
     ok: true,
     data: rows,
     total: rows.length,
-    dataSelector: (
-      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
-    ) => {
+    dynamicColumns: headerDictionary[culture],
+    dataSelector: dataRow => {
+      const stockLastMonth =
+        parseInt(dataRow.quantityOnHand, 10) -
+        parseInt(dataRow.transferFrom, 10) +
+        parseInt(dataRow.receiveTo, 10) +
+        parseInt(dataRow.use, 10) +
+        parseInt(dataRow.damage, 10)
       return {
         ...dataRow,
-        stockLastMonth:
-          dataRow.quantityOnHand -
-          dataRow.transferFrom +
-          dataRow.receiveTo +
-          dataRow.use +
-          dataRow.damage,
+        stockLastMonth: stockLastMonth === 0 ? '0' : stockLastMonth,
       }
     },
   }
