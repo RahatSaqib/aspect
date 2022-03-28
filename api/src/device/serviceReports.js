@@ -24,6 +24,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
+  selectDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
 
@@ -116,11 +117,18 @@ async function getDeviceActivityReport(auth, query) {
       'dms.name as deviceMaintenanceStatus'
     )
     .countDistinct('r.id as totalResults')
-    .max('r.endedOn as lastUploadOn')
+    .modify(
+      selectDateTimeProjectionInUserTimeZone,
+      knex,
+      'MAX(r.endedOn)',
+      offset,
+      'lastUploadOn'
+    )
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
+
   const deviceResultsPerMonths = await deviceQuery
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
@@ -225,7 +233,7 @@ async function getModuleSwapsReport(auth, query) {
 
 async function getGeneXpertIssuesReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-
+  const offset = getOffsetFromIsoDateString(query.maxDate)
   // get rows
   const issues = await knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -259,8 +267,14 @@ async function getGeneXpertIssuesReport(auth, query) {
       site: 's',
     })
     .modify(sortPageParams, query, 'i.createdOn')
+    .modify(
+      selectDateTimeProjectionInUserTimeZone,
+      knex,
+      'i.createdOn',
+      offset,
+      'triggeredOn'
+    )
     .select(
-      'i.createdOn as triggeredOn',
       's.name as siteName',
       'st.name as stateName',
       'l.name as lgaName',
@@ -340,7 +354,7 @@ async function getDeviceCapacityReport(auth, query) {
       knex.raw('COUNT(r.id) as resultCount'),
       knex.raw(
         `CASE
-            WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(now())
+            WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
             ELSE DATE(LAST_DAY(r.endedOn))
           END as lastDayOfMonth`
       ),

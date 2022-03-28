@@ -85,6 +85,11 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
 
 async function deviceStatusOverTime(request) {
   const { auth, query } = request
+  const data = await getDeviceStatusOverTime(auth, query)
+  return { ok: true, data }
+}
+
+async function getDeviceStatusOverTime(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate } = query
   const offset = getOffsetFromIsoDateString(minDate)
@@ -128,6 +133,7 @@ async function deviceStatusOverTime(request) {
         .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
         .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
     })
+    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
       geography: 'g',
@@ -142,6 +148,7 @@ async function deviceStatusOverTime(request) {
       'd.id',
       'd.name',
       'd.shortName',
+      'dcap.dailyCapacity as deviceCapacity',
       's.longitude',
       's.latitude',
       knex.raw('COUNT(r.id) as totalResults')
@@ -294,7 +301,7 @@ async function deviceStatusOverTime(request) {
   })
   data = orderBy(data, ['name'])
 
-  return { ok: true, data }
+  return data
 }
 
 /**
@@ -425,6 +432,7 @@ async function deviceStatusLastReported(request) {
 
 module.exports = {
   deviceStatusOverTime,
+  getDeviceStatusOverTime,
   deviceStatusLastReported,
   deviceStatusByDayQuery,
 }
