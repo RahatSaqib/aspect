@@ -1,14 +1,19 @@
 const reduce = require('lodash/reduce')
 const includes = require('lodash/includes')
+const { endOfMonth, startOfMonth } = require('date-fns')
+
 const { knex, filterDateRangeParams, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const [m4b1Mapping] = require('../../templates/xpert_m4b1_patients/mapping')
-const { endOfMonth, startOfMonth } = require('date-fns')
 const {
   getWellFormattedDateStringWithTimezone,
   startOfMonthUTC,
   endOfMonthUTC,
 } = require('../shared/date')
+const {
+  getTypeOfPatientCategory,
+  getMappingFieldName,
+} = require('./serviceReportVietnam/geneXpertM4B1PatientsReport')
 
 function getBaseQuery(dataConstraints, query) {
   return knex('Result as r')
@@ -42,6 +47,8 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
       'rc1.id',
       'rc2.id',
       knex.raw(`r.resultData->>'$.customFieldData."257".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."256".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."251".value'`),
       knex.raw(`r.resultData->>'$.customFieldData."254".value'`),
     ])
     .select([
@@ -49,6 +56,12 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
       'rc2.externalId as resultCategory2',
       knex.raw(
         `r.resultData->>'$.customFieldData."257".value' as typeOfPatient`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."256".value' as specimenType`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."251".value' as testingReason`
       ),
       knex.raw(
         `r.resultData->>'$.customFieldData."254".value' as previouslyTreated`
@@ -69,43 +82,25 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
   const report = reduce(
     rawReport,
     (partialReport, reportItem) => {
-      let fieldName
-      const typeOfPatient =
-        reportItem.typeOfPatient !== null &&
-        includes(typesOfPatient, reportItem.typeOfPatient)
-          ? reportItem.typeOfPatient
-          : 'Other'
-
-      // NoResult and Invalid will be consider as Error, including them in the same column
-      if (includes(['NoResult', 'Invalid'], reportItem.resultCategory1))
-        reportItem.resultCategory1 = 'Error'
-
-      // Not-splitted result categories
-      if (includes(['NotDetected', 'Error'], reportItem.resultCategory1)) {
-        fieldName = `${reportItem.resultCategory1}_${
-          reportItem.resultCategory2 || 'NA'
-        }_${typeOfPatient}`
-      } else if (reportItem.resultCategory2 === 'Indeterminate')
-        fieldName = `${
-          reportItem.resultCategory1 === 'Trace Detected'
-            ? reportItem.resultCategory1
-            : 'Other'
-        }_Indeterminate_${typeOfPatient}`
-      else if (
-        reportItem.resultCategory1 === 'Detected' &&
-        includes(['NotDetected', 'Detected'], reportItem.resultCategory2)
+      const typeOfPatient = getTypeOfPatientCategory(
+        reportItem.typeOfPatient,
+        reportItem.specimenType,
+        typesOfPatient
       )
-        // Considering custom field VNPreviouslyTreated as Chưa điều trị hoặc điều trị <1 tháng (No Treatment) when value is null
-        fieldName = `${reportItem.resultCategory1}_${
-          reportItem.resultCategory2 || 'NA'
-        }_${typeOfPatient}_${
-          reportItem.previouslyTreated &&
-          reportItem.previouslyTreated !== 'null'
-            ? reportItem.previouslyTreated
-            : 'Chưa điều trị hoặc điều trị <1 tháng'
-        }`
 
+      const fieldName = getMappingFieldName(reportItem, typeOfPatient)
       partialReport[fieldName] += reportItem.quantity
+
+      // "Active Screening/Other" is a separate count, not included in totals, so it's treated apart
+      if (
+        includes(
+          ['Sàng lọc chủ động: ghi rõ', 'Khác: ghi rõ'],
+          reportItem.testingReason
+        )
+      ) {
+        partialReport[`ActiveScreening_${typeOfPatient}`] += reportItem.quantity
+      }
+
       return partialReport
     },
     defaultValues

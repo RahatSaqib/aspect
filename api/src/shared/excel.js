@@ -241,8 +241,7 @@ function fillInSheetWithMap({
        * actual `cell.effectiveType = 2` (excel.ValueType.Number)
        */
 
-      if (fieldName === null) cell.value = ''
-      else cell.value = data[fieldName]
+      cell.value = fieldName === null ? '' : data[fieldName]
     })
 
     worksheet.eachRow(row => {
