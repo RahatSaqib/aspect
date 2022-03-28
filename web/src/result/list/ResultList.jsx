@@ -277,6 +277,7 @@ export const ResultListWithProps = ({
         onExport={onExportClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="Results"
+        disableExcel
       />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList navigate={navigate} location={location} />

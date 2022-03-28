@@ -64,6 +64,8 @@ exports[`Result List component should shallow render correctly when filter for a
       disabled={true}
     />
     <AspectExportListButton
+      disableCSV={false}
+      disableExcel={true}
       onExport={[MockFunction]}
       reportName="Results"
       visible={false}

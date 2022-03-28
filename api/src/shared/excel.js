@@ -34,6 +34,12 @@ const valueCellTypes = [
   excel.ValueType.Boolean,
 ]
 
+const isDataAList = data => {
+  if (typeof data === 'object' && !Array.isArray(data) && data !== null)
+    return false
+  return true
+}
+
 // ----------------------------------------------------------------------------------------------
 // getCellsByValue - helper function for getting all cells having requested value
 // ----------------------------------------------------------------------------------------------
@@ -286,7 +292,8 @@ async function renderExcelTemplate({
       dataSelector: dataSelectorSheet,
     } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
+
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
@@ -595,7 +602,7 @@ async function streamExcelTemplate({
     let fieldNames = []
     let dynamicMerges = []
 
-    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
 
     const dataRows = wayToFillInData === 'list' ? data : data.rows
 
@@ -706,10 +713,36 @@ async function streamExcelTemplate({
          * insert all data rows to the streamed worksheet
          */
         _.each(rowsValues, values => {
+          /**
+           * `values` is array with values for each cell
+           * Process `values` and handle all items which are plain objects,
+           * in which case such objects must have prop `value` and may have
+           * optional prop `style` to apply to particular cell
+           */
+          const rowData = _.reduce(
+            values,
+            (acc, cellValue) => {
+              if (_.isPlainObject(cellValue)) {
+                acc.rowValues = [...acc.rowValues, cellValue.value]
+                acc.cellsStyle = [...acc.cellsStyle, cellValue.style || {}]
+              } else {
+                acc.rowValues = [...acc.rowValues, cellValue]
+                // empty object for cell style
+                acc.cellsStyle = [...acc.cellsStyle, {}]
+              }
+              return acc
+            },
+            {
+              rowValues: [],
+              cellsStyle: [],
+            }
+          )
+          // prepare base payload for current row
           payload = {
             ...payload,
             rowNumber,
-            rowValues: values,
+            // add here props `rowValues` and `cellsStyle`
+            ...rowData,
           }
           writeRowToStream(payload)
           // for big data sources log checkpoint after each 500 inserted rows
@@ -736,7 +769,13 @@ async function streamExcelTemplate({
 }
 
 // ----------------------------------------------------------------------------------------------
-function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
+function writeRowToStream({
+  worksheet,
+  rowNumber,
+  rowTemplate,
+  rowValues,
+  cellsStyle,
+}) {
   /**
    * get/create row
    */
@@ -775,16 +814,6 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
         cell.value = cellTemplate.value
       }
     }
-    /**
-     * set style
-     */
-    const cellStyle = _.merge(
-      {},
-      rowTemplate.style,
-      cellTemplate.master?.style,
-      cellTemplate.style
-    )
-    cell.style = cellStyle
   })
   /**
    * overwrite values in cells if specified
@@ -792,6 +821,22 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
   if (rowValues) {
     row.values = rowValues
   }
+  /**
+   * set style
+   * Notice that we are getting all cells from template, including
+   * undefined (empty) - need this to correctly set styles
+   */
+  rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
+    const cell = row.getCell(cellTemplate.col)
+    const cellStyle = _.merge(
+      {},
+      rowTemplate.style,
+      cellTemplate.master?.style,
+      cellTemplate.style,
+      cellsStyle ? cellsStyle[cell.col - 1] : {}
+    )
+    cell.style = cellStyle
+  })
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
@@ -917,9 +962,11 @@ function getNormalizedData({
         // const normalizer = dataSelector || dataSelectorSheet
         if (normalizer) normalizedValues = normalizer(dataRow)
         else normalizedValues = dataRow
-        valuesInDynamicColumns = dynamicColumns.map(
-          column => normalizedValues[column.key] || null
-        )
+        valuesInDynamicColumns = dynamicColumns.map(column => {
+          let value = normalizedValues[column.key]
+          value = _.isUndefined(value) ? null : value
+          return value
+        })
       }
       return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
     })
@@ -1068,7 +1115,10 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
      * style cell in pattern row (with field name placeholders)
      */
     const cellPattern = patternRow.getCell(columnNumber)
-    setCellStyle(cellPattern, patternInfo.lastCellStyle)
+    const cellStyle = patternInfo.lastCellStyle
+      ? { ...patternInfo.lastCellStyle, numFmt: null }
+      : null
+    setCellStyle(cellPattern, cellStyle)
   })
 
   return merges

@@ -1,4 +1,5 @@
 require('dotenv-safe').config()
+const _ = require('lodash')
 
 const port = process.env.PORT || 8080
 const host = '127.0.0.1'
@@ -144,7 +145,12 @@ function configureOptional(config) {
   // set knex seeds
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
-    config.seeds = { directory: seedsDirectory }
+    if (
+      !_.includes(seedsDirectory, '/test') &&
+      !_.includes(seedsDirectory, '/development')
+    )
+      config.seeds = { directory: [seedsDirectory, './seeds/zz_shared/'] }
+    else config.seeds = { directory: [seedsDirectory] }
   }
 
   // plugin data

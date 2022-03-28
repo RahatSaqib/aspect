@@ -284,7 +284,13 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
           knex.raw(`${regexDeviceOperationModuleName} as moduleName`)
         ),
     ])
-    .orderBy('dateTime', 'asc')
+    /**
+     * do not use `.orderBy()` in queries with `.union()` because by some reason
+     * knex inserts `order by` clause right after 1st query before `union`
+     * which throws error.
+     * Instead - do ordering with lodash means after getting actual data
+     */
+    .then(items => _.orderBy(items, ['dateTime']))
 
   // fix hardware entries, if any
   // eslint-disable-next-line no-constant-condition
