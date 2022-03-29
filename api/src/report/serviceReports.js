@@ -250,97 +250,112 @@ async function createReport(request, reply) {
     })
   }
 
+  const renderParams = {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  }
   // Response entire file if template has formats and formulae.
   if (_.some(sheets, s => s.query.avoidStreaming)) {
-    return renderExcelFile()
+    return renderExcelFile(renderParams)
   }
   // Stream the response unless report has formats or formulae.
-  return renderExcelStream()
+  return renderExcelStream(renderParams)
+}
 
-  function renderExcelStream() {
-    const stream = new Stream.PassThrough()
+async function renderExcelFile(params) {
+  const {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  } = params
 
-    /**
-     * process in another thread with `setInterval`
-     */
-    let status = REPORT_NOT_STARTED
-    const intervalId = setInterval(() => {
-      if (status === REPORT_NOT_STARTED) {
-        status = REPORT_PROCESSING
-        // call async func in chaining mode - with then/catch
-        streamExcelTemplate({
-          stream,
-          culture,
-          templateFolderPath: templateFolderPath || externalId,
-          data,
-          replacements,
+  const dataBuffer = await renderExcelTemplate({
+    culture,
+    templateFolderPath: templateFolderPath || externalId,
+    data,
+    extension,
+    replacements,
+  })
+
+  return respondFile({
+    dataBuffer,
+    extension,
+    fileNamePrefix: fileName,
+    reply,
+  })
+}
+
+function renderExcelStream(params) {
+  const stream = new Stream.PassThrough()
+  const {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  } = params
+  /**
+   * process in another thread with `setInterval`
+   */
+  let status = REPORT_NOT_STARTED
+  const intervalId = setInterval(() => {
+    if (status === REPORT_NOT_STARTED) {
+      status = REPORT_PROCESSING
+      // call async func in chaining mode - with then/catch
+      streamExcelTemplate({
+        stream,
+        culture,
+        templateFolderPath: templateFolderPath || externalId,
+        data,
+        replacements,
+      })
+        .then(workbook => {
+          status = REPORT_FINISHED
+          /**
+           * All data written, now the very last step is to commit workbook.
+           * Notice that `commit()` in `workbook` is async func, but we run it
+           * without `await` to not delay/block thread to let clear interval
+           */
+          workbook.commit()
         })
-          .then(workbook => {
-            status = REPORT_FINISHED
-            /**
-             * All data written, now the very last step is to commit workbook.
-             * Notice that `commit()` in `workbook` is async func, but we run it
-             * without `await` to not delay/block thread to let clear interval
-             */
-            workbook.commit()
-          })
-          .catch(ex => {
-            status = REPORT_FAILED
-            logger.error(ex, RELABEL_EXCEL)
+        .catch(ex => {
+          status = REPORT_FAILED
+          logger.error(ex, RELABEL_EXCEL)
 
-            /**
-             * when stream is destroyed with specifying error object
-             * (see https://nodejs.org/api/stream.html#writabledestroyerror for details),
-             * then in UI a `catch` block triggers (yes, for Status Code 200) of the download
-             * request because responded blob contains rejected Promise
-             */
-            stream.destroy(ex)
-          })
-      }
-      if (status === REPORT_FINISHED || status === REPORT_FAILED) {
-        clearInterval(intervalId)
-      }
-    }, 1000)
+          /**
+           * when stream is destroyed with specifying error object
+           * (see https://nodejs.org/api/stream.html#writabledestroyerror for details),
+           * then in UI a `catch` block triggers (yes, for Status Code 200) of the download
+           * request because responded blob contains rejected Promise
+           */
+          stream.destroy(ex)
+        })
+    }
+    if (status === REPORT_FINISHED || status === REPORT_FAILED) {
+      clearInterval(intervalId)
+    }
+  }, 1000)
 
-    return respondStream({
-      stream,
-      extension,
-      fileNamePrefix: fileName,
-      reply,
-    })
-  }
-
-  async function renderExcelFile() {
-    const dataBuffer = await renderExcelTemplate({
-      culture,
-      templateFolderPath: templateFolderPath || externalId,
-      data,
-      extension,
-      replacements: [
-        {
-          placeholder: '<Dates>',
-          value: getDateRangeString(query),
-        },
-        {
-          placeholder: '<States>',
-          value: await getStateNames(query),
-        },
-        {
-          placeholder: '<Lgas>',
-          value: await getLgaNamesString(query),
-        },
-        ...getMaxLimitPlaceHolders(),
-      ],
-    })
-
-    return respondFile({
-      dataBuffer,
-      extension,
-      fileNamePrefix: fileName,
-      reply,
-    })
-  }
-  //
+  return respondStream({
+    stream,
+    extension,
+    fileNamePrefix: fileName,
+    reply,
+  })
 }
 
 // ----------------------------------------------------------------------------------------------
