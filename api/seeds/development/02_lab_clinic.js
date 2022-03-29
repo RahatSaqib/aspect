@@ -461,9 +461,6 @@ async function seed(knex) {
               deviceData.geographyId = siteData.geographyId
               deviceData.siteId = siteData.id
               deviceData.defaultReportableSiteId = siteData.id
-              deviceData.deviceTypeId = await deviceTypeToId(
-                device.deviceTypeId
-              )
               deviceData.deviceApprovalId = approvedDeviceApprovalId
               deviceData.name = device.name
               deviceData.shortName = device.shortName
@@ -476,8 +473,13 @@ async function seed(knex) {
               deviceData.putInService = subMonths(now, 30)
               deviceData.putInServiceSource = 'Installed at lab'
               deviceData.configurationData = '{}'
+              const { id: deviceTypeId } =
+                (await knex('DeviceType')
+                  .where('externalId', device.deviceTypeId)
+                  .first('id')) || {}
               const [deviceId] = await knex('Device').insert({
                 ...deviceData,
+                deviceTypeId,
                 ...auditFields,
               })
               deviceData.id = deviceId

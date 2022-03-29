@@ -267,6 +267,29 @@ const geneXpertIssues = {
   ],
 }
 
+const utilizationPerInstrumentDayReport = {
+  name: 'Device Utilization per Day',
+  description:
+    'This report shows the daily utilization of devices in the selected time period per day. The first sheet displays raw numbers, while the second sheet shows the utilization rate based on the device capacity',
+  i18nKey: 'deviceUtilizationPerDayReport',
+  externalId: 'device_utilization_per_day',
+  i18nKeyDescription: 'deviceUtilizationPerDayDescription',
+  fileName: 'deviceUtilizationPerDay',
+  sortOrder: 11,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
+      functionName: 'getDeviceUtilizationPerDayReport',
+    },
+    {
+      sortOrder: 0,
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
+      functionName: 'getDeviceUtilizationPerDayReportPercentage',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -279,4 +302,5 @@ module.exports = {
   deviceCalibrationReport,
   geneXpertIssues,
   allResults,
+  utilizationPerInstrumentDayReport,
 }

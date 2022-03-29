@@ -10,10 +10,7 @@ const {
   setCapacityForExistingDevices,
 } = require('../utils')
 const { randomToken } = require('../../src/deviceApi/apiKey')
-const {
-  deviceTypeToId,
-  deviceApprovalToId,
-} = require('../../src/shared/dictionary')
+const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { id: adminId } = await knex('User')
@@ -205,9 +202,6 @@ async function seed(knex) {
               deviceData.partnerId = partnerId
               deviceData.geographyId = siteData.geographyId
               deviceData.siteId = siteData.id
-              deviceData.deviceTypeId = await deviceTypeToId(
-                device.deviceTypeId
-              )
               deviceData.deviceApprovalId = approvedDeviceApprovalId
               deviceData.name = device.name
               deviceData.shortName = device.shortName
@@ -216,8 +210,13 @@ async function seed(knex) {
               deviceData.putInService = now
               deviceData.putInServiceSource = 'Installed at lab'
               deviceData.configurationData = '{}'
+              const { id: deviceTypeId } =
+                (await knex('DeviceType')
+                  .where('externalId', device.deviceTypeId)
+                  .first('id')) || {}
               const [deviceId] = await knex('Device').insert({
                 ...deviceData,
+                deviceTypeId,
                 ...auditFields,
               })
               deviceData.id = deviceId

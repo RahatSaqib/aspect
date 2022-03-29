@@ -180,10 +180,12 @@ async function getResultCountsByHIVStatus(auth, query) {
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select(
       knex.raw(`
-        CASE IFNULL(UPPER(r.patientData ->> '$.HIVStatus'), 'NULL')
-        WHEN 'NULL' THEN '- Unspecified -'
-        ELSE UPPER(r.patientData ->> '$.HIVStatus')
-        END as hivStatus
+        CASE CAST(resultData->>'$.customFieldData."255".value' AS UNSIGNED)
+          WHEN 0 THEN 'HIV NEGATIVE' 
+          WHEN 1 THEN 'HIV POSITIVE' 
+          WHEN 2 THEN 'HIV UNKNOWN STATUS' 
+          ELSE 'HIV Status Unspecified' 
+        END as hivStatus 
       `),
       'rc1.name as resultCategory1',
       'rc2.name as resultCategory2'
