@@ -5,7 +5,7 @@ const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_fun
 const jobFunctionFixture = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
-)}fixtures/jobFunctions`)
+)}/fixtures/jobFunctions`)
 
 const { partnerName } = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
