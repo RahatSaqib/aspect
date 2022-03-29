@@ -240,7 +240,8 @@ function fillInSheetWithMap({
        * (which match possible Data Validation Rule defined for that depending cell in Excel)
        * actual `cell.effectiveType = 2` (excel.ValueType.Number)
        */
-      cell.value = data[fieldName]
+
+      cell.value = fieldName === null ? '' : data[fieldName]
     })
 
     worksheet.eachRow(row => {
