@@ -7,10 +7,11 @@
     "prettier",
     "no-only-tests"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 2021,
-    "sourceType": "module"
+    "sourceType": "module",
+    "requireConfigFile": false
   },
   "env": {
     "amd": true,
@@ -21,6 +22,7 @@
   "rules": {
     "consistent-return": "off",
     "class-methods-use-this": "off",
+    "default-param-last": "off",
     "func-names": "off",
     "global-require": "off",
     "import/extensions": "off",
@@ -28,6 +30,7 @@
     "import/no-named-as-default": "off",
     "import/no-unresolved": "off",
     "no-only-tests/no-only-tests": "warn",
+    "no-promise-executor-return": "off",
     "import/no-named-as-default-member": "off",
     "max-classes-per-file": [
       "error",
