@@ -14,7 +14,7 @@ const { partnerName } = require(`../${process.env['seeds.directory'].replace(
 const relativeReportPath = `../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
-)}fixtures/reports.js`
+)}/fixtures/reports.js`
 const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace(
   '/zz_shared',
   ''
