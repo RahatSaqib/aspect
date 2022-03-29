@@ -432,8 +432,8 @@ async function renderExcelTemplate({
           const masterCell = firstRow.getCell(f.index)
 
           const rangeToFillFormula = `${
-            masterCell._address
-          }:${masterCell._address.replace(/[^a-zA-Z]+/g, '')}${
+            masterCell.address
+          }:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
             rows.length + masterCell._row._number - 1
           }`
 

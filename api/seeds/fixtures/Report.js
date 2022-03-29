@@ -239,7 +239,7 @@ const deviceCalibrationReport = {
         hasResults: 1,
         sortCol: 'name',
         sortDir: 'asc',
-        avoidStreaming: 'true',
+        avoidStreaming: true,
       },
     },
   ],
