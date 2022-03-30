@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
@@ -296,7 +297,6 @@ async function renderExcelTemplate({
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
-
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
       fillInSheetWithMap({
@@ -388,7 +388,6 @@ async function renderExcelTemplate({
             let value = fieldName && dataRow[fieldName]
             value = _.isNil(value) ? '' : value
             // TODO: think on a better generic way to handle such replacements in dataset
-            // TODO: see Jira task for this - https://ops.systemone.id/browse/ASP-1450
             if (fieldName === 'patientAge' && value === 'null') {
               value = ''
             }
@@ -416,8 +415,32 @@ async function renderExcelTemplate({
       }
 
       // remove pattern row and insert rows from patternRowNumber
-      const fillRows = async rows =>
+      const fillRows = async rows => {
+        const formulae = []
+        // `worksheet.duplicateRows` can't be used since the formulae references remains static
+        // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
+        // method, after data is filled with the destructive `worksheet.spliceRows`.
+        worksheet.getRow(patternRowNumber).eachCell((cell, index) => {
+          if (cell.type === excel.ValueType.Formula) {
+            formulae.push({ formula: cell.value.formula, index })
+          }
+          cell.value = null
+        })
         worksheet.spliceRows(patternRowNumber, 1, ...rows)
+        const firstRow = worksheet.getRow(patternRowNumber)
+
+        _.each(formulae, f => {
+          const masterCell = firstRow.getCell(f.index)
+
+          const rangeToFillFormula = `${
+            masterCell.address
+          }:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
+            rows.length + masterCell.row - 1
+          }`
+
+          worksheet.fillFormula(rangeToFillFormula, f.formula)
+        })
+      }
       await fillRows(rows)
       if (extension === 'csv') {
         // get all header values from last item of array allHeaderRows

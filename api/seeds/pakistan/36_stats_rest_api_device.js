@@ -26,7 +26,9 @@ module.exports = require('../utils').seed(async knex => {
 
   const { geographyId } = await knex('Geography as g')
     .join('Country as c', 'c.id', 'g.countryId')
-    .where({ stateId: null, lgaId:null, 'c.abbreviation': 'PK' })
+    .whereNull('stateId')
+    .whereNull('lgaId')
+    .where({ 'c.abbreviation': 'PK' })
     .first('g.id as geographyId')
 
   const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
@@ -59,5 +61,4 @@ module.exports = require('../utils').seed(async knex => {
   await knex('DeviceApiKey')
     .where('token', statsQueryDeviceApiToken)
     .update({ deviceId })
-
 }, __filename)
