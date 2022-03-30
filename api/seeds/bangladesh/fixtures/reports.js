@@ -1,5 +1,5 @@
 const resultsDrTb10A10BCovid = {
-  name: 'Monthly report on Xpert MTB/RIF and Covid',
+  name: 'Report on Xpert MTB/RIF and Covid',
   description:
     'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results',
   i18nKey: 'reportDrTb10a10bCovid',
