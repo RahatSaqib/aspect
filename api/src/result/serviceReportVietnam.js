@@ -203,6 +203,15 @@ async function getResultCountsByHIVStatus(auth, query) {
   }
 }
 
+const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
+  joinQuery
+    .on('il.inventoryItemId', 'ii.id')
+    .andOn(
+      knex.raw(
+        `IFNULL(il.adjustedFrom, il.createdOn) >= DATE('${dateFrom}') and IFNULL(il.adjustedFrom, il.createdOn) <= DATE('${dateTo}')`
+      )
+    )
+}
 async function getGeneXpertM4B3BiologicalProducts(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -215,13 +224,16 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
         query.maxDate // currentPeriodDateTo
       )
     )
+    .join('Consumable as c', 'c.id', 'ii.consumableId')
+    .join('Unit as u', 'u.id', 'c.unit')
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
     .select([
       's.name as siteName',
       'ii.lotNumber',
+      'c.name as productName',
+      'u.name as unit',
       'ii.expiresOn',
-
       knex.raw(
         `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
       ),
@@ -273,5 +285,5 @@ module.exports = {
   getListRResistantTestReport,
   getReasonForTestingReport,
   getResultCountsByHIVStatus,
-  getGeneXpertM4B3BiologicalProducts
+  getGeneXpertM4B3BiologicalProducts,
 }

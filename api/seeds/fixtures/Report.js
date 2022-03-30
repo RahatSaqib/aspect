@@ -292,10 +292,10 @@ const utilizationPerInstrumentDayReport = {
 const GeneXpertM4B3BiologicalProducts = {
   name: 'M4B3 Biological Products',
   description: 'Use of Xpert Biological Products',
-  i18nKey: 'GeneXpertM4B3BiologicalProducts',
-  i18nKeyDescription: 'GeneXpert_M4B3_Biological_Products',
-  externalId: 'GeneXpert_M4B3_Biological_Products',
-  fileName: 'GeneXpertM4B3BiologicalProducts',
+  i18nKey: 'geneXpertM4B3BiologicalProducts',
+  i18nKeyDescription: 'geneXpert_M4B3_biological_products',
+  externalId: 'geneXpert_M4B3_biological_products',
+  fileName: 'geneXpertM4B3BiologicalProducts',
   exportCsv: false,
   sortOrder: 70,
   sheets: [
