@@ -3,13 +3,12 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subDays } = require('date-fns')
 const Promise = require('bluebird')
-const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
-  getSelectCommonListFields,
-  getReportCommonFields,
-  getSelectShowFields,
-  getListFields,
+  SELECT_COMMON_FIELDS,
+  SELECT_SHOW_FIELDS,
   SORT_FIELDS,
+  REPORT_COMMON_FIELDS,
+  LIST_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./querySelectors')
 const {
@@ -52,14 +51,7 @@ const { getRemoteAddress } = require('../shared/request')
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 
-async function getListResults(query, auth, fields) {
-  if (!fields) {
-    const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-
-    fields = getListFields(userTimeOffset)
-  }
-
-  // for now call existing function, but later add here a query with different aggregations
+async function getListResults(query, auth, fields = LIST_FIELDS) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
@@ -158,6 +150,7 @@ async function getListResults(query, auth, fields) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -202,10 +195,8 @@ function getResultTreatmentStatus(response) {
 }
 
 async function getResultsForExport(auth, query) {
-  const userTimeOffset = query.maxDate
-  getOffsetFromIsoDateString(query.maxDate)
   const selectFields = [
-    ...getSelectCommonListFields(userTimeOffset),
+    ...SELECT_COMMON_FIELDS,
     knex.raw(
       `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
     ),
@@ -777,13 +768,13 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultByResultId(auth, resultId, fields) {
+async function getResultByResultId(
+  auth,
+  resultId,
+  fields = SELECT_SHOW_FIELDS
+) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-
-  if (!fields) {
-    fields = getSelectShowFields('+00:00') // This field list has been altered to use in reports showing dates in requested timezone, here is in GMT (as in the DB), because this is not meanted to use in a report.
-  }
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -2364,9 +2355,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
 }
 
 async function getResultsForReport(auth, query) {
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth, getReportCommonFields(userTimeOffset))
+  return getListResults(query, auth, REPORT_COMMON_FIELDS)
 }
 
 async function clinicalIndicatorAggregations(request) {
