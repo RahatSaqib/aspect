@@ -9,11 +9,6 @@ module.exports = [
     C7: 'lgaName',
     C8: 'siteName',
 
-    L6: 'month',
-    N6: 'quarter',
-    R6: 'year',
-    M9: 'today',
-
     M12: 'cntDevices',
     M13: 'cntModules',
     M14: 'cntModulesActive',

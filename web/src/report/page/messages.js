@@ -127,5 +127,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.resultCountsByHIVStatus_description',
     defaultMessage: 'Number of TB results grouped by patient HIV status',
   },
+  xpertPatientsReport: {
+    id: 'pages.ReportIndex.xpertPatientsReport',
+    defaultMessage: 'Xpert Patients Report',
+  },
+  xpertPatientsReport_description: {
+    id: 'pages.ReportIndex.xpertPatientsReport_description',
+    defaultMessage:
+      'This report shows the number of GeneXpert MTB tests performed categorized by result and patients types',
+  },
 })
 export default messages
