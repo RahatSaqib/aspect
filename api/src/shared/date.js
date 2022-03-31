@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const {
-  addDays,
   addMinutes,
   format,
   parse,
@@ -12,7 +11,8 @@ const {
   startOfToday,
   startOfMonth,
   endOfMonth,
-  isWeekend,
+  eachDayOfInterval,
+  eachWeekendOfInterval,
 } = require('date-fns')
 
 const { convertToLocalTime } = require('date-fns-timezone')
@@ -146,26 +146,28 @@ function dateEqual(date1, date2) {
 // If initialProperties is passed in, returns an array of objects with "date" containing
 // the day's date and initial properties set to the passed in object
 function getArrayOfDaysInRange(
-  minDate,
-  maxDate,
+  start,
+  end,
   initialProperties = null,
   excludeWeekends = false
 ) {
-  const dates = []
-  let typeSafeMinDate = minDate instanceof Date ? minDate : parseISO(minDate)
-  const typeSafeMaxDate = maxDate instanceof Date ? maxDate : parseISO(maxDate)
+  let dates
+  const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
+  if (excludeWeekends) {
+    const allWeekends = eachWeekendOfInterval({ start, end }).map(d =>
+      d.toISOString()
+    )
+    dates = _.difference(allDates, allWeekends)
+  } else dates = allDates
 
-  while (typeSafeMinDate <= typeSafeMaxDate) {
-    if (!excludeWeekends || !isWeekend(typeSafeMinDate)) {
-      dates.push(
-        initialProperties
-          ? { date: typeSafeMinDate, ...initialProperties }
-          : typeSafeMinDate
-      )
-    }
-    typeSafeMinDate = addDays(typeSafeMinDate, 1)
-  }
-  return dates
+  dates = dates.map(d => parseISO(d))
+
+  return initialProperties
+    ? dates.map(d => ({
+        date: d,
+        ...initialProperties,
+      }))
+    : dates
 }
 
 // Returns the UTC equivalent of the passed in date/time string
