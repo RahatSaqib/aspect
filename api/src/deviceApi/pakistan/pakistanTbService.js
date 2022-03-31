@@ -32,11 +32,17 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
   const baseQuery = getTbResultsStatsQuery(knex, constraints, from, to).clone()
 
   const query = knex('State as s')
-    .leftJoin('Geography as g', 'g.stateId', 's.id')
     .leftJoin(baseQuery.as('b'), builder => builder.on({ 'b.stateId': 's.id' }))
-    .modify(addConstraints, constraints, {
-      geography: 'g',
-    })
+    .whereIn(
+      's.id',
+      knex.raw(
+        '(?)',
+        knex('Geography as g')
+          .where('g.countryId', constraints.country.id)
+          .pluck('stateId')
+          .distinct()
+      )
+    )
     .select(
       knex.raw(`coalesce(s.abbreviation,'') as stateCode`),
       's.name as state',
@@ -52,13 +58,17 @@ function getTbResultsQueryWholeCountry(knex, constraints, from, to) {
   const baseQuery = getTbResultsStatsQuery(knex, constraints, from, to).clone()
 
   const query = knex('State as s')
-    .leftJoin('Geography as g', 'g.stateId', 's.id')
-    .leftJoin(baseQuery.as('b'), function () {
-      this.on({ 'b.stateId': 's.id' })
-    })
-    .modify(addConstraints, constraints, {
-      geography: 'g',
-    })
+    .leftJoin(baseQuery.as('b'), builder => builder.on({ 'b.stateId': 's.id' }))
+    .whereIn(
+      's.id',
+      knex.raw(
+        '(?)',
+        knex('Geography as g')
+          .where('g.countryId', constraints.country.id)
+          .pluck('stateId')
+          .distinct()
+      )
+    )
     .select(
       knex.raw('sum(coalesce(b.tests,0)) as tests'),
       knex.raw('sum(coalesce(b.cases, 0)) as cases'),

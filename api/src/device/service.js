@@ -38,46 +38,16 @@ const {
   formatDateOrDefault,
   getArrayOfDaysInRange,
 } = require('../shared/date')
-const {
-  getOffsetFromIsoDateString,
-  getDateTimeProjectionInUserTimeZone,
-} = require('../shared/date')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
-
-function getSelectListFields(userTimeOffset) {
-  const fields = SELECT_LIST_FIELDS
-  fields.push(
-    getDateTimeProjectionInUserTimeZone(
-      knex,
-      'd.createdOn',
-      userTimeOffset,
-      'createdOn'
-    )
-  )
-  fields.push(
-    getDateTimeProjectionInUserTimeZone(
-      knex,
-      'd.lastPingOn',
-      userTimeOffset,
-      'lastPingOn'
-    )
-  )
-  fields.push(
-    getDateTimeProjectionInUserTimeZone(
-      knex,
-      'd.lastSeenOn',
-      userTimeOffset,
-      'lastSeen'
-    )
-  )
-  return fields
-}
 
 const SELECT_LIST_FIELDS = [
   'd.id',
   'd.name',
   'd.shortName',
+  'd.createdOn',
+  'd.lastPingOn',
+  'd.lastSeenOn as lastSeen',
   'st.name as state',
   'dt.name as type',
   's.name as siteName',
@@ -255,14 +225,14 @@ async function getListDevices(query, auth) {
     })
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
-  const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
+
   // get rows
   const getItems = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...getSelectListFields(userTimeOffset),
+      ...SELECT_LIST_FIELDS,
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
@@ -871,7 +841,7 @@ async function getDevicesForReport(auth, query) {
 
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+
   const queryResults = knex('Result as r')
     .innerJoin('Sample as s', 'r.sampleId', 's.id')
     .modify(addConstraints, dataConstraints, {
@@ -887,7 +857,7 @@ async function getDevicesForReport(auth, query) {
     .modify(sortPageParams, query, 'name')
     .select([
       ..._.filter(
-        getSelectListFields(userTimeOffset),
+        SELECT_LIST_FIELDS,
         elem => _.isString(elem) && elem.indexOf('dms.') < 0
       ),
       'd.serial',
@@ -1425,8 +1395,6 @@ async function deviceMaintenanceStatusHistory(request) {
     .distinct('d.id')
     .pluck('d.id')
 
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-
   const devicesWithConstraints = _.isEmpty(filterByDeviceIds)
     ? []
     : await knex('Device as d')
@@ -1481,7 +1449,7 @@ async function deviceMaintenanceStatusHistory(request) {
           site: 's',
           disease: 'dis',
         })
-        .select(getSelectListFields(userTimeOffset))
+        .select(SELECT_LIST_FIELDS)
         .distinct()
 
   filterByDeviceIds = devicesWithConstraints.map(({ id }) => id)
@@ -1860,7 +1828,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
 async function getDeviceCalibrationsForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
 
@@ -1873,7 +1841,7 @@ async function getDeviceCalibrationsForReport(auth, query) {
     .modify(sortPageParams, query, 'name')
     .select([
       ..._.filter(
-        getSelectListFields(userTimeOffset),
+        SELECT_LIST_FIELDS,
         /**
          * make sure to exclude columns starting with `dms.` because
          * we do not have JOIN with DeviceMaintenanceStatus table

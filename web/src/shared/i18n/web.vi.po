@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
+"POT-Creation-Date: 2022-03-28T22:37:24.011Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2992,10 +2992,8 @@ msgstr "Lỗi khi chuyển kết quả"
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Fetching Endpoint"
 msgid "Error creating person"
-msgstr "Lỗi khi tìm nạp điểm cuối"
+msgstr "Lỗi tạo người"
 
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
@@ -3148,17 +3146,14 @@ msgstr "Mã cơ sở"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Please, try again in a few minutes. If the error persists, contact your "
-#| "administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of error "
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 msgstr ""
-"Vui lòng thử lại trong vài phút. Nếu lỗi vẫn còn, hãy liên hệ với quản trị "
-"viên của bạn để được hỗ trợ."
+"Không tạo được báo cáo {fileType} \"{reportName}\" vì lỗi "
+"\"{errorMessage}\". Hãy thử lại trong vài phút nữa. Nếu lỗi vẫn còn, hãy "
+"liên hệ với người quản trị của bạn để được hỗ trợ."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -7527,10 +7522,8 @@ msgstr "Chọn năm ..."
 #. defaultMessage is:
 #. Select an Assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select assay..."
 msgid "Select an Assay"
-msgstr "Chọn xét nghiệm ..."
+msgstr "Chọn xét nghiệm"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -9218,6 +9211,17 @@ msgstr ""
 "Báo cáo này cho thấy số lượng xét nghiệm GeneXpert MTB được thực hiện phân "
 "loại theo kết quả"
 
+#. [pages.ReportIndex.xpertPatientsReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result and patients types
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result and patients types"
+msgstr ""
+"Báo cáo này cho thấy số lượng xét nghiệm GeneXpert MTB được thực hiện được "
+"phân loại theo kết quả và loại bệnh nhân"
+
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
 #. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
@@ -9339,10 +9343,8 @@ msgstr "Chủ đề"
 #. defaultMessage is:
 #. Total Capacity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Cases"
 msgid "Total Capacity"
-msgstr "Tổng số trường hợp"
+msgstr "Tổng công suất"
 
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
@@ -9355,10 +9357,8 @@ msgstr "Tổng số trường hợp"
 #. defaultMessage is:
 #. Total Errors
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Critical Error"
 msgid "Total Errors"
-msgstr "Lỗi nghiêm trọng"
+msgstr "Tổng số lỗi"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9946,6 +9946,13 @@ msgstr "Hộp mực Xpert HIV-1 Qual"
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Hộp mực nạp virut Xpert HIV-1"
+
+#. [pages.ReportIndex.xpertPatientsReport]
+#. defaultMessage is:
+#. Xpert Patients Report
+#: extracted_strings.json
+msgid "Xpert Patients Report"
+msgstr "Báo cáo bệnh nhân Xpert"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:

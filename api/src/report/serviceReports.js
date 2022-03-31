@@ -12,6 +12,7 @@ const {
   getBaseReplacements,
   getMaxLimitPlaceHolders,
   renderExcelTemplateToCsv,
+  renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
   respondStream,
@@ -249,8 +250,64 @@ async function createReport(request, reply) {
     })
   }
 
-  const stream = new Stream.PassThrough()
+  const renderParams = {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  }
+  // Response entire file if template has formats and formulae.
+  if (_.some(sheets, s => s.query.avoidStreaming)) {
+    return renderExcelFile(renderParams)
+  }
+  // Stream the response unless report has formats or formulae.
+  return renderExcelStream(renderParams)
+}
 
+async function renderExcelFile(params) {
+  const {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  } = params
+
+  const dataBuffer = await renderExcelTemplate({
+    culture,
+    templateFolderPath: templateFolderPath || externalId,
+    data,
+    extension,
+    replacements,
+  })
+
+  return respondFile({
+    dataBuffer,
+    extension,
+    fileNamePrefix: fileName,
+    reply,
+  })
+}
+
+function renderExcelStream(params) {
+  const stream = new Stream.PassThrough()
+  const {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  } = params
   /**
    * process in another thread with `setInterval`
    */
