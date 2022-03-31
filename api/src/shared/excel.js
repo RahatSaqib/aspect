@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
@@ -5,9 +6,9 @@ const Range = require('exceljs/lib/doc/range')
 const { getContentType, readExcelFile, readTemplateFile } = require('./io')
 const { getUser } = require('../auth/service')
 const logger = require('./logger')
+const { RELABEL_EXCEL } = require('./constants')
 
 const LANG_DEFAULT = 'en'
-const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
 
 /**
   Notice that `cell.type` and `cell.effectiveType` are set to global constant `excel.ValueType`:
@@ -33,6 +34,12 @@ const valueCellTypes = [
   excel.ValueType.Date,
   excel.ValueType.Boolean,
 ]
+
+const isDataAList = data => {
+  if (typeof data === 'object' && !Array.isArray(data) && data !== null)
+    return false
+  return true
+}
 
 // ----------------------------------------------------------------------------------------------
 // getCellsByValue - helper function for getting all cells having requested value
@@ -234,7 +241,8 @@ function fillInSheetWithMap({
        * (which match possible Data Validation Rule defined for that depending cell in Excel)
        * actual `cell.effectiveType = 2` (excel.ValueType.Number)
        */
-      cell.value = data[fieldName]
+
+      cell.value = fieldName === null ? '' : data[fieldName]
     })
 
     worksheet.eachRow(row => {
@@ -284,11 +292,11 @@ async function renderExcelTemplate({
       dataSelector: dataSelectorSheet,
     } = dataSet[sheetIndex] || {}
 
-    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
+
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
-
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
       fillInSheetWithMap({
@@ -380,7 +388,6 @@ async function renderExcelTemplate({
             let value = fieldName && dataRow[fieldName]
             value = _.isNil(value) ? '' : value
             // TODO: think on a better generic way to handle such replacements in dataset
-            // TODO: see Jira task for this - https://ops.systemone.id/browse/ASP-1450
             if (fieldName === 'patientAge' && value === 'null') {
               value = ''
             }
@@ -408,8 +415,32 @@ async function renderExcelTemplate({
       }
 
       // remove pattern row and insert rows from patternRowNumber
-      const fillRows = async rows =>
+      const fillRows = async rows => {
+        const formulae = []
+        // `worksheet.duplicateRows` can't be used since the formulae references remains static
+        // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
+        // method, after data is filled with the destructive `worksheet.spliceRows`.
+        worksheet.getRow(patternRowNumber).eachCell((cell, index) => {
+          if (cell.type === excel.ValueType.Formula) {
+            formulae.push({ formula: cell.value.formula, index })
+          }
+          cell.value = null
+        })
         worksheet.spliceRows(patternRowNumber, 1, ...rows)
+        const firstRow = worksheet.getRow(patternRowNumber)
+
+        _.each(formulae, f => {
+          const masterCell = firstRow.getCell(f.index)
+
+          const rangeToFillFormula = `${
+            masterCell.address
+          }:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
+            rows.length + masterCell.row - 1
+          }`
+
+          worksheet.fillFormula(rangeToFillFormula, f.formula)
+        })
+      }
       await fillRows(rows)
       if (extension === 'csv') {
         // get all header values from last item of array allHeaderRows
@@ -579,10 +610,10 @@ async function streamExcelTemplate({
     /**
      * create worksheet with same model as in template
      */
-    const worksheet = workbook.addWorksheet(
-      worksheetTemplate.name,
-      worksheetTemplate.model
-    )
+    const worksheet = workbook.addWorksheet(worksheetTemplate.name, {
+      ...worksheetTemplate.model,
+      useSharedStrings: true,
+    })
 
     /**
      * set width and formatting for columns
@@ -593,7 +624,7 @@ async function streamExcelTemplate({
     let fieldNames = []
     let dynamicMerges = []
 
-    const wayToFillInData = _.isPlainObject(data) ? 'mapping' : 'list'
+    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
 
     const dataRows = wayToFillInData === 'list' ? data : data.rows
 
@@ -704,10 +735,36 @@ async function streamExcelTemplate({
          * insert all data rows to the streamed worksheet
          */
         _.each(rowsValues, values => {
+          /**
+           * `values` is array with values for each cell
+           * Process `values` and handle all items which are plain objects,
+           * in which case such objects must have prop `value` and may have
+           * optional prop `style` to apply to particular cell
+           */
+          const rowData = _.reduce(
+            values,
+            (acc, cellValue) => {
+              if (_.isPlainObject(cellValue)) {
+                acc.rowValues = [...acc.rowValues, cellValue.value]
+                acc.cellsStyle = [...acc.cellsStyle, cellValue.style || {}]
+              } else {
+                acc.rowValues = [...acc.rowValues, cellValue]
+                // empty object for cell style
+                acc.cellsStyle = [...acc.cellsStyle, {}]
+              }
+              return acc
+            },
+            {
+              rowValues: [],
+              cellsStyle: [],
+            }
+          )
+          // prepare base payload for current row
           payload = {
             ...payload,
             rowNumber,
-            rowValues: values,
+            // add here props `rowValues` and `cellsStyle`
+            ...rowData,
           }
           writeRowToStream(payload)
           // for big data sources log checkpoint after each 500 inserted rows
@@ -734,7 +791,13 @@ async function streamExcelTemplate({
 }
 
 // ----------------------------------------------------------------------------------------------
-function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
+function writeRowToStream({
+  worksheet,
+  rowNumber,
+  rowTemplate,
+  rowValues,
+  cellsStyle,
+}) {
   /**
    * get/create row
    */
@@ -747,19 +810,32 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
   row.outlineLevel = rowTemplate.outlineLevel || 0
   row.style = rowTemplate.style
   /**
-   * create cells
+   * create streaming cells from template row.
+   * Notice that we are getting all cells from template, including
+   * undefined (empty) - need this to correctly set styles
    */
-  rowTemplate.eachCell(cellTemplate => {
+  rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
     const cell = row.getCell(cellTemplate.col)
     if (!cellTemplate.isMerged || cellTemplate === cellTemplate.master) {
-      cell.value = cellTemplate.value
+      if (cellTemplate.type === excel.ValueType.Formula) {
+        /**
+         * when exceljs sets `cell.value = cellTemplate.value` with formula
+         * then Excel may show error on opening such worksheet when
+         * formula in cellTemplate.value is typed as shared and
+         * has `formula` prop because formula is in merged cell, like
+         * `{ formula: 'C23+F23', ref: 'L23', shareType: 'shared' }`.
+         * For ordinal cells we have only `formula` prop, like `{ formula: 'C23+F23' }`.
+         * Below we explicitly set cell.value only to `formula` prop for `master` cell
+         * and skip using any other props from cellTemplate.value
+         */
+        const { formula } = cellTemplate
+        if (formula) {
+          cell.value = { formula }
+        }
+      } else {
+        cell.value = cellTemplate.value
+      }
     }
-    /**
-     * set new cell directly to the same style as template cell
-     * In case of possible failing use
-     * setCellStyle(cell, getCellStyle(cellTemplate))
-     */
-    cell.style = cellTemplate.style
   })
   /**
    * overwrite values in cells if specified
@@ -767,6 +843,22 @@ function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues }) {
   if (rowValues) {
     row.values = rowValues
   }
+  /**
+   * set style
+   * Notice that we are getting all cells from template, including
+   * undefined (empty) - need this to correctly set styles
+   */
+  rowTemplate.eachCell({ includeEmpty: true }, cellTemplate => {
+    const cell = row.getCell(cellTemplate.col)
+    const cellStyle = _.merge(
+      {},
+      rowTemplate.style,
+      cellTemplate.master?.style,
+      cellTemplate.style,
+      cellsStyle ? cellsStyle[cell.col - 1] : {}
+    )
+    cell.style = cellStyle
+  })
   /**
    * must commit all row changes to move it to the stream.
    * Notice that no changes possible in row and it's cells after commit.
@@ -891,10 +983,12 @@ function getNormalizedData({
         let normalizedValues
         // const normalizer = dataSelector || dataSelectorSheet
         if (normalizer) normalizedValues = normalizer(dataRow)
-        else normalizedValues = data
-        valuesInDynamicColumns = dynamicColumns.map(
-          column => normalizedValues[column.key] || null
-        )
+        else normalizedValues = dataRow
+        valuesInDynamicColumns = dynamicColumns.map(column => {
+          let value = normalizedValues[column.key]
+          value = _.isUndefined(value) ? null : value
+          return value
+        })
       }
       return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
     })
@@ -1043,7 +1137,10 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
      * style cell in pattern row (with field name placeholders)
      */
     const cellPattern = patternRow.getCell(columnNumber)
-    setCellStyle(cellPattern, patternInfo.lastCellStyle)
+    const cellStyle = patternInfo.lastCellStyle
+      ? { ...patternInfo.lastCellStyle, numFmt: null }
+      : null
+    setCellStyle(cellPattern, cellStyle)
   })
 
   return merges

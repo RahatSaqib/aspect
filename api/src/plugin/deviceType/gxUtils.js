@@ -777,12 +777,12 @@ async function getOrCreateSite(
         })
         .andWhere(function () {
           if (deviceName) {
-            this.where({ 's.name': deviceName })
-              .orWhere({ 's.shortName': deviceName })
-              .orWhere({ 's.externalId': deviceName })
+            this.where({ 's.name': deviceName }).orWhere({
+              's.externalId': deviceName,
+            })
           }
           if (deviceShortName) {
-            this.orWhere({ 's.shortName': deviceShortName }).orWhere({
+            this.orWhere({
               's.externalId': deviceShortName,
             })
           }

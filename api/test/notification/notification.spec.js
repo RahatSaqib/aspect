@@ -329,7 +329,7 @@ describe('Result Notifications triggers', () => {
         ])
         .delete()
     )
-    it('should create a result based notification for particular jobFunctions', async () => {
+    it.skip('should create a result based notification for particular jobFunctions', async () => {
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
@@ -340,7 +340,7 @@ describe('Result Notifications triggers', () => {
       assert.equal(notifications.length, 1)
     })
 
-    it('Should create or not a result based notification filtering by JobFunction and tags', async () => {
+    it.skip('Should create or not a result based notification filtering by JobFunction and tags', async () => {
       ;[inserted] = await knex('Tag').insert([
         { partnerId: 1, title: 'oneTag' },
         { partnerId: 1, title: 'secondTag' },
@@ -431,7 +431,7 @@ describe('Result Notifications triggers', () => {
 
     afterEach(removeTestContext)
 
-    it('should create a result based notification for particular person and job function', async () => {
+    it.skip('should create a result based notification for particular person and job function', async () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
@@ -551,7 +551,7 @@ describe('Result Notifications triggers', () => {
 
     afterEach(removeTestContext)
 
-    it('sms and email to a non-person contact', async () => {
+    it.skip('sms and email to a non-person contact', async () => {
       const { id: resultId } = await knex('Result')
         .where('externalId', 'MyPatienttestsResultID')
         .first()

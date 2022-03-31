@@ -580,9 +580,8 @@ async function seed(knex) {
         .join('Job as j', 'jc.jobId', 'j.id')
         .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
     })
-    .orderBy('deviceId')
     .then(items =>
-      items.reduce((memo, row) => {
+      _.orderBy(items, ['deviceId']).reduce((memo, row) => {
         if (!memo[row.deviceId]) {
           memo[row.deviceId] = {}
         }

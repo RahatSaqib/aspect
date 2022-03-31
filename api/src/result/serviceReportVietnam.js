@@ -1,6 +1,19 @@
-const { knex } = require('../db')
+const reduce = require('lodash/reduce')
+const includes = require('lodash/includes')
+const { endOfMonth, startOfMonth } = require('date-fns')
+
+const { knex, filterDateRangeParams, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { filterDateRangeParams, filterParams } = require('../db')
+const [m4b1Mapping] = require('../../templates/xpert_m4b1_patients/mapping')
+const {
+  getWellFormattedDateStringWithTimezone,
+  startOfMonthUTC,
+  endOfMonthUTC,
+} = require('../shared/date')
+const {
+  getTypeOfPatientCategory,
+  getMappingFieldName,
+} = require('./serviceReportVietnam/geneXpertM4B1PatientsReport')
 
 function getBaseQuery(dataConstraints, query) {
   return knex('Result as r')
@@ -24,6 +37,79 @@ function getBaseQuery(dataConstraints, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+}
+
+async function getGeneXpertM4B1PatientsReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rawReport = await getBaseQuery(dataConstraints, query)
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .groupBy([
+      'rc1.id',
+      'rc2.id',
+      knex.raw(`r.resultData->>'$.customFieldData."257".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."256".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."251".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."254".value'`),
+    ])
+    .select([
+      'rc1.externalId as resultCategory1',
+      'rc2.externalId as resultCategory2',
+      knex.raw(
+        `r.resultData->>'$.customFieldData."257".value' as typeOfPatient`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."256".value' as specimenType`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."251".value' as testingReason`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."254".value' as previouslyTreated`
+      ),
+      knex.raw('COUNT(*) as quantity'),
+    ])
+
+  const defaultValues = {}
+  // Init default values set to 0
+  Object.values(m4b1Mapping).forEach(reportValue => {
+    defaultValues[reportValue] = 0
+  })
+  // Get the types of patient included in the report
+  const typesOfPatient = Object.keys(defaultValues).map(
+    reportKey => reportKey.split('_')[2]
+  )
+
+  const report = reduce(
+    rawReport,
+    (partialReport, reportItem) => {
+      const typeOfPatient = getTypeOfPatientCategory(
+        reportItem.typeOfPatient,
+        reportItem.specimenType,
+        typesOfPatient
+      )
+
+      const fieldName = getMappingFieldName(reportItem, typeOfPatient)
+      partialReport[fieldName] += reportItem.quantity
+
+      // "Active Screening/Other" is a separate count, not included in totals, so it's treated apart
+      if (
+        includes(
+          ['Sàng lọc chủ động: ghi rõ', 'Khác: ghi rõ'],
+          reportItem.testingReason
+        )
+      ) {
+        partialReport[`ActiveScreening_${typeOfPatient}`] += reportItem.quantity
+      }
+
+      return partialReport
+    },
+    defaultValues
+  )
+
+  return {
+    ok: true,
+    data: report,
+  }
 }
 
 async function getGeneXpertM4B2ActivitiesReport(auth, query) {
@@ -97,13 +183,17 @@ async function getListRResistantTestReport(auth, query) {
     .select([
       knex.raw("IFNULL(patientData->>'$.name', '-') as fullName"),
       knex.raw(
-        "CASE WHEN IFNULL(patientData->>'$.age', '-') = 'null' THEN '-' ELSE IFNULL(patientData->>'$.age', '-') END as age"
+        "CASE WHEN IFNULL(patientData->>'$.age', 'null') = 'null' THEN '-' ELSE patientData->>'$.age' END as age"
       ),
-      knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
+      knex.raw(
+        "CASE WHEN IFNULL(patientData->>'$.address', 'null') = 'null' THEN '-' ELSE patientData->>'$.address' END as address"
+      ),
+      knex.raw(
+        `CASE WHEN IFNULL(r.resultData->>'$.customFieldData."257".value', 'null') = 'null' THEN '-' ELSE r.resultData->>'$.customFieldData."257".value' END as targetGroup`
+      ),
       'r.endedOn as xpertResultDate',
       'r.notes',
     ])
-
   return {
     ok: true,
     data: {
@@ -113,7 +203,94 @@ async function getListRResistantTestReport(auth, query) {
   }
 }
 
+async function getReasonForTestingReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  let {
+    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
+      startOfMonth(new Date())
+    ),
+  } = query
+  const {
+    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
+      endOfMonth(new Date())
+    ),
+  } = query
+  if (typeof minDateStr !== 'string') {
+    minDateStr = minDateStr.toISOString()
+  }
+  const dateFrom = startOfMonthUTC(minDateStr)
+  const dateTo = endOfMonthUTC(maxDateStr)
+  const rows = await knex('Result as r')
+    .leftJoin('Site as s', 's.id', 'r.siteId')
+    .leftJoin('Geography as g', 'g.id', 'r.geographyId')
+    .select([
+      knex.raw(
+        `IF(resultData->>'$.customFieldData."251".value' = 'null', 'N/A', resultData->>'$.customFieldData."251".value') AS fields`
+      ),
+      knex.raw(`count(resultData->>'$.customFieldData."251".value') AS total`),
+    ])
+    .andWhere(
+      knex.raw(`resultData->>'$.customFieldData."251".value' is not null`)
+    )
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    // Keeping this to the Pr approve, if the dates are wrong filtred (now it takes 1 month), maybe it should bounded to the current day only)
+    // .andWhere('r.endedOn', '>=', dateFrom)
+    // .andWhere('r.endedOn', '<=', dateTo)
+    .groupBy(knex.raw(`resultData->>'$.customFieldData."251".value'`))
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
+async function getResultCountsByHIVStatus(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const data = await getBaseQuery(dataConstraints, query)
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .select(
+      knex.raw(`
+        CASE CAST(resultData->>'$.customFieldData."255".value' AS UNSIGNED)
+          WHEN 0 THEN 'HIV NEGATIVE' 
+          WHEN 1 THEN 'HIV POSITIVE' 
+          WHEN 2 THEN 'HIV UNKNOWN STATUS' 
+          ELSE 'HIV Status Unspecified' 
+        END as hivStatus 
+      `),
+      'rc1.name as resultCategory1',
+      'rc2.name as resultCategory2'
+    )
+    .groupBy('hivStatus', 'r.resultCategory1', 'r.resultCategory2')
+    .count({
+      cntAll: knex.raw('DISTINCT r.id'),
+    })
+    .orderBy('hivStatus')
+
+  return {
+    ok: true,
+    data,
+    total: data.length,
+  }
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
+  getGeneXpertM4B1PatientsReport,
+  getReasonForTestingReport,
+  getResultCountsByHIVStatus,
 }

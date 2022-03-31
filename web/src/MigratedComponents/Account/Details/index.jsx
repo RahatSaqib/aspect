@@ -19,6 +19,7 @@ import { FormSubmit } from './FormSubmit'
 import mutationSuccess from './mutationSuccess'
 import AccountEnableDisable from '../AccountEnableDisable'
 import messages from './messages'
+import { badRequestBuilder } from '../../../error/CommonErrorNotifications'
 
 const ContactDetailsFormFormik = () => {
   const { personId } = useParams()
@@ -62,6 +63,8 @@ const ContactDetailsFormFormik = () => {
       'userLockedOut',
     ]
     const { setSubmitting, values } = formik
+    /* eslint-disable no-console */
+    console.log('values', values)
     const { id } = values
 
     setTimeout(() => {
@@ -70,6 +73,9 @@ const ContactDetailsFormFormik = () => {
           values: transformOutputValues(values, baseOmitFields),
           endpoint: '/person',
           method: 'POST',
+          customErrorNotifications: {
+            400: badRequestBuilder(messages),
+          },
         })
       }
       if (type === 'update') {
@@ -177,8 +183,13 @@ const ContactDetailsFormFormik = () => {
   }, [personId, type])
 
   const mutation = useMutation(
-    ({ values, endpoint, method }) => {
-      return fetchWrapperForQueries({ endpoint, method, params: { ...values } })
+    ({ values, endpoint, method, customErrorNotifications }) => {
+      return fetchWrapperForQueries({
+        endpoint,
+        method,
+        params: { ...values },
+        customErrorNotifications,
+      })
     },
     {
       onError: error => {
@@ -200,11 +211,13 @@ const ContactDetailsFormFormik = () => {
     newValues.canLogIn = values?.canLogIn === 1 || values?.canLogIn ? 1 : 0
     newValues.phone = replace(values.phone, / /g, '')
     newValues.cell = replace(values.cell, / /g, '')
-    map(newValues, (value, key) =>
-      value === '' || isNil(value) || includes(omitValues, key)
-        ? delete newValues[key]
-        : false
-    )
+    /* eslint-disable lodash/collection-return */
+    map(newValues, (value, key) => {
+      /* eslint-disable no-console */
+      console.log('transformOutputValues value, key', value, key)
+      if (value === '' || isNil(value) || includes(omitValues, key))
+        delete newValues[key]
+    })
     return newValues
   }
 

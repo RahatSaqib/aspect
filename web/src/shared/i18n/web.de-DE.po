@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-20T08:46:38.208Z\n"
+"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,9 +32,13 @@ msgstr "(Neue Menge im Bestand: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
-#. * excluded {pendingTransfers} lot/s in transit
+#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-msgid "* excluded {pendingTransfers} lot/s in transit"
+#, fuzzy
+#| msgid "* excluded {pendingTransfers} lot/s in transit"
+msgid ""
+"* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
+"s in transit"
 msgstr "* {pendingTransfers} Los/e im Transport ausgeschlossen"
 
 #. [pages.TableCell.moreContacts]
@@ -149,6 +153,15 @@ msgstr ">= 40 cp/mL"
 #: extracted_strings.json
 msgid ">= 550 cp/mL"
 msgstr ">= 550 cp/mL"
+
+#. [pages.Contacts.person.name.exist]
+#. defaultMessage is:
+#. A person with the same name exists. Please use a different name.
+#: extracted_strings.json
+msgid "A person with the same name exists. Please use a different name."
+msgstr ""
+"Eine Person mit dem gleichen Namen existiert. Bitte verwenden Sie einen "
+"anderen Namen."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -448,6 +461,9 @@ msgstr "Alere Q HIV-1/2 VL-Plasma"
 msgid "Alerts"
 msgstr "Benachrichtigungen"
 
+#. [filter.clientSideFilterSelect.selectAll]
+#. defaultMessage is:
+#. All
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
@@ -1174,6 +1190,9 @@ msgstr "Kann nicht bearbeitet werden"
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.Notifications.table.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [contextualMenu.notifications.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1540,6 +1559,9 @@ msgid "Contact Created Successfully"
 msgstr "Kontakt erfolgreich angelegt"
 
 #. [pages.PersonDetails.contactDetails]
+#. defaultMessage is:
+#. Contact Details
+#. [pages.Notifications.table.contactDetails]
 #. defaultMessage is:
 #. Contact Details
 #: extracted_strings.json
@@ -2973,6 +2995,15 @@ msgstr "Fehler beim Senden der E-Mail zum Zurücksetzen des Kennworts"
 msgid "Error Transferring Result"
 msgstr "Fehler beim Übertragen des Ergebnisses"
 
+#. [pages.Contacts.person.name.exist.title]
+#. defaultMessage is:
+#. Error creating person
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Error Fetching Endpoint"
+msgid "Error creating person"
+msgstr "Fehler beim Laden"
+
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
 #. Excel
@@ -3116,12 +3147,26 @@ msgstr "FLQ Widerstand"
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
-#. [pages.SiteDetail.fieldFacilityCode]
-#. defaultMessage is:
-#. Facility Code
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Einrichtung Code"
+
+#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Please, try again in a few minutes. If the error persists, contact your "
+#| "administrator for support."
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Bitte versuchen Sie es in ein paar Minuten erneut. Wenn der Fehler weiterhin "
+"besteht, wenden Sie sich an Ihren Administrator, um Unterstützung zu "
+"erhalten."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -4231,6 +4276,9 @@ msgstr "Letzte"
 #. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last 30 Days
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
@@ -4248,9 +4296,6 @@ msgstr "Letzte 30 Tage"
 msgid "Last 7 Days"
 msgstr "Letzte 7 Tage"
 
-#. [pages.DeviceList.lastMonth]
-#. defaultMessage is:
-#. Last Month
 #. [pages.dateRangeSelector.lastMonth]
 #. defaultMessage is:
 #. Last Month
@@ -4378,6 +4423,13 @@ msgstr "In Behandlung"
 #: extracted_strings.json
 msgid "Lipid Panel"
 msgstr "Lipid-Panel"
+
+#. [pages.ReportIndex.listRResistantTestReport]
+#. defaultMessage is:
+#. List-R Resistant Test Report
+#: extracted_strings.json
+msgid "List-R Resistant Test Report"
+msgstr "List-R-resistenter Prüfbericht"
 
 #. [pages.ReportIndex.RIF_Resistance_Rate_description]
 #. defaultMessage is:
@@ -5237,6 +5289,9 @@ msgstr "Neuer"
 msgid "Next"
 msgstr "Weiter"
 
+#. [pages.Notifications.table.createButton.group.no]
+#. defaultMessage is:
+#. No
 #. [pages.NotificationList.no]
 #. defaultMessage is:
 #. No
@@ -5315,6 +5370,17 @@ msgstr "Durchgeführte Tests"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Keine Kontakte dem Standort zugeordnet"
+
+#. [pages.SiteDetail.siteWithoutLocation]
+#. defaultMessage is:
+#. No location set to this site - Please, edit to assign the latitude and longitude fields.
+#: extracted_strings.json
+msgid ""
+"No location set to this site - Please, edit to assign the latitude and "
+"longitude fields."
+msgstr ""
+"Kein Speicherort für diese Site festgelegt - Bitte bearbeiten Sie, um die "
+"Felder für breiten- und längengrad zuzuweisen."
 
 #. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
 #. defaultMessage is:
@@ -5561,6 +5627,15 @@ msgstr "Anzahl der Geräte"
 #: extracted_strings.json
 msgid "Number of Locations"
 msgstr "Anzahl der Standorte"
+
+#. [pages.ReportIndex.resultCountsByHIVStatus_description]
+#. defaultMessage is:
+#. Number of TB results grouped by patient HIV status
+#: extracted_strings.json
+#, fuzzy
+#| msgid "The number of results that belong to a patient that died"
+msgid "Number of TB results grouped by patient HIV status"
+msgstr "Die Anzahl der Ergebnisse, die einem verstorbenen Patienten gehören"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -5878,6 +5953,13 @@ msgstr "Patienten ID"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Patienten-/Fall-ID"
+
+#. [pages.Notifications.table.sentPending]
+#. defaultMessage is:
+#. Pending
+#: extracted_strings.json
+msgid "Pending"
+msgstr "Ausstehend"
 
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
@@ -6331,6 +6413,13 @@ msgstr "Übertragene positive Testergebnisse"
 #: extracted_strings.json
 msgid "Positives"
 msgstr "Positive"
+
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. Preceding 30 Days
+#: extracted_strings.json
+msgid "Preceding 30 Days"
+msgstr "Vorangegangene 30 Tage"
 
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
@@ -6891,6 +6980,13 @@ msgstr "Ergebnis 2"
 msgid "Result Based"
 msgstr "Ergebnisbasiert"
 
+#. [pages.ReportIndex.resultCountsByHIVStatus]
+#. defaultMessage is:
+#. Result Counts by HIV status
+#: extracted_strings.json
+msgid "Result Counts by HIV status"
+msgstr "Ergebniszählungen nach HIV-Status"
+
 #. [pages.resultEdit.resultTitle]
 #. defaultMessage is:
 #. Result Details
@@ -7444,6 +7540,15 @@ msgstr "Woche auswählen..."
 msgid "Select Year..."
 msgstr "Jahr auswählen..."
 
+#. [filter.clientSideFilterSelect.selectAssay]
+#. defaultMessage is:
+#. Select an Assay
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Select assay..."
+msgid "Select an Assay"
+msgstr "Assay auswählen..."
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -7605,12 +7710,33 @@ msgstr "Senden"
 msgid "Send to a specific person"
 msgstr "An eine bestimmte Person senden"
 
+#. [pages.Notifications.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#. [pages.Notifications.table.createButton.group.sendToPatient]
+#. defaultMessage is:
+#. Send to patient
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Linked to treatment"
+msgid "Send to patient"
+msgstr "In Behandlung"
+
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
 #. Sender Operator
 #: extracted_strings.json
 msgid "Sender Operator"
 msgstr "Betreiber"
+
+#. [pages.Notifications.table.sentDetails]
+#. defaultMessage is:
+#. Sent details
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Site Detail"
+msgid "Sent details"
+msgstr "Standort Detail"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -7932,6 +8058,9 @@ msgstr "Ausloggen"
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
+#. [filter.popover.siteName]
+#. defaultMessage is:
+#. Site
 #. [pages.JobAssignments.site]
 #. defaultMessage is:
 #. Site
@@ -8203,6 +8332,15 @@ msgstr "Senden"
 #. Success
 #: extracted_strings.json
 msgid "Success"
+msgstr "Erfolg"
+
+#. [pages.Notifications.table.sentSuccessfully]
+#. defaultMessage is:
+#. Successfully
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Success"
+msgid "Successfully"
 msgstr "Erfolg"
 
 #. [browsePage.browseDropdown.supplies]
@@ -8996,9 +9134,6 @@ msgstr ""
 msgid "These passwords don't match"
 msgstr "Diese Passwörter stimmen nicht überein"
 
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. This Month
 #. [pages.dateRangeSelector.thisMonth]
 #. defaultMessage is:
 #. This Month
@@ -9114,6 +9249,24 @@ msgstr ""
 "Dieser Bericht zeigt den prozentualen Aktivitätsprozentsatz der Geräte pro "
 "Monat während des ausgewählten Zeitraums. (Standardmäßig die letzten 12 "
 "Monate)"
+
+#. [pages.ReportIndex.listRResistantTestReport_description]
+#. defaultMessage is:
+#. This report shows the list of resistant tests
+#: extracted_strings.json
+msgid "This report shows the list of resistant tests"
+msgstr "Dieser Bericht zeigt die Liste der resistenten Tests"
+
+#. [pages.ReportIndex.xpertTestActivitiesReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result"
+msgstr ""
+"Dieser Bericht zeigt die Anzahl der durchgeführten GeneXpert MTB-Tests "
+"kategorisiert nach Ergebnis"
 
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
@@ -9233,12 +9386,30 @@ msgstr "Alle Ein- / Ausblenden"
 msgid "Topic"
 msgstr "Thema"
 
+#. [performance.barChart.capacity]
+#. defaultMessage is:
+#. Total Capacity
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Total Cases"
+msgid "Total Capacity"
+msgstr "Gesamtanzahl Fälle"
+
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
 #. Total Cases
 #: extracted_strings.json
 msgid "Total Cases"
 msgstr "Gesamtanzahl Fälle"
+
+#. [performance.barChart.errors]
+#. defaultMessage is:
+#. Total Errors
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Critical Error"
+msgid "Total Errors"
+msgstr "Kritischer Fehler"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9247,6 +9418,9 @@ msgstr "Gesamtanzahl Fälle"
 #. defaultMessage is:
 #. Total Results
 #. [pages.OperationalData.cntAll]
+#. defaultMessage is:
+#. Total Results
+#. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
@@ -9770,6 +9944,13 @@ msgstr "Woche oder Feiertag"
 msgid "When the result is"
 msgstr "Wenn das Ergebnis"
 
+#. [pages.Notifications.table.sentWithErrors]
+#. defaultMessage is:
+#. With errors
+#: extracted_strings.json
+msgid "With errors"
+msgstr "Mit Fehlern"
+
 #. [pages.OperationalData.withinTwoHoursOfTesting]
 #. defaultMessage is:
 #. Within 2 hours of testing
@@ -9818,6 +9999,13 @@ msgstr "GeneXpert HIV-1 Qual Kartusche"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Xpert HIV-1 Viruslastpatrone"
 
+#. [pages.ReportIndex."xpertTestActivitiesReport"]
+#. defaultMessage is:
+#. Xpert Test Activities Report
+#: extracted_strings.json
+msgid "Xpert Test Activities Report"
+msgstr "Rapport Xpert-testactiviteiten"
+
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
 #. Year
@@ -9828,6 +10016,9 @@ msgstr "Xpert HIV-1 Viruslastpatrone"
 msgid "Year"
 msgstr "Jahr"
 
+#. [pages.Notifications.table.createButton.group.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes

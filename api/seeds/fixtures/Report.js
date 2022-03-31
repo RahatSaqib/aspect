@@ -30,6 +30,8 @@ const allResults = {
   externalId: 'all_results',
   fileName: 'All_results',
   sortOrder: 0,
+  exportCsv: true,
+  exportExcel: false,
   sheets: [
     {
       sortOrder: 0,
@@ -237,6 +239,7 @@ const deviceCalibrationReport = {
         hasResults: 1,
         sortCol: 'name',
         sortDir: 'asc',
+        avoidStreaming: true,
       },
     },
   ],
@@ -264,6 +267,29 @@ const geneXpertIssues = {
   ],
 }
 
+const utilizationPerInstrumentDayReport = {
+  name: 'Device Utilization per Day',
+  description:
+    'This report shows the daily utilization of devices in the selected time period per day. The first sheet displays raw numbers, while the second sheet shows the utilization rate based on the device capacity',
+  i18nKey: 'deviceUtilizationPerDayReport',
+  externalId: 'device_utilization_per_day',
+  i18nKeyDescription: 'deviceUtilizationPerDayDescription',
+  fileName: 'deviceUtilizationPerDay',
+  sortOrder: 11,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
+      functionName: 'getDeviceUtilizationPerDayReport',
+    },
+    {
+      sortOrder: 0,
+      moduleName: 'deviceMaintenanceStatus/serviceReports',
+      functionName: 'getDeviceUtilizationPerDayReportPercentage',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -276,47 +302,5 @@ module.exports = {
   deviceCalibrationReport,
   geneXpertIssues,
   allResults,
-  m4b2Activities: {
-    name: 'Xpert Test Activities Report',
-    description:
-      'This report shows the number of GeneXpert MTB tests performed categorized by result',
-    i18nKey: 'xpertTestActivitiesReport',
-    i18nKeyDescription: 'xpertTestActivitiesReport_description',
-    externalId: 'xpert_test_activities_report',
-    fileName: 'm4b2Activities',
-    sortOrder: 20,
-    sheets: [
-      {
-        sortOrder: 0,
-        moduleName: 'result/serviceReportVietnam',
-        functionName: 'getGeneXpertM4B2ActivitiesReport',
-        query: {
-          sortCol: 'triggeredOn',
-          sortDir: 'asc',
-          hasResults: 1,
-        },
-      },
-    ],
-  },
-  listRResistantTest: {
-    name: 'List-R Resistant Test Report',
-    description: 'This report shows the list of resistant tests',
-    i18nKey: 'listRResistantTestReport',
-    i18nKeyDescription: 'listRResistantTestReport_description',
-    externalId: 'list_r_resistant_test',
-    fileName: 'listRResistantTest',
-    sortOrder: 30,
-    sheets: [
-      {
-        sortOrder: 0,
-        moduleName: 'result/serviceReportVietnam',
-        functionName: 'getListRResistantTestReport',
-        // query: {
-        //   sortCol: 'triggeredOn',
-        //   sortDir: 'asc',
-        //   hasResults: 1,
-        // },
-      },
-    ],
-  },
+  utilizationPerInstrumentDayReport,
 }

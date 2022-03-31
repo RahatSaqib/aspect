@@ -22,7 +22,7 @@ describe('Result Workflow Status Log', () => {
       assert.typeOf(res.body, 'Object')
       assert.property(res.body, 'data')
       assert.typeOf(res.body.data, 'array')
-      assert.isAtLeast(res.body.data.length, 2)
+      assert.isAtLeast(res.body.data.length, 1)
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'changedOn')
       assert.property(res.body.data[0], 'statusName')

@@ -334,7 +334,6 @@ async function savePerson(request, updatablePersonFields) {
 
     changedFields.updatedOn = new Date()
     changedFields.updatedBy = currentlyLoggedInUser.id
-
     await query('Save person details')
       .from('Person as p')
       .where({ 'p.id': personDetails.id })
@@ -363,7 +362,11 @@ async function createPerson(request) {
   // if user with specified 'name' exists - return Boom
   const person = await knex('Person').where({ name }).first()
   if (person) {
-    return Boom.conflict('Person with requested name already exists')
+    const err = Boom.conflict('Person with requested name already exists', {
+      errorKeyCode: 'personNameExist',
+    })
+    err.output.payload.data = err.data
+    return err
   }
 
   const currentlyLoggedInUser = await userService.getUser(
@@ -410,7 +413,10 @@ async function updatePerson(request) {
     'lastPartnerId',
     'timezone',
     'tags',
-    'canLogIn',
+    'canLogin',
+    'hidePatientId',
+    'hideSampleId',
+    'hideNotes',
   ])
 }
 

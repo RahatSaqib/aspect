@@ -1,6 +1,9 @@
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const Stream = require('stream')
+const _ = require('lodash')
+const { subDays } = require('date-fns')
+
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
@@ -9,6 +12,7 @@ const {
   getBaseReplacements,
   getMaxLimitPlaceHolders,
   renderExcelTemplateToCsv,
+  renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
   respondStream,
@@ -76,8 +80,9 @@ async function getSheetData(request, sheet) {
     dataSelector = null,
   } = result
 
+  const listSize = _.isPlainObject(data) ? data?.rows?.length : data?.length
   logger.debug(
-    `Worksheet data - total=${total}, list size=${data?.length}'`,
+    `Worksheet data - total=${total}, list size=${listSize}'`,
     RELABEL_EXCEL
   )
 
@@ -188,6 +193,10 @@ async function createReport(request, reply) {
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format || 'xlsx'
 
+  if (_.isNil(query.minDate)) {
+    query.minDate = subDays(new Date(query.maxDate), 30)
+  }
+
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
     throw data
@@ -241,8 +250,64 @@ async function createReport(request, reply) {
     })
   }
 
-  const stream = new Stream.PassThrough()
+  const renderParams = {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  }
+  // Response entire file if template has formats and formulae.
+  if (_.some(sheets, s => s.query.avoidStreaming)) {
+    return renderExcelFile(renderParams)
+  }
+  // Stream the response unless report has formats or formulae.
+  return renderExcelStream(renderParams)
+}
 
+async function renderExcelFile(params) {
+  const {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  } = params
+
+  const dataBuffer = await renderExcelTemplate({
+    culture,
+    templateFolderPath: templateFolderPath || externalId,
+    data,
+    extension,
+    replacements,
+  })
+
+  return respondFile({
+    dataBuffer,
+    extension,
+    fileNamePrefix: fileName,
+    reply,
+  })
+}
+
+function renderExcelStream(params) {
+  const stream = new Stream.PassThrough()
+  const {
+    culture,
+    templateFolderPath,
+    externalId,
+    data,
+    replacements,
+    extension,
+    fileName,
+    reply,
+  } = params
   /**
    * process in another thread with `setInterval`
    */
