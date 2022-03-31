@@ -160,14 +160,12 @@ function getArrayOfDaysInRange(
     dates = _.difference(allDates, allWeekends)
   } else dates = allDates
 
-  dates = dates.map(d => parseISO(d))
-
   return initialProperties
     ? dates.map(d => ({
-        date: d,
+        date: parseISO(d),
         ...initialProperties,
       }))
-    : dates
+    : dates.map(d => parseISO(d))
 }
 
 // Returns the UTC equivalent of the passed in date/time string
