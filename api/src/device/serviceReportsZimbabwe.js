@@ -1,5 +1,6 @@
 const { merge, orderBy, keyBy, keys, min } = require('lodash')
 const Promise = require('bluebird')
+const { parseISO } = require('date-fns')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
@@ -8,8 +9,8 @@ const { getArrayOfDaysInRange } = require('../shared/date')
 function getResultsBaseQuery(dataConstraints, query) {
   const now = new Date()
   const days = getArrayOfDaysInRange(
-    query.minDate,
-    min([query.maxDate, now.toISOString()]),
+    parseISO(query.minDate),
+    parseISO(min([query.maxDate, now.toISOString()])),
     null,
     true
   )
@@ -18,14 +19,14 @@ function getResultsBaseQuery(dataConstraints, query) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftOuterJoin('Result as r', joinResult => {
       joinResult
         .on('d.id', 'r.deviceId')
         .andOn(knex.raw('r.endedOn'), '>', knex.raw(`'${query.minDate}'`))
         .andOn(knex.raw('r.endedOn'), '<=', knex.raw(`'${query.maxDate}'`))
     })
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .where('dt.externalId', 'CepheidGeneXpert')
@@ -150,7 +151,7 @@ async function getDevicePerformanceReport(auth, query) {
 
   // Merge by deviceId
   let data = []
-  keys(resultBasedDataByDevice).forEach(deviceId => {
+  keys(maintenanceBasedDataByDevice).forEach(deviceId => {
     data.push(
       merge(
         resultBasedDataByDevice[deviceId],
