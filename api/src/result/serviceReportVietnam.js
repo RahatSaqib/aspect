@@ -1,7 +1,7 @@
 const { endOfMonth, startOfMonth } = require('date-fns')
-const { knex } = require('../db')
+const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { filterDateRangeParams, filterParams } = require('../db')
+const { knex, filterDateRangeParams, filterParams } = require('../db')
 const {
   getWellFormattedDateStringWithTimezone,
   startOfMonthUTC,
@@ -203,9 +203,174 @@ async function getResultCountsByHIVStatus(auth, query) {
   }
 }
 
+const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
+  joinQuery
+    .on('il.inventoryItemId', 'ii.id')
+    .andOn(
+      knex.raw(
+        `IFNULL(il.adjustedFrom, il.createdOn) >= DATE('${dateFrom}') and IFNULL(il.adjustedFrom, il.createdOn) <= DATE('${dateTo}')`
+      )
+    )
+}
+
+async function getGlobalFundInventoryReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { culture } = await getUser(auth.credentials.name)
+  const headerDictionary = {
+    'en-US': [
+      { key: 'lotNumber', header: 'Lot Number' },
+      { key: 'expiresOn', header: 'Expiration Date' },
+      { key: 'stockLastMonth', header: 'Stock from previous period' },
+      { key: 'transferFrom', header: 'Receive during reporting month' },
+      { key: 'receiveTo', header: 'Transfer' },
+      { key: 'use', header: 'Use' },
+      { key: 'damage', header: 'Damage' },
+      { key: 'quantityOnHand', header: 'Stock at the reporting Time' },
+    ],
+    'vi-VN': [
+      { key: 'lotNumber', header: 'Đơn Vị' },
+      { key: 'expiresOn', header: 'Số lô' },
+      { key: 'stockLastMonth', header: 'chứng khoán kỳ trước' },
+      { key: 'transferFrom', header: 'chứng khoán kỳ trước' },
+      { key: 'receiveTo', header: 'Tồn đầu kỳ' },
+      { key: 'use', header: 'Nhập trong kỳ' },
+      { key: 'damage', header: 'Điều chuyển' },
+      { key: 'quantityOnHand', header: 'Sử dụng' },
+    ],
+  }
+  const rows = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 's.id', 'ii.siteId')
+    .leftJoin('InventoryLog as il', q =>
+      joinCurrentPeriodInventoryLog(
+        q,
+        query.minDate, // currentPeriodDateFrom,
+        query.maxDate // currentPeriodDateTo
+      )
+    )
+    .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
+    .select([
+      's.name as siteName',
+      'ii.lotNumber',
+      'ii.expiresOn',
+
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), '0') as 'transferFrom'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), '0') as 'receiveTo'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), '0') as 'use'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), '0') as 'damage'`
+      ),
+      'ii.quantityOnHand',
+    ])
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      InventoryItem: 'ii',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .groupBy(['ii.lotNumber', 'il.siteId'])
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+    dynamicColumns: headerDictionary[culture],
+    dataSelector: dataRow => {
+      const stockLastMonth =
+        parseInt(dataRow.quantityOnHand, 10) -
+        parseInt(dataRow.transferFrom, 10) +
+        parseInt(dataRow.receiveTo, 10) +
+        parseInt(dataRow.use, 10) +
+        parseInt(dataRow.damage, 10)
+      return {
+        ...dataRow,
+        stockLastMonth: stockLastMonth === 0 ? '0' : stockLastMonth,
+      }
+    },
+  }
+}
+
+async function getGeneXpertM4B3BiologicalProducts(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const rows = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 's.id', 'ii.siteId')
+    .leftJoin('InventoryLog as il', q =>
+      joinCurrentPeriodInventoryLog(
+        q,
+        query.minDate, // currentPeriodDateFrom,
+        query.maxDate // currentPeriodDateTo
+      )
+    )
+    .join('Consumable as c', 'c.id', 'ii.consumableId')
+    .join('Unit as u', 'u.id', 'c.unit')
+    .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
+    .select([
+      's.name as siteName',
+      'ii.lotNumber',
+      'c.name as productName',
+      'u.name as unit',
+      'ii.expiresOn',
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), 0) as 'receiveTo'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), 0) as 'use'`
+      ),
+      knex.raw(
+        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), 0) as 'damage'`
+      ),
+      'ii.quantityOnHand',
+    ])
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      InventoryItem: 'ii',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .groupBy(['ii.lotNumber', 'il.siteId'])
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+    dataSelector: (
+      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
+    ) => {
+      return {
+        ...dataRow,
+        stockLastMonth:
+          dataRow.quantityOnHand -
+          dataRow.transferFrom +
+          dataRow.receiveTo +
+          dataRow.use +
+          dataRow.damage,
+      }
+    },
+  }
+}
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
+  getGlobalFundInventoryReport,
   getReasonForTestingReport,
   getResultCountsByHIVStatus,
   getGeneXpertM4B3BiologicalProducts,

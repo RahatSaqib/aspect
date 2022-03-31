@@ -20,7 +20,11 @@ const countryReports = [
 module.exports = [
   {
     ...admin,
-    reports: [...admin.reports, ...countryReports],
+    reports: [
+      ...admin.reports,
+      ...countryReports,
+      'global_fund_inventory_report',
+    ],
   },
   {
     ...regionalOfficer,
