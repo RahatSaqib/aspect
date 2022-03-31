@@ -193,7 +193,7 @@ async function createReport(request, reply) {
   const extension = query.format || 'xlsx'
 
   if (_.isNil(query.minDate)) {
-    query.minDate = subDays(new Date(query.maxDate), 30)
+    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
   }
 
   const data = await getAllSheetsData(request, sheets)

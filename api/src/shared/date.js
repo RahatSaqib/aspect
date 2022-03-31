@@ -12,14 +12,10 @@ const {
   startOfToday,
   startOfMonth,
   endOfMonth,
+  isWeekend,
 } = require('date-fns')
 
 const { convertToLocalTime } = require('date-fns-timezone')
-
-function dateIsWeekend(date) {
-  const dayOfWeek = date.getDay()
-  return dayOfWeek === 6 || dayOfWeek === 0
-}
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -153,14 +149,14 @@ function getArrayOfDaysInRange(
   minDate,
   maxDate,
   initialProperties = null,
-  includeWeekends = true
+  excludeWeekends = false
 ) {
   const dates = []
   let typeSafeMinDate = minDate instanceof Date ? minDate : parseISO(minDate)
   const typeSafeMaxDate = maxDate instanceof Date ? maxDate : parseISO(maxDate)
 
   while (typeSafeMinDate <= typeSafeMaxDate) {
-    if (includeWeekends || !dateIsWeekend(typeSafeMinDate)) {
+    if (!excludeWeekends || !isWeekend(typeSafeMinDate)) {
       dates.push(
         initialProperties
           ? { date: typeSafeMinDate, ...initialProperties }

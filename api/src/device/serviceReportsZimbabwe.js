@@ -11,16 +11,22 @@ function getResultsBaseQuery(dataConstraints, query) {
     query.minDate,
     min([query.maxDate, now.toISOString()]),
     null,
-    false
+    true
   )
+
   return knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftOuterJoin('Result as r', 'd.id', 'r.deviceId')
-    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
-    .leftOuterJoin('Site as s', 's.id', 'd.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftOuterJoin('Result as r', joinResult => {
+      joinResult
+        .on('d.id', 'r.deviceId')
+        .andOn(knex.raw('r.endedOn'), '>', knex.raw(`'${query.minDate}'`))
+        .andOn(knex.raw('r.endedOn'), '<=', knex.raw(`'${query.maxDate}'`))
+    })
+    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .where('dt.externalId', 'CepheidGeneXpert')
     .modify(addConstraints, dataConstraints, {
@@ -29,11 +35,6 @@ function getResultsBaseQuery(dataConstraints, query) {
       geography: 'g',
       assay: 'a',
       result: 'r',
-    })
-    .where(whereQuery => {
-      whereQuery
-        .modify(filterDateRangeParams, query, 'r.endedOn')
-        .orWhere(knex.raw('r.endedOn IS NULL'))
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -64,8 +65,8 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
   return (
     knex('Device as d')
       .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .leftOuterJoin('Site as s', 's.id', 'd.siteId')
-      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      .innerJoin('Site as s', 's.id', 'd.siteId')
+      .innerJoin('Geography as g', 's.geographyId', 'g.id')
       .leftOuterJoin('State as st', 'g.stateId', 'st.id')
       .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
       .leftOuterJoin(
