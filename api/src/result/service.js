@@ -202,10 +202,9 @@ function getResultTreatmentStatus(response) {
 }
 
 async function getResultsForExport(auth, query) {
-  const userTimeOffset = query.maxDate
-  getOffsetFromIsoDateString(query.maxDate)
+  const offset = getOffsetFromIsoDateString(query.maxDate)
   const selectFields = [
-    ...getSelectCommonListFields(userTimeOffset),
+    ...getSelectCommonListFields(offset),
     knex.raw(
       `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
     ),
