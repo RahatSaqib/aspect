@@ -303,7 +303,7 @@ async function getGlobalFundInventoryReport(auth, query) {
 async function getGeneXpertM4B3BiologicalProducts(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const rows = await knex('InventoryItem as ii')
+  const kquery = knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', q =>
       joinCurrentPeriodInventoryLog(
@@ -322,20 +322,9 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
       'c.name as productName',
       'u.name as unit',
       'ii.expiresOn',
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
-      ),
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), 0) as 'receiveTo'`
-      ),
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), 0) as 'use'`
-      ),
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), 0) as 'damage'`
-      ),
       'ii.quantityOnHand',
     ])
+    .modify(queryBuilder => applyInventoryProjection(queryBuilder))
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -348,6 +337,9 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
       siteName: 's.name',
     })
     .groupBy(['ii.lotNumber', 'il.siteId'])
+  console.log('\x1b[36m', kquery.toString())
+  const rows = await kquery
+  // console.table(rows[0])
   return {
     ok: true,
     data: rows,
@@ -367,6 +359,33 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
     },
   }
 }
+
+function applyInventoryProjection(queryBuilder) {
+  queryBuilder.select(
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), 0) as 'transferFrom'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), 0) as 'receiveTo'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), 0) as 'use'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), 0) as 'damage'` // I don't have this in ConsumableReason
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.name = 'Expired' THEN  il.quantity END), 0) as 'expired'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.name = 'Stolen' THEN  il.quantity END), 0) as 'stolen'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.name = 'Lost' THEN  il.quantity END), 0) as 'lost'`
+    )
+  )
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
