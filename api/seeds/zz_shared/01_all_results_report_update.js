@@ -26,6 +26,7 @@ module.exports = require('../utils').seed(async knex => {
   const countrySpecificReportFixture = (await exists(absolutePath))
     ? require(relativeReportPath)
     : {}
+
   await updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName, {
     countrySpecificReportFixture,
   })
