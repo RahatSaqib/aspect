@@ -4,6 +4,8 @@ import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import omitBy from 'lodash/omitBy'
+import isUndefined from 'lodash/isUndefined'
 import map from 'lodash/map'
 import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
@@ -188,7 +190,7 @@ const ContactDetailsFormFormik = () => {
   )
 
   function transformInputValues(values) {
-    const newValues = cloneDeep(values)
+    const newValues = omitBy(cloneDeep(values), isUndefined)
     newValues.canLogIn = values.canLogIn === 1
     return newValues
   }
@@ -210,15 +212,17 @@ const ContactDetailsFormFormik = () => {
 
   useEffect(() => {
     if (!isLoading && editor) {
+      const initialValues = transformInputValues({
+        ...getInitialValues(items, false),
+        countryId: editor.countryId,
+        ...queryData?.data,
+      })
+
       const newConfig = {
         id: 'contact-update',
         rows: items,
         debug: false,
-        initialValues: transformInputValues({
-          ...getInitialValues(items, false),
-          countryId: editor.countryId,
-          ...queryData?.data,
-        }),
+        initialValues,
       }
 
       if (!isEqual(config, newConfig)) {
