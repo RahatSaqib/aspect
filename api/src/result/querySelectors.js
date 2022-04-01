@@ -134,7 +134,6 @@ function getListFields(userTimeOffset) {
 const LIST_FIELDS_TIMEZONE_SAFE = [
   'r.id',
   'r.externalId',
-  // knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',

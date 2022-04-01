@@ -71,11 +71,7 @@ function selectDateTimeProjectionInUserTimeZone(
   alias
 ) {
   queryBuilder.select(
-    knex.raw(
-      `CONVERT_TZ(${expression}, "+00:00", "${offset}") as ${
-        alias ?? expression
-      }`
-    )
+    getDateTimeProjectionInUserTimeZone(knex, expression, offset, alias)
   )
 }
 
