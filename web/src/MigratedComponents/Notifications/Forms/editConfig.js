@@ -77,9 +77,9 @@ function lgaSelectOptions(data) {
 }
 
 function labSelectOptions(data) {
-  return data.map(({ externalId, name }) => ({
+  return data.map(({ stateName, name }) => ({
     label: name,
-    value: externalId,
+    value: stateName,
   }))
 }
 
