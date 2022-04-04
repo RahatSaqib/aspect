@@ -11,10 +11,13 @@ const {
   systemOne,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
+const reports = require('./report')
+
+const countryReports = Object.values(reports).map(r => r.externalId)
 
 module.exports = [
   mergeJobFunctions(admin, {
-    reports: [...admin.reports, 'zw_device_performance'],
+    reports: [...admin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -75,7 +78,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(clinician, {
-    reports: [...clinician.reports, 'zw_device_performance'],
+    reports: [...clinician.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -148,7 +151,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(donor, {
-    reports: [...donor.reports, 'zw_device_performance'],
+    reports: [...donor.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -177,7 +180,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(labUser, {
-    reports: [...labUser.reports, 'zw_device_performance'],
+    reports: [...labUser.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -234,7 +237,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(ntp, {
-    reports: [...ntp.reports, 'zw_device_performance'],
+    reports: [...ntp.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -279,7 +282,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(ntpNoResults, {
-    reports: [...ntpNoResults.reports, 'zw_device_performance'],
+    reports: [...ntpNoResults.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -320,7 +323,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(regionalOfficer, {
-    reports: [...regionalOfficer.reports, 'zw_device_performance'],
+    reports: [...regionalOfficer.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -377,10 +380,10 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(systemOne, {
-    reports: [systemOne.reports, 'zw_device_performance'],
+    reports: [systemOne.reports, ...countryReports],
   }),
   mergeJobFunctions(technician, {
-    reports: [...technician.reports, 'zw_device_performance'],
+    reports: [...technician.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -421,7 +424,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(deviceMaker, {
-    reports: [...deviceMaker.reports, 'zw_device_performance'],
+    reports: [...deviceMaker.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
