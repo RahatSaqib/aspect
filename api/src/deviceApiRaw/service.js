@@ -52,7 +52,7 @@ async function continueUnprocessedRawData(queue) {
   if (!_.isEmpty(readyDeviceApiRawRecords)) {
     // eslint-disable-next-line no-console
     console.log(
-      `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API before starting web server.`
+      `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API while starting web server.`
     )
   }
   Promise.each(readyDeviceApiRawRecords, async readyDeviceApiRawRecord => {
