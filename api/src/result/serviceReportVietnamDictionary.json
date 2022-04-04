@@ -8,6 +8,9 @@
       { "key": "receiveTo", "header": "Transfer" },
       { "key": "use", "header": "Use" },
       { "key": "damage", "header": "Damage" },
+      { "key": "expired", "header": "Expired" },
+      { "key": "stolen", "header": "Stolen" },
+      { "key": "lost", "header": "Lost" },
       { "key": "quantityOnHand", "header": "Stock at the reporting Time" }
     ],
     "vi-VN": [
@@ -17,7 +20,10 @@
       { "key": "transferFrom", "header": "chứng khoán kỳ trước" },
       { "key": "receiveTo", "header": "Tồn đầu kỳ" },
       { "key": "use", "header": "Nhập trong kỳ" },
-      { "key": "damage", "header": "Điều chuyển" },
+      { "key": "damage", "header": "Hư hại" },
+      { "key": "expired", "header": "Hết hạn" },
+      { "key": "stolen", "header": "Ăn cắp" },
+      { "key": "lost", "header": "Mất" },
       { "key": "quantityOnHand", "header": "Sử dụng" }
     ]
   }
