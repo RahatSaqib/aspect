@@ -37,7 +37,7 @@ module.exports = {
         sortOrder: 0,
         moduleName: 'result/serviceReportVietnam',
         functionName: 'getGeneXpertM4B1PatientsReport',
-        },
+      },
     ],
   },
   resultCountsByHIVStatus: {
@@ -84,11 +84,13 @@ module.exports = {
     fileName: 'globalFundInventoryReport',
     exportCsv: true,
     sortOrder: 50,
-    sheets: {
-      sortOrder: 0,
-      moduleName: 'result/serviceReportVietnam',
-      functionName: 'getGlobalFundInventoryReport',
-    },
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getGlobalFundInventoryReport',
+      },
+    ],
   },
   reasonForTestingReport: {
     name: 'Reason for Testing Report',
@@ -121,6 +123,9 @@ module.exports = {
         sortOrder: 0,
         moduleName: 'result/serviceReportVietnam',
         functionName: 'getGeneXpertM4B3BiologicalProducts',
+        query: {
+          avoidStreaming: true,
+        },
       },
     ],
   },

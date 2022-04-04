@@ -14,8 +14,8 @@ const countryReports = [
   'result_counts_by_hiv_status',
   'xpert_m4b1_patients',
   'reason_for_testing_report',
-  ...keys(reports),
   'geneXpert_M4B3_biological_products',
+  ...keys(reports),
 ]
 
 module.exports = [

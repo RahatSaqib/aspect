@@ -412,12 +412,12 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
     ])
     .modify(queryBuilder => applyInventoryProjection(queryBuilder))
     .modify(addConstraints, dataConstraints, {
-      site: 's',
+      // site: 's',
       geography: 'g',
       InventoryItem: 'ii',
     })
     .modify(filterParams, query, {
-      countryId: 'g.countryId',
+      // countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
@@ -425,24 +425,23 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
     .groupBy(['ii.lotNumber', 'il.siteId'])
   console.log('\x1b[36m', kquery.toString())
   const rows = await kquery
-  // console.table(rows[0])
   return {
     ok: true,
     data: rows,
     total: rows.length,
-    dataSelector: (
-      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
-    ) => {
-      return {
-        ...dataRow,
-        stockLastMonth:
-          dataRow.quantityOnHand -
-          dataRow.transferFrom +
-          dataRow.receiveTo +
-          dataRow.use +
-          dataRow.damage,
-      }
-    },
+    // dataSelector: (
+    //   dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
+    // ) => {
+    //   return {
+    //     ...dataRow,
+    //     stockLastMonth:
+    //       dataRow.quantityOnHand -
+    //       dataRow.transferFrom +
+    //       dataRow.receiveTo +
+    //       dataRow.use +
+    //       dataRow.damage,
+    //   }
+    // },
   }
 }
 
