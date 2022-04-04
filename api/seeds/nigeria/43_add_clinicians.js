@@ -78,7 +78,7 @@ module.exports = require('../utils').seed(async knex => {
         culture,
         timezone,
         userId,
-        canLogin: 1,
+        canLogIn: 1,
         ...auditFields,
       })
       const [jobId] = await knex('Job').insert({ personId, jobFunctionId })

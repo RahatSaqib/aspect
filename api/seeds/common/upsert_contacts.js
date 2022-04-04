@@ -197,7 +197,7 @@ module.exports = async (knex, partnerData, contacts) => {
         cell: person.personCell || null,
         phone: person.personPhone || null,
         userId,
-        canLogin: !!userId,
+        canLogIn: !!userId,
         lastPartnerId: partnerId,
         lastCountryId: countryId,
         hidePatientId: person.hidePatientId,

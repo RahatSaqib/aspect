@@ -1,9 +1,139 @@
 const { knex } = require('../db')
+const { getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 
-const LIST_FIELDS = [
+function getReportCommonFields(userTimeOffset) {
+  const fields = REPORT_COMMON_FIELDS
+
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.endedOn',
+      userTimeOffset,
+      'endedOn'
+    )
+  )
+  return fields
+}
+
+function getSelectCommonListFields(userTimeOffset) {
+  const fields = SELECT_COMMON_FIELDS
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.startedOn',
+      userTimeOffset,
+      'startedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.endedOn',
+      userTimeOffset,
+      'endedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'rsl.changedOn',
+      userTimeOffset,
+      'resultWorkflowChangedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.consumableExpirationDate',
+      userTimeOffset,
+      'consumableExpirationDate'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.createdOn',
+      userTimeOffset,
+      'createdOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.updatedOn',
+      userTimeOffset,
+      'updatedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'sp.collectedOn',
+      userTimeOffset,
+      'sampleCollectedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'rsl.createdOn',
+      userTimeOffset,
+      'resultWorkflowLogCreatedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'rsl.changedOn',
+      userTimeOffset,
+      'resultWorkflowLogChangedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'rtsl.changedOn',
+      userTimeOffset,
+      'resultTreatmentStatusChangedOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'rslog.createdOn',
+      userTimeOffset,
+      'transferredOn'
+    )
+  )
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      'r.firstViewedOn',
+      userTimeOffset,
+      'firstViewedOn'
+    )
+  )
+
+  return fields
+}
+
+function getListFields(userTimeOffset) {
+  const fields = LIST_FIELDS_TIMEZONE_SAFE
+
+  fields.push(
+    getDateTimeProjectionInUserTimeZone(
+      knex,
+      knex.raw('IFNULL(r.endedOn, r.startedOn)'),
+      userTimeOffset,
+      'endedOn'
+    )
+  )
+  return fields
+}
+
+const LIST_FIELDS_TIMEZONE_SAFE = [
   'r.id',
   'r.externalId',
-  knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
@@ -41,7 +171,6 @@ const REPORT_COMMON_FIELDS = [
   'sp.externalId as sampleId',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age")) as patientAge'),
   'd.name as deviceName',
-  'endedOn',
   'r.notes',
   'rc1.name as resultCategory1Name',
   'rc2.name as resultCategory2Name',
@@ -56,8 +185,6 @@ const REPORT_COMMON_FIELDS = [
 const SELECT_COMMON_FIELDS = [
   'r.id',
   'r.externalId',
-  'r.startedOn',
-  'r.endedOn',
   'r.deviceId',
   'd.name as deviceName',
   'd.serial as deviceSerial',
@@ -71,7 +198,6 @@ const SELECT_COMMON_FIELDS = [
   'rs.id as resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
-  'rsl.changedOn as resultWorkflowChangedOn',
   'rts.id as resultTreatmentStatusId',
   'rts.externalId as resultTreatmentStatus',
   'r.resultData',
@@ -81,7 +207,6 @@ const SELECT_COMMON_FIELDS = [
   'r.assayVersion',
   'r.consumableSerial',
   'r.consumableLot',
-  'r.consumableExpirationDate',
   'r.instrumentSerial',
   'r.moduleName',
   'r.moduleSerial',
@@ -92,13 +217,10 @@ const SELECT_COMMON_FIELDS = [
   'r.errorCode',
   'r.errorNotes',
   'a.name as assayName',
-  'r.createdOn',
-  'r.updatedOn',
   'r.assayId',
   'sp.externalId as sampleId',
   'r.sampleGroup',
   'sp.originSiteId as sampleOriginSiteId',
-  'sp.collectedOn as sampleCollectedOn',
   'so.name as sampleOriginSiteName',
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
@@ -111,28 +233,27 @@ const SELECT_COMMON_FIELDS = [
   'r.patientData',
   'rsl.reason as resultWorkflowLogReason',
   'rsl.operator as resultWorkflowLogOperator',
-  'rsl.createdOn as resultWorkflowLogCreatedOn',
-  'rsl.changedOn as resultWorkflowLogChangedOn',
   'rtsl.method as resultTreatmentMethod',
   'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
-  'rtsl.changedOn as resultTreatmentStatusChangedOn',
-  'rtsl.createdOn as resultTreatmentStatusCreatedOn',
-  // transfer result
   'r.reportableSiteId',
   'sirep.name as reportableSiteName',
-  'rslog.createdOn as transferredOn',
   'ptr.name as transferredBy',
   'r.resultStatusLogId',
-  'r.firstViewedOn',
   'r.patientCaseId',
   'ca.externalId as caseExternalId',
   'dis.id as diseaseId',
   'dis.name as diseaseName',
   'dis.externalId as diseaseExternalId',
 ]
-const SELECT_SHOW_FIELDS = [
-  ...SELECT_COMMON_FIELDS,
+
+function getSelectShowFields(userTimeZone) {
+  return [
+    ...getSelectCommonListFields(userTimeZone),
+    ...SELECT_SHOW_FIELDS_TIMEZONE_SAFE,
+  ]
+}
+const SELECT_SHOW_FIELDS_TIMEZONE_SAFE = [
   'rf.formSchema',
   knex.raw('IFNULL(pa.canEdit, 0) AS canEdit'),
   knex.raw('IFNULL(pa.canDelete, 0) AS canDelete'),
@@ -204,10 +325,10 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
 ]
 
 module.exports = {
-  LIST_FIELDS,
-  REPORT_COMMON_FIELDS,
-  SELECT_COMMON_FIELDS,
-  SELECT_SHOW_FIELDS,
+  getListFields,
+  getSelectCommonListFields,
+  getReportCommonFields,
+  getSelectShowFields,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
 }
