@@ -16,7 +16,7 @@ const {
   getMonthYearField,
   getOffsetFromIsoDateString,
   parseDateOrDefault,
-  selectDateTimeProjectionInUserTimeZone,
+  getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
 
@@ -51,12 +51,13 @@ async function getDeviceActivityPercentReport(auth, query) {
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus'
     )
-    .modify(
-      selectDateTimeProjectionInUserTimeZone,
-      knex,
-      'MAX(r.endedOn)',
-      offset,
-      'lastUploadOn'
+    .select(
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'MAX(r.endedOn)',
+        offset,
+        'lastUploadOn'
+      )
     )
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')

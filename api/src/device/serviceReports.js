@@ -24,7 +24,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
-  selectDateTimeProjectionInUserTimeZone,
+  getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
 const { getUser } = require('../auth/service')
 
@@ -117,12 +117,13 @@ async function getDeviceActivityReport(auth, query) {
       'dms.name as deviceMaintenanceStatus'
     )
     .countDistinct('r.id as totalResults')
-    .modify(
-      selectDateTimeProjectionInUserTimeZone,
-      knex,
-      'MAX(r.endedOn)',
-      offset,
-      'lastUploadOn'
+    .select(
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'MAX(r.endedOn)',
+        offset,
+        'lastUploadOn'
+      )
     )
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
@@ -267,12 +268,13 @@ async function getGeneXpertIssuesReport(auth, query) {
       site: 's',
     })
     .modify(sortPageParams, query, 'i.createdOn')
-    .modify(
-      selectDateTimeProjectionInUserTimeZone,
-      knex,
-      'i.createdOn',
-      offset,
-      'triggeredOn'
+    .select(
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'i.createdOn',
+        offset,
+        'triggeredOn'
+      )
     )
     .select(
       's.name as siteName',

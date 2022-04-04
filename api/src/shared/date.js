@@ -55,26 +55,6 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
   knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") as ${alias ?? field}`)
 
-/**
- * - Modifies a knex query to project a datetime field in the specified timezone.
- * @param {*} queryBuilder - Query Builder
- * @param {*} knex - Knex ref.
- * @param {string} expression - Field or expression to add
- * @param {string} offset - Time offset in ISO format (e.g. +05:00)
- * @param {string=} alias - Optional. name to be returned if you don't want the field name.
- */
-function selectDateTimeProjectionInUserTimeZone(
-  queryBuilder,
-  knex,
-  expression,
-  offset,
-  alias
-) {
-  queryBuilder.select(
-    getDateTimeProjectionInUserTimeZone(knex, expression, offset, alias)
-  )
-}
-
 const getISODateUserTimeZoneField = (
   knex,
   field,
@@ -303,7 +283,6 @@ module.exports = {
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
   getDateTimeProjectionInUserTimeZone,
-  selectDateTimeProjectionInUserTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
   getOffsetFromTimeZone,
