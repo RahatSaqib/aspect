@@ -181,11 +181,11 @@ async function getResultCountsByHIVStatus(auth, query) {
     .select(
       knex.raw(`
         CASE CAST(resultData->>'$.customFieldData."255".value' AS UNSIGNED)
-          WHEN 0 THEN 'HIV NEGATIVE' 
-          WHEN 1 THEN 'HIV POSITIVE' 
-          WHEN 2 THEN 'HIV UNKNOWN STATUS' 
-          ELSE 'HIV Status Unspecified' 
-        END as hivStatus 
+          WHEN 0 THEN 'HIV NEGATIVE'
+          WHEN 1 THEN 'HIV POSITIVE'
+          WHEN 2 THEN 'HIV UNKNOWN STATUS'
+          ELSE 'HIV Status Unspecified'
+        END as hivStatus
       `),
       'rc1.name as resultCategory1',
       'rc2.name as resultCategory2'
@@ -202,50 +202,55 @@ async function getResultCountsByHIVStatus(auth, query) {
     total: data.length,
   }
 }
+function applyInventoryProjection(queryBuilder, maxDate) {
+  queryBuilder.select(
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferSent' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'transferFrom'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferReceived' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'receiveTo'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TestConducted' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'use'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Damage' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'damage'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Expired' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'expired'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Stolen' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'stolen'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Lost' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'lost'`
+    )
+  )
+}
 
-const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom, dateTo) => {
+const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
   joinQuery
     .on('il.inventoryItemId', 'ii.id')
-    .andOn(
-      knex.raw(
-        `IFNULL(il.adjustedFrom, il.createdOn) >= DATE('${dateFrom}') and IFNULL(il.adjustedFrom, il.createdOn) <= DATE('${dateTo}')`
-      )
-    )
+    .andOn(knex.raw(`IFNULL(il.adjustedFrom, il.createdOn) >= '${dateFrom}'`))
 }
 
 async function getGlobalFundInventoryReport(auth, query) {
+  const globalFundInventoryReportDictionary =
+    require('./serviceReportVietnamDictionary.json').globalFundInventoryReportDictionary
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const headerDictionary = {
-    'en-US': [
-      { key: 'lotNumber', header: 'Lot Number' },
-      { key: 'expiresOn', header: 'Expiration Date' },
-      { key: 'stockLastMonth', header: 'Stock from previous period' },
-      { key: 'transferFrom', header: 'Receive during reporting month' },
-      { key: 'receiveTo', header: 'Transfer' },
-      { key: 'use', header: 'Use' },
-      { key: 'damage', header: 'Damage' },
-      { key: 'quantityOnHand', header: 'Stock at the reporting Time' },
-    ],
-    'vi-VN': [
-      { key: 'lotNumber', header: 'Đơn Vị' },
-      { key: 'expiresOn', header: 'Số lô' },
-      { key: 'stockLastMonth', header: 'chứng khoán kỳ trước' },
-      { key: 'transferFrom', header: 'chứng khoán kỳ trước' },
-      { key: 'receiveTo', header: 'Tồn đầu kỳ' },
-      { key: 'use', header: 'Nhập trong kỳ' },
-      { key: 'damage', header: 'Điều chuyển' },
-      { key: 'quantityOnHand', header: 'Sử dụng' },
-    ],
-  }
+  const maxDate = query.maxDate
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', q =>
-      joinCurrentPeriodInventoryLog(
-        q,
-        query.minDate, // currentPeriodDateFrom,
-        query.maxDate // currentPeriodDateTo
-      )
+      joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString())
     )
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
@@ -253,21 +258,11 @@ async function getGlobalFundInventoryReport(auth, query) {
       's.name as siteName',
       'ii.lotNumber',
       'ii.expiresOn',
-
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN il.operation = 'transfer from' THEN  il.quantity END), '0') as 'transferFrom'`
-      ),
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN il.operation = 'receive to' THEN  il.quantity END), '0') as 'receiveTo'`
-      ),
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN cr.name = 'Test Conducted' THEN  il.quantity END), '0') as 'use'`
-      ),
-      knex.raw(
-        `IFNULL(SUM(CASE WHEN cr.name = 'Damage' THEN  il.quantity END), '0') as 'damage'`
-      ),
-      'ii.quantityOnHand',
+      knex.raw(`
+      ii.quantityonhand - SUM(CASE WHEN IFNULL(il.adjustedFrom, il.createdOn) >
+      '${maxDate}' THEN il.quantity * IF(cr.decrease, -1, 1) ELSE 0 END) AS quantityOnHand`),
     ])
+    .modify(queryBuilder => applyInventoryProjection(queryBuilder, maxDate))
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -284,9 +279,9 @@ async function getGlobalFundInventoryReport(auth, query) {
     ok: true,
     data: rows,
     total: rows.length,
-    dynamicColumns: headerDictionary[culture],
+    dynamicColumns: globalFundInventoryReportDictionary[culture],
     dataSelector: dataRow => {
-      const stockLastMonth =
+      const stockLastPeriod =
         parseInt(dataRow.quantityOnHand, 10) -
         parseInt(dataRow.transferFrom, 10) +
         parseInt(dataRow.receiveTo, 10) +
@@ -294,7 +289,7 @@ async function getGlobalFundInventoryReport(auth, query) {
         parseInt(dataRow.damage, 10)
       return {
         ...dataRow,
-        stockLastMonth: stockLastMonth === 0 ? '0' : stockLastMonth,
+        stockLastMonth: stockLastPeriod === 0 ? '0' : stockLastPeriod,
       }
     },
   }
