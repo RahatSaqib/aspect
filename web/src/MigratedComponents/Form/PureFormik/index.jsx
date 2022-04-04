@@ -23,26 +23,34 @@ const AspectPureFormik = ({
       {formik => (
         <Fragment>
           <Form noValidate>
-            {map(rows, (items, index) => (
-              <div
-                key={`${id}-row${index}`}
-                className="form__row"
-                style={{ display: 'flex', justifyContent: 'space-between' }}
-              >
-                {map(items, ({ component: Input, ...input }) => (
-                  <div
-                    key={`${id}-row${index}-${input?.id}`}
-                    style={{ width: '100%', margin: '0 10px' }}
-                  >
-                    <FastField
-                      name={input?.id}
-                      inputProps={input}
-                      component={Input}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
+            {map(rows, (items, index) => {
+              /* eslint-disable no-console */
+              console.log('rows', rows)
+              return (
+                <div
+                  key={`${id}-row${index}`}
+                  className="form__row"
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  {map(items, ({ component: Input, ...input }) => {
+                    /* eslint-disable no-console */
+                    console.log('input', input, input?.id)
+                    return (
+                      <div
+                        key={`${id}-row${index}-${input?.id}`}
+                        style={{ width: '100%', margin: '0 10px' }}
+                      >
+                        <FastField
+                          name={input?.id}
+                          inputProps={input}
+                          component={Input}
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })}
             {map(actions, ({ id, component: Component, ...rest }) => (
               <Component key={id} {...rest} formik={formik} />
             ))}
