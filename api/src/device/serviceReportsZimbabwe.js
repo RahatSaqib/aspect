@@ -19,6 +19,7 @@ function getResultsBaseQuery(dataConstraints, query) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftOuterJoin('Result as r', joinResult => {
       joinResult
         .on('d.id', 'r.deviceId')
@@ -35,7 +36,7 @@ function getResultsBaseQuery(dataConstraints, query) {
       site: 's',
       geography: 'g',
       assay: 'a',
-      result: 'r',
+      partner: 'p',
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
