@@ -62,6 +62,8 @@ const ContactDetailsFormFormik = () => {
       'userLockedOut',
     ]
     const { setSubmitting, values } = formik
+    /* eslint-disable no-console */
+    console.log('values', values)
     const { id } = values
 
     setTimeout(() => {
@@ -196,11 +198,13 @@ const ContactDetailsFormFormik = () => {
     newValues.canLogIn = values?.canLogIn === 1 || values?.canLogIn ? 1 : 0
     newValues.phone = replace(values.phone, / /g, '')
     newValues.cell = replace(values.cell, / /g, '')
-    map(newValues, (value, key) =>
-      value === '' || isNil(value) || includes(omitValues, key)
-        ? delete newValues[key]
-        : false
-    )
+    /* eslint-disable lodash/collection-return */
+    map(newValues, (value, key) => {
+      /* eslint-disable no-console */
+      console.log('transformOutputValues value, key', value, key)
+      if (value === '' || isNil(value) || includes(omitValues, key))
+        delete newValues[key]
+    })
     return newValues
   }
 

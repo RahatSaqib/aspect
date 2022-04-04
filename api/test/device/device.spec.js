@@ -328,7 +328,7 @@ describe('Device routes', () => {
       assert.property(res.body, 'total')
     })
 
-    it.skip('should return only devices that have linked issues', async () => {
+    it('should return only devices that have linked issues', async () => {
       const devicesWithIssues = devices =>
         _.filter(
           devices,
@@ -470,33 +470,26 @@ describe('Device routes', () => {
 
       it('should filter based on device maintenance status', async () => {
         const filterOnDeviceMaintenanceStatus = ['inactiveDownForRepair']
-
-        const url = `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
-          startOfMonth(subMonths(new Date(), 1)),
-          'yyyy-MM-dd'
-        )}&maxDate=${formatDateOrDefault(
-          endOfMonth(subMonths(new Date(), 1)),
-          'yyyy-MM-dd'
-        )}&${filterOnDeviceMaintenanceStatus
-          .map(status => `deviceMaintenanceStatusId=${status}`)
-          .join('&')}`
-
-        const devicesResponse = await server
-          .get(url)
+        const devicesReponse = await server
+          .get(
+            `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
+              startOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&maxDate=${formatDateOrDefault(
+              endOfMonth(subMonths(new Date(), 1)),
+              'yyyy-MM-dd'
+            )}&${filterOnDeviceMaintenanceStatus
+              .map(status => `deviceMaintenanceStatusId=${status}`)
+              .join('&')}`
+          )
           .set('Authorization', `Bearer ${shared.token}`)
-
+        assert.isOk(devicesReponse.body.ok)
+        assert.isAbove(devicesReponse.body.length, 0)
         assert.equal(
-          devicesResponse.status,
-          200,
-          `${url} - must return HTTP status 200`
+          devicesReponse.body.length,
+          devicesReponse.body.data.length
         )
-        assert.isOk(devicesResponse.body.ok)
-        assert.isAbove(devicesResponse.body.length, 0)
-        assert.equal(
-          devicesResponse.body.length,
-          devicesResponse.body.data.length
-        )
-        devicesResponse.body.data.forEach(device => {
+        devicesReponse.body.data.forEach(device => {
           assert.isAbove(
             device.days.filter(day =>
               filterOnDeviceMaintenanceStatus.includes(day.externalId)

@@ -1,12 +1,19 @@
+const reduce = require('lodash/reduce')
+const includes = require('lodash/includes')
 const { endOfMonth, startOfMonth } = require('date-fns')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams } = require('../db')
+const [m4b1Mapping] = require('../../templates/xpert_m4b1_patients/mapping')
 const {
   getWellFormattedDateStringWithTimezone,
   startOfMonthUTC,
   endOfMonthUTC,
 } = require('../shared/date')
+const {
+  getTypeOfPatientCategory,
+  getMappingFieldName,
+} = require('./serviceReportVietnam/geneXpertM4B1PatientsReport')
 
 function getBaseQuery(dataConstraints, query) {
   return knex('Result as r')
@@ -30,6 +37,79 @@ function getBaseQuery(dataConstraints, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+}
+
+async function getGeneXpertM4B1PatientsReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rawReport = await getBaseQuery(dataConstraints, query)
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .groupBy([
+      'rc1.id',
+      'rc2.id',
+      knex.raw(`r.resultData->>'$.customFieldData."257".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."256".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."251".value'`),
+      knex.raw(`r.resultData->>'$.customFieldData."254".value'`),
+    ])
+    .select([
+      'rc1.externalId as resultCategory1',
+      'rc2.externalId as resultCategory2',
+      knex.raw(
+        `r.resultData->>'$.customFieldData."257".value' as typeOfPatient`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."256".value' as specimenType`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."251".value' as testingReason`
+      ),
+      knex.raw(
+        `r.resultData->>'$.customFieldData."254".value' as previouslyTreated`
+      ),
+      knex.raw('COUNT(*) as quantity'),
+    ])
+
+  const defaultValues = {}
+  // Init default values set to 0
+  Object.values(m4b1Mapping).forEach(reportValue => {
+    defaultValues[reportValue] = 0
+  })
+  // Get the types of patient included in the report
+  const typesOfPatient = Object.keys(defaultValues).map(
+    reportKey => reportKey.split('_')[2]
+  )
+
+  const report = reduce(
+    rawReport,
+    (partialReport, reportItem) => {
+      const typeOfPatient = getTypeOfPatientCategory(
+        reportItem.typeOfPatient,
+        reportItem.specimenType,
+        typesOfPatient
+      )
+
+      const fieldName = getMappingFieldName(reportItem, typeOfPatient)
+      partialReport[fieldName] += reportItem.quantity
+
+      // "Active Screening/Other" is a separate count, not included in totals, so it's treated apart
+      if (
+        includes(
+          ['Sàng lọc chủ động: ghi rõ', 'Khác: ghi rõ'],
+          reportItem.testingReason
+        )
+      ) {
+        partialReport[`ActiveScreening_${typeOfPatient}`] += reportItem.quantity
+      }
+
+      return partialReport
+    },
+    defaultValues
+  )
+
+  return {
+    ok: true,
+    data: report,
+  }
 }
 
 async function getGeneXpertM4B2ActivitiesReport(auth, query) {
@@ -103,13 +183,17 @@ async function getListRResistantTestReport(auth, query) {
     .select([
       knex.raw("IFNULL(patientData->>'$.name', '-') as fullName"),
       knex.raw(
-        "CASE WHEN IFNULL(patientData->>'$.age', '-') = 'null' THEN '-' ELSE IFNULL(patientData->>'$.age', '-') END as age"
+        "CASE WHEN IFNULL(patientData->>'$.age', 'null') = 'null' THEN '-' ELSE patientData->>'$.age' END as age"
       ),
-      knex.raw("IFNULL(patientData->>'$.address', '-') as address"),
+      knex.raw(
+        "CASE WHEN IFNULL(patientData->>'$.address', 'null') = 'null' THEN '-' ELSE patientData->>'$.address' END as address"
+      ),
+      knex.raw(
+        `CASE WHEN IFNULL(r.resultData->>'$.customFieldData."257".value', 'null') = 'null' THEN '-' ELSE r.resultData->>'$.customFieldData."257".value' END as targetGroup`
+      ),
       'r.endedOn as xpertResultDate',
       'r.notes',
     ])
-
   return {
     ok: true,
     data: {
@@ -299,6 +383,7 @@ module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
   getGlobalFundInventoryReport,
+  getGeneXpertM4B1PatientsReport,
   getReasonForTestingReport,
   getResultCountsByHIVStatus,
 }

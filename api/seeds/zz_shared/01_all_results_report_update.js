@@ -5,7 +5,7 @@ const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_fun
 const jobFunctionFixture = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
-)}fixtures/jobFunctions`)
+)}/fixtures/jobFunctions`)
 
 const { partnerName } = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
@@ -14,7 +14,7 @@ const { partnerName } = require(`../${process.env['seeds.directory'].replace(
 const relativeReportPath = `../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
-)}fixtures/reports.js`
+)}/fixtures/reports.js`
 const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace(
   '/zz_shared',
   ''
@@ -26,6 +26,7 @@ module.exports = require('../utils').seed(async knex => {
   const countrySpecificReportFixture = (await exists(absolutePath))
     ? require(relativeReportPath)
     : {}
+
   await updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName, {
     countrySpecificReportFixture,
   })
