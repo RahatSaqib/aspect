@@ -4,8 +4,8 @@ import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
-import omitBy from 'lodash/omitBy'
-import isUndefined from 'lodash/isUndefined'
+import keys from 'lodash/keys'
+import reduce from 'lodash/reduce'
 import map from 'lodash/map'
 import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
@@ -64,8 +64,6 @@ const ContactDetailsFormFormik = () => {
       'userLockedOut',
     ]
     const { setSubmitting, values } = formik
-    /* eslint-disable no-console */
-    console.log('values', values)
     const { id } = values
 
     setTimeout(() => {
@@ -190,7 +188,18 @@ const ContactDetailsFormFormik = () => {
   )
 
   function transformInputValues(values) {
-    const newValues = omitBy(cloneDeep(values), isUndefined)
+    let newValues = cloneDeep(values)
+    newValues = reduce(
+      keys(newValues),
+      (acc, key) => {
+        if (key !== 'undefined') {
+          acc[key] = newValues[key]
+        }
+        return acc
+      },
+      {}
+    )
+    // explicitly set boolean value
     newValues.canLogIn = values.canLogIn === 1
     return newValues
   }
@@ -202,8 +211,6 @@ const ContactDetailsFormFormik = () => {
     newValues.cell = replace(values.cell, / /g, '')
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
-      /* eslint-disable no-console */
-      console.log('transformOutputValues value, key', value, key)
       if (value === '' || isNil(value) || includes(omitValues, key))
         delete newValues[key]
     })
