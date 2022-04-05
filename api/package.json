@@ -17,7 +17,6 @@
     "lint": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js",
     "mocha:contract": "TZ=UTC mocha --config test/contract.mocharc.js",
     "mocha:contract:json": "TZ=UTC mocha --reporter json > test-results.json",
-    "mocha:contract:npm": "TZ=UTC mocha --reporter mocha-json-output-reporter --reporter-options output=test-results.json",
     "mocha:unit": "TZ=UTC mocha --config test/unit.mocharc.js",
     "mocha:unit:clear:coverage": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "mocha:unit:coverage": "nyc mocha --config test/unit.mocharc.js",

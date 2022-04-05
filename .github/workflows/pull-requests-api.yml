@@ -1,6 +1,5 @@
 name: API - Build and Test Aspect backend
-'on': fork
-# 'on': pull_request
+'on': pull_request
 jobs:
   Build-and-Test-API:
     runs-on: ubuntu-latest
@@ -99,8 +98,11 @@ jobs:
       - name: 'Run Server'
         run: yarn start:api:bg
 
-      # - name: 'Run API Contract Batch 1'
-      #   run: yarn api:contract --spec test/{_setup,accountDetails,alert,assay,auth,case,consumable,dashboard,device,deviceApiKey,deviceApiRaw,deviceMaintenanceStatus,disease,excelReports,forms,geography,inventory,job,partner,patient,person,report,result,seedHelpers,server,shared,site,stringTemplate,tag,task,utils,issue, sms, webhook, email, notification, pushNotification,scheduler}/*.spec.js*
+      - name: 'Run API Unit Tests'
+        run: yarn api:unit
+
+      - name: 'Run API Contract Tests'
+        run: yarn api:contract
 
       # - name: 'Contract Test Report'
       #   uses: dorny/test-reporter@v1
