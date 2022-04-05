@@ -7,6 +7,8 @@ jobs:
       dbUser: 'root'
       dbPassword: 'rootpass'
       dbName: 'aspect'
+      rabbitUser: 'guest'
+      rabbitPassword: 'guest'
     steps:
       - name: 'Checkout repo'
         uses: actions/checkout@v2
@@ -73,22 +75,25 @@ jobs:
       # - name: 'Setup RabbitMQ'
       #   uses: mer-team/rabbitmq-mng-action@v1.2
       #   with:
-      #     RABBITMQ_USER: 'guest'
-      #     RABBITMQ_PASS: 'guest'
+      #     RABBITMQ_USER: $rabbitUser
+      #     RABBITMQ_PASS: $rabbitPassword
       #     RABBITMQ_PORT: 5672
       #     RABBITMQ_MNG_PORT: 15672
       #     RABBITMQ_TAG: '3-management-alpine'
 
       - uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: |
+            **/node_modules
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: 'Install Node Modules'
         run: 'yarn start:api:install'
 
-      - name: 'Seed DB & Run Migrations'
-        run: yarn start:api:seed
+      # - name: 'Seed DB & Run Migrations'
+      #   run: yarn start:api:seed
 
       - name: 'Run Server'
         run: yarn start:api:bg
