@@ -50,7 +50,7 @@ function getResultsBaseQuery(query) {
         `IFNULL(ROUND(COUNT(r.id) * 100 / (${days.length} * dc.dailyCapacity), 2), 0) as utilizationRate`
       ),
       knex.raw(
-        `IFNULL(ROUND(SUM(TIMESTAMPDIFF(MINUTE, r.endedOn, r.createdOn)) / 60 / COUNT(r.id), 2), 0) as averageDelayToUpload`
+        `IFNULL(ROUND(SUM(TIMESTAMPDIFF(MINUTE, IFNULL(r.endedOn, NOW()), r.createdOn)) / 60 / COUNT(r.id), 2), 0) as averageDelayToUpload`
       ),
       knex.raw('COUNT(r.id) as totalTests'),
     ])
@@ -148,7 +148,7 @@ async function getDevicePerformanceReport(auth, query) {
 
   // Merge by deviceId
   let data = []
-  keys(maintenanceBasedDataByDevice).forEach(deviceId => {
+  keys(resultBasedDataByDevice).forEach(deviceId => {
     data.push(
       merge(
         resultBasedDataByDevice[deviceId],
