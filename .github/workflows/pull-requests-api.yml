@@ -20,7 +20,7 @@ jobs:
           echo twilioAccountSid='should-be-gh-secret' >> ./api/.env
           echo twilioAuthToken='should-be-gh-secret' >> ./api/.env
           echo twilioFromNumber='should-be-gh-secret' >> ./api/.env
-          echo twilioMessagingServiceSi='should-be-gh-secret' >> ./api/.env
+          echo twilioMessagingServiceSid='should-be-gh-secret' >> ./api/.env
 
       - name: 'Setup MySQL'
         uses: haltuf/mysql-action@master
