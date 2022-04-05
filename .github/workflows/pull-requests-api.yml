@@ -72,14 +72,14 @@ jobs:
           mysql root password: $dbPassword
           authentication plugin: 'mysql_native_password'
 
-      # - name: 'Setup RabbitMQ'
-      #   uses: mer-team/rabbitmq-mng-action@v1.2
-      #   with:
-      #     RABBITMQ_USER: $rabbitUser
-      #     RABBITMQ_PASS: $rabbitPassword
-      #     RABBITMQ_PORT: 5672
-      #     RABBITMQ_MNG_PORT: 15672
-      #     RABBITMQ_TAG: '3-management-alpine'
+      - name: 'Setup RabbitMQ'
+        uses: mer-team/rabbitmq-mng-action@v1.2
+        with:
+          RABBITMQ_USER: $rabbitUser
+          RABBITMQ_PASS: $rabbitPassword
+          RABBITMQ_PORT: 5672
+          RABBITMQ_MNG_PORT: 15672
+          RABBITMQ_TAG: '3-management-alpine'
 
       - uses: actions/cache@v2
         with:
