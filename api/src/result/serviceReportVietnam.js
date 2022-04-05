@@ -286,6 +286,7 @@ async function getResultCountsByHIVStatus(auth, query) {
     total: data.length,
   }
 }
+
 function applyInventoryProjection(queryBuilder, maxDate) {
   queryBuilder.select(
     knex.raw(
@@ -326,11 +327,12 @@ const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
 }
 
 async function getGlobalFundInventoryReport(auth, query) {
-  const globalFundInventoryReportDictionary =
-    require('./serviceReportVietnamDictionary.json').globalFundInventoryReportDictionary
+  const {
+    globalFundInventoryReportDictionary,
+  } = require('./serviceReportVietnamDictionary.json')
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const maxDate = query.maxDate
+  const { maxDate } = query
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
     .leftJoin('InventoryLog as il', q =>
