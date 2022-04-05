@@ -17,6 +17,13 @@
     "start:api": "yarn --cwd ./api start",
     "start:api:fresh": "yarn --cwd ./api start:fresh",
     "start:web": "yarn --cwd ./web start",
-    "start:web:fresh": "yarn --cwd ./web start:fresh"
+    "start:web:fresh": "yarn --cwd ./web start:fresh",
+    "actions:api": "yarn --cwd ./api start:ci",
+    "actions": "yarn actions:api",
+    "start:api:install": "yarn --cwd ./api install",
+    "start:api:seed": "yarn --cwd ./api db:reseed",
+    "start:api:bg": "yarn --cwd ./api start:background:pm2",
+    "api:contract": "yarn --cwd ./api mocha:contract",
+    "stop:api:bg": "yarn --cwd ./api stop:background:pm2"
   }
 }
