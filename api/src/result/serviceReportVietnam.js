@@ -1,5 +1,6 @@
 const reduce = require('lodash/reduce')
 const includes = require('lodash/includes')
+const sum = require('lodash/sum')
 const { endOfMonth, startOfMonth } = require('date-fns')
 
 const { knex, filterDateRangeParams, filterParams } = require('../db')
@@ -425,9 +426,28 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
     .groupBy(['ii.lotNumber', 'il.siteId'])
   console.log('\x1b[36m', kquery.toString())
   const rows = await kquery
+  const totalInventory = -1
+  const totalTransferFrom = sum(rows, 'transferFrom')
+  const totalUse = sum(rows, 'use')
+  const totalReceive = sum(rows, 'receiveTo')
+  const totalExpired = sum(rows, 'expired')
+  const totalDamage = sum(rows, 'damage')
+  const totalLost = sum(rows, 'lost')
+  const totalExixtence = 0
+
   return {
     ok: true,
-    data: rows,
+    data: {
+      rows,
+      totalInventory,
+      totalTransferFrom,
+      totalReceive,
+      totalUse,
+      totalExpired,
+      totalDamage,
+      totalLost,
+      totalExixtence,
+    },
     total: rows.length,
     // dataSelector: (
     //   dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
