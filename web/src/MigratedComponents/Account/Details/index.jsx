@@ -211,7 +211,12 @@ const ContactDetailsFormFormik = () => {
     newValues.cell = replace(values.cell, / /g, '')
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
-      if (value === '' || isNil(value) || includes(omitValues, key))
+      if (
+        key === 'undefined' ||
+        value === '' ||
+        isNil(value) ||
+        includes(omitValues, key)
+      )
         delete newValues[key]
     })
     return newValues
