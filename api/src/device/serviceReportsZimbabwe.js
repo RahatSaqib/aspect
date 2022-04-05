@@ -6,7 +6,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../db')
 const { getArrayOfDaysInRange } = require('../shared/date')
 
-function getResultsBaseQuery(dataConstraints, query) {
+function getResultsBaseQuery(query) {
   const now = new Date()
   const days = getArrayOfDaysInRange(
     parseISO(query.minDate),
@@ -31,13 +31,6 @@ function getResultsBaseQuery(dataConstraints, query) {
     .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .where('dt.externalId', 'CepheidGeneXpert')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      assay: 'a',
-      partner: 'p',
-    })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -107,7 +100,7 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
         device: 'd',
         site: 's',
         geography: 'g',
-        assay: 'a',
+        deviceType: 'dt',
       })
       .modify(filterDateRangeParams, query, 'dmsl.day')
       .modify(filterParams, query, {
@@ -134,11 +127,14 @@ async function getDevicePerformanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const [resultBasedData, maintenanceBasedData] = await Promise.all([
-    getResultsBaseQuery(dataConstraints, query).orderBy([
-      'state',
-      'lga',
-      'deviceName',
-    ]),
+    getResultsBaseQuery(query)
+      .modify(addConstraints, dataConstraints, {
+        device: 'd',
+        site: 's',
+        geography: 'g',
+        partner: 'p',
+      })
+      .orderBy(['state', 'lga', 'deviceName']),
     getMaintenanceBaseQuery(dataConstraints, query).orderBy([
       'state',
       'lga',
@@ -171,8 +167,15 @@ async function getDevicePerformanceReport(auth, query) {
 async function getDevicePerformanceReportByAssay(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const data = await getResultsBaseQuery(dataConstraints, query)
+  const data = await getResultsBaseQuery(query)
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      partner: 'p',
+      assay: 'a',
+    })
     .groupBy('r.assayId')
     .orderBy(['state', 'lga', 'deviceName', 'a.name'])
     .select(['a.name as assayName', knex.raw('COUNT(r.id) as totalTests')])
