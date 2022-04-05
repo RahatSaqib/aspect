@@ -1,0 +1,66 @@
+name: Run and test API on PR
+'on': pull_request
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout repo'
+        uses: actions/checkout@v2
+
+      - name: 'Setup NODE'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: 'Create env file'
+        run: |
+          cp -R ./api/.env.example ./api/.env
+          
+
+      # - name: 'Setup MySQL'
+      #   uses: haltuf/mysql-action@master
+      #   with:
+      #     character set server: 'utf8'
+      #     collation server: 'utf8_general_ci'
+      #     mysql version: '8.0'
+      #     mysql database: 'aspect'
+      #     mysql root password: 'rootpass'
+      #     authentication plugin: 'mysql_native_password'
+
+      # - name: 'Setup RabbitMQ'
+      #   uses: mer-team/rabbitmq-mng-action@v1.2
+      #   with:
+      #     RABBITMQ_USER: 'guest'
+      #     RABBITMQ_PASS: 'guest'
+      #     RABBITMQ_PORT: 5672
+      #     RABBITMQ_MNG_PORT: 15672
+      #     RABBITMQ_TAG: '3-management-alpine'
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: 'Install Node Modules'
+        run: 'yarn start:api:install'
+
+      # - name: 'Seed DB & Run Migrations'
+      #   run: yarn start:api:seed
+
+      - name: 'Run Server'
+        run: yarn start:api:bg
+
+      # - name: 'Run API Contract Batch 1'
+      #   run: yarn api:contract --spec test/{_setup,accountDetails,alert,assay,auth,case,consumable,dashboard,device,deviceApiKey,deviceApiRaw,deviceMaintenanceStatus,disease,excelReports,forms,geography,inventory,job,partner,patient,person,report,result,seedHelpers,server,shared,site,stringTemplate,tag,task,utils,issue, sms, webhook, email, notification, pushNotification,scheduler}/*.spec.js*
+
+      # - name: 'Contract Test Report'
+      #   uses: dorny/test-reporter@v1
+      #   if: success() || failure()
+      #   with:
+      #     name: Contract Tests
+      #     path: 'api/test-report.json'
+      #     reporter: mocha-json
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Stop Server'
+        run: yarn stop:api:bg
