@@ -290,27 +290,6 @@ const utilizationPerInstrumentDayReport = {
   ],
 }
 
-const GeneXpertM4B3BiologicalProducts = {
-  name: 'M4B3 Biological Products',
-  description: 'Use of Xpert Biological Products',
-  i18nKey: 'geneXpertM4B3BiologicalProducts',
-  i18nKeyDescription: 'geneXpert_M4B3_biological_products',
-  externalId: 'geneXpert_M4B3_biological_products',
-  fileName: 'geneXpertM4B3BiologicalProducts',
-  exportCsv: false,
-  sortOrder: 70,
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'result/serviceReportVietnam',
-      functionName: 'getGeneXpertM4B3BiologicalProducts',
-      query: {
-        avoidStreaming: true,
-      },
-    },
-  ],
-}
-
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -324,5 +303,4 @@ module.exports = {
   geneXpertIssues,
   allResults,
   utilizationPerInstrumentDayReport,
-  GeneXpertM4B3BiologicalProducts,
 }

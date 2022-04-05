@@ -123,9 +123,6 @@ module.exports = {
         sortOrder: 0,
         moduleName: 'result/serviceReportVietnam',
         functionName: 'getGeneXpertM4B3BiologicalProducts',
-        query: {
-          avoidStreaming: true,
-        },
       },
     ],
   },
