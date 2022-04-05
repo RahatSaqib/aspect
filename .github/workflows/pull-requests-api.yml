@@ -1,5 +1,6 @@
-name: Build and Test Aspect API on PR
-'on': pull_request
+name: API - Build and Test Aspect backend
+'on': fork
+# 'on': pull_request
 jobs:
   Build-and-Test-API:
     runs-on: ubuntu-latest
