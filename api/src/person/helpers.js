@@ -92,6 +92,10 @@ const personDetailsResponse = {
         lgaName: Joi.string().allow(null).description('Lga name'),
         userLockedOut: customBoolean('User userLockedOut'),
         canLogIn: customBoolean('Person canLogIn'),
+        disabled: Joi.number().allow(null).description('0 Enabled, 1 Disabled'),
+        disabledAt: Joi.date()
+          .allow(null)
+          .description('Date person was disabled'),
         jobId: Joi.number().allow(null).description('Id of first Job'),
         jobFunctions: Joi.array()
           .items(Joi.number())

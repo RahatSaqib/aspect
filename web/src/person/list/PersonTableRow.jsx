@@ -58,7 +58,11 @@ const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
       <TableCell>{formatTags(person.get('tags'))}</TableCell>
       {personEditPermission ? (
         <AccountEnableDisable type="icon" person={person} />
-      ) : null}
+      ) : (
+        <TableCell>
+          <div style={{ height: '38px' }} />
+        </TableCell>
+      )}
     </TableRow>
   )
 }

@@ -1,33 +1,18 @@
-import React, { Fragment } from 'react'
-import classnames from 'classnames/bind'
-import { defineMessages } from 'react-intl'
+import React, { Fragment, useState } from 'react'
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useMutation } from 'react-query'
+import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import { Person, PersonOff } from '@material-ui/icons'
 import { FormAction } from '../Details/FormSubmit'
 import { DataTableCell as TableCell } from '../../../components/shared/tableBody'
-
-// import Button from '@material-ui/core/Button'
-// import { useMutation } from 'react-query'
-// import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-// import AspectDialog from '../../components/shared/AspectDialog'
-
-// import { i18nWrapper } from '../../Providers/I18nProvider/index'
-// import { formatDate } from '../../shared/utils/dateFormat'
-
-// // const cssClasses = classnames.bind(styles)
-
-// const { formatMessage } = i18nWrapper()
-// const messages = {
-//   ...defineMessages({
-//     disabledOn: {
-//       id: 'pages.PersonList.disabled.title',
-//       defaultMessage: 'This person was disabled on',
-//     },
-//   }),
-// }
-
-// const dispatch = useDispatch()
+import AspectDialog from '../../../components/shared/AspectDialog'
+import fetchWrapperForQueries from '../../QueryFetch'
+import { fetchPersons } from '../../../person/PersonRedux'
+import useI18n from '../../../Hooks/i18n/useI18n'
+import messages from './messages'
 
 const IconContainer = ({ icon: Icon, style, action }) => (
   <IconButton variant="contained" onClick={action}>
@@ -37,69 +22,77 @@ const IconContainer = ({ icon: Icon, style, action }) => (
 
 const AccountEnableDisable = props => {
   const { person } = props
-  function handleDisable() {
-    console.log('disable')
+  const { formatMessage } = useI18n()
+  const location = useLocation()
+  const [params] = useSearchParams()
+  const navigate = useNavigate()
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [confirmationData, setConfirmationData] = useState(false)
+
+  const dispatch = useDispatch()
+
+  const mutation = useMutation(
+    ({ values, endpoint, method }) => {
+      return fetchWrapperForQueries({ endpoint, method, params: { ...values } })
+    },
+    {
+      onError: error => {
+        throw new Error(error)
+      },
+      onSuccess: ({ ok }) => {
+        if (ok) {
+          const searchParams = new URLSearchParams(location.search)
+          const filtersParams = new URLSearchParams(
+            searchParams.get('filters') || ''
+          )
+          const pageAt = params.get('pageAt') || 0
+          const pageSize = params.get('pageSize') || 25
+          const sortCol = params.get('sortCol') || 'name'
+          const sortDir = params.get('sortDir') || 'asc'
+          if (confirmationData?.type === 'button') {
+            navigate(0)
+          } else {
+            dispatch(
+              fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
+            )
+          }
+        }
+      },
+    }
+  )
+
+  function handleDisablePrompt() {
+    const { type, formik, person } = props
+    const personData = type === 'button' ? formik?.values : person?.toJS()
+    setConfirmationData({ ...personData, type })
+    setShowConfirmation(true)
   }
-  function handleEnable() {
-    console.log('enable')
+
+  function handleEnableDisable() {
+    setShowConfirmation(false)
+    let payload
+    if (confirmationData?.disabled === 0) {
+      payload = {
+        endpoint: `/person/${confirmationData?.id}`,
+        method: 'DELETE',
+      }
+    } else {
+      payload = {
+        endpoint: `/person/enable/${confirmationData?.id}`,
+        method: 'PUT',
+      }
+    }
+    try {
+      mutation.mutate(payload)
+    } catch (err) {
+      throw new Error(err)
+    }
   }
-
-  //   const showDeleteAlert = person => {
-  //     setPersonName(person.get('name'))
-  //     setPersonId(person.get('id'))
-  //     setPersonDisabled(person.get('disabled'))
-  //     setShowConfirmation(true)
-  //   }
-  //   const handleEnableDisable = async () => {
-  //     setShowConfirmation(false)
-  //     let payload = {
-  //       endpoint: `/person/enable/${personId}`,
-  //       method: 'PUT',
-  //     }
-  //     if (personDisabled === 0) {
-  //       payload = {
-  //         endpoint: `/person/${personId}`,
-  //         method: 'DELETE',
-  //       }
-  //     }
-  //     try {
-  //       mutation.mutate(payload)
-  //     } catch (err) {
-  //       console.log(err) // eslint-disable-line
-  //     }
-  //   }
-
-  //   const [showConfirmation, setShowConfirmation] = useState(false)
-  //   const [personName, setPersonName] = useState('')
-  //   const [personId, setPersonId] = useState()
-  //   const [personDisabled, setPersonDisabled] = useState(0)
-
-  //   const mutation = useMutation(
-  //     ({ values, endpoint, method }) => {
-  //       return fetchWrapperForQueries({ endpoint, method, params: { ...values } })
-  //     },
-  //     {
-  //       onError: error => {
-  //         throw new Error(error)
-  //       },
-  //       onSuccess: ({ ok }) => {
-  //         if (ok) {
-  //           const searchParams = new URLSearchParams(location.search)
-  //           const filtersParams = new URLSearchParams(
-  //             searchParams.get('filters') || ''
-  //           )
-  //           dispatch(
-  //             fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
-  //           )
-  //         }
-  //       },
-  //     }
-  //   )
 
   return (
     <Fragment>
       {props?.type === 'button' ? (
-        <FormAction {...props} action={handleDisable} />
+        <FormAction {...props} action={handleDisablePrompt} />
       ) : null}
       {props?.type === 'icon' ? (
         <TableCell>
@@ -116,20 +109,20 @@ const AccountEnableDisable = props => {
                 <IconContainer
                   icon={Person}
                   style={{ color: 'green' }}
-                  action={handleDisable}
+                  action={handleDisablePrompt}
                 />
               </Tooltip>
             ) : (
               <IconContainer
                 icon={PersonOff}
                 style={{ color: 'red' }}
-                action={handleEnable}
+                action={handleDisablePrompt}
               />
             )}
           </div>
         </TableCell>
       ) : null}
-      {/* <AspectDialog
+      <AspectDialog
         actions={[
           <Button color="primary" onClick={() => setShowConfirmation(false)}>
             {formatMessage(messages.cancel)}
@@ -137,7 +130,7 @@ const AccountEnableDisable = props => {
           <Button
             color="primary"
             variant="contained"
-            onClick={handleEnableDisable}
+            onClick={() => handleEnableDisable()}
           >
             {formatMessage(messages.yes)}
           </Button>,
@@ -146,41 +139,15 @@ const AccountEnableDisable = props => {
         open={showConfirmation}
         onClose={() => setShowConfirmation(false)}
       >
-        <h3>
-          {personDisabled
-            ? formatMessage(messages.enable)
-            : formatMessage(messages.disable)}{' '}
-          - <b>{personName}</b>?
-        </h3>
-      </AspectDialog> */}
+        <h3>{confirmationData?.name}</h3>
+        <div style={{ marginTop: '15px' }}>
+          {confirmationData?.disabled > 0
+            ? formatMessage(messages.enableUser)
+            : formatMessage(messages.disableUser)}
+        </div>
+      </AspectDialog>
     </Fragment>
   )
 }
 
 export default AccountEnableDisable
-
-// {personEditPermission && (
-//     <TableCell className="ActionsContainer" onClick={onClickEnableDisable}>
-//       {person.get('disabled') === 1 ? (
-//         <Tooltip
-//           title={`${formatMessage(messages.disabledOn)} ${formatDate(
-//             person.get('disabledAt')
-//           )}`}
-//         >
-//           <IconButton
-//             variant="contained"
-//             className={cssClasses('DisableButton')}
-//           >
-//             <PersonAdd style={{ fontSize: '1.25rem' }} />
-//           </IconButton>
-//         </Tooltip>
-//       ) : (
-//         <IconButton
-//           variant="contained"
-//           className={cssClasses('EnableButton')}
-//         >
-//           <PersonRemove style={{ fontSize: '1.25rem' }} />
-//         </IconButton>
-//       )}
-//     </TableCell>
-//   )}

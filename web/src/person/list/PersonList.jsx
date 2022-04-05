@@ -258,6 +258,8 @@ export const PersonList = ({
   const { permissions: userPermissions } = useSelector(
     ({ user }) => user.toJS().jwt
   )
+
+  const editor = user.toJS()
   const isEditAllow = isPermittedUser(userPermissions, {
     required: ['person:edit'],
   })
@@ -342,7 +344,9 @@ export const PersonList = ({
                     person={person}
                     onClick={onRowClick}
                     data-person-id={person.get('id')}
-                    personEditPermission={isEditAllow}
+                    personEditPermission={
+                      isEditAllow && editor?.userId !== person.get('id')
+                    }
                   />
                 ))}
             </TableBody>

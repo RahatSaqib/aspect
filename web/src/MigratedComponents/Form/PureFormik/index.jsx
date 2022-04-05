@@ -24,6 +24,8 @@ const AspectPureFormik = ({
         <Fragment>
           <Form noValidate>
             {map(rows, (items, index) => {
+              /* eslint-disable no-console */
+              // console.log('rows', rows)
               return (
                 <div
                   key={`${id}-row${index}`}
@@ -31,6 +33,8 @@ const AspectPureFormik = ({
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   {map(items, ({ component: Input, ...input }) => {
+                    /* eslint-disable no-console */
+                    // console.log('input', input, input?.id)
                     return (
                       <div
                         key={`${id}-row${index}-${input?.id}`}

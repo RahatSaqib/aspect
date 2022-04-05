@@ -260,6 +260,8 @@ function getPersonDetails(personId) {
       'l.name as lgaName',
       'u.lockedOut as userLockedOut',
       'p.canLogIn',
+      'p.disabled',
+      'p.disabledAt',
       'j.id as jobId'
     )
 }

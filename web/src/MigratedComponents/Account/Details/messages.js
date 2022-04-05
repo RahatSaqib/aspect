@@ -13,6 +13,14 @@ export default defineMessages({
     id: 'pages.Contacts.save',
     defaultMessage: 'Save',
   },
+  disable: {
+    id: 'pages.Contacts.disable',
+    defaultMessage: 'Disable',
+  },
+  enable: {
+    id: 'pages.Contacts.enable',
+    defaultMessage: 'Enable',
+  },
   personNameExist: {
     id: 'pages.Contacts.person.name.exist',
     defaultMessage:

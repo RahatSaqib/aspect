@@ -232,6 +232,7 @@ async function authenticate(request) {
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
+    userId: user.id,
   }
 }
 
@@ -341,6 +342,7 @@ async function refreshToken(request) {
     timezone: data.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryAbbreviation: data.countryAbbreviation,
+    userId: data.id,
   }
 }
 

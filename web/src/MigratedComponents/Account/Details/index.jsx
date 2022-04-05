@@ -56,6 +56,8 @@ const ContactDetailsFormFormik = () => {
   function handleSubmit(_e, formik) {
     const baseOmitFields = [
       'country',
+      'disabled',
+      'disabledAt',
       'jobId',
       'jobFunctions',
       'stateName',
@@ -110,16 +112,29 @@ const ContactDetailsFormFormik = () => {
     },
   ]
 
-  if (type !== 'add' && actions?.length) {
-    actions.push({
-      id: 'delete',
-      type: 'button',
-      color: 'error',
-      label: 'Disable',
-      // label: formatMessage(type === 'add' ? messages.create : messages.save),
-      component: AccountEnableDisable,
-      sx: { backgroundColor: 'red' },
-    })
+  if (
+    type !== 'add' &&
+    actions?.length &&
+    queryData?.data?.username !== editor?.jwt?.name
+  ) {
+    if (queryData?.data?.disabled > 0) {
+      actions.push({
+        id: 'enable',
+        type: 'button',
+        label: formatMessage(messages.enable),
+        component: AccountEnableDisable,
+        sx: { backgroundColor: 'green' },
+      })
+    } else {
+      actions.push({
+        id: 'delete',
+        type: 'button',
+        color: 'error',
+        label: formatMessage(messages.disable),
+        component: AccountEnableDisable,
+        sx: { backgroundColor: 'red' },
+      })
+    }
   }
 
   function buildItems(action) {
