@@ -3,6 +3,10 @@ name: Run and test API on PR
 jobs:
   Build-and-Test-API:
     runs-on: ubuntu-latest
+    env:
+      dbUser: 'root'
+      dbPassword: 'rootpass'
+      dbName: 'aspect'
     steps:
       - name: 'Checkout repo'
         uses: actions/checkout@v2
@@ -15,6 +19,9 @@ jobs:
       - name: 'Create env file'
         run: |
           cp -R ./api/.env.example ./api/.env
+          echo db.databaseName=$dbName >> ./api/.env
+          echo db.user=$dbUser >> ./api/.env
+          echo db.password=$dbPassword >> ./api/.env
           echo admin.email='dpotgieter+ci@systemone.co' >> ./api/.env
           echo admin.cell='+79114946979' >> ./api/.env
           echo twilioAccountSid='should-be-gh-secret' >> ./api/.env
@@ -28,8 +35,8 @@ jobs:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
           mysql version: '8.0'
-          mysql database: 'aspect'
-          mysql root password: 'rootpass'
+          mysql database: $dbName
+          mysql root password: $dbPassword
           authentication plugin: 'mysql_native_password'
 
       # - name: 'Setup RabbitMQ'
