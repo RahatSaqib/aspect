@@ -413,7 +413,7 @@ async function updatePerson(request) {
     'lastPartnerId',
     'timezone',
     'tags',
-    'canLogin',
+    'canLogIn',
     'hidePatientId',
     'hideSampleId',
     'hideNotes',
