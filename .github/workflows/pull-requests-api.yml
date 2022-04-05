@@ -1,7 +1,7 @@
 name: Run and test API on PR
 'on': pull_request
 jobs:
-  build_and_test:
+  Build-and-Test-API:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout repo'
@@ -15,17 +15,16 @@ jobs:
       - name: 'Create env file'
         run: |
           cp -R ./api/.env.example ./api/.env
-          
 
-      # - name: 'Setup MySQL'
-      #   uses: haltuf/mysql-action@master
-      #   with:
-      #     character set server: 'utf8'
-      #     collation server: 'utf8_general_ci'
-      #     mysql version: '8.0'
-      #     mysql database: 'aspect'
-      #     mysql root password: 'rootpass'
-      #     authentication plugin: 'mysql_native_password'
+      - name: 'Setup MySQL'
+        uses: haltuf/mysql-action@master
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0'
+          mysql database: 'aspect'
+          mysql root password: 'rootpass'
+          authentication plugin: 'mysql_native_password'
 
       # - name: 'Setup RabbitMQ'
       #   uses: mer-team/rabbitmq-mng-action@v1.2
@@ -44,8 +43,8 @@ jobs:
       - name: 'Install Node Modules'
         run: 'yarn start:api:install'
 
-      # - name: 'Seed DB & Run Migrations'
-      #   run: yarn start:api:seed
+      - name: 'Seed DB & Run Migrations'
+        run: yarn start:api:seed
 
       - name: 'Run Server'
         run: yarn start:api:bg
