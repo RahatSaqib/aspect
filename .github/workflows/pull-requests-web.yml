@@ -23,8 +23,8 @@ jobs:
       - name: 'Install Node Modules'
         run: 'yarn start:web:install'
 
-      - name: 'Run Server'
-        run: yarn start:web:server
+      # - name: 'Run Server'
+      #   run: yarn start:web:server
 
       - name: 'Run Tests'
         run: yarn web:test
