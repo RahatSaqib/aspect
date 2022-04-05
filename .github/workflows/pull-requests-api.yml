@@ -1,4 +1,4 @@
-name: API - Build and Test Aspect backend
+name: API
 'on': pull_request
 jobs:
   Build-and-Test-API:

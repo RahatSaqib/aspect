@@ -1,4 +1,4 @@
-name: WEB - Build and Test Aspect client
+name: WEB
 'on': pull_request
 jobs:
   Build-and-Test-Web:
