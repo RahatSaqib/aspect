@@ -20,7 +20,6 @@ const {
   commonUpserts,
   upsertGeneXpertDeviceTypeAndAssays,
 } = require('../common')
-const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 const partnerData = require('./fixtures/partnerData')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -61,7 +60,4 @@ async function seed(knex) {
 
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, assays)
-
-  // MGIT
-  await upsertMGITDeviceTypeAndAssays(knex)
 }
