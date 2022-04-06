@@ -1,9 +1,9 @@
 const reduce = require('lodash/reduce')
 const includes = require('lodash/includes')
 const { endOfMonth, startOfMonth } = require('date-fns')
-
-const { knex, filterDateRangeParams, filterParams } = require('../db')
+const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { knex, filterDateRangeParams, filterParams } = require('../db')
 const [m4b1Mapping] = require('../../templates/xpert_m4b1_patients/mapping')
 const {
   getWellFormattedDateStringWithTimezone,
@@ -265,11 +265,11 @@ async function getResultCountsByHIVStatus(auth, query) {
     .select(
       knex.raw(`
         CASE CAST(resultData->>'$.customFieldData."255".value' AS UNSIGNED)
-          WHEN 0 THEN 'HIV NEGATIVE' 
-          WHEN 1 THEN 'HIV POSITIVE' 
-          WHEN 2 THEN 'HIV UNKNOWN STATUS' 
-          ELSE 'HIV Status Unspecified' 
-        END as hivStatus 
+          WHEN 0 THEN 'HIV NEGATIVE'
+          WHEN 1 THEN 'HIV POSITIVE'
+          WHEN 2 THEN 'HIV UNKNOWN STATUS'
+          ELSE 'HIV Status Unspecified'
+        END as hivStatus
       `),
       'rc1.name as resultCategory1',
       'rc2.name as resultCategory2'
@@ -287,9 +287,104 @@ async function getResultCountsByHIVStatus(auth, query) {
   }
 }
 
+function applyInventoryProjection(queryBuilder, maxDate) {
+  queryBuilder.select(
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferSent' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'transferFrom'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferReceived' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'receiveTo'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TestConducted' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'use'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Damage' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'damage'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Expired' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'expired'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Stolen' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'stolen'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Lost' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity END), '0') as 'lost'`
+    )
+  )
+}
+
+const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
+  joinQuery
+    .on('il.inventoryItemId', 'ii.id')
+    .andOn(knex.raw(`IFNULL(il.adjustedFrom, il.createdOn) >= '${dateFrom}'`))
+}
+
+async function getGlobalFundInventoryReport(auth, query) {
+  const {
+    globalFundInventoryReportDictionary,
+  } = require('./serviceReportVietnamDictionary.json')
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { culture } = await getUser(auth.credentials.name)
+  const { maxDate } = query
+  const rows = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 's.id', 'ii.siteId')
+    .leftJoin('InventoryLog as il', q =>
+      joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString())
+    )
+    .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
+    .select([
+      's.name as siteName',
+      'ii.lotNumber',
+      'ii.expiresOn',
+      knex.raw(`
+      ii.quantityonhand - SUM(CASE WHEN IFNULL(il.adjustedFrom, il.createdOn) >
+      '${maxDate}' THEN il.quantity * IF(cr.decrease, -1, 1) ELSE 0 END) AS quantityOnHand`),
+    ])
+    .modify(queryBuilder => applyInventoryProjection(queryBuilder, maxDate))
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      InventoryItem: 'ii',
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .groupBy(['ii.lotNumber', 'il.siteId'])
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+    dynamicColumns: globalFundInventoryReportDictionary[culture],
+    dataSelector: dataRow => {
+      const stockLastPeriod =
+        parseInt(dataRow.quantityOnHand, 10) -
+        parseInt(dataRow.transferFrom, 10) +
+        parseInt(dataRow.receiveTo, 10) +
+        parseInt(dataRow.use, 10) +
+        parseInt(dataRow.damage, 10)
+      return {
+        ...dataRow,
+        stockLastMonth: stockLastPeriod === 0 ? '0' : stockLastPeriod,
+      }
+    },
+  }
+}
+
 module.exports = {
   getGeneXpertM4B2ActivitiesReport,
   getListRResistantTestReport,
+  getGlobalFundInventoryReport,
   getGeneXpertM4B1PatientsReport,
   getReasonForTestingReport,
   getResultCountsByHIVStatus,
