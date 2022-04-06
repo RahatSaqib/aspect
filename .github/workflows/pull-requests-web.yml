@@ -1,5 +1,6 @@
 name: WEB
-'on': pull_request
+'on': fork
+# 'on': pull_request
 jobs:
   Build-and-Test-Web:
     runs-on: ubuntu-latest

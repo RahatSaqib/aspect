@@ -100,6 +100,15 @@ jobs:
       - name: 'Run API Unit Tests'
         run: yarn api:unit
 
+      - name: 'Unit Test Report'
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Unit Tests
+          path: 'api/unit-test-results.json'
+          reporter: mocha-json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 'Run API Contract Tests'
         run: yarn api:contract
 
@@ -108,7 +117,7 @@ jobs:
         if: success() || failure()
         with:
           name: Contract Tests
-          path: 'api/test-report.json'
+          path: 'api/contract-test-results.json'
           reporter: mocha-json
           token: ${{ secrets.GITHUB_TOKEN }}
 
