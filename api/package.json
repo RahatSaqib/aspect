@@ -9,7 +9,9 @@
   },
   "scripts": {
     "db:recreate": "node ./migrations/utils/recreateDB",
+    "db:recreateCI": "node ./migrations/utils/recreateDBCI",
     "db:reseed": "npm-run-all db:recreate knex:migrate:latest knex:seed:run",
+    "db:reseedCI": "npm-run-all db:recreateCI knex:migrate:latest knex:seed:run",
     "debug": "nodemon --inspect src/server.js",
     "knex": "knex",
     "knex:migrate:latest": "knex migrate:latest",
