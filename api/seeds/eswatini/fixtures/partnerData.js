@@ -3,9 +3,9 @@ const jobFunctions = require('./jobFunctions')
 module.exports = {
   adminUserName: 'admin',
   adminPassword: '2wleb6v8hi',
-  partnerName: 'Swaziland',
+  partnerName: 'Eswatini',
   deviceApiToken: 'pmvrfsxjltrzfpjfkepe',
-  serverUrl: 'https://swaziland.aspect.id',
+  serverUrl: 'https://eswatini.aspect.id',
   partnerAbbreviation: 'SZ',
   lowerLevelUserPassword: 'sds123ASDTOVpMx3nHP',
   deviceLogHistoryDays: 365,
