@@ -28,14 +28,13 @@ jobs:
           echo db.databaseName=$dbName >> ./api/.env
           echo db.user=$dbUser >> ./api/.env
           echo db.password=$dbPassword >> ./api/.env
-          echo twilioAccountSid='should-be-gh-secret' >> ./api/.env
-          echo twilioAuthToken='should-be-gh-secret' >> ./api/.env
-          echo twilioFromNumber='should-be-gh-secret' >> ./api/.env
-          echo twilioMessagingServiceSid='should-be-gh-secret' >> ./api/.env
-          echo encryption.passPhrase='should-be-gh-secret' >> ./api/.env
-          echo encryption.initVector='should-be-gh-secret' >> ./api/.env
-          echo pushNotification.testDeviceTokenId='should-be-gh-secret' >> ./api/.env
-          echo firebase.serverKey='should-be-gh-secret' >> ./api/.env
+          echo twilioAccountSid=${{ secrets.TWILIOACCOUNTSID }} >> ./api/.env
+          echo twilioAuthToken=${{ secrets.TWILIOAUTHTOKEN }} >> ./api/.env
+          echo twilioMessagingServiceSid=${{ secrets.TWILIOMESSAGINGSERVICESID }} >> ./api/.env
+          echo encryption.passPhrase=${{ secrets.ENCRYPTIONPASSPHRASE }} >> ./api/.env
+          echo encryption.initVector=${{ secrets.ENCRYPTIONINITVECTOR }} >> ./api/.env
+          echo pushNotification.testDeviceTokenId=${{ secrets.PUSHNOTIFICATIONTESTDEVICETOKENID }} >> ./api/.env
+          echo firebase.serverKey=${{ secrets.FIREBASESERVERKEY }} >> ./api/.env
 
           echo db.connectionLimit=100 >> ./api/.env
           echo db.host=localhost >> ./api/.env
