@@ -103,14 +103,14 @@ jobs:
       - name: 'Run API Contract Tests'
         run: yarn api:contract
 
-      # - name: 'Contract Test Report'
-      #   uses: dorny/test-reporter@v1
-      #   if: success() || failure()
-      #   with:
-      #     name: Contract Tests
-      #     path: 'api/test-report.json'
-      #     reporter: mocha-json
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Contract Test Report'
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Contract Tests
+          path: 'api/test-report.json'
+          reporter: mocha-json
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
         run: yarn stop:api:bg
