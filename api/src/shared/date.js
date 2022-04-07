@@ -127,6 +127,10 @@ function getArrayOfDaysInRange(
   initialProperties = null,
   excludeWeekends = false
 ) {
+  if (typeof start === 'string') start = parseISO(start)
+
+  if (typeof end === 'string') end = parseISO(end)
+
   let dates
   const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
   if (excludeWeekends) {
