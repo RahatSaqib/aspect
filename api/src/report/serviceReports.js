@@ -186,9 +186,10 @@ async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
-  const { culture, email, cell, userName } = await getUser(
-    auth.credentials.name
-  )
+  const user = await getUser(auth.credentials.name)
+  const { culture, userName } = user
+  const email = user.email || '-'
+  const cell = user.cell || '-'
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format || 'xlsx'
@@ -217,7 +218,7 @@ async function createReport(request, reply) {
     },
     {
       placeholder: '<Sites>',
-      value: query.siteName ?? '',
+      value: query.siteName ?? 'all',
     },
     {
       placeholder: '<UserEmail>',
