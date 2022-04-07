@@ -378,6 +378,9 @@ export const reduceFiltersConfig = (
             case 'diseaseId':
               result.disease = true
               break
+            case 'contactsDisabled':
+              result.contactsDisabled = true
+              break
             default:
           }
         })

@@ -109,6 +109,7 @@ const FILTERS_CONFIG = [
     contactNameOrEmail: true,
     requiredPermissions: [],
   },
+  { contactsDisabled: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
