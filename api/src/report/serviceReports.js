@@ -193,6 +193,10 @@ async function createReport(request, reply) {
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format || 'xlsx'
 
+  if (_.isNil(query.maxDate)) {
+    query.maxDate = new Date().toISOString()
+  }
+
   if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
   }
