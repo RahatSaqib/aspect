@@ -50,6 +50,10 @@ const messages = defineMessages({
     id: `filter.ConsumableReasonSelectField.ConsumableReason_TestConducted`,
     defaultMessage: 'Test Conducted',
   },
+  ConsumableReason_Damage: {
+    id: `filter.ConsumableReasonSelectField.ConsumableReason_Damage`,
+    defaultMessage: 'Damage',
+  },
 })
 
 const enhance = compose(
