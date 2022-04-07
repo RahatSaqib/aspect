@@ -1264,12 +1264,13 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
-            {config.contactsDisabled && (
+            {config.contactStatus && (
               <div className={cssClasses('Control')}>
                 <EnabledDisabledPersonsSelectField
                   allItemText={formatMessage(messages.all)}
                   onChange={onToggleEnabledDisabled}
-                  value={filters.daysStockLeft}
+                  name="contactStatus"
+                  value={filters.contactStatus || ''}
                   floatingLabelFixed
                   hintText={formatMessage(messages.contactStatusHint)}
                   floatingLabelText={formatMessage(messages.contactStatus)}
