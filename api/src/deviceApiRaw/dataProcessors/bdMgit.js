@@ -163,7 +163,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       // add/update sample
       const sampleFields = {
-        externalId: mgitAccessionNumber,
+        externalId: mgitAccessionNumber || null,
         originSiteId: site ? site.id : null,
       }
       const existingSample = await knex('Sample')

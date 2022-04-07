@@ -4,6 +4,8 @@ import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import keys from 'lodash/keys'
+import reduce from 'lodash/reduce'
 import map from 'lodash/map'
 import includes from 'lodash/includes'
 import cloneDeep from 'lodash/cloneDeep'
@@ -62,8 +64,6 @@ const ContactDetailsFormFormik = () => {
       'userLockedOut',
     ]
     const { setSubmitting, values } = formik
-    /* eslint-disable no-console */
-    console.log('values', values)
     const { id } = values
 
     setTimeout(() => {
@@ -188,7 +188,18 @@ const ContactDetailsFormFormik = () => {
   )
 
   function transformInputValues(values) {
-    const newValues = cloneDeep(values)
+    let newValues = cloneDeep(values)
+    newValues = reduce(
+      keys(newValues),
+      (acc, key) => {
+        if (key !== 'undefined') {
+          acc[key] = newValues[key]
+        }
+        return acc
+      },
+      {}
+    )
+    // explicitly set boolean value
     newValues.canLogIn = values.canLogIn === 1
     return newValues
   }
@@ -200,9 +211,12 @@ const ContactDetailsFormFormik = () => {
     newValues.cell = replace(values.cell, / /g, '')
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
-      /* eslint-disable no-console */
-      console.log('transformOutputValues value, key', value, key)
-      if (value === '' || isNil(value) || includes(omitValues, key))
+      if (
+        key === 'undefined' ||
+        value === '' ||
+        isNil(value) ||
+        includes(omitValues, key)
+      )
         delete newValues[key]
     })
     return newValues
@@ -210,15 +224,17 @@ const ContactDetailsFormFormik = () => {
 
   useEffect(() => {
     if (!isLoading && editor) {
+      const initialValues = transformInputValues({
+        ...getInitialValues(items, false),
+        countryId: editor.countryId,
+        ...queryData?.data,
+      })
+
       const newConfig = {
         id: 'contact-update',
         rows: items,
         debug: false,
-        initialValues: transformInputValues({
-          ...getInitialValues(items, false),
-          countryId: editor.countryId,
-          ...queryData?.data,
-        }),
+        initialValues,
       }
 
       if (!isEqual(config, newConfig)) {

@@ -48,7 +48,7 @@ const AspectDatePickerBase = props => {
   registerLocale(culture, enUS)
   const [selectedDate, setSelectedDate] = useState(
     getDateObject(
-      transformTimezone
+      transformTimezone || !value
         ? value
         : formatDate(
             new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' }),

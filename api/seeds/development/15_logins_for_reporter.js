@@ -74,7 +74,7 @@ async function seed(knex) {
         lastCountryId: countryId, // same as 'admin' user
         timezone,
         culture,
-        canLogin: true,
+        canLogIn: true,
         ...auditFields,
       })
     }
