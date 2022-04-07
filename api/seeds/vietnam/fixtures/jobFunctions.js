@@ -8,7 +8,7 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
-const countryReports = [...reports.map(r => r.externalId)]
+const countryReports = Object.keys(reports).map(key => reports[key].externalId)
 
 module.exports = [
   {
