@@ -288,39 +288,6 @@ async function getResultCountsByHIVStatus(auth, query) {
   }
 }
 
-function applyInventoryProjection(queryBuilder, maxDate) {
-  queryBuilder.select(
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferSent' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'transferFrom'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferReceived' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'receiveTo'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TestConducted' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'use'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Damage' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'damage'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Expired' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'expired'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Stolen' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'stolen'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Lost' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'lost'`
-    )
-  )
-}
-
 const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
   joinQuery
     .on('il.inventoryItemId', 'ii.id')
@@ -369,14 +336,14 @@ async function getGlobalFundInventoryReport(auth, query) {
     dynamicColumns: globalFundInventoryReportDictionary[culture],
     dataSelector: dataRow => {
       const stockLastPeriod =
-        parseInt(dataRow.quantityOnHand, 10) -
-        parseInt(dataRow.transferFrom, 10) +
-        parseInt(dataRow.receiveTo, 10) +
-        parseInt(dataRow.use, 10) +
-        parseInt(dataRow.damage, 10)
+        dataRow.quantityOnHand -
+        dataRow.transferFrom +
+        dataRow.receiveTo +
+        dataRow.use +
+        dataRow.damage
       return {
         ...dataRow,
-        stockLastMonth: stockLastPeriod === 0 ? '0' : stockLastPeriod,
+        stockLastMonth: stockLastPeriod,
       }
     },
   }
