@@ -27,6 +27,7 @@ async function listPeople(request) {
       lgaId: 'g.lgaId',
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
+      contactStatus: 'p.disabled',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where(qb => {
@@ -461,6 +462,7 @@ async function listRefreshTokens(request) {
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
       diseaseId: 'dis.id',
+      contactStatus: 'p.disabled',
     })
     .leftJoin('ResultDownloadLog as rdl', queryBuilder => {
       queryBuilder.on('rdl.createdBy', 'r.userId')
