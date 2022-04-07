@@ -9,23 +9,12 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
-const countryReports = [
-  'xpert_test_activities_report',
-  'result_counts_by_hiv_status',
-  'xpert_m4b1_patients',
-  'reason_for_testing_report',
-  'geneXpert_M4B3_biological_products',
-  ...keys(reports),
-]
+const countryReports = [...reports.map(r => r.externalId)]
 
 module.exports = [
   {
     ...admin,
-    reports: [
-      ...admin.reports,
-      ...countryReports,
-      'global_fund_inventory_report',
-    ],
+    reports: [...admin.reports, ...countryReports],
   },
   {
     ...regionalOfficer,
