@@ -18,7 +18,6 @@ const admin = {
     'list_r_resistant_test',
     'xpert_test_activities_report',
     'device_utilization_per_day',
-    'geneXpert_M4B3_biological_products',
   ],
   permissions: [
     {
