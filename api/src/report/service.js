@@ -37,7 +37,7 @@ async function getReports(request) {
       },
     })
     .orderBy('r.sortOrder', 'asc')
-    .select(
+    .distinct(
       'r.name',
       'r.description',
       'r.externalId',

@@ -1,0 +1,707 @@
+[
+  {
+    "externalId": "Lubombo Referral Hospital Laboratory",
+    "latitude": 31.94322,
+    "longitude": -26.439907,
+    "stateName": "Lubombo",
+    "lgaName": "Lugongolweni",
+    "name": "Lubombo Referral Hospital Laboratory",
+    "shortName": "Lubombo RHL",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Lubombo Referral Hospital Laboratory",
+        "shortName": "Lubombo RHL",
+        "macAddress": "MAC2C44FD375647",
+        "hostId": "Lubombo Referral Hos",
+        "serial": "Cepheid-3481GR2",
+        "gxAlertDeviceId": 4
+      }
+    ]
+  },
+
+  {
+    "externalId": "Good Shepherd Hospital Laboratory",
+    "latitude": 31.961399,
+    "longitude": -26.46875,
+    "stateName": "Lubombo",
+    "lgaName": "Lugongolweni",
+    "name": "Good Shepherd Hospital Laboratory",
+    "shortName": "Good Shepherd ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Good Shepherd Hospital Laboratory",
+        "shortName": "Good Shepherd ",
+        "macAddress": "MAC180373C663BE",
+        "hostId": "Good Shepherd Hospit",
+        "serial": "CepheidG51M0R1",
+        "gxAlertDeviceId": 5
+      }
+    ]
+  },
+  {
+    "externalId": "Mankayane Lab",
+    "latitude": 31.06373,
+    "longitude": -26.671221,
+    "stateName": "Manzini",
+    "lgaName": "Ngwempisi",
+    "name": "Mankayane Lab",
+    "shortName": "Mankayane Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mankayane Lab",
+        "shortName": "Mankayane Lab",
+        "macAddress": "MAC6805CA152CFD",
+        "hostId": "mankayane",
+        "serial": "Cepheid-3031JCB",
+        "gxAlertDeviceId": 6
+      }
+    ]
+  },
+  {
+    "externalId": "Mbabane Government Hospital",
+    "latitude": 31.14241,
+    "longitude": -26.33238,
+    "stateName": "Hhohho",
+    "lgaName": "Mbabane West",
+    "name": "Mbabane Government Hospital",
+    "shortName": "Mbabane Gov H",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mbabane Government Hospital",
+        "shortName": "Mbabane Gov H",
+        "macAddress": "MAC2C44FD33992B",
+        "hostId": "Mbabane Government H",
+        "serial": "Cepheid-3481GR1",
+        "gxAlertDeviceId": 7
+      }
+    ]
+  },
+  {
+    "externalId": "Baylor COE Laboratory",
+    "latitude": 31.1315,
+    "longitude": -26.31871,
+    "stateName": "Hhohho",
+    "lgaName": "Mbabane East",
+    "name": "Baylor COE Laboratory",
+    "shortName": "Baylor COE ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Baylor COE Laboratory",
+        "shortName": "Baylor COE ",
+        "macAddress": "MACD89D67971D21",
+        "hostId": "Baylor COE Laborator",
+        "serial": "Cepheid304962J",
+        "gxAlertDeviceId": 10
+      }
+    ]
+  },
+  {
+    "externalId": "Illovo Laboratory",
+    "latitude": 31.934179,
+    "longitude": -26.79598,
+    "stateName": "Lubombo",
+    "lgaName": "Nkilongo",
+    "name": "Illovo Laboratory",
+    "shortName": "Illovo Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Illovo Laboratory",
+        "shortName": "Illovo Lab",
+        "macAddress": "MACEC086B142FF4",
+        "hostId": "Illovo Laboratory",
+        "serial": "Cepheid-3361K3F",
+        "gxAlertDeviceId": 11
+      }
+    ]
+  },
+  {
+    "externalId": "Matsapha Comprehensive Health Care (MSF)",
+    "latitude": 31.30337,
+    "longitude": -26.50769,
+    "stateName": "Manzini",
+    "lgaName": "Kwaluseni",
+    "name": "Matsapha Comprehensive Health Care (MSF)",
+    "shortName": "Matsapha (MSF)",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Matsapha Comprehensive Health Care (MSF)",
+        "shortName": "Matsapha (MSF)",
+        "macAddress": "MACA0369FD4EFAC",
+        "hostId": "Matsapha Comprehensi",
+        "serial": "2UA3381P4W",
+        "gxAlertDeviceId": 12
+      }
+    ]
+  },
+  {
+    "externalId": "Nhlangano Health Center Lab",
+    "latitude": 31.186001,
+    "longitude": -27.107,
+    "stateName": "Shiselweni",
+    "lgaName": "Maseyisini",
+    "name": "Nhlangano Health Center Lab",
+    "shortName": "Nhlangano HC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Nhlangano Health Center Lab",
+        "shortName": "Nhlangano HC",
+        "macAddress": "MACA0369FD4EE46",
+        "hostId": "Nhlangano Health Cen",
+        "serial": "Cepheid-7050W0Q",
+        "gxAlertDeviceId": 16
+      }
+    ]
+  },
+  {
+    "externalId": "The Luke Commission",
+    "latitude": 31.409548,
+    "longitude": -26.653152,
+    "stateName": "Manzini",
+    "lgaName": "Nhlambeni",
+    "name": "The Luke Commission",
+    "shortName": "TLC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "The Luke Commission",
+        "shortName": "TLC",
+        "macAddress": "MACA4BADBEBE9C0",
+        "hostId": "The Luke Commission",
+        "serial": "Cepheid-3381P50",
+        "gxAlertDeviceId": 19
+      }
+    ]
+  },
+  {
+    "externalId": "TB Centre - Manzini",
+    "latitude": 31.38039,
+    "longitude": -26.497561,
+    "stateName": "Manzini",
+    "lgaName": "Manzini South",
+    "name": "TB Centre - Manzini",
+    "shortName": "TB Centre",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "TB Centre - Manzini",
+        "shortName": "TB Centre",
+        "macAddress": "MAC480FCF57ED29",
+        "hostId": "TB Centre-Manzini",
+        "serial": "Cepheid-6201QKT",
+        "gxAlertDeviceId": 20
+      }
+    ]
+  },
+  {
+    "externalId": "Psychiatric Hospital",
+    "latitude": 31.363529,
+    "longitude": -26.50263,
+    "stateName": "Manzini",
+    "lgaName": "Manzini South",
+    "name": "Psychiatric Hospital",
+    "shortName": "Psychiatric H",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Psychiatric Hospital",
+        "shortName": "Psychiatric H",
+        "macAddress": "MAC480FCF57ED0F",
+        "hostId": "Psychiatric Hospital",
+        "serial": "Cepheid-6201QKX",
+        "gxAlertDeviceId": 21
+      }
+    ]
+  },
+  {
+    "externalId": "Dvokolwako Health Center",
+    "latitude": 31.580999,
+    "longitude": -26.164,
+    "stateName": "Hhohho",
+    "lgaName": "Madlangemphisi",
+    "name": "Dvokolwako Health Center",
+    "shortName": "Dvokolwako HC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Dvokolwako Health Center",
+        "shortName": "Dvokolwako HC",
+        "macAddress": "MAC7446A09A95E2",
+        "hostId": "172.20.5.40",
+        "serial": "Cepheid-330145B",
+        "gxAlertDeviceId": 22
+      }
+    ]
+  },
+  {
+    "externalId": "Piggs Peak Hospital Laboratory",
+    "latitude": 31.247999,
+    "longitude": -25.95797,
+    "stateName": "Hhohho",
+    "lgaName": "Piggs Peak",
+    "name": "Piggs Peak Hospital Laboratory",
+    "shortName": "PPK Hospital ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Piggs Peak Hospital Laboratory",
+        "shortName": "PPK Hospital ",
+        "macAddress": "MACA0369FD726D0",
+        "hostId": "Pigg's Peak Hospital",
+        "serial": "Cepheid-7050W10",
+        "gxAlertDeviceId": 24
+      }
+    ]
+  },
+  {
+    "externalId": "Mhlume Clinic",
+    "latitude": 31.81385,
+    "longitude": -26.04669,
+    "stateName": "Lubombo",
+    "lgaName": "Mhlume",
+    "name": "Mhlume Clinic",
+    "shortName": "Mhlume Clinic",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mhlume Clinic",
+        "shortName": "Mhlume Clinic",
+        "macAddress": "MAC6805CA20B9AD",
+        "hostId": "Mhlume Clinic",
+        "serial": "Cepheid-3260LHW",
+        "gxAlertDeviceId": 25
+      }
+    ]
+  },
+  {
+    "externalId": "Simunye Clinic",
+    "latitude": 31.922001,
+    "longitude": -26.211,
+    "stateName": "Lubombo",
+    "lgaName": "Mhlume",
+    "name": "Simunye Clinic",
+    "shortName": "Simunye Clinic",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Simunye Clinic",
+        "shortName": "Simunye Clinic",
+        "macAddress": "MAC6805CA20B9AD",
+        "hostId": "Simunye Clinic",
+        "serial": "Cepheid-3520VMB",
+        "gxAlertDeviceId": 26
+      }
+    ]
+  },
+  {
+    "externalId": "Sithobela Rural Health Centre",
+    "latitude": 31.595739,
+    "longitude": -26.88172,
+    "stateName": "Lubombo",
+    "lgaName": "Sithobela",
+    "name": "Sithobela Rural Health Centre",
+    "shortName": "Sithobela RHC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Sithobela Rural Health Centre",
+        "shortName": "Sithobela RHC",
+        "macAddress": "MAC7446A09ACD1E",
+        "hostId": "Sithobela Rural Heal",
+        "serial": "Cepheid-330144M",
+        "gxAlertDeviceId": 27
+      }
+    ]
+  },
+  {
+    "externalId": "Siphofaneni Clinic",
+    "latitude": 31.68154,
+    "longitude": -26.684071,
+    "stateName": "Lubombo",
+    "lgaName": "Siphofaneni",
+    "name": "Siphofaneni Clinic",
+    "shortName": "Siphofaneni",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Siphofaneni Clinic",
+        "shortName": "Siphofaneni",
+        "macAddress": "MAC2C44FD33993E",
+        "hostId": "SIPHOFANENI CLINIC L",
+        "serial": "Cepheid-3481GQV",
+        "gxAlertDeviceId": 28
+      }
+    ]
+  },
+  {
+    "externalId": "Luyengo Clinic",
+    "latitude": 31.174,
+    "longitude": -26.572001,
+    "stateName": "Manzini",
+    "lgaName": "Lobamba Lomdzala",
+    "name": "Luyengo Clinic",
+    "shortName": "Luyengo Clinic",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Luyengo Clinic",
+        "shortName": "Luyengo Clinic",
+        "macAddress": "MAC8CDCD44E6EBD",
+        "hostId": "Luyengo Clinic",
+        "serial": "Cepheid-3381P4X",
+        "gxAlertDeviceId": 29
+      }
+    ]
+  },
+  {
+    "externalId": "Bholi",
+    "latitude": 31.927469,
+    "longitude": -26.827579,
+    "stateName": "Lubombo",
+    "lgaName": "Nkilongo",
+    "name": "Bholi",
+    "shortName": "Bholi",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Bholi",
+        "shortName": "Bholi",
+        "macAddress": "MAC6805CA208AAB",
+        "hostId": "Bholi",
+        "serial": "Cepheid-3481GQT",
+        "gxAlertDeviceId": 30
+      }
+    ]
+  },
+  {
+    "externalId": "Hlathikhulu Goverment Hospital TIMS",
+    "latitude": 31.32407,
+    "longitude": -26.972565,
+    "stateName": "Shiselweni",
+    "lgaName": "Mtsambama",
+    "name": "Hlathikhulu Goverment Hospital TIMS",
+    "shortName": "Hlathikhulu TIMS",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Hlathikhulu Goverment Hospital TIMS",
+        "shortName": "Hlathikhulu TIMS",
+        "macAddress": "MACEC086B1437FB",
+        "hostId": "Hlathikhulu govermen",
+        "serial": "Cepheid-643203T",
+        "gxAlertDeviceId": 40
+      }
+    ]
+  },
+  {
+    "externalId": "National TB Hospital (Moneni)",
+    "latitude": 31.410311,
+    "longitude": -26.488831,
+    "stateName": "Manzini",
+    "lgaName": "Manzini South",
+    "name": "National TB Hospital (Moneni)",
+    "shortName": "Moneni",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "National TB Hospital (Moneni)",
+        "shortName": "Moneni",
+        "macAddress": "MACA0369FD4B4F4",
+        "hostId": "National TB Hospital",
+        "serial": "Cepheid-7051894",
+        "gxAlertDeviceId": 41
+      }
+    ]
+  },
+  {
+    "externalId": "Phocweni Clinic",
+    "latitude": 31.337879,
+    "longitude": -26.517521,
+    "stateName": "Manzini",
+    "lgaName": "Kwaluseni",
+    "name": "Phocweni Clinic",
+    "shortName": "Phocweni Clinic",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Phocweni Clinic",
+        "shortName": "Phocweni Clinic",
+        "macAddress": "MACEC086B1F2A6F",
+        "hostId": "Phocweni Military Cl",
+        "serial": "PHOCWENI-PC",
+        "gxAlertDeviceId": 43
+      }
+    ]
+  },
+  {
+    "externalId": "Matsanjeni HC",
+    "latitude": 31.750561,
+    "longitude": -27.25355,
+    "stateName": "Shiselweni",
+    "lgaName": "Matsanjeni",
+    "name": "Matsanjeni HC",
+    "shortName": "Matsanjeni HC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Matsanjeni HC",
+        "shortName": "Matsanjeni HC",
+        "macAddress": "MAC2C44FD33993E",
+        "hostId": "Disalab",
+        "serial": "CepheidG52LOR1",
+        "gxAlertDeviceId": 44
+      }
+    ]
+  },
+  {
+    "externalId": "RFM (TIMS)",
+    "name": "RFM (TIMS)",
+    "shortName": "RFM (TIMS)",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "RFM (TIMS)",
+        "shortName": "RFM (TIMS)",
+        "macAddress": "MACA0369FD37AE5",
+        "hostId": "RFM (TIMS)",
+        "serial": "Cepheid-6511RHX",
+        "gxAlertDeviceId": 45
+      }
+    ]
+  },
+  {
+    "externalId": "TB PS",
+    "name": "TB PS",
+    "shortName": "TB PS ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "TB PS",
+        "shortName": "TB PS ",
+        "macAddress": "MACA0369FD721DD",
+        "hostId": "National Referal Lab",
+        "serial": "Cepheid-7021MSQ",
+        "gxAlertDeviceId": 47
+      }
+    ]
+  },
+  {
+    "externalId": "TB PS 1",
+    "name": "TB PS 1",
+    "shortName": "TB PS 1 (Truck)",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "TB PS 1",
+        "shortName": "TB PS 1 (Truck)",
+        "macAddress": "MAC705A0F4D072E",
+        "hostId": "PS Mobile Laboratory",
+        "serial": "Cepheid-705189H",
+        "gxAlertDeviceId": 48
+      }
+    ]
+  },
+  {
+    "externalId": "TB PS 2",
+    "name": "TB PS 2",
+    "shortName": "TB PS 2",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "TB PS 2",
+        "shortName": "TB PS 2",
+        "macAddress": "MAC8CDCD44E6EBD",
+        "hostId": "TB PS Team 2",
+        "serial": "Cepheid-528266B",
+        "gxAlertDeviceId": 49
+      }
+    ]
+  },
+  {
+    "externalId": "TB PS 3",
+    "name": "TB PS 3",
+    "shortName": "TB PS 3",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "TB PS 3",
+        "shortName": "TB PS 3",
+        "macAddress": "MACA0369FD721DD",
+        "hostId": "TB PS TEAM 3",
+        "serial": "Cepheid-7050W0B",
+        "gxAlertDeviceId": 51
+      }
+    ]
+  },
+  {
+    "externalId": "Hlatikhulu Hospital Laboratory",
+    "latitude": 31.32407,
+    "longitude": -26.972565,
+    "stateName": "Shiselweni",
+    "lgaName": "Mtsambama",
+    "name": "Hlatikhulu Hospital Laboratory",
+    "shortName": "Hlatikhulu Hosp",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Hlatikhulu Hospital Laboratory",
+        "shortName": "Hlatikhulu Hosp",
+        "macAddress": "MAC7446A09AD819",
+        "hostId": "Hlatikhulu Hospital",
+        "serial": "Cepheid-3371XKD",
+        "gxAlertDeviceId": 52
+      }
+    ]
+  },
+  {
+    "externalId": "Matsapha Correctional Center",
+    "latitude": 31.302,
+    "longitude": -26.514999,
+    "stateName": "Manzini",
+    "lgaName": "Kwaluseni",
+    "name": "Matsapha Correctional Center",
+    "shortName": "Matsapha CC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Matsapha Correctional Center",
+        "shortName": "Matsapha CC",
+        "macAddress": "MAC705A0F38B4AA",
+        "hostId": "Matsapha Correctiona",
+        "serial": "Cepheid-7050W3G",
+        "gxAlertDeviceId": 53
+      }
+    ]
+  },
+  {
+    "externalId": "Mkhuzweni Health Center",
+    "latitude": 31.507999,
+    "longitude": -25.902,
+    "stateName": "Hhohho",
+    "lgaName": "Mayiwane",
+    "name": "Mkhuzweni Health Center",
+    "shortName": "Mkhuzweni HC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mkhuzweni Health Center",
+        "shortName": "Mkhuzweni HC",
+        "macAddress": "MAC6805CA129B8E",
+        "hostId": "Mkhuzweni Health Cen",
+        "serial": "Cepheid-3031JCG",
+        "gxAlertDeviceId": 54
+      }
+    ]
+  },
+  {
+    "externalId": "Sigombeni Baphalali Swaziland Red Cross Society Clinic",
+    "latitude": 31.330999,
+    "longitude": -26.361,
+    "stateName": "Manzini",
+    "lgaName": "Ludzeludze",
+    "name": "Sigombeni Baphalali Swaziland Red Cross Society Clinic",
+    "shortName": "Sigombeni RCS",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Sigombeni Baphalali Swaziland Red Cross Society Clinic",
+        "shortName": "Sigombeni RCS",
+        "macAddress": "MAC00118576120F",
+        "hostId": "Sigombeni Baphalali",
+        "serial": "Cepheid-643202Z",
+        "gxAlertDeviceId": 55
+      }
+    ]
+  },
+  {
+    "externalId": "Mankayane Lab",
+    "name": "Mankayane Lab",
+    "shortName": "Mankayane Lab",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mankayane Lab",
+        "shortName": "Mankayane Lab",
+        "macAddress": "MAC6805CA152CFD",
+        "hostId": "Mankayane Lab",
+        "serial": "Cepheid-3031JCB",
+        "gxAlertDeviceId": 57
+      }
+    ]
+  },
+  {
+    "externalId": "Matsanjeni Health Centre",
+    "name": "Matsanjeni Health Centre",
+    "shortName": "Matsanjeni HC",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Matsanjeni Health Centre",
+        "shortName": "Matsanjeni HC",
+        "macAddress": "MACA0369FD394C6",
+        "hostId": "Matsanjeni Health Ce",
+        "serial": "Cepheid-70310VC",
+        "gxAlertDeviceId": 58
+      }
+    ]
+  },
+  {
+    "externalId": "AHF(Lamvelase)",
+    "latitude": 31.383341,
+    "longitude": -26.49386,
+    "stateName": "Manzini",
+    "lgaName": "Manzini South",
+    "name": "AHF(Lamvelase)",
+    "shortName": "AHF(Lamvelase)",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "AHF(Lamvelase)",
+        "shortName": "AHF(Lamvelase)",
+        "macAddress": "MAC6805CA129FBF",
+        "hostId": "AHF(Lamvelase)",
+        "serial": "Cepheid-3031JCN",
+        "gxAlertDeviceId": 59
+      }
+    ]
+  },
+  {
+    "externalId": "Mangweni Clinic Laboratory",
+    "name": "Mangweni Clinic Laboratory",
+    "shortName": "Mangweni Clinic ",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Mangweni Clinic Laboratory",
+        "shortName": "Mangweni Clinic ",
+        "macAddress": "MAC705A0F389A1E",
+        "hostId": "Mangweni Clinic Laboratory",
+        "serial": "Cepheid-7050W2V",
+        "gxAlertDeviceId": 60
+      }
+    ]
+  },
+  {
+    "externalId": "Phocweni Clinic",
+    "name": "Phocweni Clinic",
+    "shortName": "Phocweni Clinic",
+    "timeZoneId": "South Africa Standard Time",
+    "devices": [
+      {
+        "name": "Phocweni Clinic",
+        "shortName": "Phocweni Clinic",
+        "macAddress": "MAC705A0F38DD4A",
+        "hostId": "Phocweni Clinic",
+        "serial": "Cepheid-7050W1S",
+        "gxAlertDeviceId": 61
+      }
+    ]
+  }
+]
