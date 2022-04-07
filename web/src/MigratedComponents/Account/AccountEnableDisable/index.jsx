@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux'
 import { useMutation } from 'react-query'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
 import { Person, PersonOff } from '@material-ui/icons'
 import { FormAction } from '../Details/FormSubmit'
 import { DataTableCell as TableCell } from '../../../components/shared/tableBody'
@@ -105,13 +104,11 @@ const AccountEnableDisable = props => {
             }}
           >
             {person.get('disabled') === 0 ? (
-              <Tooltip title="User disabled">
-                <IconContainer
-                  icon={Person}
-                  style={{ color: 'green' }}
-                  action={handleDisablePrompt}
-                />
-              </Tooltip>
+              <IconContainer
+                icon={Person}
+                style={{ color: 'green' }}
+                action={handleDisablePrompt}
+              />
             ) : (
               <IconContainer
                 icon={PersonOff}
