@@ -193,6 +193,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereLotNumberIncludes',
     defaultMessage: 'lot number includes "{lotNumber}"',
   },
+  contactEnabledStatus: {
+    id: 'filter.btnGroup.contactEnabledStatus',
+    defaultMessage: 'Contact Status: {contactStatus}',
+  },
 })
 const revokedOptions = [
   {
@@ -202,6 +206,16 @@ const revokedOptions = [
   {
     id: '1',
     name: 'true',
+  },
+]
+const statusOptions = [
+  {
+    id: '0',
+    name: 'Enabled',
+  },
+  {
+    id: '1',
+    name: 'Disabled',
   },
 ]
 const enhance = compose(
@@ -247,6 +261,7 @@ const filtersOrdering = {
   reportableSiteId: 33,
   sampleOriginSite: 13,
   contactNameOrEmail: 14,
+  contactStatus: 15,
   consumableId: 7,
   workflowStatusId: 16,
   deviceApprovalId: 17,
@@ -610,6 +625,15 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     lotNumber: makeButton(lotNumber =>
       formatMessage(messages.whereLotNumberIncludes, {
         lotNumber,
+      })
+    ),
+    contactStatus: makeButton(status =>
+      formatMessage(messages.contactEnabledStatus, {
+        contactStatus: statusOptions.find(
+          it => it.id === status,
+          EMPTY_CONTEXT,
+          EMPTY_MAP
+        ).name,
       })
     ),
   }

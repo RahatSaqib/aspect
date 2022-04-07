@@ -141,6 +141,7 @@ const sanitizerByConfigKey = {
   daysStockLeft: defaultSanitizer,
   hasStock: defaultSanitizer,
   lotNumber: defaultSanitizer,
+  contactStatus: defaultSanitizer,
 }
 
 /**
@@ -378,8 +379,8 @@ export const reduceFiltersConfig = (
             case 'diseaseId':
               result.disease = true
               break
-            case 'contactsDisabled':
-              result.contactsDisabled = true
+            case 'contactStatus':
+              result.contactStatus = true
               break
             default:
           }
