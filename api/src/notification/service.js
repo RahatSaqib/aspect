@@ -251,6 +251,7 @@ async function createNotifications(knex, action, context) {
   const now = new Date()
   const { filterCondition = null, notificationTypeCategoryId = 'issueBased' } =
     action
+
   const policies = await getNotificationPolicy(
     knex,
     action,
@@ -396,7 +397,7 @@ async function getNotificationPolicy(
       'ntc.id'
     )
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .modify((queryBuilder, { resultId, issueId }) => {
+    .modify((queryBuilder, { resultId, issueId, notificationTypeId }) => {
       if (!_.isNil(issueId)) {
         extraFields = [
           'i.siteId',
@@ -459,12 +460,15 @@ async function getNotificationPolicy(
         aliases.result = 'result'
         aliases.device = 'd'
       }
+
+      if (notificationTypeId) queryBuilder.andWhere('nt.id', notificationTypeId)
     }, action)
     .orderBy('nt.jobFunctionId', 'DESC')
     .orderBy('nt.level', 'DESC')
     .modify(extraConditionsFunction, extraConditions, aliases)
     .where('nt.enabled', true)
     .distinct(selectColums.concat(extraFields))
+
   return records
 }
 
