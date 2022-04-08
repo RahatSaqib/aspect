@@ -545,6 +545,16 @@ async function renderExcelTemplateToCsv({
     worksheet.spliceRows(2, patternRowNumber - 1 - 1)
   }
 
+  // Insert Byte-order-marker (BOM) to specify UTF-8 encoding.
+  // Without it, special characters will appear garbled when
+  // opening the CSV in Excel (but will be fine when using a text editor)
+  // More here: https://stackoverflow.com/a/11399444
+  if (worksheet.getRow(1) && worksheet.getRow(1).getCell(1)) {
+    const firstCellValue = worksheet.getRow(1).getCell(1).value
+    // eslint-disable-next-line no-irregular-whitespace
+    worksheet.getRow(1).getCell(1).value = `﻿${firstCellValue}`
+  }
+
   // return binary buffer
   return workbook.csv.writeBuffer()
 }
