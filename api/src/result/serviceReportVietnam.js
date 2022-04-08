@@ -463,12 +463,7 @@ function getM4B3Totals(rows) {
     acc.totalInventory +=
       quantityOnHand -
       receive +
-      transferFrom +
-      use +
-      expired +
-      damage +
-      stolen +
-      lost
+      (transferFrom + use + expired + damage + stolen + lost)
     const { activeScreening, routine, other } = row
     acc.totalActiveScreening += activeScreening
     acc.totalRoutine += routine
