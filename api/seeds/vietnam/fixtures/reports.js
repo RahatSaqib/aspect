@@ -112,10 +112,10 @@ module.exports = {
   GeneXpertM4B3BiologicalProducts: {
     name: 'M4B3 Biological Products',
     description: 'Use of Xpert Biological Products',
-    i18nKey: 'geneXpertM4B3BiologicalProducts',
-    i18nKeyDescription: 'geneXpert_M4B3_biological_products',
-    externalId: 'geneXpert_M4B3_biological_products',
-    fileName: 'geneXpertM4B3BiologicalProducts',
+    i18nKey: 'xpert_m4b3_biological_products_name',
+    i18nKeyDescription: 'xpert_m4b3_biological_products_description',
+    externalId: 'xpert_m4b3_biological_products',
+    fileName: 'xpert_m4b3_biological_products',
     exportCsv: false,
     sortOrder: 70,
     sheets: [
