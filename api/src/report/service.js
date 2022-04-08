@@ -21,7 +21,7 @@ async function getReports(request) {
     .modify(addConstraints, dataConstraints, { person: 'p' })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
-
+  console.log(reportsQuery.toString())
   const getItems = reportsQuery
     .clone()
     .modify(filterParams, query, {
@@ -48,7 +48,7 @@ async function getReports(request) {
       'r.exportCsv'
     )
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
+  console.table(data)
   return { ok: true, total, data }
 }
 

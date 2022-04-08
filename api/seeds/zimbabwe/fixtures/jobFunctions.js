@@ -12,6 +12,10 @@ const {
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 
+const reports = require('./reports')
+
+const countryReports = Object.values(reports).map(report => report.externalId)
+
 module.exports = [
   mergeJobFunctions(admin, {
     permissions: [
@@ -72,6 +76,7 @@ module.exports = [
         activity: 'view',
       },
     ],
+    reports: [...admin.reports, ...countryReports],
   }),
   mergeJobFunctions(clinician, {
     permissions: [
