@@ -52,7 +52,7 @@ function listContactBaseConfig() {
           .items(Joi.object())
           .single()
           .description('The array of {tagName,tagId} assigned to persons'),
-        contactStatus: Joi.string()
+        contactStatus: Joi.number()
           .allow('')
           .description('Filter for person enabled/disabled'),
         ...validateAllGeographyFilterParams(),
@@ -85,7 +85,7 @@ function listReporterBaseConfig() {
         format: Joi.string()
           .allow('')
           .description('File format for exporting data'),
-        contactStatus: Joi.string()
+        contactStatus: Joi.number()
           .allow('')
           .description('Filter for person enabled/disabled'),
         revoked: Joi.string()
