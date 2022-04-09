@@ -89,7 +89,7 @@ async function listPeople(request) {
       'p.id',
       'p.name',
       'p.disabled',
-      'p.disabledAt',
+      'p.disabledOn',
       getJobFunctionNames,
       'st.name as state',
       'l.name as lga',
@@ -262,7 +262,7 @@ function getPersonDetails(personId) {
       'u.lockedOut as userLockedOut',
       'p.canLogIn',
       'p.disabled',
-      'p.disabledAt',
+      'p.disabledOn',
       'j.id as jobId'
     )
 }
@@ -563,11 +563,15 @@ async function updateRefreshToken(request) {
 
 async function disablePerson(request) {
   const {
+    auth: { credentials },
     params: { personId },
   } = request
-  const person = await knex('Person')
-    .where('id', personId)
-    .update({ disabled: true, disabledAt: new Date() })
+  const { id: disabledBy } = await userService.getUser(credentials.name)
+  const person = await knex('Person').where('id', personId).update({
+    disabled: true,
+    disabledOn: new Date(),
+    disabledBy,
+  })
   return { ok: true, data: person }
 }
 
@@ -577,7 +581,7 @@ async function enablePerson(request) {
   } = request
   const person = await knex('Person')
     .where('id', personId)
-    .update({ disabled: false, disabledAt: null })
+    .update({ disabled: false, disabledOn: null, disabledBy: null })
   return { ok: true, data: person }
 }
 
