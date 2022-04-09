@@ -18,8 +18,7 @@ const {
   updateRefreshToken,
   assignContact,
   unAssignContact,
-  disablePerson,
-  enablePerson,
+  updatePersonStatus,
 } = require('./service')
 
 const { exportContacts } = require('./serviceReports')
@@ -364,7 +363,7 @@ const routes = [
   {
     method: 'DELETE',
     path: '/person/{personId}',
-    handler: asyncHandler(disablePerson),
+    handler: asyncHandler(updatePersonStatus),
     config: {
       description: 'Soft Delete Person',
       notes: 'Id of a person to disable',
@@ -379,7 +378,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/person/enable/{personId}',
-    handler: asyncHandler(enablePerson),
+    handler: asyncHandler(updatePersonStatus),
     config: {
       description: 'Enable Person',
       notes: 'Id of a person to enable',
