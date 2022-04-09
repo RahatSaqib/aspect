@@ -1,6 +1,6 @@
 const reduce = require('lodash/reduce')
 const includes = require('lodash/includes')
-const { endOfMonth, startOfMonth } = require('date-fns')
+const { format, endOfMonth, startOfMonth } = require('date-fns')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams } = require('../db')
@@ -14,6 +14,10 @@ const {
   getTypeOfPatientCategory,
   getMappingFieldName,
 } = require('./serviceReportVietnam/geneXpertM4B1PatientsReport')
+
+const activeScreeningUseKey = 'Sàng lọc chủ động: ghi rõ'
+const routineDiagnosticUseKey = 'Chẩn đoán thường quy'
+const otherUseKey = 'Khác: ghi rõ'
 
 function getBaseQuery(dataConstraints, query) {
   return knex('Result as r')
@@ -93,10 +97,7 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
 
       // "Active Screening/Other" is a separate count, not included in totals, so it's treated apart
       if (
-        includes(
-          ['Sàng lọc chủ động: ghi rõ', 'Khác: ghi rõ'],
-          reportItem.testingReason
-        )
+        includes([activeScreeningUseKey, otherUseKey], reportItem.testingReason)
       ) {
         partialReport[`ActiveScreening_${typeOfPatient}`] += reportItem.quantity
       }
@@ -287,39 +288,6 @@ async function getResultCountsByHIVStatus(auth, query) {
   }
 }
 
-function applyInventoryProjection(queryBuilder, maxDate) {
-  queryBuilder.select(
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferSent' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'transferFrom'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferReceived' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'receiveTo'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TestConducted' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'use'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Damage' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'damage'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Expired' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'expired'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Stolen' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'stolen'`
-    ),
-    knex.raw(
-      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Lost' AND IFNULL(il.adjustedFrom, il.createdOn) <=
-      '${maxDate}' THEN  il.quantity END), '0') as 'lost'`
-    )
-  )
-}
-
 const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
   joinQuery
     .on('il.inventoryItemId', 'ii.id')
@@ -368,17 +336,175 @@ async function getGlobalFundInventoryReport(auth, query) {
     dynamicColumns: globalFundInventoryReportDictionary[culture],
     dataSelector: dataRow => {
       const stockLastPeriod =
-        parseInt(dataRow.quantityOnHand, 10) -
-        parseInt(dataRow.transferFrom, 10) +
-        parseInt(dataRow.receiveTo, 10) +
-        parseInt(dataRow.use, 10) +
-        parseInt(dataRow.damage, 10)
+        dataRow.quantityOnHand -
+        dataRow.transferFrom +
+        dataRow.receiveTo +
+        dataRow.use +
+        dataRow.damage
       return {
         ...dataRow,
-        stockLastMonth: stockLastPeriod === 0 ? '0' : stockLastPeriod,
+        stockLastMonth: stockLastPeriod,
       }
     },
   }
+}
+
+async function getGeneXpertM4B3BiologicalProducts(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const { maxDate } = query
+
+  const rows = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 's.id', 'ii.siteId')
+    .leftJoin('InventoryLog as il', q =>
+      joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString())
+    )
+    .leftJoin('Result as r', 'r.id', 'il.resultId')
+    .join('Consumable as c', 'c.id', 'ii.consumableId')
+    .join('Unit as u', 'u.id', 'c.unit')
+    .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
+    .select([
+      's.name as siteName',
+      'ii.lotNumber',
+      'c.name as productName',
+      'u.name as unit',
+      'ii.expiresOn',
+      knex.raw(
+        `sum(case when r.resultData->>'$.customFieldData."251".value' = '${activeScreeningUseKey}' then 1 else 0 end) as activeScreening`
+      ),
+      knex.raw(
+        `sum(case when r.resultData->>'$.customFieldData."251".value' = '${routineDiagnosticUseKey}' then 1 else 0 end) as routine`
+      ),
+      knex.raw(
+        `sum(case when r.resultData->>'$.customFieldData."251".value' = '${otherUseKey}' then 1 else 0 end) as other`
+      ),
+      'ii.quantityOnHand as funding',
+      knex.raw(`
+      ii.quantityOnHand - SUM(CASE WHEN IFNULL(il.adjustedFrom, il.createdOn) >
+      '${maxDate}' THEN il.quantity * IF(cr.decrease, -1, 1) ELSE 0 END) AS quantityOnHand`),
+    ])
+    .modify(queryBuilder => applyInventoryProjection(queryBuilder, maxDate))
+    .modify(addConstraints, dataConstraints, {
+      geography: 'g',
+      InventoryItem: 'ii',
+    })
+    .modify(filterParams, query, {
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .groupBy(['ii.lotNumber', 'il.siteId'])
+
+  return {
+    ok: true,
+    data: {
+      rows,
+      ...getM4B3Totals(rows),
+      dateSignature: format(new Date(), ' d/M/yyyy'),
+    },
+    total: rows.length,
+    dataSelector: getM4B3dataSelectorFunction,
+  }
+}
+
+const getM4B3dataSelectorFunction = row => {
+  row.existence = row.quantityOnHand
+  row.stockLastPeriod =
+    row.quantityOnHand -
+    row.transferFrom -
+    row.receiveTo +
+    row.use +
+    row.expired +
+    row.stolen +
+    row.damage +
+    row.lost
+  return {
+    ...row,
+  }
+}
+
+function getM4B3Totals(rows) {
+  const totals = {
+    totalInventory: 0,
+    totalTransferFrom: 0,
+    totalUse: 0,
+    totalReceive: 0,
+    totalExpired: 0,
+    totalDamage: 0,
+    totalStolen: 0,
+    totalLost: 0,
+    totalExistence: 0,
+    totalActiveScreening: 0,
+    totalRoutine: 0,
+    totalOther: 0,
+  }
+
+  rows.reduce((acc, row) => {
+    const {
+      quantityOnHand,
+      transferFrom,
+      receiveTo: receive,
+      use,
+      expired,
+      damage,
+      stolen,
+      lost,
+    } = row
+
+    acc.totalTransferFrom += transferFrom
+    acc.totalUse += use
+    acc.totalReceive += receive
+    acc.totalDamage += damage
+    acc.totalExpired += expired
+    acc.totalStolen += stolen
+    acc.totalLost += lost
+    acc.totalExistence += quantityOnHand
+    acc.totalInventory +=
+      quantityOnHand -
+      receive +
+      (transferFrom + use + expired + damage + stolen + lost)
+    const { activeScreening, routine, other } = row
+    acc.totalActiveScreening += activeScreening
+    acc.totalRoutine += routine
+    acc.totalOther += other
+
+    return acc
+  }, totals)
+  return totals
+}
+
+function applyInventoryProjection(queryBuilder, maxDate) {
+  queryBuilder.select(
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferSent' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'transferFrom'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TransferReceived' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'receiveTo'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_TestConducted' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'use'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Damage' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'damage'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Expired' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'expired'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Stolen' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'stolen'`
+    ),
+    knex.raw(
+      `IFNULL(SUM(CASE WHEN cr.i18nKey = 'ConsumableReason_Lost' AND IFNULL(il.adjustedFrom, il.createdOn) <=
+      '${maxDate}' THEN  il.quantity ELSE 0 END), 0) as 'lost'`
+    )
+  )
 }
 
 module.exports = {
@@ -388,4 +514,5 @@ module.exports = {
   getGeneXpertM4B1PatientsReport,
   getReasonForTestingReport,
   getResultCountsByHIVStatus,
+  getGeneXpertM4B3BiologicalProducts,
 }

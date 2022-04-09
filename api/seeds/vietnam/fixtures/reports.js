@@ -84,11 +84,13 @@ module.exports = {
     fileName: 'globalFundInventoryReport',
     exportCsv: true,
     sortOrder: 50,
-    sheets: {
-      sortOrder: 0,
-      moduleName: 'result/serviceReportVietnam',
-      functionName: 'getGlobalFundInventoryReport',
-    },
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getGlobalFundInventoryReport',
+      },
+    ],
   },
   reasonForTestingReport: {
     name: 'Reason for Testing Report',
@@ -104,6 +106,23 @@ module.exports = {
         sortOrder: 0,
         moduleName: 'result/serviceReportVietnam',
         functionName: 'getReasonForTestingReport',
+      },
+    ],
+  },
+  GeneXpertM4B3BiologicalProducts: {
+    name: 'M4B3 Biological Products',
+    description: 'Use of Xpert Biological Products',
+    i18nKey: 'xpertM4b3BiologicalProducts',
+    i18nKeyDescription: 'xpertM4b3BiologicalProducts_description',
+    externalId: 'xpert_m4b3_biological_products',
+    fileName: 'xpert_m4b3_biological_products',
+    exportCsv: false,
+    sortOrder: 70,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'result/serviceReportVietnam',
+        functionName: 'getGeneXpertM4B3BiologicalProducts',
       },
     ],
   },
