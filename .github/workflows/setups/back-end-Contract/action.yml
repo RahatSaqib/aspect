@@ -35,19 +35,7 @@ runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v3
-      - name: 'Create .env'
-        uses: ./.github/workflows/setups/back-end-env
-        with:
-          dbname: $DB_NAME
-          dbuser: $DB_USER
-          dbpassword: $DB_PASSWORD
-          TWILIOACCOUNTSID: $TWILIOACCOUNTSID
-          TWILIOAUTHTOKEN: $TWILIOAUTHTOKEN
-          TWILIOMESSAGINGSERVICESID: $TWILIOMESSAGINGSERVICESID
-          ENCRYPTIONPASSPHRASE: $ENCRYPTIONPASSPHRASE
-          ENCRYPTIONINITVECTOR: $ENCRYPTIONINITVECTOR
-          PUSHNOTIFICATIONTESTDEVICETOKENID: $PUSHNOTIFICATIONTESTDEVICETOKENID
-          FIREBASESERVERKEY: $FIREBASESERVERKEY
+      - uses: ./.github/workflows/setups/back-end-env
         env:
           DB_NAME: ${{ inputs.dbname }}
           DB_USER: ${{ inputs.dbuser }}
@@ -59,16 +47,26 @@ runs:
           ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
           FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
-
-      - uses: actions/checkout@v3
-      - name: 'Setup MySQL'
-        uses: ./.github/workflows/setups/back-end-mysql
         with:
           dbname: $DB_NAME
+          dbuser: $DB_USER
           dbpassword: $DB_PASSWORD
+          TWILIOACCOUNTSID: $TWILIOACCOUNTSID
+          TWILIOAUTHTOKEN: $TWILIOAUTHTOKEN
+          TWILIOMESSAGINGSERVICESID: $TWILIOMESSAGINGSERVICESID
+          ENCRYPTIONPASSPHRASE: $ENCRYPTIONPASSPHRASE
+          ENCRYPTIONINITVECTOR: $ENCRYPTIONINITVECTOR
+          PUSHNOTIFICATIONTESTDEVICETOKENID: $PUSHNOTIFICATIONTESTDEVICETOKENID
+          FIREBASESERVERKEY: $FIREBASESERVERKEY
+
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/setups/back-end-mysql
         env:
           DB_NAME: ${{ inputs.dbname }}
           DB_PASSWORD: ${{ inputs.dbpassword }}
+        with:
+          dbname: $DB_NAME
+          dbpassword: $DB_PASSWORD
 
 
 
