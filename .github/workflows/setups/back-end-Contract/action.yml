@@ -1,9 +1,9 @@
-name: 'API Unit Tests'
-description: 'Run API unit tests'
+name: 'API Contract Tests'
+description: 'Run API Contract tests'
 runs:
   using: "composite"
   steps:
     - name: 'Show plan var'
       run: |
-        echo $PLAN
+        echo Contract Tests!
       shell: bash
