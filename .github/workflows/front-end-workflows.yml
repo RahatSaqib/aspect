@@ -1,4 +1,4 @@
-name: Front-end
+name: Aspect
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  install:
+  fe-install:
     name: 'Front-end install'
     runs-on: ubuntu-latest
     steps:
@@ -15,10 +15,21 @@ jobs:
       - id: install-aspect
         uses: ./.github/workflows/setups/front-end-setup
 
-  test:
+  be-install:
+    name: 'Front-end install'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: install-aspect-backend
+        uses: ./.github/workflows/setups/back-end-setup
+
+  fe-test:
     name: 'Front-end tests'
     runs-on: ubuntu-latest
-    needs: install
+    needs: fe-install
+    strategy:
+      matrix:
+        Plan: [Web]
     steps:
       - uses: actions/checkout@v3
       - id: install-aspect
@@ -26,6 +37,28 @@ jobs:
 
       - name: 'Run Tests'
         run: yarn web:test
+
+  be-test:
+    name: 'Back-end tests'
+    runs-on: ubuntu-latest
+    needs: be-install
+    strategy:
+      matrix:
+        Plan: [Unit,Contract]
+    steps:
+      - name: API Tests
+        env:
+          PLAN: ${{matrix.Plan}}
+
+      - uses: actions/checkout@v3
+      - id: api-unit-test
+        uses: ./.github/workflows/setups/back-end-Unit
+        if: $PLAN == 'Unit'
+
+      - uses: actions/checkout@v3
+      - id: api-contract-test
+        uses: ./.github/workflows/setups/back-end-Contract
+        if: $PLAN == 'Contract'
 
   # test:
   #   name: 'Front-end install'
