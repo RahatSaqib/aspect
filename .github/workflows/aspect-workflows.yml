@@ -54,7 +54,7 @@ jobs:
         Plan: [MySQL,RabbitMQ]
     steps:
       - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
+        run: sudo service mysql stop
 
       - name: 'Setup MySQL'
         if: ${{ matrix.Plan == 'MySQL' }}
@@ -76,6 +76,9 @@ jobs:
           RABBITMQ_PORT: 5672
           RABBITMQ_MNG_PORT: 15672
           RABBITMQ_TAG: '3-management-alpine'
+
+      - name: Check MySQL status
+        run: sudo service mysql status
 
   be-test:
     name: 'Back-end tests'
