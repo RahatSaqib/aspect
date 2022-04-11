@@ -549,10 +549,11 @@ async function renderExcelTemplateToCsv({
   // Without it, special characters will appear garbled when
   // opening the CSV in Excel (but will be fine when using a text editor)
   // More here: https://stackoverflow.com/a/11399444
-  if (worksheet.getRow(1) && worksheet.getRow(1).getCell(1)) {
-    const firstCellValue = worksheet.getRow(1).getCell(1).value
+  const firstCell = worksheet.getRow(1)?.getCell(1)
+  if (firstCell) {
+    const firstCellValue = firstCell.value
     // eslint-disable-next-line no-irregular-whitespace
-    worksheet.getRow(1).getCell(1).value = `﻿${firstCellValue}`
+    firstCell.value = `﻿${firstCellValue}`
   }
 
   // return binary buffer
