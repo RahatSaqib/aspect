@@ -1,12 +1,12 @@
+module.exports = require('../utils').seed(seed, __filename)
+
 const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
 const jobFunctionFixture = require('./fixtures/jobFunctions')
-const countrySpecificReportFixture = require('./fixtures/reports')
 const { partnerName } = require('./fixtures/partnerData')
+const reports = require('./fixtures/reports')
 
-module.exports = require('../utils').seed(
-  async knex =>
-    updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName, {
-      countrySpecificReportFixture,
-    }),
-  __filename
-)
+async function seed(knex) {
+  await updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName, {
+    countrySpecificReportFixture: reports,
+  })
+}

@@ -7,6 +7,7 @@ async function getNotificationSubscriptions(knex) {
       'ntc.externalId as notificationTypeCategoryId',
       'ntc.triggerCondition',
       'nt.filterCondition',
+      'nt.id as notificationTypeId',
       knex.raw(
         `IFNULL(MD5(CONCAT(ntc.externalId,nt.filterCondition)), ntc.externalId) as memoKey`
       )
@@ -20,6 +21,7 @@ async function getNotificationSubscriptions(knex) {
             triggerCondition,
             filterCondition,
             memoKey,
+            notificationTypeId,
           }
         ) => {
           const { action, method } = JSON.parse(triggerCondition || '{}')
@@ -30,6 +32,7 @@ async function getNotificationSubscriptions(knex) {
               notificationTypeCategoryId,
               filterCondition: JSON.parse(filterCondition),
               memoKey,
+              notificationTypeId,
             }
             if (memo[action]) memo[action].push(elemToAdd)
             else memo[action] = [elemToAdd]

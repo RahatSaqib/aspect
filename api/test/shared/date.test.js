@@ -47,6 +47,19 @@ describe('Shared Date Utility Functions', () => {
       assert.equal(arrayOfDays[0].getTime(), new Date(2020, 7, 1).getTime())
       assert.equal(arrayOfDays[30].getTime(), new Date(2020, 7, 31).getTime())
     })
+
+    it('should return an array of dates in the given time range excluding weekends', () => {
+      const arrayOfDays = getArrayOfDaysInRange(
+        new Date(2020, 7, 1),
+        new Date(2020, 7, 31),
+        null,
+        true
+      )
+
+      assert.equal(arrayOfDays.length, 21)
+      assert.equal(arrayOfDays[0].getTime(), new Date(2020, 7, 3).getTime())
+      assert.equal(arrayOfDays[20].getTime(), new Date(2020, 7, 31).getTime())
+    })
   })
 
   describe('getIsoDateTimeStringRegex', () => {
