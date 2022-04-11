@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
+"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,12 +34,12 @@ msgstr "(Новое количество на руках: {nextQuantity} {unitSh
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-#, fuzzy
-#| msgid "* excluded {pendingTransfers} lot/s in transit"
 msgid ""
 "* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
 "s in transit"
-msgstr "* исключено {pendingTransfers} лот/с в пути"
+msgstr ""
+"* исключено {pendingTransfersQuantityOnHand} предметов в {pendingTransfers} "
+"партии/с при транспортировке"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -826,15 +826,14 @@ msgstr "Назначение Детали"
 #. At least one assay is required for result based notifications
 #: extracted_strings.json
 msgid "At least one assay is required for result based notifications"
-msgstr ""
-"Для получения уведомлений по результатам требуется хотя бы один анализ."
+msgstr "Для получения уведомлений по результатам требуется хотя бы один анализ"
 
 #. [pages.Notifications.notificationChannels]
 #. defaultMessage is:
 #. At least one of the notification channels should be selected
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
-msgstr "Следует выбрать хотя бы один из каналов уведомлений."
+msgstr "Следует выбрать хотя бы один из каналов уведомлений"
 
 #. [pages.IdleDialog.title]
 #. defaultMessage is:
@@ -1418,7 +1417,7 @@ msgstr "Собрано:"
 #. CollectedOn date is required
 #: extracted_strings.json
 msgid "CollectedOn date is required"
-msgstr "Укажите дату сбора."
+msgstr "Укажите дату сбора"
 
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
@@ -1768,7 +1767,7 @@ msgid ""
 msgstr ""
 "Подсчитывает устройства, которые не использовали все доступные отсеки для "
 "модулей, для получения последних 20 результатов. Это может указывать на "
-"неисправный модуль."
+"неисправный модуль"
 
 #. [component.Widget.percentageOfModulesFunctioningDescription]
 #. defaultMessage is:
@@ -1941,6 +1940,13 @@ msgstr "Дактари-ВГС"
 #: extracted_strings.json
 msgid "Daktari HIV-VL"
 msgstr "Дактари ВИЧ-ВЛ"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
+#: extracted_strings.json
+msgid "Damage"
+msgstr "Урон"
 
 #. [pages.OperationalDashboard.operationalDashboardTitle]
 #. defaultMessage is:
@@ -2670,7 +2676,7 @@ msgstr "Дата окончания"
 #. End date is required
 #: extracted_strings.json
 msgid "End date is required"
-msgstr "Укажите дату окончания."
+msgstr "Укажите дату окончания"
 
 #. [pages.Result.endedOnCannotBeBeforeStartedOn]
 #. defaultMessage is:
@@ -2863,7 +2869,7 @@ msgstr "Код ошибки"
 msgid "Error Code must be a positive integer with max 5 digits"
 msgstr ""
 "Код ошибки должен быть положительным целым числом, состоящим не более чем из "
-"5 цифр."
+"5 цифр"
 
 #. [queryFetch.errorResponseMessages.GET.default.title]
 #. defaultMessage is:
@@ -2998,10 +3004,8 @@ msgstr "Результат переноса ошибок"
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Fetching Endpoint"
 msgid "Error creating person"
-msgstr "Ошибка при получении конечной точки"
+msgstr "Ошибка при создании человека"
 
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
@@ -3154,17 +3158,14 @@ msgstr "Кодекс предприятия"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Please, try again in a few minutes. If the error persists, contact your "
-#| "administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of error "
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 msgstr ""
-"Пожалуйста, попробуйте еще раз через несколько минут. Если ошибка "
-"сохраняется, обратитесь к администратору за поддержкой."
+"Не удалось сформировать {fileType} отчет \"{reportName}\" из-за ошибки "
+"\"{errorMessage}\". Пожалуйста, повторите попытку через несколько минут. "
+"Если ошибка сохраняется, обратитесь за поддержкой к администратору."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -5630,10 +5631,8 @@ msgstr "Количество мест"
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The number of results that belong to a patient that died"
 msgid "Number of TB results grouped by patient HIV status"
-msgstr "Количество результатов, принадлежащих умершему пациенту"
+msgstr "Количество результатов ТБ, сгруппированных по ВИЧ-статусу пациента"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -7538,10 +7537,8 @@ msgstr "Выберите год…"
 #. defaultMessage is:
 #. Select an Assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select assay..."
 msgid "Select an Assay"
-msgstr "Выберите анализ..."
+msgstr "Выберите анализ"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -7711,10 +7708,8 @@ msgstr "Отправить конкретному человеку"
 #. defaultMessage is:
 #. Send to patient
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Linked to treatment"
 msgid "Send to patient"
-msgstr "Связанный с лечением"
+msgstr "Отправить пациенту"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -7727,10 +7722,8 @@ msgstr "Оператор отправителя"
 #. defaultMessage is:
 #. Sent details
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Site Detail"
 msgid "Sent details"
-msgstr "Детали сайта"
+msgstr "Отправленные данные"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -7857,7 +7850,7 @@ msgid ""
 "notification"
 msgstr ""
 "Для этого уведомления следует выбрать хотя бы одну должность или отдельное "
-"лицо."
+"лицо"
 
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
@@ -8176,14 +8169,14 @@ msgstr "Тело смс обязательно"
 #. Sms body shouldn't have no more than 144 characters
 #: extracted_strings.json
 msgid "Sms body shouldn't have no more than 144 characters"
-msgstr "В теле SMS-сообщения должно быть не более 144 символов."
+msgstr "В теле SMS-сообщения должно быть не более 144 символов"
 
 #. [pages.NotificationDetail.smsBodyLimit]
 #. defaultMessage is:
 #. Sms message should not be longer than 144 characters
 #: extracted_strings.json
 msgid "Sms message should not be longer than 144 characters"
-msgstr "SMS-сообщение не должно быть длиннее 144 символов."
+msgstr "SMS-сообщение не должно быть длиннее 144 символов"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -8332,8 +8325,6 @@ msgstr "Успешно"
 #. defaultMessage is:
 #. Successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Success"
 msgid "Successfully"
 msgstr "Успешно"
 
@@ -8736,7 +8727,7 @@ msgstr "Самое большее, что вы можете перевести, 
 #. The notification name is required
 #: extracted_strings.json
 msgid "The notification name is required"
-msgstr "Требуется название уведомления."
+msgstr "Требуется название уведомления"
 
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
@@ -8771,7 +8762,7 @@ msgid ""
 "the cartridges to be consumed are always the ones closer to their expiration"
 msgstr ""
 "Количество дней, оставшихся с доступными и неистекшими запасами, при "
-"условии, что расходуются картриджи, срок годности которых ближе к концу."
+"условии, что расходуются картриджи, срок годности которых ближе к концу"
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -8969,7 +8960,7 @@ msgid ""
 "always the ones closer to their expiration"
 msgstr ""
 "Прогнозируемый расход запасов при условии, что расходуются всегда те "
-"картриджи, срок годности которых истекает ближе к концу."
+"картриджи, срок годности которых истекает ближе к концу"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -9240,7 +9231,18 @@ msgid ""
 "result"
 msgstr ""
 "В этом отчете показано количество выполненных тестов GeneXpert MTB с "
-"разбивкой по результатам."
+"разбивкой по результатам"
+
+#. [pages.ReportIndex.xpertPatientsReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result and patients types
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result and patients types"
+msgstr ""
+"Данный отчет показывает количество проведенных тестов GeneXpert MTB с "
+"разбивкой по результатам и типам пациентов"
 
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
@@ -9362,10 +9364,8 @@ msgstr "Тема"
 #. defaultMessage is:
 #. Total Capacity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Cases"
 msgid "Total Capacity"
-msgstr "Всего случаев"
+msgstr "Вся вместительность"
 
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
@@ -9378,10 +9378,8 @@ msgstr "Всего случаев"
 #. defaultMessage is:
 #. Total Errors
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Critical Error"
 msgid "Total Errors"
-msgstr "Критическая ошибка"
+msgstr "Всего ошибок"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9969,6 +9967,13 @@ msgstr "Картридж Xpert HIV-1 Qual"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Картридж для вирусной нагрузки Xpert HIV-1"
 
+#. [pages.ReportIndex.xpertPatientsReport]
+#. defaultMessage is:
+#. Xpert Patients Report
+#: extracted_strings.json
+msgid "Xpert Patients Report"
+msgstr "Отчет о пациентах Xpert"
+
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
 #. Xpert Test Activities Report
@@ -9994,7 +9999,7 @@ msgstr "Год"
 #. Yes
 #: extracted_strings.json
 msgid "Yes"
-msgstr "да"
+msgstr "Да"
 
 #. [pages.JobAssignments.yesDelete]
 #. defaultMessage is:
@@ -10090,7 +10095,7 @@ msgstr ""
 msgid "You should select at least one Result Category for this assay"
 msgstr ""
 "Вы должны выбрать по крайней мере одну категорию результатов для этого "
-"анализа."
+"анализа"
 
 #. [pages.Notifications.geographyRequired]
 #. defaultMessage is:

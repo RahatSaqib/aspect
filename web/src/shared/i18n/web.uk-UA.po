@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
+"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,12 +34,12 @@ msgstr "(Нова кількість на руках: {nextQuantity} {unitShortN
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-#, fuzzy
-#| msgid "* excluded {pendingTransfers} lot/s in transit"
 msgid ""
 "* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
 "s in transit"
-msgstr "* виключено {pendingTransfers} лот/с в дорозі"
+msgstr ""
+"* виключено {pendingTransfersQuantityOnHand} елементів у {pendingTransfers} "
+"лотах в дорозі"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -1937,6 +1937,13 @@ msgstr "Дактарі ВГС"
 msgid "Daktari HIV-VL"
 msgstr "Daktari HIV-VL"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
+#: extracted_strings.json
+msgid "Damage"
+msgstr "Пошкодження"
+
 #. [pages.OperationalDashboard.operationalDashboardTitle]
 #. defaultMessage is:
 #. Dashboard
@@ -2990,10 +2997,8 @@ msgstr "Помилка передачі результату"
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Fetching Endpoint"
 msgid "Error creating person"
-msgstr "Помилка отримання кінцевої точки"
+msgstr "Помилка створення особи"
 
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
@@ -3146,17 +3151,14 @@ msgstr "Код об'єкта"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Please, try again in a few minutes. If the error persists, contact your "
-#| "administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of error "
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 msgstr ""
-"Будь ласка, спробуйте ще раз за кілька хвилин. Якщо помилка не зникає, "
-"зверніться до адміністратора для отримання підтримки."
+"Не вдалося створити {fileType} звіт \"{reportName}\" через помилку "
+"\"{errorMessage}\". Будь ласка, спробуйте ще раз за кілька хвилин. Якщо "
+"помилка не зникає, зверніться до свого адміністратора за підтримкою."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -5621,10 +5623,9 @@ msgstr "Кількість місць розташування"
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The number of results that belong to a patient that died"
 msgid "Number of TB results grouped by patient HIV status"
-msgstr "Кількість результатів, які належать пацієнту, який помер"
+msgstr ""
+"Кількість результатів туберкульозу, згрупованих за ВІЛ-статусом пацієнта"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -6866,7 +6867,7 @@ msgstr "Потрібен принтер"
 #. Required
 #: extracted_strings.json
 msgid "Required"
-msgstr "вимагається"
+msgstr "Вимагається"
 
 #. [reporters.requiresTreatment]
 #. defaultMessage is:
@@ -7526,10 +7527,8 @@ msgstr "Виберіть рік…"
 #. defaultMessage is:
 #. Select an Assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select assay..."
 msgid "Select an Assay"
-msgstr "Виберіть аналіз ..."
+msgstr "Виберіть аналіз"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -7699,10 +7698,8 @@ msgstr "Надіслати конкретній особі"
 #. defaultMessage is:
 #. Send to patient
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Linked to treatment"
 msgid "Send to patient"
-msgstr "Пов’язане з лікуванням"
+msgstr "Надіслати пацієнту"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -7715,10 +7712,8 @@ msgstr "Оператор відправника"
 #. defaultMessage is:
 #. Sent details
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Site Detail"
 msgid "Sent details"
-msgstr "Детальна інформація про сайт"
+msgstr "Надіслали деталі"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -8319,10 +8314,8 @@ msgstr "Успіху"
 #. defaultMessage is:
 #. Successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Success"
 msgid "Successfully"
-msgstr "Успіху"
+msgstr "Успішно"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -9231,6 +9224,17 @@ msgstr ""
 "У цьому звіті показано кількість проведених тестів GeneXpert MTB за "
 "категоріями за результатами"
 
+#. [pages.ReportIndex.xpertPatientsReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result and patients types
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result and patients types"
+msgstr ""
+"У цьому звіті показано кількість проведених тестів GeneXpert MTB за "
+"категоріями за результатами та типами пацієнтів"
+
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
 #. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
@@ -9350,10 +9354,8 @@ msgstr "Тема"
 #. defaultMessage is:
 #. Total Capacity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Cases"
 msgid "Total Capacity"
-msgstr "Загальна кількість інцидентів"
+msgstr "Загальна місткість"
 
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
@@ -9366,10 +9368,8 @@ msgstr "Загальна кількість інцидентів"
 #. defaultMessage is:
 #. Total Errors
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Critical Error"
 msgid "Total Errors"
-msgstr "Критична помилка"
+msgstr "Загальна кількість помилок"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9955,6 +9955,13 @@ msgstr "Картридж Xpert HIV-1 Qual"
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Касета для вірусного навантаження Xpert HIV-1"
+
+#. [pages.ReportIndex.xpertPatientsReport]
+#. defaultMessage is:
+#. Xpert Patients Report
+#: extracted_strings.json
+msgid "Xpert Patients Report"
+msgstr "Звіт пацієнтів Xpert"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:

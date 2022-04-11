@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-28T22:37:24.011Z\n"
+"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1938,6 +1938,13 @@ msgstr "Daktari HCV"
 #: extracted_strings.json
 msgid "Daktari HIV-VL"
 msgstr "Daktari HIV-VL"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
+#: extracted_strings.json
+msgid "Damage"
+msgstr "Hư hại"
 
 #. [pages.OperationalDashboard.operationalDashboardTitle]
 #. defaultMessage is:
@@ -8085,7 +8092,7 @@ msgstr "Chi tiết đơn vị"
 #. Site ID
 #: extracted_strings.json
 msgid "Site ID"
-msgstr "ID Site"
+msgstr "ID Đơn vị"
 
 #. [filter.popover.siteId]
 #. defaultMessage is:
