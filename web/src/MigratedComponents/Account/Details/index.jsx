@@ -23,6 +23,12 @@ import AccountEnableDisable from '../AccountEnableDisable'
 import messages from './messages'
 import { badRequestBuilder } from '../../../error/CommonErrorNotifications'
 
+const FORM_METHOD = {
+  ADD: 'add',
+  UPDATE: 'update',
+  SELF: 'self',
+}
+
 const ContactDetailsFormFormik = () => {
   const { personId } = useParams()
   const navigate = useNavigate()
@@ -37,6 +43,33 @@ const ContactDetailsFormFormik = () => {
   })
   const [config, setConfig] = useState(false)
   const formItemsConfig = itemsConfig(editor)
+  const [actions, setActions] = useState([])
+  const baseSubmit = {
+    id: 'submit',
+    type: 'submit',
+    color: 'primary',
+    label: formatMessage(
+      type === FORM_METHOD.ADD ? messages.create : messages.save
+    ),
+    component: FormSubmit,
+    action: handleSubmit,
+  }
+
+  const disableSubmit = {
+    id: 'delete',
+    type: 'button',
+    color: 'error',
+    label: formatMessage(messages.disable),
+    component: AccountEnableDisable,
+    sx: { backgroundColor: 'red' },
+  }
+  const enableSubmit = {
+    id: 'enable',
+    type: 'button',
+    label: formatMessage(messages.enable),
+    component: AccountEnableDisable,
+    sx: { backgroundColor: 'green' },
+  }
 
   const {
     isLoading,
@@ -57,7 +90,7 @@ const ContactDetailsFormFormik = () => {
     const baseOmitFields = [
       'country',
       'disabled',
-      'disabledAt',
+      'disabledOn',
       'jobId',
       'jobFunctions',
       'stateName',
@@ -70,7 +103,7 @@ const ContactDetailsFormFormik = () => {
     const { id } = values
 
     setTimeout(() => {
-      if (type === 'add') {
+      if (type === FORM_METHOD.ADD) {
         mutation.mutate({
           values: transformOutputValues(values, baseOmitFields),
           endpoint: '/person',
@@ -80,14 +113,14 @@ const ContactDetailsFormFormik = () => {
           },
         })
       }
-      if (type === 'update') {
+      if (type === FORM_METHOD.UPDATE) {
         mutation.mutate({
           values: transformOutputValues(values, baseOmitFields),
           endpoint: `/person/${id}`,
           method: 'PUT',
         })
       }
-      if (type === 'self') {
+      if (type === FORM_METHOD.SELF) {
         mutation.mutate({
           values: transformOutputValues(values, [
             ...baseOmitFields,
@@ -101,42 +134,6 @@ const ContactDetailsFormFormik = () => {
     }, 0)
   }
 
-  const actions = [
-    {
-      id: 'submit',
-      type: 'submit',
-      color: 'primary',
-      label: formatMessage(type === 'add' ? messages.create : messages.save),
-      component: FormSubmit,
-      action: handleSubmit,
-    },
-  ]
-
-  if (
-    type !== 'add' &&
-    actions?.length &&
-    queryData?.data?.username !== editor?.jwt?.name
-  ) {
-    if (queryData?.data?.disabled > 0) {
-      actions.push({
-        id: 'enable',
-        type: 'button',
-        label: formatMessage(messages.enable),
-        component: AccountEnableDisable,
-        sx: { backgroundColor: 'green' },
-      })
-    } else {
-      actions.push({
-        id: 'delete',
-        type: 'button',
-        color: 'error',
-        label: formatMessage(messages.disable),
-        component: AccountEnableDisable,
-        sx: { backgroundColor: 'red' },
-      })
-    }
-  }
-
   function buildItems(action) {
     const tempItems = [
       formItemsConfig.row1,
@@ -146,18 +143,18 @@ const ContactDetailsFormFormik = () => {
       formItemsConfig.row5,
       formItemsConfig.row6,
     ]
-    if (type === 'update') {
+    if (type === FORM_METHOD.UPDATE) {
       tempItems.unshift(formItemsConfig.row0)
       // disabling tag input until we refactor tags
       // (https://ops.systemone.id/browse/ASP-2591)
       // tempItems.push(formItemsConfig.row7)
     }
-    if (type === 'self') {
+    if (type === FORM_METHOD.SELF) {
       // disabling tag input until we refactor tags
       /// (https://ops.systemone.id/browse/ASP-2591)
       // tempItems.push(formItemsConfig.row7)
     }
-    if (personId) {
+    if (personId && type !== FORM_METHOD.SELF) {
       tempItems.push(formItemsConfig.row8)
     }
     return !isEqual(tempItems, items) ? action(tempItems) : items
@@ -165,8 +162,11 @@ const ContactDetailsFormFormik = () => {
 
   useEffect(() => {
     switch (true) {
-      case !!personId && personId !== 'add' && type !== 'update':
-        setType('update')
+      case !!personId &&
+        personId !== FORM_METHOD.ADD &&
+        type !== FORM_METHOD.UPDATE &&
+        personId !== editor.userId:
+        setType(FORM_METHOD.UPDATE)
         setQuery({
           key: [`get-user-${personId}`, personId],
           endpoint: `/person/${personId}`,
@@ -175,8 +175,9 @@ const ContactDetailsFormFormik = () => {
         buildItems(setItems)
         break
 
-      case !personId && type !== 'self':
-        setType('self')
+      case !personId ||
+        (type !== FORM_METHOD.SELF && personId === editor.userId):
+        setType(FORM_METHOD.SELF)
         setQuery({
           key: ['get-current-user'],
           endpoint: '/account-details/current',
@@ -185,8 +186,8 @@ const ContactDetailsFormFormik = () => {
         buildItems(setItems)
         break
 
-      case personId === 'add':
-        setType('add')
+      case personId === FORM_METHOD.ADD:
+        setType(FORM_METHOD.ADD)
         buildItems(setItems)
         break
 
@@ -265,11 +266,25 @@ const ContactDetailsFormFormik = () => {
         initialValues,
       }
 
+      if (!actions?.length) {
+        if (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) {
+          setActions([baseSubmit])
+        }
+        if (type === FORM_METHOD.UPDATE) {
+          setActions(
+            queryData?.data?.disabled > 0
+              ? [enableSubmit]
+              : [baseSubmit, disableSubmit]
+          )
+        }
+      }
+
       if (!isEqual(config, newConfig)) {
         setConfig(newConfig)
       }
     }
-  }, [isLoading, config, queryData, items, editor])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, config, queryData, items, editor, type])
 
   return !isLoading && !isEmpty(config) ? (
     <div style={{ padding: '20px' }}>
