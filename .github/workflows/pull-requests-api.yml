@@ -94,11 +94,11 @@ jobs:
       - name: 'Seed DB & Run Migrations'
         run: yarn start:api:seed
 
-      - name: 'Run Server'
-        run: yarn start:api:bg
-
       - name: 'Run API Unit Tests'
         run: yarn api:unit
+
+      - name: 'Run Server'
+        run: yarn start:api:bg
 
       - name: 'Run API Contract Tests'
         run: yarn api:contract
