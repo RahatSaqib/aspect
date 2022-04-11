@@ -46,11 +46,9 @@ jobs:
       matrix:
         Plan: [Unit,Contract]
     steps:
-      - name: Run ${{ matrix.Plan }} Tests
-        if: ${{ matrix.Plan == 'Unit' }}
-        uses: actions/checkout@v3
-      - id: api-unit-test
-        uses: ./.github/workflows/setups/back-end-Unit
+        - uses: actions/checkout@v3
+        - uses: ./.github/workflows/setups/back-end-Unit
+          if: ${{ matrix.Plan == 'Unit' }}
 
       # - uses: actions/checkout@v3
       # - id: api-contract-test
