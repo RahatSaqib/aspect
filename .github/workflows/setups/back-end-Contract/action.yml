@@ -31,11 +31,14 @@ inputs:
   FIREBASESERVERKEY:
     description: 'FIREBASESERVERKEY'
     required: true
+  GITHUB_TOKEN:
+    description: 'GITHUB_TOKEN'
+    required: true
 runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v3
-      
+
       - uses: ./.github/workflows/setups/back-end-setup
       - uses: ./.github/workflows/setups/back-end-env
         env:
@@ -83,12 +86,14 @@ runs:
 
       - name: 'Contract Test Report'
         uses: dorny/test-reporter@v1
+        env:
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         if: success() || failure()
         with:
           name: Contract Tests
           path: 'api/contract-test-results.json'
           reporter: mocha-json
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: $GITHUB_TOKEN
 
 
 
