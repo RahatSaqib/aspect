@@ -35,7 +35,8 @@ runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/workflows/setups/back-end-env
+      - id: 'Create .env'
+        uses: ./.github/workflows/setups/back-end-env
         with:
           dbname: $DB_NAME
           dbuser: $DB_USER
@@ -58,4 +59,16 @@ runs:
           ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
           FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
+
+      - uses: actions/checkout@v3
+      - id: 'Setup MySQL'
+        uses: ./.github/workflows/setups/back-end-mysql
+        with:
+          dbname: $DB_NAME
+          dbpassword: $DB_PASSWORD
+        env:
+          DB_NAME: ${{ inputs.dbname }}
+          DB_PASSWORD: ${{ inputs.dbpassword }}
+
+
 
