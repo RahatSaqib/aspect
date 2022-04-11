@@ -38,8 +38,6 @@ runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v3
-
-      - uses: ./.github/workflows/setups/back-end-setup
       - uses: ./.github/workflows/setups/back-end-env
         env:
           DB_NAME: ${{ inputs.dbname }}
@@ -64,36 +62,36 @@ runs:
           PUSHNOTIFICATIONTESTDEVICETOKENID: $PUSHNOTIFICATIONTESTDEVICETOKENID
           FIREBASESERVERKEY: $FIREBASESERVERKEY
 
-      - uses: ./.github/workflows/setups/back-end-mysql
-        env:
-          DB_NAME: ${{ inputs.dbname }}
-          DB_PASSWORD: ${{ inputs.dbpassword }}
-        with:
-          dbname: $DB_NAME
-          dbpassword: $DB_PASSWORD
+      # - uses: ./.github/workflows/setups/back-end-mysql
+      #   env:
+      #     DB_NAME: ${{ inputs.dbname }}
+      #     DB_PASSWORD: ${{ inputs.dbpassword }}
+      #   with:
+      #     dbname: $DB_NAME
+      #     dbpassword: $DB_PASSWORD
 
       - name: 'Seed DB & Run Migrations'
         run: yarn start:api:seed
         shell: bash
 
-      - name: 'Run Server'
-        run: yarn start:api:bg
-        shell: bash
+      # - name: 'Run Server'
+      #   run: yarn start:api:bg
+      #   shell: bash
 
-      - name: 'Run API Contract Tests'
-        run: yarn api:contract
-        shell: bash
+      # - name: 'Run API Contract Tests'
+      #   run: yarn api:contract
+      #   shell: bash
 
-      - name: 'Contract Test Report'
-        uses: dorny/test-reporter@v1
-        env:
-          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        if: success() || failure()
-        with:
-          name: Contract Tests
-          path: 'api/contract-test-results.json'
-          reporter: mocha-json
-          token: $GITHUB_TOKEN
+      # - name: 'Contract Test Report'
+      #   uses: dorny/test-reporter@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+      #   if: success() || failure()
+      #   with:
+      #     name: Contract Tests
+      #     path: 'api/contract-test-results.json'
+      #     reporter: mocha-json
+      #     token: $GITHUB_TOKEN
 
 
 
