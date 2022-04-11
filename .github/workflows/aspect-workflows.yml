@@ -53,6 +53,9 @@ jobs:
       matrix:
         Plan: [MySQL,RabbitMQ]
     steps:
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
+
       - name: 'Setup MySQL'
         if: ${{ matrix.Plan == 'MySQL' }}
         uses: haltuf/mysql-action@master
