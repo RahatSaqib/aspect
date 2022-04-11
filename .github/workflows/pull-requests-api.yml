@@ -95,7 +95,8 @@ jobs:
         run: yarn start:api:seed
 
       - name: 'Run API Unit Tests'
-        run: yarn api:unit
+        run: |
+          yarn api:unit && cat api/unit-test-results.json
 
       - name: 'Unit Test Report'
         uses: dorny/test-reporter@v1
