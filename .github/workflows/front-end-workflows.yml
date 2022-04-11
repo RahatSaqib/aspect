@@ -1,0 +1,17 @@
+name: Front-end
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: 'Front-end Test'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 'Build Front-end'
+        uses: .github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
+
+      - name: 'Run Tests'
+        run: yarn web:test

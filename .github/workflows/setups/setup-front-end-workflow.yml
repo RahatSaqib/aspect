@@ -1,12 +1,11 @@
-name: Front-end
+name: ''
 
-on:
-  pull_request:
-  workflow_dispatch:
+on: 
+  workflow_call:
 
 jobs:
-  build:
-    name: 'Build Aspect Front-end'
+  install:
+    name: 'Front-end install'
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout repo'
@@ -27,11 +26,3 @@ jobs:
 
       - name: 'Install Node Modules'
         run: 'yarn start:web:install'
-
-  test:
-    name: 'Build Aspect Front-end'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 'Run Tests'
-        run: yarn web:test
