@@ -54,8 +54,8 @@ jobs:
         Plan: [MySQL,RabbitMQ]
     steps:
       - name: 'Setup MySQL'
-        uses: haltuf/mysql-action@master
         if: ${{ matrix.Plan == 'MySQL' }}
+        uses: haltuf/mysql-action@master
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
@@ -65,8 +65,8 @@ jobs:
           authentication plugin: 'mysql_native_password'
 
       - name: 'Setup RabbitMQ'
-        uses: mer-team/rabbitmq-mng-action@v1.2
         if: ${{ matrix.Plan == 'RabbitMQ' }}
+        uses: mer-team/rabbitmq-mng-action@v1.2
         with:
           RABBITMQ_USER: $rabbitUser
           RABBITMQ_PASS: $rabbitPassword
@@ -83,8 +83,6 @@ jobs:
         Plan: [Unit,Contract]
     steps:
         - uses: actions/checkout@v3
-        
-        - uses: ./.github/workflows/setups/back-end-setup
 
         # - uses: ./.github/workflows/setups/back-end-Unit
         #   if: ${{ matrix.Plan == 'Unit' }}

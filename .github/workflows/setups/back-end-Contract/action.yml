@@ -38,6 +38,7 @@ runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/workflows/setups/back-end-setup
       - uses: ./.github/workflows/setups/back-end-env
         env:
           DB_NAME: ${{ inputs.dbname }}
