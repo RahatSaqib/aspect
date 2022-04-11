@@ -46,15 +46,16 @@ jobs:
       matrix:
         Plan: [Unit,Contract]
     steps:
-      - uses: actions/checkout@v3
+      - name: Run ${{ matrix.Plan }} Tests
         if: ${{ matrix.Plan == 'Unit' }}
+        uses: actions/checkout@v3
       - id: api-unit-test
         uses: ./.github/workflows/setups/back-end-Unit
 
-      - uses: actions/checkout@v3
-        if: ${{ matrix.Plan == 'Contract' }} 
-      - id: api-contract-test
-        uses: ./.github/workflows/setups/back-end-Contract
+      # - uses: actions/checkout@v3
+      # - id: api-contract-test
+      #   uses: ./.github/workflows/setups/back-end-Contract
+      #   if: ${{ matrix.Plan == 'Contract' }} 
 
   # test:
   #   name: 'Front-end install'
