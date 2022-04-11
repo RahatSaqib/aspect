@@ -35,7 +35,7 @@ runs:
   using: "composite"
   steps:
       - uses: actions/checkout@v3
-      - id: 'Create .env'
+      - name: 'Create .env'
         uses: ./.github/workflows/setups/back-end-env
         with:
           dbname: $DB_NAME
@@ -61,7 +61,7 @@ runs:
           FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
 
       - uses: actions/checkout@v3
-      - id: 'Setup MySQL'
+      - name: 'Setup MySQL'
         uses: ./.github/workflows/setups/back-end-mysql
         with:
           dbname: $DB_NAME
