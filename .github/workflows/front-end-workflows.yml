@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: install-aspect
-        uses: ./.github/workflows/setups/setup-front-end-action.yml
+        uses: ./.github/workflows/setups/front-end-setup
 
   # test:
   #   name: 'Front-end install'
