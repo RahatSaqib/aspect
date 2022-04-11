@@ -46,7 +46,6 @@ jobs:
       matrix:
         Plan: [Unit,Contract]
     steps:
-      - name: API ${{matrix.Plan}} Tests
       - uses: actions/checkout@v3
       - id: api-unit-test
         if: ${{matrix.Plan}} == 'Unit'
