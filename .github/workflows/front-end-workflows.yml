@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Build Front-end'
-        uses: .github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
+        uses: SystemOneId/aspect/.github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
 
   test:
     name: 'Front-end Test'
@@ -18,7 +18,7 @@ jobs:
     needs: build
     steps:
       - name: 'Build Front-end'
-        uses: .github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
+        uses: SystemOneId/aspect/.github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
 
       - name: 'Run Tests'
         run: yarn web:test
