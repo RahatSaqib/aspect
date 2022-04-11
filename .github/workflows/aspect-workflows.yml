@@ -96,11 +96,6 @@ jobs:
       matrix:
         Plan: [Unit,Contract]
     steps:
-        - name: Verify MySQL connection from host
-          run: |
-            sudo apt-get install -y mysql-client
-            mysql --host 127.0.0.1 --port 32574 -uroot -prootpass -e "SHOW DATABASES"
-
         - uses: actions/checkout@v3
 
         # - uses: ./.github/workflows/setups/back-end-Unit

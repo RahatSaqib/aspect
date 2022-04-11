@@ -75,6 +75,13 @@ runs:
         run: sleep 30s
         shell: bash
 
+      - name: Verify MySQL connection from host
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql --host 127.0.0.1 --port 32574 -uroot -prootpass -e "SHOW DATABASES"
+        shell: bash
+
+
       - name: 'Seed DB & Run Migrations'
         run: yarn start:api:seed
         shell: bash
