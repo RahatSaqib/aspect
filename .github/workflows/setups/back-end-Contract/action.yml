@@ -10,6 +10,27 @@ inputs:
   dbpassword:
     description: 'The root password for the DB'
     required: true
+  TWILIOACCOUNTSID:
+    description: 'TWILIOACCOUNTSID'
+    required: true
+  TWILIOAUTHTOKEN:
+    description: 'TWILIOAUTHTOKEN'
+    required: true
+  TWILIOMESSAGINGSERVICESID:
+    description: 'TWILIOMESSAGINGSERVICESID'
+    required: true
+  ENCRYPTIONPASSPHRASE:
+    description: 'ENCRYPTIONPASSPHRASE'
+    required: true
+  ENCRYPTIONINITVECTOR:
+    description: 'ENCRYPTIONINITVECTOR'
+    required: true
+  PUSHNOTIFICATIONTESTDEVICETOKENID:
+    description: 'PUSHNOTIFICATIONTESTDEVICETOKENID'
+    required: true
+  FIREBASESERVERKEY:
+    description: 'FIREBASESERVERKEY'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -19,8 +40,22 @@ runs:
           dbname: $DB_NAME
           dbuser: $DB_USER
           dbpassword: $DB_PASSWORD
+          TWILIOACCOUNTSID: $TWILIOACCOUNTSID
+          TWILIOAUTHTOKEN: $TWILIOAUTHTOKEN
+          TWILIOMESSAGINGSERVICESID: $TWILIOMESSAGINGSERVICESID
+          ENCRYPTIONPASSPHRASE: $ENCRYPTIONPASSPHRASE
+          ENCRYPTIONINITVECTOR: $ENCRYPTIONINITVECTOR
+          PUSHNOTIFICATIONTESTDEVICETOKENID: $PUSHNOTIFICATIONTESTDEVICETOKENID
+          FIREBASESERVERKEY: $FIREBASESERVERKEY
         env:
           DB_NAME: ${{ inputs.dbname }}
           DB_USER: ${{ inputs.dbuser }}
           DB_PASSWORD: ${{ inputs.dbpassword }}
+          TWILIOACCOUNTSID: ${{ inputs.TWILIOACCOUNTSID }}
+          TWILIOAUTHTOKEN: ${{ inputs.TWILIOAUTHTOKEN }}
+          TWILIOMESSAGINGSERVICESID: ${{ inputs.TWILIOMESSAGINGSERVICESID }}
+          ENCRYPTIONPASSPHRASE: ${{ inputs.ENCRYPTIONPASSPHRASE }}
+          ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
+          PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
+          FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
 

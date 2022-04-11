@@ -64,3 +64,10 @@ jobs:
             dbname: $dbname
             dbuser: $dbuser
             dbpassword: $dbpassword
+            TWILIOACCOUNTSID: ${{secrets.TWILIOACCOUNTSID}}
+            TWILIOAUTHTOKEN: ${{secrets.TWILIOAUTHTOKEN}}
+            TWILIOMESSAGINGSERVICESID: ${{secrets.TWILIOMESSAGINGSERVICESID}}
+            ENCRYPTIONPASSPHRASE: ${{secrets.ENCRYPTIONPASSPHRASE}}
+            ENCRYPTIONINITVECTOR: ${{secrets.ENCRYPTIONINITVECTOR}}
+            PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
+            FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}

@@ -10,6 +10,27 @@ inputs:
   dbpassword:
     description: 'The root password for the DB'
     required: true
+  TWILIOACCOUNTSID:
+    description: 'TWILIOACCOUNTSID'
+    required: true
+  TWILIOAUTHTOKEN:
+    description: 'TWILIOAUTHTOKEN'
+    required: true
+  TWILIOMESSAGINGSERVICESID:
+    description: 'TWILIOMESSAGINGSERVICESID'
+    required: true
+  ENCRYPTIONPASSPHRASE:
+    description: 'ENCRYPTIONPASSPHRASE'
+    required: true
+  ENCRYPTIONINITVECTOR:
+    description: 'ENCRYPTIONINITVECTOR'
+    required: true
+  PUSHNOTIFICATIONTESTDEVICETOKENID:
+    description: 'PUSHNOTIFICATIONTESTDEVICETOKENID'
+    required: true
+  FIREBASESERVERKEY:
+    description: 'FIREBASESERVERKEY'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -23,13 +44,13 @@ runs:
         echo db.databaseName=$DB_NAME >> ./api/.env
         echo db.user=$DB_USER >> ./api/.env
         echo db.password=$DB_PASSWORD >> ./api/.env
-        echo twilioAccountSid=${{ secrets.TWILIOACCOUNTSID }} >> ./api/.env
-        echo twilioAuthToken=${{ secrets.TWILIOAUTHTOKEN }} >> ./api/.env
-        echo twilioMessagingServiceSid=${{ secrets.TWILIOMESSAGINGSERVICESID }} >> ./api/.env
-        echo encryption.passPhrase=${{ secrets.ENCRYPTIONPASSPHRASE }} >> ./api/.env
-        echo encryption.initVector=${{ secrets.ENCRYPTIONINITVECTOR }} >> ./api/.env
-        echo pushNotification.testDeviceTokenId=${{ secrets.PUSHNOTIFICATIONTESTDEVICETOKENID }} >> ./api/.env
-        echo firebase.serverKey=${{ secrets.FIREBASESERVERKEY }} >> ./api/.env
+        echo twilioAccountSid=$TWILIOACCOUNTSID >> ./api/.env
+        echo twilioAuthToken=$TWILIOAUTHTOKEN >> ./api/.env
+        echo twilioMessagingServiceSid=$TWILIOMESSAGINGSERVICESID >> ./api/.env
+        echo encryption.passPhrase=$ENCRYPTIONPASSPHRASE >> ./api/.env
+        echo encryption.initVector=$ENCRYPTIONINITVECTOR >> ./api/.env
+        echo pushNotification.testDeviceTokenId=$PUSHNOTIFICATIONTESTDEVICETOKENID >> ./api/.env
+        echo firebase.serverKey=$FIREBASESERVERKEY >> ./api/.env
 
         echo db.connectionLimit=100 >> ./api/.env
         echo db.host=localhost >> ./api/.env
@@ -60,3 +81,10 @@ runs:
         DB_NAME: ${{ inputs.dbname }}
         DB_USER: ${{ inputs.dbuser }}
         DB_PASSWORD: ${{ inputs.dbpassword }}
+        TWILIOACCOUNTSID: ${{ inputs.TWILIOACCOUNTSID }}
+        TWILIOAUTHTOKEN: ${{ inputs.TWILIOAUTHTOKEN }}
+        TWILIOMESSAGINGSERVICESID: ${{ inputs.TWILIOMESSAGINGSERVICESID }}
+        ENCRYPTIONPASSPHRASE: ${{ inputs.ENCRYPTIONPASSPHRASE }}
+        ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
+        PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
+        FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
