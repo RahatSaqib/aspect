@@ -8,7 +8,7 @@ on:
 
 jobs:
   fe-install:
-    name: 'Front-end install'
+    name: 'Front-end setup'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
         uses: ./.github/workflows/setups/front-end-setup
 
   be-install:
-    name: 'Front-end install'
+    name: 'Backend setup'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -47,14 +47,13 @@ jobs:
         Plan: [Unit,Contract]
     steps:
       - uses: actions/checkout@v3
-      - id: api-unit-test
         if: ${{matrix.Plan}} == 'Unit'
+      - id: api-unit-test
         uses: ./.github/workflows/setups/back-end-Unit
 
-      # - uses: actions/checkout@v3
-      # - id: api-contract-test
-      #   uses: ./.github/workflows/setups/back-end-Contract
-      #   if: $PLAN == 'Contract'
+        if: ${{matrix.Plan}} == 'Contract'
+      - id: api-contract-test
+        uses: ./.github/workflows/setups/back-end-Contract
 
   # test:
   #   name: 'Front-end install'
