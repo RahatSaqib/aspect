@@ -2,23 +2,42 @@ name: Front-end
 
 on:
   pull_request:
+    # paths:
+    #   - 
   workflow_dispatch:
 
 jobs:
-  build:
-    name: 'Front-end Build'
+  install:
+    name: 'Front-end install'
     runs-on: ubuntu-latest
     steps:
-      - name: 'Build Front-end'
-        uses: SystemOneId/aspect/.github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
+      - uses: actions/checkout@v3
+      - id: foo
+        uses: .github/workflows/front-end-workflows.yml
 
-  test:
-    name: 'Front-end Test'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 'Build Front-end'
-        uses: SystemOneId/aspect/.github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
+  # test:
+  #   name: 'Front-end install'
+  #   runs-on: ubuntu-latest
+  #   needs: install
+  #   steps:
+  #     - name: 'Checkout repo'
+  #       uses: actions/checkout@v2
 
-      - name: 'Run Tests'
-        run: yarn web:test
+  #     - name: 'Setup NODE'
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           ./web/**/node_modules
+  #         key: ${{ runner.os }}-modules-${{ hashFiles('./web/**/yarn.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-yarn-web
+
+  #     - name: 'Install Node Modules'
+  #       run: 'yarn start:web:install'
+
+  #     - name: 'Run Tests'
+  #       run: yarn web:test
