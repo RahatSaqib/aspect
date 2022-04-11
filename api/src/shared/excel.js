@@ -551,9 +551,8 @@ async function renderExcelTemplateToCsv({
   // More here: https://stackoverflow.com/a/11399444
   const firstCell = worksheet.getRow(1)?.getCell(1)
   if (firstCell) {
-    const firstCellValue = firstCell.value
     // eslint-disable-next-line no-irregular-whitespace
-    firstCell.value = `﻿${firstCellValue}`
+    firstCell.value = `﻿${firstCell.value}`
   }
 
   // return binary buffer
