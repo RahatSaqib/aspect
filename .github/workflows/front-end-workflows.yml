@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: foo
-        uses: .github/workflows/front-end-workflows.yml
+        uses: ./.github/workflows/front-end-workflows.yml
 
   # test:
   #   name: 'Front-end install'
