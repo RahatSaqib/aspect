@@ -62,7 +62,8 @@ const AccountEnableDisable = props => {
 
   function handleDisablePrompt() {
     const { type, formik, person } = props
-    const personData = type === 'button' ? formik?.values : person?.toJS()
+    const personData =
+      type === 'button' ? formik?.initialValues : person?.toJS()
     setConfirmationData({ ...personData, type })
     setShowConfirmation(true)
   }
