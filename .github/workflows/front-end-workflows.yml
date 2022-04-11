@@ -15,6 +15,18 @@ jobs:
       - id: install-aspect
         uses: ./.github/workflows/setups/front-end-setup
 
+  test:
+    name: 'Front-end tests'
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v3
+      - id: install-aspect
+        uses: ./.github/workflows/setups/front-end-setup
+
+      - name: 'Run Tests'
+        run: yarn web:test
+
   # test:
   #   name: 'Front-end install'
   #   runs-on: ubuntu-latest
