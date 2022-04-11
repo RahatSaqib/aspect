@@ -2228,7 +2228,7 @@ msgstr "Активность устройства (в процентах)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Состояние устройства"
+msgstr "Уровень устройства"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
