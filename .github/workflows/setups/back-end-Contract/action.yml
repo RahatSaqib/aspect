@@ -71,6 +71,10 @@ runs:
       #     dbname: $DB_NAME
       #     dbpassword: $DB_PASSWORD
 
+      - name: Wait for MySQL to finish
+        run: sleep 30s
+        shell: bash
+
       - name: 'Seed DB & Run Migrations'
         run: yarn start:api:seed
         shell: bash
