@@ -52,13 +52,13 @@ jobs:
 
       - uses: actions/checkout@v3
       - id: api-unit-test
-        uses: ./.github/workflows/setups/back-end-Unit
         if: $PLAN == 'Unit'
+        uses: ./.github/workflows/setups/back-end-Unit
 
-      - uses: actions/checkout@v3
-      - id: api-contract-test
-        uses: ./.github/workflows/setups/back-end-Contract
-        if: $PLAN == 'Contract'
+      # - uses: actions/checkout@v3
+      # - id: api-contract-test
+      #   uses: ./.github/workflows/setups/back-end-Contract
+      #   if: $PLAN == 'Contract'
 
   # test:
   #   name: 'Front-end install'
