@@ -5,6 +5,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  build:
+    name: 'Front-end Build'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Build Front-end'
+        uses: .github/workflows/setups/setup-front-end-workflow.yml@feat/ASP-2671-github-actions-poc
+
   test:
     name: 'Front-end Test'
     runs-on: ubuntu-latest
