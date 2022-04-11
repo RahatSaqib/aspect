@@ -24,7 +24,7 @@
     "start:api:seed": "yarn --cwd ./api db:reseedCI",
     "start:api:bg": "yarn --cwd ./api start:background:pm2",
     "api:contract": "yarn --cwd ./api mocha:contract:ci",
-    "api:unit": "yarn --cwd ./api test:unit",
+    "api:unit": "yarn --cwd ./api test:unit:ci",
     "stop:api:bg": "yarn --cwd ./api stop:background:pm2",
     "start:web:install": "yarn --cwd ./web install",
     "start:web:server": "yarn --cwd ./web start:ci",
