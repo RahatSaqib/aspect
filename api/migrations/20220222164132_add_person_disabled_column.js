@@ -3,7 +3,7 @@ module.exports = require('../src/db').migration(up, down)
 async function up(knex) {
   await knex.schema.alterTable('Person', tbl => {
     tbl.boolean('disabled').default(0)
-    tbl.timestamp('disabledOn').nullable()
+    tbl.dateTime('disabledOn').nullable()
     tbl.integer('disabledBy').nullable()
   })
 }
