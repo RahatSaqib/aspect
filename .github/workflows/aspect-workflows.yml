@@ -90,8 +90,7 @@ jobs:
 
       - name: Verify MySQL connection from host
         run: |
-          sudo apt-get install -y mysql-client
-          mysql --host 127.0.0.1 --port 3306 -u$dbuser -p$dbpassword -e "SHOW DATABASES"
+          mysql -u$dbuser -p$dbpassword -e "SHOW DATABASES"
         shell: bash
 
   # be-test:
