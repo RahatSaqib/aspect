@@ -1,5 +1,5 @@
 name: 'Setup Backend'
-description: 'Clone, install and build back-end'
+description: 'Clone, install and setup back-end'
 runs:
   using: "composite"
   steps:

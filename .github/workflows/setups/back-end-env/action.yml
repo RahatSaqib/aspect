@@ -31,6 +31,7 @@ inputs:
   FIREBASESERVERKEY:
     description: 'FIREBASESERVERKEY'
     required: true
+
 runs:
   using: "composite"
   steps:
