@@ -1,7 +1,7 @@
 module.exports = {
   recursive: true,
   reporter: 'mocha-multi',
-  'reporter-option': ['spec=-'],
+  'reporter-option': ['spec=-', 'json=./contract-test-results.json'],
   extension: ['.spec.js'],
   file: 'test/utils/contractTestSetup.js',
   timeout: 60000,
