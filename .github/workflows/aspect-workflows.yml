@@ -35,13 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: be-install
     steps:
-      - uses: actions/checkout@v3
-      - name: Clone and install backend environment
-        uses: ./.github/workflows/setups/back-end-setup
+      # - uses: actions/checkout@v3
+      # - name: Clone and install backend environment
+      #   uses: ./.github/workflows/setups/back-end-setup
 
       - name: Lint code
         run: |
-          yarn api:lint
+          echo 'linting!'
+        # yarn api:lint
 
   be-unit-test: 
     name: 'Run Unit Tests'
@@ -66,6 +67,11 @@ jobs:
           ENCRYPTIONINITVECTOR: ${{secrets.ENCRYPTIONINITVECTOR}}
           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
+
+      - name: Check env
+        run: |
+          ls -la && pwd
+        # yarn api:lint
 
       - name: Setup MySQL
         uses: haltuf/mysql-action@master
