@@ -18,7 +18,7 @@ jobs:
     name: 'Touched Files (WEB)'
     runs-on: ubuntu-latest
     outputs:
-      docs_changed: ${{ steps.check_fe_files_changed.outputs.docs_changed }}
+      fe_docs_changed: ${{ steps.check_fe_files_changed.outputs.fe_docs_changed }}
     steps:
     - uses: actions/checkout@v3
       with:
@@ -30,7 +30,7 @@ jobs:
         $SourceDiff = $diff | Where-Object { $_ -match '^web/' }
         $HasDiff = $SourceDiff.Length -gt 0
         echo $HasDiff
-        Write-Host "::set-output name=docs_changed::$HasDiff"
+        Write-Host "::set-output name=fe_docs_changed::$HasDiff"
 
   fe-lint:
     name: 'Lint (WEB)'
@@ -62,7 +62,7 @@ jobs:
     name: 'Touched Files (API)'
     runs-on: ubuntu-latest
     outputs:
-      docs_changed: ${{ steps.check_be_files_changed.outputs.docs_changed }}
+      be_docs_changed: ${{ steps.check_be_files_changed.outputs.be_docs_changed }}
     steps:
     - uses: actions/checkout@v3
       with:
@@ -71,9 +71,10 @@ jobs:
       id: check_be_files_changed
       run: |
         $diff = git diff --name-only HEAD^ HEAD
-        $SourceDiff = $diff | Where-Object { $_ -match '^web/' }
+        $SourceDiff = $diff | Where-Object { $_ -match '^api/' }
         $HasDiff = $SourceDiff.Length -gt 0
-        Write-Host "::set-output name=docs_changed::$HasDiff"
+        echo $HasDiff
+        Write-Host "::set-output name=be_docs_changed::$HasDiff"
 
   be-lint:
     name: 'Lint (API)'
