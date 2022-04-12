@@ -97,16 +97,18 @@ jobs:
     name: 'MySQL Setup and Verify'
     runs-on: ubuntu-latest
     needs: be-install
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: 'rootpass'
-        ports:
-        - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - name: Verify MySQL connection from host
+      - name: Setup MySQL
+        uses: haltuf/mysql-action@master
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0'
+          mysql database: $dbname
+          mysql root password: $dbpassword
+          authentication plugin: 'mysql_native_password'
+
+      - name: Verify MySQL setup
         run: |
           mysql -u$dbuser -p$dbpassword -e "SHOW DATABASES"
         shell: bash
@@ -115,15 +117,16 @@ jobs:
     name: 'RabbitMQ Setup and Verify'
     runs-on: ubuntu-latest
     needs: be-install
-    services:
-      rabbitmq:
-          image: rabbitmq
-          env:
-            RABBITMQ_DEFAULT_USER: $rabbitUser
-            RABBITMQ_DEFAULT_PASS: $rabbitPassword
-          ports:
-            - 5672
     steps:
+      - name: Setup RabbitMQ
+        uses: mer-team/rabbitmq-mng-action@v1.2
+        with:
+          RABBITMQ_USER: $rabbitUser
+          RABBITMQ_PASS: $rabbitPassword
+          RABBITMQ_PORT: 5672
+          RABBITMQ_MNG_PORT: 15672
+          RABBITMQ_TAG: '3-management-alpine'
+
       - name: Verify RabbitMQ is running
         run: |
           systemctl status rabbitmq-server.service
