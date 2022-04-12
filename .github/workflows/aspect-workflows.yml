@@ -114,24 +114,24 @@ jobs:
           shell: bash
 
   # mysql -u$dbuser -p$dbpassword -e "SHOW DATABASES"
-  # be-rabbit: 
-  #   name: 'RabbitMQ Setup and Verify'
-  #   runs-on: ubuntu-latest
-  #   needs: be-install
-  #   steps:
-  #     - name: Setup RabbitMQ
-  #       uses: mer-team/rabbitmq-mng-action@v1.2
-  #       with:
-  #         RABBITMQ_USER: $rabbitUser
-  #         RABBITMQ_PASS: $rabbitPassword
-  #         RABBITMQ_PORT: 5672
-  #         RABBITMQ_MNG_PORT: 15672
-  #         RABBITMQ_TAG: '3-management-alpine'
+  be-rabbit: 
+    name: 'RabbitMQ Setup and Verify'
+    runs-on: ubuntu-latest
+    needs: be-install
+    steps:
+      - name: Setup RabbitMQ
+        uses: mer-team/rabbitmq-mng-action@v1.2
+        with:
+          RABBITMQ_USER: ${{ env.rabbitUser }}
+          RABBITMQ_PASS: ${{ env.rabbitPassword }}
+          RABBITMQ_PORT: 5672
+          RABBITMQ_MNG_PORT: 15672
+          RABBITMQ_TAG: '3-management-alpine'
 
-  #     - name: Verify RabbitMQ is running
-  #       run: |
-  #         systemctl status rabbitmq-server.service
-  #       shell: bash
+      - name: Verify RabbitMQ is running
+        run: |
+          curl --user ${{ env.rabbitUser }}:${{ env.rabbitPassword }} --url http://localhost:15672/api/queues/%2f/
+        shell: bash
 
   be-unit-test: 
     name: 'Run Unit Tests'
