@@ -38,10 +38,12 @@ runs:
       run: |
         cp -R ./api/.env.example ./api/.env
 
+        echo ${{ inputs.dbname }}
+
         echo admin.email='dpotgieter+ci@systemone.co' >> ./api/.env
         echo admin.cell='+79114946979' >> ./api/.env
 
-        echo db.databaseName=$DB_NAME >> ./api/.env
+        echo db.databaseName=${{ inputs.dbname }} >> ./api/.env
         echo db.user=$DB_USER >> ./api/.env
         echo db.password=$DB_PASSWORD >> ./api/.env
         echo twilioAccountSid=$TWILIOACCOUNTSID >> ./api/.env
