@@ -14,29 +14,9 @@ env:
     rabbitPassword: 'guest'
 
 jobs:
-  fe-check-touched-files:
-    name: 'Touched Files (WEB)'
-    runs-on: ubuntu-latest
-    outputs:
-      fe_docs_changed: ${{ steps.check_fe_files_changed.outputs.fe_docs_changed }}
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
-    - shell: pwsh
-      id: check_fe_files_changed
-      run: |
-        $diff = git diff --name-only HEAD^ HEAD
-        $SourceDiff = $diff | Where-Object { $_ -match '^web/' }
-        $HasDiff = $SourceDiff.Length -gt 0
-        echo 'HasDiff: $HasDiff | SourceDiff: $SourceDiff'
-        Write-Host "::set-output name=fe_docs_changed::$HasDiff"
-
   fe-lint:
     name: 'Lint (WEB)'
     runs-on: ubuntu-latest
-    needs:  fe-check-touched-files
-    if: needs.fe-check-touched-files.outputs.docs_changed == 'True'
     steps:
       - uses: actions/checkout@v3
       - name: Clone and install backend environment
@@ -58,29 +38,9 @@ jobs:
       - name: 'Run Tests'
         run: yarn web:test
 
-  be-check-touched-files:
-    name: 'Touched Files (API)'
-    runs-on: ubuntu-latest
-    outputs:
-      be_docs_changed: ${{ steps.check_be_files_changed.outputs.be_docs_changed }}
-    steps:
-    - uses: actions/checkout@v3
-      with:
-          fetch-depth: 2
-    - shell: pwsh
-      id: check_be_files_changed
-      run: |
-        $diff = git diff --name-only HEAD^ HEAD
-        $SourceDiff = $diff | Where-Object { $_ -match '^api/' }
-        $HasDiff = $SourceDiff.Length -gt 0
-        echo $HasDiff
-        Write-Host "::set-output name=be_docs_changed::$HasDiff"
-
   be-lint:
     name: 'Lint (API)'
     runs-on: ubuntu-latest
-    needs: be-check-touched-files
-    if: needs.be-check-touched-files.outputs.docs_changed == 'True'
     steps:
       - uses: actions/checkout@v3
       - name: Clone and install backend environment
