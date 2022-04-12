@@ -29,7 +29,8 @@
     "stop:api:bg": "yarn --cwd ./api stop:background:pm2",
     "start:web:install": "yarn --cwd ./web install",
     "start:web:server": "yarn --cwd ./web start:ci",
-    "web:test": "yarn --cwd ./web test",
+    "web:test": "yarn --cwd ./web test:ci",
+    "web:lint": "yarn --cwd ./web lint",
     "act": "act pull_request -P ubuntu-latest=node:14"
   }
 }
