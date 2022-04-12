@@ -29,7 +29,7 @@ jobs:
         $diff = git diff --name-only HEAD^ HEAD
         $SourceDiff = $diff | Where-Object { $_ -match '^web/' }
         $HasDiff = $SourceDiff.Length -gt 0
-        echo $HasDiff
+        echo 'HasDiff: $HasDiff | SourceDiff: $SourceDiff'
         Write-Host "::set-output name=fe_docs_changed::$HasDiff"
 
   fe-lint:
