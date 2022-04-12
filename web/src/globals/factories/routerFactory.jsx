@@ -53,6 +53,7 @@ import NotFound from '../../error/notFound/NotFound'
 import License from '../../auth/license/License'
 import ClinicalHistory from '../../patient/ClinicalHistory'
 import CaseDetails from '../../case/details/CaseDetails'
+import Welcome from '../../MigratedComponents/Welcome'
 
 function useHashAndScroll() {
   const location = useLocation()
@@ -108,7 +109,7 @@ const renderRedirectToDashboard = ({ location, permissions }) => {
   } else if (isPermittedUser(permissions, { required: ['operationalData'] })) {
     pathname = '/operational-data'
   } else {
-    pathname = '/browse'
+    pathname = '/welcome'
   }
   return <Navigate replace to={pathname} state={{ referrer: location }} />
 }
@@ -158,6 +159,7 @@ const renderNotificationDetail = loggedInFactory(NotificationDetail)
 const renderNotificationDetailHistory = loggedInFactory(
   NotificationDetailHistory
 )
+const renderWelcome = loggedInFactory(Welcome)
 const renderClinicalHistory = loggedInDetailFactory(ClinicalHistory)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
@@ -418,6 +420,7 @@ const AppRoutes = ({ props: outerProps }) => {
           path="/browse/report"
           element={getElement(props, ['browse', 'report'], renderNotFound)}
         />
+        <Route path="/welcome" element={getElement(props, [], renderWelcome)} />
         <Route>{renderNotFound(props)}</Route>
       </Routes>
     </RoutesPermissionProvider>
