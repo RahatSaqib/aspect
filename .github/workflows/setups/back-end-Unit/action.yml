@@ -1,9 +1,0 @@
-name: 'API Unit Tests'
-description: 'Run API Unit tests'
-runs:
-  using: "composite"
-  steps:
-    - name: 'Show plan var'
-      run: |
-        echo Unit Tests!
-      shell: bash
