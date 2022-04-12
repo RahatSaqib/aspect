@@ -70,7 +70,7 @@ jobs:
 
       - name: Check env
         run: |
-          ls -la && pwd
+          ls -la && pwd && cat ./api/.env
         # yarn api:lint
 
       - name: Setup MySQL
