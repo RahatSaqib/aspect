@@ -44,7 +44,6 @@ jobs:
           ENCRYPTIONINITVECTOR: ${{secrets.ENCRYPTIONINITVECTOR}}
           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   # fe-test:
   #   name: 'Front-end tests'
@@ -61,73 +60,65 @@ jobs:
   #     - name: 'Run Tests'
   #       run: yarn web:test
 
-  # be-tools:
-  #   name: 'Backend tools'
-  #   runs-on: ubuntu-latest
-  #   needs: be-install
-  #   strategy:
-  #     matrix:
-  #       Plan: [MySQL,RabbitMQ]
-  #   steps:
-  #     - name: Shutdown Ubuntu MySQL (SUDO)
-  #       run: sudo service mysql stop
+  be-tools:
+    name: 'Backend tools'
+    runs-on: ubuntu-latest
+    needs: be-install
+    strategy:
+      matrix:
+        Plan: [MySQL,RabbitMQ]
+    steps:
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
 
-  #     - name: 'Setup MySQL'
-  #       if: ${{ matrix.Plan == 'MySQL' }}
-  #       uses: haltuf/mysql-action@master
-  #       with:
-  #         character set server: 'utf8'
-  #         collation server: 'utf8_general_ci'
-  #         mysql version: '8.0'
-  #         mysql database: $dbname
-  #         mysql root password: $dbpassword
-  #         authentication plugin: 'mysql_native_password'
+      - name: 'Setup MySQL'
+        if: ${{ matrix.Plan == 'MySQL' }}
+        uses: haltuf/mysql-action@master
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0'
+          mysql database: $dbname
+          mysql root password: $dbpassword
+          authentication plugin: 'mysql_native_password'
 
-  #     - name: 'Setup RabbitMQ'
-  #       if: ${{ matrix.Plan == 'RabbitMQ' }}
-  #       uses: mer-team/rabbitmq-mng-action@v1.2
-  #       with:
-  #         RABBITMQ_USER: $rabbitUser
-  #         RABBITMQ_PASS: $rabbitPassword
-  #         RABBITMQ_PORT: 5672
-  #         RABBITMQ_MNG_PORT: 15672
-  #         RABBITMQ_TAG: '3-management-alpine'
+      - name: 'Setup RabbitMQ'
+        if: ${{ matrix.Plan == 'RabbitMQ' }}
+        uses: mer-team/rabbitmq-mng-action@v1.2
+        with:
+          RABBITMQ_USER: $rabbitUser
+          RABBITMQ_PASS: $rabbitPassword
+          RABBITMQ_PORT: 5672
+          RABBITMQ_MNG_PORT: 15672
+          RABBITMQ_TAG: '3-management-alpine'
 
-  #     - name: Check MySQL status
-  #       run: sudo service mysql status
+      - name: Check MySQL status
+        run: sudo service mysql status
 
-  # be-test:
-  #   name: 'Back-end tests'
-  #   runs-on: ubuntu-latest
-  #   needs: be-install
-  #   services:
-  #     mysql:
-  #       image: mysql:8.0
-  #       env:
-  #         MYSQL_ROOT_PASSWORD: 'rootpass'
-  #       ports:
-  #       - 3306:3306
-  #       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-  #   strategy:
-  #     matrix:
-  #       Plan: [Unit,Contract]
-  #   steps:
-  #       - uses: actions/checkout@v3
+  be-test:
+    name: 'Back-end tests'
+    runs-on: ubuntu-latest
+    needs: be-install
+    # services:
+    #   mysql:
+    #     image: mysql:8.0
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: 'rootpass'
+    #     ports:
+    #     - 3306:3306
+    #     options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    strategy:
+      matrix:
+        Plan: [Unit,Contract]
+    steps:
+        - uses: actions/checkout@v3
 
-  #       # - uses: ./.github/workflows/setups/back-end-Unit
-  #       #   if: ${{ matrix.Plan == 'Unit' }}
+        # - uses: ./.github/workflows/setups/back-end-Unit
+        #   if: ${{ matrix.Plan == 'Unit' }}
 
-  #       - uses: ./.github/workflows/setups/back-end-Contract
-  #         if: ${{ matrix.Plan == 'Contract' }}
-  #         with: 
-  #           dbname: $dbname
-  #           dbuser: $dbuser
-  #           dbpassword: $dbpassword
-  #           TWILIOACCOUNTSID: ${{secrets.TWILIOACCOUNTSID}}
-  #           TWILIOAUTHTOKEN: ${{secrets.TWILIOAUTHTOKEN}}
-  #           TWILIOMESSAGINGSERVICESID: ${{secrets.TWILIOMESSAGINGSERVICESID}}
-  #           ENCRYPTIONPASSPHRASE: ${{secrets.ENCRYPTIONPASSPHRASE}}
-  #           ENCRYPTIONINITVECTOR: ${{secrets.ENCRYPTIONINITVECTOR}}
-  #           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
-  #           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
-  #           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        - uses: ./.github/workflows/setups/back-end-Contract
+          if: ${{ matrix.Plan == 'Contract' }}
+          with:
+            dbname: $dbname
+            dbuser: $dbuser
+            dbpassword: $dbpassword

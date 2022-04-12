@@ -10,58 +10,34 @@ inputs:
   dbpassword:
     description: 'The root password for the DB'
     required: true
-  TWILIOACCOUNTSID:
-    description: 'TWILIOACCOUNTSID'
-    required: true
-  TWILIOAUTHTOKEN:
-    description: 'TWILIOAUTHTOKEN'
-    required: true
-  TWILIOMESSAGINGSERVICESID:
-    description: 'TWILIOMESSAGINGSERVICESID'
-    required: true
-  ENCRYPTIONPASSPHRASE:
-    description: 'ENCRYPTIONPASSPHRASE'
-    required: true
-  ENCRYPTIONINITVECTOR:
-    description: 'ENCRYPTIONINITVECTOR'
-    required: true
-  PUSHNOTIFICATIONTESTDEVICETOKENID:
-    description: 'PUSHNOTIFICATIONTESTDEVICETOKENID'
-    required: true
-  FIREBASESERVERKEY:
-    description: 'FIREBASESERVERKEY'
-    required: true
-  GITHUB_TOKEN:
-    description: 'GITHUB_TOKEN'
-    required: true
 runs:
   using: "composite"
   steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/workflows/setups/back-end-setup
-      - uses: ./.github/workflows/setups/back-end-env
-        env:
-          DB_NAME: ${{ inputs.dbname }}
-          DB_USER: ${{ inputs.dbuser }}
-          DB_PASSWORD: ${{ inputs.dbpassword }}
-          TWILIOACCOUNTSID: ${{ inputs.TWILIOACCOUNTSID }}
-          TWILIOAUTHTOKEN: ${{ inputs.TWILIOAUTHTOKEN }}
-          TWILIOMESSAGINGSERVICESID: ${{ inputs.TWILIOMESSAGINGSERVICESID }}
-          ENCRYPTIONPASSPHRASE: ${{ inputs.ENCRYPTIONPASSPHRASE }}
-          ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
-          PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
-          FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
-        with:
-          dbname: $DB_NAME
-          dbuser: $DB_USER
-          dbpassword: $DB_PASSWORD
-          TWILIOACCOUNTSID: $TWILIOACCOUNTSID
-          TWILIOAUTHTOKEN: $TWILIOAUTHTOKEN
-          TWILIOMESSAGINGSERVICESID: $TWILIOMESSAGINGSERVICESID
-          ENCRYPTIONPASSPHRASE: $ENCRYPTIONPASSPHRASE
-          ENCRYPTIONINITVECTOR: $ENCRYPTIONINITVECTOR
-          PUSHNOTIFICATIONTESTDEVICETOKENID: $PUSHNOTIFICATIONTESTDEVICETOKENID
-          FIREBASESERVERKEY: $FIREBASESERVERKEY
+      # - uses: actions/checkout@v3
+      # - uses: ./.github/workflows/setups/back-end-setup
+      # - uses: ./.github/workflows/setups/back-end-env
+      #   env:
+      #     DB_NAME: ${{ inputs.dbname }}
+      #     DB_USER: ${{ inputs.dbuser }}
+      #     DB_PASSWORD: ${{ inputs.dbpassword }}
+      #     TWILIOACCOUNTSID: ${{ inputs.TWILIOACCOUNTSID }}
+      #     TWILIOAUTHTOKEN: ${{ inputs.TWILIOAUTHTOKEN }}
+      #     TWILIOMESSAGINGSERVICESID: ${{ inputs.TWILIOMESSAGINGSERVICESID }}
+      #     ENCRYPTIONPASSPHRASE: ${{ inputs.ENCRYPTIONPASSPHRASE }}
+      #     ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
+      #     PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
+      #     FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
+      #   with:
+      #     dbname: $DB_NAME
+      #     dbuser: $DB_USER
+      #     dbpassword: $DB_PASSWORD
+      #     TWILIOACCOUNTSID: $TWILIOACCOUNTSID
+      #     TWILIOAUTHTOKEN: $TWILIOAUTHTOKEN
+      #     TWILIOMESSAGINGSERVICESID: $TWILIOMESSAGINGSERVICESID
+      #     ENCRYPTIONPASSPHRASE: $ENCRYPTIONPASSPHRASE
+      #     ENCRYPTIONINITVECTOR: $ENCRYPTIONINITVECTOR
+      #     PUSHNOTIFICATIONTESTDEVICETOKENID: $PUSHNOTIFICATIONTESTDEVICETOKENID
+      #     FIREBASESERVERKEY: $FIREBASESERVERKEY
 
       # - uses: ./.github/workflows/setups/back-end-mysql
       #   env:
@@ -71,14 +47,10 @@ runs:
       #     dbname: $DB_NAME
       #     dbpassword: $DB_PASSWORD
 
-      - name: Wait for MySQL to finish
-        run: sleep 30s
-        shell: bash
-
       - name: Verify MySQL connection from host
         run: |
           sudo apt-get install -y mysql-client
-          mysql --host 127.0.0.1 --port 3306 -uroot -prootpass -e "SHOW DATABASES"
+          mysql --host 127.0.0.1 --port 3306 -u${{ inputs.dbuser }} -p${{ inputs.dbpassword }} -e "SHOW DATABASES"
         shell: bash
 
 

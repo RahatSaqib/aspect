@@ -38,21 +38,19 @@ runs:
       run: |
         cp -R ./api/.env.example ./api/.env
 
-        echo ${{ inputs.dbname }}
-
         echo admin.email='dpotgieter+ci@systemone.co' >> ./api/.env
         echo admin.cell='+79114946979' >> ./api/.env
 
         echo db.databaseName=${{ inputs.dbname }} >> ./api/.env
-        echo db.user=$DB_USER >> ./api/.env
-        echo db.password=$DB_PASSWORD >> ./api/.env
-        echo twilioAccountSid=$TWILIOACCOUNTSID >> ./api/.env
-        echo twilioAuthToken=$TWILIOAUTHTOKEN >> ./api/.env
-        echo twilioMessagingServiceSid=$TWILIOMESSAGINGSERVICESID >> ./api/.env
-        echo encryption.passPhrase=$ENCRYPTIONPASSPHRASE >> ./api/.env
-        echo encryption.initVector=$ENCRYPTIONINITVECTOR >> ./api/.env
-        echo pushNotification.testDeviceTokenId=$PUSHNOTIFICATIONTESTDEVICETOKENID >> ./api/.env
-        echo firebase.serverKey=$FIREBASESERVERKEY >> ./api/.env
+        echo db.user=${{ inputs.dbuser }} >> ./api/.env
+        echo db.password=${{ inputs.dbpassword }} >> ./api/.env
+        echo twilioAccountSid=${{ inputs.TWILIOACCOUNTSID }} >> ./api/.env
+        echo twilioAuthToken=${{ inputs.TWILIOAUTHTOKEN }} >> ./api/.env
+        echo twilioMessagingServiceSid=${{ inputs.TWILIOMESSAGINGSERVICESID }} >> ./api/.env
+        echo encryption.passPhrase=${{ inputs.ENCRYPTIONPASSPHRASE }} >> ./api/.env
+        echo encryption.initVector=${{ inputs.ENCRYPTIONINITVECTOR }} >> ./api/.env
+        echo pushNotification.testDeviceTokenId=${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }} >> ./api/.env
+        echo firebase.serverKey=${{ inputs.FIREBASESERVERKEY }} >> ./api/.env
 
         echo db.connectionLimit=100 >> ./api/.env
         echo db.host=localhost >> ./api/.env
@@ -79,14 +77,3 @@ runs:
         echo webhook.redcap.authToken='jkasd' >> ./api/.env
         echo countryName='github-actions' >> ./api/.env
       shell: bash
-      env:
-        DB_NAME: ${{ inputs.dbname }}
-        DB_USER: ${{ inputs.dbuser }}
-        DB_PASSWORD: ${{ inputs.dbpassword }}
-        TWILIOACCOUNTSID: ${{ inputs.TWILIOACCOUNTSID }}
-        TWILIOAUTHTOKEN: ${{ inputs.TWILIOAUTHTOKEN }}
-        TWILIOMESSAGINGSERVICESID: ${{ inputs.TWILIOMESSAGINGSERVICESID }}
-        ENCRYPTIONPASSPHRASE: ${{ inputs.ENCRYPTIONPASSPHRASE }}
-        ENCRYPTIONINITVECTOR: ${{ inputs.ENCRYPTIONINITVECTOR }}
-        PUSHNOTIFICATIONTESTDEVICETOKENID: ${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }}
-        FIREBASESERVERKEY: ${{ inputs.FIREBASESERVERKEY }}
