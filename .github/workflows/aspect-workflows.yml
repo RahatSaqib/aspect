@@ -110,8 +110,8 @@ jobs:
 
       - name: Verify MySQL setup
         run: |
-          mysql --port 3306 -u${{ env.dbuser }} -p${{ env.dbpassword }} -e "SHOW DATABASES LIKE ${{ env.dbname }}"
-          shell: bash
+          ls -la && pwd && mysql --host 127.0.0.1 --port 3306 -u${{ env.dbuser }} -p${{ env.dbpassword }} -e "SHOW DATABASES LIKE ${{ env.dbname }}"
+        shell: bash
 
   # mysql -u$dbuser -p$dbpassword -e "SHOW DATABASES"
   be-rabbit: 
