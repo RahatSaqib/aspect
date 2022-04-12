@@ -174,7 +174,7 @@ async function authenticate(request) {
 
       await updateFailedPass
 
-      if (lock && !process.env.CI_RUNNER) {
+      if (lock) {
         logger.alert(`User account locked due to too many invalid login attempts
         Username: ${payload.name}
         Attempts: ${attempts}
