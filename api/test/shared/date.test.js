@@ -15,7 +15,7 @@ const {
   getOffsetFromTimeZone,
 } = require('../../src/shared/date')
 
-describe.only('Shared Date Utility Functions', () => {
+describe('Shared Date Utility Functions', () => {
   describe('getLocalDateTimeStringInUtc', () => {
     it('should return null if no date is passed', () => {
       const utcDateTime = getLocalDateTimeStringInUtc(null)

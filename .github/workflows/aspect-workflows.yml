@@ -116,9 +116,10 @@ jobs:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         if: success() || failure()
         with:
-          name: Contract Tests
+          name: Unit Tests Report
           path: 'api/unit-test-results.json'
           reporter: mocha-json
+          fail-on-error: 'false'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
@@ -186,9 +187,10 @@ jobs:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         if: success() || failure()
         with:
-          name: Contract Tests
+          name: Contract Tests Report
           path: 'api/contract-test-results.json'
           reporter: mocha-json
+          fail-on-error: 'false'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
