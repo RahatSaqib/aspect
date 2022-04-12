@@ -38,6 +38,10 @@ jobs:
       - name: 'Run Tests'
         run: yarn web:test
 
+      # - uses: ArtiomTr/jest-coverage-report-action@v2
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+
   be-lint:
     name: 'Lint (API)'
     runs-on: ubuntu-latest
@@ -105,6 +109,17 @@ jobs:
       - name: 'Run API Unit Tests'
         run: yarn api:unit
         shell: bash
+
+      - name: 'Unit Test Report'
+        uses: dorny/test-reporter@v1
+        env:
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        if: success() || failure()
+        with:
+          name: Contract Tests
+          path: 'api/unit-test-results.json'
+          reporter: mocha-json
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
         run: yarn stop:api:bg
@@ -174,7 +189,7 @@ jobs:
           name: Contract Tests
           path: 'api/contract-test-results.json'
           reporter: mocha-json
-          token: $GITHUB_TOKEN
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
         run: yarn stop:api:bg
