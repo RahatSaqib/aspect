@@ -114,7 +114,7 @@ async function listPeople(request) {
 }
 
 async function listPeopleForSelectList(request) {
-  request.query.size = 1000000
+  request.query.size = 'all'
   const response = await listPeople(request)
   return response
 }
