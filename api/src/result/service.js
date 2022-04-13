@@ -11,7 +11,7 @@ const {
   getListFields,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
-} = require('./querySelectors')
+} = require('./query/querySelectors')
 const {
   knex,
   filterParams,
