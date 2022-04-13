@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
+"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,12 +35,12 @@ msgstr "(Nouvelle quantité en stock: {nextQuantity} {unitShortName})"
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-#, fuzzy
-#| msgid "* excluded {pendingTransfers} lot/s in transit"
 msgid ""
 "* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
 "s in transit"
-msgstr "* lot(s) {pendingTransfers} exclus en transit"
+msgstr ""
+"* exclu {pendingTransfersQuantityOnHand} articles dans {pendingTransfers} "
+"lot/s en transit"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -1954,6 +1954,13 @@ msgstr "Daktari HCV"
 msgid "Daktari HIV-VL"
 msgstr "Daktari HIV-VL"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
+#: extracted_strings.json
+msgid "Damage"
+msgstr "Dégâts"
+
 #. [pages.OperationalDashboard.operationalDashboardTitle]
 #. defaultMessage is:
 #. Dashboard
@@ -3010,10 +3017,8 @@ msgstr "Erreur de transfert du résultat"
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Fetching Endpoint"
 msgid "Error creating person"
-msgstr "Taux d'erreur"
+msgstr "Erreur lors de la création d'une personne"
 
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
@@ -3166,17 +3171,14 @@ msgstr "Code d'installation"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Please, try again in a few minutes. If the error persists, contact your "
-#| "administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of error "
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 msgstr ""
-"Veuillez réessayer dans quelques minutes. Si l'erreur persiste, contactez "
-"votre administrateur pour obtenir de l'aide."
+"Impossible de générer {fileType} rapport \"{reportName}\" à cause de "
+"l'erreur \"{errorMessage}\". Veuillez réessayer dans quelques minutes. Si "
+"l'erreur persiste, contactez votre administrateur pour obtenir de l'aide."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -5642,10 +5644,8 @@ msgstr "Nombre d'emplacements"
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The number of results that belong to a patient that died"
 msgid "Number of TB results grouped by patient HIV status"
-msgstr "Le nombre de résultats appartenant à un patient décédé"
+msgstr "Nombre de résultats de TB groupés par statut VIH du patient"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -7550,10 +7550,8 @@ msgstr "Sélectionnez l'année ..."
 #. defaultMessage is:
 #. Select an Assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select assay..."
 msgid "Select an Assay"
-msgstr "Sélectionner le test ..."
+msgstr "Sélectionnez un test"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -7723,10 +7721,8 @@ msgstr "Envoyer à une personne spécifique"
 #. defaultMessage is:
 #. Send to patient
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Linked to treatment"
 msgid "Send to patient"
-msgstr "Lié au traitement"
+msgstr "Envoyer au patient"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -7739,10 +7735,8 @@ msgstr "Opérateur"
 #. defaultMessage is:
 #. Sent details
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Site Detail"
 msgid "Sent details"
-msgstr "Détail du site"
+msgstr "Détails de l'envoi"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -8344,10 +8338,8 @@ msgstr "Succès"
 #. defaultMessage is:
 #. Successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Success"
 msgid "Successfully"
-msgstr "Succès"
+msgstr "Avec succès"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -9266,6 +9258,17 @@ msgstr ""
 "Ce rapport montre le nombre de tests GeneXpert MTB effectués classés par "
 "résultat"
 
+#. [pages.ReportIndex.xpertPatientsReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result and patients types
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result and patients types"
+msgstr ""
+"Ce rapport indique le nombre de tests GeneXpert MTB effectués, classés par "
+"résultat et par type de patient"
+
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
 #. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
@@ -9387,10 +9390,8 @@ msgstr "Sujet"
 #. defaultMessage is:
 #. Total Capacity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Cases"
 msgid "Total Capacity"
-msgstr "Total des cas"
+msgstr "Capacité totale"
 
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
@@ -9943,10 +9944,8 @@ msgstr "Lorsque le résultat est"
 #. defaultMessage is:
 #. With errors
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Errors"
 msgid "With errors"
-msgstr "Total des erreurs"
+msgstr "Avec erreurs"
 
 #. [pages.OperationalData.withinTwoHoursOfTesting]
 #. defaultMessage is:
@@ -9995,6 +9994,13 @@ msgstr "Cartouche Xpert HIV-1 Qual"
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Cartouche de charge virale Xpert HIV-1"
+
+#. [pages.ReportIndex.xpertPatientsReport]
+#. defaultMessage is:
+#. Xpert Patients Report
+#: extracted_strings.json
+msgid "Xpert Patients Report"
+msgstr "Rapport sur les patients Xpert"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
@@ -11047,9 +11053,6 @@ msgstr ""
 
 #~ msgid "Hospital Number"
 #~ msgstr "Numéro d'hôpital"
-
-#~ msgid "Images"
-#~ msgstr "Images"
 
 #~ msgid "Issue"
 #~ msgstr "Problème"
