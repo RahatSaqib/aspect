@@ -9,6 +9,7 @@ const {
 } = require('../geography/requestValidation')
 const {
   listPeople,
+  listPeopleForSelectList,
   listRefreshTokens,
   availableContacts,
   showPerson,
@@ -109,6 +110,16 @@ const routes = [
     config: {
       description: 'People List',
       notes: 'Pageable and sortable list of people',
+      ...listContactBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/select-all',
+    handler: asyncHandler(listPeopleForSelectList),
+    config: {
+      description: 'Persons for Select List',
+      notes: 'List of ALL persons',
       ...listContactBaseConfig(),
     },
   },

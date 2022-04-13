@@ -17,7 +17,7 @@ import messages from '../Detail/messages'
 import ASSAY_LIST from '../../QueryFetch/Assay'
 import { SITE_ALL } from '../../QueryFetch/Site'
 import { getBaseData, getBaseValidation } from '../../Form/Formik/Helpers'
-import PERSON_LIST from '../../QueryFetch/Person'
+import { PERSON_ALL } from '../../QueryFetch/Person'
 import styles from '../Detail/Detail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -476,9 +476,9 @@ function buildJobFunctionsRows(jobFunctions) {
                   initialValue: [],
                   controlType: {
                     component: 'select',
-                    endpoint: PERSON_LIST.ENDPOINT,
+                    endpoint: PERSON_ALL.ENDPOINT,
                     hideIfNoOptions: false,
-                    queryKey: PERSON_LIST.KEY,
+                    queryKey: PERSON_ALL.KEY,
                     normalizeLoadedData: response => {
                       const { ok, data } = response
                       let options = []
@@ -534,11 +534,11 @@ function buildSendToPersons(formatMessage) {
             initialValue: [],
             controlType: {
               component: 'select',
-              endpoint: PERSON_LIST.ENDPOINT,
+              endpoint: PERSON_ALL.ENDPOINT,
               hideIfNoOptions: false,
               isMulti: true,
               isClearable: true,
-              queryKey: PERSON_LIST.KEY,
+              queryKey: PERSON_ALL.KEY,
               normalizeLoadedData: (response, formik) => {
                 const { values, setFieldValue } = formik
                 function makeLabel(name, state) {
