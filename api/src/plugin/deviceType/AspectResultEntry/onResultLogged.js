@@ -12,7 +12,7 @@ const {
 } = require('../../../result/service')
 const {
   RESULT_STRING_TEMPLATE_FIELDS,
-} = require('../../../result/querySelectors')
+} = require('../../../result/query/querySelectors')
 const { resultUnusedModules } = require('../../../result/actions')
 
 const {
