@@ -12,50 +12,44 @@ import { getValidation } from './Helpers'
 const AspectPureFormik = ({
   config: { id, debug, rows, initialValues },
   actions,
-}) => {
-  return (
-    <Formik
-      initialValues={initialValues}
-      validateOnChange
-      enableReinitialize
-      validationSchema={object().shape(getValidation(rows))}
-    >
-      {formik => (
-        <Fragment>
-          <Form noValidate>
-            {map(rows, (items, index) => {
-              return (
+}) => (
+  <Formik
+    initialValues={initialValues}
+    validateOnChange
+    enableReinitialize
+    validationSchema={object().shape(getValidation(rows))}
+  >
+    {formik => (
+      <Fragment>
+        <Form noValidate>
+          {map(rows, (items, index) => (
+            <div
+              key={`${id}-row${index}`}
+              className="form__row"
+              style={{ display: 'flex', justifyContent: 'space-between' }}
+            >
+              {map(items, ({ component: Input, ...input }) => (
                 <div
-                  key={`${id}-row${index}`}
-                  className="form__row"
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                  key={`${id}-row${index}-${input?.id}`}
+                  style={{ width: '100%', margin: '0 10px' }}
                 >
-                  {map(items, ({ component: Input, ...input }) => {
-                    return (
-                      <div
-                        key={`${id}-row${index}-${input?.id}`}
-                        style={{ width: '100%', margin: '0 10px' }}
-                      >
-                        <FastField
-                          name={input?.id}
-                          inputProps={input}
-                          component={Input}
-                        />
-                      </div>
-                    )
-                  })}
+                  <FastField
+                    name={input?.id}
+                    inputProps={input}
+                    component={Input}
+                  />
                 </div>
-              )
-            })}
-            {map(actions, ({ id, component: Component, ...rest }) => (
-              <Component key={id} {...rest} formik={formik} />
-            ))}
-          </Form>
-          {debug ? <pre>{JSON.stringify(formik, null, 2)}</pre> : null}
-        </Fragment>
-      )}
-    </Formik>
-  )
-}
+              ))}
+            </div>
+          ))}
+          {map(actions, ({ id, component: Component, ...rest }) => (
+            <Component key={id} {...rest} formik={formik} />
+          ))}
+        </Form>
+        {debug ? <pre>{JSON.stringify(formik, null, 2)}</pre> : null}
+      </Fragment>
+    )}
+  </Formik>
+)
 
 export default AspectPureFormik
