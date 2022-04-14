@@ -116,6 +116,12 @@ async function listPeople(request) {
   return { ok: true, total, data, length: data.length }
 }
 
+async function listPeopleForSelectList(request) {
+  request.query.size = 'all'
+  const response = await listPeople(request)
+  return response
+}
+
 async function availableContacts(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -584,6 +590,7 @@ async function updatePersonStatus(request) {
 
 module.exports = {
   listPeople,
+  listPeopleForSelectList,
   listRefreshTokens,
   availableContacts,
   assignContact,

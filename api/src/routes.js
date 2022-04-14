@@ -229,6 +229,14 @@ function getSortParams(params, sortColumnMapping, defaultSort) {
 function getPageParams(params) {
   const result = {}
 
+  if (params.size === 'all') {
+    return {
+      page: 0,
+      skip: 0,
+      // don't define `size` prop here - meaning to get all available items
+    }
+  }
+
   result.page = parseInt(params.page, 10) || 0
   result.size = parseInt(params.size, 10) || 50
   result.skip = result.page * result.size
@@ -251,7 +259,9 @@ function validateSortPageParams(...sortColumns) {
       .integer()
       .min(0)
       .description('Page index with 0 as first page'),
-    size: Joi.number().integer().positive().description('Page size'),
+    size: Joi.alternatives()
+      .try(Joi.number().integer().positive(), Joi.string().allow('all'))
+      .description('Page size'),
   }
 }
 
