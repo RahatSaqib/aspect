@@ -92,7 +92,7 @@ const personDetailsResponse = {
         lgaName: Joi.string().allow(null).description('Lga name'),
         userLockedOut: customBoolean('User userLockedOut'),
         canLogIn: customBoolean('Person canLogIn'),
-        disabled: Joi.number().allow(null).description('0 Enabled, 1 Disabled'),
+        disabled: customBoolean('Person disabled'),
         disabledOn: Joi.date()
           .allow(null)
           .description('Date person was disabled'),
