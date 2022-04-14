@@ -37,7 +37,6 @@ const WIDGET_FILTER_KEYS = {
 }
 
 const positiveResults = `('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')`
-const personStatus = { ENABLED: 0, DISABLED: 1 }
 
 // props will be defined below for each object
 const sqlSnippets = {}
@@ -77,7 +76,8 @@ const personTitle = {
   titleI18nKey: 'personTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `SELECT COUNT(Person.id) AS cnt FROM Person INNER JOIN Partner ON Person.partnerId IS NULL OR Person.partnerId = Partner.id LEFT OUTER JOIN Geography AS g ON Person.geographyId = g.id WHERE Person.disabled = ${personStatus.ENABLED}`,
+  sqlForIndicator: `select count(p.id) as cnt from Person as p inner join Partner on p.partnerId is NULL or p.partnerId = Partner.id left outer join Geography as g on p.geographyId = g.id where p.disabled = 0`,
+  // sqlForIndicator: `SELECT COUNT(p.id) AS cnt FROM Person as p INNER JOIN Partner ON p.partnerId IS NULL OR p.partnerId = Partner.id LEFT OUTER JOIN Geography AS g ON p.geographyId = g.id WHERE p.disabled = 0`,
   link: '/browse/person',
   linkParams: {
     contactStatus: WIDGET_FILTER_KEYS.PERSON_DISABLED,
