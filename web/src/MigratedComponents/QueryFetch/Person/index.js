@@ -3,9 +3,9 @@ const PERSON_LIST = {
   KEY: 'PERSON_LIST',
 }
 
-const PERSON_ALL = {
-  ENDPOINT: '/person/select-all',
-  KEY: 'PERSON_ALL',
+const PERSON_SELECT_LIST = {
+  ENDPOINT: '/person/select-list',
+  KEY: 'PERSON_SELECT_LIST',
 }
 
-export { PERSON_LIST, PERSON_ALL }
+export { PERSON_LIST, PERSON_SELECT_LIST }

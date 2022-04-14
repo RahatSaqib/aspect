@@ -115,7 +115,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/person/select-all',
+    path: '/person/select-list',
     handler: asyncHandler(listPeopleForSelectList),
     config: {
       description: 'Persons for Select List',
