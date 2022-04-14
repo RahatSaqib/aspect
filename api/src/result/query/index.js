@@ -16,59 +16,6 @@ const getBaseQuery = (knex, dataConstraints) =>
       site: 'si',
     })
 
-/**
- * const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
-  // Flat mtb cnt
-  mtbNotDetected: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'NotDetected' THEN 1 ELSE 0 END)"
-  ),
-  mtbDetected: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Detected' THEN 1 ELSE 0 END)"
-  ),
-  mtbNoResult: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END)"
-  ),
-  mtbInvalid: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END)"
-  ),
-  mtbError: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END)"
-  ),
-
-  // Flat rif cnt
-  rifDetected: knex.raw(
-    "SUM(CASE WHEN rc2.externalId = 'Detected' THEN 1 ELSE 0 END)"
-  ),
-  rifNotDetected: knex.raw(
-    "SUM(CASE WHEN rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END)"
-  ),
-  rifIndeterminate: knex.raw(
-    "SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END)"
-  ),
-
-  // Flat groups cnt
-  mtbDetectedRifNotDetected: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END)"
-  ),
-  mtbDetectedRifDetected: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END)"
-  ),
-  mtbDetectedNoRif: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END)"
-  ),
-  mtbTraceNoRif: knex.raw(
-    "SUM(CASE WHEN rc1.externalId = 'Trace Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END)"
-  ),
-  // Grouped mtb cnt
-  mtbValid: knex.raw(
-    "SUM(CASE WHEN rc1.externalId NOT IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END)"
-  ),
-  mtbInconclusive: knex.raw(
-    "SUM(CASE WHEN rc1.externalId IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END)"
-  ),
-}
- */
-
 const modifiers = {
   join: {
     resultCategory1: queryBuilder => {
