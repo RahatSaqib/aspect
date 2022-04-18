@@ -48,7 +48,7 @@ async function seed(knex) {
           .pluck('id')
 
         await trx('InventoryLog')
-          .whereIn('id', toBeDeleted)
+          .whereIn('inventoryItemId', toBeDeleted)
           .update({ inventoryItemId: elegibleId })
         await trx('InventoryItem')
           .where('id', elegibleId)
