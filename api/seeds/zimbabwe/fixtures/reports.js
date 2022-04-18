@@ -29,7 +29,7 @@ module.exports = {
     externalId: 'module_activity_report',
     fileName: 'module_activity_report',
     exportCsv: true,
-    sortOrder: 10,
+    sortOrder: 100,
     sheets: [
       {
         sortOrder: 0,
