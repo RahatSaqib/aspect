@@ -1,5 +1,5 @@
-const { knex } = require('../db')
-const { getDateTimeProjectionInUserTimeZone } = require('../shared/date')
+const { knex } = require('../../db')
+const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 
 function getReportCommonFields(userTimeOffset) {
   const fields = REPORT_COMMON_FIELDS
@@ -253,6 +253,66 @@ function getSelectShowFields(userTimeZone) {
     ...SELECT_SHOW_FIELDS_TIMEZONE_SAFE,
   ]
 }
+
+const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
+  errorRate: knex.raw(
+    "ROUND(IFNULL(COUNT(r.id) / SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0), 2)"
+  ),
+  // Flat mtb cnt
+  mtbNotDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbNoResult: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbInvalid: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbError: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbTraceDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)"
+  ),
+  // Flat rif cnt
+  rifDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"
+  ),
+  rifNotDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"
+  ),
+  rifIndeterminate: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
+  ),
+
+  // Flat groups cnt
+  mtbDetectedRifNotDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbDetectedRifDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbDetectedRifIndeterminate: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbDetectedNoRif: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbTraceNoRif: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Trace Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
+  ),
+  // Grouped mtb cnt
+  mtbValid: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId NOT IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbInconclusive: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
+  ),
+}
+
 const SELECT_SHOW_FIELDS_TIMEZONE_SAFE = [
   'rf.formSchema',
   knex.raw('IFNULL(pa.canEdit, 0) AS canEdit'),
@@ -331,4 +391,5 @@ module.exports = {
   getSelectShowFields,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
+  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
 }
