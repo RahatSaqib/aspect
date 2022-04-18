@@ -4,6 +4,7 @@ const {
   getGeneralStatsForMapping,
   addErrorTableSiteTotals,
 } = require('./mtbStatsReport')
+const getSmsStatsData = require('./smsStatsReport')
 
 async function getMtbStats(auth, params) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -27,6 +28,20 @@ async function getMtbStats(auth, params) {
   }
 }
 
+async function getSmsStats(auth, params) {
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const stats = await getSmsStatsData(dataConstraints, params)
+
+  return {
+    ok: true,
+    ...stats,
+    // data: {
+    //   rows: [],
+    // },
+  }
+}
 module.exports = {
   getMtbStats,
+  getSmsStats,
 }

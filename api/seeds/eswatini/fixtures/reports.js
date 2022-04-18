@@ -16,6 +16,24 @@ const szMtbStats = {
   ],
 }
 
+const szSmsStats2 = {
+  name: 'MTB Stats',
+  description: 'Stats about SMS notifications sent',
+  i18nKey: 'szMtbStats',
+  externalId: 'sz_sms_stats',
+  i18nKeyDescription: 'szSmsStatsDescription',
+  fileName: 'smsStats',
+  sortOrder: 110,
+  sheets: [
+    {
+      sortOrder: 10,
+      moduleName: 'result/serviceReportEswatini',
+      functionName: 'getSmsStats',
+    },
+  ],
+}
+
 module.exports = {
   szMtbStats,
+  szSmsStats2,
 }
