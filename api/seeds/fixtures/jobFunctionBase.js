@@ -1242,7 +1242,10 @@ const mergeJobFunctions = (jf1, jf2) => {
  * @param {Array} countryReports The country reports external ids
  * @returns The job function including the additional reports
  */
-const decorateJobFunction = (jobFunction = {}, countryReports) => ({
+const countryReportsDecorator = (
+  jobFunction = {},
+  countryReports
+) => ({
   ...jobFunction,
   reports: [...(jobFunction.reports || []), ...countryReports],
 })
@@ -1268,5 +1271,5 @@ module.exports = {
   systemOne,
   labAdmin,
   mergeJobFunctions,
-  decorateJobFunction,
+  countryReportsDecorator,
 }

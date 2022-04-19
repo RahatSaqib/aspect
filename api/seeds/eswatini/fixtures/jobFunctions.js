@@ -5,17 +5,17 @@ const {
   clinician,
   remoteHealthWorker,
   technician,
-  decorateJobFunction,
+  countryReportsDecorator,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
 const countryReports = Object.values(reports).map(report => report.externalId)
 
 module.exports = [
-  decorateJobFunction(admin, countryReports),
-  decorateJobFunction(regionalOfficer, countryReports),
-  decorateJobFunction(labUser, countryReports),
-  decorateJobFunction(clinician, countryReports),
-  decorateJobFunction(remoteHealthWorker, countryReports),
-  decorateJobFunction(technician, countryReports),
+  countryReportsDecorator(admin, countryReports),
+  countryReportsDecorator(regionalOfficer, countryReports),
+  countryReportsDecorator(labUser, countryReports),
+  countryReportsDecorator(clinician, countryReports),
+  countryReportsDecorator(remoteHealthWorker, countryReports),
+  countryReportsDecorator(technician, countryReports),
 ]
