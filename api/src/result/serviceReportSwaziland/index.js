@@ -1,10 +1,10 @@
 const { getConstraints } = require('../../auth/constraints')
+const { getSmsStatsData } = require('./smsStatsReport')
 const {
   getErrorTable,
   getGeneralStatsForMapping,
   addErrorTableSiteTotals,
 } = require('./mtbStatsReport')
-const getSmsStatsData = require('./smsStatsReport')
 
 async function getMtbStats(auth, params) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -35,10 +35,10 @@ async function getSmsStats(auth, params) {
 
   return {
     ok: true,
-    ...stats,
-    // data: {
-    //   rows: [],
-    // },
+    data: {
+      ...stats,
+      rows: [],
+    },
   }
 }
 module.exports = {
