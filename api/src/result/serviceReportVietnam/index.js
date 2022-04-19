@@ -1,19 +1,20 @@
 const reduce = require('lodash/reduce')
 const includes = require('lodash/includes')
 const { format, endOfMonth, startOfMonth } = require('date-fns')
-const { getUser } = require('../auth/service')
-const { getConstraints, addConstraints } = require('../auth/constraints')
-const { knex, filterDateRangeParams, filterParams } = require('../db')
-const [m4b1Mapping] = require('../../templates/xpert_m4b1_patients/mapping')
+const { getUser } = require('../../auth/service')
+const { getConstraints, addConstraints } = require('../../auth/constraints')
+const { knex, filterDateRangeParams, filterParams } = require('../../db')
+const [m4b1Mapping] = require('../../../templates/xpert_m4b1_patients/mapping')
 const {
   getWellFormattedDateStringWithTimezone,
   startOfMonthUTC,
   endOfMonthUTC,
-} = require('../shared/date')
+} = require('../../shared/date')
 const {
   getTypeOfPatientCategory,
   getMappingFieldName,
-} = require('./serviceReportVietnam/geneXpertM4B1PatientsReport')
+} = require('./geneXpertM4B1PatientsReport')
+const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const activeScreeningUseKey = 'Sàng lọc chủ động: ghi rõ'
 const routineDiagnosticUseKey = 'Chẩn đoán thường quy'
@@ -114,63 +115,58 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
 }
 
 async function getGeneXpertM4B2ActivitiesReport(auth, query) {
+  const {
+    mtbNotDetected,
+    mtbDetectedRifNotDetected,
+    mtbDetectedRifDetected,
+    mtbDetectedRifIndeterminate,
+    mtbTraceNoRif,
+    mtbNoResult,
+    mtbInvalid,
+  } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
   const dataConstraints = await getConstraints(auth.credentials)
   const categoriesCnt = await getBaseQuery(dataConstraints, query)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .select([
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'NotDetected' THEN 1 ELSE 0 END) as mtbNotDetected"
+    .select({
+      mtbNotDetected,
+      mtbDetectedRifNotDetected,
+      mtbDetectedRifDetected,
+      mtbDetectedRifIndeterminate,
+      mtbTraceNoRif,
+      mtbNoResult,
+      mtbInvalid,
+      error_5006_5007_5017: knex.raw(
+        "SUM(CASE WHEN r.errorCode IN ('5006', '5007', '5017') THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END) as mtbDetectedRifNotDetected"
+      error_1001_1002_2014_4009_4010_4017: knex.raw(
+        "SUM(CASE WHEN r.errorCode IN ('1001', '1002', '2014', '4009', '4010', '4017') THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END) as mtbDetectedRifDetected"
+      error_2008: knex.raw(
+        "SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END) as mtbDetectedNoRif"
+      error_2005_2006_2016: knex.raw(
+        "SUM(CASE WHEN r.errorCode IN ('2005', '2006', '2016') THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Trace Detected' AND rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END) as mtbTraceNoRif"
+      error_2035: knex.raw(
+        "SUM(CASE WHEN r.errorCode = '2035' THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END) as noResult"
+      error_5011: knex.raw(
+        "SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END) as invalid"
+      error_2037: knex.raw(
+        "SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('5006', '5007', '5017') THEN 1 ELSE 0 END) as error_5006_5007_5017"
+      error_2126_2127: knex.raw(
+        "SUM(CASE WHEN r.errorCode IN ('2126', '2127') THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('1001', '1002', '2014', '4009', '4010', '4017') THEN 1 ELSE 0 END) as error_1001_1002_2014_4009_4010_4017"
+      error_5001_5002_5003_5004_5005: knex.raw(
+        "SUM(CASE WHEN r.errorCode IN ('5001', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END) as error_2008"
+      error_other: knex.raw(
+        "SUM(CASE WHEN r.errorCode IS NOT NULL AND r.errorCode NOT IN ('5006', '5007', '5017', '5001', '1001', '1002', '2014', '4009', '4010', '4017', '2008', '2005', '2006', '2016','2035', '5011', '2037', '2126', '2127', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END)"
       ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('2005', '2006', '2016') THEN 1 ELSE 0 END) as error_2005_2006_2016"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode = '2035' THEN 1 ELSE 0 END) as error_2035"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END) as error_5011"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END) as error_2037"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('2126', '2127') THEN 1 ELSE 0 END) as error_2126_2127"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('5001', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END) as error_5001_5002_5003_5004_5005"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN r.errorCode IS NOT NULL AND r.errorCode NOT IN ('5006', '5007', '5017', '5001', '1001', '1002', '2014', '4009', '4010', '4017', '2008', '2005', '2006', '2016','2035', '5011', '2037', '2126', '2127', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END) as error_other"
-      ),
-      knex.raw('GROUP_CONCAT(DISTINCT s.name ORDER BY s.name) as laboratories'),
-    ])
+      laboratories: knex.raw('GROUP_CONCAT(DISTINCT s.name ORDER BY s.name)'),
+    })
     .first()
 
   return { ok: true, data: categoriesCnt }
@@ -295,9 +291,7 @@ const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
 }
 
 async function getGlobalFundInventoryReport(auth, query) {
-  const {
-    globalFundInventoryReportDictionary,
-  } = require('./serviceReportVietnamDictionary.json')
+  const { globalFundInventoryReportDictionary } = require('../dictionary.json')
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
   const { maxDate } = query

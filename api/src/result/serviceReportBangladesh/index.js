@@ -2,18 +2,21 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 
-const { addConstraints, getConstraints } = require('../auth/constraints')
+const { addConstraints, getConstraints } = require('../../auth/constraints')
 const {
   knex,
   filterParams,
   filterDateRangeParams,
   sortPageParams,
-} = require('../db')
-const { formatDateOrDefault } = require('../shared/date')
-const { allAssayToId, allResultCategoryToId } = require('../shared/dictionary')
-const getPositiveCategoriesExternalIds = require('../resultCategory/service')
-const logger = require('../shared/logger')
-const { RELABEL_EXCEL } = require('../shared/constants')
+} = require('../../db')
+const { formatDateOrDefault } = require('../../shared/date')
+const {
+  allAssayToId,
+  allResultCategoryToId,
+} = require('../../shared/dictionary')
+const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
+const logger = require('../../shared/logger')
+const { RELABEL_EXCEL } = require('../../shared/constants')
 
 /**
  * **************************************
