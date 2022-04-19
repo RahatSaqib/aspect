@@ -35,6 +35,7 @@ import RevokedSelectField from '../resource/RevokedSelectField'
 import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import DaysStockLeftSelectField from '../hardcoded/daysStockLeftSelectField'
+import EnabledDisabledPersonsSelectField from '../hardcoded/toggleDisabledEnabledPersons'
 import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
@@ -243,6 +244,12 @@ const enhance = compose(
       reportName =>
         onChangeFilters({
           reportName,
+        }),
+    onToggleEnabledDisabled:
+      ({ onChangeFilters }) =>
+      contactStatus =>
+        onChangeFilters({
+          contactStatus,
         }),
   })
 )
@@ -539,6 +546,14 @@ const messages = {
       id: 'filter.popover.enterLotNumber',
       defaultMessage: 'Enter lot number...',
     },
+    contactStatus: {
+      id: 'filter.popover.contactStatus',
+      defaultMessage: 'Contact Status',
+    },
+    contactStatusHint: {
+      id: 'filter.popover.contactStatusHint',
+      defaultMessage: 'Select contact status...',
+    },
   }),
 }
 
@@ -581,6 +596,7 @@ export const FiltersPanel = ({
   onStockLeftChange,
   onHasStockChange,
   onReportNameChange,
+  onToggleEnabledDisabled,
   user,
   assays,
   countries,
@@ -1245,6 +1261,20 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterReportName)}
                   floatingLabelText={formatMessage(messages.reportName)}
+                />
+              </div>
+            )}
+            {config.contactStatus && (
+              <div className={cssClasses('Control')}>
+                <EnabledDisabledPersonsSelectField
+                  allItemText={formatMessage(messages.all)}
+                  onChange={onToggleEnabledDisabled}
+                  name="contactStatus"
+                  value={filters.contactStatus || ''}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.contactStatusHint)}
+                  floatingLabelText={formatMessage(messages.contactStatus)}
+                  style={{ verticalAlign: 'bottom' }}
                 />
               </div>
             )}

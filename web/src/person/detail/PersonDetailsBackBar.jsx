@@ -16,7 +16,7 @@ const PersonDetailBackBar = ({
   const location = useLocation()
 
   const onBackClick = () => {
-    navigate(`/browse/person`)
+    navigate(`/browse/person?filters=contactStatus%3D0`)
   }
   const onPathClick = path => {
     navigate({

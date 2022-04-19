@@ -2203,7 +2203,7 @@ msgstr "Device Activity (Percent)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Device Health"
+msgstr "Device Level"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
