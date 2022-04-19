@@ -6,8 +6,8 @@ module.exports = [
     F14: 'mtbDetectedRifIndeterminate',
     F15: 'mtbTraceNoRif',
 
-    F17: 'noResult',
-    F18: 'invalid',
+    F17: 'mtbNoResult',
+    F18: 'mtbInvalid',
     F19: 'error_5006_5007_5017',
     F20: 'error_1001_1002_2014_4009_4010_4017',
     F21: 'error_2008',
