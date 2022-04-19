@@ -1,5 +1,5 @@
+const Promise = require('bluebird')
 const { getConstraints } = require('../../auth/constraints')
-const { getSmsStatsData } = require('./smsStatsReport')
 const {
   getErrorTable,
   getGeneralStatsForMapping,
@@ -9,11 +9,13 @@ const {
 async function getMtbStats(auth, params) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  let errorTable = await getErrorTable(dataConstraints, params)
-  const tbProgramStats = await getGeneralStatsForMapping(
-    dataConstraints,
-    params
-  )
+  const sections = await Promise.all([
+    getErrorTable(dataConstraints, params),
+    getGeneralStatsForMapping(dataConstraints, params),
+  ])
+  let errorTable = sections[0]
+  const tbProgramStats = sections[1]
+
   const avgTestsPerModule =
     errorTable.length > 0 ? tbProgramStats.total / errorTable.length : 0
   errorTable = addErrorTableSiteTotals(errorTable)

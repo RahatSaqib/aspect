@@ -3,7 +3,7 @@ module.exports = [
     F11: 'mtbNotDetected',
     F12: 'mtbDetectedRifNotDetected',
     F13: 'mtbDetectedRifDetected',
-    F14: 'mtbDetectedNoRif',
+    F14: 'mtbDetectedRifIndeterminate',
     F15: 'mtbTraceNoRif',
 
     F17: 'noResult',

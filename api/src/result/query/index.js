@@ -1,4 +1,5 @@
 const { addConstraints } = require('../../auth/constraints')
+const querySelectors = require('./querySelectors')
 
 /**
  *  Builds a knex query including all the necessary joins for scoping results to the data constraints
@@ -57,4 +58,5 @@ const modifiers = {
 module.exports = {
   getBaseQuery,
   modifiers,
+  ...querySelectors,
 }

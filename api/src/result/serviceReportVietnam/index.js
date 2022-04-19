@@ -14,9 +14,7 @@ const {
   getTypeOfPatientCategory,
   getMappingFieldName,
 } = require('./geneXpertM4B1PatientsReport')
-const {
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../query/querySelectors')
+const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const activeScreeningUseKey = 'Sàng lọc chủ động: ghi rõ'
 const routineDiagnosticUseKey = 'Chẩn đoán thường quy'
@@ -117,11 +115,26 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
 }
 
 async function getGeneXpertM4B2ActivitiesReport(auth, query) {
+  const {
+    mtbNotDetected,
+    mtbDetectedRifNotDetected,
+    mtbDetectedRifDetected,
+    mtbDetectedRifIndeterminate,
+    mtbTraceNoRif,
+    mtbNoResult,
+    mtbInvalid,
+  } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
   const dataConstraints = await getConstraints(auth.credentials)
   const categoriesCnt = await getBaseQuery(dataConstraints, query)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .select([
-      ...SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
+      mtbNotDetected,
+      mtbDetectedRifNotDetected,
+      mtbDetectedRifDetected,
+      mtbDetectedRifIndeterminate,
+      mtbTraceNoRif,
+      mtbNoResult,
+      mtbInvalid,
       knex.raw(
         "SUM(CASE WHEN r.errorCode IN ('5006', '5007', '5017') THEN 1 ELSE 0 END) as error_5006_5007_5017"
       ),
