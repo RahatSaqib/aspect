@@ -52,47 +52,40 @@ async function continueUnprocessedRawData(queue) {
   if (!_.isEmpty(readyDeviceApiRawRecords)) {
     // eslint-disable-next-line no-console
     console.log(
-      `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API before starting web server.`
+      `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API while starting web server.`
     )
   }
-  await Promise.each(
-    readyDeviceApiRawRecords,
-    async readyDeviceApiRawRecord => {
-      // eslint-disable-next-line no-console
-      console.log(`Processing DeviceApiRaw ID: ${readyDeviceApiRawRecord.id}.`)
-      const messageContext = queue.createMessageContext('aspect_request')
-      let requestText = readyDeviceApiRawRecord.rawData
-      if (readyDeviceApiRawRecord.salt) {
-        requestText = decrypt(requestText, readyDeviceApiRawRecord.salt)
-      }
-      const request = JSON.parse(requestText)
-      request.plugins = {
-        rawPayload: requestText,
-        messageContext,
-      }
-      const dataProcessor = await loadRawDataProcessor(request, messageContext)
-      dataProcessor.populateFromDeviceApiRawRecord(readyDeviceApiRawRecord)
-
-      const responseReady = dataProcessor.responseReadyPromise()
-      const error = dataProcessor.dataProcessorErrorPromise()
-
-      await dataProcessor.start()
-
-      return Promise.race([responseReady, error]).catch(error => {
-        if (_.get(error, 'message') === dataProcessor.timeoutMessage) {
-          throw Boom.gatewayTimeout(dataProcessor.timeoutMessage, {
-            deviceApiRawId: dataProcessor.id,
-            timeoutMilliseconds: dataProcessor.timeoutMilliseconds,
-          })
-        }
-        throw error
-      })
-    }
-  )
-  if (!_.isEmpty(readyDeviceApiRawRecords)) {
+  Promise.each(readyDeviceApiRawRecords, async readyDeviceApiRawRecord => {
     // eslint-disable-next-line no-console
-    console.log('Done.')
-  }
+    console.log(`Processing DeviceApiRaw ID: ${readyDeviceApiRawRecord.id}.`)
+    const messageContext = queue.createMessageContext('aspect_request')
+    let requestText = readyDeviceApiRawRecord.rawData
+    if (readyDeviceApiRawRecord.salt) {
+      requestText = decrypt(requestText, readyDeviceApiRawRecord.salt)
+    }
+    const request = JSON.parse(requestText)
+    request.plugins = {
+      rawPayload: requestText,
+      messageContext,
+    }
+    const dataProcessor = await loadRawDataProcessor(request, messageContext)
+    dataProcessor.populateFromDeviceApiRawRecord(readyDeviceApiRawRecord)
+
+    const responseReady = dataProcessor.responseReadyPromise()
+    const error = dataProcessor.dataProcessorErrorPromise()
+
+    await dataProcessor.start()
+
+    return Promise.race([responseReady, error]).catch(error => {
+      if (_.get(error, 'message') === dataProcessor.timeoutMessage) {
+        throw Boom.gatewayTimeout(dataProcessor.timeoutMessage, {
+          deviceApiRawId: dataProcessor.id,
+          timeoutMilliseconds: dataProcessor.timeoutMilliseconds,
+        })
+      }
+      throw error
+    })
+  })
 }
 
 module.exports = { addDeviceRawDataHandler, continueUnprocessedRawData }

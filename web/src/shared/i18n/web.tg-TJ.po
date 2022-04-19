@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-15T02:21:11.779Z\n"
+"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,12 +34,12 @@ msgstr "(Миқдори нав дар даст: {nextQuantity} {unitShortName})"
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-#, fuzzy
-#| msgid "* excluded {pendingTransfers} lot/s in transit"
 msgid ""
 "* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
 "s in transit"
-msgstr "* {pendingTransfers} лот/с дар транзит хориҷ карда шудааст"
+msgstr ""
+"* {pendingTransfersQuantityOnHand} ашё дар {pendingTransfers} лот/с ҳангоми "
+"интиқол хориҷ карда шуд"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -694,7 +694,7 @@ msgstr "Ҳолати тасдиқ"
 #. Approved
 #: extracted_strings.json
 msgid "Approved"
-msgstr "тасдик карда шуд"
+msgstr "Tасдик карда шуд"
 
 #. [contextualMenu.notifications.areYouSureToDelete]
 #. defaultMessage is:
@@ -809,7 +809,7 @@ msgstr "{count} Калидҳоро таъин кунед"
 #. Assigned
 #: extracted_strings.json
 msgid "Assigned"
-msgstr "таъин шудааст"
+msgstr "Таъин шудааст"
 
 #. [pages.UserPreferences.assignmentDetails]
 #. defaultMessage is:
@@ -1490,7 +1490,7 @@ msgstr "Ҳодисаҳои тасдиқшуда"
 #. Connected
 #: extracted_strings.json
 msgid "Connected"
-msgstr "пайваст"
+msgstr "Пайваст"
 
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
@@ -1745,7 +1745,7 @@ msgstr "Ҳисоб кардани танҳо {ASSAY} таҳлил {RESULT}{DATE}
 #. Country
 #: extracted_strings.json
 msgid "Country"
-msgstr "кишвар"
+msgstr "Кишвар"
 
 #. [pages.deviceDetail.countryAverage]
 #. defaultMessage is:
@@ -1938,6 +1938,13 @@ msgstr "Дактари HCV"
 msgid "Daktari HIV-VL"
 msgstr "Дактари ВИЧ-ВЛ"
 
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
+#: extracted_strings.json
+msgid "Damage"
+msgstr "Зарар"
+
 #. [pages.OperationalDashboard.operationalDashboardTitle]
 #. defaultMessage is:
 #. Dashboard
@@ -2033,7 +2040,7 @@ msgstr "Санаи интиқол"
 #. Day
 #: extracted_strings.json
 msgid "Day"
-msgstr "рӯз"
+msgstr "Рӯз"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -2426,7 +2433,7 @@ msgstr "Партофтан"
 #. Discordant
 #: extracted_strings.json
 msgid "Discordant"
-msgstr "ихтилоф"
+msgstr "Ихтилоф"
 
 #. [pages.CasesList.diseaseName]
 #. defaultMessage is:
@@ -2461,7 +2468,7 @@ msgstr "Беморӣ"
 #. District
 #: extracted_strings.json
 msgid "District"
-msgstr "районй"
+msgstr "Районй"
 
 #. [pages.common.lga_CM]
 #. defaultMessage is:
@@ -2492,7 +2499,7 @@ msgstr ""
 "Ҳама сабтҳоро, ки дастгоҳи GeneXpert дар сабти худ тавлид кардааст, зеркашӣ "
 "кунед. Дар ин гузориш шумо метавонед санаҳои калибрченкунӣ, хатогиҳои "
 "сахтафзор/нармафзор ва дигар хатоҳо, нокомиҳо ё сабтҳои иттилоотиро, ки "
-"дастгоҳ тавлид кардааст, бубинед."
+"дастгоҳ тавлид кардааст, бубинед"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
@@ -2992,10 +2999,8 @@ msgstr "Хатогӣ дар интиқоли натиҷа"
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Fetching Endpoint"
 msgid "Error creating person"
-msgstr "Хатогӣ ҳангоми гирифтани нуқтаи ниҳоӣ"
+msgstr "Хатогии эҷоди шахс"
 
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
@@ -3148,17 +3153,14 @@ msgstr "Кодекси иншоот"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Please, try again in a few minutes. If the error persists, contact your "
-#| "administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of error "
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 msgstr ""
-"Лутфан, пас аз чанд дақиқа бори дигар кӯшиш кунед. Агар хатогӣ идома ёбад, "
-"барои дастгирӣ бо маъмури худ тамос гиред."
+"Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
+"тавлид нашуд. Лутфан, пас аз чанд дақиқа бори дигар кӯшиш кунед. Агар хатогӣ "
+"идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -3554,7 +3556,7 @@ msgstr "GeneXpert номаълум"
 #. Generate
 #: extracted_strings.json
 msgid "Generate"
-msgstr "тавлид"
+msgstr "Тавлид"
 
 #. [errorResponseMessages.generateDeviceApiKeys.POST.400.title]
 #. defaultMessage is:
@@ -3925,7 +3927,7 @@ msgid ""
 msgstr ""
 "Дар ҳамин ҳол, шумо метавонед кӯшиш кунед, ки арзишҳоро дар ин майдонҳои "
 "филтр танзим кунед, сутунеро, ки шумо дар рӯйхат мураттаб карда истодаед, "
-"тағир диҳед ё рақами саҳифаеро, ки дида истодаед, тағир диҳед."
+"тағир диҳед ё рақами саҳифаеро, ки дида истодаед, тағир диҳед"
 
 #. [pages.shared.deviceStatus.inactive]
 #. defaultMessage is:
@@ -3935,7 +3937,7 @@ msgstr ""
 #. Inactive
 #: extracted_strings.json
 msgid "Inactive"
-msgstr "ғайрифаъол"
+msgstr "Ғайрифаъол"
 
 #. [pages.transferResult.includeAllResults]
 #. defaultMessage is:
@@ -3977,7 +3979,7 @@ msgstr "Номи корбар ё парол нодуруст"
 #. Indeterminate
 #: extracted_strings.json
 msgid "Indeterminate"
-msgstr "номуайян"
+msgstr "Номуайян"
 
 #. [pages.Notifications.table.notificationsTableHeaderJobFunctionsPersons]
 #. defaultMessage is:
@@ -4678,7 +4680,7 @@ msgstr "Талоши вуруд ноком шуд"
 #. Login failed
 #: extracted_strings.json
 msgid "Login failed"
-msgstr "талоши вуруд ноком шуд"
+msgstr "Талоши вуруд ноком Шуд"
 
 #. [pages.ResetPassword.loginWithMyNewPassword]
 #. defaultMessage is:
@@ -4702,14 +4704,14 @@ msgstr "Тулу"
 #. Lost
 #: extracted_strings.json
 msgid "Lost"
-msgstr "гумшуда"
+msgstr "Гумшуда"
 
 #. [forms.formItem.consumableLot]
 #. defaultMessage is:
 #. Lot
 #: extracted_strings.json
 msgid "Lot"
-msgstr "лот"
+msgstr "Лот"
 
 #. [filter.popover.lotNumber]
 #. defaultMessage is:
@@ -5194,7 +5196,7 @@ msgstr "Ном"
 #. National
 #: extracted_strings.json
 msgid "National"
-msgstr "миллӣ"
+msgstr "Миллӣ"
 
 #. [pages.NotificationDetail.toNationalContacts]
 #. defaultMessage is:
@@ -5218,7 +5220,7 @@ msgstr "Ба таъмир ниёз дорад"
 #. Negative
 #: extracted_strings.json
 msgid "Negative"
-msgstr "манфӣ"
+msgstr "Манфӣ"
 
 #. [pages.InventoryItemsList.never]
 #. defaultMessage is:
@@ -5624,10 +5626,10 @@ msgstr "Шумораи ҷойҳо"
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The number of results that belong to a patient that died"
 msgid "Number of TB results grouped by patient HIV status"
-msgstr "Шумораи натиҷаҳое, ки ба бемори фавтида тааллуқ доранд"
+msgstr ""
+"Шумораи натиҷаҳои бемории сил, ки аз рӯи ҳолати беморони ВНМО гурӯҳбандӣ "
+"шудаанд"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -5697,7 +5699,7 @@ msgstr "Хуб"
 #. Older
 #: extracted_strings.json
 msgid "Older"
-msgstr "калонсолтар"
+msgstr "Калонсолтар"
 
 #. [pages.ResultList.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
@@ -5900,7 +5902,7 @@ msgstr "Бозсозии парол ноком шуд"
 #. Patient
 #: extracted_strings.json
 msgid "Patient"
-msgstr "бемор"
+msgstr "Бемор"
 
 #. [pages.ClinicalHistory.patientData]
 #. defaultMessage is:
@@ -6315,28 +6317,28 @@ msgstr ""
 #. Positive
 #: extracted_strings.json
 msgid "Positive"
-msgstr "мусбат"
+msgstr "Мусбат"
 
 #. [pages.deviceDetail.resultCategoryPositive1]
 #. defaultMessage is:
 #. Positive (+)
 #: extracted_strings.json
 msgid "Positive (+)"
-msgstr "мусбат (+)"
+msgstr "Мусбат (+)"
 
 #. [pages.deviceDetail.resultCategoryPositive2]
 #. defaultMessage is:
 #. Positive (++)
 #: extracted_strings.json
 msgid "Positive (++)"
-msgstr "мусбат (++)"
+msgstr "Мусбат (++)"
 
 #. [pages.deviceDetail.resultCategoryPositive3]
 #. defaultMessage is:
 #. Positive (+++)
 #: extracted_strings.json
 msgid "Positive (+++)"
-msgstr "мусбат (+++)"
+msgstr "Мусбат (+++)"
 
 #. [legends.Unknown.resultCategoryPositive1]
 #. defaultMessage is:
@@ -6350,14 +6352,14 @@ msgstr "Мусбат 1"
 #. Positive 2
 #: extracted_strings.json
 msgid "Positive 2"
-msgstr "мусбат 2"
+msgstr "Мусбат 2"
 
 #. [legends.Unknown.resultCategoryPositive3]
 #. defaultMessage is:
 #. Positive 3
 #: extracted_strings.json
 msgid "Positive 3"
-msgstr "мусбат 3"
+msgstr "Мусбат 3"
 
 #. [legends.Unknown.resultCategoryPositiveMOTT]
 #. defaultMessage is:
@@ -6401,7 +6403,7 @@ msgstr "Натиҷаҳои санҷиши мусбӣ интиқол дода ш�
 #. Positives
 #: extracted_strings.json
 msgid "Positives"
-msgstr "мусбат"
+msgstr "Мусбат"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -6505,7 +6507,7 @@ msgstr "Партовҳои захираҳои пешбинишуда"
 #. Province
 #: extracted_strings.json
 msgid "Province"
-msgstr "вилоят"
+msgstr "Вилоят"
 
 #. [pages.common.state_PK]
 #. defaultMessage is:
@@ -6604,7 +6606,7 @@ msgstr "Миқдори интиқол"
 #. Quarter
 #: extracted_strings.json
 msgid "Quarter"
-msgstr "квартал"
+msgstr "Квартал"
 
 #. [results.categoryTypeRIFResistanceI18nKey]
 #. defaultMessage is:
@@ -6710,7 +6712,7 @@ msgstr "Меъёрҳои барқароршавӣ аз рӯи ҷинс"
 #. Region
 #: extracted_strings.json
 msgid "Region"
-msgstr "вилоят"
+msgstr "Вилоят"
 
 #. [pages.ResultList.resultCategoryCOVID19RegionN]
 #. defaultMessage is:
@@ -7117,7 +7119,7 @@ msgstr "SARS-CoV-2 (COVID-19)"
 #. SMS
 #: extracted_strings.json
 msgid "SMS"
-msgstr "смс"
+msgstr "СМС"
 
 #. [pages.NotificationDetail.smsBody]
 #. defaultMessage is:
@@ -7532,10 +7534,8 @@ msgstr "Солро интихоб кунед..."
 #. defaultMessage is:
 #. Select an Assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select assay..."
 msgid "Select an Assay"
-msgstr "Таҳлилро интихоб кунед..."
+msgstr "Таҳлилро интихоб кунед"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -7705,10 +7705,8 @@ msgstr "Ба шахси мушаххас фиристед"
 #. defaultMessage is:
 #. Send to patient
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Linked to treatment"
 msgid "Send to patient"
-msgstr "Бо табобат алоқаманд аст"
+msgstr "Ба бемор фиристед"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -7721,10 +7719,8 @@ msgstr "Оператори ирсолкунанда"
 #. defaultMessage is:
 #. Sent details
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Site Detail"
 msgid "Sent details"
-msgstr "Тафсилоти сайт"
+msgstr "Тафсилот фиристода шуд"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -8275,7 +8271,7 @@ msgstr "Захираҳо"
 #. Stolen
 #: extracted_strings.json
 msgid "Stolen"
-msgstr "дуздида"
+msgstr "Дуздида"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterStrong]
 #. defaultMessage is:
@@ -8327,10 +8323,8 @@ msgstr "Муваффакият"
 #. defaultMessage is:
 #. Successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Success"
 msgid "Successfully"
-msgstr "Муваффакият"
+msgstr "Бомуваффакият"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -8374,7 +8368,7 @@ msgstr "ТБ АСТ"
 #. TB DST
 #: extracted_strings.json
 msgid "TB DST"
-msgstr "сил DST"
+msgstr "СИЛ DST"
 
 #. [filter.AssayTypeSelectField.assayTypeTbGnd]
 #. defaultMessage is:
@@ -8771,7 +8765,7 @@ msgid ""
 msgstr ""
 "Шумораи рӯзҳои боқимондаи захираҳои мавҷуда ва мӯҳлати истифоданашуда, бо "
 "назардошти он, ки картриджҳои истеъмолшаванда ҳамеша ба анҷоми мӯҳлати "
-"истифодаашон наздиктаранд."
+"истифодаашон наздиктаранд"
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -9246,6 +9240,17 @@ msgstr ""
 "Ин гузориш шумораи санҷишҳои GeneXpert MTB-ро, ки аз рӯи натиҷаҳо гурӯҳбандӣ "
 "шудаанд, нишон медиҳад"
 
+#. [pages.ReportIndex.xpertPatientsReport_description]
+#. defaultMessage is:
+#. This report shows the number of GeneXpert MTB tests performed categorized by result and patients types
+#: extracted_strings.json
+msgid ""
+"This report shows the number of GeneXpert MTB tests performed categorized by "
+"result and patients types"
+msgstr ""
+"Ин гузориш шумораи санҷишҳои GeneXpert MTB-ро нишон медиҳад, ки аз рӯи "
+"натиҷаҳо ва намудҳои беморон гурӯҳбандӣ шудаанд"
+
 #. [pages.ReportIndex.device_utilization_description]
 #. defaultMessage is:
 #. This report shows the utilization rate of the devices during the selected period of time, breaking it down by months (By default last 12 months)
@@ -9367,10 +9372,8 @@ msgstr "Мавзӯъ"
 #. defaultMessage is:
 #. Total Capacity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Cases"
 msgid "Total Capacity"
-msgstr "Ҳодисаҳои умумӣ"
+msgstr "Иқтидори умумӣ"
 
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
@@ -9383,10 +9386,8 @@ msgstr "Ҳодисаҳои умумӣ"
 #. defaultMessage is:
 #. Total Errors
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Critical Error"
 msgid "Total Errors"
-msgstr "Хатогии интиқодӣ"
+msgstr "Хатогиҳои умумӣ"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:
@@ -9975,6 +9976,13 @@ msgstr "Картриджи Qual Xpert HIV-1"
 #: extracted_strings.json
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Картриджи вирусии Xpert HIV-1"
+
+#. [pages.ReportIndex.xpertPatientsReport]
+#. defaultMessage is:
+#. Xpert Patients Report
+#: extracted_strings.json
+msgid "Xpert Patients Report"
+msgstr "Гузориши беморони Xpert"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:

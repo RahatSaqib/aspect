@@ -53,3 +53,9 @@ web/src/example-stories/
 # translations web
 web/diff.pot
 web/extracted_strings.json
+
+# POCs
+dev-tooling/
+web-2022/
+web-parcel-tailwind/
+web-parcel/

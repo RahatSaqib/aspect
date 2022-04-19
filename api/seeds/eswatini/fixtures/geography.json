@@ -1,0 +1,61 @@
+{
+  "countries": [
+    {
+      "abbreviation": "SZ",
+      "name": "Eswatini",
+      "a3": "SWZ",
+      "culture": "en",
+      "countryCode": "268",
+      "timezone": "South Africa Standard Time",
+      "portNumber": 3000,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeACt|ProbeBCt|ProbeCCt|ProbeDCt|ProbeECt|ProbeSpcCt|Qc1Ct|Qc2Ct",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Hhohho",
+          "lgas": [
+            { "name": "None" },
+            { "name": "Mbabane East" },
+            { "name": "Madlangemphisi" },
+            { "name": "Mbabane West" },
+            { "name": "Mayiwane" },
+            { "name": "Piggs Peak" }
+          ]
+        },
+        {
+          "name": "Lubombo",
+          "lgas": [
+            { "name": "None" },
+            { "name": "Nkilongo" },
+            { "name": "Lugongolweni" },
+            { "name": "Mhlume" },
+            { "name": "Sithobela" },
+            { "name": "Siphofaneni" }
+          ]
+        },
+        {
+          "name": "Shiselweni",
+          "lgas": [
+            { "name": "None" },
+            { "name": "Mtsambama" },
+            { "name": "Matsanjeni" },
+            { "name": "Maseyisini" }
+          ]
+        },
+        {
+          "name": "Manzini",
+          "lgas": [
+            { "name": "None" },
+            { "name": "Manzini South" },
+            { "name": "Lobamba Lomdzala" },
+            { "name": "Ngwempisi" },
+            { "name": "Kwaluseni" },
+            { "name": "Nhlambeni" },
+            { "name": "Ludzeludze" }
+          ]
+        }
+      ]
+    }
+  ]
+}

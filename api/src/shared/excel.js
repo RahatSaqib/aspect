@@ -545,6 +545,16 @@ async function renderExcelTemplateToCsv({
     worksheet.spliceRows(2, patternRowNumber - 1 - 1)
   }
 
+  // Insert Byte-order-marker (BOM) to specify UTF-8 encoding.
+  // Without it, special characters will appear garbled when
+  // opening the CSV in Excel (but will be fine when using a text editor)
+  // More here: https://stackoverflow.com/a/11399444
+  const firstCell = worksheet.getRow(1)?.getCell(1)
+  if (firstCell) {
+    // eslint-disable-next-line no-irregular-whitespace
+    firstCell.value = `﻿${firstCell.value}`
+  }
+
   // return binary buffer
   return workbook.csv.writeBuffer()
 }
@@ -601,7 +611,6 @@ async function streamExcelTemplate({
       dataSelector: dataSelectorSheet,
       dynamicColumns = [],
     } = worksheetData || {}
-
     /**
      * replace base placeholders, i.e. <Dates>, <States>, etc in the header
      */
@@ -965,25 +974,22 @@ function getNormalizedData({
   let rowsValues = []
   if (data.length > 0) {
     rowsValues = data.map((dataRow, rowIndex) => {
+      const normalizedValues = normalizer ? normalizer(dataRow) : dataRow
       const valuesInPredefinedColumns = fieldNames.map(fieldName => {
         if (fieldName === '#') {
           return rowIndex + 1
         }
-        let value = fieldName && dataRow[fieldName]
+        let value = fieldName && normalizedValues[fieldName]
         value = _.isNil(value) ? '' : value
         // TODO: think on a better generic way to handle such replacements in dataset
-        // TODO: see Jira task for this - https://ops.systemone.id/browse/ASP-1450
         if (fieldName === 'patientAge' && value === 'null') {
           value = ''
         }
         return value
       })
+
       let valuesInDynamicColumns = []
       if (dynamicColumns.length > 0) {
-        let normalizedValues
-        // const normalizer = dataSelector || dataSelectorSheet
-        if (normalizer) normalizedValues = normalizer(dataRow)
-        else normalizedValues = dataRow
         valuesInDynamicColumns = dynamicColumns.map(column => {
           let value = normalizedValues[column.key]
           value = _.isUndefined(value) ? null : value

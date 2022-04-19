@@ -1,10 +1,10 @@
+import React from 'react'
 import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -17,7 +17,10 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import requirePermissions from '../../components/shared/requirePermissions'
+import requirePermissions, {
+  isPermittedUser,
+} from '../../components/shared/requirePermissions'
+
 import AspectButton from '../../components/shared/AspectButton'
 import {
   getFilters,
@@ -74,6 +77,26 @@ const messages = {
       id: 'pages.PersonList.addContact',
       defaultMessage: 'New Contact',
     },
+    disable: {
+      id: 'pages.PersonList.disable',
+      defaultMessage: 'Do you want to disable',
+    },
+    enable: {
+      id: 'pages.PersonList.enable',
+      defaultMessage: 'Do you want to enable',
+    },
+    yes: {
+      id: 'pages.PersonList.confirm',
+      defaultMessage: 'Yes',
+    },
+    cancel: {
+      id: 'pages.PersonList.cancel',
+      defaultMessage: 'Cancel',
+    },
+    enableDisable: {
+      id: 'pages.PersonList.enableDisable',
+      defaultMessage: 'Enable/Disable User',
+    },
   }),
 }
 
@@ -81,10 +104,12 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
+  { actions: true, requiredPermissions: [] },
   {
     contactNameOrEmail: true,
     requiredPermissions: [],
   },
+  { contactStatus: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -231,6 +256,15 @@ export const PersonList = ({
   })(AspectButton)
   const { formatMessage } = i18nWrapper()
 
+  const { permissions: userPermissions } = useSelector(
+    ({ user }) => user.toJS().jwt
+  )
+
+  const editor = user.toJS()
+  const isEditAllow = isPermittedUser(userPermissions, {
+    required: ['person:edit'],
+  })
+
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.contactsTitle)} />
@@ -295,6 +329,11 @@ export const PersonList = ({
                   label: formatMessage(messages.tags),
                   sortable: true,
                 },
+                isEditAllow && {
+                  key: 'actions',
+                  label: formatMessage(messages.enableDisable),
+                  sortable: false,
+                },
               ]}
             />
             <TableBody>
@@ -306,6 +345,9 @@ export const PersonList = ({
                     person={person}
                     onClick={onRowClick}
                     data-person-id={person.get('id')}
+                    personEditPermission={
+                      isEditAllow && editor?.userId !== person.get('id')
+                    }
                   />
                 ))}
             </TableBody>

@@ -13,7 +13,7 @@ function mutationSuccess(queryData, response, navigate, type, outcome) {
       break
 
     case type === 'update' && !updatedLogin && ok:
-      navigate('/browse/person')
+      navigate('/browse/person?filters=contactStatus%3D0')
       break
 
     case type === 'self' && ok:
