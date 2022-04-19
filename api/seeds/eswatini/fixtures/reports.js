@@ -10,7 +10,7 @@ const szMtbStats = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReportSwaziland',
+      moduleName: 'result/serviceReportEswatini',
       functionName: 'getMtbStats',
     },
   ],
@@ -28,7 +28,7 @@ const szSmsStats = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReportSwaziland',
+      moduleName: 'result/serviceReportEswatini',
       functionName: 'getSmsStats',
     },
   ],
