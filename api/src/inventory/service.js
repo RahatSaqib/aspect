@@ -100,16 +100,18 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
   siteId: 's.id',
   expiresOn: 'ii.expiresOn',
   lotNumber: 'ii.lotNumber',
-  hasStock: knex.raw('ii.quantityOnHand > 0'),
 }
 
 const STOCK_LEFT_FILTER_FIELDS = {
   stockLeft: (queryBuilder, filterValue) => {
     queryBuilder.where(builder => {
       builder.whereNotNull(`stock.${filterValue}`)
-      builder.where(`stock.${filterValue}`, '>', 0)
+      builder.where(`stock.${filterValue}`, '<>', 0)
     })
   },
+}
+const SUM_STOCK_LEFT_FILTER_FIELDS = {
+  hasStock: queryBuilder => queryBuilder.havingRaw('quantityOnHand <> 0'),
 }
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
@@ -460,6 +462,7 @@ function filteredInventoryItemsBase(request, dataConstraints) {
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,
+      hasStock: knex.raw('ii.quantityOnHand <> 0'),
       ...STOCK_LEFT_FILTER_FIELDS,
     })
     .modify(
@@ -487,6 +490,7 @@ function getInventoryLots(request, dataConstraints) {
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,
+      ...SUM_STOCK_LEFT_FILTER_FIELDS,
     })
     .modify(
       addConstraints,
@@ -535,7 +539,10 @@ function getInventorySites(constraints, request) {
         .andOn(knex.raw('ii_transfer.inTransitFromSiteId IS NOT NULL'))
     })
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
-    .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+    .modify(filterParams, request.query, {
+      ...INVENTORY_ITEM_FILTER_FIELDS,
+      ...SUM_STOCK_LEFT_FILTER_FIELDS,
+    })
     .modify(builder => {
       if (request.query.daysStockLeft === 'noConsumption')
         builder.where('ficr.rate', 0).orWhereNull('ficr.rate')
@@ -1012,7 +1019,10 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
         .andOn('rate1.consumableId', 'c.id')
         .andOn('rate1.days', 1)
     })
-    .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+    .modify(filterParams, request.query, {
+      ...INVENTORY_ITEM_FILTER_FIELDS,
+      hasStock: knex.raw('ii.quantityOnHand <> 0'),
+    })
     .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
     .modify(addConstraints, dataConstraints, {
       ...INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
@@ -1074,7 +1084,10 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
         .leftOuterJoin('State as st', 'g.stateId', 'st.id')
         .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
         .whereNull('ii.id') // means site doesn't have inventory items
-        .modify(filterParams, request.query, INVENTORY_ITEM_FILTER_FIELDS)
+        .modify(filterParams, request.query, {
+          ...INVENTORY_ITEM_FILTER_FIELDS,
+          hasStock: knex.raw('ii.quantityOnHand <> 0'),
+        })
         .modify(addConstraints, dataConstraints, {
           ...INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
           assay: 'asa',
