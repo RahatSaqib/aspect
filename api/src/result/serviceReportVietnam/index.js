@@ -14,9 +14,7 @@ const {
   getTypeOfPatientCategory,
   getMappingFieldName,
 } = require('./geneXpertM4B1PatientsReport')
-const {
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../query/querySelectors')
+const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const activeScreeningUseKey = 'Sàng lọc chủ động: ghi rõ'
 const routineDiagnosticUseKey = 'Chẩn đoán thường quy'

@@ -3,9 +3,7 @@ const { addDays, differenceInDays, parseISO } = require('date-fns')
 const { knex, filterDateRangeParams, filterParams } = require('../../db')
 
 const { getBaseQuery, modifiers } = require('../query')
-const {
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../query/querySelectors')
+const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 function addErrorTableSiteTotals(data) {
   const totalsBySite = reduce(
