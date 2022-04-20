@@ -1,46 +1,46 @@
-name: 'Backend .env'
-description: 'Create and config backend .env file'
+name: "Backend .env"
+description: "Create and config backend .env file"
 inputs:
   dbname:
-    description: 'The name of the DB'
+    description: "The name of the DB"
     required: true
   dbuser:
-    description: 'The root user of the DB'
+    description: "The root user of the DB"
     required: true
   dbpassword:
-    description: 'The root password for the DB'
+    description: "The root password for the DB"
     required: true
   TWILIOACCOUNTSID:
-    description: 'TWILIOACCOUNTSID'
+    description: "TWILIOACCOUNTSID"
     required: true
   TWILIOAUTHTOKEN:
-    description: 'TWILIOAUTHTOKEN'
+    description: "TWILIOAUTHTOKEN"
     required: true
   TWILIOMESSAGINGSERVICESID:
-    description: 'TWILIOMESSAGINGSERVICESID'
+    description: "TWILIOMESSAGINGSERVICESID"
     required: true
   ENCRYPTIONPASSPHRASE:
-    description: 'ENCRYPTIONPASSPHRASE'
+    description: "ENCRYPTIONPASSPHRASE"
     required: true
   ENCRYPTIONINITVECTOR:
-    description: 'ENCRYPTIONINITVECTOR'
+    description: "ENCRYPTIONINITVECTOR"
     required: true
   PUSHNOTIFICATIONTESTDEVICETOKENID:
-    description: 'PUSHNOTIFICATIONTESTDEVICETOKENID'
+    description: "PUSHNOTIFICATIONTESTDEVICETOKENID"
     required: true
   FIREBASESERVERKEY:
-    description: 'FIREBASESERVERKEY'
+    description: "FIREBASESERVERKEY"
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: 'Create env file'
+    - name: "Create env file"
       run: |
         cp -R ./api/.env.example ./api/.env
 
-        echo admin.email='dpotgieter+ci@systemone.co' >> ./api/.env
-        echo admin.cell='+79114946979' >> ./api/.env
+        echo admin.email='aspecttest@systemone.id' >> ./api/.env
+        echo admin.cell='+14135485003' >> ./api/.env
 
         echo db.databaseName=${{ inputs.dbname }} >> ./api/.env
         echo db.user=${{ inputs.dbuser }} >> ./api/.env
