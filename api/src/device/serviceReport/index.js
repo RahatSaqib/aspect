@@ -8,25 +8,26 @@ const {
   subMonths,
 } = require('date-fns')
 const locales = require('date-fns/locale')
-const { getDeviceBaseQuery, listDevices } = require('./service')
-const { exportData, getBaseReplacements } = require('../shared/excel')
+const { getDeviceBaseQuery, listDevices } = require('../service')
+const { exportData, getBaseReplacements } = require('../../shared/excel')
 const {
   issueCategoryIntlToShortname,
   issueTypeToId,
-} = require('../shared/dictionary')
+} = require('../../shared/dictionary')
 const {
   knex,
   filterDateRangeParams,
   filterParams,
   sortPageParams,
-} = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+} = require('../../db')
+const { getConstraints, addConstraints } = require('../../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
-} = require('../shared/date')
-const { getUser } = require('../auth/service')
+} = require('../../shared/date')
+const { getUser } = require('../../auth/service')
+const { getModuleActivityReportData } = require('./moduleActivityReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -474,6 +475,20 @@ async function getGeneXpertOperationLogsReport(auth, query) {
   }
   return dataset
 }
+
+async function getModuleActivityReport(auth, query) {
+  console.log("\x1b[1;34m","🚀  ➜ file: index.js ➜ line 480 ➜ getModuleActivityReport ➜ query", query)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { minDate } = query
+  const q = await getModuleActivityReportData(minDate, dataConstraints, query)
+
+  const rows = await q
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -482,4 +497,5 @@ module.exports = {
   getGeneXpertOperationLogsReport,
   exportDeviceOperationLogReport,
   getDeviceCapacityReport,
+  getModuleActivityReport,
 }

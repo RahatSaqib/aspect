@@ -17,6 +17,7 @@ const admin = {
     'all_results',
     'xpert_test_activities_report',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -148,6 +149,7 @@ const manager = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -235,6 +237,7 @@ const regionalOfficer = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -326,6 +329,7 @@ const labUser = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -417,6 +421,7 @@ const clinician = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -559,6 +564,7 @@ const ntp = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -742,6 +748,7 @@ const resultViewerYes = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -863,6 +870,7 @@ const labManager = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -938,6 +946,7 @@ const labSupervisor = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -1088,6 +1097,7 @@ const dataViewer = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {
@@ -1164,6 +1174,7 @@ const labAdmin = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'module_activity_report',
   ],
   permissions: [
     {

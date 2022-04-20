@@ -5,7 +5,6 @@ const { knex } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { filterDateRangeParams, filterParams } = require('../../db')
 const { getArrayOfDaysInRange } = require('../../shared/date')
-const { getModuleActivityReportData } = require('./moduleActivityReport')
 
 function getResultsBaseQuery(query) {
   const now = new Date()
@@ -187,21 +186,7 @@ async function getDevicePerformanceReportByAssay(auth, query) {
   }
 }
 
-async function getModuleActivityReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate } = query
-  const q = await getModuleActivityReportData(minDate, dataConstraints, query)
-
-  const rows = await q
-  return {
-    ok: true,
-    data: rows,
-    total: rows.length,
-  }
-}
-
 module.exports = {
   getDevicePerformanceReport,
   getDevicePerformanceReportByAssay,
-  getModuleActivityReport,
 }
