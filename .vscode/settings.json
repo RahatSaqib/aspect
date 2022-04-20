@@ -2,5 +2,6 @@
   "eslint.workingDirectories": [
     "./api",
     "./web"
-  ]
+  ],
+  "turboConsoleLog.wrapLogMessage": false
 }
