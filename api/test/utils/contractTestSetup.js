@@ -74,6 +74,8 @@ function tryRefreshToken(refreshToken, clientId, done) {
     })
 }
 
+beforeEach(done => queuePurge().then(done))
+
 before(done => {
   // Wait until server is up and running
   attemptToConnectAndLogin(() => {
@@ -83,7 +85,7 @@ before(done => {
   })
 })
 
-after(done => {
+afterEach(done => {
   // waitForIdle and cleanup any leftovers
   queuePurge().then(done)
 })
