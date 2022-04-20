@@ -1,7 +1,7 @@
 const chai = require('chai')
 const Promise = require('bluebird')
 const { format, subDays, addDays, addMinutes } = require('date-fns')
-const { queuePurge } = require('../../test/utils')
+const { queuePurge } = require('../utils/mqUtils')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
