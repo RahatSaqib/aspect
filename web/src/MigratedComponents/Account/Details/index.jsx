@@ -109,7 +109,7 @@ const ContactDetailsFormFormik = () => {
           endpoint: '/person',
           method: 'POST',
           customErrorNotifications: {
-            400: badRequestBuilder(messages),
+            409: badRequestBuilder(messages),
           },
         })
       }
