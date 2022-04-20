@@ -1,6 +1,7 @@
 const chai = require('chai')
 const Promise = require('bluebird')
 const { format, subDays, addDays, addMinutes } = require('date-fns')
+const { queuePurge } = require('../../test/utils')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
@@ -127,7 +128,8 @@ const postLog = async (deviceAuth, source, data) =>
   })
 
 describe('Process GeneXpert Logs', () => {
-  beforeEach(async () => {
+  beforeEach(async done => {
+    await queuePurge().then(done)
     await context.createDeviceWithResult()
   })
   afterEach(context.afterEach)
