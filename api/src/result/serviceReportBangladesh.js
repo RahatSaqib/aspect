@@ -112,27 +112,23 @@ const andByRetreatment = (
   return counter('r.id', condition)
 }
 
-/**
- * getDataForReportDrTb10A
- */
-async function getDataForReportDrTb10A(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
+const getDatesFromQuery = query => {
   const now = new Date()
-  const {
-    stateId,
-    lgaId,
-    siteName,
-    minDate = startOfMonth(now),
-    maxDate = endOfMonth(now),
-  } = query
+  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
+  return {
+    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
+    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
+  }
+}
 
-  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
-  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
+const reportDrTb10ABaseQuery = async (auth, query) => {
+  const dataConstraints = await getConstraints(auth.credentials)
 
+  let { dateFrom } = getDatesFromQuery(query)
+  const { dateTo } = getDatesFromQuery(query)
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
-
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(
@@ -149,662 +145,681 @@ async function getDataForReportDrTb10A(auth, query) {
     and
     r.resultCategory2 IN (${positiveResultCategories})
   `
-
-  /**
-   * get total results per each device per period
-   *
-   * for Block 1,2,3 - see file
-   * `api/src/forms/formsDefinition/CustomFields_Bangladesh_Mtb.json`
-   * for details about used custom fields
-   */
-  let data = await knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    /**
-     * join to `DeviceCapacity` to count number of modules per device
-     */
-    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
-    .leftJoin('ResultCategoryAssay as rca1', function () {
-      this.on('r.assayId', 'rca1.assayId').andOn(
-        'r.resultCategory1',
-        'rca1.resultCategoryId'
+  return {
+    drTb10AData: knex('Result as r')
+      .innerJoin('Device as d', 'r.deviceId', 'd.id')
+      .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+      .innerJoin('Assay as a', 'r.assayId', 'a.id')
+      .leftOuterJoin('Site2 as s', 's.id', 'r.siteId')
+      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      /**
+       * join to `DeviceCapacity` to count number of modules per device
+       */
+      .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
+      .leftJoin('ResultCategoryAssay as rca1', function () {
+        this.on('r.assayId', 'rca1.assayId').andOn(
+          'r.resultCategory1',
+          'rca1.resultCategoryId'
+        )
+      })
+      .leftJoin('ResultCategoryAssay as rca2', function () {
+        this.on('r.assayId', 'rca2.assayId').andOn(
+          'r.resultCategory2',
+          'rca2.resultCategoryId'
+        )
+      })
+      .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+      .modify(addConstraints, dataConstraints, {
+        device: 'd',
+        site: 's',
+        geography: 'g',
+        assay: 'a',
+        result: 'r',
+      })
+      .modify(
+        filterDateRangeParams,
+        { minDate: dateFrom, maxDate: dateTo },
+        'r.endedOn'
       )
-    })
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn(
-        'r.resultCategory2',
-        'rca2.resultCategoryId'
+      .modify(filterParams, query, {
+        countryId: 'g.countryId',
+        stateId: 'g.stateId',
+        lgaId: 'g.lgaId',
+        siteName: 's.name',
+      })
+      .select(
+        'r.deviceId',
+        knex.raw(`
+      DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
+    `),
+        /**
+         * Notice that we below group by `deviceId`
+         * only because we need to count number of modules
+         * for each device
+         */
+        knex.raw(`
+      ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
+    `)
       )
-    })
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      assay: 'a',
-      result: 'r',
-    })
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-    })
-    .select(
-      'r.deviceId',
-      knex.raw(`
-        DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
-      `),
+      .groupBy('yearAndMonth', 'r.deviceId')
       /**
-       * Notice that we below group by `deviceId`
-       * only because we need to count number of modules
-       * for each device
+       * get total results per each device per period
+       *
+       * for Block 1,2,3 - see file
+       * `api/src/forms/formsDefinition/CustomFields_Bangladesh_Mtb.json`
+       * for details about used custom fields
        */
-      knex.raw(`
-        ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
-      `)
-    )
-    .groupBy('yearAndMonth', 'r.deviceId')
-    .count({
-      cntAll: knex.raw('DISTINCT r.id'),
-      /**
-       * Block 1
-       */
-      cnt_Presumptive_TB_Cases_Invalid: inTypeOfPatient(
-        presumptiveTbCases,
-        `r.resultCategory1 = ${resultCategoryIds.Invalid}`
-      ),
-      cnt_Presumptive_TB_Cases_NoResult: inTypeOfPatient(
-        presumptiveTbCases,
-        `r.resultCategory1 = ${resultCategoryIds.NoResult}`
-      ),
-      cnt_Presumptive_TB_Cases_Error: inTypeOfPatient(
-        presumptiveTbCases,
-        `r.resultCategory1 = ${resultCategoryIds.Error}`
-      ),
+      .count({
+        cntAll: knex.raw('DISTINCT r.id'),
+        /**
+         * Block 1
+         */
+        cnt_Presumptive_TB_Cases_Invalid: inTypeOfPatient(
+          presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}`
+        ),
+        cnt_Presumptive_TB_Cases_NoResult: inTypeOfPatient(
+          presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}`
+        ),
+        cnt_Presumptive_TB_Cases_Error: inTypeOfPatient(
+          presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}`
+        ),
 
-      cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
-        presumptiveDrTbCases,
-        `r.resultCategory1 = ${resultCategoryIds.Invalid}`
-      ),
-      cnt_Presumptive_DR_TB_Cases_NoResult: inTypeOfPatient(
-        presumptiveDrTbCases,
-        `r.resultCategory1 = ${resultCategoryIds.NoResult}`
-      ),
-      cnt_Presumptive_DR_TB_Cases_Error: inTypeOfPatient(
-        presumptiveDrTbCases,
-        `r.resultCategory1 = ${resultCategoryIds.Error}`
-      ),
+        cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}`
+        ),
+        cnt_Presumptive_DR_TB_Cases_NoResult: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}`
+        ),
+        cnt_Presumptive_DR_TB_Cases_Error: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}`
+        ),
 
-      cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
-        presumptiveTbCases,
-        `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
-      ),
-      cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
-        presumptiveDrTbCases,
-        `
-          r.resultCategory1 IN (${positiveResultCategories})
-          and
-          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-        `
-      ),
-      /**
-       * ****************************************
-       * Block 2 - Type of Patient : Presumptive TB Cases
-       * ****************************************
-       */
-      /** -----------------
-       * Patient History = Unknown History
-       */
-      // cell B26
-      cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all: andByHistory(
-        'Presumptive_TB',
-        'unknown'
-      ),
-      // cell B29
-      cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_Mtb: andByHistory(
-        'Presumptive_TB',
-        'unknown',
-        mtbDetected
-      ),
-      // cell B32
-      cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_MtbRif:
-        andByHistory('Presumptive_TB', 'unknown', mtbRifDetected),
-      /** -----------------
-       * Patient History = New
-       */
-      // cell C26
-      cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory(
-        'Presumptive_TB',
-        'new'
-      ),
-      // cell C29
-      cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory(
-        'Presumptive_TB',
-        'new',
-        mtbDetected
-      ),
-      // cell C32
-      cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory(
-        'Presumptive_TB',
-        'new',
-        mtbRifDetected
-      ),
-      /**
-       * ****************************************
-       * Block 2 - Type of Patient : Presumptive DR TB Cases
-       * ****************************************
-       */
-      /** -----------------
-       * Column (3) - remain positive at month 5 or later and smear negative patients who become smear positive at month 2
-       */
-      // cell E26
-      cnt_TypeOfPatient_Column_3_all: andByRetreatment(
-        'Failures_of_Category_I'
-      ),
-      // cell E29
-      cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment(
-        'Failures_of_Category_I',
-        null,
-        mtbDetected
-      ),
-      // cell E32
-      cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment(
-        'Failures_of_Category_I',
-        null,
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (4) - remain positive at month 5 or later
-       */
-      // cell F26
-      cnt_TypeOfPatient_Column_4_all: andByRetreatment(
-        'Failures_of_Retreatment'
-      ),
-      // cell F29
-      cnt_TypeOfPatient_Column_4_Mtb: andByRetreatment(
-        'Failures_of_Retreatment',
-        null,
-        mtbDetected
-      ),
-      // cell F32
-      cnt_TypeOfPatient_Column_4_MtbRif: andByRetreatment(
-        'Failures_of_Retreatment',
-        null,
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (5) - remain positive at month 2
-       */
-      // cell G26
-      cnt_TypeOfPatient_Column_5_all: andByRetreatment(
-        'Non_converters_of_Category_I'
-      ),
-      // cell G29
-      cnt_TypeOfPatient_Column_5_Mtb: andByRetreatment(
-        'Non_converters_of_Category_I',
-        null,
-        mtbDetected
-      ),
-      // cell G32
-      cnt_TypeOfPatient_Column_5_MtbRif: andByRetreatment(
-        'Non_converters_of_Category_I',
-        null,
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (6) - remain positive at month 3
-       */
-      // cell H26
-      cnt_TypeOfPatient_Column_6_all: andByRetreatment(
-        'Non_converters_of_Retreatment'
-      ),
-      // cell H29
-      cnt_TypeOfPatient_Column_6_Mtb: andByRetreatment(
-        'Non_converters_of_Retreatment',
-        null,
-        mtbDetected
-      ),
-      // cell H32
-      cnt_TypeOfPatient_Column_6_MtbRif: andByRetreatment(
-        'Non_converters_of_Retreatment',
-        null,
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (7) - Relapses (CAT I)
-       */
-      // cell I26
-      cnt_TypeOfPatient_Column_7_all: andByRetreatment(
-        'Relapses',
-        'Category-I'
-      ),
-      // cell I29
-      cnt_TypeOfPatient_Column_7_Mtb: andByRetreatment(
-        'Relapses',
-        'Category-I',
-        mtbDetected
-      ),
-      // cell I32
-      cnt_TypeOfPatient_Column_7_MtbRif: andByRetreatment(
-        'Relapses',
-        'Category-I',
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (8) - Relapses (CAT II)
-       */
-      // cell J26
-      cnt_TypeOfPatient_Column_8_all: andByRetreatment(
-        'Relapses',
-        'Retreatment'
-      ),
-      // cell J29
-      cnt_TypeOfPatient_Column_8_Mtb: andByRetreatment(
-        'Relapses',
-        'Retreatment',
-        mtbDetected
-      ),
-      // cell J32
-      cnt_TypeOfPatient_Column_8_MtbRif: andByRetreatment(
-        'Relapses',
-        'Retreatment',
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (9) - Treatment after loss to follow up (CAT I)
-       */
-      // cell K26
-      cnt_TypeOfPatient_Column_9_all: andByRetreatment(
-        'Treatment_after_loss_to_follow_up',
-        'Category-I'
-      ),
-      // cell K29
-      cnt_TypeOfPatient_Column_9_Mtb: andByRetreatment(
-        'Treatment_after_loss_to_follow_up',
-        'Category-I',
-        mtbDetected
-      ),
-      // cell K32
-      cnt_TypeOfPatient_Column_9_MtbRif: andByRetreatment(
-        'Treatment_after_loss_to_follow_up',
-        'Category-I',
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (10) - Treatment after loss to follow up (CAT II)
-       */
-      // cell L26
-      cnt_TypeOfPatient_Column_10_all: andByRetreatment(
-        'Treatment_after_loss_to_follow_up',
-        'Retreatment'
-      ),
-      // cell L29
-      cnt_TypeOfPatient_Column_10_Mtb: andByRetreatment(
-        'Treatment_after_loss_to_follow_up',
-        'Retreatment',
-        mtbDetected
-      ),
-      // cell L32
-      cnt_TypeOfPatient_Column_10_MtbRif: andByRetreatment(
-        'Treatment_after_loss_to_follow_up',
-        'Retreatment',
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (11) - Close contacts of DR TB patient with symptoms
-       */
-      // cell O26
-      cnt_TypeOfPatient_Column_11_all_UnknownHistory: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'unknown'
-      ),
-      // cell O27
-      cnt_TypeOfPatient_Column_11_all_New: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'new'
-      ),
-      // cell O28
-      cnt_TypeOfPatient_Column_11_all_PrevTreated: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'treated'
-      ),
+        cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
+          presumptiveTbCases,
+          `
+        r.resultCategory1 IN (${positiveResultCategories})
+        and
+        r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+      `
+        ),
+        cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate:
+          inTypeOfPatient(
+            presumptiveDrTbCases,
+            `
+        r.resultCategory1 IN (${positiveResultCategories})
+        and
+        r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+      `
+          ),
+        /**
+         * ****************************************
+         * Block 2 - Type of Patient : Presumptive TB Cases
+         * ****************************************
+         */
+        /** -----------------
+         * Patient History = Unknown History
+         */
+        // cell B26
+        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all: andByHistory(
+          'Presumptive_TB',
+          'unknown'
+        ),
+        // cell B29
+        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_Mtb: andByHistory(
+          'Presumptive_TB',
+          'unknown',
+          mtbDetected
+        ),
+        // cell B32
+        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_MtbRif:
+          andByHistory('Presumptive_TB', 'unknown', mtbRifDetected),
+        /** -----------------
+         * Patient History = New
+         */
+        // cell C26
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory(
+          'Presumptive_TB',
+          'new'
+        ),
+        // cell C29
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory(
+          'Presumptive_TB',
+          'new',
+          mtbDetected
+        ),
+        // cell C32
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory(
+          'Presumptive_TB',
+          'new',
+          mtbRifDetected
+        ),
+        /**
+         * ****************************************
+         * Block 2 - Type of Patient : Presumptive DR TB Cases
+         * ****************************************
+         */
+        /** -----------------
+         * Column (3) - remain positive at month 5 or later and smear negative patients who become smear positive at month 2
+         */
+        // cell E26
+        cnt_TypeOfPatient_Column_3_all: andByRetreatment(
+          'Failures_of_Category_I'
+        ),
+        // cell E29
+        cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment(
+          'Failures_of_Category_I',
+          null,
+          mtbDetected
+        ),
+        // cell E32
+        cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment(
+          'Failures_of_Category_I',
+          null,
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (4) - remain positive at month 5 or later
+         */
+        // cell F26
+        cnt_TypeOfPatient_Column_4_all: andByRetreatment(
+          'Failures_of_Retreatment'
+        ),
+        // cell F29
+        cnt_TypeOfPatient_Column_4_Mtb: andByRetreatment(
+          'Failures_of_Retreatment',
+          null,
+          mtbDetected
+        ),
+        // cell F32
+        cnt_TypeOfPatient_Column_4_MtbRif: andByRetreatment(
+          'Failures_of_Retreatment',
+          null,
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (5) - remain positive at month 2
+         */
+        // cell G26
+        cnt_TypeOfPatient_Column_5_all: andByRetreatment(
+          'Non_converters_of_Category_I'
+        ),
+        // cell G29
+        cnt_TypeOfPatient_Column_5_Mtb: andByRetreatment(
+          'Non_converters_of_Category_I',
+          null,
+          mtbDetected
+        ),
+        // cell G32
+        cnt_TypeOfPatient_Column_5_MtbRif: andByRetreatment(
+          'Non_converters_of_Category_I',
+          null,
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (6) - remain positive at month 3
+         */
+        // cell H26
+        cnt_TypeOfPatient_Column_6_all: andByRetreatment(
+          'Non_converters_of_Retreatment'
+        ),
+        // cell H29
+        cnt_TypeOfPatient_Column_6_Mtb: andByRetreatment(
+          'Non_converters_of_Retreatment',
+          null,
+          mtbDetected
+        ),
+        // cell H32
+        cnt_TypeOfPatient_Column_6_MtbRif: andByRetreatment(
+          'Non_converters_of_Retreatment',
+          null,
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (7) - Relapses (CAT I)
+         */
+        // cell I26
+        cnt_TypeOfPatient_Column_7_all: andByRetreatment(
+          'Relapses',
+          'Category-I'
+        ),
+        // cell I29
+        cnt_TypeOfPatient_Column_7_Mtb: andByRetreatment(
+          'Relapses',
+          'Category-I',
+          mtbDetected
+        ),
+        // cell I32
+        cnt_TypeOfPatient_Column_7_MtbRif: andByRetreatment(
+          'Relapses',
+          'Category-I',
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (8) - Relapses (CAT II)
+         */
+        // cell J26
+        cnt_TypeOfPatient_Column_8_all: andByRetreatment(
+          'Relapses',
+          'Retreatment'
+        ),
+        // cell J29
+        cnt_TypeOfPatient_Column_8_Mtb: andByRetreatment(
+          'Relapses',
+          'Retreatment',
+          mtbDetected
+        ),
+        // cell J32
+        cnt_TypeOfPatient_Column_8_MtbRif: andByRetreatment(
+          'Relapses',
+          'Retreatment',
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (9) - Treatment after loss to follow up (CAT I)
+         */
+        // cell K26
+        cnt_TypeOfPatient_Column_9_all: andByRetreatment(
+          'Treatment_after_loss_to_follow_up',
+          'Category-I'
+        ),
+        // cell K29
+        cnt_TypeOfPatient_Column_9_Mtb: andByRetreatment(
+          'Treatment_after_loss_to_follow_up',
+          'Category-I',
+          mtbDetected
+        ),
+        // cell K32
+        cnt_TypeOfPatient_Column_9_MtbRif: andByRetreatment(
+          'Treatment_after_loss_to_follow_up',
+          'Category-I',
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (10) - Treatment after loss to follow up (CAT II)
+         */
+        // cell L26
+        cnt_TypeOfPatient_Column_10_all: andByRetreatment(
+          'Treatment_after_loss_to_follow_up',
+          'Retreatment'
+        ),
+        // cell L29
+        cnt_TypeOfPatient_Column_10_Mtb: andByRetreatment(
+          'Treatment_after_loss_to_follow_up',
+          'Retreatment',
+          mtbDetected
+        ),
+        // cell L32
+        cnt_TypeOfPatient_Column_10_MtbRif: andByRetreatment(
+          'Treatment_after_loss_to_follow_up',
+          'Retreatment',
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (11) - Close contacts of DR TB patient with symptoms
+         */
+        // cell O26
+        cnt_TypeOfPatient_Column_11_all_UnknownHistory: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'unknown'
+        ),
+        // cell O27
+        cnt_TypeOfPatient_Column_11_all_New: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'new'
+        ),
+        // cell O28
+        cnt_TypeOfPatient_Column_11_all_PrevTreated: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'treated'
+        ),
 
-      // cell O29
-      cnt_TypeOfPatient_Column_11_Mtb_UnknownHistory: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'unknown',
-        mtbDetected
-      ),
-      // cell O30
-      cnt_TypeOfPatient_Column_11_Mtb_New: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'new',
-        mtbDetected
-      ),
-      // cell O31
-      cnt_TypeOfPatient_Column_11_Mtb_PrevTreated: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'treated',
-        mtbDetected
-      ),
+        // cell O29
+        cnt_TypeOfPatient_Column_11_Mtb_UnknownHistory: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'unknown',
+          mtbDetected
+        ),
+        // cell O30
+        cnt_TypeOfPatient_Column_11_Mtb_New: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'new',
+          mtbDetected
+        ),
+        // cell O31
+        cnt_TypeOfPatient_Column_11_Mtb_PrevTreated: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'treated',
+          mtbDetected
+        ),
 
-      // cell O32
-      cnt_TypeOfPatient_Column_11_MtbRif_UnknownHistory: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'unknown',
-        mtbRifDetected
-      ),
-      // cell O33
-      cnt_TypeOfPatient_Column_11_MtbRif_New: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'new',
-        mtbRifDetected
-      ),
-      // cell O34
-      cnt_TypeOfPatient_Column_11_MtbRif_PrevTreated: andByHistory(
-        'Close_contacts_of_DR_TB_patient_with_symptoms',
-        'treated',
-        mtbRifDetected
-      ),
-      /** -----------------
-       * Column (12) - HIV infected person with TB S/S
-       */
-      // cell R26
-      cnt_TypeOfPatient_Column_12_all_UnknownHistory: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'unknown'
-      ),
-      // cell R27
-      cnt_TypeOfPatient_Column_12_all_New: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'new'
-      ),
-      // cell R28
-      cnt_TypeOfPatient_Column_12_all_PrevTreated: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'treated'
-      ),
-
-      // cell R29
-      cnt_TypeOfPatient_Column_12_Mtb_UnknownHistory: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'unknown',
-        mtbDetected
-      ),
-      // cell R30
-      cnt_TypeOfPatient_Column_12_Mtb_New: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'new',
-        mtbDetected
-      ),
-      // cell R31
-      cnt_TypeOfPatient_Column_12_Mtb_PrevTreated: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'treated',
-        mtbDetected
-      ),
-
-      // cell R32
-      cnt_TypeOfPatient_Column_12_MtbRif_UnknownHistory: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'unknown',
-        mtbRifDetected
-      ),
-      // cell R33
-      cnt_TypeOfPatient_Column_12_MtbRif_New: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'new',
-        mtbRifDetected
-      ),
-      // cell R34
-      cnt_TypeOfPatient_Column_12_MtbRif_PrevTreated: andByHistory(
-        'HIV_infected_person_with_TB_SS',
-        'treated',
-        mtbRifDetected
-      ),
-
-      /**
-       * ****************************************
-       * Block 3 - Number of Presumptive smear negative TB cases
-       * ****************************************
-       */
-      // ------------
-      // cell B39
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_all: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'unknown'
-      ),
-      // cell B41
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_Mtb: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'unknown',
-        mtbDetected
-      ),
-      // cell B43
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_MtbRif:
-        andByHistory(
-          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+        // cell O32
+        cnt_TypeOfPatient_Column_11_MtbRif_UnknownHistory: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
           'unknown',
           mtbRifDetected
         ),
-      // ------------
-      // cell C39
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_all: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'new'
-      ),
-      // cell C41
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_Mtb: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'new',
-        mtbDetected
-      ),
-      // cell C43
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_MtbRif: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'new',
-        mtbRifDetected
-      ),
-      // ------------
-      // cell D39
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_all: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'treated'
-      ),
-      // cell D41
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_Mtb: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'treated',
-        mtbDetected
-      ),
-      // cell D43
-      cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif: andByHistory(
-        'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-        'treated',
-        mtbRifDetected
-      ),
-      /**
-       * ****************************************
-       * Block 3 - *Others (Specify)
-       * ****************************************
-       */
-      /**
-       * Patient History = Unknown History
-       */
-      // ------------
-      // cell M40
-      cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_all: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'unknown'
-      ),
-      // cell P40
-      cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_Mtb: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'unknown',
-        mtbDetected
-      ),
-      // cell S40
-      cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_MtbRif: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'unknown',
-        mtbRifDetected
-      ),
-      // ------------
-      // cell M41
-      cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_all: andByHistory(
-        'Others_Extra_Pulmonary',
-        'unknown'
-      ),
-      // cell P41
-      cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_Mtb: andByHistory(
-        'Others_Extra_Pulmonary',
-        'unknown',
-        mtbDetected
-      ),
-      // cell S41
-      cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_MtbRif: andByHistory(
-        'Others_Extra_Pulmonary',
-        'unknown',
-        mtbRifDetected
-      ),
-      // ------------
-      // cell M42
-      cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_all: andByHistory(
-        'Others_Pulmonary_Bacteriologically_Confirmed',
-        'unknown'
-      ),
-      // cell P42
-      cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_Mtb: andByHistory(
-        'Others_Pulmonary_Bacteriologically_Confirmed',
-        'unknown',
-        mtbDetected
-      ),
-      // cell S42
-      cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_MtbRif: andByHistory(
-        'Others_Pulmonary_Bacteriologically_Confirmed',
-        'unknown',
-        mtbRifDetected
-      ),
+        // cell O33
+        cnt_TypeOfPatient_Column_11_MtbRif_New: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'new',
+          mtbRifDetected
+        ),
+        // cell O34
+        cnt_TypeOfPatient_Column_11_MtbRif_PrevTreated: andByHistory(
+          'Close_contacts_of_DR_TB_patient_with_symptoms',
+          'treated',
+          mtbRifDetected
+        ),
+        /** -----------------
+         * Column (12) - HIV infected person with TB S/S
+         */
+        // cell R26
+        cnt_TypeOfPatient_Column_12_all_UnknownHistory: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'unknown'
+        ),
+        // cell R27
+        cnt_TypeOfPatient_Column_12_all_New: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'new'
+        ),
+        // cell R28
+        cnt_TypeOfPatient_Column_12_all_PrevTreated: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'treated'
+        ),
 
-      /**
-       * Patient History = New
-       */
-      // ------------
-      // cell N40
-      cnt_TypeOfPatient_OtherPulmClinDiag_New_all: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'new'
-      ),
-      // cell Q40
-      cnt_TypeOfPatient_OtherPulmClinDiag_New_Mtb: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'new',
-        mtbDetected
-      ),
-      // cell T40
-      cnt_TypeOfPatient_OtherPulmClinDiag_New_MtbRif: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'new',
-        mtbRifDetected
-      ),
-      // ------------
-      // cell N41
-      cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory(
-        'Others_Extra_Pulmonary',
-        'new'
-      ),
-      // cell Q41
-      cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory(
-        'Others_Extra_Pulmonary',
-        'new',
-        mtbDetected
-      ),
-      // cell T41
-      cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif: andByHistory(
-        'Others_Extra_Pulmonary',
-        'new',
-        mtbRifDetected
-      ),
-      // ------------
-      // cell N42
-      cnt_TypeOfPatient_OtherPulmBactConf_New_all: andByHistory(
-        'Others_Pulmonary_Bacteriologically_Confirmed',
-        'new'
-      ),
-      // cell Q42
-      cnt_TypeOfPatient_OtherPulmBactConf_New_Mtb: andByHistory(
-        'Others_Pulmonary_Bacteriologically_Confirmed',
-        'new',
-        mtbDetected
-      ),
-      // cell T42
-      cnt_TypeOfPatient_OtherPulmBactConf_New_MtbRif: andByHistory(
-        'Others_Pulmonary_Bacteriologically_Confirmed',
-        'new',
-        mtbRifDetected
-      ),
-      /**
-       * Patient History = Previously treated
-       */
-      // ------------
-      // cell O40
-      cnt_TypeOfPatient_OtherPulmClinDiag_Treated_all: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'treated'
-      ),
-      // cell R40
-      cnt_TypeOfPatient_OtherPulmClinDiag_Treated_Mtb: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'treated',
-        mtbDetected
-      ),
-      // cell U40
-      cnt_TypeOfPatient_OtherPulmClinDiag_Treated_MtbRif: andByHistory(
-        'Others_Pulmonary_clinically_diagnosed',
-        'treated',
-        mtbRifDetected
-      ),
-      // ------------
-      // cell O41
-      cnt_TypeOfPatient_OtherExtraPulm_Treated_all: andByHistory(
-        'Others_Extra_Pulmonary',
-        'treated'
-      ),
-      // cell R41
-      cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb: andByHistory(
-        'Others_Extra_Pulmonary',
-        'treated',
-        mtbDetected
-      ),
-      // cell U41
-      cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif: andByHistory(
-        'Others_Extra_Pulmonary',
-        'treated',
-        mtbRifDetected
-      ),
+        // cell R29
+        cnt_TypeOfPatient_Column_12_Mtb_UnknownHistory: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'unknown',
+          mtbDetected
+        ),
+        // cell R30
+        cnt_TypeOfPatient_Column_12_Mtb_New: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'new',
+          mtbDetected
+        ),
+        // cell R31
+        cnt_TypeOfPatient_Column_12_Mtb_PrevTreated: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'treated',
+          mtbDetected
+        ),
 
-      /**
-       * TODO: change below value and count modules that haven’t sent results
-       * for several days in the given time frame (>5)
-       */
-      cntModulesActive: knex.raw(`DISTINCT
-        CONCAT(r.deviceId, '-',  r.moduleName)
-      `),
-    })
+        // cell R32
+        cnt_TypeOfPatient_Column_12_MtbRif_UnknownHistory: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'unknown',
+          mtbRifDetected
+        ),
+        // cell R33
+        cnt_TypeOfPatient_Column_12_MtbRif_New: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'new',
+          mtbRifDetected
+        ),
+        // cell R34
+        cnt_TypeOfPatient_Column_12_MtbRif_PrevTreated: andByHistory(
+          'HIV_infected_person_with_TB_SS',
+          'treated',
+          mtbRifDetected
+        ),
 
+        /**
+         * ****************************************
+         * Block 3 - Number of Presumptive smear negative TB cases
+         * ****************************************
+         */
+        // ------------
+        // cell B39
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_all:
+          andByHistory(
+            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+            'unknown'
+          ),
+        // cell B41
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_Mtb:
+          andByHistory(
+            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+            'unknown',
+            mtbDetected
+          ),
+        // cell B43
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_MtbRif:
+          andByHistory(
+            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+            'unknown',
+            mtbRifDetected
+          ),
+        // ------------
+        // cell C39
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_all: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'new'
+        ),
+        // cell C41
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_Mtb: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'new',
+          mtbDetected
+        ),
+        // cell C43
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_MtbRif: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'new',
+          mtbRifDetected
+        ),
+        // ------------
+        // cell D39
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_all: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'treated'
+        ),
+        // cell D41
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_Mtb: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'treated',
+          mtbDetected
+        ),
+        // cell D43
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif:
+          andByHistory(
+            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+            'treated',
+            mtbRifDetected
+          ),
+        /**
+         * ****************************************
+         * Block 3 - *Others (Specify)
+         * ****************************************
+         */
+        /**
+         * Patient History = Unknown History
+         */
+        // ------------
+        // cell M40
+        cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_all: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'unknown'
+        ),
+        // cell P40
+        cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_Mtb: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'unknown',
+          mtbDetected
+        ),
+        // cell S40
+        cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_MtbRif: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'unknown',
+          mtbRifDetected
+        ),
+        // ------------
+        // cell M41
+        cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_all: andByHistory(
+          'Others_Extra_Pulmonary',
+          'unknown'
+        ),
+        // cell P41
+        cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_Mtb: andByHistory(
+          'Others_Extra_Pulmonary',
+          'unknown',
+          mtbDetected
+        ),
+        // cell S41
+        cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_MtbRif: andByHistory(
+          'Others_Extra_Pulmonary',
+          'unknown',
+          mtbRifDetected
+        ),
+        // ------------
+        // cell M42
+        cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_all: andByHistory(
+          'Others_Pulmonary_Bacteriologically_Confirmed',
+          'unknown'
+        ),
+        // cell P42
+        cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_Mtb: andByHistory(
+          'Others_Pulmonary_Bacteriologically_Confirmed',
+          'unknown',
+          mtbDetected
+        ),
+        // cell S42
+        cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_MtbRif: andByHistory(
+          'Others_Pulmonary_Bacteriologically_Confirmed',
+          'unknown',
+          mtbRifDetected
+        ),
+
+        /**
+         * Patient History = New
+         */
+        // ------------
+        // cell N40
+        cnt_TypeOfPatient_OtherPulmClinDiag_New_all: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'new'
+        ),
+        // cell Q40
+        cnt_TypeOfPatient_OtherPulmClinDiag_New_Mtb: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'new',
+          mtbDetected
+        ),
+        // cell T40
+        cnt_TypeOfPatient_OtherPulmClinDiag_New_MtbRif: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'new',
+          mtbRifDetected
+        ),
+        // ------------
+        // cell N41
+        cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory(
+          'Others_Extra_Pulmonary',
+          'new'
+        ),
+        // cell Q41
+        cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory(
+          'Others_Extra_Pulmonary',
+          'new',
+          mtbDetected
+        ),
+        // cell T41
+        cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif: andByHistory(
+          'Others_Extra_Pulmonary',
+          'new',
+          mtbRifDetected
+        ),
+        // ------------
+        // cell N42
+        cnt_TypeOfPatient_OtherPulmBactConf_New_all: andByHistory(
+          'Others_Pulmonary_Bacteriologically_Confirmed',
+          'new'
+        ),
+        // cell Q42
+        cnt_TypeOfPatient_OtherPulmBactConf_New_Mtb: andByHistory(
+          'Others_Pulmonary_Bacteriologically_Confirmed',
+          'new',
+          mtbDetected
+        ),
+        // cell T42
+        cnt_TypeOfPatient_OtherPulmBactConf_New_MtbRif: andByHistory(
+          'Others_Pulmonary_Bacteriologically_Confirmed',
+          'new',
+          mtbRifDetected
+        ),
+        /**
+         * Patient History = Previously treated
+         */
+        // ------------
+        // cell O40
+        cnt_TypeOfPatient_OtherPulmClinDiag_Treated_all: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'treated'
+        ),
+        // cell R40
+        cnt_TypeOfPatient_OtherPulmClinDiag_Treated_Mtb: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'treated',
+          mtbDetected
+        ),
+        // cell U40
+        cnt_TypeOfPatient_OtherPulmClinDiag_Treated_MtbRif: andByHistory(
+          'Others_Pulmonary_clinically_diagnosed',
+          'treated',
+          mtbRifDetected
+        ),
+        // ------------
+        // cell O41
+        cnt_TypeOfPatient_OtherExtraPulm_Treated_all: andByHistory(
+          'Others_Extra_Pulmonary',
+          'treated'
+        ),
+        // cell R41
+        cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb: andByHistory(
+          'Others_Extra_Pulmonary',
+          'treated',
+          mtbDetected
+        ),
+        // cell U41
+        cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif: andByHistory(
+          'Others_Extra_Pulmonary',
+          'treated',
+          mtbRifDetected
+        ),
+
+        /**
+         * TODO: change below value and count modules that haven’t sent results
+         * for several days in the given time frame (>5)
+         */
+        cntModulesActive: knex.raw(`DISTINCT
+      CONCAT(r.deviceId, '-',  r.moduleName)
+    `),
+      }),
+  }
+}
+/**
+ * getDataForReportDrTb10A
+ */
+async function getDataForReportDrTb10A(auth, query) {
+  const { stateId, lgaId, siteName } = query
+
+  let { dateFrom } = getDatesFromQuery(query)
+  const { dateTo } = getDatesFromQuery(query)
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+
+  const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query)
+  let data = await drTb10AData
   data = _.reduce(
     data, // <-- this `data` is grouped by 'yearAndMonth' and 'deviceId'
     (acc, { deviceId, yearAndMonth, ...rest }) => {
@@ -909,7 +924,7 @@ async function getDataForReportDrTb10B(auth, query) {
   const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Site2 as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
@@ -1180,7 +1195,7 @@ async function getDataForReportCovid19(auth, query) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Site2 as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('ResultCategoryAssay as rca1', function () {
       this.on('r.assayId', 'rca1.assayId').andOn(
@@ -1241,8 +1256,549 @@ async function getDataForReportCovid19(auth, query) {
   }
 }
 
+async function getReportDrTb10a10bCovidNtpUse(auth, query) {
+  const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query)
+  const drTb10ADataNtp = drTb10AData
+    .clone()
+    .leftOuterJoin('Lga as lga', 'lga.id', 'g.lgaId')
+    .leftOuterJoin('State as state', 'state.id', 'g.stateId')
+    .select(
+      's.id as siteId',
+      's.name as siteName',
+      'state.name as stateName',
+      'lga.name as lgaName'
+    )
+  // console.log('>>>>>>', drTb10ADataNtp.toString())
+  const CONSTANT_COLS = [
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all',
+      value: 'presumptiveUnknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_Mtb',
+      value: 'presumptiveUnknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_MtbRif',
+      value: 'presumptiveUnknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Presumptive_TB_Cases_New_all',
+      value: 'presumptiveNew',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb',
+      value: 'presumptiveNew',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif',
+      value: 'presumptiveNew',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_3_all',
+      value: 'col3',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_3_Mtb',
+      value: 'col3',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_3_MtbRif',
+      value: 'col3',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_4_all',
+      value: 'col4',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_4_Mtb',
+      value: 'col4',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_4_MtbRif',
+      value: 'col4',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_5_all',
+      value: 'col5',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_5_Mtb',
+      value: 'col5',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_5_MtbRif',
+      value: 'col5',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_6_all',
+      value: 'col6',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_6_Mtb',
+      value: 'col6',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_6_MtbRif',
+      value: 'col6',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_7_all',
+      value: 'col7',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_7_Mtb',
+      value: 'col7',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_7_MtbRif',
+      value: 'col7',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_8_all',
+      value: 'col8',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_8_Mtb',
+      value: 'col8',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_8_MtbRif',
+      value: 'col8',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_9_all',
+      value: 'col9',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_9_Mtb',
+      value: 'col9',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_9_MtbRif',
+      value: 'col9',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_10_all',
+      value: 'col10',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_10_Mtb',
+      value: 'col10',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_10_MtbRif',
+      value: 'col10',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_11_all_UnknownHistory',
+      value: 'col11Unknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_11_all_New',
+      value: 'col11Unknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_11_all_PrevTreated',
+      value: 'col11Unknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_11_Mtb_UnknownHistory',
+      value: 'col11New',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_11_Mtb_New',
+      value: 'col11New',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_11_Mtb_PrevTreated',
+      value: 'col11New',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_11_MtbRif_UnknownHistory',
+      value: 'col11Prev',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_11_MtbRif_New',
+      value: 'col11Prev',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_11_MtbRif_PrevTreated',
+      value: 'col11Prev',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_12_all_UnknownHistory',
+      value: 'col12Unknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_12_all_New',
+      value: 'col12Unknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_12_all_PrevTreated',
+      value: 'col12Unknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_12_Mtb_UnknownHistory',
+      value: 'col12New',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_12_Mtb_New',
+      value: 'col12New',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_12_Mtb_PrevTreated',
+      value: 'col12New',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Column_12_MtbRif_UnknownHistory',
+      value: 'col12Prev',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Column_12_MtbRif_New',
+      value: 'col12Prev',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Column_12_MtbRif_PrevTreated',
+      value: 'col12Prev',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_all',
+      value: 'pulmUnknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_Mtb',
+      value: 'pulmUnknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_MtbRif',
+      value: 'pulmUnknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_New_all',
+      value: 'pulmNew',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_New_Mtb',
+      value: 'pulmNew',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_New_MtbRif',
+      value: 'pulmNew',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_Treated_all',
+      value: 'pulmPrev',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_Treated_Mtb',
+      value: 'pulmPrev',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherPulmClinDiag_Treated_MtbRif',
+      value: 'pulmPrev',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_all',
+      value: 'extraPulmUnknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_Mtb',
+      value: 'extraPulmUnknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_MtbRif',
+      value: 'extraPulmUnknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_New_all',
+      value: 'extraPulmNew',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_New_Mtb',
+      value: 'extraPulmNew',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif',
+      value: 'extraPulmNew',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_all',
+      value: 'extraPulmPrev',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb',
+      value: 'extraPulmPrev',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif',
+      value: 'extraPulmPrev',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_all',
+      value: 'pulmBactUnknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_Mtb',
+      value: 'pulmBactUnknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_MtbRif',
+      value: 'pulmBactUnknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_OtherPulmBactConf_New_all',
+      value: 'pulmBactNew',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_OtherPulmBactConf_New_Mtb',
+      value: 'pulmBactNew',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_OtherPulmBactConf_New_MtbRif',
+      value: 'pulmBactNew',
+    },
+
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_all',
+      value: 'smearUnknown',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_Mtb',
+      value: 'smearUnknown',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_MtbRif',
+      value: 'smearUnknown',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_all',
+      value: 'smearNew',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_Mtb',
+      value: 'smearNew',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_MtbRif',
+      value: 'smearNew',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_all',
+      value: 'smearPrev',
+    },
+    {
+      line: 'line2',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_Mtb',
+      value: 'smearPrev',
+    },
+    {
+      line: 'line3',
+      key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif',
+      value: 'smearPrev',
+    },
+    //
+    {
+      line: 'line1',
+      key: 'key',
+      value: 'col',
+    },
+    {
+      line: 'line2',
+      key: 'key',
+      value: 'col',
+    },
+    {
+      line: 'line3',
+      key: 'key',
+      value: 'col',
+    },
+  ]
+  const data = await drTb10ADataNtp
+  const obj = {}
+  const newDataset = _.reduce(
+    data,
+    (oldVal, current) => {
+      // _.forEach(_.keys(current), key => {
+      //   const found = _.find(CONSTANT_COLS, { key })
+      //   if (found) {
+      //     obj[found.line] = { [found.value]: current[key] }
+      //     // oldVal.push({ [found.value]: current[key] })
+
+      //   }
+
+      // _.forEach(_.keys(CONSTANT_COLS), key => {
+      _.forEach(_.keys(current), key => {
+        const found = _.find(CONSTANT_COLS, { key })
+        if (found) {
+          const {
+            deviceId,
+            lgaName,
+            siteId,
+            siteName,
+            stateName,
+            yearAndMonth,
+          } = current
+
+          obj[found.line] = {
+            ...obj[found.line],
+            [found.value]: current[key],
+            deviceId,
+            lgaName,
+            siteId,
+            siteName,
+            stateName,
+            yearAndMonth,
+          }
+          // oldVal.push({ [found.value]: current[key] })
+        }
+      })
+      oldVal.push(obj.line1)
+      oldVal.push(obj.line2)
+      oldVal.push(obj.line3)
+      return oldVal
+    },
+    []
+  )
+  /*
+  const arra = []
+const line1[{key:'Presumptive_unknown_mtb',value:'Presumptive'}];
+const line2[{key:'Presumptive_unknown_tb',value:'Presumptive'}];
+const line3[{key:'Presumptive_unknown_tb',value:'Presumptive'}]
+const dataset=_.reduce(array, (curr, elem, index) => {
+  let obj1 ={}
+  let obj2 ={}
+  let obj3 ={}
+  _.forEach(_.keys(elem),key=>{
+    let field1=_.find(line1,elem1 => elem1.key===key)
+    if (field1)
+      obj1[field1.value]=elem[key];
+      let field2=_.find(line2,elem1 => elem1.key===key)
+      if (field2)
+        obj1[field2.value]=elem[key];
+        let field3=_.find(line3,elem1 => elem1.key===key)
+        if (field3)
+          obj1[field3.value]=elem[key];
+    curr.push(obj1);
+    curr.push(obj2);
+    curr.push(obj3);
+  })
+}, [])
+
+const arra = []
+const line1[{key:'Presumptive_unknown_mtb',value:'Presumptive', line:'line1'}];
+const line2[{key:'Presumptive_unknown_tb',value:'Presumptive'}];
+const line3[{key:'Presumptive_unknown_tb',value:'Presumptive'}]
+const dataset=_.reduce(array, (curr, elem, index) => {
+  let obj ={}
+
+  _.forEach(_.keys(elem),key=>{
+    let field1=_.find(line1,elem1 => elem1.key===key)
+    if (field1)
+      obj[field1.index][field1.value]=elem[key];
+      let field2=_.find(line2,elem1 => elem1.key===key)
+      if (field2)
+        obj1[field2.value]=elem[key];
+        let field3=_.find(line3,elem1 => elem1.key===key)
+        if (field3)
+          obj1[field3.value]=elem[key];
+
+
+    curr.push(obj.line1);
+    curr.push(obj.line2);
+    curr.push(obj.line3);
+  })
+
+}, [])
+  */
+  return {
+    ok: true,
+    data: newDataset,
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
   getDataForReportDrTb10B,
   getDataForReportCovid19,
+  getReportDrTb10a10bCovidNtpUse,
 }

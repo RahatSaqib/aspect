@@ -36,6 +36,7 @@ module.exports = [
     C29: 'cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb',
     C32: 'cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif',
     // Column (3)
+
     E26: 'cnt_TypeOfPatient_Column_3_all',
     E29: 'cnt_TypeOfPatient_Column_3_Mtb',
     E32: 'cnt_TypeOfPatient_Column_3_MtbRif',
@@ -108,13 +109,12 @@ module.exports = [
     D39: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_all',
     D41: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_Mtb',
     D43: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif',
-
     /**
      * Block 3 - Others (Specify)
      */
     /**
      * Patient History = Unknown History
-     */
+     */ // =P40+P41+P42+Q40+Q41+Q42+R40+R41
     M40: 'cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_all',
     P40: 'cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_Mtb',
     S40: 'cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_MtbRif',
