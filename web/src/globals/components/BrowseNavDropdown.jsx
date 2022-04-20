@@ -56,7 +56,11 @@ const messages = defineMessages({
 const navigations = [
   { value: '/browse/device', label: 'Devices', i18nKey: 'devices' },
   { value: '/browse/result', label: 'Results', i18nKey: 'results' },
-  { value: '/browse/person', label: 'Contacts', i18nKey: 'contacts' },
+  {
+    value: '/browse/person',
+    label: 'Contacts',
+    i18nKey: 'contacts',
+  },
   { value: '/browse/site', label: 'Sites', i18nKey: 'sites' },
   { value: '/browse/inventory', label: 'Supplies', i18nKey: 'supplies' },
   { value: '/browse/router', label: 'Routers', i18nKey: 'routers' },
@@ -113,6 +117,14 @@ const enhance = compose(
         const filtersParams = new URLSearchParams(searchParams.get('filters'))
         if (!filtersParams.has('hasStock')) {
           filtersParams.set('hasStock', true)
+          searchParams.set('filters', filtersParams)
+        }
+      }
+
+      if (value === '/browse/person') {
+        const filtersParams = new URLSearchParams(searchParams.get('filters'))
+        if (!filtersParams.has('contactStatus')) {
+          filtersParams.set('contactStatus', 0)
           searchParams.set('filters', filtersParams)
         }
       }

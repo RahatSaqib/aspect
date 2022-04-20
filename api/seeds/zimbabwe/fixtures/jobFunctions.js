@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const {
   admin,
   clinician,
@@ -11,9 +12,12 @@ const {
   systemOne,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
+const reports = require('./reports')
 
+const countryReports = _.keys(reports)
 module.exports = [
   mergeJobFunctions(admin, {
+    reports: [...admin.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -74,6 +78,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(clinician, {
+    reports: [...clinician.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -146,6 +151,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(donor, {
+    reports: [...donor.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -174,6 +180,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(labUser, {
+    reports: [...labUser.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -230,6 +237,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(ntp, {
+    reports: [...ntp.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -274,6 +282,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(ntpNoResults, {
+    reports: [...ntpNoResults.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -314,6 +323,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(regionalOfficer, {
+    reports: [...regionalOfficer.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -369,8 +379,11 @@ module.exports = [
       },
     ],
   }),
-  systemOne,
+  mergeJobFunctions(systemOne, {
+    reports: [systemOne.reports, ...countryReports],
+  }),
   mergeJobFunctions(technician, {
+    reports: [...technician.reports, ...countryReports],
     permissions: [
       {
         module: 'account',
@@ -411,6 +424,7 @@ module.exports = [
     ],
   }),
   mergeJobFunctions(deviceMaker, {
+    reports: [...deviceMaker.reports, ...countryReports],
     permissions: [
       {
         module: 'account',

@@ -53,6 +53,12 @@
       "i18nKey": "ConsumableReason_Captured",
       "decrease": 0,
       "reset": 1
+    },
+    {
+      "name": "Damage",
+      "i18nKey": "ConsumableReason_Damage",
+      "decrease": 1,
+      "reset": 0
     }
   ]
 }
