@@ -6,11 +6,11 @@ const szMtbStats = {
   externalId: 'sz_mtb_stats',
   i18nKeyDescription: 'szMtbStatsDescription',
   fileName: 'mtbStats',
-  sortOrder: 11,
+  sortOrder: 100,
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReportSwaziland',
+      moduleName: 'result/serviceReportEswatini',
       functionName: 'getMtbStats',
     },
   ],

@@ -1,12 +1,9 @@
 const { reduce, min, round } = require('lodash')
-const { addDays } = require('date-fns')
+const { addDays, differenceInDays, parseISO } = require('date-fns')
 const { knex, filterDateRangeParams, filterParams } = require('../../db')
 
 const { getBaseQuery, modifiers } = require('../query')
-const {
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../query/querySelectors')
-const { getArrayOfDaysInRange } = require('../../shared/date')
+const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 function addErrorTableSiteTotals(data) {
   const totalsBySite = reduce(
@@ -73,10 +70,10 @@ async function getErrorTable(dataConstraints, params) {
 }
 
 async function getGeneralStatsForMapping(dataConstraints, params) {
-  const daysInRange = getArrayOfDaysInRange(
-    params.minDate,
-    min([params.maxDate, addDays(new Date(), -1)])
-  ).length
+  const daysInRange = differenceInDays(
+    min([parseISO(params.maxDate), addDays(new Date(), -1)]),
+    parseISO(params.minDate)
+  )
 
   const {
     mtbDetected,

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-03-28T22:37:24.011Z\n"
+"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -551,7 +551,7 @@ msgstr "Tất cả các bệnh"
 #. All sites
 #: extracted_strings.json
 msgid "All sites"
-msgstr "Tất cả các trang web"
+msgstr "Tất cả các đơn vị"
 
 #. [pages.JobAssignments.allStates]
 #. defaultMessage is:
@@ -632,7 +632,7 @@ msgstr "Đã xảy ra lỗi khi cố gắng lưu bộ định tuyến"
 #. An Error Occurred When Trying to Save the Site
 #: extracted_strings.json
 msgid "An Error Occurred When Trying to Save the Site"
-msgstr "Đã xảy ra lỗi khi cố gắng lưu trang web"
+msgstr "Đã xảy ra lỗi khi cố gắng lưu đơn vị"
 
 #. [errorResponseMessages.updateResultWorkflowStatus.PUT.default.title]
 #. defaultMessage is:
@@ -1663,7 +1663,7 @@ msgstr "Không thể tìm thấy chi tiết bộ định tuyến"
 #. Could Not Find Site Details
 #: extracted_strings.json
 msgid "Could Not Find Site Details"
-msgstr "Không thể tìm thấy chi tiết trang web"
+msgstr "Không thể tìm thấy chi tiết đơn vị"
 
 #. [errorResponseMessages.fetchResultsDetail.GET.404.title]
 #. defaultMessage is:
@@ -1684,7 +1684,7 @@ msgstr "Không thể tìm thấy thông tin chi tiết của người dùng"
 #. Could Not Load All Sites
 #: extracted_strings.json
 msgid "Could Not Load All Sites"
-msgstr "Không thể tải tất cả các trang web"
+msgstr "Không thể tải tất cả các đơn vị"
 
 #. [errorResponseMessages.transferResult.GET.404.title]
 #. defaultMessage is:
@@ -1938,6 +1938,13 @@ msgstr "Daktari HCV"
 #: extracted_strings.json
 msgid "Daktari HIV-VL"
 msgstr "Daktari HIV-VL"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
+#: extracted_strings.json
+msgid "Damage"
+msgstr "Hư hại"
 
 #. [pages.OperationalDashboard.operationalDashboardTitle]
 #. defaultMessage is:
@@ -2771,14 +2778,14 @@ msgstr "Nhập tên báo cáo ..."
 #. Enter reportable site name...
 #: extracted_strings.json
 msgid "Enter reportable site name..."
-msgstr "Nhập tên trang web có thể báo cáo ..."
+msgstr "Nhập tên đơn vị có thể báo cáo ..."
 
 #. [filter.popover.enterReportableSiteId]
 #. defaultMessage is:
 #. Enter reportable site...
 #: extracted_strings.json
 msgid "Enter reportable site..."
-msgstr "Nhập trang web có thể báo cáo ..."
+msgstr "Nhập đơn vị có thể báo cáo ..."
 
 #. [filter.popover.enterSampleId]
 #. defaultMessage is:
@@ -2792,7 +2799,7 @@ msgstr "Nhập ID mẫu ..."
 #. Enter sample origin site name...
 #: extracted_strings.json
 msgid "Enter sample origin site name..."
-msgstr "Nhập tên trang web gốc mẫu ..."
+msgstr "Nhập tên đơn vị gốc mẫu ..."
 
 #. [filter.popover.enterSiteId]
 #. defaultMessage is:
@@ -2802,14 +2809,14 @@ msgstr "Nhập tên trang web gốc mẫu ..."
 #. Enter site ID...
 #: extracted_strings.json
 msgid "Enter site ID..."
-msgstr "Nhập ID trang web ..."
+msgstr "Nhập ID đơn vị..."
 
 #. [filter.popover.enterSiteName]
 #. defaultMessage is:
 #. Enter site name...
 #: extracted_strings.json
 msgid "Enter site name..."
-msgstr "Nhập tên trang web ..."
+msgstr "Nhập tên đơn vị..."
 
 #. [legends.Unknown.resultCategoryError]
 #. defaultMessage is:
@@ -2871,7 +2878,7 @@ msgstr "Lỗi khi tìm nạp điểm cuối"
 #. Error Loading All Sites
 #: extracted_strings.json
 msgid "Error Loading All Sites"
-msgstr "Lỗi khi tải tất cả các trang web"
+msgstr "Lỗi khi tải tất cả các đơn vị"
 
 #. [errorResponseMessages.fetchLgasForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -2941,7 +2948,7 @@ msgstr "Lỗi khi tải chi tiết bộ định tuyến"
 #. Error Loading Site Details
 #: extracted_strings.json
 msgid "Error Loading Site Details"
-msgstr "Lỗi khi tải chi tiết trang web"
+msgstr "Lỗi khi tải chi tiết đơn vị"
 
 #. [errorResponseMessages.fetchStatesForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -3278,7 +3285,7 @@ msgstr "Quên mật khẩu?"
 #. From Site
 #: extracted_strings.json
 msgid "From Site"
-msgstr "Từ trang web"
+msgstr "Từ đơn vị"
 
 #. [pages.NotificationDetail.fromThisDevice]
 #. defaultMessage is:
@@ -4058,7 +4065,7 @@ msgstr "Mật khẩu không hợp lệ"
 #. Invalid Site ID
 #: extracted_strings.json
 msgid "Invalid Site ID"
-msgstr "ID trang web không hợp lệ"
+msgstr "ID đơn vị không hợp lệ"
 
 #. [errorResponseMessages.common.unauthorized.resolution]
 #. defaultMessage is:
@@ -4595,7 +4602,7 @@ msgstr "Tải bộ định tuyến không thành công"
 #. Loading Sites Failed
 #: extracted_strings.json
 msgid "Loading Sites Failed"
-msgstr "Tải trang web không thành công"
+msgstr "Tải đơn vị không thành công"
 
 #. [errorResponseMessages.fetchTags.GET.default.title]
 #. defaultMessage is:
@@ -5355,7 +5362,7 @@ msgstr "Không có thử nghiệm nào được thực hiện"
 #. No contacts assigned to site
 #: extracted_strings.json
 msgid "No contacts assigned to site"
-msgstr "Không có địa chỉ liên hệ nào được chỉ định cho trang web"
+msgstr "Không có địa chỉ liên hệ nào được chỉ định cho đơn vị"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -5365,8 +5372,8 @@ msgid ""
 "No location set to this site - Please, edit to assign the latitude and "
 "longitude fields."
 msgstr ""
-"Không có vị trí nào được đặt cho trang web này - Vui lòng chỉnh sửa để gán "
-"các trường kinh độ và vĩ độ."
+"Không có vị trí nào được đặt cho đơn vị này - Vui lòng chỉnh sửa để gán các "
+"trường kinh độ và vĩ độ."
 
 #. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
 #. defaultMessage is:
@@ -6043,7 +6050,7 @@ msgstr "Vui lòng chọn một ngày muộn hơn hoặc bằng ngày kể từ n
 #. Please choose a different site
 #: extracted_strings.json
 msgid "Please choose a different site"
-msgstr "Vui lòng chọn một trang web khác"
+msgstr "Vui lòng chọn một đơn vị khác"
 
 #. [pages.ResetPassword.newPasswordRequired]
 #. defaultMessage is:
@@ -6154,7 +6161,7 @@ msgstr "Vui lòng chọn một lý do"
 #. Please select a site
 #: extracted_strings.json
 msgid "Please select a site"
-msgstr "Vui lòng chọn một trang web"
+msgstr "Vui lòng chọn một đơn vị"
 
 #. [pages.NotificationDetail.jobFunctionAtLeastOneNeeded]
 #. defaultMessage is:
@@ -6771,7 +6778,7 @@ msgstr "Báo cáo"
 #. Reportable Site
 #: extracted_strings.json
 msgid "Reportable Site"
-msgstr "Trang web có thể báo cáo"
+msgstr "Đơn vị có thể báo cáo"
 
 #. [pages.shared.deviceStatus.reportedActive]
 #. defaultMessage is:
@@ -7171,14 +7178,14 @@ msgstr "Ngày thu thập mẫu"
 #. Sample Collection Site
 #: extracted_strings.json
 msgid "Sample Collection Site"
-msgstr "Trang web thu thập mẫu"
+msgstr "Đơn vị thu thập mẫu"
 
 #. [pages.Milestones.originalSiteName]
 #. defaultMessage is:
 #. Sample Collection Site:
 #: extracted_strings.json
 msgid "Sample Collection Site:"
-msgstr "Trang web thu thập mẫu:"
+msgstr "Đơn vị thu thập mẫu:"
 
 #. [forms.formItem.sampleId]
 #. defaultMessage is:
@@ -7211,7 +7218,7 @@ msgstr "Id mẫu"
 #. Sample Origin Site
 #: extracted_strings.json
 msgid "Sample Origin Site"
-msgstr "Trang web nguồn gốc mẫu"
+msgstr "Đơn vị nguồn gốc mẫu"
 
 #. [forms.formItem.sampleType]
 #. defaultMessage is:
@@ -7232,7 +7239,7 @@ msgstr "Loại mẫu:"
 #. Sample collection site
 #: extracted_strings.json
 msgid "Sample collection site"
-msgstr "Trang web thu thập mẫu"
+msgstr "Đơn vị thu thập mẫu"
 
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
@@ -7422,7 +7429,7 @@ msgstr "Tìm kiếm bộ định tuyến không thành công"
 #. Searching Sites Failed
 #: extracted_strings.json
 msgid "Searching Sites Failed"
-msgstr "Tìm kiếm trang web không thành công"
+msgstr "Tìm kiếm đơn vị không thành công"
 
 #. [errorResponseMessages.getTasksByStatus.GET.400.title]
 #. defaultMessage is:
@@ -8069,7 +8076,7 @@ msgstr "Địa chỉ liên hệ"
 #. Site Detail
 #: extracted_strings.json
 msgid "Site Detail"
-msgstr "Chi tiết trang web"
+msgstr "Chi tiết đơn vị"
 
 #. [filter.popover.externalId]
 #. defaultMessage is:
@@ -8085,7 +8092,7 @@ msgstr "Chi tiết trang web"
 #. Site ID
 #: extracted_strings.json
 msgid "Site ID"
-msgstr "ID Site"
+msgstr "ID Đơn vị"
 
 #. [filter.popover.siteId]
 #. defaultMessage is:
@@ -8102,7 +8109,7 @@ msgstr "Số địa chỉ"
 #. Site Name
 #: extracted_strings.json
 msgid "Site Name"
-msgstr "Tên trang web"
+msgstr "Tên đơn vị"
 
 #. [pages.TaskDetail.siteContact]
 #. defaultMessage is:
@@ -8116,7 +8123,7 @@ msgstr "Địa chỉ liên hệ"
 #. Site is required
 #: extracted_strings.json
 msgid "Site is required"
-msgstr "Trang web là bắt buộc"
+msgstr "Đơn vị là bắt buộc"
 
 #. [component.Widget.sitesTitle]
 #. defaultMessage is:
@@ -8818,7 +8825,7 @@ msgstr "Số lượng kết quả thuộc về một bệnh nhân đã khỏi b�
 #. The number of sites.
 #: extracted_strings.json
 msgid "The number of sites."
-msgstr "Số lượng các trang web."
+msgstr "Số lượng các đơn vị."
 
 #. [pages.NotFound.help]
 #. defaultMessage is:
@@ -8978,9 +8985,9 @@ msgid ""
 "any stock for any of the GeneXpert assays and dividing that number by the "
 "total number of sites."
 msgstr ""
-"Số lượng hàng không được ghi lại được tính bằng cách đếm tất cả các trang "
-"web không nhập bất kỳ nguồn hàng nào cho bất kỳ xét nghiệm GeneXpert nào và "
-"chia số đó cho tổng số trang web."
+"Số lượng hàng không được ghi lại được tính bằng cách đếm tất cả các đơn vị "
+"không nhập bất kỳ nguồn hàng nào cho bất kỳ xét nghiệm GeneXpert nào và chia "
+"số đó cho tổng số đơn vị."
 
 #. [component.Widget.stockoutsDescription]
 #. defaultMessage is:
@@ -8990,7 +8997,7 @@ msgid ""
 "The stockout percentage is calculated by counting all sites with stockout "
 "issues during the month and dividing by all active sites."
 msgstr ""
-"Phần trăm tồn kho được tính bằng cách đếm tất cả các trang web có vấn đề về "
+"Phần trăm tồn kho được tính bằng cách đếm tất cả các đơn vị có vấn đề về "
 "hàng tồn trong tháng và chia cho tất cả các trang đang hoạt động."
 
 #. [component.Widget.dashboardWidgetSmsSentDescription]
@@ -9286,7 +9293,7 @@ msgstr "Gửi báo cáo viên"
 #. To Site
 #: extracted_strings.json
 msgid "To Site"
-msgstr "Đến trang web"
+msgstr "Đến đơn vị"
 
 #. [pages.NotificationDetail.personsSelectLabel]
 #. defaultMessage is:
@@ -10469,8 +10476,7 @@ msgstr "phần trăm thiết bị đang hoạt động"
 #. percentage of active sites experiencing stockouts
 #: extracted_strings.json
 msgid "percentage of active sites experiencing stockouts"
-msgstr ""
-"tỷ lệ phần trăm các trang web đang hoạt động gặp phải tình trạng hết hàng"
+msgstr "tỷ lệ phần trăm các đơn vị đang hoạt động gặp phải tình trạng hết hàng"
 
 #. [widgetAlerts.averageDaysOfServiceInterruption]
 #. defaultMessage is:
@@ -10512,8 +10518,7 @@ msgstr "phần trăm thời gian hoạt động của máy chủ"
 #. percentage of sites that never entered stock of GeneXpert assays
 #: extracted_strings.json
 msgid "percentage of sites that never entered stock of GeneXpert assays"
-msgstr ""
-"tỷ lệ phần trăm các trang web chưa bao giờ nhập kho xét nghiệm GeneXpert"
+msgstr "tỷ lệ phần trăm các đơn vị chưa bao giờ nhập kho xét nghiệm GeneXpert"
 
 #. [widgetAlerts.percentageOfValidResults]
 #. defaultMessage is:
@@ -10534,21 +10539,21 @@ msgstr "tên báo cáo bao gồm \"{reportName}\""
 #. reportable site "{reportableSiteName}"
 #: extracted_strings.json
 msgid "reportable site \"{reportableSiteName}\""
-msgstr "trang web có thể báo cáo \"{reportableSiteName}\""
+msgstr "đơn vị có thể báo cáo \"{reportableSiteName}\""
 
 #. [filter.btnGroup.whereSiteIdIncludes]
 #. defaultMessage is:
 #. reportable site ID includes "{reportableSiteId}"
 #: extracted_strings.json
 msgid "reportable site ID includes \"{reportableSiteId}\""
-msgstr "ID trang web có thể báo cáo bao gồm \"{reportableSiteId}\""
+msgstr "ID đơn vị có thể báo cáo bao gồm \"{reportableSiteId}\""
 
 #. [filter.btnGroup.whereReportableSiteNameIncludes]
 #. defaultMessage is:
 #. reportable site name includes "{reportableSiteName}"
 #: extracted_strings.json
 msgid "reportable site name includes \"{reportableSiteName}\""
-msgstr "tên trang web có thể báo cáo bao gồm \"{reportableSiteName}\""
+msgstr "tên đơn vị có thể báo cáo bao gồm \"{reportableSiteName}\""
 
 #. [filter.btnGroup.withRevoked]
 #. defaultMessage is:
@@ -10562,7 +10567,7 @@ msgstr "bị thu hồi là \"{revokedStatus}\""
 #. sample collection site is {sampleOriginSiteName}
 #: extracted_strings.json
 msgid "sample collection site is {sampleOriginSiteName}"
-msgstr "trang web thu thập mẫu là {sampleOriginSiteName}"
+msgstr "đơn vị thu thập mẫu là {sampleOriginSiteName}"
 
 #. [filter.btnGroup.sampleId]
 #. defaultMessage is:
@@ -10583,14 +10588,14 @@ msgstr "kể từ {date}"
 #. site ID is in ({joinedIds})
 #: extracted_strings.json
 msgid "site ID is in ({joinedIds})"
-msgstr "ID trang web ở ({joinedIds})"
+msgstr "ID đơn vị ở ({joinedIds})"
 
 #. [filter.btnGroup.whereSiteNameIncludes]
 #. defaultMessage is:
 #. site name includes "{siteName}"
 #: extracted_strings.json
 msgid "site name includes \"{siteName}\""
-msgstr "tên trang web bao gồm \"{siteName}\""
+msgstr "tên đơn vị bao gồm \"{siteName}\""
 
 #. [pages.OperationalData.stockOutsTitle]
 #. defaultMessage is:
@@ -10702,7 +10707,7 @@ msgstr "{count} trong số {total} ngày"
 #. {count} site with problems
 #: extracted_strings.json
 msgid "{count} site with problems"
-msgstr "{count} trang web có vấn đề"
+msgstr "{count} đơn vị có vấn đề"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithoutStatus]
 #. defaultMessage is:

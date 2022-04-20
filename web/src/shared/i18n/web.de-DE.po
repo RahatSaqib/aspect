@@ -34,12 +34,12 @@ msgstr "(Neue Menge im Bestand: {nextQuantity} {unitShortName})"
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
-#, fuzzy
-#| msgid "* excluded {pendingTransfers} lot/s in transit"
 msgid ""
 "* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/"
 "s in transit"
-msgstr "* {pendingTransfers} Los/e im Transport ausgeschlossen"
+msgstr ""
+"* ausgeschlossen {pendingTransfersQuantityOnHand} Artikel in "
+"{pendingTransfers} Partie/n im Transit"
 
 #. [pages.TableCell.moreContacts]
 #. defaultMessage is:
@@ -2231,7 +2231,7 @@ msgstr "Geräteaktivität (Prozent)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Gerätezustand"
+msgstr "Geräte Level"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -2999,10 +2999,8 @@ msgstr "Fehler beim Übertragen des Ergebnisses"
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Error Fetching Endpoint"
 msgid "Error creating person"
-msgstr "Fehler beim Laden"
+msgstr "Fehler beim Anlegen einer Person"
 
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
@@ -3155,18 +3153,15 @@ msgstr "Einrichtung Code"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Please, try again in a few minutes. If the error persists, contact your "
-#| "administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of error "
 "\"{errorMessage}\". Please, try again in a few minutes. If the error "
 "persists, contact your administrator for support."
 msgstr ""
-"Bitte versuchen Sie es in ein paar Minuten erneut. Wenn der Fehler weiterhin "
-"besteht, wenden Sie sich an Ihren Administrator, um Unterstützung zu "
-"erhalten."
+"Die Erstellung von {fileType} Bericht \"{reportName}\" ist aufgrund des "
+"Fehlers \"{errorMessage}\" fehlgeschlagen. Bitte versuchen Sie es in ein "
+"paar Minuten erneut. Wenn der Fehler weiterhin besteht, wenden Sie sich "
+"bitte an Ihren Administrator, um Unterstützung zu erhalten."
 
 #. [pages.revokedSelectField.false]
 #. defaultMessage is:
@@ -5632,10 +5627,8 @@ msgstr "Anzahl der Standorte"
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The number of results that belong to a patient that died"
 msgid "Number of TB results grouped by patient HIV status"
-msgstr "Die Anzahl der Ergebnisse, die einem verstorbenen Patienten gehören"
+msgstr "Anzahl der TB-Ergebnisse gruppiert nach HIV-Status des Patienten"
 
 #. [pages.DeviceList.numberOfTests]
 #. defaultMessage is:
@@ -7544,10 +7537,8 @@ msgstr "Jahr auswählen..."
 #. defaultMessage is:
 #. Select an Assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Select assay..."
 msgid "Select an Assay"
-msgstr "Assay auswählen..."
+msgstr "Assay auswählen"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -7717,10 +7708,8 @@ msgstr "An eine bestimmte Person senden"
 #. defaultMessage is:
 #. Send to patient
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Linked to treatment"
 msgid "Send to patient"
-msgstr "In Behandlung"
+msgstr "An den Patienten senden"
 
 #. [forms.formItem.senderOperator]
 #. defaultMessage is:
@@ -7733,10 +7722,8 @@ msgstr "Betreiber"
 #. defaultMessage is:
 #. Sent details
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Site Detail"
 msgid "Sent details"
-msgstr "Standort Detail"
+msgstr "Gesendete Details"
 
 #. [pages.OperationalData.sentViaEmail]
 #. defaultMessage is:
@@ -8338,10 +8325,8 @@ msgstr "Erfolg"
 #. defaultMessage is:
 #. Successfully
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Success"
 msgid "Successfully"
-msgstr "Erfolg"
+msgstr "Erfolgreich"
 
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
@@ -9390,10 +9375,8 @@ msgstr "Thema"
 #. defaultMessage is:
 #. Total Capacity
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Total Cases"
 msgid "Total Capacity"
-msgstr "Gesamtanzahl Fälle"
+msgstr "Gesamtkapazität"
 
 #. [pages.Status.clinicalIndicatorsPieSubLegend]
 #. defaultMessage is:
@@ -9406,10 +9389,8 @@ msgstr "Gesamtanzahl Fälle"
 #. defaultMessage is:
 #. Total Errors
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Critical Error"
 msgid "Total Errors"
-msgstr "Kritischer Fehler"
+msgstr "Fehler insgesamt"
 
 #. [pages.OperationalData.totalResults]
 #. defaultMessage is:

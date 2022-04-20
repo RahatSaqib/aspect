@@ -37,14 +37,12 @@ function listReportBaseConfig() {
 }
 
 function requestBaseQuery() {
+  const { minDate, maxDate } = validateDateRangeParams()
   return {
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(),
-    maxDate: Joi.date()
-      .iso()
-      .allow(null)
-      .description('To Date')
-      .default(new Date().toISOString()),
+    minDate,
+    maxDate: maxDate.default(new Date().toISOString()),
     siteName: Joi.string().allow('').description('Filter for site name'),
     reportName: Joi.string().allow('').description('Filter for report name'),
   }

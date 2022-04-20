@@ -474,6 +474,7 @@ async function getNotificationPolicy(
 
 async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
   const people = txKnex('Person as p')
+    .where('p.disabled', false)
     .innerJoin('Job as j', 'p.id', 'j.personId')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')

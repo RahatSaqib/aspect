@@ -27,6 +27,7 @@ async function listPeople(request) {
       lgaId: 'g.lgaId',
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
+      contactStatus: 'p.disabled',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where(qb => {
@@ -87,6 +88,8 @@ async function listPeople(request) {
     .select(
       'p.id',
       'p.name',
+      'p.disabled',
+      'p.disabledOn',
       getJobFunctionNames,
       'st.name as state',
       'l.name as lga',
@@ -111,6 +114,12 @@ async function listPeople(request) {
   })
 
   return { ok: true, total, data, length: data.length }
+}
+
+async function listPeopleForSelectList(request) {
+  request.query.size = 'all'
+  const response = await listPeople(request)
+  return response
 }
 
 async function availableContacts(request) {
@@ -258,6 +267,8 @@ function getPersonDetails(personId) {
       'l.name as lgaName',
       'u.lockedOut as userLockedOut',
       'p.canLogIn',
+      'p.disabled',
+      'p.disabledOn',
       'j.id as jobId'
     )
 }
@@ -457,6 +468,7 @@ async function listRefreshTokens(request) {
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
       diseaseId: 'dis.id',
+      contactStatus: 'p.disabled',
     })
     .leftJoin('ResultDownloadLog as rdl', queryBuilder => {
       queryBuilder.on('rdl.createdBy', 'r.userId')
@@ -554,8 +566,31 @@ async function updateRefreshToken(request) {
     },
   }
 }
+
+async function updatePersonStatus(request) {
+  const {
+    auth: { credentials },
+    params: { personId },
+    method,
+  } = request
+  const { id: disabledBy } = await userService.getUser(credentials.name)
+  const person = await knex('Person')
+    .where('id', personId)
+    .update(
+      method === 'delete'
+        ? {
+            disabled: true,
+            disabledOn: new Date(),
+            disabledBy,
+          }
+        : { disabled: false, disabledOn: null, disabledBy: null }
+    )
+  return { ok: true, data: person }
+}
+
 module.exports = {
   listPeople,
+  listPeopleForSelectList,
   listRefreshTokens,
   availableContacts,
   assignContact,
@@ -565,4 +600,5 @@ module.exports = {
   createPerson,
   updatePersonUserPreferences,
   updateRefreshToken,
+  updatePersonStatus,
 }
