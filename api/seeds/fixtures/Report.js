@@ -296,7 +296,7 @@ const moduleActivityReport = {
   i18nKey: 'moduleActivityReport',
   i18nKeyDescription: 'moduleActivityReport_Description',
   externalId: 'module_activity_report',
-  fileName: 'module_activity_report',
+  fileName: 'ModuleActivityReport',
   exportCsv: true,
   sortOrder: 120,
   sheets: [
