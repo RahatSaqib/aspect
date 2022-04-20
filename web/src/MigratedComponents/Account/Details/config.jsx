@@ -59,7 +59,7 @@ const itemsConfig = user => {
         label: formatMessage(messages.primaryEmail),
         type: 'email',
         component: PureTextInput,
-        validation: string().email('Invalid email').nullable(),
+        validation: string().email('Invalid email').required('Required'),
       },
       {
         id: 'email2',
