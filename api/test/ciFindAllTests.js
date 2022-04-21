@@ -28,11 +28,29 @@ function isMocha(context) {
   )
 }
 
-if (!isMocha(global)) {
-  findAllTests('./api/test/')
-  _.map(_.chunk(files, files.length / 3), chunk =>
+function arrayAllTests({ path }) {
+  if (!isMocha(global)) {
+    findAllTests(path)
+    return JSON.stringify(files, null, 2)
+  }
+}
+
+function constructMochaCommand({ files }) {
+  const filesArr = JSON.parse(files)
+  _.map(_.chunk(filesArr, filesArr.length / 3), chunk =>
     strings.push(`test/{${_.join(chunk, ',')}}/*.spec.js`)
   )
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(strings, null, 2))
+  return strings
 }
+
+module.exports = {
+  constructMochaCommand,
+  arrayAllTests,
+}
+
+// require('make-runnable')
+require('make-runnable/custom')({
+  printOutputFrame: false,
+})
+
+// '["report","clinicalIndicators","followUpAggregations","result","resultComments","resultCreateUpdate","resultDownload","resultFollowUps","resultJobContext","resultPatient","resultTransfer","resultTreatment","resultTypes","resultWorkflow","taskTracker","server","server","reporters","site","smsMq","tag","task","webhookMq"]'
