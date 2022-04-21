@@ -137,7 +137,7 @@ jobs:
         run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js arrayAllTests --path './api/test/')"
       - id: set-test-chunk-ids
         name: Set Chunk IDs
-        run: echo "::set-output name=test-chunk-ids::$(node ./api/test/ciFindAllTests.js constructMochaCommand --files $CHUNKS)"
+        run: echo "::set-output name=test-chunk-ids::$(node ./api/test/ciFindAllTests.js constructMochaCommand --files '$CHUNKS')"
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
@@ -200,7 +200,7 @@ jobs:
           yarn api:contract --spec $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text'
         # run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs yarn api:contract
         env:
-          CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunks'] }}
+          CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunk-ids'] }}
         shell: bash
 
       # - name: "Run API Contract Tests"

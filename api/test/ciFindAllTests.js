@@ -43,11 +43,13 @@ function arrayAllTests({ path }) {
 }
 
 function constructMochaCommand({ files }) {
-  const filesArr = JSON.parse(files) || 0
-  // eslint-disable-next-line no-console
-  console.log({ files: filesArr?.length })
-  const chunks = chunk(filesArr, 3)
-  chunks.map(chunk => strings.push(`test/{${chunk.join(',')}}/*.spec.js`))
+  if (files) {
+    const filesArr = JSON.parse(files) || 0
+    // eslint-disable-next-line no-console
+    console.log({ files: filesArr?.length })
+    const chunks = chunk(filesArr, 3)
+    chunks.map(chunk => strings.push(`test/{${chunk.join(',')}}/*.spec.js`))
+  }
   return strings
 }
 
