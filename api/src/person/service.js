@@ -39,7 +39,7 @@ async function listPeople(request) {
       }
     })
     .where(qb => {
-      if (query?.onlyEnabled) {
+      if (query?.onlyUsersNotDisabled) {
         qb.where('p.disabled', 0)
       }
     })
@@ -123,7 +123,7 @@ async function listPeople(request) {
 
 async function listPeopleForSelectList(request) {
   request.query.size = 'all'
-  request.query.onlyEnabled = true
+  request.query.onlyUsersNotDisabled = true
   const response = await listPeople(request)
   return response
 }
