@@ -192,9 +192,12 @@ jobs:
         shell: bash
 
       - name: "Run API Contract Tests"
-        run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs yarn api:contract
+        run: |
+          yarn api:contract --spec $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text'
+        # run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs yarn api:contract
         env:
           CHUNKS: ${{ needs.setup.outputs['test-chunks'] }}
+        shell: bash
 
       # - name: "Run API Contract Tests"
       #   run: yarn api:contract
