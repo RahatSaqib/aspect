@@ -118,6 +118,9 @@ const ContactDetailsFormFormik = () => {
           values: transformOutputValues(values, baseOmitFields),
           endpoint: `/person/${id}`,
           method: 'PUT',
+          customErrorNotifications: {
+            409: badRequestBuilder(messages),
+          },
         })
       }
       if (type === FORM_METHOD.SELF) {

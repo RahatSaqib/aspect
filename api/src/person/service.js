@@ -317,6 +317,18 @@ async function savePerson(request, updatablePersonFields) {
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
+
+  // if user with specified 'email' exists - return Boom
+  if (payload.email) {
+    const person = await knex('Person').where({ email: payload.email }).first()
+    if (person && payload.id !== person.id) {
+      const err = Boom.conflict('Person with requested email already exists', {
+        errorKeyCode: 'personEmailExist',
+      })
+      err.output.payload.data = err.data
+      return err
+    }
+  }
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
