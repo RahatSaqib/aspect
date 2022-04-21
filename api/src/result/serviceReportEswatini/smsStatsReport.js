@@ -36,22 +36,32 @@ async function getResultStatsData(dataConstraints, params) {
 async function getSmsStatsData(dataConstraints, params) {
   const data = await getBaseQuery(knex, dataConstraints)
     .join('SmsMessage as sms', 'r.id', 'sms.resultId')
+    // .join('MessageStatus as ms', 'sms.messageStatusId', 'ms.id')
     .join('Sample as s', 'r.sampleId', 's.id')
+    // .where('ms.externalId', knex.raw('?', 'Sent'))
     .modify(filterParams, params)
     .modify(filterDateRangeParams, params, 'r.endedOn')
     .select({
       totalSmsForPeriod: knex.count('sms.id'),
       smsSentToClient: knex.raw(
+        // pending analysis
         'SUM(CASE sms.personId WHEN NULL THEN 1 ELSE 0 END) '
       ),
       smsSentToFacility: knex.raw(
+        // pending analysis
         'SUM(CASE WHEN sms.siteId = s.originSiteId AND sms.personId IS NOT NULL THEN 1 ELSE 0 END)'
+      ),
+      smsWithResultCount: knex.raw(
+        'SUM(CASE WHEN sms.resultId IS NOT NULL THEN 1 ELSE 0 END)'
+      ),
+      smsWithNoResultCount: knex.raw(
+        'SUM(CASE WHEN sms.resultId IS NULL THEN 1 ELSE 0 END)'
       ),
       averageTATSampleCollectionRegistration: knex.raw(
         "IFNULL(ROUND(AVG(CASE WHEN s.collectedOn IS NOT NULL AND r.startedOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, s.collectedOn, r.startedOn) ELSE NULL END ),2),'-')"
       ),
       averageTATSampleCollectionResultSent: knex.raw(
-        "IFNULL(ROUND(AVG(CASE WHEN s.collectedOn IS NOT NULL AND sms.createdOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, s.collectedOn, sms.createdOn) ELSE NULL END ) ,2),'-')"
+        "IFNULL(ROUND(AVG(CASE WHEN s.collectedOn IS NOT NULL AND sms.updatedOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, s.collectedOn, sms.updatedOn) ELSE NULL END ) ,2),'-')"
       ),
       averageTATResultDateResultSent: knex.raw(
         "IFNULL(ROUND(AVG(CASE WHEN r.endedOn IS NOT NULL AND sms.createdOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, r.endedOn, sms.createdOn) ELSE NULL END ) ,2),'-')"
@@ -59,13 +69,13 @@ async function getSmsStatsData(dataConstraints, params) {
     })
     .first()
 
-  data.averageTATSampleCollectionRegistration = humanDuration(
+  data.averageTATSampleCollectionRegistrationText = humanDuration(
     data.averageTATSampleCollectionRegistration
   )
-  data.averageTATSampleCollectionResultSent = humanDuration(
+  data.averageTATSampleCollectionResultSentText = humanDuration(
     data.averageTATSampleCollectionResultSent
   )
-  data.averageTATResultDateResultSent = humanDuration(
+  data.averageTATResultDateResultSentText = humanDuration(
     data.averageTATResultDateResultSent
   )
   return data
