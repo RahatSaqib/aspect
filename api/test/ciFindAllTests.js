@@ -1,7 +1,9 @@
 const fs = require('fs')
 const path = require('path')
+const _ = require('lodash')
 
 const files = []
+const strings = []
 
 function findAllTests(directory) {
   fs.readdirSync(directory).forEach(file => {
@@ -13,7 +15,7 @@ function findAllTests(directory) {
       absolute.endsWith('.spec.js') &&
       !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)
     ) {
-      return files.push(absolute)
+      return files.push(file.replace('.spec.js', ''))
     }
   })
 }
@@ -28,6 +30,9 @@ function isMocha(context) {
 
 if (!isMocha(global)) {
   findAllTests('./api/test/')
+  _.map(_.chunk(files, files.length / 3), chunk =>
+    strings.push(`test/{${_.join(chunk, ',')}}/*.spec.js`)
+  )
   // eslint-disable-next-line no-console
-  console.log(JSON.stringify(files, null, 2))
+  console.log(JSON.stringify(strings, null, 2))
 }

@@ -124,16 +124,16 @@ jobs:
     needs: be-lint
     outputs:
       test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
-      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
+      # test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
       - uses: actions/checkout@v3
 
       - id: set-test-chunks
         name: Set Chunks
-        run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js | jq -cM '[_nwise(length / 3 | ceil)]')"
-      - id: set-test-chunk-ids
-        name: Set Chunk IDs
-        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
+        run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js')"
+        # - id: set-test-chunk-ids
+        #   name: Set Chunk IDs
+        #   run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
@@ -143,7 +143,7 @@ jobs:
     needs: be-contract-chunks
     strategy:
       matrix:
-        chunk: ${{ fromJson(needs.be-contract-chunks.outputs['test-chunk-ids']) }}
+        chunk: ${{ fromJson(needs.be-contract-chunks.outputs['set-test-chunks']) }}
     steps:
       - name: Setup MySQL
         uses: haltuf/mysql-action@master
