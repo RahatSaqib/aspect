@@ -36,26 +36,18 @@ async function getResultStatsData(dataConstraints, params) {
 async function getSmsStatsData(dataConstraints, params) {
   const data = await getBaseQuery(knex, dataConstraints)
     .join('SmsMessage as sms', 'r.id', 'sms.resultId')
-    // .join('MessageStatus as ms', 'sms.messageStatusId', 'ms.id')
+    .join('MessageStatus as ms', 'sms.messageStatusId', 'ms.id')
     .join('Sample as s', 'r.sampleId', 's.id')
-    // .where('ms.externalId', knex.raw('?', 'Sent'))
+    .where('ms.externalId', knex.raw('?', 'Sent'))
     .modify(filterParams, params)
     .modify(filterDateRangeParams, params, 'r.endedOn')
     .select({
       totalSmsForPeriod: knex.count('sms.id'),
-      smsSentToClient: knex.raw(
-        // pending analysis
-        'SUM(CASE sms.personId WHEN NULL THEN 1 ELSE 0 END) '
-      ),
-      smsSentToFacility: knex.raw(
-        // pending analysis
-        'SUM(CASE WHEN sms.siteId = s.originSiteId AND sms.personId IS NOT NULL THEN 1 ELSE 0 END)'
-      ),
       smsWithResultCount: knex.raw(
-        'SUM(CASE WHEN sms.resultId IS NOT NULL THEN 1 ELSE 0 END)'
+        'IFNULL(SUM(CASE WHEN sms.resultId IS NOT NULL THEN 1 ELSE 0 END),0)'
       ),
       smsWithNoResultCount: knex.raw(
-        'SUM(CASE WHEN sms.resultId IS NULL THEN 1 ELSE 0 END)'
+        'IFNULL(SUM(CASE WHEN sms.resultId IS NULL THEN 1 ELSE 0 END),0)'
       ),
       averageTATSampleCollectionRegistration: knex.raw(
         "IFNULL(ROUND(AVG(CASE WHEN s.collectedOn IS NOT NULL AND r.startedOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, s.collectedOn, r.startedOn) ELSE NULL END ),2),'-')"
@@ -82,7 +74,10 @@ async function getSmsStatsData(dataConstraints, params) {
 }
 
 function humanDuration(minutes) {
-  const duration = intervalToDuration({ start: 0, end: minutes * 1000 })
+  const minutesNum = parseInt(minutes, 10)
+  if (Number.isNaN(minutesNum)) return '-'
+  const duration = intervalToDuration({ start: 0, end: minutesNum * 1000 })
+
   const cleanDuration = {
     days: duration.days,
     hours: duration.hours,

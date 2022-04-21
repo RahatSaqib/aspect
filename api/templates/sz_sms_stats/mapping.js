@@ -7,12 +7,10 @@ module.exports = [
     I12: 'smsWithResultCount',
     I13: 'smsWithNoResultCount',
 
-    I15: 'smsSentToFacility',
-    I16: 'smsSentToClient',
-    I18: 'totalSmsForPeriod',
+    I15: 'totalSmsForPeriod',
 
-    I20: 'averageTATSampleCollectionRegistrationText',
-    I21: 'averageTATSampleCollectionResultSentText',
-    I22: 'averageTATResultDateResultSentText',
+    I17: 'averageTATSampleCollectionRegistrationText',
+    I18: 'averageTATSampleCollectionResultSentText',
+    I19: 'averageTATResultDateResultSentText',
   },
 ]
