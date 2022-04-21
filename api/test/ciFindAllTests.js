@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const _ = require('lodash')
 
 const files = []
 const strings = []
@@ -28,6 +27,14 @@ function isMocha(context) {
   )
 }
 
+function chunk(array, parts) {
+  const output = []
+  for (let i = parts; i > 0; i--) {
+    output.push(array.splice(0, Math.ceil(array.length / i)))
+  }
+  return output
+}
+
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
@@ -36,10 +43,8 @@ function arrayAllTests({ path }) {
 }
 
 function constructMochaCommand({ files }) {
-  const filesArr = JSON.parse(files)
-  _.map(_.chunk(filesArr, filesArr.length / 3), chunk =>
-    strings.push(`test/{${_.join(chunk, ',')}}/*.spec.js`)
-  )
+  const chunks = chunk(JSON.parse(files), 3)
+  chunks.map(chunk => strings.push(`test/{${chunk.join(',')}}/*.spec.js`))
   return strings
 }
 
@@ -48,9 +53,6 @@ module.exports = {
   arrayAllTests,
 }
 
-// require('make-runnable')
 require('make-runnable/custom')({
   printOutputFrame: false,
 })
-
-// '["report","clinicalIndicators","followUpAggregations","result","resultComments","resultCreateUpdate","resultDownload","resultFollowUps","resultJobContext","resultPatient","resultTransfer","resultTreatment","resultTypes","resultWorkflow","taskTracker","server","server","reporters","site","smsMq","tag","task","webhookMq"]'
