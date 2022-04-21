@@ -10,7 +10,7 @@ function findAllTests(directory) {
       return findAllTests(absolute)
     }
     if (
-      absolute.endsWith('.js') &&
+      absolute.endsWith('.spec.js') &&
       !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)
     ) {
       return files.push(absolute)
