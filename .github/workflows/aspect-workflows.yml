@@ -130,10 +130,7 @@ jobs:
 
       - id: set-test-chunks
         name: Set Chunks
-        run: |
-          echo pwd
-          echo ls -la
-          echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js | jq -cM '[_nwise(length / 3 | ceil)]')"
+        run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js | jq -cM '[_nwise(length / 3 | ceil)]')"
       - id: set-test-chunk-ids
         name: Set Chunk IDs
         run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
