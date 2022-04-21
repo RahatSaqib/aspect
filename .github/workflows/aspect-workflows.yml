@@ -137,7 +137,7 @@ jobs:
         run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js arrayAllTests --path './api/test/')"
       - id: set-test-chunk-ids
         name: Set Chunk IDs
-        run: echo "::set-output name=test-chunk-ids::$(node ./api/test/ciFindAllTests.js constructMochaCommand --files '$CHUNKS')"
+        run: echo "::set-output name=test-chunk-ids::$(node ./api/test/ciFindAllTests.js constructMochaCommand --files '${{ outputs.test-chunks }}')"
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
