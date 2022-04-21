@@ -1,7 +1,6 @@
 const chai = require('chai')
 const Promise = require('bluebird')
 const { format, subDays, addDays, addMinutes } = require('date-fns')
-const { queuePurge } = require('../utils/mqUtils')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
@@ -128,14 +127,10 @@ const postLog = async (deviceAuth, source, data) =>
   })
 
 describe('Process GeneXpert Logs', () => {
-  beforeEach(async done => {
-    await queuePurge().then(done)
+  beforeEach(async () => {
     await context.createDeviceWithResult()
   })
-  afterEach(async done => {
-    await await queuePurge().then(done)
-    return context.afterEach
-  })
+  afterEach(context.afterEach)
   let issueEventTriggerId = null
   before(async () => {
     const issueTypeId = await issueTypeToId('HardwareModuleWasReset')
