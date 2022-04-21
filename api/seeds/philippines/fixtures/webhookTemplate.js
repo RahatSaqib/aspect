@@ -142,9 +142,7 @@ const itisWebhookTemplate = {
   externalId: 'itisPushTbExam',
   method: 'GET',
   url:
-    `http://itis.doh.gov.ph:3005/pushtbexam/${encodeURIComponent(
-      'gX@leR+!Ti$'
-    )}` +
+    `http://itis.doh.gov.ph:3005/pushtbexam/gX%40leR%2B%21Ti%24` +
     `/TB_CASE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.tbCaseNumber result.patient.id) 'NULL')}}` +
     `/SPECIMEN_CODE/{{urlEncode (defaultTo result.sample.id 'NULL')}}` +
     `/REQUESTING_FACILITY/{{urlEncode (defaultTo (coalesce result.sample.originSite.id result.patient.referringHealthFacility) 'NULL')}}` +

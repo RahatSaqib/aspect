@@ -1698,9 +1698,7 @@ L|1`,
         }
         const itisDateFormat = 'yyyy-MM-dd'
         const template =
-          `${philippinesITISWebApiUrl}/${encodeURIComponent(
-            philippinesITISSystemKey
-          )}` +
+          `${philippinesITISWebApiUrl}/gX%40leR%2B%21Ti%24` +
           `/TB_CASE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.tbCaseNumber result.patient.id) 'NULL')}}` +
           `/SPECIMEN_CODE/{{urlEncode (defaultTo result.sample.id 'NULL')}}` +
           `/REQUESTING_FACILITY/{{urlEncode (defaultTo (coalesce result.sample.originSite.id result.patient.referringHealthFacility) 'NULL')}}` +
