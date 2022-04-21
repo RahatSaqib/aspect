@@ -2,47 +2,54 @@ const { knex } = require('../../db')
 const { filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
-function getModuleActivityReportData(minDate, dataConstraints, query) {
-  const maxResultBeforeMinDateSubquery = knex('Result as r')
+async function getModuleActivityReportData(minDate, dataConstraints, query) {
+  const modulesWithLastResultBeforeMinDate = knex('Result as r')
     .where('r.endedOn', '<', minDate)
-    .max('id')
-    .groupBy('r.deviceId', 'r.moduleName')
+    .select(
+      'r.siteId',
+      'r.deviceId',
+      'r.moduleName',
+      'r.moduleSerial',
+      knex.raw('max(r.id) as id'),
+      knex.raw('max(r.endedOn) as endedOn')
+    )
+    .groupBy('r.deviceId', 'r.moduleName', 'r.moduleSerial')
+    .having('endedOn', '<', minDate) // only bays with last result before minDate -> inactive
+    .as('r')
 
-  return knex('Result as r')
-    .whereIn('r.id', maxResultBeforeMinDateSubquery)
+  const moduleDisabledIssues = knex('Issue as i2')
+    .join('IssueType as it', 'i2.issueTypeId', 'it.id')
+    .where('it.name', 'ModuleDisabled')
+    .whereIn('i2.id', function () {
+      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
+    })
+    .select(
+      'i2.id',
+      'i2.resultId',
+      'i2.deviceId',
+      knex.raw('i2.data->>"$.moduleName" as moduleName'),
+      'i2.createdOn as dateLastIssue',
+      'it.name as lastIssue'
+    )
+    .as('i')
+
+  return knex(modulesWithLastResultBeforeMinDate)
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Partner as p', 'p.id', 'd.partnerId')
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin(
-      'Issue as i',
-      'i.id',
-      knex('Issue as ilast')
-        .whereRaw('ilast.deviceId = r.deviceId')
-        .andWhereRaw('ilast.data->>"$.moduleName" = r.moduleName')
-        .max('ilast.id')
-    )
-    .leftJoin('IssueType as it', queryBuilder => {
-      queryBuilder
-        .on('it.id', 'i.issueTypeId')
-        .andOn('it.externalId', knex.raw('?', 'ModuleDisabled'))
-    })
-    .whereNotExists(function () {
-      // filter bays with results beyond mindate
-      this.from('Result as r2')
-        .whereRaw('r2.deviceId = r.deviceId')
-        .whereRaw('r2.moduleName = r.moduleName')
-        .where('r2.endedOn', '>', minDate)
+    .leftJoin(moduleDisabledIssues, function () {
+      this.on('i.deviceId', 'r.deviceId').andOn('i.moduleName', 'r.moduleName')
     })
     .where('dt.externalId', 'CepheidGeneXpert')
-    .select([
+    .distinct([
       'd.name as deviceName',
       knex.raw(`ifnull(r.moduleName, 'N/A') as moduleName`),
       'r.moduleSerial',
       knex.raw('max(r.endedOn) as lastSeen'),
-      'it.name as lastIssue',
-      'i.updatedOn as dateLastIssue',
+      'i.lastIssue',
+      'i.dateLastIssue',
     ])
     .groupBy('r.deviceId', 'r.moduleName')
     .orderBy([
@@ -50,12 +57,14 @@ function getModuleActivityReportData(minDate, dataConstraints, query) {
       'r.deviceId',
       'r.moduleName',
     ])
+
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
       geography: 'g',
       partner: 'p',
     })
+
     .modify(filterParams, query, {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',

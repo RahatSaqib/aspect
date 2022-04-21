@@ -479,9 +479,12 @@ async function getGeneXpertOperationLogsReport(auth, query) {
 async function getModuleActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate } = query
-  const q = await getModuleActivityReportData(minDate, dataConstraints, query)
+  const rows = await getModuleActivityReportData(
+    minDate,
+    dataConstraints,
+    query
+  )
 
-  const rows = await q
   return {
     ok: true,
     data: rows,
