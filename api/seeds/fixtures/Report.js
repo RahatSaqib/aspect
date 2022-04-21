@@ -290,6 +290,24 @@ const utilizationPerInstrumentDayReport = {
   ],
 }
 
+const moduleActivityReport = {
+  name: 'Module Activity Report',
+  description: 'Shows devices with one or more inactive modules',
+  i18nKey: 'moduleActivityReport',
+  i18nKeyDescription: 'moduleActivityReport_Description',
+  externalId: 'module_activity_report',
+  fileName: 'ModuleActivityReport',
+  exportCsv: true,
+  sortOrder: 120,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReport',
+      functionName: 'getModuleActivityReport',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -303,4 +321,5 @@ module.exports = {
   geneXpertIssues,
   allResults,
   utilizationPerInstrumentDayReport,
+  moduleActivityReport,
 }

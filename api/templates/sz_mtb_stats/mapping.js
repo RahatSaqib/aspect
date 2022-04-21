@@ -12,7 +12,7 @@ module.exports = [
     G12: 'mtbInconclusive', // invalid, errors, no results
     G13: 'total',
     G14: 'percentMtbError',
-    
+
     // > RIF section
     G16: 'totalRif',
     G17: 'mtbDetectedRifDetected',
@@ -28,5 +28,5 @@ module.exports = [
     D27: 'mtbDetectedRifDetected',
     E27: 'mtbTraceDetected',
     F27: 'mtbInvalid',
-  }
+  },
 ]

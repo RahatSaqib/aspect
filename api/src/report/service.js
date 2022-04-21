@@ -21,7 +21,6 @@ async function getReports(request) {
     .modify(addConstraints, dataConstraints, { person: 'p' })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
-
   const getItems = reportsQuery
     .clone()
     .modify(filterParams, query, {
