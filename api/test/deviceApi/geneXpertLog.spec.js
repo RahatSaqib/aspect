@@ -132,7 +132,10 @@ describe('Process GeneXpert Logs', () => {
     await queuePurge().then(done)
     await context.createDeviceWithResult()
   })
-  afterEach(context.afterEach)
+  afterEach(async done => {
+    await await queuePurge().then(done)
+    return context.afterEach
+  })
   let issueEventTriggerId = null
   before(async () => {
     const issueTypeId = await issueTypeToId('HardwareModuleWasReset')
