@@ -201,20 +201,31 @@ const ContactDetailsFormFormik = () => {
       sx: { backgroundColor: 'green' },
     }
 
-    if (actions[0]?.label !== baseSubmit?.label) {
-      if (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) {
+    switch (true) {
+      case (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) &&
+        actions[0]?.label !== baseSubmit.label:
         setActions([baseSubmit])
-      }
-      if (type === FORM_METHOD.UPDATE) {
-        setActions(
-          queryData?.data?.disabled > 0
-            ? [enableSubmit]
-            : [baseSubmit, disableSubmit]
-        )
-      }
+        break
+
+      case type === FORM_METHOD.UPDATE &&
+        !isEmpty(queryData) &&
+        queryData?.data?.disabled === 1 &&
+        actions[0]?.label !== enableSubmit.label:
+        setActions([enableSubmit])
+        break
+
+      case type === FORM_METHOD.UPDATE &&
+        !isEmpty(queryData) &&
+        queryData?.data?.disabled === 0 &&
+        actions[0]?.label !== baseSubmit.label:
+        setActions([baseSubmit, disableSubmit])
+        break
+
+      default:
+        break
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actions, type])
+  }, [queryData, actions, type])
 
   const mutation = useMutation(
     ({ values, endpoint, method, customErrorNotifications }) => {
