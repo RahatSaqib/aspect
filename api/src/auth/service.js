@@ -40,6 +40,7 @@ const personProps = [
   'p.phone',
   'p.cell',
   'p.email',
+  'p.disabled',
 ]
 
 const userProps = [
@@ -140,7 +141,7 @@ async function authenticate(request) {
     }
   }
 
-  if (user.lockedOut === 1) {
+  if (user.lockedOut !== 0 || user.disabled !== 0) {
     return Boom.forbidden('Your account is locked.')
   }
 
