@@ -3,7 +3,7 @@ const path = require('path')
 const _ = require('lodash')
 
 const tests = []
-const problemTests = ['geneXpertLog', 'geneXpert', 'fact']
+const problemTests = ['geneXpertLog', 'geneXpert', 'fact', 'plugin']
 // const problemTests = ['fact']
 const strings = []
 
@@ -15,10 +15,10 @@ const strings = []
 //   return output
 // }
 
-function cleanupString(pathString) {
-  const split = pathString.split('/')
-  return `${split.slice(-2)[0]}/${split.slice(-1)[0]}`
-}
+// function cleanupString(pathString) {
+//   const split = pathString.split('/')
+//   return `${split.slice(-2)[0]}/${split.slice(-1)[0]}`
+// }
 
 function findAllTests(directory) {
   fs.readdirSync(directory).forEach(file => {
@@ -30,7 +30,7 @@ function findAllTests(directory) {
       absolute.endsWith('.spec.js') &&
       !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)
     ) {
-      tests.push(cleanupString(absolute))
+      tests.push(absolute.replace('api/test/', ''))
     }
   })
 }
@@ -88,7 +88,9 @@ function arrayAllTests({ path }) {
 
     // const testsArr = testsToGroup
     // const chunks = chunk(testsToGroup, 1)
-    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}`))
+    chunks.map(chunk =>
+      strings.push(`test/${chunk.length > 1 ? `{${chunk.join(',')}}` : chunk}`)
+    )
     // console.log(testsToRunSeparate)
     // problemTests.map(test => console.log(test))
     // strings.push(`test/**/{${testsToRunSeparate.join(',')}}`)
