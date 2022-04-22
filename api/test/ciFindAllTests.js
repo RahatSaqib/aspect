@@ -49,7 +49,8 @@ function chunk(array, parts) {
 }
 
 function cleanupString(pathString) {
-  return pathString.split('/').slice(-1)[0]
+  const split = pathString.split('/')
+  return `${split.slice(-2)[0]}/${split.slice(-1)[0]}`
   // .findLast(x => true)
 }
 
