@@ -40,10 +40,17 @@ function chunk(array, parts) {
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
+    const problemTests = ['geneXpertLog', 'pakistanTbService', 'result']
     const filesArr = files
-    const chunks = chunk(filesArr, 3)
-    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}.spec.js*`))
-    // console.log(JSON.stringify(strings))
+    const chunks = chunk(filesArr, 2)
+    chunks.map(chunk =>
+      strings.push(
+        `test/**/{${chunk
+          .filter(test => problemTests.indexOf(test) === -1)
+          .join(',')}}.spec.js*`
+      )
+    )
+    strings.push(`test/**/{${problemTests.join(',')}}.spec.js*`)
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(strings))
   }
