@@ -1552,7 +1552,6 @@ L|1`,
 
     describe('use cases for Philippines', () => {
       it('should process ITIS "REST API" urls', async () => {
-        const philippinesITISSystemKey = 't3$+P@s5h!'
         const philippinesITISWebApiUrl =
           'http://itis.doh.gov.ph:3005/pushtbexam'
         const genderValueMap = { Male: 'M', Female: 'F' }
@@ -2447,9 +2446,7 @@ L|1`,
             ['urlTemplate']
           )
           expect(message.url).to.equal(
-            `${philippinesITISWebApiUrl}/${encodeURIComponent(
-              philippinesITISSystemKey
-            )}` +
+            `${philippinesITISWebApiUrl}/gX%40leR%2B%21Ti%24` +
               `/TB_CASE_NUMBER/${encodeURIComponent(
                 resultPatientData.id || 'NULL'
               )}` +
