@@ -291,7 +291,7 @@ const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
 }
 
 async function getGlobalFundInventoryReport(auth, query) {
-  const { globalFundInventoryReportDictionary } = require('../dictionary.json')
+  const { globalFundInventoryReportDictionary } = require('./dictionary.json')
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
   const { maxDate } = query
