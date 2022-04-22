@@ -40,7 +40,7 @@ function arrayAllTests({ path }) {
     findAllTests(path)
     const filesArr = files
     const chunks = chunk(filesArr, 3)
-    chunks.map(chunk => strings.push(`test/{${chunk.join(',')}}/*.spec.js`))
+    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}.spec.js`))
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(strings))
   }
