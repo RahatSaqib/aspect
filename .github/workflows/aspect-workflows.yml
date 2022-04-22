@@ -196,7 +196,7 @@ jobs:
 
       - name: "Run API Contract Tests"
         run: |
-          yarn api:contract --spec $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text'
+          yarn api:contract --spec ${{ matrix.chunk }}
         # run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs yarn api:contract
         env:
           CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunks'] }}
