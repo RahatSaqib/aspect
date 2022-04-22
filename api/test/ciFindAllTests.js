@@ -4,7 +4,7 @@ const path = require('path')
 const tests = []
 const testsToGroup = []
 const testsToRunSeparate = []
-const problemTests = ['geneXpertLog', 'geneXpert']
+const problemTests = ['geneXpertLog', 'geneXpert', 'fact']
 const strings = []
 
 function findAllTests(directory) {
@@ -64,7 +64,7 @@ function arrayAllTests({ path }) {
     )
 
     // const testsArr = testsToGroup
-    const chunks = chunk(testsToGroup, 2)
+    const chunks = chunk(testsToGroup, 1)
     chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}/*.spec.js`))
     strings.push(`test/**/{${testsToRunSeparate.join(',')}}/*.spec.js`)
     // testsToRunSeparate.map(chunk =>
