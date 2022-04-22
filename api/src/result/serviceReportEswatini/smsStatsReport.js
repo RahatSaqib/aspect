@@ -34,7 +34,7 @@ async function getResultStatsData(dataConstraints, params) {
 }
 
 async function getSmsStatsData(dataConstraints, params) {
-  const q = getBaseQuery(knex, dataConstraints)
+  const data = await getBaseQuery(knex, dataConstraints)
     .join('SmsMessage as sms', 'r.id', 'sms.resultId')
     .join('MessageStatus as ms', 'sms.messageStatusId', 'ms.id')
     .join('Sample as s', 'r.sampleId', 's.id')
@@ -60,12 +60,7 @@ async function getSmsStatsData(dataConstraints, params) {
       ),
     })
     .first()
-  console.log(
-    '\x1b[1;34m',
-    '🚀  ➜ file: smsStatsReport.js ➜ line 64 ➜ getSmsStatsData ➜ q',
-    q.toString()
-  )
-  const data = await q
+
   data.averageTATSampleCollectionRegistrationText = humanDuration(
     data.averageTATSampleCollectionRegistration
   )
