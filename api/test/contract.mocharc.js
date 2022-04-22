@@ -8,5 +8,5 @@ module.exports = {
   timeout: 60000,
   ui: 'bdd',
   exit: true,
-  spec: 'test/**/*.spec.js*',
+  // spec: 'test/**/*.spec.js*',
 }

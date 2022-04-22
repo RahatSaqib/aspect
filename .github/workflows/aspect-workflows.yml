@@ -134,17 +134,15 @@ jobs:
       - id: set-test-chunks
         name: Set Chunks
         run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js arrayAllTests --path './api/test/')"
-        # - id: see-test-chunks
-        #   name: See Chunks
-        #   run: echo ${{ fromJson($CHUNKS) }}
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
   be-contract-test:
-    name: "Contract Tests (API) - (chunk ${{ matrix.chunk }})"
+    name: "Contract Tests (API) - (chunk ${{ strategy.job-index }})"
     runs-on: ubuntu-latest
     needs: be-contract-chunks
     strategy:
+      fail-fast: false
       matrix:
         chunk: ${{ fromJson(needs.be-contract-chunks.outputs.test-chunks) }}
     steps:
@@ -197,26 +195,21 @@ jobs:
       - name: "Run API Contract Tests"
         run: |
           yarn api:contract --spec ${{ matrix.chunk }}
-        # run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs yarn api:contract
         env:
           CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunks'] }}
         shell: bash
 
-      # - name: "Run API Contract Tests"
-      #   run: yarn api:contract
-      #   shell: bash
-
-      # - name: "Contract Test Report"
-      #   uses: dorny/test-reporter@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-      #   if: success() || failure()
-      #   with:
-      #     name: Contract Tests Report
-      #     path: "api/contract-test-results.json"
-      #     reporter: mocha-json
-      #     fail-on-error: "false"
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Contract Test Report"
+        uses: dorny/test-reporter@v1
+        env:
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        if: success() || failure()
+        with:
+          name: Contract Tests Report
+          path: "api/contract-test-results.json"
+          reporter: mocha-json
+          fail-on-error: "false"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Stop Server"
         run: yarn stop:api:bg
