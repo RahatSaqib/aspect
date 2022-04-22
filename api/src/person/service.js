@@ -318,17 +318,6 @@ async function savePerson(request, updatablePersonFields) {
     return Boom.notFound()
   }
 
-  // if user with specified 'email' exists - return Boom
-  if (payload.email) {
-    const person = await knex('Person').where({ email: payload.email }).first()
-    if (person && payload.id !== person.id) {
-      const err = Boom.conflict('Person with requested email already exists', {
-        errorKeyCode: 'personEmailExist',
-      })
-      err.output.payload.data = err.data
-      return err
-    }
-  }
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
@@ -372,22 +361,12 @@ async function savePerson(request, updatablePersonFields) {
 
 async function createPerson(request) {
   const { payload } = request
-  const { email } = payload
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
       _.set(payload, `${key}`, null)
     }
   })
-  // if user with specified 'email' exists - return Boom
-  const person = await knex('Person').where({ email }).first()
-  if (person) {
-    const err = Boom.conflict('Person with requested email already exists', {
-      errorKeyCode: 'personEmailExist',
-    })
-    err.output.payload.data = err.data
-    return err
-  }
 
   const currentlyLoggedInUser = await userService.getUser(
     request.auth.credentials.name
