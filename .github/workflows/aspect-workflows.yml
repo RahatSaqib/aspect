@@ -134,6 +134,9 @@ jobs:
       - id: set-test-chunks
         name: Set Chunks
         run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js arrayAllTests --path './api/test/')"
+        # - id: see-test-chunks
+        #   name: See Chunks
+        #   run: echo ${{ fromJson($CHUNKS) }}
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
@@ -143,7 +146,7 @@ jobs:
     needs: be-contract-chunks
     strategy:
       matrix:
-        chunk: ${{ fromJson(needs.be-contract-chunks.outputs['test-chunks']) }}
+        chunk: ${{ fromJson(needs.be-contract-chunks.outputs.test-chunks) }}
     steps:
       - name: Setup MySQL
         uses: haltuf/mysql-action@master
