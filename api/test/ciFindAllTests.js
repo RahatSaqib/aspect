@@ -38,23 +38,15 @@ function chunk(array, parts) {
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
-    return JSON.stringify(files, null, 2)
-  }
-}
-
-function constructMochaCommand({ files }) {
-  if (files) {
-    const filesArr = JSON.parse(files) || 0
-    // eslint-disable-next-line no-console
-    console.log({ files: filesArr?.length })
+    const filesArr = files
     const chunks = chunk(filesArr, 3)
     chunks.map(chunk => strings.push(`test/{${chunk.join(',')}}/*.spec.js`))
+    // eslint-disable-next-line no-console
+    console.log(strings)
   }
-  return strings
 }
 
 module.exports = {
-  constructMochaCommand,
   arrayAllTests,
 }
 

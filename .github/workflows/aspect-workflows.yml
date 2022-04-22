@@ -124,7 +124,6 @@ jobs:
     # needs: be-lint
     outputs:
       test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
-      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
       - uses: actions/checkout@v3
 
@@ -135,9 +134,6 @@ jobs:
       - id: set-test-chunks
         name: Set Chunks
         run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js arrayAllTests --path './api/test/')"
-      - id: set-test-chunk-ids
-        name: Set Chunk IDs
-        run: echo "::set-output name=test-chunk-ids::$(node ./api/test/ciFindAllTests.js constructMochaCommand --files '${{ outputs.test-chunks }}')"
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
@@ -147,7 +143,7 @@ jobs:
     needs: be-contract-chunks
     strategy:
       matrix:
-        chunk: ${{ fromJson(needs.be-contract-chunks.outputs['set-test-chunks']) }}
+        chunk: ${{ fromJson(needs.be-contract-chunks.outputs['test-chunks']) }}
     steps:
       - name: Setup MySQL
         uses: haltuf/mysql-action@master
@@ -200,7 +196,7 @@ jobs:
           yarn api:contract --spec $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text'
         # run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs yarn api:contract
         env:
-          CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunk-ids'] }}
+          CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunks'] }}
         shell: bash
 
       # - name: "Run API Contract Tests"
