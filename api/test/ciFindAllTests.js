@@ -4,7 +4,7 @@ const path = require('path')
 const tests = []
 const testsToGroup = []
 const testsToRunSeparate = []
-const problemTests = ['geneXpertLog', 'geneXpert', 'fact']
+const problemTests = ['geneXpertLog', 'geneXpert', 'fact', 'plugin']
 const strings = []
 
 function findAllTests(directory) {
