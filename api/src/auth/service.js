@@ -141,7 +141,7 @@ async function authenticate(request) {
     }
   }
 
-  if (user.lockedOut !== 0 || user.disabled !== 0) {
+  if (user.lockedOut === 1 || user.disabled === 1) {
     return Boom.forbidden('Your account is locked.')
   }
 
