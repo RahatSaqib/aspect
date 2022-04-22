@@ -1,7 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 
-const files = []
+const tests = []
+const testsToGroup = []
+const testsToRunSeparate = []
+const problemTests = ['geneXpertLog', 'geneXpert']
 const strings = []
 
 function findAllTests(directory) {
@@ -14,9 +17,17 @@ function findAllTests(directory) {
       absolute.endsWith('.spec.js') &&
       !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)
     ) {
-      // return files.push(absolute.replace('api/', ''))
-      return files.push(file.replace('.spec.js', ''))
-      // return files.push(file)
+      // return tests.push(absolute.replace('api/', ''))
+      // console.log(
+      //   `${directory}/${file}`,
+      //   problemTests.some(test => directory.includes(test))
+      // )
+      // if (problemTests.some(testName => directory.includes(testName))) {
+      //   testsToRunSeparate.push(file.replace('.spec.js', ''))
+      // } else {
+      //   testsToGroup.push(file.replace('.spec.js', ''))
+      // }
+      tests.push(absolute)
     }
   })
 }
@@ -37,20 +48,37 @@ function chunk(array, parts) {
   return output
 }
 
+function cleanupString(pathString) {
+  return pathString.replace('.spec.js', '').split('/').slice(-1)[0]
+  // .findLast(x => true)
+}
+
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
-    const problemTests = ['geneXpertLog', 'pakistanTbService', 'result']
-    const filesArr = files
-    const chunks = chunk(filesArr, 2)
-    chunks.map(chunk =>
-      strings.push(
-        `test/**/{${chunk
-          .filter(test => problemTests.indexOf(test) === -1)
-          .join(',')}}.spec.js*`
-      )
+    // eslint-disable-next-line no-confusing-arrow
+    tests.map(test =>
+      problemTests.some(testName => test.includes(testName))
+        ? testsToRunSeparate.push(cleanupString(test))
+        : testsToGroup.push(cleanupString(test))
     )
-    strings.push(`test/**/{${problemTests.join(',')}}.spec.js*`)
+
+    // const testsArr = testsToGroup
+    const chunks = chunk(testsToGroup, 2)
+    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}/*.spec.js`))
+    strings.push(`test/**/{${testsToRunSeparate.join(',')}}/*.spec.js`)
+    // testsToRunSeparate.map(chunk =>
+    // )
+    // chunks.map(chunk =>
+    //   strings.push(
+    //     `test/**/{${chunk
+    //       .filter(test => problemTests.indexOf(test) === -1)
+    //       .join(',')}}.spec.js*`
+    //   )
+    // )
+    // problemTests.map(test => strings.push(`test/**/{${test}}.spec.js*`))
+
+    // console.log(testsToRunSeparate)
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(strings))
   }
