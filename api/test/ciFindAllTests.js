@@ -49,7 +49,7 @@ function chunk(array, parts) {
 }
 
 function cleanupString(pathString) {
-  return pathString.replace('.spec.js', '').split('/').slice(-1)[0]
+  return pathString.split('/').slice(-1)[0]
   // .findLast(x => true)
 }
 
@@ -65,8 +65,8 @@ function arrayAllTests({ path }) {
 
     // const testsArr = testsToGroup
     const chunks = chunk(testsToGroup, 1)
-    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}/*.spec.js`))
-    strings.push(`test/**/{${testsToRunSeparate.join(',')}}/*.spec.js`)
+    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}`))
+    strings.push(`test/**/{${testsToRunSeparate.join(',')}}`)
     // testsToRunSeparate.map(chunk =>
     // )
     // chunks.map(chunk =>
