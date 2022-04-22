@@ -46,19 +46,19 @@ function isMocha(context) {
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
-    const startSum = tests.length
+    // const startSum = tests.length
     const matches = _.map(problemTests, string =>
       _.remove(tests, test => new RegExp(`${string}\\b`, '').test(test))
     )
     const chunks = _.concat(matches, [tests])
     // eslint-disable-next-line no-return-assign
-    const checksum = _.reduce(chunks, (acc, curr) => (acc += curr.length), 0)
+    // const checksum = _.reduce(chunks, (acc, curr) => (acc += curr.length), 0)
 
     // eslint-disable-next-line no-console
-    console.log(
-      `Cheksum: ${startSum}:${checksum}`,
-      startSum === checksum ? `✅` : `🤬`
-    )
+    // console.log(
+    //   `Cheksum: ${startSum}:${checksum}`,
+    //   startSum === checksum ? `✅` : `🤬`
+    // )
 
     // console.log(chunks)
 
