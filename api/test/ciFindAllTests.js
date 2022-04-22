@@ -14,7 +14,8 @@ function findAllTests(directory) {
       absolute.endsWith('.spec.js') &&
       !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)
     ) {
-      return files.push(file.replace('.spec.js', ''))
+      return files.push(file)
+      // return files.push(file.replace('.spec.js', ''))
     }
   })
 }
@@ -40,7 +41,7 @@ function arrayAllTests({ path }) {
     findAllTests(path)
     const filesArr = files
     const chunks = chunk(filesArr, 3)
-    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}.spec.js`))
+    chunks.map(chunk => strings.push(`test/**/{${chunk.join(',')}}`))
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(strings))
   }
