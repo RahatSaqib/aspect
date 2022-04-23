@@ -261,7 +261,8 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(totals1, totals2)
   })
 
-  it('should create entry with Errors in log details and trigger "deviceHardwareError" action', async () => {
+  // eslint-disable-next-line no-only-tests/no-only-tests
+  it.only('should create entry with Errors in log details and trigger "deviceHardwareError" action', async () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
     // initial count of deviceOperation entries
