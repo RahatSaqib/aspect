@@ -44,32 +44,6 @@ const ContactDetailsFormFormik = () => {
   const [config, setConfig] = useState(false)
   const formItemsConfig = itemsConfig(editor)
   const [actions, setActions] = useState([])
-  const baseSubmit = {
-    id: 'submit',
-    type: 'submit',
-    color: 'primary',
-    label: formatMessage(
-      type === FORM_METHOD.ADD ? messages.create : messages.save
-    ),
-    component: FormSubmit,
-    action: handleSubmit,
-  }
-
-  const disableSubmit = {
-    id: 'delete',
-    type: 'button',
-    color: 'error',
-    label: formatMessage(messages.disable),
-    component: AccountEnableDisable,
-    sx: { backgroundColor: 'red' },
-  }
-  const enableSubmit = {
-    id: 'enable',
-    type: 'button',
-    label: formatMessage(messages.enable),
-    component: AccountEnableDisable,
-    sx: { backgroundColor: 'green' },
-  }
 
   const {
     isLoading,
@@ -192,11 +166,66 @@ const ContactDetailsFormFormik = () => {
         break
 
       default:
+        setType(FORM_METHOD.UPDATE)
         buildItems(setItems)
         break
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personId, type])
+
+  useEffect(() => {
+    const baseSubmit = {
+      id: 'submit',
+      type: 'submit',
+      color: 'primary',
+      label: formatMessage(
+        type === FORM_METHOD.ADD ? messages.create : messages.save
+      ),
+      component: FormSubmit,
+      action: handleSubmit,
+    }
+
+    const disableSubmit = {
+      id: 'delete',
+      type: 'button',
+      color: 'error',
+      label: formatMessage(messages.disable),
+      component: AccountEnableDisable,
+      sx: { backgroundColor: 'red' },
+    }
+    const enableSubmit = {
+      id: 'enable',
+      type: 'button',
+      label: formatMessage(messages.enable),
+      component: AccountEnableDisable,
+      sx: { backgroundColor: 'green' },
+    }
+
+    switch (true) {
+      case (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) &&
+        actions[0]?.label !== baseSubmit.label:
+        setActions([baseSubmit])
+        break
+
+      case type === FORM_METHOD.UPDATE &&
+        !isEmpty(queryData) &&
+        queryData?.data?.disabled === 1 &&
+        actions[0]?.label !== enableSubmit.label:
+        setActions([enableSubmit])
+        break
+
+      case type === FORM_METHOD.UPDATE &&
+        !isEmpty(queryData) &&
+        queryData?.data?.disabled === 0 &&
+        actions[0]?.label !== baseSubmit.label:
+        setActions([baseSubmit, disableSubmit])
+        break
+
+      default:
+        break
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryData, actions, type])
 
   const mutation = useMutation(
     ({ values, endpoint, method, customErrorNotifications }) => {
@@ -264,19 +293,6 @@ const ContactDetailsFormFormik = () => {
         rows: items,
         debug: false,
         initialValues,
-      }
-
-      if (!actions?.length) {
-        if (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) {
-          setActions([baseSubmit])
-        }
-        if (type === FORM_METHOD.UPDATE) {
-          setActions(
-            queryData?.data?.disabled > 0
-              ? [enableSubmit]
-              : [baseSubmit, disableSubmit]
-          )
-        }
       }
 
       if (!isEqual(config, newConfig)) {

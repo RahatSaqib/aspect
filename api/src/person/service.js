@@ -38,6 +38,11 @@ async function listPeople(request) {
         )
       }
     })
+    .where(qb => {
+      if (query?.onlyUsersNotDisabled) {
+        qb.where('p.disabled', 0)
+      }
+    })
 
   switch (geographicLevel) {
     case 'state':
@@ -118,6 +123,7 @@ async function listPeople(request) {
 
 async function listPeopleForSelectList(request) {
   request.query.size = 'all'
+  request.query.onlyUsersNotDisabled = true
   const response = await listPeople(request)
   return response
 }
