@@ -40,6 +40,7 @@ mysql -u root <<EOT
 create database aspect;
 create user 'aspectapi'@'localhost' identified by 'mypassword';
 grant all on aspect. * to 'aspectapi'@'localhost';
+set global log_bin_trust_function_creators=1;
 flush privileges;
 EOT
 
