@@ -1,10 +1,10 @@
 const { merge, orderBy, keyBy, keys, min } = require('lodash')
 const Promise = require('bluebird')
 const { parseISO } = require('date-fns')
-const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
-const { filterDateRangeParams, filterParams } = require('../db')
-const { getArrayOfDaysInRange } = require('../shared/date')
+const { knex } = require('../../db')
+const { getConstraints, addConstraints } = require('../../auth/constraints')
+const { filterDateRangeParams, filterParams } = require('../../db')
+const { getArrayOfDaysInRange } = require('../../shared/date')
 
 function getResultsBaseQuery(query) {
   const now = new Date()

@@ -10,9 +10,7 @@ const {
 const {
   getResultForStringTemplateProcessing,
 } = require('../../../result/service')
-const {
-  RESULT_STRING_TEMPLATE_FIELDS,
-} = require('../../../result/querySelectors')
+const { RESULT_STRING_TEMPLATE_FIELDS } = require('../../../result/query')
 const { resultUnusedModules } = require('../../../result/actions')
 
 const {
