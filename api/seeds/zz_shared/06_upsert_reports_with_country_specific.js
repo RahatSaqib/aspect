@@ -16,7 +16,7 @@ const relativeReportPath = `../${process.env['seeds.directory'].replace(
   ''
 )}/fixtures/reports.js`
 const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace(
-  '/zz_shared',
+  /(\/|\\)zz_shared/,
   ''
 )
 function exists(path) {

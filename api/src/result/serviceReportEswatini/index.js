@@ -1,10 +1,10 @@
-const Promise = require('bluebird')
 const { getConstraints } = require('../../auth/constraints')
 const {
   getErrorTable,
   getGeneralStatsForMapping,
   addErrorTableSiteTotals,
 } = require('./mtbStatsReport')
+const { getSmsStatsData, getResultStatsData } = require('./smsStatsReport')
 
 async function getMtbStats(auth, params) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -30,6 +30,26 @@ async function getMtbStats(auth, params) {
   }
 }
 
+async function getSmsStats(auth, params) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const smsStatsPromise = getSmsStatsData(dataConstraints, params)
+  const resultStatsPromise = getResultStatsData(dataConstraints, params)
+
+  const [smsStats, resultStats] = await Promise.all([
+    smsStatsPromise,
+    resultStatsPromise,
+  ])
+
+  return {
+    ok: true,
+    data: {
+      ...smsStats,
+      ...resultStats,
+      rows: [],
+    },
+  }
+}
 module.exports = {
   getMtbStats,
+  getSmsStats,
 }
