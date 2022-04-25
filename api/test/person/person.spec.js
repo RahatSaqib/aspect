@@ -178,17 +178,6 @@ describe('Person routes', () => {
         // keep person id to remove it in after()
         testingPersonId = personDetails.id
       })
-      it('Should fail to create person with same name', async () => {
-        const res = await server
-          .post(`${path}`)
-          .send({ name: testingPersonName, countryId })
-          .set('Authorization', `Bearer ${shared.token}`)
-        assert.equal(res.status, 409) // Boom.conflict
-        assert.equal(
-          res.body.message,
-          'Person with requested name already exists'
-        )
-      })
     })
   })
 })

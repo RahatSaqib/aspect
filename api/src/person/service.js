@@ -323,6 +323,7 @@ async function savePerson(request, updatablePersonFields) {
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
+
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
@@ -366,23 +367,12 @@ async function savePerson(request, updatablePersonFields) {
 
 async function createPerson(request) {
   const { payload } = request
-  const { name } = payload
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
       _.set(payload, `${key}`, null)
     }
   })
-
-  // if user with specified 'name' exists - return Boom
-  const person = await knex('Person').where({ name }).first()
-  if (person) {
-    const err = Boom.conflict('Person with requested name already exists', {
-      errorKeyCode: 'personNameExist',
-    })
-    err.output.payload.data = err.data
-    return err
-  }
 
   const currentlyLoggedInUser = await userService.getUser(
     request.auth.credentials.name
