@@ -1676,6 +1676,16 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
       key: 'cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif',
       value: 'smearPrev',
     },
+    {
+      line: 'line1', // merged cell, only line 1 has to be filled
+      key: 'cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate',
+      value: 'presumtiveTbIndeterminated',
+    },
+    {
+      line: 'line1', // merged cell, only line 1 has to be filled
+      key: 'cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate',
+      value: 'presumtiveDrTbIndeterminated',
+    },
     //
     {
       line: 'line1',
