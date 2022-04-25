@@ -3,5 +3,4 @@
     "./api",
     "./web"
   ],
-  "turboConsoleLog.wrapLogMessage": false
 }

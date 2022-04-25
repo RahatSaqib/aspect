@@ -41,8 +41,8 @@ async function getSmsStatsData(dataConstraints, params) {
     .where('ms.externalId', knex.raw('?', 'Sent'))
     .modify(filterParams, params)
     .modify(filterDateRangeParams, params, 'r.endedOn')
-    .select({
-      totalSmsForPeriod: knex.count('sms.id'),
+    .count('sms.id as totalSmsForPeriod')
+    .first({
       smsWithResultCount: knex.raw(
         'IFNULL(SUM(CASE WHEN sms.resultId IS NOT NULL THEN 1 ELSE 0 END),0)'
       ),
@@ -59,7 +59,6 @@ async function getSmsStatsData(dataConstraints, params) {
         "IFNULL(ROUND(AVG(CASE WHEN r.endedOn IS NOT NULL AND sms.createdOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, r.endedOn, sms.createdOn) ELSE NULL END ) ,2),'-')"
       ),
     })
-    .first()
 
   data.averageTATSampleCollectionRegistrationText = humanDuration(
     data.averageTATSampleCollectionRegistration
@@ -73,10 +72,16 @@ async function getSmsStatsData(dataConstraints, params) {
   return data
 }
 
-function humanDuration(minutes) {
-  const minutesNum = parseInt(minutes, 10)
-  if (Number.isNaN(minutesNum)) return '-'
-  const duration = intervalToDuration({ start: 0, end: minutesNum * 1000 })
+/**
+ * @param {*} seconds Duration in seconds for a time period between 1 second and 31 days
+ * @returns {string} Human readable duration in english
+ */
+function humanDuration(seconds) {
+  const secondsNum = parseInt(seconds, 10)
+  const seconsInMonth = 2678400
+  if (Number.isNaN(secondsNum) || secondsNum <= 0 || secondsNum > seconsInMonth)
+    return '-'
+  const duration = intervalToDuration({ start: 0, end: secondsNum * 1000 })
 
   const cleanDuration = {
     days: duration.days,
@@ -89,4 +94,5 @@ function humanDuration(minutes) {
 module.exports = {
   getResultStatsData,
   getSmsStatsData,
+  humanDuration,
 }
