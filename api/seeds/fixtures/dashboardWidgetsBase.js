@@ -33,6 +33,7 @@ const WIDGET_GROUP_KEYS = {
 const WIDGET_FILTER_KEYS = {
   LAST_THIRTY_DAYS: 'last30Days',
   CURRENT_MONTH: 'currentMonth',
+  PERSON_DISABLED: 0,
 }
 
 const positiveResults = `('Detected' , 'Trace Detected', 'MoreThan40', 'MoreThan150', 'MoreThan550', 'MoreThan1000', 'Resistant', 'Positive1', 'Positive2', 'Positive3', 'Scanty', 'PositiveMOTT', 'PositiveMTB', 'Positive')`
@@ -75,9 +76,12 @@ const personTitle = {
   titleI18nKey: 'personTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator:
-    'SELECT COUNT(pe.id) AS cnt FROM Person as pe INNER JOIN Partner as pa ON pe.partnerId IS NULL OR pe.partnerId = pa.id LEFT OUTER JOIN Geography AS g ON pe.geographyId = g.id',
+  sqlForIndicator: `select count(p.id) as cnt from Person as p inner join Partner on p.partnerId is NULL or p.partnerId = Partner.id left outer join Geography as g on p.geographyId = g.id where p.disabled = 0`,
+  // sqlForIndicator: `SELECT COUNT(p.id) AS cnt FROM Person as p INNER JOIN Partner ON p.partnerId IS NULL OR p.partnerId = Partner.id LEFT OUTER JOIN Geography AS g ON p.geographyId = g.id WHERE p.disabled = 0`,
   link: '/browse/person',
+  linkParams: {
+    contactStatus: WIDGET_FILTER_KEYS.PERSON_DISABLED,
+  },
   sortOrder: 3,
   externalId: 'personTitle',
   description: 'The number of contacts in the system.',

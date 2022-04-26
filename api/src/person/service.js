@@ -27,6 +27,7 @@ async function listPeople(request) {
       lgaId: 'g.lgaId',
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
+      contactStatus: 'p.disabled',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where(qb => {
@@ -35,6 +36,11 @@ async function listPeople(request) {
           'p.partnerId',
           dataConstraints.partner.id
         )
+      }
+    })
+    .where(qb => {
+      if (query?.onlyUsersNotDisabled) {
+        qb.where('p.disabled', 0)
       }
     })
 
@@ -87,6 +93,8 @@ async function listPeople(request) {
     .select(
       'p.id',
       'p.name',
+      'p.disabled',
+      'p.disabledOn',
       getJobFunctionNames,
       'st.name as state',
       'l.name as lga',
@@ -111,6 +119,13 @@ async function listPeople(request) {
   })
 
   return { ok: true, total, data, length: data.length }
+}
+
+async function listPeopleForSelectList(request) {
+  request.query.size = 'all'
+  request.query.onlyUsersNotDisabled = true
+  const response = await listPeople(request)
+  return response
 }
 
 async function availableContacts(request) {
@@ -258,6 +273,8 @@ function getPersonDetails(personId) {
       'l.name as lgaName',
       'u.lockedOut as userLockedOut',
       'p.canLogIn',
+      'p.disabled',
+      'p.disabledOn',
       'j.id as jobId'
     )
 }
@@ -306,6 +323,7 @@ async function savePerson(request, updatablePersonFields) {
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
+
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
@@ -349,23 +367,12 @@ async function savePerson(request, updatablePersonFields) {
 
 async function createPerson(request) {
   const { payload } = request
-  const { name } = payload
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
       _.set(payload, `${key}`, null)
     }
   })
-
-  // if user with specified 'name' exists - return Boom
-  const person = await knex('Person').where({ name }).first()
-  if (person) {
-    const err = Boom.conflict('Person with requested name already exists', {
-      errorKeyCode: 'personNameExist',
-    })
-    err.output.payload.data = err.data
-    return err
-  }
 
   const currentlyLoggedInUser = await userService.getUser(
     request.auth.credentials.name
@@ -457,6 +464,7 @@ async function listRefreshTokens(request) {
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
       diseaseId: 'dis.id',
+      contactStatus: 'p.disabled',
     })
     .leftJoin('ResultDownloadLog as rdl', queryBuilder => {
       queryBuilder.on('rdl.createdBy', 'r.userId')
@@ -554,8 +562,31 @@ async function updateRefreshToken(request) {
     },
   }
 }
+
+async function updatePersonStatus(request) {
+  const {
+    auth: { credentials },
+    params: { personId },
+    method,
+  } = request
+  const { id: disabledBy } = await userService.getUser(credentials.name)
+  const person = await knex('Person')
+    .where('id', personId)
+    .update(
+      method === 'delete'
+        ? {
+            disabled: true,
+            disabledOn: new Date(),
+            disabledBy,
+          }
+        : { disabled: false, disabledOn: null, disabledBy: null }
+    )
+  return { ok: true, data: person }
+}
+
 module.exports = {
   listPeople,
+  listPeopleForSelectList,
   listRefreshTokens,
   availableContacts,
   assignContact,
@@ -565,4 +596,5 @@ module.exports = {
   createPerson,
   updatePersonUserPreferences,
   updateRefreshToken,
+  updatePersonStatus,
 }

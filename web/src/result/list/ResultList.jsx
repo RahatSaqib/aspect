@@ -400,13 +400,9 @@ const ResultList = () => {
       sortCol: 'endedOn',
       sortDir: 'desc',
     })
-    const urlSearchParams = new URLSearchParams(location.search)
-    const urlFilters = urlSearchParams.get('filters')
-      ? new URLSearchParams(urlSearchParams.get('filters'))
-      : []
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(getFilters(urlFilters))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 

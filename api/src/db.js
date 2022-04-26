@@ -16,10 +16,12 @@ function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
     sortColumnMapping,
     defaultSort
   )
-  queryBuilder
-    .orderBy(sortingAndPagingValues.orderBy)
-    .limit(sortingAndPagingValues.size)
-    .offset(sortingAndPagingValues.skip)
+  queryBuilder.orderBy(sortingAndPagingValues.orderBy)
+  if (sortingAndPagingValues.size) {
+    queryBuilder
+      .limit(sortingAndPagingValues.size)
+      .offset(sortingAndPagingValues.skip)
+  }
 }
 
 // extracts the parameters related to sorting from the candidate params and
@@ -33,7 +35,10 @@ function sortParams(queryBuilder, params, defaultSort, sortColumnMapping) {
 // modifies the query builder with the paging modifications
 function pageParams(queryBuilder, params) {
   const pagingValues = getPageParams(params)
-  queryBuilder.limit(pagingValues.size).offset(pagingValues.skip)
+  // missing `size` means no limitation in size and querying all items
+  if (pagingValues.size) {
+    queryBuilder.limit(pagingValues.size).offset(pagingValues.skip)
+  }
 }
 
 function getWhereArgs(columnName, paramValue) {

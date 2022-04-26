@@ -33,6 +33,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.daysStockLeft.noConsumption',
     defaultMessage: 'No Consumption',
   },
+  contactEnabled: {
+    id: 'filter.btnGroup.contactStatus.contactEnabled',
+    defaultMessage: 'Enabled',
+  },
+  contactDisabled: {
+    id: 'filter.btnGroup.contactStatus.contactDisabled',
+    defaultMessage: 'Disabled',
+  },
 })
 
 export default messages

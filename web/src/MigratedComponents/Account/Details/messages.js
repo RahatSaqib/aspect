@@ -13,13 +13,21 @@ export default defineMessages({
     id: 'pages.Contacts.save',
     defaultMessage: 'Save',
   },
-  personNameExist: {
-    id: 'pages.Contacts.person.name.exist',
-    defaultMessage:
-      'A person with the same name exists. Please use a different name.',
+  disable: {
+    id: 'pages.Contacts.disable',
+    defaultMessage: 'Disable',
   },
-  personNameExistTitle: {
-    id: 'pages.Contacts.person.name.exist.title',
+  enable: {
+    id: 'pages.Contacts.enable',
+    defaultMessage: 'Enable',
+  },
+  personEmailExist: {
+    id: 'pages.Contacts.person.email.exist',
+    defaultMessage:
+      'A person with the same email exists. Please use a different email.',
+  },
+  personEmailExistTitle: {
+    id: 'pages.Contacts.person.email.exist.title',
     defaultMessage: 'Error creating person',
   },
 })

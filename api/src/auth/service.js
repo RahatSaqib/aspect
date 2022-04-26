@@ -40,6 +40,7 @@ const personProps = [
   'p.phone',
   'p.cell',
   'p.email',
+  'p.disabled',
 ]
 
 const userProps = [
@@ -140,7 +141,7 @@ async function authenticate(request) {
     }
   }
 
-  if (user.lockedOut === 1) {
+  if (user.lockedOut === 1 || user.disabled === 1) {
     return Boom.forbidden('Your account is locked.')
   }
 
@@ -232,6 +233,7 @@ async function authenticate(request) {
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
+    userId: user.id,
   }
 }
 
@@ -341,6 +343,7 @@ async function refreshToken(request) {
     timezone: data.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryAbbreviation: data.countryAbbreviation,
+    userId: data.id,
   }
 }
 

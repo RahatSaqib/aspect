@@ -1,15 +1,14 @@
+import React from 'react'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import React from 'react'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-
 import styles from '../../components/shared/DataTableRow.css'
+import AccountEnableDisable from '../../MigratedComponents/Account/AccountEnableDisable'
 
 const cssClasses = classnames.bind(styles)
-
 const enhance = identity
 
 const formatTags = tagsStr => {
@@ -37,15 +36,35 @@ const formatTags = tagsStr => {
     </span>
   ))
 }
-
-const PersonTableRow = ({ person, ...restProps }) => (
-  <TableRow {...restProps} className={cssClasses(restProps.className)}>
-    <TableCell>{person.get('name')}</TableCell>
-    <TableCell>{person.get('level')}</TableCell>
-    <TableCell>{person.get('state')}</TableCell>
-    <TableCell>{person.get('lga')}</TableCell>
-    <TableCell>{formatTags(person.get('tags'))}</TableCell>
-  </TableRow>
-)
+const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
+  const rowClickHandler = (evt, onClick) => {
+    const tagName = evt.target.tagName.toLowerCase()
+    if (['svg', 'button', 'path'].includes(tagName)) {
+      evt.preventDefault()
+    } else {
+      onClick(evt)
+    }
+  }
+  return (
+    <TableRow
+      {...restProps}
+      onClick={evt => rowClickHandler(evt, restProps.onClick)}
+      className={cssClasses(restProps.className)}
+    >
+      <TableCell>{person.get('name')}</TableCell>
+      <TableCell>{person.get('level')}</TableCell>
+      <TableCell>{person.get('state')}</TableCell>
+      <TableCell>{person.get('lga')}</TableCell>
+      <TableCell>{formatTags(person.get('tags'))}</TableCell>
+      {personEditPermission ? (
+        <AccountEnableDisable type="icon" person={person} />
+      ) : (
+        <TableCell>
+          <div style={{ height: '38px' }} />
+        </TableCell>
+      )}
+    </TableRow>
+  )
+}
 
 export default enhance(PersonTableRow)

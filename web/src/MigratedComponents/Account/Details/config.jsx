@@ -40,7 +40,7 @@ const itemsConfig = user => {
     row1: [
       {
         id: 'name',
-        label: formatMessage(messages.fullName),
+        label: `${formatMessage(messages.fullName)}`,
         type: 'text',
         component: PureTextInput,
         validation: string().required('Required'),
@@ -56,10 +56,10 @@ const itemsConfig = user => {
     row2: [
       {
         id: 'email',
-        label: formatMessage(messages.primaryEmail),
+        label: `${formatMessage(messages.primaryEmail)}`,
         type: 'email',
         component: PureTextInput,
-        validation: string().email('Invalid email').nullable(),
+        validation: string().email('Invalid email'),
       },
       {
         id: 'email2',

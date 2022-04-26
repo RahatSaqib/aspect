@@ -9,6 +9,7 @@ const {
 } = require('../geography/requestValidation')
 const {
   listPeople,
+  listPeopleForSelectList,
   listRefreshTokens,
   availableContacts,
   showPerson,
@@ -18,6 +19,7 @@ const {
   updateRefreshToken,
   assignContact,
   unAssignContact,
+  updatePersonStatus,
 } = require('./service')
 
 const { exportContacts } = require('./serviceReports')
@@ -50,6 +52,9 @@ function listContactBaseConfig() {
           .items(Joi.object())
           .single()
           .description('The array of {tagName,tagId} assigned to persons'),
+        contactStatus: Joi.number()
+          .allow('')
+          .description('Filter for person enabled/disabled'),
         ...validateAllGeographyFilterParams(),
         ...validateSortPageParams('name', 'level', 'state', 'lga'),
       },
@@ -80,6 +85,9 @@ function listReporterBaseConfig() {
         format: Joi.string()
           .allow('')
           .description('File format for exporting data'),
+        contactStatus: Joi.number()
+          .allow('')
+          .description('Filter for person enabled/disabled'),
         revoked: Joi.string()
           .valid('0', '1')
           .description('Filter for revoked status'),
@@ -109,6 +117,16 @@ const routes = [
     config: {
       description: 'People List',
       notes: 'Pageable and sortable list of people',
+      ...listContactBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/select-list',
+    handler: asyncHandler(listPeopleForSelectList),
+    config: {
+      description: 'Persons for Select List',
+      notes: 'List of ALL persons',
       ...listContactBaseConfig(),
     },
   },
@@ -349,6 +367,36 @@ const routes = [
         payload: {
           timezone: Joi.string().max(255).allow('', null),
           culture: Joi.string().max(45).allow('', null),
+        },
+      },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/person/{personId}',
+    handler: asyncHandler(updatePersonStatus),
+    config: {
+      description: 'Soft Delete Person',
+      notes: 'Id of a person to disable',
+      auth: { scope: ['person:edit'] },
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/enable/{personId}',
+    handler: asyncHandler(updatePersonStatus),
+    config: {
+      description: 'Enable Person',
+      notes: 'Id of a person to enable',
+      auth: { scope: ['person:edit'] },
+      validate: {
+        params: {
+          personId: Joi.string().description('Person ID').required(),
         },
       },
     },

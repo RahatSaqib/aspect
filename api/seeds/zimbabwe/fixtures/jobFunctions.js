@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const {
   admin,
   clinician,
@@ -14,7 +13,8 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
-const countryReports = _.keys(reports)
+const countryReports = Object.values(reports).map(report => report.externalId)
+
 module.exports = [
   mergeJobFunctions(admin, {
     reports: [...admin.reports, ...countryReports],

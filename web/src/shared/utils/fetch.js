@@ -102,10 +102,10 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
           return resp.json().then(changeAllIdsToString)
         }
         // HTTP Status !== 2xx
-        return resp.json().then(({ data }) => {
+        return resp.json().then(({ data, statusCode }) => {
           const error = new APIApplicationError(data || {}, data.message)
           error.statusCode =
-            data.statusCode /* HAPI always responds with statusCode */
+            statusCode /* HAPI always responds with statusCode */
           throw error
         })
       },
