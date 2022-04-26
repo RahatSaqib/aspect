@@ -1686,22 +1686,53 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
       key: 'cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate',
       value: 'presumtiveDrTbIndeterminated',
     },
-    //
     {
       line: 'line1',
-      key: 'key',
-      value: 'col',
+      key: 'cnt_Presumptive_TB_Cases_NoResult',
+      value: 'presumptiveTbInvalid',
     },
     {
-      line: 'line2',
-      key: 'key',
-      value: 'col',
+      line: 'line1',
+      key: 'cnt_Presumptive_TB_Cases_NoResult',
+      value: 'presumptiveTbNoResult',
     },
     {
-      line: 'line3',
-      key: 'key',
-      value: 'col',
+      line: 'line1',
+      key: 'cnt_Presumptive_TB_Cases_Error',
+      value: 'presumptiveTbError',
     },
+    {
+      line: 'line1',
+      key: 'cnt_Presumptive_DR_TB_Cases_Invalid',
+      value: 'presumptiveDrTbInvalid',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_Presumptive_DR_TB_Cases_NoResult',
+      value: 'presumptiveDrTbNoResult',
+    },
+    {
+      line: 'line1',
+      key: 'cnt_Presumptive_DR_TB_Cases_Error',
+      value: 'presumptiveDrTbError',
+    },
+
+    //
+    // {
+    //   line: 'line1',
+    //   key: 'key',
+    //   value: 'col',
+    // },
+    // {
+    //   line: 'line2',
+    //   key: 'key',
+    //   value: 'col',
+    // },
+    // {
+    //   line: 'line3',
+    //   key: 'key',
+    //   value: 'col',
+    // },
   ]
   const data = await drTb10ADataNtp
   const obj = {}
@@ -1742,9 +1773,9 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
           // oldVal.push({ [found.value]: current[key] })
         }
       })
-      oldVal.push(obj.line1)
-      oldVal.push(obj.line2)
-      oldVal.push(obj.line3)
+      oldVal.push({ ...obj.line1, deviceName: 'Tested by Xpert MTB/RIF' })
+      oldVal.push({ ...obj.line2, deviceName: 'MTB detected' })
+      oldVal.push({ ...obj.line3, deviceName: 'RR TB detected' })
       return oldVal
     },
     []
