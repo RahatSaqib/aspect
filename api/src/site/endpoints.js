@@ -13,6 +13,7 @@ const {
   updateSite,
   listSitesForSelectList,
   listSitesWithReporters,
+  disableSite,
 } = require('./service')
 
 const { exportSites, exportReporters } = require('./serviceReports')
@@ -338,6 +339,21 @@ const routes = [
       description: 'Export Reporter List into Excel or CSV',
       auth: { scope: ['reporter'] },
       validate: reportersBaseConfig().query,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/site/{siteId}',
+    handler: asyncHandler(disableSite),
+    config: {
+      description: 'Soft Delete Site',
+      notes: 'Id of the site to disable',
+      auth: { scope: ['site:disable'] },
+      validate: {
+        params: {
+          siteId: Joi.string().description('Site ID').required(),
+        },
+      },
     },
   },
 ]

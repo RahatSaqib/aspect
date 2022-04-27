@@ -48,6 +48,10 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'site',
+        activity: 'disable',
+      },
+      {
         module: 'treatmentStatus',
         activity: 'edit',
       },

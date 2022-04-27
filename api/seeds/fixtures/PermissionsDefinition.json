@@ -85,6 +85,11 @@
         "description": "Can view, edit, and filter by sites"
     },
     {
+        "module": "site",
+        "activity": "disable",
+        "description": "Can disable sites"
+    },
+    {
         "module": "issue",
         "activity": "edit",
         "description": "Can trigger issues (internal/developer use only)"

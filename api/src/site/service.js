@@ -1,3 +1,4 @@
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const {
   knex,
@@ -151,22 +152,32 @@ async function showSite(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // get item
-  const item = await getSite(params.siteId, dataConstraints)
-  item.devices = await knex('Device as d')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
-    .where('siteId', params.siteId)
-    .select(
-      'd.id',
-      'd.name',
-      'd.shortName',
-      'dt.id as deviceTypeId',
-      'dt.name as deviceTypeName',
-      'dtc.id as category'
-    )
-
-  const result = { ok: true, data: item }
+  const site = await getSite(params.siteId, dataConstraints)
+  if (site) {
+    site.devices = await knex('Device as d')
+      .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .innerJoin(
+        'DeviceTypeCategory as dtc',
+        'dt.deviceTypeCategoryId',
+        'dtc.id'
+      )
+      .modify(addConstraints, dataConstraints, {
+        device: 'd',
+        deviceType: 'dt',
+      })
+      .where('siteId', params.siteId)
+      .select(
+        'd.id',
+        'd.name',
+        'd.shortName',
+        'dt.id as deviceTypeId',
+        'dt.name as deviceTypeName',
+        'dtc.id as category'
+      )
+  } else {
+    return Boom.notFound()
+  }
+  const result = { ok: true, data: site }
 
   return result
 }
@@ -207,6 +218,26 @@ async function updateSite(request) {
 
   const result = await showSite(request)
   return result
+}
+
+async function disableSite(request) {
+  const {
+    params,
+    auth: { credentials },
+  } = request
+  const dataConstraints = await getConstraints(credentials)
+  const user = await getUser(credentials.name)
+  const { id: disabledBy } = user
+  const updatedCount = await knex('Site as s')
+    .where('s.id', params.siteId)
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .update({ disabled: true, disabledOn: new Date(), disabledBy })
+
+  if (updatedCount !== 1) {
+    return Boom.conflict('The site is already disabled.')
+  }
+
+  return { ok: true }
 }
 
 async function listSitesForSelectList(request) {
@@ -424,4 +455,5 @@ module.exports = {
   listSitesForSelectList,
   listSitesWithReporters,
   getListSitesForSelectList,
+  disableSite,
 }

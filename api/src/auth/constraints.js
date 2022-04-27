@@ -398,20 +398,24 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
-      queryBuilder.leftOuterJoin(
-        `Site as ${aliases.site}`,
-        `${device}.siteId`,
-        `${aliases.site}.id`
-      )
+      queryBuilder
+        .leftOuterJoin(
+          `Site as ${aliases.site}`,
+          `${device}.siteId`,
+          `${aliases.site}.id`
+        )
+        .where(`${aliases.site}.disabled`, knex.raw('?', 0))
     }
     if (aliases.site) {
       if (!aliases.partner) {
         aliases.partner = alias('Partner')
-        queryBuilder.leftOuterJoin(
-          `Partner as ${aliases.partner}`,
-          `${aliases.site}.partnerId`,
-          `${aliases.partner}.id`
-        )
+        queryBuilder
+          .leftOuterJoin(
+            `Partner as ${aliases.partner}`,
+            `${aliases.site}.partnerId`,
+            `${aliases.partner}.id`
+          )
+          .where(`${aliases.site}.disabled`, knex.raw('?', 0))
       }
     }
     if (_.get(constraints, 'deviceType.id')) {

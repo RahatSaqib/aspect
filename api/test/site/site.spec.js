@@ -109,6 +109,44 @@ describe('Site routes', () => {
 
     describe('POST', () => {})
 
+    describe('DELETE', () => {
+      it('should soft delete a site given a siteId', async () => {
+        const deleteSiteResponse = await server
+          .delete(`${path}/${siteId}`)
+          .send()
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(deleteSiteResponse.status, 200)
+
+        // make sure the site has been disabled
+        const site = await knex('Site as s')
+          .where('s.id', siteId)
+          .first('s.id', 's.disabled', 's.disabledOn', 's.disabledBy')
+
+        assert.isNotNull(site, 'Site should not be null')
+        assert.equal(1, site.id, 'Site should be disabled')
+        assert.equal(1, site.disabled, 'Site should be disabled')
+        assert.equal(site.disabledBy, 1, 'Site should be disabled by user')
+        assert.isNotNull(site.disabledOn, 'Site should have a disabledOn date')
+
+        // check that constraints filter the disabled site
+        const getSiteResponse = await server
+          .get(`/api/site/${siteId}`)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(
+          getSiteResponse.status,
+          404,
+          'disabled site should not be retrieved anymore'
+        )
+
+        // return the test site to its original state
+        await knex('Site')
+          .where('id', siteId)
+          .update({ disabled: 0, disabledBy: null, disabledOn: null })
+      })
+    })
+
     describe('PUT', () => {
       it('Should update site given a siteId', async () => {
         const originalStreet2 = siteData.street2

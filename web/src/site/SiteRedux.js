@@ -38,6 +38,9 @@ export const types = {
 
   REQUEST_SITES_FOR_SELECT_LIST: 'REQUEST_SITES_FOR_SELECT_LIST',
   RECEIVE_SITES_FOR_SELECT_LIST: 'RECEIVE_SITES_FOR_SELECT_LIST',
+
+  REQUEST_DELETING_SINGLE_SITE: 'REQUEST_DELETING_SINGLE_SITE',
+  RECEIVE_DELETED_SINGLE_SITE: 'RECEIVE_DELETED_SINGLE_SITE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -363,6 +366,53 @@ export function updateLatLongFromFormAddress() {
     })
   }
 }
+
+function requestDeletingSingleSite(requestedAt, siteId, data) {
+ 
+  return {
+    type: types.REQUEST_DELETING_SINGLE_SITE,
+    requestedAt,
+    siteId,
+    data,
+  }
+}
+
+function receiveDeletedSingleSite(requestedAt, item) {
+  return {
+    type: types.RECEIVE_DELETED_SINGLE_SITE,
+    requestedAt,
+    item,
+  }
+}
+
+export function deleteSingleSite(siteId, data) {
+  return dispatch => {
+    dispatch(requestDeletingSingleSite(new Date(), siteId, data))
+    return aspectFetch(`/site/${siteId}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ siteId }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.deleteSingleSite.DELETE.default.title', // TODO: add resource and translations
+              defaultMessage:
+                'An Error Occurred When Trying to Delete the Site',
+            },
+          })
+        ),
+      },
+    }).then(json =>
+      dispatch(
+        receiveDeletedSingleSite(new Date(), {
+          ...json.data,
+          id: siteId,
+        })
+      )
+    )
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
