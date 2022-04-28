@@ -141,6 +141,9 @@ const plugins = {
     issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
     transformMergeResultPayload: require('./partner/Philippines/transformMergeResultPayload'),
   },
+  pakistan: {
+    settings: require('./partner/Pakistan/settings'),
+  },
 }
 
 /**

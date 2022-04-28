@@ -9,6 +9,7 @@ module.exports = {
   lowerLevelUserPassword: '324PoCbqIeBG',
   serverUrl: 'https://pakistan.aspect.id',
   partnerAbbreviation: 'PK',
+  partnerPlugin: 'pakistan',
   assayTypes: [
     'GxUnknown',
     'GxHcv',
