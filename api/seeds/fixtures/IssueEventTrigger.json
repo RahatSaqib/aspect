@@ -597,7 +597,7 @@
           "evaluationFilterParameters": {
             "errorCodes": [4017, 1001, 1002, 4012, 2014, 1004, 4009],
             "daysPeriod": 60,
-            "minErrors": 3
+            "minErrors": 4
           }
         },
         "suppressingConditions": {
