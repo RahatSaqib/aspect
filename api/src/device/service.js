@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const {
   addDays,
   addYears,
+  differenceInBusinessDays,
   subMonths,
   startOfMonth,
   endOfMonth,
@@ -45,7 +46,7 @@ const {
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
-function getSelectListFields(userTimeOffset) {
+function getSelectListFields(userTimeOffset, { lastSeenField }) {
   const fields = SELECT_LIST_FIELDS
   fields.push(
     getDateTimeProjectionInUserTimeZone(
@@ -66,7 +67,7 @@ function getSelectListFields(userTimeOffset) {
   fields.push(
     getDateTimeProjectionInUserTimeZone(
       knex,
-      'd.lastSeenOn',
+      lastSeenField ?? 'd.lastSeenOn',
       userTimeOffset,
       'lastSeen'
     )
@@ -262,7 +263,9 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...getSelectListFields(userTimeOffset),
+      ...getSelectListFields(userTimeOffset, {
+        lastSeenField: 'GREATEST(dmsl.day, d.lastSeenOn)',
+      }),
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
@@ -1733,7 +1736,8 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
       'current_dmsl.day as currentMaintenanceStatusDay',
       'da.token as approvalToken',
       'd.deviceApprovalId as deviceApprovalId',
-      knex.raw('COUNT(r.id) as totalResults')
+      knex.raw('COUNT(r.id) as totalResults'),
+      'd.lastSeenOn'
     )
 }
 
@@ -1843,14 +1847,37 @@ async function onDeviceMaintenanceStatusLogScheduled(
           ? currentMaintenanceStatusLogData
           : '{}'
 
+      /**
+       * `data` to store in DeviceMaintenanceStatusLog
+       */
+      const data = {
+        ...JSON.parse(deviceMaintenanceStatusLogData),
+        ...action,
+      }
+
+      /**
+       * if data for DeviceMaintenanceStatusLog has type='RESULT_LOGGED' and device's `lastSeenOn`
+       * is not equal TODAY - then update `lastSeenOn`
+       */
+      const lastSeenOn = lastSeenOn ? startOfDayUtc(device.lastSeenOn) : null
+      if (
+        (data.type === 'RESULT_LOGGED' ||
+          deviceMaintenanceStatusForTheDay === 'active') &&
+        lastSeenOn &&
+        lastSeenOn < today &&
+        differenceInBusinessDays(lastSeenOn, today) > 0
+      ) {
+        const now = new Date()
+        await knex('Device')
+          .where({ id: device.id })
+          .update({ lastSeenOn: now, updatedOn: now })
+      }
+
       await automaticallySetDeviceMaintenanceStatus(
         id,
         today,
         deviceMaintenanceStatusForTheDay,
-        {
-          ...JSON.parse(deviceMaintenanceStatusLogData),
-          ...action,
-        },
+        data,
         messageContext
       )
     })
