@@ -294,7 +294,7 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
 })
 
 const dateRangeOptions = (key, showLast30Days = true) => {
-  const { formatDate, formatMessage } = i18nWrapper()
+  const { format, formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
   const dateFormatRanges = {
     day: '2-digit',
@@ -320,8 +320,8 @@ const dateRangeOptions = (key, showLast30Days = true) => {
     id: DATE_CONSTS.DATE_RANGE_OPTIONS.CURRENT_MONTH,
     name: formatMessage
       ? formatMessage(messages.thisMonth, {
-          minDate: formatDate(startOfMonth(today), dateFormatRanges),
-          maxDate: formatDate(endOfMonth(today), dateFormatRanges),
+          minDate: format(startOfMonth(today), 'dd-MM'),
+          maxDate: format(endOfMonth(today), 'dd-MM'),
         })
       : messages.thisMonth.id,
     value: {
