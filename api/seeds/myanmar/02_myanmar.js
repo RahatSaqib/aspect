@@ -5,13 +5,7 @@ const RO_PW = 'u4W9wupFBA'
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
-const {
-  serverUrl,
-  partnerName,
-  adminUserName,
-  adminPassword,
-  deviceApiToken,
-} = require('./fixtures/partnerData')
+const partnerData = require('./fixtures/partnerData')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget')
@@ -25,10 +19,13 @@ const {
   deviceTypeToId,
   partnerTypeToId,
 } = require('../../src/shared/dictionary')
+const upsertPartnerData = require('../common/upsert_partner_data')
 
 const now = new Date()
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
+
+const { adminUserName, adminPassword, deviceApiToken } = partnerData
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
@@ -55,15 +52,11 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const [partnerId] = await knex('Partner').insert({
-    name: partnerName,
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
     partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    autoAcknowledgeOlderThanDays: 28,
-    numberToLeaveUnacknowledged: 15,
-    maxDaysDeviceOffline: 7,
-    serverUrl,
   })
+
   await addIssueTypes(knex, partnerId, adminId, null)
   // Reuse previously seeded "static" data
   const defaultMessageTypes = await getDefaultMessageTypes(knex)

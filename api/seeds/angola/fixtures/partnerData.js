@@ -5,12 +5,8 @@ module.exports = {
   adminPassword: '8Zx8z8CR',
   partnerName: 'Angola',
   deviceApiToken: 'bh59kmC69TZh2EEvVUz25mwx',
-  serverUrl: 'https://angola.aspect.id',
   partnerAbbreviation: 'AO',
   lowerLevelUserPassword: 'wMNrV96R',
-  deviceLogHistoryDays: 365,
-  maxDaysDeviceOffline: 7,
-  maxDaysDeviceNoResults: 14,
   assays: [
     'GxUnknown',
     'GxHcv',
@@ -25,4 +21,14 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
+  plugin: '',
+  deviceLogHistoryDays: 365,
+  autoAcknowledgeOlderThanDays: null,
+  numberToLeaveUnacknowledged: null,
+  maxDaysDeviceOffline: 7,
+  maxDaysDeviceNoResults: 14,
+  dueDaysInventoryStockout: 30,
+  dueDaysInventoryStockExpiring: 30,
+  serverUrl: 'https://angola.aspect.id',
+  implementsReporterApp: true,
 }

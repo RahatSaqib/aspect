@@ -3,32 +3,29 @@ const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
-const {
-  adminUserName,
-  adminPassword,
-  partnerName,
-  partnerAbbreviation,
-  serverUrl,
-  deviceApiToken,
-  lowerLevelUserPassword,
-} = require('./fixtures/partnerData')
+
 const {
   commonUpserts,
   upsertGeneXpertDeviceTypeAndAssays,
 } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 
+const upsertPartnerData = require('../common/upsert_partner_data')
+
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
+const {
+  adminUserName,
+  adminPassword,
+  partnerAbbreviation,
+  deviceApiToken,
+  lowerLevelUserPassword,
+} = partnerData
 
 async function seed(knex) {
-  const [partnerId] = await knex('Partner').insert({
-    name: partnerName,
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
     partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-    serverUrl,
   })
 
   const [adminId] = await knex('User').insert({

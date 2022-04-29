@@ -25,6 +25,7 @@ const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneX
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
 const defaultDashboardWidgetsFixture = require('./fixtures/DashboardWidget')
+const upsertPartnerData = require('./common/upsert_partner_data')
 const {
   deviceApprovalToId,
   deviceTypeToId,
@@ -120,6 +121,7 @@ async function commonUpserts(
     id: countryId,
     geographyId,
   } = countries[countryAbbreviation]
+
   let { id: adminPersonId } =
     (await knex('Person')
       .where({
@@ -1208,22 +1210,15 @@ async function baseGxAlertMigration(
       password: bcrypt.hashSync(admin.password || '', saltRounds),
     })
   }
-  let { id: partnerId } =
-    (await knex('Partner').where('name', partner.name).first('id')) || {}
-  if (!partnerId) {
-    ;[partnerId] = await knex('Partner').insert({
-      partnerTypeId: await partnerTypeToId('Operating'),
-      deviceLogHistoryDays: 365,
-      maxDaysDeviceOffline: 7,
-      maxDaysDeviceNoResults: 14,
-      ...partner,
-    })
-  }
+
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
+    partnerTypeId: await partnerTypeToId('Operating'),
+  })
   const returnValue = {
     adminId,
     partnerId,
   }
-
   // --------------------
   // Common general seeds
   // --------------------

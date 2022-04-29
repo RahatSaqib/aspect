@@ -7,7 +7,6 @@ module.exports = {
   deviceApiToken: '77zc0ar862xcys2626w6',
   statsQueryDeviceApiToken: 'kcf2ve9wy96pp800kdk0',
   lowerLevelUserPassword: '324PoCbqIeBG',
-  serverUrl: 'https://pakistan.aspect.id',
   partnerAbbreviation: 'PK',
   assayTypes: [
     'GxUnknown',
@@ -23,4 +22,14 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
+  partnerPlugin: 'pakistan',
+  deviceLogHistoryDays: 365,
+  autoAcknowledgeOlderThanDays: null,
+  numberToLeaveUnacknowledged: null,
+  maxDaysDeviceOffline: 7,
+  maxDaysDeviceNoResults: 14,
+  dueDaysInventoryStockout: 30,
+  dueDaysInventoryStockExpiring: 30,
+  serverUrl: 'https://pakistan.aspect.id',
+  implementsReporterApp: true,
 }
