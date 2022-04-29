@@ -181,7 +181,11 @@ const resultDataMappings = {
           'LPA Aminoglycosides/ SLI',
           'LPA Ethionamide/Prothionamide',
         ].forEach(categoryType => {
-          if (payload[categoryType] === 'Resistance Detected')
+          // Includes Low-Resistance Detected, Resistance Detected, etc
+          if (
+            payload[categoryType] &&
+            payload[categoryType].indexOf('Resistance Detected') > -1
+          )
             detectedResistances.push(
               categoryType.replace('LPA', '').replace('Result', '').trim()
             )
