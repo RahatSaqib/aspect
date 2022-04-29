@@ -102,7 +102,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
         result.endedOn = resultEndedOn
       }
       const resultData = mergeDeep(JSON.parse(result.resultData || '{}'), {
-        encodedResult: newResultData,
+        ...newResultData,
         resultSignOff,
       })
       result.resultData = JSON.stringify(resultData)
