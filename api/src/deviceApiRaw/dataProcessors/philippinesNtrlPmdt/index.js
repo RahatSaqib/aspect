@@ -387,7 +387,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           resultDataMappings[testTypes.CULTURE])
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
-          const encodedResult = mappedResultData
+          const { encodedResult } = mappedResultData
           // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
