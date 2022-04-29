@@ -41,6 +41,10 @@ web/dist
 #nyc output
 .nyc_output/
 
+#test results JSON
+**/unit-test-results.json
+**/contract-test-results.json
+
 #Local developer helper scripts
 **/--devutil--*
 
