@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-// import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
@@ -25,7 +23,6 @@ import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigur
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
 import useI18n from '../../Hooks/i18n/useI18n'
-import ColorDemo from './ColorDemo/ColorDemo'
 
 import styles from './Status.css'
 
@@ -49,6 +46,7 @@ const Status = () => {
 
   useEffect(() => {
     dispatch(fetchAssays(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -80,19 +78,19 @@ const Status = () => {
       const { deviceStatus } = deviceStatusGraphs()
       const { testsOverTime } = testsPerFormedGraphs
       setGraphs([
-        // testsOverTime,
-        // hivResults,
-        // tbDetected,
-        // tbResults,
-        // xdrResults,
-        // covidResults,
-        // treatmentStatus,
-        // deviceStatus,
-        // covidDailyConfirmed,
-        // covidMortalityAndRecoveryConfig,
-        // covidMortalityAndRecoveryByGender,
-        // covidCasesByAgeAndGender,
-        // inventoryStatus,
+        testsOverTime,
+        hivResults,
+        tbDetected,
+        tbResults,
+        xdrResults,
+        covidResults,
+        treatmentStatus,
+        deviceStatus,
+        covidDailyConfirmed,
+        covidMortalityAndRecoveryConfig,
+        covidMortalityAndRecoveryByGender,
+        covidCasesByAgeAndGender,
+        inventoryStatus,
       ])
     }
   }, [culture])
@@ -103,14 +101,14 @@ const Status = () => {
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown />
       </div>
-      {/* <ErrorBoundary>
+      <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
           <SummaryStatus
             className={cssClasses('Section--summary')}
             dashboard="home"
           />
         </PermissionsProvider>
-      </ErrorBoundary> */}
+      </ErrorBoundary>
 
       {graphs
         ? graphs.map(graph => (
@@ -123,60 +121,6 @@ const Status = () => {
             </ErrorBoundary>
           ))
         : null}
-
-      <ColorDemo
-        name1='Graph "TB Results"'
-        vars1={{
-          '--aspect-color-conifer': {
-            color: '#99D25D',
-            name: 'Not Detected',
-          },
-          '--aspect-color-mint': { color: '#d4ffdf', name: 'Mint' },
-          '--aspect-color-tara': { color: '#D0F1DA', name: 'Tara' },
-          '--aspect-color-hint': { color: '#EBFFEB', name: 'Hint' },
-        }}
-        vars2={{
-          '--aspect-color-pink': { color: '#ffc9c4', name: 'No result' },
-          '--aspect-color-stone': { color: '#333333', name: 'Stone' },
-          '--aspect-color-slate': { color: '#666666', name: 'Slate' },
-          '--aspect-color-dusk': { color: '#999999', name: 'Dusk' },
-        }}
-        vars3={{
-          '--aspect-color-pink': { color: '#EB6562', name: 'Trace Detected' },
-          '--aspect-color-tangerine': { color: '#FF9A5C', name: 'Tangerine' },
-          '--aspect-color-crayola': { color: '#FFC099', name: 'Crayola' },
-          '--aspect-color-champagne': { color: '#FFE6D6', name: 'Champagne' },
-        }}
-        name2='Graph "TB Rif Resistance"'
-        vars4={{
-          '--aspect-color-conifer': {
-            color: '#99D25D',
-            name: 'Not Detected',
-          },
-          '--aspect-color-middle': { color: '#7AD3E1', name: 'Middle' },
-          '--aspect-color-baby': { color: '#85D8FF', name: 'Baby' },
-          '--aspect-color-powder': { color: '#BCE9F0', name: 'Powder' },
-        }}
-        name3='Graph "Covid Results"'
-        vars5={{
-          '--aspect-color-pink': {
-            color: '#ffc9c4',
-            name: 'Not Result',
-          },
-          '--aspect-color-stone': { color: '#333333', name: 'Stone' },
-          '--aspect-color-slate': { color: '#666666', name: 'Slate' },
-          '--aspect-color-dusk': { color: '#999999', name: 'Dusk' },
-        }}
-        vars6={{
-          '--aspect-color-conifer': {
-            color: '#99D25D',
-            name: 'Covid Detected',
-          },
-          '--aspect-color-mint': { color: '#d4ffdf', name: 'Mint' },
-          '--aspect-color-tara': { color: '#D0F1DA', name: 'Tara' },
-          '--aspect-color-hint': { color: '#EBFFEB', name: 'Hint' },
-        }}
-      />
 
       <Reports
         className={cssClasses('Section--withStatus')}
