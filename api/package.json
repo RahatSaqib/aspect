@@ -18,7 +18,7 @@
     "knex:seed:run": "knex seed:run",
     "lint": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js",
     "mocha:contract": "TZ=UTC mocha --config test/contract.mocharc.js ",
-    "mocha:contract:ci": "TZ=UTC mocha --config test/contract.mocharc.js",
+    "mocha:contract:ci": "TZ=UTC mocha --config test/ci-contract.mocharc.js",
     "mocha:unit": "TZ=UTC mocha --config test/unit.mocharc.js",
     "mocha:unit:clear:coverage": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "mocha:unit:coverage": "nyc mocha --config test/unit.mocharc.js",
