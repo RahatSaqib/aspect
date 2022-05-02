@@ -79,12 +79,12 @@ const ReportIndex = () => {
   const onClickDownload = (externalId, fileExtension = 'xlsx', reportName) => {
     const { value: filtersParams } = filtersFromLocation(location)
     const params = { ...fromPairs([...filtersParams.entries()]) }
-    params.format = fileExtension
+    const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
     if (!params.maxDate) params.maxDate = new Date()
     setShowProgressBar(true)
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
-      params,
+      params: { ...params, timeZone },
     })
       .then(async resp => {
         setShowProgressBar(false)
