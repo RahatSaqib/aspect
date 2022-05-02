@@ -223,12 +223,14 @@ const getBaseColumns = (extraColumns = []) => {
           label: formatMessage(messages.resultWorkflowStatus),
           sortable: true,
           hiddenOn: 'md',
+          auth: ['+reporter'],
         },
         {
           key: 'treatmentStatusInfo',
           label: formatMessage(messages.resultTreatmentStatus),
           sortable: true,
           hiddenOn: 'md',
+          auth: ['+reporter'],
         },
         {
           key: 'patientId',

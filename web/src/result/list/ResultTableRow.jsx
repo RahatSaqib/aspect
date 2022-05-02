@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 import {
   DataTableRow as TableRow,
@@ -91,29 +92,33 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         ))
       )}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
-      <TableCell hiddenOn="md">
-        {formatMessage(
-          messages[result.get('resultWorkflowStatusI18nkey')],
-          null,
-          result.get('resultWorkflowStatus')
-        )}
-      </TableCell>
-      <TableCell hiddenOn="md">
-        {result.get('treatmentStatusInfo') && (
-          <Tooltip
-            title={formatMessage(
-              messages[result.get('resultTreatmentStatusI18nKey')],
-              null,
-              result.get('resultTreatmentStatus')
-            )}
-            disableInteractive
-          >
-            <PermIdentity
-              className={styles[`${result.get('treatmentStatusInfo')}`]}
-            />
-          </Tooltip>
-        )}
-      </TableCell>
+      <PermissionsProvider permissions={['+reporter']}>
+        <TableCell hiddenOn="md">
+          {formatMessage(
+            messages[result.get('resultWorkflowStatusI18nkey')],
+            null,
+            result.get('resultWorkflowStatus')
+          )}
+        </TableCell>
+      </PermissionsProvider>
+      <PermissionsProvider permissions={['+reporter']}>
+        <TableCell hiddenOn="md">
+          {result.get('treatmentStatusInfo') && (
+            <Tooltip
+              title={formatMessage(
+                messages[result.get('resultTreatmentStatusI18nKey')],
+                null,
+                result.get('resultTreatmentStatus')
+              )}
+              disableInteractive
+            >
+              <PermIdentity
+                className={styles[`${result.get('treatmentStatusInfo')}`]}
+              />
+            </Tooltip>
+          )}
+        </TableCell>
+      </PermissionsProvider>
       <TableCell hiddenOn="xs">{patientId}</TableCell>
     </TableRow>
   )
