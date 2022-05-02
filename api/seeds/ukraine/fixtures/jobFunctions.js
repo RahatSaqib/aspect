@@ -86,10 +86,6 @@ module.exports = [
         module: 'issue',
         activity: 'edit',
       },
-      {
-        module: 'reporter',
-        activity: 'edit',
-      },
     ],
   }),
   mergeJobFunctions(regionalOfficer, {
