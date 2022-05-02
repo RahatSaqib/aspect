@@ -11,6 +11,5 @@
   "maxDaysDeviceNoResults": 14,
   "dueDaysInventoryStockout": 30,
   "dueDaysInventoryStockExpiring": 30,
-  "serverUrl": "https://lesotho.aspect.id",
-  "implementsReporterApp": true
+  "serverUrl": "https://lesotho.aspect.id"
 }

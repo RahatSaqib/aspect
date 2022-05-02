@@ -15,7 +15,6 @@ module.exports = async (knex, partnerData) => {
       dueDaysInventoryStockExpiring = 30,
       serverUrl = 'https://systemone.id',
       partnerTypeId = null,
-      implementsReporterApp = true,
     } = partnerData
 
     const [partnerId] = await knex('Partner').insert({
@@ -30,7 +29,6 @@ module.exports = async (knex, partnerData) => {
       dueDaysInventoryStockExpiring,
       serverUrl,
       partnerTypeId,
-      implementsReporterApp,
     })
     return partnerId
   }

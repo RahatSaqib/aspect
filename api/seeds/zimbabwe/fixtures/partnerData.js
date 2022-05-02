@@ -13,5 +13,4 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://zimbabwe.aspect.id:2843',
-  implementsReporterApp: true,
 }
