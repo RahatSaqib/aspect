@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
+"POT-Creation-Date: 2022-05-03T19:42:03.703Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -154,12 +154,14 @@ msgstr ">= 40 cp/mL"
 msgid ">= 550 cp/mL"
 msgstr ">= 550 cp/mL"
 
-#. [pages.Contacts.person.name.exist]
+#. [pages.Contacts.person.email.exist]
 #. defaultMessage is:
-#. A person with the same name exists. Please use a different name.
+#. A person with the same email exists. Please use a different email.
 #: extracted_strings.json
-msgid "A person with the same name exists. Please use a different name."
-msgstr "Existe una persona con el mismo nombre. Utilice un nombre diferente."
+msgid "A person with the same email exists. Please use a different email."
+msgstr ""
+"Existe una persona con el mismo correo electrónico. Utilice un correo "
+"electrónico diferente."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1172,10 +1174,16 @@ msgstr "No puede ser editado"
 #. [pages.JobAssignments.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.PersonList.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.RouterDetail.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [button_Cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.PersonList.disabled.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.BaseDialog.cancel]
@@ -1567,6 +1575,20 @@ msgstr "Contacto creado con éxito"
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Detalles de contacto"
+
+#. [filter.popover.contactStatus]
+#. defaultMessage is:
+#. Contact Status
+#: extracted_strings.json
+msgid "Contact Status"
+msgstr "Estado de contacto"
+
+#. [filter.btnGroup.contactEnabledStatus]
+#. defaultMessage is:
+#. Contact Status: {contactStatus}
+#: extracted_strings.json
+msgid "Contact Status: {contactStatus}"
+msgstr ""
 
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -2425,6 +2447,20 @@ msgstr "Dispositivos con módulos no utilizados"
 msgid "Dial Code"
 msgstr "Código de marcación"
 
+#. [pages.Contacts.disable]
+#. defaultMessage is:
+#. Disable
+#: extracted_strings.json
+msgid "Disable"
+msgstr "Desactivar"
+
+#. [filter.btnGroup.contactStatus.contactDisabled]
+#. defaultMessage is:
+#. Disabled
+#: extracted_strings.json
+msgid "Disabled"
+msgstr ""
+
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
 #. Discard
@@ -2486,6 +2522,20 @@ msgstr "Distrito"
 #: extracted_strings.json
 msgid "Division"
 msgstr "División"
+
+#. [pages.PersonList.disable]
+#. defaultMessage is:
+#. Do you want to disable
+#: extracted_strings.json
+msgid "Do you want to disable"
+msgstr ""
+
+#. [pages.PersonList.enable]
+#. defaultMessage is:
+#. Do you want to enable
+#: extracted_strings.json
+msgid "Do you want to enable"
+msgstr ""
 
 #. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
@@ -2654,6 +2704,9 @@ msgstr "El asunto del correo electrónico es obligatorio"
 msgid "Email was sent to:"
 msgstr "El correo electrónico fue enviado a:"
 
+#. [pages.Contacts.enable]
+#. defaultMessage is:
+#. Enable
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
@@ -2667,6 +2720,20 @@ msgstr "Permitir"
 #: extracted_strings.json
 msgid "Enable this notification"
 msgstr "Habilitar esta notificación"
+
+#. [pages.PersonList.enableDisable]
+#. defaultMessage is:
+#. Enable/Disable User
+#: extracted_strings.json
+msgid "Enable/Disable User"
+msgstr ""
+
+#. [filter.btnGroup.contactStatus.contactEnabled]
+#. defaultMessage is:
+#. Enabled
+#: extracted_strings.json
+msgid "Enabled"
+msgstr "Activado"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -3004,7 +3071,7 @@ msgstr "Error al enviar el correo electrónico de reinicio de contraseña"
 msgid "Error Transferring Result"
 msgstr "Error al transferir el resultados"
 
-#. [pages.Contacts.person.name.exist.title]
+#. [pages.Contacts.person.email.exist.title]
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
@@ -7570,6 +7637,13 @@ msgstr "Seleccione el ensayo..."
 msgid "Select consumable..."
 msgstr "Seleccione el consumible..."
 
+#. [filter.popover.contactStatusHint]
+#. defaultMessage is:
+#. Select contact status...
+#: extracted_strings.json
+msgid "Select contact status..."
+msgstr "Seleccionar estado de contacto..."
+
 #. [pages.NotificationDetail.jobFunctionTags]
 #. defaultMessage is:
 #. Select contacts with any of the following tags
@@ -8416,10 +8490,10 @@ msgstr "Resistencia de TB Rif"
 
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
-#. TB XDR
+#. TB XDR Drug Resistances
 #: extracted_strings.json
-msgid "TB XDR"
-msgstr "TB XDR"
+msgid "TB XDR Drug Resistances"
+msgstr "Resistencias a los medicamentos TB XDR"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -9195,6 +9269,13 @@ msgstr "Este correo electrónico no es válido"
 msgid "This field is required"
 msgstr "Este campo es requerido"
 
+#. [pages.PersonList.disabled.disabledOn]
+#. defaultMessage is:
+#. This person was disabled on
+#: extracted_strings.json
+msgid "This person was disabled on"
+msgstr ""
+
 #. [pages.ReportIndex.geneXpertIssues_description]
 #. defaultMessage is:
 #. This report shows all issues that apply to GeneXpert devices
@@ -9287,6 +9368,24 @@ msgstr ""
 #: extracted_strings.json
 msgid "This username is unavailable"
 msgstr "Este nombre de usuario no está disponible"
+
+#. [pages.PersonList.disabled.disableUser]
+#. defaultMessage is:
+#. This will disable this user, and they will not be able to login. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will disable this user, and they will not be able to login. Would you "
+"like to continue?"
+msgstr ""
+
+#. [pages.PersonList.disabled.enableUser]
+#. defaultMessage is:
+#. This will enable this user again, and they will be able to login again. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will enable this user again, and they will be able to login again. "
+"Would you like to continue?"
+msgstr ""
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -9932,6 +10031,13 @@ msgstr "Semana"
 msgid "Week or holiday"
 msgstr "Semana o día festivo"
 
+#. [pages.welcomePage.welcome]
+#. defaultMessage is:
+#. Welcome to Aspect
+#: extracted_strings.json
+msgid "Welcome to Aspect"
+msgstr ""
+
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
 #. When the result is
@@ -10018,6 +10124,12 @@ msgstr "Informe de actividades de prueba Xpert"
 msgid "Year"
 msgstr "Año"
 
+#. [pages.PersonList.confirm]
+#. defaultMessage is:
+#. Yes
+#. [pages.PersonList.disabled.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
@@ -10167,6 +10279,15 @@ msgstr ""
 #: extracted_strings.json
 msgid "You've successfully logged out"
 msgstr "Has cerrado la sesión con éxito"
+
+#. [pages.welcomePage.setupNeeded]
+#. defaultMessage is:
+#. Your account still needs some setup before you will be able to use the system. Please contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your account still needs some setup before you will be able to use the "
+"system. Please contact your administrator."
+msgstr ""
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -10869,6 +10990,9 @@ msgstr "{unit} calibraciones totales"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid "TB XDR"
+#~ msgstr "TB XDR"
 
 #~ msgid "* in transit from {inTransitFromSiteName}"
 #~ msgstr "* en tránsito desde {inTransitFromSiteName}"
