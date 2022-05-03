@@ -169,6 +169,10 @@ exports.customPropertiesVariables = {
   '--aspect-color-supernova': 'var(--saffron, #f0bc2c)',
   '--aspect-color-supernova-2': 'var(--my-sin, #fcb124)',
   '--aspect-color-sushi': 'var(--sushi, #7cb342)',
+  '--aspect-color-mint': '#d4ffdf',
+  '--aspect-color-slate': '#666666',
+  '--aspect-color-crayola': '#FFC099',
+  '--aspect-color-powder': '#BCE9F0',
 
   // Operational Data screen
   '--aspect-device-active': '#99D25D',

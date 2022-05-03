@@ -31,7 +31,9 @@ const AspectResponsivePie = ({
   type = false,
   link,
   i18nKeys,
+  config: baseConfig,
 }) => {
+  const { id: graphId } = baseConfig
   const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
   const config = (type, data, displayMethod) => {
     switch (true) {
@@ -109,7 +111,7 @@ const AspectResponsivePie = ({
             )}
           />
         )}
-        colors={v => generateColorForValue(v)}
+        colors={v => generateColorForValue(v.id, graphId)}
       />
       {averages && !type ? (
         <PieInnerLegend averages={averages} data={data} />
@@ -126,6 +128,7 @@ AspectResponsivePie.defaultProps = {
   type: false,
   link: false,
   i18nKeys: {},
+  config: {},
 }
 
 AspectResponsivePie.propTypes = {
@@ -138,6 +141,7 @@ AspectResponsivePie.propTypes = {
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   i18nKeys: PropTypes.oneOfType([PropTypes.object]),
+  config: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default AspectResponsivePie
