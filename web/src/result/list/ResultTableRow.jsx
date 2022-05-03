@@ -10,16 +10,17 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
 import formatters from '../formatters'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
 import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
-  const { formatMessage, formatNumber } = useI18n()
+  const { format, formatMessage, formatNumber } = useI18n()
+  const { dateFormat } = getAspectDisplayPreferences().toJS()
   const patientId = result?.get('patientId') || 'N/A'
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
@@ -34,7 +35,9 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
-        {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
+        {result.get('endedOn')
+          ? format(new Date(result.get('endedOn')), dateFormat)
+          : ''}
       </TableCell>
       <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
       <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
