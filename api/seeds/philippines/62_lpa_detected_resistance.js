@@ -4,6 +4,6 @@ module.exports = require('../utils').seed(
   async knex =>
     knex('Assay')
       .where({ externalId: 'assayLPA' })
-      .update({ resultDataSchema: lpaDataSchema }),
+      .update({ resultDataSchema: JSON.stringify(lpaDataSchema) }),
   __filename
 )
