@@ -1,0 +1,24 @@
+name: 'Setup Backend'
+description: 'Clone, install and setup back-end'
+runs:
+  using: "composite"
+  steps:
+    - name: 'Checkout repo'
+      uses: actions/checkout@v2
+
+    - name: 'Setup NODE'
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ./api/**/node_modules
+        key: ${{ runner.os }}-modules-${{ hashFiles('./api/**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-api
+
+    - name: 'Install Node Modules'
+      run: 'yarn start:api:install'
+      shell: bash

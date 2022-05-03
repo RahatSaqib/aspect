@@ -269,6 +269,7 @@ async function upsertTruenatDevices(
         geographyId,
         siteId: truenatLab.id,
         defaultReportableSiteId: truenatLab.id,
+        serial: truenatDevice.deviceSerial,
         createdOn: new Date(),
         updatedOn: new Date(),
         lastPingOn: new Date(),
@@ -282,6 +283,39 @@ async function upsertTruenatDevices(
           deviceApprovalId: deviceApprovalApprovedId,
           updatedOn: new Date(),
         })
+      }
+    } else {
+      const deviceUpdates = {}
+      if (
+        truenatDevice.deviceName &&
+        existingTruenatDevice.name !== truenatDevice.deviceName
+      ) {
+        deviceUpdates.name = truenatDevice.deviceName
+      }
+      if (
+        truenatDevice.deviceShortName &&
+        existingTruenatDevice.shortName !== truenatDevice.deviceShortName
+      ) {
+        deviceUpdates.shortName = truenatDevice.deviceShortName
+      }
+      if (geographyId && existingTruenatDevice.geographyId !== geographyId) {
+        deviceUpdates.geographyId = geographyId
+      }
+      if (truenatLab.id && existingTruenatDevice.siteId !== truenatLab.id) {
+        deviceUpdates.siteId = truenatLab.id
+      }
+      if (
+        truenatDevice.deviceSerial &&
+        existingTruenatDevice.serial !== truenatDevice.deviceSerial
+      ) {
+        deviceUpdates.serial = truenatDevice.deviceSerial
+      }
+      if (!_.isEmpty(deviceUpdates)) {
+        deviceUpdates.updatedOn = new Date()
+        deviceUpdates.updatedBy = auditFields.updatedBy
+        await knex('Device')
+          .where('id', existingTruenatDevice.id)
+          .update(deviceUpdates)
       }
     }
     const truenatDeviceApiKey = await knex('DeviceApiKey')

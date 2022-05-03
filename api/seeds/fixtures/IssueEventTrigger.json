@@ -560,87 +560,6 @@
       }
     },
     {
-      "issueType": "HardwareHeaterTemperatureDifferentialError",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_HEATER_TEMPERATURE_DIFFERENTIAL_ERROR",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [1002],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "checkHardwareSuppression",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareTemperatureDriftedFromSetPoint",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_TEMPERATURE_DRIFTED_FROM_SETPOINT",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [1001],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "checkHardwareSuppression",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareThermistorTemperatureOutOfRange2014",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_2014",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [2014],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "checkHardwareSuppression",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
       "issueType": "HardwarePowerSupplyVoltageOutOfRange",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
@@ -650,7 +569,7 @@
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
             "errorCodes": [4008],
-            "daysPeriod": 30,
+            "daysPeriod": 60,
             "minErrors": 3
           }
         },
@@ -668,44 +587,17 @@
       }
     },
     {
-      "issueType": "HardwareHeaterATemperatureUnstable",
+      "issueType": "HardwareTemperatureErrors",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
-        "action": "HARDWARE_HEATER_A_TEMPERATURE_UNSTABLE",
+        "action": "HARDWARE_TEMPERATURE_ERRORS",
         "conditions": {
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCodes": [4009, 4012],
-            "daysPeriod": 30,
-            "minErrors": 3
-          }
-        },
-        "suppressingConditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "checkHardwareSuppression",
-          "evaluationFilterParameters": {
-            "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
-            ]
-          }
-        }
-      }
-    },
-    {
-      "issueType": "HardwareThermistorTemperatureOutOfRange4017",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "HARDWARE_THERMISTOR_TEMPERATURE_OUT_OF_RANGE_4017",
-        "conditions": {
-          "evaluationMethod": "plugin-function",
-          "evaluationParameter": "analyzeDeviceHardwareError",
-          "evaluationFilterParameters": {
-            "errorCodes": [4017],
-            "daysPeriod": 30,
-            "minErrors": 3
+            "errorCodes": [4017, 1001, 1002, 4012, 2014, 1004, 4009],
+            "daysPeriod": 60,
+            "minErrors": 4
           }
         },
         "suppressingConditions": {

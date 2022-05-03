@@ -43,6 +43,11 @@ grant all on aspect. * to 'aspectapi'@'localhost';
 flush privileges;
 EOT
 
+# If you see an "You do not have the SUPER privilege and binary logging is enabled" error, then you can try the command below.
+mysql -u root <<EOT
+set global log_bin_trust_function_creators=1;
+EOT
+
 # If you have ONLY_FULL_GROUP_BY in your sql_mode by default, add this to my.cnf or my.ini in the [mysqld] section
 sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
 

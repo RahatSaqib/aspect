@@ -1,17 +1,5 @@
 module.exports = [
   {
-    errorCode: 1001,
-    externalId: 'HardwareTemperatureDriftedFromSetPoint',
-  },
-  {
-    errorCode: 1002,
-    externalId: 'HardwareHeaterTemperatureDifferentialError',
-  },
-  {
-    errorCode: 2014,
-    externalId: 'HardwareThermistorTemperatureOutOfRange2014',
-  },
-  {
     errorCode: 2037,
     externalId: 'HardwareCartridgeIntegrityTestFailure',
   },
@@ -53,15 +41,7 @@ module.exports = [
     externalId: 'HardwarePowerSupplyVoltageOutOfRange',
   },
   {
-    errorCode: 4009,
-    externalId: 'HardwareHeaterATemperatureUnstable',
-  },
-  {
-    errorCode: 4012,
-    externalId: 'HardwareHeaterBTemperatureUnstable',
-  },
-  {
     errorCode: 4017,
-    externalId: 'HardwareThermistorTemperatureOutOfRange4017',
+    externalId: 'HardwareTemperatureErrors',
   },
 ]
