@@ -46,16 +46,6 @@ const resultsDrTb10A10BCovidNtpUse = {
         avoidStreaming: true,
       },
     },
-    // {
-    //   sortOrder: 1,
-    //   moduleName: 'result/serviceReportBangladesh',
-    //   functionName: 'getDataForReportDrTb10B',
-    // },
-    // {
-    //   sortOrder: 2,
-    //   moduleName: 'result/serviceReportBangladesh',
-    //   functionName: 'getDataForReportCovid19',
-    // },
   ],
 }
 

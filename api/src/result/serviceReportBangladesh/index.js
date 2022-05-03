@@ -153,7 +153,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
       .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
-      .leftOuterJoin('Site2 as s', 's.id', 'r.siteId')
+      .leftOuterJoin('Site as s', 's.id', 'r.siteId')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
       /**
        * join to `DeviceCapacity` to count number of modules per device
@@ -927,7 +927,7 @@ async function getDataForReportDrTb10B(auth, query) {
   const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site2 as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
@@ -1198,7 +1198,7 @@ async function getDataForReportCovid19(auth, query) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site2 as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('ResultCategoryAssay as rca1', function () {
       this.on('r.assayId', 'rca1.assayId').andOn(
