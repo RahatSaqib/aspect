@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T19:42:03.703Z\n"
+"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2550,6 +2550,13 @@ msgstr ""
 "кунед. Дар ин гузориш шумо метавонед санаҳои калибрченкунӣ, хатогиҳои "
 "сахтафзор/нармафзор ва дигар хатоҳо, нокомиҳо ё сабтҳои иттилоотиро, ки "
 "дастгоҳ тавлид кардааст, бубинед"
+
+#. [pages.ResultList.resultCategoryDrugResistance]
+#. defaultMessage is:
+#. Drug Resistance
+#: extracted_strings.json
+msgid "Drug Resistance"
+msgstr "Муқовимат ба маводи мухаддир"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
@@ -10055,13 +10062,6 @@ msgstr "Дар давоми 2 соат пас аз санҷиш"
 msgid "Workflow Status"
 msgstr "Ҳолати ҷараёни корӣ"
 
-#. [pages.ResultList.resultCategoryXDR]
-#. defaultMessage is:
-#. XDR
-#: extracted_strings.json
-msgid "XDR"
-msgstr "XDR"
-
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
 #. Xpert HCV Viral Load Cartridge
@@ -10972,6 +10972,9 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, ҷамъ, як {# натиҷа} дигар {# натиҷа} })"
+
+#~ msgid "XDR"
+#~ msgstr "XDR"
 
 #~ msgid "TB XDR"
 #~ msgstr "TB XDR"

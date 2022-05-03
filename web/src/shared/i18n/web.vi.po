@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T19:42:03.703Z\n"
+"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2548,6 +2548,13 @@ msgstr ""
 "Tải xuống tất cả các mục nhập mà thiết bị GeneXpert đã tạo trong nhật ký của "
 "nó. Trong báo cáo này, bạn có thể thấy ngày hiệu chuẩn, lỗi phần cứng / phần "
 "mềm và các lỗi khác, lỗi hoặc bản ghi thông tin mà thiết bị đã tạo"
+
+#. [pages.ResultList.resultCategoryDrugResistance]
+#. defaultMessage is:
+#. Drug Resistance
+#: extracted_strings.json
+msgid "Drug Resistance"
+msgstr "Kháng thuốc"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
@@ -10034,13 +10041,6 @@ msgstr "Trong vòng 2 giờ kiểm tra"
 msgid "Workflow Status"
 msgstr "Trạng thái quy trình làm việc"
 
-#. [pages.ResultList.resultCategoryXDR]
-#. defaultMessage is:
-#. XDR
-#: extracted_strings.json
-msgid "XDR"
-msgstr "XDR"
-
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
 #. Xpert HCV Viral Load Cartridge
@@ -10955,6 +10955,9 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
+
+#~ msgid "XDR"
+#~ msgstr "XDR"
 
 #~ msgid "TB XDR"
 #~ msgstr "TB XDR Drug Resistances"

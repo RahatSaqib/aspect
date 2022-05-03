@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T19:42:03.703Z\n"
+"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2557,6 +2557,13 @@ msgstr ""
 "registro. En este informe puede ver las fechas de calibración, los fallos de "
 "hardware/software y otros errores, fallos o registros de información que el "
 "dispositivo generó"
+
+#. [pages.ResultList.resultCategoryDrugResistance]
+#. defaultMessage is:
+#. Drug Resistance
+#: extracted_strings.json
+msgid "Drug Resistance"
+msgstr "Resistencia a las drogas"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
@@ -10072,13 +10079,6 @@ msgstr "Dentro de las 2 horas siguientes a la prueba"
 msgid "Workflow Status"
 msgstr "Estado de flujo de trabajo"
 
-#. [pages.ResultList.resultCategoryXDR]
-#. defaultMessage is:
-#. XDR
-#: extracted_strings.json
-msgid "XDR"
-msgstr "XDR"
-
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
 #. Xpert HCV Viral Load Cartridge
@@ -10990,6 +10990,9 @@ msgstr "{unit} calibraciones totales"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid "XDR"
+#~ msgstr "XDR"
 
 #~ msgid "TB XDR"
 #~ msgstr "TB XDR"
