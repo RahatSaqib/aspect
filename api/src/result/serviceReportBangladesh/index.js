@@ -127,8 +127,9 @@ const getDatesFromQuery = query => {
 const reportDrTb10ABaseQuery = async (auth, query) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  let { dateFrom } = getDatesFromQuery(query)
-  const { dateTo } = getDatesFromQuery(query)
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
@@ -814,9 +815,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
  */
 async function getDataForReportDrTb10A(auth, query) {
   const { stateId, lgaId, siteName } = query
-
-  let { dateFrom } = getDatesFromQuery(query)
-  const { dateTo } = getDatesFromQuery(query)
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
@@ -1271,7 +1272,6 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
       'state.name as stateName',
       'lga.name as lgaName'
     )
-  // console.log('>>>>>>', drTb10ADataNtp.toString())
   const CONSTANT_COLS = [
     {
       line: 'line1',
@@ -1719,38 +1719,12 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
       key: 'cnt_Presumptive_DR_TB_Cases_Error',
       value: 'presumptiveDrTbError',
     },
-
-    //
-    // {
-    //   line: 'line1',
-    //   key: 'key',
-    //   value: 'col',
-    // },
-    // {
-    //   line: 'line2',
-    //   key: 'key',
-    //   value: 'col',
-    // },
-    // {
-    //   line: 'line3',
-    //   key: 'key',
-    //   value: 'col',
-    // },
   ]
   const data = await drTb10ADataNtp
   const obj = {}
   const newDataset = _.reduce(
     data,
     (oldVal, current) => {
-      // _.forEach(_.keys(current), key => {
-      //   const found = _.find(CONSTANT_COLS, { key })
-      //   if (found) {
-      //     obj[found.line] = { [found.value]: current[key] }
-      //     // oldVal.push({ [found.value]: current[key] })
-
-      //   }
-
-      // _.forEach(_.keys(CONSTANT_COLS), key => {
       _.forEach(_.keys(current), key => {
         const found = _.find(CONSTANT_COLS, { key })
         if (found) {
@@ -1773,7 +1747,6 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
             stateName,
             yearAndMonth,
           }
-          // oldVal.push({ [found.value]: current[key] })
         }
       })
       oldVal.push({ ...obj.line1, deviceName: 'Tested by Xpert MTB/RIF' })
@@ -1783,57 +1756,6 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
     },
     []
   )
-  /*
-  const arra = []
-const line1[{key:'Presumptive_unknown_mtb',value:'Presumptive'}];
-const line2[{key:'Presumptive_unknown_tb',value:'Presumptive'}];
-const line3[{key:'Presumptive_unknown_tb',value:'Presumptive'}]
-const dataset=_.reduce(array, (curr, elem, index) => {
-  let obj1 ={}
-  let obj2 ={}
-  let obj3 ={}
-  _.forEach(_.keys(elem),key=>{
-    let field1=_.find(line1,elem1 => elem1.key===key)
-    if (field1)
-      obj1[field1.value]=elem[key];
-      let field2=_.find(line2,elem1 => elem1.key===key)
-      if (field2)
-        obj1[field2.value]=elem[key];
-        let field3=_.find(line3,elem1 => elem1.key===key)
-        if (field3)
-          obj1[field3.value]=elem[key];
-    curr.push(obj1);
-    curr.push(obj2);
-    curr.push(obj3);
-  })
-}, [])
-
-const arra = []
-const line1[{key:'Presumptive_unknown_mtb',value:'Presumptive', line:'line1'}];
-const line2[{key:'Presumptive_unknown_tb',value:'Presumptive'}];
-const line3[{key:'Presumptive_unknown_tb',value:'Presumptive'}]
-const dataset=_.reduce(array, (curr, elem, index) => {
-  let obj ={}
-
-  _.forEach(_.keys(elem),key=>{
-    let field1=_.find(line1,elem1 => elem1.key===key)
-    if (field1)
-      obj[field1.index][field1.value]=elem[key];
-      let field2=_.find(line2,elem1 => elem1.key===key)
-      if (field2)
-        obj1[field2.value]=elem[key];
-        let field3=_.find(line3,elem1 => elem1.key===key)
-        if (field3)
-          obj1[field3.value]=elem[key];
-
-
-    curr.push(obj.line1);
-    curr.push(obj.line2);
-    curr.push(obj.line3);
-  })
-
-}, [])
-  */
   return {
     ok: true,
     data: newDataset,
