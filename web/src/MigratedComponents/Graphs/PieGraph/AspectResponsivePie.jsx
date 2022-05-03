@@ -128,6 +128,7 @@ AspectResponsivePie.defaultProps = {
   type: false,
   link: false,
   i18nKeys: {},
+  config: {},
 }
 
 AspectResponsivePie.propTypes = {
@@ -140,7 +141,7 @@ AspectResponsivePie.propTypes = {
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   i18nKeys: PropTypes.oneOfType([PropTypes.object]),
-  config: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  config: PropTypes.oneOfType([PropTypes.object]),
 }
 
 export default AspectResponsivePie
