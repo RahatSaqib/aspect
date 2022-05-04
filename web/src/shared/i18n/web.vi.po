@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
+"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -154,12 +154,12 @@ msgstr "> = 40 cp / mL"
 msgid ">= 550 cp/mL"
 msgstr "> = 550 cp / mL"
 
-#. [pages.Contacts.person.name.exist]
+#. [pages.Contacts.person.email.exist]
 #. defaultMessage is:
-#. A person with the same name exists. Please use a different name.
+#. A person with the same email exists. Please use a different email.
 #: extracted_strings.json
-msgid "A person with the same name exists. Please use a different name."
-msgstr "Một người có cùng tên tồn tại. Vui lòng sử dụng một tên khác."
+msgid "A person with the same email exists. Please use a different email."
+msgstr "Một người có cùng email tồn tại. Vui lòng sử dụng một email khác."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1167,10 +1167,16 @@ msgstr "Không thể chỉnh sửa"
 #. [pages.JobAssignments.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.PersonList.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.RouterDetail.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [button_Cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.PersonList.disabled.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.BaseDialog.cancel]
@@ -1562,6 +1568,20 @@ msgstr "Liên hệ được tạo thành công"
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Chi tiết liên hệ"
+
+#. [filter.popover.contactStatus]
+#. defaultMessage is:
+#. Contact Status
+#: extracted_strings.json
+msgid "Contact Status"
+msgstr "Tình trạng liên hệ"
+
+#. [filter.btnGroup.contactEnabledStatus]
+#. defaultMessage is:
+#. Contact Status: {contactStatus}
+#: extracted_strings.json
+msgid "Contact Status: {contactStatus}"
+msgstr "Trạng thái liên hệ: {contactStatus}"
 
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -2419,6 +2439,20 @@ msgstr "Thiết bị có mô-đun không sử dụng"
 msgid "Dial Code"
 msgstr "Quay số mã"
 
+#. [pages.Contacts.disable]
+#. defaultMessage is:
+#. Disable
+#: extracted_strings.json
+msgid "Disable"
+msgstr "Vô hiệu"
+
+#. [filter.btnGroup.contactStatus.contactDisabled]
+#. defaultMessage is:
+#. Disabled
+#: extracted_strings.json
+msgid "Disabled"
+msgstr "Vô hiệu hóa"
+
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
 #. Discard
@@ -2481,6 +2515,20 @@ msgstr "Quận/Huyện"
 msgid "Division"
 msgstr "Bộ môn"
 
+#. [pages.PersonList.disable]
+#. defaultMessage is:
+#. Do you want to disable
+#: extracted_strings.json
+msgid "Do you want to disable"
+msgstr "Bạn có muốn vô hiệu hóa"
+
+#. [pages.PersonList.enable]
+#. defaultMessage is:
+#. Do you want to enable
+#: extracted_strings.json
+msgid "Do you want to enable"
+msgstr "Bạn có muốn bật"
+
 #. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
 #. Down for Repair
@@ -2500,6 +2548,13 @@ msgstr ""
 "Tải xuống tất cả các mục nhập mà thiết bị GeneXpert đã tạo trong nhật ký của "
 "nó. Trong báo cáo này, bạn có thể thấy ngày hiệu chuẩn, lỗi phần cứng / phần "
 "mềm và các lỗi khác, lỗi hoặc bản ghi thông tin mà thiết bị đã tạo"
+
+#. [pages.ResultList.resultCategoryDrugResistance]
+#. defaultMessage is:
+#. Drug Resistance
+#: extracted_strings.json
+msgid "Drug Resistance"
+msgstr "Kháng thuốc"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
@@ -2647,6 +2702,9 @@ msgstr "Chủ đề email là bắt buộc"
 msgid "Email was sent to:"
 msgstr "Email đã được gửi đến:"
 
+#. [pages.Contacts.enable]
+#. defaultMessage is:
+#. Enable
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
@@ -2660,6 +2718,20 @@ msgstr "Cho phép"
 #: extracted_strings.json
 msgid "Enable this notification"
 msgstr "Bật thông báo này"
+
+#. [pages.PersonList.enableDisable]
+#. defaultMessage is:
+#. Enable/Disable User
+#: extracted_strings.json
+msgid "Enable/Disable User"
+msgstr "Bật/Tắt Người dùng"
+
+#. [filter.btnGroup.contactStatus.contactEnabled]
+#. defaultMessage is:
+#. Enabled
+#: extracted_strings.json
+msgid "Enabled"
+msgstr "Đã bật"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -2995,7 +3067,7 @@ msgstr "Lỗi khi gửi Email Đặt lại Mật khẩu"
 msgid "Error Transferring Result"
 msgstr "Lỗi khi chuyển kết quả"
 
-#. [pages.Contacts.person.name.exist.title]
+#. [pages.Contacts.person.email.exist.title]
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
@@ -7553,6 +7625,13 @@ msgstr "Chọn xét nghiệm ..."
 msgid "Select consumable..."
 msgstr "Chọn vật tư tiêu hao ..."
 
+#. [filter.popover.contactStatusHint]
+#. defaultMessage is:
+#. Select contact status...
+#: extracted_strings.json
+msgid "Select contact status..."
+msgstr "Chọn trạng thái liên hệ ..."
+
 #. [pages.NotificationDetail.jobFunctionTags]
 #. defaultMessage is:
 #. Select contacts with any of the following tags
@@ -8396,10 +8475,10 @@ msgstr "Lao kháng Rif"
 
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
-#. TB XDR
+#. TB XDR Drug Resistances
 #: extracted_strings.json
-msgid "TB XDR"
-msgstr "TB XDR"
+msgid "TB XDR Drug Resistances"
+msgstr "Lao XDR kháng thuốc"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -9157,6 +9236,13 @@ msgstr "Email này không hợp lệ"
 msgid "This field is required"
 msgstr "Trường này là bắt buộc"
 
+#. [pages.PersonList.disabled.disabledOn]
+#. defaultMessage is:
+#. This person was disabled on
+#: extracted_strings.json
+msgid "This person was disabled on"
+msgstr "Người này bị tàn tật trên"
+
 #. [pages.ReportIndex.geneXpertIssues_description]
 #. defaultMessage is:
 #. This report shows all issues that apply to GeneXpert devices
@@ -9246,6 +9332,28 @@ msgstr ""
 #: extracted_strings.json
 msgid "This username is unavailable"
 msgstr "Tên người dùng này không khả dụng"
+
+#. [pages.PersonList.disabled.disableUser]
+#. defaultMessage is:
+#. This will disable this user, and they will not be able to login. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will disable this user, and they will not be able to login. Would you "
+"like to continue?"
+msgstr ""
+"Điều này sẽ vô hiệu hóa người dùng này và họ sẽ không thể đăng nhập. Bạn có "
+"muốn tiếp tục không?"
+
+#. [pages.PersonList.disabled.enableUser]
+#. defaultMessage is:
+#. This will enable this user again, and they will be able to login again. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will enable this user again, and they will be able to login again. "
+"Would you like to continue?"
+msgstr ""
+"Điều này sẽ cho phép người dùng này một lần nữa và họ sẽ có thể đăng nhập "
+"lại. Bạn có muốn tiếp tục không?"
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -9892,6 +10000,13 @@ msgstr "Tuần"
 msgid "Week or holiday"
 msgstr "Tuần hoặc ngày lễ"
 
+#. [pages.welcomePage.welcome]
+#. defaultMessage is:
+#. Welcome to Aspect
+#: extracted_strings.json
+msgid "Welcome to Aspect"
+msgstr "Chào mừng bạn đến với Khía cạnh"
+
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
 #. When the result is
@@ -9925,13 +10040,6 @@ msgstr "Trong vòng 2 giờ kiểm tra"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Trạng thái quy trình làm việc"
-
-#. [pages.ResultList.resultCategoryXDR]
-#. defaultMessage is:
-#. XDR
-#: extracted_strings.json
-msgid "XDR"
-msgstr "XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -9978,6 +10086,12 @@ msgstr "Báo cáo hoạt động thử nghiệm Xpert"
 msgid "Year"
 msgstr "Năm"
 
+#. [pages.PersonList.confirm]
+#. defaultMessage is:
+#. Yes
+#. [pages.PersonList.disabled.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
@@ -10127,6 +10241,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "You've successfully logged out"
 msgstr "Bạn đã đăng xuất thành công"
+
+#. [pages.welcomePage.setupNeeded]
+#. defaultMessage is:
+#. Your account still needs some setup before you will be able to use the system. Please contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your account still needs some setup before you will be able to use the "
+"system. Please contact your administrator."
+msgstr ""
+"Tài khoản của bạn vẫn cần một số thiết lập trước khi bạn có thể sử dụng hệ "
+"thống. Vui lòng liên hệ với quản trị viên của bạn."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -10830,6 +10955,12 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
+
+#~ msgid "XDR"
+#~ msgstr "XDR"
+
+#~ msgid "TB XDR"
+#~ msgstr "TB XDR Drug Resistances"
 
 #~ msgid "* in transit from {inTransitFromSiteName}"
 #~ msgstr "* đang chuyển tiếp từ {inTransitFromSiteName}"

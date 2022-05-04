@@ -83,6 +83,7 @@ const CustomBarGraphLegend = ({
   generateLegendIntl,
   assaysFromState,
   type,
+  graphId,
   legendsNotToRender,
   legendsToPopover,
   symbolShape,
@@ -106,7 +107,7 @@ const CustomBarGraphLegend = ({
           i18nKeys,
           k,
           assaysFromState,
-          type,
+          graphId,
           legendsNotToRender
         )
 
@@ -134,6 +135,7 @@ CustomBarGraphLegend.propTypes = {
   generateLegendIntl: PropTypes.func.isRequired,
   assaysFromState: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   type: PropTypes.string.isRequired,
+  graphId: PropTypes.string.isRequired,
   symbolShape: PropTypes.string,
   legendsNotToRender: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.object, PropTypes.string])

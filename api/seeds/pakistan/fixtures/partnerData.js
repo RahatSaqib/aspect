@@ -8,6 +8,7 @@ module.exports = {
   statsQueryDeviceApiToken: 'kcf2ve9wy96pp800kdk0',
   lowerLevelUserPassword: '324PoCbqIeBG',
   partnerAbbreviation: 'PK',
+  partnerPlugin: 'pakistan',
   assayTypes: [
     'GxUnknown',
     'GxHcv',

@@ -88,32 +88,34 @@ const resultDataMappings = {
   dst: {
     mapResultData: payload => {
       return {
-        testRequested: payload['DST Test Requested'],
-        dateInoculated: payload['DST Date Inoculated'],
-        inoculatedBy: payload['DST MT Inoculated'],
-        idResult: payload['DST ID Result'] || payload['Culture Final Result'], // There is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
-        streptomycin: payload.Streptomycin,
-        isoniazid: payload.Isoniazid,
-        rifampicin: payload.Rifampicin,
-        ethambutol: payload.Ethambutol,
-        pyrazinamide: payload.Pyrazinamide,
-        kanamycin: payload.Kanamycin,
-        levofloxacin: payload.Levofloxacin,
-        amikacin: payload.Amikacin,
-        capreomycin: payload.Capreomycin,
-        moxifloxacin: payload.Moxifloxacin,
-        methodUsed: payload['DST Method Used'],
-        otherMethodUsed: payload['DST Method Used Others'],
-        remarks: payload['DST Remarks'],
-        dateTransferredToDst: payload['Date transfered to DST'],
-        dstTat: payload['DST TAT'],
-        dateRead: payload['DST Date Read'],
-        dateReleased: payload['DST Date Released'],
-        readBy: payload['DST MT Read'],
-        labTech: payload['DST Lab Tech'],
-        encodedBy: payload['DST Encoded by'],
-        reviewedBy: payload['DST Releasing Form Lab Manager'],
-        notedBy: payload['DST Noted By'],
+        encodedResult: {
+          testRequested: payload['DST Test Requested'],
+          dateInoculated: payload['DST Date Inoculated'],
+          inoculatedBy: payload['DST MT Inoculated'],
+          idResult: payload['DST ID Result'] || payload['Culture Final Result'], // There is a mis-mapping in the NTRL database that uses the Culture Final Result in the DST result encoding form
+          streptomycin: payload.Streptomycin,
+          isoniazid: payload.Isoniazid,
+          rifampicin: payload.Rifampicin,
+          ethambutol: payload.Ethambutol,
+          pyrazinamide: payload.Pyrazinamide,
+          kanamycin: payload.Kanamycin,
+          levofloxacin: payload.Levofloxacin,
+          amikacin: payload.Amikacin,
+          capreomycin: payload.Capreomycin,
+          moxifloxacin: payload.Moxifloxacin,
+          methodUsed: payload['DST Method Used'],
+          otherMethodUsed: payload['DST Method Used Others'],
+          remarks: payload['DST Remarks'],
+          dateTransferredToDst: payload['Date transfered to DST'],
+          dstTat: payload['DST TAT'],
+          dateRead: payload['DST Date Read'],
+          dateReleased: payload['DST Date Released'],
+          readBy: payload['DST MT Read'],
+          labTech: payload['DST Lab Tech'],
+          encodedBy: payload['DST Encoded by'],
+          reviewedBy: payload['DST Releasing Form Lab Manager'],
+          notedBy: payload['DST Noted By'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -136,21 +138,23 @@ const resultDataMappings = {
   culture: {
     mapResultData: payload => {
       return {
-        dateInoculated: payload['Culture Date Inoculated'],
-        medTech: payload['Culture Med Tech'],
-        resultStatus: payload['Culture Result Status'],
-        dstStatus: payload['Culture DST Status'],
-        methodUsed1: payload['Culture Method'],
-        result1: payload['Culture Result 1'],
-        grade1: payload['Culture Grade 1'],
-        result2: payload['Culture Result 2'],
-        grade2: payload['Culture Grade 2'],
-        finalResult: payload['Culture Final Result'],
-        remarks: payload['Culture Remarks 1'],
-        dateReleased: payload['Culture Date Released'],
-        encodedBy: payload['Culture Encoded by'],
-        labTech: payload['Culture Lab Tech'],
-        notedBy: payload['Culture Noted By'],
+        encodedResult: {
+          dateInoculated: payload['Culture Date Inoculated'],
+          medTech: payload['Culture Med Tech'],
+          resultStatus: payload['Culture Result Status'],
+          dstStatus: payload['Culture DST Status'],
+          methodUsed1: payload['Culture Method'],
+          result1: payload['Culture Result 1'],
+          grade1: payload['Culture Grade 1'],
+          result2: payload['Culture Result 2'],
+          grade2: payload['Culture Grade 2'],
+          finalResult: payload['Culture Final Result'],
+          remarks: payload['Culture Remarks 1'],
+          dateReleased: payload['Culture Date Released'],
+          encodedBy: payload['Culture Encoded by'],
+          labTech: payload['Culture Lab Tech'],
+          notedBy: payload['Culture Noted By'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -167,24 +171,48 @@ const resultDataMappings = {
   },
   lpa: {
     mapResultData: payload => {
+      const getDetectedResistanceCategoryTypes = payload => {
+        const detectedResistances = []
+        ;[
+          'LPA Rifampicin Result',
+          'LPA Isoniazid Result',
+          'LPA Ethambutol',
+          'LPA Fluoroquinolones',
+          'LPA Aminoglycosides/ SLI',
+          'LPA Ethionamide/Prothionamide',
+        ].forEach(categoryType => {
+          // Includes Low-Resistance Detected, Resistance Detected, etc
+          if (
+            payload[categoryType] &&
+            payload[categoryType].indexOf('Resistance Detected') > -1
+          )
+            detectedResistances.push(
+              categoryType.replace('LPA', '').replace('Result', '').trim()
+            )
+        })
+        return detectedResistances
+      }
       return {
-        center: payload['LPA Center'],
-        lpaKit: payload['LPA Kit Used'],
-        lpaKitOther: payload['LPA Kit Others'],
-        lpaTestRequested: payload['LPA Test Requested'],
-        lpaTestRequestedOther: payload['LPA Test Requested Others'],
-        mtbComplex: payload['LPA MTB Complex'],
-        rifampicin: payload['LPA Rifampicin Result'],
-        isoniazid: payload['LPA Isoniazid Result'],
-        ethambutol: payload['LPA Ethambutol'],
-        fluoroquinolones: payload['LPA Fluoroquinolones'],
-        aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
-        ethionamideProthionamide: payload['LPA Ethionamide/Prothionamide'],
-        remarks: payload['LPA Remarks:'],
-        dateReleased: payload['LPA Date of Release'],
-        performedBy: payload['LPA Performed By'],
-        reviewedBy: payload['LPA Reviewed By'],
-        notedBy: payload['LPA Noted By'],
+        encodedResult: {
+          center: payload['LPA Center'],
+          lpaKit: payload['LPA Kit Used'],
+          lpaKitOther: payload['LPA Kit Others'],
+          lpaTestRequested: payload['LPA Test Requested'],
+          lpaTestRequestedOther: payload['LPA Test Requested Others'],
+          mtbComplex: payload['LPA MTB Complex'],
+          rifampicin: payload['LPA Rifampicin Result'],
+          isoniazid: payload['LPA Isoniazid Result'],
+          ethambutol: payload['LPA Ethambutol'],
+          fluoroquinolones: payload['LPA Fluoroquinolones'],
+          aminoglycoside: payload['LPA Aminoglycosides/ SLI'],
+          ethionamideProthionamide: payload['LPA Ethionamide/Prothionamide'],
+          remarks: payload['LPA Remarks:'],
+          dateReleased: payload['LPA Date of Release'],
+          performedBy: payload['LPA Performed By'],
+          reviewedBy: payload['LPA Reviewed By'],
+          notedBy: payload['LPA Noted By'],
+        },
+        detectedResistance: getDetectedResistanceCategoryTypes(payload),
       }
     },
     isPayloadValid: payload =>
@@ -203,15 +231,17 @@ const resultDataMappings = {
   smear: {
     mapResultData: payload => {
       return {
-        smearMethod: payload['Smear Method'],
-        smearResult1: payload['Smear Result 1'],
-        smearResult2: payload['Smear Result 2'],
-        finalResult: payload['Smear Final Result'],
-        dateReleased: payload['Smear Date Released'],
-        encodedBy: payload['Smear Encoded by'],
-        laboratoryTechnician: payload['Smear Lab Tech'],
-        notedBy: payload['Smear Noted By'],
-        verifiedBy: payload['Smear Verified By'],
+        encodedResult: {
+          smearMethod: payload['Smear Method'],
+          smearResult1: payload['Smear Result 1'],
+          smearResult2: payload['Smear Result 2'],
+          finalResult: payload['Smear Final Result'],
+          dateReleased: payload['Smear Date Released'],
+          encodedBy: payload['Smear Encoded by'],
+          laboratoryTechnician: payload['Smear Lab Tech'],
+          notedBy: payload['Smear Noted By'],
+          verifiedBy: payload['Smear Verified By'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -227,17 +257,19 @@ const resultDataMappings = {
   genexpert: {
     mapResultData: payload => {
       return {
-        center: payload['Gx Center'],
-        processingDate: payload['Gx Processing Date'],
-        mtb: payload['Gx MTB'],
-        rifampicin: payload['Gx Rifampicin'],
-        remarks: payload['Gx Remarks'],
-        dateReleased: payload['Gx Date Released'],
-        examiner: payload['Gx Examiner'],
-        labManager: payload['Gx Laboratory Manager'],
-        gxTestRequested: payload['Gx Test Requested'],
-        notedBy: payload['Gx Noted By'],
-        dateDispatched: payload['Date Dispatch'] || null,
+        encodedResult: {
+          center: payload['Gx Center'],
+          processingDate: payload['Gx Processing Date'],
+          mtb: payload['Gx MTB'],
+          rifampicin: payload['Gx Rifampicin'],
+          remarks: payload['Gx Remarks'],
+          dateReleased: payload['Gx Date Released'],
+          examiner: payload['Gx Examiner'],
+          labManager: payload['Gx Laboratory Manager'],
+          gxTestRequested: payload['Gx Test Requested'],
+          notedBy: payload['Gx Noted By'],
+          dateDispatched: payload['Date Dispatch'] || null,
+        },
       }
     },
     isPayloadValid: payload =>
@@ -253,13 +285,15 @@ const resultDataMappings = {
   tblamp: {
     mapResultData: payload => {
       return {
-        tbLampResult: payload['TB LAMP Result'],
-        verifiedBy: payload['TB LAMP Verified By'],
-        notedBy: payload['TB LAMP Noted By'],
-        processingDate: payload['Gx Processing Date'],
-        dateReleased: payload['Smear Date Released'],
-        laboratoryTechnician: payload['Smear Lab Tech'],
-        examiner: payload['Gx Examiner'],
+        encodedResult: {
+          tbLampResult: payload['TB LAMP Result'],
+          verifiedBy: payload['TB LAMP Verified By'],
+          notedBy: payload['TB LAMP Noted By'],
+          processingDate: payload['Gx Processing Date'],
+          dateReleased: payload['Smear Date Released'],
+          laboratoryTechnician: payload['Smear Lab Tech'],
+          examiner: payload['Gx Examiner'],
+        },
       }
     },
     isPayloadValid: payload =>

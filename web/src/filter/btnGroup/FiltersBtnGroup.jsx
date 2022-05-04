@@ -9,11 +9,10 @@ import { MdClose } from 'react-icons/md'
 import startCase from 'lodash/startCase'
 import isArray from 'lodash/isArray'
 
-import { forceBaseFormatDate } from '../../components/shared/DateTimeInput/utils/date'
 import { isCountryFilterHidden } from '../utils'
 import useI18n from '../../Hooks/i18n/useI18n'
-
 import styles from './FiltersBtnGroup.css'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(styles)
 
@@ -313,6 +312,9 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+  const { formatMessage, format } = useI18n()
+  const { dateFormat } = getAspectDisplayPreferences().toJS()
+
   const buttonBy = {
     assayId: (filterKey, props) => {
       const {
@@ -367,12 +369,12 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     minDate: makeButton(date =>
       formatMessage(messages.dateFrom, {
-        date: forceBaseFormatDate(date),
+        date: format(new Date(date), dateFormat),
       })
     ),
     maxDate: makeButton(date =>
       formatMessage(messages.dateTo, {
-        date: forceBaseFormatDate(date),
+        date: format(new Date(date), dateFormat),
       })
     ),
     partnerId: makeButton((partnerId, { partnerItems }) =>
@@ -638,7 +640,6 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
   }
 
-  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses(className, 'FiltersBtnGroup')}>
       {children &&

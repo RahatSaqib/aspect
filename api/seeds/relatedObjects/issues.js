@@ -295,11 +295,8 @@ const errorIssueEmailTextLot = errorIssueEmailText.replace(
 
 // must correspond with 'Hardware*' items in IssueEventTrigger.json
 const hardwareMessage = {
-  1001: 'Temperature Drifted From Setpoint',
-  1002: 'Heater Temperature Differential Error',
   2005: 'Syringe Stall Error',
   2008: 'Syringe Pressure Too High',
-  2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
   2026: 'Ultrasonic Horn Current Out of Range',
   2032: 'Ultrasonic Horn Tuning Error',
   2035: 'Ultrasonic Horn Failure',
@@ -308,9 +305,7 @@ const hardwareMessage = {
   2097: 'Assay-Specific Termination #2',
   2126: 'Module was Reset',
   4008: 'Power Supply Voltage Out of Range',
-  4009: 'Heater A Temperature Unstable',
-  4012: 'Heater B Temperature Unstable',
-  4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
+  4017: 'Temperature Errors', // same as 2014 (see Excel in ASP-1831)
 }
 const hardwareErrorIssueEmailHtml = errorCode =>
   getDeviceBaseHtml({
@@ -1235,40 +1230,6 @@ async function getBaseIssues(auditFields) {
     // --------------------------------------------------------
     // Hardware Issues - must correspond with 'Hardware*' items in IssueEventTrigger.json
     // --------------------------------------------------------
-    HardwareTemperatureDriftedFromSetPoint: {
-      issueType: {
-        name: hardwareMessage[1001],
-        externalId: 'HardwareTemperatureDriftedFromSetPoint',
-        i18nKey: 'issueHardwareTemperatureDriftedFromSetPoint',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(1001),
-        body: hardwareErrorIssueEmailText(1001),
-        htmlBody: hardwareErrorIssueEmailHtml(1001),
-        ...auditFields,
-      },
-    },
-    HardwareHeaterTemperatureDifferentialError: {
-      issueType: {
-        name: hardwareMessage[1002],
-        externalId: 'HardwareHeaterTemperatureDifferentialError',
-        i18nKey: 'issueHardwareHeaterTemperatureDifferentialError',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(1002),
-        body: hardwareErrorIssueEmailText(1002),
-        htmlBody: hardwareErrorIssueEmailHtml(1002),
-        ...auditFields,
-      },
-    },
     HardwareSyringeStallError: {
       issueType: {
         name: hardwareMessage[2005],
@@ -1300,23 +1261,6 @@ async function getBaseIssues(auditFields) {
         subject: getErrorIssueSubjectBase(2008),
         body: hardwareErrorIssueEmailText(2008),
         htmlBody: hardwareErrorIssueEmailHtml(2008),
-        ...auditFields,
-      },
-    },
-    HardwareThermistorTemperatureOutOfRange2014: {
-      issueType: {
-        name: hardwareMessage[2014],
-        externalId: 'HardwareThermistorTemperatureOutOfRange2014',
-        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange2014',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(2014),
-        body: hardwareErrorIssueEmailText(2014),
-        htmlBody: hardwareErrorIssueEmailHtml(2014),
         ...auditFields,
       },
     },
@@ -1450,45 +1394,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    HardwareHeaterATemperatureUnstable: {
-      issueType: {
-        name: hardwareMessage[4009],
-        externalId: 'HardwareHeaterATemperatureUnstable',
-        i18nKey: 'issueHardwareHeaterATemperatureUnstable',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(4009),
-        body: hardwareErrorIssueEmailText(4009),
-        htmlBody: hardwareErrorIssueEmailHtml(4009),
-        ...auditFields,
-      },
-    },
-    HardwareHeaterBTemperatureUnstable: {
-      issueType: {
-        name: hardwareMessage[4012],
-        externalId: 'HardwareHeaterBTemperatureUnstable',
-        i18nKey: 'issueHardwareHeaterBTemperatureUnstable',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(4012),
-        body: hardwareErrorIssueEmailText(4012),
-        htmlBody: hardwareErrorIssueEmailHtml(4012),
-        ...auditFields,
-      },
-    },
-    HardwareThermistorTemperatureOutOfRange4017: {
+    HardwareTemperatureErrors: {
       issueType: {
         name: hardwareMessage[4017],
-        externalId: 'HardwareThermistorTemperatureOutOfRange4017',
-        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange4017',
+        externalId: 'HardwareTemperatureErrors',
+        i18nKey: 'HardwareTemperatureErrors',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {

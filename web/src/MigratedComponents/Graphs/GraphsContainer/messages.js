@@ -100,7 +100,7 @@ export const messages = defineMessages({
 
   clinicalIndicatorsXdrTitle: {
     id: 'pages.Status.clinicalIndicatorsXdr.title',
-    defaultMessage: 'TB XDR',
+    defaultMessage: 'TB XDR Drug Resistances',
   },
   clinicalIndicatorsXdrPieLegend: {
     id: 'pages.Status.clinicalIndicatorsXdr.pie',

@@ -43,7 +43,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
         return baseValue
       }
       if (_.isArray(baseValue) && _.isArray(sourceValue)) {
-        return [...(baseValue || []), ...(sourceValue || [])]
+        return _.uniq([...(baseValue || []), ...(sourceValue || [])])
       }
       if (_.isPlainObject(baseValue) && _.isPlainObject(sourceValue)) {
         const mergedValue = {
@@ -102,7 +102,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
         result.endedOn = resultEndedOn
       }
       const resultData = mergeDeep(JSON.parse(result.resultData || '{}'), {
-        encodedResult: newResultData,
+        ...newResultData,
         resultSignOff,
       })
       result.resultData = JSON.stringify(resultData)

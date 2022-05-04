@@ -273,6 +273,11 @@ describe('Process GeneXpert Logs', () => {
     const logDatas = [
       {
         ...logDataWithErrors,
+        externalId: 138,
+        occurredOn: getDateDaysAgo(50),
+      },
+      {
+        ...logDataWithErrors,
         externalId: 139,
         occurredOn: getDateDaysAgo(10),
       },
@@ -288,7 +293,7 @@ describe('Process GeneXpert Logs', () => {
       },
     ]
     // last item sent - it should trigger issue and be referred in db
-    const detailsSent = JSON.parse(logDatas[2].details)
+    const detailsSent = JSON.parse(logDatas[3].details)
 
     // get device to pass it to action creator deviceHardwareError
     const device = await knex('Device').where('id', deviceId).first()
@@ -297,7 +302,7 @@ describe('Process GeneXpert Logs', () => {
     const getIssues = deviceId =>
       knex('Issue as i')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .where('it.externalId', 'HardwareHeaterATemperatureUnstable')
+        .where('it.externalId', 'HardwareTemperatureErrors')
         .where('i.deviceId', deviceId)
         .orderBy('i.id', 'desc')
         .select('i.*')
@@ -317,8 +322,8 @@ describe('Process GeneXpert Logs', () => {
      * post data with error code 1002 within daysPeriod
      *
      * See trigger conditions in api/seeds/fixtures/IssueEventTrigger.json, i.e.
-     *  "daysPeriod": 30,
-     *  "minErrors": 3
+     *  "daysPeriod": 60,
+     *  "minErrors": 4
      */
     // helper - define action to wait for, post data, asert response, waitFor*
     const postError = async (data, shouldTrigger = false) => {
@@ -355,7 +360,12 @@ describe('Process GeneXpert Logs', () => {
     // post 3-rd error
     await postError(logDatas[2])
     issuesAfter = await getIssues(deviceId)
-    // 3rd error triggers issue - Issue table contains just created record with issue details
+    assert.equal(issuesBefore.length, issuesAfter.length)
+    // post 4-rd error
+    await postError(logDatas[3])
+    issuesAfter = await getIssues(deviceId)
+
+    // 4rd error triggers issue - Issue table contains just created record with issue details
     assert.equal(issuesBefore.length + 1, issuesAfter.length)
 
     // -------------------
@@ -395,7 +405,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
-      format(logDatas[2].occurredOn, 'yyyy-MM-dd HH:mm:ss')
+      format(logDatas[3].occurredOn, 'yyyy-MM-dd HH:mm:ss')
     )
     const { details: detailsStored } = JSON.parse(deviceOperation.data)
     expect(detailsStored).to.containSubset(detailsSent)
@@ -472,8 +482,8 @@ describe('Process GeneXpert Logs', () => {
      * post data with error code 2126 within daysPeriod
      *
      * See trigger conditions in api/seeds/fixtures/IssueEventTrigger.json, i.e.
-     *  "daysPeriod": 30,
-     *  "minErrors": 3
+     *  "daysPeriod": 60,
+     *  "minErrors": 4
      */
     // helper - define action to wait for, post data, asert response, waitFor*
     const postError = async (data, shouldTrigger = false) => {
@@ -569,6 +579,11 @@ describe('Process GeneXpert Logs', () => {
     const logDatas = [
       {
         ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
+        externalId: 138,
+        occurredOn: getDateDaysAgo(50),
+      },
+      {
+        ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
         externalId: 139,
         occurredOn: getDateDaysAgo(10),
       },
@@ -593,7 +608,7 @@ describe('Process GeneXpert Logs', () => {
     const getIssues = deviceId =>
       knex('Issue as i')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .where('it.externalId', 'HardwareHeaterTemperatureDifferentialError')
+        .where('it.externalId', 'HardwareTemperatureErrors')
         .where('i.deviceId', deviceId)
         .orderBy('i.id', 'desc')
         .select('i.*')
@@ -651,6 +666,10 @@ describe('Process GeneXpert Logs', () => {
     // post 3-rd error
     await postError(logDatas[2])
     issuesAfter = await getIssues(deviceId)
+
+    // post 4-rd error
+    await postError(logDatas[3])
+    issuesAfter = await getIssues(deviceId)
     // 3rd error triggers issue - Issue table contains just created record with issue details
     assert.equal(issuesBefore.length + 1, issuesAfter.length)
 
@@ -680,7 +699,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
-      format(logDatas[2].occurredOn, 'yyyy-MM-dd HH:mm:ss')
+      format(logDatas[3].occurredOn, 'yyyy-MM-dd HH:mm:ss')
     )
     const { details: detailsStored } = JSON.parse(deviceOperation.data)
     expect(detailsStored).to.containSubset(detailsSent)
@@ -695,6 +714,11 @@ describe('Process GeneXpert Logs', () => {
       new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
 
     const logDatas = [
+      {
+        ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
+        externalId: 138,
+        occurredOn: getDateDaysAgo(50),
+      },
       {
         ...logDataWithErrorsThatShouldBeDeduplicatedInTimespan,
         externalId: 139,
@@ -776,6 +800,10 @@ describe('Process GeneXpert Logs', () => {
 
     // post 3-rd error
     await postError(logDatas[2])
+    issuesAfter = await getIssues(deviceId)
+    assert.equal(issuesBefore.length, issuesAfter.length)
+
+    await postError(logDatas[3])
     issuesAfter = await getIssues(deviceId)
     // 3rd error triggers issue - Issue table contains just created record with issue details
     assert.equal(issuesBefore.length + 1, issuesAfter.length)
