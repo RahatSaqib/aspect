@@ -87,9 +87,9 @@ const messages = defineMessages({
     id: 'pages.ResultList.resultCategoryCOVID19RegionN',
     defaultMessage: 'Region n',
   },
-  resultCategoryXDR: {
-    id: 'pages.ResultList.resultCategoryXDR',
-    defaultMessage: 'XDR',
+  resultCategoryDrugResistance: {
+    id: 'pages.ResultList.resultCategoryDrugResistance',
+    defaultMessage: 'Drug Resistance',
   },
   resultCategoryHiv: {
     id: 'pages.ResultList.resultCategoryHiv',

@@ -18,6 +18,7 @@ const DEFAULT_DISPLAY_PREFERENCES = {
   dateFormat: 'yyyy-MM-dd',
   timeFormat: 'HH:mm:ss',
   dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
+  dayMonthFormat: 'MM/dd',
 }
 
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)

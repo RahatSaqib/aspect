@@ -18,10 +18,10 @@ import getQuarter from 'date-fns/getQuarter'
 import endOfYear from 'date-fns/endOfYear'
 import startOfYear from 'date-fns/startOfYear'
 import subtractYears from 'date-fns/subYears'
+import format from 'date-fns/format'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { injectIntl } from 'react-intl'
-
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
@@ -31,6 +31,7 @@ import SelectField from '../../components/shared/SelectField'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import PropTypeOf from '../../shared/types'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
 import styles from './DateRangeSelector.css'
 import messages from './messages'
@@ -56,7 +57,7 @@ export class DateRangeSelector extends PureComponent {
     rangeMode: 'any',
   }
 
-  getDaysSelectList = () => {
+  getDaysSelectList = formatDayMonthFunc => {
     const {
       intl: { formatMessage, formatDate },
     } = this.props
@@ -68,18 +69,14 @@ export class DateRangeSelector extends PureComponent {
     }
     return [
       {
-        label: `${formatMessage(messages.today)} (${formatDate(now, {
-          day: '2-digit',
-          month: '2-digit',
-        })})`,
+        label: `${formatMessage(messages.today)} (${formatDayMonthFunc(now)})`,
         minDate: startOfDay(now),
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.yesterday)} (${formatDate(yesterday, {
-          day: '2-digit',
-          month: '2-digit',
-        })})`,
+        label: `${formatMessage(messages.yesterday)} (${formatDayMonthFunc(
+          yesterday
+        )})`,
         minDate: startOfDay(yesterday),
         maxDate: endOfDay(yesterday),
       },
@@ -98,9 +95,9 @@ export class DateRangeSelector extends PureComponent {
     ]
   }
 
-  getWeeksSelectList = () => {
+  getWeeksSelectList = formatDayMonthFunc => {
     const {
-      intl: { formatMessage, formatDate },
+      intl: { formatMessage },
     } = this.props
     const now = new Date()
     const last7DaysStart = subtractDays(now, 7)
@@ -120,30 +117,16 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.thisWeek)} (${formatDate(
-          thisWeekStart,
-          {
-            day: '2-digit',
-            month: '2-digit',
-          }
-        )} - ${formatDate(thisWeekEnd, {
-          day: '2-digit',
-          month: '2-digit',
-        })})`,
+        label: `${formatMessage(messages.thisWeek)} (${formatDayMonthFunc(
+          thisWeekStart
+        )} - ${formatDayMonthFunc(thisWeekEnd)})`,
         minDate: thisWeekStart,
         maxDate: thisWeekEnd,
       },
       {
-        label: `${formatMessage(messages.lastWeek)} (${formatDate(
-          lastWeekStart,
-          {
-            day: '2-digit',
-            month: '2-digit',
-          }
-        )} - ${formatDate(lastWeekEnd, {
-          day: '2-digit',
-          month: '2-digit',
-        })})`,
+        label: `${formatMessage(messages.lastWeek)} (${formatDayMonthFunc(
+          lastWeekStart
+        )} - ${formatDayMonthFunc(lastWeekEnd)})`,
         minDate: lastWeekStart,
         maxDate: lastWeekEnd,
       },
@@ -151,15 +134,9 @@ export class DateRangeSelector extends PureComponent {
         const weekStart = startOfWeek(dayInWeek)
         const weekEnd = endOfWeek(dayInWeek)
         return {
-          label: `${formatDate(weekStart, {
-            weekday: 'long',
-            day: '2-digit',
-            month: '2-digit',
-          })} - ${formatDate(weekEnd, {
-            weekday: 'long',
-            day: '2-digit',
-            month: '2-digit',
-          })}`,
+          label: `${formatDayMonthFunc(weekStart)} - ${formatDayMonthFunc(
+            weekEnd
+          )}`,
           minDate: startOfDay(weekStart),
           maxDate: endOfDay(weekEnd),
         }
@@ -167,7 +144,7 @@ export class DateRangeSelector extends PureComponent {
     ]
   }
 
-  getMonthsSelectList = () => {
+  getMonthsSelectList = formatDayMonthFunc => {
     const {
       intl: { formatMessage, formatDate },
     } = this.props
@@ -189,30 +166,16 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.thisMonth)} (${formatDate(
-          thisMonthStart,
-          {
-            day: '2-digit',
-            month: '2-digit',
-          }
-        )} - ${formatDate(thisMonthEnd, {
-          day: '2-digit',
-          month: '2-digit',
-        })})`,
+        label: `${formatMessage(messages.thisMonth)} (${formatDayMonthFunc(
+          thisMonthStart
+        )} - ${formatDayMonthFunc(thisMonthEnd)})`,
         minDate: thisMonthStart,
         maxDate: thisMonthEnd,
       },
       {
-        label: `${formatMessage(messages.lastMonth)} (${formatDate(
-          lastMonthStart,
-          {
-            day: '2-digit',
-            month: '2-digit',
-          }
-        )} - ${formatDate(lastMonthEnd, {
-          day: '2-digit',
-          month: '2-digit',
-        })})`,
+        label: `${formatMessage(messages.lastMonth)} (${formatDayMonthFunc(
+          lastMonthStart
+        )} - ${formatDayMonthFunc(lastMonthEnd)})`,
         minDate: lastMonthStart,
         maxDate: lastMonthEnd,
       },
@@ -337,15 +300,17 @@ export class DateRangeSelector extends PureComponent {
 
   render() {
     const { intl, floatingLabelText, controlClassName, dateFormat } = this.props
+    const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
     const { formatMessage } = intl
+    const formatDayMonthFunc = date => format(date, dayMonthFormat)
 
     const dropDownSelectItems = {
       any: [],
-      day: this.getDaysSelectList(),
-      week: this.getWeeksSelectList(),
-      month: this.getMonthsSelectList(),
-      quarter: this.getQuartersSelectList(),
-      year: this.getYearsSelectList(),
+      day: this.getDaysSelectList(formatDayMonthFunc),
+      week: this.getWeeksSelectList(formatDayMonthFunc),
+      month: this.getMonthsSelectList(formatDayMonthFunc),
+      quarter: this.getQuartersSelectList(formatDayMonthFunc),
+      year: this.getYearsSelectList(formatDayMonthFunc),
       custom: [],
     }[this.state.rangeMode]
 

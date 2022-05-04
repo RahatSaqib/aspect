@@ -8,6 +8,7 @@ const DEFAULT_SETTINGS = {
     dateFormat: 'yyyy-MM-dd',
     timeFormat: 'HH:mm:ss',
     dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
+    dayMonthFormat: 'MM/dd',
     utilizationRateThreshold: 0.8,
     errorRateThreshold: 0.05,
   },
@@ -140,6 +141,9 @@ const plugins = {
     issueTriggers: require('./partner/Philippines/issueTriggers'),
     issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
     transformMergeResultPayload: require('./partner/Philippines/transformMergeResultPayload'),
+  },
+  pakistan: {
+    settings: require('./partner/Pakistan/settings'),
   },
 }
 

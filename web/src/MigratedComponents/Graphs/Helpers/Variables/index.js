@@ -14,6 +14,10 @@ const {
   '--aspect-color-supernova': colorSuperNova,
   '--aspect-color-supernova-2': colorSuperNova2,
   '--aspect-color-white-4': colorWhite4,
+  '--aspect-color-mint': colorMint,
+  '--aspect-color-slate': colorSlate,
+  '--aspect-color-crayola': colorCrayola,
+  '--aspect-color-powder': colorPowder,
   '--eastern-blue': easternBlue,
   '--eastern-blue-2': easternBlue2,
   '--dusty': dusty,
@@ -107,6 +111,74 @@ const graphColorMap = [
   { id: 25, externalId: 'NotConfirmed', color: colorBlue4 },
   { id: 30, externalId: 'devicesActive', color: odActive },
   { id: 31, externalId: 'weekendOrHoliday', color: odWeekend },
+
+  // color modifications for tbResultsByCategory1Monthly && NotDetected tbResultsByCategory1Aggregate
+  {
+    id: 7,
+    externalId: 'Trace Detected_tbResultsByCategory1Monthly',
+    color: colorCrayola,
+  },
+  {
+    id: 9,
+    externalId: 'NotDetected_tbResultsByCategory1Monthly',
+    color: colorMint,
+  },
+  {
+    id: 11,
+    externalId: 'NoResult_tbResultsByCategory1Monthly',
+    color: colorSlate,
+  },
+  {
+    id: 7,
+    externalId: 'Trace Detected_tbResultsByCategory1Aggregate',
+    color: colorCrayola,
+  },
+  {
+    id: 9,
+    externalId: 'NotDetected_tbResultsByCategory1Aggregate',
+    color: colorMint,
+  },
+  {
+    id: 11,
+    externalId: 'NoResult_tbResultsByCategory1Aggregate',
+    color: colorSlate,
+  },
+
+  // color modifications for tbByCategory1Monthly && tbByCategory1Aggregate
+  {
+    id: 9,
+    externalId: 'NotDetected_tbByCategory1Monthly',
+    color: colorPowder,
+  },
+  {
+    id: 9,
+    externalId: 'NotDetected_tbByCategory1Aggregate',
+    color: colorPowder,
+  },
+
+  // color modifications for covidByCategory1Monthly && covidByCategory1Aggregate
+  {
+    id: 11,
+    externalId: 'NoResult_covidByCategory1Monthly',
+    color: colorSlate,
+  },
+  { id: 16, externalId: 'Unknown_covidByCategory1Monthly', color: colorSlate },
+  { id: 17, externalId: 'Negative_covidByCategory1Monthly', color: colorMint },
+  {
+    id: 11,
+    externalId: 'NoResult_covidByCategory1Aggregate',
+    color: colorSlate,
+  },
+  {
+    id: 16,
+    externalId: 'Unknown_covidByCategory1Aggregate',
+    color: colorSlate,
+  },
+  {
+    id: 17,
+    externalId: 'Negative_covidByCategory1Aggregate',
+    color: colorMint,
+  },
 
   // for `inactive*` device statuses
   { id: 40, externalId: 'inactiveUnknown', color: odUnknown },
