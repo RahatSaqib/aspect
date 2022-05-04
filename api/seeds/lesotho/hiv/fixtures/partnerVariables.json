@@ -3,7 +3,7 @@
   "adminPassword": "dh8sEakm6y",
   "partnerName": "Lesotho HIV",
   "gxAlertDeviceApiKey": "bnhqb0a2jkfajhut2x3g",
-  "partnerPlugin": "",
+  "plugin": "",
   "deviceLogHistoryDays": 365,
   "autoAcknowledgeOlderThanDays": null,
   "numberToLeaveUnacknowledged": null,

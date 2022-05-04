@@ -4,7 +4,7 @@ module.exports = {
   adminPassword: 'e5wQ40TLzd',
   deviceApiToken: 'jdk5ctyu8jhwimkvfc99',
   partnerAbbreviation: 'PH',
-  partnerPlugin: '',
+  plugin: '',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

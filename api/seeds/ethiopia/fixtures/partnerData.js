@@ -9,7 +9,7 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
-  partnerPlugin: '',
+  plugin: '',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

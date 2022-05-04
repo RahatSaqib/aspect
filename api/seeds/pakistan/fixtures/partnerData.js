@@ -22,7 +22,7 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
-  partnerPlugin: 'pakistan',
+  plugin: 'pakistan',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

@@ -4,7 +4,7 @@ module.exports = {
   partnerAbbreviation: 'MM',
   adminUserName: 'myanmar_admin',
   adminPassword: '8v5TMxkpzP',
-  partnerPlugin: '',
+  plugin: '',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

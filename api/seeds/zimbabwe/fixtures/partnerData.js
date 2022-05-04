@@ -7,7 +7,7 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
-  partnerPlugin: '',
+  plugin: '',
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,
   dueDaysInventoryStockout: 30,

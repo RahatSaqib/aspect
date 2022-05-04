@@ -3,7 +3,7 @@
   "adminPassword": "DM3tFfbQnx",
   "partnerName": "Lesotho TB",
   "gxAlertDeviceApiKey": "auv294emdbaervaeqzxc",
-  "partnerPlugin": "",
+  "plugin": "",
   "deviceLogHistoryDays": 365,
   "autoAcknowledgeOlderThanDays": null,
   "numberToLeaveUnacknowledged": null,

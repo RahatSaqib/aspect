@@ -5,7 +5,7 @@ module.exports = {
   adminUserName: 'admin',
   adminPassword: 'bC2B04ABra',
   defaultPassword: 'azD45r', // default password for users that are not admins
-  partnerPlugin: '',
+  plugin: '',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,
