@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-04-11T21:15:07.516Z\n"
+"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -156,12 +156,14 @@ msgstr ">= 40 cp/mL"
 msgid ">= 550 cp/mL"
 msgstr ">= 550 cp/mL"
 
-#. [pages.Contacts.person.name.exist]
+#. [pages.Contacts.person.email.exist]
 #. defaultMessage is:
-#. A person with the same name exists. Please use a different name.
+#. A person with the same email exists. Please use a different email.
 #: extracted_strings.json
-msgid "A person with the same name exists. Please use a different name."
-msgstr "Человек с таким именем существует. Пожалуйста, используйте другое имя."
+msgid "A person with the same email exists. Please use a different email."
+msgstr ""
+"Человек с таким же адресом электронной почты существует. Пожалуйста, "
+"используйте другой адрес электронной почты."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1168,10 +1170,16 @@ msgstr "Невозможно редактировать"
 #. [pages.JobAssignments.cancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.PersonList.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.RouterDetail.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [button_Cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.PersonList.disabled.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.BaseDialog.cancel]
@@ -1563,6 +1571,20 @@ msgstr "Контакт Создан успешно"
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Контактная информация"
+
+#. [filter.popover.contactStatus]
+#. defaultMessage is:
+#. Contact Status
+#: extracted_strings.json
+msgid "Contact Status"
+msgstr "Статус контакта"
+
+#. [filter.btnGroup.contactEnabledStatus]
+#. defaultMessage is:
+#. Contact Status: {contactStatus}
+#: extracted_strings.json
+msgid "Contact Status: {contactStatus}"
+msgstr ""
 
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -2421,6 +2443,20 @@ msgstr "Устройства с неиспользуемыми модулями"
 msgid "Dial Code"
 msgstr "Телефонный код"
 
+#. [pages.Contacts.disable]
+#. defaultMessage is:
+#. Disable
+#: extracted_strings.json
+msgid "Disable"
+msgstr "Запрещать"
+
+#. [filter.btnGroup.contactStatus.contactDisabled]
+#. defaultMessage is:
+#. Disabled
+#: extracted_strings.json
+msgid "Disabled"
+msgstr ""
+
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
 #. Discard
@@ -2483,6 +2519,20 @@ msgstr "Район"
 msgid "Division"
 msgstr "Дивизион"
 
+#. [pages.PersonList.disable]
+#. defaultMessage is:
+#. Do you want to disable
+#: extracted_strings.json
+msgid "Do you want to disable"
+msgstr ""
+
+#. [pages.PersonList.enable]
+#. defaultMessage is:
+#. Do you want to enable
+#: extracted_strings.json
+msgid "Do you want to enable"
+msgstr ""
+
 #. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
 #. Down for Repair
@@ -2503,6 +2553,13 @@ msgstr ""
 "этом отчете вы можете увидеть даты калибровки, сбои аппаратного/программного "
 "обеспечения и другие ошибки, сбои или информационные записи, которые "
 "генерировал прибор"
+
+#. [pages.ResultList.resultCategoryDrugResistance]
+#. defaultMessage is:
+#. Drug Resistance
+#: extracted_strings.json
+msgid "Drug Resistance"
+msgstr "Устойчивость к лекарству"
 
 #. [pages.TaskList.issueStatusDueNow]
 #. defaultMessage is:
@@ -2650,6 +2707,9 @@ msgstr "Укажите тему электронной почты"
 msgid "Email was sent to:"
 msgstr "Электронная почта была отправлена на:"
 
+#. [pages.Contacts.enable]
+#. defaultMessage is:
+#. Enable
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
 #. Enable
@@ -2663,6 +2723,20 @@ msgstr "Давать возможность"
 #: extracted_strings.json
 msgid "Enable this notification"
 msgstr "Включить это уведомление"
+
+#. [pages.PersonList.enableDisable]
+#. defaultMessage is:
+#. Enable/Disable User
+#: extracted_strings.json
+msgid "Enable/Disable User"
+msgstr ""
+
+#. [filter.btnGroup.contactStatus.contactEnabled]
+#. defaultMessage is:
+#. Enabled
+#: extracted_strings.json
+msgid "Enabled"
+msgstr "Включено"
 
 #. [forms.formItem.endDate]
 #. defaultMessage is:
@@ -3000,7 +3074,7 @@ msgstr "Ошибка при отправке сообщения о сбросе 
 msgid "Error Transferring Result"
 msgstr "Результат переноса ошибок"
 
-#. [pages.Contacts.person.name.exist.title]
+#. [pages.Contacts.person.email.exist.title]
 #. defaultMessage is:
 #. Error creating person
 #: extracted_strings.json
@@ -7561,6 +7635,13 @@ msgstr "Выберите анализ..."
 msgid "Select consumable..."
 msgstr "Выберите расходный материал..."
 
+#. [filter.popover.contactStatusHint]
+#. defaultMessage is:
+#. Select contact status...
+#: extracted_strings.json
+msgid "Select contact status..."
+msgstr "Выберите статус контакта..."
+
 #. [pages.NotificationDetail.jobFunctionTags]
 #. defaultMessage is:
 #. Select contacts with any of the following tags
@@ -8405,10 +8486,10 @@ msgstr "Сопротивление туберкулёза"
 
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
-#. TB XDR
+#. TB XDR Drug Resistances
 #: extracted_strings.json
-msgid "TB XDR"
-msgstr "TB XDR"
+msgid "TB XDR Drug Resistances"
+msgstr "ТБ ШЛУ лекарственная устойчивость"
 
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
@@ -9172,6 +9253,13 @@ msgstr "Это электронное сообщение недействите�
 msgid "This field is required"
 msgstr "Это поле обязательно для заполнения"
 
+#. [pages.PersonList.disabled.disabledOn]
+#. defaultMessage is:
+#. This person was disabled on
+#: extracted_strings.json
+msgid "This person was disabled on"
+msgstr ""
+
 #. [pages.ReportIndex.geneXpertIssues_description]
 #. defaultMessage is:
 #. This report shows all issues that apply to GeneXpert devices
@@ -9261,6 +9349,24 @@ msgstr ""
 #: extracted_strings.json
 msgid "This username is unavailable"
 msgstr "Это имя пользователя недоступно"
+
+#. [pages.PersonList.disabled.disableUser]
+#. defaultMessage is:
+#. This will disable this user, and they will not be able to login. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will disable this user, and they will not be able to login. Would you "
+"like to continue?"
+msgstr ""
+
+#. [pages.PersonList.disabled.enableUser]
+#. defaultMessage is:
+#. This will enable this user again, and they will be able to login again. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will enable this user again, and they will be able to login again. "
+"Would you like to continue?"
+msgstr ""
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -9905,6 +10011,13 @@ msgstr "Неделя"
 msgid "Week or holiday"
 msgstr "Неделя или праздник"
 
+#. [pages.welcomePage.welcome]
+#. defaultMessage is:
+#. Welcome to Aspect
+#: extracted_strings.json
+msgid "Welcome to Aspect"
+msgstr ""
+
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
 #. When the result is
@@ -9938,13 +10051,6 @@ msgstr "В течение 2 часов после тестирования"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Статус процесса"
-
-#. [pages.ResultList.resultCategoryXDR]
-#. defaultMessage is:
-#. XDR
-#: extracted_strings.json
-msgid "XDR"
-msgstr "XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -9991,6 +10097,12 @@ msgstr "Xpert Test Activities Report"
 msgid "Year"
 msgstr "Год"
 
+#. [pages.PersonList.confirm]
+#. defaultMessage is:
+#. Yes
+#. [pages.PersonList.disabled.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
@@ -10142,6 +10254,15 @@ msgstr ""
 #: extracted_strings.json
 msgid "You've successfully logged out"
 msgstr "Вы успешно вышли из системы"
+
+#. [pages.welcomePage.setupNeeded]
+#. defaultMessage is:
+#. Your account still needs some setup before you will be able to use the system. Please contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your account still needs some setup before you will be able to use the "
+"system. Please contact your administrator."
+msgstr ""
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -10845,6 +10966,12 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid "XDR"
+#~ msgstr "XDR"
+
+#~ msgid "TB XDR"
+#~ msgstr "TB XDR"
 
 #~ msgid "* in transit from {inTransitFromSiteName}"
 #~ msgstr "* в пути из {inTransitFromSiteName}"
