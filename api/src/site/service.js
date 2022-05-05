@@ -231,10 +231,32 @@ async function disableSite(request) {
     .update({ disabled: true, disabledOn: new Date(), disabledBy })
 
   if (updatedCount !== 1) {
-    return Boom.conflict('The site is already disabled.')
+    return getDisableSiteErrorReason(params.siteId, dataConstraints)
   }
 
   return { ok: true }
+}
+
+async function getDisableSiteErrorReason(siteId, dataConstraints) {
+  let error = new Boom.Boom('Unknown error')
+  const site = await getSite(siteId, dataConstraints)
+
+  if (!site) {
+    const rawSiteRecord = await knex('Site as s')
+      .where('s.id', siteId)
+      .first('s.id', 's.disabled')
+
+    if (!rawSiteRecord) {
+      error = new Boom.notFound(`The site doesn't exists.`)
+    } else if (rawSiteRecord.disabled) {
+      error = new Boom.conflict('The site is already disabled.')
+    } else {
+      error = new Boom.forbidden(
+        `You don't have access to this site. Ask your administrator.`
+      )
+    }
+  }
+  return error
 }
 
 async function listSitesForSelectList(request) {

@@ -10,7 +10,7 @@ const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
   const siteIdToDisable = 3
-  describe('/site', () => {
+  describe.only('/site', () => {
     const path = '/api/site'
     let siteId = 1
 
@@ -116,8 +116,8 @@ describe('Site routes', () => {
 
     describe('POST', () => {})
 
-    describe('DELETE', () => {
-      it('should soft delete a site given a siteId', async () => {
+    describe('Disable Site', () => {
+      it('should disable a site given a siteId', async () => {
         const deleteSiteResponse = await server
           .delete(`${path}/${siteIdToDisable}`)
           .send()
@@ -136,14 +136,38 @@ describe('Site routes', () => {
         assert.isNotNull(site.disabledOn, 'Site should have a disabledOn date')
 
         // check that constraints filter the disabled site
-        const getSiteResponse = await server
+        const getDisableSiteResponse = await server
           .get(`/api/site/${siteIdToDisable}`)
           .set('Authorization', `Bearer${shared.token}`)
 
         assert.equal(
-          getSiteResponse.status,
+          getDisableSiteResponse.status,
           404,
           'disabled site should not be retrieved anymore'
+        )
+
+        const disableASiteAlreadyDisabledReponse = await server
+          .delete(`${path}/${siteIdToDisable}`)
+          .send()
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(
+          disableASiteAlreadyDisabledReponse.status,
+          409,
+          'disable an already disabled site should return a 409'
+        )
+      })
+
+      it('should return 404 when disabling a non existent site', async () => {
+        const disableANonExistentSiteReponse = await server
+          .delete(`${path}/99999`)
+          .send()
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(
+          disableANonExistentSiteReponse.status,
+          404,
+          'disable a non existent site should return a 404'
         )
       })
     })
