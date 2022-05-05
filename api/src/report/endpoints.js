@@ -45,6 +45,7 @@ function requestBaseQuery() {
     maxDate: maxDate.default(new Date().toISOString()),
     siteName: Joi.string().allow('').description('Filter for site name'),
     reportName: Joi.string().allow('').description('Filter for report name'),
+    timeZone: Joi.string().allow('').description('IANA Timezone for requester'),
   }
 }
 
