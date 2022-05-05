@@ -1859,7 +1859,9 @@ async function onDeviceMaintenanceStatusLogScheduled(
        * if data for DeviceMaintenanceStatusLog has type='RESULT_LOGGED' and device's `lastSeenOn`
        * is not equal TODAY - then update `lastSeenOn`
        */
-      const lastSeenOn = lastSeenOn ? startOfDayUtc(device.lastSeenOn) : null
+      const lastSeenOn = device.lastSeenOn
+        ? startOfDayUtc(device.lastSeenOn)
+        : null
       if (
         (data.type === 'RESULT_LOGGED' ||
           deviceMaintenanceStatusForTheDay === 'active') &&
