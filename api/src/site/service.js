@@ -153,30 +153,27 @@ async function showSite(request) {
 
   // get item
   const site = await getSite(params.siteId, dataConstraints)
-  if (site) {
-    site.devices = await knex('Device as d')
-      .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .innerJoin(
-        'DeviceTypeCategory as dtc',
-        'dt.deviceTypeCategoryId',
-        'dtc.id'
-      )
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        deviceType: 'dt',
-      })
-      .where('siteId', params.siteId)
-      .select(
-        'd.id',
-        'd.name',
-        'd.shortName',
-        'dt.id as deviceTypeId',
-        'dt.name as deviceTypeName',
-        'dtc.id as category'
-      )
-  } else {
+
+  if (!site) {
     return Boom.notFound()
   }
+  site.devices = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+    })
+    .where('siteId', params.siteId)
+    .select(
+      'd.id',
+      'd.name',
+      'd.shortName',
+      'dt.id as deviceTypeId',
+      'dt.name as deviceTypeName',
+      'dtc.id as category'
+    )
+
   const result = { ok: true, data: site }
 
   return result

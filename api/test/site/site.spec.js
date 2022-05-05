@@ -10,7 +10,7 @@ const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
   const siteIdToDisable = 3
-  describe.only('/site', () => {
+  describe('/site', () => {
     const path = '/api/site'
     let siteId = 1
 
@@ -131,7 +131,7 @@ describe('Site routes', () => {
           .first('s.id', 's.disabled', 's.disabledOn', 's.disabledBy')
 
         assert.isNotNull(site, 'Site should not be null')
-        assert.equal(1, site.disabled, 'Site should be disabled')
+        assert.equal(site.disabled, 1, 'Site should be disabled')
         assert.equal(site.disabledBy, 1, 'Site should be disabled by user')
         assert.isNotNull(site.disabledOn, 'Site should have a disabledOn date')
 
