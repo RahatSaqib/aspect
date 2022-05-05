@@ -10,7 +10,7 @@ const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
   const siteIdToDisable = 3
-  describe.only('/site', () => {
+  describe('/site', () => {
     const path = '/api/site'
     let siteId = 1
 

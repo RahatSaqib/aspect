@@ -22,6 +22,7 @@ import ConnectedTagInput from '../../../../tag/ConnectedTagInput'
 import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 import AspectButton from '../../../../components/shared/AspectButton'
 import AspectDialog from '../../../../components/shared/AspectDialog'
+import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
 import messages from '../messages'
 import styles from './EditableFieldsForm.css'
@@ -222,17 +223,18 @@ export const EditableFieldsForm = ({
       >
         {formatMessage(messages.buttonUpdate)}
       </Button>
-
-      <Button
-        disabled={!pristine}
-        style={{ marginLeft: '1rem', backgroundColor: 'red', color: 'white' }}
-        type="button"
-        color="error"
-        variant="contained"
-        onClick={handleDeletePrompt}
-      >
-        {formatMessage(messages.buttonDelete)}
-      </Button>
+      <PermissionsProvider permissions={['site:admin']}>
+        <Button
+          disabled={!pristine}
+          style={{ marginLeft: '1rem', backgroundColor: 'red', color: 'white' }}
+          type="button"
+          color="error"
+          variant="contained"
+          onClick={handleDeletePrompt}
+        >
+          {formatMessage(messages.buttonDelete)}
+        </Button>
+      </PermissionsProvider>
       {submitting && <LinearProgress />}
 
       <AspectDialog
