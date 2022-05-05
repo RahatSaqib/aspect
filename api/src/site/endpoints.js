@@ -342,11 +342,11 @@ const routes = [
     },
   },
   {
-    method: 'DELETE',
-    path: '/site/{siteId}',
+    method: 'PUT',
+    path: '/site/disable/{siteId}',
     handler: asyncHandler(disableSite),
     config: {
-      description: 'Soft Delete Site',
+      description: 'Disable Site',
       notes: 'Id of the site to disable',
       auth: { scope: ['site:disable'] },
       validate: {

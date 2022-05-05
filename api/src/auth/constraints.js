@@ -395,6 +395,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
     showUnapprovedDevices = false,
     showDecommissionedDevices = false,
   } = aliases
+
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
@@ -421,6 +422,13 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
         )
       )
     }
+  } else if (!aliases.site) {
+    aliases.site = alias('Site')
+    queryBuilder.leftOuterJoin(
+      `Site as ${aliases.site}`,
+      `${result}.siteId`,
+      `${aliases.site}.id`
+    )
   }
   if (aliases.site) {
     excludeDisabledSites(queryBuilder, aliases)

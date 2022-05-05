@@ -388,14 +388,14 @@ function receiveDeletedSingleSite(requestedAt, item) {
 export function deleteSingleSite(siteId, data) {
   return dispatch => {
     dispatch(requestDeletingSingleSite(new Date(), siteId, data))
-    return aspectFetch(`/site/${siteId}`, {
-      method: 'DELETE',
+    return aspectFetch(`/site/disable/${siteId}`, {
+      method: 'PUT',
       body: JSON.stringify({ siteId }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.deleteSingleSite.DELETE.default.title', // TODO: add resource and translations
+              id: 'errorResponseMessages.deleteSingleSite.DELETE.default.title',
               defaultMessage:
                 'An Error Occurred When Trying to Delete the Site',
             },

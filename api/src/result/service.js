@@ -2352,6 +2352,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       assayType: 'at',
       device: 'd',
       deviceType: 'dt',
+      site: 'so',
       sample: 'sp',
       geography: 'g',
       result: 'r',
@@ -2359,6 +2360,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       disease: 'dis',
       showUnapprovedDevices,
     })
+
   return resultQuery
 }
 
