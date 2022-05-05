@@ -86,7 +86,7 @@
     },
     {
         "module": "site",
-        "activity": "disable",
+        "activity": "admin",
         "description": "Can disable sites"
     },
     {

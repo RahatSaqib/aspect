@@ -46,7 +46,7 @@
     },
     {
       "name": "site",
-      "activities": ["view", "edit"]
+      "activities": ["view", "edit", "admin"]
     },
     {
       "name": "issue",
