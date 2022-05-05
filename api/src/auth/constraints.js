@@ -398,24 +398,20 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
-      queryBuilder
-        .leftOuterJoin(
-          `Site as ${aliases.site}`,
-          `${device}.siteId`,
-          `${aliases.site}.id`
-        )
-        .where(`${aliases.site}.disabled`, knex.raw('?', 0))
+      queryBuilder.leftOuterJoin(
+        `Site as ${aliases.site}`,
+        `${device}.siteId`,
+        `${aliases.site}.id`
+      )
     }
     if (aliases.site) {
       if (!aliases.partner) {
         aliases.partner = alias('Partner')
-        queryBuilder
-          .leftOuterJoin(
-            `Partner as ${aliases.partner}`,
-            `${aliases.site}.partnerId`,
-            `${aliases.partner}.id`
-          )
-          .where(`${aliases.site}.disabled`, knex.raw('?', 0))
+        queryBuilder.leftOuterJoin(
+          `Partner as ${aliases.partner}`,
+          `${aliases.site}.partnerId`,
+          `${aliases.partner}.id`
+        )
       }
     }
     if (_.get(constraints, 'deviceType.id')) {
@@ -425,6 +421,9 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
         )
       )
     }
+  }
+  if (aliases.site) {
+    excludeDisabledSites(queryBuilder, aliases)
   }
   if (device && !showUnapprovedDevices) {
     queryBuilder.leftOuterJoin(
@@ -460,6 +459,14 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
         )
     )
   }
+}
+
+function excludeDisabledSites(queryBuilder, aliases) {
+  queryBuilder.where(disabledSitesQueryBuilder => {
+    disabledSitesQueryBuilder
+      .whereNull(`${aliases.site}.id`)
+      .orWhere(`${aliases.site}.disabled`, knex.raw('?', 0))
+  })
 }
 
 function addPersonConstraints(

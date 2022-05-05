@@ -9,7 +9,8 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
-  describe('/site', () => {
+  const siteIdToDisable = 3
+  describe.only('/site', () => {
     const path = '/api/site'
     let siteId = 1
 
@@ -18,6 +19,12 @@ describe('Site routes', () => {
       shared.checkToken(server, path)
     })
 
+    after(async () => {
+      // return the test site to its original state
+      await knex('Site')
+        .where('id', siteIdToDisable)
+        .update({ disabled: 0, disabledBy: null, disabledOn: null })
+    })
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
         const res = await server
@@ -112,7 +119,7 @@ describe('Site routes', () => {
     describe('DELETE', () => {
       it('should soft delete a site given a siteId', async () => {
         const deleteSiteResponse = await server
-          .delete(`${path}/${siteId}`)
+          .delete(`${path}/${siteIdToDisable}`)
           .send()
           .set('Authorization', `Bearer${shared.token}`)
 
@@ -120,18 +127,17 @@ describe('Site routes', () => {
 
         // make sure the site has been disabled
         const site = await knex('Site as s')
-          .where('s.id', siteId)
+          .where('s.id', siteIdToDisable)
           .first('s.id', 's.disabled', 's.disabledOn', 's.disabledBy')
 
         assert.isNotNull(site, 'Site should not be null')
-        assert.equal(1, site.id, 'Site should be disabled')
         assert.equal(1, site.disabled, 'Site should be disabled')
         assert.equal(site.disabledBy, 1, 'Site should be disabled by user')
         assert.isNotNull(site.disabledOn, 'Site should have a disabledOn date')
 
         // check that constraints filter the disabled site
         const getSiteResponse = await server
-          .get(`/api/site/${siteId}`)
+          .get(`/api/site/${siteIdToDisable}`)
           .set('Authorization', `Bearer${shared.token}`)
 
         assert.equal(
@@ -139,11 +145,6 @@ describe('Site routes', () => {
           404,
           'disabled site should not be retrieved anymore'
         )
-
-        // return the test site to its original state
-        await knex('Site')
-          .where('id', siteId)
-          .update({ disabled: 0, disabledBy: null, disabledOn: null })
       })
     })
 
