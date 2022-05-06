@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const Stream = require('stream')
 const _ = require('lodash')
 const { subDays } = require('date-fns')
+const { formatInTimeZone } = require('date-fns-tz')
 
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
@@ -18,7 +19,6 @@ const {
   respondStream,
   RELABEL_EXCEL,
 } = require('../shared/excel')
-const { formatDateOrDefault } = require('../shared/date')
 const logger = require('../shared/logger')
 
 /**
@@ -96,17 +96,26 @@ async function getSheetData(request, sheet) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function getDateRangeString({ minDate, maxDate }) {
+function getDateRangeString({
+  minDate,
+  maxDate,
+  timeZone = 'America/New_York',
+}) {
+  const dateFormat = 'dd-MM-yyyy'
   if (!minDate && !maxDate) {
     return 'all'
   }
   const dates = []
   if (minDate) {
-    dates.push(minDate ? formatDateOrDefault(minDate) : '')
+    dates.push(
+      minDate ? formatInTimeZone(new Date(minDate), timeZone, dateFormat) : ''
+    )
   }
   dates.push(' — ') // long dash
   if (maxDate) {
-    dates.push(maxDate ? formatDateOrDefault(maxDate) : '')
+    dates.push(
+      maxDate ? formatInTimeZone(new Date(maxDate), timeZone, dateFormat) : ''
+    )
   }
   return dates.join('')
 }

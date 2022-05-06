@@ -724,8 +724,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ],
       'MTB',
       'resultCategoryMtb',
-      'XDR',
-      'resultCategoryXDR'
+      'Drug Resistance',
+      'resultCategoryDrugResistance'
     )
     await upsertConsumables(knex, true, ['GxMtbXdr'])
   }

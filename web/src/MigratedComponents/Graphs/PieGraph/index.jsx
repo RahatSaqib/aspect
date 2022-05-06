@@ -20,6 +20,7 @@ const PieGraph = ({
       componentClasses={componentClasses}
       keys={keys}
       i18nKeys={i18nKeys}
+      config={config}
     />
   )
 }

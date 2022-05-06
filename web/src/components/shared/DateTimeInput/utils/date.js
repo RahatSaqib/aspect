@@ -41,6 +41,7 @@ import values from 'lodash/values'
 import { i18nWrapper } from '../../../../Providers/I18nProvider'
 import messages from '../messages'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import { getAspectDisplayPreferences } from '../../../../globals/sideEffects/LocalStorage'
 
 const now = new Date()
 export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)
@@ -294,12 +295,9 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
 })
 
 const dateRangeOptions = (key, showLast30Days = true) => {
+  const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
   const { formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
-  const dateFormatRanges = {
-    day: '2-digit',
-    month: '2-digit',
-  }
   const dateFormatMonths = { month: 'long', year: 'numeric' }
   const today = negateTimeZoneOffset(new Date())
   const dateRange = []
@@ -320,8 +318,8 @@ const dateRangeOptions = (key, showLast30Days = true) => {
     id: DATE_CONSTS.DATE_RANGE_OPTIONS.CURRENT_MONTH,
     name: formatMessage
       ? formatMessage(messages.thisMonth, {
-          minDate: formatDate(startOfMonth(today), dateFormatRanges),
-          maxDate: formatDate(endOfMonth(today), dateFormatRanges),
+          minDate: format(startOfMonth(today), dayMonthFormat),
+          maxDate: format(endOfMonth(today), dayMonthFormat),
         })
       : messages.thisMonth.id,
     value: {
@@ -333,8 +331,8 @@ const dateRangeOptions = (key, showLast30Days = true) => {
   dateRange.push({
     id: DATE_CONSTS.DATE_RANGE_OPTIONS.LAST_MONTH,
     name: formatMessage(messages.lastMonth, {
-      minDate: formatDate(startOfMonth(subMonths(today, 1)), dateFormatRanges),
-      maxDate: formatDate(endOfMonth(subMonths(today, 1)), dateFormatRanges),
+      minDate: format(startOfMonth(subMonths(today, 1)), dayMonthFormat),
+      maxDate: format(endOfMonth(subMonths(today, 1)), dayMonthFormat),
     }),
     value: monthRangeByCount(today, 1, dateFormatValue),
   })
