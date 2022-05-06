@@ -116,9 +116,18 @@ async function authenticate(request) {
       user = await gxAlertAuthenticate(payload.name, payload.password)
       if (!user) {
         // TODO: Check if what is wrong is the user or the password
-        return Boom.unauthorized(
-          'Authentication failed. Wrong username or password.'
+        // return Boom.unauthorized(
+        //   'Authentication failed. Wrong username or password.'
+        // )
+
+        const err = Boom.unauthorized(
+          'Authentication failed. Wrong username or password.',
+          {
+            errorKeyCode: 'wrongUserOrPassword',
+          }
         )
+        err.output.payload.data = err.data
+        return err
       }
     } catch (err) {
       const data = {

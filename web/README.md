@@ -204,21 +204,21 @@ For configuring it we inserted in the top level component and its entry page the
 <https://github.com/SystemOneId/aspect/blob/15b05296956b3994e220488079506fb154595156/web/src/index.jsx#L15>
 
 ```javascript
-   Sentry.init({
-    dsn: config.sentry.dsn,
-    integrations: [
-      new Integrations.BrowserTracing({
-        tracingOrigins: config.sentry.tracingOrigins || [
-          'localhost:8000',
-          '*.aspect.id',
-        ],
-      }),
-    ],
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: 1.0,
-  })
+Sentry.init({
+  dsn: config.sentry.dsn,
+  integrations: [
+    new Integrations.BrowserTracing({
+      tracingOrigins: config.sentry.tracingOrigins || [
+        'localhost:8000',
+        '*.aspect.id',
+      ],
+    }),
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+})
 ```
 
 The integration for browser tracing is the one responsable for tracking the performance of the application.
@@ -235,5 +235,44 @@ const config = {
   },
   ...
 }
+
+```
+
+## Creating a custom error | Frontend (please read the backend part also)
+
+To create a custom error, we need to pass "customErrorNotifications" to our "errorNotifications" object in the aspectFetch.
+customErrorNotifications is an object that shoukd have as a key our custom statusCode. As the value we need to call
+badRequestBuilder. badRequestBuilder expectes at least an object with messages defined as i18n. And if needed a
+severity type. By default its 'error'
+eg:
+
+```javascript
+...
+
+const messages = defineMessages({
+  accountLockedTitle: {
+    id: 'pages.Login.accountLocked.title',
+    defaultMessage: 'This is the title to display',
+  },
+  accountLocked: {
+    id: 'pages.Login.accountLocked.resolutions',
+    defaultMessage: 'This is the resolution (body)',
+  },
+})
+
+...
+
+aspectFetch('...', {
+  method: 'POST',
+  body: ...,
+  errorNotifications: {
+    401: {...},
+    409: {...},
+    403: {...},
+    customErrorNotifications: {
+      444: badRequestBuilder(messages, 'warn'),
+    }
+  },
+})
 
 ```
