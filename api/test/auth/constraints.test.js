@@ -1,7 +1,7 @@
 const { addConstraints } = require('../../src/auth/constraints')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
-describe.only('addConstraints should add disabled sites filter, only when applicable', async () => {
+describe('addConstraints should add disabled sites filter, only when applicable', async () => {
   const defaultSiteAlias = '__constraints_Site'
   const defaultfilterDisabledAdHocSiteAlias = '__Site_filterDisabled'
   // Let's add some production like dataConstraints
