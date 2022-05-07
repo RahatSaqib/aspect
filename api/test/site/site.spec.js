@@ -118,12 +118,13 @@ describe('Site routes', () => {
 
     describe('Disable Site', () => {
       it('should disable a site given a siteId', async () => {
-        const deleteSiteResponse = await server
-          .delete(`${path}/${siteIdToDisable}`)
+
+        const disableSiteResponse = await server
+          .put(`${path}/disable/${siteIdToDisable}`)
           .send()
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(deleteSiteResponse.status, 200)
+        assert.equal(disableSiteResponse.status, 200)
 
         // make sure the site has been disabled
         const site = await knex('Site as s')
@@ -147,7 +148,7 @@ describe('Site routes', () => {
         )
 
         const disableASiteAlreadyDisabledReponse = await server
-          .delete(`${path}/${siteIdToDisable}`)
+          .put(`${path}/disable/${siteIdToDisable}`)
           .send()
           .set('Authorization', `Bearer${shared.token}`)
 
@@ -160,7 +161,7 @@ describe('Site routes', () => {
 
       it('should return 404 when disabling a non existent site', async () => {
         const disableANonExistentSiteReponse = await server
-          .delete(`${path}/99999`)
+          .put(`${path}/disable/99999`)
           .send()
           .set('Authorization', `Bearer${shared.token}`)
 
