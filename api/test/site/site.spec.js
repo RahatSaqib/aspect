@@ -118,7 +118,6 @@ describe('Site routes', () => {
 
     describe('Disable Site', () => {
       it('should disable a site given a siteId', async () => {
-
         const disableSiteResponse = await server
           .put(`${path}/disable/${siteIdToDisable}`)
           .send()
