@@ -43,7 +43,7 @@ const treatmentStatusGraphs = {
         identifier: 'assayTypeId',
       },
     ],
-    graphRenderPermissions: ['dashboard'],
+    graphRenderPermissions: ['dashboard', '+reporter'],
     graphType: [
       {
         id: 'treatmentStatusMonthly',

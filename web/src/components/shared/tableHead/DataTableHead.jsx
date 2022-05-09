@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
+import PermissionsProvider from '../../../Providers/PermissionsProvider'
 
 const styles = theme => {
   const style = {
@@ -64,49 +65,51 @@ const DataTableHead = ({
             sortable = false,
             isHidden,
             hiddenOn,
+            auth,
             ...restProps
           },
           index
         ) =>
           !isHidden ? (
-            <TableCell
-              key={key}
-              data-column={key}
-              colSpan={colSpan}
-              sortDirection={sortColumnKey === key ? sortColumnDir : false}
-              onClick={onClick}
-              {...restProps}
-              className={classNames(
-                restProps.className,
-                classes.cell,
-                classes[`hidden${hiddenOn}Down`],
-                {
-                  [classes.centerAlignedCell]: !!colSpan,
-                  [classes.clickable]: isFunction(onClick) || sortable,
-                  [classes.compact]: compact,
-                }
-              )}
-            >
-              {!sortable ? (
-                label
-              ) : (
-                <TableSortLabel
-                  active={sortColumnKey === key}
-                  direction={sortColumnDir}
-                  onClick={() => onHeadColumnClick(key)}
-                  IconComponent={KeyboardArrowDown}
-                  classes={{
-                    icon: classes.sortIcon,
-                  }}
-                >
-                  {label}
-                </TableSortLabel>
-              )}
-            </TableCell>
+            <PermissionsProvider permissions={auth || []}>
+              <TableCell
+                key={key}
+                data-column={key}
+                colSpan={colSpan}
+                sortDirection={sortColumnKey === key ? sortColumnDir : false}
+                onClick={onClick}
+                {...restProps}
+                className={classNames(
+                  restProps.className,
+                  classes.cell,
+                  classes[`hidden${hiddenOn}Down`],
+                  {
+                    [classes.centerAlignedCell]: !!colSpan,
+                    [classes.clickable]: isFunction(onClick) || sortable,
+                    [classes.compact]: compact,
+                  }
+                )}
+              >
+                {!sortable ? (
+                  label
+                ) : (
+                  <TableSortLabel
+                    active={sortColumnKey === key}
+                    direction={sortColumnDir}
+                    onClick={() => onHeadColumnClick(key)}
+                    IconComponent={KeyboardArrowDown}
+                    classes={{
+                      icon: classes.sortIcon,
+                    }}
+                  >
+                    {label}
+                  </TableSortLabel>
+                )}
+              </TableCell>
+            </PermissionsProvider>
           ) : null
       )}
     </TableRow>
   </TableHead>
 )
-
 export default withStyles(styles)(DataTableHead)

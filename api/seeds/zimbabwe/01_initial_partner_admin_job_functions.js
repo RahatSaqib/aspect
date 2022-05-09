@@ -3,19 +3,17 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 const { allJobFunctionToId } = require('../../src/shared/dictionary')
-const {
-  adminUserName,
-  partnerName,
-  adminPassword,
-  serverUrl,
-  fixtures,
-} = require('./fixtures/partnerData')
+
 const config = require('../../src/config')
 const geography = require('./fixtures/geography.json')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const { upsertJobFunctionFixture } = require('../common')
 
+const partnerData = require('./fixtures/partnerData')
+const upsertPartnerData = require('../common/upsert_partner_data')
+
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
+const { adminUserName, adminPassword, fixtures } = partnerData
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
@@ -43,13 +41,9 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const [partnerId] = await knex('Partner').insert({
-    name: partnerName,
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
     partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 1,
-    maxDaysDeviceNoResults: 1,
-    serverUrl,
   })
 
   const countries = {}

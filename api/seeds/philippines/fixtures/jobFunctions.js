@@ -60,10 +60,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'reporter',
-        activity: 'edit',
-      },
-      {
         module: 'task',
         activity: 'view',
       },

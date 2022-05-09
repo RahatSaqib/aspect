@@ -13,18 +13,13 @@ const tbPartnerVariables = require('../tb/fixtures/partnerVariables.json')
 const tbGeneXpertPatientDataSchema = require('../tb/fixtures/geneXpertPatientDataSchema.json')
 const hivPartnerVariables = require('../hiv/fixtures/partnerVariables.json')
 const hivGeneXpertPatientDataSchema = require('../hiv/fixtures/geneXpertPatientDataSchema.json')
+const upsertPartnerData = require('../../common/upsert_partner_data')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   utils.hasSeededStaticData = true
-  const partnerDetails = {
-    partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-    serverUrl: 'https://lesotho.aspect.id',
-  }
+
   const adminDetails = {
     approved: 1,
     createdOn: new Date(),
@@ -58,16 +53,11 @@ async function seed(knex) {
   await knex('Partner').where('name', 'Lesotho').update({
     name: tbPartnerVariables.partnerName,
   })
-  let { id: hivPartnerId } =
-    (await knex('Partner')
-      .where('name', hivPartnerVariables.partnerName)
-      .first('id')) || {}
-  if (!hivPartnerId) {
-    ;[hivPartnerId] = await knex('Partner').insert({
-      ...partnerDetails,
-      name: hivPartnerVariables.partnerName,
-    })
-  }
+  const hivPartnerId = await upsertPartnerData(knex, {
+    ...hivPartnerVariables,
+    partnerTypeId: await partnerTypeToId('Operating'),
+  })
+
   let { id: hivAdminId } =
     (await knex('User')
       .where('name', hivPartnerVariables.adminUserName)
@@ -104,17 +94,12 @@ async function seed(knex) {
       password: bcrypt.hashSync(tbPartnerVariables.adminPassword, saltRounds),
     })
   }
+  const tbPartnerId = await upsertPartnerData(knex, {
+    ...tbPartnerVariables,
+    partnerTypeId: await partnerTypeToId('Operating'),
+    name: tbPartnerVariables.partnerName,
+  })
 
-  let { id: tbPartnerId } =
-    (await knex('Partner')
-      .where('name', tbPartnerVariables.partnerName)
-      .first('id')) || {}
-  if (!tbPartnerId) {
-    ;[tbPartnerId] = await knex('Partner').insert({
-      ...partnerDetails,
-      name: tbPartnerVariables.partnerName,
-    })
-  }
   await commonUpserts(
     knex,
     tbPartnerId,

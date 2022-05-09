@@ -3,4 +3,13 @@ module.exports = {
   adminPassword: 'test07',
   partnerName: 'Partner One',
   jobFunctionsToNotify: ['admin'],
+  plugin: '',
+  deviceLogHistoryDays: 365,
+  autoAcknowledgeOlderThanDays: null,
+  numberToLeaveUnacknowledged: null,
+  maxDaysDeviceOffline: 7,
+  maxDaysDeviceNoResults: 14,
+  dueDaysInventoryStockout: 30,
+  dueDaysInventoryStockExpiring: 30,
+  serverUrl: 'https://systemone.id',
 }

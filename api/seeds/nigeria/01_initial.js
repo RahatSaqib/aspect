@@ -4,14 +4,11 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
-const {
-  partnerName,
-  deviceApiToken,
-  adminPassword,
-  partnerAbbreviation,
-  adminUserName,
-  serverUrl,
-} = require('./fixtures/partnerData')
+const partnerData = require('./fixtures/partnerData')
+const upsertPartnerData = require('../common/upsert_partner_data')
+
+const { deviceApiToken, adminPassword, partnerAbbreviation, adminUserName } =
+  partnerData
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -26,14 +23,11 @@ async function seed(knex) {
     lockedOut: 0,
     failedPasswordAttempts: 0,
   })
-  const [partnerId] = await knex('Partner').insert({
-    name: partnerName,
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
     partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-    serverUrl,
   })
+
   await commonUpserts(
     knex,
     partnerId,
