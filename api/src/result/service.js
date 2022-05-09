@@ -2353,7 +2353,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       assayType: 'at',
       device: 'd',
       deviceType: 'dt',
-      site: 'si',
       sample: 'sp',
       geography: 'g',
       result: 'r',
