@@ -22,7 +22,8 @@ const cssClasses = classnames.bind(styles)
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { format, formatMessage, formatNumber } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
-  const patientId = result?.get('patientId') || 'N/A'
+  let patientId = result?.get('patientId')
+  patientId = !patientId || patientId === 'null' ? 'N/A' : patientId
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
