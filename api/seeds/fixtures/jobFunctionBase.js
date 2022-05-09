@@ -54,6 +54,14 @@ const admin = {
     },
     {
       module: 'site',
+      activity: 'admin',
+    },
+    {
+      module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'site',
       activity: 'edit',
     },
     {

@@ -1,3 +1,4 @@
+const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const {
   knex,
@@ -151,11 +152,18 @@ async function showSite(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // get item
-  const item = await getSite(params.siteId, dataConstraints)
-  item.devices = await knex('Device as d')
+  const site = await getSite(params.siteId, dataConstraints)
+
+  if (!site) {
+    return Boom.notFound()
+  }
+  site.devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', deviceType: 'dt' })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+    })
     .where('siteId', params.siteId)
     .select(
       'd.id',
@@ -166,7 +174,7 @@ async function showSite(request) {
       'dtc.id as category'
     )
 
-  const result = { ok: true, data: item }
+  const result = { ok: true, data: site }
 
   return result
 }
@@ -207,6 +215,48 @@ async function updateSite(request) {
 
   const result = await showSite(request)
   return result
+}
+
+async function disableSite(request) {
+  const {
+    params,
+    auth: { credentials },
+  } = request
+  const dataConstraints = await getConstraints(credentials)
+  const user = await getUser(credentials.name)
+  const { id: disabledBy } = user
+  const updatedCount = await knex('Site as s')
+    .where('s.id', params.siteId)
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .update({ disabled: true, disabledOn: new Date(), disabledBy })
+
+  if (updatedCount !== 1) {
+    return getDisableSiteErrorReason(params.siteId, dataConstraints)
+  }
+
+  return { ok: true }
+}
+
+async function getDisableSiteErrorReason(siteId, dataConstraints) {
+  let error = new Boom.Boom('Unknown error')
+  const site = await getSite(siteId, dataConstraints)
+
+  if (!site) {
+    const rawSiteRecord = await knex('Site as s')
+      .where('s.id', siteId)
+      .first('s.id', 's.disabled')
+
+    if (!rawSiteRecord) {
+      error = new Boom.notFound(`The site doesn't exists.`)
+    } else if (rawSiteRecord.disabled) {
+      error = new Boom.conflict('The site is already disabled.')
+    } else {
+      error = new Boom.forbidden(
+        `You don't have access to this site. Ask your administrator.`
+      )
+    }
+  }
+  return error
 }
 
 async function listSitesForSelectList(request) {
@@ -424,4 +474,5 @@ module.exports = {
   listSitesForSelectList,
   listSitesWithReporters,
   getListSitesForSelectList,
+  disableSite,
 }

@@ -236,7 +236,7 @@ function getJobContextConstraint(context) {
     }
   }
 
-  // constrain to device type
+  // constraint to device type
   if (context.deviceTypeId != null) {
     constraint.deviceType = { id: context.deviceTypeId }
     constraint.device = { deviceTypeId: context.deviceTypeId }
@@ -388,6 +388,7 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 }
 
 function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
+  let filterAlias = null
   const {
     device,
     assay,
@@ -395,6 +396,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
     showUnapprovedDevices = false,
     showDecommissionedDevices = false,
   } = aliases
+
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
@@ -421,6 +423,16 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
         )
       )
     }
+  } else if (!aliases.site) {
+    filterAlias = '__Site_filterDisabled'
+    queryBuilder.leftOuterJoin(
+      `Site as ${filterAlias}`,
+      `${result}.siteId`,
+      `${filterAlias}.id`
+    )
+  }
+  if (aliases.site || filterAlias) {
+    excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
   if (device && !showUnapprovedDevices) {
     queryBuilder.leftOuterJoin(
@@ -456,6 +468,14 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
         )
     )
   }
+}
+
+function excludeDisabledSites(queryBuilder, alias) {
+  queryBuilder.where(disabledSitesQueryBuilder => {
+    disabledSitesQueryBuilder
+      .whereNull(`${alias}.id`)
+      .orWhere(`${alias}.disabled`, knex.raw('?', 0))
+  })
 }
 
 function addPersonConstraints(
@@ -499,6 +519,7 @@ function addOrConstraints(
         )
       }
     }
+
     const getBaseProps = (queryBuilder, constraint) => ({
       queryBuilder,
       jobFunctionAlias: jobFunction,

@@ -1,8 +1,11 @@
 // Imports from packages
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { compose, setPropTypes, pure, withHandlers } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
+
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 
@@ -12,11 +15,14 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 // Our own imports
+import { deleteSingleSite } from '../../../../site/SiteRedux'
 import TimezoneSelect from '../../../../components/shared/TimezoneSelect'
 import LocationSelector from '../../../../components/shared/LocationSelector'
 import ConnectedTagInput from '../../../../tag/ConnectedTagInput'
 import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 import AspectButton from '../../../../components/shared/AspectButton'
+import AspectDialog from '../../../../components/shared/AspectDialog'
+import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
 import messages from '../messages'
 import styles from './EditableFieldsForm.css'
@@ -89,6 +95,20 @@ export const EditableFieldsForm = ({
   onSetBasedAddressClick,
   invalid,
 }) => {
+  const dispatch = useDispatch()
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const navigate = useNavigate()
+
+  const handleDelete = () => {
+    dispatch(deleteSingleSite(initialValues.get('id')))
+    setShowConfirmation(false)
+    navigate(-2)
+  }
+
+  function handleDeletePrompt() {
+    setShowConfirmation(true)
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <div className={cssClasses('container')}>
@@ -203,7 +223,42 @@ export const EditableFieldsForm = ({
       >
         {formatMessage(messages.buttonUpdate)}
       </Button>
+      <PermissionsProvider permissions={['site:admin']}>
+        <Button
+          disabled={!pristine}
+          style={{ marginLeft: '1rem', backgroundColor: 'red', color: 'white' }}
+          type="button"
+          color="error"
+          variant="contained"
+          onClick={handleDeletePrompt}
+        >
+          {formatMessage(messages.buttonDelete)}
+        </Button>
+      </PermissionsProvider>
       {submitting && <LinearProgress />}
+
+      <AspectDialog
+        actions={[
+          <Button color="primary" onClick={() => setShowConfirmation(false)}>
+            {formatMessage(messages.cancel)}
+          </Button>,
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => handleDelete()}
+          >
+            {formatMessage(messages.yes)}
+          </Button>,
+        ]}
+        maxWidth="sm"
+        open={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+      >
+        <h3>{formatMessage(messages.deleteSiteConfirmationTitle)}</h3>
+        <div style={{ marginTop: '15px' }}>
+          {formatMessage(messages.deleteSiteConfirmationMessage)}
+        </div>
+      </AspectDialog>
     </form>
   )
 }
