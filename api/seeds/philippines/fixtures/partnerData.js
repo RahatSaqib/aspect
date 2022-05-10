@@ -1,3 +1,5 @@
+const jobFunctions = require('./jobFunctions')
+
 module.exports = {
   partnerName: 'Philippines',
   adminUserName: 'admin',
@@ -5,6 +7,9 @@ module.exports = {
   deviceApiToken: 'jdk5ctyu8jhwimkvfc99',
   partnerAbbreviation: 'PH',
   plugin: '',
+  fixtures: {
+    jobFunctions,
+  },
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

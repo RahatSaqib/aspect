@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { partnerName } = require('./fixtures/partnerVariables')
+const { partnerName } = require('./fixtures/partnerData')
 
 const config = require('../../src/config')
 

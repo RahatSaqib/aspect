@@ -9,6 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const jobFunctionsFixtureDefault = require('./fixtures/jobFunctions')
 const followUpFixture = require('./fixtures/FollowUp.json')
 const timezone = require('./fixtures/TimeZone.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
@@ -1754,7 +1755,11 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
  * @param {Array} jobFunctionFixture
  * @param {number} partnerId
  */
-async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
+async function upsertJobFunctionFixture(
+  knex,
+  jobFunctionFixture = jobFunctionsFixtureDefault,
+  partnerId
+) {
   const { getPermissonByModuleAndActivity } = utils
 
   const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))

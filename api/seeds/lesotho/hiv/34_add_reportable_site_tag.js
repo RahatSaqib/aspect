@@ -1,5 +1,5 @@
 const upsertTags = require('../../common/upsert_tags')
-const partnerData = require('./fixtures/partnerVariables.json')
+const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const { partnerName } = partnerData

@@ -26,7 +26,7 @@ const {
 const {
   exportDevices,
   exportDeviceOperationLogReport,
-} = require('./serviceReport')
+} = require('./serviceReports')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')

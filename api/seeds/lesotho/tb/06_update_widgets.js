@@ -1,6 +1,6 @@
 module.exports = require('../../utils').seed(seed, __filename)
 
-const { partnerName } = require('./fixtures/partnerVariables.json')
+const { partnerName } = require('./fixtures/partnerData')
 
 const sharedSeed = require('../shared/06_update_widgets')
 

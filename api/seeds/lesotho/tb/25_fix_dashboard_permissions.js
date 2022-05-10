@@ -1,7 +1,7 @@
 module.exports = require('../../utils').seed(seed, __filename)
 const { upsertJobFunctionFixture } = require('../../common')
 const fixture = require('../shared/fixtures/jobFunctions')
-const { partnerName } = require('./fixtures/partnerVariables')
+const { partnerName } = require('./fixtures/partnerData')
 const { getPartnerByName } = require('../../utils')
 
 async function seed(knex) {

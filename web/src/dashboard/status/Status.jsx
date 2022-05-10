@@ -99,7 +99,7 @@ const Status = () => {
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
       <div className={cssClasses('FiltersGroup')}>
-        <BrowseSiteDropdown />
+        <BrowseSiteDropdown location={location} />
       </div>
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>

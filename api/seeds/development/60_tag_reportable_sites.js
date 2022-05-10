@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const partnerData = require('./fixtures/partnerVariables')
+const partnerData = require('./fixtures/partnerData')
 const upsertTags = require('../common/upsert_tags')
 
 module.exports = require('../utils').seed(async knex => {

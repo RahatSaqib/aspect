@@ -9,9 +9,9 @@ const {
   commonUpserts,
 } = require('../../common')
 const geography = require('./fixtures/geography.json')
-const tbPartnerVariables = require('../tb/fixtures/partnerVariables.json')
+const tbPartnerVariables = require('../tb/fixtures/partnerData')
 const tbGeneXpertPatientDataSchema = require('../tb/fixtures/geneXpertPatientDataSchema.json')
-const hivPartnerVariables = require('../hiv/fixtures/partnerVariables.json')
+const hivPartnerVariables = require('../hiv/fixtures/partnerData')
 const hivGeneXpertPatientDataSchema = require('../hiv/fixtures/geneXpertPatientDataSchema.json')
 const upsertPartnerData = require('../../common/upsert_partner_data')
 

@@ -1,18 +1,12 @@
-const {
-  upsertJobFunctionFixture,
-  upsertPermissionFixture,
-} = require('../common')
+const upsertJobFunctionsAndPermissions = require('../common/upsert_job_functions_&_permissions')
 
 /* eslint-disable import/no-dynamic-require */
-const { partnerName } = require(`../${process.env['seeds.directory'].replace(
+const partnerData = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
 )}/fixtures/partnerData`)
 
-const jobFunctionFixture = require('../fixtures/jobFunctions')
-const { getPartnerByName } = require('../utils')
-module.exports = require('../utils').seed(async knex => {
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
-  await upsertPermissionFixture(knex)
-  await upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId)
-}, __filename)
+module.exports = require('../utils').seed(
+  async knex => upsertJobFunctionsAndPermissions(knex, partnerData),
+  __filename
+)

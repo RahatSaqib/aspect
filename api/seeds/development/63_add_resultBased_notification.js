@@ -7,7 +7,7 @@ const {
   messageStatusToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
-const { partnerName } = require('./fixtures/partnerVariables')
+const { partnerName } = require('./fixtures/partnerData')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { getPeopleBase } = require('../../src/shared/utilsPerson')
 
