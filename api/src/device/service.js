@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 const {
   addDays,
   addYears,
-  differenceInBusinessDays,
   subMonths,
   startOfMonth,
   endOfMonth,
@@ -278,6 +277,10 @@ async function getListDevices(query, auth) {
         'count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'
       ),
       'issues.categories as issueCategories',
+      'dms.active as isDeviceActive',
+      'dmsl.day as dmslDay',
+      'dmsl.data as dmslData',
+      'd.lastSeenOn as deviceLastSeenOn',
     ])
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
@@ -329,6 +332,7 @@ async function getListDevices(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
+  const toSyncDmslAndDevice = {}
   data.forEach(it => {
     it.availability = {
       count: it.activeDays ? it.activeDays : 0,
@@ -350,7 +354,37 @@ async function getListDevices(query, auth) {
     it.issueCategories = it.issueCategories
       ? it.issueCategories.split(',').map(key => ({ key }))
       : []
+
+    /**
+     * for Active devices - get devices when
+     * DeviceMaintenanceStatusLog.data.type = 'RESULT_LOGGED' and
+     * Device.lastSeenOn < DeviceMaintenanceStatusLog.day
+     */
+    if (
+      +it.isDeviceActive &&
+      it.deviceLastSeenOn &&
+      it.dmslDay &&
+      it.deviceLastSeenOn < it.dmslDay &&
+      JSON.parse(it.dmslData || '{}').type === 'RESULT_LOGGED'
+    ) {
+      toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
+    }
+    delete it.dmslDay
+    delete it.dmslData
+    delete it.deviceLastSeenOn
+    delete it.isDeviceActive
   })
+
+  if (!_.isEmpty(toSyncDmslAndDevice)) {
+    await Promise.all(
+      _.map(_.keys(toSyncDmslAndDevice), async deviceId => {
+        const { lastSeenOn } = toSyncDmslAndDevice[deviceId]
+        return knex('Device')
+          .where({ id: deviceId })
+          .update({ lastSeenOn, updatedOn: new Date() })
+      })
+    )
+  }
 
   const result = { ok: true, total, length: data.length, data }
 
@@ -1736,8 +1770,7 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
       'current_dmsl.day as currentMaintenanceStatusDay',
       'da.token as approvalToken',
       'd.deviceApprovalId as deviceApprovalId',
-      knex.raw('COUNT(r.id) as totalResults'),
-      'd.lastSeenOn'
+      knex.raw('COUNT(r.id) as totalResults')
     )
 }
 
@@ -1847,39 +1880,14 @@ async function onDeviceMaintenanceStatusLogScheduled(
           ? currentMaintenanceStatusLogData
           : '{}'
 
-      /**
-       * `data` to store in DeviceMaintenanceStatusLog
-       */
-      const data = {
-        ...JSON.parse(deviceMaintenanceStatusLogData),
-        ...action,
-      }
-
-      /**
-       * if data for DeviceMaintenanceStatusLog has type='RESULT_LOGGED' and device's `lastSeenOn`
-       * is not equal TODAY - then update `lastSeenOn`
-       */
-      const lastSeenOn = device.lastSeenOn
-        ? startOfDayUtc(device.lastSeenOn)
-        : null
-      if (
-        (data.type === 'RESULT_LOGGED' ||
-          deviceMaintenanceStatusForTheDay === 'active') &&
-        lastSeenOn &&
-        lastSeenOn < today &&
-        differenceInBusinessDays(lastSeenOn, today) > 0
-      ) {
-        const now = new Date()
-        await knex('Device')
-          .where({ id: device.id })
-          .update({ lastSeenOn: now, updatedOn: now })
-      }
-
       await automaticallySetDeviceMaintenanceStatus(
         id,
         today,
         deviceMaintenanceStatusForTheDay,
-        data,
+        {
+          ...JSON.parse(deviceMaintenanceStatusLogData),
+          ...action,
+        },
         messageContext
       )
     })
