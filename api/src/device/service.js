@@ -263,7 +263,7 @@ async function getListDevices(query, auth) {
     .groupBy('d.id')
     .select([
       ...getSelectListFields(userTimeOffset, {
-        lastSeenField: 'GREATEST(dmsl.day, d.lastSeenOn)',
+        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
       }),
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
@@ -279,7 +279,6 @@ async function getListDevices(query, auth) {
       'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
-      'dmsl.data as dmslData',
       'd.lastSeenOn as deviceLastSeenOn',
     ])
     .leftJoin(
@@ -356,21 +355,17 @@ async function getListDevices(query, auth) {
       : []
 
     /**
-     * for Active devices - get devices when
-     * DeviceMaintenanceStatusLog.data.type = 'RESULT_LOGGED' and
-     * Device.lastSeenOn < DeviceMaintenanceStatusLog.day
+     * for Active devices - get devices when Device.lastSeenOn < DeviceMaintenanceStatusLog.day
      */
     if (
       +it.isDeviceActive &&
       it.deviceLastSeenOn &&
       it.dmslDay &&
-      it.deviceLastSeenOn < it.dmslDay &&
-      JSON.parse(it.dmslData || '{}').type === 'RESULT_LOGGED'
+      it.deviceLastSeenOn < it.dmslDay
     ) {
       toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
     }
     delete it.dmslDay
-    delete it.dmslData
     delete it.deviceLastSeenOn
     delete it.isDeviceActive
   })

@@ -46,8 +46,10 @@ async function preProcessAddDeviceData({
   }
   const configurationData = _.get(payload, 'configuration.data') || {}
   const site = await getOrCreateSite(knex, device, payload, now)
+  const payloadLastPingOn = parseDateOrDefault(configurationData.lastPingOn)
+  const deviceLastSeenOn = parseDateOrDefault(device.lastSeenOn)
   const deviceDetails = {
-    lastSeenOn: parseDateOrDefault(configurationData.lastPingOn, now),
+    lastSeenOn: _.max([payloadLastPingOn, deviceLastSeenOn]) ?? now,
     updatedOn: now,
     updatedBy: null,
   }
@@ -343,7 +345,7 @@ async function postProcessAddDeviceOperation({
 async function postProcessUpdateDeviceConfiguration({
   knex,
   payload,
-  device: { id: deviceId },
+  device: { id: deviceId, lastSeenOn },
   now,
 }) {
   let device = {}
@@ -362,11 +364,14 @@ async function postProcessUpdateDeviceConfiguration({
         longitude,
       },
     } = payload
+
+    const payloadLastPingOn = parseDateOrDefault(lastPingOn)
+    const deviceLastSeenOn = parseDateOrDefault(lastSeenOn)
     const deviceDetails = {
       hostId,
       culture,
       timezone,
-      lastSeenOn: parseDateOrDefault(lastPingOn, now),
+      lastSeenOn: _.max([payloadLastPingOn, deviceLastSeenOn]) ?? now,
     }
     if (macAddress && macAddressValid(macAddress)) {
       deviceDetails.macAddress = macAddress
