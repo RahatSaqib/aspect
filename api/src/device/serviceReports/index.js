@@ -357,9 +357,9 @@ async function getDeviceCapacityReport(auth, query) {
       knex.raw('COUNT(r.id) as resultCount'),
       knex.raw(
         `CASE
-            WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
-            ELSE DATE(LAST_DAY(r.endedOn))
-          END as lastDayOfMonth`
+              WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
+              ELSE DATE(LAST_DAY(r.endedOn))
+            END as lastDayOfMonth`
       ),
       'dcap.dailyCapacity'
     )
@@ -399,6 +399,7 @@ async function getDeviceCapacityReport(auth, query) {
 
     return deviceRow
   })
+
   const dataset = {
     ok: true,
     total: data.length,
