@@ -1,3 +1,5 @@
+const jobFunctions = require('./jobFunctions')
+
 module.exports = {
   partnerName: 'Nigeria',
   deviceApiToken: 'q5zh29mw0a01zkqzq1yg',
@@ -6,6 +8,9 @@ module.exports = {
   adminPassword: 'bC2B04ABra',
   defaultPassword: 'azD45r', // default password for users that are not admins
   plugin: '',
+  fixtures: {
+    jobFunctions,
+  },
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,
