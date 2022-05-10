@@ -1,5 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { adminName } = require('./fixtures/partnerVariables')
+const { adminName } = require('./fixtures/partnerData')
 const truenatDevices = require('./fixtures/truenatDevices.json')
 const { upsertTruenatDevices } = require('../commonTruenat')
 

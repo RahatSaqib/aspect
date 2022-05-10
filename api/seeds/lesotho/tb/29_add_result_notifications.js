@@ -12,7 +12,7 @@ const {
 
 const { addIssueTypes } = require('../../relativeObjectsSeeds')
 
-const { partnerName, adminUserName } = require('./fixtures/partnerVariables')
+const { partnerName, adminUserName } = require('./fixtures/partnerData')
 
 const fixture = require('../shared/fixtures/jobFunctions')
 

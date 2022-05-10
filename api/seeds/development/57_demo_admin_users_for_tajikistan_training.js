@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 const upsertContacts = require('../common/upsert_contacts')
-const partnerData = require('./fixtures/partnerVariables')
+const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const contacts = [
