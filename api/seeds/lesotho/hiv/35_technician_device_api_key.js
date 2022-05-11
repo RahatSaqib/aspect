@@ -1,7 +1,7 @@
 module.exports = require('../../utils').seed(seed, __filename)
 const updateJobFunctions = require('../../common/20210331_add_jobfunction_technician')
 const jobFunctionFixture = require('../shared/fixtures/jobFunctions')
-const { partnerName } = require('./fixtures/partnerVariables')
+const { partnerName } = require('./fixtures/partnerData')
 const { upsertDashboardWidgets } = require('../../common')
 const dashboardWidgets = require('./fixtures/dashboardWidget')
 

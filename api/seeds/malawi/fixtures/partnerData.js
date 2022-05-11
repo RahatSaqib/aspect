@@ -6,7 +6,6 @@ module.exports = {
   adminPassword: 'yIeRINEZ',
   deviceApiToken: 'RMENANyMAcKSKInABeAtHIcuRSiCiTZe',
   lowerLevelUserPassword: 'Y29bDu28',
-  serverUrl: 'https://malawi.aspect.id',
   partnerAbbreviation: 'MW',
   assays: [
     'GxUnknown',
@@ -22,4 +21,13 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
+  plugin: '',
+  deviceLogHistoryDays: 365,
+  autoAcknowledgeOlderThanDays: null,
+  numberToLeaveUnacknowledged: null,
+  maxDaysDeviceOffline: 7,
+  maxDaysDeviceNoResults: 14,
+  dueDaysInventoryStockout: 30,
+  dueDaysInventoryStockExpiring: 30,
+  serverUrl: 'https://malawi.aspect.id',
 }

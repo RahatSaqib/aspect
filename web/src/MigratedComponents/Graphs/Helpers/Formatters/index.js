@@ -205,13 +205,45 @@ const generateTickValues = (
   return values
 }
 
-const filterColour = value =>
-  graphColorMap.filter(
-    color => color.externalId === value || color.id === 999
-  )[0].color
+const filterColour = (valueId, graphId) => {
+  let colorValue
+  const tbResultsGraphs = [
+    'tbResultsByCategory1Monthly',
+    'tbResultsByCategory1Aggregate',
+  ]
+  const tbResultsValues = ['Trace Detected', 'NotDetected', 'NoResult']
+  const tRifGraphs = ['tbByCategory1Monthly', 'tbByCategory1Aggregate']
+  const tbRifValues = ['NotDetected']
+  const covidGraphs = ['covidByCategory1Monthly', 'covidByCategory1Aggregate']
+  const covidValues = ['Negative', 'Unknown', 'NotDetected']
+  switch (true) {
+    case includes(tbResultsGraphs, graphId) &&
+      includes(tbResultsValues, valueId):
+      colorValue = `${valueId}_${graphId}`
+      break
 
-const generateColorForValue = ({ id: valueId }) => filterColour(valueId)
-const generateColorForLegend = value => filterColour(value)
+    case includes(tRifGraphs, graphId) && includes(tbRifValues, valueId):
+      colorValue = `${valueId}_${graphId}`
+      break
+
+    case includes(covidGraphs, graphId) && includes(covidValues, valueId):
+      colorValue = `${valueId}_${graphId}`
+      break
+
+    default:
+      colorValue = valueId
+      break
+  }
+
+  return graphColorMap.filter(
+    color => color.externalId === colorValue || color.id === 999
+  )[0].color
+}
+
+const generateColorForValue = (valueId, graphId) =>
+  filterColour(valueId, graphId)
+const generateColorForLegend = (valueId, graphId) =>
+  filterColour(valueId, graphId)
 
 const generateMargin = (tickValuesYShape, legend, type = false) => {
   const shouldMargin = tickValuesYShape !== 'none'
@@ -325,7 +357,7 @@ const generateLegendIntl = (
   i18nKeys,
   string,
   assaysFromState,
-  type = false,
+  graphId = false,
   legendsNotToRender = false
 ) => {
   if (!legendsNotToRender?.includes(string)) {
@@ -337,7 +369,7 @@ const generateLegendIntl = (
         intlMessages,
         i18nKeys
       ),
-      color: generateColorForLegend(string, type),
+      color: generateColorForLegend(string, graphId),
     }
   }
   return {}

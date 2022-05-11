@@ -252,10 +252,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'reporter',
-        activity: 'view',
-      },
-      {
         module: 'report',
         activity: 'view',
       },

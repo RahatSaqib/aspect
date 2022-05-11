@@ -9,6 +9,7 @@ const { query } = require('../src/db')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
+const jobFunctionsFixtureDefault = require('./fixtures/jobFunctions')
 const followUpFixture = require('./fixtures/FollowUp.json')
 const timezone = require('./fixtures/TimeZone.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
@@ -25,6 +26,7 @@ const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneX
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
 const defaultDashboardWidgetsFixture = require('./fixtures/DashboardWidget')
+const upsertPartnerData = require('./common/upsert_partner_data')
 const {
   deviceApprovalToId,
   deviceTypeToId,
@@ -120,6 +122,7 @@ async function commonUpserts(
     id: countryId,
     geographyId,
   } = countries[countryAbbreviation]
+
   let { id: adminPersonId } =
     (await knex('Person')
       .where({
@@ -724,8 +727,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       ],
       'MTB',
       'resultCategoryMtb',
-      'XDR',
-      'resultCategoryXDR'
+      'Drug Resistance',
+      'resultCategoryDrugResistance'
     )
     await upsertConsumables(knex, true, ['GxMtbXdr'])
   }
@@ -1208,22 +1211,15 @@ async function baseGxAlertMigration(
       password: bcrypt.hashSync(admin.password || '', saltRounds),
     })
   }
-  let { id: partnerId } =
-    (await knex('Partner').where('name', partner.name).first('id')) || {}
-  if (!partnerId) {
-    ;[partnerId] = await knex('Partner').insert({
-      partnerTypeId: await partnerTypeToId('Operating'),
-      deviceLogHistoryDays: 365,
-      maxDaysDeviceOffline: 7,
-      maxDaysDeviceNoResults: 14,
-      ...partner,
-    })
-  }
+
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
+    partnerTypeId: await partnerTypeToId('Operating'),
+  })
   const returnValue = {
     adminId,
     partnerId,
   }
-
   // --------------------
   // Common general seeds
   // --------------------
@@ -1759,7 +1755,11 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
  * @param {Array} jobFunctionFixture
  * @param {number} partnerId
  */
-async function upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId) {
+async function upsertJobFunctionFixture(
+  knex,
+  jobFunctionFixture = jobFunctionsFixtureDefault,
+  partnerId
+) {
   const { getPermissonByModuleAndActivity } = utils
 
   const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))

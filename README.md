@@ -8,7 +8,7 @@ See subfolders for project specific READMEs.
 The Aspect API lives under `api`
 React Client App lives under `web`
 
-Setup Development Environemnt
+Setup Development Environment
 ------------------------------
 
 Install [Husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged) tools by running `yarn` in the root.
@@ -17,4 +17,4 @@ Continue both web and API installs by reading: [API README](api/README.md#new-de
 Deployment
 ----------
 
-See: <https://kb.systemone.id/display/AS/Release+Process>
+See: <https://systemone.youtrack.cloud/articles/ASP-A-244122289/Release-Process>

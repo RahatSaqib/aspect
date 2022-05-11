@@ -4,12 +4,7 @@ const sharedSeed = require('../shared/04_gxalert_device')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
-const {
-  adminUserName,
-  adminPassword,
-  partnerName,
-  gxAlertDeviceApiKey,
-} = require('./fixtures/partnerVariables.json')
+const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
   await sharedSeed(
@@ -17,9 +12,6 @@ async function seed(knex) {
     contactsFromGxAlert,
     customFieldsFromGxAlert,
     sitesFromGxAlert,
-    adminUserName,
-    adminPassword,
-    partnerName,
-    gxAlertDeviceApiKey
+    partnerData
   )
 }

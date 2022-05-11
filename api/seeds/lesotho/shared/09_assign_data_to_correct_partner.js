@@ -6,15 +6,14 @@ const { diseaseToId } = require('../../../src/shared/dictionary')
 
 module.exports = async function (
   knex,
-  partnerName,
-  adminUserName,
-  gxAlertDeviceApiKey,
   sitesFromGxAlert,
   contactsFromGxAlert,
   geneXpertAssayExternalIds,
   customFieldsFromGxAlert,
-  diseaseExternalId
+  diseaseExternalId,
+  partnerData
 ) {
+  const { partnerName, adminUserName, gxAlertDeviceApiKey } = partnerData
   const { id: partnerId } = await knex('Partner')
     .where('name', partnerName)
     .first('id')
@@ -66,6 +65,6 @@ module.exports = async function (
       customFieldsFromGxAlert,
     },
     knex,
-    { fixtures: { jobFunctions: jobFunctionsFixture } }
+    partnerData
   )
 }

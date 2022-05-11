@@ -21,6 +21,10 @@ export const messages = defineMessages({
   /**
    * for widget parts
    */
+  dashboardWidgetUnitTests: {
+    id: 'component.Widget.dashboardWidgetUnitTests',
+    defaultMessage: 'Tests',
+  },
   forMtbPositive: {
     id: 'component.Widget.forMtbPositive',
     defaultMessage: 'for {unit} MTB+',

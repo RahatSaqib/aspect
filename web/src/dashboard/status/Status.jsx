@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-// import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import { useSelector, useDispatch } from 'react-redux'
 import { Helmet } from 'react-helmet'
@@ -48,6 +46,7 @@ const Status = () => {
 
   useEffect(() => {
     dispatch(fetchAssays(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -100,7 +99,7 @@ const Status = () => {
     <div className={cssClasses('Container')} style={{ marginBottom }}>
       <Helmet title="Status" />
       <div className={cssClasses('FiltersGroup')}>
-        <BrowseSiteDropdown />
+        <BrowseSiteDropdown location={location} />
       </div>
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>

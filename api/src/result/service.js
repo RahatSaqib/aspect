@@ -408,6 +408,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       result: 'r',
       country: 'c',
     })
+
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
@@ -2359,6 +2360,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       disease: 'dis',
       showUnapprovedDevices,
     })
+
   return resultQuery
 }
 

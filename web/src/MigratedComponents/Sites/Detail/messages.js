@@ -79,6 +79,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.buttonUpdate',
     defaultMessage: 'UPDATE',
   },
+  buttonDelete: {
+    id: 'pages.SiteDetail.buttonDelete',
+    defaultMessage: 'DELETE',
+  },
   fieldNoContact: {
     id: 'pages.SiteDetail.fieldNoContact',
     defaultMessage: 'No contacts assigned to site',
@@ -107,5 +111,22 @@ export default defineMessages({
     id: 'pages.SiteDetail.siteWithoutLocation',
     defaultMessage:
       ' No location set to this site - Please, edit to assign the latitude and longitude fields.',
+  },
+  cancel: {
+    id: 'pages.SiteDetail.disable.cancel',
+    defaultMessage: 'Cancel',
+  },
+  yes: {
+    id: 'pages.SiteDetail.disable.yes',
+    defaultMessage: 'Yes',
+  },
+  deleteSiteConfirmationTitle: {
+    id: 'pages.SiteDetail.disable.confirmation.title',
+    defaultMessage: 'Site Delete Confirmation',
+  },
+  deleteSiteConfirmationMessage: {
+    id: 'pages.SiteDetail.disable.confirmation.message',
+    defaultMessage:
+      'Are you sure you want to delete this site? This action is intented only for test sites, all site data will be lost.',
   },
 })

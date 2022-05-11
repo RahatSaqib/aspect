@@ -7,11 +7,10 @@ module.exports = async function (
   contactsFromGxAlert,
   customFieldsFromGxAlert,
   sitesFromGxAlert,
-  adminUserName,
-  adminPassword,
-  partnerName,
-  gxAlertDeviceApiKey
+  partnerData
 ) {
+  const { adminUserName, adminPassword, partnerName, gxAlertDeviceApiKey } =
+    partnerData
   await baseGxAlertMigration(
     {
       admin: {
@@ -32,7 +31,7 @@ module.exports = async function (
       customFieldsFromGxAlert,
     },
     knex,
-    { fixtures: { jobFunctions } }
+    partnerData
   )
 
   const { id: partnerId } = await knex('Partner')

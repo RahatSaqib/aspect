@@ -52,7 +52,7 @@ const AspectResponsiveBar = ({
     'stackedDeviceActivity',
     'barLegacyTreatment',
   ]
-  const { sortByKeys } = baseConfig
+  const { id: graphId, sortByKeys } = baseConfig
   let filteredData = data
   if (sortByKeys?.length) {
     const firstDataItem = first(sortBy(data, sortByKeys))
@@ -223,7 +223,7 @@ const AspectResponsiveBar = ({
                 i18nKeys,
                 k,
                 assaysFromState,
-                type,
+                graphId,
                 legendsNotToRender
               )
             ),
@@ -274,7 +274,7 @@ const AspectResponsiveBar = ({
           motionStiffness={90}
           motionDamping={15}
           layers={layers}
-          colors={v => generateColorForValue(v)}
+          colors={v => generateColorForValue(v.id, graphId)}
           margin={margin}
           tooltip={v =>
             v && legendsNotToRender.includes(v.id) ? (
@@ -331,6 +331,7 @@ const AspectResponsiveBar = ({
           i18nKeys={i18nKeys}
           assaysFromState={assaysFromState}
           type={type}
+          graphId={graphId}
           symbolShape={symbolShape}
           legendsNotToRender={legendsNotToRender}
           legendsToPopover={legendsToPopover}

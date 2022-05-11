@@ -3105,6 +3105,8 @@ async function updatePermissions(knex, permissions) {
  * @param  {[object]} knex The knex instance
  * @param  {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
  * @param  {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
+ * @deprecated this method breaks seeding if you later re-add the removed permissions.
+ * Instead use @example await upsertPermissions(knex, permissions)
  */
 async function removeAndReplaceActivity(
   knex,

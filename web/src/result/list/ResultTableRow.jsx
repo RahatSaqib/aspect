@@ -5,22 +5,25 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatDate } from '../../shared/utils/dateFormat'
 import useI18n from '../../Hooks/i18n/useI18n'
 import formatters from '../formatters'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
 import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
-  const { formatMessage, formatNumber } = useI18n()
-  const patientId = result?.get('patientId') || 'N/A'
+  const { format, formatMessage, formatNumber } = useI18n()
+  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  let patientId = result?.get('patientId')
+  patientId = !patientId || patientId === 'null' ? 'N/A' : patientId
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
     (formatterBy, type) => formatterBy[type] || formatterBy.default,
@@ -34,7 +37,9 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>
-        {result.get('endedOn') ? formatDate(result.get('endedOn')) : ''}
+        {result.get('endedOn')
+          ? format(new Date(result.get('endedOn')), dateFormat)
+          : ''}
       </TableCell>
       <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
       <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
@@ -91,29 +96,33 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         ))
       )}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
-      <TableCell hiddenOn="md">
-        {formatMessage(
-          messages[result.get('resultWorkflowStatusI18nkey')],
-          null,
-          result.get('resultWorkflowStatus')
-        )}
-      </TableCell>
-      <TableCell hiddenOn="md">
-        {result.get('treatmentStatusInfo') && (
-          <Tooltip
-            title={formatMessage(
-              messages[result.get('resultTreatmentStatusI18nKey')],
-              null,
-              result.get('resultTreatmentStatus')
-            )}
-            disableInteractive
-          >
-            <PermIdentity
-              className={styles[`${result.get('treatmentStatusInfo')}`]}
-            />
-          </Tooltip>
-        )}
-      </TableCell>
+      <PermissionsProvider permissions={['+reporter']}>
+        <TableCell hiddenOn="md">
+          {formatMessage(
+            messages[result.get('resultWorkflowStatusI18nkey')],
+            null,
+            result.get('resultWorkflowStatus')
+          )}
+        </TableCell>
+      </PermissionsProvider>
+      <PermissionsProvider permissions={['+reporter']}>
+        <TableCell hiddenOn="md">
+          {result.get('treatmentStatusInfo') && (
+            <Tooltip
+              title={formatMessage(
+                messages[result.get('resultTreatmentStatusI18nKey')],
+                null,
+                result.get('resultTreatmentStatus')
+              )}
+              disableInteractive
+            >
+              <PermIdentity
+                className={styles[`${result.get('treatmentStatusInfo')}`]}
+              />
+            </Tooltip>
+          )}
+        </TableCell>
+      </PermissionsProvider>
       <TableCell hiddenOn="xs">{patientId}</TableCell>
     </TableRow>
   )

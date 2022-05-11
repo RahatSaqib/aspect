@@ -9,6 +9,7 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
+  const siteIdToDisable = 3
   describe('/site', () => {
     const path = '/api/site'
     let siteId = 1
@@ -18,6 +19,12 @@ describe('Site routes', () => {
       shared.checkToken(server, path)
     })
 
+    after(async () => {
+      // return the test site to its original state
+      await knex('Site')
+        .where('id', siteIdToDisable)
+        .update({ disabled: 0, disabledBy: null, disabledOn: null })
+    })
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
         const res = await server
@@ -108,6 +115,62 @@ describe('Site routes', () => {
     })
 
     describe('POST', () => {})
+
+    describe('Disable Site', () => {
+      it('should disable a site given a siteId', async () => {
+        const disableSiteResponse = await server
+          .put(`${path}/disable/${siteIdToDisable}`)
+          .send()
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(disableSiteResponse.status, 200)
+
+        // make sure the site has been disabled
+        const site = await knex('Site as s')
+          .where('s.id', siteIdToDisable)
+          .first('s.id', 's.disabled', 's.disabledOn', 's.disabledBy')
+
+        assert.isNotNull(site, 'Site should not be null')
+        assert.equal(site.disabled, 1, 'Site should be disabled')
+        assert.equal(site.disabledBy, 1, 'Site should be disabled by user')
+        assert.isNotNull(site.disabledOn, 'Site should have a disabledOn date')
+
+        // check that constraints filter the disabled site
+        const getDisableSiteResponse = await server
+          .get(`/api/site/${siteIdToDisable}`)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(
+          getDisableSiteResponse.status,
+          404,
+          'disabled site should not be retrieved anymore'
+        )
+
+        const disableASiteAlreadyDisabledReponse = await server
+          .put(`${path}/disable/${siteIdToDisable}`)
+          .send()
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(
+          disableASiteAlreadyDisabledReponse.status,
+          409,
+          'disable an already disabled site should return a 409'
+        )
+      })
+
+      it('should return 404 when disabling a non existent site', async () => {
+        const disableANonExistentSiteReponse = await server
+          .put(`${path}/disable/99999`)
+          .send()
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(
+          disableANonExistentSiteReponse.status,
+          404,
+          'disable a non existent site should return a 404'
+        )
+      })
+    })
 
     describe('PUT', () => {
       it('Should update site given a siteId', async () => {

@@ -5,12 +5,8 @@ module.exports = {
   adminPassword: '5Bd9cWWtxu',
   partnerName: 'Bangladesh',
   deviceApiToken: 'vqzewlc2d67v5kdwa9h6',
-  serverUrl: 'https://bangladesh.aspect.id',
   partnerAbbreviation: 'BD',
   lowerLevelUserPassword: 'sds123ASDTOVpMx3nHP',
-  deviceLogHistoryDays: 365,
-  maxDaysDeviceOffline: 7,
-  maxDaysDeviceNoResults: 14,
   assays: [
     'GxUnknown',
     'GxHcv',
@@ -29,4 +25,13 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
+  plugin: '',
+  deviceLogHistoryDays: 365,
+  autoAcknowledgeOlderThanDays: null,
+  numberToLeaveUnacknowledged: null,
+  maxDaysDeviceOffline: 7,
+  maxDaysDeviceNoResults: 14,
+  dueDaysInventoryStockout: 30,
+  dueDaysInventoryStockExpiring: 30,
+  serverUrl: 'https://bangladesh.aspect.id',
 }

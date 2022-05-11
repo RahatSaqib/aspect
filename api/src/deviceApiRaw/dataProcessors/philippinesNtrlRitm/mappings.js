@@ -100,26 +100,28 @@ const resultDataMappings = {
   dst: {
     mapResultData: payload => {
       return {
-        testRequested: payload['DST Laboratory Test Performed'],
-        idResult: payload['DST Final Result'] || payload['TBC FINAL RESULT'],
-        streptomycin: payload.Streptomycin,
-        isoniazid: payload.Isoniazid,
-        rifampicin: payload.Rifampicin,
-        ethambutol: payload.Ethambutol,
-        pyrazinamide: payload.Pyrazinamide,
-        kanamycin: payload.Kanamycin,
-        levofloxacin: payload.Levofloxacin,
-        amikacin: payload.Amikacin,
-        capreomycin: payload.Capreomycin,
-        ofloxacin: payload.Ofloxacin,
-        moxifloxacin: payload.Moxifloxacin,
-        methodUsed: payload['DST Laboratory Test Performed'],
-        remarks: payload['DST Comments'],
-        dateReleased: payload['Date and Time of Release of DST Result'],
-        labTech: payload['DST Performed by'],
-        encodedBy: payload['DST Encoded by'],
-        reviewedBy: payload['DST Validated by'],
-        notedBy: payload['DST Noted by'],
+        encodedResult: {
+          testRequested: payload['DST Laboratory Test Performed'],
+          idResult: payload['DST Final Result'] || payload['TBC FINAL RESULT'],
+          streptomycin: payload.Streptomycin,
+          isoniazid: payload.Isoniazid,
+          rifampicin: payload.Rifampicin,
+          ethambutol: payload.Ethambutol,
+          pyrazinamide: payload.Pyrazinamide,
+          kanamycin: payload.Kanamycin,
+          levofloxacin: payload.Levofloxacin,
+          amikacin: payload.Amikacin,
+          capreomycin: payload.Capreomycin,
+          ofloxacin: payload.Ofloxacin,
+          moxifloxacin: payload.Moxifloxacin,
+          methodUsed: payload['DST Laboratory Test Performed'],
+          remarks: payload['DST Comments'],
+          dateReleased: payload['Date and Time of Release of DST Result'],
+          labTech: payload['DST Performed by'],
+          encodedBy: payload['DST Encoded by'],
+          reviewedBy: payload['DST Validated by'],
+          notedBy: payload['DST Noted by'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -142,17 +144,19 @@ const resultDataMappings = {
   culture: {
     mapResultData: payload => {
       return {
-        medTech: payload['TBC Performed by'],
-        methodUsed1: payload['TBC Laboratory Test Performed'],
-        result1: payload['TBC Test Result 1st Sample'],
-        result2: payload['TBC Test Result 2nd Sample'],
-        result3: payload['TBC Test Result 3rd Sample'],
-        finalResult: payload['TBC FINAL RESULT'],
-        remarks: payload['TBC Comments'],
-        dateReleased: payload['Date and Time of Release of TBC Result'],
-        encodedBy: payload['TBC Encoded by'],
-        validatedBy: payload['TBC Validated by'],
-        notedBy: payload['TBC Noted by'],
+        encodedResult: {
+          medTech: payload['TBC Performed by'],
+          methodUsed1: payload['TBC Laboratory Test Performed'],
+          result1: payload['TBC Test Result 1st Sample'],
+          result2: payload['TBC Test Result 2nd Sample'],
+          result3: payload['TBC Test Result 3rd Sample'],
+          finalResult: payload['TBC FINAL RESULT'],
+          remarks: payload['TBC Comments'],
+          dateReleased: payload['Date and Time of Release of TBC Result'],
+          encodedBy: payload['TBC Encoded by'],
+          validatedBy: payload['TBC Validated by'],
+          notedBy: payload['TBC Noted by'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -169,21 +173,23 @@ const resultDataMappings = {
   smear: {
     mapResultData: payload => {
       return {
-        smearMethod:
-          payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
-        smearDateCollected1: payload['Smear Result 1 Date Collected'],
-        smearResult1: payload['Smear Result 1'],
-        smearDateCollected2: payload['Smear Result 2 Date Collected'],
-        smearResult2: payload['Smear Result 2'],
-        smearDateCollected3: payload['Smear Result 3 Date Collected'],
-        smearResult3: payload['Smear Result 3'],
-        finalResult: payload['FINAL RESULT'],
-        dateReleased: payload['Date and Time of Release of AFB Result'],
-        comments: payload.Comments,
-        encodedBy: payload['Smear Encoded by'],
-        laboratoryTechnician: payload['Performed by'],
-        validatedBy: payload['Validated by'],
-        notedBy: payload['Noted by'],
+        encodedResult: {
+          smearMethod:
+            payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
+          smearDateCollected1: payload['Smear Result 1 Date Collected'],
+          smearResult1: payload['Smear Result 1'],
+          smearDateCollected2: payload['Smear Result 2 Date Collected'],
+          smearResult2: payload['Smear Result 2'],
+          smearDateCollected3: payload['Smear Result 3 Date Collected'],
+          smearResult3: payload['Smear Result 3'],
+          finalResult: payload['FINAL RESULT'],
+          dateReleased: payload['Date and Time of Release of AFB Result'],
+          comments: payload.Comments,
+          encodedBy: payload['Smear Encoded by'],
+          laboratoryTechnician: payload['Performed by'],
+          validatedBy: payload['Validated by'],
+          notedBy: payload['Noted by'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -200,15 +206,17 @@ const resultDataMappings = {
   genexpert: {
     mapResultData: payload => {
       return {
-        center: payload['GX Laboratory Test Performed'],
-        mtb: payload.MTB,
-        rifampicin: payload['Rifampicin:'],
-        remarks: payload['GX Comments'],
-        dateReleased: payload['Date and Time of Release of Gx Result'],
-        encodedBy: payload['GX Encoded by'],
-        examiner: payload['GX Performed by'],
-        labManager: payload['GX Validated by'],
-        notedBy: payload['GX Noted by'],
+        encodedResult: {
+          center: payload['GX Laboratory Test Performed'],
+          mtb: payload.MTB,
+          rifampicin: payload['Rifampicin:'],
+          remarks: payload['GX Comments'],
+          dateReleased: payload['Date and Time of Release of Gx Result'],
+          encodedBy: payload['GX Encoded by'],
+          examiner: payload['GX Performed by'],
+          labManager: payload['GX Validated by'],
+          notedBy: payload['GX Noted by'],
+        },
       }
     },
     isPayloadValid: payload =>
@@ -223,7 +231,9 @@ const resultDataMappings = {
   tblamp: {
     mapResultData: payload => {
       return {
-        tbLampResult: payload['TB LAMP Result'],
+        encodedResult: {
+          tbLampResult: payload['TB LAMP Result'],
+        },
       }
     },
     isPayloadValid: payload =>
