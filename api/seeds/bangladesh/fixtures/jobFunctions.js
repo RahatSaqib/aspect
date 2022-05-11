@@ -14,6 +14,7 @@ const withNewReports = jobFunction => ({
     ...jobFunction.reports,
     'results_10a_10b_covid',
     'results_10a_10b_covid_ntp_use',
+    'report_custom_fields_completion',
   ]), // add externalId of report
 })
 

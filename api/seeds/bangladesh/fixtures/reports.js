@@ -36,7 +36,7 @@ const resultsDrTb10A10BCovidNtpUse = {
   i18nKeyDescription: 'reportDrTb10a10bCovidDescriptionNtpUse',
   fileName: 'ReportDrTb10a10bCovidNtpUse',
   exportCsv: false,
-  sortOrder: 11,
+  sortOrder: 12,
   sheets: [
     {
       sortOrder: 0,
@@ -49,7 +49,30 @@ const resultsDrTb10A10BCovidNtpUse = {
   ],
 }
 
+const reportCustomFieldsCompletion = {
+  name: 'Percent of custom fields completion for the MTB form',
+  description:
+    'Lists one row per site and shows the percentage of completion of each MTB custom field',
+  i18nKey: 'reportCustomFieldsCompletion',
+  externalId: 'report_custom_fields_completion', // folder name in /templates
+  i18nKeyDescription: 'reportCustomFieldsCompletionDescription',
+  fileName: 'ReportCustomFieldsCompletion',
+  exportCsv: false,
+  sortOrder: 13,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReportBangladesh',
+      functionName: 'getReportCustomFieldsCompletion',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsDrTb10A10BCovid,
   resultsDrTb10A10BCovidNtpUse,
+  reportCustomFieldsCompletion,
 }
