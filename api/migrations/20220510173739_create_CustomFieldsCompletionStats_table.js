@@ -1,27 +1,21 @@
 const { addAuditFields } = require('./utils')
 
-const tableName = 'CustomFieldsCompletionStats'
+const tableName = 'CustomFieldCompletionFact'
 
 module.exports.up = async function (knex) {
-  await knex.schema.createTable(tableName, cs => {
-    cs.increments('id').primary()
-    cs.integer('siteId')
+  await knex.schema.createTable(tableName, x => {
+    x.increments('id').primary()
+    x.integer('siteId')
       .unsigned()
       .index()
       .references('id')
       .inTable('Site')
       .notNullable()
-    cs.integer('formDefinitionId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('FormDefinition')
-      .notNullable()
-    cs.dateTime('date').index().notNullable()
-    cs.decimal('completionRate', 5, 2).notNullable()
-    cs.json('completionByField').notNullable()
-    cs.integer('recordCount').notNullable()
-    addAuditFields(cs)
+    x.dateTime('date').index().notNullable()
+    x.decimal('completionRate', 5, 2).notNullable()
+    x.json('completionByField').notNullable()
+    x.integer('recordCount').notNullable()
+    addAuditFields(x)
   })
 }
 
