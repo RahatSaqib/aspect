@@ -247,6 +247,9 @@ severity type. By default its 'error'
 eg:
 
 ```javascript
+import {
+  badRequestBuilder
+} from '../error/CommonErrorNotifications'
 ...
 
 const messages = defineMessages({
