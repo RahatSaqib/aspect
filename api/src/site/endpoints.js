@@ -348,7 +348,7 @@ const routes = [
     config: {
       description: 'Disable Site',
       notes: 'Id of the site to disable',
-      auth: { scope: ['site:disable'] },
+      auth: { scope: ['site:admin'] },
       validate: {
         params: {
           siteId: Joi.string().description('Site ID').required(),
