@@ -1935,6 +1935,8 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
     .orderBy('s.name')
 
   data.forEach(siteRow => {
+    let sum = 0
+    let totalFields = 0
     _.keys(forms).forEach(formKey => {
       const { fields } = forms[formKey]
       let { assayId } = forms[formKey]
@@ -1952,9 +1954,19 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
             ? _.round(percentRaw, 2)
             : _.round(percentRaw)
         siteRow[`cnt_${assayId}_${fieldName}`] = `${percent}%`
+        sum += percent
       })
+      totalFields += fields.length
     })
+    siteRow.overall = `${_.round(sum / totalFields, 2)}%`
   })
+  allColumns = [
+    ...allColumns,
+    {
+      key: `overall`,
+      header: 'Overall Completion Rate',
+    },
+  ]
 
   return {
     ok: true,
