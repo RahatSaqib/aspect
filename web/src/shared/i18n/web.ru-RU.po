@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
+"POT-Creation-Date: 2022-05-13T20:45:26.512Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -597,6 +597,13 @@ msgstr "Альтернативный адрес электронной почт�
 msgid "An Error Occurred When Trying to Create the Contact"
 msgstr "Ошибка, возникшая при попытке создания контакта"
 
+#. [errorResponseMessages.deleteSingleSite.DELETE.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Delete the Site
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Delete the Site"
+msgstr "При попытке удалить сайт возникла ошибка"
+
 #. [errorResponseMessages.updatePerson.PUT.default.title]
 #. defaultMessage is:
 #. An Error Occurred When Trying to Save the Contact
@@ -707,6 +714,17 @@ msgstr "Утвержден"
 #: extracted_strings.json
 msgid "Are you sure to delete notification {notificationName}?"
 msgstr "Вы уверены, что хотите удалить уведомление {notificationName}?"
+
+#. [pages.SiteDetail.disable.confirmation.message]
+#. defaultMessage is:
+#. Are you sure you want to delete this site? This action is intented only for test sites, all site data will be lost.
+#: extracted_strings.json
+msgid ""
+"Are you sure you want to delete this site? This action is intented only for "
+"test sites, all site data will be lost."
+msgstr ""
+"Вы уверены, что хотите удалить этот сайт? Это действие предназначено только "
+"для тестовых сайтов, все данные сайта будут потеряны."
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -926,10 +944,16 @@ msgstr "Число получателей SMS на положительный т
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
-#. Average days between module swaps
+#. Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
-msgid "Average days between module swaps"
-msgstr "В среднем дней между заменами модулей"
+msgid ""
+"Average days between module swaps. The module swap issue appears when two "
+"consecutive results performed in the same device's slot, they have a "
+"different module serial number"
+msgstr ""
+"Среднее количество дней между заменами модулей. Проблема замены модуля "
+"возникает, когда два последовательных результата, выполненных в одном и том "
+"же слоте устройства, имеют разный серийный номер модуля"
 
 #. [component.Widget.averageRecipientsOfEmail]
 #. defaultMessage is:
@@ -1191,6 +1215,9 @@ msgstr "Невозможно редактировать"
 #. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.SiteDetail.disable.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1198,6 +1225,9 @@ msgstr "Невозможно редактировать"
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceDetail.delete.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -1584,7 +1614,7 @@ msgstr "Статус контакта"
 #. Contact Status: {contactStatus}
 #: extracted_strings.json
 msgid "Contact Status: {contactStatus}"
-msgstr ""
+msgstr "Статус контакта: {contactStatus}"
 
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -1906,6 +1936,13 @@ msgstr "В настоящее время нельзя выбрать - отсу�
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Пользовательский"
+
+#. [pages.SiteDetail.buttonDelete]
+#. defaultMessage is:
+#. DELETE
+#: extracted_strings.json
+msgid "DELETE"
+msgstr "УДАЛИТЬ"
 
 #. [pages.ResultList.assayGenericDst]
 #. defaultMessage is:
@@ -2455,7 +2492,7 @@ msgstr "Запрещать"
 #. Disabled
 #: extracted_strings.json
 msgid "Disabled"
-msgstr ""
+msgstr "Отключено"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2524,14 +2561,14 @@ msgstr "Дивизион"
 #. Do you want to disable
 #: extracted_strings.json
 msgid "Do you want to disable"
-msgstr ""
+msgstr "Хотите ли вы отключить"
 
 #. [pages.PersonList.enable]
 #. defaultMessage is:
 #. Do you want to enable
 #: extracted_strings.json
 msgid "Do you want to enable"
-msgstr ""
+msgstr "Хотите ли вы включить"
 
 #. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
@@ -2729,7 +2766,7 @@ msgstr "Включить это уведомление"
 #. Enable/Disable User
 #: extracted_strings.json
 msgid "Enable/Disable User"
-msgstr ""
+msgstr "Включить/выключить пользователя"
 
 #. [filter.btnGroup.contactStatus.contactEnabled]
 #. defaultMessage is:
@@ -8161,6 +8198,13 @@ msgstr "Сайт"
 msgid "Site Contacts"
 msgstr "Контакты сайта"
 
+#. [pages.SiteDetail.disable.confirmation.title]
+#. defaultMessage is:
+#. Site Delete Confirmation
+#: extracted_strings.json
+msgid "Site Delete Confirmation"
+msgstr "Подтверждение удаления сайта"
+
 #. [pages.SiteDetail.title]
 #. defaultMessage is:
 #. Site Detail
@@ -8679,19 +8723,26 @@ msgstr ""
 "Средняя задержка загрузки результатов в часах. Только с учетом результатов, "
 "для которых задержка составила более двух часов."
 
-#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
-#. defaultMessage is:
-#. The average duration of a service interruption, in days
-#: extracted_strings.json
-msgid "The average duration of a service interruption, in days"
-msgstr "Средняя продолжительность перерыва в обслуживании, в днях"
-
 #. [component.Widget.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
 #. The average duration of a service interruption, in days.
 #: extracted_strings.json
 msgid "The average duration of a service interruption, in days."
 msgstr "Средняя продолжительность перерыва в обслуживании, в днях."
+
+#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
+#. defaultMessage is:
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
+#: extracted_strings.json
+msgid ""
+"The average duration of a service interruption, in days. The period of "
+"interruption will be the date range between the device was flagged as \"Down "
+"for repair\" and when it back to be active again"
+msgstr ""
+"Средняя продолжительность перерыва в обслуживании, в днях. Период перерыва в "
+"обслуживании - это диапазон дат между моментом, когда устройство было "
+"отмечено как \"Не работает для ремонта\", и моментом, когда оно снова стало "
+"активным"
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -8714,26 +8765,35 @@ msgstr ""
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
-#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
+#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between the last result reported under a replaced "
 "module serial and the new module serial in that module slot reporting its "
-"first result."
+"first result. The module swap issue appears when two consecutive results "
+"performed in the same device's slot, they have a different module serial "
+"number"
 msgstr ""
-"Среднее время (в днях) между моментом отключения модуля и моментом "
-"обнаружения другого последовательного модуля в одном и том же слоте."
+"Среднее количество дней между последним результатом, полученным при замене "
+"серийного номера модуля, и первым результатом, полученным новым серийным "
+"номером модуля в этом слоте. Проблема замены модуля возникает, когда два "
+"последовательных результата, полученные в одном и том же слоте устройства, "
+"имеют разный серийный номер модуля"
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.
+#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting."
+"from a device and a new instrument serial reporting. An Instrument is marked "
+"as replaced when two consecutive results performed in the same device, have "
+"a different Instrument serial number"
 msgstr ""
-"Среднее количество дней между последним сообщением серийного номера прибора "
-"от устройства и новым сообщением серийного номера прибора."
+"Среднее количество дней между последним сообщением о серийном номере прибора "
+"и сообщением о новом серийном номере прибора. Прибор отмечается как "
+"замененный, если два последовательных результата, выполненных на одном и том "
+"же приборе, имеют разный серийный номер прибора"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
@@ -8782,6 +8842,13 @@ msgid ""
 msgstr ""
 "Устройство не подключалось к Aspect несколько дней. Может быть, оно проводит "
 "тесты, но тесты еще не загружены в Aspect."
+
+#. [pages.DeviceDetail.delete.deletedOn]
+#. defaultMessage is:
+#. The device was permanently deleted
+#: extracted_strings.json
+msgid "The device was permanently deleted"
+msgstr "Устройство было безвозвратно удалено"
 
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
@@ -8870,10 +8937,16 @@ msgstr "Количество приборов, прошедших последн
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
-msgid "The number of module swaps made at the current month"
-msgstr "Количество замен модулей в текущем месяце"
+msgid ""
+"The number of module swaps made at the current month. The module swap issue "
+"appears when two consecutive results performed in the same device's slot, "
+"they have a different module serial number"
+msgstr ""
+"Количество подмен модулей, выполненных в текущем месяце. Проблема подмены "
+"модулей возникает, когда два последовательных результата, выполненных в "
+"одном и том же слоте устройства, имеют разный серийный номер модуля"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -8959,9 +9032,6 @@ msgstr "Введенный вами пароль неверен"
 #. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
-#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
-#. defaultMessage is:
-#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
 msgid ""
 "The percentage of \"device-days\" that were statused as \"down for repair\", "
@@ -8973,6 +9043,24 @@ msgstr ""
 "\", за исключением выходных дней. Например, 20 рабочих дней в месяце и 5 "
 "устройств приравниваются к 100 \"приборам-приборам-дням\". Если бы один "
 "прибор не работал половину месяца, то это число составляло бы 10%"
+
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
+#. defaultMessage is:
+#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#: extracted_strings.json
+msgid ""
+"The percentage of \"device-days\" that were statused as \"down for repair\", "
+"excluding weekends. For example, 20 weekdays in the month and 5 devices "
+"would equate 100 \"device-days\". If one device was down half of the month, "
+"this number would be 10%. A device has a service interruption when it is "
+"flagged as \"Down for repair\" for it maintenance status."
+msgstr ""
+"Процент \"дней работы устройства\", которые были отмечены как \"не работает "
+"для ремонта\", исключая выходные дни. Например, 20 будних дней в месяце и 5 "
+"устройств будут равны 100 \"дням работы устройств\". Если одно устройство не "
+"работает половину месяца, это число составит 10%. Устройство прерывает "
+"обслуживание, если оно отмечено как \"Не работает для ремонта\" в связи с "
+"его статусом технического обслуживания."
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -9258,7 +9346,7 @@ msgstr "Это поле обязательно для заполнения"
 #. This person was disabled on
 #: extracted_strings.json
 msgid "This person was disabled on"
-msgstr ""
+msgstr "Этот человек был инвалидом по"
 
 #. [pages.ReportIndex.geneXpertIssues_description]
 #. defaultMessage is:
@@ -9350,6 +9438,18 @@ msgstr ""
 msgid "This username is unavailable"
 msgstr "Это имя пользователя недоступно"
 
+#. [pages.DeviceDetail.delete.deleteDevicePrompt]
+#. defaultMessage is:
+#. This will delete this device. All results generated by this device will be erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will delete this device. All results generated by this device will be "
+"erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?"
+msgstr ""
+"Это приведет к удалению данного устройства. Все результаты, полученные этим "
+"устройством, будут удалены. ЭТО ДЕЙСТВИЕ НЕЛЬЗЯ ОТМЕНИТЬ. Вы хотите "
+"продолжить?"
+
 #. [pages.PersonList.disabled.disableUser]
 #. defaultMessage is:
 #. This will disable this user, and they will not be able to login. Would you like to continue?
@@ -9358,6 +9458,8 @@ msgid ""
 "This will disable this user, and they will not be able to login. Would you "
 "like to continue?"
 msgstr ""
+"Это отключит данного пользователя, и он не сможет войти в систему. Вы хотите "
+"продолжить?"
 
 #. [pages.PersonList.disabled.enableUser]
 #. defaultMessage is:
@@ -9367,6 +9469,8 @@ msgid ""
 "This will enable this user again, and they will be able to login again. "
 "Would you like to continue?"
 msgstr ""
+"Это снова включит этого пользователя, и он сможет снова войти в систему. Вы "
+"хотите продолжить?"
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -10016,7 +10120,7 @@ msgstr "Неделя или праздник"
 #. Welcome to Aspect
 #: extracted_strings.json
 msgid "Welcome to Aspect"
-msgstr ""
+msgstr "Добро пожаловать в Aspect"
 
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
@@ -10106,7 +10210,13 @@ msgstr "Год"
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
+#. [pages.SiteDetail.disable.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#. [pages.DeviceDetail.delete.yes]
 #. defaultMessage is:
 #. Yes
 #: extracted_strings.json
@@ -10263,6 +10373,8 @@ msgid ""
 "Your account still needs some setup before you will be able to use the "
 "system. Please contact your administrator."
 msgstr ""
+"Ваша учетная запись еще нуждается в настройке, прежде чем вы сможете "
+"пользоваться системой. Пожалуйста, свяжитесь с вашим администратором."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -10966,6 +11078,15 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid "Average days between module swaps"
+#~ msgstr "В среднем дней между заменами модулей"
+
+#~ msgid "The average duration of a service interruption, in days"
+#~ msgstr "Средняя продолжительность перерыва в обслуживании, в днях"
+
+#~ msgid "The number of module swaps made at the current month"
+#~ msgstr "Количество замен модулей в текущем месяце"
 
 #~ msgid "XDR"
 #~ msgstr "XDR"

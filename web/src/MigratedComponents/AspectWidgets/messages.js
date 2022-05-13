@@ -184,7 +184,8 @@ export const messages = defineMessages({
   },
   moduleSwapsDescription: {
     id: 'component.Widget.moduleSwapsDescription',
-    defaultMessage: 'The number of module swaps made at the current month',
+    defaultMessage:
+      "The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
   },
   gxPositiveResultsNotifiedTitle: {
     id: 'component.Widget.gxPositiveResultsNotifiedTitle',
@@ -219,7 +220,7 @@ export const messages = defineMessages({
   instrumentsReplacedDescription: {
     id: 'component.Widget.instrumentsReplacedDescription',
     defaultMessage:
-      'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.',
+      'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
   },
   averageRecipientsOfEmail: {
     id: 'component.Widget.averageRecipientsOfEmail',
@@ -258,12 +259,13 @@ export const messages = defineMessages({
   },
   averageDaysModuleSwap: {
     id: 'component.Widget.averageDaysModuleSwap',
-    defaultMessage: 'Average days between module swaps',
+    defaultMessage:
+      "Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
   },
   averageDaysModuleSwapDescription: {
     id: 'component.Widget.averageDaysModuleSwapDescription',
     defaultMessage:
-      'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
+      "The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
   },
   averageTimeToModuleReplacementTitle: {
     id: 'component.Widget.averageTimeToModuleReplacementTitle',

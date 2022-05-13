@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
+"POT-Creation-Date: 2022-05-13T20:45:26.512Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -592,6 +592,13 @@ msgstr "Email thay thế"
 msgid "An Error Occurred When Trying to Create the Contact"
 msgstr "Đã xảy ra lỗi khi cố gắng tạo liên hệ"
 
+#. [errorResponseMessages.deleteSingleSite.DELETE.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Delete the Site
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Delete the Site"
+msgstr "Đã xảy ra lỗi khi cố gắng xóa trang web"
+
 #. [errorResponseMessages.updatePerson.PUT.default.title]
 #. defaultMessage is:
 #. An Error Occurred When Trying to Save the Contact
@@ -702,6 +709,17 @@ msgstr "Tán thành"
 #: extracted_strings.json
 msgid "Are you sure to delete notification {notificationName}?"
 msgstr "Bạn có chắc chắn muốn xóa thông báo {notificationName} không?"
+
+#. [pages.SiteDetail.disable.confirmation.message]
+#. defaultMessage is:
+#. Are you sure you want to delete this site? This action is intented only for test sites, all site data will be lost.
+#: extracted_strings.json
+msgid ""
+"Are you sure you want to delete this site? This action is intented only for "
+"test sites, all site data will be lost."
+msgstr ""
+"Bạn có chắc chắn muốn xóa trang web này không? Hành động này chỉ dành cho "
+"các trang web thử nghiệm, tất cả dữ liệu trang web sẽ bị mất."
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -921,10 +939,16 @@ msgstr "Người nhận SMS trung bình trên mỗi kết quả dương tính"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
-#. Average days between module swaps
+#. Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
-msgid "Average days between module swaps"
-msgstr "Số ngày trung bình giữa các lần hoán đổi mô-đun"
+msgid ""
+"Average days between module swaps. The module swap issue appears when two "
+"consecutive results performed in the same device's slot, they have a "
+"different module serial number"
+msgstr ""
+"Số ngày trung bình giữa các lần hoán đổi mô-đun. Sự cố hoán đổi mô-đun xuất "
+"hiện khi hai kết quả liên tiếp được thực hiện trong cùng một khe cắm của "
+"thiết bị, chúng có số sê-ri mô-đun khác nhau"
 
 #. [component.Widget.averageRecipientsOfEmail]
 #. defaultMessage is:
@@ -1188,6 +1212,9 @@ msgstr "Không thể chỉnh sửa"
 #. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.SiteDetail.disable.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1195,6 +1222,9 @@ msgstr "Không thể chỉnh sửa"
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceDetail.delete.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -1902,6 +1932,13 @@ msgstr "Hiện không thể chọn - thiếu vai trò"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Tùy chỉnh"
+
+#. [pages.SiteDetail.buttonDelete]
+#. defaultMessage is:
+#. DELETE
+#: extracted_strings.json
+msgid "DELETE"
+msgstr "XÓA"
 
 #. [pages.ResultList.assayGenericDst]
 #. defaultMessage is:
@@ -8150,6 +8187,13 @@ msgstr "Đơn vị"
 msgid "Site Contacts"
 msgstr "Địa chỉ liên hệ"
 
+#. [pages.SiteDetail.disable.confirmation.title]
+#. defaultMessage is:
+#. Site Delete Confirmation
+#: extracted_strings.json
+msgid "Site Delete Confirmation"
+msgstr "Xác nhận Xóa Trang web"
+
 #. [pages.SiteDetail.title]
 #. defaultMessage is:
 #. Site Detail
@@ -8668,19 +8712,25 @@ msgstr ""
 "Độ trễ trung bình của việc tải lên kết quả, tính bằng giờ. Chỉ xem xét kết "
 "quả khi độ trễ lớn hơn hai giờ."
 
-#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
-#. defaultMessage is:
-#. The average duration of a service interruption, in days
-#: extracted_strings.json
-msgid "The average duration of a service interruption, in days"
-msgstr "Thời gian gián đoạn dịch vụ trung bình, tính bằng ngày"
-
 #. [component.Widget.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
 #. The average duration of a service interruption, in days.
 #: extracted_strings.json
 msgid "The average duration of a service interruption, in days."
 msgstr "Thời gian gián đoạn dịch vụ trung bình, tính bằng ngày."
+
+#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
+#. defaultMessage is:
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
+#: extracted_strings.json
+msgid ""
+"The average duration of a service interruption, in days. The period of "
+"interruption will be the date range between the device was flagged as \"Down "
+"for repair\" and when it back to be active again"
+msgstr ""
+"Thời gian gián đoạn dịch vụ trung bình, tính bằng ngày. Khoảng thời gian bị "
+"gián đoạn sẽ là phạm vi ngày giữa thiết bị được gắn cờ là \"Không hoạt động "
+"để sửa chữa\" và khi thiết bị hoạt động trở lại"
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -8702,27 +8752,35 @@ msgstr ""
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
-#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
+#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between the last result reported under a replaced "
 "module serial and the new module serial in that module slot reporting its "
-"first result."
+"first result. The module swap issue appears when two consecutive results "
+"performed in the same device's slot, they have a different module serial "
+"number"
 msgstr ""
 "Số ngày trung bình giữa kết quả cuối cùng được báo cáo theo sê-ri mô-đun "
 "được thay thế và sê-ri mô-đun mới trong khe mô-đun đó báo cáo kết quả đầu "
-"tiên của nó."
+"tiên của nó. Sự cố hoán đổi mô-đun xuất hiện khi hai kết quả liên tiếp được "
+"thực hiện trong cùng một khe cắm của thiết bị, chúng có số sê-ri mô-đun khác "
+"nhau"
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.
+#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting."
+"from a device and a new instrument serial reporting. An Instrument is marked "
+"as replaced when two consecutive results performed in the same device, have "
+"a different Instrument serial number"
 msgstr ""
 "Số ngày trung bình giữa thời điểm báo cáo sê-ri thiết bị gần đây nhất từ một "
-"thiết bị và báo cáo sê-ri thiết bị mới."
+"thiết bị và báo cáo sê-ri thiết bị mới. Dụng cụ được đánh dấu là thay thế "
+"khi hai kết quả liên tiếp được thực hiện trên cùng một thiết bị, có số sê-ri "
+"của Dụng cụ khác nhau"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
@@ -8770,6 +8828,13 @@ msgid ""
 msgstr ""
 "Thiết bị đã không kết nối với Aspect trong vài ngày. Nó có thể đang chạy các "
 "bài kiểm tra, nhưng các bài kiểm tra vẫn chưa được tải lên Aspect."
+
+#. [pages.DeviceDetail.delete.deletedOn]
+#. defaultMessage is:
+#. The device was permanently deleted
+#: extracted_strings.json
+msgid "The device was permanently deleted"
+msgstr "Thiết bị đã bị xóa vĩnh viễn"
 
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
@@ -8859,10 +8924,16 @@ msgstr "Số lượng thiết bị đã được hiệu chuẩn lần cuối cá
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
-msgid "The number of module swaps made at the current month"
-msgstr "Số lượng hoán đổi mô-đun được thực hiện ở tháng hiện tại"
+msgid ""
+"The number of module swaps made at the current month. The module swap issue "
+"appears when two consecutive results performed in the same device's slot, "
+"they have a different module serial number"
+msgstr ""
+"Số lượng hoán đổi mô-đun được thực hiện ở tháng hiện tại. Sự cố hoán đổi mô-"
+"đun xuất hiện khi hai kết quả liên tiếp được thực hiện trong cùng một khe "
+"cắm của thiết bị, chúng có số sê-ri mô-đun khác nhau"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -8946,9 +9017,6 @@ msgstr "Mật khẩu bạn nhập không đúng"
 #. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
-#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
-#. defaultMessage is:
-#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
 msgid ""
 "The percentage of \"device-days\" that were statused as \"down for repair\", "
@@ -8960,6 +9028,24 @@ msgstr ""
 "không bao gồm các ngày cuối tuần. Ví dụ: 20 ngày trong tuần và 5 thiết bị sẽ "
 "tương đương với 100 \"ngày thiết bị\". Nếu một thiết bị ngừng hoạt động "
 "trong nửa tháng, con số này sẽ là 10%"
+
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
+#. defaultMessage is:
+#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#: extracted_strings.json
+msgid ""
+"The percentage of \"device-days\" that were statused as \"down for repair\", "
+"excluding weekends. For example, 20 weekdays in the month and 5 devices "
+"would equate 100 \"device-days\". If one device was down half of the month, "
+"this number would be 10%. A device has a service interruption when it is "
+"flagged as \"Down for repair\" for it maintenance status."
+msgstr ""
+"Phần trăm \"ngày thiết bị\" được ghi là \"ngừng hoạt động để sửa chữa\", "
+"không bao gồm các ngày cuối tuần. Ví dụ: 20 ngày trong tuần và 5 thiết bị sẽ "
+"tương đương với 100 \"ngày thiết bị\". Nếu một thiết bị ngừng hoạt động "
+"trong nửa tháng, con số này sẽ là 10%. Một thiết bị bị gián đoạn dịch vụ khi "
+"nó được gắn cờ là \"Không sửa chữa được\" cho trạng thái bảo trì của thiết "
+"bị."
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -9332,6 +9418,17 @@ msgstr ""
 #: extracted_strings.json
 msgid "This username is unavailable"
 msgstr "Tên người dùng này không khả dụng"
+
+#. [pages.DeviceDetail.delete.deleteDevicePrompt]
+#. defaultMessage is:
+#. This will delete this device. All results generated by this device will be erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will delete this device. All results generated by this device will be "
+"erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?"
+msgstr ""
+"Thao tác này sẽ xóa thiết bị này. Tất cả kết quả do thiết bị này tạo ra sẽ "
+"bị xóa. HÀNH ĐỘNG NÀY KHÔNG THỂ ĐƯỢC HOÀN TÁC. Bạn có muốn tiếp tục không?"
 
 #. [pages.PersonList.disabled.disableUser]
 #. defaultMessage is:
@@ -10095,7 +10192,13 @@ msgstr "Năm"
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
+#. [pages.SiteDetail.disable.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#. [pages.DeviceDetail.delete.yes]
 #. defaultMessage is:
 #. Yes
 #: extracted_strings.json
@@ -10955,6 +11058,15 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
+
+#~ msgid "Average days between module swaps"
+#~ msgstr "Số ngày trung bình giữa các lần hoán đổi mô-đun"
+
+#~ msgid "The average duration of a service interruption, in days"
+#~ msgstr "Thời gian gián đoạn dịch vụ trung bình, tính bằng ngày"
+
+#~ msgid "The number of module swaps made at the current month"
+#~ msgstr "Số lượng hoán đổi mô-đun được thực hiện ở tháng hiện tại"
 
 #~ msgid "XDR"
 #~ msgstr "XDR"
