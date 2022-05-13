@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-13T21:03:15.542Z\n"
+"POT-Creation-Date: 2022-05-13T21:06:58.330Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -867,10 +867,16 @@ msgstr "Average Confirmed Response"
 
 #. [component.Widget.instrumentsReplaced]
 #. defaultMessage is:
-#. Average Days for Instrument Replacement
+#. Average Days for Instrument Replacement. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
-msgid "Average Days for Instrument Replacement"
-msgstr "Average Days for Instrument Replacement"
+msgid ""
+"Average Days for Instrument Replacement. An Instrument is marked as replaced "
+"when two consecutive results performed in the same device, have a different "
+"Instrument serial number"
+msgstr ""
+"Average Days for Instrument Replacement. An Instrument is marked as replaced "
+"when two consecutive results performed in the same device, have a different "
+"Instrument serial number"
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -8707,11 +8713,7 @@ msgstr ""
 
 #. [component.Widget.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
-#. The average duration of a service interruption, in days.
-#: extracted_strings.json
-msgid "The average duration of a service interruption, in days."
-msgstr "The average duration of a service interruption, in days."
-
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
 #. [pages.OperationalData.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
 #. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
@@ -8891,14 +8893,16 @@ msgstr ""
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
-"previous month."
+"previous month. A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
 msgstr ""
 "The number of devices experiencing service interruption on this and the "
-"previous month."
+"previous month. A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
 
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
@@ -11049,6 +11053,19 @@ msgstr "{unit} total calibrations"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{total, plural, one {# result} other {# results} })"
+
+#~ msgid "Average Days for Instrument Replacement"
+#~ msgstr "Average Days for Instrument Replacement"
+
+#~ msgid "The average duration of a service interruption, in days."
+#~ msgstr "The average duration of a service interruption, in days."
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month."
+#~ msgstr ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month."
 
 #~ msgid "Average days between module swaps"
 #~ msgstr "Average days between module swaps"

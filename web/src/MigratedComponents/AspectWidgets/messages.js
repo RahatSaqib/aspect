@@ -215,7 +215,8 @@ export const messages = defineMessages({
   },
   instrumentsReplaced: {
     id: 'component.Widget.instrumentsReplaced',
-    defaultMessage: 'Average Days for Instrument Replacement',
+    defaultMessage:
+      'Average Days for Instrument Replacement. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
   },
   instrumentsReplacedDescription: {
     id: 'component.Widget.instrumentsReplacedDescription',
@@ -283,7 +284,7 @@ export const messages = defineMessages({
   numberOfDevicesExperiencingServiceInterruptionDescription: {
     id: 'component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription',
     defaultMessage:
-      'The number of devices experiencing service interruption on this and the previous month.',
+      'The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.',
   },
   averageDurationServiceInterruptionTitle: {
     id: 'component.Widget.averageDurationServiceInterruptionTitle',
@@ -291,7 +292,8 @@ export const messages = defineMessages({
   },
   averageDurationServiceInterruptionDescription: {
     id: 'component.Widget.averageDurationServiceInterruptionDescription',
-    defaultMessage: 'The average duration of a service interruption, in days.',
+    defaultMessage:
+      'The average duration of a service interruption, in days.  The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again',
   },
   percentageOfDaysWithServiceInterruptionTitle: {
     id: 'component.Widget.percentageOfDaysWithServiceInterruptionTitle',
