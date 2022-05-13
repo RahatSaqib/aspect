@@ -45,7 +45,7 @@ const {
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
-function getSelectListFields(userTimeOffset, { lastSeenField }) {
+function getSelectListFields(userTimeOffset, { lastSeenField } = {}) {
   const fields = SELECT_LIST_FIELDS
   fields.push(
     getDateTimeProjectionInUserTimeZone(
