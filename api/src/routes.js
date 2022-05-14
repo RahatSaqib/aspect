@@ -165,8 +165,16 @@ function decorateAPI({ module, scope, strategies }) {
         if (auth.scope) {
           auth.scope.forEach(s => {
             const destructuredScope = s.split(':')
-            if (destructuredScope.length > 1 && destructuredScope[1] === 'view')
+            if (
+              destructuredScope.length > 1 &&
+              destructuredScope[1] === 'view'
+            ) {
               scopeToAdd.push(`${destructuredScope[0]}:edit`)
+              scopeToAdd.push(`${destructuredScope[0]}:admin`)
+            }
+
+            if (destructuredScope.length > 1 && destructuredScope[1] === 'edit')
+              scopeToAdd.push(`${destructuredScope[0]}:admin`)
           })
         }
         // Merge configured and dynamically added permissions
