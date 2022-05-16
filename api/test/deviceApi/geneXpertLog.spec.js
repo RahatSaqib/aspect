@@ -4,15 +4,10 @@ const { format, subDays, addDays, addMinutes } = require('date-fns')
 const { createTestContext } = require('./utils')
 const { knex } = require('../../src/db')
 
-const {
-  deviceMaintenanceTypeToId,
-  issueTypeToId,
-  issueEventStatusToId,
-} = require('../../src/shared/dictionary')
+const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 const { deviceHardwareError } = require('../../src/device/actions')
 const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
-const { updateSubscription } = require('../utils/mqUtils')
 
 const { assert, expect } = chai
 
@@ -131,37 +126,6 @@ describe('Process GeneXpert Logs', () => {
     await context.createDeviceWithResult()
   })
   afterEach(context.afterEach)
-  let issueEventTriggerId = null
-  before(async () => {
-    const issueTypeId = await issueTypeToId('HardwareModuleWasReset')
-    const issueEventStatusId = await issueEventStatusToId('Triggered')
-    const triggerConditions = JSON.stringify({
-      action: 'HARDWARE_MODULE_WAS_RESET',
-      conditions: {
-        evaluationMethod: 'plugin-function',
-        evaluationParameter: 'analyzeDeviceHardwareError',
-        evaluationFilterParameters: {
-          errorCodes: [2126],
-          daysPeriod: 30,
-          minErrors: 3,
-        },
-      },
-    })
-
-    const { id: partnerId } = await knex('Partner').first()
-    ;[issueEventTriggerId] = await knex('IssueEventTrigger').insert({
-      issueTypeId,
-      partnerId,
-      issueEventStatusId,
-      triggerConditions,
-      createdOn: new Date(),
-      updatedOn: new Date(),
-    })
-    await updateSubscription('issue')
-  })
-  after(async () =>
-    knex('IssueEventTrigger').where({ id: issueEventTriggerId }).delete()
-  )
   it('should create entry with log details in table DeviceOperation', async () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
@@ -334,7 +298,6 @@ describe('Process GeneXpert Logs', () => {
       // see calling deviceHardwareError() in api/src/plugin/utils.js in func shouldTriggerHardwareErrorAnalysis()
       const action = deviceHardwareError(device, hardwareErorCode, options)
       const waitForHardwareError = waitForAction(action)
-
       const res = await postLog(deviceAuth, logSource, data)
       assert.equal(res.status, 200)
 
