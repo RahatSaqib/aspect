@@ -2,6 +2,7 @@
   "fields": [
     {
       "id": 201,
+      "completionWeight": 10,
       "name": "Gender",
       "title": "Gender",
       "i18nKey": "Genderi18nKey",
@@ -26,6 +27,7 @@
     },
     {
       "id": 202,
+      "completionWeight": 10,
       "name": "Age",
       "title": "Age",
       "i18nKey": "AgeFieldi18nKey",
@@ -47,6 +49,7 @@
     },
     {
       "id": 203,
+      "completionWeight": 10,
       "name": "Retreatment Case",
       "i18nKey": "RetreatCaseFieldi18nKey",
       "fieldType": "number",
@@ -71,6 +74,7 @@
     },
     {
       "id": 204,
+      "completionWeight": 10,
       "name": "Referring Facility",
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
@@ -89,6 +93,7 @@
     },
     {
       "id": 205,
+      "completionWeight": 10,
       "name": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKey": "ReferringClinicianI18nkey",
       "fieldType": "text",
@@ -101,6 +106,7 @@
     },
     {
       "id": 206,
+      "completionWeight": 10,
       "name": "Repeat Test",
       "i18nKey": "RepeatTesti18nKey",
       "fieldType": "number",
