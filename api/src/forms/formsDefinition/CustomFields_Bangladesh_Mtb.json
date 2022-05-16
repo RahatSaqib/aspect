@@ -2,6 +2,7 @@
   "fields": [
     {
       "id": 1101,
+      "completionWeight": 10,
       "name": "PatientName",
       "title": "Patient Name",
       "i18nKey": "PatientNameI18nKey",
@@ -14,6 +15,7 @@
     },
     {
       "id": 1102,
+      "completionWeight": 10,
       "name": "Age",
       "title": "Age",
       "i18nKey": "AgeFieldi18nKey",
@@ -35,6 +37,7 @@
     },
     {
       "id": 1103,
+      "completionWeight": 10,
       "name": "Gender",
       "title": "Gender",
       "i18nKey": "GenderI18nKey",
@@ -59,6 +62,7 @@
     },
     {
       "id": 1104,
+      "completionWeight": 10,
       "name": "Address",
       "title": "Address",
       "i18nKey": "AddressI18nKey",
@@ -71,6 +75,7 @@
     },
     {
       "id": 1105,
+      "completionWeight": 10,
       "name": "Mobile Number",
       "title": "Mobile Number",
       "i18nKey": "MobileNumberI18nkey",
@@ -85,6 +90,7 @@
     },
     {
       "id": 1106,
+      "completionWeight": 10,
       "name": "Referring Facility",
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
@@ -104,6 +110,7 @@
     },
     {
       "id": 12011,
+      "completionWeight": 10,
       "name": "TypeOfPatient",
       "i18nKey": "TypeOfPatientI18nKey",
       "fieldType": "text",
@@ -189,6 +196,7 @@
     },
     {
       "id": 12012,
+      "completionWeight": 10,
       "name": "PatientHistory",
       "i18nKey": "PatientHistoryI18nKey",
       "fieldType": "text",
@@ -296,6 +304,7 @@
     },
     {
       "id": 12013,
+      "completionWeight": 10,
       "name": "PatientRetreatment",
       "i18nKey": "PatientRetreatmentI18nKey",
       "fieldType": "text",
@@ -336,6 +345,7 @@
     },
     {
       "id": 1210,
+      "completionWeight": 50,
       "name": "HIV Status",
       "i18nKey": "HIVStatusI18nKey",
       "fieldType": "text",
@@ -367,6 +377,7 @@
     },
     {
       "id": 1211,
+      "completionWeight": 10,
       "name": "Sample Type",
       "i18nKey": "SampleTypeI18nKey",
       "fieldType": "text",
@@ -393,6 +404,7 @@
     },
     {
       "id": 1301,
+      "completionWeight": 10,
       "name": "TBRegistrationNumberPrevious",
       "title": "TB Registration Number - Previous (if any)",
       "i18nKey": "TBRegistrationNumberPreviousI18nKey",
@@ -407,6 +419,7 @@
     },
     {
       "id": 1302,
+      "completionWeight": 10,
       "name": "TBRegistrationNumberCurrent",
       "title": "TB Registration Number - Current",
       "i18nKey": "TBRegistrationNumberCurrentI18nKey",

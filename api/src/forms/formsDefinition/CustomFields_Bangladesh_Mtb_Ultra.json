@@ -2,6 +2,7 @@
   "fields": [
     {
       "id": 1202,
+      "completionWeight": 10,
       "name": "Repeat Test",
       "i18nKey": "RepeatTesti18nKey",
       "fieldType": "number",

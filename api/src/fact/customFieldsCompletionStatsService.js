@@ -10,7 +10,7 @@ const {
   getMappingFieldName,
 } = require('../result/serviceReportVietnam/geneXpertM4B1PatientsReport')
 
-async function getCustomFieldsCompletionStats() {
+async function getCustomFieldsCompletionStats(dateFrom, dateTo) {
   const definitions = await getCustomFieldsDefinitions()
 
   const selectColumnClauses =
@@ -18,29 +18,61 @@ async function getCustomFieldsCompletionStats() {
 
   const res = await getCustomFieldsFromResults(
     selectColumnClauses,
-    '2022-02-01',
-    '2022-02-02'
+    dateFrom,
+    dateTo
   )
 
   const fields = definitions.map(d => d.fields).flat()
-  const result = convertToJson(fields, res)
-  return result
-  // console.log(res)
+
+  const results = generateStatsResult(fields, res)
+
+  await knex('FactCustomFieldCompletion').insert(results)
+
+  return results
 }
 
-function convertToJson(fields, res) {
-  return res.map(r => {
-    return {
+function generateStatsResult(fields, res) {
+  const stats = res.map(r => {
+    const totalWeigth = fields.reduce(
+      (acc, cur) => acc + cur.completionWeight,
+      0
+    )
+    let completionRate = 0
+
+    const statsRow = {
       siteId: r.siteId,
       assayId: r.assayId,
       date: r.date,
-      completionRate: '',
+
       completionByField: Object.fromEntries(
-        fields.map(f => [[`${f.fieldName}`], r[f.fieldName]])
+        fields.map(f => {
+          const completionCount = r[f.fieldName]
+          // field completion weighting = (100 / recordCount) * (completionCount / totalWeigth) * completionWeight / 100
+          const fieldWeighting =
+            ((100 / r.recordCount) *
+              (completionCount / totalWeigth) *
+              f.completionWeight) /
+            100
+          completionRate += fieldWeighting
+          return [
+            f.fieldName,
+            {
+              completed: completionCount,
+              weighting: fieldWeighting.toFixed(5),
+            },
+          ]
+        })
       ),
-      recordCount: '',
+      recordCount: r.recordCount,
+      completionRate: completionRate.toFixed(5),
+      createdBy: 1,
+      updatedBy: 1,
+      createdOn: new Date(),
+      updatedOn: new Date(),
     }
+    return statsRow
   })
+  return stats
 }
 
 /**
@@ -58,7 +90,6 @@ async function getCustomFieldsDefinitions() {
     .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
     .where('fd.partnerId', 1)
     .where('ft.externalId', 'gxConnectForm')
-    // .where('d.externalId', 'tb') // <-- includes MTB and MTB-Ultra
     .distinct(
       'fd.externalId',
       'fd.assayId',
@@ -176,7 +207,7 @@ async function getCustomFieldsFromResults(
       'a.id as assayId',
       knex.raw('DATE(r.endedOn) as date')
     )
-    .count('* as total')
+    .count('* as recordCount')
     .select(...customFieldsClauses.map(cf => cf.clause))
     .orderBy('s.name')
   return data
