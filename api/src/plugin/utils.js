@@ -1,4 +1,7 @@
+const subMonths = require('date-fns/subMonths')
+
 const _ = require('lodash')
+
 const subDays = require('date-fns/subDays')
 const { knex } = require('../db')
 const {
@@ -127,26 +130,29 @@ async function shouldTriggerModuleReplaced(
       resultModuleReplaced,
     })
   }
-  // check if a module was just now replaced and trigger replacement-issue if it was
-  // get the most recent result from the same moduleName as the current result
-  const previousResultOnModule = await knex('Result')
-    .where('deviceId', deviceId)
-    .where('moduleName', moduleName)
-    .whereNotNull('moduleSerial')
-    .where('moduleSerial', '<>', moduleSerial)
-    .andWhere('instrumentSerial', instrumentSerial)
-    .whereRaw('startedOn < ?', [startedOn])
-    .orderBy('startedOn', 'desc')
-    .first('moduleSerial', 'id')
+  if (startedOn > subMonths(new Date(), 2)) {
+    // check if a module was just now replaced and trigger replacement-issue if it was
+    // get the most recent result from the same moduleName as the current result
+    const previousResultOnModule = await knex('Result')
+      .where('deviceId', deviceId)
+      .where('moduleName', moduleName)
+      .whereNotNull('moduleSerial')
+      .where('moduleSerial', '<>', moduleSerial)
+      .andWhere('instrumentSerial', instrumentSerial)
+      .andWhere('startedOn', '<', startedOn)
+      .andWhere('startedOn', '>', subMonths(startedOn, 6))
+      .orderBy('startedOn', 'desc')
+      .first('moduleSerial', 'id')
 
-  if (previousResultOnModule) {
-    messageContext.resultModuleReplaced(resultId, deviceId, {
-      moduleName,
-      replacedModuleSerial: previousResultOnModule.moduleSerial,
-      newModuleSerial: moduleSerial,
-      instrumentSerial,
-      oldResultId: previousResultOnModule.id,
-    })
+    if (previousResultOnModule) {
+      messageContext.resultModuleReplaced(resultId, deviceId, {
+        moduleName,
+        replacedModuleSerial: previousResultOnModule.moduleSerial,
+        newModuleSerial: moduleSerial,
+        instrumentSerial,
+        oldResultId: previousResultOnModule.id,
+      })
+    }
   }
 }
 

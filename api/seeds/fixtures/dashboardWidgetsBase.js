@@ -750,7 +750,8 @@ const moduleSwaps = {
   },
   sortOrder: 6,
   externalId: 'moduleSwaps',
-  description: 'The number of module swaps made at the current month',
+  description:
+    "The number of module swaps made at the current month. A module swap it is counted when two consecutive results performed in the same device's slot, they have a different module serial number",
   descriptionI18nKey: 'moduleSwapsDescription',
   dashboards: {
     operational: {
@@ -1084,7 +1085,7 @@ const instrumentsReplaced = {
   sortOrder: 3,
   externalId: 'instrumentsReplaced',
   description:
-    'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.',
+    'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting in the consecutive result conducted.',
   descriptionI18nKey: 'instrumentsReplacedDescription',
   dashboards: {
     operational: {
@@ -1390,7 +1391,7 @@ const averageDaysModuleSwap = {
   sortOrder: 7,
   externalId: 'averageDaysModuleSwap',
   description:
-    'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
+    'The average number of days between the last result reported under an specific module serial number and the consecutive result with a different module serial number',
   descriptionI18nKey: 'averageDaysModuleSwapDescription',
   dashboards: {
     operational: {
@@ -1566,7 +1567,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
-  description: `The number of devices experiencing service interruption on this and the previous month.`,
+  description: `The number of devices experiencing service interruption on this and the previous month. The service interruption is counted for every device with status`,
   descriptionI18nKey:
     'numberOfDevicesExperiencingServiceInterruptionDescription',
   dashboards: {
