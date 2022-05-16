@@ -45,7 +45,7 @@ const {
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
-function getSelectListFields(userTimeOffset) {
+function getSelectListFields(userTimeOffset, { lastSeenField } = {}) {
   const fields = SELECT_LIST_FIELDS
   fields.push(
     getDateTimeProjectionInUserTimeZone(
@@ -66,7 +66,7 @@ function getSelectListFields(userTimeOffset) {
   fields.push(
     getDateTimeProjectionInUserTimeZone(
       knex,
-      'd.lastSeenOn',
+      lastSeenField ?? 'd.lastSeenOn',
       userTimeOffset,
       'lastSeen'
     )
@@ -262,7 +262,9 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...getSelectListFields(userTimeOffset),
+      ...getSelectListFields(userTimeOffset, {
+        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
+      }),
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
@@ -275,6 +277,9 @@ async function getListDevices(query, auth) {
         'count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'
       ),
       'issues.categories as issueCategories',
+      'dms.active as isDeviceActive',
+      'dmsl.day as dmslDay',
+      'd.lastSeenOn as deviceLastSeenOn',
     ])
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
@@ -326,6 +331,7 @@ async function getListDevices(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
+  const toSyncDmslAndDevice = {}
   data.forEach(it => {
     it.availability = {
       count: it.activeDays ? it.activeDays : 0,
@@ -347,7 +353,33 @@ async function getListDevices(query, auth) {
     it.issueCategories = it.issueCategories
       ? it.issueCategories.split(',').map(key => ({ key }))
       : []
+
+    /**
+     * for Active devices - get devices when Device.lastSeenOn < DeviceMaintenanceStatusLog.day
+     */
+    if (
+      +it.isDeviceActive &&
+      it.deviceLastSeenOn &&
+      it.dmslDay &&
+      it.deviceLastSeenOn < it.dmslDay
+    ) {
+      toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
+    }
+    delete it.dmslDay
+    delete it.deviceLastSeenOn
+    delete it.isDeviceActive
   })
+
+  if (!_.isEmpty(toSyncDmslAndDevice)) {
+    await Promise.all(
+      _.map(_.keys(toSyncDmslAndDevice), async deviceId => {
+        const { lastSeenOn } = toSyncDmslAndDevice[deviceId]
+        return knex('Device')
+          .where({ id: deviceId })
+          .update({ lastSeenOn, updatedOn: new Date() })
+      })
+    )
+  }
 
   const result = { ok: true, total, length: data.length, data }
 

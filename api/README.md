@@ -361,3 +361,18 @@ ssh drc -L 15673:localhost:15672
 ```
 
 You'll be able to browse the UI in your browser at http://localhost:15673
+
+## Creating a custom error | Backend (please read the frontend part also)
+
+To create a custom error, we need to create a new Bomm.ERROR. Then assign our custom error data, such as the errorKeyCode, that will be used by the frontend as an 18n key. We also have to assign a new statusCode. Lastly, reformat the error and return it.
+eg:
+
+```javascript
+const err = Boom.forbidden('Your account is locked.', {
+  errorKeyCode: 'accountLocked',
+})
+err.output.payload.extraData = err.data
+err.output.statusCode = 444
+err.reformat()
+return err
+```

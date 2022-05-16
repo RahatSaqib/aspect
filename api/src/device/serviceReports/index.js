@@ -328,8 +328,13 @@ async function exportDeviceOperationLogReport(request, reply) {
 async function getDeviceCapacityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const { minDate = addMonths(new Date(), -12), maxDate = new Date() } = query
+  let { minDate } = query
+  const { maxDate } = query
+
   const offset = getOffsetFromIsoDateString(maxDate)
+
+  minDate = minDate || addMonths(new Date(), -12).toISOString()
+
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
   const monthlyCapacity = deviceQuery
     .clone()
@@ -387,13 +392,15 @@ async function getDeviceCapacityReport(auth, query) {
           format(
             new Date(`${filteredMonthlyCapacity.monthYear}-01`),
             'yyyy-MM'
-          ) === format(minDate, 'yyyy-MM')
-            ? minDate
+          ) === format(new Date(minDate), 'yyyy-MM')
+            ? parseISO(minDate)
             : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
         )
-        deviceRow[filteredMonthlyCapacity.monthYear] =
+        deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
           filteredMonthlyCapacity.resultCount /
-          Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1)
+            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          2
+        )
       }
     )
 

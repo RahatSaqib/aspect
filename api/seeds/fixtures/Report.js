@@ -302,7 +302,7 @@ const moduleActivityReport = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'device/serviceReport',
+      moduleName: 'device/serviceReports',
       functionName: 'getModuleActivityReport',
     },
   ],

@@ -24,4 +24,4 @@ module.exports = require('../utils').seed(async knex => {
   await updateReportsAndJobFunctions(knex, jobFunctions, partnerName, {
     countrySpecificReportFixture,
   })
-}, __filename)
+}, `${__filename}-${new Date().toISOString()}`)
