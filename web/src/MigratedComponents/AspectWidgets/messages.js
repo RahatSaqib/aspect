@@ -215,8 +215,7 @@ export const messages = defineMessages({
   },
   instrumentsReplaced: {
     id: 'component.Widget.instrumentsReplaced',
-    defaultMessage:
-      'Average Days for Instrument Replacement. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
+    defaultMessage: 'Average Days for Instrument Replacement.',
   },
   instrumentsReplacedDescription: {
     id: 'component.Widget.instrumentsReplacedDescription',
