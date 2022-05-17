@@ -1,8 +1,5 @@
-const subMonths = require('date-fns/subMonths')
-
 const _ = require('lodash')
-
-const subDays = require('date-fns/subDays')
+const { subYears, subMonths, subDays } = require('date-fns')
 const { knex } = require('../db')
 const {
   resultModuleReplaced,
@@ -140,7 +137,7 @@ async function shouldTriggerModuleReplaced(
       .where('moduleSerial', '<>', moduleSerial)
       .andWhere('instrumentSerial', instrumentSerial)
       .andWhere('startedOn', '<', startedOn)
-      .andWhere('startedOn', '>', subMonths(startedOn, 6))
+      .andWhere('startedOn', '>', subYears(startedOn, 2))
       .orderBy('startedOn', 'desc')
       .first('moduleSerial', 'id')
 
