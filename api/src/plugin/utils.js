@@ -127,9 +127,10 @@ async function shouldTriggerModuleReplaced(
       resultModuleReplaced,
     })
   }
+  // We decided to avoid taking into account for this analysis the results older than 60 days
   if (startedOn > subMonths(new Date(), 2)) {
     // check if a module was just now replaced and trigger replacement-issue if it was
-    // get the most recent result from the same moduleName as the current result
+    // get the most recent result from the same moduleName as the current resul within the last 2 years
     const previousResultOnModule = await knex('Result')
       .where('deviceId', deviceId)
       .where('moduleName', moduleName)
