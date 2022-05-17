@@ -2034,12 +2034,12 @@ const bangladeshAverageCompletion = {
   subTitle: null,
   subTitleI18nKey: null,
   sqlForIndicator: `SELECT
-  ROUND((IFNULL(SUM(completionRate * recordCount) / SUM(recordCount),0)), 2) AS cnt
+  ROUND((IFNULL(SUM(completionRate * 100 * recordCount) / SUM(recordCount),0)), 2) AS cnt
   FROM FactCustomFieldCompletion
   WHERE
   createdOn BETWEEN  DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()`,
   sqlForStatUnit: `SELECT
-  ROUND((IFNULL(SUM(completionRate * recordCount) / SUM(recordCount),0)), 2) AS cnt
+  ROUND((IFNULL(SUM(completionRate * 100 * recordCount) / SUM(recordCount),0)), 2) AS cnt
   FROM FactCustomFieldCompletion
   WHERE
   createdOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
