@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-13T21:06:58.330Z\n"
+"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -867,16 +867,10 @@ msgstr "Average Confirmed Response"
 
 #. [component.Widget.instrumentsReplaced]
 #. defaultMessage is:
-#. Average Days for Instrument Replacement. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
+#. Average Days for Instrument Replacement.
 #: extracted_strings.json
-msgid ""
-"Average Days for Instrument Replacement. An Instrument is marked as replaced "
-"when two consecutive results performed in the same device, have a different "
-"Instrument serial number"
-msgstr ""
-"Average Days for Instrument Replacement. An Instrument is marked as replaced "
-"when two consecutive results performed in the same device, have a different "
-"Instrument serial number"
+msgid "Average Days for Instrument Replacement."
+msgstr "Average Days for Instrument Replacement."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -11054,8 +11048,14 @@ msgstr "{unit} total calibrations"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{total, plural, one {# result} other {# results} })"
 
-#~ msgid "Average Days for Instrument Replacement"
-#~ msgstr "Average Days for Instrument Replacement"
+#~ msgid ""
+#~ "Average Days for Instrument Replacement. An Instrument is marked as "
+#~ "replaced when two consecutive results performed in the same device, have "
+#~ "a different Instrument serial number"
+#~ msgstr ""
+#~ "Average Days for Instrument Replacement. An Instrument is marked as "
+#~ "replaced when two consecutive results performed in the same device, have "
+#~ "a different Instrument serial number"
 
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "The average duration of a service interruption, in days."

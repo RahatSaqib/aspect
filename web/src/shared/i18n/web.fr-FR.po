@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-13T20:45:26.512Z\n"
+"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -884,9 +884,11 @@ msgstr "Moyenne des réponses confirmées"
 
 #. [component.Widget.instrumentsReplaced]
 #. defaultMessage is:
-#. Average Days for Instrument Replacement
+#. Average Days for Instrument Replacement.
 #: extracted_strings.json
-msgid "Average Days for Instrument Replacement"
+#, fuzzy
+#| msgid "Average Days for Instrument Replacement"
+msgid "Average Days for Instrument Replacement."
 msgstr "Nombre moyen de jours pour le remplacement de l'instrument"
 
 #. [component.Widget.avgTimeToUploadTitle]
@@ -8739,11 +8741,7 @@ msgstr ""
 
 #. [component.Widget.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
-#. The average duration of a service interruption, in days.
-#: extracted_strings.json
-msgid "The average duration of a service interruption, in days."
-msgstr "La durée moyenne d'une interruption de service, en jours."
-
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
 #. [pages.OperationalData.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
 #. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
@@ -8931,17 +8929,30 @@ msgstr ""
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
-"previous month."
+"previous month. A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
 msgstr ""
-"Le nombre d'appareils ayant subi une interruption de service ce mois-ci et "
-"le mois précédent."
+"Le nombre de dispositifs ayant subi une interruption de service ce mois-ci "
+"et le mois précédent. Un dispositif subit une interruption de service "
+"lorsqu'il est signalé comme \"en panne pour réparation\" pour son état de "
+"maintenance."
+
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#: extracted_strings.json
+msgid ""
+"The number of devices experiencing service interruption on this and the "
+"previous month.A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
+msgstr ""
+"Le nombre de dispositifs subissant une interruption de service ce mois-ci et "
+"le mois précédent. Un dispositif subit une interruption de service lorsqu'il "
+"est marqué comme \"en panne pour réparation\" pour son état de maintenance."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -11112,6 +11123,9 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+
+#~ msgid "The average duration of a service interruption, in days."
+#~ msgstr "La durée moyenne d'une interruption de service, en jours."
 
 #~ msgid "Average days between module swaps"
 #~ msgstr "Nombre moyen de jours entre les échanges de modules"
