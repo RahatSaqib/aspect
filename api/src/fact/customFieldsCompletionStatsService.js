@@ -1,16 +1,20 @@
-const {
-  knex,
-  filterDateRangeParams,
-  filterParams,
-  sortPageParams,
-} = require('../db')
-// const { getCustomFields } = require('../forms/service')
+const { startOfToday, addDays, format } = require('date-fns')
+const { getArrayOfDaysInRange } = require('../date')
+const { knex, filterDateRangeParams } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
-const {
-  getMappingFieldName,
-} = require('../result/serviceReportVietnam/geneXpertM4B1PatientsReport')
 
-async function getCustomFieldsCompletionStats(dateFrom, dateTo) {
+const factFillCustomFieldsCompletionStatsLast30Days = async () =>
+  factFillCustomFieldsCompletionStats(
+    '2022-01-01',
+    '2022-01-02'
+    // format(addDays(startOfToday(), -1), 'yyyy-MM-dd'),
+    // format(startOfToday(), 'yyyy-MM-dd')
+  )
+
+async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
+  // console.table({ dateFrom, dateTo })
+  await knex.raw('truncate table FactCustomFieldCompletion')
+
   const definitions = await getCustomFieldsDefinitions()
 
   const selectColumnClauses =
@@ -25,54 +29,69 @@ async function getCustomFieldsCompletionStats(dateFrom, dateTo) {
   const fields = definitions.map(d => d.fields).flat()
 
   const results = generateStatsResult(fields, res)
+  // console.table(results)
 
   await knex('FactCustomFieldCompletion').insert(results)
 
   return results
 }
 
-function generateStatsResult(fields, res) {
-  const stats = res.map(r => {
-    const totalWeigth = fields.reduce(
-      (acc, cur) => acc + cur.completionWeight,
-      0
+/**
+ * Converts the custom fields definitions in all the form definitions provided, to a list of knex clauses
+ * @param {*} formDefinitions - Array of form definitions
+ */
+function convertCustomFieldsToColumnKnexClauses(formDefinitions) {
+  return formDefinitions
+    .map(fd =>
+      fd.fields.map(customField => ({
+        fieldName: customField.fieldName,
+        clause: knex.raw(
+          `SUM(CASE WHEN IFNULL(${getMySqlJsonPathFromCustomField(
+            customField
+          )},'') IN ('', 'null') THEN 0 ELSE 1 END) AS '${
+            customField.fieldName
+          }'`
+        ),
+      }))
     )
-    let completionRate = 0
+    .flat() // flatten fields from all forms
+    .filter(
+      // Unique clauses
+      (value, index, array) =>
+        array.findIndex(
+          v => v.clause.toString() === value.clause.toString()
+        ) === index
+    )
+}
 
-    const statsRow = {
-      siteId: r.siteId,
-      assayId: r.assayId,
-      date: r.date,
-
-      completionByField: Object.fromEntries(
-        fields.map(f => {
-          const completionCount = r[f.fieldName]
-          // field completion weighting = (100 / recordCount) * (completionCount / totalWeigth) * completionWeight / 100
-          const fieldWeighting =
-            ((100 / r.recordCount) *
-              (completionCount / totalWeigth) *
-              f.completionWeight) /
-            100
-          completionRate += fieldWeighting
-          return [
-            f.fieldName,
-            {
-              completed: completionCount,
-              weighting: fieldWeighting.toFixed(5),
-            },
-          ]
-        })
-      ),
-      recordCount: r.recordCount,
-      completionRate: completionRate.toFixed(5),
-      createdBy: 1,
-      updatedBy: 1,
-      createdOn: new Date(),
-      updatedOn: new Date(),
-    }
-    return statsRow
-  })
-  return stats
+async function getCustomFieldsFromResults(
+  customFieldsClauses,
+  dateFrom,
+  dateTo
+) {
+  const data = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    .where('s.disabled', 0)
+    .groupBy('s.id', 'a.id', knex.raw('DATE(r.endedOn)'))
+    .select(
+      's.id as siteId',
+      's.name as siteName',
+      'a.id as assayId',
+      knex.raw('DATE(r.endedOn) as date')
+    )
+    .count('* as recordCount')
+    .select(...customFieldsClauses.map(cf => cf.clause))
+    .orderBy('s.name')
+  return data
 }
 
 /**
@@ -120,34 +139,48 @@ async function getCustomFieldsDefinitions() {
   }))
 }
 
-/**
- * Converts the custom fields definitions in all the form definitions provided, to a list of knex clauses
- * @param {*} formDefinitions - Array of form definitions
- */
-function convertCustomFieldsToColumnKnexClauses(formDefinitions) {
-  return formDefinitions
-    .map(fd =>
-      fd.fields.map(customField => ({
-        // id: customField.id,
-        // form: fd.file,
-        fieldName: customField.fieldName,
-        clause: knex.raw(
-          `SUM(CASE WHEN IFNULL(${getMySqlJsonPathFromCustomField(
-            customField
-          )},'') IN ('', 'null') THEN 0 ELSE 1 END) AS '${
-            customField.fieldName
-          }'`
-        ),
-      }))
+function generateStatsResult(fields, res) {
+  const stats = res.map(r => {
+    const totalWeigth = fields.reduce(
+      (acc, cur) => acc + cur.completionWeight,
+      0
     )
-    .flat() // flatten fields from all forms
-    .filter(
-      // Unique clauses
-      (value, index, array) =>
-        array.findIndex(
-          v => v.clause.toString() === value.clause.toString()
-        ) === index
-    )
+    let completionRate = 0
+
+    const statsRow = {
+      siteId: r.siteId,
+      assayId: r.assayId,
+      date: r.date,
+
+      completionByField: Object.fromEntries(
+        fields.map(f => {
+          const completionCount = r[f.fieldName]
+          // field completion weighting = (100 / recordCount) * (completionCount / totalWeigth) * completionWeight / 100
+          const fieldWeighting =
+            ((100 / r.recordCount) *
+              (completionCount / totalWeigth) *
+              f.completionWeight) /
+            100
+          completionRate += fieldWeighting
+          return [
+            f.fieldName,
+            {
+              completed: completionCount,
+              weighting: fieldWeighting.toFixed(5),
+            },
+          ]
+        })
+      ),
+      recordCount: r.recordCount,
+      completionRate: completionRate.toFixed(5),
+      createdBy: 1,
+      updatedBy: 1,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    }
+    return statsRow
+  })
+  return stats
 }
 
 function getMySqlJsonPathFromCustomField(customField) {
@@ -164,55 +197,7 @@ const normalizeCustomFieldName = customFieldName => {
   )
 }
 
-async function getCustomFieldsFromResults(
-  customFieldsClauses,
-  dateFrom,
-  dateTo
-) {
-  // console.log(
-  //   '\x1b[1;34m',
-  //   '🚀  ➜ file: customFieldsCompletionStatsService.js ➜ line 168 ➜ getCustomFieldsFromResults ➜ customFields.map(cf => cf.clause)',
-  //   customFieldsClauses
-  // )
-  const data = await knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    // .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
-    // .modify(addConstraints, dataConstraints, {
-    //   device: 'd',
-    //   site: 's',
-    //   geography: 'g',
-    //   assay: 'a',
-    //   result: 'r',
-    // })
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
-    // .modify(filterParams, query, {
-    //   // query
-    //   countryId: 'g.countryId',
-    //   stateId: 'g.stateId',
-    //   lgaId: 'g.lgaId',
-    //   siteName: 's.name',
-    // })
-    .groupBy('s.id', 'a.id', knex.raw('DATE(r.endedOn)'))
-    .select(
-      's.id as siteId',
-      's.name as siteName',
-      'a.id as assayId',
-      knex.raw('DATE(r.endedOn) as date')
-    )
-    .count('* as recordCount')
-    .select(...customFieldsClauses.map(cf => cf.clause))
-    .orderBy('s.name')
-  return data
-}
-
 module.exports = {
-  customFieldsCompletionStatsService: getCustomFieldsCompletionStats,
+  factFillCustomFieldsCompletionStats,
+  factFillCustomFieldsCompletionStatsLast30Days,
 }
