@@ -206,17 +206,15 @@ describe('Device API routes for GxAlert Device', () => {
 
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
-        payload: _.merge(
+        payload: _.assign(
           {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
+          _.assign({}, basicDevicePayload, basicResultPayload),
           {
-            result: {
+            result: _.assign({}, basicResultPayload.result, {
               sample: { id: 'new sample' },
               instrument: { serial: 'new instrument' },
               startedOn: testStartedOn,
-            },
+            }),
           }
         ),
         expectedStatusCode: 200,
@@ -252,8 +250,8 @@ describe('Device API routes for GxAlert Device', () => {
         consumableExpirationDate: null,
         consumableLot: null,
         instrumentSerial: 'new instrument',
-        moduleName: basicResultPayload.result.instrument.module.name,
-        moduleSerial: basicResultPayload.result.instrument.module.serial,
+        moduleName: null,
+        moduleSerial: null,
         patientData: {
           ...basicResultPayload.result.patient,
           phone: '+10833243682',
