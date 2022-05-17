@@ -1,20 +1,20 @@
 const util = require('util')
 const { expect } = require('chai')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+// const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const {
-  factFillCustomFieldsCompletionStatsLast30Days,
+  factFillCustomFieldsCompletionStats,
 } = require('../../src/fact/customFieldsCompletionStatsService')
 
-describe('CustomFieldsCompletionStatsService', async () => {
-  it.only('Must retrieve custom fields', async () => {
-    const stats = await factFillCustomFieldsCompletionStatsLast30Days()
-    // const stats = await factFillCustomFieldsCompletionStats(
-    //   '2022-02-28',
-    //   '2022-03-01'
-    // )
+describe('CustomFieldsCompletionStatsService', async function () {
+  this.timeout(0)
+  it.skip('Must save stats data', async () => {
+    const stats = await factFillCustomFieldsCompletionStats(
+      '2021-05-01',
+      '2021-05-30'
+    )
 
-    console.log('\x1b[1;34m', '🚀', stats[2])
-    expect(stats).to.be.an('Array')
+    console.log('\x1b[1;34m', '🚀 Stats created: ', stats)
+    expect(stats).to.be.an('Number')
   })
 })
