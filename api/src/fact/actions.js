@@ -17,6 +17,8 @@ const types = {
   FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
   FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
   FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
+  FACT_CHECK_COMPLETION_RATE_PER_SITE: 'FACT_CHECK_COMPLETION_RATE_PER_SITE',
+  SITE_WITH_LOW_COMPLETION_RATE: 'SITE_WITH_LOW_COMPLETION_RATE',
 }
 
 /**
@@ -50,6 +52,16 @@ function factGenerateResultCounts(deviceId, options) {
     type: types.FACT_GENERATE_RESULT_COUNTS,
     deviceId,
     options,
+  }
+}
+
+/**
+ * Requests facts to be regenerated. Will be called on
+ * schedule to run fact ETL
+ */
+function factCheckCompletionRatePerSite() {
+  return {
+    type: types.FACT_CHECK_COMPLETION_RATE_PER_SITE,
   }
 }
 
@@ -152,6 +164,26 @@ function factNewResultsAvailable({ siteId, numberOfResults }) {
   }
 }
 
+function siteWithLowCompletionRateIssue(
+  siteId,
+  geographyId,
+  partnerId,
+  completionRate
+) {
+  if (!siteId || !completionRate) {
+    throw new Error('Must specify siteId and completionRate for new Evaluation')
+  }
+  return {
+    type: types.SITE_WITH_LOW_COMPLETION_RATE,
+    siteId,
+    geographyId,
+    partnerId,
+    options: {
+      completionRate,
+    },
+  }
+}
+
 /**
  * Creates an action to notify that it is time to check uptime robot stats for Aspect
  *
@@ -175,4 +207,6 @@ module.exports = {
   factNewResultsAvailableCheck,
   factNewResultsAvailable,
   factExternalSourceCheck,
+  factCheckCompletionRatePerSite,
+  siteWithLowCompletionRateIssue,
 }
