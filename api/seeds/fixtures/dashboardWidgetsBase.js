@@ -2037,12 +2037,12 @@ const bangladeshAverageCompletion = {
   ROUND((IFNULL(SUM(completionRate * 100 * recordCount) / SUM(recordCount),0)), 2) AS cnt
   FROM FactCustomFieldCompletion
   WHERE
-  createdOn BETWEEN  DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()`,
+  updatedOn BETWEEN  DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()`,
   sqlForStatUnit: `SELECT
   ROUND((IFNULL(SUM(completionRate * 100 * recordCount) / SUM(recordCount),0)), 2) AS cnt
   FROM FactCustomFieldCompletion
   WHERE
-  createdOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
+  updatedOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
   `,
   statUnit: '{unit} since last month',
   statUnitI18nKey: 'lastMonth',
