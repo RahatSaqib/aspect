@@ -142,20 +142,18 @@ async function getCustomFieldsDefinitions() {
     assayId: qf.assayId,
     diseaseId: qf.diseaseId,
     formTypeId: qf.assayId,
-    fields: formDictionary[qf.jsonSchemaFileName].fields.map(field => ({
-      id: field.id,
-      assayId: qf.assayId,
-      diseaseId: qf.diseaseId,
-      name: field.name,
-      gxAlertDbColumn: field.gxAlertDbColumn,
-      completionWeight: field.completionWeight || 0,
-      payloadDestinationPath: field.payloadDestinationPath,
-      fieldName: normalizeCustomFieldName(
-        field.payloadDestinationPath
-          ? field.payloadDestinationPath.split('.')[1]
-          : field.name
-      ),
-    })),
+    fields: formDictionary[qf.jsonSchemaFileName].fields
+      .filter(f => f.completionWeight && f.payloadDestinationPath)
+      .map(field => ({
+        id: field.id,
+        assayId: qf.assayId,
+        diseaseId: qf.diseaseId,
+        name: field.name,
+        gxAlertDbColumn: field.gxAlertDbColumn,
+        completionWeight: field.completionWeight || 0,
+        payloadDestinationPath: field.payloadDestinationPath,
+        fieldName: normalizeCustomFieldName(field),
+      })),
   }))
 }
 
@@ -174,6 +172,12 @@ function generateStatsResult(fields, res) {
           f.assayId === r.assayId || (!f.assayId && f.diseaseId === r.diseaseId)
         )
       })
+      // console.dir(res, {
+      //   depth: null,
+      //   colors: true,
+      //   maxArrayLength: null,
+      // })
+
       const statsRow = {
         siteId: r.siteId,
         assayId: r.assayId,
@@ -181,6 +185,7 @@ function generateStatsResult(fields, res) {
         completionByField: Object.fromEntries(
           currentFields.map(f => {
             const completionCount = r[f.fieldName]
+
             const totalWeight = fields.reduce((acc, cur) => {
               if (cur.assayId === r.assayId || cur.diseaseId === r.diseaseId) {
                 acc += cur.completionWeight
@@ -223,9 +228,15 @@ function getMySqlJsonPathFromCustomField(customField) {
   return `r.patientData ->> '$.${customField.fieldName}'`
 }
 
-const normalizeCustomFieldName = customFieldName => {
-  const cleaned = customFieldName.replace(/[^a-zA-Z0-9]/g, '')
-  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1)
+/**
+ * Determine the name of the custom field
+ * @param {string} - Custom field definition from the form json definition
+ * @returns if the field has payloadDestinationPath, extracts the name, if not returns the field name with lower capitalization
+ */
+const normalizeCustomFieldName = field => {
+  if (field.payloadDestinationPath) {
+    return field.payloadDestinationPath.split('.')[1]
+  }
 }
 
 module.exports = {
