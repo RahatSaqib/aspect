@@ -1,12 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { addHours, differenceInHours } = require('date-fns')
-const {
-  getDateOrDefault,
-  parseDateOrDefault,
-  startOfDayUtc,
-} = require('../shared/date')
+const { getDateOrDefault, parseDateOrDefault } = require('../shared/date')
 const {
   knex,
   transact,
@@ -111,7 +106,7 @@ const STOCK_LEFT_FILTER_FIELDS = {
   },
 }
 const SUM_STOCK_LEFT_FILTER_FIELDS = {
-  hasStock: queryBuilder => queryBuilder.havingRaw('quantityOnHand <> 0'),
+  hasStock: queryBuilder => queryBuilder.havingRaw('quantityOnHand > 0'),
 }
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
@@ -511,7 +506,23 @@ function getInventoryLots(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
+function getInventoryItemsRaw() {
+  const fldExpiresOn = `DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d')`
+  const fldQuantity = `CAST( IFNULL(ii.quantityOnHand, 0) AS CHAR )`
+  const itemRaw = `CONCAT(
+    '{ "expiresOn": "', ${fldExpiresOn}, '", "quantityOnHand": "', ${fldQuantity}, '" }'
+  )`
+
+  return `CONCAT(
+    '[',
+      GROUP_CONCAT(${itemRaw} SEPARATOR ','),
+    ']'
+  )`
+}
+
 function getInventorySites(constraints, request) {
+  const inventoryItemsRaw = getInventoryItemsRaw()
+
   return query('Search Inventory Sites')
     .from('Site as s')
     .innerJoin('Consumable as c')
@@ -531,6 +542,8 @@ function getInventorySites(constraints, request) {
         .on('s.id', 'ii.siteId')
         .andOn('c.id', 'ii.consumableId')
         .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
+        // we are interested in unexpired yet as of today
+        .andOn(knex.raw('ii.expiresOn >= DATE(NOW())'))
     })
     .leftJoin('InventoryItem as ii_transfer', builder => {
       builder
@@ -571,6 +584,18 @@ function getInventorySites(constraints, request) {
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
       knex.raw(
         'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
+      ),
+      knex.raw(
+        `CASE WHEN IFNULL(ficr.rate, 0) = 0
+          THEN null
+          ELSE GetDaysStockLeft(ficr.rate, ${inventoryItemsRaw})
+        END as daysStockLeft`
+      ),
+      knex.raw(
+        `CASE WHEN IFNULL(ficr.rate, 0) = 0
+          THEN null
+          ELSE GetProjectedWaste(ficr.rate, ${inventoryItemsRaw})
+        END as projectedWaste`
       ),
     ])
 }
@@ -632,121 +657,37 @@ async function listInventoryByLot(request, dataConstraints) {
 
 async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
+  const range = getDaysStockLeftRanges(query.daysStockLeft)
+
   let inventoryQuery = getInventorySites(dataConstraints, request)
-  const {
-    sortCol,
-    sortDir,
-    page,
-    size = 10,
-    daysStockLeft: daysStockLeftFilter,
-  } = query
 
-  // As the daysStockLeft and projectedWaste fields are calculated in memory, then we need to apply post-process ordering
-  const requirePostProcessOrdering =
-    sortCol === 'daysStockLeft' || sortCol === 'projectedWaste'
+  inventoryQuery = knex
+    .from(inventoryQuery.as('t2'))
+    .modify(builder => {
+      if (range) {
+        builder.whereRaw(
+          `daysStockLeft IS NOT NULL 
+          AND 
+          daysStockLeft >= ${range.min}
+          ${_.isNil(range.max) ? '' : ` AND daysStockLeft <= ${range.max}`}
+          `
+        )
+      }
+    })
+    .select(`*`)
 
-  let total
+  const [{ total }] = await inventoryQuery.clone().count('id as total')
 
-  if (!requirePostProcessOrdering) {
-    ;[{ total }] = await knex
-      .from(inventoryQuery.as('q'))
-      .count('q.id as total')
-    // Apply ordering and paging - we only want to process the sites-consumables inside the requested page
-    inventoryQuery = inventoryQuery.modify(
-      sortPageParams,
-      request.query,
-      INVENTORY_ITEM_SORT_FIELDS.siteName,
-      INVENTORY_ITEM_SORT_FIELDS
-    )
-  }
-
-  let inventorySites = await inventoryQuery
-
-  // Get the available lots for the scoped sites and consumables - only the sites-consumables with stock are needed
-  const availableInventory = await getAvailableLots(
-    inventorySites.filter(is => is.quantityOnHand > 0)
+  // sorting and pagination
+  inventoryQuery = inventoryQuery.modify(
+    sortPageParams,
+    request.query,
+    'siteName'
   )
 
-  // Set daysStockLeft and projectedWaste fields - keep original ordering
-  inventorySites = setCalculatedFields(
-    inventorySites,
-    availableInventory,
-    sortCol,
-    sortDir
-  )
-
-  // If the daysStockLeft filter was set, then we need to filter the inventories in memory
-  if (daysStockLeftFilter) {
-    if (daysStockLeftFilter === 'outOfStock')
-      inventorySites = _.filter(inventorySites, is => is.daysStockLeft === 0)
-
-    if (daysStockLeftFilter === 'noConsumption')
-      inventorySites = _.filter(
-        inventorySites,
-        is => is.dailyConsumptionRate === 0
-      )
-
-    const range = getDaysStockLeftRanges(daysStockLeftFilter)
-    if (range)
-      inventorySites = _.filter(
-        inventorySites,
-        is =>
-          is.daysStockLeft >= range.min &&
-          (!range.max || is.daysStockLeft <= range.max)
-      )
-  }
-
-  // If the sortCol is daysStockleft or projectedWaste, we need to apply post-process paging and ordering
-  if (requirePostProcessOrdering) {
-    total = inventorySites.length
-
-    if (sortCol)
-      inventorySites = _.orderBy(
-        inventorySites,
-        item => {
-          return item[sortCol] || ''
-        },
-        sortDir || 'asc'
-      )
-
-    inventorySites = inventorySites.slice(page * size, size)
-  }
+  const inventorySites = await inventoryQuery
 
   return { data: inventorySites, total }
-}
-
-/**
- *
- * @param {Array} inventorySites The collection of scoped sites and consumables. It should be formatted like [{ consumableId, siteId }]
- * @returns
- */
-function getAvailableLots(inventorySites) {
-  return (
-    knex('InventoryItem as ii')
-      // Get all the not-expired
-      .whereRaw('ii.expiresOn > NOW()')
-      // and not-consumed lots
-      .whereRaw('ii.quantityOnHand > 0')
-      // and is not in transit
-      .whereNull('ii.inTransitFromSiteId')
-      // scoped in the paged list of inventory sites
-      .andWhere(q => {
-        inventorySites.forEach(inventorySite => {
-          q.orWhere(qOr =>
-            qOr
-              .where('ii.consumableId', inventorySite.consumableId)
-              .andWhere('ii.siteId', inventorySite.siteId)
-          )
-        })
-      })
-      .orderBy(['ii.siteId', 'ii.consumableId', 'ii.expiresOn'])
-      .select([
-        'ii.siteId',
-        'ii.consumableId',
-        'ii.quantityOnHand',
-        'ii.expiresOn',
-      ])
-  )
 }
 
 function getDaysStockLeftRanges(key) {
@@ -766,76 +707,6 @@ function getDaysStockLeftRanges(key) {
     default:
       return null
   }
-}
-
-function setCalculatedFields(
-  inventorySites,
-  availableInventory,
-  sortCol,
-  sortDir
-) {
-  let availableInventoryIdx = 0
-  inventorySites = _.orderBy(inventorySites, ['siteId', 'consumableId'])
-  inventorySites.forEach(inventorySite => {
-    let projectedWaste = 0
-    const now = startOfDayUtc(new Date())
-    let currentDay = now
-    const { dailyConsumptionRate } = inventorySite
-    const hasConsumptionRate = dailyConsumptionRate && dailyConsumptionRate > 0
-    // Iterate over inventory items - ordered by siteId, consumableId
-    while (
-      availableInventoryIdx < availableInventory.length &&
-      _.isEqual(
-        _.pick(availableInventory[availableInventoryIdx], [
-          'siteId',
-          'consumableId',
-        ]),
-        _.pick(inventorySite, ['siteId', 'consumableId'])
-      )
-    ) {
-      // All the calculations are based on the consumption rate - skip all inventories when it's null
-      if (hasConsumptionRate) {
-        const { quantityOnHand, expiresOn } =
-          availableInventory[availableInventoryIdx]
-
-        if (expiresOn < currentDay) {
-          // Lot already expired - stock will be wasted
-          projectedWaste += quantityOnHand
-        } else {
-          const daysLeftUnexpired =
-            differenceInHours(expiresOn, currentDay) / 24
-          if (daysLeftUnexpired * dailyConsumptionRate > quantityOnHand) {
-            // The inventory item will be consumed before expiring - no wasted stock
-            currentDay = addHours(
-              currentDay,
-              (quantityOnHand / dailyConsumptionRate) * 24
-            )
-          } else {
-            // The inventory item will expire before consuming the stock - stock will be wasted
-            currentDay = addHours(
-              currentDay,
-              differenceInHours(expiresOn, currentDay)
-            )
-            projectedWaste +=
-              quantityOnHand - daysLeftUnexpired * dailyConsumptionRate
-          }
-        }
-      }
-
-      availableInventoryIdx += 1
-    }
-
-    if (hasConsumptionRate) {
-      inventorySite.daysStockLeft = differenceInHours(currentDay, now) / 24
-      inventorySite.projectedWaste = projectedWaste
-    } else {
-      inventorySite.daysStockLeft = null
-      inventorySite.projectedWaste = null
-    }
-  })
-
-  // Re-order inventory-sites to match the original ordering
-  return _.orderBy(inventorySites, sortCol, sortDir)
 }
 
 const siteFields = [
