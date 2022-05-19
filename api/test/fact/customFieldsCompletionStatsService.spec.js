@@ -12,7 +12,6 @@ const {
 } = require('../../src/fact/customFieldsCompletionStatsService')
 const { knex } = require('../../src/db')
 
-
 let context
 /**
  * this test is dependant on completionWeight and payloadDestinationPath on CustomFieldsTB.json
@@ -63,11 +62,6 @@ describe('CustomFieldsCompletionStatsService', async function () {
         `f.completionByField`
       )
       .orderBy('f.date')
-    console.dir(stats, {
-      depth: null,
-      colors: true,
-      maxArrayLength: null,
-    })
     expect(statsCount).to.be.equal(3, 'a record per date')
 
     expect(stats[0].recordCount).to.be.equal(2)
@@ -102,7 +96,8 @@ describe('CustomFieldsCompletionStatsService', async function () {
     expect(+fieldStats[2].ReferringFacility.completed).to.be.equal(1)
   })
 
-  const patientDataDates = [ // 3 different days
+  const patientDataDates = [
+    // 3 different days
     addDays(startOfToday(), -20),
     addDays(startOfToday(), -20),
     addDays(startOfToday(), -18),

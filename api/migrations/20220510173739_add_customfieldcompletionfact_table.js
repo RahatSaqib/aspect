@@ -1,5 +1,3 @@
-const { addAuditFields } = require('./utils')
-
 const tableName = 'FactCustomFieldCompletion'
 
 module.exports.up = async function (knex) {
