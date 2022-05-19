@@ -790,7 +790,11 @@ async function seedIssueEventTriggersForPartner(
   issueTypeWhitelist.forEach(issueType => {
     issueTypeConfigured[issueType] = true
   })
-
+  console.log(
+    '🚀 ~ file: utils.js ~ line 792 ~ issueTypeConfigured',
+    issueTypeConfigured,
+    issueTypeWhitelist
+  )
   await Promise.each(
     data,
     async ({
@@ -799,6 +803,12 @@ async function seedIssueEventTriggersForPartner(
       triggerConditions,
       filterIssueCondition = null,
     }) => {
+      console.log(
+        '1111111111111111111111',
+        issueType,
+        issueTypeConfigured[issueType],
+        issueTypes[issueType]
+      )
       if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
           partnerId,

@@ -1047,7 +1047,7 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
       )
       .groupBy('fcr.siteId', 'partnerId', 'geographyId')
       .having(
-        knex.raw('completionRatePerSite >= ?', [
+        knex.raw('completionRatePerSite <= ?', [
           MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
         ])
       )
@@ -1072,6 +1072,7 @@ module.exports = {
   checkDataCategoriesForLowStatus,
   getDataCategoryStatus,
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
+  MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
   onFactNewResultsAvailableCheck,
   onFactExternalSourceCheck,
   onFactCompletionRatePerSite,

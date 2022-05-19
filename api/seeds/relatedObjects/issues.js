@@ -1411,6 +1411,22 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    SiteWithLowFieldCompletionRate: {
+      issueType: {
+        name: 'Site with low field completion rate',
+        externalId: 'SiteWithLowFieldCompletionRate',
+        i18nKey: 'SiteWithLowFieldCompletionRate',
+        issueCategoryId: issueCategories.DataHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message:
+          'Site with low completion rate {{completionRate issue.data.completionRate}}',
+        ...auditFields,
+      },
+    },
   }
   return IssueDefinition
 }
