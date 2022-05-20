@@ -1,5 +1,6 @@
 const { expect } = require('chai')
 const { startOfToday, addDays } = require('date-fns')
+const Promise = require('bluebird')
 const {
   createGxConnectTestContext,
 } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -29,7 +30,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
     })
     await context.beforeRegisterAndSetDevice()
     await waitForIdle()
-    await patientDataSeed.map(async (pd, index) => {
+    await Promise.map(patientDataSeed, async (pd, index) => {
       await context.createResultForThisDevice({
         resultDetails: {
           ...{
@@ -40,7 +41,6 @@ describe('CustomFieldsCompletionStatsService', async () => {
         },
       })
     })
-    await waitForIdle()
   })
 
   after(async () => {
