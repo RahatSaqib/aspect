@@ -40,7 +40,7 @@ export const messages = defineMessages({
   numberOfDevicesExperiencingServiceInterruptionDescription: {
     id: 'pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription',
     defaultMessage:
-      'The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.',
+      'The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.',
   },
   averageDurationServiceInterruptionTitle: {
     id: 'pages.OperationalData.averageDurationServiceInterruptionTitle',
