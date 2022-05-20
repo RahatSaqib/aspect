@@ -1422,8 +1422,7 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Site with low completion rate {{completionRate issue.data.completionRate}}',
+        message: 'Site with low completion rate {{issue.data.completionRate}}',
         ...auditFields,
       },
     },

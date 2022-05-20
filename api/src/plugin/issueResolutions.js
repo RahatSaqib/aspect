@@ -47,9 +47,7 @@ async function resolveIssueUnusedModules(knex, issue, conditions) {
 async function resolveIssueSiteWithLowFieldCompletionRate(knex, issue) {
   const { siteId } = issue
 
-  const { siteId: siteMeetConditions } = await knex(
-    'FactCustomFieldCompletion as fcr'
-  )
+  const site = await knex('FactCustomFieldCompletion as fcr')
     .join('Site as si', 'si.id', 'fcr.siteId')
     .where('fcr.date', '>=', subDays(new Date(), 30))
     .andWhere('fcr.siteId', siteId)
@@ -63,11 +61,11 @@ async function resolveIssueSiteWithLowFieldCompletionRate(knex, issue) {
     )
     .groupBy('fcr.siteId', 'partnerId', 'geographyId')
     .having(
-      knex.raw('completionRatePerSite < ?', [
+      knex.raw('completionRatePerSite >= ?', [
         MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
       ])
     )
-  return !isNil(siteMeetConditions)
+  return !isNil(site)
 }
 
 module.exports = {

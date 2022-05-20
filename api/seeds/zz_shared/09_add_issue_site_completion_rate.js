@@ -1,5 +1,4 @@
-// eslint-disable-next-line camelcase
-const add_issue = require('../common/add_issue')
+const addIssue = require('../common/add_issue')
 
 /* eslint-disable import/no-dynamic-require */
 const { partnerName, adminName } = require(`../${process.env[
@@ -8,7 +7,7 @@ const { partnerName, adminName } = require(`../${process.env[
 
 module.exports = require('../utils').seed(
   async knex =>
-    add_issue(
+    addIssue(
       knex,
       'SiteWithLowFieldCompletionRate',
       ['admin', 'regionalOfficer'],

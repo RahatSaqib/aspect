@@ -1207,7 +1207,7 @@ describe('Fact based issues', () => {
       }))
   })
 
-  describe.only('Sites with low completion rate based on FactCustomFieldCompletion', () => {
+  describe('Sites with low completion rate based on FactCustomFieldCompletion', () => {
     const issueId = null
     let siteId = null
     after(async () => {
@@ -1217,9 +1217,11 @@ describe('Fact based issues', () => {
     })
 
     before(async () => {
-      const { id, geographyId, partnerId, updatedBy, createdBy } = await knex(
-        'Site'
-      ).first('id', 'geographyId', 'partnerId', 'createdBy', 'updatedBy')
+      const { id, updatedBy, createdBy } = await knex('Site').first(
+        'id',
+        'createdBy',
+        'updatedBy'
+      )
 
       const { id: assayId } = await knex('Assay').first()
       siteId = id
@@ -1262,7 +1264,7 @@ describe('Fact based issues', () => {
 
       await knex('FactCustomFieldCompletion').update({ completionRate: 0.9 })
       await messageContext.resolveIssues()
-      await waitForIdle()
+      await waitForIdle(2000)
 
       issues = await knex('Issue as i')
         .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
