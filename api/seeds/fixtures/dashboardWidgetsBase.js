@@ -1391,7 +1391,7 @@ const averageDaysModuleSwap = {
   sortOrder: 7,
   externalId: 'averageDaysModuleSwap',
   description:
-    'The average number of days between the last result reported under an specific module serial number and the consecutive result with a different module serial number',
+    'The average number of days between the last result reported under a specific module serial number and the consecutive result with a different module serial number',
   descriptionI18nKey: 'averageDaysModuleSwapDescription',
   dashboards: {
     operational: {
