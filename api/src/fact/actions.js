@@ -180,6 +180,7 @@ function siteWithLowCompletionRateIssue({
     partnerId,
     options: {
       completionRate,
+      completionRatePercentage: completionRate * 100,
     },
   }
 }
