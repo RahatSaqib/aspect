@@ -1423,7 +1423,7 @@ async function getBaseIssues(auditFields) {
       },
       AlertTemplate: {
         message:
-          'Site with low completion rate {{issue.data.completionRatePercentage:0.00}}%',
+          'Site with low completion rate {{issue.data.completionRatePercentage}}%',
         ...auditFields,
       },
     },
