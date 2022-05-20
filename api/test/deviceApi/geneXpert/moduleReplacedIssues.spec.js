@@ -217,7 +217,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    // Post another result with same module serial to the same slot
+    // Post another result with a different module serial to the same slot
     resultId = `UNIQUE-ID-3`
     sampleId = `GENMAC25B3`
     moduleSerial = `GENMAC123B`
