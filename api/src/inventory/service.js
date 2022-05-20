@@ -588,13 +588,13 @@ function getInventorySites(constraints, request) {
       knex.raw(
         `CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
-          ELSE GetDaysStockLeft(ficr.rate, ${inventoryItemsRaw})
+          ELSE GetDaysStockLeft(NOW(), ficr.rate, ${inventoryItemsRaw})
         END as daysStockLeft`
       ),
       knex.raw(
         `CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
-          ELSE GetProjectedWaste(ficr.rate, ${inventoryItemsRaw})
+          ELSE GetProjectedWaste(NOW(), ficr.rate, ${inventoryItemsRaw})
         END as projectedWaste`
       ),
     ])
