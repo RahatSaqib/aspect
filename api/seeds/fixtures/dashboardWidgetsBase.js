@@ -751,7 +751,7 @@ const moduleSwaps = {
   sortOrder: 6,
   externalId: 'moduleSwaps',
   description:
-    "The number of module swaps made at the current month. A module swap it is counted when two consecutive results performed in the same device's slot, they have a different module serial number",
+    "The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number",
   descriptionI18nKey: 'moduleSwapsDescription',
   dashboards: {
     operational: {
