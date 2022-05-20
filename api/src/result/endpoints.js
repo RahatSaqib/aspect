@@ -1420,6 +1420,7 @@ const routes = [
     config: {
       description: 'Sample types',
       notes: 'List of all sample types',
+      auth: { scope: ['result'] },
     },
   },
 ]
