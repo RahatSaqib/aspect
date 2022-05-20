@@ -1567,7 +1567,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
-  description: `The number of devices experiencing service interruption on this and the previous month. The service interruption is counted for every device with status`,
+  description: `The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.`,
   descriptionI18nKey:
     'numberOfDevicesExperiencingServiceInterruptionDescription',
   dashboards: {
