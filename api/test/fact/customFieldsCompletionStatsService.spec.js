@@ -16,9 +16,9 @@ let context
 /**
  * this test is dependant on completionWeight and payloadDestinationPath on CustomFieldsTB.json
  */
-describe('CustomFieldsCompletionStatsService', async function () {
+describe('CustomFieldsCompletionStatsService', async () => {
   before(async () => {
-    context = createGxConnectTestContext(server, {
+    context = await createGxConnectTestContext(server, {
       countryCode: 'US',
       adminUsername: 'admin',
       adminPassword: 'test07',
@@ -28,10 +28,8 @@ describe('CustomFieldsCompletionStatsService', async function () {
       deviceSerialNumber: 'Tamagochi-PC-001',
     })
     await context.beforeRegisterAndSetDevice()
-
     await waitForIdle()
-
-    patientDataSeed.map(async (pd, index) => {
+    await patientDataSeed.map(async (pd, index) => {
       await context.createResultForThisDevice({
         resultDetails: {
           ...{
@@ -42,18 +40,22 @@ describe('CustomFieldsCompletionStatsService', async function () {
         },
       })
     })
+    await waitForIdle()
   })
 
-  afterEach(async () => {
+  after(async () => {
     await knex.raw('truncate table FactCustomFieldCompletion')
     await context.cleanUp()
   })
 
   it('Must save stats data', async () => {
+    const dateFrom = addDays(startOfToday(), -21)
+    const dateTo = addDays(startOfToday(), -14)
     const statsCount = await factFillCustomFieldsCompletionStats(
-      addDays(startOfToday(), -21),
-      addDays(startOfToday(), -14)
+      dateFrom,
+      dateTo
     )
+
     const stats = await knex('FactCustomFieldCompletion as f')
       .select(
         'f.recordCount',
@@ -62,7 +64,7 @@ describe('CustomFieldsCompletionStatsService', async function () {
         `f.completionByField`
       )
       .orderBy('f.date')
-    expect(statsCount).to.be.equal(3, 'a record per date')
+    expect(statsCount).to.be.equal(3, 'There has to be saved a record per date')
 
     expect(stats[0].recordCount).to.be.equal(2)
     expect(stats[1].recordCount).to.be.equal(1)

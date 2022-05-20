@@ -12,7 +12,7 @@
       "caption": "Patient Name",
       "i18nKeyCaption": "PatientNameI18nCaptionKey",
       "controlType": "textBox",
-      "payloadDestinationPath": "PatientName"
+      "payloadDestinationPath": "patient.PatientName"
     },
     {
       "id": 1102,

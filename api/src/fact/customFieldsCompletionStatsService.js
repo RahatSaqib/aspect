@@ -30,7 +30,10 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
 
   const allFields = definitions.map(d => d.fields).flat()
 
-  await knex.raw('truncate table FactCustomFieldCompletion')
+  await knex.raw(
+    'delete from FactCustomFieldCompletion where date >= ?',
+    dateFrom
+  )
 
   await Promise.map(
     days,
@@ -172,12 +175,6 @@ function generateStatsResult(fields, res) {
           f.assayId === r.assayId || (!f.assayId && f.diseaseId === r.diseaseId)
         )
       })
-      // console.dir(res, {
-      //   depth: null,
-      //   colors: true,
-      //   maxArrayLength: null,
-      // })
-
       const statsRow = {
         siteId: r.siteId,
         assayId: r.assayId,
