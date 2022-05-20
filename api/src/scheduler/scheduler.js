@@ -33,7 +33,8 @@ function startScheduler(queue) {
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
   dispatcher.factCalculateInventoryConsumptionRates()
-  // dispatcher.factCheckCompletionRatePerSite()
+  // TODO: We have to place this call as part of the daily process which calculates
+  dispatcher.factCheckCompletionRatePerSite()
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minmutes past the hour
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour

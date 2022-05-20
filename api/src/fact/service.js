@@ -1030,8 +1030,8 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
 
   return context.run(async knex => {
     const now = new Date()
-    // get sample origin sites that have new results in last 24 hours
-    // TODO: Enable Issues for persons. Currently triggering a notification for every origin site. That means people who have access to more than one site will receive a separate notification for each site.
+    // get sites with completion rate above the 80%
+
     const sitesWithLowCompletionRate = await knex(
       'FactCustomFieldCompletion as fcr'
     )

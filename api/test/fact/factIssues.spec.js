@@ -1248,7 +1248,7 @@ describe('Fact based issues', () => {
       })
 
       const issueTypeId = await issueTypeToId('SiteWithLowFieldCompletionRate')
-      // should have no new results available to begin with
+      // We should strart with no issues.
       let issues = await knex('Issue').where('issueTypeId', issueTypeId)
       assert.equal(issues.length, 0)
       await messageContext.factCheckCompletionRatePerSite()
