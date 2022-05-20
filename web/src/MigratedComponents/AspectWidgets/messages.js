@@ -188,7 +188,8 @@ export const messages = defineMessages({
   },
   moduleSwapsDescription: {
     id: 'component.Widget.moduleSwapsDescription',
-    defaultMessage: 'The number of module swaps made at the current month',
+    defaultMessage:
+      "The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number",
   },
   gxPositiveResultsNotifiedTitle: {
     id: 'component.Widget.gxPositiveResultsNotifiedTitle',
@@ -218,12 +219,12 @@ export const messages = defineMessages({
   },
   instrumentsReplaced: {
     id: 'component.Widget.instrumentsReplaced',
-    defaultMessage: 'Average Days for Instrument Replacement',
+    defaultMessage: 'Average Days for Instrument Replacement.',
   },
   instrumentsReplacedDescription: {
     id: 'component.Widget.instrumentsReplacedDescription',
     defaultMessage:
-      'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.',
+      'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
   },
   averageRecipientsOfEmail: {
     id: 'component.Widget.averageRecipientsOfEmail',
@@ -262,12 +263,13 @@ export const messages = defineMessages({
   },
   averageDaysModuleSwap: {
     id: 'component.Widget.averageDaysModuleSwap',
-    defaultMessage: 'Average days between module swaps',
+    defaultMessage:
+      "Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
   },
   averageDaysModuleSwapDescription: {
     id: 'component.Widget.averageDaysModuleSwapDescription',
     defaultMessage:
-      'The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.',
+      "The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
   },
   averageTimeToModuleReplacementTitle: {
     id: 'component.Widget.averageTimeToModuleReplacementTitle',
@@ -285,7 +287,7 @@ export const messages = defineMessages({
   numberOfDevicesExperiencingServiceInterruptionDescription: {
     id: 'component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription',
     defaultMessage:
-      'The number of devices experiencing service interruption on this and the previous month.',
+      'The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.',
   },
   averageDurationServiceInterruptionTitle: {
     id: 'component.Widget.averageDurationServiceInterruptionTitle',
@@ -293,7 +295,8 @@ export const messages = defineMessages({
   },
   averageDurationServiceInterruptionDescription: {
     id: 'component.Widget.averageDurationServiceInterruptionDescription',
-    defaultMessage: 'The average duration of a service interruption, in days.',
+    defaultMessage:
+      'The average duration of a service interruption, in days.  The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again',
   },
   percentageOfDaysWithServiceInterruptionTitle: {
     id: 'component.Widget.percentageOfDaysWithServiceInterruptionTitle',

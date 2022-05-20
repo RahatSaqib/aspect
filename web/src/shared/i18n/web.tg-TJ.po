@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
+"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -594,6 +594,13 @@ msgstr "Имейли иловагӣ"
 msgid "An Error Occurred When Trying to Create the Contact"
 msgstr "Ҳангоми кӯшиши сохтани тамос хатогӣ рух дод"
 
+#. [errorResponseMessages.deleteSingleSite.DELETE.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Delete the Site
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Delete the Site"
+msgstr "Ҳангоми кӯшиши нест кардани сайт хатогӣ рух дод"
+
 #. [errorResponseMessages.updatePerson.PUT.default.title]
 #. defaultMessage is:
 #. An Error Occurred When Trying to Save the Contact
@@ -704,6 +711,17 @@ msgstr "Tасдик карда шуд"
 #: extracted_strings.json
 msgid "Are you sure to delete notification {notificationName}?"
 msgstr "Оё мутмаин ҳастед, ки огоҳиномаи {notificationName}-ро нест кунед?"
+
+#. [pages.SiteDetail.disable.confirmation.message]
+#. defaultMessage is:
+#. Are you sure you want to delete this site? This action is intented only for test sites, all site data will be lost.
+#: extracted_strings.json
+msgid ""
+"Are you sure you want to delete this site? This action is intented only for "
+"test sites, all site data will be lost."
+msgstr ""
+"Шумо мутмаин ҳастед, ки мехоҳед ин сайтро нест кунед? Ин амал танҳо барои "
+"сайтҳои санҷишӣ пешбинӣ шудааст, ҳама маълумоти сайт гум мешаванд."
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -850,9 +868,9 @@ msgstr "Ҷавоби миёнаи тасдиқшуда"
 
 #. [component.Widget.instrumentsReplaced]
 #. defaultMessage is:
-#. Average Days for Instrument Replacement
+#. Average Days for Instrument Replacement.
 #: extracted_strings.json
-msgid "Average Days for Instrument Replacement"
+msgid "Average Days for Instrument Replacement."
 msgstr "Рӯзҳои миёна барои иваз кардани асбоб"
 
 #. [component.Widget.avgTimeToUploadTitle]
@@ -923,10 +941,16 @@ msgstr "Миқдори миёнаи қабулкунандагони SMS бар�
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
-#. Average days between module swaps
+#. Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
-msgid "Average days between module swaps"
-msgstr "Рӯзҳои миёна байни мубодилаи модулҳо"
+msgid ""
+"Average days between module swaps. The module swap issue appears when two "
+"consecutive results performed in the same device's slot, they have a "
+"different module serial number"
+msgstr ""
+"Рӯзҳои миёна байни мубодилаи модулҳо. Масъалаи мубодилаи модул вақте пайдо "
+"мешавад, ки ду натиҷаи пайдарпай дар як ковокии дастгоҳ иҷро карда мешаванд, "
+"онҳо рақами силсилавии модули дигар доранд"
 
 #. [component.Widget.averageRecipientsOfEmail]
 #. defaultMessage is:
@@ -1188,6 +1212,9 @@ msgstr "Таҳрир кардан мумкин нест"
 #. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.SiteDetail.disable.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1195,6 +1222,9 @@ msgstr "Таҳрир кардан мумкин нест"
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceDetail.delete.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -1581,7 +1611,7 @@ msgstr "Ҳолати тамос"
 #. Contact Status: {contactStatus}
 #: extracted_strings.json
 msgid "Contact Status: {contactStatus}"
-msgstr ""
+msgstr "Ҳолати тамос: {contactStatus}"
 
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -1903,6 +1933,13 @@ msgstr "Дар айни замон интихоб карда намешавад 
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Фармоишгар"
+
+#. [pages.SiteDetail.buttonDelete]
+#. defaultMessage is:
+#. DELETE
+#: extracted_strings.json
+msgid "DELETE"
+msgstr "Нобуд кунед"
 
 #. [pages.ResultList.assayGenericDst]
 #. defaultMessage is:
@@ -2452,7 +2489,7 @@ msgstr "Хомӯш кардан"
 #. Disabled
 #: extracted_strings.json
 msgid "Disabled"
-msgstr ""
+msgstr "Маъюб"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2521,14 +2558,14 @@ msgstr "Шуъба"
 #. Do you want to disable
 #: extracted_strings.json
 msgid "Do you want to disable"
-msgstr ""
+msgstr "Оё шумо мехоҳед, ки хомӯш кунед"
 
 #. [pages.PersonList.enable]
 #. defaultMessage is:
 #. Do you want to enable
 #: extracted_strings.json
 msgid "Do you want to enable"
-msgstr ""
+msgstr "Мехоҳед фаъол созед"
 
 #. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
@@ -2726,7 +2763,7 @@ msgstr "Ин огоҳиномаро фаъол созед"
 #. Enable/Disable User
 #: extracted_strings.json
 msgid "Enable/Disable User"
-msgstr ""
+msgstr "Истифодабарандаро фаъол/хомӯш кардан"
 
 #. [filter.btnGroup.contactStatus.contactEnabled]
 #. defaultMessage is:
@@ -8159,6 +8196,13 @@ msgstr "Сайт"
 msgid "Site Contacts"
 msgstr "Тамосҳои сайт"
 
+#. [pages.SiteDetail.disable.confirmation.title]
+#. defaultMessage is:
+#. Site Delete Confirmation
+#: extracted_strings.json
+msgid "Site Delete Confirmation"
+msgstr "Тасдиқи нест кардани сайт"
+
 #. [pages.SiteDetail.title]
 #. defaultMessage is:
 #. Site Detail
@@ -8677,19 +8721,21 @@ msgstr ""
 "Таъхири миёнаи натиҷаҳои боргузорӣ, дар соат. Танҳо бо назардошти натиҷаҳое, "
 "ки таъхир аз ду соат зиёд буд."
 
-#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
-#. defaultMessage is:
-#. The average duration of a service interruption, in days
-#: extracted_strings.json
-msgid "The average duration of a service interruption, in days"
-msgstr "Давомнокии миёнаи қатъи хидмат, бо рӯз"
-
 #. [component.Widget.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
-#. The average duration of a service interruption, in days.
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
+#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
+#. defaultMessage is:
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
 #: extracted_strings.json
-msgid "The average duration of a service interruption, in days."
-msgstr "Давомнокии миёнаи қатъи хидмат, бо рӯз."
+msgid ""
+"The average duration of a service interruption, in days. The period of "
+"interruption will be the date range between the device was flagged as \"Down "
+"for repair\" and when it back to be active again"
+msgstr ""
+"Давомнокии миёнаи қатъи хидмат, бо рӯз. Давраи танаффус ин диапазони санаи "
+"байни дастгоҳ ҳамчун \"Барои таъмир\" қайд карда шуда ва вақте ки он дубора "
+"фаъол мешавад, хоҳад буд."
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -8712,27 +8758,35 @@ msgstr ""
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
-#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
+#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between the last result reported under a replaced "
 "module serial and the new module serial in that module slot reporting its "
-"first result."
+"first result. The module swap issue appears when two consecutive results "
+"performed in the same device's slot, they have a different module serial "
+"number"
 msgstr ""
 "Миқдори миёнаи рӯзҳо байни натиҷаи охирин дар зери силсилаи модули ивазшуда "
 "ва силсилаи модули нав дар он ковокии модул, ки натиҷаи аввалини худро "
-"гузориш медиҳанд."
+"гузориш медиҳанд. Масъалаи иваз кардани модул вақте пайдо мешавад, ки ду "
+"натиҷаи пайдарпай дар як ковокии дастгоҳ иҷро карда мешаванд, онҳо рақами "
+"силсилавии модули дигар доранд"
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.
+#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting."
+"from a device and a new instrument serial reporting. An Instrument is marked "
+"as replaced when two consecutive results performed in the same device, have "
+"a different Instrument serial number"
 msgstr ""
 "Миқдори миёнаи рӯзҳо байни вақте ки силсилаи асбобҳо охирон аз дастгоҳ "
-"гузориш дода мешаванд ва гузоришдиҳии силсилавии асбоби нав."
+"гузориш дода мешаванд ва гузоришдиҳии силсилавии асбоби нав. Асбоб ҳамчун "
+"ивазшуда қайд карда мешавад, вақте ки ду натиҷаи пайдарпай дар як дастгоҳ "
+"иҷро карда шуда, рақами силсилавии асбоби гуногун доранд"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
@@ -8781,6 +8835,13 @@ msgid ""
 msgstr ""
 "Дастгоҳ чанд рӯз боз ба Aspect пайваст нашудааст. Он метавонад санҷишҳоро "
 "иҷро кунад, аммо санҷишҳо то ҳол ба Aspect бор карда нашудаанд."
+
+#. [pages.DeviceDetail.delete.deletedOn]
+#. defaultMessage is:
+#. The device was permanently deleted
+#: extracted_strings.json
+msgid "The device was permanently deleted"
+msgstr "Дастгоҳ ба таври доимӣ нест карда шуд"
 
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
@@ -8850,17 +8911,29 @@ msgstr ""
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
-"previous month."
+"previous month. A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
 msgstr ""
 "Шумораи дастгоҳҳое, ки дар ин ва моҳи гузашта қатъи хидматро аз сар "
-"мегузаронанд."
+"мегузаронанд. Дастгоҳ қатъи хидматро дорад, вақте ки он барои ҳолати "
+"нигоҳдории он ҳамчун \"Ба таъмир поён\" ишора карда мешавад."
+
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#: extracted_strings.json
+msgid ""
+"The number of devices experiencing service interruption on this and the "
+"previous month.A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
+msgstr ""
+"Миқдори дастгоҳҳое, ки дар ин ва моҳи гузашта қатъи хидматро аз сар "
+"мегузаронанд. Дастгоҳ қатъи хидмат дорад, вақте ки он барои ҳолати "
+"нигоҳдории он ҳамчун \"Паст барои таъмир\" қайд карда мешавад."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -8875,10 +8948,16 @@ msgstr ""
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
-msgid "The number of module swaps made at the current month"
-msgstr "Шумораи мубодилаи модулҳо дар моҳи ҷорӣ"
+msgid ""
+"The number of module swaps made at the current month. The module swap issue "
+"appears when two consecutive results performed in the same device's slot, "
+"they have a different module serial number"
+msgstr ""
+"Шумораи мубодилаи модулҳо дар моҳи ҷорӣ. Масъалаи мубодилаи модул вақте "
+"пайдо мешавад, ки ду натиҷаи пайдарпай дар як ковокии дастгоҳ иҷро карда "
+"мешаванд, онҳо рақами силсилавии модули дигар доранд"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -8962,9 +9041,6 @@ msgstr "Рамзи воридкардаи шумо нодуруст аст"
 #. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
-#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
-#. defaultMessage is:
-#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
 msgid ""
 "The percentage of \"device-days\" that were statused as \"down for repair\", "
@@ -8976,6 +9052,23 @@ msgstr ""
 "тамом шудааст\". Масалан, 20 рӯзи корӣ дар як моҳ ва 5 дастгоҳ ба 100 \"рӯзи "
 "дастгоҳ\" баробар мешаванд. Агар як дастгоҳ нимаи моҳ коҳиш ёбад, ин рақам "
 "10% хоҳад буд"
+
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
+#. defaultMessage is:
+#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#: extracted_strings.json
+msgid ""
+"The percentage of \"device-days\" that were statused as \"down for repair\", "
+"excluding weekends. For example, 20 weekdays in the month and 5 devices "
+"would equate 100 \"device-days\". If one device was down half of the month, "
+"this number would be 10%. A device has a service interruption when it is "
+"flagged as \"Down for repair\" for it maintenance status."
+msgstr ""
+"Фоизи \"рӯзҳои дастгоҳ\", ба истиснои рӯзҳои истироҳат, ҳамчун \"ба таъмир "
+"тамом шудааст\". Масалан, 20 рӯзи корӣ дар як моҳ ва 5 дастгоҳ ба 100 \"рӯзи "
+"дастгоҳ\" баробар мешаванд. Агар як дастгоҳ нимаи моҳ коҳиш ёбад, ин рақам "
+"10% хоҳад буд. Дастгоҳ қатъи хидматро дорад, вақте ки он барои ҳолати "
+"нигоҳдории он ҳамчун \"Ба таъмир поён\" ишора карда мешавад."
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -9264,7 +9357,7 @@ msgstr "Ин бахш ҳатмист"
 #. This person was disabled on
 #: extracted_strings.json
 msgid "This person was disabled on"
-msgstr ""
+msgstr "Ин шахс маъюб буд"
 
 #. [pages.ReportIndex.geneXpertIssues_description]
 #. defaultMessage is:
@@ -9357,6 +9450,18 @@ msgstr ""
 msgid "This username is unavailable"
 msgstr "Ин номи корбарӣ дастрас нест"
 
+#. [pages.DeviceDetail.delete.deleteDevicePrompt]
+#. defaultMessage is:
+#. This will delete this device. All results generated by this device will be erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will delete this device. All results generated by this device will be "
+"erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?"
+msgstr ""
+"Ин ин дастгоҳро нест мекунад. Ҳама натиҷаҳое, ки ин дастгоҳ тавлид кардааст, "
+"нест карда мешаванд. ИН АМАЛИЕТРО БАТЪ КАРДАН НАМЕТАВОНАД. Оё мехоҳед идома "
+"диҳед?"
+
 #. [pages.PersonList.disabled.disableUser]
 #. defaultMessage is:
 #. This will disable this user, and they will not be able to login. Would you like to continue?
@@ -9365,6 +9470,8 @@ msgid ""
 "This will disable this user, and they will not be able to login. Would you "
 "like to continue?"
 msgstr ""
+"Ин корбарро хомӯш мекунад ва онҳо наметавонанд ворид шаванд. Оё мехоҳед "
+"идома диҳед?"
 
 #. [pages.PersonList.disabled.enableUser]
 #. defaultMessage is:
@@ -9374,6 +9481,8 @@ msgid ""
 "This will enable this user again, and they will be able to login again. "
 "Would you like to continue?"
 msgstr ""
+"Ин корбарро дубора фаъол мекунад ва онҳо метавонанд дубора ворид шаванд. Оё "
+"мехоҳед идома диҳед?"
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -10026,7 +10135,7 @@ msgstr "Ҳафта ё истироҳат"
 #. Welcome to Aspect
 #: extracted_strings.json
 msgid "Welcome to Aspect"
-msgstr ""
+msgstr "Хуш омадед ба Aspect"
 
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
@@ -10116,7 +10225,13 @@ msgstr "Соли"
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
+#. [pages.SiteDetail.disable.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#. [pages.DeviceDetail.delete.yes]
 #. defaultMessage is:
 #. Yes
 #: extracted_strings.json
@@ -10272,6 +10387,8 @@ msgid ""
 "Your account still needs some setup before you will be able to use the "
 "system. Please contact your administrator."
 msgstr ""
+"Пеш аз он ки шумо системаро истифода баред, ҳисоби шумо ҳанӯз ба баъзе "
+"танзимот ниёз дорад. Лутфан бо администратори худ тамос гиред."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -10972,6 +11089,18 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, ҷамъ, як {# натиҷа} дигар {# натиҷа} })"
+
+#~ msgid "The average duration of a service interruption, in days."
+#~ msgstr "Давомнокии миёнаи қатъи хидмат, бо рӯз."
+
+#~ msgid "Average days between module swaps"
+#~ msgstr "Рӯзҳои миёна байни мубодилаи модулҳо"
+
+#~ msgid "The average duration of a service interruption, in days"
+#~ msgstr "Давомнокии миёнаи қатъи хидмат, бо рӯз"
+
+#~ msgid "The number of module swaps made at the current month"
+#~ msgstr "Шумораи мубодилаи модулҳо дар моҳи ҷорӣ"
 
 #~ msgid "XDR"
 #~ msgstr "XDR"
