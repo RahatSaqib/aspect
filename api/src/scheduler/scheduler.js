@@ -1,8 +1,5 @@
 const _ = require('lodash')
 const cron = require('node-cron')
-const {
-  factFillCustomFieldsCompletionStatsLast30Days,
-} = require('../fact/customFieldsCompletionStatsService')
 
 const {
   factGenerateDeviceConnectivity,
@@ -12,6 +9,7 @@ const {
   factDataCategoryLowCheck,
   factNewResultsAvailableCheck,
   factExternalSourceCheck,
+  factFillCustomFieldsCompletionStatsLast30Days,
 } = require('../fact/actions')
 const { escalateIssues, resolveIssues } = require('../issue/actions')
 const { logDeviceMaintenanceStatus } = require('../device/actions')
