@@ -19,7 +19,7 @@ let context
  */
 describe('CustomFieldsCompletionStatsService', async () => {
   before(async () => {
-    context = await createGxConnectTestContext(server, {
+    context = createGxConnectTestContext(server, {
       countryCode: 'US',
       adminUsername: 'admin',
       adminPassword: 'test07',

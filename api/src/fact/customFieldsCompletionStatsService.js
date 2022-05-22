@@ -152,7 +152,6 @@ async function getCustomFieldsDefinitions() {
         assayId: qf.assayId,
         diseaseId: qf.diseaseId,
         name: field.name,
-        gxAlertDbColumn: field.gxAlertDbColumn,
         completionWeight: field.completionWeight || 0,
         payloadDestinationPath: field.payloadDestinationPath,
         fieldName: normalizeCustomFieldName(field),

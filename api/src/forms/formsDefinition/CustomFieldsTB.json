@@ -85,7 +85,7 @@
       "caption": "Referring Facility",
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.ReferringFacility",
+      "payloadDestinationPath": "patient.HealthFacility",
       "calculated": {
         "fieldId1": 5,
         "fixedValue": "now",
