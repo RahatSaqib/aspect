@@ -90,12 +90,12 @@ describe('CustomFieldsCompletionStatsService', async () => {
     expect(+fieldStats[2].gender.weighting).to.be.equal(0.33333)
     expect(+fieldStats[2].gender.completed).to.be.equal(2)
 
-    expect(+fieldStats[0].ReferringFacility.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[0].ReferringFacility.completed).to.be.equal(1)
-    expect(+fieldStats[1].ReferringFacility.weighting).to.be.equal(0.33333)
-    expect(+fieldStats[1].ReferringFacility.completed).to.be.equal(1)
-    expect(+fieldStats[2].ReferringFacility.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[2].ReferringFacility.completed).to.be.equal(1)
+    expect(+fieldStats[0].HealthFacility.weighting).to.be.equal(0.16667)
+    expect(+fieldStats[0].HealthFacility.completed).to.be.equal(1)
+    expect(+fieldStats[1].HealthFacility.weighting).to.be.equal(0.33333)
+    expect(+fieldStats[1].HealthFacility.completed).to.be.equal(1)
+    expect(+fieldStats[2].HealthFacility.weighting).to.be.equal(0.16667)
+    expect(+fieldStats[2].HealthFacility.completed).to.be.equal(1)
   })
 
   const patientDataDates = [
@@ -125,7 +125,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
       PatientStreet: '52 Khata Gandaria',
       TypeOfPatient: 'Presumptive TB',
       PatientHistory: null,
-      ReferringFacility: 'Dholaikhal icddrb',
+      HealthFacility: 'Dholaikhal icddrb',
       PatientRetreatment: null,
       TBRegistrationNumberCurrent: null,
       TBRegistrationNumberPrevious: null,
@@ -162,7 +162,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
       PatientStreet: 'Mosori Rupgong',
       TypeOfPatient: 'Presumptive TB',
       PatientHistory: null,
-      ReferringFacility: 'Dholaikhal icddrb',
+      HealthFacility: 'Dholaikhal icddrb',
       PatientRetreatment: null,
       TBRegistrationNumberCurrent: null,
       TBRegistrationNumberPrevious: null,
@@ -185,7 +185,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
       PatientStreet: 'B Baria Naraingong',
       TypeOfPatient: 'Presumptive TB',
       PatientHistory: null,
-      ReferringFacility: 'Dholaikhal icddrb',
+      HealthFacility: 'Dholaikhal icddrb',
       PatientRetreatment: null,
       TBRegistrationNumberCurrent: null,
       TBRegistrationNumberPrevious: null,

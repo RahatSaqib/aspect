@@ -151,9 +151,7 @@ async function getCustomFieldsDefinitions() {
         id: field.id,
         assayId: qf.assayId,
         diseaseId: qf.diseaseId,
-        name: field.name,
         completionWeight: field.completionWeight || 0,
-        payloadDestinationPath: field.payloadDestinationPath,
         fieldName: normalizeCustomFieldName(field),
       })),
   }))
