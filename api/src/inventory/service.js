@@ -106,7 +106,7 @@ const STOCK_LEFT_FILTER_FIELDS = {
   },
 }
 const SUM_STOCK_LEFT_FILTER_FIELDS = {
-  hasStock: queryBuilder => queryBuilder.havingRaw('quantityOnHand > 0'),
+  hasStock: queryBuilder => queryBuilder.havingRaw('quantityOnHand <> 0'),
 }
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
@@ -513,6 +513,11 @@ function getInventoryItemsRaw() {
     '{ "expiresOn": "', ${fldExpiresOn}, '", "quantityOnHand": "', ${fldQuantity}, '" }'
   )`
 
+  /**
+   * assemble json array from '[' and ']', and json object strings of all
+   * grouped items
+   * with props `{ "expiresOn": "...", "quantityOnHand": "..." }`
+   */
   return `CONCAT(
     '[',
       GROUP_CONCAT(${itemRaw} SEPARATOR ','),
