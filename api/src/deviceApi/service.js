@@ -287,8 +287,8 @@ async function addDeviceDataWithContext(context) {
     operation,
     result,
     site,
+    getFormsDefinition,
   } = payload
-  const { getFormsDefinition } = payload
 
   if (name) {
     await knex('Device')

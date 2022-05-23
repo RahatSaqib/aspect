@@ -1,4 +1,4 @@
-const { partnerName } = require('./fixtures/partnerVariables')
+const { partnerName } = require('./fixtures/partnerData')
 const fixture = require('../../fixtures/DashboardWidgetExtended')
 const { upsertDashboardWidgets } = require('../../common')
 

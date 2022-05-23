@@ -2,6 +2,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 
+const { getUser } = require('../../auth/service')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
 const {
   knex,
@@ -9,7 +10,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../../db')
-const { formatDateOrDefault } = require('../../shared/date')
+const { formatDateOrDefault, getDatesFromQuery } = require('../../shared/date')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -17,6 +18,7 @@ const {
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const logger = require('../../shared/logger')
 const { RELABEL_EXCEL } = require('../../shared/constants')
+const { createFormObject } = require('../../forms/service')
 
 /**
  * **************************************
@@ -113,15 +115,6 @@ const andByRetreatment = (
     condition += ` and ${resultCategoryCondition} `
   }
   return counter('r.id', condition)
-}
-
-const getDatesFromQuery = query => {
-  const now = new Date()
-  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
-  return {
-    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
-    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
-  }
 }
 
 const reportDrTb10ABaseQuery = async (auth, query) => {
@@ -1762,9 +1755,221 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
   }
 }
 
+const getReportCustomFieldsCompletion = async (auth, query) => {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { partnerId } = await getUser(auth.credentials.name)
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+  const assayIds = await allAssayToId()
+
+  const queryForm = await knex('FormType AS ft')
+    .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
+    .join(
+      'FormDefinitionSchema as fschema',
+      'fd.formDefinitionSchemaId',
+      'fschema.id'
+    )
+    .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
+    .where('fd.partnerId', partnerId)
+    .where('ft.externalId', 'gxConnectForm')
+    .where('d.externalId', 'tb') // <-- includes MTB and MTB-Ultra
+    .distinct(
+      'fd.externalId',
+      'fd.assayId',
+      'fd.diseaseId',
+      'ft.externalId as formTypeId',
+      knex.raw(
+        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
+      )
+    )
+  /**
+   * `forms` is a object with 2 props for 2 forms
+   * {
+   *    CustomFields_Bangladesh_Mtb: {...},
+   *    CustomFields_Bangladesh_Mtb_Ultra: {...},
+   * }
+   */
+  const forms = createFormObject(queryForm)
+
+  /**
+   * `allFormFields` is a object with 2 props for 2 forms
+   * {
+   *    CustomFields_Bangladesh_Mtb: {
+   *      cnt_FIELD_NAME_1: knex.raw('...'),
+   *      cnt_FIELD_NAME_2: knex.raw('...'),
+   *      ...
+   *    },
+   *    CustomFields_Bangladesh_Mtb_Ultra: {...},
+   * }
+   */
+  let allColumns = []
+  const allFormFields = _.reduce(
+    _.keys(forms),
+    (accForm, formKey) => {
+      const { fields } = forms[formKey]
+      let { assayId } = forms[formKey]
+      const header = `Total Results (${assayId ? 'Mtb-Ultra' : 'Mtb'})`
+      assayId = assayId || assayIds.GxMtbRif
+      allColumns = [
+        ...allColumns,
+        {
+          key: `cntAll_${assayId}`,
+          header,
+        },
+      ]
+
+      accForm[formKey] = _.reduce(
+        fields,
+        (acc, field) => {
+          const { name, title, gxAlertDbColumn } = field
+          const fieldName = gxAlertDbColumn || name
+          acc[`cnt_${assayId}_${fieldName}`] = knex.raw(
+            `
+            DISTINCT
+            CASE
+              WHEN 
+                a.id = ${assayId}
+                AND
+                IFNULL(r.patientData ->> '$.${fieldName}', '') IN ('', 'null')
+              THEN r.id
+              ELSE null
+            END`
+          )
+
+          allColumns = [
+            ...allColumns,
+            {
+              key: `cnt_${assayId}_${fieldName}`,
+              header: title,
+            },
+          ]
+
+          return acc
+        },
+        // initial object with counter for all affected results
+        {
+          [`cntAll_${assayId}`]: knex.raw(`DISTINCT
+            CASE
+              WHEN a.id = ${assayId}
+              THEN r.id
+              ELSE null
+            END`),
+        }
+      )
+
+      /**
+       * in case of poor performance when using `DISTINCT ... r.id` -
+       * try
+       * knex.raw(`
+       *  SUM(
+       *    CASE
+       *    WHEN IFNULL(r.patientData ->> '$.${fieldName}', '') IN ('', 'null')
+       *    THEN 1
+       *    ELSE 0
+       *    END
+       *  ) as cnt_${assayId}_${fieldName}
+       * `)
+       */
+
+      return accForm
+    },
+    {}
+  )
+
+  const allCustomFields = _.reduce(
+    _.values(allFormFields),
+    (acc, formFields) => {
+      acc = {
+        ...acc,
+        ...formFields,
+      }
+      return acc
+    },
+    {}
+  )
+
+  const data = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+      result: 'r',
+    })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .select('s.id as siteId', 's.name as siteName')
+    .groupBy('s.id')
+    .count({
+      cntAll: knex.raw('DISTINCT r.id'),
+      ...allCustomFields,
+    })
+    .orderBy('s.name')
+
+  data.forEach(siteRow => {
+    let sum = 0
+    let totalFields = 0
+    _.keys(forms).forEach(formKey => {
+      const { fields } = forms[formKey]
+      let { assayId } = forms[formKey]
+      assayId = assayId || assayIds.GxMtbRif
+
+      const total = siteRow[`cntAll_${assayId}`]
+      fields.forEach(field => {
+        const fieldName = field.gxAlertDbColumn || field.name
+        const percentRaw =
+          total > 0 ? (100 * siteRow[`cnt_${assayId}_${fieldName}`]) / total : 0
+        const percent =
+          percentRaw === 0
+            ? 0
+            : percentRaw < 1
+            ? _.round(percentRaw, 2)
+            : _.round(percentRaw)
+        siteRow[`cnt_${assayId}_${fieldName}`] = `${percent}%`
+        sum += percent
+      })
+      totalFields += fields.length
+    })
+    siteRow.overall = `${_.round(sum / totalFields, 2)}%`
+  })
+  allColumns = [
+    ...allColumns,
+    {
+      key: `overall`,
+      header: 'Overall Completion Rate',
+    },
+  ]
+
+  return {
+    ok: true,
+    data,
+    dynamicColumns: allColumns,
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
   getDataForReportDrTb10B,
   getDataForReportCovid19,
   getReportDrTb10a10bCovidNtpUse,
+  getReportCustomFieldsCompletion,
 }

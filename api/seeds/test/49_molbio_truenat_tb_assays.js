@@ -1,6 +1,6 @@
 const { upsertTruenatDeviceTypeAndAssays } = require('../commonTruenat')
 const { createDevicesForAllMissingTypes } = require('../commonGenerateResults')
-const { partnerName, adminName } = require('./fixtures/partnerVariables')
+const { partnerName, adminName } = require('./fixtures/partnerData')
 
 module.exports = require('../utils').seed(async knex => {
   await upsertTruenatDeviceTypeAndAssays(knex)

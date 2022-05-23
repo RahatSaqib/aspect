@@ -105,6 +105,7 @@ const routes = [
     path: '/case/auto',
     handler: asyncHandler(getAutoCompleteCases),
     config: {
+      auth: { scope: ['case'] },
       description: 'Autocomplete Cases List',
       notes: 'list of cases',
       validate: {

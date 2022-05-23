@@ -16,7 +16,7 @@ const routes = [
     config: {
       description: 'Update Issue Status',
       notes: 'Update the status of an issue',
-      auth: { scope: ['notification:edit'] },
+      auth: { scope: ['notification:edit', 'issue:edit'] },
       validate: {
         params: {
           issueId: Joi.number().integer().positive().description('Issue Id'),

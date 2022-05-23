@@ -274,6 +274,15 @@ function getWellFormattedDateStringWithTimezone(dateTime) {
   return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
 }
 
+function getDatesFromQuery(query) {
+  const now = new Date()
+  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
+  return {
+    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
+    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
+  }
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -298,4 +307,5 @@ module.exports = {
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
   getOffsetFromTimeZone,
+  getDatesFromQuery,
 }

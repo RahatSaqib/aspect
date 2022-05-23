@@ -4,7 +4,7 @@ const range = require('lodash/range')
 const random = require('lodash/random')
 const { insertSites } = require('../utils')
 const upsertContacts = require('../common/upsert_contacts')
-const partnerData = require('./fixtures/partnerVariables')
+const partnerData = require('./fixtures/partnerData')
 
 const NUMBER_OF_SITES = 50
 

@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi')
+const uniq = require('lodash/uniq')
 const logger = require('./shared/logger')
 const { REGEX_ISODATESTRING } = require('./shared/date')
 const { splitCsvWithTrim } = require('./shared/string')
@@ -113,13 +114,7 @@ function decorateClientAPI(module) {
   const scope = ['+clientApi']
   const strategies = ['clientApi']
 
-  if (module) {
-    // If module specified, must have one of admin or `{module}:edit`
-    // in addition to any other listed in scope of routes.
-    scope.push('edit', `${module}:edit`)
-  }
-
-  return decorateAPI({ scope, strategies })
+  return decorateAPI({ module, scope, strategies })
 }
 
 function decorateDeviceAPI() {
@@ -139,7 +134,7 @@ function decorateDeviceRawAPI() {
   return decorateAPI({ scope, strategies })
 }
 
-function decorateAPI({ scope, strategies }) {
+function decorateAPI({ module, scope, strategies }) {
   return route => {
     // add ['api'] tag by default so available in Hapi-Swagger
     let { config } = route
@@ -154,15 +149,36 @@ function decorateAPI({ scope, strategies }) {
     // If route is authenticated, add common configuration
     if (config.auth !== false) {
       // Require module scope to all routes
+      let { auth } = config
+      if (!auth) {
+        // could be undefined instead of explicitly false
+        auth = {}
+        config.auth = auth
+      }
+      auth.strategies = strategies.concat(auth.strategies || [])
+
       if (module) {
-        let { auth } = config
-        if (!auth) {
-          // could be undefined instead of explicitly false
-          auth = {}
-          config.auth = auth
+        // Always add access to the highest permission level
+        const scopeToAdd = ['admin', `${module}:admin`]
+
+        // Add access to :edit level if :view is specified
+        if (auth.scope) {
+          auth.scope.forEach(s => {
+            const destructuredScope = s.split(':')
+            if (
+              destructuredScope.length > 1 &&
+              destructuredScope[1] === 'view'
+            ) {
+              scopeToAdd.push(`${destructuredScope[0]}:edit`)
+              scopeToAdd.push(`${destructuredScope[0]}:admin`)
+            }
+
+            if (destructuredScope.length > 1 && destructuredScope[1] === 'edit')
+              scopeToAdd.push(`${destructuredScope[0]}:admin`)
+          })
         }
-        auth.strategies = strategies.concat(auth.strategies || [])
-        auth.scope = scope.concat(auth.scope || [])
+        // Merge configured and dynamically added permissions
+        auth.scope = uniq(scope.concat(auth.scope || []).concat(scopeToAdd))
       }
 
       // Add JWT Auth token query param configuration
