@@ -26,7 +26,7 @@
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.age",
+      "payloadDestinationPath": "patient.PatientAge",
       "validation": [
         {
           "validationType": "integer",
@@ -49,7 +49,7 @@
       "caption": "Gender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.gender",      
+      "payloadDestinationPath": "patient.PatientGender",      
       "items": [
         {
           "key": 1,
@@ -74,7 +74,7 @@
       "gxAlertDbColumn": "PatientStreet",
       "caption": "Address",
       "i18nKeyCaption": "AddressI18nCaptionKey",
-      "payloadDestinationPath": "patient.address",
+      "payloadDestinationPath": "patient.PatientStreet",
       "controlType": "textBox"
     },
     {

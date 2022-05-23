@@ -12,7 +12,7 @@
       "gxAlertDbColumn": "PatientGender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.gender",      
+      "payloadDestinationPath": "patient.PatientGender",      
       "items": [
         {
           "key": 1,
@@ -38,7 +38,7 @@
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.age",
+      "payloadDestinationPath": "patient.PatientAgeYears",
       "validation": [
         {
           "validationType": "integer",
@@ -60,6 +60,7 @@
       "caption": "Retreatment Case",
       "i18nKeyCaption": "RetreatmentCasei18nCaptionKey",
       "controlType": "comboBox",
+      "payloadDestinationPath": "patient.PreviouslyTreated",
       "items": [
         {
           "key": 1,
@@ -103,7 +104,8 @@
       "title": "Referring Clinician or Facility Phone Number (if known)",
       "caption": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "payloadDestinationPath": "patient.RequestorPhone"
     },
     {
       "id": 106,
@@ -116,6 +118,7 @@
       "gxAlertDbColumn": "RepeatTest",
       "i18nKeyCaption": "RepeatTesti18nCaptionKey",
       "controlType": "comboBox",
+      "payloadDestinationPath": "patient.RepeatTest",
       "items": [
         {
           "key": 0,

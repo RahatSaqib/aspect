@@ -17,7 +17,7 @@ let context
 /**
  * this test is dependant on completionWeight and payloadDestinationPath on CustomFieldsTB.json
  */
-describe('CustomFieldsCompletionStatsService', async () => {
+describe.only('CustomFieldsCompletionStatsService', async () => {
   before(async () => {
     context = createGxConnectTestContext(server, {
       countryCode: 'US',
@@ -70,25 +70,25 @@ describe('CustomFieldsCompletionStatsService', async () => {
     expect(stats[1].recordCount).to.be.equal(1)
     expect(stats[2].recordCount).to.be.equal(2)
 
-    expect(stats[0].completionRate).to.be.equal(0.67)
-    expect(stats[1].completionRate).to.be.equal(1)
-    expect(stats[2].completionRate).to.be.equal(0.83)
+    expect(stats[0].completionRate).to.be.equal(0.67, 'stats[0].completionRate')
+    expect(stats[1].completionRate).to.be.equal(1, 'stats[1].completionRate')
+    expect(stats[2].completionRate).to.be.equal(0.83, 'stats[2].completionRate')
 
     const fieldStats = stats.map(s => JSON.parse(s.completionByField))
 
-    expect(+fieldStats[0].age.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[0].age.completed).to.be.equal(1)
-    expect(+fieldStats[1].age.weighting).to.be.equal(0.33333)
-    expect(+fieldStats[1].age.completed).to.be.equal(1)
-    expect(+fieldStats[2].age.weighting).to.be.equal(0.33333)
-    expect(+fieldStats[2].age.completed).to.be.equal(2)
+    expect(+fieldStats[0].PatientAgeYears.weighting).to.be.equal(0.16667)
+    expect(+fieldStats[0].PatientAgeYears.completed).to.be.equal(1)
+    expect(+fieldStats[1].PatientAgeYears.weighting).to.be.equal(0.33333)
+    expect(+fieldStats[1].PatientAgeYears.completed).to.be.equal(1)
+    expect(+fieldStats[2].PatientAgeYears.weighting).to.be.equal(0.33333)
+    expect(+fieldStats[2].PatientAgeYears.completed).to.be.equal(2)
 
-    expect(+fieldStats[0].gender.weighting).to.be.equal(0.33333)
-    expect(+fieldStats[0].gender.completed).to.be.equal(2)
-    expect(+fieldStats[1].gender.weighting).to.be.equal(0.33333)
-    expect(+fieldStats[1].gender.completed).to.be.equal(1)
-    expect(+fieldStats[2].gender.weighting).to.be.equal(0.33333)
-    expect(+fieldStats[2].gender.completed).to.be.equal(2)
+    expect(+fieldStats[0].PatientGender.weighting).to.be.equal(0.33333)
+    expect(+fieldStats[0].PatientGender.completed).to.be.equal(2)
+    expect(+fieldStats[1].PatientGender.weighting).to.be.equal(0.33333)
+    expect(+fieldStats[1].PatientGender.completed).to.be.equal(1)
+    expect(+fieldStats[2].PatientGender.weighting).to.be.equal(0.33333)
+    expect(+fieldStats[2].PatientGender.completed).to.be.equal(2)
 
     expect(+fieldStats[0].HealthFacility.weighting).to.be.equal(0.16667)
     expect(+fieldStats[0].HealthFacility.completed).to.be.equal(1)
@@ -117,7 +117,6 @@ describe('CustomFieldsCompletionStatsService', async () => {
       address: '52 Khata Gandaria\r\n',
       surname: '',
       HIVStatus: 'Unknown',
-      PatientAge: '32',
       SampleType: 'Pulmonary',
       PatientName: 'Sarmin Akter',
       PatientPhone: '01316208782',
@@ -138,6 +137,8 @@ describe('CustomFieldsCompletionStatsService', async () => {
       gender: 'Male',
       street: 'H-6, R-11, B-H, Mirpur-1',
       address: 'H-6, R-11, B-H, Mirpur-1\r\n',
+      PatientAgeYears: '45',
+      PatientGender: 'Male',
       surname: '',
       HIVStatus: 'Unknown',
       SampleType: 'Pulmonary',
@@ -154,7 +155,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
       address: 'Mosori Rupgong\r\n',
       surname: '',
       HIVStatus: 'Unknown',
-      PatientAge: '45',
+      PatientAgeYears: '45',
       SampleType: 'Pulmonary',
       PatientName: 'Anjali Sarker',
       PatientPhone: '01724572692',
@@ -177,7 +178,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
       address: 'B Baria Naraingong\r\n',
       surname: '',
       HIVStatus: 'Unknown',
-      PatientAge: '07',
+      PatientAgeYears: '07',
       SampleType: 'Pulmonary',
       PatientName: 'Nusrat Akter',
       PatientPhone: '01735760591',
@@ -202,6 +203,8 @@ describe('CustomFieldsCompletionStatsService', async () => {
       HIVStatus: 'Unknown',
       SampleType: 'Pulmonary',
       PatientPhone: '01702339259',
+      PatientAgeYears: '27',
+      PatientGender: 'Male',
       TypeOfPatient: 'Presumptive TB',
     },
   ]
