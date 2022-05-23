@@ -10,7 +10,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../../db')
-const { formatDateOrDefault } = require('../../shared/date')
+const { formatDateOrDefault, getDatesFromQuery } = require('../../shared/date')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -115,15 +115,6 @@ const andByRetreatment = (
     condition += ` and ${resultCategoryCondition} `
   }
   return counter('r.id', condition)
-}
-
-const getDatesFromQuery = query => {
-  const now = new Date()
-  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
-  return {
-    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
-    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
-  }
 }
 
 const reportDrTb10ABaseQuery = async (auth, query) => {

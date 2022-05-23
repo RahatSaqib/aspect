@@ -18,6 +18,7 @@ const admin = {
     'xpert_test_activities_report',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -158,6 +159,7 @@ const manager = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -246,6 +248,7 @@ const regionalOfficer = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -573,6 +576,7 @@ const ntp = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -757,6 +761,7 @@ const resultViewerYes = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -879,6 +884,7 @@ const labManager = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -955,6 +961,7 @@ const labSupervisor = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
@@ -1183,6 +1190,7 @@ const labAdmin = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'report_custom_fields_completion',
   ],
   permissions: [
     {
