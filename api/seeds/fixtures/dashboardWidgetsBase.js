@@ -940,7 +940,7 @@ FROM
       FROM
           Device AS d
       LEFT JOIN (SELECT
-        r2.deviceId,  
+        r2.deviceId,
         COUNT(DISTINCT r2.moduleName) AS cnt
       FROM
           Result AS r2
@@ -982,7 +982,7 @@ FROM
   FROM
       Device AS d
   LEFT JOIN (SELECT
-    r2.deviceId,  
+    r2.deviceId,
     COUNT(DISTINCT r2.moduleName) AS cnt
   FROM
       Result AS r2
@@ -994,7 +994,7 @@ FROM
   INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
   LEFT JOIN Geography AS g ON s.geographyId = g.id
   INNER JOIN Result AS r ON d.id = r.deviceId
-      
+
   WHERE
       dc.hasResults = 1
           AND dt.externalId = 'CepheidGeneXpert'
@@ -1115,7 +1115,7 @@ const averageRecipientsOfEmail = {
     FROM
     (
       SELECT COUNT(em.resultId) AS resultCount
-      FROM Result AS r 
+      FROM Result AS r
         INNER JOIN EmailMessage AS em ON em.resultId = r.id
         INNER JOIN Device AS d ON d.id = em.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
@@ -1134,7 +1134,7 @@ const averageRecipientsOfEmail = {
     FROM
     (
       SELECT COUNT(em.resultId) AS resultCount
-      FROM Result AS r 
+      FROM Result AS r
         INNER JOIN EmailMessage AS em ON em.resultId = r.id
         INNER JOIN Device AS d ON d.id = em.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
@@ -1176,7 +1176,7 @@ const averageRecipientsOfSms = {
     FROM
     (
       SELECT COUNT(sms.resultId) AS resultCount
-      FROM Result AS r 
+      FROM Result AS r
         INNER JOIN SmsMessage AS sms ON sms.resultId = r.id
         INNER JOIN Device AS d ON d.id = sms.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
@@ -1195,7 +1195,7 @@ const averageRecipientsOfSms = {
     FROM
     (
       SELECT COUNT(sms.resultId) AS resultCount
-      FROM Result AS r 
+      FROM Result AS r
         INNER JOIN SmsMessage AS sms ON sms.resultId = r.id
         INNER JOIN Device AS d ON d.id = sms.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
@@ -2026,6 +2026,38 @@ const deviceCalibratedWhenDue = {
   },
 }
 
+const bangladeshAverageCompletion = {
+  jobFunctions: ['all'],
+  icon: 'MdVerifiedUser',
+  title: 'Average Completion',
+  titleI18nKey: 'bangladeshAverageCompletionTitle',
+  subTitle: 'Previous month Average Completion',
+  subTitleI18nKey: 'bangladeshAverageCompletionSubTitle',
+  sqlForIndicator: `SELECT
+  CONCAT(ROUND((IFNULL(SUM(f.completionRate * 100 * f.recordCount) / SUM(f.recordCount),0)), 2), '%') AS cnt
+  FROM FactCustomFieldCompletion f INNER JOIN Site as s ON f.siteId = s.id
+  WHERE
+  updatedOn BETWEEN  DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()`,
+  sqlForStatUnit: `SELECT
+  CONCAT(ROUND((IFNULL(SUM(f.completionRate * 100 * f.recordCount) / SUM(f.recordCount),0)), 2), '%') AS cnt
+  FROM FactCustomFieldCompletion f INNER JOIN Site as s ON f.siteId = s.id
+  WHERE
+  updatedOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
+  `,
+  statUnit: '{unit} since last month',
+  statUnitI18nKey: 'lastMonth',
+  link: null,
+  sortOrder: 8,
+  externalId: 'bangladeshAverageCompletion',
+  description: `The average of completion rate current month`,
+  descriptionI18nKey: 'bangladeshAverageCompletionDescription',
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.DEVICES,
+    },
+  },
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
   WIDGET_FILTER_KEYS,
@@ -2064,5 +2096,6 @@ module.exports = {
     serverUptimeTitle,
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
+    bangladeshAverageCompletion,
   },
 }

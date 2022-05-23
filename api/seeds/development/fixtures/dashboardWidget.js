@@ -35,6 +35,7 @@ const {
     dashboardWidgetTitleConfirmedCases,
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
+    bangladeshAverageCompletion,
   },
 } = dashboardWidgetsBase
 
@@ -88,5 +89,6 @@ module.exports = {
     },
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
+    bangladeshAverageCompletion,
   ],
 }
