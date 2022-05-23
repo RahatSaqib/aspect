@@ -373,11 +373,12 @@ export const messages = defineMessages({
   },
   bangladeshAverageCompletionTitle: {
     id: 'component.Widget.bangladeshAverageCompletionTitle',
-    defaultMessage: 'Average Completion',
+    defaultMessage: 'Custom Fields Average Completion',
   },
-  bangladeshAverageCompletionSubTitle: {
-    id: 'component.Widget.bangladeshAverageCompletionSubTitle',
-    defaultMessage: 'Previous month Average Completion',
+  bangladeshAverageCompletionDescription: {
+    id: 'component.Widget.bangladeshAverageCompletionDescription',
+    defaultMessage:
+      'The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay',
   },
 })
 

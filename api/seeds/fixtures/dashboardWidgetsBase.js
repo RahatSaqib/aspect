@@ -2029,10 +2029,8 @@ const deviceCalibratedWhenDue = {
 const bangladeshAverageCompletion = {
   jobFunctions: ['all'],
   icon: 'MdVerifiedUser',
-  title: 'Average Completion',
+  title: 'Custom Fields Average Completion',
   titleI18nKey: 'bangladeshAverageCompletionTitle',
-  subTitle: 'Previous month Average Completion',
-  subTitleI18nKey: 'bangladeshAverageCompletionSubTitle',
   sqlForIndicator: `SELECT
   CONCAT(ROUND((IFNULL(SUM(f.completionRate * 100 * f.recordCount) / SUM(f.recordCount),0)), 2), '%') AS cnt
   FROM FactCustomFieldCompletion as f INNER JOIN Site as s ON f.siteId = s.id
@@ -2044,12 +2042,14 @@ const bangladeshAverageCompletion = {
   WHERE
   f.updatedOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
   `,
-  statUnit: '{unit} since last month',
+  subTitle: null,
+  subTitleI18nKey: null,
+  statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: null,
   sortOrder: 8,
   externalId: 'bangladeshAverageCompletion',
-  description: `The average of completion rate current month`,
+  description: `The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay`,
   descriptionI18nKey: 'bangladeshAverageCompletionDescription',
   dashboards: {
     operational: {
