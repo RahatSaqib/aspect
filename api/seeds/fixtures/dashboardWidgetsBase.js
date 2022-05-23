@@ -2035,14 +2035,14 @@ const bangladeshAverageCompletion = {
   subTitleI18nKey: 'bangladeshAverageCompletionSubTitle',
   sqlForIndicator: `SELECT
   CONCAT(ROUND((IFNULL(SUM(f.completionRate * 100 * f.recordCount) / SUM(f.recordCount),0)), 2), '%') AS cnt
-  FROM FactCustomFieldCompletion f INNER JOIN Site as s ON f.siteId = s.id
+  FROM FactCustomFieldCompletion as f INNER JOIN Site as s ON f.siteId = s.id
   WHERE
-  updatedOn BETWEEN  DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()`,
+  f.updatedOn BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) AND NOW()`,
   sqlForStatUnit: `SELECT
   CONCAT(ROUND((IFNULL(SUM(f.completionRate * 100 * f.recordCount) / SUM(f.recordCount),0)), 2), '%') AS cnt
-  FROM FactCustomFieldCompletion f INNER JOIN Site as s ON f.siteId = s.id
+  FROM FactCustomFieldCompletion as f INNER JOIN Site as s ON f.siteId = s.id
   WHERE
-  updatedOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
+  f.updatedOn BETWEEN DATE_SUB(NOW(), INTERVAL 60 DAY) AND DATE_SUB(NOW(), INTERVAL 30 DAY)
   `,
   statUnit: '{unit} since last month',
   statUnitI18nKey: 'lastMonth',
