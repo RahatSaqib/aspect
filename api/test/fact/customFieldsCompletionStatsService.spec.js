@@ -17,7 +17,7 @@ let context
 /**
  * this test is dependant on completionWeight and payloadDestinationPath on CustomFieldsTB.json
  */
-describe.only('CustomFieldsCompletionStatsService', async () => {
+describe('CustomFieldsCompletionStatsService', async () => {
   before(async () => {
     context = createGxConnectTestContext(server, {
       countryCode: 'US',
