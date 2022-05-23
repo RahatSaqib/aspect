@@ -371,6 +371,14 @@ export const messages = defineMessages({
     id: 'component.Widget.unusedModulesStats',
     defaultMessage: '{unit} last month',
   },
+  bangladeshAverageCompletionTitle: {
+    id: 'component.Widget.bangladeshAverageCompletionTitle',
+    defaultMessage: 'Average Completion',
+  },
+  bangladeshAverageCompletionSubTitle: {
+    id: 'component.Widget.bangladeshAverageCompletionSubTitle',
+    defaultMessage: 'Previous month Average Completion',
+  },
 })
 
 export default messages

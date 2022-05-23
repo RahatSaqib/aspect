@@ -2031,8 +2031,8 @@ const bangladeshAverageCompletion = {
   icon: 'MdVerifiedUser',
   title: 'Average Completion',
   titleI18nKey: 'bangladeshAverageCompletionTitle',
-  subTitle: null,
-  subTitleI18nKey: null,
+  subTitle: 'Previous month Average Completion',
+  subTitleI18nKey: 'bangladeshAverageCompletionSubTitle',
   sqlForIndicator: `SELECT
   CONCAT(ROUND((IFNULL(SUM(f.completionRate * 100 * f.recordCount) / SUM(f.recordCount),0)), 2), '%') AS cnt
   FROM FactCustomFieldCompletion f INNER JOIN Site as s ON f.siteId = s.id
