@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subDays } = require('date-fns')
+const { subMonths, subDays } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
@@ -27,6 +27,7 @@ const {
 } = require('../auth/constraints')
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
+  allAssayToId,
   deviceTypeToId,
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
@@ -35,6 +36,7 @@ const {
   resultTypeToId,
   resultCategoryToId,
 } = require('../shared/dictionary')
+const { getDatesFromQuery } = require('../shared/date')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -51,6 +53,7 @@ const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
+const { createFormObject } = require('../forms/service')
 
 async function getListResults(query, auth, fields) {
   if (!fields) {
@@ -3063,6 +3066,185 @@ async function listSampleTypes() {
   return { ok: true, data }
 }
 
+async function getCustomFieldsCompletion(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { partnerId } = await getUser(auth.credentials.name)
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+  const assayIds = await allAssayToId()
+
+  const queryForm = await knex('FormType AS ft')
+    .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
+    .join(
+      'FormDefinitionSchema as fschema',
+      'fd.formDefinitionSchemaId',
+      'fschema.id'
+    )
+    .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
+    .where('fd.partnerId', partnerId)
+    .where('ft.externalId', 'gxConnectForm')
+    .where('d.externalId', 'tb') // <-- includes MTB and MTB-Ultra
+    .distinct(
+      'fd.externalId',
+      'fd.assayId',
+      'fd.diseaseId',
+      'ft.externalId as formTypeId',
+      knex.raw(
+        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
+      )
+    )
+  /**
+   * `forms` is a object with 2 props for 2 forms
+   * {
+   *    CustomFields_Bangladesh_Mtb: {...},
+   *    CustomFields_Bangladesh_Mtb_Ultra: {...},
+   * }
+   */
+  const forms = createFormObject(queryForm)
+
+  /**
+   * `allFormFields` is a object with 2 props for 2 forms
+   * {
+   *    CustomFields_Bangladesh_Mtb: [
+   *      knex.raw('SUM(...) as cnt_FIELD_NAME_1'),
+   *      knex.raw('SUM(...) as cnt_FIELD_NAME_2'),
+   *      ...
+   *    ],
+   *    CustomFields_Bangladesh_Mtb_Ultra: [...],
+   * }
+   */
+  let allColumns = []
+  const allFormFields = _.reduce(
+    _.keys(forms),
+    (accForm, formKey) => {
+      const { fields } = forms[formKey]
+      let { assayId } = forms[formKey]
+      const header = `Total Results (${assayId ? 'Mtb-Ultra' : 'Mtb'})`
+      assayId = assayId || assayIds.GxMtbRif
+      allColumns = [
+        ...allColumns,
+        {
+          key: `cntAll_${assayId}`,
+          header,
+        },
+      ]
+
+      accForm[formKey] = _.reduce(
+        fields,
+        (acc, field) => {
+          const { name, title, gxAlertDbColumn } = field
+          const fieldName = gxAlertDbColumn || name
+          acc = [
+            ...acc,
+            knex.raw(
+              `
+              SUM(
+                IFNULL(fcfc.completionByField ->> '$.${fieldName}.completed', 0)
+              ) as cnt_${assayId}_${fieldName}
+              `
+            ),
+          ]
+
+          allColumns = [
+            ...allColumns,
+            {
+              key: `cnt_${assayId}_${fieldName}`,
+              header: title,
+            },
+          ]
+
+          return acc
+        },
+        // initial object with counter for all affected results
+        [knex.raw(`SUM( IFNULL(fcfc.recordCount, 0) ) as cntAll_${assayId}`)]
+      )
+
+      return accForm
+    },
+    {}
+  )
+
+  const allCustomFields = _.reduce(
+    _.values(allFormFields),
+    (acc, formFields) => [...acc, ...formFields],
+    []
+  )
+
+  const data = await knex('Site as s')
+    .innerJoin('FactCustomFieldCompletion as fcfc', 'fcfc.siteId', 's.id')
+    .innerJoin('Assay as a', 'fcfc.assayId', 'a.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+    })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'fcfc.date'
+    )
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .groupBy('s.id')
+    .select([
+      's.id as siteId',
+      's.name as siteName',
+      knex.raw('SUM(fcfc.recordCount) as cntAll'),
+      ...allCustomFields,
+    ])
+    .orderBy('s.name')
+
+  data.forEach(siteRow => {
+    let sum = 0
+    let totalFields = 0
+    _.keys(forms).forEach(formKey => {
+      const { fields } = forms[formKey]
+      let { assayId } = forms[formKey]
+      assayId = assayId || assayIds.GxMtbRif
+
+      const total = siteRow[`cntAll_${assayId}`]
+      fields.forEach(field => {
+        const fieldName = field.gxAlertDbColumn || field.name
+        const percentRaw =
+          total > 0 ? (100 * siteRow[`cnt_${assayId}_${fieldName}`]) / total : 0
+        const percent =
+          percentRaw === 0
+            ? 0
+            : percentRaw < 1
+            ? _.round(percentRaw, 2)
+            : _.round(percentRaw)
+        siteRow[`cnt_${assayId}_${fieldName}`] = `${percent}%`
+        sum += percent
+      })
+      totalFields += fields.length
+    })
+    siteRow.overall = `${_.round(sum / totalFields, 2)}%`
+  })
+  allColumns = [
+    ...allColumns,
+    {
+      key: `overall`,
+      header: 'Overall Completion Rate',
+    },
+  ]
+
+  return {
+    ok: true,
+    data,
+    dynamicColumns: allColumns,
+  }
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -3104,4 +3286,5 @@ module.exports = {
   getBaseQueryForResults,
   addResultDownloadLog,
   listSampleTypes,
+  getCustomFieldsCompletion,
 }

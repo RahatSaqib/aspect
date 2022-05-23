@@ -36,7 +36,7 @@ const resultsDrTb10A10BCovidNtpUse = {
   i18nKeyDescription: 'reportDrTb10a10bCovidDescriptionNtpUse',
   fileName: 'ReportDrTb10a10bCovidNtpUse',
   exportCsv: false,
-  sortOrder: 11,
+  sortOrder: 12,
   sheets: [
     {
       sortOrder: 0,

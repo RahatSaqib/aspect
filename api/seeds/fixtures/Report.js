@@ -308,6 +308,28 @@ const moduleActivityReport = {
   ],
 }
 
+const reportCustomFieldsCompletion = {
+  name: 'Percent of custom fields completion for the MTB form',
+  description:
+    'Lists one row per site and shows the percentage of completion of each MTB custom field',
+  i18nKey: 'reportCustomFieldsCompletion',
+  externalId: 'report_custom_fields_completion', // folder name in /templates
+  i18nKeyDescription: 'reportCustomFieldsCompletionDescription',
+  fileName: 'ReportCustomFieldsCompletion',
+  exportCsv: false,
+  sortOrder: 13,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/service',
+      functionName: 'getCustomFieldsCompletion',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -322,4 +344,5 @@ module.exports = {
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
+  reportCustomFieldsCompletion,
 }
