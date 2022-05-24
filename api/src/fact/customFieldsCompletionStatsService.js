@@ -219,6 +219,38 @@ function getMySqlJsonPathFromCustomField(customField) {
   if (customField.payloadDestinationPath?.startsWith('data')) {
     return `r.resultData ->> '$.${customField.fieldName}'`
   }
+
+  // Hack: for now, we support inconsistencies in the form processing.
+  if (customField.fieldName === 'PatientAge') {
+    return `COALESCE(
+    r.patientData ->> '$.PatientAge',
+    r.patientData ->> '$.age')`
+  }
+
+  if (customField.fieldName === 'PatientGender') {
+    return `COALESCE(
+    r.patientData ->> '$.PatientGender',
+    r.patientData ->> '$.gender')`
+  }
+
+  if (customField.fieldName === 'PatientName') {
+    return `COALESCE(
+    r.patientData ->> '$.PatientName',
+    r.patientData ->> '$.name')`
+  }
+
+  if (customField.fieldName === 'PatientPhone') {
+    return `COALESCE(
+    r.patientData ->> '$.PatientPhone',
+    r.patientData ->> '$.phone')`
+  }
+
+  if (customField.fieldName === 'PatientStreet') {
+    return `COALESCE(
+    r.patientData ->> '$.PatientStreet',
+    r.patientData ->> '$.street')`
+  }
+
   return `r.patientData ->> '$.${customField.fieldName}'`
 }
 

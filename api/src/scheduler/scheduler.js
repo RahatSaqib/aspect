@@ -35,7 +35,10 @@ function startScheduler(queue) {
   dispatcher.factDataCategoryLowCheck()
   dispatcher.factCalculateInventoryConsumptionRates()
 
-  cron.schedule('30 00 * * *', factFillCustomFieldsCompletionStatsLast30Days) // daily at 1 am
+  cron.schedule(
+    '30 00 * * *',
+    dispatcher.factFillCustomFieldsCompletionStatsLast30Days
+  ) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minmutes past the hour
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
