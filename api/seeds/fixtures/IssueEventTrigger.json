@@ -8,6 +8,13 @@
       }
     },
     {
+      "issueType": "SiteWithLowFieldCompletionRate",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "SITE_WITH_LOW_COMPLETION_RATE"
+      }
+    },
+    {
       "issueType": "DeviceMaintenance",
       "issueEventStatus": "Resolved",
       "triggerConditions": {
