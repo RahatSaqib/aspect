@@ -3,7 +3,8 @@ const { Promise } = require('bluebird')
 const { getArrayOfDaysInRange } = require('../shared/date')
 const { knex, filterDateRangeParams } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
-const { onFactCompletionRatePerSite } = require('./actions')
+const { factCheckCompletionRatePerSite } = require('./actions')
+
 /**
  * Clean and fills FactCustomFieldCompletion table with stats for last 30 days
  */
@@ -12,14 +13,14 @@ const factFillCustomFieldsCompletionStatsLast30Days = async (
   { messageContext }
 ) => {
   const context = messageContext.bindActionCreators({
-    onFactCompletionRatePerSite,
+    factCheckCompletionRatePerSite,
   })
   await context.run(async () => {
     await factFillCustomFieldsCompletionStats(
       format(addDays(startOfToday(), -30), 'yyyy-MM-dd'),
       format(startOfToday(), 'yyyy-MM-dd')
     )
-    await context.onFactCompletionRatePerSite()
+    await context.factCheckCompletionRatePerSite()
   })
 }
 

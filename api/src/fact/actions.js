@@ -223,4 +223,5 @@ module.exports = {
   factCheckCompletionRatePerSite,
   siteWithLowCompletionRateIssue,
   factFillCustomFieldsCompletionStatsLast30Days,
+
 }
