@@ -2,6 +2,7 @@ const format = require('date-fns/format')
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
 const { addDays, subDays, subHours } = require('date-fns')
+const { range, random, map } = require('lodash')
 const { knex } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
@@ -29,6 +30,7 @@ const {
 const {
   factGenerateDeviceConnectivity,
   factNewResultsAvailableCheck,
+  factCheckCompletionRatePerSite,
 } = require('../../src/fact/actions')
 const {
   resultSourceToId,
@@ -1203,5 +1205,74 @@ describe('Fact based issues', () => {
 
         assert.equal(issue.issueStatusId, issueStatusResolved)
       }))
+  })
+
+  describe('Sites with low completion rate based on FactCustomFieldCompletion', () => {
+    const issueId = null
+    let siteId = null
+    after(async () => {
+      await waitForIdle()
+      await knex('FactCustomFieldCompletion').delete()
+      await knex('Issue').where('id', issueId).delete()
+    })
+
+    before(async () => {
+      const { id, updatedBy, createdBy } = await knex('Site').first(
+        'id',
+        'createdBy',
+        'updatedBy'
+      )
+
+      const { id: assayId } = await knex('Assay').first()
+      siteId = id
+      const factRecords = map(range(3), i => ({
+        siteId,
+        completionRate: random(0, 0.79),
+        recordCount: random(100, 1000),
+        assayId,
+        date: subDays(new Date(), i),
+        completionByField: JSON.stringify({}),
+        createdOn: new Date(),
+        updatedOn: new Date(),
+        updatedBy,
+        createdBy,
+      }))
+
+      await knex('FactCustomFieldCompletion').insert(factRecords)
+    })
+    it('should create a Site new Completion rate issue and then update the rate and resolve it', async () => {
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({
+        factCheckCompletionRatePerSite,
+        resolveIssues,
+      })
+
+      const issueTypeId = await issueTypeToId('SiteWithLowFieldCompletionRate')
+      // We should strart with no issues.
+      let issues = await knex('Issue').where('issueTypeId', issueTypeId)
+      assert.equal(issues.length, 0)
+      await messageContext.factCheckCompletionRatePerSite()
+      await waitForIdle()
+
+      issues = await knex('Issue as i')
+        .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
+        .where('issueTypeId', issueTypeId)
+        .select('siteId', 'is.externalId as issueStatusId')
+      assert.equal(issues.length, 1)
+      assert.equal(issues[0].siteId, siteId)
+      assert.equal(issues[0].issueStatusId, 'Active')
+
+      await knex('FactCustomFieldCompletion').update({ completionRate: 0.9 })
+      await messageContext.resolveIssues()
+      await waitForIdle(2000)
+
+      issues = await knex('Issue as i')
+        .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
+        .where('issueTypeId', issueTypeId)
+        .select('siteId', 'is.externalId as issueStatusId')
+      assert.equal(issues.length, 1)
+      assert.equal(issues[0].siteId, siteId)
+      assert.equal(issues[0].issueStatusId, 'Resolved')
+    })
   })
 })
