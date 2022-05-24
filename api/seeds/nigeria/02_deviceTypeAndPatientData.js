@@ -7,7 +7,7 @@ const { patientData } = require('./fixtures/geneXpertPatientDataSchema.json')
 async function seed(knex) {
   // Grant access to sites
   // Reuse previously seeded "static" data
- 
+
   const { id: permissionSiteAdminId } = await knex('Permission')
     .where('module', 'site')
     .where('activity', 'admin')
@@ -17,11 +17,11 @@ async function seed(knex) {
     .where('name', 'Admin')
     .first('id')
 
-    const { jobFunctionId } = knex('JobFunctionPermission')
+  const { jobFunctionId } = knex('JobFunctionPermission')
     .where('jobFunctionId', jobFunctionIdAdmin)
     .where('permissionId', permissionSiteAdminId)
     .first('jobFunctionId')
- 
+
   if (!jobFunctionId)
     await knex('JobFunctionPermission').insert([
       {
