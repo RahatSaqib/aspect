@@ -368,7 +368,6 @@ export function updateLatLongFromFormAddress() {
 }
 
 function requestDeletingSingleSite(requestedAt, siteId, data) {
- 
   return {
     type: types.REQUEST_DELETING_SINGLE_SITE,
     requestedAt,
