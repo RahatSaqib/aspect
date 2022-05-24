@@ -31,6 +31,7 @@ const {
   auditInventoryStockExpiring,
 } = require('../shared/utilsInventory')
 const { splitCsvWithTrim } = require('../shared/string')
+const { findInventoryItem } = require('./queries/inventoryDbAccess')
 
 const INVENTORY_COMMON_FIELDS = [
   'c.id as consumableId',
@@ -1157,56 +1158,6 @@ async function getDaysByLocation(request) {
     total: result.length,
     data: result,
   }
-}
-
-async function findInventoryItem(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  inTransitFromSiteId
-) {
-  const matchingInventoryItemsQuery = query('Find Inventory Item')
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as co', 'g.countryId', 'co.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .where({
-      'ii.siteId': siteId,
-      'ii.consumableId': consumableId,
-    })
-  if (expiresOn) {
-    matchingInventoryItemsQuery.where('ii.expiresOn', expiresOn)
-  } else {
-    matchingInventoryItemsQuery.whereNull('ii.expiresOn')
-  }
-
-  if (!_.isEmpty(lotNumber)) {
-    matchingInventoryItemsQuery.where('ii.lotNumber', lotNumber)
-  } else {
-    matchingInventoryItemsQuery.where(builder =>
-      builder.whereNull('ii.lotNumber').orWhere('ii.lotNumber', '')
-    )
-  }
-
-  if (inTransitFromSiteId) {
-    matchingInventoryItemsQuery.where(
-      'ii.inTransitFromSiteId',
-      inTransitFromSiteId
-    )
-  } else {
-    matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
-  }
-
-  const matchingInventoryItems = await matchingInventoryItemsQuery.select(
-    INVENTORY_ITEM_SELECT
-  )
-  return _.head(matchingInventoryItems)
 }
 
 function getInventoryItem(inventoryItemId) {
