@@ -7,12 +7,13 @@ async function up(knex) {
     dailyConsumptionRate decimal,
     jsonExpirationAndQuantity varchar(10000)
   ) RETURNS decimal(10,2)
-  BEGIN
+BEGIN
+    set @secondsInDay = 24 * 60 * 60;
     set @now = startDate;
     set @currentDay = DATE_SUB(DATE_ADD(DATE(@now), INTERVAL 1 DAY), INTERVAL 1 SECOND); -- end of today, i.e. '... 23:59:59'
           
     set @daysStockLeft = (
-      SELECT TIMESTAMPDIFF(HOUR, @now, MAX(@currentDay)) /24
+      SELECT TIMESTAMPDIFF(SECOND, @now, MAX(@currentDay)) / @secondsInDay
       FROM (
         SELECT 
           /*
@@ -34,32 +35,28 @@ async function up(knex) {
             THEN
               CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
                 -- items will be consumed before expiring - no wasted stock
-                THEN @currentDay := date_add(@currentDay, INTERVAL (quantityOnHand / dailyConsumptionRate) DAY)
+                THEN @currentDay := date_add(@currentDay, INTERVAL (24 * quantityOnHand / dailyConsumptionRate) HOUR)
                 -- items will expire before consuming the stock - stock will be wasted
                 ELSE @currentDay := date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
                 END 
             ELSE @currentDay 
             END
           FROM 
-            (
-              SELECT
-                JSON_UNQUOTE(json_extract( jsonExpirationAndQuantity ,  concat('$[', n.i, '].expiresOn'))) AS expiresOn,
-                JSON_UNQUOTE(json_extract( jsonExpirationAndQuantity ,  concat('$[', n.i, '].quantityOnHand'))) AS quantityOnHand
-              from 
-                (
-                  SELECT 0 AS i 
-                    UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5
-                    UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10
-                ) AS n
+            JSON_TABLE(
+              jsonExpirationAndQuantity, 
+              '$[*]' COLUMNS(
+                expiresOn DATE PATH '$.expiresOn', 
+                quantityOnHand DECIMAL(10,2) PATH '$.quantityOnHand'
+              )
             ) AS t
           WHERE t.expiresOn IS NOT NULL AND t.expiresOn > NOW()
           ORDER BY t.expiresOn
         ) as t1
-        limit 1
     );
     
     RETURN @daysStockLeft;
-  END`)
+  END
+  `)
 
   await knex.raw(`
   CREATE FUNCTION GetProjectedWaste(
@@ -68,6 +65,7 @@ async function up(knex) {
     jsonExpirationAndQuantity varchar(10000)
   ) RETURNS int(11)
   BEGIN
+    set @secondsInDay = 24 * 60 * 60;
     set @now = startDate;
     set @currentDay = @now;
     set @projectedWaste = 0;
@@ -85,7 +83,7 @@ async function up(knex) {
           */
           @daysLeftUnexpired := CASE 
             WHEN @endOfExpirationDate > @currentDay 
-            THEN (TIMESTAMPDIFF(HOUR, @currentDay, @endOfExpirationDate) / 24)
+            THEN TIMESTAMPDIFF(SECOND, @currentDay, @endOfExpirationDate) / @secondsInDay
             ELSE 0
             END,
           /*
@@ -109,23 +107,19 @@ async function up(knex) {
             THEN
             CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
               -- items will be consumed before expiring - no wasted stock
-              THEN @currentDay := date_add(@currentDay, INTERVAL (quantityOnHand / dailyConsumptionRate) DAY)
+              THEN @currentDay := date_add(@currentDay, INTERVAL (24 * quantityOnHand / dailyConsumptionRate) HOUR)
               -- items will expire before consuming the stock - stock will be wasted
               ELSE @currentDay := date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
               END 
             ELSE @currentDay 
             END
           FROM 
-            (
-              SELECT
-                JSON_UNQUOTE(json_extract( jsonExpirationAndQuantity ,  concat('$[', n.i, '].expiresOn'))) AS expiresOn,
-                JSON_UNQUOTE(json_extract( jsonExpirationAndQuantity ,  concat('$[', n.i, '].quantityOnHand'))) AS quantityOnHand
-              from 
-                (
-                  SELECT 0 AS i 
-                    UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5
-                    UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10
-                ) AS n
+            JSON_TABLE(
+              jsonExpirationAndQuantity, 
+              '$[*]' COLUMNS(
+                expiresOn DATE PATH '$.expiresOn', 
+                quantityOnHand DECIMAL(10,2) PATH '$.quantityOnHand'
+              )
             ) AS t
           WHERE t.expiresOn IS NOT NULL AND t.expiresOn > NOW()
           order by t.expiresOn

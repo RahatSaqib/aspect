@@ -279,16 +279,14 @@ describe('Inventory Routes', () => {
           // - 300 expiring in 50 days (inclusive)
           // - The consumption rate is 200 cartridges/day
           // So...
-          // TODAY - We use up to 200 depending on hour test is running
           // Day 1 - We use 200 from expiring tomorrow ===> 50 wasted
           // Day 2 - We use 200 from expiring in two days ===> 150 wasted
           // Day 3 - We use 200 from expiring in 50 days
           // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
           // ===> 3.5 days of stock left
           // ===> 200 cartridges to be wasted
-
-          assert.isAtLeast(inventoryItems[0].daysStockLeft, 3.5)
-          assert.isAtLeast(inventoryItems[0].projectedWaste, 0)
+          assert.equal(inventoryItems[0].daysStockLeft, 3.5)
+          assert.equal(inventoryItems[0].projectedWaste, 200)
         })
 
         it('should return a list of inventory items, apply in-query ordering by consumable name', async () => {
