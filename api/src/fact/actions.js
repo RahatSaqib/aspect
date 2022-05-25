@@ -17,6 +17,8 @@ const types = {
   FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
   FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
   FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
+  FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS:
+    'FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS',
   FACT_CHECK_COMPLETION_RATE_PER_SITE: 'FACT_CHECK_COMPLETION_RATE_PER_SITE',
   SITE_WITH_LOW_COMPLETION_RATE: 'SITE_WITH_LOW_COMPLETION_RATE',
 }
@@ -197,6 +199,16 @@ function factExternalSourceCheck({ sourceName }) {
   }
 }
 
+/**
+ * Creates an action to fill custom fields completions
+ * for last 30 days
+ */
+function factFillCustomFieldsCompletionStatsLast30Days() {
+  return {
+    type: types.FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS,
+  }
+}
+
 module.exports = {
   types,
   factGenerateDeviceConnectivity,
@@ -210,4 +222,5 @@ module.exports = {
   factExternalSourceCheck,
   factCheckCompletionRatePerSite,
   siteWithLowCompletionRateIssue,
+  factFillCustomFieldsCompletionStatsLast30Days,
 }
