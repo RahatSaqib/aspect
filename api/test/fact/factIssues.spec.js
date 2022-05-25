@@ -1217,11 +1217,7 @@ describe('Fact based issues', () => {
     })
 
     before(async () => {
-      const { id, updatedBy, createdBy } = await knex('Site').first(
-        'id',
-        'createdBy',
-        'updatedBy'
-      )
+      const { id } = await knex('Site').first('id')
 
       const { id: assayId } = await knex('Assay').first()
       siteId = id
@@ -1232,10 +1228,7 @@ describe('Fact based issues', () => {
         assayId,
         date: subDays(new Date(), i),
         completionByField: JSON.stringify({}),
-        createdOn: new Date(),
         updatedOn: new Date(),
-        updatedBy,
-        createdBy,
       }))
 
       await knex('FactCustomFieldCompletion').insert(factRecords)
@@ -1248,9 +1241,10 @@ describe('Fact based issues', () => {
       })
 
       const issueTypeId = await issueTypeToId('SiteWithLowFieldCompletionRate')
-      // We should strart with no issues.
+
       let issues = await knex('Issue').where('issueTypeId', issueTypeId)
-      assert.equal(issues.length, 0)
+      assert.equal(issues.length, 0, 'This test should start with no issues')
+
       await messageContext.factCheckCompletionRatePerSite()
       await waitForIdle()
 
@@ -1258,6 +1252,7 @@ describe('Fact based issues', () => {
         .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
         .where('issueTypeId', issueTypeId)
         .select('siteId', 'is.externalId as issueStatusId')
+
       assert.equal(issues.length, 1)
       assert.equal(issues[0].siteId, siteId)
       assert.equal(issues[0].issueStatusId, 'Active')
@@ -1272,7 +1267,11 @@ describe('Fact based issues', () => {
         .select('siteId', 'is.externalId as issueStatusId')
       assert.equal(issues.length, 1)
       assert.equal(issues[0].siteId, siteId)
-      assert.equal(issues[0].issueStatusId, 'Resolved')
+      assert.equal(
+        issues[0].issueStatusId,
+        'Resolved',
+        'Issue should be "Resolved" after update stats and re-run this process'
+      )
     })
   })
 })
