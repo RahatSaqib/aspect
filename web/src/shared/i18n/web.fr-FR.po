@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
+"POT-Creation-Date: 2022-05-26T17:32:05.652Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -957,17 +957,10 @@ msgstr "Nombre moyen de destinataires de SMS par résultat positif"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
-#. Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. Average days between module swaps
 #: extracted_strings.json
-msgid ""
-"Average days between module swaps. The module swap issue appears when two "
-"consecutive results performed in the same device's slot, they have a "
-"different module serial number"
-msgstr ""
-"Nombre moyen de jours entre les échanges de modules. Le problème d'échange "
-"de modules apparaît lorsque deux résultats consécutifs sont exécutés dans le "
-"même emplacement du dispositif, mais qu'ils ont un numéro de série de module "
-"différent"
+msgid "Average days between module swaps"
+msgstr "Nombre moyen de jours entre les échanges de modules"
 
 #. [component.Widget.averageRecipientsOfEmail]
 #. defaultMessage is:
@@ -1950,6 +1943,13 @@ msgstr "Actuellement non sélectionnable - rôle manquant"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Douane"
+
+#. [component.Widget.bangladeshAverageCompletionTitle]
+#. defaultMessage is:
+#. Custom Fields Average Completion
+#: extracted_strings.json
+msgid "Custom Fields Average Completion"
+msgstr ""
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -8682,6 +8682,9 @@ msgstr "Test des échecs"
 msgid "Test history"
 msgstr "Historique des tests"
 
+#. [component.Widget.dashboardWidgetUnitTests]
+#. defaultMessage is:
+#. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
@@ -8715,6 +8718,16 @@ msgstr "Tests effectués"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Tests exécutés entre"
+
+#. [component.Widget.bangladeshAverageCompletionDescription]
+#. defaultMessage is:
+#. The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay
+#: extracted_strings.json
+msgid ""
+"The average custom fields completion percent in the current month. The "
+"calculation is based on the comparative between the completed score of each "
+"result's custom fields and total score of the fields assigned to the assay"
+msgstr ""
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -8928,6 +8941,9 @@ msgstr ""
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
@@ -8938,19 +8954,6 @@ msgstr ""
 "et le mois précédent. Un dispositif subit une interruption de service "
 "lorsqu'il est signalé comme \"en panne pour réparation\" pour son état de "
 "maintenance."
-
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
-#: extracted_strings.json
-msgid ""
-"The number of devices experiencing service interruption on this and the "
-"previous month.A device has a service interruption when it is flagged as "
-"\"Down for repair\" for it maintenance status."
-msgstr ""
-"Le nombre de dispositifs subissant une interruption de service ce mois-ci et "
-"le mois précédent. Un dispositif subit une interruption de service lorsqu'il "
-"est marqué comme \"en panne pour réparation\" pour son état de maintenance."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -8965,12 +8968,17 @@ msgstr ""
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "The number of module swaps made at the current month. The module swap "
+#| "issue appears when two consecutive results performed in the same device's "
+#| "slot, they have a different module serial number"
 msgid ""
 "The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same device's slot, "
-"they have a different module serial number"
+"appears when two consecutive results performed in the same slot have a "
+"different module serial number"
 msgstr ""
 "Le nombre d'échanges de modules effectués au cours du mois actuel. Le "
 "problème d'échange de module apparaît lorsque deux résultats consécutifs "
@@ -11122,11 +11130,28 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
 
+#~ msgid ""
+#~ "Average days between module swaps. The module swap issue appears when two "
+#~ "consecutive results performed in the same device's slot, they have a "
+#~ "different module serial number"
+#~ msgstr ""
+#~ "Nombre moyen de jours entre les échanges de modules. Le problème "
+#~ "d'échange de modules apparaît lorsque deux résultats consécutifs sont "
+#~ "exécutés dans le même emplacement du dispositif, mais qu'ils ont un "
+#~ "numéro de série de module différent"
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "Le nombre de dispositifs subissant une interruption de service ce mois-ci "
+#~ "et le mois précédent. Un dispositif subit une interruption de service "
+#~ "lorsqu'il est marqué comme \"en panne pour réparation\" pour son état de "
+#~ "maintenance."
+
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "La durée moyenne d'une interruption de service, en jours."
-
-#~ msgid "Average days between module swaps"
-#~ msgstr "Nombre moyen de jours entre les échanges de modules"
 
 #~ msgid "The average duration of a service interruption, in days"
 #~ msgstr "La durée moyenne d'une interruption de service, en jours"

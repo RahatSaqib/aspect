@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-26T12:21:09.739Z\n"
+"POT-Creation-Date: 2022-05-26T17:32:05.652Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -942,16 +942,10 @@ msgstr "Média de recebedores de SMS por resultado positivo"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
-#. Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. Average days between module swaps
 #: extracted_strings.json
-msgid ""
-"Average days between module swaps. The module swap issue appears when two "
-"consecutive results performed in the same device's slot, they have a "
-"different module serial number"
-msgstr ""
-"Média de dias entre as trocas de módulos. O problema da troca de módulos "
-"aparece quando dois resultados consecutivos realizados no slot do mesmo "
-"dispositivo, eles têm um número de série de módulo diferente"
+msgid "Average days between module swaps"
+msgstr "Média de dias entre as trocas de módulos"
 
 #. [component.Widget.averageRecipientsOfEmail]
 #. defaultMessage is:
@@ -8709,13 +8703,18 @@ msgstr "Testes realizados entre"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
-#. The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay
+#. The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "The average custom fields completion percent in the current month. Each "
+#| "custom field has a score assigned, and the completion percent is based on "
+#| "the comparative between the completed score of each result and total "
+#| "score of the fields assigned to the assay"
 msgid ""
-"The average custom fields completion percent in the current month. Each "
-"custom field has a score assigned, and the completion percent is based on "
-"the comparative between the completed score of each result and total score "
-"of the fields assigned to the assay"
+"The average custom fields completion percent in the current month. The "
+"calculation is based on the comparative between the completed score of each "
+"result's custom fields and total score of the fields assigned to the assay"
 msgstr ""
 "A percentagem média de preenchimento de campos personalizados no mês "
 "corrente. Cada campo personalizado tem uma pontuação atribuída, e a "
@@ -11090,8 +11089,14 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
 
-#~ msgid "Average days between module swaps"
-#~ msgstr "Média de dias entre as trocas de módulos"
+#~ msgid ""
+#~ "Average days between module swaps. The module swap issue appears when two "
+#~ "consecutive results performed in the same device's slot, they have a "
+#~ "different module serial number"
+#~ msgstr ""
+#~ "Média de dias entre as trocas de módulos. O problema da troca de módulos "
+#~ "aparece quando dois resultados consecutivos realizados no slot do mesmo "
+#~ "dispositivo, eles têm um número de série de módulo diferente"
 
 #~ msgid "The average duration of a service interruption, in days"
 #~ msgstr "A duração média de uma interrupção de serviço, em dias"
