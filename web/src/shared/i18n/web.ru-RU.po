@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
+"POT-Creation-Date: 2022-05-26T12:21:09.739Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1936,6 +1936,13 @@ msgstr "В настоящее время нельзя выбрать - отсу�
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Пользовательский"
+
+#. [component.Widget.bangladeshAverageCompletionTitle]
+#. defaultMessage is:
+#. Custom Fields Average Completion
+#: extracted_strings.json
+msgid "Custom Fields Average Completion"
+msgstr "Пользовательские поля Среднее заполнение"
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -8668,6 +8675,9 @@ msgstr "Неудачи теста"
 msgid "Test history"
 msgstr "История тестирования"
 
+#. [component.Widget.dashboardWidgetUnitTests]
+#. defaultMessage is:
+#. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
@@ -8701,6 +8711,21 @@ msgstr "Проведенные тесты"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Пробег тестов между"
+
+#. [component.Widget.bangladeshAverageCompletionDescription]
+#. defaultMessage is:
+#. The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay
+#: extracted_strings.json
+msgid ""
+"The average custom fields completion percent in the current month. Each "
+"custom field has a score assigned, and the completion percent is based on "
+"the comparative between the completed score of each result and total score "
+"of the fields assigned to the assay"
+msgstr ""
+"Средний процент заполнения пользовательских полей в текущем месяце. Каждому "
+"пользовательскому полю присвоен балл, а процент заполнения основывается на "
+"сравнении между заполненным баллом каждого результата и общим баллом полей, "
+"присвоенных анализу"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -8911,6 +8936,9 @@ msgstr ""
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
@@ -8919,19 +8947,6 @@ msgid ""
 msgstr ""
 "Количество устройств, на которых было прервано обслуживание в этом и "
 "предыдущем месяце."
-
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
-#: extracted_strings.json
-msgid ""
-"The number of devices experiencing service interruption on this and the "
-"previous month.A device has a service interruption when it is flagged as "
-"\"Down for repair\" for it maintenance status."
-msgstr ""
-"Количество устройств, испытывающих перебои в обслуживании в этом и "
-"предыдущем месяце. Устройство испытывает перебои в обслуживании, когда оно "
-"отмечено как \"Не работает для ремонта\" для статуса обслуживания."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -8944,16 +8959,16 @@ msgstr "Количество приборов, прошедших последн
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same device's slot, "
-"they have a different module serial number"
+"appears when two consecutive results performed in the same slot have a "
+"different module serial number"
 msgstr ""
 "Количество подмен модулей, выполненных в текущем месяце. Проблема подмены "
 "модулей возникает, когда два последовательных результата, выполненных в "
-"одном и том же слоте устройства, имеют разный серийный номер модуля"
+"одном и том же слоте, имеют разные серийные номера модулей"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -11085,6 +11100,15 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "Количество устройств, испытывающих перебои в обслуживании в этом и "
+#~ "предыдущем месяце. Устройство испытывает перебои в обслуживании, когда "
+#~ "оно отмечено как \"Не работает для ремонта\" для статуса обслуживания."
 
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "Средняя продолжительность перерыва в обслуживании, в днях."

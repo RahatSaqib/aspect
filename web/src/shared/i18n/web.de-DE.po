@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
+"POT-Creation-Date: 2022-05-26T12:21:09.739Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -873,10 +873,8 @@ msgstr "Durchschnittlich Bestätigt"
 #. defaultMessage is:
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average Days for Instrument Replacement"
 msgid "Average Days for Instrument Replacement."
-msgstr "Durchschnittliche Tage für Geräteaustausch"
+msgstr "Durchschnittliche Tage für den Austausch von Instrumenten."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1941,6 +1939,13 @@ msgstr "Derzeit nicht auswählbar - fehlende Rolle"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Benutzerdefiniert"
+
+#. [component.Widget.bangladeshAverageCompletionTitle]
+#. defaultMessage is:
+#. Custom Fields Average Completion
+#: extracted_strings.json
+msgid "Custom Fields Average Completion"
+msgstr "Benutzerdefinierte Felder Durchschnittliche Fertigstellung"
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -8676,6 +8681,9 @@ msgstr "Testfehler"
 msgid "Test history"
 msgstr "Testverlauf"
 
+#. [component.Widget.dashboardWidgetUnitTests]
+#. defaultMessage is:
+#. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
@@ -8709,6 +8717,22 @@ msgstr "Durchgeführte Tests"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Tests zwischen"
+
+#. [component.Widget.bangladeshAverageCompletionDescription]
+#. defaultMessage is:
+#. The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay
+#: extracted_strings.json
+msgid ""
+"The average custom fields completion percent in the current month. Each "
+"custom field has a score assigned, and the completion percent is based on "
+"the comparative between the completed score of each result and total score "
+"of the fields assigned to the assay"
+msgstr ""
+"Die durchschnittliche prozentuale Ausfüllung der benutzerdefinierten Felder "
+"im aktuellen Monat. Jedem benutzerdefinierten Feld ist eine Punktzahl "
+"zugewiesen, und die prozentuale Erledigung basiert auf dem Vergleich "
+"zwischen der erledigten Punktzahl jedes Ergebnisses und der Gesamtpunktzahl "
+"der dem Test zugewiesenen Felder"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -8923,6 +8947,9 @@ msgstr ""
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
@@ -8933,19 +8960,6 @@ msgstr ""
 "Betriebsunterbrechung auftrat. Ein Gerät hat eine Betriebsunterbrechung, "
 "wenn es für seinen Wartungsstatus als \"Zur Reparatur außer Betrieb\" "
 "gekennzeichnet ist."
-
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
-#: extracted_strings.json
-msgid ""
-"The number of devices experiencing service interruption on this and the "
-"previous month.A device has a service interruption when it is flagged as "
-"\"Down for repair\" for it maintenance status."
-msgstr ""
-"Die Anzahl der Geräte, bei denen in diesem und im vorangegangenen Monat eine "
-"Betriebsunterbrechung auftrat, wenn ein Gerät aufgrund seines Wartungsstatus "
-"als \"Zur Reparatur außer Betrieb\" gekennzeichnet ist."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -8960,16 +8974,16 @@ msgstr ""
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same device's slot, "
-"they have a different module serial number"
+"appears when two consecutive results performed in the same slot have a "
+"different module serial number"
 msgstr ""
 "Die Anzahl der im aktuellen Monat durchgeführten Modultauschvorgänge. Das "
-"Problem des Modultauschs tritt auf, wenn zwei aufeinanderfolgende Ergebnisse "
-"im selben Steckplatz des Geräts durchgeführt werden, die eine "
+"Problem des Modultauschs tritt auf, wenn zwei aufeinanderfolgende "
+"Ergebnisse, die im selben Steckplatz durchgeführt wurden, eine "
 "unterschiedliche Modul-Seriennummer haben"
 
 #. [component.Widget.confirmedCasesDescription]
@@ -11117,6 +11131,15 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "Die Anzahl der Geräte, bei denen in diesem und im vorangegangenen Monat "
+#~ "eine Betriebsunterbrechung auftrat, wenn ein Gerät aufgrund seines "
+#~ "Wartungsstatus als \"Zur Reparatur außer Betrieb\" gekennzeichnet ist."
 
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "Die durchschnittliche Dauer einer Dienstunterbrechung in Tagen."

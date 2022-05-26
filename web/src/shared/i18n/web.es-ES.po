@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
+"POT-Creation-Date: 2022-05-26T12:21:09.739Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1940,6 +1940,13 @@ msgstr "Actualmente no seleccionable - rol faltante"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Personalizado"
+
+#. [component.Widget.bangladeshAverageCompletionTitle]
+#. defaultMessage is:
+#. Custom Fields Average Completion
+#: extracted_strings.json
+msgid "Custom Fields Average Completion"
+msgstr "Campos personalizados Finalización media"
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -8679,6 +8686,9 @@ msgstr "Fallos en las pruebas"
 msgid "Test history"
 msgstr "Historial de pruebas"
 
+#. [component.Widget.dashboardWidgetUnitTests]
+#. defaultMessage is:
+#. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
@@ -8712,6 +8722,22 @@ msgstr "Pruebas realizadas"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Pruebas realizadas entre"
+
+#. [component.Widget.bangladeshAverageCompletionDescription]
+#. defaultMessage is:
+#. The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay
+#: extracted_strings.json
+msgid ""
+"The average custom fields completion percent in the current month. Each "
+"custom field has a score assigned, and the completion percent is based on "
+"the comparative between the completed score of each result and total score "
+"of the fields assigned to the assay"
+msgstr ""
+"El porcentaje medio de finalización de los campos personalizados en el mes "
+"actual. Cada campo personalizado tiene una puntuación asignada, y el "
+"porcentaje de finalización se basa en la comparativa entre la puntuación "
+"completada de cada resultado y la puntuación total de los campos asignados "
+"al ensayo"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -8927,6 +8953,9 @@ msgstr ""
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
@@ -8936,20 +8965,6 @@ msgstr ""
 "El número de dispositivos que experimentan una interrupción del servicio en "
 "este mes y en el anterior. Un dispositivo tiene una interrupción de servicio "
 "cuando está marcado como \"Abajo para reparación\" por su estado de "
-"mantenimiento."
-
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
-#: extracted_strings.json
-msgid ""
-"The number of devices experiencing service interruption on this and the "
-"previous month.A device has a service interruption when it is flagged as "
-"\"Down for repair\" for it maintenance status."
-msgstr ""
-"El número de dispositivos que experimentan una interrupción del servicio en "
-"este mes y en el anterior. Un dispositivo tiene una interrupción del "
-"servicio cuando está marcado como \"Down for repair\" por su estado de "
 "mantenimiento."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
@@ -8965,17 +8980,17 @@ msgstr ""
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same device's slot, "
-"they have a different module serial number"
+"appears when two consecutive results performed in the same slot have a "
+"different module serial number"
 msgstr ""
 "El número de intercambios de módulos realizados en el mes actual. El "
 "problema de intercambio de módulos aparece cuando dos resultados "
-"consecutivos realizados en la misma ranura del dispositivo, tienen un número "
-"de serie de módulo diferente"
+"consecutivos realizados en la misma ranura tienen un número de serie de "
+"módulo diferente"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -11111,6 +11126,16 @@ msgstr "{unit} calibraciones totales"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "El número de dispositivos que experimentan una interrupción del servicio "
+#~ "en este mes y en el anterior. Un dispositivo tiene una interrupción del "
+#~ "servicio cuando está marcado como \"Down for repair\" por su estado de "
+#~ "mantenimiento."
 
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "La duración media de interrupciones de servicio, en días."

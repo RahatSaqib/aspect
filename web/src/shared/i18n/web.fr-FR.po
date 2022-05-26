@@ -886,10 +886,8 @@ msgstr "Moyenne des réponses confirmées"
 #. defaultMessage is:
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average Days for Instrument Replacement"
 msgid "Average Days for Instrument Replacement."
-msgstr "Nombre moyen de jours pour le remplacement de l'instrument"
+msgstr "Nombre moyen de jours pour le remplacement d'un instrument."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
