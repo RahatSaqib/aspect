@@ -263,8 +263,7 @@ export const messages = defineMessages({
   },
   averageDaysModuleSwap: {
     id: 'component.Widget.averageDaysModuleSwap',
-    defaultMessage:
-      "Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
+    defaultMessage: 'Average days between module swaps',
   },
   averageDaysModuleSwapDescription: {
     id: 'component.Widget.averageDaysModuleSwapDescription',
