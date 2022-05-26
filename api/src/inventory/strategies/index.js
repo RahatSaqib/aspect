@@ -3,8 +3,7 @@ const _ = require('lodash')
 module.exports = {
   withLotStrategy,
   withExpiresDateStrategy,
-
-  default: withLotAndExpirationDateStrategy,
+  withLotAndExpirationDateStrategy,
 }
 
 async function withLotStrategy(

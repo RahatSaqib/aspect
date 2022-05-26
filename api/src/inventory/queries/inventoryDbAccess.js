@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { loadPlugin } = require('../../plugin/registration')
+
+const strategies = require('../strategies')
 
 const INVENTORY_COMMON_FIELDS = [
   'c.id as consumableId',
@@ -33,13 +34,12 @@ async function findInventoryItem(
   consumableId,
   inTransitFromSiteId,
   lotNumber,
-  expiresOn,
-  partnerId
+  expiresOn
 ) {
-  const { plugin } = await knex('Partner as p')
-    .where({ 'p.id': partnerId })
-    .first('p.plugin')
-  const strategy = null // await loadPlugin(plugin, 'inventoryStrategy')
+  const { strategy } = knex('Consumable')
+    .where({ consumableId })
+    .first('strategy')
+
   const matchingInventoryItemsQuery = knex('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -53,8 +53,10 @@ async function findInventoryItem(
       'ii.siteId': siteId,
       'ii.consumableId': consumableId,
     })
+  const matchingStrategy = strategies[strategy]
+  if (matchingStrategy)
+    matchingStrategy(matchingInventoryItems, { lotNumber, expiresOn })
 
-  if (strategy) strategy(matchingInventoryItems, { lotNumber, expiresOn })
   if (inTransitFromSiteId) {
     matchingInventoryItemsQuery.where(
       'ii.inTransitFromSiteId',
