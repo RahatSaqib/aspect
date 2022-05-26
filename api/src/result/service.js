@@ -2207,6 +2207,7 @@ function getBaseQueryForResults() {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId } = query
+  debugger
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -2214,6 +2215,9 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca.resultCategoryId'
       )
     })
+    .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
+    .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
+    .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
     .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',

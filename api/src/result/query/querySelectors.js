@@ -245,6 +245,7 @@ const SELECT_COMMON_FIELDS = [
   'dis.id as diseaseId',
   'dis.name as diseaseName',
   'dis.externalId as diseaseExternalId',
+  'sdpn.name AS deviceProvinceName',
 ]
 
 function getSelectShowFields(userTimeZone) {

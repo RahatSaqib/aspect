@@ -65,6 +65,7 @@ async function getAllResultsForExport(auth, query) {
       header: column.title,
     })),
     // TODO: move below items to Excel template for better formatting and translations
+    { key: 'deviceProvinceName', header: 'Device Province Name' },
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'sampleId', header: 'Sample Id' },
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
