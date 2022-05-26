@@ -385,7 +385,7 @@ export const messages = defineMessages({
   bangladeshAverageCompletionDescription: {
     id: 'component.Widget.bangladeshAverageCompletionDescription',
     defaultMessage:
-      'The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay',
+      "The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay",
   },
 })
 

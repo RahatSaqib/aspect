@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-26T12:21:09.739Z\n"
+"POT-Creation-Date: 2022-05-26T17:16:24.267Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -8697,18 +8697,16 @@ msgstr "Tests Run Between"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
-#. The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay
+#. The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay
 #: extracted_strings.json
 msgid ""
-"The average custom fields completion percent in the current month. Each "
-"custom field has a score assigned, and the completion percent is based on "
-"the comparative between the completed score of each result and total score "
-"of the fields assigned to the assay"
+"The average custom fields completion percent in the current month. The "
+"calculation is based on the comparative between the completed score of each "
+"result's custom fields and total score of the fields assigned to the assay"
 msgstr ""
-"The average custom fields completion percent in the current month. Each "
-"custom field has a score assigned, and the completion percent is based on "
-"the comparative between the completed score of each result and total score "
-"of the fields assigned to the assay"
+"The average custom fields completion percent in the current month. The "
+"calculation is based on the comparative between the completed score of each "
+"result's custom fields and total score of the fields assigned to the assay"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
