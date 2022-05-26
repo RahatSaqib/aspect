@@ -11,6 +11,7 @@
       "gxAlertDbColumn": "PatientGender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
+      "payloadDestinationPath": "patient.PatientGender",
       "items": [
         {
           "key": 1,
@@ -35,6 +36,7 @@
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
+      "payloadDestinationPath": "patient.PatientAge",
       "validation": [
         {
           "validationType": "integer",
@@ -57,7 +59,7 @@
       "i18nKeyCaption": "RetreatmentCasei18nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.203.value",
-      "payloadDestinationPath": "patient.RetreatmentCase",
+      "payloadDestinationPath": "patient.PreviouslyTreated",
       "items": [
         {
           "key": 1,
@@ -103,7 +105,7 @@
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.205.value",
-      "payloadDestinationPath": "patient.ReferringClinicianPhone"
+      "payloadDestinationPath": "patient.PatientPhone"
     },
     {
       "id": 206,

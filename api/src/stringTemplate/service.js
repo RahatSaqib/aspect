@@ -218,7 +218,6 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
-
     if (options.dynamic) {
       memo[fieldName] = processUsingDynamicHelpers(template, ds)
     } else {

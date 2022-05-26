@@ -16,6 +16,7 @@ const {
   factGenerateResultCounts,
   factDataCategoryLow,
   factNewResultsAvailable,
+  siteWithLowCompletionRateIssue,
 } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const {
@@ -40,6 +41,8 @@ const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
 const timeFramesToCalculate = ['month']
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
+
+const MIN_PERCENTAGE_FIELDS_COMPLETION_RATE = 0.8
 
 async function onFactGenerateDeviceConnectivity(
   { deviceId },
@@ -1020,6 +1023,42 @@ async function onFactExternalSourceCheck({ sourceName }, context) {
   }
 }
 
+async function onFactCompletionRatePerSite(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    siteWithLowCompletionRateIssue,
+  })
+
+  return context.run(async knex => {
+    const now = new Date()
+    // get sites with completion rate above the 80%
+
+    const sitesWithLowCompletionRate = await knex(
+      'FactCustomFieldCompletion as fcr'
+    )
+      .join('Site as si', 'si.id', 'fcr.siteId')
+      .where('fcr.date', '>=', subDays(now, 30))
+      .select(
+        'fcr.siteId',
+        knex.raw(
+          'SUM(completionRate*recordCount)/SUM(recordCount) as completionRatePerSite'
+        ),
+        'si.partnerId as partnerId',
+        'si.geographyId as geographyId'
+      )
+      .groupBy('fcr.siteId', 'partnerId', 'geographyId')
+      .having(
+        knex.raw('completionRatePerSite <= ?', [
+          MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
+        ])
+      )
+
+    // loop all and trigger issue
+    _.map(sitesWithLowCompletionRate, async site => {
+      context.siteWithLowCompletionRateIssue(site)
+    })
+  })
+}
+
 module.exports = {
   daysToCalculate,
   onFactGenerateDeviceConnectivity,
@@ -1033,6 +1072,8 @@ module.exports = {
   checkDataCategoriesForLowStatus,
   getDataCategoryStatus,
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
+  MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
   onFactNewResultsAvailableCheck,
   onFactExternalSourceCheck,
+  onFactCompletionRatePerSite,
 }

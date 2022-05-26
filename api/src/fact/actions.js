@@ -17,6 +17,10 @@ const types = {
   FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
   FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
   FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
+  FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS:
+    'FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS',
+  FACT_CHECK_COMPLETION_RATE_PER_SITE: 'FACT_CHECK_COMPLETION_RATE_PER_SITE',
+  SITE_WITH_LOW_COMPLETION_RATE: 'SITE_WITH_LOW_COMPLETION_RATE',
 }
 
 /**
@@ -50,6 +54,16 @@ function factGenerateResultCounts(deviceId, options) {
     type: types.FACT_GENERATE_RESULT_COUNTS,
     deviceId,
     options,
+  }
+}
+
+/**
+ * Requests facts to be regenerated. Will be called on
+ * schedule to run fact ETL
+ */
+function factCheckCompletionRatePerSite() {
+  return {
+    type: types.FACT_CHECK_COMPLETION_RATE_PER_SITE,
   }
 }
 
@@ -152,6 +166,27 @@ function factNewResultsAvailable({ siteId, numberOfResults }) {
   }
 }
 
+function siteWithLowCompletionRateIssue({
+  siteId,
+  geographyId,
+  partnerId,
+  completionRatePerSite: completionRate,
+}) {
+  if (!siteId || !completionRate) {
+    throw new Error('Must specify siteId and completionRate for new Evaluation')
+  }
+  return {
+    type: types.SITE_WITH_LOW_COMPLETION_RATE,
+    siteId,
+    geographyId,
+    partnerId,
+    options: {
+      completionRate,
+      completionRatePercentage: (completionRate * 100).toFixed(2),
+    },
+  }
+}
+
 /**
  * Creates an action to notify that it is time to check uptime robot stats for Aspect
  *
@@ -161,6 +196,16 @@ function factExternalSourceCheck({ sourceName }) {
   return {
     type: types.FACT_CHECK_EXTERNAL_FACT_SOURCE,
     sourceName,
+  }
+}
+
+/**
+ * Creates an action to fill custom fields completions
+ * for last 30 days
+ */
+function factFillCustomFieldsCompletionStatsLast30Days() {
+  return {
+    type: types.FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS,
   }
 }
 
@@ -175,4 +220,7 @@ module.exports = {
   factNewResultsAvailableCheck,
   factNewResultsAvailable,
   factExternalSourceCheck,
+  factCheckCompletionRatePerSite,
+  siteWithLowCompletionRateIssue,
+  factFillCustomFieldsCompletionStatsLast30Days,
 }
