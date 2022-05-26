@@ -1,5 +1,3 @@
-const { addAuditFields } = require('./utils')
-
 const tableName = 'FactCustomFieldCompletion'
 
 module.exports.up = async function (knex) {
@@ -21,7 +19,7 @@ module.exports.up = async function (knex) {
     x.decimal('completionRate', 5, 2).notNullable()
     x.json('completionByField').notNullable()
     x.integer('recordCount').notNullable()
-    addAuditFields(x)
+    x.dateTime('updatedOn').notNullable()
   })
 }
 

@@ -9,7 +9,11 @@ const {
   checkDataCategoriesForLowStatus,
   onFactNewResultsAvailableCheck,
   onFactExternalSourceCheck,
+  onFactCompletionRatePerSite,
 } = require('./service')
+const {
+  factFillCustomFieldsCompletionStatsLast30Days,
+} = require('./customFieldsCompletionStatsService')
 
 const subscriptions = [
   {
@@ -30,6 +34,9 @@ const subscriptions = [
       FACT_DATA_CATEGORY_LOW_CHECK: checkDataCategoriesForLowStatus,
       FACT_NEW_RESULTS_AVAILABLE_CHECK: onFactNewResultsAvailableCheck,
       FACT_CHECK_EXTERNAL_FACT_SOURCE: onFactExternalSourceCheck,
+      FACT_CHECK_COMPLETION_RATE_PER_SITE: onFactCompletionRatePerSite,
+      FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS:
+        factFillCustomFieldsCompletionStatsLast30Days,
     },
   },
 ]

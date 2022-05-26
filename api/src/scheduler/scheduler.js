@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const cron = require('node-cron')
+
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
@@ -8,6 +9,8 @@ const {
   factDataCategoryLowCheck,
   factNewResultsAvailableCheck,
   factExternalSourceCheck,
+  factFillCustomFieldsCompletionStatsLast30Days,
+  factCheckCompletionRatePerSite,
 } = require('../fact/actions')
 const { escalateIssues, resolveIssues } = require('../issue/actions')
 const { logDeviceMaintenanceStatus } = require('../device/actions')
@@ -26,12 +29,19 @@ function startScheduler(queue) {
     escalateIssues,
     resolveIssues,
     logDeviceMaintenanceStatus,
+    factFillCustomFieldsCompletionStatsLast30Days,
+    factCheckCompletionRatePerSite,
   })
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
   dispatcher.factCalculateInventoryConsumptionRates()
+  dispatcher.factCheckCompletionRatePerSite()
 
+  cron.schedule(
+    '30 00 * * *',
+    dispatcher.factFillCustomFieldsCompletionStatsLast30Days
+  ) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minmutes past the hour
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour

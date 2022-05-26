@@ -189,7 +189,7 @@ export const messages = defineMessages({
   moduleSwapsDescription: {
     id: 'component.Widget.moduleSwapsDescription',
     defaultMessage:
-      "The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number",
+      'The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
   },
   gxPositiveResultsNotifiedTitle: {
     id: 'component.Widget.gxPositiveResultsNotifiedTitle',
@@ -377,6 +377,15 @@ export const messages = defineMessages({
   unusedModulesStats: {
     id: 'component.Widget.unusedModulesStats',
     defaultMessage: '{unit} last month',
+  },
+  bangladeshAverageCompletionTitle: {
+    id: 'component.Widget.bangladeshAverageCompletionTitle',
+    defaultMessage: 'Custom Fields Average Completion',
+  },
+  bangladeshAverageCompletionDescription: {
+    id: 'component.Widget.bangladeshAverageCompletionDescription',
+    defaultMessage:
+      'The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay',
   },
 })
 
