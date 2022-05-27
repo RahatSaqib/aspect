@@ -7,13 +7,14 @@ async function up(knex) {
     dailyConsumptionRate decimal(10,2),
     jsonExpirationAndQuantity varchar(10000)
   ) RETURNS decimal(10,2) DETERMINISTIC
-BEGIN
+  BEGIN
     set @secondsInDay = 24 * 60 * 60;
-    set @now = startDate;
-    set @currentDay = DATE_SUB(DATE_ADD(@now, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND); -- end of today, i.e. '... 23:59:59.999999'
-          
+    set @startDate = startDate;
+    set @now = DATE_SUB(DATE_ADD(@startDate, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND); -- end of today, i.e. '... 23:59:59.999999'
+    set @currentDay = @now;
+
     set @daysStockLeft = (
-      SELECT TIMESTAMPDIFF(SECOND, @now, MAX(@currentDay)) / @secondsInDay
+      SELECT TIMESTAMPDIFF(SECOND, @now, MAX(currentDay)) / @secondsInDay
       FROM (
         SELECT 
           /*
@@ -41,7 +42,7 @@ BEGIN
                 ELSE date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
                 END 
             ELSE @currentDay 
-            END
+            END AS currentDay
           FROM 
             JSON_TABLE(
               jsonExpirationAndQuantity, 
@@ -50,7 +51,7 @@ BEGIN
                 quantityOnHand DECIMAL(10,2) PATH '$.quantityOnHand'
               )
             ) AS t
-          WHERE t.expiresOn IS NOT NULL AND t.expiresOn > NOW()
+          WHERE t.expiresOn IS NOT NULL AND t.expiresOn > @now
           ORDER BY t.expiresOn
         ) as t1
     );
@@ -67,8 +68,9 @@ BEGIN
   ) RETURNS int(11) DETERMINISTIC
   BEGIN
     set @secondsInDay = 24 * 60 * 60;
-    set @now = startDate;
-    set @currentDay = DATE_SUB(DATE_ADD(@now, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND); -- end of today, i.e. '... 23:59:59.999999'
+    set @startDate = startDate;
+    set @now = DATE_SUB(DATE_ADD(@startDate, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND); -- end of today, i.e. '... 23:59:59.999999'
+    set @currentDay = @now;
     set @projectedWaste = 0;
             
     set @result = (
@@ -124,7 +126,7 @@ BEGIN
                 quantityOnHand DECIMAL(10,2) PATH '$.quantityOnHand'
               )
             ) AS t
-          WHERE t.expiresOn IS NOT NULL AND t.expiresOn > NOW()
+          WHERE t.expiresOn IS NOT NULL AND t.expiresOn > @now
           order by t.expiresOn
         ) as t1
     );
