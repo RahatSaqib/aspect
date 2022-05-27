@@ -3,14 +3,14 @@ module.exports = require('../src/db').migration(up, down)
 async function up(knex) {
   await knex.raw(`
   CREATE FUNCTION GetDaysStockLeft(
-    startDate datetime,
-    dailyConsumptionRate decimal,
+    startDate date,
+    dailyConsumptionRate decimal(10,2),
     jsonExpirationAndQuantity varchar(10000)
-  ) RETURNS decimal(10,2)
+  ) RETURNS decimal(10,2) DETERMINISTIC
 BEGIN
     set @secondsInDay = 24 * 60 * 60;
     set @now = startDate;
-    set @currentDay = DATE_SUB(DATE_ADD(DATE(@now), INTERVAL 1 DAY), INTERVAL 1 SECOND); -- end of today, i.e. '... 23:59:59'
+    set @currentDay = DATE_SUB(DATE_ADD(@now, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND); -- end of today, i.e. '... 23:59:59.999999'
           
     set @daysStockLeft = (
       SELECT TIMESTAMPDIFF(SECOND, @now, MAX(@currentDay)) / @secondsInDay
@@ -19,7 +19,7 @@ BEGIN
           /*
           * include whole expiresOn date
           */
-          @endOfExpirationDate := DATE_SUB(DATE_ADD(DATE(expiresOn), INTERVAL 1 DAY), INTERVAL 1 MICROSECOND) as endOfExpirationDate,
+          @endOfExpirationDate := DATE_SUB(DATE_ADD(expiresOn, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND),
           /*
           * how many days of unexpired inventories left for current item
           */
@@ -31,13 +31,14 @@ BEGIN
           /*
           * shift pointer of the currentDay
           */
-          CASE WHEN @endOfExpirationDate > @currentDay
+          @currentDay := CASE
+            WHEN @endOfExpirationDate > @currentDay
             THEN
               CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
                 -- items will be consumed before expiring - no wasted stock
-                THEN @currentDay := date_add(@currentDay, INTERVAL (24 * quantityOnHand / dailyConsumptionRate) HOUR)
+                THEN date_add(@currentDay, INTERVAL (24 * quantityOnHand / dailyConsumptionRate) HOUR)
                 -- items will expire before consuming the stock - stock will be wasted
-                ELSE @currentDay := date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
+                ELSE date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
                 END 
             ELSE @currentDay 
             END
@@ -60,14 +61,14 @@ BEGIN
 
   await knex.raw(`
   CREATE FUNCTION GetProjectedWaste(
-    startDate datetime,
-    dailyConsumptionRate decimal,
+    startDate date,
+    dailyConsumptionRate decimal(10,2),
     jsonExpirationAndQuantity varchar(10000)
-  ) RETURNS int(11)
+  ) RETURNS int(11) DETERMINISTIC
   BEGIN
     set @secondsInDay = 24 * 60 * 60;
     set @now = startDate;
-    set @currentDay = @now;
+    set @currentDay = DATE_SUB(DATE_ADD(@now, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND); -- end of today, i.e. '... 23:59:59.999999'
     set @projectedWaste = 0;
             
     set @result = (
@@ -77,7 +78,7 @@ BEGIN
           /*
           * include whole expiresOn date
           */
-          @endOfExpirationDate := DATE_SUB(DATE_ADD(DATE(expiresOn), INTERVAL 1 DAY), INTERVAL 1 MICROSECOND),
+          @endOfExpirationDate := DATE_SUB(DATE_ADD(expiresOn, INTERVAL 1 DAY), INTERVAL 1 MICROSECOND),
           /*
           * how many days of unexpired inventories left for current item
           */
@@ -90,27 +91,29 @@ BEGIN
           * how many are going to be wasted
           */
           @projectedWaste := @projectedWaste +
-            CASE WHEN @endOfExpirationDate > @currentDay
+            CASE 
+            WHEN @endOfExpirationDate > @currentDay
             THEN
-            CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
-              -- items will be consumed before expiring - no wasted stock
-              THEN 0
-              -- items will expire before consuming the stock - stock will be wasted
-              ELSE quantityOnHand - @daysLeftUnexpired * dailyConsumptionRate
-              END 
+                CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
+                  -- items will be consumed before expiring - no wasted stock
+                  THEN 0
+                  -- items will expire before consuming the stock - stock will be wasted
+                  ELSE quantityOnHand - @daysLeftUnexpired * dailyConsumptionRate
+                  END
             ELSE quantityOnHand
             END as projectedWaste,
           /*
           * shift pointer of the currentDay
           */
-            CASE WHEN @endOfExpirationDate > @currentDay
+          @currentDay := CASE
+            WHEN @endOfExpirationDate > @currentDay
             THEN
-            CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
-              -- items will be consumed before expiring - no wasted stock
-              THEN @currentDay := date_add(@currentDay, INTERVAL (24 * quantityOnHand / dailyConsumptionRate) HOUR)
-              -- items will expire before consuming the stock - stock will be wasted
-              ELSE @currentDay := date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
-              END 
+              CASE WHEN (@daysLeftUnexpired * dailyConsumptionRate) >= quantityOnHand
+                -- items will be consumed before expiring - no wasted stock
+                THEN date_add(@currentDay, INTERVAL (24 * quantityOnHand / dailyConsumptionRate) HOUR)
+                -- items will expire before consuming the stock - stock will be wasted
+                ELSE date_add(@currentDay, INTERVAL @daysLeftUnexpired DAY)
+                END 
             ELSE @currentDay 
             END
           FROM 
