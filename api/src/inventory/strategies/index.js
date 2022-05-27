@@ -6,11 +6,7 @@ module.exports = {
   withLotAndExpirationDateStrategy,
 }
 
-async function withLotStrategy(
-  knexQuery,
-  { lotNumber },
-  inventoryItemAlias = 'ii'
-) {
+function withLotStrategy(knexQuery, { lotNumber }, inventoryItemAlias = 'ii') {
   if (!_.isEmpty(lotNumber)) {
     knexQuery.where('ii.lotNumber', lotNumber)
   } else {
@@ -22,26 +18,23 @@ async function withLotStrategy(
   }
 }
 
-async function withExpiresDateStrategy(
+function withExpiresDateStrategy(
   knexQuery,
-  { expiresOn },
+  { expiresOn = null },
   inventoryItemAlias = 'ii'
 ) {
-  if (!_.isEmpty(expiresOn)) {
+  if (!_.isNil(expiresOn)) {
     knexQuery.where(`${inventoryItemAlias}.expiresOn`, expiresOn)
   } else {
     knexQuery.whereNull(`${inventoryItemAlias}.expiresOn`)
   }
 }
 
-async function withLotAndExpirationDateStrategy(
+function withLotAndExpirationDateStrategy(
   knexQuery,
-  { expiresOn, lotNumber },
+  { lotNumber, expiresOn },
   inventoryItemAlias = 'ii'
 ) {
-  return withLotStrategy(
-    withExpiresDateStrategy(knexQuery, { expiresOn }, inventoryItemAlias),
-    { lotNumber },
-    inventoryItemAlias
-  )
+  withLotStrategy(knexQuery, { lotNumber }, inventoryItemAlias)
+  withExpiresDateStrategy(knexQuery, { expiresOn }, inventoryItemAlias)
 }

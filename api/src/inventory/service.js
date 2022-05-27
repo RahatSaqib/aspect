@@ -31,33 +31,11 @@ const {
   auditInventoryStockExpiring,
 } = require('../shared/utilsInventory')
 const { splitCsvWithTrim } = require('../shared/string')
-const { findInventoryItem } = require('./queries/inventoryDbAccess')
-
-const INVENTORY_COMMON_FIELDS = [
-  'c.id as consumableId',
-  'c.name as consumableName',
-  'c.manufacturer',
-  'c.canExpire',
-  'u.shortName as unitShortName',
-  's.id as siteId',
-  's.name as siteName',
-  'g.countryId',
-  'g.stateId',
-  'g.lgaId',
-  'co.name as countryName',
-  'st.name as stateName',
-  'l.name as lgaName',
-]
-
-const INVENTORY_ITEM_SELECT = [
-  ...INVENTORY_COMMON_FIELDS,
-  'ii.quantityOnHand',
-  'ii.id',
-  'ii.expiresOn',
-  'ii.lotNumber',
-  'itfs.name as inTransitFromSiteName',
-  'ii.inTransitFromSiteId',
-]
+const {
+  findInventoryItem,
+  INVENTORY_ITEM_SELECT,
+  INVENTORY_COMMON_FIELDS,
+} = require('./queries/inventoryDbAccess')
 
 // Select for inventory grouped by site and consumable
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [

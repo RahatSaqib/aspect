@@ -11,7 +11,7 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 const { startOfDayUtc } = require('../../src/shared/date')
 
-describe.only('Inventory Routes', () => {
+describe('Inventory Routes', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
     const [site1, site2] = await knex('Site as s')
@@ -446,66 +446,60 @@ describe.only('Inventory Routes', () => {
     let transitItem
     const inventoryItemsToRemove = []
 
-    beforeEach(() =>
-      run(async knex => {
-        const { id: consumableId } = await knex('Consumable')
-          .where('name', consumableName)
-          .first('id')
-        const dataConstraints = await getConstraints({ name: 'admin' })
-        ;[{ id: siteId }, destinationSite] = await knex('Site as s')
-          .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-          .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-          .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
-          .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-          .modify(addConstraints, dataConstraints, {
-            site: 's',
-            geography: 'g',
-          })
-          .select('s.id')
-
-        const expiryDate = new Date(
-          addYears(new Date(), 1).setHours(0, 0, 0, 0)
-        )
-        const [inventoryItemId] = await knex('InventoryItem').insert({
-          consumableId,
-          siteId,
-          lotNumber: testLotNumber,
-          expiresOn: expiryDate,
-          quantityOnHand: initialQuantityOnHand,
+    beforeEach(async () => {
+      const { id: consumableId } = await knex('Consumable')
+        .where('name', consumableName)
+        .first('id')
+      const dataConstraints = await getConstraints({ name: 'admin' })
+      ;[{ id: siteId }, destinationSite] = await knex('Site as s')
+        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+        .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
+        .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+        .modify(addConstraints, dataConstraints, {
+          site: 's',
+          geography: 'g',
         })
-        inventoryItemsToRemove.push(inventoryItemId)
-        inventoryItem = await knex('InventoryItem')
-          .where({ id: inventoryItemId })
-          .first()
-        assert.isOk(destinationSite, `Cannot find destinationSite`)
-      })
-    )
+        .select('s.id')
 
-    afterEach(async () =>
-      run(async knex => {
-        await knex('InventoryLog')
-          .whereIn('inventoryItemId', inventoryItemsToRemove)
-          .orWhere(function () {
-            if (transitItem != null) {
-              this.where({ inventoryItemId: transitItem.id })
-            }
-          })
-          .delete()
-        await knex('InventoryItem')
-          .whereIn('id', inventoryItemsToRemove)
-          .orWhere(function () {
-            if (transitItem != null) {
-              this.where({ id: transitItem.id })
-            }
-          })
-          .delete()
+      const expiryDate = new Date(addYears(new Date(), 1).setHours(0, 0, 0, 0))
+      const [inventoryItemId] = await knex('InventoryItem').insert({
+        consumableId,
+        siteId,
+        lotNumber: testLotNumber,
+        expiresOn: expiryDate,
+        quantityOnHand: initialQuantityOnHand,
       })
-    )
+      inventoryItemsToRemove.push(inventoryItemId)
+      inventoryItem = await knex('InventoryItem')
+        .where({ id: inventoryItemId })
+        .first()
+      assert.isOk(destinationSite, `Cannot find destinationSite`)
+    })
+
+    afterEach(async () => {
+      await knex('InventoryLog')
+        .whereIn('inventoryItemId', inventoryItemsToRemove)
+        .orWhere(function () {
+          if (transitItem != null) {
+            this.where({ inventoryItemId: transitItem.id })
+          }
+        })
+        .delete()
+      await knex('InventoryItem')
+        .whereIn('id', inventoryItemsToRemove)
+        .orWhere(function () {
+          if (transitItem != null) {
+            this.where({ id: transitItem.id })
+          }
+        })
+        .delete()
+    })
 
     describe('/inventory/add', () => {
       describe('PUT', () => {
-        it('should update the quantity of an inventory item', done => {
-          server
+        it('should update the quantity of an inventory item', async () => {
+          const res = await server
             .put(`${addInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
@@ -517,17 +511,14 @@ describe.only('Inventory Routes', () => {
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.equal(
-                res.body.data.quantityOnHand,
-                _.max([0, inventoryItem.quantityOnHand + quantityToAdjust])
-              )
-              done()
-            })
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.equal(
+            res.body.data.quantityOnHand,
+            _.max([0, inventoryItem.quantityOnHand + quantityToAdjust])
+          )
         })
       })
     })

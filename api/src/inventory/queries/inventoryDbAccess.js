@@ -1,6 +1,5 @@
-const _ = require('lodash')
-
 const strategies = require('../strategies')
+const { knex } = require('../../db')
 
 const INVENTORY_COMMON_FIELDS = [
   'c.id as consumableId',
@@ -28,18 +27,20 @@ const INVENTORY_ITEM_SELECT = [
   'ii.inTransitFromSiteId',
 ]
 
+async function getConsumableStrategy(consumableId) {
+  const { strategy } = await knex('Consumable')
+    .where({ id: consumableId })
+    .first('strategy')
+  return strategies[strategy]
+}
+
 async function findInventoryItem(
-  knex,
   siteId,
   consumableId,
-  inTransitFromSiteId,
+  expiresOn,
   lotNumber,
-  expiresOn
+  inTransitFromSiteId
 ) {
-  const { strategy } = knex('Consumable')
-    .where({ consumableId })
-    .first('strategy')
-
   const matchingInventoryItemsQuery = knex('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -53,9 +54,9 @@ async function findInventoryItem(
       'ii.siteId': siteId,
       'ii.consumableId': consumableId,
     })
-  const matchingStrategy = strategies[strategy]
+  const matchingStrategy = await getConsumableStrategy(consumableId)
   if (matchingStrategy)
-    matchingStrategy(matchingInventoryItems, { lotNumber, expiresOn })
+    matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
 
   if (inTransitFromSiteId) {
     matchingInventoryItemsQuery.where(
@@ -65,13 +66,14 @@ async function findInventoryItem(
   } else {
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
-
-  const matchingInventoryItems = await matchingInventoryItemsQuery.select(
+  const matchingInventoryItems = await matchingInventoryItemsQuery.first(
     INVENTORY_ITEM_SELECT
   )
-  return _.head(matchingInventoryItems)
+  return matchingInventoryItems
 }
 
 module.exports = {
   findInventoryItem,
+  INVENTORY_ITEM_SELECT,
+  INVENTORY_COMMON_FIELDS,
 }
