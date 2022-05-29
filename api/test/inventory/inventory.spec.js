@@ -11,6 +11,36 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 const { startOfDayUtc } = require('../../src/shared/date')
 
+const assertBodyAndInventoryItems = res => {
+  assert.equal(res.status, 200)
+  assert.typeOf(res.body, 'Object')
+  assert.property(res.body, 'data')
+  assert.typeOf(res.body.data, 'array')
+  res.body.data.forEach(inventoryItem => {
+    assert.property(inventoryItem, 'consumableId')
+    assert.property(inventoryItem, 'siteId')
+    assert.property(inventoryItem, 'canExpire')
+    assert.property(inventoryItem, 'quantityOnHand')
+    assert.property(inventoryItem, 'consumableName')
+    assert.property(inventoryItem, 'manufacturer')
+    assert.property(inventoryItem, 'unitShortName')
+    assert.property(inventoryItem, 'siteName')
+    assert.property(inventoryItem, 'countryId')
+    assert.property(inventoryItem, 'stateId')
+    assert.property(inventoryItem, 'lgaId')
+    assert.property(inventoryItem, 'countryName')
+    assert.property(inventoryItem, 'stateName')
+    assert.property(inventoryItem, 'lgaName')
+    assert.property(inventoryItem, 'daysStockLeft')
+    assert.property(inventoryItem, 'dailyConsumptionRate')
+    assert.property(inventoryItem, 'id')
+    assert.notProperty(inventoryItem, 'lotNumber')
+    assert.notProperty(inventoryItem, 'expiresOn')
+    assert.notProperty(inventoryItem, 'inTransitFromSiteId')
+    assert.notProperty(inventoryItem, 'inTransitFromSiteName')
+  })
+}
+
 describe('Inventory Routes', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
@@ -229,38 +259,46 @@ describe('Inventory Routes', () => {
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
           const res = await server
-            .get(`${path}`)
+            .get(`${path}?size=500`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          res.body.data.forEach(inventoryItem => {
-            assert.property(inventoryItem, 'consumableId')
-            assert.property(inventoryItem, 'siteId')
-            assert.property(inventoryItem, 'canExpire')
-            assert.property(inventoryItem, 'quantityOnHand')
-            assert.property(inventoryItem, 'consumableName')
-            assert.property(inventoryItem, 'manufacturer')
-            assert.property(inventoryItem, 'unitShortName')
-            assert.property(inventoryItem, 'siteName')
-            assert.property(inventoryItem, 'countryId')
-            assert.property(inventoryItem, 'stateId')
-            assert.property(inventoryItem, 'lgaId')
-            assert.property(inventoryItem, 'countryName')
-            assert.property(inventoryItem, 'stateName')
-            assert.property(inventoryItem, 'lgaName')
-            assert.property(inventoryItem, 'daysStockLeft')
-            assert.property(inventoryItem, 'dailyConsumptionRate')
-            assert.property(inventoryItem, 'id')
-            assert.notProperty(inventoryItem, 'lotNumber')
-            assert.notProperty(inventoryItem, 'expiresOn')
-            assert.notProperty(inventoryItem, 'inTransitFromSiteId')
-            assert.notProperty(inventoryItem, 'inTransitFromSiteName')
-          })
+          assertBodyAndInventoryItems(res)
 
           assert.equal(res.status, 200)
+
+          const inventoryItems = res.body.data.filter(
+            ii => ii.siteId === site1Id && ii.consumableId === consumableId
+          )
+
+          // Only one row per site and consumable
+          assert.equal(inventoryItems.length, 1)
+          assert.isNotNull(inventoryItems[0])
+
+          // Correct quantity - stock in transit should not be counted
+          assert.equal(inventoryItems[0].quantityOnHand, 900)
+
+          // - We have 900 cartridges
+          // - 250 expiring tomorrow (inclusive)
+          // - 350 expiring in two days (inclusive)
+          // - 300 expiring in 50 days (inclusive)
+          // - The consumption rate is 200 cartridges/day
+          // So...
+          // Day 1 - We use 200 from expiring tomorrow ===> 50 wasted
+          // Day 2 - We use 200 from expiring in two days ===> 150 wasted
+          // Day 3 - We use 200 from expiring in 50 days
+          // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
+          // ===> 3.5 days of stock left
+          // ===> 200 cartridges to be wasted
+          assert.equal(inventoryItems[0].daysStockLeft, 3.5)
+          assert.equal(inventoryItems[0].projectedWaste, 200)
+        })
+
+        it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
+          const res = await server
+            .get(`${path}?size=500`)
+            .set('Authorization', `Bearer ${shared.token}`)
+
+          assertBodyAndInventoryItems(res)
 
           const inventoryItems = res.body.data.filter(
             ii => ii.siteId === site1Id && ii.consumableId === consumableId
@@ -374,6 +412,97 @@ describe('Inventory Routes', () => {
               done()
             })
         })
+      })
+    })
+
+    describe('/inventory calculations of daysStockLeft', () => {
+      const path = '/api/inventory?size=500'
+      let site1Id
+      let inventoryItem1Id
+      let inventoryItem2Id
+      let inventoryItem3Id
+      let consumableId
+      const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
+      const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
+      const expiresOn3 = startOfDayUtc(addDays(new Date(), 50))
+
+      before(async () => {
+        shared.checkToken(server, path)
+        ;[{ id: site1Id }] = await getScopedSites()
+        ;({ id: consumableId } = await knex('Consumable')
+          .where('name', 'GeneXpert TB Cartridge')
+          .first('id'))
+        ;[inventoryItem1Id] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          lotNumber: '0000001-1',
+          expiresOn: expiresOn1,
+          quantityOnHand: 2,
+        })
+        ;[inventoryItem2Id] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          lotNumber: '0000002-1',
+          expiresOn: expiresOn2,
+          quantityOnHand: 3,
+        })
+        ;[inventoryItem3Id] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site1Id,
+          lotNumber: '0000003-1',
+          expiresOn: expiresOn3,
+          quantityOnHand: 10,
+        })
+        await knex('FactInventoryConsumptionRate').insert({
+          siteId: site1Id,
+          consumableId,
+          days: 1,
+          rate: 0.5,
+          updatedOn: new Date(),
+        })
+      })
+
+      after(async () => {
+        await knex('InventoryItem')
+          .whereIn('id', [inventoryItem1Id, inventoryItem2Id, inventoryItem3Id])
+          .delete()
+        await knex('FactInventoryConsumptionRate')
+          .whereIn('siteId', [site1Id])
+          .delete()
+        await knex('Site').whereIn('id', [site1Id]).delete()
+      })
+
+      it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
+        const res = await server
+          .get(`${path}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assertBodyAndInventoryItems(res)
+
+        const inventoryItems = res.body.data.filter(
+          ii => ii.siteId === site1Id && ii.consumableId === consumableId
+        )
+
+        // Only one row per site and consumable
+        assert.equal(inventoryItems.length, 1)
+        assert.isNotNull(inventoryItems[0])
+
+        // Correct quantity - stock in transit should not be counted
+        assert.equal(inventoryItems[0].quantityOnHand, 15)
+
+        // - We have 15 cartridges
+        // - 2 expiring tomorrow (inclusive)
+        // - 3 expiring in two days (inclusive)
+        // - 10 expiring in 50 days (inclusive)
+        // - The consumption rate is 0.5 cartridges/day
+        // So...
+        // Day 1 - We use 0.5 from expiring tomorrow ===> 1.5 wasted
+        // Day 2 - We use 0.5 from expiring in two days ===> 2.5 wasted
+        // Day 3 - We use all 10 from expiring in 50 days ===> 0 wasted
+        // ===> 22 days of stock left (1 from 1st lot, 1 from 2nd lot, 20 (10=20*0.5) from 3rd lot)
+        // ===> 4 cartridges to be wasted
+        assert.equal(inventoryItems[0].daysStockLeft, 22)
+        assert.equal(inventoryItems[0].projectedWaste, 4)
       })
     })
 
