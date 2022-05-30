@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-03T20:29:41.849Z\n"
+"POT-Creation-Date: 2022-05-26T17:32:05.652Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -594,6 +594,13 @@ msgstr "E-mail alternativo"
 msgid "An Error Occurred When Trying to Create the Contact"
 msgstr "Ocorreu um erro ao tentar criar o contato"
 
+#. [errorResponseMessages.deleteSingleSite.DELETE.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Delete the Site
+#: extracted_strings.json
+msgid "An Error Occurred When Trying to Delete the Site"
+msgstr "Ocorreu um erro quando se tentou apagar o site"
+
 #. [errorResponseMessages.updatePerson.PUT.default.title]
 #. defaultMessage is:
 #. An Error Occurred When Trying to Save the Contact
@@ -704,6 +711,17 @@ msgstr "Aprovado"
 #: extracted_strings.json
 msgid "Are you sure to delete notification {notificationName}?"
 msgstr "Tem certeza de que deseja excluir a notificação {notificationName}?"
+
+#. [pages.SiteDetail.disable.confirmation.message]
+#. defaultMessage is:
+#. Are you sure you want to delete this site? This action is intented only for test sites, all site data will be lost.
+#: extracted_strings.json
+msgid ""
+"Are you sure you want to delete this site? This action is intented only for "
+"test sites, all site data will be lost."
+msgstr ""
+"Tem a certeza de que quer apagar este sítio? Esta acção destina-se apenas a "
+"sítios de teste, todos os dados do sítio serão perdidos."
 
 #. [pages.LocationSelector.lga]
 #. defaultMessage is:
@@ -851,10 +869,10 @@ msgstr "Média resposta confirmada"
 
 #. [component.Widget.instrumentsReplaced]
 #. defaultMessage is:
-#. Average Days for Instrument Replacement
+#. Average Days for Instrument Replacement.
 #: extracted_strings.json
-msgid "Average Days for Instrument Replacement"
-msgstr "Média de dias para substituição de instrumentos"
+msgid "Average Days for Instrument Replacement."
+msgstr "média de dias para substituição do instrumento"
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1189,6 +1207,9 @@ msgstr "Não pode ser editado"
 #. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.SiteDetail.disable.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1196,6 +1217,9 @@ msgstr "Não pode ser editado"
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceDetail.delete.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -1582,7 +1606,7 @@ msgstr "Status do contato"
 #. Contact Status: {contactStatus}
 #: extracted_strings.json
 msgid "Contact Status: {contactStatus}"
-msgstr ""
+msgstr "Estado de Contacto: {contactStatus}"
 
 #. [pages.PersonDetails.contactDetailsUpdatedMessage]
 #. defaultMessage is:
@@ -1904,6 +1928,20 @@ msgstr "Atualmente não selecionável - função ausente"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Personalizado"
+
+#. [component.Widget.bangladeshAverageCompletionTitle]
+#. defaultMessage is:
+#. Custom Fields Average Completion
+#: extracted_strings.json
+msgid "Custom Fields Average Completion"
+msgstr "Campos personalizados Conclusão média"
+
+#. [pages.SiteDetail.buttonDelete]
+#. defaultMessage is:
+#. DELETE
+#: extracted_strings.json
+msgid "DELETE"
+msgstr "APAGAR"
 
 #. [pages.ResultList.assayGenericDst]
 #. defaultMessage is:
@@ -2453,7 +2491,7 @@ msgstr "Desativar"
 #. Disabled
 #: extracted_strings.json
 msgid "Disabled"
-msgstr ""
+msgstr "Desativado"
 
 #. [pages.DeviceDetailEdit.discard]
 #. defaultMessage is:
@@ -2522,14 +2560,14 @@ msgstr "Divisão"
 #. Do you want to disable
 #: extracted_strings.json
 msgid "Do you want to disable"
-msgstr ""
+msgstr "Quer desactivar"
 
 #. [pages.PersonList.enable]
 #. defaultMessage is:
 #. Do you want to enable
 #: extracted_strings.json
 msgid "Do you want to enable"
-msgstr ""
+msgstr "Deseja habilitar"
 
 #. [pages.shared.deviceStatus.inactiveDownForRepair]
 #. defaultMessage is:
@@ -2727,7 +2765,7 @@ msgstr "Ativar esta notificação"
 #. Enable/Disable User
 #: extracted_strings.json
 msgid "Enable/Disable User"
-msgstr ""
+msgstr "Activar/Desactivar Utilizador"
 
 #. [filter.btnGroup.contactStatus.contactEnabled]
 #. defaultMessage is:
@@ -8156,6 +8194,13 @@ msgstr "Site"
 msgid "Site Contacts"
 msgstr "Contatos do site"
 
+#. [pages.SiteDetail.disable.confirmation.title]
+#. defaultMessage is:
+#. Site Delete Confirmation
+#: extracted_strings.json
+msgid "Site Delete Confirmation"
+msgstr "Requer Confirmação"
+
 #. [pages.SiteDetail.title]
 #. defaultMessage is:
 #. Site Detail
@@ -8619,6 +8664,9 @@ msgstr "Falhas nos testes"
 msgid "Test history"
 msgstr "Histórico dos testes"
 
+#. [component.Widget.dashboardWidgetUnitTests]
+#. defaultMessage is:
+#. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
@@ -8653,6 +8701,26 @@ msgstr "Testes Realizados"
 msgid "Tests Run Between"
 msgstr "Testes realizados entre"
 
+#. [component.Widget.bangladeshAverageCompletionDescription]
+#. defaultMessage is:
+#. The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "The average custom fields completion percent in the current month. Each "
+#| "custom field has a score assigned, and the completion percent is based on "
+#| "the comparative between the completed score of each result and total "
+#| "score of the fields assigned to the assay"
+msgid ""
+"The average custom fields completion percent in the current month. The "
+"calculation is based on the comparative between the completed score of each "
+"result's custom fields and total score of the fields assigned to the assay"
+msgstr ""
+"A percentagem média de preenchimento de campos personalizados no mês "
+"corrente. Cada campo personalizado tem uma pontuação atribuída, e a "
+"percentagem de conclusão é baseada na comparação entre a pontuação concluída "
+"de cada resultado e a pontuação total dos campos atribuídos ao ensaio"
+
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
 #. The average daily percentage of devices sending results, excluding weekends.
@@ -8674,19 +8742,21 @@ msgstr ""
 "O atraso médio de envio dos resultados, em horas. Considerando apenas os "
 "resultados em que o atraso foi superior a duas horas."
 
-#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
-#. defaultMessage is:
-#. The average duration of a service interruption, in days
-#: extracted_strings.json
-msgid "The average duration of a service interruption, in days"
-msgstr "A duração média de uma interrupção de serviço, em dias"
-
 #. [component.Widget.averageDurationServiceInterruptionDescription]
 #. defaultMessage is:
-#. The average duration of a service interruption, in days.
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
+#. [pages.OperationalData.averageDurationServiceInterruptionDescription]
+#. defaultMessage is:
+#. The average duration of a service interruption, in days. The period of interruption will be the date range between the device was flagged as "Down for repair" and when it back to be active again
 #: extracted_strings.json
-msgid "The average duration of a service interruption, in days."
-msgstr "A duração média de uma interrupção de serviço, em dias."
+msgid ""
+"The average duration of a service interruption, in days. The period of "
+"interruption will be the date range between the device was flagged as \"Down "
+"for repair\" and when it back to be active again"
+msgstr ""
+"A duração média de uma interrupção de serviço, em dias. O período de "
+"interrupção será o intervalo de datas entre o dispositivo foi assinalado "
+"como \"Para baixo para reparação\" e quando voltar a estar activo"
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -8709,12 +8779,14 @@ msgstr ""
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
-#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result.
+#. The average number of days between the last result reported under a replaced module serial and the new module serial in that module slot reporting its first result. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between the last result reported under a replaced "
 "module serial and the new module serial in that module slot reporting its "
-"first result."
+"first result. The module swap issue appears when two consecutive results "
+"performed in the same device's slot, they have a different module serial "
+"number"
 msgstr ""
 "O número médio de dias entre o último resultado relatado em um módulo de "
 "série substituído e o novo módulo de série nesse slot de módulo relatando "
@@ -8722,14 +8794,19 @@ msgstr ""
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting.
+#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting."
+"from a device and a new instrument serial reporting. An Instrument is marked "
+"as replaced when two consecutive results performed in the same device, have "
+"a different Instrument serial number"
 msgstr ""
-"O número médio de dias entre o último relatório de série de um instrumento "
-"de um dispositivo e um novo relatório de série de instrumento."
+"O número médio de dias entre a última notificação em série de um instrumento "
+"a partir de um dispositivo e a última notificação em série de um novo "
+"instrumento. Um instrumento é marcado como substituído quando dois "
+"resultados consecutivos realizados no mesmo dispositivo, têm um número de "
+"série de instrumento diferente"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
@@ -8777,6 +8854,13 @@ msgid ""
 msgstr ""
 "O dispositivo não se conecta ao Aspect há vários dias. Pode estar executando "
 "testes, mas os testes não foram carregados para Aspect ainda."
+
+#. [pages.DeviceDetail.delete.deletedOn]
+#. defaultMessage is:
+#. The device was permanently deleted
+#: extracted_strings.json
+msgid "The device was permanently deleted"
+msgstr "O dispositivo foi permanentemente apagado"
 
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
@@ -8844,14 +8928,15 @@ msgstr ""
 
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
-"previous month."
+"previous month. A device has a service interruption when it is flagged as "
+"\"Down for repair\" for it maintenance status."
 msgstr ""
 "O número de dispositivos com interrupção do serviço neste e no mês anterior."
 
@@ -8867,10 +8952,16 @@ msgstr ""
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
-msgid "The number of module swaps made at the current month"
-msgstr "O número de trocas de módulo feitas no mês atual"
+msgid ""
+"The number of module swaps made at the current month. The module swap issue "
+"appears when two consecutive results performed in the same slot have a "
+"different module serial number"
+msgstr ""
+"O número de trocas de módulos efectuadas no mês em curso. A questão da troca "
+"de módulos aparece quando dois resultados consecutivos realizados na mesma "
+"ranhura têm um número de série de módulos diferente"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -8955,15 +9046,28 @@ msgstr "A senha que você digitou está incorreta"
 #. [component.Widget.percentageOfDaysWithServiceInterruptionDescription]
 #. defaultMessage is:
 #. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
-#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
-#. defaultMessage is:
-#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%
 #: extracted_strings.json
 msgid ""
 "The percentage of \"device-days\" that were statused as \"down for repair\", "
 "excluding weekends. For example, 20 weekdays in the month and 5 devices "
 "would equate 100 \"device-days\". If one device was down half of the month, "
 "this number would be 10%"
+msgstr ""
+"A porcentagem de \"dias de dispositivo\" que foram classificados como "
+"\"inativos para reparo\", excluindo fins de semana. Por exemplo, 20 dias da "
+"semana no mês e 5 dispositivos equivalem a 100 \"dias do dispositivo\". Se "
+"um dispositivo caísse na metade do mês, esse número seria de 10%"
+
+#. [pages.OperationalData.percentageOfDaysWithServiceInterruptionDescription]
+#. defaultMessage is:
+#. The percentage of "device-days" that were statused as "down for repair", excluding weekends. For example, 20 weekdays in the month and 5 devices would equate 100 "device-days". If one device was down half of the month, this number would be 10%. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#: extracted_strings.json
+msgid ""
+"The percentage of \"device-days\" that were statused as \"down for repair\", "
+"excluding weekends. For example, 20 weekdays in the month and 5 devices "
+"would equate 100 \"device-days\". If one device was down half of the month, "
+"this number would be 10%. A device has a service interruption when it is "
+"flagged as \"Down for repair\" for it maintenance status."
 msgstr ""
 "A porcentagem de \"dias de dispositivo\" que foram classificados como "
 "\"inativos para reparo\", excluindo fins de semana. Por exemplo, 20 dias da "
@@ -9254,7 +9358,7 @@ msgstr "Este campo é obrigatório"
 #. This person was disabled on
 #: extracted_strings.json
 msgid "This person was disabled on"
-msgstr ""
+msgstr "Esta pessoa foi incapacitada em"
 
 #. [pages.ReportIndex.geneXpertIssues_description]
 #. defaultMessage is:
@@ -9348,6 +9452,18 @@ msgstr ""
 msgid "This username is unavailable"
 msgstr "Este nome de usuário não está disponível"
 
+#. [pages.DeviceDetail.delete.deleteDevicePrompt]
+#. defaultMessage is:
+#. This will delete this device. All results generated by this device will be erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?
+#: extracted_strings.json
+msgid ""
+"This will delete this device. All results generated by this device will be "
+"erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?"
+msgstr ""
+"Isto irá apagar este dispositivo. Todos os resultados gerados por este "
+"dispositivo serão apagados. ESTA ACÇÃO NÃO PODE SER DESFEITA. Gostaria de "
+"continuar?"
+
 #. [pages.PersonList.disabled.disableUser]
 #. defaultMessage is:
 #. This will disable this user, and they will not be able to login. Would you like to continue?
@@ -9356,6 +9472,8 @@ msgid ""
 "This will disable this user, and they will not be able to login. Would you "
 "like to continue?"
 msgstr ""
+"Isto irá desactivar este utilizador, e este não poderá iniciar sessão. "
+"Gostaria de continuar?"
 
 #. [pages.PersonList.disabled.enableUser]
 #. defaultMessage is:
@@ -9365,6 +9483,8 @@ msgid ""
 "This will enable this user again, and they will be able to login again. "
 "Would you like to continue?"
 msgstr ""
+"Isto irá permitir que este utilizador volte a entrar no sistema, e poderá "
+"voltar a entrar no sistema. Gostaria de continuar?"
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -10014,7 +10134,7 @@ msgstr "Semana ou feriado"
 #. Welcome to Aspect
 #: extracted_strings.json
 msgid "Welcome to Aspect"
-msgstr ""
+msgstr "Bem-vindo à Aspect"
 
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
@@ -10104,7 +10224,13 @@ msgstr "Ano"
 #. [pages.Notifications.table.createButton.group.yes]
 #. defaultMessage is:
 #. Yes
+#. [pages.SiteDetail.disable.yes]
+#. defaultMessage is:
+#. Yes
 #. [pages.NotificationList.yes]
+#. defaultMessage is:
+#. Yes
+#. [pages.DeviceDetail.delete.yes]
 #. defaultMessage is:
 #. Yes
 #: extracted_strings.json
@@ -10257,6 +10383,8 @@ msgid ""
 "Your account still needs some setup before you will be able to use the "
 "system. Please contact your administrator."
 msgstr ""
+"A sua conta ainda precisa de alguma configuração antes de poder utilizar o "
+"sistema. Por favor contacte o seu administrador."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -10960,6 +11088,24 @@ msgstr "{unit} calibrações totais"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid ""
+#~ "Average days between module swaps. The module swap issue appears when two "
+#~ "consecutive results performed in the same device's slot, they have a "
+#~ "different module serial number"
+#~ msgstr ""
+#~ "Média de dias entre as trocas de módulos. O problema da troca de módulos "
+#~ "aparece quando dois resultados consecutivos realizados no slot do mesmo "
+#~ "dispositivo, eles têm um número de série de módulo diferente"
+
+#~ msgid "The average duration of a service interruption, in days"
+#~ msgstr "A duração média de uma interrupção de serviço, em dias"
+
+#~ msgid "The average duration of a service interruption, in days."
+#~ msgstr "A duração média de uma interrupção de serviço, em dias."
+
+#~ msgid "The number of module swaps made at the current month"
+#~ msgstr "O número de trocas de módulo feitas no mês atual"
 
 #~ msgid "XDR"
 #~ msgstr "XDR"
