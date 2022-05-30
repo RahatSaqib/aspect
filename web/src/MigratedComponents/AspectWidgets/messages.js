@@ -263,8 +263,7 @@ export const messages = defineMessages({
   },
   averageDaysModuleSwap: {
     id: 'component.Widget.averageDaysModuleSwap',
-    defaultMessage:
-      "Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number",
+    defaultMessage: 'Average days between module swaps',
   },
   averageDaysModuleSwapDescription: {
     id: 'component.Widget.averageDaysModuleSwapDescription',
@@ -385,7 +384,7 @@ export const messages = defineMessages({
   bangladeshAverageCompletionDescription: {
     id: 'component.Widget.bangladeshAverageCompletionDescription',
     defaultMessage:
-      'The average custom fields completion percent in the current month. Each custom field has a score assigned, and the completion percent is based on the comparative between the completed score of each result and total score of the fields assigned to the assay',
+      "The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay",
   },
 })
 

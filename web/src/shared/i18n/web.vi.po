@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-17T19:56:17.475Z\n"
+"POT-Creation-Date: 2022-05-26T17:32:05.652Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -939,16 +939,10 @@ msgstr "Người nhận SMS trung bình trên mỗi kết quả dương tính"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
-#. Average days between module swaps. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. Average days between module swaps
 #: extracted_strings.json
-msgid ""
-"Average days between module swaps. The module swap issue appears when two "
-"consecutive results performed in the same device's slot, they have a "
-"different module serial number"
-msgstr ""
-"Số ngày trung bình giữa các lần hoán đổi mô-đun. Sự cố hoán đổi mô-đun xuất "
-"hiện khi hai kết quả liên tiếp được thực hiện trong cùng một khe cắm của "
-"thiết bị, chúng có số sê-ri mô-đun khác nhau"
+msgid "Average days between module swaps"
+msgstr "Số ngày trung bình giữa các lần hoán đổi mô-đun"
 
 #. [component.Widget.averageRecipientsOfEmail]
 #. defaultMessage is:
@@ -1932,6 +1926,13 @@ msgstr "Hiện không thể chọn - thiếu vai trò"
 #: extracted_strings.json
 msgid "Custom"
 msgstr "Tùy chỉnh"
+
+#. [component.Widget.bangladeshAverageCompletionTitle]
+#. defaultMessage is:
+#. Custom Fields Average Completion
+#: extracted_strings.json
+msgid "Custom Fields Average Completion"
+msgstr "Mức hoàn thành trung bình của các trường tùy chỉnh"
 
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
@@ -8657,6 +8658,9 @@ msgstr "Xét nghiệm thất bại"
 msgid "Test history"
 msgstr "Lịch sử kiểm tra"
 
+#. [component.Widget.dashboardWidgetUnitTests]
+#. defaultMessage is:
+#. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
@@ -8690,6 +8694,26 @@ msgstr "Các xét nghiệm đã thực hiện"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Kiểm tra chạy giữa"
+
+#. [component.Widget.bangladeshAverageCompletionDescription]
+#. defaultMessage is:
+#. The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay
+#: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "The average custom fields completion percent in the current month. Each "
+#| "custom field has a score assigned, and the completion percent is based on "
+#| "the comparative between the completed score of each result and total "
+#| "score of the fields assigned to the assay"
+msgid ""
+"The average custom fields completion percent in the current month. The "
+"calculation is based on the comparative between the completed score of each "
+"result's custom fields and total score of the fields assigned to the assay"
+msgstr ""
+"Phần trăm hoàn thành trường tùy chỉnh trung bình trong tháng hiện tại. Mỗi "
+"trường tùy chỉnh có một điểm được chỉ định và phần trăm hoàn thành dựa trên "
+"sự so sánh giữa điểm đã hoàn thành của mỗi kết quả và tổng điểm của các "
+"trường được chỉ định cho thử nghiệm"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -8899,6 +8923,9 @@ msgstr ""
 #. [component.Widget.numberOfDevicesExperiencingServiceInterruptionDescription]
 #. defaultMessage is:
 #. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
+#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
+#. defaultMessage is:
+#. The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
 #: extracted_strings.json
 msgid ""
 "The number of devices experiencing service interruption on this and the "
@@ -8908,19 +8935,6 @@ msgstr ""
 "Số lượng thiết bị gặp sự cố gián đoạn dịch vụ vào tháng này và tháng trước. "
 "Một thiết bị bị gián đoạn dịch vụ khi nó được gắn cờ là \"Không sửa chữa được"
 "\" cho trạng thái bảo trì của thiết bị."
-
-#. [pages.OperationalData.numberOfDevicesExperiencingServiceInterruptionDescription]
-#. defaultMessage is:
-#. The number of devices experiencing service interruption on this and the previous month.A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.
-#: extracted_strings.json
-msgid ""
-"The number of devices experiencing service interruption on this and the "
-"previous month.A device has a service interruption when it is flagged as "
-"\"Down for repair\" for it maintenance status."
-msgstr ""
-"Số lượng thiết bị gặp sự cố gián đoạn dịch vụ vào tháng này và tháng trước. "
-"Một thiết bị bị gián đoạn dịch vụ khi được gắn cờ là \"Không thể sửa chữa\" "
-"cho trạng thái bảo trì."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -8933,16 +8947,16 @@ msgstr "Số lượng thiết bị đã được hiệu chuẩn lần cuối cá
 
 #. [component.Widget.moduleSwapsDescription]
 #. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same device's slot, they have a different module serial number
+#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
 msgid ""
 "The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same device's slot, "
-"they have a different module serial number"
+"appears when two consecutive results performed in the same slot have a "
+"different module serial number"
 msgstr ""
 "Số lượng hoán đổi mô-đun được thực hiện ở tháng hiện tại. Sự cố hoán đổi mô-"
-"đun xuất hiện khi hai kết quả liên tiếp được thực hiện trong cùng một khe "
-"cắm của thiết bị, chúng có số sê-ri mô-đun khác nhau"
+"đun xuất hiện khi hai kết quả liên tiếp được thực hiện trong cùng một vị trí "
+"có số sê-ri mô-đun khác nhau"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -11068,11 +11082,26 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
 
+#~ msgid ""
+#~ "Average days between module swaps. The module swap issue appears when two "
+#~ "consecutive results performed in the same device's slot, they have a "
+#~ "different module serial number"
+#~ msgstr ""
+#~ "Số ngày trung bình giữa các lần hoán đổi mô-đun. Sự cố hoán đổi mô-đun "
+#~ "xuất hiện khi hai kết quả liên tiếp được thực hiện trong cùng một khe cắm "
+#~ "của thiết bị, chúng có số sê-ri mô-đun khác nhau"
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "Số lượng thiết bị gặp sự cố gián đoạn dịch vụ vào tháng này và tháng "
+#~ "trước. Một thiết bị bị gián đoạn dịch vụ khi được gắn cờ là \"Không thể "
+#~ "sửa chữa\" cho trạng thái bảo trì."
+
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "Thời gian gián đoạn dịch vụ trung bình, tính bằng ngày."
-
-#~ msgid "Average days between module swaps"
-#~ msgstr "Số ngày trung bình giữa các lần hoán đổi mô-đun"
 
 #~ msgid "The average duration of a service interruption, in days"
 #~ msgstr "Thời gian gián đoạn dịch vụ trung bình, tính bằng ngày"
