@@ -21,8 +21,13 @@ const INVENTORY_ITEM_SELECT = [
   ...INVENTORY_COMMON_FIELDS,
   'ii.quantityOnHand',
   'ii.id',
-  'ii.expiresOn',
-  'ii.lotNumber',
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
+  ),
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
+  ),
+
   'itfs.name as inTransitFromSiteName',
   'ii.inTransitFromSiteId',
 ]

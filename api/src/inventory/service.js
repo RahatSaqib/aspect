@@ -46,8 +46,9 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
+    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
   ),
+
   ...INVENTORY_ITEM_SELECT.filter(
     field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
   ),
@@ -481,8 +482,12 @@ function getInventoryLots(request, dataConstraints) {
         `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,''))`
       ),
       's.name',
-      'ii.expiresOn',
-      'ii.lotNumber',
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
+      ),
       'ii.inTransitFromSiteId',
     ])
     .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
@@ -550,6 +555,12 @@ function getInventorySites(constraints, request) {
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
       knex.raw(
         'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
       ),
     ])
 }

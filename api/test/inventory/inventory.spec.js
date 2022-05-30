@@ -498,7 +498,29 @@ describe('Inventory Routes', () => {
 
     describe('/inventory/add', () => {
       describe('PUT', () => {
-        it('should update the quantity of an inventory item', async () => {
+        it('should update the quantity of an inventory item with lot serial number and expirationDate', async () => {
+          const res = await server
+            .put(`${addInventoryPath}`)
+            .send({
+              consumableId: inventoryItem.consumableId,
+              lotNumber: inventoryItem.lotNumber,
+              expiresOn: inventoryItem.expiresOn,
+              quantity: quantityToAdjust,
+              notes: 'Testing add',
+              toSiteId: inventoryItem.siteId,
+              dateAdjusted: new Date().toISOString(),
+            })
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.equal(
+            res.body.data.quantityOnHand,
+            _.max([0, inventoryItem.quantityOnHand + quantityToAdjust])
+          )
+        })
+        it('should update the quantity of an inventory item only with expiration date matching', async () => {
           const res = await server
             .put(`${addInventoryPath}`)
             .send({
