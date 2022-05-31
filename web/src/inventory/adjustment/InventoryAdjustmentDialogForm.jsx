@@ -191,46 +191,52 @@ export const InventoryAdjustmentDialogForm = ({
             )}
           </section>
           <section>
-            <TextField
-              fullWidth
-              type="text"
-              name="lotNumber"
-              label={intl.formatMessage(messages.lotNumber)}
-              disabled={
-                form.submitting ||
-                (currInventoryItem &&
-                  !isNil(currInventoryItem.get('lotNumber')))
-              }
-              value={values.lotNumber}
-              onChange={onLotNumberChange}
-              error={meta.lotNumber.touched && meta.lotNumber.error}
-              helperText={meta.lotNumber.touched && meta.lotNumber.error}
-              margin="normal"
-              FormHelperTextProps={{
-                margin: 'dense',
-              }}
-              inputProps={{ maxLength: 500 }}
-            />
-            {consumable.get('canExpire') && (
-              <FormGroup label={intl.formatMessage(messages.expiryDate)}>
-                <DateTimeInput
-                  fullWidth
-                  margin="normal"
-                  disabled={
-                    form.submitting ||
-                    (currInventoryItem &&
-                      !isNil(currInventoryItem.get('expiresOn')))
-                  }
-                  dateFormat={dateFormat}
-                  intl={intl}
-                  RootProps={{
-                    name: 'expiresOn',
-                  }}
-                  onChange={onExpiresOnChange}
-                  value={values.expiresOn}
-                />
-              </FormGroup>
+            {currInventoryItem && currInventoryItem.get('showLot') ? (
+              <TextField
+                fullWidth
+                type="text"
+                name="lotNumber"
+                label={intl.formatMessage(messages.lotNumber)}
+                disabled={
+                  form.submitting ||
+                  (currInventoryItem &&
+                    !isNil(currInventoryItem.get('lotNumber')))
+                }
+                value={values.lotNumber}
+                onChange={onLotNumberChange}
+                error={meta.lotNumber.touched && meta.lotNumber.error}
+                helperText={meta.lotNumber.touched && meta.lotNumber.error}
+                margin="normal"
+                FormHelperTextProps={{
+                  margin: 'dense',
+                }}
+                inputProps={{ maxLength: 500 }}
+              />
+            ) : (
+              <div />
             )}
+            {currInventoryItem &&
+              currInventoryItem.get('showExpirationDate') &&
+              consumable.get('canExpire') && (
+                <FormGroup label={intl.formatMessage(messages.expiryDate)}>
+                  <DateTimeInput
+                    fullWidth
+                    margin="normal"
+                    disabled={
+                      form.submitting ||
+                      (currInventoryItem &&
+                        !isNil(currInventoryItem.get('expiresOn')))
+                    }
+                    dateFormat={dateFormat}
+                    intl={intl}
+                    RootProps={{
+                      name: 'expiresOn',
+                    }}
+                    onChange={onExpiresOnChange}
+                    value={values.expiresOn}
+                  />
+                </FormGroup>
+              )}
           </section>
           <section>
             {has(values, 'fromSiteId') && (
