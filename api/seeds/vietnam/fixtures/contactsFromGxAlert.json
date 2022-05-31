@@ -611,11 +611,11 @@
     "geographies": [{}]
   },
   {
-    "personName": "Stefan Baumgartner",
+    "personName": "SystemOne Developer",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "stefanbaumg@gmail.com",
-    "personCell": "+14135485003",
+    "personEmailAddress": "developer@systemone.id",
+    "personCell": "+18888452610",
     "timezone": "SE Asia Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
@@ -623,7 +623,7 @@
     "getPasswordFromGxAlert": true,
     "sites": [
       {
-        "shortName": "Stefan SystemOne"
+        "shortName": "Developer SystemOne"
       }
     ]
   },
