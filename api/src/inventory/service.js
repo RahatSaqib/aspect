@@ -25,6 +25,7 @@ const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
 } = require('../shared/utilsInventory')
+const { querySelectors, getInventoryLogBaseQuery } = require('./query/index')
 const { splitCsvWithTrim } = require('../shared/string')
 
 const INVENTORY_COMMON_FIELDS = [
@@ -523,6 +524,30 @@ function getInventoryItemsRaw() {
       GROUP_CONCAT(${itemRaw} SEPARATOR ','),
     ']'
   )`
+}
+
+async function listLog(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
+    .modify(filterDateRangeParams, query, 'il.createdOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      consumableId: 'c.id',
+      consumableExternalId: 'c.externalId',
+      siteName: 's.name',
+      siteId: 's.id',
+    })
+  const { total } = await inventoryLogQuery
+    .clone()
+    .count('il.id as total')
+    .first()
+  const data = await inventoryLogQuery
+    .select(querySelectors.INVENTORY_LOG_LIST)
+    .modify(sortPageParams, query, 's.name', INVENTORY_ITEM_SORT_FIELDS)
+  return { ok: true, total, length: data.length, data }
 }
 
 function getInventorySites(constraints, request) {
@@ -1326,6 +1351,7 @@ async function transferInventory(request) {
       inventoryItemId: sourceInventoryItemId,
       consumableId,
       siteId: fromSiteId,
+      referencedSiteId: toSiteId,
       consumableReasonId: transferSentConsumableReasonId,
       lotNumber,
       expiresOn,
@@ -1420,6 +1446,7 @@ async function receiveInventory(request) {
       inventoryItemId: destinationInventoryItemId,
       consumableId,
       siteId: toSiteId,
+      referencedSiteId: fromSiteId,
       consumableReasonId: transferReceivedConsumableReasonId,
       lotNumber,
       expiresOn,
@@ -1638,6 +1665,7 @@ async function logInventoryChange({
   inventoryItemId,
   consumableId,
   siteId,
+  referencedSiteId = null,
   consumableReasonId,
   resultId,
   lotNumber,
@@ -1654,6 +1682,7 @@ async function logInventoryChange({
     inventoryItemId,
     consumableId,
     siteId,
+    referencedSiteId,
     consumableReasonId,
     resultId,
     lotNumber,
@@ -1786,4 +1815,5 @@ module.exports = {
   receiveInventory,
   selectInventoryStockAtSite,
   getDaysByLocation,
+  listLog,
 }

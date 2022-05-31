@@ -18,7 +18,6 @@ function listReportBaseConfig() {
         format: Joi.string()
           .allow('')
           .description('File format for exporting data'),
-
         contactNameOrEmail: Joi.string()
           .allow('')
           .description('Filter for report name'),
@@ -41,6 +40,7 @@ function requestBaseQuery() {
   return {
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(),
+    consumableId: Joi.number().integer().positive().allow('', null),
     minDate,
     maxDate: maxDate.default(new Date().toISOString()),
     siteName: Joi.string().allow('').description('Filter for site name'),

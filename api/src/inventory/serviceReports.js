@@ -1,5 +1,5 @@
 const { format } = require('date-fns')
-const { listInventory } = require('./service')
+const { listInventory, listLog } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 
 async function exportSupplies(request, reply) {
@@ -28,6 +28,16 @@ async function exportSupplies(request, reply) {
   })
 }
 
+async function inventoryLog(auth, query) {
+  const { data, total, ok } = await listLog({ auth, query })
+  return {
+    ok,
+    total,
+    data,
+  }
+}
+
 module.exports = {
   exportSupplies,
+  inventoryLog,
 }

@@ -15,6 +15,7 @@ const {
   transferInventory,
   receiveInventory,
   getDaysByLocation,
+  listLog,
 } = require('./service')
 
 const { exportSupplies } = require('./serviceReports')
@@ -83,6 +84,37 @@ const routes = [
     config: {
       description: 'List of Consumables on Hand At Site',
       notes: 'Pageable and sortable list of inventory items',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'manufacturer',
+            'siteName',
+            'countryName',
+            'stateName',
+            'lgaName',
+            'quantityOnHand',
+            'expiresOn',
+            'daysStockLeft',
+            'projectedWaste',
+            'dailyConsumptionRate',
+            'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/log',
+    handler: asyncHandler(listLog),
+    config: {
+      description: 'List of Inventory Transactions',
+      notes: 'Pageable and sortable list of inventory transactions',
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
