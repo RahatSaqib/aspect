@@ -46,7 +46,7 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
+    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
   ),
 
   ...INVENTORY_ITEM_SELECT.filter(
@@ -479,7 +479,33 @@ function getInventoryLots(request, dataConstraints) {
     )
     .groupBy([
       knex.raw(
-        `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,''))`
+        `CONCAT(
+          c.id,
+          '-',
+          s.id,
+          '-',
+          IFNULL(
+            CASE
+              WHEN c.strategy IS NOT NULL
+              AND INSTR(c.strategy, 'expirationDate') > 0
+              THEN ii.expiresOn
+              ELSE ''
+            END,
+            '-'
+          ),
+          '-',
+          IFNULL(
+            CASE
+              WHEN c.strategy IS NOT NULL
+              AND INSTR(c.strategy, 'withlot') > 0
+              THEN ii.lotNumber
+              ELSE ''
+            END,
+            ''
+          ),
+          '-',
+          IFNULL(ii.inTransitFromSiteId, '')
+        )`
       ),
       's.name',
       knex.raw(
@@ -616,7 +642,6 @@ async function listInventoryByLot(request, dataConstraints) {
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
   return { total, data }
 }
 

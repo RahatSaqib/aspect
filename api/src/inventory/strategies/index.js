@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 module.exports = {
   withLotStrategy,
-  withExpiresDateStrategy,
+  withExpirationDateStrategy,
   withLotAndExpirationDateStrategy,
 }
 
@@ -18,7 +18,7 @@ function withLotStrategy(knexQuery, { lotNumber }, inventoryItemAlias = 'ii') {
   }
 }
 
-function withExpiresDateStrategy(
+function withExpirationDateStrategy(
   knexQuery,
   { expiresOn = null },
   inventoryItemAlias = 'ii'
@@ -36,5 +36,5 @@ function withLotAndExpirationDateStrategy(
   inventoryItemAlias = 'ii'
 ) {
   withLotStrategy(knexQuery, { lotNumber }, inventoryItemAlias)
-  withExpiresDateStrategy(knexQuery, { expiresOn }, inventoryItemAlias)
+  withExpirationDateStrategy(knexQuery, { expiresOn }, inventoryItemAlias)
 }

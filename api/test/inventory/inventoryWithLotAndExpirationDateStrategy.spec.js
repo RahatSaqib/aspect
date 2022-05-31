@@ -43,7 +43,7 @@ describe('Inventory Routes', () => {
     return newSites
   }
 
-  describe('Inventory List Route', () => {
+  describe('Inventory List Route With Lot and expiration date strategy', () => {
     describe('/inventory', () => {
       const path = '/api/inventory'
       let site1Id
