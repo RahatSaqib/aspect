@@ -2,7 +2,6 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const sinon = require('sinon')
-const logger = require('../../src/shared/logger')
 const endpointUtils = require('../utils/endpointUtils')
 
 const validPassword = 'test07'
