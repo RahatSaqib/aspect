@@ -123,17 +123,10 @@ const routes = [
           ...validateDateRangeParams(),
           ...validateSortPageParams(
             'consumableName',
-            'manufacturer',
             'siteName',
             'countryName',
             'stateName',
-            'lgaName',
-            'quantityOnHand',
-            'expiresOn',
-            'daysStockLeft',
-            'projectedWaste',
-            'dailyConsumptionRate',
-            'lotNumber'
+            'lgaName'
           ),
         },
       },
