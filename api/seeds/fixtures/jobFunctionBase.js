@@ -586,6 +586,35 @@ const ntp = {
   ],
 }
 
+const ntpLevel = {
+  name: 'NTP Level',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'device_utilization',
+    'device_activity_percent',
+    'module_swaps',
+    'all_results',
+    'device_utilization_per_day',
+    'module_activity_report',
+    'report_custom_fields_completion',
+  ],
+  permissions: [
+    {
+      module: 'operationalData',
+      activity: 'view',
+    },
+    {
+      module: 'report',
+      activity: 'view',
+    },
+  ],
+}
+
 const ntpNoResults = {
   name: 'NTP - No Results',
   reports: [
@@ -1015,6 +1044,25 @@ const labSupervisor = {
   ],
 }
 
+const labTechnician = {
+  name: 'Lab Manager',
+  reports: [],
+  permissions: [
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+  ],
+}
+
 const medTech = {
   name: 'Med Tech',
   reports: [
@@ -1266,6 +1314,30 @@ const countryReportsDecorator = (jobFunction = {}, countryReports) => ({
   reports: [...(jobFunction.reports || []), ...countryReports],
 })
 
+const partners = {
+  name: 'Partners',
+  reports: [
+    'mtb_detected_rr_detected',
+    'critical_errors_by_device',
+    'rif_resistance_rate',
+    'results_hiv_not_suppressed',
+    'device_calibration_report',
+    'device_activity',
+    'device_utilization',
+    'device_activity_percent',
+    'module_swaps',
+    'all_results',
+    'device_utilization_per_day',
+    'module_activity_report',
+    'report_custom_fields_completion',
+  ],
+  permissions: [
+    {
+      module: 'result',
+      activity: 'view',
+    },
+  ],
+}
 module.exports = {
   admin,
   regionalOfficer,
@@ -1273,6 +1345,7 @@ module.exports = {
   clinician,
   deviceMaker,
   ntp,
+  ntpLevel,
   technician,
   donor,
   manager,
@@ -1281,11 +1354,13 @@ module.exports = {
   remoteHealthWorker,
   labManager,
   labSupervisor,
+  labTechnician,
   medTech,
   dataViewer,
   ntpNoResults,
   systemOne,
   labAdmin,
+  partners,
   mergeJobFunctions,
   countryReportsDecorator,
 }
