@@ -32,11 +32,19 @@ const Loading = () => (
 )
 
 const GraphRender = ({
+  /**
+   * required props
+   */
   assays: { assaysFromState, whiteListed } = false,
   config,
-  updatedParams = {},
   formatMessage,
-  clientSideFilter = false,
+  /**
+   * optional props - see defaultProps
+   */
+  updatedParams,
+  clientSideFilter,
+  onSettled,
+  isOwnerReady,
 }) => {
   const {
     api: { endpoint, params, method } = false,
@@ -73,6 +81,12 @@ const GraphRender = ({
     {
       onSuccess: ({ data }) =>
         setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data),
+
+      onSettled: (data, error) => {
+        if (onSettled) {
+          onSettled(data, error)
+        }
+      },
     }
   )
   if (isError) {
@@ -140,22 +154,26 @@ const GraphRender = ({
   return (
     <Grid item xs={12} md={size} lg={size}>
       <div className={cssClasses('graphrender__container')}>
-        {(!graphData || isEmpty(graphData)) && isLoading ? <Loading /> : null}
-        {(!graphData || isEmpty(graphData)) && !isLoading ? (
-          <EmptyGraph type={type} />
-        ) : null}
-        {graphData && !isEmpty(graphData) && !isLoading ? (
-          <Component
-            data={graphData}
-            keys={graphKeys}
-            config={config}
-            culture={culture}
-            averages={averages}
-            assaysFromState={assaysFromState}
-            i18n={messages}
-            i18nKeys={i18nKeys}
-          />
-        ) : null}
+        {isOwnerReady ? (
+          (!graphData || isEmpty(graphData)) && isLoading ? (
+            <Loading />
+          ) : (!graphData || isEmpty(graphData)) && !isLoading ? (
+            <EmptyGraph type={type} />
+          ) : graphData && !isEmpty(graphData) && !isLoading ? (
+            <Component
+              data={graphData}
+              keys={graphKeys}
+              config={config}
+              culture={culture}
+              averages={averages}
+              assaysFromState={assaysFromState}
+              i18n={messages}
+              i18nKeys={i18nKeys}
+            />
+          ) : null
+        ) : (
+          <Loading />
+        )}
       </div>
     </Grid>
   )
@@ -164,6 +182,8 @@ const GraphRender = ({
 GraphRender.defaultProps = {
   updatedParams: {},
   clientSideFilter: false,
+  onSettled: null,
+  isOwnerReady: true,
 }
 
 GraphRender.propTypes = {
@@ -173,6 +193,8 @@ GraphRender.propTypes = {
   id: string.isRequired,
   updatedParams: oneOfType([object, bool]),
   formatMessage: func.isRequired,
+  onSettled: func,
+  isOwnerReady: bool,
 }
 
 export default GraphRender

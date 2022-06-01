@@ -54,6 +54,7 @@ const { getRemoteAddress } = require('../shared/request')
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 const { createFormObject } = require('../forms/service')
+const { GRAPH_FLAGS } = require('../shared/constants')
 
 async function getListResults(query, auth, fields) {
   if (!fields) {
@@ -2397,6 +2398,12 @@ async function clinicalIndicatorAggregations(request) {
     groupBy = query.groupBy
   }
 
+  // optional flags
+  let flags = []
+  if (query.flags) {
+    flags = _.isArray(query.flags) ? query.flags : [query.flags]
+  }
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -2408,6 +2415,8 @@ async function clinicalIndicatorAggregations(request) {
     'resultCategory1',
     'resultCategory2',
   ]
+
+  const resp = {}
   if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
     const factTableQuery = getClinicalIndicatorQueryForFactTable(
       dataConstraints,
@@ -2415,12 +2424,18 @@ async function clinicalIndicatorAggregations(request) {
       groupBy,
       query
     )
-    const data = await processGroupedQuery(
+
+    if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
+      const [{ cnt }] = await factTableQuery.clone()
+      resp.totalResults = cnt
+    }
+
+    resp.data = await processGroupedQuery(
       factTableQuery,
       groupBy,
       'r.startedOn'
     )
-    return { data }
+    return resp
   }
 
   const resultQuery = getClinicalIndicatorQueryForResultsTable(
@@ -2429,8 +2444,13 @@ async function clinicalIndicatorAggregations(request) {
     groupBy,
     query
   )
-  const data = await processGroupedQuery(resultQuery, groupBy)
-  return { data }
+
+  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
+    const [{ cnt }] = await resultQuery.clone()
+    resp.totalResults = cnt
+  }
+  resp.data = await processGroupedQuery(resultQuery, groupBy)
+  return resp
 }
 
 function getClinicalIndicatorQueryForFactTable(
