@@ -1,6 +1,6 @@
 -- If you front lost connection issues, limit file size (1 run per year seems to work)
 SET @startDate = '2019-01-01';
-set @i = @startDate;  
+set @currentMonth = @startDate;  
 SET @endDate = '2022-01-01'; 
 SET @interval = 30; -- Months
 
@@ -222,11 +222,11 @@ FROM
   LEFT JOIN Geography AS go on go.id = so.geographyId
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
-  WHERE r.endedOn >= @i AND r.endedOn < date_add(@i,interval @interval month);
+  WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH);
     -- ------------------------------------------------------------------------------------------------------
-SET @i = date_add(@i, INTERVAL @interval MONTH);
+SET @currentMonth = date_add(@currentMonth, INTERVAL @interval MONTH);
 
-UNTIL @i > @endDate
+UNTIL @currentMonth > @endDate
 END REPEAT;
 END;;
 
