@@ -2,7 +2,8 @@
 SET @startDate = '2019-01-01';
 set @currentMonth = @startDate;  
 SET @endDate = '2022-01-01'; 
-SET @interval = 30; -- Months
+SET @interval = 1; -- Months
+SET @fileName = concat('/var/lib/mysql-files/from_',@startDate,'_to_',@endDate,'_', cast(sysdate() as char), '.csv');
 
 DROP TEMPORARY TABLE IF EXISTS ResultExport;
 
@@ -236,7 +237,6 @@ CALL ExtractDataForTableau;
 
 DROP PROCEDURE IF EXISTS ExtractDataForTableau;
 
-SET @fileName = concat('/var/lib/mysql-files/from_',@startDate,'_to_',@endDate,'_', cast(sysdate() as char), '.csv');
 
 SELECT @fileName fileName, count(*) quantity FROM ResultExport;
 
