@@ -612,6 +612,34 @@ const ntpLevel = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'result',
+      activity: 'view',
+    },
+    {
+      module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'result',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'dashboard',
+      activity: 'target',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
+    },
   ],
 }
 
