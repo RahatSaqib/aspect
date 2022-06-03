@@ -9,14 +9,21 @@ import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
 import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 
+import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 import styles from '../GraphsContainer.css'
 
 const cssClasses = classnames.bind(styles)
 
-const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
-  const { title, id, selectorModifiers = false } = config
+const GraphContainer = ({
+  assaysFromState,
+  classNames,
+  config,
+  size,
+  whiteListed,
+}) => {
+  const { title, id, selectorModifiers = false, isOwnerReady = true } = config
   const { formatMessage: intlFormatMessage } = useIntl()
   const { graphType, graphRenderPermissions } = config
   const { innerSize, outerSize } = size
@@ -65,6 +72,7 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
                     }
               }
               name={id}
+              classNames={classNames}
             >
               <Grid
                 container
@@ -72,23 +80,32 @@ const GraphContainer = ({ config, size, assaysFromState, whiteListed }) => {
                 className={cssClasses('graph__containerGrid')}
               >
                 {graphType &&
-                  graphType.map(graph => (
-                    <GraphRender
-                      assays={{ whiteListed, assaysFromState }}
-                      config={graph}
-                      key={graph.id}
-                      id={graph.id}
-                      updatedParams={graphParams}
-                      formatMessage={intlFormatMessage}
-                      clientSideFilter={{
-                        isClientSide,
-                        selectorModifiers,
-                        clientSideFilters,
-                        clientSideFilterOptions,
-                        setClientSideFilterOptions,
-                      }}
-                    />
-                  ))}
+                  graphType.map(graph => {
+                    const { api: { params: { flags = [] } = {} } = {} } = graph
+                    const optionalProps = { isOwnerReady }
+                    if (flags.includes(GRAPH_CONSTS.GET_TOTAL_RESULTS)) {
+                      optionalProps.onSettled = config.onSettled
+                    }
+
+                    return (
+                      <GraphRender
+                        assays={{ whiteListed, assaysFromState }}
+                        config={graph}
+                        key={graph.id}
+                        id={graph.id}
+                        updatedParams={graphParams}
+                        formatMessage={intlFormatMessage}
+                        clientSideFilter={{
+                          isClientSide,
+                          selectorModifiers,
+                          clientSideFilters,
+                          clientSideFilterOptions,
+                          setClientSideFilterOptions,
+                        }}
+                        {...optionalProps}
+                      />
+                    )
+                  })}
               </Grid>
             </AspectCard>
           </Grid>

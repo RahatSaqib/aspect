@@ -1305,6 +1305,11 @@ const routes = [
                 ...resultAggregationsResponseItem,
               })
             ),
+          totalResults: Joi.number()
+            .allow(null)
+            .integer()
+            .positive()
+            .description('Number of affected/used results'),
         }),
       },
     },

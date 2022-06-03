@@ -3,6 +3,7 @@ import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
@@ -30,6 +31,7 @@ const tbGraphs = {
             groupBy: ['month', 'resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+            flags: [GRAPH_CONSTS.GET_TOTAL_RESULTS],
           },
         },
         i18nKey: 'resultCategory1I18nKey',
@@ -97,6 +99,7 @@ const tbGraphs = {
             groupBy: ['month', 'resultCategory2', 'resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+            flags: [GRAPH_CONSTS.GET_TOTAL_RESULTS],
           },
         },
         i18nKey: 'resultCategory2I18nKey',
