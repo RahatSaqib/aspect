@@ -110,7 +110,10 @@ const FilterByAssayDropDown = props => {
           'resultCount',
           'desc'
         )[0]
-        let defaultAssayGroupIndex = data?.assays.indexOf(defaultAssayGroup)
+        let defaultAssayGroupIndex = findIndex(
+          newOptions,
+          ({ label }) => label === defaultAssayGroup.assayTypeAbbreviation
+        )
         // Default selected assay group to the provided one
         if (initByCountryDefaultGroup) {
           const presetDefaultGroupIndex = findIndex(
