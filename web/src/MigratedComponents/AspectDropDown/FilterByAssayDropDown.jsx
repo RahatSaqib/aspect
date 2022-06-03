@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import map from 'lodash/map'
 import groupBy from 'lodash/groupBy'
+import orderBy from 'lodash/orderBy'
 import findIndex from 'lodash/findIndex'
 import Select, { components } from 'react-select'
 import { defineMessages } from 'react-intl'
@@ -102,15 +103,28 @@ const FilterByAssayDropDown = props => {
           })
         )
       }
+      // Set default assay group
       if (!isEqual(options, newOptions)) {
+        const defaultAssayGroup = orderBy(
+          data?.assays,
+          'resultCount',
+          'desc'
+        )[0]
+        let defaultAssayGroupIndex = data?.assays.indexOf(defaultAssayGroup)
+        // Default selected assay group to the provided one
         if (initByCountryDefaultGroup) {
-          const found = findIndex(
+          const presetDefaultGroupIndex = findIndex(
             newOptions,
             ({ label }) => label === initByCountryDefaultGroup
           )
-          setDefaultValue(newOptions[found]?.options)
-          handleChange(newOptions[found]?.options, { action: 'select-option' })
+          // If it doesn't exist in the list, then default to the group of the assay with more results
+          if (presetDefaultGroupIndex > -1)
+            defaultAssayGroupIndex = presetDefaultGroupIndex
         }
+        setDefaultValue(newOptions[defaultAssayGroupIndex]?.options)
+        handleChange(newOptions[defaultAssayGroupIndex]?.options, {
+          action: 'select-option',
+        })
         setOptions(newOptions)
       }
     }
