@@ -12,6 +12,9 @@ const GRAPH_CONSTS = {
     NotConfirmed: 'AwaitingTreatment',
     Confirmed: 'OnTreatment',
   },
+
+  // this flag(s) should correspond with GRAPH_FLAGS in API in `api/src/shared/constants.js`
+  GET_TOTAL_RESULTS: 'GET_TOTAL_RESULTS',
 }
 
 export default GRAPH_CONSTS
