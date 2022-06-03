@@ -54,7 +54,9 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") as ${alias ?? field}`)
+  knex.raw(
+    `CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`
+  )
 
 const getISODateUserTimeZoneField = (
   knex,

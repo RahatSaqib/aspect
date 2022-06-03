@@ -526,7 +526,10 @@ function getInventoryItemsRaw() {
   )`
 }
 
-async function listLog(request) {
+async function listLog(
+  request,
+  querySelector = querySelectors.INVENTORY_LOG_LIST
+) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
@@ -545,7 +548,8 @@ async function listLog(request) {
     .count('il.id as total')
     .first()
   const data = await inventoryLogQuery
-    .select(querySelectors.INVENTORY_LOG_LIST)
+    .select(querySelector)
+    // TODO: set the correct inventory-item-sort-fields for inventory log. This is currently not being used, as only a report is available.
     .modify(sortPageParams, query, 's.name', INVENTORY_ITEM_SORT_FIELDS)
   return { ok: true, total, length: data.length, data }
 }
