@@ -24,7 +24,9 @@ function withExpirationDateStrategy(
   inventoryItemAlias = 'ii'
 ) {
   if (!_.isNil(expiresOn)) {
-    knexQuery.where(`${inventoryItemAlias}.expiresOn`, expiresOn)
+    knexQuery.whereRaw(`Date(${inventoryItemAlias}.expiresOn) = date(?)`, [
+      expiresOn,
+    ])
   } else {
     knexQuery.whereNull(`${inventoryItemAlias}.expiresOn`)
   }
