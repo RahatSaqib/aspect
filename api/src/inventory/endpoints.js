@@ -15,6 +15,7 @@ const {
   transferInventory,
   receiveInventory,
   getDaysByLocation,
+  listLog,
 } = require('./service')
 
 const { exportSupplies } = require('./serviceReports')
@@ -102,6 +103,30 @@ const routes = [
             'projectedWaste',
             'dailyConsumptionRate',
             'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/log',
+    handler: asyncHandler(listLog),
+    config: {
+      description: 'List of Inventory Transactions',
+      notes: 'Pageable and sortable list of inventory transactions',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'siteName',
+            'countryName',
+            'stateName',
+            'lgaName'
           ),
         },
       },

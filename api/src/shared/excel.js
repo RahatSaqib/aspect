@@ -376,7 +376,6 @@ async function renderExcelTemplate({
       let dataRows = data
       // If way to fill in data is mapping, then we need to get the rows inside the object, if they exist
       if (wayToFillInData === 'mapping') dataRows = data.rows
-
       // fill in array 'rows'
       let rows = []
       if (dataRows && dataRows.length > 0) {

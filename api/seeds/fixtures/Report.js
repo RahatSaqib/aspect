@@ -330,6 +330,27 @@ const reportCustomFieldsCompletion = {
   ],
 }
 
+const inventoryLog = {
+  name: 'Inventory Log',
+  description: 'Lists all the inventory transactions in the filters scope',
+  i18nKey: 'inventoryLog',
+  externalId: 'inventory_log',
+  i18nKeyDescription: 'inventoryLogDescription',
+  fileName: 'InventoryLog',
+  exportCsv: false,
+  sortOrder: 14,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'inventory/serviceReports',
+      functionName: 'inventoryLog',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -345,4 +366,5 @@ module.exports = {
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
   reportCustomFieldsCompletion,
+  inventoryLog,
 }

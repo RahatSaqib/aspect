@@ -4,6 +4,7 @@ import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
@@ -37,6 +38,7 @@ const covidGraphs = {
             groupBy: ['month', 'resultCategory1'],
             [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
             [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+            flags: [GRAPH_CONSTS.GET_TOTAL_RESULTS],
           },
         },
         indexBy: 'month',
