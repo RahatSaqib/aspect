@@ -10,20 +10,31 @@ import {
   isPermittedUser,
 } from '../../components/shared/requirePermissions'
 
-const PermissionsProvider = ({
+export const isGraphPermitted = ({
+  auth,
   permissions: permissionsInConfig,
-  override: overriddenPermissions,
-  extra: extraPermissions,
-  children,
+  override: overriddenPermissions = [],
+  extra: extraPermissions = [],
 }) => {
   const {
     jwt: { permissions },
-  } = useAuthState()
+  } = auth
   const permissionsByTypes = flowRight([
     groupByPermissionTypes,
     getPermissions,
   ])(permissionsInConfig, overriddenPermissions, extraPermissions)
   const isPermitted = isPermittedUser(permissions, permissionsByTypes)
+  return isPermitted
+}
+
+const PermissionsProvider = ({ permissions, override, extra, children }) => {
+  const auth = useAuthState()
+  const isPermitted = isGraphPermitted({
+    auth,
+    permissions,
+    override,
+    extra,
+  })
   return isPermitted ? <Fragment>{children}</Fragment> : null
 }
 

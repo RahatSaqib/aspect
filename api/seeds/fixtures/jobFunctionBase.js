@@ -19,6 +19,7 @@ const admin = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'inventory_log',
   ],
   permissions: [
     {
