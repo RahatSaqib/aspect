@@ -3,7 +3,7 @@
     "personName": "Bryan M Richards",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "sbaumgartner@systemone.id",
+    "personEmailAddress": "developer@systemone.id",
     "personCell": "+27 083 324 3682",
     "username": "admin",
     "timezone": "South Africa Standard Time",
@@ -1908,17 +1908,17 @@
     ]
   },
   {
-    "personName": "Stefan",
+    "personName": "Developer",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "stefanbaumg@gmail.com",
-    "personCell": "+14135485003",
+    "personEmailAddress": "developer@systemone.id",
+    "personCell": "+18888452610",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{ "shortName": "SystemOne Stefan" }]
+    "sites": [{ "shortName": "SystemOne Developer" }]
   },
   {
     "personName": "Sipho Tsabedze",

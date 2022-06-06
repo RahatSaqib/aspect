@@ -24,7 +24,7 @@ describe('Custom field mapper', () => {
       id: 'new instrument_109109_07bd96a5',
       assay: { id: 'GxMtbRifUltra', version: '2' },
       instrument: { serial: 'new instrument' },
-      sender: { version: '4.7b', operator: 'Big Boy Baumgartner' },
+      sender: { version: '4.7b', operator: 'A GeneXpert User' },
       patient: {
         id: '0833223622',
         name: 'Peta J',

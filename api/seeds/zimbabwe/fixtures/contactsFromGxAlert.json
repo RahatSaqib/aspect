@@ -2,7 +2,7 @@
   {
     "personName": "Admin User",
     "jobFunctions": ["Admin"],
-    "personEmailAddress": "sbaumgartner@systemone.id",
+    "personEmailAddress": "developer@systemone.id",
     "personCell": "+1112223333",
     "username": "admin",
     "timezone": "South Africa Standard Time",
@@ -23,9 +23,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Bonda Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Bonda Hospital"
+      }
+    ]
   },
   {
     "personName": "Perfias Nkhoma",
@@ -38,9 +40,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Tshelanyemba Mis"
-    }]
+    "sites": [
+      {
+        "shortName": "Tshelanyemba Mis"
+      }
+    ]
   },
   {
     "personName": "Khonzubule Maphosa",
@@ -53,9 +57,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Maphisa District"
-    }]
+    "sites": [
+      {
+        "shortName": "Maphisa District"
+      }
+    ]
   },
   {
     "personName": "Siqaliso Ndlovu",
@@ -68,9 +74,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chimanimani Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chimanimani Hosp"
+      }
+    ]
   },
   {
     "personName": "Charity Ncube",
@@ -83,9 +91,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Filabusi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Filabusi Hosp"
+      }
+    ]
   },
   {
     "personName": "Hebert Mutunzi",
@@ -124,11 +134,14 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Epworth 1"
-    }, {
-      "shortName": "Epworth 2"
-    }]
+    "sites": [
+      {
+        "shortName": "Epworth 1"
+      },
+      {
+        "shortName": "Epworth 2"
+      }
+    ]
   },
   {
     "personName": "Chemhere T",
@@ -141,9 +154,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Shurugwi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Shurugwi Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHAYAMOMBE I",
@@ -156,25 +171,35 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chikombedzi Hosp"
-    }, {
-      "shortName": "Hwange Colliery"
-    }, {
-      "shortName": "Kotwa Hospital"
-    }, {
-      "shortName": "Manama Hospital"
-    }, {
-      "shortName": "Mtshabezi Hosp"
-    }, {
-      "shortName": "Ndanga Hosp"
-    }, {
-      "shortName": "Neshuro Hosp"
-    }, {
-      "shortName": "Rusape Hosp 1"
-    }, {
-      "shortName": "Rusape Hosp 2"
-    }]
+    "sites": [
+      {
+        "shortName": "Chikombedzi Hosp"
+      },
+      {
+        "shortName": "Hwange Colliery"
+      },
+      {
+        "shortName": "Kotwa Hospital"
+      },
+      {
+        "shortName": "Manama Hospital"
+      },
+      {
+        "shortName": "Mtshabezi Hosp"
+      },
+      {
+        "shortName": "Ndanga Hosp"
+      },
+      {
+        "shortName": "Neshuro Hosp"
+      },
+      {
+        "shortName": "Rusape Hosp 1"
+      },
+      {
+        "shortName": "Rusape Hosp 2"
+      }
+    ]
   },
   {
     "personName": "MASIWA MUSUKA",
@@ -187,9 +212,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Birchenough "
-    }]
+    "sites": [
+      {
+        "shortName": "Birchenough "
+      }
+    ]
   },
   {
     "personName": "Patron T. Mafaune",
@@ -203,9 +230,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "Kathryn Zvinoira",
@@ -219,9 +248,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "JEFFREY DANA",
@@ -234,9 +265,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mabvuku Clinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Mabvuku Clinic"
+      }
+    ]
   },
   {
     "personName": "Edwell Fungai Zamba",
@@ -250,9 +283,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "SINIKIWE MAPHOSA",
@@ -265,9 +300,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Manama Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Manama Hospital"
+      }
+    ]
   },
   {
     "personName": "THOKOE KHUMALO",
@@ -280,9 +317,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mtshabezi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mtshabezi Hosp"
+      }
+    ]
   },
   {
     "personName": "Alouis Magocha",
@@ -295,9 +334,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chipinge Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chipinge Hosp"
+      }
+    ]
   },
   {
     "personName": "Fabrice Kasongo",
@@ -311,9 +352,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland North"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland North"
+      }
+    ]
   },
   {
     "personName": "Norbert Muleya",
@@ -327,9 +370,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South"
+      }
+    ]
   },
   {
     "personName": "Nyakazai Vhurande",
@@ -343,10 +388,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South",
-      "lgaName": "Beitbridge"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South",
+        "lgaName": "Beitbridge"
+      }
+    ]
   },
   {
     "personName": "Mlungisi Nkala",
@@ -360,10 +407,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South",
-      "lgaName": "Gwanda"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South",
+        "lgaName": "Gwanda"
+      }
+    ]
   },
   {
     "personName": "Phakamani Nsindane",
@@ -377,9 +426,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South"
+      }
+    ]
   },
   {
     "personName": "Sithembinkosi Nkomo",
@@ -393,10 +444,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South",
-      "lgaName": "Umzingwane"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South",
+        "lgaName": "Umzingwane"
+      }
+    ]
   },
   {
     "personName": "Dumisani Ndlovu",
@@ -410,10 +463,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South",
-      "lgaName": "Matobo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South",
+        "lgaName": "Matobo"
+      }
+    ]
   },
   {
     "personName": "Taurai Moyo",
@@ -427,10 +482,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South",
-      "lgaName": "Bulilima"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South",
+        "lgaName": "Bulilima"
+      }
+    ]
   },
   {
     "personName": "Siboneni Ndlovu",
@@ -444,10 +501,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South",
-      "lgaName": "Mangwe"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South",
+        "lgaName": "Mangwe"
+      }
+    ]
   },
   {
     "personName": "Dr N.M Singine",
@@ -461,9 +520,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South"
+      }
+    ]
   },
   {
     "personName": "TENDAI SHAMU",
@@ -515,9 +576,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland North"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland North"
+      }
+    ]
   },
   {
     "personName": "Dr Tendai Nkomo",
@@ -573,9 +636,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South"
+      }
+    ]
   },
   {
     "personName": "MIRIAM MATOPE",
@@ -588,9 +653,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Kadoma Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Kadoma Hospital"
+      }
+    ]
   },
   {
     "personName": "FOSTER CHUMA",
@@ -603,9 +670,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Sanyati District"
-    }]
+    "sites": [
+      {
+        "shortName": "Sanyati District"
+      }
+    ]
   },
   {
     "personName": "George Chibukwe",
@@ -618,9 +687,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Gokwe North "
-    }]
+    "sites": [
+      {
+        "shortName": "Gokwe North "
+      }
+    ]
   },
   {
     "personName": "M James",
@@ -633,9 +704,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chitungwiza"
-    }]
+    "sites": [
+      {
+        "shortName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "MANDY MUNYENYIWA",
@@ -648,9 +721,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Zengeza 3"
-    }]
+    "sites": [
+      {
+        "shortName": "Zengeza 3"
+      }
+    ]
   },
   {
     "personName": "PRECIOUS MUNARO",
@@ -663,9 +738,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Rimuka"
-    }]
+    "sites": [
+      {
+        "shortName": "Rimuka"
+      }
+    ]
   },
   {
     "personName": "ELVA NDADZUNGIRA",
@@ -678,9 +755,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Seke South "
-    }]
+    "sites": [
+      {
+        "shortName": "Seke South "
+      }
+    ]
   },
   {
     "personName": "Blessing Mvura",
@@ -693,9 +772,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chegutu Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Chegutu Hospital"
+      }
+    ]
   },
   {
     "personName": "WANISAI HOVE",
@@ -708,9 +789,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Marondera Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Marondera Hosp"
+      }
+    ]
   },
   {
     "personName": "STANLEY MOYO",
@@ -723,9 +806,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "St Michael's "
-    }]
+    "sites": [
+      {
+        "shortName": "St Michael's "
+      }
+    ]
   },
   {
     "personName": "LORRAINE ZINGWE",
@@ -738,9 +823,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Nhowe Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Nhowe Hosp"
+      }
+    ]
   },
   {
     "personName": "SystemOne Support",
@@ -765,9 +852,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ruwa Rehab"
-    }]
+    "sites": [
+      {
+        "shortName": "Ruwa Rehab"
+      }
+    ]
   },
   {
     "personName": "TARIRO CHAKAFA",
@@ -780,9 +869,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Fr O'Hea"
-    }]
+    "sites": [
+      {
+        "shortName": "Fr O'Hea"
+      }
+    ]
   },
   {
     "personName": "TALENT MAPWEZA",
@@ -795,9 +886,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chinhoyi Hosp "
-    }]
+    "sites": [
+      {
+        "shortName": "Chinhoyi Hosp "
+      }
+    ]
   },
   {
     "personName": "NHAPI JOSEPHINE",
@@ -810,9 +903,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mutawatawa Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mutawatawa Hosp"
+      }
+    ]
   },
   {
     "personName": "LLOYD CHINYERERE",
@@ -825,9 +920,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Murewa Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Murewa Hospital"
+      }
+    ]
   },
   {
     "personName": "Arnold Tsande",
@@ -840,9 +937,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Karoi Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Karoi Hospital"
+      }
+    ]
   },
   {
     "personName": "Nyangumbe",
@@ -855,9 +954,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Kotwa Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Kotwa Hospital"
+      }
+    ]
   },
   {
     "personName": "Webster Mhindirira",
@@ -870,9 +971,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Luisa Guidotti "
-    }]
+    "sites": [
+      {
+        "shortName": "Luisa Guidotti "
+      }
+    ]
   },
   {
     "personName": "OWEN BANDE",
@@ -885,9 +988,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chidamoyo Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chidamoyo Hosp"
+      }
+    ]
   },
   {
     "personName": "mutoko",
@@ -900,9 +1005,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mutoko District Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mutoko District Hosp"
+      }
+    ]
   },
   {
     "personName": "THOMAS MUZENDA",
@@ -915,9 +1022,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Kariba Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Kariba Hospital"
+      }
+    ]
   },
   {
     "personName": "Kudzai Mbayo",
@@ -930,9 +1039,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Sadza Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Sadza Hospital"
+      }
+    ]
   },
   {
     "personName": "Grace Hungwe",
@@ -945,9 +1056,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Gokwe South "
-    }]
+    "sites": [
+      {
+        "shortName": "Gokwe South "
+      }
+    ]
   },
   {
     "personName": "Knowledge Kujowo",
@@ -960,9 +1073,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mt St Mary's"
-    }]
+    "sites": [
+      {
+        "shortName": "Mt St Mary's"
+      }
+    ]
   },
   {
     "personName": "Witness Chikondowa",
@@ -975,9 +1090,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mahusekwa Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mahusekwa Hosp"
+      }
+    ]
   },
   {
     "personName": "SIBANGAKI MATIMBE",
@@ -990,9 +1107,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Silobela Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Silobela Hosp"
+      }
+    ]
   },
   {
     "personName": "INNOCENT GUMBO",
@@ -1005,9 +1124,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mvuma Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Mvuma Hospital"
+      }
+    ]
   },
   {
     "personName": "Albert Madenga",
@@ -1020,11 +1141,14 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chinhoyi Hosp "
-    }, {
-      "shortName": "Muvonde Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chinhoyi Hosp "
+      },
+      {
+        "shortName": "Muvonde Hosp"
+      }
+    ]
   },
   {
     "personName": "SABINA MAKUSHA",
@@ -1037,9 +1161,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Gweru District"
-    }]
+    "sites": [
+      {
+        "shortName": "Gweru District"
+      }
+    ]
   },
   {
     "personName": "Nixon Kanenungo",
@@ -1052,11 +1178,14 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "St Albert's 1"
-    }, {
-      "shortName": "St Albert's 2"
-    }]
+    "sites": [
+      {
+        "shortName": "St Albert's 1"
+      },
+      {
+        "shortName": "St Albert's 2"
+      }
+    ]
   },
   {
     "personName": "Mr Mavhura",
@@ -1069,9 +1198,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mt Darwin Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mt Darwin Hosp"
+      }
+    ]
   },
   {
     "personName": "Mr Mavhura",
@@ -1084,9 +1215,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mt Darwin Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mt Darwin Hosp"
+      }
+    ]
   },
   {
     "personName": "MAVIS GOZHO",
@@ -1099,9 +1232,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Musume Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Musume Hospital"
+      }
+    ]
   },
   {
     "personName": "A Chisango",
@@ -1113,9 +1248,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Makumbe Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Makumbe Hosp"
+      }
+    ]
   },
   {
     "personName": "Kundai Maregere",
@@ -1128,9 +1265,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Shamva Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Shamva Hospital"
+      }
+    ]
   },
   {
     "personName": "Thulani Sibindi",
@@ -1143,9 +1282,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mbuma Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Mbuma Hospital"
+      }
+    ]
   },
   {
     "personName": "NEVERSON MUTAVA",
@@ -1158,9 +1299,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Rutenga Clinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Rutenga Clinic"
+      }
+    ]
   },
   {
     "personName": "Fana  Farai",
@@ -1173,9 +1316,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Neshuro Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Neshuro Hosp"
+      }
+    ]
   },
   {
     "personName": "LEOPOLD CHITSA",
@@ -1188,9 +1333,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "BRIDH"
-    }]
+    "sites": [
+      {
+        "shortName": "BRIDH"
+      }
+    ]
   },
   {
     "personName": "washington gava",
@@ -1203,9 +1350,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Guruve Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Guruve Hospital"
+      }
+    ]
   },
   {
     "personName": "MELODY SHIRIYEDEWE",
@@ -1218,9 +1367,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Glen View Poly"
-    }]
+    "sites": [
+      {
+        "shortName": "Glen View Poly"
+      }
+    ]
   },
   {
     "personName": "Archford Ndengu",
@@ -1233,9 +1384,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Highfield Clinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Highfield Clinic"
+      }
+    ]
   },
   {
     "personName": "Tawanda Chirere",
@@ -1248,9 +1401,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mbare Polyclinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Mbare Polyclinic"
+      }
+    ]
   },
   {
     "personName": "LOVEMORE PAMHIDZAI",
@@ -1263,9 +1418,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Howard Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Howard Hospital"
+      }
+    ]
   },
   {
     "personName": "Tendai Nyamande",
@@ -1278,9 +1435,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mvurwi Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Mvurwi Hospital"
+      }
+    ]
   },
   {
     "personName": "MARVELOUS MAPONDE",
@@ -1293,9 +1452,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Concession Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Concession Hosp"
+      }
+    ]
   },
   {
     "personName": "Musindo Murambiwa",
@@ -1308,9 +1469,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Silveira Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Silveira Hosp"
+      }
+    ]
   },
   {
     "personName": "MUDZINGWA WELLINGTON",
@@ -1323,9 +1486,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mashoko Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Mashoko Hosp"
+      }
+    ]
   },
   {
     "personName": "MURAHWO NORMAN",
@@ -1338,9 +1503,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Musiso Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Musiso Hospital"
+      }
+    ]
   },
   {
     "personName": "Tatenda Chakanyuka",
@@ -1353,9 +1520,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MUKACHANA B",
@@ -1368,9 +1537,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chikombedzi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chikombedzi Hosp"
+      }
+    ]
   },
   {
     "personName": "CHITAURO TERENCE",
@@ -1383,9 +1554,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chiredzi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chiredzi Hosp"
+      }
+    ]
   },
   {
     "personName": "Nelson Garwi",
@@ -1398,9 +1571,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "St Peter's "
-    }]
+    "sites": [
+      {
+        "shortName": "St Peter's "
+      }
+    ]
   },
   {
     "personName": "Aristead Muchenje",
@@ -1413,9 +1588,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Masvingo Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Masvingo Hosp"
+      }
+    ]
   },
   {
     "personName": "JACHI JOSHUA",
@@ -1428,9 +1605,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chivi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chivi Hosp"
+      }
+    ]
   },
   {
     "personName": "MAGURA ENILIA",
@@ -1443,9 +1622,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Morgenster Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Morgenster Hosp"
+      }
+    ]
   },
   {
     "personName": "JUNIOR BANGUZA",
@@ -1458,9 +1639,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Rujeko Clinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Rujeko Clinic"
+      }
+    ]
   },
   {
     "personName": "Modina Mashakada",
@@ -1473,9 +1656,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Masvingo Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Masvingo Hosp"
+      }
+    ]
   },
   {
     "personName": "Annah Pingani",
@@ -1488,9 +1673,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Kuwadzana Clinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Kuwadzana Clinic"
+      }
+    ]
   },
   {
     "personName": "MBIRI OWEN",
@@ -1503,9 +1690,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Gutu Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Gutu Hospital"
+      }
+    ]
   },
   {
     "personName": "Dr Tawanda Mapuranga",
@@ -1532,9 +1721,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chivhu Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chivhu Hosp"
+      }
+    ]
   },
   {
     "personName": "MAGURA ENILIA",
@@ -1547,9 +1738,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Morgenster Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Morgenster Hosp"
+      }
+    ]
   },
   {
     "personName": "STANLEY MJANGA",
@@ -1562,9 +1755,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Kwekwe Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Kwekwe Hosp"
+      }
+    ]
   },
   {
     "personName": "Shame Musengi",
@@ -1577,9 +1772,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chimhanda Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chimhanda Hosp"
+      }
+    ]
   },
   {
     "personName": "Chipo Mudewairi",
@@ -1591,9 +1788,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mary Mount "
-    }]
+    "sites": [
+      {
+        "shortName": "Mary Mount "
+      }
+    ]
   },
   {
     "personName": "MUDAMBURI PARDON",
@@ -1606,9 +1805,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "tatenda chakanyuka",
@@ -1621,9 +1822,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "Nqobile Mlilo",
@@ -1664,11 +1867,14 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chitungwiza"
-    }, {
-      "shortName": "MIDH"
-    }]
+    "sites": [
+      {
+        "shortName": "Chitungwiza"
+      },
+      {
+        "shortName": "MIDH"
+      }
+    ]
   },
   {
     "personName": "Misheck Kuhudzayi",
@@ -1682,9 +1888,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "Dennis Dumisani Nkomo",
@@ -1698,9 +1906,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Bulawayo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Bulawayo"
+      }
+    ]
   },
   {
     "personName": "Kelvin Magenende",
@@ -1728,9 +1938,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "Frankson Masiye",
@@ -1744,9 +1956,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland West"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland West"
+      }
+    ]
   },
   {
     "personName": "Diana Maboya",
@@ -1774,9 +1988,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland North"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland North"
+      }
+    ]
   },
   {
     "personName": "Nelson Mashanga",
@@ -1790,9 +2006,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland West"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland West"
+      }
+    ]
   },
   {
     "personName": "Clemence Duri",
@@ -1806,9 +2024,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Harare"
-    }]
+    "geographies": [
+      {
+        "stateName": "Harare"
+      }
+    ]
   },
   {
     "personName": "Ephraim Kufa",
@@ -1822,9 +2042,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland East"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland East"
+      }
+    ]
   },
   {
     "personName": "Modina Mashakada",
@@ -1838,9 +2060,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Masvingo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Masvingo"
+      }
+    ]
   },
   {
     "personName": "Fortune Tauro",
@@ -1854,9 +2078,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Masvingo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Masvingo"
+      }
+    ]
   },
   {
     "personName": "Nyasha Musiya",
@@ -1870,9 +2096,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Midlands"
-    }]
+    "geographies": [
+      {
+        "stateName": "Midlands"
+      }
+    ]
   },
   {
     "personName": "Stanford Mjanga",
@@ -1886,9 +2114,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Midlands"
-    }]
+    "geographies": [
+      {
+        "stateName": "Midlands"
+      }
+    ]
   },
   {
     "personName": "Henry Dickson",
@@ -1902,9 +2132,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland East"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland East"
+      }
+    ]
   },
   {
     "personName": "Tsitsi Sakupwanya",
@@ -1932,9 +2164,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Harare"
-    }]
+    "geographies": [
+      {
+        "stateName": "Harare"
+      }
+    ]
   },
   {
     "personName": "Sharon Ngwenya",
@@ -1948,9 +2182,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland North"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland North"
+      }
+    ]
   },
   {
     "personName": "MASHAYAMOMBE I",
@@ -1963,9 +2199,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Rusape Hosp 2"
-    }]
+    "sites": [
+      {
+        "shortName": "Rusape Hosp 2"
+      }
+    ]
   },
   {
     "personName": "Max Kanyamura",
@@ -1978,9 +2216,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland Central"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland Central"
+      }
+    ]
   },
   {
     "personName": "TANDIWE MAKUMBE",
@@ -1994,9 +2234,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland West"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland West"
+      }
+    ]
   },
   {
     "personName": "Evidence Makombe",
@@ -2010,9 +2252,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Midlands"
-    }]
+    "geographies": [
+      {
+        "stateName": "Midlands"
+      }
+    ]
   },
   {
     "personName": "Phibeon M. Mangwendeza",
@@ -2039,9 +2283,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "United Byo Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "United Byo Hosp"
+      }
+    ]
   },
   {
     "personName": "ZEBRO MUDZIMBABWE",
@@ -2054,9 +2300,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Epworth 2"
-    }]
+    "sites": [
+      {
+        "shortName": "Epworth 2"
+      }
+    ]
   },
   {
     "personName": "Kudakwashe Musomekwa",
@@ -2069,9 +2317,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "PSI Bambanani"
-    }]
+    "sites": [
+      {
+        "shortName": "PSI Bambanani"
+      }
+    ]
   },
   {
     "personName": "Mkhokheli Ngwenya",
@@ -2098,9 +2348,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Hatcliff Clinic"
-    }]
+    "sites": [
+      {
+        "shortName": "Hatcliff Clinic"
+      }
+    ]
   },
   {
     "personName": "Kathazo Mazhambe",
@@ -2113,9 +2365,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Birchenough "
-    }]
+    "sites": [
+      {
+        "shortName": "Birchenough "
+      }
+    ]
   },
   {
     "personName": "Simba Mashizha",
@@ -2156,9 +2410,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Marange Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Marange Hospital"
+      }
+    ]
   },
   {
     "personName": "PATRICK SIMBI",
@@ -2171,9 +2427,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Hauna Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Hauna Hospital"
+      }
+    ]
   },
   {
     "personName": "Mvurwi Hospital",
@@ -2186,9 +2444,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Mvurwi Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Mvurwi Hospital"
+      }
+    ]
   },
   {
     "personName": "mudzingwa",
@@ -2201,9 +2461,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Regina Coeli"
-    }]
+    "sites": [
+      {
+        "shortName": "Regina Coeli"
+      }
+    ]
   },
   {
     "personName": "Adam Chindore",
@@ -2216,9 +2478,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Esigodini Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Esigodini Hosp"
+      }
+    ]
   },
   {
     "personName": "Washington Chimbiro",
@@ -2231,9 +2495,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Makumbe Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Makumbe Hosp"
+      }
+    ]
   },
   {
     "personName": "Gokwe South Laboratory",
@@ -2245,9 +2511,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Gokwe South "
-    }]
+    "sites": [
+      {
+        "shortName": "Gokwe South "
+      }
+    ]
   },
   {
     "personName": "Bryan Richards",
@@ -2261,9 +2529,11 @@
     "hideSampleId": true,
     "hideNotes": true,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "NMRL"
-    }]
+    "sites": [
+      {
+        "shortName": "NMRL"
+      }
+    ]
   },
   {
     "personName": "Peter Gumbo",
@@ -2277,9 +2547,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland Central"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland Central"
+      }
+    ]
   },
   {
     "personName": "Dr Cremance Tshuma",
@@ -2293,9 +2565,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland Central"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland Central"
+      }
+    ]
   },
   {
     "personName": "Tatenda Maparo",
@@ -2320,9 +2594,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOICE",
@@ -2333,9 +2609,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOICE",
@@ -2346,9 +2624,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOICE",
@@ -2359,9 +2639,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2372,9 +2654,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2385,9 +2669,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2398,9 +2684,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2411,9 +2699,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2424,9 +2714,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2437,9 +2729,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2450,9 +2744,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2463,9 +2759,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2476,9 +2774,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2489,9 +2789,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "MASHENJERE LOISI",
@@ -2502,9 +2804,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Ndanga Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Ndanga Hosp"
+      }
+    ]
   },
   {
     "personName": "shoko",
@@ -2517,9 +2821,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Neshuro Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Neshuro Hosp"
+      }
+    ]
   },
   {
     "personName": "Regina Mubau",
@@ -2723,9 +3029,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Bonda Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Bonda Hospital"
+      }
+    ]
   },
   {
     "personName": "neshuro district",
@@ -2738,9 +3046,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Neshuro Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Neshuro Hosp"
+      }
+    ]
   },
   {
     "personName": "Tonderai K Madzima",
@@ -2754,9 +3064,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland East"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland East"
+      }
+    ]
   },
   {
     "personName": "Manners Ncube",
@@ -2770,9 +3082,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Bulawayo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Bulawayo"
+      }
+    ]
   },
   {
     "personName": "Cathrine Banana",
@@ -2786,9 +3100,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Bulawayo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Bulawayo"
+      }
+    ]
   },
   {
     "personName": "Emmanuel Mare",
@@ -2802,9 +3118,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Chitungwiza"
-    }]
+    "geographies": [
+      {
+        "stateName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "Tony Mlambo",
@@ -2818,9 +3136,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland South"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland South"
+      }
+    ]
   },
   {
     "personName": "Rachel Taruvinga",
@@ -2834,9 +3154,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland Central"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland Central"
+      }
+    ]
   },
   {
     "personName": "Mercy Chinosengwa",
@@ -2850,9 +3172,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland Central"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland Central"
+      }
+    ]
   },
   {
     "personName": "John Ncube",
@@ -2866,10 +3190,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Matabeleland North",
-      "lgaName": "Lupane"
-    }]
+    "geographies": [
+      {
+        "stateName": "Matabeleland North",
+        "lgaName": "Lupane"
+      }
+    ]
   },
   {
     "personName": "Admore Murwira",
@@ -2883,9 +3209,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Harare"
-    }]
+    "geographies": [
+      {
+        "stateName": "Harare"
+      }
+    ]
   },
   {
     "personName": "Fortune Tauro",
@@ -2899,9 +3227,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Masvingo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Masvingo"
+      }
+    ]
   },
   {
     "personName": "MPHELO TRUST",
@@ -2916,9 +3246,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Chitungwiza"
-    }]
+    "geographies": [
+      {
+        "stateName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "TARIRO MADAMOMBE",
@@ -2946,9 +3278,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "CHOGA GODWIN",
@@ -2962,9 +3296,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "TINODAISHE MHANGARA",
@@ -2992,9 +3328,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland East"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland East"
+      }
+    ]
   },
   {
     "personName": "paul nyatsungo",
@@ -3008,9 +3346,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland East"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland East"
+      }
+    ]
   },
   {
     "personName": "Munosiyei Norbet",
@@ -3024,10 +3364,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland West",
-      "lgaName": "Sanyati"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland West",
+        "lgaName": "Sanyati"
+      }
+    ]
   },
   {
     "personName": "Kudzayi Chishaya",
@@ -3041,9 +3383,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Mashonaland West"
-    }]
+    "geographies": [
+      {
+        "stateName": "Mashonaland West"
+      }
+    ]
   },
   {
     "personName": "Loveness Mugova",
@@ -3057,9 +3401,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Masvingo"
-    }]
+    "geographies": [
+      {
+        "stateName": "Masvingo"
+      }
+    ]
   },
   {
     "personName": "Mulunda Luboya",
@@ -3073,10 +3419,12 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Masvingo",
-      "lgaName": "Chivi"
-    }]
+    "geographies": [
+      {
+        "stateName": "Masvingo",
+        "lgaName": "Chivi"
+      }
+    ]
   },
   {
     "personName": "isaacdzveya@gmail.com",
@@ -3090,9 +3438,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Chitungwiza"
-    }]
+    "geographies": [
+      {
+        "stateName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "Isaac Dzveya",
@@ -3106,9 +3456,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Chitungwiza"
-    }]
+    "geographies": [
+      {
+        "stateName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "fadzai kawonza",
@@ -3122,9 +3474,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Chitungwiza"
-    }]
+    "geographies": [
+      {
+        "stateName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "fadzai kawonza",
@@ -3138,9 +3492,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Chitungwiza"
-    }]
+    "geographies": [
+      {
+        "stateName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "Shelton Kwiri",
@@ -3154,9 +3510,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Manicaland"
-    }]
+    "geographies": [
+      {
+        "stateName": "Manicaland"
+      }
+    ]
   },
   {
     "personName": "Adam Chindore",
@@ -3178,9 +3536,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Banket Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Banket Hospital"
+      }
+    ]
   },
   {
     "personName": "Sani Dube",
@@ -3193,9 +3553,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Nkayi Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Nkayi Hospital"
+      }
+    ]
   },
   {
     "personName": "Adam Chindore",
@@ -3222,11 +3584,14 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Filabusi Hosp"
-    }, {
-      "shortName": "Nkayi Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Filabusi Hosp"
+      },
+      {
+        "shortName": "Nkayi Hospital"
+      }
+    ]
   },
   {
     "personName": "SAKUBANI",
@@ -3238,9 +3603,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chikombedzi Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chikombedzi Hosp"
+      }
+    ]
   },
   {
     "personName": "SAKAHUHWA OLIVER",
@@ -3252,24 +3619,28 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chidamoyo Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chidamoyo Hosp"
+      }
+    ]
   },
   {
-    "personName": "Stefan",
+    "personName": "Developer",
     "personTitle": "Lab Contact",
     "jobFunctions": ["Lab User"],
-    "personEmailAddress": "stefanbaumg@gmail.com",
-    "personCell": "+14135485003",
+    "personEmailAddress": "developer@systemone.id",
+    "personCell": "+18888452610",
     "timezone": "South Africa Standard Time",
     "hidePatientId": false,
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "SystemOne Stefan"
-    }]
+    "sites": [
+      {
+        "shortName": "SystemOne Developer"
+      }
+    ]
   },
   {
     "personName": "Apronia Nehowa",
@@ -3282,9 +3653,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chitungwiza"
-    }]
+    "sites": [
+      {
+        "shortName": "Chitungwiza"
+      }
+    ]
   },
   {
     "personName": "Raynolds V. Mangena",
@@ -3311,9 +3684,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Chimanimani Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Chimanimani Hosp"
+      }
+    ]
   },
   {
     "personName": "Kelvin Charambira",
@@ -3340,13 +3715,17 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Gweru District"
-    }, {
-      "shortName": "Musume Hospital"
-    }, {
-      "shortName": "Mvuma Hospital"
-    }]
+    "sites": [
+      {
+        "shortName": "Gweru District"
+      },
+      {
+        "shortName": "Musume Hospital"
+      },
+      {
+        "shortName": "Mvuma Hospital"
+      }
+    ]
   },
   {
     "personName": "Wilbert Bara",
@@ -3360,9 +3739,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "geographies": [{
-      "stateName": "Harare"
-    }]
+    "geographies": [
+      {
+        "stateName": "Harare"
+      }
+    ]
   },
   {
     "personName": "William Mudzimu",
@@ -3375,9 +3756,11 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Plumtree Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Plumtree Hosp"
+      }
+    ]
   },
   {
     "personName": "Cloudia Gwatidzo",
@@ -3390,8 +3773,10 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true,
-    "sites": [{
-      "shortName": "Plumtree Hosp"
-    }]
+    "sites": [
+      {
+        "shortName": "Plumtree Hosp"
+      }
+    ]
   }
 ]

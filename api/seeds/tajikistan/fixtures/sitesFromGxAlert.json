@@ -199,16 +199,16 @@
     ]
   },
   {
-    "externalId": "Stefan SystemOne",
-    "name": "Stefan SystemOne",
-    "shortName": "Stefan SystemOne",
+    "externalId": "Developer SystemOne",
+    "name": "Developer SystemOne",
+    "shortName": "Developer SystemOne",
     "timeZoneId": "West Asia Standard Time",
     "devices": [
       {
-        "name": "Stefan SystemOne",
-        "shortName": "Stefan SystemOne",
+        "name": "Developer SystemOne",
+        "shortName": "Developer SystemOne",
         "macAddress": "MAC1C872CB8D373",
-        "hostId": "Stefan SystemOne GxC",
+        "hostId": "Developer SystemOne GxC",
         "serial": "Tranquilo",
         "gxAlertDeviceId": 2494
       }
