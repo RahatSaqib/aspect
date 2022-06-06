@@ -35,7 +35,7 @@ module.exports = require('../utils').seed(async knex => {
 
   await knex('SmsTemplate')
     .whereIn('phoneNumber', ['+1 413 548 5003', '+14135485003'])
-    .update({ cell: '+1 888 8452610' })
+    .update({ phoneNumber: '+1 888 8452610' })
 
   const { id: pendingMessageStatusId } = await knex('MessageStatus')
     .where('externalId', 'Pending')
@@ -43,7 +43,7 @@ module.exports = require('../utils').seed(async knex => {
   await knex('SmsMessage')
     .whereIn('phoneNumber', ['+1 413 548 5003', '+14135485003'])
     .andWhere('messageStatusId', pendingMessageStatusId)
-    .update({ cell: '+1 888 8452610' })
+    .update({ phoneNumber: '+1 888 8452610' })
 
   await knex('User').where('name', 'sbaumgartner').update({ name: 'developer' })
   await knex('User')
