@@ -341,22 +341,24 @@ async function upsertTruenatDevices(
         expiresOn: addMinutes(new Date(), 15),
         ...auditFields,
       })
-    } else if (
-      truenatDeviceApiKey.geographyId !== geographyId ||
-      truenatDeviceApiKey.siteId !== truenatLab.id ||
-      truenatDeviceApiKey.deviceId !== existingTruenatDevice.id ||
-      truenatDeviceApiKey.username !== truenatDevice.username ||
-      truenatDeviceApiKey.password !== password
-    ) {
-      await knex('DeviceApiKey').where('id', truenatDeviceApiKey.id).update({
-        geographyId,
-        siteId: truenatLab.id,
-        deviceId: existingTruenatDevice.id,
-        username: truenatDevice.username,
-        password,
-        updatedOn: auditFields.updatedOn,
-        updatedBy: auditFields.updatedBy,
-      })
+    } else {
+      const deviceApiKeyFixtureChanged =
+        truenatDeviceApiKey.geographyId !== geographyId ||
+        truenatDeviceApiKey.siteId !== truenatLab.id ||
+        truenatDeviceApiKey.deviceId !== existingTruenatDevice.id ||
+        truenatDeviceApiKey.username !== truenatDevice.username ||
+        truenatDeviceApiKey.password !== password
+      if (deviceApiKeyFixtureChanged) {
+        await knex('DeviceApiKey').where('id', truenatDeviceApiKey.id).update({
+          geographyId,
+          siteId: truenatLab.id,
+          deviceId: existingTruenatDevice.id,
+          username: truenatDevice.username,
+          password,
+          updatedOn: auditFields.updatedOn,
+          updatedBy: auditFields.updatedBy,
+        })
+      }
     }
   })
 }
