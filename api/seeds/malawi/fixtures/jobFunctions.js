@@ -8,12 +8,8 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
-  mergeJobFunctions(admin, {
-    permissions: [],
-  }),
-  mergeJobFunctions(regionalOfficer, {
-    permissions: [],
-  }),
+  admin,
+  regionalOfficer,
   mergeJobFunctions(labUser, {
     permissions: [
       {
@@ -22,8 +18,6 @@ module.exports = [
       },
     ],
   }),
-  mergeJobFunctions(clinician, {
-    permissions: [],
-  }),
+  clinician,
   technician,
 ]
