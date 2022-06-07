@@ -8,14 +8,16 @@
     "name": "Mutare Provincial Hospital",
     "shortname": "Mutare Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mutare Provincial Hospital",
-      "shortName": "Mutare Hospital",
-      "macAddress": "MAC180373B9E63C",
-      "hostId": "Mutare Provincial Ho",
-      "serial": "Cepheid5YSWDQ1",
-      "gxAlertDeviceId": 1
-    }]
+    "devices": [
+      {
+        "name": "Mutare Provincial Hospital",
+        "shortName": "Mutare Hospital",
+        "macAddress": "MAC180373B9E63C",
+        "hostId": "Mutare Provincial Ho",
+        "serial": "Cepheid5YSWDQ1",
+        "gxAlertDeviceId": 1
+      }
+    ]
   },
   {
     "externalId": "Epworth Polyclinic 1",
@@ -26,19 +28,21 @@
     "name": "Epworth Polyclinic 1",
     "shortname": "Epworth 1",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Epworth Polyclinic 1",
-      "shortName": "Epworth 1",
-      "macAddress": "MAC6805CA20C7AF",
-      "hostId": "Epworth Polyclinic",
-      "serial": "Cepheid-3520W1Q",
-      "gxAlertDeviceId": 2
-    }]
+    "devices": [
+      {
+        "name": "Epworth Polyclinic 1",
+        "shortName": "Epworth 1",
+        "macAddress": "MAC6805CA20C7AF",
+        "hostId": "Epworth Polyclinic",
+        "serial": "Cepheid-3520W1Q",
+        "gxAlertDeviceId": 2
+      }
+    ]
   },
   {
     "externalId": "Tsholotsho District Hospital",
-    "latitude": -18.823000,
-    "longitude": 27.399000,
+    "latitude": -18.823,
+    "longitude": 27.399,
     "stateName": "Matabeleland North",
     "lgaName": "Tsholotsho",
     "name": "Tsholotsho District Hospital",
@@ -47,26 +51,28 @@
   },
   {
     "externalId": "Filabusi District Hospital",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Insiza",
     "name": "Filabusi District Hospital",
     "shortname": "Filabusi Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Filabusi District Hospital",
-      "shortName": "Filabusi Hosp",
-      "macAddress": "MAC6805CA18FCF2",
-      "hostId": "Filabusi District Ho",
-      "serial": "Cepheid-HP",
-      "gxAlertDeviceId": 4
-    }]
+    "devices": [
+      {
+        "name": "Filabusi District Hospital",
+        "shortName": "Filabusi Hosp",
+        "macAddress": "MAC6805CA18FCF2",
+        "hostId": "Filabusi District Ho",
+        "serial": "Cepheid-HP",
+        "gxAlertDeviceId": 4
+      }
+    ]
   },
   {
     "externalId": "Gweru Provincial Hospital",
-    "latitude": -18.982000,
-    "longitude": 29.462000,
+    "latitude": -18.982,
+    "longitude": 29.462,
     "stateName": "Midlands",
     "lgaName": "Gweru",
     "name": "Gweru Provincial Hospital",
@@ -82,14 +88,16 @@
     "name": "Murambinda Mission Hospital",
     "shortname": "Murambinda Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Murambinda Mission Hospital",
-      "shortName": "Murambinda Hosp",
-      "macAddress": "MAC98DED01D23FC",
-      "hostId": "MURAMBINDA MISSION H",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 6
-    }]
+    "devices": [
+      {
+        "name": "Murambinda Mission Hospital",
+        "shortName": "Murambinda Hosp",
+        "macAddress": "MAC98DED01D23FC",
+        "hostId": "MURAMBINDA MISSION H",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 6
+      }
+    ]
   },
   {
     "externalId": "Marange Rural Hospital",
@@ -100,68 +108,76 @@
     "name": "Marange Rural Hospital",
     "shortname": "Marange Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Marange Rural Hospital",
-      "shortName": "Marange Hospital",
-      "macAddress": "MAC6805CA20B61E",
-      "hostId": "Marange Rural Hospit",
-      "serial": "Cepheid-3520VMM",
-      "gxAlertDeviceId": 7
-    }]
+    "devices": [
+      {
+        "name": "Marange Rural Hospital",
+        "shortName": "Marange Hospital",
+        "macAddress": "MAC6805CA20B61E",
+        "hostId": "Marange Rural Hospit",
+        "serial": "Cepheid-3520VMM",
+        "gxAlertDeviceId": 7
+      }
+    ]
   },
   {
     "externalId": "St Luke's Mission Hospital",
-    "latitude": -18.823000,
-    "longitude": 27.399000,
+    "latitude": -18.823,
+    "longitude": 27.399,
     "stateName": "Matabeleland North",
     "lgaName": "Lupane",
     "name": "St Luke's Mission Hospital",
     "shortname": "St Luke's Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "St Luke's Mission Hospital",
-      "shortName": "St Luke's Hosp",
-      "macAddress": "MACA0481C7DFE14",
-      "hostId": "St Lukes",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 50
-    }]
+    "devices": [
+      {
+        "name": "St Luke's Mission Hospital",
+        "shortName": "St Luke's Hosp",
+        "macAddress": "MACA0481C7DFE14",
+        "hostId": "St Lukes",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 50
+      }
+    ]
   },
   {
     "externalId": "Shurugwi District Hospital",
-    "latitude": -18.982000,
-    "longitude": 29.462000,
+    "latitude": -18.982,
+    "longitude": 29.462,
     "stateName": "Midlands",
     "lgaName": "Shurugwi",
     "name": "Shurugwi District Hospital",
     "shortname": "Shurugwi Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Shurugwi District Hospital",
-      "shortName": "Shurugwi Hosp",
-      "macAddress": "MAC98DED01BF03C",
-      "hostId": "Shurugwi District Ho",
-      "serial": "Cepheid-44224TT",
-      "gxAlertDeviceId": 12
-    }]
+    "devices": [
+      {
+        "name": "Shurugwi District Hospital",
+        "shortName": "Shurugwi Hosp",
+        "macAddress": "MAC98DED01BF03C",
+        "hostId": "Shurugwi District Ho",
+        "serial": "Cepheid-44224TT",
+        "gxAlertDeviceId": 12
+      }
+    ]
   },
   {
     "externalId": "Hwange Colliery Hospital",
-    "latitude": -18.823000,
-    "longitude": 27.399000,
+    "latitude": -18.823,
+    "longitude": 27.399,
     "stateName": "Matabeleland North",
     "lgaName": "Hwange",
     "name": "Hwange Colliery Hospital",
     "shortname": "Hwange Colliery",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Hwange Colliery Hospital",
-      "shortName": "Hwange Colliery",
-      "macAddress": "MACC4346B5CD3CA",
-      "hostId": "Hwange Colliery Hosp",
-      "serial": "Cepheid-4421HKH",
-      "gxAlertDeviceId": 13
-    }]
+    "devices": [
+      {
+        "name": "Hwange Colliery Hospital",
+        "shortName": "Hwange Colliery",
+        "macAddress": "MACC4346B5CD3CA",
+        "hostId": "Hwange Colliery Hosp",
+        "serial": "Cepheid-4421HKH",
+        "gxAlertDeviceId": 13
+      }
+    ]
   },
   {
     "externalId": "PSI Mutare",
@@ -175,21 +191,23 @@
   },
   {
     "externalId": "Tshelanyemba Mission Hospital",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Matobo",
     "name": "Tshelanyemba Mission Hospital",
     "shortname": "Tshelanyemba Mis",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Tshelanyemba Mission Hospital",
-      "shortName": "Tshelanyemba Mis",
-      "macAddress": "MAC6805CA20C3FC",
-      "hostId": "Tshelanyemba Mission",
-      "serial": "Cepheid-3520VRJ",
-      "gxAlertDeviceId": 17
-    }]
+    "devices": [
+      {
+        "name": "Tshelanyemba Mission Hospital",
+        "shortName": "Tshelanyemba Mis",
+        "macAddress": "MAC6805CA20C3FC",
+        "hostId": "Tshelanyemba Mission",
+        "serial": "Cepheid-3520VRJ",
+        "gxAlertDeviceId": 17
+      }
+    ]
   },
   {
     "externalId": "Mutambara Mission Hospital",
@@ -210,14 +228,16 @@
     "name": "Regina Coeli Mission Hospital",
     "shortname": "Regina Coeli",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Regina Coeli Mission Hospital",
-      "shortName": "Regina Coeli",
-      "macAddress": "MAC8CDCD4509CEB",
-      "hostId": "reghina coeli",
-      "serial": "Cepheid-5212D5L",
-      "gxAlertDeviceId": 19
-    }]
+    "devices": [
+      {
+        "name": "Regina Coeli Mission Hospital",
+        "shortName": "Regina Coeli",
+        "macAddress": "MAC8CDCD4509CEB",
+        "hostId": "reghina coeli",
+        "serial": "Cepheid-5212D5L",
+        "gxAlertDeviceId": 19
+      }
+    ]
   },
   {
     "externalId": "Nyanga District Hospital",
@@ -228,14 +248,16 @@
     "name": "Nyanga District Hospital",
     "shortname": "Nyanga Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Nyanga District Hospital",
-      "shortName": "Nyanga Hospital",
-      "macAddress": "MAC6805CA208DA0",
-      "hostId": "NYANGA DISTRICT HOSP",
-      "serial": "Cepheid-3481GMY",
-      "gxAlertDeviceId": 20
-    }]
+    "devices": [
+      {
+        "name": "Nyanga District Hospital",
+        "shortName": "Nyanga Hospital",
+        "macAddress": "MAC6805CA208DA0",
+        "hostId": "NYANGA DISTRICT HOSP",
+        "serial": "Cepheid-3481GMY",
+        "gxAlertDeviceId": 20
+      }
+    ]
   },
   {
     "externalId": "Plumtree District Hospital",
@@ -246,50 +268,56 @@
     "name": "Plumtree District Hospital",
     "shortname": "Plumtree Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Plumtree District Hospital",
-      "shortName": "Plumtree Hosp",
-      "macAddress": "MAC180373E4E75E",
-      "hostId": "Plumtree District Ho",
-      "serial": "CepheidJB25YR1",
-      "gxAlertDeviceId": 21
-    }]
+    "devices": [
+      {
+        "name": "Plumtree District Hospital",
+        "shortName": "Plumtree Hosp",
+        "macAddress": "MAC180373E4E75E",
+        "hostId": "Plumtree District Ho",
+        "serial": "CepheidJB25YR1",
+        "gxAlertDeviceId": 21
+      }
+    ]
   },
   {
     "externalId": "Binga District Hospital",
-    "latitude": -18.823000,
-    "longitude": 27.399000,
+    "latitude": -18.823,
+    "longitude": 27.399,
     "stateName": "Matabeleland North",
     "lgaName": "Binga",
     "name": "Binga District Hospital",
     "shortname": "Binga Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Binga District Hospital",
-      "shortName": "Binga Hosp",
-      "macAddress": "MAC98DED01D458F",
-      "hostId": "Binga District Hospi",
-      "serial": "Cepheid-3300V88",
-      "gxAlertDeviceId": 22
-    }]
+    "devices": [
+      {
+        "name": "Binga District Hospital",
+        "shortName": "Binga Hosp",
+        "macAddress": "MAC98DED01D458F",
+        "hostId": "Binga District Hospi",
+        "serial": "Cepheid-3300V88",
+        "gxAlertDeviceId": 22
+      }
+    ]
   },
   {
     "externalId": "Esigodini District Hospital",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Umzingwane",
     "name": "Esigodini District Hospital",
     "shortname": "Esigodini Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Esigodini District Hospital",
-      "shortName": "Esigodini Hosp",
-      "macAddress": "MAC6805CA20C4A1",
-      "hostId": "Esigodini Dsitrict H",
-      "serial": "Cepheid-3520W3H",
-      "gxAlertDeviceId": 23
-    }]
+    "devices": [
+      {
+        "name": "Esigodini District Hospital",
+        "shortName": "Esigodini Hosp",
+        "macAddress": "MAC6805CA20C4A1",
+        "hostId": "Esigodini Dsitrict H",
+        "serial": "Cepheid-3520W3H",
+        "gxAlertDeviceId": 23
+      }
+    ]
   },
   {
     "externalId": "Hauna District Hospital",
@@ -300,54 +328,60 @@
     "name": "Hauna District Hospital",
     "shortname": "Hauna Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Hauna District Hospital",
-      "shortName": "Hauna Hospital",
-      "macAddress": "MAC6805CA20B5AA",
-      "hostId": "HAUNA DISTRICT HOSPI",
-      "serial": "Cepheid-3520W2B",
-      "gxAlertDeviceId": 24
-    }]
+    "devices": [
+      {
+        "name": "Hauna District Hospital",
+        "shortName": "Hauna Hospital",
+        "macAddress": "MAC6805CA20B5AA",
+        "hostId": "HAUNA DISTRICT HOSPI",
+        "serial": "Cepheid-3520W2B",
+        "gxAlertDeviceId": 24
+      }
+    ]
   },
   {
     "externalId": "Beitbridge District Hospital 2",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Beitbridge",
     "name": "Beitbridge District Hospital 2",
     "shortname": "Beitbridge 2",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Beitbridge District Hospital 2",
-      "shortName": "Beitbridge 2",
-      "macAddress": "MAC6805CA20A9D8",
-      "hostId": "Beitbridge District",
-      "serial": "Cepheid-3520VXQ",
-      "gxAlertDeviceId": 26
-    }]
+    "devices": [
+      {
+        "name": "Beitbridge District Hospital 2",
+        "shortName": "Beitbridge 2",
+        "macAddress": "MAC6805CA20A9D8",
+        "hostId": "Beitbridge District",
+        "serial": "Cepheid-3520VXQ",
+        "gxAlertDeviceId": 26
+      }
+    ]
   },
   {
     "externalId": "NTBRL",
-    "latitude": -20.135000,
+    "latitude": -20.135,
     "longitude": 28.556999,
     "stateName": "Bulawayo",
     "lgaName": "Northern Suburbs",
     "name": "NTBRL",
     "shortname": "NTBRL",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "NTBRL",
-      "shortName": "NTBRL",
-      "macAddress": "MAC6805CA129F85",
-      "hostId": "NATIONAL TUBERCOLUSI",
-      "serial": "Cepheid-3031JD8",
-      "gxAlertDeviceId": 27
-    }]
+    "devices": [
+      {
+        "name": "NTBRL",
+        "shortName": "NTBRL",
+        "macAddress": "MAC6805CA129F85",
+        "hostId": "NATIONAL TUBERCOLUSI",
+        "serial": "Cepheid-3031JD8",
+        "gxAlertDeviceId": 27
+      }
+    ]
   },
   {
     "externalId": "NMRL",
-    "latitude": -17.844000,
+    "latitude": -17.844,
     "longitude": 31.058001,
     "stateName": "Harare",
     "lgaName": "Southern",
@@ -367,93 +401,103 @@
   },
   {
     "externalId": "Beitbridge District Hospital 1",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Beitbridge",
     "name": "Beitbridge District Hospital 1",
     "shortname": "Beitbridge 1",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Beitbridge District Hospital 1",
-      "shortName": "Beitbridge 1",
-      "macAddress": "MAC1803733362D6",
-      "hostId": "Beitbridge District",
-      "serial": "Cepheid5YSWDQ1",
-      "gxAlertDeviceId": 32
-    }]
+    "devices": [
+      {
+        "name": "Beitbridge District Hospital 1",
+        "shortName": "Beitbridge 1",
+        "macAddress": "MAC1803733362D6",
+        "hostId": "Beitbridge District",
+        "serial": "Cepheid5YSWDQ1",
+        "gxAlertDeviceId": 32
+      }
+    ]
   },
   {
     "externalId": "Mabvuku Polyclinic",
-    "latitude": -17.844000,
+    "latitude": -17.844,
     "longitude": 31.058001,
     "stateName": "Harare",
     "lgaName": "Eastern",
     "name": "Mabvuku Polyclinic",
     "shortname": "Mabvuku Clinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mabvuku Polyclinic",
-      "shortName": "Mabvuku Clinic",
-      "macAddress": "MAC6805CA129FBB",
-      "hostId": "mabvuku poly clinic",
-      "serial": "Cepheid-3031JC3",
-      "gxAlertDeviceId": 33
-    }]
+    "devices": [
+      {
+        "name": "Mabvuku Polyclinic",
+        "shortName": "Mabvuku Clinic",
+        "macAddress": "MAC6805CA129FBB",
+        "hostId": "mabvuku poly clinic",
+        "serial": "Cepheid-3031JC3",
+        "gxAlertDeviceId": 33
+      }
+    ]
   },
   {
     "externalId": "Manama Mission Hospital",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Gwanda",
     "name": "Manama Mission Hospital",
     "shortname": "Manama Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Manama Mission Hospital",
-      "shortName": "Manama Hospital",
-      "macAddress": "MACC4346B780D9C",
-      "hostId": "MANAMA MISSION HOSPI",
-      "serial": "Cepheid-44819B6",
-      "gxAlertDeviceId": 35
-    }]
+    "devices": [
+      {
+        "name": "Manama Mission Hospital",
+        "shortName": "Manama Hospital",
+        "macAddress": "MACC4346B780D9C",
+        "hostId": "MANAMA MISSION HOSPI",
+        "serial": "Cepheid-44819B6",
+        "gxAlertDeviceId": 35
+      }
+    ]
   },
   {
     "externalId": "Mtshabezi Mission Hospital",
-    "latitude": -21.010000,
+    "latitude": -21.01,
     "longitude": 28.990999,
     "stateName": "Matabeleland South",
     "lgaName": "Gwanda",
     "name": "Mtshabezi Mission Hospital",
     "shortname": "Mtshabezi Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mtshabezi Mission Hospital",
-      "shortName": "Mtshabezi Hosp",
-      "macAddress": "MACC4346B73E5BF",
-      "hostId": "MTHSABEZI MISSION HO",
-      "serial": "Cepheid-44819DL",
-      "gxAlertDeviceId": 36
-    }]
+    "devices": [
+      {
+        "name": "Mtshabezi Mission Hospital",
+        "shortName": "Mtshabezi Hosp",
+        "macAddress": "MACC4346B73E5BF",
+        "hostId": "MTHSABEZI MISSION HO",
+        "serial": "Cepheid-44819DL",
+        "gxAlertDeviceId": 36
+      }
+    ]
   },
   {
     "externalId": "Nkayi District Hospital",
-    "latitude": -18.823000,
-    "longitude": 27.399000,
+    "latitude": -18.823,
+    "longitude": 27.399,
     "stateName": "Matabeleland North",
     "lgaName": "Nkayi",
     "name": "Nkayi District Hospital",
     "shortname": "Nkayi Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Nkayi District Hospital",
-      "shortName": "Nkayi Hospital",
-      "macAddress": "MAC7446A09A900E",
-      "hostId": "Nkayi District Hospi",
-      "serial": "Cepheid-3300V8K",
-      "gxAlertDeviceId": 38
-    }]
+    "devices": [
+      {
+        "name": "Nkayi District Hospital",
+        "shortName": "Nkayi Hospital",
+        "macAddress": "MAC7446A09A900E",
+        "hostId": "Nkayi District Hospi",
+        "serial": "Cepheid-3300V8K",
+        "gxAlertDeviceId": 38
+      }
+    ]
   },
   {
     "externalId": "Rusape General Hospital 1",
@@ -464,32 +508,36 @@
     "name": "Rusape General Hospital 1",
     "shortname": "Rusape Hosp 1",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Rusape General Hospital 1",
-      "shortName": "Rusape Hosp 1",
-      "macAddress": "MAC842B2BBB458F",
-      "hostId": "RUSAPE GENERAL HOSPI",
-      "serial": "JB26YR1",
-      "gxAlertDeviceId": 40
-    }]
+    "devices": [
+      {
+        "name": "Rusape General Hospital 1",
+        "shortName": "Rusape Hosp 1",
+        "macAddress": "MAC842B2BBB458F",
+        "hostId": "RUSAPE GENERAL HOSPI",
+        "serial": "JB26YR1",
+        "gxAlertDeviceId": 40
+      }
+    ]
   },
   {
     "externalId": "Gwanda Provincial Hospital",
-    "latitude": -20.941000,
-    "longitude": 29.028000,
+    "latitude": -20.941,
+    "longitude": 29.028,
     "stateName": "Matabeleland South",
     "lgaName": "Gwanda",
     "name": "Gwanda Provincial Hospital",
     "shortname": "Gwanda Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Gwanda Provincial Hospital",
-      "shortName": "Gwanda Hospital",
-      "macAddress": "MACD4BED98CFE45",
-      "hostId": "Gwanda Provincial Ho",
-      "serial": "CepheidG422LS1",
-      "gxAlertDeviceId": 45
-    }]
+    "devices": [
+      {
+        "name": "Gwanda Provincial Hospital",
+        "shortName": "Gwanda Hospital",
+        "macAddress": "MACD4BED98CFE45",
+        "hostId": "Gwanda Provincial Ho",
+        "serial": "CepheidG422LS1",
+        "gxAlertDeviceId": 45
+      }
+    ]
   },
   {
     "externalId": "Gweru Provincial Hospital",
@@ -498,14 +546,16 @@
     "name": "Gweru Provincial Hospital",
     "shortname": "Gweru Prov. Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Gweru Provincial Hospital",
-      "shortName": "Gweru Prov. Hosp",
-      "macAddress": "MAC10604B6B3D80",
-      "hostId": "Gweru General Hospit",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 49
-    }]
+    "devices": [
+      {
+        "name": "Gweru Provincial Hospital",
+        "shortName": "Gweru Prov. Hosp",
+        "macAddress": "MAC10604B6B3D80",
+        "hostId": "Gweru General Hospit",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 49
+      }
+    ]
   },
   {
     "externalId": "Bonda Mission Hospital",
@@ -516,19 +566,21 @@
     "name": "Bonda Mission Hospital",
     "shortname": "Bonda Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Bonda Mission Hospital",
-      "shortName": "Bonda Hospital",
-      "macAddress": "MAC2C4138B836C0",
-      "hostId": "bonda",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 52
-    }]
+    "devices": [
+      {
+        "name": "Bonda Mission Hospital",
+        "shortName": "Bonda Hospital",
+        "macAddress": "MAC2C4138B836C0",
+        "hostId": "bonda",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 52
+      }
+    ]
   },
   {
     "externalId": "Nyamandlovu Rural Hospital",
     "latitude": -18.823029,
-    "longitude": 27.398870,
+    "longitude": 27.39887,
     "stateName": "Matabeleland North",
     "lgaName": "Umguza",
     "name": "Nyamandlovu Rural Hospital",
@@ -544,68 +596,76 @@
     "name": "Epworth Polyclinic 3",
     "shortname": "Epworth 3",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Epworth Polyclinic 3",
-      "shortName": "Epworth 3",
-      "macAddress": "MACA4BADBE8F3C2",
-      "hostId": "Epworth Polyclinic",
-      "serial": "D4Q0YKN1",
-      "gxAlertDeviceId": 55
-    }]
+    "devices": [
+      {
+        "name": "Epworth Polyclinic 3",
+        "shortName": "Epworth 3",
+        "macAddress": "MACA4BADBE8F3C2",
+        "hostId": "Epworth Polyclinic",
+        "serial": "D4Q0YKN1",
+        "gxAlertDeviceId": 55
+      }
+    ]
   },
   {
     "externalId": "nyathi dist hosp",
-    "latitude": -18.823000,
-    "longitude": 27.399000,
+    "latitude": -18.823,
+    "longitude": 27.399,
     "stateName": "Matabeleland North",
     "lgaName": "Bubi",
     "name": "Inyathi District Hospital",
     "shortname": "Inyathi Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Inyathi District Hospital",
-      "shortName": "Inyathi Hospital",
-      "macAddress": "MACC4346B5CD3A9",
-      "hostId": "nyathi dist hosp",
-      "serial": "Cepheid-4421HKG",
-      "gxAlertDeviceId": 56
-    }]
+    "devices": [
+      {
+        "name": "Inyathi District Hospital",
+        "shortName": "Inyathi Hospital",
+        "macAddress": "MACC4346B5CD3A9",
+        "hostId": "nyathi dist hosp",
+        "serial": "Cepheid-4421HKG",
+        "gxAlertDeviceId": 56
+      }
+    ]
   },
   {
     "externalId": "Gokwe North District Hospital",
-    "latitude": -18.982000,
-    "longitude": 29.462000,
+    "latitude": -18.982,
+    "longitude": 29.462,
     "stateName": "Midlands",
     "lgaName": "Gokwe North",
     "name": "Gokwe North District Hospital",
     "shortname": "Gokwe North ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Gokwe North District Hospital",
-      "shortName": "Gokwe North ",
-      "macAddress": "MAC4C72B940B8C1",
-      "hostId": "Gokwe North District",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 62
-    }]
+    "devices": [
+      {
+        "name": "Gokwe North District Hospital",
+        "shortName": "Gokwe North ",
+        "macAddress": "MAC4C72B940B8C1",
+        "hostId": "Gokwe North District",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 62
+      }
+    ]
   },
   {
     "externalId": "Seke South Clinic",
     "latitude": -18.023479,
-    "longitude": 31.056770,
+    "longitude": 31.05677,
     "stateName": "Chitungwiza",
     "lgaName": "Seke",
     "name": "Seke South Clinic",
     "shortname": "Seke South ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Seke South Clinic",
-      "shortName": "Seke South ",
-      "macAddress": "MACC4346B73E67C",
-      "hostId": "Seke South Clinic",
-      "serial": "Cepheid-44819D2",
-      "gxAlertDeviceId": 66
-    }]
+    "devices": [
+      {
+        "name": "Seke South Clinic",
+        "shortName": "Seke South ",
+        "macAddress": "MACC4346B73E67C",
+        "hostId": "Seke South Clinic",
+        "serial": "Cepheid-44819D2",
+        "gxAlertDeviceId": 66
+      }
+    ]
   },
   {
     "externalId": "Marondera Provincial Hospital",
@@ -614,32 +674,36 @@
     "name": "Marondera Provincial Hospital",
     "shortname": "Marondera Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Marondera Provincial Hospital",
-      "shortName": "Marondera Hosp",
-      "macAddress": "MACD4BED98B769F",
-      "hostId": "MARONDERA PROVINCIAL",
-      "serial": "Cepheid94J0LS1",
-      "gxAlertDeviceId": 69
-    }]
+    "devices": [
+      {
+        "name": "Marondera Provincial Hospital",
+        "shortName": "Marondera Hosp",
+        "macAddress": "MACD4BED98B769F",
+        "hostId": "MARONDERA PROVINCIAL",
+        "serial": "Cepheid94J0LS1",
+        "gxAlertDeviceId": 69
+      }
+    ]
   },
   {
     "externalId": "St Michael's Mission Hospital",
     "latitude": -18.322001,
-    "longitude": 30.594000,
+    "longitude": 30.594,
     "stateName": "Mashonaland West",
     "lgaName": "Mhondoro-Ngezi",
     "name": "St Michael's Mission Hospital",
     "shortname": "St Michael's ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "St Michael's Mission Hospital",
-      "shortName": "St Michael's ",
-      "macAddress": "MAC8CDCD4509D02",
-      "hostId": "ST MICHAELS HOSPITAL",
-      "serial": "Cepheid-5212D65",
-      "gxAlertDeviceId": 70
-    }]
+    "devices": [
+      {
+        "name": "St Michael's Mission Hospital",
+        "shortName": "St Michael's ",
+        "macAddress": "MAC8CDCD4509D02",
+        "hostId": "ST MICHAELS HOSPITAL",
+        "serial": "Cepheid-5212D65",
+        "gxAlertDeviceId": 70
+      }
+    ]
   },
   {
     "externalId": "Nhowe Mission Hospital",
@@ -650,14 +714,16 @@
     "name": "Nhowe Mission Hospital",
     "shortname": "Nhowe Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Nhowe Mission Hospital",
-      "shortName": "Nhowe Hosp",
-      "macAddress": "MACC4346B781409",
-      "hostId": "NHOWE MISSION",
-      "serial": "Cepheid-4520Y2Y",
-      "gxAlertDeviceId": 71
-    }]
+    "devices": [
+      {
+        "name": "Nhowe Mission Hospital",
+        "shortName": "Nhowe Hosp",
+        "macAddress": "MACC4346B781409",
+        "hostId": "NHOWE MISSION",
+        "serial": "Cepheid-4520Y2Y",
+        "gxAlertDeviceId": 71
+      }
+    ]
   },
   {
     "externalId": "Chinhoyi Provincial Hospital",
@@ -668,14 +734,16 @@
     "name": "Chinhoyi Provincial Hospital",
     "shortname": "Chinhoyi Hosp ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chinhoyi Provincial Hospital",
-      "shortName": "Chinhoyi Hosp ",
-      "macAddress": "MACE840F2B9B807",
-      "hostId": "CHINHOYI PROVINCIAL",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 75
-    }]
+    "devices": [
+      {
+        "name": "Chinhoyi Provincial Hospital",
+        "shortName": "Chinhoyi Hosp ",
+        "macAddress": "MACE840F2B9B807",
+        "hostId": "CHINHOYI PROVINCIAL",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 75
+      }
+    ]
   },
   {
     "externalId": "Norton Hospital",
@@ -684,28 +752,32 @@
     "name": "Norton Hospital",
     "shortname": "Norton Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Norton Hospital",
-      "shortName": "Norton Hospital",
-      "macAddress": "MACC4346B56B94D",
-      "hostId": "NORTON HOSPITAL",
-      "serial": "Cepheid-4421HKM",
-      "gxAlertDeviceId": 81
-    }]
+    "devices": [
+      {
+        "name": "Norton Hospital",
+        "shortName": "Norton Hospital",
+        "macAddress": "MACC4346B56B94D",
+        "hostId": "NORTON HOSPITAL",
+        "serial": "Cepheid-4421HKM",
+        "gxAlertDeviceId": 81
+      }
+    ]
   },
   {
-    "externalId": "Stefan SystemOne",
-    "name": "Stefan SystemOne",
-    "shortname": "Stefan SystemOne",
+    "externalId": "Developer SystemOne",
+    "name": "Developer SystemOne",
+    "shortname": "Developer SystemOne",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Stefan SystemOne",
-      "shortName": "Stefan SystemOne",
-      "macAddress": "MAC74EA3A8EE8BF",
-      "hostId": "Stefan SystemOne GxC",
-      "serial": "Tranquilo",
-      "gxAlertDeviceId": 84
-    }]
+    "devices": [
+      {
+        "name": "Developer SystemOne",
+        "shortName": "Developer SystemOne",
+        "macAddress": "MAC74EA3A8EE8BF",
+        "hostId": "Developer SystemOne GxC",
+        "serial": "Tranquilo",
+        "gxAlertDeviceId": 84
+      }
+    ]
   },
   {
     "externalId": "Mutoko District Hospital",
@@ -716,32 +788,36 @@
     "name": "Mutoko District Hospital",
     "shortname": "Mutoko District Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mutoko District Hospital",
-      "shortName": "Mutoko District Hosp",
-      "macAddress": "MAC7C8BCA1B8BA5",
-      "hostId": "Mutoko District Hosp",
-      "serial": "Cepheid-3520W21",
-      "gxAlertDeviceId": 89
-    }]
+    "devices": [
+      {
+        "name": "Mutoko District Hospital",
+        "shortName": "Mutoko District Hosp",
+        "macAddress": "MAC7C8BCA1B8BA5",
+        "hostId": "Mutoko District Hosp",
+        "serial": "Cepheid-3520W21",
+        "gxAlertDeviceId": 89
+      }
+    ]
   },
   {
     "externalId": "Kariba District Hospital",
     "latitude": -17.183821,
-    "longitude": 29.707220,
+    "longitude": 29.70722,
     "stateName": "Mashonaland West",
     "lgaName": "Kariba",
     "name": "Kariba District Hospital",
     "shortname": "Kariba Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Kariba District Hospital",
-      "shortName": "Kariba Hospital",
-      "macAddress": "MAC7C8BCA10E37E",
-      "hostId": "KARIBA DISTSRICT HOS",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 90
-    }]
+    "devices": [
+      {
+        "name": "Kariba District Hospital",
+        "shortName": "Kariba Hospital",
+        "macAddress": "MAC7C8BCA10E37E",
+        "hostId": "KARIBA DISTSRICT HOS",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 90
+      }
+    ]
   },
   {
     "externalId": "Kadoma General Hospital",
@@ -750,32 +826,36 @@
     "name": "Kadoma General Hospital",
     "shortname": "Kadoma Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Kadoma General Hospital",
-      "shortName": "Kadoma Hospital",
-      "macAddress": "MACA08CFDCB9529",
-      "hostId": "kadoma",
-      "serial": "Cepheid-71020FM",
-      "gxAlertDeviceId": 91
-    }]
+    "devices": [
+      {
+        "name": "Kadoma General Hospital",
+        "shortName": "Kadoma Hospital",
+        "macAddress": "MACA08CFDCB9529",
+        "hostId": "kadoma",
+        "serial": "Cepheid-71020FM",
+        "gxAlertDeviceId": 91
+      }
+    ]
   },
   {
     "externalId": "Sadza District Hospital",
-    "latitude": -18.247000,
-    "longitude": 31.223000,
+    "latitude": -18.247,
+    "longitude": 31.223,
     "stateName": "Mashonaland East",
     "lgaName": "Chikomba",
     "name": "Sadza District Hospital",
     "shortname": "Sadza Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Sadza District Hospital",
-      "shortName": "Sadza Hospital",
-      "macAddress": "MAC90B11C980EFE",
-      "hostId": "SADZA DISTRICT HOSPI",
-      "serial": "Cepheid5YSWDQ1",
-      "gxAlertDeviceId": 93
-    }]
+    "devices": [
+      {
+        "name": "Sadza District Hospital",
+        "shortName": "Sadza Hospital",
+        "macAddress": "MAC90B11C980EFE",
+        "hostId": "SADZA DISTRICT HOSPI",
+        "serial": "Cepheid5YSWDQ1",
+        "gxAlertDeviceId": 93
+      }
+    ]
   },
   {
     "externalId": "Mt St Mary's Mission Hospital",
@@ -786,32 +866,36 @@
     "name": "Mt St Mary's Mission Hospital",
     "shortname": "Mt St Mary's",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mt St Mary's Mission Hospital",
-      "shortName": "Mt St Mary's",
-      "macAddress": "MAC6805CA20BE97",
-      "hostId": "MT ST MARY'S",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 95
-    }]
+    "devices": [
+      {
+        "name": "Mt St Mary's Mission Hospital",
+        "shortName": "Mt St Mary's",
+        "macAddress": "MAC6805CA20BE97",
+        "hostId": "MT ST MARY'S",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 95
+      }
+    ]
   },
   {
     "externalId": "Silobela District Hospital",
-    "latitude": -18.973000,
-    "longitude": 29.285000,
+    "latitude": -18.973,
+    "longitude": 29.285,
     "stateName": "Midlands",
     "lgaName": "Kwekwe",
     "name": "Silobela District Hospital",
     "shortname": "Silobela Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Silobela District Hospital",
-      "shortName": "Silobela Hosp",
-      "macAddress": "MACC4346B5CE22C",
-      "hostId": "SILOBELA DISTRICT HO",
-      "serial": "Cepheid-44224TS",
-      "gxAlertDeviceId": 97
-    }]
+    "devices": [
+      {
+        "name": "Silobela District Hospital",
+        "shortName": "Silobela Hosp",
+        "macAddress": "MACC4346B5CE22C",
+        "hostId": "SILOBELA DISTRICT HO",
+        "serial": "Cepheid-44224TS",
+        "gxAlertDeviceId": 97
+      }
+    ]
   },
   {
     "externalId": "Bindura Provincial Hospital",
@@ -822,14 +906,16 @@
     "name": "Bindura Provincial Hospital",
     "shortname": "Bindura Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Bindura Provincial Hospital",
-      "shortName": "Bindura Hospital",
-      "macAddress": "MACA0481C8F130C",
-      "hostId": "Bindura Provincial H",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 99
-    }]
+    "devices": [
+      {
+        "name": "Bindura Provincial Hospital",
+        "shortName": "Bindura Hospital",
+        "macAddress": "MACA0481C8F130C",
+        "hostId": "Bindura Provincial H",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 99
+      }
+    ]
   },
   {
     "externalId": "Mvuma District Hospital",
@@ -838,32 +924,36 @@
     "name": "Mvuma District Hospital",
     "shortname": "Mvuma Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mvuma District Hospital",
-      "shortName": "Mvuma Hospital",
-      "macAddress": "MAC705A0F38D834",
-      "hostId": "MVUMA DISTRICT HOSPI",
-      "serial": "Cepheid-7050W39",
-      "gxAlertDeviceId": 100
-    }]
+    "devices": [
+      {
+        "name": "Mvuma District Hospital",
+        "shortName": "Mvuma Hospital",
+        "macAddress": "MAC705A0F38D834",
+        "hostId": "MVUMA DISTRICT HOSPI",
+        "serial": "Cepheid-7050W39",
+        "gxAlertDeviceId": 100
+      }
+    ]
   },
   {
     "externalId": "Muvonde Mission Hospital",
-    "latitude": -19.278000,
+    "latitude": -19.278,
     "longitude": 30.542999,
     "stateName": "Midlands",
     "lgaName": "Chirumhanzu",
     "name": "Muvonde Mission Hospital",
     "shortname": "Muvonde Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Muvonde Mission Hospital",
-      "shortName": "Muvonde Hosp",
-      "macAddress": "MACC4346B5E299E",
-      "hostId": "MUVONDE MISION HOSPI",
-      "serial": "Cepheid-44224TG",
-      "gxAlertDeviceId": 101
-    }]
+    "devices": [
+      {
+        "name": "Muvonde Mission Hospital",
+        "shortName": "Muvonde Hosp",
+        "macAddress": "MACC4346B5E299E",
+        "hostId": "MUVONDE MISION HOSPI",
+        "serial": "Cepheid-44224TG",
+        "gxAlertDeviceId": 101
+      }
+    ]
   },
   {
     "externalId": "Gweru District Hospital",
@@ -874,50 +964,56 @@
     "name": "Gweru District Hospital",
     "shortname": "Gweru District",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Gweru District Hospital",
-      "shortName": "Gweru District",
-      "macAddress": "MAC705A0F389A9E",
-      "hostId": "GWERU DISTRICT HOSPI",
-      "serial": "Cepheid-7050W2F",
-      "gxAlertDeviceId": 102
-    }]
+    "devices": [
+      {
+        "name": "Gweru District Hospital",
+        "shortName": "Gweru District",
+        "macAddress": "MAC705A0F389A9E",
+        "hostId": "GWERU DISTRICT HOSPI",
+        "serial": "Cepheid-7050W2F",
+        "gxAlertDeviceId": 102
+      }
+    ]
   },
   {
     "externalId": "St Albert's Mission Hospital 1",
     "latitude": -16.747999,
-    "longitude": 31.129000,
+    "longitude": 31.129,
     "stateName": "Mashonaland Central",
     "lgaName": "Centenary",
     "name": "St Albert's Mission Hospital 1",
     "shortname": "St Albert's 1",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "St Albert's Mission Hospital 1",
-      "shortName": "St Albert's 1",
-      "macAddress": "MACC4346B5E361C",
-      "hostId": "ST ALBERTS MISSION H",
-      "serial": "Cepheid-44224TV",
-      "gxAlertDeviceId": 103
-    }]
+    "devices": [
+      {
+        "name": "St Albert's Mission Hospital 1",
+        "shortName": "St Albert's 1",
+        "macAddress": "MACC4346B5E361C",
+        "hostId": "ST ALBERTS MISSION H",
+        "serial": "Cepheid-44224TV",
+        "gxAlertDeviceId": 103
+      }
+    ]
   },
   {
     "externalId": "St Albert's Mission Hospital 2",
     "latitude": -16.747999,
-    "longitude": 31.129000,
+    "longitude": 31.129,
     "stateName": "Mashonaland Central",
     "lgaName": "Centenary",
     "name": "St Albert's Mission Hospital 2",
     "shortname": "St Albert's 2",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "St Albert's Mission Hospital 2",
-      "shortName": "St Albert's 2",
-      "macAddress": "MAC90B11C7599BC",
-      "hostId": "ST ABLBERTS (2)",
-      "serial": "Cepheid76NZYV1",
-      "gxAlertDeviceId": 104
-    }]
+    "devices": [
+      {
+        "name": "St Albert's Mission Hospital 2",
+        "shortName": "St Albert's 2",
+        "macAddress": "MAC90B11C7599BC",
+        "hostId": "ST ABLBERTS (2)",
+        "serial": "Cepheid76NZYV1",
+        "gxAlertDeviceId": 104
+      }
+    ]
   },
   {
     "externalId": "Musume Mission Hospital",
@@ -928,14 +1024,16 @@
     "name": "Musume Mission Hospital",
     "shortname": "Musume Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Musume Mission Hospital",
-      "shortName": "Musume Hospital",
-      "macAddress": "MAC705A0F3DDAB2",
-      "hostId": "MUSUME MISSION HOSPI",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 106
-    }]
+    "devices": [
+      {
+        "name": "Musume Mission Hospital",
+        "shortName": "Musume Hospital",
+        "macAddress": "MAC705A0F3DDAB2",
+        "hostId": "MUSUME MISSION HOSPI",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 106
+      }
+    ]
   },
   {
     "externalId": "Makumbe District Hospital",
@@ -944,14 +1042,16 @@
     "name": "Makumbe District Hospital",
     "shortname": "Makumbe Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Makumbe District Hospital",
-      "shortName": "Makumbe Hosp",
-      "macAddress": "MAC6805CA21DCC0",
-      "hostId": "MAKUMBE DISTRICT HOS",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 107
-    }]
+    "devices": [
+      {
+        "name": "Makumbe District Hospital",
+        "shortName": "Makumbe Hosp",
+        "macAddress": "MAC6805CA21DCC0",
+        "hostId": "MAKUMBE DISTRICT HOS",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 107
+      }
+    ]
   },
   {
     "externalId": "Shamva District Hospital",
@@ -962,32 +1062,36 @@
     "name": "Shamva District Hospital",
     "shortname": "Shamva Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Shamva District Hospital",
-      "shortName": "Shamva Hospital",
-      "macAddress": "MACC4346B5CE4B9",
-      "hostId": "Shamva District Hosp",
-      "serial": "Cepheid-44224SV",
-      "gxAlertDeviceId": 109
-    }]
+    "devices": [
+      {
+        "name": "Shamva District Hospital",
+        "shortName": "Shamva Hospital",
+        "macAddress": "MACC4346B5CE4B9",
+        "hostId": "Shamva District Hosp",
+        "serial": "Cepheid-44224SV",
+        "gxAlertDeviceId": 109
+      }
+    ]
   },
   {
     "externalId": "Mbuma Mission Hospital",
-    "latitude": -19.014000,
-    "longitude": 28.900000,
+    "latitude": -19.014,
+    "longitude": 28.9,
     "stateName": "Matabeleland North",
     "lgaName": "Nkayi",
     "name": "Mbuma Mission Hospital",
     "shortname": "Mbuma Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mbuma Mission Hospital",
-      "shortName": "Mbuma Hospital",
-      "macAddress": "MACC4346B5CE512",
-      "hostId": "Mbuma Mission Hospit",
-      "serial": "Cepheid-44224V2",
-      "gxAlertDeviceId": 110
-    }]
+    "devices": [
+      {
+        "name": "Mbuma Mission Hospital",
+        "shortName": "Mbuma Hospital",
+        "macAddress": "MACC4346B5CE512",
+        "hostId": "Mbuma Mission Hospit",
+        "serial": "Cepheid-44224V2",
+        "gxAlertDeviceId": 110
+      }
+    ]
   },
   {
     "externalId": "Beatrice Road Infectious Disease Hospital",
@@ -996,14 +1100,16 @@
     "name": "Beatrice Road Infectious Disease Hospital",
     "shortname": "BRIDH",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Beatrice Road Infectious Disease Hospital",
-      "shortName": "BRIDH",
-      "macAddress": "MACA41F72520017",
-      "hostId": "BEATRICE ROAD INFECT",
-      "serial": "HCH-PC",
-      "gxAlertDeviceId": 115
-    }]
+    "devices": [
+      {
+        "name": "Beatrice Road Infectious Disease Hospital",
+        "shortName": "BRIDH",
+        "macAddress": "MACA41F72520017",
+        "hostId": "BEATRICE ROAD INFECT",
+        "serial": "HCH-PC",
+        "gxAlertDeviceId": 115
+      }
+    ]
   },
   {
     "externalId": "Glen View Polyclinic",
@@ -1014,14 +1120,16 @@
     "name": "Glen View Polyclinic",
     "shortname": "Glen View Poly",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Glen View Polyclinic",
-      "shortName": "Glen View Poly",
-      "macAddress": "MAC6805CA152F25",
-      "hostId": "GLEN VIEW POLY",
-      "serial": "Cepheid-31916TR",
-      "gxAlertDeviceId": 117
-    }]
+    "devices": [
+      {
+        "name": "Glen View Polyclinic",
+        "shortName": "Glen View Poly",
+        "macAddress": "MAC6805CA152F25",
+        "hostId": "GLEN VIEW POLY",
+        "serial": "Cepheid-31916TR",
+        "gxAlertDeviceId": 117
+      }
+    ]
   },
   {
     "externalId": "Mbare Polyclinic",
@@ -1032,14 +1140,16 @@
     "name": "Mbare Polyclinic",
     "shortname": "Mbare Polyclinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mbare Polyclinic",
-      "shortName": "Mbare Polyclinic",
-      "macAddress": "MAC6805CA20BFD3",
-      "hostId": "MBARE POLYCLINIC",
-      "serial": "Cepheid-3520VRR",
-      "gxAlertDeviceId": 118
-    }]
+    "devices": [
+      {
+        "name": "Mbare Polyclinic",
+        "shortName": "Mbare Polyclinic",
+        "macAddress": "MAC6805CA20BFD3",
+        "hostId": "MBARE POLYCLINIC",
+        "serial": "Cepheid-3520VRR",
+        "gxAlertDeviceId": 118
+      }
+    ]
   },
   {
     "externalId": "Highfield Polyclinic",
@@ -1050,14 +1160,16 @@
     "name": "Highfield Polyclinic",
     "shortname": "Highfield Clinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Highfield Polyclinic",
-      "shortName": "Highfield Clinic",
-      "macAddress": "MACD4BED98D00EE",
-      "hostId": "HIGHFIELDS POLY",
-      "serial": "G2F1LS1",
-      "gxAlertDeviceId": 119
-    }]
+    "devices": [
+      {
+        "name": "Highfield Polyclinic",
+        "shortName": "Highfield Clinic",
+        "macAddress": "MACD4BED98D00EE",
+        "hostId": "HIGHFIELDS POLY",
+        "serial": "G2F1LS1",
+        "gxAlertDeviceId": 119
+      }
+    ]
   },
   {
     "externalId": "Howard Mission Hospital",
@@ -1068,14 +1180,16 @@
     "name": "Howard Mission Hospital",
     "shortname": "Howard Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Howard Mission Hospital",
-      "shortName": "Howard Hospital",
-      "macAddress": "MAC6805CA18FD3E",
-      "hostId": "HOWARD MISSION HOSPI",
-      "serial": "Cepheid-3300V8W",
-      "gxAlertDeviceId": 120
-    }]
+    "devices": [
+      {
+        "name": "Howard Mission Hospital",
+        "shortName": "Howard Hospital",
+        "macAddress": "MAC6805CA18FD3E",
+        "hostId": "HOWARD MISSION HOSPI",
+        "serial": "Cepheid-3300V8W",
+        "gxAlertDeviceId": 120
+      }
+    ]
   },
   {
     "externalId": "Concession District Hospital",
@@ -1086,14 +1200,16 @@
     "name": "Concession District Hospital",
     "shortname": "Concession Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Concession District Hospital",
-      "shortName": "Concession Hosp",
-      "macAddress": "MACC4346B5E3613",
-      "hostId": "CONCESSION HOSPITAL",
-      "serial": "Cepheid-44224TR",
-      "gxAlertDeviceId": 123
-    }]
+    "devices": [
+      {
+        "name": "Concession District Hospital",
+        "shortName": "Concession Hosp",
+        "macAddress": "MACC4346B5E3613",
+        "hostId": "CONCESSION HOSPITAL",
+        "serial": "Cepheid-44224TR",
+        "gxAlertDeviceId": 123
+      }
+    ]
   },
   {
     "externalId": "Silveira Mission Hospital",
@@ -1102,86 +1218,96 @@
     "name": "Silveira Mission Hospital",
     "shortname": "Silveira Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Silveira Mission Hospital",
-      "shortName": "Silveira Hosp",
-      "macAddress": "MACA0481C896CFD",
-      "hostId": "Silveira Mission Hos",
-      "serial": "Cepheid-33714HS",
-      "gxAlertDeviceId": 124
-    }]
+    "devices": [
+      {
+        "name": "Silveira Mission Hospital",
+        "shortName": "Silveira Hosp",
+        "macAddress": "MACA0481C896CFD",
+        "hostId": "Silveira Mission Hos",
+        "serial": "Cepheid-33714HS",
+        "gxAlertDeviceId": 124
+      }
+    ]
   },
   {
     "externalId": "Mashoko Christian Hospital",
-    "latitude": -20.084000,
-    "longitude": 31.614000,
+    "latitude": -20.084,
+    "longitude": 31.614,
     "stateName": "Masvingo",
     "lgaName": "Bikita",
     "name": "Mashoko Christian Hospital",
     "shortname": "Mashoko Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mashoko Christian Hospital",
-      "shortName": "Mashoko Hosp",
-      "macAddress": "MAC7C8BCA1B4376",
-      "hostId": "Mashoko Christian Ho",
-      "serial": "Cepheid-5212D57",
-      "gxAlertDeviceId": 125
-    }]
+    "devices": [
+      {
+        "name": "Mashoko Christian Hospital",
+        "shortName": "Mashoko Hosp",
+        "macAddress": "MAC7C8BCA1B4376",
+        "hostId": "Mashoko Christian Ho",
+        "serial": "Cepheid-5212D57",
+        "gxAlertDeviceId": 125
+      }
+    ]
   },
   {
     "externalId": "Musiso Mission Hospital",
     "latitude": -20.405001,
-    "longitude": 31.448000,
+    "longitude": 31.448,
     "stateName": "Masvingo",
     "lgaName": "Zaka",
     "name": "Musiso Mission Hospital",
     "shortname": "Musiso Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Musiso Mission Hospital",
-      "shortName": "Musiso Hospital",
-      "macAddress": "MAC705A0F38E10E",
-      "hostId": "Musiso Mission Hospi",
-      "serial": "Cepheid-7050W0V",
-      "gxAlertDeviceId": 126
-    }]
+    "devices": [
+      {
+        "name": "Musiso Mission Hospital",
+        "shortName": "Musiso Hospital",
+        "macAddress": "MAC705A0F38E10E",
+        "hostId": "Musiso Mission Hospi",
+        "serial": "Cepheid-7050W0V",
+        "gxAlertDeviceId": 126
+      }
+    ]
   },
   {
     "externalId": "Chiredzi District Hospital",
-    "latitude": -21.018000,
-    "longitude": 31.684000,
+    "latitude": -21.018,
+    "longitude": 31.684,
     "stateName": "Masvingo",
     "lgaName": "Chiredzi",
     "name": "Chiredzi District Hospital",
     "shortname": "Chiredzi Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chiredzi District Hospital",
-      "shortName": "Chiredzi Hosp",
-      "macAddress": "MACA4BADBEF9E69",
-      "hostId": "CHIREDZI DISTRICT HO",
-      "serial": "1L50LN1",
-      "gxAlertDeviceId": 131
-    }]
+    "devices": [
+      {
+        "name": "Chiredzi District Hospital",
+        "shortName": "Chiredzi Hosp",
+        "macAddress": "MACA4BADBEF9E69",
+        "hostId": "CHIREDZI DISTRICT HO",
+        "serial": "1L50LN1",
+        "gxAlertDeviceId": 131
+      }
+    ]
   },
   {
     "externalId": "Masvingo Provincial Hospital",
-    "latitude": -20.789000,
-    "longitude": 31.239000,
+    "latitude": -20.789,
+    "longitude": 31.239,
     "stateName": "Masvingo",
     "lgaName": "Masvingo",
     "name": "Masvingo Provincial Hospital",
     "shortname": "Masvingo Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Masvingo Provincial Hospital",
-      "shortName": "Masvingo Hosp",
-      "macAddress": "MACA0481CA714D4",
-      "hostId": "Masvingo Provincial",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 134
-    }]
+    "devices": [
+      {
+        "name": "Masvingo Provincial Hospital",
+        "shortName": "Masvingo Hosp",
+        "macAddress": "MACA0481CA714D4",
+        "hostId": "Masvingo Provincial",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 134
+      }
+    ]
   },
   {
     "externalId": "Mvurwi District Hospital",
@@ -1190,32 +1316,36 @@
     "name": "Mvurwi District Hospital",
     "shortname": "Mvurwi Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mvurwi District Hospital",
-      "shortName": "Mvurwi Hospital",
-      "macAddress": "MAC8CDCD4509F21",
-      "hostId": "mvurwi",
-      "serial": "Cepheid-5212D6Y",
-      "gxAlertDeviceId": 136
-    }]
+    "devices": [
+      {
+        "name": "Mvurwi District Hospital",
+        "shortName": "Mvurwi Hospital",
+        "macAddress": "MAC8CDCD4509F21",
+        "hostId": "mvurwi",
+        "serial": "Cepheid-5212D6Y",
+        "gxAlertDeviceId": 136
+      }
+    ]
   },
   {
     "externalId": "Morgenster Mission Hospital",
     "latitude": -20.072001,
-    "longitude": 30.834000,
+    "longitude": 30.834,
     "stateName": "Masvingo",
     "lgaName": "Masvingo",
     "name": "Morgenster Mission Hospital",
     "shortname": "Morgenster Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Morgenster Mission Hospital",
-      "shortName": "Morgenster Hosp",
-      "macAddress": "MAC705A0F38D6A1",
-      "hostId": "Morgenster Mission H",
-      "serial": "Cepheid-7050W22",
-      "gxAlertDeviceId": 137
-    }]
+    "devices": [
+      {
+        "name": "Morgenster Mission Hospital",
+        "shortName": "Morgenster Hosp",
+        "macAddress": "MAC705A0F38D6A1",
+        "hostId": "Morgenster Mission H",
+        "serial": "Cepheid-7050W22",
+        "gxAlertDeviceId": 137
+      }
+    ]
   },
   {
     "externalId": "Rujeko Polyclinic",
@@ -1224,14 +1354,16 @@
     "name": "Rujeko Polyclinic",
     "shortname": "Rujeko Clinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Rujeko Polyclinic",
-      "shortName": "Rujeko Clinic",
-      "macAddress": "MAC7C8BCA1B3407",
-      "hostId": "RUJEKO POLYCLINIC",
-      "serial": "Cepheid-31916TC",
-      "gxAlertDeviceId": 138
-    }]
+    "devices": [
+      {
+        "name": "Rujeko Polyclinic",
+        "shortName": "Rujeko Clinic",
+        "macAddress": "MAC7C8BCA1B3407",
+        "hostId": "RUJEKO POLYCLINIC",
+        "serial": "Cepheid-31916TC",
+        "gxAlertDeviceId": 138
+      }
+    ]
   },
   {
     "externalId": "Kuwadzana Polyclinic",
@@ -1242,32 +1374,36 @@
     "name": "Kuwadzana Polyclinic",
     "shortname": "Kuwadzana Clinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Kuwadzana Polyclinic",
-      "shortName": "Kuwadzana Clinic",
-      "macAddress": "MACDC4A3E7F3F29",
-      "hostId": "KUWADZANA POLYCLINIC",
-      "serial": "PC-PC",
-      "gxAlertDeviceId": 139
-    }]
+    "devices": [
+      {
+        "name": "Kuwadzana Polyclinic",
+        "shortName": "Kuwadzana Clinic",
+        "macAddress": "MACDC4A3E7F3F29",
+        "hostId": "KUWADZANA POLYCLINIC",
+        "serial": "PC-PC",
+        "gxAlertDeviceId": 139
+      }
+    ]
   },
   {
     "externalId": "Gutu Mission Hospital ",
-    "latitude": -19.646000,
-    "longitude": 31.153000,
+    "latitude": -19.646,
+    "longitude": 31.153,
     "stateName": "Masvingo",
     "lgaName": "Gutu",
     "name": "Gutu Mission Hospital ",
     "shortname": "Gutu Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Gutu Mission Hospital ",
-      "shortName": "Gutu Hospital",
-      "macAddress": "MAC6805CA20BC1D",
-      "hostId": "Gutu Mission Hospita",
-      "serial": "Cepheid-3520VZW",
-      "gxAlertDeviceId": 140
-    }]
+    "devices": [
+      {
+        "name": "Gutu Mission Hospital ",
+        "shortName": "Gutu Hospital",
+        "macAddress": "MAC6805CA20BC1D",
+        "hostId": "Gutu Mission Hospita",
+        "serial": "Cepheid-3520VZW",
+        "gxAlertDeviceId": 140
+      }
+    ]
   },
   {
     "externalId": "Chivhu General Hospital",
@@ -1278,14 +1414,16 @@
     "name": "Chivhu General Hospital",
     "shortname": "Chivhu Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chivhu General Hospital",
-      "shortName": "Chivhu Hosp",
-      "macAddress": "MAC6805CA20BDCF",
-      "hostId": "Chivhu General Hospi",
-      "serial": "Cepheid-3520W25",
-      "gxAlertDeviceId": 143
-    }]
+    "devices": [
+      {
+        "name": "Chivhu General Hospital",
+        "shortName": "Chivhu Hosp",
+        "macAddress": "MAC6805CA20BDCF",
+        "hostId": "Chivhu General Hospi",
+        "serial": "Cepheid-3520W25",
+        "gxAlertDeviceId": 143
+      }
+    ]
   },
   {
     "externalId": "Chimhanda District hospital",
@@ -1294,14 +1432,16 @@
     "name": "Chimhanda District hospital",
     "shortname": "Chimhanda Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chimhanda District hospital",
-      "shortName": "Chimhanda Hosp",
-      "macAddress": "MACC4346B5CF1ED",
-      "hostId": "Chimhanda District h",
-      "serial": "Cepheid-44413QN",
-      "gxAlertDeviceId": 144
-    }]
+    "devices": [
+      {
+        "name": "Chimhanda District hospital",
+        "shortName": "Chimhanda Hosp",
+        "macAddress": "MACC4346B5CF1ED",
+        "hostId": "Chimhanda District h",
+        "serial": "Cepheid-44413QN",
+        "gxAlertDeviceId": 144
+      }
+    ]
   },
   {
     "externalId": "Mary Mount Mission Hospital",
@@ -1310,140 +1450,156 @@
     "name": "Mary Mount Mission Hospital",
     "shortname": "Mary Mount ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mary Mount Mission Hospital",
-      "shortName": "Mary Mount ",
-      "macAddress": "MAC8CDCD4509EE2",
-      "hostId": "MARY MOUNT MISSION H",
-      "serial": "Cepheid-5212D44",
-      "gxAlertDeviceId": 145
-    }]
+    "devices": [
+      {
+        "name": "Mary Mount Mission Hospital",
+        "shortName": "Mary Mount ",
+        "macAddress": "MAC8CDCD4509EE2",
+        "hostId": "MARY MOUNT MISSION H",
+        "serial": "Cepheid-5212D44",
+        "gxAlertDeviceId": 145
+      }
+    ]
   },
   {
     "externalId": "Murewa District Hospital",
-    "latitude": -17.645000,
-    "longitude": 31.778000,
+    "latitude": -17.645,
+    "longitude": 31.778,
     "stateName": "Mashonaland East",
     "lgaName": "Murewa",
     "name": "Murewa District Hospital",
     "shortname": "Murewa Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Murewa District Hospital",
-      "shortName": "Murewa Hospital",
-      "macAddress": "MAC6805CA18FD1E",
-      "hostId": "Murewa Hospital",
-      "serial": "Cepheid-3300V7S",
-      "gxAlertDeviceId": 155
-    }]
+    "devices": [
+      {
+        "name": "Murewa District Hospital",
+        "shortName": "Murewa Hospital",
+        "macAddress": "MAC6805CA18FD1E",
+        "hostId": "Murewa Hospital",
+        "serial": "Cepheid-3300V7S",
+        "gxAlertDeviceId": 155
+      }
+    ]
   },
   {
     "externalId": "Mutawatawa District Hospital",
-    "latitude": -17.115000,
-    "longitude": 31.976000,
+    "latitude": -17.115,
+    "longitude": 31.976,
     "stateName": "Mashonaland East",
     "lgaName": "Uzumba-Maramba-Pfungwe",
     "name": "Mutawatawa District Hospital",
     "shortname": "Mutawatawa Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mutawatawa District Hospital",
-      "shortName": "Mutawatawa Hosp",
-      "macAddress": "MAC6805CA12A103",
-      "hostId": "Mutawatawa",
-      "serial": "Cepheid-3300V8Z",
-      "gxAlertDeviceId": 156
-    }]
+    "devices": [
+      {
+        "name": "Mutawatawa District Hospital",
+        "shortName": "Mutawatawa Hosp",
+        "macAddress": "MAC6805CA12A103",
+        "hostId": "Mutawatawa",
+        "serial": "Cepheid-3300V8Z",
+        "gxAlertDeviceId": 156
+      }
+    ]
   },
   {
     "externalId": "Kwekwe General Hospital",
-    "latitude": -18.982000,
-    "longitude": 29.462000,
+    "latitude": -18.982,
+    "longitude": 29.462,
     "stateName": "Midlands",
     "lgaName": "Kwekwe",
     "name": "Kwekwe General Hospital",
     "shortname": "Kwekwe Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Kwekwe General Hospital",
-      "shortName": "Kwekwe Hosp",
-      "macAddress": "MACA0481C896CB4",
-      "hostId": "kwekwe laboratory",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 160
-    }]
+    "devices": [
+      {
+        "name": "Kwekwe General Hospital",
+        "shortName": "Kwekwe Hosp",
+        "macAddress": "MACA0481C896CB4",
+        "hostId": "kwekwe laboratory",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 160
+      }
+    ]
   },
   {
     "externalId": "Mt Darwin District Hospital",
     "latitude": -16.773001,
-    "longitude": 31.577000,
+    "longitude": 31.577,
     "stateName": "Mashonaland Central",
     "lgaName": "Mt Darwin",
     "name": "Mt Darwin District Hospital",
     "shortname": "Mt Darwin Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mt Darwin District Hospital",
-      "shortName": "Mt Darwin Hosp",
-      "macAddress": "MAC6805CA18FD7E",
-      "hostId": "MT DARWIN",
-      "serial": "Cepheid-3300V9P",
-      "gxAlertDeviceId": 163
-    }]
+    "devices": [
+      {
+        "name": "Mt Darwin District Hospital",
+        "shortName": "Mt Darwin Hosp",
+        "macAddress": "MAC6805CA18FD7E",
+        "hostId": "MT DARWIN",
+        "serial": "Cepheid-3300V9P",
+        "gxAlertDeviceId": 163
+      }
+    ]
   },
   {
     "externalId": "Chitungwiza Central Hospital",
     "latitude": -18.023479,
-    "longitude": 31.056770,
+    "longitude": 31.05677,
     "stateName": "Chitungwiza",
     "lgaName": "Zengeza",
     "name": "Chitungwiza Central Hospital",
     "shortname": "Chitungwiza",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chitungwiza Central Hospital",
-      "shortName": "Chitungwiza",
-      "macAddress": "MAC78ACC0C0510F",
-      "hostId": "CHITUNGWIZA CENTRAL",
-      "serial": "SpecimenRecepti",
-      "gxAlertDeviceId": 165
-    }]
+    "devices": [
+      {
+        "name": "Chitungwiza Central Hospital",
+        "shortName": "Chitungwiza",
+        "macAddress": "MAC78ACC0C0510F",
+        "hostId": "CHITUNGWIZA CENTRAL",
+        "serial": "SpecimenRecepti",
+        "gxAlertDeviceId": 165
+      }
+    ]
   },
   {
     "externalId": "Rusape General Hospital 2",
-    "latitude": -19.064930,
-    "longitude": 32.396320,
+    "latitude": -19.06493,
+    "longitude": 32.39632,
     "stateName": "Manicaland",
     "lgaName": "Makoni",
     "name": "Rusape General Hospital 2",
     "shortname": "Rusape Hosp 2",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Rusape General Hospital 2",
-      "shortName": "Rusape Hosp 2",
-      "macAddress": "MAC40B0341B7041",
-      "hostId": "RUSAPE HOSPITAL2",
-      "serial": "Cepheid-7361P5C",
-      "gxAlertDeviceId": 167
-    }]
+    "devices": [
+      {
+        "name": "Rusape General Hospital 2",
+        "shortName": "Rusape Hosp 2",
+        "macAddress": "MAC40B0341B7041",
+        "hostId": "RUSAPE HOSPITAL2",
+        "serial": "Cepheid-7361P5C",
+        "gxAlertDeviceId": 167
+      }
+    ]
   },
   {
     "externalId": "Mahusekwa District Hospital",
     "latitude": -18.297001,
-    "longitude": 31.187000,
+    "longitude": 31.187,
     "stateName": "Mashonaland East",
     "lgaName": "Marondera",
     "name": "Mahusekwa District Hospital",
     "shortname": "Mahusekwa Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mahusekwa District Hospital",
-      "shortName": "Mahusekwa Hosp",
-      "macAddress": "MAC8CDCD44E5B2D",
-      "hostId": "mahusekwa",
-      "serial": "Cepheid-5212D4K",
-      "gxAlertDeviceId": 170
-    }]
+    "devices": [
+      {
+        "name": "Mahusekwa District Hospital",
+        "shortName": "Mahusekwa Hosp",
+        "macAddress": "MAC8CDCD44E5B2D",
+        "hostId": "mahusekwa",
+        "serial": "Cepheid-5212D4K",
+        "gxAlertDeviceId": 170
+      }
+    ]
   },
   {
     "externalId": "United Bulawayo Hospitals",
@@ -1454,14 +1610,16 @@
     "name": "United Bulawayo Hospitals",
     "shortname": "United Byo Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "United Bulawayo Hospitals",
-      "shortName": "United Byo Hosp",
-      "macAddress": "MACD4BED98B3326",
-      "hostId": "United Bulawayo Hosp",
-      "serial": "CepheidJB1GYR1",
-      "gxAlertDeviceId": 172
-    }]
+    "devices": [
+      {
+        "name": "United Bulawayo Hospitals",
+        "shortName": "United Byo Hosp",
+        "macAddress": "MACD4BED98B3326",
+        "hostId": "United Bulawayo Hosp",
+        "serial": "CepheidJB1GYR1",
+        "gxAlertDeviceId": 172
+      }
+    ]
   },
   {
     "externalId": "PSI Bambanani",
@@ -1472,14 +1630,16 @@
     "name": "PSI Bambanani",
     "shortname": "PSI Bambanani",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "PSI Bambanani",
-      "shortName": "PSI Bambanani",
-      "macAddress": "MAC001EC963E6E3",
-      "hostId": "PSI Bambanani",
-      "serial": "cepheid5yswdq1",
-      "gxAlertDeviceId": 173
-    }]
+    "devices": [
+      {
+        "name": "PSI Bambanani",
+        "shortName": "PSI Bambanani",
+        "macAddress": "MAC001EC963E6E3",
+        "hostId": "PSI Bambanani",
+        "serial": "cepheid5yswdq1",
+        "gxAlertDeviceId": 173
+      }
+    ]
   },
   {
     "externalId": "Harare Central Hospital",
@@ -1490,14 +1650,16 @@
     "name": "Harare Central Hospital",
     "shortname": "Harare Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Harare Central Hospital",
-      "shortName": "Harare Hospital",
-      "macAddress": "MACA0369F4A719F",
-      "hostId": "Harare Hospital Labo",
-      "serial": "Cepheid-44819GM",
-      "gxAlertDeviceId": 174
-    }]
+    "devices": [
+      {
+        "name": "Harare Central Hospital",
+        "shortName": "Harare Hospital",
+        "macAddress": "MACA0369F4A719F",
+        "hostId": "Harare Hospital Labo",
+        "serial": "Cepheid-44819GM",
+        "gxAlertDeviceId": 174
+      }
+    ]
   },
   {
     "externalId": "Epworth Polyclinic 2",
@@ -1508,14 +1670,16 @@
     "name": "Epworth Polyclinic 2",
     "shortname": "Epworth 2",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Epworth Polyclinic 2",
-      "shortName": "Epworth 2",
-      "macAddress": "MACA0369F70388E",
-      "hostId": "EPWORTH POLYCLINIC LABORATORY",
-      "serial": "Cepheid-530PDDD",
-      "gxAlertDeviceId": 176
-    }]
+    "devices": [
+      {
+        "name": "Epworth Polyclinic 2",
+        "shortName": "Epworth 2",
+        "macAddress": "MACA0369F70388E",
+        "hostId": "EPWORTH POLYCLINIC LABORATORY",
+        "serial": "Cepheid-530PDDD",
+        "gxAlertDeviceId": 176
+      }
+    ]
   },
   {
     "externalId": "Hatcliff Polyclinic",
@@ -1526,32 +1690,36 @@
     "name": "Hatcliff Polyclinic",
     "shortname": "Hatcliff Clinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Hatcliff Polyclinic",
-      "shortName": "Hatcliff Clinic",
-      "macAddress": "MACD8CB8A2382A2",
-      "hostId": "Hatcliff Polyclinic",
-      "serial": "BeatriceLab-PC",
-      "gxAlertDeviceId": 181
-    }]
+    "devices": [
+      {
+        "name": "Hatcliff Polyclinic",
+        "shortName": "Hatcliff Clinic",
+        "macAddress": "MACD8CB8A2382A2",
+        "hostId": "Hatcliff Polyclinic",
+        "serial": "BeatriceLab-PC",
+        "gxAlertDeviceId": 181
+      }
+    ]
   },
   {
     "externalId": "St Peter's Mission Hospital",
     "latitude": -19.065001,
-    "longitude": 32.396000,
+    "longitude": 32.396,
     "stateName": "Manicaland",
     "lgaName": "Chipinge",
     "name": "St Peter's Mission Hospital",
     "shortname": "St Peter's ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "St Peter's Mission Hospital",
-      "shortName": "St Peter's ",
-      "macAddress": "MAC6805CA21E50C",
-      "hostId": "St Peter's Mission H",
-      "serial": "Cepheid-40611WJ",
-      "gxAlertDeviceId": 190
-    }]
+    "devices": [
+      {
+        "name": "St Peter's Mission Hospital",
+        "shortName": "St Peter's ",
+        "macAddress": "MAC6805CA21E50C",
+        "hostId": "St Peter's Mission H",
+        "serial": "Cepheid-40611WJ",
+        "gxAlertDeviceId": 190
+      }
+    ]
   },
   {
     "externalId": "Birchenough Bridge District Hospital",
@@ -1562,14 +1730,16 @@
     "name": "Birchenough Bridge District Hospital",
     "shortname": "Birchenough ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Birchenough Bridge District Hospital",
-      "shortName": "Birchenough ",
-      "macAddress": "MACA0481C8F107C",
-      "hostId": "Birchenough Bridge D",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 191
-    }]
+    "devices": [
+      {
+        "name": "Birchenough Bridge District Hospital",
+        "shortName": "Birchenough ",
+        "macAddress": "MACA0481C8F107C",
+        "hostId": "Birchenough Bridge D",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 191
+      }
+    ]
   },
   {
     "externalId": "Rutenga Clinic",
@@ -1578,14 +1748,16 @@
     "name": "Rutenga Clinic",
     "shortname": "Rutenga Clinic",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Rutenga Clinic",
-      "shortName": "Rutenga Clinic",
-      "macAddress": "MAC7C8BCA1B7894",
-      "hostId": "rutenga rural health",
-      "serial": "Cepheid-5471C4R",
-      "gxAlertDeviceId": 193
-    }]
+    "devices": [
+      {
+        "name": "Rutenga Clinic",
+        "shortName": "Rutenga Clinic",
+        "macAddress": "MAC7C8BCA1B7894",
+        "hostId": "rutenga rural health",
+        "serial": "Cepheid-5471C4R",
+        "gxAlertDeviceId": 193
+      }
+    ]
   },
   {
     "externalId": "Gokwe South District Hospital",
@@ -1596,50 +1768,56 @@
     "name": "Gokwe South District Hospital",
     "shortname": "Gokwe South ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Gokwe South District Hospital",
-      "shortName": "Gokwe South ",
-      "macAddress": "MAC6805CA18FE05",
-      "hostId": "Gokwe South Hospital",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 195
-    }]
+    "devices": [
+      {
+        "name": "Gokwe South District Hospital",
+        "shortName": "Gokwe South ",
+        "macAddress": "MAC6805CA18FE05",
+        "hostId": "Gokwe South Hospital",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 195
+      }
+    ]
   },
   {
     "externalId": "Banket District Hospital",
     "latitude": -17.391001,
-    "longitude": 30.396000,
+    "longitude": 30.396,
     "stateName": "Mashonaland West",
     "lgaName": "Zvimba",
     "name": "Banket District Hospital",
     "shortname": "Banket Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Banket District Hospital",
-      "shortName": "Banket Hospital",
-      "macAddress": "MAC6805CA21E17D",
-      "hostId": "banket district hosp",
-      "serial": "Cepheid-40611XX",
-      "gxAlertDeviceId": 200
-    }]
+    "devices": [
+      {
+        "name": "Banket District Hospital",
+        "shortName": "Banket Hospital",
+        "macAddress": "MAC6805CA21E17D",
+        "hostId": "banket district hosp",
+        "serial": "Cepheid-40611XX",
+        "gxAlertDeviceId": 200
+      }
+    ]
   },
   {
     "externalId": "Victoria Falls Hospital",
     "latitude": -18.823029,
-    "longitude": 27.398870,
+    "longitude": 27.39887,
     "stateName": "Matabeleland North",
     "lgaName": "Hwange",
     "name": "Victoria Falls Hospital",
     "shortname": "Victoria Falls Hospi",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Victoria Falls Hospital",
-      "shortName": "Victoria Falls Hospi",
-      "macAddress": "MAC6805CA129B0D",
-      "hostId": "Victoria Falls Hospi",
-      "serial": "Cepheid-3031JBG",
-      "gxAlertDeviceId": 202
-    }]
+    "devices": [
+      {
+        "name": "Victoria Falls Hospital",
+        "shortName": "Victoria Falls Hospi",
+        "macAddress": "MAC6805CA129B0D",
+        "hostId": "Victoria Falls Hospi",
+        "serial": "Cepheid-3031JBG",
+        "gxAlertDeviceId": 202
+      }
+    ]
   },
   {
     "externalId": "Mutare Infectious Disease Hospital",
@@ -1650,68 +1828,76 @@
     "name": "Mutare Infectious Disease Hospital",
     "shortname": "MIDH",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Mutare Infectious Disease Hospital",
-      "shortName": "MIDH",
-      "macAddress": "MAC6805CA21E111",
-      "hostId": "MIDH",
-      "serial": "Cepheid-406123C",
-      "gxAlertDeviceId": 204
-    }]
+    "devices": [
+      {
+        "name": "Mutare Infectious Disease Hospital",
+        "shortName": "MIDH",
+        "macAddress": "MAC6805CA21E111",
+        "hostId": "MIDH",
+        "serial": "Cepheid-406123C",
+        "gxAlertDeviceId": 204
+      }
+    ]
   },
   {
     "externalId": "Chikombedzi Mission Hospital",
-    "latitude": -21.018000,
-    "longitude": 31.684000,
+    "latitude": -21.018,
+    "longitude": 31.684,
     "stateName": "Masvingo",
     "lgaName": "Chiredzi",
     "name": "Chikombedzi Mission Hospital",
     "shortname": "Chikombedzi Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chikombedzi Mission Hospital",
-      "shortName": "Chikombedzi Hosp",
-      "macAddress": "MACECB1D72F85DD",
-      "hostId": "CHIKOMBEDZI",
-      "serial": "Cepheid-5212D70",
-      "gxAlertDeviceId": 206
-    }]
+    "devices": [
+      {
+        "name": "Chikombedzi Mission Hospital",
+        "shortName": "Chikombedzi Hosp",
+        "macAddress": "MACECB1D72F85DD",
+        "hostId": "CHIKOMBEDZI",
+        "serial": "Cepheid-5212D70",
+        "gxAlertDeviceId": 206
+      }
+    ]
   },
   {
     "externalId": "Thorngrove Hospital",
     "latitude": -20.148001,
-    "longitude": 28.584000,
+    "longitude": 28.584,
     "stateName": "Bulawayo",
     "lgaName": "Northern Suburbs",
     "name": "Thorngrove Hospital",
     "shortname": "Thorngrove Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Thorngrove Hospital",
-      "shortName": "Thorngrove Hosp",
-      "macAddress": "MACD4BED98B7413",
-      "hostId": "Thorngrove Hosp",
-      "serial": "Cepheid94PYKS1",
-      "gxAlertDeviceId": 209
-    }]
+    "devices": [
+      {
+        "name": "Thorngrove Hospital",
+        "shortName": "Thorngrove Hosp",
+        "macAddress": "MACD4BED98B7413",
+        "hostId": "Thorngrove Hosp",
+        "serial": "Cepheid94PYKS1",
+        "gxAlertDeviceId": 209
+      }
+    ]
   },
   {
     "externalId": "Rimuka Clinic",
-    "latitude": -18.337000,
-    "longitude": 29.920000,
+    "latitude": -18.337,
+    "longitude": 29.92,
     "stateName": "Mashonaland West",
     "lgaName": "Sanyati",
     "name": "Rimuka Clinic",
     "shortname": "Rimuka",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Rimuka Clinic",
-      "shortName": "Rimuka",
-      "macAddress": "MACECB1D72F8351",
-      "hostId": "ITHC",
-      "serial": "Cepheid-5212D6F",
-      "gxAlertDeviceId": 210
-    }]
+    "devices": [
+      {
+        "name": "Rimuka Clinic",
+        "shortName": "Rimuka",
+        "macAddress": "MACECB1D72F8351",
+        "hostId": "ITHC",
+        "serial": "Cepheid-5212D6F",
+        "gxAlertDeviceId": 210
+      }
+    ]
   },
   {
     "externalId": "Luisa Guidotti Hospital",
@@ -1722,14 +1908,16 @@
     "name": "Luisa Guidotti Hospital",
     "shortname": "Luisa Guidotti ",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Luisa Guidotti Hospital",
-      "shortName": "Luisa Guidotti ",
-      "macAddress": "MACC4346B73E47D",
-      "hostId": "luisa Guidotti Hospi",
-      "serial": "Cepheid-44819BK",
-      "gxAlertDeviceId": 212
-    }]
+    "devices": [
+      {
+        "name": "Luisa Guidotti Hospital",
+        "shortName": "Luisa Guidotti ",
+        "macAddress": "MACC4346B73E47D",
+        "hostId": "luisa Guidotti Hospi",
+        "serial": "Cepheid-44819BK",
+        "gxAlertDeviceId": 212
+      }
+    ]
   },
   {
     "externalId": "Kotwa District hospital",
@@ -1740,19 +1928,21 @@
     "name": "Kotwa District hospital",
     "shortname": "Kotwa Hospital",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Kotwa District hospital",
-      "shortName": "Kotwa Hospital",
-      "macAddress": "MACA0481C825EC1",
-      "hostId": "kotwa district hospi",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 214
-    }]
+    "devices": [
+      {
+        "name": "Kotwa District hospital",
+        "shortName": "Kotwa Hospital",
+        "macAddress": "MACA0481C825EC1",
+        "hostId": "kotwa district hospi",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 214
+      }
+    ]
   },
   {
     "externalId": "Zengeza 3 ",
     "latitude": -18.823029,
-    "longitude": 27.398870,
+    "longitude": 27.39887,
     "stateName": "Chitungwiza",
     "lgaName": "Zengeza",
     "name": "Zengeza 3 ",
@@ -1766,14 +1956,16 @@
     "name": "Chidamoyo Mission Hospital",
     "shortname": "Chidamoyo Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chidamoyo Mission Hospital",
-      "shortName": "Chidamoyo Hosp",
-      "macAddress": "MAC6805CA18FCD3",
-      "hostId": "CHIDAMOYO CHRISTIAN HOSPITAL",
-      "serial": "Cepheid-3300V92",
-      "gxAlertDeviceId": 219
-    }]
+    "devices": [
+      {
+        "name": "Chidamoyo Mission Hospital",
+        "shortName": "Chidamoyo Hosp",
+        "macAddress": "MAC6805CA18FCD3",
+        "hostId": "CHIDAMOYO CHRISTIAN HOSPITAL",
+        "serial": "Cepheid-3300V92",
+        "gxAlertDeviceId": 219
+      }
+    ]
   },
   {
     "externalId": "Victoria Falls District Hospital",
@@ -1782,32 +1974,36 @@
     "name": "Victoria Falls District Hospital",
     "shortname": "Vic. Falls Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Victoria Falls District Hospital",
-      "shortName": "Vic. Falls Hosp",
-      "macAddress": "MAC6805CA129B0D",
-      "hostId": "Victoria Falls Distr",
-      "serial": "Cepheid-3031JBG",
-      "gxAlertDeviceId": 223
-    }]
+    "devices": [
+      {
+        "name": "Victoria Falls District Hospital",
+        "shortName": "Vic. Falls Hosp",
+        "macAddress": "MAC6805CA129B0D",
+        "hostId": "Victoria Falls Distr",
+        "serial": "Cepheid-3031JBG",
+        "gxAlertDeviceId": 223
+      }
+    ]
   },
   {
     "externalId": "Chipinge District Hospital",
-    "latitude": -20.193150,
-    "longitude": 32.620220,
+    "latitude": -20.19315,
+    "longitude": 32.62022,
     "stateName": "Manicaland",
     "lgaName": "Chipinge",
     "name": "Chipinge District Hospital",
     "shortname": "Chipinge Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Chipinge District Hospital",
-      "shortName": "Chipinge Hosp",
-      "macAddress": "MAC6805CA129BBE",
-      "hostId": "Chipinge District Ho",
-      "serial": "Cepheid-PC",
-      "gxAlertDeviceId": 224
-    }]
+    "devices": [
+      {
+        "name": "Chipinge District Hospital",
+        "shortName": "Chipinge Hosp",
+        "macAddress": "MAC6805CA129BBE",
+        "hostId": "Chipinge District Ho",
+        "serial": "Cepheid-PC",
+        "gxAlertDeviceId": 224
+      }
+    ]
   },
   {
     "externalId": "Plumtree District Hospital 2",
@@ -1818,13 +2014,15 @@
     "name": "Plumtree District Hospital 2",
     "shortname": "Plumtree Hosp",
     "timeZoneId": "South Africa Standard Time",
-    "devices": [{
-      "name": "Plumtree District Hospital 2",
-      "shortName": "Plumtree Hosp",
-      "macAddress": "MAC",
-      "hostId": "Plumtree District Hospital 2",
-      "serial": "Cepheid-4071D9V",
-      "gxAlertDeviceId": 225
-    }]
+    "devices": [
+      {
+        "name": "Plumtree District Hospital 2",
+        "shortName": "Plumtree Hosp",
+        "macAddress": "MAC",
+        "hostId": "Plumtree District Hospital 2",
+        "serial": "Cepheid-4071D9V",
+        "gxAlertDeviceId": 225
+      }
+    ]
   }
 ]

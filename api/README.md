@@ -271,7 +271,7 @@ Unlike migrations ALL seed files are run every time. You should structure your s
 Install siege: <http://jason.pureconcepts.net/2011/09/installing-siege-mac-os-x-lion/>
 
 To test the auth endpoint, run this command:
-siege --concurrent=25 --content-type="application/json" '<http://localhost:8080/api/auth> POST { "name": "sbaumgartner", "password": "test07", "clientName": "SIEGE", "clientId": "1234" }'
+siege --concurrent=25 --content-type="application/json" '<http://localhost:8080/api/auth> POST { "name": "admin", "password": "test07", "clientName": "SIEGE", "clientId": "1234" }'
 
 ### Creating seeds for migrating from GxAlert to Aspect
 

@@ -26,6 +26,10 @@ const getResultAggregationsValidate = validGroups => ({
       Joi.string().valid(...validGroups)
     )
     .description('Array of fields to group by'),
+  flags: Joi.alternatives()
+    .allow(null, '')
+    .try(Joi.array(), Joi.string())
+    .description('Flags in csv'),
 })
 
 const resultAggregationsValidGroups = [
