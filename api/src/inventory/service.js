@@ -30,6 +30,7 @@ const {
   findInventoryItem,
   INVENTORY_ITEM_SELECT,
   INVENTORY_COMMON_FIELDS,
+  findInventoryItems,
 } = require('./queries/inventoryDbAccess')
 
 // Select for inventory grouped by site and consumable
@@ -158,7 +159,8 @@ async function consumeInventoryForResult(
           siteId,
           assayConsumable,
           consumablesInResultData,
-          now
+          now,
+          assayConsumable.strategy
         )
         const testedOn = testStartedOn || testEndedOn
 
@@ -243,18 +245,11 @@ async function findOrCreateMatchingInventoryItems(
   siteId,
   assayConsumable,
   consumablesInResultData,
-  now
+  now,
+  strategy
 ) {
   const { consumableId } = assayConsumable
-  const existingItems = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .whereNull('inTransitFromSiteId')
-    // Order by expiresOn asc nulls last, createdOn desc
-    .orderByRaw('expiresOn is null')
-    .orderBy('expiresOn', 'asc')
-    .orderBy('createdOn', 'desc')
-    .orderBy('id', 'desc')
-    .select()
+  const existingItems = await findInventoryItems(siteId, consumableId)
   if (existingItems.length > 0) {
     return existingItems
   }
@@ -263,7 +258,9 @@ async function findOrCreateMatchingInventoryItems(
   // should always have at least consumableInResultData.length items
   // We can likely do this by moving the Or Create prior to the match function
   // if candidate items are empty!
-  const lotNumberInResultData = _.get(consumablesInResultData, '[0].lot')
+  const lotNumberInResultData = strategy.indexOf('withLot')
+    ? _.get(consumablesInResultData, '[0].lot')
+    : null
   const expirationDateInResultData = getDateOrDefault(
     consumablesInResultData,
     '[0].expirationDate'
@@ -668,7 +665,6 @@ async function listInventoryByLot(request, dataConstraints) {
       INVENTORY_ITEM_SORT_FIELDS.siteName,
       INVENTORY_ITEM_SORT_FIELDS
     )
-
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
   return { total, data }
 }
@@ -693,7 +689,6 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
       }
     })
     .select(`*`)
-
   const [{ total }] = await inventoryQuery.clone().count('id as total')
 
   // sorting and pagination

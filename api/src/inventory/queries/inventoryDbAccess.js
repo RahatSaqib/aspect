@@ -16,7 +16,23 @@ const INVENTORY_COMMON_FIELDS = [
   'st.name as stateName',
   'l.name as lgaName',
 ]
-
+const INVENTORY_ITEMS_TABLE_WITH_STRATEGY = [
+  'ii.id',
+  'ii.consumableId',
+  'ii.siteId',
+  'ii.inTransitFromSiteId',
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
+  ),
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
+  ),
+  'ii.quantityOnHand',
+  'ii.createdOn',
+  'ii.createdBy',
+  'ii.updatedOn',
+  'ii.updatedBy',
+]
 const INVENTORY_ITEM_SELECT = [
   ...INVENTORY_COMMON_FIELDS,
   'ii.quantityOnHand',
@@ -39,13 +55,7 @@ async function getConsumableStrategy(consumableId) {
   return strategies[strategy]
 }
 
-async function findInventoryItem(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  inTransitFromSiteId
-) {
+function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
   const matchingInventoryItemsQuery = knex('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
@@ -59,9 +69,6 @@ async function findInventoryItem(
       'ii.siteId': siteId,
       'ii.consumableId': consumableId,
     })
-  const matchingStrategy = await getConsumableStrategy(consumableId)
-  if (matchingStrategy)
-    matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
 
   if (inTransitFromSiteId) {
     matchingInventoryItemsQuery.where(
@@ -71,6 +78,55 @@ async function findInventoryItem(
   } else {
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
+  return matchingInventoryItemsQuery
+}
+
+async function findInventoryItems(
+  siteId,
+  consumableId,
+  expiresOn = null,
+  lotNumber = null,
+  inTransitFromSiteId = null,
+  select = INVENTORY_ITEMS_TABLE_WITH_STRATEGY
+) {
+  const matchingInventoryItemsQuery = baseInventoryQuery(
+    siteId,
+    consumableId,
+    inTransitFromSiteId
+  )
+  if (lotNumber || expiresOn) {
+    const matchingStrategy = await getConsumableStrategy(consumableId)
+    if (matchingStrategy)
+      matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  }
+  const matchingInventoryItems = await matchingInventoryItemsQuery
+    .clone()
+    .orderByRaw('ii.expiresOn is null')
+    .orderBy('ii.expiresOn', 'asc')
+    .orderBy('ii.createdOn', 'desc')
+    .orderBy('ii.id', 'desc')
+    .select(select)
+
+  return matchingInventoryItems
+}
+
+async function findInventoryItem(
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  inTransitFromSiteId
+) {
+  const matchingInventoryItemsQuery = baseInventoryQuery(
+    siteId,
+    consumableId,
+
+    inTransitFromSiteId
+  )
+  const matchingStrategy = await getConsumableStrategy(consumableId)
+  if (matchingStrategy)
+    matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+
   const matchingInventoryItems = await matchingInventoryItemsQuery.first(
     INVENTORY_ITEM_SELECT
   )
@@ -79,6 +135,7 @@ async function findInventoryItem(
 
 module.exports = {
   findInventoryItem,
+  findInventoryItems,
   INVENTORY_ITEM_SELECT,
   INVENTORY_COMMON_FIELDS,
 }
