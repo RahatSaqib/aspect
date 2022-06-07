@@ -180,7 +180,7 @@ module.exports = [
       },
       {
         module: 'inventory',
-        activity: 'view',
+        activity: 'edit',
       },
       {
         module: 'notification',
