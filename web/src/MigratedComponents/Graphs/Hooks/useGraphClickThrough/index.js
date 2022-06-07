@@ -9,6 +9,9 @@ import parse from 'date-fns/parse'
 import map from 'lodash/map'
 import uniqBy from 'lodash/uniqBy'
 import filter from 'lodash/filter'
+import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+import keys from 'lodash/keys'
 
 import ASSAY_LIST from '../../../QueryFetch/Assay'
 import fetchWrapperForQueries from '../../../QueryFetch'
@@ -59,7 +62,7 @@ function getQueryParameters(
   formatDate,
   id,
   indexBy,
-  { assays, baseAssay, keys, filterBy, keyToConsume }
+  { assays, baseAssay, keys: paramKeys, filterBy, keyToConsume }
 ) {
   const params = new URLSearchParams()
   const buildParamsFromKey = (key, params) => {
@@ -68,6 +71,7 @@ function getQueryParameters(
       const { minDate, maxDate } = parseDate(month, formatDate)
       params.set(MIN_DATE, minDate)
       params.set(MAX_DATE, maxDate)
+      return
     }
 
     if (key === 'resultCategoryId') {
@@ -97,11 +101,13 @@ function getQueryParameters(
         )
         params.set('resultCategoryId', resultCategoryId)
       }
+      return
     }
 
     if (key === 'assay' && !params.has('assayId')) {
       const { id: assayId } = assayIdFromKey(linkData, id)
       params.set('assayId', assayId)
+      return
     }
 
     if (key === 'treatmentStatus') {
@@ -117,19 +123,32 @@ function getQueryParameters(
         default:
           break
       }
+      return
     }
 
     if (key === 'diseaseId') {
       const { diseaseId } = diseaseIdFromKey(linkData, baseAssay)
       params.set('diseaseId', diseaseId)
+      return
     }
 
     if (key === 'daysStockLeft') {
       params.set('daysStockLeft', id)
+      return
     }
 
     if (key === 'consumableId') {
       params.set('consumableId', data.consumableId)
+      return
+    }
+
+    if (isFunction(key)) {
+      const moreParams = key(id)
+      if (isPlainObject(moreParams)) {
+        keys(moreParams).forEach(paramName => {
+          params.set(paramName, moreParams[paramName])
+        })
+      }
     }
   }
 
@@ -139,8 +158,8 @@ function getQueryParameters(
       .filter(it => assays.includes(it.externalId))
       .map(it => params.append('assayId', it.id))
   }
-  // params from `keys`
-  keys.forEach(key => buildParamsFromKey(key, params))
+  // params from `paramKeys`
+  paramKeys.forEach(key => buildParamsFromKey(key, params))
 
   return params
 }
