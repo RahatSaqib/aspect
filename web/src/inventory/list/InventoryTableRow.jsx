@@ -23,7 +23,7 @@ import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({ inventoryItem }) => {
+const InventoryTableRow = ({ isEditAllow, inventoryItem }) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
@@ -172,12 +172,14 @@ const InventoryTableRow = ({ inventoryItem }) => {
             : 'N/A'}
         </TableCell>
       ) : null}
-      <TableCell className={cssClasses('TableCell')}>
-        <AspectVertMenu
-          params={{ inventoryItemId: inventoryItem.get('id') }}
-          actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
-        />
-      </TableCell>
+      {isEditAllow ? (
+        <TableCell className={cssClasses('TableCell')}>
+          <AspectVertMenu
+            params={{ inventoryItemId: inventoryItem.get('id') }}
+            actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
+          />
+        </TableCell>
+      ) : null}
     </TableRow>
   )
 }
