@@ -3610,54 +3610,93 @@ async function seed(knex) {
     // Insert Inventory Items
     await Promise.each(_.range(siteDatas.length), async i => {
       const siteData = siteDatas[i]
+      let expiresOn = new Date(
+        new Date(
+          now.getTime() +
+            _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
+        ).setHours(0, 0, 0, 0)
+      )
+      let quantityOnHand = _.random(0, 1000)
+      let lotNumber = `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
+        (siteData.id + i) * consumableGxTbCartridgeId
+      }`
       // TB Cartridges
-      await knex('InventoryItem').insert({
+      let [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: consumableGxTbCartridgeId,
         siteId: siteData.id,
-        lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
+        lotNumber,
+        expiresOn,
+        quantityOnHand,
+        ...auditFields,
+      })
+      await knex('InventoryLog').insert({
+        expiresOn,
+        siteId: siteData.id,
+        consumableId: consumableGxTbCartridgeId,
+        lotNumber,
+        quantity: quantityOnHand,
+        inventoryItemId,
+        ..._.omit(auditFields, ['updatedOn', 'updatedBy']),
+      })
+
+      if (i % 5 === 0) {
+        lotNumber = `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
           (siteData.id + i) * consumableGxTbCartridgeId
-        }`,
-        expiresOn: new Date(
+        }`
+        quantityOnHand = _.random(0, 1000)
+        expiresOn = new Date(
           new Date(
             now.getTime() +
               _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
           ).setHours(0, 0, 0, 0)
-        ),
-        quantityOnHand: _.random(0, 1000),
-        ...auditFields,
-      })
-      if (i % 5 === 0) {
-        await knex('InventoryItem').insert({
+        )
+        ;[inventoryItemId] = await knex('InventoryItem').insert({
           consumableId: consumableGxEbolaCartridgeId,
           siteId: siteData.id,
           lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][i % 2]}-${
             (siteData.id + i) * consumableGxEbolaCartridgeId
           }`,
-          expiresOn: new Date(
-            new Date(
-              now.getTime() +
-                _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
-            ).setHours(0, 0, 0, 0)
-          ),
-          quantityOnHand: _.random(0, 1000),
+          expiresOn,
+          quantityOnHand,
           ...auditFields,
+        })
+        await knex('InventoryLog').insert({
+          expiresOn,
+          siteId: siteData.id,
+          lotNumber,
+          consumableId: consumableGxEbolaCartridgeId,
+          quantity: quantityOnHand,
+          inventoryItemId,
+          ..._.omit(auditFields, ['updatedOn', 'updatedBy']),
         })
       }
       if (i % 7 === 0) {
-        await knex('InventoryItem').insert({
+        lotNumber = `${(i + 11) * (i + 1)}${['A', 'V'][i % 2]}-${
+          (siteData.id + i) * consumableGxHiv1VlCartridgeId
+        }`
+        expiresOn = new Date(
+          new Date(
+            now.getTime() +
+              _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
+          ).setHours(0, 0, 0, 0)
+        )
+        quantityOnHand = _.random(0, 1000)
+        ;[inventoryItemId] = await knex('InventoryItem').insert({
           consumableId: consumableGxHiv1VlCartridgeId,
           siteId: siteData.id,
-          lotNumber: `${(i + 11) * (i + 1)}${['A', 'V'][i % 2]}-${
-            (siteData.id + i) * consumableGxHiv1VlCartridgeId
-          }`,
-          expiresOn: new Date(
-            new Date(
-              now.getTime() +
-                _.random(-millisInNormalYear / 2, millisInNormalYear * 2)
-            ).setHours(0, 0, 0, 0)
-          ),
-          quantityOnHand: _.random(0, 1000),
+          lotNumber,
+          expiresOn,
+          quantityOnHand,
           ...auditFields,
+        })
+        await knex('InventoryLog').insert({
+          expiresOn,
+          siteId: siteData.id,
+          lotNumber,
+          consumableId: consumableGxHiv1VlCartridgeId,
+          quantity: quantityOnHand,
+          inventoryItemId,
+          ..._.omit(auditFields, ['updatedOn', 'updatedBy']),
         })
       }
     })

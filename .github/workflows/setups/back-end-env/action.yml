@@ -40,7 +40,7 @@ runs:
         cp -R ./api/.env.example ./api/.env
 
         echo admin.email='aspecttest@systemone.id' >> ./api/.env
-        echo admin.cell='+14135485003' >> ./api/.env
+        echo admin.cell='+18888452610' >> ./api/.env
 
         echo db.databaseName=${{ inputs.dbname }} >> ./api/.env
         echo db.user=${{ inputs.dbuser }} >> ./api/.env

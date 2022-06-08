@@ -74,11 +74,18 @@ describe('auth endpoints', () => {
         return await Promise.resolve() // eslint-disable-line
       },
     }
+    const fakeLogger = {
+      add() {},
+      alert() {},
+    }
+
+    sinon.spy()
     sinon.spy(emailUtilFake, 'sendEmail')
     const service = proxyquire.noCallThru().load('../../src/auth/service', {
       jsonwebtoken: jwt,
       '../db': dbSpy,
       '../config': fakeConfig,
+      '../../src/shared/logger': fakeLogger,
       '../email/emailUtil': emailUtilFake,
       '../email/templateProcessor': templateProcessorFake,
     })

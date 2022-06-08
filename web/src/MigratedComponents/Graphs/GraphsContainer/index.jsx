@@ -4,6 +4,10 @@ import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
 import GraphContainer from './GraphContainer'
 import { validateGraphConfig } from '../Helpers/Formatters'
+import {
+  isAllowedGroupsWithoutAssays,
+  getWhitelistedAssays,
+} from '../../../shared/utils/graph'
 
 const spacing = {
   half: { innerSize: 12, outerSize: 6 },
@@ -11,24 +15,16 @@ const spacing = {
   row: { innerSize: 10, outerSize: 12 },
 }
 
-const GraphsContainer = ({ assaysFromState, config }) => {
+const GraphsContainer = ({ assaysFromState, classNames, config }) => {
   const { assays, componentSize, group } = config
-  const allowedGroupsWithoutAssays = ['assaysNotNeeded'].includes(group)
-  const [whiteListed, setwhiteListed] = useState(false)
+  const allowedGroupsWithoutAssays = isAllowedGroupsWithoutAssays(group)
+  const [whiteListed, setWhiteListed] = useState(false)
 
   useEffect(() => {
     if (assays && assays.length) {
-      const allowed = []
       validateGraphConfig(config).then(() => {
-        if (assays && assays.length > 0) {
-          assays.map(a =>
-            assaysFromState.filter(
-              ({ externalId, hasResults }) =>
-                externalId === a && hasResults && allowed.push(a)
-            )
-          )
-        }
-        setwhiteListed(allowed)
+        const allowedAssays = getWhitelistedAssays({ assays, assaysFromState })
+        setWhiteListed(allowedAssays)
       })
     }
   }, [config, assays, assaysFromState])
@@ -38,6 +34,7 @@ const GraphsContainer = ({ assaysFromState, config }) => {
       {(whiteListed && whiteListed.length) || allowedGroupsWithoutAssays ? (
         <GraphContainer
           assaysFromState={assaysFromState}
+          classNames={classNames}
           config={config}
           size={spacing[componentSize]}
           whiteListed={whiteListed}
@@ -49,10 +46,12 @@ const GraphsContainer = ({ assaysFromState, config }) => {
 
 GraphsContainer.defaultProps = {
   assaysFromState: [],
+  classNames: null,
 }
 
 GraphsContainer.propTypes = {
   assaysFromState: PropTypes.oneOfType([PropTypes.array]),
+  classNames: PropTypes.oneOfType([PropTypes.object]),
   config: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

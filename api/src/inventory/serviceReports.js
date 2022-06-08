@@ -1,6 +1,12 @@
 const { format } = require('date-fns')
-const { listInventory } = require('./service')
+const { listInventory, listLog } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
+const { knex } = require('../db')
+const { INVENTORY_LOG_LIST } = require('./query/querySelectors')
+const {
+  getOffsetFromIsoDateString,
+  getDateTimeProjectionInUserTimeZone,
+} = require('../shared/date')
 
 async function exportSupplies(request, reply) {
   const { query } = request
@@ -28,6 +34,28 @@ async function exportSupplies(request, reply) {
   })
 }
 
+async function inventoryLog(auth, query) {
+  const { maxDate = new Date().toISOString() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
+  const { data, total, ok } = await listLog(
+    { auth, query },
+    {
+      ...INVENTORY_LOG_LIST,
+      createdOn: getDateTimeProjectionInUserTimeZone(
+        knex,
+        'il.createdOn',
+        offset
+      ),
+    }
+  )
+  return {
+    ok,
+    total,
+    data,
+  }
+}
+
 module.exports = {
   exportSupplies,
+  inventoryLog,
 }

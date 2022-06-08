@@ -11,7 +11,7 @@ import styles from './Card.css'
 const cssClasses = classnames.bind(styles)
 
 const CardHeader = ({ props }) => {
-  const { title, actionComponent, action } = props
+  const { title, actionComponent, action, classNames } = props
   const { component: ActionComponent, props: actionComponentProps } =
     actionComponent
 
@@ -24,7 +24,7 @@ const CardHeader = ({ props }) => {
       >
         {title ? (
           <Grid item xs={6} className={cssClasses('card__title')}>
-            <AspectTitle title={title} />
+            <AspectTitle title={title} classNames={classNames} />
           </Grid>
         ) : null}
         {actionComponent ? (
@@ -39,6 +39,7 @@ const CardHeader = ({ props }) => {
 
 const AspectCard = ({
   children,
+  classNames,
   justify,
   innerSize,
   title,
@@ -53,7 +54,7 @@ const AspectCard = ({
         justifyContent={justify}
         className={cssClasses('card__grid')}
       >
-        <CardHeader props={{ title, actionComponent, action }} />
+        <CardHeader props={{ title, actionComponent, action, classNames }} />
         <Grid
           item
           xs={12}
@@ -71,10 +72,12 @@ AspectCard.defaultProps = {
   justify: 'center',
   innerSize: 12,
   name: null,
+  classNames: null,
 }
 
 AspectCard.protoTypes = {
   children: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  classNames: PropTypes.oneOfType([PropTypes.object]),
   justify: PropTypes.string,
   innerSize: PropTypes.instanceOf,
   title: PropTypes.string.isRequired,

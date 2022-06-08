@@ -2,8 +2,6 @@ name: Checks
 
 on:
   pull_request:
-    branches:
-      - "contract-tests/**"
 
 env:
   dbname: "aspect"
@@ -23,7 +21,7 @@ jobs:
 
       - name: Lint code
         run: |
-          yarn web:lint
+          yarn web:lint --fix
 
   fe-test:
     name: "Tests (WEB)"
