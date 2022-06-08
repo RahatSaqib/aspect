@@ -110,6 +110,7 @@ const routes = [
               unitShortName: Joi.string().max(50).allow('', null),
               assayName: Joi.string().max(255).allow('', null),
               assayI18nKey: Joi.string().max(255).allow('', null),
+              strategy: Joi.string().optional().allow(null, ''),
             })
           ),
         },
@@ -142,6 +143,7 @@ const routes = [
               unitShortName: Joi.string().max(50).allow('', null),
               assayName: Joi.string().max(255).allow('', null),
               assayI18nKey: Joi.string().max(255).allow('', null),
+              strategy: Joi.string().optional().allow(null, ''),
             })
           ),
         },
