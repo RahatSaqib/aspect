@@ -157,10 +157,10 @@ export const InventoryItemsListWithProps = ({
   const { permissions: userPermissions } = useSelector(
     ({ user }) => user.toJS().jwt
   )
+
   const isEditAllow = isPermittedUser(userPermissions, {
     required: ['inventory:edit'],
   })
-
   const columns = [
     {
       key: 'siteName',
