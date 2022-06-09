@@ -1,4 +1,5 @@
 const { subDays, startOfToday } = require('date-fns')
+const { groupBy } = require('lodash')
 const { knex } = require('../../db')
 const { filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
@@ -9,29 +10,52 @@ async function getModuleStatusReportData(
   dataConstraints,
   query
 ) {
-  const today = startOfToday()
+  const [[issueTypeModuleDisabledId], [issueTypeModuleReplacedId]] =
+    await Promise.all([
+      await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id'),
+      await knex('IssueType').where({ name: 'Module Replaced' }).pluck('id'),
+    ])
 
-  const modulesWithResultsLastMonth = knex('Result as r')
-    .select('r.deviceId')
-    .countDistinct('r.moduleName as qty')
-    .where('r.endedOn', '>=', subDays(today, 30))
-    .groupBy('r.deviceId')
-
-  const modulesWihtoutResultsLastMonthButResultsTheMonthBefore = knex(
-    'Result as r'
-  )
-    .select('r.deviceId')
-    .countDistinct('r.moduleName as qty')
-    .where('r.endedOn', '>=', subDays(today, 60))
-    .where('r.endedOn', '<', subDays(today, 30))
-    .whereNotExists(
+  const lastResults = knex('Result as r')
+    .join(
       knex('Result as r2')
-        .select('*')
-        .where('r2.endedOn', '>=', subDays(today, 30))
-        .where('r2.deviceId', 'r.deviceId')
-        .where('r2.moduleName', 'r.moduleName')
+        .groupBy('r2.deviceId', knex.raw('r2.resultData ->> "$.moduleName"'))
+        .select('r2.deviceId')
+        .max('r2.id as id')
+        .as('rmax'),
+      function () {
+        this.on('r.id', 'rmax.id')
+      }
     )
-    .groupBy('r.deviceId')
+    .select([
+      'r.deviceId',
+      knex.raw('r.resultData ->> "$.moduleName" as moduleName'),
+      'r.createdOn as lastResultDate',
+      'r.moduleSerial as lastSerial',
+    ])
+    .whereRaw('r.resultData ->> "$.moduleName" is not null')
+
+  const moduleAvailability = knex
+    .from(lastResults)
+    .as('m')
+    .leftJoin('Issue as i', function () {
+      this.on('i.deviceId', 'm.deviceId')
+        .andOn('m.lastSerial', knex.raw('i.data ->> "$.moduleSerial"'))
+        .andOn('i.issueTypeId', issueTypeModuleDisabledId)
+        .andOn(knex.raw('i.data ->> "$.disabledOn"'), '>', 'm.lastResultDate')
+    })
+    .leftJoin('Issue as ir', function () {
+      this.on('ir.deviceId', 'm.deviceId')
+        .andOn(knex.raw('ir.data ->> "$.replacedModuleSerial"'), 'm.lastSerial')
+        .andOn('ir.issueTypeId', issueTypeModuleReplacedId)
+        .andOn('ir.createdOn', '>', 'm.lastResultDate')
+    })
+    .select([
+      'm.deviceId',
+      knex.raw('sum(case when i.id is null then 1 else 0 end) as enabled'),
+      knex.raw('sum(case when i.id is null then 0 else 1 end) as disabled'),
+    ])
+    .groupBy('m.deviceId')
 
   const moduleReplacedIssuesForPeriod = knex('Issue as i3')
     .join('IssueType as it', 'i3.issueTypeId', 'it.id')
@@ -41,24 +65,16 @@ async function getModuleStatusReportData(
     .select('i3.deviceId')
     .count('i3.id as qty')
 
-  return knex('Device as d')
+  const aaa = knex('Device as d')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Partner as p', 'p.id', 'd.partnerId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as state', 'state.id', 'g.stateId')
     .innerJoin('Lga as lga', 'lga.id', 'g.lgaId')
-    .leftJoin(modulesWithResultsLastMonth.as('activeModules'), function () {
-      this.on('d.id', 'activeModules.deviceId')
+    .leftJoin(moduleAvailability.as('ma'), function () {
+      this.on('ma.deviceId', 'd.id')
     })
-    .leftJoin(
-      modulesWihtoutResultsLastMonthButResultsTheMonthBefore.as(
-        'inactiveModules'
-      ),
-      function () {
-        this.on('d.id', 'inactiveModules.deviceId')
-      }
-    )
     .leftJoin(moduleReplacedIssuesForPeriod.as('mr'), function () {
       this.on('mr.deviceId', 'd.id')
     })
@@ -68,8 +84,8 @@ async function getModuleStatusReportData(
       'd.serial as deviceSerial',
       'state.name as State',
       'lga.name as Lga',
-      knex.raw('ifnull(activeModules.qty, 0) as functionalModules'),
-      knex.raw('ifnull(inactiveModules.qty, 0) as disabledModules'),
+      knex.raw('ifnull(ma.enabled, 0) as functionalModules'),
+      knex.raw('ifnull(ma.disabled, 0) as disabledModules'),
       knex.raw('ifnull(mr.qty, 0) as replacedModules'),
     ])
     .groupBy('d.id')
@@ -85,6 +101,13 @@ async function getModuleStatusReportData(
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+  console.log(
+    '\x1b[1;36m',
+    '🚀🚀🚀🚀 ➜ file: moduleStatusReport.js ➜ line 86 ➜ aaa :: ',
+    aaa.toString()
+  )
+  const result = await aaa
+  return result
 }
 
 module.exports = {
