@@ -47,7 +47,7 @@ const GraphRender = ({
   isOwnerReady,
 }) => {
   const {
-    api: { endpoint, params, method } = false,
+    api: { endpoint, params, method, prepareData } = false,
     averages,
     component: Component,
     size,
@@ -79,9 +79,16 @@ const GraphRender = ({
         params: mergedParams,
       }),
     {
-      onSuccess: ({ data }) =>
-        setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data),
-
+      onSuccess: ({ data }) => {
+        if (prepareData) {
+          data = formatRawData(data)
+          data = prepareData(data)
+          setGraphData(data)
+          setGraphKeys([])
+        } else {
+          setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data)
+        }
+      },
       onSettled: (data, error) => {
         if (onSettled) {
           onSettled(data, error)
@@ -111,10 +118,10 @@ const GraphRender = ({
     }
   }
 
-  function formatRawData() {
+  function formatRawData(someData) {
     const i18nKeysCollection = buildI18nKeys()
     return formatDataByGraphType(
-      rawData,
+      someData || rawData,
       displayMethod,
       filterBy,
       formatDate,

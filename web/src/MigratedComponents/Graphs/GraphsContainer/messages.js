@@ -106,6 +106,19 @@ export const messages = defineMessages({
     id: 'pages.Status.clinicalIndicatorsXdr.pie',
     defaultMessage: 'Average Monthly Resistance Rate',
   },
+
+  testingTrendsInYearTitle: {
+    id: 'pages.Status.TB.testingTrendsInYear.title',
+    defaultMessage: 'Testing Trends In Year',
+  },
+  mtbDetectedTrendsInYearTitle: {
+    id: 'pages.Status.TB.mtbDetectedTrendsInYear.title',
+    defaultMessage: 'MTB+ Trends In Year',
+  },
+  rifDetectedTrendsInYearTitle: {
+    id: 'pages.Status.TB.rifDetectedTrendsInYear.title',
+    defaultMessage: 'RRD Trends In Year',
+  },
 })
 
 export default messages

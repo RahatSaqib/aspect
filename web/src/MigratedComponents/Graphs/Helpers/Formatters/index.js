@@ -454,6 +454,11 @@ const formatDataByGraphType = (
       grouped = groupForPieRow(data, mergedParams)
       break
 
+    case 'line-trends': {
+      const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+      return filtered
+    }
+
     default:
       grouped = false
       break

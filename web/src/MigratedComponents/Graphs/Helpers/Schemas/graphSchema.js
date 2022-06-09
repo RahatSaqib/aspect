@@ -79,6 +79,7 @@ const graphItemsSchema = {
         'barLegacyTreatment',
         'stackedDeviceActivity',
         'barInventory',
+        'line-trends',
       ],
     },
     size: {
