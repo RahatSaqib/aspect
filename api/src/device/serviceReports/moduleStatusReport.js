@@ -36,8 +36,7 @@ async function getModuleStatusReportData(
     .whereRaw('r.resultData ->> "$.moduleName" is not null')
 
   const moduleAvailability = knex
-    .from(lastResults)
-    .as('m')
+    .from(lastResults.as('m'))
     .leftJoin('Issue as i', function () {
       this.on('i.deviceId', 'm.deviceId')
         .andOn('m.lastSerial', knex.raw('i.data ->> "$.moduleSerial"'))
@@ -64,8 +63,9 @@ async function getModuleStatusReportData(
     .where('i3.createdOn', '<', maxDate)
     .select('i3.deviceId')
     .count('i3.id as qty')
+    .groupBy('i3.deviceId')
 
-  const aaa = knex('Device as d')
+  return knex('Device as d')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Partner as p', 'p.id', 'd.partnerId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
@@ -101,13 +101,6 @@ async function getModuleStatusReportData(
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-  console.log(
-    '\x1b[1;36m',
-    '🚀🚀🚀🚀 ➜ file: moduleStatusReport.js ➜ line 86 ➜ aaa :: ',
-    aaa.toString()
-  )
-  const result = await aaa
-  return result
 }
 
 module.exports = {
