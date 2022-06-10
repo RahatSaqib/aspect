@@ -9,7 +9,7 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 
 const labTechnician = {
-  name: 'Lab Manager',
+  name: 'Lab Technician',
   reports: [],
   permissions: [
     {
