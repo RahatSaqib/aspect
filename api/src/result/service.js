@@ -3,7 +3,10 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { subMonths, subDays } = require('date-fns')
 const Promise = require('bluebird')
-const { getOffsetFromIsoDateString } = require('../shared/date')
+const {
+  getOffsetFromIsoDateString,
+  getOffsetFromUser,
+} = require('../shared/date')
 const {
   getSelectCommonListFields,
   getReportCommonFields,
@@ -58,7 +61,9 @@ const { GRAPH_FLAGS } = require('../shared/constants')
 
 async function getListResults(query, auth, fields) {
   if (!fields) {
-    const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+    const userTimeOffset = query.maxDate
+      ? getOffsetFromIsoDateString(query.maxDate)
+      : await getOffsetFromUser(knex, auth.credentials.name)
 
     fields = getListFields(userTimeOffset)
   }
