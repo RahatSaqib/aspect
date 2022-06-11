@@ -52,15 +52,14 @@ import {
   InventoryDataTableHead,
   InventoryDataTableRow,
 } from './InventoryDataTable'
-import requirePermissions, {
-  isPermittedUser,
-} from '../../components/shared/requirePermissions'
+import requirePermissions from '../../components/shared/requirePermissions'
 import AspectButton from '../../components/shared/AspectButton'
 import { INVENTORY_LIST } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 
 import styles from './InventoryItemsList.css'
 import AspectTooltip from '../../components/shared/AspectTooltip'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 const cssClasses = classnames.bind(styles)
 
@@ -154,13 +153,6 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
 }) => {
-  const { permissions: userPermissions } = useSelector(
-    ({ user }) => user.toJS().jwt
-  )
-
-  const isEditAllow = isPermittedUser(userPermissions, {
-    required: ['inventory:edit'],
-  })
   const columns = [
     {
       key: 'siteName',
@@ -223,7 +215,7 @@ export const InventoryItemsListWithProps = ({
       sortable: true,
       isHidden: breakOutByLot,
     },
-    isEditAllow && {
+    {
       key: 'action',
     },
   ]
@@ -239,15 +231,17 @@ export const InventoryItemsListWithProps = ({
         config={reducedFilters}
         dateFilterLabel={intl.formatMessage(messages.expiresOn)}
       >
-        <AddNewButton
-          type="button"
-          color="primary"
-          variant="contained"
-          onClick={() => dispatch(showNewInventoryDialog())}
-          browseButton
-        >
-          {intl.formatMessage(messages.addInventory)}
-        </AddNewButton>
+        <PermissionsProvider permissions={['inventory:edit']}>
+          <AddNewButton
+            type="button"
+            color="primary"
+            variant="contained"
+            onClick={() => dispatch(showNewInventoryDialog())}
+            browseButton
+          >
+            {intl.formatMessage(messages.addInventory)}
+          </AddNewButton>
+        </PermissionsProvider>
       </BrowseFilters>
 
       <DataTableCard className={cssClasses('DataTableCard--action')}>
@@ -289,7 +283,6 @@ export const InventoryItemsListWithProps = ({
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
                     inventoryItem={inventoryItem}
-                    isEditAllow={isEditAllow}
                   />
                 ))}
             </TableBody>

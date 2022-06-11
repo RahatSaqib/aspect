@@ -20,7 +20,7 @@ function reducer(state = initialState, action) {
   }
 }
 
-describe.only('InventoryItemList module', () => {
+describe('InventoryItemList module', () => {
   const User = Immutable.Record({
     jwt: {
       permissions: [
