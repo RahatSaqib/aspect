@@ -311,7 +311,7 @@ const moduleActivityReport = {
 const moduleStatusReport = {
   name: 'Module Status Report',
   description:
-    'Shows information about working and not working modules, as well as module replacements.',
+    'Lists the number of currently active/disabled modules, and also the number of modules replaced in a period of time defined by filters.',
   i18nKey: 'moduleStatusReport',
   i18nKeyDescription: 'moduleStatusReport_Description',
   externalId: 'module_status_report',
