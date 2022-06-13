@@ -24,6 +24,10 @@ const labTechnician = {
       module: 'inventory',
       activity: 'edit',
     },
+    {
+      module: 'assay',
+      activity: 'view',
+    },
   ],
 }
 
