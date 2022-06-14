@@ -5,6 +5,7 @@ const {
   getBaseQuery: getResultBaseQuery,
   modifiers,
 } = require('../../result/query')
+const { trimStart } = require('lodash')
 
 async function getModuleStatusReportData(
   minDate,
@@ -36,8 +37,11 @@ async function getModuleStatusReportData(
         )
         .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
     })
-    .leftJoin('IssueStatus as issueStatus', 'issueStatus.id', 'issueModuleDisabled.issueStatusId')
-    .where('issueStatus.name', 'Active')
+    .leftJoin('IssueStatus as issueStatus', function () {
+      this.on('issueStatus.id', 'issueModuleDisabled.issueStatusId').on(
+        knex.raw(`issueStatus.name = 'Active'`)
+      )
+    })
     .select([
       'lastResult.deviceId',
       knex.raw(
@@ -58,7 +62,7 @@ async function getModuleStatusReportData(
     .count('issueModuleReplaced.id as qty')
     .groupBy('issueModuleReplaced.deviceId')
 
-  return knex('Device as d')
+  const a = knex('Device as d')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Partner as p', 'p.id', 'd.partnerId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
@@ -94,6 +98,12 @@ async function getModuleStatusReportData(
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+  console.log(
+    '\x1b[1;36m',
+    '🚀 ➜ file: moduleStatusReport.js ➜ line 103 ➜ a',
+    a.toString()
+  )
+  return a
 }
 
 module.exports = {

@@ -34,20 +34,24 @@ const modifiers = {
       )
     },
     /**
-     * Join the last result per module. Use to get module statuses.
+     * Inner joins each result with the latest result made in the same module name.
+     * Commonly used for filter only the last result performed by each module.
      * @param {*} queryBuilder
      * @param {*} knex
-     * @param {*} aliasMainResult - Alias of the main result table you want to join to
+     * @param {*} mainResultAlias - Alias of the main result table you want to join to
      */
-    lastResultPerModule: (queryBuilder, knex, aliasMainResult = 'r') => {
+    lastResultPerModule: (queryBuilder, knex, mainResultAlias = 'r') => {
       queryBuilder.join(
-        knex('Result as r2')
-          .groupBy('r2.deviceId', knex.raw('r2.resultData ->> "$.moduleName"'))
-          .select('r2.deviceId')
-          .max('r2.id as id')
-          .as('rmax'),
+        knex('Result as ____lastResultPerModule')
+          .groupBy(
+            '____lastResultPerModule.deviceId',
+            knex.raw('____lastResultPerModule.resultData ->> "$.moduleName"')
+          )
+          .select('____lastResultPerModule.deviceId')
+          .max('____lastResultPerModule.id as id')
+          .as('____rmax'),
         function () {
-          this.on(`${aliasMainResult}.id`, 'rmax.id')
+          this.on(`${mainResultAlias}.id`, '____rmax.id')
         }
       )
     },
