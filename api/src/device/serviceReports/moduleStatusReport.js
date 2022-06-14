@@ -28,15 +28,15 @@ async function getModuleStatusReportData(
 
   const moduleAvailability = knex
     .from(lastResults.as('lastResult'))
-    .leftJoin('Issue as issueModuleReplaced', function () {
-      this.on('issueModuleReplaced.deviceId', 'lastResult.deviceId')
+    .leftJoin('Issue as issueModuleDisabled', function () {
+      this.on('issueModuleDisabled.deviceId', 'lastResult.deviceId')
         .andOn(
           'lastResult.moduleSerial',
-          knex.raw('issueModuleReplaced.data ->> "$.moduleSerial"')
+          knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"')
         )
-        .andOn('issueModuleReplaced.issueTypeId', issueTypeModuleDisabledId)
+        .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
         .andOn(
-          knex.raw('issueModuleReplaced.data ->> "$.disabledOn"'),
+          knex.raw('issueModuleDisabled.data ->> "$.disabledOn"'),
           '>',
           'lastResult.resultDate'
         )
@@ -44,10 +44,10 @@ async function getModuleStatusReportData(
     .select([
       'lastResult.deviceId',
       knex.raw(
-        'sum(case when issueModuleReplaced.id is null then 1 else 0 end) as enabled'
+        'sum(case when issueModuleDisabled.id is null then 1 else 0 end) as enabled'
       ),
       knex.raw(
-        'sum(case when issueModuleReplaced.id is null then 0 else 1 end) as disabled'
+        'sum(case when issueModuleDisabled.id is null then 0 else 1 end) as disabled'
       ),
     ])
     .groupBy('lastResult.deviceId')
