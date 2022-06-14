@@ -33,6 +33,24 @@ const modifiers = {
         'rc2.id'
       )
     },
+    /**
+     * Join the last result per module. Use to get module statuses.
+     * @param {*} queryBuilder
+     * @param {*} knex
+     * @param {*} aliasMainResult - Alias of the main result table you want to join to
+     */
+    lastResultPerModule: (queryBuilder, knex, aliasMainResult = 'r') => {
+      queryBuilder.join(
+        knex('Result as r2')
+          .groupBy('r2.deviceId', knex.raw('r2.resultData ->> "$.moduleName"'))
+          .select('r2.deviceId')
+          .max('r2.id as id')
+          .as('rmax'),
+        function () {
+          this.on(`${aliasMainResult}.id`, 'rmax.id')
+        }
+      )
+    },
   },
   where: {
     module: {
