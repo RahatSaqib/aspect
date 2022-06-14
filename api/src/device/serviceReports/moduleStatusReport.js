@@ -16,6 +16,10 @@ async function getModuleStatusReportData(
     .where({ name: 'Module Disabled' })
     .pluck('id')
 
+  const [issueStatusActiveId] = await knex('IssueStatus')
+    .where({ name: 'Active' })
+    .pluck('id')
+
   const lastResults = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.lastResultPerModule, knex)
     .select([
@@ -35,11 +39,7 @@ async function getModuleStatusReportData(
           knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"')
         )
         .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
-    })
-    .leftJoin('IssueStatus as issueStatus', function () {
-      this.on('issueStatus.id', 'issueModuleDisabled.issueStatusId').on(
-        knex.raw(`issueStatus.name = 'Active'`)
-      )
+        .andOn('issueModuleDisabled.issueStatusId', issueStatusActiveId)
     })
     .select([
       'lastResult.deviceId',
