@@ -35,12 +35,9 @@ async function getModuleStatusReportData(
           knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"')
         )
         .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
-        .andOn(
-          knex.raw('issueModuleDisabled.data ->> "$.disabledOn"'),
-          '>',
-          'lastResult.resultDate'
-        )
     })
+    .leftJoin('IssueStatus as issueStatus', 'issueStatus.id', 'issueModuleDisabled.issueStatusId')
+    .where('issueStatus.name', 'Active')
     .select([
       'lastResult.deviceId',
       knex.raw(
