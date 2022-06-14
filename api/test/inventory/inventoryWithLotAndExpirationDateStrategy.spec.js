@@ -287,14 +287,10 @@ describe('Inventory Routes', () => {
           // Day 2 - We use 200 from expiring in two days ===> 150 wasted
           // Day 3 - We use 200 from expiring in 50 days
           // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
-          // ===> 4.5 days of stock left
+          // ===> 3.5 days of stock left
           // ===> 200 cartridges to be wasted
-          console.log(
-            '🚀 ~ file: inventoryWithLotAndExpirationDateStrategy.spec.js ~ line 294 ~ it ~ inventoryItems',
-            inventoryItems
-          )
 
-          assert.equal(inventoryItems[0].daysStockLeft, 4.5)
+          assert.equal(inventoryItems[0].daysStockLeft, 3.5)
 
           assert.equal(inventoryItems[0].projectedWaste, 200)
         })
@@ -329,11 +325,8 @@ describe('Inventory Routes', () => {
           // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
           // ===> 3.5 days of stock left
           // ===> 200 cartridges to be wasted
-          assert.equal(inventoryItems[0].daysStockLeft, 4.5)
-          console.log(
-            '🚀 ~ file: inventoryWithLotAndExpirationDateStrategy.spec.js ~ line 333 ~ it ~ inventoryItems',
-            inventoryItems
-          )
+          assert.equal(inventoryItems[0].daysStockLeft, 3.5)
+
           assert.equal(inventoryItems[0].projectedWaste, 200)
         })
 
@@ -356,10 +349,7 @@ describe('Inventory Routes', () => {
           const res = await server
             .get(`${path}?sortCol=daysStockLeft&sortDir=desc`)
             .set('Authorization', `Bearer ${shared.token}`)
-          console.log(
-            '🚀 ~ file: inventoryWithLotAndExpirationDateStrategy.spec.js ~ line 362 ~ it ~ res.body.data',
-            res.body.data
-          )
+
           // Site 2 has 50 days of stock left
           assert.equal(res.body.data[0].siteId, site2Id)
 

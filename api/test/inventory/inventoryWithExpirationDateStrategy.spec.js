@@ -262,8 +262,6 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             assert.notProperty(inventoryItem, 'inTransitFromSiteName')
           })
 
-          assert.equal(res.status, 200)
-
           const inventoryItems = res.body.data.filter(
             ii => ii.siteId === site1Id && ii.consumableId === consumableId
           )
@@ -320,15 +318,13 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           const res = await server
             .get(`${path}?sortCol=projectedWaste&sortDir=desc`)
             .set('Authorization', `Bearer ${shared.token}`)
-          console.log(
-            '🚀 ~ file: inventoryWithExpirationDateStrategy.spec.js ~ line 326 ~ it ~ res.body.data',
-            res.body.data
-          )
-          // Site 1 will have 200 cartridges wasted
-          assert.equal(res.body.data[0].siteId, site2Id)
 
+          // Site 1 will have 200 cartridges wasted
+          assert.equal(res.body.data[0].siteId, site1Id)
+          assert.equal(res.body.data[0].projectedWaste, 200)
           // Site 2 will have 50 cartridges wasted
-          assert.equal(res.body.data[1].siteId, site1Id)
+          assert.equal(res.body.data[1].siteId, site2Id)
+          assert.equal(res.body.data[1].projectedWaste, 50)
         })
 
         it('should return a list of inventory items, apply post-processing filtering by a range of days stock left', async () => {
