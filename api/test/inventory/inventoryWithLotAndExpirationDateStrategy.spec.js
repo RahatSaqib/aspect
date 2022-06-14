@@ -503,9 +503,9 @@ describe('Inventory Routes', () => {
         // Day 1 - We use 0.5 from expiring tomorrow ===> 1.5 wasted
         // Day 2 - We use 0.5 from expiring in two days ===> 2.5 wasted
         // Day 3 - We use all 10 from expiring in 50 days ===> 0 wasted
-        // ===> 23 days of stock left (1 from 1st lot, 1 from 2nd lot, 20 (10=20*0.5) from 3rd lot)
+        // ===> 22 days of stock left (1 from 1st lot, 1 from 2nd lot, 20 (10=20*0.5) from 3rd lot)
         // ===> 4 cartridges to be wasted
-        assert.equal(inventoryItems[0].daysStockLeft, 23)
+        assert.equal(inventoryItems[0].daysStockLeft, 22)
         assert.equal(inventoryItems[0].projectedWaste, 4)
       })
     })
