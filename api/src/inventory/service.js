@@ -285,9 +285,10 @@ async function findOrCreateMatchingInventoryItems(
   // should always have at least consumableInResultData.length items
   // We can likely do this by moving the Or Create prior to the match function
   // if candidate items are empty!
-  const lotNumberInResultData = strategy.indexOf('withLot')
-    ? _.get(consumablesInResultData, '[0].lot')
-    : null
+  const lotNumberInResultData =
+    strategy.indexOf('withLot') >= 0
+      ? _.get(consumablesInResultData, '[0].lot')
+      : null
   const expirationDateInResultData = getDateOrDefault(
     consumablesInResultData,
     '[0].expirationDate'

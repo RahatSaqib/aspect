@@ -55,6 +55,16 @@ describe('admin result updates', () => {
   }
 
   describe('inventory management With Lot and Expiration date', () => {
+    before(async () =>
+      knex('Consumable').update({
+        strategy: 'withLotAndExpirationDateStrategy',
+      })
+    )
+    after(async () =>
+      knex('Consumable').update({
+        strategy: 'withExpirationDateStrategy',
+      })
+    )
     it('should deduct inventory levels from the site', async () => {
       const { deviceId, deviceAuth, now } = context
       const results = [
@@ -1156,9 +1166,7 @@ describe('admin result updates', () => {
             expirationDate: resultDetails.expirationDate,
           },
         })
-        .then(res => {
-          assert.equal(res.status, 200)
-        })
+        .expect(200)
 
       const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
@@ -1617,9 +1625,8 @@ describe('admin result updates', () => {
       const matchingExpirationDateCartridgeAtSiteAfter = _.find(
         inventoryItemsAfter,
         inventoryItem =>
-          inventoryItem.lotNumber === randomLotNumber &&
           inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          new Date(resultDetails.expirationDate).toISOString()
       )
 
       assert.equal(
@@ -2154,9 +2161,7 @@ describe('admin result updates', () => {
             expirationDate: resultDetails.expirationDate,
           },
         })
-        .then(res => {
-          assert.equal(res.status, 200)
-        })
+        .expect(200)
 
       const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
@@ -2164,7 +2169,6 @@ describe('admin result updates', () => {
         .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
         .where('il.consumableId', daktariHivVlCartridgeId)
         .andWhere('il.siteId', siteId)
-        .andWhere('il.lotNumber', resultDetails.lotNumber)
         .andWhere('il.expiresOn', resultDetails.expirationDate)
         .first(
           'il.id',
@@ -2205,7 +2209,7 @@ describe('admin result updates', () => {
         'Test Conducted'
       )
       assert.isOk(inventoryConsumptionLog.resultId)
-      assert.equal(inventoryConsumptionLog.lotNumber, resultDetails.lotNumber)
+      assert.isNull(inventoryConsumptionLog.lotNumber)
       assert.equal(
         inventoryConsumptionLog.expiresOn.toISOString(),
         resultDetails.expirationDate.toISOString()
