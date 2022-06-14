@@ -20,6 +20,7 @@ import {
 import AspectVertMenu from '../../MigratedComponents/AspectVertMenu'
 
 import styles from '../../components/shared/DataTableRow.css'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 const cssClasses = classnames.bind(styles)
 
@@ -172,12 +173,16 @@ const InventoryTableRow = ({ inventoryItem }) => {
             : 'N/A'}
         </TableCell>
       ) : null}
-      <TableCell className={cssClasses('TableCell')}>
-        <AspectVertMenu
-          params={{ inventoryItemId: inventoryItem.get('id') }}
-          actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
-        />
-      </TableCell>
+      {
+        <PermissionsProvider permissions={['inventory:edit']}>
+          <TableCell className={cssClasses('TableCell')}>
+            <AspectVertMenu
+              params={{ inventoryItemId: inventoryItem.get('id') }}
+              actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
+            />
+          </TableCell>
+        </PermissionsProvider>
+      }
     </TableRow>
   )
 }
