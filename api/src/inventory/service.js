@@ -52,6 +52,34 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
+const CONCATED_ID = `CONCAT(
+  c.id,
+  '-',
+  s.id,
+  '-',
+  IFNULL(
+    CASE
+      WHEN c.strategy IS NOT NULL
+      AND INSTR(c.strategy, 'expirationDate') > 0
+      THEN ii.expiresOn
+      ELSE ''
+    END,
+    '-'
+  ),
+  '-',
+  IFNULL(
+    CASE
+      WHEN c.strategy IS NOT NULL
+      AND INSTR(c.strategy, 'withlot') > 0
+      THEN ii.lotNumber
+      ELSE ''
+    END,
+    ''
+  ),
+  '-',
+  IFNULL(ii.inTransitFromSiteId, '')
+)`
+
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
   manufacturer: 'c.manufacturer',
@@ -204,7 +232,7 @@ async function consumeInventoryForResult(
           // Do not bump updatedOn here because of the double count check
           if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
             inventoryItemUpdates.quantityOnHand = knex.raw(
-              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
+              `quantityOnHand - ${assayConsumable.quantity}`
             )
           }
 
@@ -233,9 +261,6 @@ async function consumeInventoryForResult(
           }
 
           // TODO ASP-811 do not use same inventory item for next consumable
-          // matchingInventoryItems = _.reject(matchingInventoryItems => {
-          //  matchingInventoryItemOnHand.id
-          // })
         }
       }
     })
@@ -472,35 +497,8 @@ function getInventoryLots(request, dataConstraints) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
     .groupBy([
-      knex.raw(
-        `CONCAT(
-          c.id,
-          '-',
-          s.id,
-          '-',
-          IFNULL(
-            CASE
-              WHEN c.strategy IS NOT NULL
-              AND INSTR(c.strategy, 'expirationDate') > 0
-              THEN ii.expiresOn
-              ELSE ''
-            END,
-            '-'
-          ),
-          '-',
-          IFNULL(
-            CASE
-              WHEN c.strategy IS NOT NULL
-              AND INSTR(c.strategy, 'withlot') > 0
-              THEN ii.lotNumber
-              ELSE ''
-            END,
-            ''
-          ),
-          '-',
-          IFNULL(ii.inTransitFromSiteId, '')
-        )`
-      ),
+      knex.raw(CONCATED_ID),
+
       's.name',
       knex.raw(
         `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`

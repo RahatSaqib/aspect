@@ -120,7 +120,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const lastResultId = await getLastResultId(knex, device.id)
         const reply = await server
           .set('Authorization', `Bearer ${shared.token}`)
-          .get(`/api/inventory?siteName=${site.name}`)
+          .get(`/api/inventory?siteName=${site.name}&breakOutByLot=true`)
 
         const {
           body: { data },
@@ -128,8 +128,11 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const inventoryItem = _.find(
           data,
-          elem => elem.consumableId === consumableAssay.consumableId
+          elem =>
+            elem.consumableId === consumableAssay.consumableId &&
+            elem.lotNumber === null
         )
+
         assert.equal(
           inventoryItem.quantityOnHand,
           initialQuantityOnHand * 2 - consumableAssay.quantity
@@ -143,11 +146,15 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.siteId',
             'cr.name as consumableReason',
             'il.resultId',
-            'il.quantity'
+            'il.quantity',
+            'il.expiresOn',
+            'il.lotNumber'
           )
         assert.deepEqual(inventoryLogs, [
           {
             consumableId: inventoryItem.consumableId,
+            lotNumber: null,
+            expiresOn: expiryDate,
             siteId: site.id,
             consumableReason: 'Test Conducted',
             resultId: lastResultId,
@@ -256,11 +263,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
           assert.equal(
             inventoryItemAfterFirstRequest.quantityOnHand,
-            _.max([
-              0,
-              inventoryItemBeforeFirstRequest.quantityOnHand -
-                consumableAssay.quantity,
-            ])
+
+            inventoryItemBeforeFirstRequest.quantityOnHand -
+              consumableAssay.quantity
           )
 
           await waitForApproximately(2, 'seconds')
@@ -413,6 +418,7 @@ describe('Device API routes for GxConnect Devices', () => {
                     consumableName,
                     consumableReasonName: consumableReason,
                     quantity,
+                    lotNumber: 'The real great lot number',
                     resultingQuantityOnHand: initialQuantity + quantity,
                     dateChanged: startedOn,
                     expirationDate,
@@ -449,7 +455,7 @@ describe('Device API routes for GxConnect Devices', () => {
             inTransitFromSiteId: null,
             lotNumber: null,
             expiresOn: new Date(expirationDate),
-            quantityOnHand: _.max([0, initialQuantity + quantity]),
+            quantityOnHand: initialQuantity + quantity,
           },
         ]
       )
@@ -578,6 +584,7 @@ describe('Device API routes for GxConnect Devices', () => {
           {
             consumableName: 'GeneXpert TB Cartridge',
             consumableReasonName: consumableReason,
+            lotNumber: 'THE-SUPER-GREAT-LOT',
             quantity: 13,
             resultingQuantityOnHand: 86,
             dateChanged: addHours(startedOn, 1),
@@ -792,10 +799,8 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand: _.max([
-                0,
+              quantityOnHand:
                 inventoryItemAtSiteBefore.quantityOnHand + quantity,
-              ]),
             },
           ]
         )
@@ -907,10 +912,8 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand: _.max([
-                0,
+              quantityOnHand:
                 inventoryItemAtSiteBefore.quantityOnHand + quantity,
-              ]),
             },
           ]
         )
@@ -1311,10 +1314,8 @@ describe('Device API routes for GxConnect Devices', () => {
         inTransitFromSiteId: null,
         lotNumber: null,
         expiresOn: new Date(lot1.expirationDate),
-        quantityOnHand: _.max([
-          0,
+        quantityOnHand:
           lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
-        ]),
       })
       assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
         consumableName: lot2.consumableName,
@@ -1378,20 +1379,16 @@ describe('Device API routes for GxConnect Devices', () => {
         inTransitFromSiteId: null,
         lotNumber: null,
         expiresOn: new Date(lot1.expirationDate),
-        quantityOnHand: _.max([
-          0,
+        quantityOnHand:
           lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
-        ]),
       })
       assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
         consumableName: lot2.consumableName,
         inTransitFromSiteId: null,
         lotNumber: null,
         expiresOn: new Date(lot2.expirationDate),
-        quantityOnHand: _.max([
-          0,
+        quantityOnHand:
           lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
-        ]),
       })
       const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
         .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
@@ -1737,10 +1734,8 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: new Date(inventoryLost.expirationDate),
-              quantityOnHand: _.max([
-                0,
+              quantityOnHand:
                 initialLotCaptured.quantity + inventoryLost.quantity,
-              ]),
             },
           ]
         )

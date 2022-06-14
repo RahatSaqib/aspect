@@ -1,7 +1,7 @@
 const chai = require('chai')
 const _ = require('lodash')
 const addYears = require('date-fns/addYears')
-const { addDays } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
@@ -662,7 +662,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.typeOf(res.body.data, 'Object')
           assert.equal(
             res.body.data.existingInventoryItem.quantityOnHand,
-            _.max([0, inventoryItem.quantityOnHand - quantityToAdjust * 2])
+            inventoryItem.quantityOnHand - quantityToAdjust * 2
           )
           const updatedTransitItem = res.body.data.newInventoryItem
           assert.deepEqual(updatedTransitItem, {
@@ -681,7 +681,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             .send({
               consumableId: inventoryItem.consumableId,
               lotNumber: 'NON-EXISTING LOT',
-              expiresOn: inventoryItem.expiresOn,
+              expiresOn: subDays(inventoryItem.expiresOn, 10),
               quantity: quantityToAdjust,
               notes: 'Testing transfer',
               fromSiteId: inventoryItem.siteId,
@@ -707,15 +707,15 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
             lotNumber: null,
-            expiresOn: inventoryItem.expiresOn.toISOString(),
+            expiresOn: subDays(inventoryItem.expiresOn, 10).toISOString(),
           })
 
           assert.deepEqual(sourceInventoryItem, {
             ...sourceInventoryItem,
-            quantityOnHand: 500 - quantityToAdjust,
+            quantityOnHand: -quantityToAdjust,
             siteId: inventoryItem.siteId,
             lotNumber: null,
-            expiresOn: inventoryItem.expiresOn.toISOString(),
+            expiresOn: subDays(inventoryItem.expiresOn, 10).toISOString(),
           })
         })
       })
