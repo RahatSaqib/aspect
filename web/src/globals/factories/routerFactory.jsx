@@ -385,7 +385,7 @@ const AppRoutes = ({ props: outerProps }) => {
           )}
         />
         <Route
-          path="/browse/inventory"
+          path="/browse/inventory/*"
           element={getElement(
             props,
             ['browse', 'inventory'],

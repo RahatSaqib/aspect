@@ -1,12 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-import find from 'lodash/find'
 import { defineMessages, useIntl } from 'react-intl'
-import { Routes, Route, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 import styles from './InventoryContainer.css'
 import InventoryItemsList from './list/InventoryItemsList'
+import InventoryLog from './log/InventoryLog'
 
 const cssClasses = classnames.bind(styles)
 
@@ -20,41 +19,41 @@ const messages = defineMessages({
     defaultMessage: 'Inventory Log',
   },
 })
-
-const currentTabStyle = (currentTab, index) =>
-  currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
+const currentTabStyle = (currentTab, activeTab) =>
+  currentTab === activeTab ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
 export const InventoryContainer = ({ navigate, location }) => {
+  const [activeTab, setActiveTab] = useState('supplies')
   const { formatMessage } = useIntl()
-  const { pathname } = useLocation()
   const tabsConfig = {
     supplies: {
-      path: './list/inventoryItemList',
+      path: 'supplies',
       label: formatMessage(messages.suppliesTabTitle),
     },
     inventoryLog: {
-      path: '/list/inventory-log',
+      path: 'log',
       label: formatMessage(messages.inventoryLogTitle),
     },
   }
-  const { path: currentTab } =
-    find(tabsConfig, { path: pathname }) || tabsConfig.supplies
 
+  const handleChange = (e, v) => {
+    setActiveTab(v)
+  }
   return (
     <div className={cssClasses('Container')}>
       <div className={cssClasses('tabs__container')}>
         <Tabs
           indicatorColor="primary"
           textColor="inherit"
-          value={currentTab}
-          onChange={(e, v) => navigate(v)}
+          value={activeTab}
+          onChange={handleChange}
           TabIndicatorProps={{ style: { height: '0px' } }}
         >
           <Tab
             label={tabsConfig.supplies.label}
             className={cssClasses(
               'tabs__tab',
-              currentTabStyle(currentTab, tabsConfig.supplies.path)
+              currentTabStyle('supplies', activeTab)
             )}
             value={tabsConfig.supplies.path}
           />
@@ -62,21 +61,17 @@ export const InventoryContainer = ({ navigate, location }) => {
             label={tabsConfig.inventoryLog.label}
             className={cssClasses(
               'tabs__tab',
-              currentTabStyle(currentTab, tabsConfig.inventoryLog.path)
+              currentTabStyle('log', activeTab)
             )}
             value={tabsConfig.inventoryLog.path}
           />
         </Tabs>
       </div>
-      <Routes>
-        <Route path="">
-          <InventoryItemsList navigate={navigate} location={location} />
-          <h1>Put here screen component</h1>
-        </Route>
-        <Route path="inventory-log">
-          <h1>Put here screen two component</h1>
-        </Route>
-      </Routes>
+      {activeTab === 'supplies' ? (
+        <InventoryItemsList navigate={navigate} location={location} />
+      ) : (
+        <InventoryLog navigate={navigate} location={location} />
+      )}
     </div>
   )
 }
