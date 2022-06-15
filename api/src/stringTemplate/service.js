@@ -67,7 +67,15 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Geography as rg', `r.geographyId`, 'rg.id')
       .leftJoin('Country as rc', `rg.countryId`, 'rc.id')
       .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
-      .leftJoin('Assay as a', `r.assayId`, 'a.id')
+      .leftJoin('Assay as a', assayJoin => {
+        assayJoin
+          .on(assayJoinResult =>
+            assayJoinResult.onNotNull('r.id').andOn('r.assayId', 'a.id')
+          )
+          .orOn(assayJoinDeviceType =>
+            assayJoinDeviceType.onNull('r.id').andOn('dt.id', 'a.deviceTyped')
+          )
+      })
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
