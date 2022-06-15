@@ -308,6 +308,26 @@ const moduleActivityReport = {
   ],
 }
 
+const moduleStatusReport = {
+  name: 'Module Status Report',
+  description:
+    'Lists the number of currently active/disabled modules, and also the number of modules replaced in a period of time defined by filters.',
+  i18nKey: 'moduleStatusReport',
+  i18nKeyDescription: 'moduleStatusReport_Description',
+  externalId: 'module_status_report',
+  fileName: 'ModuleStatusReport',
+  exportCsv: true,
+  exportExcel: true,
+  sortOrder: 130,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getModuleStatusReport',
+    },
+  ],
+}
+
 const reportCustomFieldsCompletion = {
   name: 'Percent of custom fields completion for the MTB form',
   description:
@@ -367,4 +387,5 @@ module.exports = {
   moduleActivityReport,
   reportCustomFieldsCompletion,
   inventoryLog,
+  moduleStatusReport,
 }
