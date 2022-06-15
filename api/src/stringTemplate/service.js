@@ -73,7 +73,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
             assayJoinResult.onNotNull('r.id').andOn('r.assayId', 'a.id')
           )
           .orOn(assayJoinDeviceType =>
-            assayJoinDeviceType.onNull('r.id').andOn('dt.id', 'a.deviceTyped')
+            assayJoinDeviceType.onNull('r.id').andOn('dt.id', 'a.deviceTypeId')
           )
       })
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
