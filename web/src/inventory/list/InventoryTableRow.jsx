@@ -23,7 +23,12 @@ import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({ inventoryItem }) => {
+const InventoryTableRow = ({
+  inventoryItem,
+  breakOutByLot,
+  navigate,
+  location,
+}) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
 
@@ -55,6 +60,22 @@ const InventoryTableRow = ({ inventoryItem }) => {
       disabled: isInTransit,
       action: ({ inventoryItemId }) =>
         dispatch(showRemoveInventoryDialog(inventoryItemId)),
+    },
+    {
+      icon: 'FaSquare',
+      text: formatMessage(messages.inventoryOnHand),
+      disabled: isInTransit || breakOutByLot,
+      action: ({ inventoryItem }) => {
+        const siteId = inventoryItem.get('siteId')
+        const consumableId = inventoryItem.get('consumableId')
+        navigate(
+          {
+            ...location,
+            pathname: `/browse/inventory/onHand/${siteId}/${consumableId}`,
+          },
+          { replace: true }
+        )
+      },
     },
   ]
 
@@ -174,7 +195,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
       ) : null}
       <TableCell className={cssClasses('TableCell')}>
         <AspectVertMenu
-          params={{ inventoryItemId: inventoryItem.get('id') }}
+          params={{ inventoryItemId: inventoryItem.get('id'), inventoryItem }}
           actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
         />
       </TableCell>

@@ -266,6 +266,37 @@ function receiveInventory(data, dispatch, inventoryState) {
     })
 }
 
+function modifyInventoryOnHand(data, dispatch, itemState) {
+  const siteId = itemState.get('siteId')
+  const consumableId = itemState.get('consumableId')
+  const lotNumber = itemState.get('lotNumber')
+  return fetchWrapperForQueries({
+    endpoint: '/inventory/on-hand',
+    method: 'PUT',
+    params: {
+      siteId,
+      consumableId,
+      lotNumber,
+      ...data,
+    },
+    customErrorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes({
+        ...defineMessages({
+          title: {
+            id: 'errorResponseMessages.addInventory.PUT.default.title',
+            defaultMessage: 'Adding Inventory Failed',
+          },
+        }),
+      }),
+    },
+  })
+    .then(() => dispatch(hideAdjustInventoryDialog()))
+    .catch(err => {
+      dispatch(hideAdjustInventoryDialog())
+      throw err
+    })
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -346,4 +377,5 @@ export {
   removeInventory,
   transferInventory,
   receiveInventory,
+  modifyInventoryOnHand,
 }

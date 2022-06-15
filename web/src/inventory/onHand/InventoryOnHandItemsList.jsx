@@ -1,5 +1,5 @@
 import classnames from 'classnames/bind'
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -70,6 +70,7 @@ export const InventoryItemsListWithProps = ({
   table,
   pageAt,
   pageSize,
+  refreshData,
 }) => {
   const columns = [
     {
@@ -86,14 +87,17 @@ export const InventoryItemsListWithProps = ({
     },
     {
       key: 'newQuantityOnHand',
-      label: 'New Quantity On Hand',
+      label: intl.formatMessage(messages.newQuantityOnHand),
     },
     {
       key: 'resultQuantityOnHand',
-      label: 'Result Quantity On Hand',
+      label: intl.formatMessage(messages.quantityOnHand),
+    },
+    {
+      key: 'quantityOnHandNote',
+      label: intl.formatMessage(messages.quantityOnHand),
     },
   ]
-
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -128,6 +132,7 @@ export const InventoryItemsListWithProps = ({
                     breakOutByLot={breakOutByLot}
                     navigate={navigate}
                     location={location}
+                    refreshData={refreshData}
                   />
                 ))}
             </TableBody>
@@ -153,9 +158,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
   const intl = useIntl()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
 
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)
@@ -168,9 +170,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
     location,
     availableSortCol,
   })
-
-  // >>>>>> Defining callbacks <<<<<<
-
   const { siteId, consumableId } = useParams()
   // >>>>>> Defining queries <<<<<<
   const params = {
@@ -182,19 +181,27 @@ export const InventoryItemsList = ({ navigate, location }) => {
     siteId,
     consumableId,
   }
+
   const {
     isError,
     isLoading,
     data = false,
     error,
+    refetch,
   } = useQuery([INVENTORY_LIST.KEY, params], async () => {
     return fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   })
 
-  // >>>>>> Lifecycle hooks <<<<<<
-  useEffect(() => {
-    if (data) {
-      const qtyOnHandData = data.data.map(x => {
+  const refreshData = async () => {
+    const resp = await refetch()
+    if (resp.data) {
+      setDataTable(resp.data)
+    }
+  }
+  const setDataTable = useCallback(
+    updatedData => {
+      const dataTableData = updatedData || data
+      const qtyOnHandData = dataTableData.data.map(x => {
         return {
           id: x.id,
           consumableId: x.consumableId,
@@ -209,8 +216,16 @@ export const InventoryItemsList = ({ navigate, location }) => {
       const newData = { ...data }
       newData.data = qtyOnHandData
       dispatch(receiveInventoryItems(newData))
+    },
+    [dispatch, data]
+  )
+
+  // >>>>>> Lifecycle hooks <<<<<<
+  useEffect(() => {
+    if (data) {
+      setDataTable()
     }
-  }, [data, dispatch])
+  }, [data, dispatch, refetch, setDataTable])
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
@@ -240,6 +255,9 @@ export const InventoryItemsList = ({ navigate, location }) => {
     pageAt,
     pageSize,
     inventoryAdjustment,
+    siteId,
+    consumableId,
+    refreshData,
   }
 
   return <InventoryItemsListWithProps {...props} />

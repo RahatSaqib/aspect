@@ -16,11 +16,13 @@ const {
   receiveInventory,
   getDaysByLocation,
   listLog,
+  modifyInventoryOnHand,
 } = require('./service')
 
 const { exportSupplies } = require('./serviceReports')
 
 const inventoryFilters = {
+  siteId: Joi.number().integer().positive().allow('', null),
   consumableId: Joi.number().integer().positive().allow('', null),
   consumableExternalId: Joi.string()
     .optional()
@@ -45,6 +47,16 @@ const removeInventoryCommonPayloadFields = {
   ...adjustInventoryCommonPayloadFields,
   fromSiteId: Joi.number().integer().positive().required(),
   reasonId: Joi.number().integer().positive().required(),
+}
+
+const modifyInventoryCommonPayloadFields = {
+  siteId: Joi.number().integer().positive().required(),
+  consumableId: Joi.number().integer().positive().required(),
+  quantity: Joi.number().positive().required(),
+  lotNumber: Joi.string().max(255).required(),
+  expiresOn: Joi.date().iso().required(),
+  isAdd: Joi.bool().required(),
+  notes: Joi.string().max(2000).required(),
 }
 
 function listSuppliesBaseConfig() {
@@ -299,6 +311,21 @@ const routes = [
           fromSiteId: Joi.number().integer().positive().required(),
           toSiteId: Joi.number().integer().positive().required(),
           dateAdjusted: Joi.date().iso().required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/inventory/on-hand',
+    handler: asyncHandler(modifyInventoryOnHand),
+    config: {
+      description: 'Modify Inventory on Hand',
+      notes: 'Received quantity to modify inventory',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        payload: {
+          ...modifyInventoryCommonPayloadFields,
         },
       },
     },

@@ -694,14 +694,18 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const range = getDaysStockLeftRanges(query.daysStockLeft)
 
   let inventoryQuery = getInventorySites(dataConstraints, request)
-
+  if (query.siteId) {
+    inventoryQuery.modify(qb => {
+      qb.where('s.id', query.siteId)
+    })
+  }
   inventoryQuery = knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {
       if (range) {
         builder.whereRaw(
-          `daysStockLeft IS NOT NULL 
-          AND 
+          `daysStockLeft IS NOT NULL
+          AND
           daysStockLeft >= ${range.min}
           ${_.isNil(range.max) ? '' : ` AND daysStockLeft <= ${range.max}`}
           `
@@ -1544,7 +1548,6 @@ async function changeInventoryQuantity({
       createdOn: now,
       createdBy: userId,
     })
-
     await checkOpenedStockIssues({
       knex,
       siteId,
@@ -1806,6 +1809,58 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   return newInventoryItem
 }
 
+async function modifyInventoryOnHand(request) {
+  const {
+    auth,
+    payload: {
+      siteId,
+      consumableId,
+      lotNumber,
+      quantity,
+      isAdd,
+      notes,
+      expiresOn,
+    },
+  } = request
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+    escalateIssues,
+  })
+  const dataConstraints = await getConstraints(auth.credentials)
+  const payload = {
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    quantity,
+    notes,
+    messageContext,
+    now: new Date(),
+  }
+  let result = null
+  const fromToSite = await getSite(siteId, dataConstraints)
+  if (isAdd) {
+    if (!fromToSite) {
+      return Boom.forbidden(
+        'You are not permitted to add inventory to this site'
+      )
+    }
+    payload.operation = 'add'
+    result = await increaseInventory(payload)
+  } else {
+    if (!fromToSite) {
+      return Boom.forbidden(
+        'You are not permitted to remove inventory from this site'
+      )
+    }
+    payload.operation = 'remove'
+    result = await decreaseInventory(payload)
+  }
+  return result
+}
+
 module.exports = {
   getInventoryItems,
   listInventory,
@@ -1820,4 +1875,5 @@ module.exports = {
   selectInventoryStockAtSite,
   getDaysByLocation,
   listLog,
+  modifyInventoryOnHand,
 }

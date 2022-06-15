@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 import isNull from 'lodash/isNull'
 import TextField from '@material-ui/core/TextField'
+import { useDispatch } from 'react-redux'
+import { useMutation } from 'react-query'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
@@ -10,31 +12,67 @@ import {
 } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 import messages from '../list/messages'
-
 import styles from '../../components/shared/DataTableRow.css'
+
+import { modifyInventoryOnHand } from '../InventoryRedux'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({ inventoryItem }) => {
+const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   const { formatMessage, formatNumber } = useI18n()
+  const [newQtyOnHand, setNewQtyOnHand] = useState('')
+  const [resultQtyOnHand, setResultQtyOnHand] = useState('')
+  const [notes, setNotes] = useState('')
+  const [isAdd, setIsAdd] = useState(false)
+  const dispatch = useDispatch()
 
-  const [newQtyOnHand, setNewQtyOnHand] = useState(0)
-  const [resultQtyOnHand, setResultQtyOnHand] = useState(0)
   const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
   // helper funcs
   const hasQtyOnHand = qty =>
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
 
   const newQtyHandler = evt => {
-    const qty = inventoryItem.get('quantityOnHand')
-    const newQty = evt.target.value
-    if (qty < newQty) {
+    const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
+    const newQty = parseInt(evt.target.value, 10)
+    if (qty === newQty) {
+      setResultQtyOnHand(newQty)
+    } else if (qty > newQty) {
       setResultQtyOnHand(newQty - qty)
+      setIsAdd(false)
+    } else {
+      setResultQtyOnHand(newQty + qty)
+      setIsAdd(true)
     }
     setNewQtyOnHand(evt.target.value)
   }
+
+  const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
+    values => modifyInventoryOnHand(values, dispatch, inventoryItem),
+    {
+      onSuccess: async () => {
+        await refreshData()
+        setNewQtyOnHand(0)
+        setResultQtyOnHand(0)
+        setNotes('')
+      },
+    }
+  )
+
+  const updateInventoryOnBlur = async () => {
+    const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
+    const newQty = parseInt(newQtyOnHand, 10)
+    if (qty !== newQty && notes) {
+      onModifyInventoryOnHandSubmit({
+        quantity: newQty,
+        isAdd,
+        notes,
+        expiresOn: inventoryItem.get('expiresOn'),
+      })
+    }
+  }
+
   return (
-    <TableRow className={cssClasses('TableRow')}>
+    <TableRow onBlur={updateInventoryOnBlur} className={cssClasses('TableRow')}>
       {inventoryItem.get('expiresOn') !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
@@ -112,7 +150,6 @@ const InventoryTableRow = ({ inventoryItem }) => {
             margin: 'dense',
           }}
         />
-        {/* <span>{inventoryItem.get('newQuantityOnHand')}</span> */}
       </TableCell>
       <TableCell
         className={cssClasses('TableCell')}
@@ -125,7 +162,20 @@ const InventoryTableRow = ({ inventoryItem }) => {
           margin="normal"
           disabled
         />
-        {/* <span>{inventoryItem.get('resultQuantityOnHand')}</span> */}
+      </TableCell>
+      <TableCell
+        className={cssClasses('TableCell')}
+        rowSpan={rowSpan('quantityOnHandNote')}
+      >
+        <TextField
+          value={notes}
+          error={!!newQtyOnHand && notes.length < 5}
+          type="text"
+          name="resultQuantityOnHand"
+          margin="normal"
+          helperText={formatMessage(messages.inventoryOnMandatoryNote)}
+          onChange={evt => setNotes(evt.target.value)}
+        />
       </TableCell>
     </TableRow>
   )
