@@ -40,10 +40,13 @@ import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './Status.css'
 
+const { trendInYears, trendInQuarters } = tbTrendGraphs
+
 const cssClasses = classnames.bind(styles)
 
 const GRAPHS_SORTED_BY_TOTAL_RESULTS = 'GRAPHS_SORTED_BY_TOTAL_RESULTS'
-const GRAPHS_TREND_IN_YEAR = 'GRAPHS_TREND_IN_YEAR'
+const GRAPHS_TREND_IN_YEARS = 'GRAPHS_TREND_IN_YEARS'
+const GRAPHS_TREND_IN_QUARTERS = 'GRAPHS_TREND_IN_QUARTERS'
 // const GRAPHS_TREND_IN_QUARTER = 'GRAPHS_TREND_IN_QUARTER'
 /**
  * TODO: Add table in db to define such country-specific graphs in seed,
@@ -51,8 +54,8 @@ const GRAPHS_TREND_IN_YEAR = 'GRAPHS_TREND_IN_YEAR'
  * Another words, jobFunction definition in fixture will have 3 base array props -
  * `permissions`, `reports` and new array `graphs`.
  */
-const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['PK']
-// const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['PK']
+const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['BD']
+const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['BD']
 
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
@@ -72,7 +75,9 @@ const {
   trendInYearsAllTests,
   trendInYearsMtbDetected,
   trendInYearsRifDetected,
-} = tbTrendGraphs
+} = trendInYears
+const { trendInQuartersMtbDetected, trendInQuartersRifDetected } =
+  trendInQuarters
 const baseGroupFor = {
   sortedByTotalResults: [
     hivResults,
@@ -86,6 +91,7 @@ const baseGroupFor = {
     trendInYearsMtbDetected,
     trendInYearsRifDetected,
   ],
+  trendInQuarters: [trendInQuartersMtbDetected, trendInQuartersRifDetected],
 }
 /**
  * helpers
@@ -122,8 +128,15 @@ const getGroupedGraphsInitialValue = (
 
   // country-specific graphs
   if (COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
-    groupedGraphsInitialValue[GRAPHS_TREND_IN_YEAR] = reduce(
+    groupedGraphsInitialValue[GRAPHS_TREND_IN_YEARS] = reduce(
       baseGroupFor.trendInYears,
+      (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
+      {}
+    )
+  }
+  if (COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)) {
+    groupedGraphsInitialValue[GRAPHS_TREND_IN_QUARTERS] = reduce(
+      baseGroupFor.trendInQuarters,
       (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
       {}
     )
@@ -296,10 +309,29 @@ const Status = () => {
     if (!COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
       return null
     }
-    const groupName = GRAPHS_TREND_IN_YEAR
+    const groupName = GRAPHS_TREND_IN_YEARS
     const groupInfo = groupedGraphsInfo[groupName]
     const groupItems = getPermittedGroupItems(
       baseGroupFor.trendInYears,
+      groupInfo
+    )
+
+    return {
+      id: groupName,
+      isGroup: true,
+      isReady: true,
+      graphs: groupItems,
+    }
+  }, [groupedGraphsInfo, countryAbbreviation])
+
+  const groupTrendInQuarters = useMemo(() => {
+    if (!COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)) {
+      return null
+    }
+    const groupName = GRAPHS_TREND_IN_QUARTERS
+    const groupInfo = groupedGraphsInfo[groupName]
+    const groupItems = getPermittedGroupItems(
+      baseGroupFor.trendInQuarters,
       groupInfo
     )
 
@@ -337,6 +369,11 @@ const Status = () => {
       if (COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
         graphs = [...graphs, groupTrendInYears]
       }
+      if (
+        COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)
+      ) {
+        graphs = [...graphs, groupTrendInQuarters]
+      }
 
       setGraphs(graphs)
     }
@@ -344,6 +381,7 @@ const Status = () => {
     culture,
     groupSortedByTotalResults,
     groupTrendInYears,
+    groupTrendInQuarters,
     countryAbbreviation,
   ])
 

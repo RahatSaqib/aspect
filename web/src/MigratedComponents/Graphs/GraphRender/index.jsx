@@ -45,9 +45,10 @@ const GraphRender = ({
   clientSideFilter,
   onSettled,
   isOwnerReady,
+  groupMode,
 }) => {
   const {
-    api: { endpoint, params, method, prepareData } = false,
+    api: { endpoint, params, method, prepareData, isServerSide } = false,
     averages,
     component: Component,
     size,
@@ -79,13 +80,19 @@ const GraphRender = ({
         params: mergedParams,
       }),
     {
-      onSuccess: ({ data }) => {
-        if (prepareData) {
-          data = formatRawData(data)
+      onSuccess: resp => {
+        if (isServerSide) {
+          const { grouped, keysFromGrouped, i18nKeys } = resp
+          setI18nKeys(i18nKeys)
+          setGraphData(grouped)
+          setGraphKeys(keysFromGrouped)
+        } else if (prepareData) {
+          let data = formatRawData(resp.data)
           data = prepareData(data)
           setGraphData(data)
           setGraphKeys([])
         } else {
+          const { data } = resp
           setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data)
         }
       },
@@ -176,6 +183,7 @@ const GraphRender = ({
               assaysFromState={assaysFromState}
               i18n={messages}
               i18nKeys={i18nKeys}
+              groupMode={groupMode}
             />
           ) : null
         ) : (
@@ -191,6 +199,7 @@ GraphRender.defaultProps = {
   clientSideFilter: false,
   onSettled: null,
   isOwnerReady: true,
+  groupMode: null,
 }
 
 GraphRender.propTypes = {
@@ -202,6 +211,7 @@ GraphRender.propTypes = {
   formatMessage: func.isRequired,
   onSettled: func,
   isOwnerReady: bool,
+  groupMode: string,
 }
 
 export default GraphRender

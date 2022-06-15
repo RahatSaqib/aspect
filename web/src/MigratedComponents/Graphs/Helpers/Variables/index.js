@@ -290,7 +290,12 @@ const graphColorMap = [
   { id: 312, externalId: '2024', color: colorSuperNova2 },
   { id: 312, externalId: '2025', color: colorPowder },
 
+  { id: 501, externalId: 'caseTotal', color: odTransferTime },
+  { id: 502, externalId: 'caseDetected', color: colorMandy }, // same color as for 'Detected'
+  { id: 503, externalId: 'casePercentDetectedOfTotal', color: webOrange },
+
   { id: 999, externalId: 'Cases', color: colorConifer },
+  { id: 1000, externalId: 'unknown', color: odUnknown },
 ]
 
 export default graphColorMap

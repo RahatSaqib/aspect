@@ -42,6 +42,7 @@ const resultAggregationsValidGroups = [
   'age',
   'state',
   'day',
+  'quarter',
 ]
 
 const clinicalIndicatorsValidGroups = [
@@ -87,6 +88,10 @@ const resultAggregationsResponseItem = {
     .optional()
     .allow(null, '')
     .description('The month that the count is grouped by'),
+  quarter: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The quarter that the count is grouped by'),
   year: Joi.string()
     .optional()
     .allow(null, '')

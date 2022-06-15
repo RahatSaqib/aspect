@@ -80,6 +80,7 @@ const graphItemsSchema = {
         'stackedDeviceActivity',
         'barInventory',
         'line-trends',
+        'bar-line',
       ],
     },
     size: {
@@ -129,7 +130,7 @@ const graphItemsSchema = {
     },
     formatDate: {
       $id: `${graphItemsSchemaId}/properties/formatDate`,
-      type: 'string',
+      anyOf: [{ type: 'string' }, { instanceof: 'Function' }],
     },
   },
 }

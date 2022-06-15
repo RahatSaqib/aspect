@@ -119,6 +119,14 @@ export const messages = defineMessages({
     id: 'pages.Status.TB.rifDetectedTrendsInYear.title',
     defaultMessage: 'RRD Trends In Year',
   },
+  mtbDetectedTrendsInQuarterTitle: {
+    id: 'pages.Status.TB.mtbDetectedTrendsInQuarterTitle.title',
+    defaultMessage: 'MTB Positivity In Quarters',
+  },
+  rifDetectedTrendsInQuarterTitle: {
+    id: 'pages.Status.TB.rifDetectedTrendsInQuarterTitle.title',
+    defaultMessage: 'RRD In Quarters',
+  },
 })
 
 export default messages

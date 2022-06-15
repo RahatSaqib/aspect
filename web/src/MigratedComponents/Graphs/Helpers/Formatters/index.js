@@ -358,7 +358,8 @@ const generateLegendIntl = (
   string,
   assaysFromState,
   graphId = false,
-  legendsNotToRender = false
+  legendsNotToRender = false,
+  { colorExternalId } = {}
 ) => {
   if (!legendsNotToRender?.includes(string)) {
     return {
@@ -369,7 +370,7 @@ const generateLegendIntl = (
         intlMessages,
         i18nKeys
       ),
-      color: generateColorForLegend(string, graphId),
+      color: generateColorForLegend(colorExternalId || string, graphId),
     }
   }
   return {}
@@ -458,6 +459,17 @@ const formatDataByGraphType = (
       const filtered = filterBy ? filterByMultiple(data, filterBy) : data
       return filtered
     }
+
+    case 'bar-line':
+      grouped = groupByKey(
+        data,
+        indexBy,
+        keyToConsume,
+        displayMethod,
+        formatDate,
+        filterBy
+      )
+      return grouped
 
     default:
       grouped = false
