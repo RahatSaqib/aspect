@@ -107,7 +107,8 @@ const STOCK_LEFT_FILTER_FIELDS = {
   },
 }
 const SUM_STOCK_LEFT_FILTER_FIELDS = {
-  hasStock: queryBuilder => queryBuilder.havingRaw('quantityOnHand <> 0'),
+  hasStock: queryBuilder =>
+    queryBuilder.havingRaw('IFNULL(quantityOnHand, 0) <> 0'),
 }
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
@@ -116,28 +117,28 @@ const SUPPLY_IN_STOCK_FIELDS = [
   'consumableId',
   'consumableName',
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired = 0 THEN true ELSE null END) as outOfStock'
+    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft = 0 THEN true ELSE null END) as outOfStock'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
+    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 15 and 30 THEN true ELSE null END) as upTo30'
+    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft BETWEEN 15 and 30 THEN true ELSE null END) as upTo30'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 31 and 90 THEN true ELSE null END) as upTo90'
+    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft BETWEEN 31 and 90 THEN true ELSE null END) as upTo90'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
+    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NOT NULL AND daysUnexpired > 180 THEN true ELSE null END) as moreThan180'
+    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft > 180 THEN true ELSE null END) as moreThan180'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'
+    'COUNT(CASE WHEN daysStockLeft IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'
   ),
   knex.raw(
-    'COUNT(CASE WHEN daysUnexpired IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
+    'COUNT(CASE WHEN daysStockLeft IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
   ),
 ]
 
@@ -622,7 +623,7 @@ function getInventorySites(constraints, request) {
       knex.raw(
         `CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
-          ELSE GetDaysStockLeft( NOW(), ficr.rate, ${inventoryItemsRaw})
+          ELSE GetDaysStockLeft(NOW(), ficr.rate, ${inventoryItemsRaw})
         END as daysStockLeft`
       ),
       knex.raw(
@@ -1048,11 +1049,18 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
 async function getDaysByLocation(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+
+  /*
+  // --------
+  // old query
+  // --------
   const baseWithCalculatedFields =
     getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
       request,
       dataConstraints
     )
+  */
+  const baseWithCalculatedFields = getInventorySites(dataConstraints, request)
 
   // -----------------
   // group by location fields and consumableId, and return different counts

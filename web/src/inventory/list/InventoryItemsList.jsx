@@ -59,6 +59,7 @@ import messages from './messages'
 
 import styles from './InventoryItemsList.css'
 import AspectTooltip from '../../components/shared/AspectTooltip'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 const cssClasses = classnames.bind(styles)
 
@@ -230,15 +231,17 @@ export const InventoryItemsListWithProps = ({
         config={reducedFilters}
         dateFilterLabel={intl.formatMessage(messages.expiresOn)}
       >
-        <AddNewButton
-          type="button"
-          color="primary"
-          variant="contained"
-          onClick={() => dispatch(showNewInventoryDialog())}
-          browseButton
-        >
-          {intl.formatMessage(messages.addInventory)}
-        </AddNewButton>
+        <PermissionsProvider permissions={['inventory:edit']}>
+          <AddNewButton
+            type="button"
+            color="primary"
+            variant="contained"
+            onClick={() => dispatch(showNewInventoryDialog())}
+            browseButton
+          >
+            {intl.formatMessage(messages.addInventory)}
+          </AddNewButton>
+        </PermissionsProvider>
       </BrowseFilters>
 
       <DataTableCard className={cssClasses('DataTableCard--action')}>
