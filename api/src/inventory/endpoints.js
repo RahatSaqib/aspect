@@ -15,7 +15,7 @@ const {
   transferInventory,
   receiveInventory,
   getDaysByLocation,
-  listLog,
+  listLogForUI,
 } = require('./service')
 
 const { exportSupplies } = require('./serviceReports')
@@ -111,7 +111,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/log',
-    handler: asyncHandler(listLog),
+    handler: asyncHandler(listLogForUI),
     config: {
       description: 'List of Inventory Transactions',
       notes: 'Pageable and sortable list of inventory transactions',
