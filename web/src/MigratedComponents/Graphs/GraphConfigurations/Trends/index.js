@@ -167,6 +167,15 @@ const trendInQuartersMtbDetected = getGraphEntry({
     id: 'tbMtbDetectedQuarterlyTrends',
     type: 'bar-line',
     indexBy: 'quarter', // is used for setting jsx `key` in loops
+    fields: [
+      { name: 'Total', colorId: 'caseTotal', target: 'bar' },
+      { name: 'MtbDetected', colorId: 'caseDetected', target: 'bar' },
+      {
+        name: 'MtbToTotalPercentage',
+        colorId: 'casePercentDetectedOfTotal',
+        target: 'line',
+      },
+    ],
     keyToConsume: '',
     filterBy: {},
     groupMode: 'grouped',
@@ -176,13 +185,6 @@ const trendInQuartersMtbDetected = getGraphEntry({
       return `Q${qq}-${yyyy.substring(2)}`
     },
     layers: [MtbToTotalPercentage],
-    getColorIdByFieldName: fieldName => {
-      if (fieldName === 'Total') return 'caseTotal'
-      if (fieldName === 'MtbDetected') return 'caseDetected'
-      if (fieldName === 'MtbToTotalPercentage')
-        return 'casePercentDetectedOfTotal'
-      return 'unknown'
-    },
   },
   api: {
     params: {
@@ -202,6 +204,15 @@ const trendInQuartersRifDetected = getGraphEntry({
     id: 'tbRifDetectedQuarterlyTrends',
     type: 'bar-line',
     indexBy: 'quarter',
+    fields: [
+      { name: 'MtbDetected', colorId: 'caseTotal', target: 'bar' },
+      { name: 'RrdDetected', colorId: 'caseDetected', target: 'bar' },
+      {
+        name: 'RrdToMtbPercentage',
+        colorId: 'casePercentDetectedOfTotal',
+        target: 'line',
+      },
+    ],
     keyToConsume: '',
     filterBy: {},
     groupMode: 'grouped',
@@ -211,13 +222,6 @@ const trendInQuartersRifDetected = getGraphEntry({
       return `Q${qq}-${yyyy.substring(2)}`
     },
     layers: [RrdToMtbPercentage],
-    getColorIdByFieldName: fieldName => {
-      if (fieldName === 'MtbDetected') return 'caseTotal'
-      if (fieldName === 'RrdDetected') return 'caseDetected'
-      if (fieldName === 'RrdToMtbPercentage')
-        return 'casePercentDetectedOfTotal'
-      return 'unknown'
-    },
   },
   api: {
     params: {

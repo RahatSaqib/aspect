@@ -21,6 +21,7 @@ import {
   generateToolTip,
   generateLegendIntl,
   getMaxValueForDivergent,
+  getColorIdByFieldName,
 } from '../Helpers/Formatters'
 import { negateTimeZoneOffset } from '../../../components/shared/DateTimeInput/utils/date'
 
@@ -47,6 +48,7 @@ const graphsToHaveCustomLegend = [
   'bar',
   'stackedDeviceActivity',
   'barLegacyTreatment',
+  'bar-line',
 ]
 
 // ----------------------------------------------------------
@@ -60,7 +62,7 @@ const getLegend = (props, config, { formatMessage }) => {
     type,
     i18nKeys,
   } = props
-  const { id: graphId, getColorIdByFieldName } = baseConfig
+  const { id: graphId, fields } = baseConfig
   const { translateX, itemDirection, itemWidth, symbolShape } = config
   const baseLegend =
     displayLegend && !graphsToHaveCustomLegend.includes(type)
@@ -77,9 +79,7 @@ const getLegend = (props, config, { formatMessage }) => {
                 graphId,
                 legendsNotToRender,
                 {
-                  colorExternalId: getColorIdByFieldName
-                    ? getColorIdByFieldName(k)
-                    : null,
+                  colorExternalId: getColorIdByFieldName(fields, k),
                 }
               )
             ),
@@ -136,13 +136,10 @@ const AspectResponsiveBar = props => {
   } = props
   const { setConfig } = useGraphClickThrough()
   const { format, formatNumber: intlFormatNumber, formatMessage } = useI18n()
-  const {
-    id: graphId,
-    getColorIdByFieldName,
-    sortByKeys,
-    groupMode,
-    layers = [],
-  } = baseConfig
+  const { id: graphId, sortByKeys, groupMode, fields, layers = [] } = baseConfig
+  const keysForBars = fields
+    ? fields.filter(it => it.target === 'bar').map(it => it.name)
+    : keys
   const filteredData = normalizeData(data, { sortByKeys })
   const generateConfig = (type, data) => {
     switch (true) {
@@ -318,7 +315,7 @@ const AspectResponsiveBar = props => {
         <ResponsiveBar
           style={{ flex: 1 }}
           data={filteredData}
-          keys={keys}
+          keys={keysForBars}
           indexBy={indexBy}
           colorBy="index"
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
@@ -341,9 +338,12 @@ const AspectResponsiveBar = props => {
           baseConfig={baseConfig} // original graphType object to pass to layer
           groupMode={groupMode}
           colors={v => {
-            const valueId = getColorIdByFieldName
-              ? getColorIdByFieldName(v.id)
-              : v.id
+            let valueId = v.id
+            if (fields) {
+              ;[{ colorId: valueId }] = fields.filter(
+                it => it.target === 'bar' && it.name === v.id
+              )
+            }
             return generateColorForValue(valueId, graphId)
           }}
           margin={config.margin}
@@ -398,6 +398,7 @@ const AspectResponsiveBar = props => {
         <CustomBarGraphLegend
           style={{ flex: 1 }}
           keys={keys}
+          fields={fields}
           generateLegendIntl={generateLegendIntl}
           i18nKeys={i18nKeys}
           assaysFromState={assaysFromState}

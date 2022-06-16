@@ -561,6 +561,18 @@ const prepParamsForEndPoint = (urlParams, updatedParams) => {
   return params
 }
 
+const getPropByFieldName = (propName, fields, fieldName) => {
+  if (isArray(fields)) {
+    const [field = {}] = fields?.filter(it => it.name === fieldName) || {}
+    return field[propName]
+  }
+  return null
+}
+
+const getColorIdByFieldName = (fields, fieldName) => {
+  return getPropByFieldName('colorId', fields, fieldName)
+}
+
 export {
   calcPercentageSplitBar,
   calcPercentageForGraphs,
@@ -598,4 +610,6 @@ export {
   prepAssaysForParams,
   prepParamsForEndPoint,
   validateGraphConfig,
+  getPropByFieldName,
+  getColorIdByFieldName,
 }

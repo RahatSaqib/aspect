@@ -4,6 +4,7 @@ import classnames from 'classnames/bind'
 import { useIntl } from 'react-intl'
 import find from 'lodash/find'
 
+import { getColorIdByFieldName } from '../../Helpers/Formatters'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import messages from '../../intlMessages'
 
@@ -19,6 +20,19 @@ const LegendKey = ({
   ...rest
 }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
+  let styles = {}
+  if (symbolShape.includes('hollow-')) {
+    styles = {
+      ...styles,
+      background: '#fff',
+      border: `2px solid ${color}`,
+    }
+  } else {
+    styles = {
+      ...styles,
+      background: color,
+    }
+  }
   return (
     <div
       {...rest}
@@ -33,7 +47,7 @@ const LegendKey = ({
           'legend__color',
           `legend__color--${symbolShape}`,
         ])}
-        style={{ background: color }}
+        style={styles}
       />
       <div className={cssClasses('legend__label')}>
         {show ? (
@@ -80,6 +94,7 @@ LegendKey.propTypes = {
 
 const CustomBarGraphLegend = ({
   keys,
+  fields,
   generateLegendIntl,
   assaysFromState,
   type,
@@ -101,6 +116,14 @@ const CustomBarGraphLegend = ({
         const { tooltip } =
           find(legendsToPopover, { externalId: k, tooltip: { show: true } }) ||
           false
+
+        let currentSymbolShape = symbolShape
+        const colorExternalId = getColorIdByFieldName(fields, k)
+        if (fields) {
+          const [field] = fields.filter(it => it.name === k)
+          if (field.target === 'line') currentSymbolShape = 'hollow-circle'
+        }
+
         const { label = '?', color = '#999999' } = generateLegendIntl(
           formatMessage,
           messages,
@@ -108,12 +131,13 @@ const CustomBarGraphLegend = ({
           k,
           assaysFromState,
           graphId,
-          legendsNotToRender
+          legendsNotToRender,
+          { colorExternalId }
         )
 
         return (
           <LegendKey
-            symbolShape={symbolShape}
+            symbolShape={currentSymbolShape}
             color={color}
             label={label}
             tooltip={tooltip}
@@ -128,10 +152,12 @@ const CustomBarGraphLegend = ({
 CustomBarGraphLegend.defaultProps = {
   assaysFromState: [],
   symbolShape: 'circle',
+  fields: null,
 }
 
 CustomBarGraphLegend.propTypes = {
   keys: PropTypes.arrayOf(PropTypes.string).isRequired,
+  fields: PropTypes.arrayOf(PropTypes.object),
   generateLegendIntl: PropTypes.func.isRequired,
   assaysFromState: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   type: PropTypes.string.isRequired,

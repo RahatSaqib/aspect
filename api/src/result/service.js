@@ -2566,7 +2566,7 @@ async function trendInQuartersMtbDetected(request) {
 
   return {
     grouped,
-    keysFromGrouped: ['Total', 'MtbDetected'], // series
+    keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
     i18nKeys: {
       MtbDetected: 'MTBPlus',
       Total: 'Total',
@@ -2617,7 +2617,7 @@ async function trendInQuartersRifDetected(request) {
 
   return {
     grouped,
-    keysFromGrouped: ['MtbDetected', 'RrdDetected'], // series
+    keysFromGrouped: ['MtbDetected', 'RrdDetected', 'RrdToMtbPercentage'], // series
     i18nKeys: {
       MtbDetected: 'MTBPlus',
       RrdDetected: 'RRDHash',

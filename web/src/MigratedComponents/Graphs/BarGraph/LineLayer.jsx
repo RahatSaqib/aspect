@@ -3,7 +3,7 @@ import max from 'lodash/max'
 import { line } from 'd3-shape'
 import { scaleLinear } from 'd3-scale'
 
-import { filterColour } from '../Helpers/Formatters'
+import { filterColour, getColorIdByFieldName } from '../Helpers/Formatters'
 
 // ----------------------------------------------------------
 const getPointX = (bar, props) => {
@@ -35,10 +35,11 @@ const getPointY = (bar, props) => {
 const getColor = barGraphProps => {
   const {
     layerProps,
-    baseConfig: { getColorIdByFieldName = () => null },
+    baseConfig: { fields = [] },
   } = barGraphProps
   const colorId =
-    getColorIdByFieldName(layerProps.valueFieldName) || layerProps.colorId
+    getColorIdByFieldName(fields, layerProps.valueFieldName) ||
+    layerProps.colorId
   return filterColour(colorId)
 }
 
