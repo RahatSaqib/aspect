@@ -53,23 +53,11 @@ const FILTERS_CONFIG = [
 ]
 
 const availableSortCol = [
+  'createdOn',
   'siteName',
   'consumableName',
-  'quantityOnHand',
-  { col: 'expiresOn', isEnabled: dependencies => dependencies.breakOutByLot },
-  { col: 'lotNumber', isEnabled: dependencies => dependencies.breakOutByLot },
-  {
-    col: 'daysStockLeft',
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-  {
-    col: 'projectedWaste',
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-  {
-    col: 'dailyConsumptionRate',
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
+  'expiresOn',
+  'quantity',
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -93,7 +81,7 @@ export const InventoryLogWithProps = ({
     {
       key: 'date',
       label: intl.formatMessage(messages.date),
-      sortable: true,
+      sortable: false,
     },
     {
       key: 'siteName',
@@ -108,7 +96,7 @@ export const InventoryLogWithProps = ({
     {
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
-      sortable: true,
+      sortable: false,
     },
     {
       key: 'expirationDate',
@@ -135,8 +123,8 @@ export const InventoryLogWithProps = ({
   const hasItems = items && items.length > 0
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
+      <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
+      <NavTitle title={intl.formatMessage(messages.inventoryLogTitle)} />
       <BrowseFilters
         navigate={navigate}
         location={location}

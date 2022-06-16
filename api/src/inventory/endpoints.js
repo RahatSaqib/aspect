@@ -122,11 +122,11 @@ const routes = [
           ...validateAllGeographyFilterParams(),
           ...validateDateRangeParams(),
           ...validateSortPageParams(
-            'consumableName',
+            'createdOn',
             'siteName',
-            'countryName',
-            'stateName',
-            'lgaName'
+            'consumableName',
+            'expiresOn',
+            'quantity'
           ),
         },
       },

@@ -5,23 +5,9 @@ const messages = defineMessages({
     id: 'pages.InventoryLog.date',
     defaultMessage: 'Date',
   },
-  projectedWasteDescription: {
-    id: 'pages.InventoryLog.projectedWasteDescription',
-    defaultMessage:
-      'The projected stock waste, assuming that the cartridges to be consumed are always the ones closer to their expiration',
-  },
-  daysStockLeftDescription: {
-    id: 'pages.InventoryLog.daysStockLeftDescription',
-    defaultMessage:
-      'The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration',
-  },
-  inventoryItemsTitle: {
-    id: 'pages.InventoryLog.inventoryItemsTitle',
-    defaultMessage: 'Inventory on Hand',
-  },
-  breakOutByLot: {
-    id: 'pages.InventoryLog.breakOutByLot',
-    defaultMessage: 'Break out by lot',
+  inventoryLogTitle: {
+    id: 'pages.InventoryLog.inventoryLogTitle',
+    defaultMessage: 'Inventory Log',
   },
   siteName: {
     id: 'pages.InventoryLog.siteName',
@@ -42,11 +28,6 @@ const messages = defineMessages({
   notes: {
     id: 'pages.InventoryLog.notes',
     defaultMessage: 'Notes',
-  },
-
-  dailyConsumptionRate: {
-    id: 'pages.InventoryLog.dailyConsumptionRate',
-    defaultMessage: 'Daily Consumption',
   },
   notRecorded: {
     id: 'pages.InventoryLog.notRecorded',
@@ -71,22 +52,6 @@ const messages = defineMessages({
   adjust: {
     id: 'pages.InventoryLog.adjust',
     defaultMessage: 'Adjust',
-  },
-  addInventory: {
-    id: 'pages.InventoryLog.addInventory',
-    defaultMessage: 'Add Inventory',
-  },
-  transferInventory: {
-    id: 'pages.InventoryLog.transferInventory',
-    defaultMessage: 'Transfer Inventory',
-  },
-  receiveInventory: {
-    id: 'pages.InventoryLog.receiveInventory',
-    defaultMessage: 'Receive Inventory in Transit',
-  },
-  removeInventory: {
-    id: 'pages.InventoryLog.removeInventory',
-    defaultMessage: 'Remove Inventory',
   },
   paginatorStatus: {
     id: 'pages.InventoryLog.paginatorStatus',
