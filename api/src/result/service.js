@@ -2659,6 +2659,7 @@ function getClinicalIndicatorQueryForFactTable(
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -2727,6 +2728,7 @@ function getClinicalIndicatorQueryForResultsTable(
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',

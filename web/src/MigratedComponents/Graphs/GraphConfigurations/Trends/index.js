@@ -1,8 +1,9 @@
 import reduce from 'lodash/reduce'
+
 import LineGraph from '../../LineGraph'
 import BarGraph from '../../BarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
-
+import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
 
@@ -55,7 +56,21 @@ const getGraphEntry = ({ id, title, graphType, api }) => {
     title,
     assays,
     componentSize: 'full',
-    group: 'tb-yearly-trends',
+    group: 'tb-trends',
+    selectorModifiers: [
+      {
+        component: FilterByStateDropDown,
+        identifier: 'stateId', // for query param name
+        isClearable: true,
+        isClientSide: true,
+        filterFunctions: [
+          {
+            id: graphType.id,
+            shouldFilterOnServer: true,
+          },
+        ],
+      },
+    ],
     graphRenderPermissions: ['dashboard'],
     graphType: [
       {
@@ -90,7 +105,7 @@ const trendInYearsAllTests = getGraphEntry({
     id: 'tbAllTestsYearlyTrends',
     i18nKey: 'resultCategory1I18nKey',
     indexBy: 'month',
-    keyToConsume: 'resultCategory1',
+    keyToConsume: '',
   },
   api: {
     params: {
@@ -98,7 +113,7 @@ const trendInYearsAllTests = getGraphEntry({
       [MIN_DATE]: '2019-01-01',
       [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
     },
-    prepareData: data => getData(data),
+    formatData: data => getData(data),
   },
 })
 const trendInYearsMtbDetected = getGraphEntry({
@@ -108,18 +123,16 @@ const trendInYearsMtbDetected = getGraphEntry({
     id: 'tbMtbDetectedYearlyTrends',
     i18nKey: 'resultCategory2I18nKey',
     indexBy: 'month',
-    keyToConsume: 'resultCategory1',
-    filterBy: {
-      resultCategory1: { values: ['Detected'] },
-    },
+    keyToConsume: '',
   },
   api: {
     params: {
-      groupBy: ['month', 'resultCategory1'],
+      groupBy: ['month'],
       [MIN_DATE]: '2019-01-01',
       [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+      resultCategory1: 'Detected',
     },
-    prepareData: data => getData(data),
+    formatData: data => getData(data),
   },
 })
 const trendInYearsRifDetected = getGraphEntry({
@@ -129,19 +142,17 @@ const trendInYearsRifDetected = getGraphEntry({
     id: 'tbRifDetectedYearlyTrends',
     i18nKey: 'resultCategory2I18nKey',
     indexBy: 'month',
-    keyToConsume: 'resultCategory2',
-    filterBy: {
-      resultCategory1: { values: ['Detected'] },
-      resultCategory2: { values: ['Detected'] },
-    },
+    keyToConsume: '',
   },
   api: {
     params: {
-      groupBy: ['month', 'resultCategory1', 'resultCategory2'],
+      groupBy: ['month'],
       [MIN_DATE]: '2019-01-01',
       [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+      resultCategory1: 'Detected',
+      resultCategory2: 'Detected',
     },
-    prepareData: data => getData(data),
+    formatData: data => getData(data),
   },
 })
 

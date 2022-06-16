@@ -48,7 +48,7 @@ const GraphRender = ({
   groupMode,
 }) => {
   const {
-    api: { endpoint, params, method, prepareData, isServerSide } = false,
+    api: { endpoint, params, method, formatData, isServerSide } = false,
     averages,
     component: Component,
     size,
@@ -66,7 +66,8 @@ const GraphRender = ({
   const { culture } = useAuthState()
   const assayParams = prepAssaysForParams(whiteListed, method)
   const endpointParams = prepParamsForEndPoint(params, updatedParams)
-  const mergedParams = [...assayParams, ...endpointParams]
+  const [filterParams, setFilterParams] = useState([])
+  const mergedParams = [...assayParams, ...endpointParams, ...filterParams]
   const [rawData, setRawData] = useState(false)
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
@@ -86,11 +87,6 @@ const GraphRender = ({
           setI18nKeys(i18nKeys)
           setGraphData(grouped)
           setGraphKeys(keysFromGrouped)
-        } else if (prepareData) {
-          let data = formatRawData(resp.data)
-          data = prepareData(data)
-          setGraphData(data)
-          setGraphKeys([])
         } else {
           const { data } = resp
           setRawData(sortByKeys?.length ? sortBy(data, sortByKeys) : data)
@@ -125,10 +121,15 @@ const GraphRender = ({
     }
   }
 
-  function formatRawData(someData) {
+  function formatRawData() {
     const i18nKeysCollection = buildI18nKeys()
+
+    if (formatData) {
+      return formatData(rawData)
+    }
+
     return formatDataByGraphType(
-      someData || rawData,
+      rawData,
       displayMethod,
       filterBy,
       formatDate,
@@ -161,7 +162,7 @@ const GraphRender = ({
     return handleClientSideFilterState(
       clientSideFilter,
       { id, i18nKeys, graphData, assaysFromState },
-      { formatRawData, setNewData }
+      { formatRawData, setNewData, setFilterParams }
     )
   }, [clientSideFilter, graphData])
 

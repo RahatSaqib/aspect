@@ -19,6 +19,11 @@ const getResultAggregationsValidate = validGroups => ({
     .description('Filter for result category 2'),
   siteName: Joi.string().allow(null, '').description('Filter for site'),
   deviceName: Joi.string().allow(null, '').description('Filter for device'),
+  stateId: Joi.number()
+    .integer()
+    .positive()
+    .allow(null)
+    .description('Filter for state'),
   groupBy: Joi.alternatives()
     .allow(null, '')
     .try(
