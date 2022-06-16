@@ -1,7 +1,5 @@
-import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
-import React, { useEffect, useCallback, useState, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
@@ -11,7 +9,6 @@ import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
-  composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import {
   getFilters,
@@ -23,9 +20,7 @@ import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
-import ExportListButton from '../../globals/components/ExportListButton'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { exportSupplies, receiveInventoryItems } from '../InventoryRedux'
 import {
   InventoryLogDataTable,
   InventoryLogDataTableHead,
@@ -81,13 +76,6 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol,
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
-  searchSanitizer
-)
 
 export const InventoryLogWithProps = ({
   intl,
@@ -95,11 +83,9 @@ export const InventoryLogWithProps = ({
   location,
   reducedFilters,
   isLoading,
-  onExcelClick,
-  items,
+  data,
   sortCol,
   sortDir,
-  table,
   pageAt,
   pageSize,
 }) => {
@@ -107,6 +93,11 @@ export const InventoryLogWithProps = ({
     {
       key: 'date',
       label: intl.formatMessage(messages.date),
+      sortable: true,
+    },
+    {
+      key: 'siteName',
+      label: intl.formatMessage(messages.siteName),
       sortable: true,
     },
     {
@@ -125,11 +116,6 @@ export const InventoryLogWithProps = ({
       sortable: true,
     },
     {
-      key: 'siteName',
-      label: intl.formatMessage(messages.siteName),
-      sortable: true,
-    },
-    {
       key: 'quantity',
       label: intl.formatMessage(messages.quantity),
       sortable: true,
@@ -145,7 +131,8 @@ export const InventoryLogWithProps = ({
       sortable: false,
     },
   ]
-
+  const { data: items, total } = data || { data: null }
+  const hasItems = items && items.length > 0
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -156,24 +143,16 @@ export const InventoryLogWithProps = ({
         intl={intl}
         config={reducedFilters}
         dateFilterLabel={intl.formatMessage(messages.expiresOn)}
-      >
-        {/* <PermissionsProvider permissions={['inventory:edit']} />{' '} */}
-      </BrowseFilters>
+      />
       <DataTableCard
         key={`DataTableCard--table-${location.key}`}
         className={cssClasses('DataTableCard--table')}
       >
         <DataTableProgressBar disabled={!isLoading} />
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Supplies"
-        />
-        {items.currentIdList.isEmpty() && (
+        {!hasItems && (
           <BrowseEmptyList navigate={navigate} location={location} />
         )}
-        {!items.currentIdList.isEmpty() && (
+        {hasItems && (
           <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
             <InventoryLogDataTableHead
               navigate={navigate}
@@ -183,24 +162,22 @@ export const InventoryLogWithProps = ({
               columns={columns}
             />
             <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(inventoryItem => (
-                  <InventoryLogTableRow
-                    key={inventoryItem.get('id')}
-                    inventoryItem={inventoryItem}
-                  />
-                ))}
+              {items.map(inventoryLogItem => (
+                <InventoryLogTableRow
+                  key={inventoryLogItem.id}
+                  inventoryLogItem={inventoryLogItem}
+                />
+              ))}
             </TableBody>
           </InventoryLogDataTable>
         )}
-        {!items.currentIdList.isEmpty() && (
+        {hasItems && (
           <BrowseTablePaginator
             navigate={navigate}
             location={location}
             intl={intl}
             paginatorStatus={messages.paginatorStatus}
-            total={table.total}
+            total={total}
             pageAt={pageAt}
             pageSize={pageSize}
           />
@@ -212,68 +189,31 @@ export const InventoryLogWithProps = ({
 
 export const InventoryLog = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
-  const dispatch = useDispatch()
   const intl = useIntl()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
 
-  // >>>>>> Defining selectors <<<<<<
-  const inventory = useSelector(state => state.inventory)
-  // const consumableReasons = useSelector(
-  //   state => state.consumable.consumableReasons
-  // )
-  const [breakOutByLot, setBreakOutByLot] = useState(false)
-  const dependencies = useMemo(
-    () => ({
-      breakOutByLot,
-    }),
-    [breakOutByLot]
-  )
-
   // >>>>>> Structuring data <<<<<<
-  const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
   })
   const reducedFilters = reduceFiltersConfig(
     FILTERS_CONFIG,
     userPermissions,
-    dependencies
+    {}
   )
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
     location,
     availableSortCol,
-    dependencies,
+    dependencies: {},
   })
-  const { value: searchParams } = searchSanitizer(location, dependencies)
+  const { value: searchParams } = searchSanitizer(location, {})
   const { value: filtersParams } = filtersSanitizer(
     searchParams.get('filters') || '',
-    dependencies
+    {}
   )
   const filters = getFilters(filtersParams)
-  // >>>>>> Defining callbacks <<<<<<
-  const onExcelClick = useCallback(
-    formatType => {
-      const format = formatType.id
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSupplies(
-          filtersParams,
-          breakOutByLot,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'supplies',
-          dispatch
-        )
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location, breakOutByLot, sortCol, sortDir, pageAt, table]
-  )
 
   // >>>>>> Defining queries <<<<<<
   const params = {
@@ -281,7 +221,6 @@ export const InventoryLog = ({ navigate, location }) => {
     sortDir,
     page: pageAt,
     size: pageSize,
-    breakOutByLot,
     ...filters,
   }
 
@@ -294,18 +233,10 @@ export const InventoryLog = ({ navigate, location }) => {
     fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params })
   )
 
-  // >>>>>> Lifecycle hooks <<<<<<
   useEffect(() => {
-    if (data) dispatch(receiveInventoryItems(data))
-  }, [data, dispatch])
-
-  useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(
-      location,
-      dependencies
-    )
+    const { sanitized, value: searchParams } = searchSanitizer(location, {})
     const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '', dependencies)
+      filtersSanitizer(searchParams.get('filters') || '', {})
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
@@ -317,7 +248,7 @@ export const InventoryLog = ({ navigate, location }) => {
         { replace: true }
       )
     }
-  }, [location, navigate, dependencies, dispatch])
+  }, [location, navigate])
 
   if (isError) throw new Error(error)
 
@@ -326,18 +257,12 @@ export const InventoryLog = ({ navigate, location }) => {
     navigate,
     location,
     reducedFilters,
-    dispatch,
-    breakOutByLot,
-    setBreakOutByLot,
     isLoading,
-    onExcelClick,
-    items,
+    data,
     sortCol,
     sortDir,
-    table,
     pageAt,
     pageSize,
-    inventoryAdjustment,
   }
 
   return <InventoryLogWithProps {...props} />

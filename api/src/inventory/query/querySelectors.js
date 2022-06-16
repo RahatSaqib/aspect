@@ -29,14 +29,8 @@ const INVENTORY_LOG_UILIST = {
   quantity: knex.raw(
     'CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'
   ),
-  consumableReason: 'cr.name',
+  consumableReasonI18nKey: 'cr.i18nKey',
   refSiteName: 'refSite.name',
-  movementReason: knex.raw(`
-      CASE
-        WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
-        WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
-        ELSE cr.name
-      END`),
   notes: 'il.notes',
 }
 

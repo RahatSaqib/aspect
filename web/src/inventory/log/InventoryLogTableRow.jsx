@@ -4,92 +4,63 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
+import useI18n from '../../Hooks/i18n/useI18n'
 import { formatDate } from '../../shared/utils/dateFormat'
-
+import messages from './messages'
 import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryLogTableRow = ({ inventoryItem }) => {
-  const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
+const InventoryLogTableRow = ({ inventoryLogItem }) => {
+  const { formatMessage } = useI18n()
 
   return (
     <TableRow className={cssClasses('TableRow')}>
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('createdOn')}
-      >
-        {inventoryItem.get('createdOn')
-          ? formatDate(inventoryItem.get('createdOn'))
+      <TableCell className={cssClasses('TableCell')}>
+        {inventoryLogItem.createdOn
+          ? formatDate(inventoryLogItem.createdOn)
           : 'N/A'}
       </TableCell>
-
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('consumableName')}
-      >
-        {inventoryItem.get('consumableName')}
+      <TableCell className={cssClasses('TableCell')}>
+        {inventoryLogItem.siteName}
+      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>
+        {inventoryLogItem.consumableName}
       </TableCell>
 
-      {inventoryItem.get('lotNumber') !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('lotNumber')}
-        >
-          {inventoryItem.get('lotNumber')
-            ? inventoryItem.get('lotNumber')
-            : 'N/A'}
+      {inventoryLogItem.lotNumber !== undefined ? (
+        <TableCell className={cssClasses('TableCell')}>
+          {inventoryLogItem.lotNumber ? inventoryLogItem.lotNumber : 'N/A'}
         </TableCell>
       ) : null}
 
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('expirationDate')}
-      >
+      <TableCell className={cssClasses('TableCell')}>
         <span
           className={
-            inventoryItem.get('expirationDate') !== null &&
-            new Date(inventoryItem.get('expirationDate')) < new Date()
+            inventoryLogItem.expirationDate !== null &&
+            new Date(inventoryLogItem.expirationDate) < new Date()
               ? cssClasses('alert')
               : null
           }
         >
-          {inventoryItem.get('expirationDate')
-            ? formatDate(inventoryItem.get('expirationDate'))
+          {inventoryLogItem.expirationDate
+            ? formatDate(inventoryLogItem.expirationDate)
             : 'N/A'}
         </span>
       </TableCell>
 
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('siteName')}
-      >
-        {inventoryItem.get('siteName')}
+      <TableCell className={cssClasses('TableCell')}>
+        {inventoryLogItem.quantity}
       </TableCell>
-
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('quantity')}
-      >
-        {inventoryItem.get('quantity')}
+      <TableCell className={cssClasses('TableCell')}>
+        {messages[inventoryLogItem.consumableReasonI18nKey]
+          ? formatMessage(messages[inventoryLogItem.consumableReasonI18nKey], {
+              refSiteName: inventoryLogItem.refSiteName,
+            })
+          : ''}
       </TableCell>
-
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('consumableReason')}
-      >
-        {inventoryItem.get('consumableReason')}
-      </TableCell>
-
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('movementReason')}
-      >
-        {inventoryItem.get('movementReason')}
-      </TableCell>
-
-      <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('notes')}>
-        {inventoryItem.get('notes')}
+      <TableCell className={cssClasses('TableCell')}>
+        {inventoryLogItem.notes}
       </TableCell>
     </TableRow>
   )
