@@ -198,7 +198,10 @@ const InventoryTableRow = ({
         <PermissionsProvider permissions={['inventory:edit']}>
           <TableCell className={cssClasses('TableCell')}>
             <AspectVertMenu
-              params={{ inventoryItemId: inventoryItem.get('id') }}
+              params={{
+                inventoryItemId: inventoryItem.get('id'),
+                inventoryItem,
+              }}
               actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
             />
           </TableCell>
