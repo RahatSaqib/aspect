@@ -49,7 +49,7 @@ const AxisRight = barGraphProps => {
 
       <g transform={`translate(${width}, 0)`}>
         {tickValues.map(y => (
-          <g transform={`translate(0, ${yScale(y)})`}>
+          <g transform={`translate(0, ${yScale(y)})`} key={y}>
             <line
               x1={0}
               x2={5}

@@ -203,10 +203,10 @@ const Line = barGraphProps => {
       />
       {anchorBars.map((bar, index) => (
         <g
+          key={bar.key}
           transform={`translate(${coordinates[index].x}, ${coordinates[index].y})`}
         >
           <Point
-            key={bar.key}
             stroke={lineColor}
             pointProps={pointProps}
             onMouseOver={event => onMouseOver(event, index)}
