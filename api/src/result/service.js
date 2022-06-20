@@ -58,7 +58,7 @@ const { GRAPH_FLAGS } = require('../shared/constants')
 
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
-  let selectFields = _.clone(fields)
+  const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
   const assayColumns = []
@@ -144,16 +144,13 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
-  selectFields = {
-    ...selectFields,
-    ...{
-      resultCategory2Name: 'rc2.name',
-      resultCategory2I18nKey: 'rc2.i18nKey',
-      resultCategory2Titlei18nKey: 'a.resultCategory2i18nKey',
-      resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
-      resultCategory1Title: 'a.resultCategory1label',
-      resultCategory2Title: 'a.resultCategory2label',
-    },
+  const resultFields = {
+    resultCategory2Name: 'rc2.name',
+    resultCategory2I18nKey: 'rc2.i18nKey',
+    resultCategory2Titlei18nKey: 'a.resultCategory2i18nKey',
+    resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
+    resultCategory1Title: 'a.resultCategory1label',
+    resultCategory2Title: 'a.resultCategory2label',
   }
 
   // get rows
@@ -162,6 +159,9 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+    .modify(function (qb) {
+      qb.select(resultFields)
+    })
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -806,7 +806,9 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       device: 'd',
       result: 'r',
     })
-    .select(fields)
+    .modify(function (qb) {
+      qb.select(fields)
+    })
     .select({
       resultText: knex.raw(
         `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
