@@ -18,13 +18,7 @@ import Reports from './Reports'
 import GroupedGraphs from './GroupedGraphs'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import { useAuthState } from '../../Providers/AuthProvider'
-import PermissionsProvider, {
-  isGraphPermitted,
-} from '../../Providers/PermissionsProvider'
-import {
-  isAllowedGroupsWithoutAssays,
-  getWhitelistedAssays,
-} from '../../shared/utils/graph'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
@@ -37,6 +31,7 @@ import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurati
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
 import tbTrendGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Trends'
 import useI18n from '../../Hooks/i18n/useI18n'
+import { getGroupedGraphsInitialValue, getPermittedGroupItems } from './Helpers'
 
 import styles from './Status.css'
 
@@ -93,66 +88,7 @@ const baseGroupFor = {
   ],
   trendInQuarters: [trendInQuartersMtbDetected, trendInQuartersRifDetected],
 }
-/**
- * helpers
- */
-// -------------------------------------------------------------------------
-const addGraphIfPermitted = (acc, graph, { auth, assaysFromState }) => {
-  const { id, assays, group } = graph
-  const isPermitted = isGraphPermitted({
-    auth,
-    permissions: graph.graphRenderPermissions,
-  })
-  const allowedGroupsWithoutAssays = isAllowedGroupsWithoutAssays(group)
-  const allowed = getWhitelistedAssays({ assays, assaysFromState })
-  const isWhitelisted = allowed.length > 0 || allowedGroupsWithoutAssays
-  if (isPermitted && isWhitelisted) {
-    acc[id] = { settled: false }
-  }
-  return acc
-}
-// -------------------------------------------------------------------------
-const getGroupedGraphsInitialValue = (
-  auth,
-  assaysFromState,
-  countryAbbreviation
-) => {
-  // common graphs
-  const groupedGraphsInitialValue = {
-    [GRAPHS_SORTED_BY_TOTAL_RESULTS]: reduce(
-      baseGroupFor.sortedByTotalResults,
-      (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
-      {}
-    ),
-  }
 
-  // country-specific graphs
-  if (COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
-    groupedGraphsInitialValue[GRAPHS_TREND_IN_YEARS] = reduce(
-      baseGroupFor.trendInYears,
-      (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
-      {}
-    )
-  }
-  if (COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)) {
-    groupedGraphsInitialValue[GRAPHS_TREND_IN_QUARTERS] = reduce(
-      baseGroupFor.trendInQuarters,
-      (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
-      {}
-    )
-  }
-  return groupedGraphsInitialValue
-}
-// -------------------------------------------------------------------------
-const getPermittedGroupItems = (allGraphsInGroup, groupInfo) => {
-  const groupItems = allGraphsInGroup.filter(
-    // use only graphs added to `groupedGraphs` as permitted and whitelisted (allowed assay)
-    gr => !!groupInfo[gr.id]
-  )
-  return groupItems
-}
-
-// -------------------------------------------------------------------------
 const Status = () => {
   const location = useLocation()
   /**

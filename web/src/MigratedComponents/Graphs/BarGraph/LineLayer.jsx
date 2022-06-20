@@ -166,7 +166,7 @@ const Line = barGraphProps => {
   const {
     bars,
     keys: [firstBarNameInSeries],
-    layerProps: { pointProps, tooltipProps },
+    layerProps: { pointProps, tooltipProps, strokeWidth = 1 },
   } = barGraphProps
 
   // bars of 1st series
@@ -199,7 +199,7 @@ const Line = barGraphProps => {
         d={lineGenerator(anchorBars)}
         fill="none"
         stroke={lineColor}
-        style={{ pointerEvents: 'none' }}
+        style={{ pointerEvents: 'none', strokeDasharray: '3 3', strokeWidth }}
       />
       {anchorBars.map((bar, index) => (
         <g

@@ -10,11 +10,12 @@ const layerProps = {
       // show percent with 2 decimal points
       return `${Math.round(100 * value) / 100}%`
     },
+    strokeWidth: 2,
     /**
      * circle
      */
     shape: 'circle',
-    r: 4,
+    r: 5,
     /**
      * rect
      */
@@ -31,6 +32,7 @@ const layerProps = {
     width: 100,
     height: 24,
   },
+  strokeWidth: 3,
 }
 
 export const MtbToTotalPercentage = propsFromBarGraph => (

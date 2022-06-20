@@ -16,7 +16,6 @@ import {
   generateColorForValue,
   generateTickValues,
   generateToolTip,
-  // generateLegendIntl,
   getMaxValueForDivergent,
 } from '../Helpers/Formatters'
 
@@ -31,8 +30,6 @@ const AspectResponsiveLine = ({
   displayLegend,
   displayMethod,
   indexBy,
-  // formatDate,
-  // legendsToPopover,
   legendsNotToRender,
   keys,
   tickValuesYShape,
@@ -128,7 +125,7 @@ const AspectResponsiveLine = ({
             anchor: 'bottom',
             direction: 'row',
             justify: false,
-            translateX: 0, // 100,
+            translateX: 0,
             translateY: 70,
             itemsSpacing: 0,
             itemDirection: 'left-to-right',
