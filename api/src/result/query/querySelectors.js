@@ -179,7 +179,7 @@ const getSelectCommonListFieldsTZ = userTimeOffset => ({
  */
 const LIST_FIELDS_UTC = {
   id: 'r.id',
-  endedOn: 'r.endedOn',
+  endedOn: knex.raw('IFNULL(r.endedOn, r.startedOn)'),
   externalId: 'r.externalId',
   deviceName: 'd.name',
   sampleOriginSiteName: 'so.name',
