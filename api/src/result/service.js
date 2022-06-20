@@ -806,7 +806,9 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       device: 'd',
       result: 'r',
     })
-    .select(fields)
+    .modify(function (qb) {
+      qb.select(fields)
+    })
     .select({
       resultText: knex.raw(
         `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
