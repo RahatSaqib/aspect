@@ -49,8 +49,8 @@ const GRAPHS_TREND_IN_QUARTERS = 'GRAPHS_TREND_IN_QUARTERS'
  * Another words, jobFunction definition in fixture will have 3 base array props -
  * `permissions`, `reports` and new array `graphs`.
  */
-const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['BD']
-const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['BD']
+const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['PK']
+const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['PK']
 
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
