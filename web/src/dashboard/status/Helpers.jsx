@@ -12,18 +12,17 @@ import tbTrendGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/T
 
 const { trendInYears, trendInQuarters } = tbTrendGraphs
 
-const GRAPHS_SORTED_BY_TOTAL_RESULTS = 'GRAPHS_SORTED_BY_TOTAL_RESULTS'
-const GRAPHS_TREND_IN_YEARS = 'GRAPHS_TREND_IN_YEARS'
-const GRAPHS_TREND_IN_QUARTERS = 'GRAPHS_TREND_IN_QUARTERS'
-// const GRAPHS_TREND_IN_QUARTER = 'GRAPHS_TREND_IN_QUARTER'
+export const GRAPHS_SORTED_BY_TOTAL_RESULTS = 'GRAPHS_SORTED_BY_TOTAL_RESULTS'
+export const GRAPHS_TREND_IN_YEARS = 'GRAPHS_TREND_IN_YEARS'
+export const GRAPHS_TREND_IN_QUARTERS = 'GRAPHS_TREND_IN_QUARTERS'
 /**
  * TODO: Add table in db to define such country-specific graphs in seed,
  * same as we do with Report/JobFunctionReport.
  * Another words, jobFunction definition in fixture will have 3 base array props -
  * `permissions`, `reports` and new array `graphs`.
  */
-const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['BD']
-const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['BD']
+export const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['US', 'PK']
+export const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['US', 'PK']
 
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
