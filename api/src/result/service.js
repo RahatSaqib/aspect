@@ -806,19 +806,17 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       device: 'd',
       result: 'r',
     })
+    .select(fields)
     .select({
-      ...fields,
-      ...{
-        resultText: knex.raw(
-          `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
-        ),
-        stateId: 'st.id',
-        deviceTypeId: 'dt.id',
-        resultCategory1: 'r.resultCategory1',
-        resultCategory2: 'r.resultCategory2',
-        sampleTypeId: 'stp.id',
-        resultSourceExternalId: 'rso.externalId',
-      },
+      resultText: knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
+      ),
+      stateId: 'st.id',
+      deviceTypeId: 'dt.id',
+      resultCategory1: 'r.resultCategory1',
+      resultCategory2: 'r.resultCategory2',
+      sampleTypeId: 'stp.id',
+      resultSourceExternalId: 'rso.externalId',
     })
   let data = null
   // translate result data back to an object and get assay details
@@ -1385,6 +1383,7 @@ async function updateFormData(request) {
     'r.partnerId',
     'r.formData',
   ])
+
   if (!result.ok) {
     return Boom.notFound()
   }
