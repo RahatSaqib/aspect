@@ -2,20 +2,47 @@ import React from 'react'
 
 import Line from '../../BarGraph/LineLayer'
 
+const layerProps = {
+  pointProps: {
+    // common props
+    fillColor: '#fff',
+    formatText: value => {
+      // show percent with 2 decimal points
+      return `${Math.round(100 * value) / 100}%`
+    },
+    /**
+     * circle
+     */
+    shape: 'circle',
+    r: 4,
+    /**
+     * rect
+     */
+    // shape: 'rect',
+    // width: 6,
+    // height: 6,
+    /**
+     * diamond
+     */
+    // shape: 'diamond',
+    // size: 6,
+  },
+  tooltipProps: {
+    width: 100,
+    height: 24,
+  },
+}
+
 export const MtbToTotalPercentage = propsFromBarGraph => (
   <Line
     {...propsFromBarGraph}
-    layerProps={{
-      valueFieldName: 'MtbToTotalPercentage',
-    }}
+    layerProps={{ ...layerProps, valueFieldName: 'MtbToTotalPercentage' }}
   />
 )
 
 export const RrdToMtbPercentage = propsFromBarGraph => (
   <Line
     {...propsFromBarGraph}
-    layerProps={{
-      valueFieldName: 'RrdToMtbPercentage',
-    }}
+    layerProps={{ ...layerProps, valueFieldName: 'RrdToMtbPercentage' }}
   />
 )

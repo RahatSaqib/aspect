@@ -262,7 +262,7 @@ const AspectResponsiveBar = props => {
           xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
           extraConfig: {},
           padding: 0.3,
-          translateX: 0, // -25,
+          translateX: -25,
           itemWidth: 120,
           layers: ['axes', 'grid', 'bars', 'markers', GraphLegend, ...layers],
           itemDirection: 'left-to-right',

@@ -113,17 +113,12 @@ const AspectResponsiveLine = ({
     yTickValues,
     gridYValues,
     enableGridX,
-    // translateX,
     xTickValues,
     extraConfig,
-    // itemDirection,
-    // itemWidth,
-    // layers,
     legend,
     markers,
     margin,
     padding,
-    // symbolShape,
     theme,
   } = generateConfig(type, filteredData)
   const baseLegend =
@@ -155,10 +150,6 @@ const AspectResponsiveLine = ({
           },
         ]
       : []
-  // const formatAxisLabel = (v, displayMethod, intlFormatNumber) =>
-  //   type === 'stackedDeviceActivity'
-  //     ? v.replace(/\D/g, '')
-  //     : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
 
   return (
     <div className={cssClasses('aspect-responsive-line__container')}>
@@ -167,7 +158,7 @@ const AspectResponsiveLine = ({
           style={{ flex: 1 }}
           data={filteredData}
           pointSize={10}
-          pointColor={{ theme: 'background' }}
+          pointColor={{ from: 'color' }}
           pointBorderWidth={2}
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}

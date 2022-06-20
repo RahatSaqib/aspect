@@ -6,6 +6,7 @@ import { getTimePeriod } from '../../Helpers/Formatters'
 import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
 import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
 import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
+import AxisRightLayer from '../../BarGraph/AxisRightLayer'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
@@ -184,7 +185,10 @@ const trendInQuartersMtbDetected = getGraphEntry({
       const [yyyy, qq] = `${value}`.split('-')
       return `Q${qq}-${yyyy.substring(2)}`
     },
-    layers: [MtbToTotalPercentage],
+    layers: [MtbToTotalPercentage, AxisRightLayer],
+    axisRightProps: {
+      fieldName: 'MtbToTotalPercentage',
+    },
   },
   api: {
     params: {
@@ -221,7 +225,10 @@ const trendInQuartersRifDetected = getGraphEntry({
       const [yyyy, qq] = `${value}`.split('-')
       return `Q${qq}-${yyyy.substring(2)}`
     },
-    layers: [RrdToMtbPercentage],
+    layers: [RrdToMtbPercentage, AxisRightLayer],
+    axisRightProps: {
+      fieldName: 'RrdToMtbPercentage',
+    },
   },
   api: {
     params: {
