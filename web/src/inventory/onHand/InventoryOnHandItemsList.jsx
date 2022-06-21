@@ -110,7 +110,9 @@ export const InventoryItemsListWithProps = ({
       <DataTableCard className={cssClasses('DataTableCard--title')}>
         <Grid container>
           <Grid item xs={11}>
-            {siteName} - {consumableName}
+            <h2>
+              {siteName} - {consumableName}
+            </h2>
           </Grid>
           <Grid item xs={1}>
             <Button
