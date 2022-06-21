@@ -85,6 +85,10 @@ const ntpLevel = {
       module: 'dashboard',
       activity: 'view',
     },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
   ],
 }
 
@@ -108,6 +112,22 @@ const partners = {
   permissions: [
     {
       module: 'result',
+      activity: 'view',
+    },
+    {
+      module: 'browse',
+      activity: 'view',
+    },
+    {
+      module: 'dashboard',
+      activity: 'summary',
+    },
+    {
+      module: 'dashboard',
+      activity: 'view',
+    },
+    {
+      module: 'assay',
       activity: 'view',
     },
   ],
