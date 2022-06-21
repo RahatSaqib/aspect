@@ -117,16 +117,24 @@ const messages = defineMessages({
   },
   resultQuantityOnHand: {
     id: 'pages.InventoryItemsList.resultQuantityOnHand',
-    defaultMessage: 'Quantity for move',
+    defaultMessage: 'Increase/Decrease',
   },
   inventoryOnNote: {
     id: 'pages.InventoryItemsList.inventoryOnNote',
-    defaultMessage: 'note',
+    defaultMessage: 'notes',
   },
   inventoryOnMandatoryNote: {
     id: 'pages.InventoryItemsList.inventoryOnHand.mandatoryNote',
     defaultMessage:
       'This field its mandatory and must be at least 5 characters long',
+  },
+  consumableReason: {
+    id: 'pages.InventoryItemsList.inventoryOnHand.consumableReason',
+    defaultMessage: 'Consumable Reason',
+  },
+  backButton: {
+    id: 'pages.InventoryItemsList.inventoryOnHand.backButton',
+    defaultMessage: 'Back',
   },
 })
 

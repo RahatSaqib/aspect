@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import React, { useEffect, useCallback, useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
@@ -95,11 +95,12 @@ export const InventoryItemsListWithProps = ({
     },
     {
       key: 'resultQuantityOnHand',
-      label: intl.formatMessage(messages.quantityOnHand),
+      label: intl.formatMessage(messages.resultQuantityOnHand),
     },
+
     {
       key: 'quantityOnHandNote',
-      label: intl.formatMessage(messages.quantityOnHand),
+      label: intl.formatMessage(messages.inventoryOnNote),
     },
   ]
   return (
@@ -107,17 +108,21 @@ export const InventoryItemsListWithProps = ({
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <DataTableCard className={cssClasses('DataTableCard--title')}>
-        <Grid container spacing={2}>
+        <Grid container>
           <Grid item xs={11}>
             {siteName} - {consumableName}
           </Grid>
           <Grid item xs={1}>
             <Button
-              className={cssClasses('form__button', `form__button--back`, {})}
-              onClick={() => navigate('browse/inventory')}
-              variant="outlined"
+              variant="contained"
+              color="primary"
+              onClick={() =>
+                navigate(
+                  'browse/inventory?filters=countryId%3D4%26hasStock%3Dtrue'
+                )
+              }
             >
-              Back
+              {intl.formatMessage(messages.backButton)}
             </Button>
           </Grid>
         </Grid>

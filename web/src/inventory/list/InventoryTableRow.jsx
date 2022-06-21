@@ -32,7 +32,9 @@ const InventoryTableRow = ({
 }) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
-
+  const isNumber =
+    !Number.isNaN(inventoryItem.get('quantityOnHand')) &&
+    Number.isInteger(parseFloat(inventoryItem.get('quantityOnHand')))
   const getActions = isInTransit => [
     {
       icon: 'FaCheck',
@@ -65,7 +67,7 @@ const InventoryTableRow = ({
     {
       icon: 'FaSquare',
       text: formatMessage(messages.inventoryOnHand),
-      disabled: isInTransit || breakOutByLot,
+      disabled: isInTransit || breakOutByLot || !isNumber,
       action: ({ inventoryItem }) => {
         const siteId = inventoryItem.get('siteId')
         const consumableId = inventoryItem.get('consumableId')
@@ -90,7 +92,7 @@ const InventoryTableRow = ({
       : formatNumber(round(qty, 2))
 
   return (
-    <TableRow className={cssClasses('TableRow')}>
+    <TableRow className={cssClasses('TableRow')} key={rowSpan('id')}>
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={rowSpan('siteName')}

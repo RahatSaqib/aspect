@@ -4,7 +4,9 @@ import isNull from 'lodash/isNull'
 import TextField from '@material-ui/core/TextField'
 import { useDispatch } from 'react-redux'
 import { useMutation } from 'react-query'
-
+import Fade from '@material-ui/core/Fade'
+import CancelSharpIcon from '@material-ui/icons/CancelSharp'
+import CheckIcon from '@material-ui/icons/Check'
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
@@ -21,6 +23,8 @@ const cssClasses = classnames.bind(styles)
 const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   const { formatMessage, formatNumber } = useI18n()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
+  const [showCheck, setShowCheck] = useState(false)
+  const [showError, setShowError] = useState(false)
   const [resultQtyOnHand, setResultQtyOnHand] = useState('')
   const [notes, setNotes] = useState('')
   const [isAdd, setIsAdd] = useState(false)
@@ -37,26 +41,32 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
     }
     const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
     const newQty = parseInt(evt.target.value, 10)
-    if (qty === newQty) {
-      setResultQtyOnHand(newQty)
-    } else if (qty > newQty) {
+    if (newQty !== qty) {
       setResultQtyOnHand(newQty - qty)
-      setIsAdd(false)
-    } else {
-      setResultQtyOnHand(newQty + qty)
-      setIsAdd(true)
+      if (qty > newQty) {
+        setIsAdd(false)
+      } else {
+        setIsAdd(true)
+      }
+      setNewQtyOnHand(newQty)
     }
-    setNewQtyOnHand(newQty)
   }
 
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
     values => modifyInventoryOnHand(values, dispatch, inventoryItem),
     {
+      onError: error => {
+        setShowError(true)
+        setTimeout(() => setShowError(false), 3000)
+        throw new Error(error)
+      },
       onSuccess: async () => {
         await refreshData()
         setNewQtyOnHand(0)
         setResultQtyOnHand(0)
         setNotes('')
+        setShowCheck(true)
+        setTimeout(() => setShowCheck(false), 3000)
       },
     }
   )
@@ -64,9 +74,11 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   const updateInventoryOnBlur = async () => {
     const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
     const newQty = parseInt(newQtyOnHand, 10)
+    const movementQty = parseInt(resultQtyOnHand, 10)
+
     if (qty !== newQty && notes && notes.length >= 5) {
       onModifyInventoryOnHandSubmit({
-        quantity: newQty,
+        quantity: movementQty,
         isAdd,
         notes,
         expiresOn: inventoryItem.get('expiresOn'),
@@ -75,7 +87,11 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   }
 
   return (
-    <TableRow onBlur={updateInventoryOnBlur} className={cssClasses('TableRow')}>
+    <TableRow
+      onBlur={updateInventoryOnBlur}
+      className={cssClasses('TableRow')}
+      key={inventoryItem.get('id')}
+    >
       {inventoryItem.get('expiresOn') !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
@@ -179,6 +195,14 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
           helperText={formatMessage(messages.inventoryOnMandatoryNote)}
           onChange={evt => setNotes(evt.target.value)}
         />
+      </TableCell>
+      <TableCell>
+        <Fade in={showCheck} out={!showCheck} timeout={1500}>
+          <CheckIcon color="primary" />
+        </Fade>
+        <Fade in={showError} out={!showError} timeout={1500}>
+          <CancelSharpIcon color="secondary" />
+        </Fade>
       </TableCell>
     </TableRow>
   )
