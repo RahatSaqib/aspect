@@ -27,8 +27,11 @@ const GraphContainer = ({
   const { formatMessage: intlFormatMessage } = useIntl()
   const { graphType, graphRenderPermissions } = config
   const { innerSize, outerSize } = size
-  const { isClientSide, component: ClientSideFilter } =
-    selectorModifiers[0] || false
+  const {
+    identifier,
+    isClientSide,
+    component: ClientSideFilter,
+  } = selectorModifiers[0] || false
   const [graphParams, setGraphParams] = useState(false)
   const [clientSideFilters, setClientSideFilters] = useState(false)
   const [clientSideFilterOptions, setClientSideFilterOptions] = useState(false)
@@ -96,6 +99,7 @@ const GraphContainer = ({
                         updatedParams={graphParams}
                         formatMessage={intlFormatMessage}
                         clientSideFilter={{
+                          identifier,
                           isClientSide,
                           selectorModifiers,
                           clientSideFilters,

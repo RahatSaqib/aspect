@@ -81,13 +81,7 @@ function isExpired(lastRefreshed) {
   )
 }
 
-export const fetchCountriesForLocationSelector = countriesState => dispatch => {
-  if (
-    countriesState.get('loading') ||
-    !isExpired(countriesState.get('lastRefreshed'))
-  ) {
-    return
-  }
+const doFetchCountries = dispatch => {
   dispatch(createRequestCountriesForLocationSelector())
   return aspectFetch('/geography/country-select-list', {
     errorNotifications: {
@@ -105,38 +99,94 @@ export const fetchCountriesForLocationSelector = countriesState => dispatch => {
   )
 }
 
-export const fetchStatesForLocationSelector = selectedCountry => dispatch => {
+export const fetchCountries = () => dispatch => doFetchCountries(dispatch)
+
+export const fetchCountriesForLocationSelector = countriesState => dispatch => {
   if (
-    selectedCountry.getIn(['children', 'loading']) ||
-    !isExpired(selectedCountry.getIn(['children', 'lastRefreshed']))
+    countriesState.get('loading') ||
+    !isExpired(countriesState.get('lastRefreshed'))
   ) {
     return
   }
-  dispatch(createRequestStatesForLocationSelector(selectedCountry.get('id')))
-  return aspectFetch(
-    `/geography/state-select-list/${selectedCountry.get('id')}`,
-    {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
-              defaultMessage: 'Error Loading States for {countryName}',
-            },
-          }),
-          { countryName: selectedCountry.get('name') }
-        ),
-      },
-    }
-  ).then(json =>
-    dispatch(
-      createReceiveStatesForLocationSelector(
-        json.data,
-        selectedCountry.get('id')
-      )
-    )
+  return doFetchCountries(dispatch)
+}
+
+const doFetchStatesForCountry = ({
+  countryId,
+  countryName,
+  geography,
+  forceRefresh,
+  dispatch,
+}) => {
+  const selectedCountry = geography
+    .getIn(['countriesForLocationSelector', 'items'])
+    .find(country => +country.get('id') === +countryId)
+
+  const shouldFetch =
+    forceRefresh || !selectedCountry?.getIn(['children', 'lastRefreshed'])
+
+  if (!shouldFetch) {
+    return
+  }
+
+  dispatch(createRequestStatesForLocationSelector(countryId))
+  return aspectFetch(`/geography/state-select-list/${countryId}`, {
+    errorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchStatesForLocationSelector.GET.default.title',
+            defaultMessage: 'Error Loading States for {countryName}',
+          },
+        }),
+        { countryName }
+      ),
+    },
+  }).then(json =>
+    dispatch(createReceiveStatesForLocationSelector(json.data, countryId))
   )
 }
+
+export const fetchStatesForCountry =
+  (countryId, countryName, forceRefresh) => (dispatch, getState) => {
+    const { geography } = getState()
+    if (geography.getIn(['countriesForLocationSelector', 'loading'])) {
+      return
+    }
+
+    return doFetchStatesForCountry({
+      countryId,
+      countryName,
+      geography,
+      forceRefresh,
+      dispatch,
+    })
+  }
+
+export const fetchStatesForLocationSelector =
+  selectedCountry => (dispatch, getState) => {
+    const { geography } = getState()
+    if (geography.getIn(['countriesForLocationSelector', 'loading'])) {
+      return
+    }
+
+    if (
+      selectedCountry.getIn(['children', 'loading']) ||
+      !isExpired(selectedCountry.getIn(['children', 'lastRefreshed']))
+    ) {
+      return
+    }
+
+    const countryId = selectedCountry.get('id')
+    const countryName = selectedCountry.get('name')
+
+    return doFetchStatesForCountry({
+      countryId,
+      countryName,
+      geography,
+      dispatch,
+    })
+  }
 
 export const fetchLgasForLocationSelector =
   (selectedCountry, selectedState) => dispatch => {

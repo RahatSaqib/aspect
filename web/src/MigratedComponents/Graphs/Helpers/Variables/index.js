@@ -273,7 +273,29 @@ const graphColorMap = [
   { id: 202, externalId: 'assayLPA', color: assayHitGray },
   { id: 204, externalId: 'assayTbLamp', color: assayRollingStone },
 
+  { id: 301, externalId: '2010', color: covid1 },
+  { id: 301, externalId: '2011', color: colorMandy },
+  { id: 302, externalId: '2012', color: webOrange },
+  { id: 303, externalId: '2013', color: colorPink },
+  { id: 304, externalId: '2014', color: goldenDream },
+  { id: 305, externalId: '2015', color: bdGray1 },
+  { id: 306, externalId: '2016', color: colorConifer },
+  { id: 307, externalId: '2017', color: colorMandy2 },
+  { id: 308, externalId: '2018', color: colorCrayola },
+  { id: 309, externalId: '2019', color: easternBlue2 },
+  { id: 310, externalId: '2020', color: colorSuperNova },
+  { id: 311, externalId: '2021', color: dusty },
+  { id: 312, externalId: '2022', color: colorConifer },
+  { id: 312, externalId: '2023', color: colorMint },
+  { id: 312, externalId: '2024', color: colorSuperNova2 },
+  { id: 312, externalId: '2025', color: colorPowder },
+
+  { id: 501, externalId: 'caseTotal', color: odTransferTime },
+  { id: 502, externalId: 'caseDetected', color: colorMandy }, // same color as for 'Detected'
+  { id: 503, externalId: 'casePercentDetectedOfTotal', color: webOrange },
+
   { id: 999, externalId: 'Cases', color: colorConifer },
+  { id: 1000, externalId: 'unknown', color: odUnknown },
 ]
 
 export default graphColorMap
