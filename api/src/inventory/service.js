@@ -527,7 +527,7 @@ function getInventoryItemsRaw() {
   )`
 }
 
-async function listLogForUI(request) {
+async function listInventoryLog(request) {
   const res = await listLog(request, querySelectors.INVENTORY_LOG_UILIST)
   return res
 }
@@ -1833,5 +1833,5 @@ module.exports = {
   selectInventoryStockAtSite,
   getDaysByLocation,
   listLog,
-  listLogForUI,
+  listInventoryLog,
 }
