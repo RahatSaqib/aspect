@@ -1820,15 +1820,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
 async function modifyInventoryOnHand(request) {
   const {
     auth,
-    payload: {
-      siteId,
-      consumableId,
-      lotNumber,
-      quantity,
-      isAdd,
-      notes,
-      expiresOn,
-    },
+    payload: { siteId, consumableId, lotNumber, quantity, notes, expiresOn },
   } = request
   const messageContext = request.plugins.messageContext.bindActionCreators({
     inventoryStockout,
@@ -1849,23 +1841,11 @@ async function modifyInventoryOnHand(request) {
   }
   let result = null
   const fromToSite = await getSite(siteId, dataConstraints)
-  if (isAdd) {
-    if (!fromToSite) {
-      return Boom.forbidden(
-        'You are not permitted to add inventory to this site'
-      )
-    }
-    payload.operation = 'add'
-    result = await increaseInventory(payload)
-  } else {
-    if (!fromToSite) {
-      return Boom.forbidden(
-        'You are not permitted to remove inventory from this site'
-      )
-    }
-    payload.operation = 'remove'
-    result = await decreaseInventory(payload)
+  if (!fromToSite) {
+    return Boom.forbidden('You are not permitted to add inventory to this site')
   }
+  payload.operation = 'add'
+  result = await increaseInventory(payload)
   return result
 }
 
