@@ -117,7 +117,7 @@ const messages = defineMessages({
   },
   resultQuantityOnHand: {
     id: 'pages.InventoryItemsList.resultQuantityOnHand',
-    defaultMessage: 'Result Quantity On Hand',
+    defaultMessage: 'Quantity for move',
   },
   inventoryOnNote: {
     id: 'pages.InventoryItemsList.inventoryOnNote',

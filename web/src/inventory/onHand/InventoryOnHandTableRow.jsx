@@ -32,6 +32,9 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
 
   const newQtyHandler = evt => {
+    if (!evt.target.value) {
+      return setNewQtyOnHand('')
+    }
     const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
     const newQty = parseInt(evt.target.value, 10)
     if (qty === newQty) {
@@ -43,7 +46,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
       setResultQtyOnHand(newQty + qty)
       setIsAdd(true)
     }
-    setNewQtyOnHand(evt.target.value)
+    setNewQtyOnHand(newQty)
   }
 
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
@@ -61,7 +64,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   const updateInventoryOnBlur = async () => {
     const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
     const newQty = parseInt(newQtyOnHand, 10)
-    if (qty !== newQty && notes) {
+    if (qty !== newQty && notes && notes.length >= 5) {
       onModifyInventoryOnHandSubmit({
         quantity: newQty,
         isAdd,

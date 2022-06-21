@@ -1,14 +1,16 @@
 import classnames from 'classnames/bind'
-import React, { useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useCallback, useState } from 'react'
+import { useParams, useLocation } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import Grid from '@material-ui/core/Grid'
 
-import { useAuthState } from '../../Providers/AuthProvider'
+import Button from '@material-ui/core/Button'
+
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import {
   makeSortPageSelector,
@@ -71,6 +73,8 @@ export const InventoryItemsListWithProps = ({
   pageAt,
   pageSize,
   refreshData,
+  siteName,
+  consumableName,
 }) => {
   const columns = [
     {
@@ -103,7 +107,20 @@ export const InventoryItemsListWithProps = ({
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <DataTableCard className={cssClasses('DataTableCard--title')}>
-        Site and Consumable here
+        <Grid container spacing={2}>
+          <Grid item xs={11}>
+            {siteName} - {consumableName}
+          </Grid>
+          <Grid item xs={1}>
+            <Button
+              className={cssClasses('form__button', `form__button--back`, {})}
+              onClick={() => navigate('browse/inventory')}
+              variant="outlined"
+            >
+              Back
+            </Button>
+          </Grid>
+        </Grid>
       </DataTableCard>
       <DataTableCard
         key={`DataTableCard--table-${location.key}`}
@@ -158,7 +175,8 @@ export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
   const intl = useIntl()
-
+  const [siteName, setSiteName] = useState('')
+  const [consumableName, setConsumableName] = useState('')
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)
   // >>>>>> Structuring data <<<<<<
@@ -195,6 +213,8 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const refreshData = async () => {
     const resp = await refetch()
     if (resp.data) {
+      setSiteName(data.data[0].siteName)
+      setConsumableName(data.data[0].consumableName)
       setDataTable(resp.data)
     }
   }
@@ -223,6 +243,8 @@ export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Lifecycle hooks <<<<<<
   useEffect(() => {
     if (data) {
+      setSiteName(data.data[0].siteName)
+      setConsumableName(data.data[0].consumableName)
       setDataTable()
     }
   }, [data, dispatch, refetch, setDataTable])
@@ -258,6 +280,8 @@ export const InventoryItemsList = ({ navigate, location }) => {
     siteId,
     consumableId,
     refreshData,
+    siteName,
+    consumableName,
   }
 
   return <InventoryItemsListWithProps {...props} />
