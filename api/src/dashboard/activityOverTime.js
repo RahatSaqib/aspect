@@ -102,9 +102,9 @@ async function activityOverTimeDashboard(request) {
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
-    .whereRaw('dmsl.day >= ? AND dmsl.day <= ?', [
+    .whereRaw('dmsl.day >= ? AND dmsl.day < ?', [
       formatDateOrDefault(query.minDate, 'yyyy-MM-dd'),
-      formatDateOrDefault(query.maxDate, 'yyyy-MM-dd'),
+      formatDateOrDefault(addDays(new Date(), 1), 'yyyy-MM-dd'),
     ])
     .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)
