@@ -5,10 +5,10 @@ const { subMonths, subDays } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
-  getSelectCommonListFields,
-  getReportCommonFields,
-  getSelectShowFields,
-  getListFields,
+  getSelectCommonListFieldsTZ,
+  getReportCommonFieldsTZ,
+  SELECT_FIELDS_UTC,
+  LIST_FIELDS_UTC,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./query')
@@ -56,13 +56,7 @@ const logger = require('../shared/logger')
 const { createFormObject } = require('../forms/service')
 const { GRAPH_FLAGS } = require('../shared/constants')
 
-async function getListResults(query, auth, fields) {
-  if (!fields) {
-    const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-
-    fields = getListFields(userTimeOffset)
-  }
-
+async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -87,7 +81,7 @@ async function getListResults(query, auth, fields) {
 
     if (assay.resultCategory1Label) {
       if (!sortableFields.includes('resultCategory1Name')) {
-        selectFields.push('rc1.name as resultCategory1Name')
+        selectFields.resultCategory1Name = 'rc1.name'
         sortableFields.push('resultCategory1Name')
       }
       assayColumns.push({
@@ -101,7 +95,7 @@ async function getListResults(query, auth, fields) {
 
     if (assay.resultCategory2Label) {
       if (!sortableFields.includes('resultCategory2Name')) {
-        selectFields.push('rc2.name as resultCategory2Name')
+        selectFields.resultCategory2Name = 'rc2.name'
         sortableFields.push('resultCategory2Name')
       }
       assayColumns.push({
@@ -119,9 +113,10 @@ async function getListResults(query, auth, fields) {
         if (value.list) {
           const alias = key.replace('.', '_')
           if (!sortableFields.includes(alias)) {
-            selectFields.push(
-              knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, alias])
-            )
+            selectFields[alias] = knex.raw('JSON_EXTRACT(resultData, ?)', [
+              `$.${key}`,
+            ])
+
             sortableFields.push(alias)
           }
           assayColumns.push({
@@ -149,12 +144,14 @@ async function getListResults(query, auth, fields) {
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
-  selectFields.push('rc2.name as resultCategory2Name')
-  selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
-  selectFields.push('a.resultCategory2i18nKey as resultCategory2Titlei18nKey')
-  selectFields.push('a.resultCategory1i18nKey as resultCategory1Titlei18nKey')
-  selectFields.push('a.resultCategory1label as resultCategory1Title')
-  selectFields.push('a.resultCategory2label as resultCategory2Title')
+  const resultFields = {
+    resultCategory2Name: 'rc2.name',
+    resultCategory2I18nKey: 'rc2.i18nKey',
+    resultCategory2Titlei18nKey: 'a.resultCategory2i18nKey',
+    resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
+    resultCategory1Title: 'a.resultCategory1label',
+    resultCategory2Title: 'a.resultCategory2label',
+  }
 
   // get rows
   const getItems = resultQuery
@@ -162,6 +159,9 @@ async function getListResults(query, auth, fields) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+    .modify(function (qb) {
+      qb.select(resultFields)
+    })
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -207,12 +207,12 @@ function getResultTreatmentStatus(response) {
 
 async function getResultsForExport(auth, query) {
   const offset = getOffsetFromIsoDateString(query.maxDate)
-  const selectFields = [
-    ...getSelectCommonListFields(offset),
-    knex.raw(
-      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+  const selectFields = {
+    ...getSelectCommonListFieldsTZ(offset),
+    resultText: knex.raw(
+      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
     ),
-  ]
+  }
   const sortableFields = [...SORT_FIELDS]
 
   const assayColumns = []
@@ -220,7 +220,7 @@ async function getResultsForExport(auth, query) {
     const assay = await knex('Assay as a').where('a.id', query.assayId).first()
 
     if (assay.resultCategory1Label) {
-      selectFields.push('rc1.name as resultCategory1Name')
+      selectFields.resultCategory1Name = 'rc1.name'
       sortableFields.push('resultCategory1Name')
       assayColumns.push({
         db: 'resultCategory1Name',
@@ -231,7 +231,7 @@ async function getResultsForExport(auth, query) {
     }
 
     if (assay.resultCategory2Label) {
-      selectFields.push('rc2.name as resultCategory2Name')
+      selectFields.resultCategory2Name = 'rc2.name'
       sortableFields.push('resultCategory2Name')
       assayColumns.push({
         db: 'resultCategory2Name',
@@ -781,13 +781,10 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultByResultId(auth, resultId, fields) {
+async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
 
-  if (!fields) {
-    fields = getSelectShowFields('+00:00') // This field list has been altered to use in reports showing dates in requested timezone, here is in GMT (as in the DB), because this is not meanted to use in a report.
-  }
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -809,18 +806,20 @@ async function getResultByResultId(auth, resultId, fields) {
       device: 'd',
       result: 'r',
     })
-    .select([
-      ...fields,
-      knex.raw(
-        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+    .modify(function (qb) {
+      qb.select(fields)
+    })
+    .select({
+      resultText: knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
       ),
-      'st.id as stateId',
-      'dt.id as deviceTypeId',
-      'r.resultCategory1',
-      'r.resultCategory2',
-      'stp.id as sampleTypeId',
-      'rso.externalId as resultSourceExternalId',
-    ])
+      stateId: 'st.id',
+      deviceTypeId: 'dt.id',
+      resultCategory1: 'r.resultCategory1',
+      resultCategory2: 'r.resultCategory2',
+      sampleTypeId: 'stp.id',
+      resultSourceExternalId: 'rso.externalId',
+    })
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful
@@ -1386,6 +1385,7 @@ async function updateFormData(request) {
     'r.partnerId',
     'r.formData',
   ])
+
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -2372,7 +2372,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
 async function getResultsForReport(auth, query) {
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth, getReportCommonFields(userTimeOffset))
+  return getListResults(query, auth, getReportCommonFieldsTZ(userTimeOffset))
 }
 
 // ---------------------------------------------------------------
