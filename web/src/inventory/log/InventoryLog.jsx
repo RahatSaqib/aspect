@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import PropTypes from 'prop-types'
 import { useAuthState } from '../../Providers/AuthProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import {
@@ -175,7 +176,7 @@ export const InventoryLogWithProps = ({
   )
 }
 
-export const InventoryLog = ({ navigate, location }) => {
+const InventoryLog = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const intl = useIntl()
   const {
@@ -254,6 +255,11 @@ export const InventoryLog = ({ navigate, location }) => {
   }
 
   return <InventoryLogWithProps {...props} />
+}
+
+InventoryLog.propTypes = {
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default InventoryLog
