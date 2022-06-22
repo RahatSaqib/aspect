@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { oneOfType, object } from 'prop-types'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -6,42 +6,11 @@ import map from 'lodash/map'
 import groupBy from 'lodash/groupBy'
 import findIndex from 'lodash/findIndex'
 import Select, { components } from 'react-select'
-import { defineMessages } from 'react-intl'
 import useI18n from '../../Hooks/i18n/useI18n'
 import { getAspectTheme } from './index.jsx'
 import assayTranslations from '../../shared/messages/assay.js'
-
-const messages = defineMessages({
-  selectAssay: {
-    id: 'filter.clientSideFilterSelect.selectAssay',
-    defaultMessage: 'Select an Assay',
-  },
-  selectAll: {
-    id: 'filter.clientSideFilterSelect.selectAll',
-    defaultMessage: 'All',
-  },
-})
-
-const CustomClearText = () => {
-  const { formatMessage } = useI18n()
-  return <Fragment>{formatMessage(messages.selectAll)}</Fragment>
-}
-const ClearIndicator = props => {
-  const {
-    children = <CustomClearText />,
-    getStyles,
-    innerProps: { ref, ...restInnerProps },
-  } = props
-  return (
-    <div
-      {...restInnerProps}
-      ref={ref}
-      style={getStyles('clearIndicator', props)}
-    >
-      <div style={{ padding: '0px 5px' }}>{children}</div>
-    </div>
-  )
-}
+import messages from './messages'
+import ClearIndicator from './ClearIndicator'
 
 const Group = props => {
   const { selectProps, options, headingProps } = props

@@ -376,6 +376,27 @@ export const messages = {
       id: 'legends.Unknown.inventoryGraphStatusYAxisLegend',
       defaultMessage: 'Supply in Stock',
     },
+
+    Total: {
+      id: 'legends.Unknown.Total',
+      defaultMessage: 'Total',
+    },
+    MTBPlus: {
+      id: 'legends.Unknown.MTBPlus',
+      defaultMessage: 'MTB+',
+    },
+    MTBPercent: {
+      id: 'legends.Unknown.MTBPercent',
+      defaultMessage: 'MTB%',
+    },
+    RRDHash: {
+      id: 'legends.Unknown.RRDHash',
+      defaultMessage: 'RRD#',
+    },
+    RRDPercent: {
+      id: 'legends.Unknown.RRDPercent',
+      defaultMessage: 'RRD%',
+    },
   }),
 }
 

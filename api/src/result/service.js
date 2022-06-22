@@ -2368,12 +2368,26 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   return resultQuery
 }
 
+// ---------------------------------------------------------------
 async function getResultsForReport(auth, query) {
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // for now call existing function, but later add here a query with different aggregations
   return getListResults(query, auth, getReportCommonFields(userTimeOffset))
 }
 
+// ---------------------------------------------------------------
+function getGroupBy(query) {
+  if (!query.groupBy) {
+    // if no group is specified, use result category
+    return ['resultCategory1']
+  }
+  if (!_.isArray(query.groupBy)) {
+    return [query.groupBy]
+  }
+  return query.groupBy
+}
+
+// ---------------------------------------------------------------
 async function clinicalIndicatorAggregations(request) {
   const { auth, query } = request
 
@@ -2389,14 +2403,7 @@ async function clinicalIndicatorAggregations(request) {
   }
 
   // if no group is specified, use result category
-  let groupBy = null
-  if (!query.groupBy) {
-    groupBy = ['resultCategory1']
-  } else if (!Array.isArray(query.groupBy)) {
-    groupBy = [query.groupBy]
-  } else {
-    groupBy = query.groupBy
-  }
+  const groupBy = getGroupBy(query)
 
   // optional flags
   let flags = []
@@ -2449,10 +2456,177 @@ async function clinicalIndicatorAggregations(request) {
     const [{ cnt }] = await resultQuery.clone()
     resp.totalResults = cnt
   }
+
   resp.data = await processGroupedQuery(resultQuery, groupBy)
   return resp
 }
 
+// ---------------------------------------------------------------
+function getQuarterByMonth(monthNumber) {
+  if (monthNumber >= 1 && monthNumber <= 3) return 1
+  if (monthNumber >= 4 && monthNumber <= 6) return 2
+  if (monthNumber >= 7 && monthNumber <= 9) return 3
+  if (monthNumber >= 10 && monthNumber <= 12) return 4
+  return null
+}
+
+// ---------------------------------------------------------------
+async function trendInQuarters(request) {
+  const { query } = request
+  let groupBy = [...getGroupBy(query), 'month']
+
+  request.query = { ...request.query, groupBy }
+
+  // get data grouped by month via using Fact table
+  const resp = await clinicalIndicatorAggregations(request)
+
+  // remove `month` from groupBy array to use rest of groupBy items
+  groupBy = _.filter(groupBy, it => it !== 'month')
+
+  // re-group data by quarter
+  const dataRaw = _.reduce(
+    resp.data,
+    (acc, it) => {
+      const [yyyy, mm] = it.month.split('-')
+      const quarter = getQuarterByMonth(+mm)
+      const restGroupedBy = _.pick(it, groupBy)
+
+      acc[yyyy] = acc[yyyy] || {} // object for each year
+      acc[yyyy][quarter] = acc[yyyy][quarter] || [] // array of items for each quarter
+
+      /**
+       * from array of items in acc[yyyy][quarter] - get item with same
+       * props as in `restGroupedBy`
+       */
+      let item = _.find(acc[yyyy][quarter], restGroupedBy)
+      if (!item) {
+        item = { cnt: 0, ...restGroupedBy }
+        acc[yyyy][quarter] = [...acc[yyyy][quarter], item]
+      }
+      item.cnt += it.cnt
+      return acc
+    },
+    {
+      /**
+       * assemble temporal object
+       * YYYY: {
+       *  1: [
+       *    { cnt: xxx, resultCategory1: 'Detected', ... }, <---- `cnt` and each groupBy param
+       *    { cnt: xxx, resultCategory1: 'NotDetected', ... },
+       *    ...
+       *  ],
+       *  2: ...
+       *  3: ...
+       *  4: ...
+       * }
+       */
+    }
+  )
+
+  return { resp, dataRaw }
+}
+
+// ---------------------------------------------------------------
+async function trendInQuartersMtbDetected(request) {
+  const { dataRaw } = await trendInQuarters(request)
+  const DETECTED = 'Detected'
+
+  // get final data set groped by rest of items
+  let grouped = []
+  // for each year ...
+  _.keys(dataRaw).forEach(yyyy => {
+    // ... for each quarter ...
+    _.keys(dataRaw[yyyy]).forEach(quarter => {
+      grouped = [
+        ...grouped,
+        _.reduce(
+          dataRaw[yyyy][quarter],
+          (acc, it) => {
+            if (it.resultCategory1 === DETECTED) {
+              acc.MtbDetected = it.cnt
+            }
+            acc.Total += it.cnt
+            return acc
+          },
+          {
+            quarter: `${yyyy}-${quarter}`,
+            Total: 0,
+            MtbDetected: 0,
+          }
+        ),
+      ]
+    })
+  })
+
+  grouped = _.sortBy(grouped, 'quarter')
+  grouped.forEach(it => {
+    it.MtbToTotalPercentage =
+      it.Total === 0 ? 0 : (100 * it.MtbDetected) / it.Total
+  })
+
+  return {
+    grouped,
+    keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
+    i18nKeys: {
+      MtbDetected: 'MTBPlus',
+      Total: 'Total',
+      MtbToTotalPercentage: 'MTBPercent',
+    },
+  }
+}
+
+// ---------------------------------------------------------------
+async function trendInQuartersRifDetected(request) {
+  const { dataRaw } = await trendInQuarters(request)
+  const DETECTED = 'Detected'
+
+  // get final data set groped by rest of items
+  let grouped = []
+  // for each year ...
+  _.keys(dataRaw).forEach(yyyy => {
+    // ... for each quarter ...
+    _.keys(dataRaw[yyyy]).forEach(quarter => {
+      grouped = [
+        ...grouped,
+        _.reduce(
+          dataRaw[yyyy][quarter],
+          (acc, it) => {
+            if (it.resultCategory1 === DETECTED) {
+              acc.MtbDetected += it.cnt
+              if (it.resultCategory2 === DETECTED) {
+                acc.RrdDetected += it.cnt
+              }
+            }
+            return acc
+          },
+          {
+            quarter: `${yyyy}-${quarter}`,
+            MtbDetected: 0,
+            RrdDetected: 0,
+          }
+        ),
+      ]
+    })
+  })
+
+  grouped = _.sortBy(grouped, 'quarter')
+  grouped.forEach(it => {
+    it.RrdToMtbPercentage =
+      it.MtbDetected === 0 ? 0 : (100 * it.RrdDetected) / it.MtbDetected
+  })
+
+  return {
+    grouped,
+    keysFromGrouped: ['MtbDetected', 'RrdDetected', 'RrdToMtbPercentage'], // series
+    i18nKeys: {
+      MtbDetected: 'MTBPlus',
+      RrdDetected: 'RRDHash',
+      RrdToMtbPercentage: 'RRDPercent',
+    },
+  }
+}
+
+// ---------------------------------------------------------------
 function getClinicalIndicatorQueryForFactTable(
   dataConstraints,
   assay,
@@ -2485,6 +2659,7 @@ function getClinicalIndicatorQueryForFactTable(
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -2553,6 +2728,7 @@ function getClinicalIndicatorQueryForResultsTable(
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -2606,6 +2782,9 @@ async function processGroupedQuery(
 
     week: knex.raw(`DATE_FORMAT(${dateColumn}, "%x-%v") as week_value`),
     month: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m") as month_value`),
+    quarter: knex.raw(
+      `CONCAT( YEAR(${dateColumn}),'-',QUARTER(${dateColumn}) ) as quarter_value`
+    ),
     year: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y") as year_value`),
     day: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m-%d") as day_value`),
 
@@ -2617,7 +2796,7 @@ async function processGroupedQuery(
     followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
   }
 
-  const reservedWords = ['day', 'month', 'week', 'year']
+  const reservedWords = ['day', 'month', 'quarter', 'week', 'year']
 
   groupBy.forEach(g => {
     resultQuery.modify(qb => {
@@ -3296,6 +3475,7 @@ module.exports = {
   showResultFollowUps,
   transferResult,
   clinicalIndicatorAggregations,
+  // clinicalIndicatorAggregationsInQuarters,
   followUpAggregations,
   getQueryForResultsListAndExport,
   queryResultFollowUpLastItems,
@@ -3307,4 +3487,8 @@ module.exports = {
   addResultDownloadLog,
   listSampleTypes,
   getCustomFieldsCompletion,
+
+  trendInQuartersMtbDetected,
+  trendInQuartersRifDetected,
+  // trendInYears,
 }

@@ -4,6 +4,7 @@ import every from 'lodash/every'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
 import sortBy from 'lodash/sortBy'
+import isFunction from 'lodash/isFunction'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
 
@@ -20,6 +21,7 @@ import {
   generateToolTip,
   generateLegendIntl,
   getMaxValueForDivergent,
+  getColorIdByFieldName,
 } from '../Helpers/Formatters'
 import { negateTimeZoneOffset } from '../../../components/shared/DateTimeInput/utils/date'
 
@@ -29,30 +31,8 @@ import styles from './AspectResponsiveBar.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectResponsiveBar = ({
-  assaysFromState,
-  config: baseConfig,
-  data,
-  displayLegend,
-  displayMethod,
-  indexBy,
-  formatDate,
-  legendsToPopover,
-  legendsNotToRender,
-  keys,
-  tickValuesYShape,
-  tickValuesXShape,
-  type,
-  i18nKeys,
-}) => {
-  const { setConfig } = useGraphClickThrough()
-  const { format, formatNumber: intlFormatNumber, formatMessage } = useI18n()
-  const graphsToHaveCustomLegend = [
-    'bar',
-    'stackedDeviceActivity',
-    'barLegacyTreatment',
-  ]
-  const { id: graphId, sortByKeys } = baseConfig
+// ----------------------------------------------------------
+const normalizeData = (data, { sortByKeys }) => {
   let filteredData = data
   if (sortByKeys?.length) {
     const firstDataItem = first(sortBy(data, sortByKeys))
@@ -60,6 +40,107 @@ const AspectResponsiveBar = ({
       every(sortByKeys, k => d[k] === firstDataItem[k])
     )
   }
+  return filteredData
+}
+
+// ----------------------------------------------------------
+const graphsToHaveCustomLegend = [
+  'bar',
+  'stackedDeviceActivity',
+  'barLegacyTreatment',
+  'bar-line',
+]
+
+// ----------------------------------------------------------
+const getLegend = (props, config, { formatMessage }) => {
+  const {
+    assaysFromState,
+    config: baseConfig,
+    displayLegend,
+    legendsNotToRender,
+    keys,
+    type,
+    i18nKeys,
+  } = props
+  const { id: graphId, fields } = baseConfig
+  const { translateX, itemDirection, itemWidth, symbolShape } = config
+  const baseLegend =
+    displayLegend && !graphsToHaveCustomLegend.includes(type)
+      ? [
+          {
+            dataFrom: 'keys',
+            data: keys.map(k =>
+              generateLegendIntl(
+                formatMessage,
+                messages,
+                i18nKeys,
+                k,
+                assaysFromState,
+                graphId,
+                legendsNotToRender,
+                {
+                  colorExternalId: getColorIdByFieldName(fields, k),
+                }
+              )
+            ),
+            anchor: 'bottom',
+            direction: 'row',
+            justify: false,
+            translateX,
+            translateY: 60,
+            itemsSpacing: 2,
+            itemWidth,
+            itemHeight: 20,
+            itemDirection,
+            itemOpacity: 0.85,
+            symbolSize: 20,
+            symbolShape,
+            effects: [{ on: 'hover', style: { itemOpacity: 1 } }],
+          },
+        ]
+      : []
+  return baseLegend
+}
+
+// ----------------------------------------------------------
+const formatAxisLabel = (v, type, displayMethod, intlFormatNumber) => {
+  if (isFunction(displayMethod)) {
+    return displayMethod(v, intlFormatNumber)
+  }
+  return type === 'stackedDeviceActivity'
+    ? v.replace(/\D/g, '')
+    : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
+}
+
+/** ***********************************************************
+ *
+ * AspectResponsiveBar
+ *
+ ** *********************************************************** */
+const AspectResponsiveBar = props => {
+  const {
+    assaysFromState,
+    config: baseConfig,
+    data,
+    displayLegend,
+    displayMethod,
+    indexBy,
+    formatDate,
+    legendsToPopover,
+    legendsNotToRender,
+    keys,
+    tickValuesYShape,
+    tickValuesXShape,
+    type,
+    i18nKeys,
+  } = props
+  const { setConfig } = useGraphClickThrough()
+  const { format, formatNumber: intlFormatNumber, formatMessage } = useI18n()
+  const { id: graphId, sortByKeys, groupMode, fields, layers = [] } = baseConfig
+  const keysForBars = fields
+    ? fields.filter(it => it.target === 'bar').map(it => it.name)
+    : keys
+  const filteredData = normalizeData(data, { sortByKeys })
   const generateConfig = (type, data) => {
     switch (true) {
       case type === 'divergent':
@@ -162,6 +243,39 @@ const AspectResponsiveBar = ({
           ],
         }
 
+      case type === 'bar-line': {
+        const yAxisValues = generateTickValues(
+          data,
+          tickValuesYShape,
+          keys,
+          'Y',
+          true
+        )
+
+        return {
+          legend: false,
+          ylegend: false,
+          gridYValues: yAxisValues,
+          enableGridY: true,
+          yTickValues: yAxisValues,
+          enableGridX: true,
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          extraConfig: {},
+          padding: 0.3,
+          translateX: -25,
+          itemWidth: 120,
+          layers: ['axes', 'grid', 'bars', 'markers', GraphLegend, ...layers],
+          itemDirection: 'left-to-right',
+          symbolShape: 'square',
+          theme: {
+            axis: { ticks: { text: { fontSize: 12 } } },
+          },
+          markers: [],
+          groupMode: 'grouped',
+          margin: { top: 40, right: 60, bottom: 60, left: 60 },
+        }
+      }
+
       default:
         return {
           legend: false,
@@ -192,61 +306,8 @@ const AspectResponsiveBar = ({
         }
     }
   }
-  const {
-    enableGridY,
-    ylegend,
-    yTickValues,
-    gridYValues,
-    enableGridX,
-    translateX,
-    xTickValues,
-    extraConfig,
-    itemDirection,
-    itemWidth,
-    layers,
-    legend,
-    markers,
-    margin,
-    padding,
-    symbolShape,
-    theme,
-  } = generateConfig(type, filteredData)
-  const baseLegend =
-    displayLegend && !graphsToHaveCustomLegend.includes(type)
-      ? [
-          {
-            dataFrom: 'keys',
-            data: keys.map(k =>
-              generateLegendIntl(
-                formatMessage,
-                messages,
-                i18nKeys,
-                k,
-                assaysFromState,
-                graphId,
-                legendsNotToRender
-              )
-            ),
-            anchor: 'bottom-right',
-            direction: 'row',
-            justify: false,
-            translateX,
-            translateY: 60,
-            itemsSpacing: 2,
-            itemWidth,
-            itemHeight: 20,
-            itemDirection,
-            itemOpacity: 0.85,
-            symbolSize: 20,
-            symbolShape,
-            effects: [{ on: 'hover', style: { itemOpacity: 1 } }],
-          },
-        ]
-      : []
-  const formatAxisLabel = (v, displayMethod, intlFormatNumber) =>
-    type === 'stackedDeviceActivity'
-      ? v.replace(/\D/g, '')
-      : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
+  const config = generateConfig(type, filteredData)
+  const baseLegend = getLegend(props, config, { formatMessage })
 
   return (
     <div className={cssClasses('aspectresponsivebar__container')}>
@@ -254,16 +315,16 @@ const AspectResponsiveBar = ({
         <ResponsiveBar
           style={{ flex: 1 }}
           data={filteredData}
-          keys={keys}
+          keys={keysForBars}
           indexBy={indexBy}
           colorBy="index"
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
           enableLabel={false}
-          enableGridY={enableGridY}
-          enableGridX={enableGridX}
-          gridYValues={gridYValues}
-          {...extraConfig}
-          padding={padding}
+          enableGridY={config.enableGridY}
+          enableGridX={config.enableGridX}
+          gridYValues={config.gridYValues}
+          {...config.extraConfig}
+          padding={config.padding}
           borderWidth={0}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           axisTop={null}
@@ -273,9 +334,19 @@ const AspectResponsiveBar = ({
           animate
           motionStiffness={90}
           motionDamping={15}
-          layers={layers}
-          colors={v => generateColorForValue(v.id, graphId)}
-          margin={margin}
+          layers={config.layers}
+          baseConfig={baseConfig} // original graphType object to pass to layer
+          groupMode={groupMode}
+          colors={v => {
+            let valueId = v.id
+            if (fields) {
+              ;[{ colorId: valueId }] = fields.filter(
+                it => it.target === 'bar' && it.name === v.id
+              )
+            }
+            return generateColorForValue(valueId, graphId)
+          }}
+          margin={config.margin}
           tooltip={v =>
             v && legendsNotToRender.includes(v.id) ? (
               <EmptyTooltip title={v.id} />
@@ -298,17 +369,17 @@ const AspectResponsiveBar = ({
           }
           axisLeft={{
             tickSize: 5,
-            tickValues: yTickValues,
+            tickValues: config.yTickValues,
             format: v =>
               formatValuesForGraphs(v, displayMethod, intlFormatNumber),
             legendPosition: 'middle',
             legendOffset: -60,
-            legend,
+            legend: config.legend,
           }}
           axisBottom={{
-            legend: ylegend,
+            legend: config.ylegend,
             tickSize: 5,
-            tickValues: xTickValues,
+            tickValues: config.xTickValues,
             tickPadding: 10,
             tickRotation: 0,
             legendPosition: 'middle',
@@ -316,23 +387,24 @@ const AspectResponsiveBar = ({
             format: v =>
               v && formatDate === 'MMM'
                 ? format(negateTimeZoneOffset(new Date(v)), formatDate)
-                : formatAxisLabel(v, formatDate),
+                : formatAxisLabel(v, type, formatDate),
           }}
           legends={baseLegend}
-          theme={theme}
-          markers={markers}
+          theme={config.theme}
+          markers={config.markers}
         />
       </div>
       {displayLegend && graphsToHaveCustomLegend.includes(type) ? (
         <CustomBarGraphLegend
           style={{ flex: 1 }}
           keys={keys}
+          fields={fields}
           generateLegendIntl={generateLegendIntl}
           i18nKeys={i18nKeys}
           assaysFromState={assaysFromState}
           type={type}
           graphId={graphId}
-          symbolShape={symbolShape}
+          symbolShape={config.symbolShape}
           legendsNotToRender={legendsNotToRender}
           legendsToPopover={legendsToPopover}
         />
@@ -358,8 +430,16 @@ AspectResponsiveBar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  formatDate: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  formatDate: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+    PropTypes.func,
+  ]),
+  legendsToPopover: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool,
+    PropTypes.func,
+  ]),
   legendsNotToRender: PropTypes.oneOfType([PropTypes.array]),
   tickValuesYShape: PropTypes.oneOf([
     'bookends',
@@ -377,6 +457,7 @@ AspectResponsiveBar.propTypes = {
     'barLegacyTreatment',
     'stackedDeviceActivity',
     'barInventory',
+    'bar-line',
   ]),
   i18nKeys: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 }

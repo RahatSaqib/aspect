@@ -28,6 +28,7 @@ const {
 } = require('../../shared/date')
 const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
+const { getModuleStatusReportData } = require('./moduleStatusReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -499,6 +500,24 @@ async function getModuleActivityReport(auth, query) {
     total: rows.length,
   }
 }
+
+async function getModuleStatusReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { minDate, maxDate } = query
+  const rows = await getModuleStatusReportData(
+    minDate,
+    maxDate,
+    dataConstraints,
+    query
+  )
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -508,4 +527,5 @@ module.exports = {
   exportDeviceOperationLogReport,
   getDeviceCapacityReport,
   getModuleActivityReport,
+  getModuleStatusReport,
 }
