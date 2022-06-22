@@ -1845,6 +1845,11 @@ async function modifyInventoryOnHand(request) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
   payload.operation = 'add'
+  const { id: reasonId } =
+    (await knex('ConsumableReason')
+      .first('id')
+      .where('i18nKey', 'ConsumableReason_AssertedInventoryOnHand')) || {}
+  payload.reasonId = reasonId
   result = await increaseInventory(payload)
   return result
 }

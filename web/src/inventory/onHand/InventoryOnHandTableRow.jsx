@@ -41,19 +41,21 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
     }
     const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
     const newQty = parseInt(evt.target.value, 10)
-    if (newQty !== qty) {
-      setResultQtyOnHand(newQty - qty)
-      if (qty > newQty) {
-        setIsAdd(false)
-      } else {
-        setIsAdd(true)
-      }
-      setNewQtyOnHand(newQty)
+
+    setResultQtyOnHand(newQty - qty)
+    if (qty > newQty) {
+      setIsAdd(false)
+    } else {
+      setIsAdd(true)
     }
+    setNewQtyOnHand(newQty)
   }
 
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
-    values => modifyInventoryOnHand(values, dispatch, inventoryItem),
+    values =>
+      resultQtyOnHand !== newQtyOnHand
+        ? modifyInventoryOnHand(values, dispatch, inventoryItem)
+        : () => true,
     {
       onError: error => {
         setShowError(true)
@@ -62,8 +64,8 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
       },
       onSuccess: async () => {
         await refreshData()
-        setNewQtyOnHand(0)
-        setResultQtyOnHand(0)
+        setNewQtyOnHand('')
+        setResultQtyOnHand('')
         setNotes('')
         setShowCheck(true)
         setTimeout(() => setShowCheck(false), 3000)
