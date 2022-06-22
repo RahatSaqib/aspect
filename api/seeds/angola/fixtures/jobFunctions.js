@@ -8,29 +8,6 @@ const {
   technician,
 } = require('../../fixtures/jobFunctionBase')
 
-const labTechnician = {
-  name: 'Lab Technician',
-  reports: [],
-  permissions: [
-    {
-      module: 'dashboard',
-      activity: 'summary',
-    },
-    {
-      module: 'dashboard',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
-    },
-    {
-      module: 'assay',
-      activity: 'view',
-    },
-  ],
-}
-
 const ntpLevel = {
   name: 'NTP Level',
   reports: [
@@ -63,6 +40,10 @@ const ntpLevel = {
     },
     {
       module: 'assay',
+      activity: 'view',
+    },
+    {
+      module: 'device',
       activity: 'view',
     },
     {
@@ -119,6 +100,10 @@ const partners = {
       activity: 'view',
     },
     {
+      module: 'device',
+      activity: 'view',
+    },
+    {
       module: 'dashboard',
       activity: 'summary',
     },
@@ -139,7 +124,7 @@ module.exports = [
   regionalOfficer,
   { ...labManager, name: 'Lab Head' },
   labUser,
-  labTechnician,
+  { ...technician, name: 'Lab Technician' },
   clinician,
   remoteHealthWorker,
   technician,
