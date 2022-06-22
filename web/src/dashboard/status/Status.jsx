@@ -18,13 +18,7 @@ import Reports from './Reports'
 import GroupedGraphs from './GroupedGraphs'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import { useAuthState } from '../../Providers/AuthProvider'
-import PermissionsProvider, {
-  isGraphPermitted,
-} from '../../Providers/PermissionsProvider'
-import {
-  isAllowedGroupsWithoutAssays,
-  getWhitelistedAssays,
-} from '../../shared/utils/graph'
+import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
@@ -35,13 +29,24 @@ import treatmentStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigur
 import inventoryStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Inventory'
 import deviceStatusGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TestsPerformed'
+import tbTrendGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Trends'
 import useI18n from '../../Hooks/i18n/useI18n'
+import {
+  COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS,
+  COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS,
+  GRAPHS_SORTED_BY_TOTAL_RESULTS,
+  GRAPHS_TREND_IN_YEARS,
+  GRAPHS_TREND_IN_QUARTERS,
+  getGroupedGraphsInitialValue,
+  getPermittedGroupItems,
+} from './Helpers'
 
 import styles from './Status.css'
 
+const { trendInYears, trendInQuarters } = tbTrendGraphs
+
 const cssClasses = classnames.bind(styles)
 
-const GRAPHS_SORTED_BY_TOTAL_RESULTS = 'GRAPHS_SORTED_BY_TOTAL_RESULTS'
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
 const { xdrResults } = xdrGraphs
@@ -56,35 +61,27 @@ const { treatmentStatus } = treatmentStatusGraphs
 const { inventoryStatus } = inventoryStatusGraphs
 const { deviceStatus } = deviceStatusGraphs()
 const { testsOverTime } = testsPerFormedGraphs
-const resultScopedGraphs = [
-  hivResults,
-  tbDetected,
-  tbResults,
-  xdrResults,
-  covidResults,
-]
-const getGroupedGraphsInitialValue = (auth, assaysFromState) => {
-  const groupedGraphsInitialValue = {
-    [GRAPHS_SORTED_BY_TOTAL_RESULTS]: reduce(
-      resultScopedGraphs,
-      (acc, graph) => {
-        const { id, assays, group } = graph
-        const isPermitted = isGraphPermitted({
-          auth,
-          permissions: graph.graphRenderPermissions,
-        })
-        const allowedGroupsWithoutAssays = isAllowedGroupsWithoutAssays(group)
-        const allowed = getWhitelistedAssays({ assays, assaysFromState })
-        const isWhitelisted = allowed.length > 0 || allowedGroupsWithoutAssays
-        if (isPermitted && isWhitelisted) {
-          acc[id] = { settled: false }
-        }
-        return acc
-      },
-      {}
-    ),
-  }
-  return groupedGraphsInitialValue
+const {
+  trendInYearsAllTests,
+  trendInYearsMtbDetected,
+  trendInYearsRifDetected,
+} = trendInYears
+const { trendInQuartersMtbDetected, trendInQuartersRifDetected } =
+  trendInQuarters
+const baseGroupFor = {
+  sortedByTotalResults: [
+    hivResults,
+    tbDetected,
+    tbResults,
+    xdrResults,
+    covidResults,
+  ],
+  trendInYears: [
+    trendInYearsAllTests,
+    trendInYearsMtbDetected,
+    trendInYearsRifDetected,
+  ],
+  trendInQuarters: [trendInQuartersMtbDetected, trendInQuartersRifDetected],
 }
 
 const Status = () => {
@@ -97,21 +94,20 @@ const Status = () => {
     () => assaysComposed.toJS().filter(a => a.hasResults),
     [assaysComposed]
   )
-  const userComposed = useSelector(({ user }) => user)
-  const auth = useMemo(() => userComposed.toJS(), [userComposed])
+  const auth = useAuthState()
+  const {
+    countryAbbreviation,
+    jwt: { name: userName },
+    culture,
+  } = auth
 
   const { formatMessage } = useI18n()
   const [graphs, setGraphs] = useState(false)
-  const [groupedGraphs, setGroupedGraphs] = useState(
-    getGroupedGraphsInitialValue(auth, assays)
+  const [groupedGraphsInfo, setGroupedGraphsInfo] = useState(
+    getGroupedGraphsInitialValue(auth, assays, countryAbbreviation)
   )
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
-  const {
-    countryAbbreviation: countryIsoAlpha2CodeIgnored,
-    jwt: { name: userName },
-    culture,
-  } = useAuthState()
 
   /**
    * 1. `assays` - load assays
@@ -125,8 +121,11 @@ const Status = () => {
    * 2. `groupedGraphs` - define permitted/whitelisted graphs in group
    */
   useEffect(
-    () => setGroupedGraphs(getGroupedGraphsInitialValue(auth, assays)),
-    [auth, assays]
+    () =>
+      setGroupedGraphsInfo(
+        getGroupedGraphsInitialValue(auth, assays, countryAbbreviation)
+      ),
+    [auth, assays, countryAbbreviation]
   )
 
   useEffect(() => {
@@ -143,21 +142,22 @@ const Status = () => {
 
   /**
    * event handler when API response for particular graph in group received
-   * 3. `groupedGraphs` - update after loading data for graph in group
+   * 3. `groupedGraphsInfo` - update after loading data for graph in group
    */
   const onGraphSettled = useCallback(
-    (graphId, { data, error }) => {
-      if (groupedGraphs[GRAPHS_SORTED_BY_TOTAL_RESULTS][graphId]?.settled) {
+    (groupName, graphId, { data, error }) => {
+      const graphGroup = groupedGraphsInfo[groupName]
+      if (graphGroup[graphId]?.settled) {
         return
       }
       let totalResults = 0
       if (!error) {
         ;({ totalResults = 0 } = data || {})
       }
-      setGroupedGraphs(prev => ({
+      setGroupedGraphsInfo(prev => ({
         ...prev,
-        [GRAPHS_SORTED_BY_TOTAL_RESULTS]: {
-          ...prev[GRAPHS_SORTED_BY_TOTAL_RESULTS],
+        [groupName]: {
+          ...prev[groupName],
           [graphId]: {
             settled: true,
             totalResults,
@@ -165,7 +165,7 @@ const Status = () => {
         },
       }))
     },
-    [groupedGraphs]
+    [groupedGraphsInfo]
   )
 
   /**
@@ -173,25 +173,23 @@ const Status = () => {
    * to be included in `graphs` state
    */
   const groupSortedByTotalResults = useMemo(() => {
-    const totalsInGroup = groupedGraphs[GRAPHS_SORTED_BY_TOTAL_RESULTS]
+    const groupName = GRAPHS_SORTED_BY_TOTAL_RESULTS
+    const groupInfo = groupedGraphsInfo[groupName]
     let isReady = false
-    let groupItems = resultScopedGraphs.filter(
-      /**
-       * use only those graphs from `resultScopedGraphs` which are added
-       * to `groupedGraphs` as permitted and whitelisted (allowed assay)
-       */
-      gr => !!groupedGraphs[GRAPHS_SORTED_BY_TOTAL_RESULTS][gr.id]
+    let groupItems = getPermittedGroupItems(
+      baseGroupFor.sortedByTotalResults,
+      groupInfo
     )
 
-    if (!isEmpty(totalsInGroup) && every(totalsInGroup, ['settled', true])) {
-      /**
-       * sort group items by `totalResults desc`
-       */
+    /**
+     * if all members of the group loaded data - sort them by `totalResults desc`
+     */
+    if (!isEmpty(groupInfo) && every(groupInfo, ['settled', true])) {
       // get array of `{ graphId, totalResults }` items
       const graphTotals = reduce(
-        keys(totalsInGroup),
+        keys(groupInfo),
         (acc, graphId) => {
-          const { totalResults } = totalsInGroup[graphId]
+          const { totalResults } = groupInfo[graphId]
           acc = [
             ...acc,
             {
@@ -210,39 +208,78 @@ const Status = () => {
           totalResults,
         }
       })
-      /**
-       * group is ready - all graphs to be displayed
-       */
+      // group is ready - all graphs to be displayed
       isReady = true
     }
 
+    /**
+     * classNames object to paint/shadow card title when group is not
+     * ready yet (not all graphs loaded data) to correctly sort inner graphs
+     * by totalResults
+     */
+    const classNames = {}
+    if (!isReady) {
+      classNames.cardTitleText = cssClasses(
+        'CardTitle--paint-when-group-is-not-ready'
+      )
+    }
+
     return {
-      id: GRAPHS_SORTED_BY_TOTAL_RESULTS,
+      id: groupName,
       isGroup: true,
       isReady,
-      items: groupItems,
+      graphs: groupItems,
+      classNames,
     }
-  }, [groupedGraphs])
+  }, [groupedGraphsInfo])
 
   /**
-   * memoized classNames object to paint/shadow card title when group is not
-   * ready yet (not all it's graphs loaded data) to correctly sort inner graphs
-   * by totalResults
+   * observable group of graphs to be included in `graphs` state
    */
-  const classNamesForGroupedGraphsByTotalResults = useMemo(() => {
-    const css = {}
-    if (!groupSortedByTotalResults.isReady) {
-      css.cardTitleText = cssClasses('CardTitle--paint-when-group-is-not-ready')
+  const groupTrendInYears = useMemo(() => {
+    if (!COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
+      return null
     }
-    return css
-  }, [groupSortedByTotalResults])
+    const groupName = GRAPHS_TREND_IN_YEARS
+    const groupInfo = groupedGraphsInfo[groupName]
+    const groupItems = getPermittedGroupItems(
+      baseGroupFor.trendInYears,
+      groupInfo
+    )
+
+    return {
+      id: groupName,
+      isGroup: true,
+      isReady: true,
+      graphs: groupItems,
+    }
+  }, [groupedGraphsInfo, countryAbbreviation])
+
+  const groupTrendInQuarters = useMemo(() => {
+    if (!COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)) {
+      return null
+    }
+    const groupName = GRAPHS_TREND_IN_QUARTERS
+    const groupInfo = groupedGraphsInfo[groupName]
+    const groupItems = getPermittedGroupItems(
+      baseGroupFor.trendInQuarters,
+      groupInfo
+    )
+
+    return {
+      id: groupName,
+      isGroup: true,
+      isReady: true,
+      graphs: groupItems,
+    }
+  }, [groupedGraphsInfo, countryAbbreviation])
 
   /**
    * `graphs` - define array of graphs to display
    */
   useEffect(() => {
     if (culture) {
-      setGraphs([
+      const base = [
         testsOverTime,
         /**
          * group of up to 5 graphs (see raw array `resultScopedGraphs` in the top)
@@ -258,9 +295,26 @@ const Status = () => {
         covidMortalityAndRecoveryByGender,
         covidCasesByAgeAndGender,
         inventoryStatus,
-      ])
+      ]
+      let graphs = base
+      if (COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
+        graphs = [...graphs, groupTrendInYears]
+      }
+      if (
+        COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)
+      ) {
+        graphs = [...graphs, groupTrendInQuarters]
+      }
+
+      setGraphs(graphs)
     }
-  }, [culture, groupSortedByTotalResults])
+  }, [
+    culture,
+    groupSortedByTotalResults,
+    groupTrendInYears,
+    groupTrendInQuarters,
+    countryAbbreviation,
+  ])
 
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
@@ -280,14 +334,16 @@ const Status = () => {
       {graphs && assays?.length
         ? graphs.map(graph => {
             if (graph.isGroup) {
+              const group = graph // use appropriate name since this entry is a group of graphs
               return (
                 <GroupedGraphs
-                  key={graph.id}
+                  key={group.id}
                   assays={assays}
-                  graphs={graph.items}
+                  graphs={group.graphs}
+                  groupName={group.id}
                   onGraphSettled={onGraphSettled}
-                  isOwnerReady={graph.isReady}
-                  classNames={classNamesForGroupedGraphsByTotalResults}
+                  isOwnerReady={group.isReady}
+                  classNames={group.classNames}
                 />
               )
             }
