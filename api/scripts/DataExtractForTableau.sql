@@ -163,7 +163,7 @@ SELECT
   JSON_VALUE(r.patientData, '$.requestorPhone' RETURNING CHAR) as RequestorPhone,
   r.errorCode,
   -- ec.`Category` AS `ErrorCategory`, -- ------------------------------- error category -> Not found in Aspect
-  r.errorNotes as ErrorDescription,
+  REPLACE(r.errorNotes,'\n',' - ')  as ErrorDescription,
   a.name as AssayName,
   r.assayVersion as AssayHostTestCode,
   r.createdOn as InsertedOn,
@@ -203,7 +203,7 @@ SELECT
   JSON_VALUE(r.resultData, '$.probes.probeSpcEndpt' RETURNING CHAR) AS ProbeSpcEndpt,
   JSON_VALUE(r.resultData, '$.probes.qc1Endpt' RETURNING CHAR) AS ProbeSpcEndpt,
   JSON_VALUE(r.resultData, '$.probes.qc2Endpt' RETURNING CHAR) AS Qc2Endpt,
-  r.notes as Notes
+  REPLACE(r.notes,'\n',' - ')  as Notes
   , c.name as Country
   , st.name as State
   , lg.name as Lga
