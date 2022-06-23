@@ -8,6 +8,7 @@ const GroupedGraphs = ({
   assays,
   classNames,
   graphs,
+  groupName,
   onGraphSettled,
   isOwnerReady,
 }) => {
@@ -21,7 +22,7 @@ const GroupedGraphs = ({
               config={{
                 ...graph,
                 onSettled: (data, error) => {
-                  onGraphSettled(graph.id, { data, error })
+                  onGraphSettled(groupName, graph.id, { data, error })
                 },
                 isOwnerReady,
               }}

@@ -37,6 +37,8 @@ function startScheduler(queue) {
   dispatcher.factDataCategoryLowCheck()
   dispatcher.factCalculateInventoryConsumptionRates()
   dispatcher.factCheckCompletionRatePerSite()
+  dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
+  dispatcher.resolveIssues()
 
   cron.schedule(
     '30 00 * * *',

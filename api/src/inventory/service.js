@@ -80,6 +80,23 @@ const CONCATED_ID = `CONCAT(
   IFNULL(ii.inTransitFromSiteId, '')
 )`
 
+const INVENTORY_LOG_SORT_FIELDS = {
+  consumableName: 'c.name',
+  siteName: 's.name',
+  countryName: 'co.name',
+  stateName: 'st.name',
+  lgaName: 'l.name',
+  quantityOnHand: 'il.quantity',
+  expiresOn: 'il.expiresOn',
+  lotNumber: 'il.lotNumber',
+  movementReason: knex.raw(`
+  CASE
+    WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
+    WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
+    ELSE cr.name
+  END`),
+}
+
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
   manufacturer: 'c.manufacturer',
@@ -533,6 +550,11 @@ function getInventoryItemsRaw() {
   )`
 }
 
+async function listInventoryLog(request) {
+  const res = await listLog(request, querySelectors.INVENTORY_LOG_UILIST)
+  return res
+}
+
 async function listLog(
   request,
   querySelector = querySelectors.INVENTORY_LOG_LIST
@@ -556,8 +578,7 @@ async function listLog(
     .first()
   const data = await inventoryLogQuery
     .select(querySelector)
-    // TODO: set the correct inventory-item-sort-fields for inventory log. This is currently not being used, as only a report is available.
-    .modify(sortPageParams, query, 's.name', INVENTORY_ITEM_SORT_FIELDS)
+    .modify(sortPageParams, query, 's.name', INVENTORY_LOG_SORT_FIELDS)
   return { ok: true, total, length: data.length, data }
 }
 
@@ -1785,4 +1806,5 @@ module.exports = {
   selectInventoryStockAtSite,
   getDaysByLocation,
   listLog,
+  listInventoryLog,
 }

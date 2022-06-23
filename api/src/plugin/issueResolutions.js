@@ -2,7 +2,6 @@ const compareAsc = require('date-fns/compareAsc')
 const parseISO = require('date-fns/parseISO')
 const addDays = require('date-fns/addDays')
 const { subDays } = require('date-fns')
-const { isNil } = require('lodash')
 const { issueTypeToId } = require('../shared/dictionary')
 const { hasUnusedModules } = require('./issueTriggers')
 const { MIN_PERCENTAGE_FIELDS_COMPLETION_RATE } = require('../fact/service')
@@ -46,8 +45,7 @@ async function resolveIssueUnusedModules(knex, issue, conditions) {
 
 async function resolveIssueSiteWithLowFieldCompletionRate(knex, issue) {
   const { siteId } = issue
-
-  const site = await knex('FactCustomFieldCompletion as fcr')
+  const sites = await knex('FactCustomFieldCompletion as fcr')
     .join('Site as si', 'si.id', 'fcr.siteId')
     .where('fcr.date', '>=', subDays(new Date(), 30))
     .andWhere('fcr.siteId', siteId)
@@ -65,7 +63,7 @@ async function resolveIssueSiteWithLowFieldCompletionRate(knex, issue) {
         MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
       ])
     )
-  return !isNil(site)
+  return sites.length > 0
 }
 
 module.exports = {

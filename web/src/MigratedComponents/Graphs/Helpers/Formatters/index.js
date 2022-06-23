@@ -358,7 +358,8 @@ const generateLegendIntl = (
   string,
   assaysFromState,
   graphId = false,
-  legendsNotToRender = false
+  legendsNotToRender = false,
+  { colorExternalId } = {}
 ) => {
   if (!legendsNotToRender?.includes(string)) {
     return {
@@ -369,7 +370,7 @@ const generateLegendIntl = (
         intlMessages,
         i18nKeys
       ),
-      color: generateColorForLegend(string, graphId),
+      color: generateColorForLegend(colorExternalId || string, graphId),
     }
   }
   return {}
@@ -453,6 +454,22 @@ const formatDataByGraphType = (
     case 'pieRow':
       grouped = groupForPieRow(data, mergedParams)
       break
+
+    case 'line-trends': {
+      const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+      return filtered
+    }
+
+    case 'bar-line':
+      grouped = groupByKey(
+        data,
+        indexBy,
+        keyToConsume,
+        displayMethod,
+        formatDate,
+        filterBy
+      )
+      return grouped
 
     default:
       grouped = false
@@ -544,6 +561,18 @@ const prepParamsForEndPoint = (urlParams, updatedParams) => {
   return params
 }
 
+const getPropByFieldName = (propName, fields, fieldName) => {
+  if (isArray(fields)) {
+    const [field = {}] = fields?.filter(it => it.name === fieldName) || {}
+    return field[propName]
+  }
+  return null
+}
+
+const getColorIdByFieldName = (fields, fieldName) => {
+  return getPropByFieldName('colorId', fields, fieldName)
+}
+
 export {
   calcPercentageSplitBar,
   calcPercentageForGraphs,
@@ -581,4 +610,6 @@ export {
   prepAssaysForParams,
   prepParamsForEndPoint,
   validateGraphConfig,
+  getPropByFieldName,
+  getColorIdByFieldName,
 }
