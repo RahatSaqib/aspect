@@ -45,7 +45,7 @@ import NotificationDetail from '../../MigratedComponents/Notifications/Detail'
 import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
-import InventoryItemsList from '../../inventory/list/InventoryItemsList'
+import InventoryContainer from '../../inventory/InventoryContainer'
 import RouterList from '../../router/list/RouterList'
 import RouterDetail from '../../router/detail/RouterDetail'
 import ReporterList from '../../reporter/list/ReporterList'
@@ -153,7 +153,7 @@ const renderSiteList = loggedInFactory(SiteList)
 const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
-const renderInventoryItemsList = loggedInFactory(InventoryItemsList)
+const renderInventoryContainer = loggedInFactory(InventoryContainer)
 const renderNotificationList = loggedInFactory(NotificationList)
 const renderNotificationDetail = loggedInFactory(NotificationDetail)
 const renderNotificationDetailHistory = loggedInFactory(
@@ -385,11 +385,11 @@ const AppRoutes = ({ props: outerProps }) => {
           )}
         />
         <Route
-          path="/browse/inventory"
+          path="/browse/inventory/*"
           element={getElement(
             props,
             ['browse', 'inventory'],
-            renderInventoryItemsList
+            renderInventoryContainer
           )}
         />
         <Route

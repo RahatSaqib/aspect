@@ -43,6 +43,8 @@ const routes = [
               canExpire: Joi.number().integer(),
               manufacturer: Joi.string().max(500).allow('', null),
               autoInclude: Joi.number().integer(),
+              showLot: Joi.number().integer().required(),
+              showExpirationDate: Joi.number().integer().required(),
             })
           ),
         },

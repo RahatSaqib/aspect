@@ -52,7 +52,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
-const CONCATED_ID = `CONCAT(
+const CONCATENATED_ID = `CONCAT(
   c.id,
   '-',
   s.id,
@@ -79,6 +79,23 @@ const CONCATED_ID = `CONCAT(
   '-',
   IFNULL(ii.inTransitFromSiteId, '')
 )`
+
+const INVENTORY_LOG_SORT_FIELDS = {
+  consumableName: 'c.name',
+  siteName: 's.name',
+  countryName: 'co.name',
+  stateName: 'st.name',
+  lgaName: 'l.name',
+  quantityOnHand: 'il.quantity',
+  expiresOn: 'il.expiresOn',
+  lotNumber: 'il.lotNumber',
+  movementReason: knex.raw(`
+  CASE
+    WHEN cr.name = 'Transfer Sent' THEN CONCAT('Transfer sent to ', IFNULL(refSite.name, 'N/A'))
+    WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
+    ELSE cr.name
+  END`),
+}
 
 const INVENTORY_ITEM_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -498,7 +515,7 @@ function getInventoryLots(request, dataConstraints) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
     .groupBy([
-      knex.raw(CONCATED_ID),
+      knex.raw(CONCATENATED_ID),
 
       's.name',
       knex.raw(
@@ -509,7 +526,15 @@ function getInventoryLots(request, dataConstraints) {
       ),
       'ii.inTransitFromSiteId',
     ])
-    .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
+    .select(
+      ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+      )
+    )
 
   return inventoryItemsQuery
 }
@@ -531,6 +556,11 @@ function getInventoryItemsRaw() {
       GROUP_CONCAT(${itemRaw} SEPARATOR ','),
     ']'
   )`
+}
+
+async function listInventoryLog(request) {
+  const res = await listLog(request, querySelectors.INVENTORY_LOG_UILIST)
+  return res
 }
 
 async function listLog(
@@ -556,8 +586,7 @@ async function listLog(
     .first()
   const data = await inventoryLogQuery
     .select(querySelector)
-    // TODO: set the correct inventory-item-sort-fields for inventory log. This is currently not being used, as only a report is available.
-    .modify(sortPageParams, query, 's.name', INVENTORY_ITEM_SORT_FIELDS)
+    .modify(sortPageParams, query, 's.name', INVENTORY_LOG_SORT_FIELDS)
   return { ok: true, total, length: data.length, data }
 }
 
@@ -1785,4 +1814,5 @@ module.exports = {
   selectInventoryStockAtSite,
   getDaysByLocation,
   listLog,
+  listInventoryLog,
 }

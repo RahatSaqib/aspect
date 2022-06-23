@@ -1,10 +1,12 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
-  const auth = useSelector(({ user }) => user.toJS())
+  const userComposed = useSelector(({ user }) => user)
+  const auth = useMemo(() => userComposed.toJS(), [userComposed])
+
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
 }
 

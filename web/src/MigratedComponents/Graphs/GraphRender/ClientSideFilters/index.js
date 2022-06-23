@@ -9,22 +9,42 @@ function handleClientSideFilterState(
 ) {
   const {
     isClientSide,
+    identifier,
     selectorModifiers,
     clientSideFilters,
     clientSideFilterOptions,
     setClientSideFilterOptions,
   } = clientSideFilter
   const { id, i18nKeys, graphData, assaysFromState } = graphState
-  const { formatRawData, setNewData } = graphActions
+  const { formatRawData, setNewData, setFilterParams } = graphActions
 
   if (isClientSide) {
     const { filterFunctions } = selectorModifiers[0] || false
-    const { filterFunction } = filter(filterFunctions, { id })[0] || false
+    const { filterFunction, shouldFilterOnServer } =
+      filter(filterFunctions, { id })[0] || false
     const { val, selectAction } = clientSideFilters
     if (!isEmpty(i18nKeys) && !clientSideFilterOptions) {
       setClientSideFilterOptions({ keys: i18nKeys, assays: assaysFromState })
     }
     if (!!clientSideFilters && graphData) {
+      const isRemoveOrPop = ['remove-value', 'pop-value'].includes(selectAction)
+
+      if (shouldFilterOnServer || !filterFunction) {
+        switch (true) {
+          case selectAction === 'select-option':
+          case isRemoveOrPop && val?.length > 0:
+            setFilterParams([{ [identifier]: val.value }])
+            break
+          case selectAction === 'clear':
+          case isRemoveOrPop && val?.length === 0:
+            setFilterParams([])
+            break
+          default:
+          /** */
+        }
+        return
+      }
+
       let newData
       switch (true) {
         case selectAction === 'select-option':
