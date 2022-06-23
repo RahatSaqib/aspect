@@ -32,8 +32,6 @@ import testsPerFormedGraphs from '../../MigratedComponents/Graphs/GraphConfigura
 import tbTrendGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Trends'
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
-  COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS,
-  COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS,
   GRAPHS_SORTED_BY_TOTAL_RESULTS,
   GRAPHS_TREND_IN_YEARS,
   GRAPHS_TREND_IN_QUARTERS,
@@ -104,7 +102,7 @@ const Status = () => {
   const { formatMessage } = useI18n()
   const [graphs, setGraphs] = useState(false)
   const [groupedGraphsInfo, setGroupedGraphsInfo] = useState(
-    getGroupedGraphsInitialValue(auth, assays, countryAbbreviation)
+    getGroupedGraphsInitialValue(auth, assays)
   )
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
@@ -121,11 +119,8 @@ const Status = () => {
    * 2. `groupedGraphs` - define permitted/whitelisted graphs in group
    */
   useEffect(
-    () =>
-      setGroupedGraphsInfo(
-        getGroupedGraphsInitialValue(auth, assays, countryAbbreviation)
-      ),
-    [auth, assays, countryAbbreviation]
+    () => setGroupedGraphsInfo(getGroupedGraphsInitialValue(auth, assays)),
+    [auth, assays]
   )
 
   useEffect(() => {
@@ -237,9 +232,6 @@ const Status = () => {
    * observable group of graphs to be included in `graphs` state
    */
   const groupTrendInYears = useMemo(() => {
-    if (!COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
-      return null
-    }
     const groupName = GRAPHS_TREND_IN_YEARS
     const groupInfo = groupedGraphsInfo[groupName]
     const groupItems = getPermittedGroupItems(
@@ -253,12 +245,9 @@ const Status = () => {
       isReady: true,
       graphs: groupItems,
     }
-  }, [groupedGraphsInfo, countryAbbreviation])
+  }, [groupedGraphsInfo])
 
   const groupTrendInQuarters = useMemo(() => {
-    if (!COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)) {
-      return null
-    }
     const groupName = GRAPHS_TREND_IN_QUARTERS
     const groupInfo = groupedGraphsInfo[groupName]
     const groupItems = getPermittedGroupItems(
@@ -272,14 +261,14 @@ const Status = () => {
       isReady: true,
       graphs: groupItems,
     }
-  }, [groupedGraphsInfo, countryAbbreviation])
+  }, [groupedGraphsInfo])
 
   /**
    * `graphs` - define array of graphs to display
    */
   useEffect(() => {
     if (culture) {
-      const base = [
+      const graphs = [
         testsOverTime,
         /**
          * group of up to 5 graphs (see raw array `resultScopedGraphs` in the top)
@@ -295,16 +284,9 @@ const Status = () => {
         covidMortalityAndRecoveryByGender,
         covidCasesByAgeAndGender,
         inventoryStatus,
+        groupTrendInYears,
+        groupTrendInQuarters,
       ]
-      let graphs = base
-      if (COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
-        graphs = [...graphs, groupTrendInYears]
-      }
-      if (
-        COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)
-      ) {
-        graphs = [...graphs, groupTrendInQuarters]
-      }
 
       setGraphs(graphs)
     }
