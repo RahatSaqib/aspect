@@ -188,7 +188,8 @@ const InventoryLog = ({ navigate, location }) => {
 
   // >>>>>> Structuring data <<<<<<
   const sortPage = makeSortPageSelector({
-    sortCol: 'siteName',
+    sortCol: 'createdOn',
+    sortDir: 'desc',
   })
   const reducedFilters = reduceFiltersConfig(
     FILTERS_CONFIG,
