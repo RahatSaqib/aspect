@@ -5,10 +5,10 @@ const { subMonths, subDays } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
-  getSelectCommonListFields,
-  getReportCommonFields,
-  getSelectShowFields,
-  getListFields,
+  getSelectCommonListFieldsTZ,
+  getReportCommonFieldsTZ,
+  SELECT_FIELDS_UTC,
+  LIST_FIELDS_UTC,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./query')
@@ -54,14 +54,9 @@ const { getRemoteAddress } = require('../shared/request')
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 const { createFormObject } = require('../forms/service')
+const { GRAPH_FLAGS } = require('../shared/constants')
 
-async function getListResults(query, auth, fields) {
-  if (!fields) {
-    const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
-
-    fields = getListFields(userTimeOffset)
-  }
-
+async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -86,7 +81,7 @@ async function getListResults(query, auth, fields) {
 
     if (assay.resultCategory1Label) {
       if (!sortableFields.includes('resultCategory1Name')) {
-        selectFields.push('rc1.name as resultCategory1Name')
+        selectFields.resultCategory1Name = 'rc1.name'
         sortableFields.push('resultCategory1Name')
       }
       assayColumns.push({
@@ -100,7 +95,7 @@ async function getListResults(query, auth, fields) {
 
     if (assay.resultCategory2Label) {
       if (!sortableFields.includes('resultCategory2Name')) {
-        selectFields.push('rc2.name as resultCategory2Name')
+        selectFields.resultCategory2Name = 'rc2.name'
         sortableFields.push('resultCategory2Name')
       }
       assayColumns.push({
@@ -118,9 +113,10 @@ async function getListResults(query, auth, fields) {
         if (value.list) {
           const alias = key.replace('.', '_')
           if (!sortableFields.includes(alias)) {
-            selectFields.push(
-              knex.raw('JSON_EXTRACT(resultData, ?) as ?', [`$.${key}`, alias])
-            )
+            selectFields[alias] = knex.raw('JSON_EXTRACT(resultData, ?)', [
+              `$.${key}`,
+            ])
+
             sortableFields.push(alias)
           }
           assayColumns.push({
@@ -148,12 +144,14 @@ async function getListResults(query, auth, fields) {
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
-  selectFields.push('rc2.name as resultCategory2Name')
-  selectFields.push('rc2.i18nKey as resultCategory2I18nKey')
-  selectFields.push('a.resultCategory2i18nKey as resultCategory2Titlei18nKey')
-  selectFields.push('a.resultCategory1i18nKey as resultCategory1Titlei18nKey')
-  selectFields.push('a.resultCategory1label as resultCategory1Title')
-  selectFields.push('a.resultCategory2label as resultCategory2Title')
+  const resultFields = {
+    resultCategory2Name: 'rc2.name',
+    resultCategory2I18nKey: 'rc2.i18nKey',
+    resultCategory2Titlei18nKey: 'a.resultCategory2i18nKey',
+    resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
+    resultCategory1Title: 'a.resultCategory1label',
+    resultCategory2Title: 'a.resultCategory2label',
+  }
 
   // get rows
   const getItems = resultQuery
@@ -161,6 +159,9 @@ async function getListResults(query, auth, fields) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+    .modify(function (qb) {
+      qb.select(resultFields)
+    })
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -206,12 +207,12 @@ function getResultTreatmentStatus(response) {
 
 async function getResultsForExport(auth, query) {
   const offset = getOffsetFromIsoDateString(query.maxDate)
-  const selectFields = [
-    ...getSelectCommonListFields(offset),
-    knex.raw(
-      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+  const selectFields = {
+    ...getSelectCommonListFieldsTZ(offset),
+    resultText: knex.raw(
+      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
     ),
-  ]
+  }
   const sortableFields = [...SORT_FIELDS]
 
   const assayColumns = []
@@ -219,7 +220,7 @@ async function getResultsForExport(auth, query) {
     const assay = await knex('Assay as a').where('a.id', query.assayId).first()
 
     if (assay.resultCategory1Label) {
-      selectFields.push('rc1.name as resultCategory1Name')
+      selectFields.resultCategory1Name = 'rc1.name'
       sortableFields.push('resultCategory1Name')
       assayColumns.push({
         db: 'resultCategory1Name',
@@ -230,7 +231,7 @@ async function getResultsForExport(auth, query) {
     }
 
     if (assay.resultCategory2Label) {
-      selectFields.push('rc2.name as resultCategory2Name')
+      selectFields.resultCategory2Name = 'rc2.name'
       sortableFields.push('resultCategory2Name')
       assayColumns.push({
         db: 'resultCategory2Name',
@@ -780,13 +781,10 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultByResultId(auth, resultId, fields) {
+async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
 
-  if (!fields) {
-    fields = getSelectShowFields('+00:00') // This field list has been altered to use in reports showing dates in requested timezone, here is in GMT (as in the DB), because this is not meanted to use in a report.
-  }
   const results = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -808,18 +806,20 @@ async function getResultByResultId(auth, resultId, fields) {
       device: 'd',
       result: 'r',
     })
-    .select([
-      ...fields,
-      knex.raw(
-        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-')) as resultText`
+    .modify(function (qb) {
+      qb.select(fields)
+    })
+    .select({
+      resultText: knex.raw(
+        `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
       ),
-      'st.id as stateId',
-      'dt.id as deviceTypeId',
-      'r.resultCategory1',
-      'r.resultCategory2',
-      'stp.id as sampleTypeId',
-      'rso.externalId as resultSourceExternalId',
-    ])
+      stateId: 'st.id',
+      deviceTypeId: 'dt.id',
+      resultCategory1: 'r.resultCategory1',
+      resultCategory2: 'r.resultCategory2',
+      sampleTypeId: 'stp.id',
+      resultSourceExternalId: 'rso.externalId',
+    })
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful
@@ -1385,6 +1385,7 @@ async function updateFormData(request) {
     'r.partnerId',
     'r.formData',
   ])
+
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -2370,12 +2371,26 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   return resultQuery
 }
 
+// ---------------------------------------------------------------
 async function getResultsForReport(auth, query) {
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // for now call existing function, but later add here a query with different aggregations
-  return getListResults(query, auth, getReportCommonFields(userTimeOffset))
+  return getListResults(query, auth, getReportCommonFieldsTZ(userTimeOffset))
 }
 
+// ---------------------------------------------------------------
+function getGroupBy(query) {
+  if (!query.groupBy) {
+    // if no group is specified, use result category
+    return ['resultCategory1']
+  }
+  if (!_.isArray(query.groupBy)) {
+    return [query.groupBy]
+  }
+  return query.groupBy
+}
+
+// ---------------------------------------------------------------
 async function clinicalIndicatorAggregations(request) {
   const { auth, query } = request
 
@@ -2391,13 +2406,12 @@ async function clinicalIndicatorAggregations(request) {
   }
 
   // if no group is specified, use result category
-  let groupBy = null
-  if (!query.groupBy) {
-    groupBy = ['resultCategory1']
-  } else if (!Array.isArray(query.groupBy)) {
-    groupBy = [query.groupBy]
-  } else {
-    groupBy = query.groupBy
+  const groupBy = getGroupBy(query)
+
+  // optional flags
+  let flags = []
+  if (query.flags) {
+    flags = _.isArray(query.flags) ? query.flags : [query.flags]
   }
 
   // get data constraints
@@ -2411,6 +2425,8 @@ async function clinicalIndicatorAggregations(request) {
     'resultCategory1',
     'resultCategory2',
   ]
+
+  const resp = {}
   if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
     const factTableQuery = getClinicalIndicatorQueryForFactTable(
       dataConstraints,
@@ -2418,12 +2434,18 @@ async function clinicalIndicatorAggregations(request) {
       groupBy,
       query
     )
-    const data = await processGroupedQuery(
+
+    if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
+      const [{ cnt }] = await factTableQuery.clone()
+      resp.totalResults = cnt
+    }
+
+    resp.data = await processGroupedQuery(
       factTableQuery,
       groupBy,
       'r.startedOn'
     )
-    return { data }
+    return resp
   }
 
   const resultQuery = getClinicalIndicatorQueryForResultsTable(
@@ -2432,10 +2454,182 @@ async function clinicalIndicatorAggregations(request) {
     groupBy,
     query
   )
-  const data = await processGroupedQuery(resultQuery, groupBy)
-  return { data }
+
+  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
+    const [{ cnt }] = await resultQuery.clone()
+    resp.totalResults = cnt
+  }
+
+  resp.data = await processGroupedQuery(resultQuery, groupBy)
+  return resp
 }
 
+// ---------------------------------------------------------------
+function getQuarterByMonth(monthNumber) {
+  if (monthNumber >= 1 && monthNumber <= 3) return 1
+  if (monthNumber >= 4 && monthNumber <= 6) return 2
+  if (monthNumber >= 7 && monthNumber <= 9) return 3
+  if (monthNumber >= 10 && monthNumber <= 12) return 4
+  return null
+}
+
+// ---------------------------------------------------------------
+async function trendInQuarters(request) {
+  const { query } = request
+  let groupBy = [...getGroupBy(query), 'month']
+
+  request.query = { ...request.query, groupBy }
+
+  // get data grouped by month via using Fact table
+  const resp = await clinicalIndicatorAggregations(request)
+
+  // remove `month` from groupBy array to use rest of groupBy items
+  groupBy = _.filter(groupBy, it => it !== 'month')
+
+  // re-group data by quarter
+  const dataRaw = _.reduce(
+    resp.data,
+    (acc, it) => {
+      const [yyyy, mm] = it.month.split('-')
+      const quarter = getQuarterByMonth(+mm)
+      const restGroupedBy = _.pick(it, groupBy)
+
+      acc[yyyy] = acc[yyyy] || {} // object for each year
+      acc[yyyy][quarter] = acc[yyyy][quarter] || [] // array of items for each quarter
+
+      /**
+       * from array of items in acc[yyyy][quarter] - get item with same
+       * props as in `restGroupedBy`
+       */
+      let item = _.find(acc[yyyy][quarter], restGroupedBy)
+      if (!item) {
+        item = { cnt: 0, ...restGroupedBy }
+        acc[yyyy][quarter] = [...acc[yyyy][quarter], item]
+      }
+      item.cnt += it.cnt
+      return acc
+    },
+    {
+      /**
+       * assemble temporal object
+       * YYYY: {
+       *  1: [
+       *    { cnt: xxx, resultCategory1: 'Detected', ... }, <---- `cnt` and each groupBy param
+       *    { cnt: xxx, resultCategory1: 'NotDetected', ... },
+       *    ...
+       *  ],
+       *  2: ...
+       *  3: ...
+       *  4: ...
+       * }
+       */
+    }
+  )
+
+  return { resp, dataRaw }
+}
+
+// ---------------------------------------------------------------
+async function trendInQuartersMtbDetected(request) {
+  const { dataRaw } = await trendInQuarters(request)
+  const DETECTED = 'Detected'
+
+  // get final data set groped by rest of items
+  let grouped = []
+  // for each year ...
+  _.keys(dataRaw).forEach(yyyy => {
+    // ... for each quarter ...
+    _.keys(dataRaw[yyyy]).forEach(quarter => {
+      grouped = [
+        ...grouped,
+        _.reduce(
+          dataRaw[yyyy][quarter],
+          (acc, it) => {
+            if (it.resultCategory1 === DETECTED) {
+              acc.MtbDetected = it.cnt
+            }
+            acc.Total += it.cnt
+            return acc
+          },
+          {
+            quarter: `${yyyy}-${quarter}`,
+            Total: 0,
+            MtbDetected: 0,
+          }
+        ),
+      ]
+    })
+  })
+
+  grouped = _.sortBy(grouped, 'quarter')
+  grouped.forEach(it => {
+    it.MtbToTotalPercentage =
+      it.Total === 0 ? 0 : (100 * it.MtbDetected) / it.Total
+  })
+
+  return {
+    grouped,
+    keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
+    i18nKeys: {
+      MtbDetected: 'MTBPlus',
+      Total: 'Total',
+      MtbToTotalPercentage: 'MTBPercent',
+    },
+  }
+}
+
+// ---------------------------------------------------------------
+async function trendInQuartersRifDetected(request) {
+  const { dataRaw } = await trendInQuarters(request)
+  const DETECTED = 'Detected'
+
+  // get final data set groped by rest of items
+  let grouped = []
+  // for each year ...
+  _.keys(dataRaw).forEach(yyyy => {
+    // ... for each quarter ...
+    _.keys(dataRaw[yyyy]).forEach(quarter => {
+      grouped = [
+        ...grouped,
+        _.reduce(
+          dataRaw[yyyy][quarter],
+          (acc, it) => {
+            if (it.resultCategory1 === DETECTED) {
+              acc.MtbDetected += it.cnt
+              if (it.resultCategory2 === DETECTED) {
+                acc.RrdDetected += it.cnt
+              }
+            }
+            return acc
+          },
+          {
+            quarter: `${yyyy}-${quarter}`,
+            MtbDetected: 0,
+            RrdDetected: 0,
+          }
+        ),
+      ]
+    })
+  })
+
+  grouped = _.sortBy(grouped, 'quarter')
+  grouped.forEach(it => {
+    it.RrdToMtbPercentage =
+      it.MtbDetected === 0 ? 0 : (100 * it.RrdDetected) / it.MtbDetected
+  })
+
+  return {
+    grouped,
+    keysFromGrouped: ['MtbDetected', 'RrdDetected', 'RrdToMtbPercentage'], // series
+    i18nKeys: {
+      MtbDetected: 'MTBPlus',
+      RrdDetected: 'RRDHash',
+      RrdToMtbPercentage: 'RRDPercent',
+    },
+  }
+}
+
+// ---------------------------------------------------------------
 function getClinicalIndicatorQueryForFactTable(
   dataConstraints,
   assay,
@@ -2468,6 +2662,7 @@ function getClinicalIndicatorQueryForFactTable(
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -2536,6 +2731,7 @@ function getClinicalIndicatorQueryForResultsTable(
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -2589,6 +2785,9 @@ async function processGroupedQuery(
 
     week: knex.raw(`DATE_FORMAT(${dateColumn}, "%x-%v") as week_value`),
     month: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m") as month_value`),
+    quarter: knex.raw(
+      `CONCAT( YEAR(${dateColumn}),'-',QUARTER(${dateColumn}) ) as quarter_value`
+    ),
     year: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y") as year_value`),
     day: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m-%d") as day_value`),
 
@@ -2600,7 +2799,7 @@ async function processGroupedQuery(
     followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
   }
 
-  const reservedWords = ['day', 'month', 'week', 'year']
+  const reservedWords = ['day', 'month', 'quarter', 'week', 'year']
 
   groupBy.forEach(g => {
     resultQuery.modify(qb => {
@@ -3279,6 +3478,7 @@ module.exports = {
   showResultFollowUps,
   transferResult,
   clinicalIndicatorAggregations,
+  // clinicalIndicatorAggregationsInQuarters,
   followUpAggregations,
   getQueryForResultsListAndExport,
   queryResultFollowUpLastItems,
@@ -3290,4 +3490,8 @@ module.exports = {
   addResultDownloadLog,
   listSampleTypes,
   getCustomFieldsCompletion,
+
+  trendInQuartersMtbDetected,
+  trendInQuartersRifDetected,
+  // trendInYears,
 }

@@ -29,5 +29,5 @@ update Person
 set email = null,
 phone = null,
 cell = null
-where email <> 'sbaumgartner@systemone.id'
+where email <> 'developer@systemone.id'
 and id > 0;

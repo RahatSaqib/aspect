@@ -15,7 +15,7 @@ const {
   eachWeekendOfInterval,
 } = require('date-fns')
 
-const { convertToLocalTime } = require('date-fns-timezone')
+const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -42,7 +42,7 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
     ) ${alias ? ` as ${alias}` : ''}`)
 
 /**
- * - Generate knex code to project a datetime field in the specified timezone.
+ * - Generates knex code to project a datetime field in the specified timezone.
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
  * @param {string} offset - Time offset in ISO format (e.g. +05:00)
@@ -54,7 +54,9 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") as ${alias ?? field}`)
+  knex.raw(
+    `CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`
+  )
 
 const getISODateUserTimeZoneField = (
   knex,
@@ -118,9 +120,16 @@ function dateEqual(date1, date2) {
   return isEqual(typeSafeDate1, typeSafeDate2)
 }
 
-// Returns an array of dates formatted as "yyyy-MM-dd" in the given range
-// If initialProperties is passed in, returns an array of objects with "date" containing
-// the day's date and initial properties set to the passed in object
+/**
+ * Returns an array of dates formatted as "yyyy-MM-dd" in the given range
+ * If initialProperties is passed in, returns an array of objects with "date" containing
+ * the day's date and initial properties set to the passed in object
+ * @param {*} start - initial date (included)
+ * @param {*} end - final date (included)
+ * @param {*} initialProperties - optional. object with initial properties to be returned with a `date` property added.
+ * @param {*} excludeWeekends - optional. boolean to exclude weekends from the returned array
+ * @returns {Array} - array of dates formatted as "yyyy-MM-dd" or array ob objects with "date" property and specified initial properties if such parameter exists
+ */
 function getArrayOfDaysInRange(
   start,
   end,
@@ -133,19 +142,19 @@ function getArrayOfDaysInRange(
 
   let dates
   const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
+
   if (excludeWeekends) {
     const allWeekends = eachWeekendOfInterval({ start, end }).map(d =>
       d.toISOString()
     )
     dates = _.difference(allDates, allWeekends)
   } else dates = allDates
-
   return initialProperties
     ? dates.map(d => ({
-        date: parseISO(d),
+        date: getLocalDateInUtc(parseISO(d)),
         ...initialProperties,
       }))
-    : dates.map(d => parseISO(d))
+    : dates.map(d => getLocalDateInUtc(parseISO(d)))
 }
 
 // Returns the UTC equivalent of the passed in date/time string
@@ -162,32 +171,11 @@ function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
  * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
  * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
  */
-function getOffsetFromTimeZone(timeZone, date = new Date()) {
-  // Starting from https://stackoverflow.com/questions/20712419/get-utc-offset-from-timezone-in-javascript
-  const tz = date
-    .toLocaleString('en', { timeZone, timeStyle: 'long' })
-    .split(' ')
-    .slice(-1)[0]
-  const dateString = date.toString()
-  let offset =
-    Date.parse(`${dateString} UTC`) - Date.parse(`${dateString} ${tz}`)
-
-  if (Number.isNaN(offset)) {
-    // If the time zone cannot be processed by javascript, use +00:00 (America/Jumeau, Canada/Atlantic and Pacific/Honolulu to this date.)
-    offset = 0
-  }
-
-  return milliseconsToTimeOffset(offset)
-
-  function milliseconsToTimeOffset(offset) {
-    const offsetNum = parseInt(offset / 10 / 60 / 60, 10)
-    const hourString = Math.floor(Math.abs(offsetNum / 100))
-      .toString()
-      .padStart(2, '0')
-    const offsetString = `${
-      (offsetNum >= 0 ? '+' : '-') + hourString
-    }:${offsetNum.toString().padStart(2, '0').slice(-2)}`
-    return offsetString
+function getOffsetFromTimeZone(timeZone) {
+  try {
+    return formatToTimeZone(new Date(), 'Z', { timeZone })
+  } catch (error) {
+    return '+00:00'
   }
 }
 
@@ -283,6 +271,33 @@ function getDatesFromQuery(query) {
   }
 }
 
+/**
+ * Retrieves the user timezone from the Person table in the database.
+ * @param {knex} knex - Knex instance
+ * @param {string} userName - User name
+ * @returns {string} - User timezone name or 'UTC' if not found
+ */
+async function getTimeZoneFromUser(knex, userName) {
+  const tz = await knex('User as u')
+    .join('Person as p', 'u.id', 'p.userId')
+    .join('TimeZone as tz', 'p.timezone', 'tz.id')
+    .where('u.name', userName)
+    .pluck('tz.timeZone')
+  return tz || 'UTC'
+}
+
+/**
+ *  Retrieves the user timezone from the DB and returns its timezone offset.
+ * @param {*} knex - Knex instance
+ * @param {*} userName - User name (can be taken from `auth.credentials.name`)
+ * @returns string - Timezone offset in '[+/-]hh:mm' format (i.e. '+05:00')
+ * @note It should be used as fallback for {@link getOffsetFromIsoDateString} when the request doesn't count with a date parameter.
+ */
+async function getOffsetFromUser(knex, userName) {
+  const tz = await getTimeZoneFromUser(knex, userName)
+  return getOffsetFromTimeZone(tz)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -308,4 +323,6 @@ module.exports = {
   getWellFormattedDateStringWithTimezone,
   getOffsetFromTimeZone,
   getDatesFromQuery,
+  getTimeZoneFromUser,
+  getOffsetFromUser,
 }

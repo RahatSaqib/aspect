@@ -43,9 +43,36 @@ const {
   createResult,
   updateResult,
   listSampleTypes,
+  trendInQuartersMtbDetected,
+  trendInQuartersRifDetected,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
+
+const configs = {
+  trendInQuarters: {
+    auth: { scope: ['site', 'result'] },
+    validate: {
+      query: {
+        ...getResultAggregationsValidate(clinicalIndicatorsValidGroups),
+      },
+    },
+    response: {
+      options: {
+        allowUnknown: false,
+      },
+      schema: Joi.object().keys({
+        grouped: Joi.array()
+          .required()
+          .description('List of prepared data for the graph'),
+        keysFromGrouped: Joi.array()
+          .required()
+          .description('List of keys for series'),
+        i18nKeys: Joi.object().required().description('Intl keys for axis X'),
+      }),
+    },
+  },
+}
 
 // -----------------------------------------------------
 // routes
@@ -1305,8 +1332,33 @@ const routes = [
                 ...resultAggregationsResponseItem,
               })
             ),
+          totalResults: Joi.number()
+            .allow(null)
+            .integer()
+            .positive()
+            .description('Number of affected/used results'),
         }),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/trend-in-quarters-mtb-detected',
+    handler: asyncHandler(trendInQuartersMtbDetected),
+    config: {
+      description: 'Data for graph Mtb Detected Trend in Quarters',
+      notes: 'Feed graph directly',
+      ...configs.trendInQuarters,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/trend-in-quarters-rif-detected',
+    handler: asyncHandler(trendInQuartersRifDetected),
+    config: {
+      description: 'Data for graph Rif Detected Trend in Quarters',
+      notes: 'Feed graph directly',
+      ...configs.trendInQuarters,
     },
   },
   {

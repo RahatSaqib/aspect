@@ -14,7 +14,7 @@ const basicResultPayload = {
     },
     sender: {
       version: '4.7b',
-      operator: 'Big Boy Baumgartner',
+      operator: 'A GeneXpert User',
     },
     patient: {
       id: '0833223622',

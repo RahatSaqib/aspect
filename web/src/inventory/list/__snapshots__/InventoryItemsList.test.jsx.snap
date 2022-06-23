@@ -1,312 +1,111 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`InventoryItemList module InventoryItemList component should render correctly 1`] = `
-<div
-  className="Container"
->
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
-    title="Inventory on Hand"
-  />
-  <Connect(lifecycle(Component))
-    title="Inventory on Hand"
-  />
-  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={null}
-    dateFilterLabel="Expires On"
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(Symbol.observable): [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
         },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "dispatch": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+          Symbol(Symbol.observable): [Function],
+        },
+        "unsubscribe": null,
+      },
     }
-    location={
-      Object {
-        "search": "",
+  }
+>
+  <AuthProvider>
+    <InventoryItemsListWithProps
+      breakOutbyLot={true}
+      dispatch={[Function]}
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
+          "formatDate": [Function],
+          "formatDateTimeRange": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
+          "formatListToParts": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+        }
       }
-    }
-    navigate={[Function]}
-  >
-    <Memo(requirePermissions(AspectButton))
-      browseButton={true}
-      color="primary"
-      onClick={[Function]}
-      type="button"
-      variant="contained"
-    >
-      Add Inventory
-    </Memo(requirePermissions(AspectButton))>
-  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
-  <DataTableCard
-    className="DataTableCard--action"
-  >
-    <WithStyles(CheckboxField)
-      className="Checkbox"
-      label="Break out by lot"
-      name="breakOutByLot"
-      onChange={[Function]}
-    />
-  </DataTableCard>
-  <DataTableCard
-    className="DataTableCard--table"
-    key="DataTableCard--table-undefined"
-  >
-    <DataTableProgressBar
-      disabled={true}
-    />
-    <Connect(withState(withHandlers(ExportListButton)))
-      onCsvClick={[Function]}
-      onExcelClick={[Function]}
-      reportName="Supplies"
-      visible={false}
-    />
-    <pure(withHandlers(EmptyList))
+      inventoryAdjustment={Immutable.List []}
+      isLoading={false}
+      items={
+        Immutable.Record {
+          "byId": Immutable.Map {},
+          "currentIdList": Immutable.List [],
+        }
+      }
       location={
         Object {
           "search": "",
         }
       }
       navigate={[Function]}
+      onAddInventorySubmit={[Function]}
+      onExcelClick={[Function]}
+      onReceiveInventorySubmit={[Function]}
+      onRemoveInventorySubmit={[Function]}
+      pageAt={0}
+      pageSize={10}
+      reducedFilters={null}
+      showTransferInventoryDialog={[Function]}
+      sortCol="siteName"
+      sortDir="asc"
+      table={
+        Immutable.Record {
+          "loading": false,
+          "sortCol": "name",
+          "sortDir": "asc",
+          "page": 0,
+          "pageSize": 10,
+          "total": 0,
+          "extraColumns": Immutable.List [],
+          "groupBy": Immutable.List [],
+        }
+      }
     />
-  </DataTableCard>
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    isDialogActive={false}
-    onCancel={[Function]}
-    onSubmit={[Function]}
-  />
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    inventoryItem={Immutable.Map {}}
-    isDialogActive={false}
-    onCancel={[Function]}
-    onSubmit={[Function]}
-  />
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    inventoryItem={Immutable.Map {}}
-    isDialogActive={false}
-    onCancel={[Function]}
-    onSubmit={[Function]}
-  />
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    inventoryItem={Immutable.Map {}}
-    isDialogActive={false}
-    onCancel={[Function]}
-  />
-  <pure(withProps(withProps(lifecycle(Connect(withProps(recomposeForm(InventoryAdjustmentDialogForm)))))))
-    intl={
-      Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    inventoryItem={Immutable.Map {}}
-    isDialogActive={false}
-    items={
-      Immutable.Record {
-        "byId": Immutable.Map {},
-        "currentIdList": Immutable.List [],
-      }
-    }
-    onCancel={[Function]}
-    onSubmit={[Function]}
-  />
-</div>
+  </AuthProvider>
+</ContextProvider>
 `;

@@ -19,6 +19,11 @@ const getResultAggregationsValidate = validGroups => ({
     .description('Filter for result category 2'),
   siteName: Joi.string().allow(null, '').description('Filter for site'),
   deviceName: Joi.string().allow(null, '').description('Filter for device'),
+  stateId: Joi.number()
+    .integer()
+    .positive()
+    .allow(null)
+    .description('Filter for state'),
   groupBy: Joi.alternatives()
     .allow(null, '')
     .try(
@@ -26,6 +31,10 @@ const getResultAggregationsValidate = validGroups => ({
       Joi.string().valid(...validGroups)
     )
     .description('Array of fields to group by'),
+  flags: Joi.alternatives()
+    .allow(null, '')
+    .try(Joi.array(), Joi.string())
+    .description('Flags in csv'),
 })
 
 const resultAggregationsValidGroups = [
@@ -38,6 +47,7 @@ const resultAggregationsValidGroups = [
   'age',
   'state',
   'day',
+  'quarter',
 ]
 
 const clinicalIndicatorsValidGroups = [
@@ -83,6 +93,10 @@ const resultAggregationsResponseItem = {
     .optional()
     .allow(null, '')
     .description('The month that the count is grouped by'),
+  quarter: Joi.string()
+    .optional()
+    .allow(null, '')
+    .description('The quarter that the count is grouped by'),
   year: Joi.string()
     .optional()
     .allow(null, '')
