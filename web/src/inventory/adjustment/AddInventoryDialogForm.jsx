@@ -73,6 +73,7 @@ const enhance = compose(
   pure,
   withTodayProps,
   withDateFormatProps,
+
   lifecycle({
     UNSAFE_componentWillMount() {
       const onChange = values => this.setState({ values })
@@ -118,6 +119,7 @@ const enhance = compose(
       }),
     },
   })),
+
   recomposeForm({
     fields: [
       sharedFields.lotNumber,

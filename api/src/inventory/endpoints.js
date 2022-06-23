@@ -15,8 +15,8 @@ const {
   transferInventory,
   receiveInventory,
   getDaysByLocation,
-  listLog,
   modifyInventoryOnHand,
+  listInventoryLog,
 } = require('./service')
 
 const { exportSupplies } = require('./serviceReports')
@@ -123,7 +123,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/log',
-    handler: asyncHandler(listLog),
+    handler: asyncHandler(listInventoryLog),
     config: {
       description: 'List of Inventory Transactions',
       notes: 'Pageable and sortable list of inventory transactions',
@@ -134,11 +134,14 @@ const routes = [
           ...validateAllGeographyFilterParams(),
           ...validateDateRangeParams(),
           ...validateSortPageParams(
-            'consumableName',
+            'createdOn',
             'siteName',
-            'countryName',
-            'stateName',
-            'lgaName'
+            'lotNumber',
+            'notes',
+            'movementReason',
+            'consumableName',
+            'expiresOn',
+            'quantity'
           ),
         },
       },

@@ -9,6 +9,12 @@ const SELECT_LIST_FIELDS = [
   'c.canExpire',
   'c.manufacturer',
   knex.raw('coalesce(pc.autoInclude, 0) as autoInclude'),
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+  ),
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+  ),
 ]
 
 async function listConsumableTypes(request) {
@@ -40,7 +46,6 @@ async function listConsumableTypes(request) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
-
   return result
 }
 

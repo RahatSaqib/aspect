@@ -12,6 +12,7 @@ const SELECT_LIST_FIELDS = [
   'u.shortName as unitShortName',
   'a.name as assayName',
   'a.i18nKey as assayI18nKey',
+  'c.strategy',
 ]
 
 async function getConsumableAssays(request) {

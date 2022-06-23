@@ -21,8 +21,8 @@ export const GRAPHS_TREND_IN_QUARTERS = 'GRAPHS_TREND_IN_QUARTERS'
  * Another words, jobFunction definition in fixture will have 3 base array props -
  * `permissions`, `reports` and new array `graphs`.
  */
-export const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['US', 'PK']
-export const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['US', 'PK']
+// export const COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS = ['US', 'PK']
+// export const COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS = ['US', 'PK']
 
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
@@ -69,11 +69,7 @@ export const addGraphIfPermitted = (acc, graph, { auth, assaysFromState }) => {
   return acc
 }
 // -------------------------------------------------------------------------
-export const getGroupedGraphsInitialValue = (
-  auth,
-  assaysFromState,
-  countryAbbreviation
-) => {
+export const getGroupedGraphsInitialValue = (auth, assaysFromState) => {
   // common graphs
   const groupedGraphsInitialValue = {
     [GRAPHS_SORTED_BY_TOTAL_RESULTS]: reduce(
@@ -84,20 +80,17 @@ export const getGroupedGraphsInitialValue = (
   }
 
   // country-specific graphs
-  if (COUNTRIES_SHOW_GRAPH_TREND_IN_YEARS.includes(countryAbbreviation)) {
-    groupedGraphsInitialValue[GRAPHS_TREND_IN_YEARS] = reduce(
-      baseGroupFor.trendInYears,
-      (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
-      {}
-    )
-  }
-  if (COUNTRIES_SHOW_GRAPH_TREND_IN_QUARTERS.includes(countryAbbreviation)) {
-    groupedGraphsInitialValue[GRAPHS_TREND_IN_QUARTERS] = reduce(
-      baseGroupFor.trendInQuarters,
-      (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
-      {}
-    )
-  }
+  groupedGraphsInitialValue[GRAPHS_TREND_IN_YEARS] = reduce(
+    baseGroupFor.trendInYears,
+    (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
+    {}
+  )
+  groupedGraphsInitialValue[GRAPHS_TREND_IN_QUARTERS] = reduce(
+    baseGroupFor.trendInQuarters,
+    (acc, gr) => addGraphIfPermitted(acc, gr, { auth, assaysFromState }),
+    {}
+  )
+
   return groupedGraphsInitialValue
 }
 // -------------------------------------------------------------------------
