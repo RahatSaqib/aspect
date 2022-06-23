@@ -52,7 +52,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
-const CONCATED_ID = `CONCAT(
+const CONCATENATED_ID = `CONCAT(
   c.id,
   '-',
   s.id,
@@ -515,7 +515,7 @@ function getInventoryLots(request, dataConstraints) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
     .groupBy([
-      knex.raw(CONCATED_ID),
+      knex.raw(CONCATENATED_ID),
 
       's.name',
       knex.raw(
@@ -526,7 +526,15 @@ function getInventoryLots(request, dataConstraints) {
       ),
       'ii.inTransitFromSiteId',
     ])
-    .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
+    .select(
+      ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+      )
+    )
 
   return inventoryItemsQuery
 }

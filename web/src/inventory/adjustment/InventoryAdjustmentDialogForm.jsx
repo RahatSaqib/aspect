@@ -146,6 +146,12 @@ export const InventoryAdjustmentDialogForm = ({
   onNotesChange,
   handleSubmit,
 }) => {
+  const showLot =
+    (currInventoryItem && currInventoryItem.get('showLot')) ||
+    (consumable && consumable.get('showLot'))
+  const showExpirationDate =
+    (currInventoryItem && currInventoryItem.get('showExpirationDate')) ||
+    (consumable && consumable.get('showExpirationDate'))
   return (
     <AspectDialog
       actions={[
@@ -191,7 +197,7 @@ export const InventoryAdjustmentDialogForm = ({
             )}
           </section>
           <section>
-            {currInventoryItem && currInventoryItem.get('showLot') ? (
+            {showLot ? (
               <TextField
                 fullWidth
                 type="text"
@@ -215,28 +221,26 @@ export const InventoryAdjustmentDialogForm = ({
             ) : (
               <div />
             )}
-            {currInventoryItem &&
-              currInventoryItem.get('showExpirationDate') &&
-              consumable.get('canExpire') && (
-                <FormGroup label={intl.formatMessage(messages.expiryDate)}>
-                  <DateTimeInput
-                    fullWidth
-                    margin="normal"
-                    disabled={
-                      form.submitting ||
-                      (currInventoryItem &&
-                        !isNil(currInventoryItem.get('expiresOn')))
-                    }
-                    dateFormat={dateFormat}
-                    intl={intl}
-                    RootProps={{
-                      name: 'expiresOn',
-                    }}
-                    onChange={onExpiresOnChange}
-                    value={values.expiresOn}
-                  />
-                </FormGroup>
-              )}
+            {showExpirationDate && consumable.get('canExpire') && (
+              <FormGroup label={intl.formatMessage(messages.expiryDate)}>
+                <DateTimeInput
+                  fullWidth
+                  margin="normal"
+                  disabled={
+                    form.submitting ||
+                    (currInventoryItem &&
+                      !isNil(currInventoryItem.get('expiresOn')))
+                  }
+                  dateFormat={dateFormat}
+                  intl={intl}
+                  RootProps={{
+                    name: 'expiresOn',
+                  }}
+                  onChange={onExpiresOnChange}
+                  value={values.expiresOn}
+                />
+              </FormGroup>
+            )}
           </section>
           <section>
             {has(values, 'fromSiteId') && (
