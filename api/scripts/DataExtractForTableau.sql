@@ -3,7 +3,7 @@ SET @startDate = '2019-01-01';
 set @currentMonth = @startDate;  
 SET @endDate = '2022-01-01'; 
 SET @interval = 1; -- Months
-SET @fileName = concat('/var/lib/mysql-files/from_',@startDate,'_to_',@endDate,'_', cast(sysdate() as char), '.csv');
+SET @fileName = concat('/var/lib/mysql-files/BG_from_',@startDate,'_to_',@endDate,'_', cast(sysdate() as char), '.csv');
 
 DROP TEMPORARY TABLE IF EXISTS ResultExport;
 
@@ -74,8 +74,16 @@ CREATE TEMPORARY TABLE
     `ProbeSpcEndpt` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `Qc1Endpt` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `Qc2Endpt` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    `Notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+    `Notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    `Country` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    `State` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    `Lga` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+    `DateFirstTest` datetime DEFAULT NULL ,
+    `DeviceName`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+    `User` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ,
+	`Latitude` float DEFAULT NULL,
+	`Longitude` float DEFAULT NULL 
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 DROP PROCEDURE IF EXISTS ExtractDataForTableau;
 DELIMITER ;;
@@ -155,7 +163,7 @@ SELECT
   JSON_VALUE(r.patientData, '$.requestorPhone' RETURNING CHAR) as RequestorPhone,
   r.errorCode,
   -- ec.`Category` AS `ErrorCategory`, -- ------------------------------- error category -> Not found in Aspect
-  r.errorNotes as ErrorDescription,
+  REPLACE(r.errorNotes,'\n',' - ')  as ErrorDescription,
   a.name as AssayName,
   r.assayVersion as AssayHostTestCode,
   r.createdOn as InsertedOn,
@@ -195,7 +203,15 @@ SELECT
   JSON_VALUE(r.resultData, '$.probes.probeSpcEndpt' RETURNING CHAR) AS ProbeSpcEndpt,
   JSON_VALUE(r.resultData, '$.probes.qc1Endpt' RETURNING CHAR) AS ProbeSpcEndpt,
   JSON_VALUE(r.resultData, '$.probes.qc2Endpt' RETURNING CHAR) AS Qc2Endpt,
-  r.notes as Notes
+  REPLACE(r.notes,'\n',' - ')  as Notes
+  , c.name as Country
+  , st.name as State
+  , lg.name as Lga
+  , firstResult.minDate as DateFirstTest 
+  , d.name as DeviceName
+  , r.senderOperator as 'User'
+  , si.latitude as latitude
+  , si.longitude as longitude
   -- t.`ValidatedLab`, --------------------------------------------- NOT FOUND
   -- t.`ValidatedLocal`, ------------------------------------------- NOT FOUND
   -- t.`TestExcludeReasonId`, -------------------------------------- NOT FOUND
@@ -223,6 +239,7 @@ FROM
   LEFT JOIN Geography AS go on go.id = so.geographyId
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
+  LEFT JOIN (SELECT minr.deviceId, min(minr.endedOn) as minDate from Result as minr group by minr.siteId) as firstResult on firstResult.deviceId = d.id
   WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH);
     -- ------------------------------------------------------------------------------------------------------
 SET @currentMonth = date_add(@currentMonth, INTERVAL @interval MONTH);
@@ -236,7 +253,6 @@ DELIMITER ;
 CALL ExtractDataForTableau;
 
 DROP PROCEDURE IF EXISTS ExtractDataForTableau;
-
 
 SELECT @fileName fileName, count(*) quantity FROM ResultExport;
 
