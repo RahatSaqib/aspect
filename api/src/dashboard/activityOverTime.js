@@ -10,7 +10,6 @@ const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
 async function activityOverTimeDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
-
   // build up array of days in date range, excluding today because it could be incomplete. It makes querying easier:
   let days = getArrayOfDaysInRange(
     query.minDate,
@@ -102,9 +101,9 @@ async function activityOverTimeDashboard(request) {
       'dmsl.deviceMaintenanceStatusId',
       'dms.id'
     )
-    .whereRaw('dmsl.day >= ? AND dmsl.day <= ?', [
+    .whereRaw('dmsl.day >= ? AND dmsl.day < ?', [
       formatDateOrDefault(query.minDate, 'yyyy-MM-dd'),
-      formatDateOrDefault(query.maxDate, 'yyyy-MM-dd'),
+      formatDateOrDefault(addDays(query.maxDate, 1), 'yyyy-MM-dd'),
     ])
     .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)
@@ -167,6 +166,7 @@ async function activityOverTimeDashboard(request) {
     })
 
   // update the devices counts for each day in the range
+
   days = days.map(day => {
     const dayCounts = allCounts.find(
       ({ dayDate }) =>
@@ -177,6 +177,7 @@ async function activityOverTimeDashboard(request) {
         ...day,
         ...omit(dayCounts, ['dayDate']),
       }
+
       day.devicesInactive = day.devicesTotal - day.devicesActive
     } else {
       day = {

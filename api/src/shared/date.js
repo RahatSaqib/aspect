@@ -120,9 +120,16 @@ function dateEqual(date1, date2) {
   return isEqual(typeSafeDate1, typeSafeDate2)
 }
 
-// Returns an array of dates formatted as "yyyy-MM-dd" in the given range
-// If initialProperties is passed in, returns an array of objects with "date" containing
-// the day's date and initial properties set to the passed in object
+/**
+ * Returns an array of dates formatted as "yyyy-MM-dd" in the given range
+ * If initialProperties is passed in, returns an array of objects with "date" containing
+ * the day's date and initial properties set to the passed in object
+ * @param {*} start - initial date (included)
+ * @param {*} end - final date (included)
+ * @param {*} initialProperties - optional. object with initial properties to be returned with a `date` property added.
+ * @param {*} excludeWeekends - optional. boolean to exclude weekends from the returned array
+ * @returns {Array} - array of dates formatted as "yyyy-MM-dd" or array ob objects with "date" property and specified initial properties if such parameter exists
+ */
 function getArrayOfDaysInRange(
   start,
   end,
@@ -135,19 +142,19 @@ function getArrayOfDaysInRange(
 
   let dates
   const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
+
   if (excludeWeekends) {
     const allWeekends = eachWeekendOfInterval({ start, end }).map(d =>
       d.toISOString()
     )
     dates = _.difference(allDates, allWeekends)
   } else dates = allDates
-
   return initialProperties
     ? dates.map(d => ({
-        date: parseISO(d),
+        date: getLocalDateInUtc(parseISO(d)),
         ...initialProperties,
       }))
-    : dates.map(d => parseISO(d))
+    : dates.map(d => getLocalDateInUtc(parseISO(d)))
 }
 
 // Returns the UTC equivalent of the passed in date/time string

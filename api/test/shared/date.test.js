@@ -40,7 +40,7 @@ describe('Shared Date Utility Functions', () => {
     it('should return an array of dates in the given time range', () => {
       const arrayOfDays = getArrayOfDaysInRange(
         new Date(2020, 7, 1),
-        new Date(2020, 7, 31)
+        new Date(2020, 7, 31, 3)
       )
 
       assert.equal(arrayOfDays.length, 31)
@@ -50,15 +50,37 @@ describe('Shared Date Utility Functions', () => {
 
     it('should return an array of dates in the given time range excluding weekends', () => {
       const arrayOfDays = getArrayOfDaysInRange(
-        new Date(2020, 7, 1),
-        new Date(2020, 7, 31),
+        new Date('2020-08-01'),
+        new Date('2020-08-31'),
         null,
         true
       )
 
-      assert.equal(arrayOfDays.length, 21)
-      assert.equal(arrayOfDays[0].getTime(), new Date(2020, 7, 3).getTime())
-      assert.equal(arrayOfDays[20].getTime(), new Date(2020, 7, 31).getTime())
+      const okDates = [
+        '2020-08-03T00:00:00.000Z',
+        '2020-08-04T00:00:00.000Z',
+        '2020-08-05T00:00:00.000Z',
+        '2020-08-06T00:00:00.000Z',
+        '2020-08-07T00:00:00.000Z',
+        '2020-08-10T00:00:00.000Z',
+        '2020-08-11T00:00:00.000Z',
+        '2020-08-12T00:00:00.000Z',
+        '2020-08-13T00:00:00.000Z',
+        '2020-08-14T00:00:00.000Z',
+        '2020-08-17T00:00:00.000Z',
+        '2020-08-18T00:00:00.000Z',
+        '2020-08-19T00:00:00.000Z',
+        '2020-08-20T00:00:00.000Z',
+        '2020-08-21T00:00:00.000Z',
+        '2020-08-24T00:00:00.000Z',
+        '2020-08-25T00:00:00.000Z',
+        '2020-08-26T00:00:00.000Z',
+        '2020-08-27T00:00:00.000Z',
+        '2020-08-28T00:00:00.000Z',
+        '2020-08-31T00:00:00.000Z',
+      ]
+
+      arrayOfDays.map((d, i) => assert.equal(d.toISOString(), okDates[i]))
     })
   })
 
