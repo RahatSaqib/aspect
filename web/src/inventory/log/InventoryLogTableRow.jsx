@@ -5,7 +5,7 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import useI18n from '../../Hooks/i18n/useI18n'
-import { formatDate } from '../../shared/utils/dateFormat'
+import { formatDate, formatDateTime } from '../../shared/utils/dateFormat'
 import messages from './messages'
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -13,12 +13,11 @@ const cssClasses = classnames.bind(styles)
 
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
   const { formatMessage } = useI18n()
-
   return (
     <TableRow className={cssClasses('TableRow')}>
       <TableCell className={cssClasses('TableCell')}>
         {inventoryLogItem.createdOn
-          ? formatDate(inventoryLogItem.createdOn)
+          ? formatDateTime(inventoryLogItem.createdOn)
           : 'N/A'}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>
