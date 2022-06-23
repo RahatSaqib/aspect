@@ -46,19 +46,22 @@ const FILTERS_CONFIG = [
     date: true,
     requiredPermissions: [],
   },
-  {
-    lotNumber: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => dependencies.breakOutByLot,
-  },
+  // {
+  //   lotNumber: true,
+  //   requiredPermissions: [],
+  //   isEnabled: dependencies => dependencies.breakOutByLot,
+  // },
 ]
 
 const availableSortCol = [
   'createdOn',
   'siteName',
+  'lotNumber',
   'consumableName',
+  'movementReason',
   'expiresOn',
   'quantity',
+  'notes',
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -80,9 +83,9 @@ export const InventoryLogWithProps = ({
 }) => {
   const columns = [
     {
-      key: 'date',
+      key: 'createdOn',
       label: intl.formatMessage(messages.date),
-      sortable: false,
+      sortable: true,
     },
     {
       key: 'siteName',
@@ -97,10 +100,10 @@ export const InventoryLogWithProps = ({
     {
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
-      sortable: false,
+      sortable: true,
     },
     {
-      key: 'expirationDate',
+      key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
     },
@@ -110,14 +113,14 @@ export const InventoryLogWithProps = ({
       sortable: true,
     },
     {
-      key: 'consumableReason',
+      key: 'movementReason',
       label: intl.formatMessage(messages.reason),
-      sortable: false,
+      sortable: true,
     },
     {
       key: 'notes',
       label: intl.formatMessage(messages.notes),
-      sortable: false,
+      sortable: true,
     },
   ]
   const { data: items, total } = data || { data: null }

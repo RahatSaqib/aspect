@@ -124,6 +124,9 @@ const routes = [
           ...validateSortPageParams(
             'createdOn',
             'siteName',
+            'lotNumber',
+            'notes',
+            'movementReason',
             'consumableName',
             'expiresOn',
             'quantity'
