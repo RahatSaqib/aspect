@@ -131,7 +131,7 @@ export const InventoryLogWithProps = ({
         location={location}
         intl={intl}
         config={reducedFilters}
-        dateFilterLabel={intl.formatMessage(messages.expiresOn)}
+        dateFilterLabel={intl.formatMessage(messages.date)}
       />
       <DataTableCard
         key={`DataTableCard--table-${location.key}`}
