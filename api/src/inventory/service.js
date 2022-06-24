@@ -249,31 +249,11 @@ async function consumeInventoryForResult(
             `quantityOnHand - ${assayConsumable.quantity}`
           )
 
-          // if we had an exact match on consumable date, and we don't have
-          // a lot number for inventory item, but we do for matching consumable,
-          // copy it over
-          if (
-            matchingConsumable != null &&
-            matchingInventoryOnHand.lotNumber == null &&
-            matchingConsumable.lot != null &&
-            matchingInventoryOnHand.expiresOn != null &&
-            _.isEqual(
-              matchingInventoryOnHand.expiresOn,
-              parseDateOrDefault(matchingConsumable.expirationDate)
-            )
-          ) {
-            inventoryItemUpdates.lotNumber = matchingConsumable.lot
-          }
-
-          if (!_.isEmpty(inventoryItemUpdates)) {
-            await updateInventoryItem(
-              knex,
-              matchingInventoryOnHand.id,
-              inventoryItemUpdates
-            )
-          }
-
-          // TODO ASP-811 do not use same inventory item for next consumable
+          await updateInventoryItem(
+            knex,
+            matchingInventoryOnHand.id,
+            inventoryItemUpdates
+          )
         }
       }
     })
