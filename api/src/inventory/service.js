@@ -209,6 +209,7 @@ async function consumeInventoryForResult(
           now,
           assayConsumable.strategy
         )
+
         const testedOn = testStartedOn || testEndedOn
 
         // always try to find match whether we have consumables or not
@@ -244,14 +245,9 @@ async function consumeInventoryForResult(
 
           const inventoryItemUpdates = {}
 
-          // Update quantity on hand, but result completed after
-          // item was updated, to avoid double counting.
-          // Do not bump updatedOn here because of the double count check
-          if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
-            inventoryItemUpdates.quantityOnHand = knex.raw(
-              `quantityOnHand - ${assayConsumable.quantity}`
-            )
-          }
+          inventoryItemUpdates.quantityOnHand = knex.raw(
+            `quantityOnHand - ${assayConsumable.quantity}`
+          )
 
           // if we had an exact match on consumable date, and we don't have
           // a lot number for inventory item, but we do for matching consumable,
