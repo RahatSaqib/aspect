@@ -117,6 +117,7 @@ async function exportResults(request, reply) {
   const { query, auth } = request
   const { data, dynamicColumns, dataSelector, total } =
     await getAllResultsForExport(auth, query)
+
   const sheetData = {
     data,
     dynamicColumns,

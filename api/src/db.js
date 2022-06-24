@@ -84,10 +84,10 @@ function filterParams(queryBuilder, params, filters) {
 // extracts the parameters related to filtering from the candidate
 // params and modifies the query builder with the filter modifications
 function filterDateRangeParams(queryBuilder, params, dateColumnName) {
-  if (params.minDate) {
+  if (params.minDate && params.minDate.toString() !== 'Invalid Date') {
     queryBuilder.where(dateColumnName, '>=', params.minDate)
   }
-  if (params.maxDate) {
+  if (params.maxDate && params.minDate.toString() !== 'Invalid Date') {
     queryBuilder.where(dateColumnName, '<', params.maxDate)
   }
 }
