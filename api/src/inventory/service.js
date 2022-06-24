@@ -201,14 +201,15 @@ async function consumeInventoryForResult(
       // Don't double deduct inventory for the same result
       if (_.isEmpty(existingInventoryLog)) {
         // Find Inventory on hand where lot number and expiry date match
-        const matchingInventoryItems = await findOrCreateMatchingInventoryItems(
-          knex,
-          siteId,
-          assayConsumable,
-          consumablesInResultData,
-          now,
-          assayConsumable.strategy
-        )
+        const { items: matchingInventoryItems, isNewInventoryItem } =
+          await findOrCreateMatchingInventoryItems(
+            knex,
+            siteId,
+            assayConsumable,
+            consumablesInResultData,
+            now,
+            assayConsumable.strategy
+          )
         const testedOn = testStartedOn || testEndedOn
 
         // always try to find match whether we have consumables or not
@@ -247,7 +248,10 @@ async function consumeInventoryForResult(
           // Update quantity on hand, but result completed after
           // item was updated, to avoid double counting.
           // Do not bump updatedOn here because of the double count check
-          if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
+          if (
+            isNewInventoryItem ||
+            matchingInventoryOnHand.updatedOn <= (testedOn || now) // REMOVE CHECKING FROM INVENTORY LOG
+          ) {
             inventoryItemUpdates.quantityOnHand = knex.raw(
               `quantityOnHand - ${assayConsumable.quantity}`
             )
@@ -292,10 +296,18 @@ async function findOrCreateMatchingInventoryItems(
   now,
   strategy
 ) {
+  const [{ expirationDate }] = consumablesInResultData
   const { consumableId } = assayConsumable
-  const existingItems = await findInventoryItems(siteId, consumableId)
-  if (existingItems.length > 0) {
-    return existingItems
+  const existingItem = await findInventoryItem(
+    siteId,
+    consumableId,
+    expirationDate,
+    null,
+    false
+  )
+
+  if (existingItem) {
+    return { items: [existingItem], isNewInventoryItem: false }
   }
 
   // TODO ASP-811 should create a new item for each consumable in result data
@@ -306,16 +318,13 @@ async function findOrCreateMatchingInventoryItems(
     strategy.indexOf('withLot') >= 0
       ? _.get(consumablesInResultData, '[0].lot')
       : null
-  const expirationDateInResultData = getDateOrDefault(
-    consumablesInResultData,
-    '[0].expirationDate'
-  )
+
   const newInventoryItemId = await upsertInventoryItem({
     knex,
     consumableId,
     siteId,
     lotNumber: lotNumberInResultData,
-    expiresOn: expirationDateInResultData || undefined,
+    expiresOn: expirationDate || undefined,
     quantity: 0,
     now,
   })
@@ -323,7 +332,7 @@ async function findOrCreateMatchingInventoryItems(
   const newItem = await knex('InventoryItem')
     .where({ id: newInventoryItemId })
     .first()
-  return [newItem]
+  return { items: [newItem], isNewInventoryItem: true }
 }
 
 function findInventoryItemMatchingConsumableInResultData(
@@ -337,9 +346,8 @@ function findInventoryItemMatchingConsumableInResultData(
   }
 
   // Normalize input data for comparisons below
-  const consumableExpiresOn =
-    consumable == null ? null : consumable.expirationDate
-  const consumableLot = consumable == null ? null : consumable.lot
+  const consumableExpiresOn = consumable?.expirationDate
+  const consumableLot = consumable?.lot
 
   let hasItemExpiresOn = false
   let hasItemLot = false

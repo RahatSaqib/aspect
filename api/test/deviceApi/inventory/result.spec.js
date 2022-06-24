@@ -1228,7 +1228,7 @@ describe('admin result updates', () => {
       assert.isNotOk(otherInventoryConsumptionLogsForThisTest)
     })
   })
-  describe('inventory management with Expiration date strategy', () => {
+  describe.only('inventory management with Expiration date strategy', () => {
     before(async () =>
       knex('Consumable').update({ strategy: 'withExpirationDateStrategy' })
     )
@@ -1754,7 +1754,7 @@ describe('admin result updates', () => {
       )
     })
 
-    it.only('should update quantityOnHand only if tested on before item updatedOn', async () => {
+    it('should update quantityOnHand only if result exists on InventoryLog', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const { siteId } = await knex('Device')
         .where({ id: deviceId })
@@ -1780,7 +1780,7 @@ describe('admin result updates', () => {
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: 'HIV58210',
-        expiresOn: null,
+        expiresOn: futureExpiresOn.toISOString(),
         quantityOnHand: 50,
         createdBy: adminId,
         createdOn: past,
@@ -1807,7 +1807,11 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.equal(inventoryItemBefore.lotNumber, resultDetails.lotNumber)
-      assert.isNotOk(inventoryItemBefore.expiresOn)
+      assert.equal(
+        inventoryItemBefore.expiresOn.toISOString(),
+        futureExpiresOn.toISOString()
+      )
+
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
       const inventoryLogsBefore = await knex('InventoryLog')
@@ -1832,6 +1836,7 @@ describe('admin result updates', () => {
         .expect(200)
 
       let inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
+
       assert.deepEqual(
         _.map(inventoryItemsBefore, 'id'),
         _.map(inventoryItemsAfter, 'id')
@@ -1840,15 +1845,26 @@ describe('admin result updates', () => {
         id: inventoryItemId,
       })
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
-      assert.isNotOk(inventoryItemAfter.expiresOn)
+      assert.equal(
+        inventoryItemAfter.expiresOn.toISOString(),
+        futureExpiresOn.toISOString()
+      )
+      assert.equal(
+        inventoryItemBefore.id,
+        inventoryItemAfter.id,
+        'Inventory Item used is the one created by the test'
+      )
+
       assert.equal(
         inventoryItemAfter.quantityOnHand,
-        inventoryItemBefore.quantityOnHand - inventoryConsumedByTest
+        inventoryItemBefore.quantityOnHand - inventoryConsumedByTest,
+        'Quantity on Hand must be updated'
       )
 
       let inventoryLogsAfter = await knex('InventoryLog')
         .where({ inventoryItemId })
         .select()
+
       assert.equal(inventoryLogsAfter.length, 1)
 
       let [inventoryLog] = inventoryLogsAfter
@@ -1894,7 +1910,10 @@ describe('admin result updates', () => {
         id: inventoryItemId,
       })
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
-      assert.isNotOk(inventoryItemAfter.expiresOn)
+      assert.equal(
+        inventoryItemAfter.expiresOn.toISOString(),
+        futureExpiresOn.toISOString()
+      )
       assert.equal(inventoryItemAfter.quantityOnHand, newQuantityOnHand)
 
       inventoryLogsAfter = await knex('InventoryLog')
@@ -1941,7 +1960,7 @@ describe('admin result updates', () => {
         id: inventoryItemId,
       })
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
-      assert.isNotOk(inventoryItemAfter.expiresOn)
+      assert.isOk(inventoryItemAfter.expiresOn)
       assert.equal(
         inventoryItemAfter.quantityOnHand,
         newQuantityOnHand - inventoryConsumedByTest
@@ -2060,7 +2079,7 @@ describe('admin result updates', () => {
           assay: { id: assayExternalId },
           sample: { id: 'New Test Deduct From Closest Item' },
           instrument: { serial: '423456789' },
-          consumable: {
+          consumablse: {
             lot: resultDetails.lotNumber,
             expirationDate: resultDetails.expirationDate,
           },
