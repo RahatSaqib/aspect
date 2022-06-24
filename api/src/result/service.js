@@ -220,7 +220,12 @@ async function getResultsForExport(auth, query) {
   const assayColumns = []
   if (query.assayId) {
     const assays = await knex('Assay as a')
-      .whereIn('a.id', query.assayId)
+      .modify(queryBuilder => {
+        if (_.isArray(query.assayId))
+          queryBuilder.whereIn('a.id', query.assayId)
+        else queryBuilder.where('a.id', query.assayId)
+      })
+
       .select()
 
     for (const assay of assays) {
