@@ -225,21 +225,6 @@ async function consumeInventoryForResult(
               testedOn,
               now
             )
-
-          const inventoryItemUpdates = {}
-
-          // Update quantity on hand, but only if not exists an inventoryLog entry for
-          // the InventoryItem, to avoid double counting.
-          const existsInventoryLog = await knex('InventoryLog as il')
-            .where('il.inventoryItemId', matchingInventoryOnHand.id)
-            .first(1)
-
-          if (isNewInventoryItem || !existsInventoryLog) {
-            inventoryItemUpdates.quantityOnHand = knex.raw(
-              `quantityOnHand - ${assayConsumable.quantity}`
-            )
-          }
-
           // Log change
           await logInventoryChange({
             knex,
@@ -256,8 +241,11 @@ async function consumeInventoryForResult(
             adjustedTo: testEndedOn,
             createdOn: now,
           })
-
           const inventoryItemUpdates = {}
+
+          inventoryItemUpdates.quantityOnHand = knex.raw(
+            `quantityOnHand - ${assayConsumable.quantity}`
+          )
 
           inventoryItemUpdates.quantityOnHand = knex.raw(
             `quantityOnHand - ${assayConsumable.quantity}`

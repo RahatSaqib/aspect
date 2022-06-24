@@ -1643,7 +1643,7 @@ describe('admin result updates', () => {
       )
     })
 
-    it.only('should deduct inventory item with expiresOn', async () => {
+    it('should deduct inventory item with expiresOn', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const { siteId } = await knex('Device')
         .where({ id: deviceId })
@@ -1653,7 +1653,7 @@ describe('admin result updates', () => {
         .first('id')
 
       const past = subDays(now, 1)
-      const future = addDays(now, 7)
+      const future = addDays(startOfDay(now), 7)
 
       const assayExternalId = 'DaktariHivVL'
       const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
@@ -1669,7 +1669,7 @@ describe('admin result updates', () => {
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: null,
-        expiresOn: futureExpiresOn.toISOString(),
+        expiresOn: future.toISOString(),
         quantityOnHand: 50,
         createdBy: adminId,
         createdOn: past,
@@ -1696,7 +1696,10 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.isNotOk(inventoryItemBefore.lotNumber)
-      assert.isNotOk(inventoryItemBefore.expiresOn)
+      assert.equal(
+        inventoryItemBefore.expiresOn.toISOString(),
+        future.toISOString()
+      )
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
       const inventoryLogsBefore = await knex('InventoryLog')
@@ -1731,7 +1734,10 @@ describe('admin result updates', () => {
         id: inventoryItemId,
       })
       assert.isNotOk(inventoryItemAfter.lotNumber)
-      assert.isNotOk(inventoryItemAfter.expiresOn)
+      assert.equal(
+        inventoryItemAfter.expiresOn.toISOString(),
+        future.toISOString()
+      )
       assert.equal(
         inventoryItemAfter.quantityOnHand,
         inventoryItemBefore.quantityOnHand - inventoryConsumedByTest
@@ -1755,7 +1761,7 @@ describe('admin result updates', () => {
       )
     })
 
-    it('should update quantityOnHand only if result exists on InventoryLog', async () => {
+    it('should update quantityOnHand only if no result exists on InventoryLog', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const { siteId } = await knex('Device')
         .where({ id: deviceId })
@@ -1881,6 +1887,7 @@ describe('admin result updates', () => {
       )
 
       const newQuantityOnHand = 30
+      // Force update of quantityOnHand
       await knex('InventoryItem')
         .where({ id: inventoryItemId })
         .update({ updatedOn: now, quantityOnHand: newQuantityOnHand })
@@ -1910,19 +1917,27 @@ describe('admin result updates', () => {
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
+
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
+
       assert.equal(
         inventoryItemAfter.expiresOn.toISOString(),
         futureExpiresOn.toISOString()
       )
-      assert.equal(inventoryItemAfter.quantityOnHand, newQuantityOnHand)
+
+      assert.equal(
+        inventoryItemAfter.quantityOnHand,
+        newQuantityOnHand - inventoryConsumedByTest
+      )
 
       inventoryLogsAfter = await knex('InventoryLog')
         .where({ inventoryItemId })
         .orderBy('id', 'desc')
         .select()
+
       assert.equal(inventoryLogsAfter.length, 2)
       ;[inventoryLog] = inventoryLogsAfter
+
       assert.equal(inventoryLog.inventoryItemId, inventoryItemId)
       assert.isOk(inventoryLog.resultId)
 
@@ -1964,7 +1979,7 @@ describe('admin result updates', () => {
       assert.isOk(inventoryItemAfter.expiresOn)
       assert.equal(
         inventoryItemAfter.quantityOnHand,
-        newQuantityOnHand - inventoryConsumedByTest
+        newQuantityOnHand - inventoryConsumedByTest * 2
       )
 
       inventoryLogsAfter = await knex('InventoryLog')
@@ -2356,9 +2371,6 @@ describe('admin result updates', () => {
         .where({ id: inventoryConsumptionLog.inventoryItemId })
         .del()
 
-      assert.isOk(
-        _.find(inventoryItemsAfter, { lotNumber: resultDetails.lotNumber })
-      )
       assert.isOk(inventoryConsumptionLog.inventoryItemId)
 
       assert.equal(
