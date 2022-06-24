@@ -73,7 +73,7 @@ describe('Inventory Routes', () => {
     return newSites
   }
 
-  describe('Inventory List Route', () => {
+  describe('Inventory List Route With Lot and expiration date strategy', () => {
     describe('/inventory', () => {
       const path = '/api/inventory'
       let site1Id
@@ -289,7 +289,9 @@ describe('Inventory Routes', () => {
           // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
           // ===> 3.5 days of stock left
           // ===> 200 cartridges to be wasted
+
           assert.equal(inventoryItems[0].daysStockLeft, 3.5)
+
           assert.equal(inventoryItems[0].projectedWaste, 200)
         })
 
@@ -324,6 +326,7 @@ describe('Inventory Routes', () => {
           // ===> 3.5 days of stock left
           // ===> 200 cartridges to be wasted
           assert.equal(inventoryItems[0].daysStockLeft, 3.5)
+
           assert.equal(inventoryItems[0].projectedWaste, 200)
         })
 
@@ -349,6 +352,7 @@ describe('Inventory Routes', () => {
 
           // Site 2 has 50 days of stock left
           assert.equal(res.body.data[0].siteId, site2Id)
+
           // Site 1 has 3.5 days of stock left
           assert.equal(res.body.data[1].siteId, site1Id)
         })
@@ -576,66 +580,60 @@ describe('Inventory Routes', () => {
     let transitItem
     const inventoryItemsToRemove = []
 
-    beforeEach(() =>
-      run(async knex => {
-        const { id: consumableId } = await knex('Consumable')
-          .where('name', consumableName)
-          .first('id')
-        const dataConstraints = await getConstraints({ name: 'admin' })
-        ;[{ id: siteId }, destinationSite] = await knex('Site as s')
-          .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-          .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-          .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
-          .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-          .modify(addConstraints, dataConstraints, {
-            site: 's',
-            geography: 'g',
-          })
-          .select('s.id')
-
-        const expiryDate = new Date(
-          addYears(new Date(), 1).setHours(0, 0, 0, 0)
-        )
-        const [inventoryItemId] = await knex('InventoryItem').insert({
-          consumableId,
-          siteId,
-          lotNumber: testLotNumber,
-          expiresOn: expiryDate,
-          quantityOnHand: initialQuantityOnHand,
+    beforeEach(async () => {
+      const { id: consumableId } = await knex('Consumable')
+        .where('name', consumableName)
+        .first('id')
+      const dataConstraints = await getConstraints({ name: 'admin' })
+      ;[{ id: siteId }, destinationSite] = await knex('Site as s')
+        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+        .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
+        .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+        .modify(addConstraints, dataConstraints, {
+          site: 's',
+          geography: 'g',
         })
-        inventoryItemsToRemove.push(inventoryItemId)
-        inventoryItem = await knex('InventoryItem')
-          .where({ id: inventoryItemId })
-          .first()
-        assert.isOk(destinationSite, `Cannot find destinationSite`)
-      })
-    )
+        .select('s.id')
 
-    afterEach(async () =>
-      run(async knex => {
-        await knex('InventoryLog')
-          .whereIn('inventoryItemId', inventoryItemsToRemove)
-          .orWhere(function () {
-            if (transitItem != null) {
-              this.where({ inventoryItemId: transitItem.id })
-            }
-          })
-          .delete()
-        await knex('InventoryItem')
-          .whereIn('id', inventoryItemsToRemove)
-          .orWhere(function () {
-            if (transitItem != null) {
-              this.where({ id: transitItem.id })
-            }
-          })
-          .delete()
+      const expiryDate = new Date(addYears(new Date(), 1).setHours(0, 0, 0, 0))
+      const [inventoryItemId] = await knex('InventoryItem').insert({
+        consumableId,
+        siteId,
+        lotNumber: testLotNumber,
+        expiresOn: expiryDate,
+        quantityOnHand: initialQuantityOnHand,
       })
-    )
+      inventoryItemsToRemove.push(inventoryItemId)
+      inventoryItem = await knex('InventoryItem')
+        .where({ id: inventoryItemId })
+        .first()
+      assert.isOk(destinationSite, `Cannot find destinationSite`)
+    })
+
+    afterEach(async () => {
+      await knex('InventoryLog')
+        .whereIn('inventoryItemId', inventoryItemsToRemove)
+        .orWhere(function () {
+          if (transitItem != null) {
+            this.where({ inventoryItemId: transitItem.id })
+          }
+        })
+        .delete()
+      await knex('InventoryItem')
+        .whereIn('id', inventoryItemsToRemove)
+        .orWhere(function () {
+          if (transitItem != null) {
+            this.where({ id: transitItem.id })
+          }
+        })
+        .delete()
+    })
 
     describe('/inventory/add', () => {
       describe('PUT', () => {
-        it('should update the quantity of an inventory item', done => {
-          server
+        it('should update the quantity of an inventory item with lot serial number and expirationDate', async () => {
+          const res = await server
             .put(`${addInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
@@ -647,17 +645,36 @@ describe('Inventory Routes', () => {
               dateAdjusted: new Date().toISOString(),
             })
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.equal(
-                res.body.data.quantityOnHand,
-                _.max([0, inventoryItem.quantityOnHand + quantityToAdjust])
-              )
-              done()
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.equal(
+            res.body.data.quantityOnHand,
+            _.max([0, inventoryItem.quantityOnHand + quantityToAdjust])
+          )
+        })
+        it('should update the quantity of an inventory item only with expiration date matching', async () => {
+          const res = await server
+            .put(`${addInventoryPath}`)
+            .send({
+              consumableId: inventoryItem.consumableId,
+              lotNumber: inventoryItem.lotNumber,
+              expiresOn: inventoryItem.expiresOn,
+              quantity: quantityToAdjust,
+              notes: 'Testing add',
+              toSiteId: inventoryItem.siteId,
+              dateAdjusted: new Date().toISOString(),
             })
+            .set('Authorization', `Bearer ${shared.token}`)
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.equal(
+            res.body.data.quantityOnHand,
+            _.max([0, inventoryItem.quantityOnHand + quantityToAdjust])
+          )
         })
       })
     })

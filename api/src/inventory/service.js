@@ -27,32 +27,12 @@ const {
 } = require('../shared/utilsInventory')
 const { querySelectors, getInventoryLogBaseQuery } = require('./query/index')
 const { splitCsvWithTrim } = require('../shared/string')
-
-const INVENTORY_COMMON_FIELDS = [
-  'c.id as consumableId',
-  'c.name as consumableName',
-  'c.manufacturer',
-  'c.canExpire',
-  'u.shortName as unitShortName',
-  's.id as siteId',
-  's.name as siteName',
-  'g.countryId',
-  'g.stateId',
-  'g.lgaId',
-  'co.name as countryName',
-  'st.name as stateName',
-  'l.name as lgaName',
-]
-
-const INVENTORY_ITEM_SELECT = [
-  ...INVENTORY_COMMON_FIELDS,
-  'ii.quantityOnHand',
-  'ii.id',
-  'ii.expiresOn',
-  'ii.lotNumber',
-  'itfs.name as inTransitFromSiteName',
-  'ii.inTransitFromSiteId',
-]
+const {
+  findInventoryItem,
+  INVENTORY_ITEM_SELECT,
+  INVENTORY_COMMON_FIELDS,
+  findInventoryItems,
+} = require('./queries/inventoryDbAccess')
 
 // Select for inventory grouped by site and consumable
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
@@ -63,13 +43,42 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
 // Select for inventory split by lot
 const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
   knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
+    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
   ),
+
   ...INVENTORY_ITEM_SELECT.filter(
     field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
   ),
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
+
+const CONCATENATED_ID = `CONCAT(
+  c.id,
+  '-',
+  s.id,
+  '-',
+  IFNULL(
+    CASE
+      WHEN c.strategy IS NOT NULL
+      AND INSTR(c.strategy, 'expirationDate') > 0
+      THEN ii.expiresOn
+      ELSE ''
+    END,
+    '-'
+  ),
+  '-',
+  IFNULL(
+    CASE
+      WHEN c.strategy IS NOT NULL
+      AND INSTR(c.strategy, 'withlot') > 0
+      THEN ii.lotNumber
+      ELSE ''
+    END,
+    ''
+  ),
+  '-',
+  IFNULL(ii.inTransitFromSiteId, '')
+)`
 
 const INVENTORY_LOG_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -197,8 +206,10 @@ async function consumeInventoryForResult(
           siteId,
           assayConsumable,
           consumablesInResultData,
-          now
+          now,
+          assayConsumable.strategy
         )
+
         const testedOn = testStartedOn || testEndedOn
 
         // always try to find match whether we have consumables or not
@@ -234,43 +245,15 @@ async function consumeInventoryForResult(
 
           const inventoryItemUpdates = {}
 
-          // Update quantity on hand, but result completed after
-          // item was updated, to avoid double counting.
-          // Do not bump updatedOn here because of the double count check
-          if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
-            inventoryItemUpdates.quantityOnHand = knex.raw(
-              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
-            )
-          }
+          inventoryItemUpdates.quantityOnHand = knex.raw(
+            `quantityOnHand - ${assayConsumable.quantity}`
+          )
 
-          // if we had an exact match on consumable date, and we don't have
-          // a lot number for inventory item, but we do for matching consumable,
-          // copy it over
-          if (
-            matchingConsumable != null &&
-            matchingInventoryOnHand.lotNumber == null &&
-            matchingConsumable.lot != null &&
-            matchingInventoryOnHand.expiresOn != null &&
-            _.isEqual(
-              matchingInventoryOnHand.expiresOn,
-              parseDateOrDefault(matchingConsumable.expirationDate)
-            )
-          ) {
-            inventoryItemUpdates.lotNumber = matchingConsumable.lot
-          }
-
-          if (!_.isEmpty(inventoryItemUpdates)) {
-            await updateInventoryItem(
-              knex,
-              matchingInventoryOnHand.id,
-              inventoryItemUpdates
-            )
-          }
-
-          // TODO ASP-811 do not use same inventory item for next consumable
-          // matchingInventoryItems = _.reject(matchingInventoryItems => {
-          //  matchingInventoryItemOnHand.id
-          // })
+          await updateInventoryItem(
+            knex,
+            matchingInventoryOnHand.id,
+            inventoryItemUpdates
+          )
         }
       }
     })
@@ -282,18 +265,11 @@ async function findOrCreateMatchingInventoryItems(
   siteId,
   assayConsumable,
   consumablesInResultData,
-  now
+  now,
+  strategy
 ) {
   const { consumableId } = assayConsumable
-  const existingItems = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .whereNull('inTransitFromSiteId')
-    // Order by expiresOn asc nulls last, createdOn desc
-    .orderByRaw('expiresOn is null')
-    .orderBy('expiresOn', 'asc')
-    .orderBy('createdOn', 'desc')
-    .orderBy('id', 'desc')
-    .select()
+  const existingItems = await findInventoryItems(siteId, consumableId)
   if (existingItems.length > 0) {
     return existingItems
   }
@@ -302,7 +278,10 @@ async function findOrCreateMatchingInventoryItems(
   // should always have at least consumableInResultData.length items
   // We can likely do this by moving the Or Create prior to the match function
   // if candidate items are empty!
-  const lotNumberInResultData = _.get(consumablesInResultData, '[0].lot')
+  const lotNumberInResultData =
+    strategy.indexOf('withLot') >= 0
+      ? _.get(consumablesInResultData, '[0].lot')
+      : null
   const expirationDateInResultData = getDateOrDefault(
     consumablesInResultData,
     '[0].expirationDate'
@@ -512,15 +491,26 @@ function getInventoryLots(request, dataConstraints) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
     .groupBy([
-      knex.raw(
-        `CONCAT(c.id, '-', s.id, '-', ii.expiresOn,'-', ifnull(ii.lotNumber,''),'-', ifnull(ii.inTransitFromSiteId,''))`
-      ),
+      knex.raw(CONCATENATED_ID),
+
       's.name',
-      'ii.expiresOn',
-      'ii.lotNumber',
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
+      ),
       'ii.inTransitFromSiteId',
     ])
-    .select(INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS)
+    .select(
+      ...INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
+      ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+      )
+    )
 
   return inventoryItemsQuery
 }
@@ -642,11 +632,15 @@ function getInventorySites(constraints, request) {
         'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
       ),
       knex.raw(
-        `CASE WHEN IFNULL(ficr.rate, 0) = 0
-          THEN null
-          ELSE GetDaysStockLeft(NOW(), ficr.rate, ${inventoryItemsRaw})
-        END as daysStockLeft`
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
       ),
+      knex.raw(
+        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
+      ),
+      knex.raw(`CASE WHEN IFNULL(ficr.rate, 0) = 0
+          THEN null
+          ELSE GetDaysStockLeft( NOW(), ficr.rate, ${inventoryItemsRaw})
+        END as daysStockLeft`),
       knex.raw(
         `CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
@@ -705,9 +699,7 @@ async function listInventoryByLot(request, dataConstraints) {
       INVENTORY_ITEM_SORT_FIELDS.siteName,
       INVENTORY_ITEM_SORT_FIELDS
     )
-
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
   return { total, data }
 }
 
@@ -731,7 +723,6 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
       }
     })
     .select(`*`)
-
   const [{ total }] = await inventoryQuery.clone().count('id as total')
 
   // sorting and pagination
@@ -1091,56 +1082,6 @@ async function getDaysByLocation(request) {
     total: result.length,
     data: result,
   }
-}
-
-async function findInventoryItem(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  inTransitFromSiteId
-) {
-  const matchingInventoryItemsQuery = query('Find Inventory Item')
-    .from('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .innerJoin('Unit as u', 'c.unit', 'u.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as co', 'g.countryId', 'co.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
-    .where({
-      'ii.siteId': siteId,
-      'ii.consumableId': consumableId,
-    })
-  if (expiresOn) {
-    matchingInventoryItemsQuery.where('ii.expiresOn', expiresOn)
-  } else {
-    matchingInventoryItemsQuery.whereNull('ii.expiresOn')
-  }
-
-  if (!_.isEmpty(lotNumber)) {
-    matchingInventoryItemsQuery.where('ii.lotNumber', lotNumber)
-  } else {
-    matchingInventoryItemsQuery.where(builder =>
-      builder.whereNull('ii.lotNumber').orWhere('ii.lotNumber', '')
-    )
-  }
-
-  if (inTransitFromSiteId) {
-    matchingInventoryItemsQuery.where(
-      'ii.inTransitFromSiteId',
-      inTransitFromSiteId
-    )
-  } else {
-    matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
-  }
-
-  const matchingInventoryItems = await matchingInventoryItemsQuery.select(
-    INVENTORY_ITEM_SELECT
-  )
-  return _.head(matchingInventoryItems)
 }
 
 function getInventoryItem(inventoryItemId) {
