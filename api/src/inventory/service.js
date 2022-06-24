@@ -226,6 +226,20 @@ async function consumeInventoryForResult(
               now
             )
 
+          const inventoryItemUpdates = {}
+
+          // Update quantity on hand, but only if not exists an inventoryLog entry for
+          // the InventoryItem, to avoid double counting.
+          const existsInventoryLog = await knex('InventoryLog as il')
+            .where('il.inventoryItemId', matchingInventoryOnHand.id)
+            .first(1)
+
+          if (isNewInventoryItem || !existsInventoryLog) {
+            inventoryItemUpdates.quantityOnHand = knex.raw(
+              `quantityOnHand - ${assayConsumable.quantity}`
+            )
+          }
+
           // Log change
           await logInventoryChange({
             knex,
@@ -245,43 +259,15 @@ async function consumeInventoryForResult(
 
           const inventoryItemUpdates = {}
 
-          // Update quantity on hand, but result completed after
-          // item was updated, to avoid double counting.
-          // Do not bump updatedOn here because of the double count check
-          if (
-            isNewInventoryItem ||
-            matchingInventoryOnHand.updatedOn <= (testedOn || now) // REMOVE CHECKING FROM INVENTORY LOG
-          ) {
-            inventoryItemUpdates.quantityOnHand = knex.raw(
-              `quantityOnHand - ${assayConsumable.quantity}`
-            )
-          }
+          inventoryItemUpdates.quantityOnHand = knex.raw(
+            `quantityOnHand - ${assayConsumable.quantity}`
+          )
 
-          // if we had an exact match on consumable date, and we don't have
-          // a lot number for inventory item, but we do for matching consumable,
-          // copy it over
-          if (
-            matchingConsumable != null &&
-            matchingInventoryOnHand.lotNumber == null &&
-            matchingConsumable.lot != null &&
-            matchingInventoryOnHand.expiresOn != null &&
-            _.isEqual(
-              matchingInventoryOnHand.expiresOn,
-              parseDateOrDefault(matchingConsumable.expirationDate)
-            )
-          ) {
-            inventoryItemUpdates.lotNumber = matchingConsumable.lot
-          }
-
-          if (!_.isEmpty(inventoryItemUpdates)) {
-            await updateInventoryItem(
-              knex,
-              matchingInventoryOnHand.id,
-              inventoryItemUpdates
-            )
-          }
-
-          // TODO ASP-811 do not use same inventory item for next consumable
+          await updateInventoryItem(
+            knex,
+            matchingInventoryOnHand.id,
+            inventoryItemUpdates
+          )
         }
       }
     })

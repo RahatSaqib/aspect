@@ -1228,6 +1228,7 @@ describe('admin result updates', () => {
       assert.isNotOk(otherInventoryConsumptionLogsForThisTest)
     })
   })
+
   describe.only('inventory management with Expiration date strategy', () => {
     before(async () =>
       knex('Consumable').update({ strategy: 'withExpirationDateStrategy' })
@@ -1642,7 +1643,7 @@ describe('admin result updates', () => {
       )
     })
 
-    it('should deduct inventory item with expiresOn', async () => {
+    it.only('should deduct inventory item with expiresOn', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const { siteId } = await knex('Device')
         .where({ id: deviceId })
@@ -1668,7 +1669,7 @@ describe('admin result updates', () => {
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: null,
-        expiresOn: null,
+        expiresOn: futureExpiresOn.toISOString(),
         quantityOnHand: 50,
         createdBy: adminId,
         createdOn: past,
