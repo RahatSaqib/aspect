@@ -199,10 +199,10 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
         />
       </TableCell>
       <TableCell>
-        <Fade in={showCheck} out={!showCheck} timeout={1500}>
+        <Fade in={showCheck} timeout={1500}>
           <CheckIcon color="primary" />
         </Fade>
-        <Fade in={showError} out={!showError} timeout={1500}>
+        <Fade in={showError} timeout={1500}>
           <CancelSharpIcon color="secondary" />
         </Fade>
       </TableCell>

@@ -559,8 +559,7 @@ function getInventoryItemsRaw() {
 }
 
 async function listInventoryLog(request) {
-  const res = await listLog(request, querySelectors.INVENTORY_LOG_UILIST)
-  return res
+  return listLog(request)
 }
 
 async function listLog(
@@ -1831,10 +1830,10 @@ async function modifyInventoryOnHand(request) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
   payload.operation = 'add'
-  const { id: reasonId } =
+  const { reasonId } =
     (await knex('ConsumableReason')
-      .first('id')
-      .where('i18nKey', 'ConsumableReason_AssertedInventoryOnHand')) || {}
+      .where('i18nKey', 'ConsumableReason_AssertedInventoryOnHand')
+      .first('id as reasonId')) || {}
   payload.reasonId = reasonId
   result = await increaseInventory(payload)
   return result

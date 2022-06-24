@@ -71,9 +71,12 @@ const DataTableHead = ({
           index
         ) =>
           !isHidden ? (
-            <PermissionsProvider permissions={auth || []}>
+            <PermissionsProvider
+              key={`${(Math.random() * 100000).toString()}--${key}`}
+              permissions={auth || []}
+            >
               <TableCell
-                key={key}
+                key={`${(Math.random() * 100000).toString()}--${key}`}
                 data-column={key}
                 colSpan={colSpan}
                 sortDirection={sortColumnKey === key ? sortColumnDir : false}
