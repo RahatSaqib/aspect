@@ -76,7 +76,6 @@ const COMMON_LIST_FIELDS_UTC = {
   resultTreatmentStatusChangedOn: 'rtsl.changedOn',
   transferredOn: 'rslog.createdOn',
   firstViewedOn: 'r.firstViewedOn',
-  deviceProvinceName: 'stdpn.name',
 }
 
 /**

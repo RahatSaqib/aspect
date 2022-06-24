@@ -151,6 +151,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
     resultCategory1Title: 'a.resultCategory1label',
     resultCategory2Title: 'a.resultCategory2label',
+    deviceProvinceName: 'stdpn.name',
   }
 
   // get rows
@@ -212,6 +213,7 @@ async function getResultsForExport(auth, query) {
     resultText: knex.raw(
       `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
     ),
+    deviceProvinceName: 'stdpn.name',
   }
   const sortableFields = [...SORT_FIELDS]
 
