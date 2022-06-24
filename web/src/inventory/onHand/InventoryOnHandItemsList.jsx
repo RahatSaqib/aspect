@@ -2,7 +2,7 @@ import classnames from 'classnames/bind'
 import React, { useEffect, useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
@@ -19,10 +19,9 @@ import {
 
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
-import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { receiveInventoryItems } from '../InventoryRedux'
 
 import {
   InventoryDataTable,
@@ -36,45 +35,20 @@ import styles from './InventoryItemsList.css'
 
 const cssClasses = classnames.bind(styles)
 
-const availableSortCol = [
-  'siteName',
-  'consumableName',
-  'quantityOnHand',
-  { col: 'expiresOn', isEnabled: dependencies => dependencies.breakOutByLot },
-  { col: 'lotNumber', isEnabled: dependencies => dependencies.breakOutByLot },
-  {
-    col: 'daysStockLeft',
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-  {
-    col: 'projectedWaste',
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-  {
-    col: 'dailyConsumptionRate',
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-]
-
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol,
+  availableSortCol: [],
 })
 
-export const InventoryItemsListWithProps = ({
+export const InventoryOnHandItemsListWithProps = ({
   intl,
   navigate,
   location,
   breakOutByLot,
   isLoading,
-  items,
-  sortCol,
-  sortDir,
-  table,
-  pageAt,
-  pageSize,
   refreshData,
   siteName,
   consumableName,
+  dataTableItems,
 }) => {
   const columns = [
     {
@@ -118,11 +92,7 @@ export const InventoryItemsListWithProps = ({
             <Button
               variant="contained"
               color="primary"
-              onClick={() =>
-                navigate(
-                  'browse/inventory?filters=countryId%3D4%26hasStock%3Dtrue'
-                )
-              }
+              onClick={() => navigate(-1)}
             >
               {intl.formatMessage(messages.backButton)}
             </Button>
@@ -134,56 +104,41 @@ export const InventoryItemsListWithProps = ({
         className={cssClasses('DataTableCard--table')}
       >
         <DataTableProgressBar disabled={!isLoading} />
-        {items.currentIdList.isEmpty() && (
+        {dataTableItems && dataTableItems.length === 0 && (
           <BrowseEmptyList navigate={navigate} location={location} />
         )}
-        {!items.currentIdList.isEmpty() && (
+        {dataTableItems && dataTableItems.length > 0 && (
           <InventoryDataTable className={cssClasses('InventoryDataTable')}>
             <InventoryDataTableHead
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
               columns={columns}
             />
             <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(inventoryItem => (
-                  <InventoryOnHandTableRow
-                    key={inventoryItem.get('id')}
-                    inventoryItem={inventoryItem}
-                    breakOutByLot={breakOutByLot}
-                    navigate={navigate}
-                    location={location}
-                    refreshData={refreshData}
-                  />
-                ))}
+              {dataTableItems.map(inventoryItem => (
+                <InventoryOnHandTableRow
+                  key={inventoryItem.id}
+                  inventoryItem={inventoryItem}
+                  breakOutByLot={breakOutByLot}
+                  navigate={navigate}
+                  location={location}
+                  refreshData={refreshData}
+                />
+              ))}
             </TableBody>
           </InventoryDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            intl={intl}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
         )}
       </DataTableCard>
     </div>
   )
 }
 
-export const InventoryItemsList = ({ navigate, location }) => {
+export const InventoryOnHandItemsList = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
-  const dispatch = useDispatch()
   const intl = useIntl()
   const [siteName, setSiteName] = useState('')
   const [consumableName, setConsumableName] = useState('')
+  const [dataTableItems, setDataTableItems] = useState([])
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)
   // >>>>>> Structuring data <<<<<<
@@ -193,15 +148,11 @@ export const InventoryItemsList = ({ navigate, location }) => {
   })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
     location,
-    availableSortCol,
+    availableSortCol: [],
   })
   const { siteId, consumableId } = useParams()
   // >>>>>> Defining queries <<<<<<
   const params = {
-    sortCol,
-    sortDir,
-    page: pageAt,
-    size: pageSize,
     breakOutByLot: true,
     siteId,
     consumableId,
@@ -242,19 +193,18 @@ export const InventoryItemsList = ({ navigate, location }) => {
       })
       const newData = { ...data }
       newData.data = qtyOnHandData
-      dispatch(receiveInventoryItems(newData))
     },
-    [dispatch, data]
+    [data]
   )
 
   // >>>>>> Lifecycle hooks <<<<<<
   useEffect(() => {
-    if (data) {
+    if (data.data?.length > 0) {
       setSiteName(data.data[0].siteName)
       setConsumableName(data.data[0].consumableName)
-      setDataTable()
+      setDataTableItems(data.data)
     }
-  }, [data, dispatch, refetch, setDataTable])
+  }, [data, refetch, setDataTable])
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
@@ -267,7 +217,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
         { replace: true }
       )
     }
-  }, [location, navigate, dispatch])
+  }, [location, navigate])
 
   if (isError) throw new Error(error)
 
@@ -275,7 +225,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     intl,
     navigate,
     location,
-    dispatch,
+
     isLoading,
     items,
     sortCol,
@@ -289,9 +239,10 @@ export const InventoryItemsList = ({ navigate, location }) => {
     refreshData,
     siteName,
     consumableName,
+    dataTableItems,
   }
 
-  return <InventoryItemsListWithProps {...props} />
+  return <InventoryOnHandItemsListWithProps {...props} />
 }
 
-export default InventoryItemsList
+export default InventoryOnHandItemsList
