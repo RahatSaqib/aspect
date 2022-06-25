@@ -2092,8 +2092,6 @@ describe('admin result updates', () => {
         })
         .expect(200)
 
-      const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-
       const inventoryConsumptionLog = await knex('InventoryLog as il')
         .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
         .where('il.consumableId', daktariHivVlCartridgeId)
