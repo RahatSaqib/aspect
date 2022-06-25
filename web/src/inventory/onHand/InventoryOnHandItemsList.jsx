@@ -1,8 +1,7 @@
 import classnames from 'classnames/bind'
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { useSelector } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
@@ -10,12 +9,9 @@ import TableBody from '@material-ui/core/TableBody'
 import Grid from '@material-ui/core/Grid'
 
 import Button from '@material-ui/core/Button'
-
+import { PropTypes } from 'prop-types'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-} from '../../shared/selectors/searchParams'
+import { makeSearchParamsSanitizer } from '../../shared/selectors/searchParams'
 
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -39,17 +35,55 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [],
 })
 
-export const InventoryOnHandItemsListWithProps = ({
-  intl,
-  navigate,
-  location,
-  breakOutByLot,
-  isLoading,
-  refreshData,
-  siteName,
-  consumableName,
-  dataTableItems,
-}) => {
+export const InventoryOnHandItemsList = ({ navigate, location }) => {
+  // >>>>>> Defining hooks <<<<<<
+  const intl = useIntl()
+  const [siteName, setSiteName] = useState('')
+  const [consumableName, setConsumableName] = useState('')
+  const [dataTableItems, setDataTableItems] = useState([])
+
+  const { siteId, consumableId } = useParams()
+  // >>>>>> Defining queries <<<<<<
+  const params = {
+    breakOutByLot: true,
+    siteId,
+    consumableId,
+  }
+
+  const {
+    isError,
+    isLoading,
+    data = false,
+    error,
+    refetch,
+  } = useQuery([INVENTORY_LIST.KEY, params], async () => {
+    return fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
+  })
+
+  // >>>>>> Lifecycle hooks <<<<<<
+  useEffect(() => {
+    if (data.data?.length > 0) {
+      setSiteName(data.data[0].siteName)
+      setConsumableName(data.data[0].consumableName)
+      setDataTableItems(data.data)
+    }
+  }, [data, refetch])
+
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    if (sanitized) {
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
+  }, [location, navigate])
+
+  if (isError) throw new Error(error)
+
   const columns = [
     {
       key: 'expiresOn',
@@ -119,10 +153,10 @@ export const InventoryOnHandItemsListWithProps = ({
                 <InventoryOnHandTableRow
                   key={inventoryItem.id}
                   inventoryItem={inventoryItem}
-                  breakOutByLot={breakOutByLot}
+                  breakOutByLot
                   navigate={navigate}
                   location={location}
-                  refreshData={refreshData}
+                  refreshData={refetch}
                 />
               ))}
             </TableBody>
@@ -133,116 +167,8 @@ export const InventoryOnHandItemsListWithProps = ({
   )
 }
 
-export const InventoryOnHandItemsList = ({ navigate, location }) => {
-  // >>>>>> Defining hooks <<<<<<
-  const intl = useIntl()
-  const [siteName, setSiteName] = useState('')
-  const [consumableName, setConsumableName] = useState('')
-  const [dataTableItems, setDataTableItems] = useState([])
-  // >>>>>> Defining selectors <<<<<<
-  const inventory = useSelector(state => state.inventory)
-  // >>>>>> Structuring data <<<<<<
-  const { table, items, inventoryAdjustment } = inventory
-  const sortPage = makeSortPageSelector({
-    sortCol: 'siteName',
-  })
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
-    location,
-    availableSortCol: [],
-  })
-  const { siteId, consumableId } = useParams()
-  // >>>>>> Defining queries <<<<<<
-  const params = {
-    breakOutByLot: true,
-    siteId,
-    consumableId,
-  }
-
-  const {
-    isError,
-    isLoading,
-    data = false,
-    error,
-    refetch,
-  } = useQuery([INVENTORY_LIST.KEY, params], async () => {
-    return fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
-  })
-
-  const refreshData = async () => {
-    const resp = await refetch()
-    if (resp.data) {
-      setSiteName(data.data[0].siteName)
-      setConsumableName(data.data[0].consumableName)
-      setDataTable(resp.data)
-    }
-  }
-  const setDataTable = useCallback(
-    updatedData => {
-      const dataTableData = updatedData || data
-      const qtyOnHandData = dataTableData.data.map(x => {
-        return {
-          id: x.id,
-          consumableId: x.consumableId,
-          siteId: x.siteId,
-          lotNumber: x.lotNumber,
-          quantityOnHand: x.quantityOnHand,
-          expiresOn: x.expiresOn,
-          newQuantityOnHand: 0,
-          resultQuantityOnHand: 0,
-        }
-      })
-      const newData = { ...data }
-      newData.data = qtyOnHandData
-    },
-    [data]
-  )
-
-  // >>>>>> Lifecycle hooks <<<<<<
-  useEffect(() => {
-    if (data.data?.length > 0) {
-      setSiteName(data.data[0].siteName)
-      setConsumableName(data.data[0].consumableName)
-      setDataTableItems(data.data)
-    }
-  }, [data, refetch, setDataTable])
-
-  useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    if (sanitized) {
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
-    }
-  }, [location, navigate])
-
-  if (isError) throw new Error(error)
-
-  const props = {
-    intl,
-    navigate,
-    location,
-
-    isLoading,
-    items,
-    sortCol,
-    sortDir,
-    table,
-    pageAt,
-    pageSize,
-    inventoryAdjustment,
-    siteId,
-    consumableId,
-    refreshData,
-    siteName,
-    consumableName,
-    dataTableItems,
-  }
-
-  return <InventoryOnHandItemsListWithProps {...props} />
-}
-
 export default InventoryOnHandItemsList
+InventoryOnHandItemsList.propTypes = {
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
+}

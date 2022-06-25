@@ -7,6 +7,7 @@ import { useMutation } from 'react-query'
 import Fade from '@material-ui/core/Fade'
 import CancelSharpIcon from '@material-ui/icons/CancelSharp'
 import CheckIcon from '@material-ui/icons/Check'
+import { PropTypes } from 'prop-types'
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
@@ -76,7 +77,7 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
     const newQty = parseInt(newQtyOnHand, 10)
     const movementQty = parseInt(resultQtyOnHand, 10)
 
-    if (qty !== newQty && notes && notes.length >= 5) {
+    if (qty !== newQty && notes) {
       onModifyInventoryOnHandSubmit({
         quantity: movementQty,
         isAdd,
@@ -183,11 +184,14 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
       >
         <TextField
           value={notes}
-          error={!!newQtyOnHand && notes.length < 5}
+          error={
+            !!newQtyOnHand && newQtyOnHand !== inventoryItem.quantityOnHand
+          }
           type="text"
           name="resultQuantityOnHand"
           margin="normal"
-          helperText={formatMessage(messages.inventoryOnMandatoryNote)}
+          required
+          // helperText={formatMessage(messages.inventoryOnMandatoryNote)}
           onChange={evt => setNotes(evt.target.value)}
         />
       </TableCell>
@@ -204,3 +208,8 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
 }
 
 export default InventoryOnHandTableRow
+
+InventoryOnHandTableRow.propTypes = {
+  inventoryItem: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  refreshData: PropTypes.oneOfType([PropTypes.func]).isRequired,
+}
