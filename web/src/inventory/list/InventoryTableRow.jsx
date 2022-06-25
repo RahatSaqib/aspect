@@ -3,13 +3,11 @@ import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
 import isNull from 'lodash/isNull'
 import round from 'lodash/round'
-
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatDate } from '../../shared/utils/dateFormat'
 import messages from './messages'
 import {
   showAddInventoryDialog,
@@ -24,10 +22,17 @@ import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({ inventoryItem }) => {
+const InventoryTableRow = ({
+  inventoryItem,
+  breakOutByLot,
+  navigate,
+  location,
+}) => {
   const { formatMessage, formatNumber } = useI18n()
   const dispatch = useDispatch()
-
+  const isNumber =
+    !Number.isNaN(inventoryItem.get('quantityOnHand')) &&
+    Number.isInteger(parseFloat(inventoryItem.get('quantityOnHand')))
   const getActions = isInTransit => [
     {
       icon: 'FaCheck',
@@ -57,6 +62,22 @@ const InventoryTableRow = ({ inventoryItem }) => {
       action: ({ inventoryItemId }) =>
         dispatch(showRemoveInventoryDialog(inventoryItemId)),
     },
+    {
+      icon: 'FaSquare',
+      text: formatMessage(messages.inventoryOnHand),
+      disabled: isInTransit || breakOutByLot || !isNumber,
+      action: ({ inventoryItem }) => {
+        const siteId = inventoryItem.get('siteId')
+        const consumableId = inventoryItem.get('consumableId')
+        navigate(
+          {
+            ...location,
+            pathname: `/browse/inventory/onHand/${siteId}/${consumableId}`,
+          },
+          { replace: true }
+        )
+      },
+    },
   ]
 
   const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
@@ -69,7 +90,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
       : formatNumber(round(qty, 2))
 
   return (
-    <TableRow className={cssClasses('TableRow')}>
+    <TableRow className={cssClasses('TableRow')} key={rowSpan('id')}>
       <TableCell
         className={cssClasses('TableCell')}
         rowSpan={rowSpan('siteName')}
@@ -83,14 +104,11 @@ const InventoryTableRow = ({ inventoryItem }) => {
       >
         {inventoryItem.get('consumableName')}
       </TableCell>
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('quantityOnHand')}
-      >
+      <TableCell className={cssClasses('TableCell')}>
+        {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
+        &nbsp;
         {inventoryItem.get('inTransitFromSiteName') ? (
           <span>
-            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
-            &nbsp;
             <small>
               {formatMessage(messages.inTransitFromSiteName, {
                 inTransitFromSiteName: inventoryItem.get(
@@ -101,8 +119,6 @@ const InventoryTableRow = ({ inventoryItem }) => {
           </span>
         ) : (
           <span>
-            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
-            &nbsp;
             <small>
               {inventoryItem.get('pendingTransfers')
                 ? formatMessage(messages.excludedLotInTransit, {
@@ -115,6 +131,11 @@ const InventoryTableRow = ({ inventoryItem }) => {
             </small>
           </span>
         )}
+        {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
+          <span className={cssClasses('alert')}>
+            &nbsp; (-{inventoryItem.get('qtyExpired')} Expired)
+          </span>
+        ) : null}
       </TableCell>
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
         <TableCell
@@ -148,7 +169,7 @@ const InventoryTableRow = ({ inventoryItem }) => {
             }
           >
             {inventoryItem.get('expiresOn')
-              ? formatDate(inventoryItem.get('expiresOn'))
+              ? inventoryItem.get('expiresOn').split('T')[0]
               : 'N/A'}
           </span>
         </TableCell>
@@ -177,7 +198,10 @@ const InventoryTableRow = ({ inventoryItem }) => {
         <PermissionsProvider permissions={['inventory:edit']}>
           <TableCell className={cssClasses('TableCell')}>
             <AspectVertMenu
-              params={{ inventoryItemId: inventoryItem.get('id') }}
+              params={{
+                inventoryItemId: inventoryItem.get('id'),
+                inventoryItem,
+              }}
               actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
             />
           </TableCell>

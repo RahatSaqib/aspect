@@ -40,18 +40,6 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   knex.raw('SUM(ii.quantityOnHand)'),
 ]
 
-// Select for inventory split by lot
-const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
-  knex.raw(
-    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
-  ),
-
-  ...INVENTORY_ITEM_SELECT.filter(
-    field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
-  ),
-  knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
-]
-
 const CONCATENATED_ID = `CONCAT(
   c.id,
   '-',
@@ -79,6 +67,18 @@ const CONCATENATED_ID = `CONCAT(
   '-',
   IFNULL(ii.inTransitFromSiteId, '')
 )`
+
+// Select for inventory split by lot
+const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
+  knex.raw(
+    "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
+  ),
+
+  ...INVENTORY_ITEM_SELECT.filter(
+    field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
+  ),
+  knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
+]
 
 const INVENTORY_LOG_SORT_FIELDS = {
   consumableName: 'c.name',
@@ -535,8 +535,7 @@ function getInventoryItemsRaw() {
 }
 
 async function listInventoryLog(request) {
-  const res = await listLog(request, querySelectors.INVENTORY_LOG_UILIST)
-  return res
+  return listLog(request)
 }
 
 async function listLog(
@@ -588,8 +587,8 @@ function getInventorySites(constraints, request) {
         .on('s.id', 'ii.siteId')
         .andOn('c.id', 'ii.consumableId')
         .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
-        // we are interested in unexpired yet as of today
-        .andOn(knex.raw('ii.expiresOn >= DATE(NOW())'))
+      // we are interested in unexpired yet as of today
+      // .andOn(knex.raw('ii.expiresOn >= DATE(NOW())'))
     })
     .leftJoin('InventoryItem as ii_transfer', builder => {
       builder
@@ -632,6 +631,11 @@ function getInventorySites(constraints, request) {
         'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
       ),
       knex.raw(
+        `sum(
+          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end 
+        ) as qtyExpired`
+      ),
+      knex.raw(
         `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
       ),
       knex.raw(
@@ -667,7 +671,6 @@ async function listInventory(request) {
       dataConstraints
     ))
   }
-
   return { ok: true, total, length: data.length, data }
 }
 
@@ -699,7 +702,9 @@ async function listInventoryByLot(request, dataConstraints) {
       INVENTORY_ITEM_SORT_FIELDS.siteName,
       INVENTORY_ITEM_SORT_FIELDS
     )
+
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
   return { total, data }
 }
 
@@ -714,8 +719,8 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
     .modify(builder => {
       if (range) {
         builder.whereRaw(
-          `daysStockLeft IS NOT NULL 
-          AND 
+          `daysStockLeft IS NOT NULL
+          AND
           daysStockLeft >= ${range.min}
           ${_.isNil(range.max) ? '' : ` AND daysStockLeft <= ${range.max}`}
           `
@@ -1514,7 +1519,6 @@ async function changeInventoryQuantity({
       createdOn: now,
       createdBy: userId,
     })
-
     await checkOpenedStockIssues({
       knex,
       siteId,
@@ -1660,7 +1664,7 @@ async function logInventoryChange({
     consumableReasonId,
     resultId,
     lotNumber,
-    expiresOn: expiresOn || null,
+    expiresOn: parseDateOrDefault(expiresOn) || null,
     quantity,
     operation,
     notes,
@@ -1776,6 +1780,54 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   return newInventoryItem
 }
 
+async function modifyInventoryOnHand(request) {
+  const {
+    auth,
+    payload: { siteId, consumableId, lotNumber, quantity, notes, expiresOn },
+  } = request
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+    escalateIssues,
+  })
+  const dataConstraints = await getConstraints(auth.credentials)
+  const payload = {
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber,
+    quantity,
+    notes,
+    messageContext,
+    now: new Date(),
+  }
+  let result = null
+  const site = await getSite(siteId, dataConstraints)
+  if (!site) {
+    return Boom.forbidden('You are not permitted to add inventory to this site')
+  }
+
+  if (quantity > 0) {
+    const { reasonId } =
+      (await knex('ConsumableReason')
+        .where('i18nKey', 'ConsumableReason_AssertedInventoryOnHandAdd')
+        .first('id as reasonId')) || {}
+    payload.operation = 'add'
+    payload.reasonId = reasonId
+    result = await increaseInventory(payload)
+  } else {
+    const { reasonId } =
+      (await knex('ConsumableReason')
+        .where('i18nKey', 'ConsumableReason_AssertedInventoryOnHandRemove')
+        .first('id as reasonId')) || {}
+    payload.operation = 'remove'
+    payload.reasonId = reasonId
+    result = await increaseInventory(payload)
+  }
+  return result
+}
+
 module.exports = {
   getInventoryItems,
   listInventory,
@@ -1790,5 +1842,6 @@ module.exports = {
   selectInventoryStockAtSite,
   getDaysByLocation,
   listLog,
+  modifyInventoryOnHand,
   listInventoryLog,
 }

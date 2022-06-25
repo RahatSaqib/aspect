@@ -15,12 +15,14 @@ const {
   transferInventory,
   receiveInventory,
   getDaysByLocation,
+  modifyInventoryOnHand,
   listInventoryLog,
 } = require('./service')
 
 const { exportSupplies } = require('./serviceReports')
 
 const inventoryFilters = {
+  siteId: Joi.number().integer().positive().allow('', null),
   consumableId: Joi.number().integer().positive().allow('', null),
   consumableExternalId: Joi.string()
     .optional()
@@ -36,7 +38,7 @@ const inventoryFilters = {
 const adjustInventoryCommonPayloadFields = {
   consumableId: Joi.number().positive().required(),
   lotNumber: Joi.string().max(255).allow('', null),
-  expiresOn: Joi.date().iso().allow(null),
+  expiresOn: Joi.string(),
   quantity: Joi.number().positive().required(),
   notes: Joi.string().max(2000).allow('', null),
 }
@@ -45,6 +47,16 @@ const removeInventoryCommonPayloadFields = {
   ...adjustInventoryCommonPayloadFields,
   fromSiteId: Joi.number().integer().positive().required(),
   reasonId: Joi.number().integer().positive().required(),
+}
+
+const modifyInventoryCommonPayloadFields = {
+  siteId: Joi.number().integer().positive().required(),
+  consumableId: Joi.number().integer().positive().required(),
+  quantity: Joi.number().required(),
+  lotNumber: Joi.string().max(255).optional().allow('', null),
+  expiresOn: Joi.date().optional().allow('', null),
+  isAdd: Joi.bool().required(),
+  notes: Joi.string().max(2000).required(),
 }
 
 function listSuppliesBaseConfig() {
@@ -302,6 +314,21 @@ const routes = [
           fromSiteId: Joi.number().integer().positive().required(),
           toSiteId: Joi.number().integer().positive().required(),
           dateAdjusted: Joi.date().iso().required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/inventory/on-hand',
+    handler: asyncHandler(modifyInventoryOnHand),
+    config: {
+      description: 'Modify Inventory on Hand',
+      notes: 'Received quantity to modify inventory',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        payload: {
+          ...modifyInventoryCommonPayloadFields,
         },
       },
     },
