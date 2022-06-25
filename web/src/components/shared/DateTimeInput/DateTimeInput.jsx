@@ -591,6 +591,7 @@ const DateTimeInput = props => {
   const [isBlured, setIsBlured] = useState(false)
   const selectRefs = useSelectRefs(displayFormat)
   const methodRefs = useSelectRefs(displayFormat)
+  const [stringDate, setStringDate] = useState(['2018', '01', '01'])
 
   useEffect(
     () => {
@@ -622,17 +623,27 @@ const DateTimeInput = props => {
     }
   }
 
-  const handleChange =
-    set =>
-    ({ value: nextValue }) => {
-      const changedDate = set(optionsDate, nextValue)
-      setOptionsDate(changedDate)
-      setDateTime(changedDate)
+  const handleChange = set => val => {
+    const { value: nextValue, label } = val
+    const changedDate = set(optionsDate, nextValue)
+    setOptionsDate(changedDate)
+    setDateTime(changedDate)
 
-      if (isControlled()) {
-        onChange(changedDate)
-      }
+    const [year, month, day] = stringDate
+    if (set.toString() === accessOptions.setDate.toString())
+      setStringDate([year, month, label])
+    else if (set.toString() === accessOptions.setMonth.toString())
+      setStringDate([year, label, day])
+    else if (set.toString() === accessOptions.setYear.toString())
+      setStringDate([label, month, day])
+
+    if (isControlled()) {
+      onChange(
+        changedDate,
+        `${stringDate[0]}-${stringDate[1]}-${stringDate[2]}T00:00:00Z`
+      )
     }
+  }
 
   const handleKeyPress = nextFieldKey => event => {
     if (event.key === 'Enter') {

@@ -38,7 +38,7 @@ const inventoryFilters = {
 const adjustInventoryCommonPayloadFields = {
   consumableId: Joi.number().positive().required(),
   lotNumber: Joi.string().max(255).allow('', null),
-  expiresOn: Joi.date().iso().allow(null),
+  expiresOn: Joi.string(),
   quantity: Joi.number().positive().required(),
   notes: Joi.string().max(2000).allow('', null),
 }

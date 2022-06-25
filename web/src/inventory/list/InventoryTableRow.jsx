@@ -9,7 +9,6 @@ import {
   DataTableRow as TableRow,
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
-import { formatDate } from '../../shared/utils/dateFormat'
 import messages from './messages'
 import {
   showAddInventoryDialog,
@@ -171,7 +170,7 @@ const InventoryTableRow = ({
             }
           >
             {inventoryItem.get('expiresOn')
-              ? formatDate(inventoryItem.get('expiresOn'))
+              ? inventoryItem.get('expiresOn').split('T')[0]
               : 'N/A'}
           </span>
         </TableCell>

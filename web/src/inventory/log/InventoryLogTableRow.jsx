@@ -5,7 +5,7 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import useI18n from '../../Hooks/i18n/useI18n'
-import { formatDate, formatDateTime } from '../../shared/utils/dateFormat'
+import { formatDateTime } from '../../shared/utils/dateFormat'
 import messages from './messages'
 import styles from '../../components/shared/DataTableRow.css'
 
@@ -43,7 +43,7 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
           }
         >
           {inventoryLogItem.expirationDate
-            ? formatDate(inventoryLogItem.expirationDate)
+            ? inventoryLogItem.expirationDate.split('T')[0]
             : 'N/A'}
         </span>
       </TableCell>
