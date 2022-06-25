@@ -584,7 +584,7 @@ async function listLog(
     .first()
   const data = await inventoryLogQuery
     .select(querySelector)
-    .modify(sortPageParams, query, 's.name', INVENTORY_LOG_SORT_FIELDS)
+    .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
   return { ok: true, total, length: data.length, data }
 }
 
