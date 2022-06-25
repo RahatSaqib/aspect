@@ -272,7 +272,7 @@ export const ResultListWithProps = ({
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
     />
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
+    <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
 
       <AspectExportListButton

@@ -151,6 +151,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     resultCategory1Titlei18nKey: 'a.resultCategory1i18nKey',
     resultCategory1Title: 'a.resultCategory1label',
     resultCategory2Title: 'a.resultCategory2label',
+    deviceStateName: 'stdpn.name',
   }
 
   // get rows
@@ -212,6 +213,7 @@ async function getResultsForExport(auth, query) {
     resultText: knex.raw(
       `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
     ),
+    deviceStateName: 'stdpn.name',
   }
   const sortableFields = [...SORT_FIELDS]
 
@@ -2215,6 +2217,9 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         'rca.resultCategoryId'
       )
     })
+    .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
+    .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
+    .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
     .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.assayId', 'rca2.assayId').andOn(
         'r.resultCategory2',

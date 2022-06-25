@@ -59,6 +59,18 @@
       "i18nKey": "ConsumableReason_Damage",
       "decrease": 1,
       "reset": 0
+    },
+    {
+      "name": "Asserted Inventory On Hand Increase",
+      "i18nKey": "ConsumableReason_AssertedInventoryOnHandAdd",
+      "decrease": 0,
+      "reset": 1
+    },
+    {
+      "name": "Asserted Inventory On Hand Decrease",
+      "i18nKey": "ConsumableReason_AssertedInventoryOnHandRemove",
+      "decrease": 1,
+      "reset": 1
     }
   ]
 }

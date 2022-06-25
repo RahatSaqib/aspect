@@ -46,11 +46,6 @@ const FILTERS_CONFIG = [
     date: true,
     requiredPermissions: [],
   },
-  // {
-  //   lotNumber: true,
-  //   requiredPermissions: [],
-  //   isEnabled: dependencies => dependencies.breakOutByLot,
-  // },
 ]
 
 const availableSortCol = [
@@ -154,9 +149,10 @@ export const InventoryLogWithProps = ({
               columns={columns}
             />
             <TableBody>
-              {items.map(inventoryLogItem => (
+              {items.map((inventoryLogItem, index) => (
                 <InventoryLogTableRow
-                  key={inventoryLogItem.id}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`InventoryLog---${location.key}--${index}`}
                   inventoryLogItem={inventoryLogItem}
                 />
               ))}

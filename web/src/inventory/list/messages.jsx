@@ -107,6 +107,35 @@ const messages = defineMessages({
     id: 'pages.InventoryItemsList.projectedWaste',
     defaultMessage: 'Projected stock waste',
   },
+  inventoryOnHand: {
+    id: 'pages.InventoryItemsList.inventoryOnHand',
+    defaultMessage: 'Inventory on Hand',
+  },
+  newQuantityOnHand: {
+    id: 'pages.InventoryItemsList.newQuantityOnHand',
+    defaultMessage: 'New Quantity On Hand',
+  },
+  resultQuantityOnHand: {
+    id: 'pages.InventoryItemsList.resultQuantityOnHand',
+    defaultMessage: 'Increase/Decrease',
+  },
+  inventoryOnNote: {
+    id: 'pages.InventoryItemsList.inventoryOnNote',
+    defaultMessage: 'notes',
+  },
+  inventoryOnMandatoryNote: {
+    id: 'pages.InventoryItemsList.inventoryOnHand.mandatoryNote',
+    defaultMessage:
+      'This is a mandatory field its mandatory and must be at least 3 characters long',
+  },
+  consumableReason: {
+    id: 'pages.InventoryItemsList.inventoryOnHand.consumableReason',
+    defaultMessage: 'Consumable Reason',
+  },
+  backButton: {
+    id: 'pages.InventoryItemsList.inventoryOnHand.backButton',
+    defaultMessage: 'Back',
+  },
 })
 
 export default messages

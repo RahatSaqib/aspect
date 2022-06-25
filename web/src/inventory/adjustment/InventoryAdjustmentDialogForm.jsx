@@ -236,7 +236,12 @@ export const InventoryAdjustmentDialogForm = ({
                   RootProps={{
                     name: 'expiresOn',
                   }}
-                  onChange={onExpiresOnChange}
+                  onChange={(...params) => {
+                    // Get the second parameter, representing the string date
+                    // This is ugly, I know.
+                    const stringDate = params[1]
+                    onExpiresOnChange(stringDate)
+                  }}
                   value={values.expiresOn}
                 />
               </FormGroup>

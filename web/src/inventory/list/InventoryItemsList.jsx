@@ -283,6 +283,9 @@ export const InventoryItemsListWithProps = ({
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
                     inventoryItem={inventoryItem}
+                    breakOutByLot={breakOutByLot}
+                    navigate={navigate}
+                    location={location}
                   />
                 ))}
             </TableBody>

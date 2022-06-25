@@ -18,6 +18,7 @@ const INVENTORY_LOG_LIST = {
         ELSE cr.name
       END`),
   notes: 'il.notes',
+  consumableReasonI18nKey: 'cr.i18nKey',
 }
 
 const INVENTORY_LOG_UILIST = {
