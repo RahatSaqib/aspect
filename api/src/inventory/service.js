@@ -191,18 +191,35 @@ async function consumeInventoryForResult(
 
   await Promise.all(
     _.map(assayConsumables, async assayConsumable => {
-      const existingInventoryLog = await knex('InventoryLog as il')
+      const existingInventoryLogQuery = knex('InventoryLog as il')
         .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
         .where({
           'il.resultId': resultId,
           'ii.consumableId': assayConsumable.consumableId,
         })
         .first('ii.id')
+      const existingInventoryLog = await existingInventoryLogQuery
+      console.log(
+        '\x1b[1;36m',
+        '🚀 ➜ file: service.js ➜ line 202 ➜ existingInventoryLogQuery',
+        existingInventoryLogQuery.toString()
+      )
+      console.log('LOGS: ', await knex('InventoryLog'))
+      console.log('ITEMS: ', await knex('InventoryItem'))
+      console.log(
+        'RESULTS: ',
+        await knex('Result').select(
+          'id',
+          'consumableLot',
+          'consumableExpirationDate',
+          'externalId'
+        )
+      )
       // Don't double deduct inventory for the same result
       if (_.isEmpty(existingInventoryLog)) {
         // Find Inventory on hand where lot number and expiry date match
-        const { items: matchingInventoryItems, isNewInventoryItem } =
-          await findOrCreateMatchingInventoryItems(
+        const { items: matchingInventoryItems } =
+          await findOrCreateMatchingInventoryItem(
             knex,
             siteId,
             assayConsumable,
@@ -262,7 +279,7 @@ async function consumeInventoryForResult(
   )
 }
 
-async function findOrCreateMatchingInventoryItems(
+async function findOrCreateMatchingInventoryItem(
   knex,
   siteId,
   assayConsumable,
@@ -270,13 +287,14 @@ async function findOrCreateMatchingInventoryItems(
   now,
   strategy
 ) {
-  const [{ expirationDate }] = consumablesInResultData
+  const [{ lot, expirationDate }] = consumablesInResultData
+
   const { consumableId } = assayConsumable
   const existingItem = await findInventoryItem(
     siteId,
     consumableId,
     expirationDate,
-    null,
+    lot,
     false
   )
 
