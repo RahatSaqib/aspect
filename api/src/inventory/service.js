@@ -1683,7 +1683,7 @@ async function logInventoryChange({
     consumableReasonId,
     resultId,
     lotNumber,
-    expiresOn: expiresOn || null,
+    expiresOn: parseDateOrDefault(expiresOn) || null,
     quantity,
     operation,
     notes,
