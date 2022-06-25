@@ -198,7 +198,9 @@ async function consumeInventoryForResult(
           'ii.consumableId': assayConsumable.consumableId,
         })
         .first('ii.id')
+
       const existingInventoryLog = await existingInventoryLogQuery
+
       console.log(
         '\x1b[1;36m',
         '🚀 ➜ file: service.js ➜ line 202 ➜ existingInventoryLogQuery',
@@ -259,10 +261,6 @@ async function consumeInventoryForResult(
             createdOn: now,
           })
           const inventoryItemUpdates = {}
-
-          inventoryItemUpdates.quantityOnHand = knex.raw(
-            `quantityOnHand - ${assayConsumable.quantity}`
-          )
 
           inventoryItemUpdates.quantityOnHand = knex.raw(
             `quantityOnHand - ${assayConsumable.quantity}`
