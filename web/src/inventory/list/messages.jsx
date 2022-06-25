@@ -126,7 +126,7 @@ const messages = defineMessages({
   inventoryOnMandatoryNote: {
     id: 'pages.InventoryItemsList.inventoryOnHand.mandatoryNote',
     defaultMessage:
-      'This field its mandatory and must be at least 5 characters long',
+      'This is a mandatory field its mandatory and must be at least 3 characters long',
   },
   consumableReason: {
     id: 'pages.InventoryItemsList.inventoryOnHand.consumableReason',

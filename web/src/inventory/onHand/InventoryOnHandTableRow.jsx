@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 import isNull from 'lodash/isNull'
 import TextField from '@material-ui/core/TextField'
-import { useDispatch } from 'react-redux'
+
 import { useMutation } from 'react-query'
 import Fade from '@material-ui/core/Fade'
 import CancelSharpIcon from '@material-ui/icons/CancelSharp'
 import CheckIcon from '@material-ui/icons/Check'
+import { PropTypes } from 'prop-types'
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
@@ -20,7 +21,7 @@ import { modifyInventoryOnHand } from '../InventoryRedux'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({ inventoryItem, refreshData }) => {
+const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
   const { formatMessage, formatNumber } = useI18n()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
   const [showCheck, setShowCheck] = useState(false)
@@ -28,9 +29,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   const [resultQtyOnHand, setResultQtyOnHand] = useState('')
   const [notes, setNotes] = useState('')
   const [isAdd, setIsAdd] = useState(false)
-  const dispatch = useDispatch()
 
-  const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
   // helper funcs
   const hasQtyOnHand = qty =>
     isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
@@ -39,7 +38,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
     if (!evt.target.value) {
       return setNewQtyOnHand('')
     }
-    const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
+    const qty = parseInt(inventoryItem.quantityOnHand, 10)
     const newQty = parseInt(evt.target.value, 10)
 
     setResultQtyOnHand(newQty - qty)
@@ -54,7 +53,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
     values =>
       resultQtyOnHand !== newQtyOnHand
-        ? modifyInventoryOnHand(values, dispatch, inventoryItem)
+        ? modifyInventoryOnHand(values, inventoryItem)
         : () => true,
     {
       onError: error => {
@@ -74,16 +73,16 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   )
 
   const updateInventoryOnBlur = async () => {
-    const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
+    const qty = parseInt(inventoryItem.quantityOnHand, 10)
     const newQty = parseInt(newQtyOnHand, 10)
     const movementQty = parseInt(resultQtyOnHand, 10)
 
-    if (qty !== newQty && notes && notes.length >= 5) {
+    if (qty !== newQty && notes) {
       onModifyInventoryOnHandSubmit({
         quantity: movementQty,
         isAdd,
         notes,
-        expiresOn: inventoryItem.get('expiresOn'),
+        expiresOn: inventoryItem.expiresOn,
       })
     }
   }
@@ -92,64 +91,59 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
     <TableRow
       onBlur={updateInventoryOnBlur}
       className={cssClasses('TableRow')}
-      key={inventoryItem.get('id')}
+      key={inventoryItem.id}
     >
-      {inventoryItem.get('expiresOn') !== undefined ? (
+      {inventoryItem.expiresOn !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={rowSpan('expiresOn')}
+          rowSpan={inventoryItem.expiresOn}
         >
           <span
             className={
-              inventoryItem.get('expiresOn') !== null &&
-              new Date(inventoryItem.get('expiresOn')) < new Date()
+              inventoryItem.expiresOn !== null &&
+              new Date(inventoryItem.expiresOn) < new Date()
                 ? cssClasses('alert')
                 : null
             }
           >
-            {inventoryItem.get('expiresOn')
-              ? formatDate(inventoryItem.get('expiresOn'))
+            {inventoryItem.expiresOn
+              ? formatDate(inventoryItem.expiresOn)
               : 'N/A'}
           </span>
         </TableCell>
       ) : null}
-      {inventoryItem.get('lotNumber') !== undefined ? (
+      {inventoryItem.lotNumber !== undefined ? (
         <TableCell
           className={cssClasses('TableCell')}
-          rowSpan={rowSpan('lotNumber')}
+          rowSpan={inventoryItem.lotNumber}
         >
-          {inventoryItem.get('lotNumber')
-            ? inventoryItem.get('lotNumber')
-            : 'N/A'}
+          {inventoryItem.lotNumber ? inventoryItem.lotNumber : 'N/A'}
         </TableCell>
       ) : null}
       <TableCell
         className={cssClasses('TableCell')}
-        rowSpan={rowSpan('quantityOnHand')}
+        rowSpan={inventoryItem.quantityOnHand}
       >
-        {inventoryItem.get('inTransitFromSiteName') ? (
+        {inventoryItem.inTransitFromSiteName ? (
           <span>
-            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
+            {hasQtyOnHand(inventoryItem.quantityOnHand)}
             &nbsp;
             <small>
               {formatMessage(messages.inTransitFromSiteName, {
-                inTransitFromSiteName: inventoryItem.get(
-                  'inTransitFromSiteName'
-                ),
+                inTransitFromSiteName: inventoryItem.inTransitFromSiteName,
               })}
             </small>
           </span>
         ) : (
           <span>
-            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
+            {hasQtyOnHand(inventoryItem.quantityOnHand)}
             &nbsp;
             <small>
-              {inventoryItem.get('pendingTransfers')
+              {inventoryItem.pendingTransfers
                 ? formatMessage(messages.excludedLotInTransit, {
-                    pendingTransfers: inventoryItem.get('pendingTransfers'),
-                    pendingTransfersQuantityOnHand: inventoryItem.get(
-                      'pendingTransfersQuantityOnHand'
-                    ),
+                    pendingTransfers: inventoryItem.pendingTransfers,
+                    pendingTransfersQuantityOnHand:
+                      inventoryItem.pendingTransfersQuantityOnHand,
                   })
                 : null}
             </small>
@@ -158,7 +152,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
       </TableCell>
       <TableCell
         className={cssClasses('TableCell')}
-        rowSpan={rowSpan('newQuantityOnHand')}
+        rowSpan={inventoryItem.newQuantityOnHand}
       >
         <TextField
           autoFocus
@@ -174,7 +168,7 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
       </TableCell>
       <TableCell
         className={cssClasses('TableCell')}
-        rowSpan={rowSpan('resultQuantityOnHand')}
+        rowSpan={inventoryItem.resultQuantityOnHand}
       >
         <TextField
           value={resultQtyOnHand}
@@ -186,15 +180,18 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
       </TableCell>
       <TableCell
         className={cssClasses('TableCell')}
-        rowSpan={rowSpan('quantityOnHandNote')}
+        rowSpan={inventoryItem.quantityOnHandNote}
       >
         <TextField
           value={notes}
-          error={!!newQtyOnHand && notes.length < 5}
+          error={
+            !!newQtyOnHand && newQtyOnHand !== inventoryItem.quantityOnHand
+          }
           type="text"
           name="resultQuantityOnHand"
           margin="normal"
-          helperText={formatMessage(messages.inventoryOnMandatoryNote)}
+          required
+          // helperText={formatMessage(messages.inventoryOnMandatoryNote)}
           onChange={evt => setNotes(evt.target.value)}
         />
       </TableCell>
@@ -210,4 +207,9 @@ const InventoryTableRow = ({ inventoryItem, refreshData }) => {
   )
 }
 
-export default InventoryTableRow
+export default InventoryOnHandTableRow
+
+InventoryOnHandTableRow.propTypes = {
+  inventoryItem: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  refreshData: PropTypes.oneOfType([PropTypes.func]).isRequired,
+}

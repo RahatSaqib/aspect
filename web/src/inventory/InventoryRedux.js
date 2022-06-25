@@ -266,10 +266,10 @@ function receiveInventory(data, dispatch, inventoryState) {
     })
 }
 
-function modifyInventoryOnHand(data, dispatch, itemState) {
-  const siteId = itemState.get('siteId')
-  const consumableId = itemState.get('consumableId')
-  const lotNumber = itemState.get('lotNumber')
+function modifyInventoryOnHand(data, itemState) {
+  const { siteId } = itemState
+  const { consumableId } = itemState
+  const { lotNumber } = itemState
   return fetchWrapperForQueries({
     endpoint: '/inventory/on-hand',
     method: 'PUT',
@@ -289,12 +289,9 @@ function modifyInventoryOnHand(data, dispatch, itemState) {
         }),
       }),
     },
+  }).catch(err => {
+    throw err
   })
-    .then(() => dispatch(hideAdjustInventoryDialog()))
-    .catch(err => {
-      dispatch(hideAdjustInventoryDialog())
-      throw err
-    })
 }
 
 /*
