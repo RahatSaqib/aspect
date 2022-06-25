@@ -655,6 +655,11 @@ function getInventorySites(constraints, request) {
         'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
       ),
       knex.raw(
+        `sum(
+          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end 
+        ) as qtyExpired`
+      ),
+      knex.raw(
         `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
       ),
       knex.raw(

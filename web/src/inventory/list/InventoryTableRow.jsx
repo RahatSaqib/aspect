@@ -3,7 +3,6 @@ import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
 import isNull from 'lodash/isNull'
 import round from 'lodash/round'
-
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
@@ -105,14 +104,11 @@ const InventoryTableRow = ({
       >
         {inventoryItem.get('consumableName')}
       </TableCell>
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('quantityOnHand')}
-      >
+      <TableCell className={cssClasses('TableCell')}>
+        {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
+        &nbsp;
         {inventoryItem.get('inTransitFromSiteName') ? (
           <span>
-            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
-            &nbsp;
             <small>
               {formatMessage(messages.inTransitFromSiteName, {
                 inTransitFromSiteName: inventoryItem.get(
@@ -123,8 +119,6 @@ const InventoryTableRow = ({
           </span>
         ) : (
           <span>
-            {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
-            &nbsp;
             <small>
               {inventoryItem.get('pendingTransfers')
                 ? formatMessage(messages.excludedLotInTransit, {
@@ -137,6 +131,11 @@ const InventoryTableRow = ({
             </small>
           </span>
         )}
+        {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
+          <span className={cssClasses('alert')}>
+            &nbsp; (-{inventoryItem.get('qtyExpired')} Expired)
+          </span>
+        ) : null}
       </TableCell>
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
         <TableCell
