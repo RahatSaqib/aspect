@@ -611,8 +611,8 @@ function getInventorySites(constraints, request) {
         .on('s.id', 'ii.siteId')
         .andOn('c.id', 'ii.consumableId')
         .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
-        // we are interested in unexpired yet as of today
-        .andOn(knex.raw('ii.expiresOn >= DATE(NOW())'))
+      // we are interested in unexpired yet as of today
+      // .andOn(knex.raw('ii.expiresOn >= DATE(NOW())'))
     })
     .leftJoin('InventoryItem as ii_transfer', builder => {
       builder

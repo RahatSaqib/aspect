@@ -49,6 +49,7 @@ export const InventoryOnHandItemsList = ({ navigate, location }) => {
     siteId,
     consumableId,
   }
+  const onBackClick = () => navigate(-1)
 
   const {
     isError,
@@ -126,11 +127,7 @@ export const InventoryOnHandItemsList = ({ navigate, location }) => {
             </h2>
           </Grid>
           <Grid item xs={1}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate(-1)}
-            >
+            <Button variant="contained" color="primary" onClick={onBackClick}>
               {intl.formatMessage(messages.backButton)}
             </Button>
           </Grid>

@@ -54,7 +54,7 @@ const modifyInventoryCommonPayloadFields = {
   consumableId: Joi.number().integer().positive().required(),
   quantity: Joi.number().required(),
   lotNumber: Joi.string().max(255).optional().allow('', null),
-  expiresOn: Joi.date().iso().required(),
+  expiresOn: Joi.date().optional().allow('', null),
   isAdd: Joi.bool().required(),
   notes: Joi.string().max(2000).required(),
 }
