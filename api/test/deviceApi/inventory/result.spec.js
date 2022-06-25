@@ -844,7 +844,7 @@ describe('admin result updates', () => {
       const fakeResultId = 'fake-result-id'
       const fakeSampleId = 'fake-sample-id'
 
-      await server // -----------------------------------------------------------------> 1
+      await server
         .post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
@@ -911,7 +911,7 @@ describe('admin result updates', () => {
         .where({ id: inventoryItemId })
         .update({ updatedOn: now, quantityOnHand: newQuantityOnHand })
 
-      await server // -------------------------------------------------------------------> 2
+      await server
         .post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
@@ -967,7 +967,7 @@ describe('admin result updates', () => {
         parseDateOrDefault(resultDetails.expirationDate).toISOString()
       )
 
-      await server // ----------------------------------------------------------------> 3
+      await server
         .post(devicePostResultPath)
         .set('Authorization', deviceAuth)
         .send({
