@@ -58,7 +58,7 @@ exports[`Result List component should shallow render correctly when filter for a
     navigate={[MockFunction]}
   />
   <DataTableCard
-    key="DataTableCard--table-undefined"
+    key="DataTableCard--table-Result-list---undefined"
   >
     <DataTableProgressBar
       disabled={true}
