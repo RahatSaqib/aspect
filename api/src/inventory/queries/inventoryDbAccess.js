@@ -132,6 +132,7 @@ async function findInventoryItem(
   const matchingInventoryItems = await matchingInventoryItemsQuery.first(
     INVENTORY_ITEM_SELECT
   )
+
   return matchingInventoryItems
 }
 
