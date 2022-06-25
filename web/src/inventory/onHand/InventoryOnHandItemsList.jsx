@@ -110,6 +110,9 @@ export const InventoryOnHandItemsList = ({ navigate, location }) => {
       key: 'quantityOnHandNote',
       label: intl.formatMessage(messages.inventoryOnNote),
     },
+    {
+      key: 'actions',
+    },
   ]
   return (
     <div className={cssClasses('Container')}>

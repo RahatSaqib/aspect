@@ -94,10 +94,7 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
       key={inventoryItem.id}
     >
       {inventoryItem.expiresOn !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.expiresOn}
-        >
+        <TableCell className={cssClasses('TableCell')} size="small">
           <span
             className={
               inventoryItem.expiresOn !== null &&
@@ -112,18 +109,12 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
           </span>
         </TableCell>
       ) : null}
-      {inventoryItem.lotNumber !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={inventoryItem.lotNumber}
-        >
-          {inventoryItem.lotNumber ? inventoryItem.lotNumber : 'N/A'}
+      {inventoryItem !== undefined ? (
+        <TableCell className={cssClasses('TableCell')} size="small">
+          {inventoryItem?.lotNumber ? inventoryItem.lotNumber : 'N/A'}
         </TableCell>
       ) : null}
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={inventoryItem.quantityOnHand}
-      >
+      <TableCell className={cssClasses('TableCell')}>
         {inventoryItem.inTransitFromSiteName ? (
           <span>
             {hasQtyOnHand(inventoryItem.quantityOnHand)}
@@ -150,10 +141,7 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
           </span>
         )}
       </TableCell>
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={inventoryItem.newQuantityOnHand}
-      >
+      <TableCell className={cssClasses('TableCell')} size="small">
         <TextField
           autoFocus
           type="number"
@@ -166,10 +154,7 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
           }}
         />
       </TableCell>
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={inventoryItem.resultQuantityOnHand}
-      >
+      <TableCell className={cssClasses('TableCell')} size="small">
         <TextField
           value={resultQtyOnHand}
           type="number"
@@ -178,24 +163,21 @@ const InventoryOnHandTableRow = ({ inventoryItem, refreshData }) => {
           disabled
         />
       </TableCell>
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={inventoryItem.quantityOnHandNote}
-      >
+      <TableCell className={cssClasses('TableCell')} size="large">
         <TextField
+          size="large"
           value={notes}
           error={
             !!newQtyOnHand && newQtyOnHand !== inventoryItem.quantityOnHand
           }
           type="text"
-          name="resultQuantityOnHand"
+          name="resultQuantityOnHandNotes"
           margin="normal"
           required
-          // helperText={formatMessage(messages.inventoryOnMandatoryNote)}
           onChange={evt => setNotes(evt.target.value)}
         />
       </TableCell>
-      <TableCell>
+      <TableCell size="small">
         <Fade in={showCheck} timeout={1500}>
           <CheckIcon color="primary" />
         </Fade>
