@@ -265,7 +265,7 @@ async function findOrCreateMatchingInventoryItem(
   now,
   strategy
 ) {
-  const [{ lot, expirationDate }] = consumablesInResultData
+  const { lot, expirationDate } = _.get(consumablesInResultData, '[0]') || {}
 
   const { consumableId } = assayConsumable
   const existingItem = await findInventoryItem(
@@ -408,7 +408,7 @@ function findInventoryItemMatchingConsumableInResultData(
   //  previous checks, this is the least recent createdOn
   //  Note we should always have at least one item since we create
   //  if does not exist per AssayConsumable
-  return inventoryItem[0].inventoryItem
+  return inventoryItem
 }
 
 function filteredInventoryItemsBase(request, dataConstraints) {
