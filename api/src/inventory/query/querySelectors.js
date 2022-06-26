@@ -32,7 +32,9 @@ const INVENTORY_LOG_UILIST = {
   ),
   consumableReasonI18nKey: 'cr.i18nKey',
   refSiteName: 'refSite.name',
-  notes: 'il.notes',
+  notes: knex.raw(
+    `case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`
+  ),
 }
 
 module.exports = {
