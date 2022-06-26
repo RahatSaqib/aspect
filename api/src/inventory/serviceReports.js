@@ -35,6 +35,8 @@ async function exportSupplies(request, reply) {
 }
 
 async function inventoryLog(auth, query) {
+  query.sortCol = 'createdOn'
+  query.sortDir = 'asc'
   const { maxDate = new Date().toISOString() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
   const { data, total, ok } = await listLog(

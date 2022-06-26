@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { getDateOrDefault, parseDateOrDefault } = require('../shared/date')
+const { parseDateOrDefault } = require('../shared/date')
 const {
   knex,
   transact,
@@ -31,7 +31,6 @@ const {
   findInventoryItem,
   INVENTORY_ITEM_SELECT,
   INVENTORY_COMMON_FIELDS,
-  findInventoryItems,
 } = require('./queries/inventoryDbAccess')
 
 // Select for inventory grouped by site and consumable
@@ -198,10 +197,11 @@ async function consumeInventoryForResult(
           'ii.consumableId': assayConsumable.consumableId,
         })
         .first('ii.id')
+
       // Don't double deduct inventory for the same result
       if (_.isEmpty(existingInventoryLog)) {
         // Find Inventory on hand where lot number and expiry date match
-        const matchingInventoryItems = await findOrCreateMatchingInventoryItems(
+        const matchingInventoryItem = await findOrCreateMatchingInventoryItem(
           knex,
           siteId,
           assayConsumable,
@@ -209,7 +209,6 @@ async function consumeInventoryForResult(
           now,
           assayConsumable.strategy
         )
-
         const testedOn = testStartedOn || testEndedOn
 
         // always try to find match whether we have consumables or not
@@ -221,11 +220,10 @@ async function consumeInventoryForResult(
           const matchingInventoryOnHand =
             findInventoryItemMatchingConsumableInResultData(
               matchingConsumable,
-              matchingInventoryItems,
+              matchingInventoryItem,
               testedOn,
               now
             )
-
           // Log change
           await logInventoryChange({
             knex,
@@ -242,7 +240,6 @@ async function consumeInventoryForResult(
             adjustedTo: testEndedOn,
             createdOn: now,
           })
-
           const inventoryItemUpdates = {}
 
           inventoryItemUpdates.quantityOnHand = knex.raw(
@@ -260,7 +257,7 @@ async function consumeInventoryForResult(
   )
 }
 
-async function findOrCreateMatchingInventoryItems(
+async function findOrCreateMatchingInventoryItem(
   knex,
   siteId,
   assayConsumable,
@@ -268,10 +265,19 @@ async function findOrCreateMatchingInventoryItems(
   now,
   strategy
 ) {
+  const { lot, expirationDate } = _.get(consumablesInResultData, '[0]') || {}
+
   const { consumableId } = assayConsumable
-  const existingItems = await findInventoryItems(siteId, consumableId)
-  if (existingItems.length > 0) {
-    return existingItems
+  const existingItem = await findInventoryItem(
+    siteId,
+    consumableId,
+    expirationDate,
+    lot,
+    false
+  )
+
+  if (existingItem) {
+    return existingItem
   }
 
   // TODO ASP-811 should create a new item for each consumable in result data
@@ -282,16 +288,13 @@ async function findOrCreateMatchingInventoryItems(
     strategy.indexOf('withLot') >= 0
       ? _.get(consumablesInResultData, '[0].lot')
       : null
-  const expirationDateInResultData = getDateOrDefault(
-    consumablesInResultData,
-    '[0].expirationDate'
-  )
+
   const newInventoryItemId = await upsertInventoryItem({
     knex,
     consumableId,
     siteId,
     lotNumber: lotNumberInResultData,
-    expiresOn: expirationDateInResultData || undefined,
+    expiresOn: expirationDate || undefined,
     quantity: 0,
     now,
   })
@@ -299,36 +302,29 @@ async function findOrCreateMatchingInventoryItems(
   const newItem = await knex('InventoryItem')
     .where({ id: newInventoryItemId })
     .first()
-  return [newItem]
+  return newItem
 }
 
 function findInventoryItemMatchingConsumableInResultData(
   consumable,
-  inventoryItems,
+  inventoryItem,
   testedOn,
   now
 ) {
-  if (inventoryItems.length === 0) {
+  if (!inventoryItem) {
     throw new Error('We should always have at least one candidate item.')
   }
 
   // Normalize input data for comparisons below
-  const consumableExpiresOn =
-    consumable == null ? null : consumable.expirationDate
-  const consumableLot = consumable == null ? null : consumable.lot
+  const consumableExpiresOn = consumable?.expirationDate
+  const consumableLot = consumable?.lot
 
   let hasItemExpiresOn = false
   let hasItemLot = false
-  const items = _.map(inventoryItems, item => {
-    const normalizedItem = {
-      inventoryItem: item,
-      expiresOn: item.expiresOn,
-      lot: item.lotNumber ? item.lotNumber : null,
-    }
-    hasItemExpiresOn = hasItemExpiresOn || normalizedItem.expiresOn != null
-    hasItemLot = hasItemLot || normalizedItem.lot != null
-    return normalizedItem
-  })
+  const { expiresOn } = inventoryItem
+  const lot = inventoryItem.lotNumber ? inventoryItem.lotNumber : null
+  hasItemExpiresOn = hasItemExpiresOn || expiresOn != null
+  hasItemLot = hasItemLot || lot != null
 
   if (consumable != null) {
     // Exact match of expire on and lot number
@@ -338,41 +334,36 @@ function findInventoryItemMatchingConsumableInResultData(
       consumableExpiresOn != null &&
       consumableLot != null
     ) {
-      for (const item of items) {
-        if (item.expiresOn == null) {
-          break // Ordered by expiresOn, nulls last
-        }
+      if (inventoryItem.expiresOn != null) {
         const matchExpiresAndLotNumber =
-          item.lot != null &&
-          _.isEqual(consumableExpiresOn, item.expiresOn) &&
-          _.isEqual(consumableLot, item.lot)
+          inventoryItem.lot != null &&
+          _.isEqual(consumableExpiresOn, inventoryItem.expiresOn) &&
+          _.isEqual(consumableLot, inventoryItem.lot)
         if (matchExpiresAndLotNumber) {
-          return item.inventoryItem
+          return inventoryItem
         }
       }
     }
 
     // Exact match of expiration date
     if (hasItemExpiresOn && consumableExpiresOn != null) {
-      for (const item of items) {
-        if (item.expiresOn == null) {
-          break
-        }
-
-        const matchExpires = _.isEqual(consumableExpiresOn, item.expiresOn)
+      if (inventoryItem.expiresOn != null) {
+        const matchExpires = _.isEqual(
+          consumableExpiresOn,
+          inventoryItem.expiresOn
+        )
         if (matchExpires) {
-          return item.inventoryItem
+          return inventoryItem
         }
       }
     }
 
     // Exact match of lot number
     if (hasItemLot && consumableLot != null) {
-      for (const item of items) {
-        const matchLot = item.lot != null && _.isEqual(consumableLot, item.lot)
-        if (matchLot) {
-          return item.inventoryItem
-        }
+      const matchLot =
+        inventoryItem.lot != null && _.isEqual(consumableLot, inventoryItem.lot)
+      if (matchLot) {
+        return inventoryItem
       }
     }
 
@@ -380,25 +371,16 @@ function findInventoryItemMatchingConsumableInResultData(
     if (hasItemExpiresOn && consumableExpiresOn != null) {
       let bestItemMatch = null
       let bestItemAbsDiff = null
-      for (const item of items) {
-        if (item.expiresOn == null) {
-          // ordered by expiresOn null last, so we have no more to check
-          break
-        }
+      if (inventoryItem.expiresOn != null) {
+        // ordered by expiresOn null last, so we have no more to check
         const currentDiff =
-          item.expiresOn.getTime() - consumableExpiresOn.getTime()
+          inventoryItem.expiresOn.getTime() - consumableExpiresOn.getTime()
         const currentAbsDiff = Math.abs(currentDiff)
         if (bestItemAbsDiff == null || currentAbsDiff < bestItemAbsDiff) {
           // if we don't have a current best, or abs diff is smaller,
           // then this is the best so far
-          bestItemMatch = item
+          bestItemMatch = inventoryItem
           bestItemAbsDiff = currentAbsDiff
-        }
-        if (currentDiff >= 0) {
-          // we've crossed threshold for this consumable since we are
-          // ordered by item expiresOn. The best match is either this
-          // or previous item, depending on absolate value
-          break
         }
       }
       if (bestItemMatch != null) {
@@ -411,16 +393,14 @@ function findInventoryItemMatchingConsumableInResultData(
   // -or- most recently created item with null expires on
   if (hasItemExpiresOn) {
     const itemCutoffDate = testedOn || now
-    for (const item of items) {
-      if (item.expiresOn == null) {
-        // most recently created item with null expires on
-        // ordered by nulls last, so will prefer next check
-        return item.inventoryItem
-      }
-      const itemExpireAfterTest = item.expiresOn >= itemCutoffDate
-      if (itemExpireAfterTest) {
-        return item.inventoryItem
-      }
+    if (inventoryItem.expiresOn == null) {
+      // most recently created item with null expires on
+      // ordered by nulls last, so will prefer next check
+      return inventoryItem
+    }
+    const itemExpireAfterTest = inventoryItem.expiresOn >= itemCutoffDate
+    if (itemExpireAfterTest) {
+      return inventoryItem
     }
   }
 
@@ -428,7 +408,7 @@ function findInventoryItemMatchingConsumableInResultData(
   //  previous checks, this is the least recent createdOn
   //  Note we should always have at least one item since we create
   //  if does not exist per AssayConsumable
-  return items[0].inventoryItem
+  return inventoryItem
 }
 
 function filteredInventoryItemsBase(request, dataConstraints) {
@@ -561,7 +541,7 @@ async function listLog(
     .first()
   const data = await inventoryLogQuery
     .select(querySelector)
-    .modify(sortPageParams, query, 's.name', INVENTORY_LOG_SORT_FIELDS)
+    .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
   return { ok: true, total, length: data.length, data }
 }
 
