@@ -109,6 +109,9 @@ describe('Device API routes for GxConnect Devices', () => {
                   id: consumableAssay.assayId,
                   version: '2',
                 },
+                consumable: {
+                  expirationDate: expiryDate,
+                },
               }),
             })
           )
@@ -228,6 +231,9 @@ describe('Device API routes for GxConnect Devices', () => {
                     instrument: { serial: instrumentSerial },
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
+                    consumable: {
+                      expirationDate: expiryDate,
+                    },
                   }),
                 }
               )
