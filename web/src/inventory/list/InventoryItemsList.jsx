@@ -155,8 +155,10 @@ export const InventoryItemsListWithProps = ({
   onReceiveInventorySubmit,
   onTransferInventorySubmit,
   onAddInventorySubmit,
+  refetch,
 }) => {
   const [inventoryOnHand, setInventoryOnHand] = useState(false)
+
   const columns = [
     {
       key: 'siteName',
@@ -185,7 +187,6 @@ export const InventoryItemsListWithProps = ({
       sortable: true,
       isHidden: !breakOutByLot,
     },
-
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
@@ -204,7 +205,7 @@ export const InventoryItemsListWithProps = ({
     },
     {
       key: 'notes',
-      label: intl.formatMessage(messages.inventoryOnMandatoryNote),
+      label: intl.formatMessage(messages.inventoryOnNote),
       isHidden: !inventoryOnHand,
     },
     {
@@ -219,7 +220,7 @@ export const InventoryItemsListWithProps = ({
         </div>
       ),
       sortable: true,
-      isHidden: breakOutByLot && inventoryOnHand,
+      isHidden: breakOutByLot,
     },
     {
       key: 'projectedWaste',
@@ -237,6 +238,7 @@ export const InventoryItemsListWithProps = ({
     },
     {
       key: 'action',
+      isHidden: inventoryOnHand,
     },
   ]
 
@@ -323,6 +325,8 @@ export const InventoryItemsListWithProps = ({
                     key={inventoryItem.get('id')}
                     inventoryItem={inventoryItem}
                     breakOutByLot={breakOutByLot}
+                    inventoryOnHand={inventoryOnHand}
+                    refetch={refetch}
                     navigate={navigate}
                     location={location}
                   />
@@ -493,6 +497,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     isLoading,
     data = false,
     error,
+    refetch,
   } = useQuery([INVENTORY_LIST.KEY, params, filters], async () =>
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
@@ -601,6 +606,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     onReceiveInventorySubmit,
     onTransferInventorySubmit,
     onAddInventorySubmit,
+    refetch,
   }
 
   return <InventoryItemsListWithProps {...props} />
