@@ -1283,15 +1283,6 @@ describe('Device API routes for GxAlert Device', () => {
         assert.isAbove(consumableAssay.quantity, 0)
 
         const geneXpertDevice = await getCurrentGeneXpertDevice()
-        const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-        const [inventoryItemId] = await knex('InventoryItem').insert({
-          consumableId: consumableAssay.consumableId,
-          siteId: geneXpertDevice.siteId,
-          expiresOn: expiryDate,
-          quantityOnHand: initialQuantityOnHand,
-          createdOn: subDays(now, 4),
-          updatedOn: subDays(now, 4),
-        })
 
         const testStartedOn = setMilliseconds(subDays(now, 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
@@ -1322,33 +1313,34 @@ describe('Device API routes for GxAlert Device', () => {
         assert.typeOf(response.body, 'Object')
 
         const { id: lastResultId } = response.body.result
-        const inventoryItem = await knex('InventoryItem')
-          .where({ id: inventoryItemId })
-          .first()
-        assert.equal(
-          inventoryItem.quantityOnHand,
-          _.max([0, initialQuantityOnHand - consumableAssay.quantity])
-        )
 
-        const inventoryLogs = await knex('InventoryLog as il')
+        const inventoryItemLog = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .where({ inventoryItemId })
-          .select(
+          .join('InventoryItem as ii', 'ii.id', 'il.inventoryItemId')
+          .where({ 'il.resultId': lastResultId })
+          .first(
             'il.consumableId',
             'il.siteId',
             'cr.name as consumableReason',
             'il.resultId',
-            'il.quantity'
+            'il.quantity',
+            'ii.quantityOnHand',
+            'ii.lotNumber',
+            'ii.expiresOn'
           )
-        assert.deepEqual(inventoryLogs, [
-          {
-            consumableId: inventoryItem.consumableId,
-            siteId: geneXpertDevice.siteId,
-            consumableReason: 'Test Conducted',
-            resultId: lastResultId,
-            quantity: consumableAssay.quantity,
-          },
-        ])
+
+        assert.equal(inventoryItemLog.quantityOnHand, -1)
+
+        assert.deepEqual(inventoryItemLog, {
+          consumableId: consumableAssay.consumableId,
+          siteId: geneXpertDevice.siteId,
+          consumableReason: 'Test Conducted',
+          resultId: lastResultId,
+          quantity: 1,
+          expiresOn: null,
+          lotNumber: null,
+          quantityOnHand: -1,
+        })
       })
 
       describe('when the test already exists in the database', () => {
@@ -1410,6 +1402,9 @@ describe('Device API routes for GxAlert Device', () => {
                   instrument: { serial: instrumentSerial },
                   startedOn: testStartedOn,
                   endedOn: testEndedOn,
+                  consumable: {
+                    expirationDate: expiryDate,
+                  },
                 },
               }
             ),

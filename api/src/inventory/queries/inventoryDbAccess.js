@@ -36,6 +36,7 @@ const INVENTORY_ITEMS_TABLE_WITH_STRATEGY = [
 const INVENTORY_ITEM_SELECT = [
   ...INVENTORY_COMMON_FIELDS,
   'ii.quantityOnHand',
+  'ii.updatedOn',
   'ii.id',
   knex.raw(
     `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
@@ -120,16 +121,18 @@ async function findInventoryItem(
   const matchingInventoryItemsQuery = baseInventoryQuery(
     siteId,
     consumableId,
-
     inTransitFromSiteId
   )
   const matchingStrategy = await getConsumableStrategy(consumableId)
-  if (matchingStrategy)
+
+  if (matchingStrategy) {
     matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  }
 
   const matchingInventoryItems = await matchingInventoryItemsQuery.first(
     INVENTORY_ITEM_SELECT
   )
+
   return matchingInventoryItems
 }
 
