@@ -14,9 +14,11 @@ const mtbDetectedRRDetected = {
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
-        assayId: 'GxMtbRif',
-        resultCategoryId: 'Detected',
-        resultCategory2Id: 'Detected',
+        assayId: ['GxMtbRif', 'GxMtbRifUltra'],
+        resultCategoryGroupId: [
+          'GxMtbRifMtbDetectedRifDetected',
+          'GxMtbRifUltraMtbDetectedRifDetected',
+        ],
       },
     },
   ],
