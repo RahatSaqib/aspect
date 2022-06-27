@@ -226,7 +226,9 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .modify((queryBuilder, assayId) => {
-      if (assayId) queryBuilder.where('a.id', assayId)
+      if (assayId && _.isArray(assayId)) queryBuilder.whereIn('a.id', assayId)
+      else if (assayId && !_.isArray(assayId))
+        queryBuilder.where('a.id', assayId)
     }, assayId)
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
