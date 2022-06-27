@@ -158,6 +158,10 @@ export const InventoryItemsListWithProps = ({
   refetch,
 }) => {
   const [inventoryOnHand, setInventoryOnHand] = useState(false)
+  const breakOutByLotToggle = useCallback(() => {
+    setBreakOutByLot(!breakOutByLot)
+    setInventoryOnHand(false)
+  }, [breakOutByLot, setInventoryOnHand, setBreakOutByLot])
 
   const columns = [
     {
@@ -238,7 +242,6 @@ export const InventoryItemsListWithProps = ({
     },
     {
       key: 'action',
-      isHidden: inventoryOnHand,
     },
   ]
 
@@ -269,19 +272,21 @@ export const InventoryItemsListWithProps = ({
       <DataTableCard className={cssClasses('DataTableCard--action')}>
         <FormGroup row>
           <FormControlLabel
+            sx={{ m: 2 }}
             control={
               <CheckboxField
                 className={cssClasses('Checkbox')}
                 name="breakOutByLot"
                 checked={breakOutByLot}
                 label=""
-                onChange={event => setBreakOutByLot(event.target.checked)}
+                onChange={breakOutByLotToggle}
               />
             }
             label={intl.formatMessage(messages.breakOutByLot)}
           />
           {breakOutByLot ? (
             <FormControlLabel
+              sx={{ p: 2 }}
               control={
                 <Switch
                   onChange={event =>

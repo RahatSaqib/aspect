@@ -3,12 +3,12 @@ import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
 import isNull from 'lodash/isNull'
 import round from 'lodash/round'
-import Fade from '@material-ui/core/Fade'
+
 import TextField from '@material-ui/core/TextField'
-import CancelSharpIcon from '@material-ui/icons/CancelSharp'
 import CheckIcon from '@material-ui/icons/Check'
 
 import { useMutation } from 'react-query'
+import ErrorIcon from '@material-ui/icons/Error'
 import useI18n from '../../Hooks/i18n/useI18n'
 import {
   DataTableRow as TableRow,
@@ -33,8 +33,6 @@ const InventoryTableRow = ({
   inventoryItem,
   breakOutByLot,
   inventoryOnHand,
-  navigate,
-  location,
   refetch,
 }) => {
   const { formatMessage, formatNumber } = useI18n()
@@ -45,9 +43,7 @@ const InventoryTableRow = ({
   const [resultQtyOnHand, setResultQtyOnHand] = useState('')
   const [notes, setNotes] = useState('')
   const dispatch = useDispatch()
-  const isNumber =
-    !Number.isNaN(inventoryItem.get('quantityOnHand')) &&
-    Number.isInteger(parseFloat(inventoryItem.get('quantityOnHand')))
+
   const getActions = isInTransit => [
     {
       icon: 'FaCheck',
@@ -77,22 +73,6 @@ const InventoryTableRow = ({
       action: ({ inventoryItemId }) =>
         dispatch(showRemoveInventoryDialog(inventoryItemId)),
     },
-    {
-      icon: 'FaSquare',
-      text: formatMessage(messages.inventoryOnHand),
-      disabled: isInTransit || breakOutByLot || !isNumber,
-      action: ({ inventoryItem }) => {
-        const siteId = inventoryItem.get('siteId')
-        const consumableId = inventoryItem.get('consumableId')
-        navigate(
-          {
-            ...location,
-            pathname: `/browse/inventory/onHand/${siteId}/${consumableId}`,
-          },
-          { replace: true }
-        )
-      },
-    },
   ]
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
     values =>
@@ -106,7 +86,6 @@ const InventoryTableRow = ({
     {
       onError: error => {
         setShowError(true)
-        setTimeout(() => setShowError(false), 3000)
         throw new Error(error)
       },
       onSuccess: async () => {
@@ -115,7 +94,6 @@ const InventoryTableRow = ({
         setResultQtyOnHand('')
         setNotes('')
         setShowCheck(true)
-        setTimeout(() => setShowCheck(false), 3000)
       },
     }
   )
@@ -158,6 +136,7 @@ const InventoryTableRow = ({
       className={cssClasses('TableRow')}
       key={rowSpan('id')}
       onBlur={updateInventoryOnBlur}
+      onFocus={() => setShowCheck(false)}
     >
       <TableCell
         className={cssClasses('TableCell')}
@@ -201,7 +180,9 @@ const InventoryTableRow = ({
         )}
         {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={cssClasses('alert')}>
-            &nbsp; (-{inventoryItem.get('qtyExpired')} Expired)
+            &nbsp; (
+            {parseFloat(inventoryItem.get('quantityOnHand')) <= 0 ? '' : '-'}
+            {inventoryItem.get('qtyExpired')} Expired)
           </span>
         ) : null}
       </TableCell>
@@ -250,6 +231,7 @@ const InventoryTableRow = ({
               type="number"
               name="newQuantityOnHand"
               value={newQtyOnHand}
+              disabled={isNull(inventoryItem.get('quantityOnHand'))}
               onChange={newQtyHandler}
               margin="normal"
               FormHelperTextProps={{
@@ -270,18 +252,15 @@ const InventoryTableRow = ({
               }
               type="text"
               name="resultQuantityOnHandNotes"
+              disabled={isNull(inventoryItem.get('quantityOnHand'))}
               margin="normal"
-              required
+              required={newQtyOnHand !== inventoryItem.get('quantityOnHand')}
               onChange={evt => setNotes(evt.target.value)}
             />
           </TableCell>
           <TableCell size="small">
-            <Fade in={showCheck} timeout={1500}>
-              <CheckIcon color="primary" />
-            </Fade>
-            <Fade in={showError} timeout={1500}>
-              <CancelSharpIcon color="secondary" />
-            </Fade>
+            {showCheck ? <CheckIcon color="primary" /> : null}
+            {showError ? <ErrorIcon color="error" /> : null}
           </TableCell>
         </>
       ) : null}

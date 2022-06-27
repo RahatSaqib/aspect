@@ -45,7 +45,6 @@ import NotificationDetail from '../../MigratedComponents/Notifications/Detail'
 import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
 import ReportIndex from '../../report/page/ReportIndex'
 import AccountDetails from '../../account/detail/AccountDetails'
-import InventoryOnHandItemsList from '../../inventory/onHand/InventoryOnHandItemsList'
 import InventoryContainer from '../../inventory/InventoryContainer'
 import RouterList from '../../router/list/RouterList'
 import RouterDetail from '../../router/detail/RouterDetail'
@@ -154,7 +153,7 @@ const renderSiteList = loggedInFactory(SiteList)
 const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
-const renderInventoryOnHandItemsList = loggedInFactory(InventoryOnHandItemsList)
+
 const renderInventoryContainer = loggedInFactory(InventoryContainer)
 const renderNotificationList = loggedInFactory(NotificationList)
 const renderNotificationDetail = loggedInFactory(NotificationDetail)
@@ -394,14 +393,7 @@ const AppRoutes = ({ props: outerProps }) => {
             renderInventoryContainer
           )}
         />
-        <Route
-          path="/browse/inventory/onHand/:siteId/:consumableId"
-          element={getElement(
-            props,
-            ['browse', 'inventory'],
-            renderInventoryOnHandItemsList
-          )}
-        />
+
         <Route
           path="/browse/notification"
           element={getElement(
