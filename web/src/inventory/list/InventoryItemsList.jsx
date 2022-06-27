@@ -63,6 +63,7 @@ import messages from './messages'
 import styles from './InventoryItemsList.css'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
+import ErrorBoundary from '../../MigratedComponents/ErrorBoundary/index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -288,11 +289,17 @@ export const InventoryItemsListWithProps = ({
             <FormControlLabel
               sx={{ p: 2 }}
               control={
-                <Switch
-                  onChange={event =>
-                    setInventoryOnHand(breakOutByLot && event.target.checked)
-                  }
-                />
+                <ErrorBoundary>
+                  <PermissionsProvider permissions={['inventory:edit']}>
+                    <Switch
+                      onChange={event =>
+                        setInventoryOnHand(
+                          breakOutByLot && event.target.checked
+                        )
+                      }
+                    />
+                  </PermissionsProvider>
+                </ErrorBoundary>
               }
               label="Inventory on hand"
             />
