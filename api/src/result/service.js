@@ -231,7 +231,6 @@ async function getResultsForExport(auth, query) {
     for (const assay of assays) {
       if (
         assay.resultCategory1Label &&
-        !selectFields.resultCategory1Name &&
         selectFields.resultCategory1Name !== 'rc1.name'
       ) {
         selectFields.resultCategory1Name = 'rc1.name'
@@ -246,7 +245,6 @@ async function getResultsForExport(auth, query) {
 
       if (
         assay.resultCategory2Label &&
-        !selectFields.resultCategory2Name &&
         selectFields.resultCategory2Name !== 'rc2.name'
       ) {
         selectFields.resultCategory2Name = 'rc2.name'
