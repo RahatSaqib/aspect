@@ -1,0 +1,23 @@
+.Container {
+  padding: 10px;
+}
+
+.DataTableCard--action {
+  padding: 12px 20px;
+  margin-bottom: 2px;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+.DataTableCard--table {
+  overflow: visible; /* For IconMenu at last row to be visible */
+}
+
+.Checkbox {
+  padding: inherit;
+}
+
+.InventoryDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}

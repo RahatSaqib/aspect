@@ -9,6 +9,7 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     .leftJoin('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
     .leftJoin('Result as r', 'il.resultId', 'r.id')
     .leftJoin('Site as refSite', 'il.referencedSiteId', 'refSite.id')
+    .leftJoin('Sample as sam', 'r.sampleId', 'sam.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',

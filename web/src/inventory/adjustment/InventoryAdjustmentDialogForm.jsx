@@ -146,6 +146,12 @@ export const InventoryAdjustmentDialogForm = ({
   onNotesChange,
   handleSubmit,
 }) => {
+  const showLot =
+    (currInventoryItem && currInventoryItem.get('showLot')) ||
+    (consumable && consumable.get('showLot'))
+  const showExpirationDate =
+    (currInventoryItem && currInventoryItem.get('showExpirationDate')) ||
+    (consumable && consumable.get('showExpirationDate'))
   return (
     <AspectDialog
       actions={[
@@ -191,27 +197,31 @@ export const InventoryAdjustmentDialogForm = ({
             )}
           </section>
           <section>
-            <TextField
-              fullWidth
-              type="text"
-              name="lotNumber"
-              label={intl.formatMessage(messages.lotNumber)}
-              disabled={
-                form.submitting ||
-                (currInventoryItem &&
-                  !isNil(currInventoryItem.get('lotNumber')))
-              }
-              value={values.lotNumber}
-              onChange={onLotNumberChange}
-              error={meta.lotNumber.touched && meta.lotNumber.error}
-              helperText={meta.lotNumber.touched && meta.lotNumber.error}
-              margin="normal"
-              FormHelperTextProps={{
-                margin: 'dense',
-              }}
-              inputProps={{ maxLength: 500 }}
-            />
-            {consumable.get('canExpire') && (
+            {showLot ? (
+              <TextField
+                fullWidth
+                type="text"
+                name="lotNumber"
+                label={intl.formatMessage(messages.lotNumber)}
+                disabled={
+                  form.submitting ||
+                  (currInventoryItem &&
+                    !isNil(currInventoryItem.get('lotNumber')))
+                }
+                value={values.lotNumber}
+                onChange={onLotNumberChange}
+                error={meta.lotNumber.touched && meta.lotNumber.error}
+                helperText={meta.lotNumber.touched && meta.lotNumber.error}
+                margin="normal"
+                FormHelperTextProps={{
+                  margin: 'dense',
+                }}
+                inputProps={{ maxLength: 500 }}
+              />
+            ) : (
+              <div />
+            )}
+            {showExpirationDate && consumable.get('canExpire') && (
               <FormGroup label={intl.formatMessage(messages.expiryDate)}>
                 <DateTimeInput
                   fullWidth
@@ -226,7 +236,12 @@ export const InventoryAdjustmentDialogForm = ({
                   RootProps={{
                     name: 'expiresOn',
                   }}
-                  onChange={onExpiresOnChange}
+                  onChange={(...params) => {
+                    // Get the second parameter, representing the string date
+                    // This is ugly, I know.
+                    const stringDate = params[1]
+                    onExpiresOnChange(stringDate)
+                  }}
                   value={values.expiresOn}
                 />
               </FormGroup>

@@ -677,6 +677,8 @@ describe('geography action creators', () => {
   let now
   let geographyRedux
   let dispatch
+  let getState
+  let geographyState
   let freshCacheTime
   let expiredCacheTime
   let countriesState = new LazyLoadItems({
@@ -923,18 +925,23 @@ describe('geography action creators', () => {
 
   describe('fetchStatesForLocationSelector', () => {
     beforeAll(() => {
-      countriesState = createCountriesStateWith(
-        [
-          { id: 1, name: 'South Africa' },
-          { id: 2, name: 'United States' },
-        ],
-        now
-      )
+      const countries = [
+        { id: 1, name: 'South Africa' },
+        { id: 2, name: 'United States' },
+      ]
+      countriesState = createCountriesStateWith(countries, now)
+
+      geographyState = geography(undefined, {
+        type: types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,
+        countries,
+        lastRefreshed: now,
+      })
     })
 
     describe('and the states cache for the selected country is still fresh', () => {
       beforeEach(() => {
         dispatch = sinon.spy()
+        getState = sinon.spy(() => ({ geography: geographyState }))
         geographyRedux = require('./GeographyRedux')
         countriesState = setLastRefreshedTimeOnCountryStates(0, freshCacheTime)
       })
@@ -943,7 +950,7 @@ describe('geography action creators', () => {
         const selectedCountry = getCountryAt(0)
         const dispatchFunction =
           geographyRedux.fetchStatesForLocationSelector(selectedCountry)
-        dispatchFunction(dispatch)
+        dispatchFunction(dispatch, getState)
         expect(dispatch.notCalled).toBe(true)
       })
 
@@ -963,6 +970,7 @@ describe('geography action creators', () => {
             .withArgs('/geography/state-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
+          getState = sinon.spy(() => ({ geography: geographyState }))
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountryStates(
             0,
@@ -971,7 +979,7 @@ describe('geography action creators', () => {
           const selectedCountry = getCountryAt(0)
           const dispatchFunction =
             geographyRedux.fetchStatesForLocationSelector(selectedCountry)
-          dispatchFunction(dispatch)
+          dispatchFunction(dispatch, getState)
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {
@@ -1024,12 +1032,13 @@ describe('geography action creators', () => {
             .withArgs('/geography/state-select-list/1')
             .returns(expectedResponseFromServer)
           dispatch = sinon.spy()
+          getState = sinon.spy(() => ({ geography: geographyState }))
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountryStates(0, undefined)
           const selectedCountry = getCountryAt(0)
           const dispatchFunction =
             geographyRedux.fetchStatesForLocationSelector(selectedCountry)
-          dispatchFunction(dispatch)
+          dispatchFunction(dispatch, getState)
         })
 
         it('Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action', () => {

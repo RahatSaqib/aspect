@@ -43,6 +43,8 @@ const routes = [
               canExpire: Joi.number().integer(),
               manufacturer: Joi.string().max(500).allow('', null),
               autoInclude: Joi.number().integer(),
+              showLot: Joi.number().integer().required(),
+              showExpirationDate: Joi.number().integer().required(),
             })
           ),
         },
@@ -110,6 +112,7 @@ const routes = [
               unitShortName: Joi.string().max(50).allow('', null),
               assayName: Joi.string().max(255).allow('', null),
               assayI18nKey: Joi.string().max(255).allow('', null),
+              strategy: Joi.string().optional().allow(null, ''),
             })
           ),
         },
@@ -142,6 +145,7 @@ const routes = [
               unitShortName: Joi.string().max(50).allow('', null),
               assayName: Joi.string().max(255).allow('', null),
               assayI18nKey: Joi.string().max(255).allow('', null),
+              strategy: Joi.string().optional().allow(null, ''),
             })
           ),
         },

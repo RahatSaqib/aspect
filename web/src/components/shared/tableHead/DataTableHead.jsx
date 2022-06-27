@@ -71,9 +71,11 @@ const DataTableHead = ({
           index
         ) =>
           !isHidden ? (
-            <PermissionsProvider permissions={auth || []}>
+            <PermissionsProvider
+              key={`PermissionProvider--${key}`}
+              permissions={auth || []}
+            >
               <TableCell
-                key={key}
                 data-column={key}
                 colSpan={colSpan}
                 sortDirection={sortColumnKey === key ? sortColumnDir : false}

@@ -17,9 +17,29 @@ const INVENTORY_LOG_LIST = {
         WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
         ELSE cr.name
       END`),
-  notes: 'il.notes',
+  notes: knex.raw(
+    `case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`
+  ),
+  consumableReasonI18nKey: 'cr.i18nKey',
+}
+
+const INVENTORY_LOG_UILIST = {
+  createdOn: 'il.createdOn',
+  consumableName: 'c.name',
+  lotNumber: 'il.lotNumber',
+  expirationDate: 'il.expiresOn',
+  siteName: 's.name',
+  quantity: knex.raw(
+    'CASE WHEN IFNULL(cr.decrease, 0) = 1 THEN -il.quantity ELSE il.quantity END'
+  ),
+  consumableReasonI18nKey: 'cr.i18nKey',
+  refSiteName: 'refSite.name',
+  notes: knex.raw(
+    `case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`
+  ),
 }
 
 module.exports = {
   INVENTORY_LOG_LIST,
+  INVENTORY_LOG_UILIST,
 }
