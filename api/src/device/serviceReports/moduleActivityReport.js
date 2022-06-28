@@ -47,7 +47,7 @@ async function getModuleActivityReportData(minDate, dataConstraints, query) {
       'd.name as deviceName',
       knex.raw(`ifnull(r.moduleName, 'N/A') as moduleName`),
       'r.moduleSerial',
-      knex.raw('max(r.endedOn) as lastSeen'),
+      knex.raw('d.lastSeenOn as lastSeen'),
       'i.lastIssue',
       'i.dateLastIssue',
     ])
