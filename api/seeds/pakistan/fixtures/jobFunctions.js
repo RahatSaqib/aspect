@@ -91,6 +91,7 @@ module.exports = [
         activity: 'view',
       },
     ],
+    reports: ['tb_workload_summary'],
   }),
   mergeJobFunctions(regionalOfficer, {
     permissions: [
@@ -159,6 +160,7 @@ module.exports = [
         activity: 'edit',
       },
     ],
+    reports: ['tb_workload_summary'],
   }),
   mergeJobFunctions(labUser, {
     permissions: [

@@ -30,9 +30,11 @@ const REPORT_FAILED = 'REPORT_FAILED'
 const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
-async function getSheetData(request, sheet) {
+async function getSheetData(request, sheet, sharedResults) {
   const { auth } = request
   const { moduleName, functionName } = sheet
+  const { nameOfSharedData, useNamedData } = sheet.query
+  const sheetQuery = _.omit(sheet.query, ['nameOfSharedData', 'useNamedData'])
   const query = {
     // filters defined on Reports page
     ...request.query,
@@ -40,7 +42,7 @@ async function getSheetData(request, sheet) {
     page: 0,
     size: 999999,
     // specific params for endpoint from ReportSheet table, i.e. sortCol, sortDir
-    ...sheet.query,
+    ...sheetQuery,
   }
 
   if (!moduleName || !functionName) {
@@ -70,15 +72,20 @@ async function getSheetData(request, sheet) {
     RELABEL_EXCEL
   )
 
-  const result = await dataFunc(auth, query)
+  const result = await dataFunc(auth, query, { sharedResults, useNamedData })
   const {
     ok,
     data,
     total,
     errorMessage,
-    dynamicColumns = {},
+    dynamicColumns = [],
     dataSelector = null,
+    sections = [],
   } = result
+
+  if (nameOfSharedData) {
+    sharedResults[nameOfSharedData] = result
+  }
 
   const listSize = _.isPlainObject(data) ? data?.rows?.length : data?.length
   logger.debug(
@@ -87,7 +94,7 @@ async function getSheetData(request, sheet) {
   )
 
   if (ok) {
-    return { data, total, dynamicColumns, dataSelector }
+    return { data, total, dynamicColumns, dataSelector, sections }
   }
 
   return Boom.preconditionFailed(
@@ -158,6 +165,7 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
 async function getAllSheetsData(request, sheets) {
   let boomError
   const dataSet = []
+  const sharedResults = {}
   // process all sheets
   await Promise.each(sheets, async (sheet, sheetIndex) => {
     if (!sheet || boomError) return
@@ -168,7 +176,8 @@ async function getAllSheetsData(request, sheets) {
       dynamicColumns,
       total = null,
       dataSelector = null,
-    } = await getSheetData(request, sheet)
+      sections,
+    } = await getSheetData(request, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
       return
@@ -177,6 +186,7 @@ async function getAllSheetsData(request, sheets) {
     dataSet[sheetIndex] = {
       data,
       dynamicColumns,
+      sections,
       dataSelector,
       total,
       // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
