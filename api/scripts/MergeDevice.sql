@@ -10,7 +10,8 @@ SET sql_safe_updates = 0;
 -- (__INCORRECT_DEVICE_IDS__) are the device ids that you want to merge from
 -- ___CORRECT_DEVICE_ID___ is the device id that you want to merge to
 
-SET @toDevice = ___CORRECT_DEVICE_ID___; SET @toSite = (SELECT siteId FROM Device WHERE id = @toDevice LIMIT 1); 
+SET @toDevice = ___CORRECT_DEVICE_ID___; 
+SET @toSite = (SELECT siteId FROM Device WHERE id = @toDevice LIMIT 1); 
 UPDATE Device SET deviceMaintenanceStatusLogId = NULL WHERE id IN (__INCORRECT_DEVICE_IDS__);
 DELETE FROM DeviceMaintenanceStatusLog WHERE deviceId IN (__INCORRECT_DEVICE_IDS__);
 DELETE FROM DeviceMaintenance WHERE deviceId IN (__INCORRECT_DEVICE_IDS__);
