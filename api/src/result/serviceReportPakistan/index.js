@@ -147,11 +147,11 @@ async function getReportWorkloadSummary(auth, query) {
   data = _.sortBy(data, ['state', 'month'])
 
   /**
-   * count all numbers (via formating data as object)
+   * count all numbers (via formatting data as object)
    * {
    *  [state]: {
    *    [month]: {
-   *      total: ###,
+   *      all: ###,
    *      mtb: ###,
    *      rrd: ###,
    *    },
@@ -167,10 +167,13 @@ async function getReportWorkloadSummary(auth, query) {
       const { state, month, cnt, resultCategory1, resultCategory2 } = item
       acc[state] = acc[state] || {}
       acc[state][month] = acc[state][month] || { ...emptyCounts }
+      // count 'all'
       acc[state][month][SECTION_KEY_ALL] += cnt
+      // count 'mtb'
       if (positiveResultCategories.includes(resultCategory1)) {
         acc[state][month][SECTION_KEY_MTB] += cnt
       }
+      // count 'rrd'
       if (
         positiveResultCategories.includes(resultCategory1) &&
         positiveResultCategories.includes(resultCategory2)
@@ -216,6 +219,9 @@ async function getReportWorkloadSummary(auth, query) {
     )
     row[column.key] = sum
   }
+  const sumPerStates = (rowTotal, row, key) => {
+    rowTotal[key] = (rowTotal[key] ?? 0) + row[key]
+  }
   /**
    * define final `data` object for report
    */
@@ -224,20 +230,26 @@ async function getReportWorkloadSummary(auth, query) {
   sectionKeys.forEach(sectionKey => {
     // start section data with empty array of rows
     data[sectionKey] = []
+    // separate row with `Total` across all states for each column
+    const rowTotal = { state: 'TOTAL' }
+    data[sectionKey].push(rowTotal)
     // for each `state` ...
     _.forEach(obj, (months, state) => {
       const row = { state }
       // 1. process all fetched months
       _.forEach(months, (item, month) => {
         row[month] = item[sectionKey]
+        sumPerStates(rowTotal, row, month)
       })
       // 2. process all quarters
       _.forEach(dynamicQuarterColumns, quarterColumn => {
         sumAllMonths(row, quarterColumn)
+        sumPerStates(rowTotal, row, quarterColumn.key)
       })
       // 3. process all years
       _.forEach(dynamicYearColumns, yearColumn => {
         sumAllMonths(row, yearColumn)
+        sumPerStates(rowTotal, row, yearColumn.key)
       })
       // add row to the section data
       data[sectionKey].push(row)
