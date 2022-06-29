@@ -54,6 +54,7 @@ describe('Inventory Routes', () => {
         geography: 'g',
       })
       .select('s.*')
+
     await knex('Site').insert([
       {
         ..._.omit(site1, 'id'),
@@ -70,6 +71,7 @@ describe('Inventory Routes', () => {
       'testSite1',
       'testSite2',
     ])
+
     return newSites
   }
 
@@ -257,7 +259,7 @@ describe('Inventory Routes', () => {
           assert.isTrue(emptyInventoryItems.length === 0)
         })
 
-        it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
+        it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 1', async () => {
           const res = await server
             .get(`${path}?size=500`)
             .set('Authorization', `Bearer ${shared.token}`)
@@ -290,41 +292,6 @@ describe('Inventory Routes', () => {
           // ===> 3.5 days of stock left
           // ===> 200 cartridges to be wasted
 
-          assert.equal(inventoryItems[0].daysStockLeft, 3.5)
-
-          assert.equal(inventoryItems[0].projectedWaste, 200)
-        })
-
-        it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
-          const res = await server
-            .get(`${path}?size=500`)
-            .set('Authorization', `Bearer ${shared.token}`)
-
-          assertBodyAndInventoryItems(res)
-
-          const inventoryItems = res.body.data.filter(
-            ii => ii.siteId === site1Id && ii.consumableId === consumableId
-          )
-
-          // Only one row per site and consumable
-          assert.equal(inventoryItems.length, 1)
-          assert.isNotNull(inventoryItems[0])
-
-          // Correct quantity - stock in transit should not be counted
-          assert.equal(inventoryItems[0].quantityOnHand, 900)
-
-          // - We have 900 cartridges
-          // - 250 expiring tomorrow (inclusive)
-          // - 350 expiring in two days (inclusive)
-          // - 300 expiring in 50 days (inclusive)
-          // - The consumption rate is 200 cartridges/day
-          // So...
-          // Day 1 - We use 200 from expiring tomorrow ===> 50 wasted
-          // Day 2 - We use 200 from expiring in two days ===> 150 wasted
-          // Day 3 - We use 200 from expiring in 50 days
-          // Day 4 - We use 100 from expiring in 50 days ===> Everything consumed
-          // ===> 3.5 days of stock left
-          // ===> 200 cartridges to be wasted
           assert.equal(inventoryItems[0].daysStockLeft, 3.5)
 
           assert.equal(inventoryItems[0].projectedWaste, 200)
@@ -422,6 +389,7 @@ describe('Inventory Routes', () => {
     describe('/inventory calculations of daysStockLeft', () => {
       const path = '/api/inventory?size=500'
       let site1Id
+      let site2Id
       let inventoryItem1Id
       let inventoryItem2Id
       let inventoryItem3Id
@@ -432,7 +400,7 @@ describe('Inventory Routes', () => {
 
       before(async () => {
         shared.checkToken(server, path)
-        ;[{ id: site1Id }] = await getScopedSites()
+        ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
         ;({ id: consumableId } = await knex('Consumable')
           .where('name', 'GeneXpert TB Cartridge')
           .first('id'))
@@ -473,27 +441,22 @@ describe('Inventory Routes', () => {
         await knex('FactInventoryConsumptionRate')
           .whereIn('siteId', [site1Id])
           .delete()
-        await knex('Site').whereIn('id', [site1Id]).delete()
+        await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
       })
 
-      it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
+      it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 2', async () => {
         const res = await server
           .get(`${path}`)
           .set('Authorization', `Bearer ${shared.token}`)
-
         assertBodyAndInventoryItems(res)
-
         const inventoryItems = res.body.data.filter(
           ii => ii.siteId === site1Id && ii.consumableId === consumableId
         )
-
         // Only one row per site and consumable
         assert.equal(inventoryItems.length, 1)
         assert.isNotNull(inventoryItems[0])
-
         // Correct quantity - stock in transit should not be counted
         assert.equal(inventoryItems[0].quantityOnHand, 15)
-
         // - We have 15 cartridges
         // - 2 expiring tomorrow (inclusive)
         // - 3 expiring in two days (inclusive)
@@ -578,9 +541,10 @@ describe('Inventory Routes', () => {
     let destinationSite
     let siteId
     let transitItem
-    const inventoryItemsToRemove = []
+    const inventoryItemsToRemove = {}
 
-    beforeEach(async () => {
+    beforeEach(async function () {
+      inventoryItemsToRemove[this.currentTest.title] = []
       const { id: consumableId } = await knex('Consumable')
         .where('name', consumableName)
         .first('id')
@@ -604,16 +568,19 @@ describe('Inventory Routes', () => {
         expiresOn: expiryDate,
         quantityOnHand: initialQuantityOnHand,
       })
-      inventoryItemsToRemove.push(inventoryItemId)
+      inventoryItemsToRemove[this.currentTest.title].push(inventoryItemId)
       inventoryItem = await knex('InventoryItem')
         .where({ id: inventoryItemId })
         .first()
       assert.isOk(destinationSite, `Cannot find destinationSite`)
     })
 
-    afterEach(async () => {
+    afterEach(async function () {
       await knex('InventoryLog')
-        .whereIn('inventoryItemId', inventoryItemsToRemove)
+        .whereIn(
+          'inventoryItemId',
+          inventoryItemsToRemove[this.currentTest.title]
+        )
         .orWhere(function () {
           if (transitItem != null) {
             this.where({ inventoryItemId: transitItem.id })
@@ -621,7 +588,7 @@ describe('Inventory Routes', () => {
         })
         .delete()
       await knex('InventoryItem')
-        .whereIn('id', inventoryItemsToRemove)
+        .whereIn('id', inventoryItemsToRemove[this.currentTest.title])
         .orWhere(function () {
           if (transitItem != null) {
             this.where({ id: transitItem.id })
@@ -705,7 +672,7 @@ describe('Inventory Routes', () => {
           )
         })
 
-        it('should create a new inventory item and set the quantity if the lot does not exist', async () => {
+        it('should create a new inventory item and set the quantity if the lot does not exist', async function () {
           const res = await server
             .put(`${removeInventoryPath}`)
             .send({
@@ -724,14 +691,14 @@ describe('Inventory Routes', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
           assert.equal(res.body.data.quantityOnHand, -510)
-          inventoryItemsToRemove.push(res.body.data.id)
+          inventoryItemsToRemove[this.test.title].push(res.body.data.id)
         })
       })
     })
 
     describe('/inventory/transfer', () => {
       describe('PUT', () => {
-        it('should add an inventory item in transit to the destination site', done => {
+        it('should add an inventory item in transit to the destination site', function (done) {
           server
             .put(`${transferInventoryPath}`)
             .send({
@@ -755,7 +722,9 @@ describe('Inventory Routes', () => {
                 _.max([0, inventoryItem.quantityOnHand - quantityToAdjust])
               )
               transitItem = res.body.data.newInventoryItem
-              inventoryItemsToRemove.push(res.body.data.newInventoryItem.id)
+              inventoryItemsToRemove[this.test.title].push(
+                res.body.data.newInventoryItem.id
+              )
               assert.deepEqual(transitItem, {
                 ...transitItem,
                 quantityOnHand: _.max([0, quantityToAdjust]),
@@ -807,7 +776,7 @@ describe('Inventory Routes', () => {
             })
         })
 
-        it('when transfering from a non-existing lot, should add an inventory item in transit to the destination and another with negative stock in the origin site', async () => {
+        it('when transfering from a non-existing lot, should add an inventory item in transit to the destination and another with negative stock in the origin site', async function () {
           const res = await server
             .put(`${transferInventoryPath}`)
             .send({
@@ -828,10 +797,12 @@ describe('Inventory Routes', () => {
           assert.typeOf(res.body.data, 'Object')
 
           transitItem = res.body.data.newInventoryItem
-          inventoryItemsToRemove.push(res.body.data.newInventoryItem.id)
+          inventoryItemsToRemove[this.test.title].push(
+            res.body.data.newInventoryItem.id
+          )
 
           const sourceInventoryItem = res.body.data.existingInventoryItem
-          inventoryItemsToRemove.push(sourceInventoryItem.id)
+          inventoryItemsToRemove[this.test.title].push(sourceInventoryItem.id)
 
           assert.deepEqual(transitItem, {
             ...transitItem,
