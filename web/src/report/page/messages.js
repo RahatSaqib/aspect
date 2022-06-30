@@ -62,11 +62,11 @@ const messages = defineMessages({
   Critical_Errors_By_Device_description: {
     id: 'pages.ReportIndex.Critical_Errors_By_Device_description',
     defaultMessage:
-      'Includes a list of devices that had at least 2 critical errors',
+      'Includes a list of GeneXpert devices that had at least 2 critical errors',
   },
   MTB_Detected_RR_Detected_description: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected_description',
-    defaultMessage: 'Contains all MTB Detected/RR Detected cases',
+    defaultMessage: 'Contains all MTB Detected/Rif Detected cases',
   },
   device_activity_description: {
     id: 'pages.ReportIndex.device_activity_description',

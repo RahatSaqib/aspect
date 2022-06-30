@@ -1,6 +1,6 @@
 const mtbDetectedRRDetected = {
   name: 'MTB Detected RR Detected',
-  description: 'Contains all MTB Detected/RR Detected cases',
+  description: 'Contains all MTB Detected/Rif Detected cases',
   i18nKey: 'MTB_Detected_RR_Detected',
   i18nKeyDescription: 'MTB_Detected_RR_Detected_description',
   externalId: 'mtb_detected_rr_detected',
@@ -14,7 +14,6 @@ const mtbDetectedRRDetected = {
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
-        assayId: ['GxMtbRif', 'GxMtbRifUltra'],
         resultCategoryGroupId: [
           'GxMtbRifMtbDetectedRifDetected',
           'GxMtbRifUltraMtbDetectedRifDetected',
@@ -50,7 +49,8 @@ const allResults = {
 }
 const criticalErrorsByDevice = {
   name: 'Critical Errors By Device',
-  description: 'Includes a list of devices that had at least 2 critical errors',
+  description:
+    'Includes a list of GeneXpert devices that had at least 2 critical errors',
   i18nKey: 'Critical_Errors_By_Device',
   i18nKeyDescription: 'Critical_Errors_By_Device_description',
   externalId: 'critical_errors_by_device',
@@ -65,7 +65,7 @@ const criticalErrorsByDevice = {
         sortCol: 'name',
         sortDir: 'asc',
         hasResults: 1,
-        assayId: 'GxMtbRif',
+        deviceTypeId: 'CepheidGeneXpert',
       },
     },
   ],
@@ -74,7 +74,7 @@ const criticalErrorsByDevice = {
 const rifResistanceRate = {
   name: 'RIF Resistance Rate (%positive results)',
   description:
-    'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
+    'Listing MTB/Rif and MTB/Rif Ultra Resistance Rate for all GeneXpert devices, ranked highest to lowest',
   i18nKey: 'RIF_Resistance_Rate',
   externalId: 'rif_resistance_rate',
   i18nKeyDescription: 'RIF_Resistance_Rate_description',
@@ -85,14 +85,6 @@ const rifResistanceRate = {
       sortOrder: 0,
       moduleName: 'device/service',
       functionName: 'getDevicesForRifResistanceReport',
-      query: {
-        sortCol: 'name',
-        sortDir: 'asc',
-        hasResults: 1,
-        assayId: 'GxMtbRif',
-        resultCategoryId: 'Detected',
-        resultCategory2Id: 'Detected',
-      },
     },
   ],
 }
