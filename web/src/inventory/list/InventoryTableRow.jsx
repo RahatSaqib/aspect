@@ -76,7 +76,7 @@ const InventoryTableRow = ({
   ]
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
     values =>
-      resultQtyOnHand !== newQtyOnHand
+      resultQtyOnHand !== inventoryItem.get('quantityOnHand')
         ? modifyInventoryOnHand(values, {
             siteId: inventoryItem.get('siteId'),
             consumableId: inventoryItem.get('consumableId'),
@@ -102,7 +102,6 @@ const InventoryTableRow = ({
       const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
       const newQty = parseInt(newQtyOnHand, 10)
       const movementQty = parseInt(resultQtyOnHand, 10)
-
       if (qty !== newQty && notes) {
         onModifyInventoryOnHandSubmit({
           quantity: movementQty,
