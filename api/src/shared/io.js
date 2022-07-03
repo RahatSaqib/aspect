@@ -233,20 +233,62 @@ function getContentType(fileExt) {
 }
 
 // ----------------------------------------------------------------------------------------------
-async function readTemplateFile(
+function getTemplateFilePath(
   templateFolderPath,
-  lang,
-  langDefault = LANG_DEFAULT
+  { lang, langDefault = LANG_DEFAULT, countryAbbreviation }
 ) {
+  const countryAbbreviationLo = countryAbbreviation?.toLowerCase()
+  const baseFolderPath = `templates/${templateFolderPath}`
+  let filePath = null
+  let exists = null
+  /**
+   * 1. try to use file in country folder
+   */
+  if (countryAbbreviationLo) {
+    const countryFolderPath = `${baseFolderPath}/${countryAbbreviationLo}`
+    if (fs.existsSync(countryFolderPath)) {
+      filePath = `${countryFolderPath}/${lang}.xlsx`
+      exists = fs.existsSync(filePath)
+      if (exists) {
+        return { filePath, exists }
+      }
+      if (lang !== langDefault) {
+        filePath = `${countryFolderPath}/${langDefault}.xlsx`
+        exists = fs.existsSync(filePath)
+        if (exists) {
+          return { filePath, exists }
+        }
+      }
+    }
+  }
+
+  /**
+   * 2. try to use file in base folder of report template
+   */
   // TODO: think how to differ files for the same language but different partners
   // TODO: see Jira task - https://ops.systemone.id/browse/ASP-1451
-  let filePath = `templates/${templateFolderPath}/${lang}.xlsx`
+  filePath = `${baseFolderPath}/${lang}.xlsx`
   // check if file exists, fallback to default language, throw error if no file found
-  let exists = fs.existsSync(filePath)
+  exists = fs.existsSync(filePath)
   if (!exists && lang !== langDefault) {
-    filePath = `templates/${templateFolderPath}/${langDefault}.xlsx`
+    filePath = `${baseFolderPath}/${langDefault}.xlsx`
     exists = fs.existsSync(filePath)
   }
+
+  return { filePath, exists }
+}
+
+// ----------------------------------------------------------------------------------------------
+async function readTemplateFile(
+  templateFolderPath,
+  { lang, langDefault = LANG_DEFAULT, countryAbbreviation }
+) {
+  const { filePath, exists } = getTemplateFilePath(templateFolderPath, {
+    lang,
+    langDefault,
+    countryAbbreviation,
+  })
+
   // throw exception if no file found
   if (!exists) {
     throw new Error(`File ${filePath} is missing`)

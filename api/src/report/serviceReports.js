@@ -206,7 +206,7 @@ async function createReport(request, reply) {
   const { externalId, templateFolderPath } = params
   const { sheets, fileName } = await getReportDetails(auth, externalId)
   const user = await getUser(auth.credentials.name)
-  const { culture, userName } = user
+  const { countryAbbreviation, culture, userName } = user
   const email = user.email || '-'
   const cell = user.cell || '-'
 
@@ -256,6 +256,7 @@ async function createReport(request, reply) {
 
   if (extension === 'csv') {
     const dataBuffer = await renderExcelTemplateToCsv({
+      countryAbbreviation,
       culture,
       templateFolderPath: templateFolderPath || externalId,
       data,
@@ -271,6 +272,7 @@ async function createReport(request, reply) {
   }
 
   const renderParams = {
+    countryAbbreviation,
     culture,
     templateFolderPath,
     externalId,
@@ -290,6 +292,7 @@ async function createReport(request, reply) {
 
 async function renderExcelFile(params) {
   const {
+    countryAbbreviation,
     culture,
     templateFolderPath,
     externalId,
@@ -301,6 +304,7 @@ async function renderExcelFile(params) {
   } = params
 
   const dataBuffer = await renderExcelTemplate({
+    countryAbbreviation,
     culture,
     templateFolderPath: templateFolderPath || externalId,
     data,

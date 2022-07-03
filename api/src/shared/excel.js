@@ -282,6 +282,7 @@ function replacePlaceholders(worksheet, replacements, data) {
 
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
+  countryAbbreviation,
   culture,
   data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   extension, // xlsx
@@ -291,11 +292,11 @@ async function renderExcelTemplate({
 }) {
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
-  const workbook = await readTemplateFile(
-    templateFolderPath,
+  const workbook = await readTemplateFile(templateFolderPath, {
     lang,
-    LANG_DEFAULT
-  )
+    langDefault: LANG_DEFAULT,
+    countryAbbreviation,
+  })
 
   // get worksheets with specified in API way, 'workbook.worksheets' also works but not specified in API
   const worksheets = []
@@ -504,6 +505,7 @@ async function renderExcelTemplate({
 
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplateToCsv({
+  countryAbbreviation,
   culture,
   data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
@@ -512,11 +514,11 @@ async function renderExcelTemplateToCsv({
 }) {
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
-  const workbook = await readTemplateFile(
-    templateFolderPath,
+  const workbook = await readTemplateFile(templateFolderPath, {
     lang,
-    LANG_DEFAULT
-  )
+    langDefault: LANG_DEFAULT,
+    countryAbbreviation,
+  })
 
   const worksheet = workbook.worksheets[0]
   const worksheetData = dataSet[0]
@@ -600,6 +602,7 @@ async function renderExcelTemplateToCsv({
 async function streamExcelTemplate({
   stream,
   templateFolderPath,
+  countryAbbreviation,
   culture,
   data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
@@ -610,11 +613,11 @@ async function streamExcelTemplate({
   /**
    * read file into workbook as ExcelWorkbook
    */
-  const workbookTemplate = await readTemplateFile(
-    templateFolderPath,
+  const workbookTemplate = await readTemplateFile(templateFolderPath, {
     lang,
-    LANG_DEFAULT
-  )
+    langDefault: LANG_DEFAULT,
+    countryAbbreviation,
+  })
 
   /**
    * create Excel Workbook which will write to `stream`
@@ -1051,8 +1054,9 @@ async function exportData(request, reply, sheetData, scope, options) {
   const { auth } = request
   const extension = request.query.format || 'xlsx'
 
-  const { culture } = await getUser(auth.credentials.name)
+  const { countryAbbreviation, culture } = await getUser(auth.credentials.name)
   const dataBuffer = await renderExcelTemplate({
+    countryAbbreviation,
     culture,
     templateFolderPath: `export/${scope}`,
     data: [sheetData],

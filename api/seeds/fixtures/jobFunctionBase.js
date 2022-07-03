@@ -20,6 +20,7 @@ const admin = {
     'module_activity_report',
     'report_custom_fields_completion',
     'inventory_log',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -153,6 +154,7 @@ const manager = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -242,6 +244,7 @@ const regionalOfficer = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -334,6 +337,7 @@ const labUser = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -426,6 +430,7 @@ const clinician = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -570,6 +575,7 @@ const ntp = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -878,6 +884,7 @@ const labManager = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -955,6 +962,7 @@ const labSupervisor = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -1030,6 +1038,7 @@ const medTech = {
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -1106,6 +1115,7 @@ const dataViewer = {
     'all_results',
     'device_utilization_per_day',
     'module_activity_report',
+    'tb_workload_summary',
   ],
   permissions: [
     {
@@ -1184,6 +1194,7 @@ const labAdmin = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'tb_workload_summary',
   ],
   permissions: [
     {
