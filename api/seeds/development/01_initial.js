@@ -3617,9 +3617,7 @@ async function seed(knex) {
         ).setHours(0, 0, 0, 0)
       )
       let quantityOnHand = _.random(0, 1000)
-      let lotNumber = `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
-        (siteData.id + i) * consumableGxTbCartridgeId
-      }`
+      let lotNumber = null
       // TB Cartridges
       let [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: consumableGxTbCartridgeId,

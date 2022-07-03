@@ -153,6 +153,7 @@ const renderSiteList = loggedInFactory(SiteList)
 const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
+
 const renderInventoryContainer = loggedInFactory(InventoryContainer)
 const renderNotificationList = loggedInFactory(NotificationList)
 const renderNotificationDetail = loggedInFactory(NotificationDetail)
@@ -392,6 +393,7 @@ const AppRoutes = ({ props: outerProps }) => {
             renderInventoryContainer
           )}
         />
+
         <Route
           path="/browse/notification"
           element={getElement(

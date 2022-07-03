@@ -125,6 +125,14 @@ const messages = defineMessages({
     id: 'pages.InventoryLog.ConsumableReason_Damage',
     defaultMessage: 'Damage',
   },
+  ConsumableReason_AssertedInventoryOnHandAdd: {
+    id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove',
+    defaultMessage: 'Asserted inventory on hand',
+  },
+  ConsumableReason_AssertedInventoryOnHandRemove: {
+    id: 'pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove',
+    defaultMessage: 'Asserted inventory on hand',
+  },
 })
 
 export default messages

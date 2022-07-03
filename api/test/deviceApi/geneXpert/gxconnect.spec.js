@@ -34,7 +34,7 @@ const {
   deviceTypeToId,
   assayToId,
 } = require('../../../src/shared/dictionary')
-const { getLocalDateInUtc } = require('../../../src/shared/date')
+
 const {
   gxEbola: gxEbolaMappings,
   gxHiv1Qual: gxHiv1QualMappings,
@@ -1791,11 +1791,9 @@ describe('Device API routes for GxConnect Devices', () => {
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
-      const initialQuantityOnHand = 100
-
       it('should reduce inventory levels of that consumable appropriately', () =>
         runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, device, site, now } = context
+          const { basicDevicePayload, deviceAuth, device, site } = context
 
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
@@ -1806,16 +1804,6 @@ describe('Device API routes for GxConnect Devices', () => {
 
           assert.isNotEmpty(consumableAssay)
           assert.isAbove(consumableAssay.quantity, 0)
-
-          const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-          const [inventoryItemId] = await knex('InventoryItem').insert({
-            consumableId: consumableAssay.consumableId,
-            siteId: site.id,
-            expiresOn: expiryDate,
-            quantityOnHand: initialQuantityOnHand,
-            createdOn: subDays(now, 4),
-            updatedOn: subDays(now, 4),
-          })
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
@@ -1848,13 +1836,18 @@ describe('Device API routes for GxConnect Devices', () => {
             .catch(assert.fail)
 
           const lastResultId = await getLastResultId(knex, device.id)
+
+          const { quantityOnHand, inventoryItemId } = await knex(
+            'InventoryLog as il'
+          )
+            .join('InventoryItem as ii', 'ii.id', 'il.inventoryItemId')
+            .where({ resultId: lastResultId })
+            .first('ii.quantityOnHand', 'il.inventoryItemId')
+
           const inventoryItem = await knex('InventoryItem')
             .where({ id: inventoryItemId })
             .first()
-          assert.equal(
-            inventoryItem.quantityOnHand,
-            _.max([0, initialQuantityOnHand - consumableAssay.quantity])
-          )
+          assert.equal(quantityOnHand, -1)
 
           const inventoryLogs = await knex('InventoryLog as il')
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
@@ -1880,7 +1873,7 @@ describe('Device API routes for GxConnect Devices', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
-            const { basicDevicePayload, deviceAuth, site, now } = context
+            const { basicDevicePayload, deviceAuth, now } = context
             const uniqueTestId = dateFormat(new Date(), 'T')
 
             const consumableAssays = await knex('ConsumableAssay as ca')
@@ -1897,24 +1890,6 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.isNotEmpty(consumableAssays)
             const [consumableAssay] = consumableAssays
             assert.isAbove(consumableAssay.quantity, 0)
-
-            const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-            const [inventoryItemId] = await knex('InventoryItem').insert({
-              consumableId: consumableAssay.consumableId,
-              siteId: site.id,
-              expiresOn: expiryDate,
-              quantityOnHand: initialQuantityOnHand,
-              createdOn: subDays(now, 4),
-              updatedOn: subDays(now, 4),
-            })
-
-            const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: getLocalDateInUtc(expiryDate),
-              })
-              .first()
 
             const testStartedOn = setMilliseconds(
               subMinutes(
@@ -1962,31 +1937,18 @@ describe('Device API routes for GxConnect Devices', () => {
               'InventoryLog as il'
             )
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-              .where({ inventoryItemId })
-              .select(
+              .join('InventoryItem as ii', 'ii.id', 'il.inventoryItemId')
+              .where({ 'il.resultId': beforeUpdateResultDetails.id })
+              .first(
                 'il.consumableId',
                 'il.siteId',
                 'cr.name as consumableReason',
                 'il.resultId',
-                'il.quantity'
+                'il.quantity',
+                'ii.quantityOnHand',
+                'ii.lotNumber',
+                'ii.expiresOn'
               )
-
-            const inventoryItemAfterFirstRequest = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: getLocalDateInUtc(expiryDate),
-              })
-              .first()
-
-            assert.equal(
-              inventoryItemAfterFirstRequest.quantityOnHand,
-              _.max([
-                0,
-                inventoryItemBeforeFirstRequest.quantityOnHand -
-                  consumableAssay.quantity,
-              ])
-            )
 
             await waitForApproximately(2, 'seconds')
 
@@ -2035,7 +1997,6 @@ describe('Device API routes for GxConnect Devices', () => {
               .catch(assert.fail)
 
             const afterUpdateResultDetails = await getLastResult()
-
             assert.equal(
               afterUpdateResultDetails.id,
               beforeUpdateResultDetails.id
@@ -2048,42 +2009,34 @@ describe('Device API routes for GxConnect Devices', () => {
               beforeUpdateResultDetails.updatedOn
             )
 
-            const inventoryItemAfterSecondRequest = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: getLocalDateInUtc(expiryDate),
-              })
-              .first()
-
-            assert.deepEqual(
-              inventoryItemAfterSecondRequest,
-              inventoryItemAfterFirstRequest
-            )
-
             const inventoryLogsAfterSecondRequest = await knex(
               'InventoryLog as il'
             )
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-              .where({ inventoryItemId })
-              .select(
+              .join('InventoryItem as ii', 'ii.id', 'il.inventoryItemId')
+              .where({ 'il.resultId': afterUpdateResultDetails.id })
+              .first(
                 'il.consumableId',
                 'il.siteId',
                 'cr.name as consumableReason',
                 'il.resultId',
-                'il.quantity'
+                'il.quantity',
+                'ii.quantityOnHand',
+                'ii.lotNumber',
+                'ii.expiresOn'
               )
+
             assert.deepEqual(
               inventoryLogsAfterSecondRequest,
+
               inventoryLogsAfterFirstRequest
             )
 
             const matchingConsumableAssayAfterSecondRequest = _.find(
               consumableAssays,
               {
-                consumableId: _.head(inventoryLogsAfterSecondRequest)
-                  .consumableId,
-                quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+                consumableId: inventoryLogsAfterSecondRequest.consumableId,
+                quantity: inventoryLogsAfterSecondRequest.quantity,
               }
             )
             assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)

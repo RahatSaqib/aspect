@@ -9,6 +9,9 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
+import Switch from '@material-ui/core/Switch'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { useAuthState } from '../../Providers/AuthProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import {
@@ -60,6 +63,7 @@ import messages from './messages'
 import styles from './InventoryItemsList.css'
 import AspectTooltip from '../../components/shared/AspectTooltip'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
+import ErrorBoundary from '../../MigratedComponents/ErrorBoundary/index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -152,7 +156,15 @@ export const InventoryItemsListWithProps = ({
   onReceiveInventorySubmit,
   onTransferInventorySubmit,
   onAddInventorySubmit,
+  refetch,
 }) => {
+  const [enableInventoryOnHandField, setEnableInventoryOnHandField] =
+    useState(false)
+  const breakOutByLotToggle = useCallback(() => {
+    setBreakOutByLot(!breakOutByLot)
+    setEnableInventoryOnHandField(false)
+  }, [breakOutByLot, setEnableInventoryOnHandField, setBreakOutByLot])
+
   const columns = [
     {
       key: 'siteName',
@@ -186,6 +198,21 @@ export const InventoryItemsListWithProps = ({
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
       isHidden: !breakOutByLot,
+    },
+    {
+      key: 'newQuantity',
+      label: intl.formatMessage(messages.newQuantityOnHand),
+      isHidden: !enableInventoryOnHandField,
+    },
+    {
+      key: 'inc-dec',
+      label: intl.formatMessage(messages.resultQuantityOnHand),
+      isHidden: !enableInventoryOnHandField,
+    },
+    {
+      key: 'notes',
+      label: intl.formatMessage(messages.inventoryOnNote),
+      isHidden: !enableInventoryOnHandField,
     },
     {
       key: 'daysStockLeft',
@@ -245,13 +272,40 @@ export const InventoryItemsListWithProps = ({
       </BrowseFilters>
 
       <DataTableCard className={cssClasses('DataTableCard--action')}>
-        <CheckboxField
-          className={cssClasses('Checkbox')}
-          name="breakOutByLot"
-          checked={breakOutByLot}
-          label={intl.formatMessage(messages.breakOutByLot)}
-          onChange={event => setBreakOutByLot(event.target.checked)}
-        />
+        <FormGroup row>
+          <FormControlLabel
+            sx={{ m: 2 }}
+            control={
+              <CheckboxField
+                className={cssClasses('Checkbox')}
+                name="breakOutByLot"
+                checked={breakOutByLot}
+                label=""
+                onChange={breakOutByLotToggle}
+              />
+            }
+            label={intl.formatMessage(messages.breakOutByLot)}
+          />
+          {breakOutByLot ? (
+            <FormControlLabel
+              sx={{ p: 2 }}
+              control={
+                <ErrorBoundary>
+                  <PermissionsProvider permissions={['inventory:edit']}>
+                    <Switch
+                      onChange={event =>
+                        setEnableInventoryOnHandField(
+                          breakOutByLot && event.target.checked
+                        )
+                      }
+                    />
+                  </PermissionsProvider>
+                </ErrorBoundary>
+              }
+              label="Inventory on hand"
+            />
+          ) : null}
+        </FormGroup>
       </DataTableCard>
       <DataTableCard
         key={`DataTableCard--table-${location.key}`}
@@ -283,6 +337,11 @@ export const InventoryItemsListWithProps = ({
                   <InventoryDataTableRow
                     key={inventoryItem.get('id')}
                     inventoryItem={inventoryItem}
+                    breakOutByLot={breakOutByLot}
+                    inventoryOnHand={enableInventoryOnHandField}
+                    refetch={refetch}
+                    navigate={navigate}
+                    location={location}
                   />
                 ))}
             </TableBody>
@@ -454,7 +513,6 @@ export const InventoryItemsList = ({ navigate, location }) => {
   } = useQuery([INVENTORY_LIST.KEY, params, filters], async () =>
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
-
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
@@ -488,10 +546,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const { mutate: onAddInventorySubmit } = useMutation(
     values => addInventory(omit(values, ['canExpire']), dispatch, inventory),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(INVENTORY_LIST.KEY)
-        onAdjustInventorySucceeded()
-      },
+      onSuccess,
     }
   )
   // Transfer
@@ -559,6 +614,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     onReceiveInventorySubmit,
     onTransferInventorySubmit,
     onAddInventorySubmit,
+    refetch: onSuccess,
   }
 
   return <InventoryItemsListWithProps {...props} />

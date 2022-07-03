@@ -219,28 +219,43 @@ async function getResultsForExport(auth, query) {
 
   const assayColumns = []
   if (query.assayId) {
-    const assay = await knex('Assay as a').where('a.id', query.assayId).first()
-
-    if (assay.resultCategory1Label) {
-      selectFields.resultCategory1Name = 'rc1.name'
-      sortableFields.push('resultCategory1Name')
-      assayColumns.push({
-        db: 'resultCategory1Name',
-        type: 'string',
-        title: assay.resultCategory1Label,
-        i18nKey: assay.resultCategory1i18nKey,
+    const assays = await knex('Assay as a')
+      .modify(queryBuilder => {
+        if (_.isArray(query.assayId))
+          queryBuilder.whereIn('a.id', query.assayId)
+        else queryBuilder.where('a.id', query.assayId)
       })
-    }
 
-    if (assay.resultCategory2Label) {
-      selectFields.resultCategory2Name = 'rc2.name'
-      sortableFields.push('resultCategory2Name')
-      assayColumns.push({
-        db: 'resultCategory2Name',
-        type: 'string',
-        title: assay.resultCategory2Label,
-        i18nKey: assay.resultCategory2i18nKey,
-      })
+      .select()
+
+    for (const assay of assays) {
+      if (
+        assay.resultCategory1Label &&
+        selectFields.resultCategory1Name !== 'rc1.name'
+      ) {
+        selectFields.resultCategory1Name = 'rc1.name'
+        sortableFields.push('resultCategory1Name')
+        assayColumns.push({
+          db: 'resultCategory1Name',
+          type: 'string',
+          title: assay.resultCategory1Label,
+          i18nKey: assay.resultCategory1i18nKey,
+        })
+      }
+
+      if (
+        assay.resultCategory2Label &&
+        selectFields.resultCategory2Name !== 'rc2.name'
+      ) {
+        selectFields.resultCategory2Name = 'rc2.name'
+        sortableFields.push('resultCategory2Name')
+        assayColumns.push({
+          db: 'resultCategory2Name',
+          type: 'string',
+          title: assay.resultCategory2Label,
+          i18nKey: assay.resultCategory2i18nKey,
+        })
+      }
     }
   }
 
@@ -260,6 +275,7 @@ async function getResultsForExport(auth, query) {
     .groupBy('r.id')
     .modify(sortPageParams, query, 'endedOn')
     .select(selectFields)
+
   const [{ total }, data] = await Promise.all([getCount, getData])
   const result = {
     ok: true,
@@ -2209,7 +2225,12 @@ function getBaseQueryForResults() {
 }
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, resultCategoryGroupId } = query
+  const {
+    showUnapprovedDevices = false,
+    resultCategoryGroupId,
+    assayId,
+  } = query
+
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(
@@ -2244,6 +2265,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             })
         })
       }
+      if (!_.isEmpty(assayId)) queryBuilder.whereIn('r.assayId', assayId)
       if (query.reportableSiteId || query.reportableSiteName) {
         /**
          * onlyEverTransferred filter can only be applied if
@@ -2297,7 +2319,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
-      assayId: 'r.assayId',
       resultCategoryId: 'r.resultCategory1',
       resultCategory2Id: 'r.resultCategory2',
       countryId: 'g.countryId',
