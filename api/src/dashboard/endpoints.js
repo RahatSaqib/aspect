@@ -172,12 +172,12 @@ const routes = [
       auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
-          minDate: Joi.date()
-            .iso()
+          minDate: Joi.string()
+            .pattern(REGEX_ISODATESTRING)
             .required()
             .description('From Date, inclusive'),
-          maxDate: Joi.date()
-            .iso()
+          maxDate: Joi.string()
+            .pattern(REGEX_ISODATESTRING)
             .required()
             .description('To Date, inclusive'),
         },
