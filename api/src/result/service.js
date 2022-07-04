@@ -3516,5 +3516,8 @@ module.exports = {
 
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
-  // trendInYears,
+
+  getGroupBy,
+  getClinicalIndicatorQueryForResultsTable,
+  processGroupedQuery,
 }
