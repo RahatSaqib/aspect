@@ -602,21 +602,12 @@ async function getReportWorkloadSummary(auth, query) {
     sections: [
       {
         dataSource: SECTION_KEY_ALL,
-        title: 'All Tests',
-        i18nKeyTitle: 'AllTests',
-        totalsLocation: 'top',
       },
       {
         dataSource: SECTION_KEY_MTB,
-        title: 'MTB+',
-        i18nKeyTitle: 'MTB+',
-        totalsLocation: 'top',
       },
       {
         dataSource: SECTION_KEY_RRD,
-        title: 'RRD',
-        i18nKeyTitle: 'RRD',
-        totalsLocation: 'top',
       },
     ],
   }
