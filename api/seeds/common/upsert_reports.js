@@ -35,7 +35,6 @@ module.exports = async function upsertReports(
       resultCategoryGroup.id
   })
 
-  // const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
 
   const actualReports = {
