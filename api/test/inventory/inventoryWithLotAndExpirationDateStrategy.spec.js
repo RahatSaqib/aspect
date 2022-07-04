@@ -41,7 +41,7 @@ const assertBodyAndInventoryItems = res => {
   })
 }
 
-describe.only('Inventory Routes', () => {
+describe('Inventory Routes', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
     const [site1, site2] = await knex('Site as s')

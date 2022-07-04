@@ -11,7 +11,7 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 const { startOfDayUtc } = require('../../src/shared/date')
 
-describe.only('Inventory Routes With Expiration Date Strategy', () => {
+describe('Inventory Routes With Expiration Date Strategy', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
     const [site1, site2] = await knex('Site as s')
