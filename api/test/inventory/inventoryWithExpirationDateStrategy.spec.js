@@ -11,7 +11,7 @@ const { assert } = chai
 const server = require('../utils/testUtils')
 const { startOfDayUtc } = require('../../src/shared/date')
 
-describe('Inventory Routes With Expiration Date Strategy', () => {
+describe.only('Inventory Routes With Expiration Date Strategy', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
     const [site1, site2] = await knex('Site as s')
@@ -354,25 +354,23 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           res.body.data.forEach(d => assert.equal(d.quantityOnHand, null))
         })
 
-        it('should accept consumableId and siteName as query string parameters', done => {
+        it('should accept consumableId and siteName as query string parameters', async () => {
           const consumableId = 2
           const siteNameFilter = 'clinic'
-          server
+          const res = await server
             .get(
               `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
             )
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              res.body.data.forEach(inventoryItem => {
-                assert.equal(inventoryItem.consumableId, consumableId)
-                assert.includes(
-                  inventoryItem.siteName.toLowerCase(),
-                  siteNameFilter.toLowerCase()
-                )
-              })
-              done()
-            })
+
+          assert.equal(res.status, 200)
+          res.body.data.forEach(inventoryItem => {
+            assert.equal(inventoryItem.consumableId, consumableId)
+            assert.includes(
+              inventoryItem.siteName.toLowerCase(),
+              siteNameFilter.toLowerCase()
+            )
+          })
         })
       })
     })
@@ -398,34 +396,30 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(item, 'noConsumption')
         }
 
-        it('should return a list of sites with inventories counts, when using valid token', done => {
-          server
+        it('should return a list of sites with inventories counts, when using valid token', async () => {
+          const res = await server
             .get(path)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'array')
-              res.body.data.forEach(item => assertAggregatedItem(item))
-              assert.property(res.body, 'total')
-              done()
-            })
+
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          res.body.data.forEach(item => assertAggregatedItem(item))
+          assert.property(res.body, 'total')
         })
 
-        it('should accept consumableId and siteName as query string parameters', done => {
+        it('should accept consumableId and siteName as query string parameters', async () => {
           const consumableId = 1
           const siteNameFilter = 'lab'
-          server
+          const res = await server
             .get(
               `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
             )
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              res.body.data.forEach(item => assertAggregatedItem(item))
-              done()
-            })
+
+          assert.equal(res.status, 200)
+          res.body.data.forEach(item => assertAggregatedItem(item))
         })
       })
     })
@@ -445,7 +439,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
     let destinationSite
     let siteId
     let transitItem
-    const inventoryItemsToRemove = {}
+    const inventoryItemsToRemove = []
     after(async () => {
       await knex('Consumable').update({
         strategy: 'withLotAndExpirationDateStrategy',
@@ -456,8 +450,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         strategy: 'withExpirationDateStrategy',
       })
     })
-    beforeEach(async function () {
-      inventoryItemsToRemove[this.currentTest.title] = []
+    beforeEach(async () => {
       const { id: consumableId } = await knex('Consumable')
         .where('name', consumableName)
         .first('id')
@@ -481,19 +474,16 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         expiresOn: expiryDate,
         quantityOnHand: initialQuantityOnHand,
       })
-      inventoryItemsToRemove[this.currentTest.title].push(inventoryItemId)
+      inventoryItemsToRemove.push(inventoryItemId)
       inventoryItem = await knex('InventoryItem')
         .where({ id: inventoryItemId })
         .first()
       assert.isOk(destinationSite, `Cannot find destinationSite`)
     })
 
-    afterEach(async function () {
+    afterEach(async () => {
       await knex('InventoryLog')
-        .whereIn(
-          'inventoryItemId',
-          inventoryItemsToRemove[this.currentTest.title]
-        )
+        .whereIn('inventoryItemId', inventoryItemsToRemove)
         .orWhere(function () {
           if (transitItem != null) {
             this.where({ inventoryItemId: transitItem.id })
@@ -501,7 +491,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         })
         .delete()
       await knex('InventoryItem')
-        .whereIn('id', inventoryItemsToRemove[this.currentTest.title])
+        .whereIn('id', inventoryItemsToRemove)
         .orWhere(function () {
           if (transitItem != null) {
             this.where({ id: transitItem.id })
@@ -560,9 +550,9 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       })
     })
 
-    describe('/inventory/remove', function () {
-      describe('PUT', function () {
-        it('should update the quantity of an inventory item', async function () {
+    describe('/inventory/remove', () => {
+      describe('PUT', () => {
+        it('should update the quantity of an inventory item', async () => {
           const res = await server
             .put(`${removeInventoryPath}`)
             .send({
@@ -586,7 +576,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           )
         })
 
-        it('should create a new inventory item and set the quantity if the expiration date is different', async function () {
+        it('should create a new inventory item and set the quantity if the expiration date is different', async () => {
           const res = await server
             .put(`${removeInventoryPath}`)
             .send({
@@ -605,14 +595,14 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
           assert.equal(res.body.data.quantityOnHand, -510)
-          inventoryItemsToRemove[this.test.title].push(res.body.data.id)
+          inventoryItemsToRemove.push(res.body.data.id)
         })
       })
     })
 
-    describe('/inventory/transfer', function () {
-      describe('PUT', function () {
-        it('should add an inventory item in transit to the destination site', async function () {
+    describe('/inventory/transfer', () => {
+      describe('PUT', () => {
+        it('should add an inventory item in transit to the destination site', async () => {
           let res = await server
             .put(`${transferInventoryPath}`)
             .send({
@@ -636,9 +626,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inventoryItem.quantityOnHand - quantityToAdjust
           )
           transitItem = res.body.data.newInventoryItem
-          inventoryItemsToRemove[this.test.title].push(
-            res.body.data.newInventoryItem.id
-          )
+          inventoryItemsToRemove.push(res.body.data.newInventoryItem.id)
           assert.deepEqual(transitItem, {
             ...transitItem,
             quantityOnHand: quantityToAdjust,
@@ -681,7 +669,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           })
         })
 
-        it('when transfering from a non-existing lot, should add an inventory item in transit to the destination and another with negative stock in the origin site', async function () {
+        it('when transfering from a non-existing lot, should add an inventory item in transit to the destination and another with negative stock in the origin site', async () => {
           const res = await server
             .put(`${transferInventoryPath}`)
             .send({
@@ -702,12 +690,10 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.typeOf(res.body.data, 'Object')
 
           transitItem = res.body.data.newInventoryItem
-          inventoryItemsToRemove[this.test.title].push(
-            res.body.data.newInventoryItem.id
-          )
+          inventoryItemsToRemove.push(res.body.data.newInventoryItem.id)
 
           const sourceInventoryItem = res.body.data.existingInventoryItem
-          inventoryItemsToRemove[this.test.title].push(sourceInventoryItem.id)
+          inventoryItemsToRemove.push(sourceInventoryItem.id)
 
           assert.deepEqual(transitItem, {
             ...transitItem,
