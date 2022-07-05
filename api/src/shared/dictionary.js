@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const { knex } = require('../db')
 
@@ -132,4 +133,17 @@ exports.issueCategoryIntlToShortname = async function () {
         return memo
       }, {})
     )
+}
+
+/**
+ * Builds dictionary of external ids, mapped to the record ID from the database
+ * @param {string} table The table name
+ * @returns The dictionary of keys
+ */
+exports.keysByExternalId = async table => {
+  const mapping = {}
+  await Promise.each(knex(table), item => {
+    mapping[item.externalId] = item.id
+  })
+  return mapping
 }

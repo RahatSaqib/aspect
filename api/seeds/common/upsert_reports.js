@@ -1,7 +1,8 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const commonReportFixture = require('../fixtures/Report')
-const { allResultCategoryToId } = require('../../src/shared/dictionary')
+const { keysByExternalId } = require('../../src/shared/dictionary')
+const { mapToId } = require('./utils')
 
 async function upsertSheets(knex, reportId, sheets) {
   await knex('ReportSheet').where({ reportId }).delete()
@@ -21,21 +22,9 @@ module.exports = async function upsertReports(
   countrySpecificReportFixture = {},
   omitFields = []
 ) {
-  const assayIds = {}
-  await Promise.each(knex('Assay'), assay => {
-    assayIds[assay.externalId] = assay.id
-  })
-  const deviceTypeIds = {}
-  await Promise.each(knex('DeviceType'), deviceType => {
-    deviceTypeIds[deviceType.externalId] = deviceType.id
-  })
-  const resultCategoryGroupIds = {}
-  await Promise.each(knex('ResultCategoryGroup'), resultCategoryGroup => {
-    resultCategoryGroupIds[resultCategoryGroup.externalId] =
-      resultCategoryGroup.id
-  })
-
-  const resultCategoryIds = await allResultCategoryToId()
+  const assayIds = await keysByExternalId('Assay')
+  const deviceTypeIds = await keysByExternalId('DeviceType')
+  const resultCategoryIds = await keysByExternalId('ResultCategory')
 
   const actualReports = {
     ..._.cloneDeep(commonReportFixture),
@@ -52,45 +41,10 @@ module.exports = async function upsertReports(
       if (query.resultCategory2Id)
         query.resultCategory2Id = resultCategoryIds[query.resultCategory2Id]
 
-      const assayExternalId = query.assayId
-      if (assayExternalId) {
-        // Support filtering by multiple assay ids
-        if (_.isArray(assayExternalId)) {
-          query.assayId = []
-          assayExternalId.forEach(externalId => {
-            query.assayId.push(assayIds[externalId])
-          })
-        } else {
-          query.assayId = assayIds[assayExternalId]
-        }
-      }
+      if (query.assayId) query.assayId = mapToId(assayIds, query.assayId)
 
-      const deviceTypeExternalId = query.deviceTypeId
-      if (deviceTypeExternalId) {
-        // Support filtering by multiple deviceType ids
-        if (_.isArray(deviceTypeExternalId)) {
-          query.deviceTypeId = []
-          deviceTypeExternalId.forEach(externalId => {
-            query.deviceTypeId.push(deviceTypeIds[externalId])
-          })
-        } else {
-          query.deviceTypeId = deviceTypeIds[deviceTypeExternalId]
-        }
-      }
-
-      const resultCategoryGroupExternalId = query.resultCategoryGroupId
-      if (resultCategoryGroupExternalId) {
-        // Support filtering by multiple resultCategoryGroup ids
-        if (_.isArray(resultCategoryGroupExternalId)) {
-          query.resultCategoryGroupId = []
-          resultCategoryGroupExternalId.forEach(externalId => {
-            query.resultCategoryGroupId.push(resultCategoryGroupIds[externalId])
-          })
-        } else {
-          query.resultCategoryGroupId =
-            resultCategoryGroupIds[resultCategoryGroupExternalId]
-        }
-      }
+      if (query.deviceTypeId)
+        query.deviceTypeId = mapToId(deviceTypeIds, query.deviceTypeId)
 
       sheets.push({ ...sheet, query })
     })

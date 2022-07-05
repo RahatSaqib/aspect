@@ -905,12 +905,12 @@ async function getDevicesForReport(auth, query) {
   const getCount = deviceQuery.clone().count('d.id as count').first()
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   const queryResults = knex('Result as r')
-    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
-      sample: 's',
+      sample: 'sa',
     })
-    .whereRaw('s.originSiteId = d.siteId')
+    .whereRaw('sa.originSiteId = d.siteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   // get rows
