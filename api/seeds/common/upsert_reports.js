@@ -1,8 +1,8 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const commonReportFixture = require('../fixtures/Report')
-const { keysByExternalId } = require('../../src/shared/dictionary')
-const { mapToId } = require('./utils')
+const { getIdsByExternalId } = require('../../src/shared/dictionary')
+const { mapExternalIdToId } = require('./utils')
 
 async function upsertSheets(knex, reportId, sheets) {
   await knex('ReportSheet').where({ reportId }).delete()
@@ -22,9 +22,9 @@ module.exports = async function upsertReports(
   countrySpecificReportFixture = {},
   omitFields = []
 ) {
-  const assayIds = await keysByExternalId('Assay')
-  const deviceTypeIds = await keysByExternalId('DeviceType')
-  const resultCategoryIds = await keysByExternalId('ResultCategory')
+  const assayIds = await getIdsByExternalId('Assay')
+  const deviceTypeIds = await getIdsByExternalId('DeviceType')
+  const resultCategoryIds = await getIdsByExternalId('ResultCategory')
 
   const actualReports = {
     ..._.cloneDeep(commonReportFixture),
@@ -41,10 +41,14 @@ module.exports = async function upsertReports(
       if (query.resultCategory2Id)
         query.resultCategory2Id = resultCategoryIds[query.resultCategory2Id]
 
-      if (query.assayId) query.assayId = mapToId(assayIds, query.assayId)
+      if (query.assayId)
+        query.assayId = mapExternalIdToId(assayIds, query.assayId)
 
       if (query.deviceTypeId)
-        query.deviceTypeId = mapToId(deviceTypeIds, query.deviceTypeId)
+        query.deviceTypeId = mapExternalIdToId(
+          deviceTypeIds,
+          query.deviceTypeId
+        )
 
       sheets.push({ ...sheet, query })
     })

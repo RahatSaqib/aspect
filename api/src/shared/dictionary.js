@@ -140,7 +140,7 @@ exports.issueCategoryIntlToShortname = async function () {
  * @param {string} table The table name
  * @returns The dictionary of keys
  */
-exports.keysByExternalId = async table => {
+exports.getIdsByExternalId = async table => {
   const mapping = {}
   await Promise.each(knex(table), item => {
     mapping[item.externalId] = item.id
