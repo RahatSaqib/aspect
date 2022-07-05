@@ -371,6 +371,50 @@ const inventoryLog = {
   ],
 }
 
+const tbWorkloadSummary = {
+  name: 'Report of TB Workload Summary',
+  description:
+    'Summary of TB Workload grouped by month, quarter and year for all regions',
+  i18nKey: 'reportTBWorkloadSummary',
+  externalId: 'tb_workload_summary', // folder name in /templates
+  i18nKeyDescription: 'reportTBWorkloadSummaryDescription',
+  fileName: 'ReportTBWorkloadSummary',
+  exportCsv: false,
+  sortOrder: 15,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReport',
+      functionName: 'getReportWorkloadSummary',
+      query: {
+        avoidStreaming: true,
+        assay: ['GxMtbRif', 'GxMtbRifUltra'],
+        groupBy: ['month', 'state', 'resultCategory1', 'resultCategory2'],
+        minDate: '2019-01-01',
+        nameOfSharedData: 'workload-summary-grouped-by-month',
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'result/serviceReport',
+      functionName: 'getReportWorkloadSummaryByQuarter',
+      query: {
+        avoidStreaming: true,
+        useNamedData: 'workload-summary-grouped-by-month',
+      },
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'result/serviceReport',
+      functionName: 'getReportWorkloadSummaryByYear',
+      query: {
+        avoidStreaming: true,
+        useNamedData: 'workload-summary-grouped-by-month',
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -388,4 +432,5 @@ module.exports = {
   reportCustomFieldsCompletion,
   inventoryLog,
   moduleStatusReport,
+  tbWorkloadSummary,
 }
