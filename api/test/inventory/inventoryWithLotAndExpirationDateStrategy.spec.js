@@ -84,6 +84,7 @@ describe('Inventory Routes', () => {
       let inventoryItem2Id
       let inventoryItem3Id
       let inventoryItem4Id
+      let negativeQoHInventoryItemId
       let inventoryItemInTransitId
       let consumableId
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
@@ -140,6 +141,13 @@ describe('Inventory Routes', () => {
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
+        ;[negativeQoHInventoryItemId] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site2Id,
+          lotNumber: '0000018',
+          expiresOn: expiresOn3,
+          quantityOnHand: -1,
+        })
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site2Id,
           consumableId,
@@ -157,6 +165,7 @@ describe('Inventory Routes', () => {
             inventoryItem3Id,
             inventoryItemInTransitId,
             inventoryItem4Id,
+            negativeQoHInventoryItemId,
           ])
           .delete()
         await knex('FactInventoryConsumptionRate')
@@ -232,16 +241,19 @@ describe('Inventory Routes', () => {
           assert.isNotNull(inventoryItemInTransit)
           assert.equal(inventoryItemInTransit.quantityOnHand, 500)
 
-          // We should filter empty or negative inventories
+          // We should filter empty inventories
           const emptyInventoryItems = res.body.data.filter(
-            ii => ii.quantityOnHand <= 0
+            ii => ii.quantityOnHand === 0
           )
-          assert.isFalse(emptyInventoryItems.length > 0)
+          assert.isFalse(
+            emptyInventoryItems.length > 0,
+            'There should be no empty inventories'
+          )
 
           assert.property(res.body, 'total')
         })
-        it('should return a list of positive inventory items broken out by lot', async () => {
-          // TODO: seed negative items too
+
+        it('should return a list of non zero QoH inventory items broken out by lot', async () => {
           const res = await server
             .get(`${path}?breakOutByLot=true&hasStock=true`)
             .set('Authorization', `Bearer ${shared.token}`)
@@ -252,11 +264,14 @@ describe('Inventory Routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 2)
 
-          // We should not filter empty or negative inventories
+          // We should filter empty inventories
           const emptyInventoryItems = res.body.data.filter(
             ii => ii.quantityOnHand === 0
           )
-          assert.isTrue(emptyInventoryItems.length === 0)
+          assert.isTrue(
+            emptyInventoryItems.length === 0,
+            'There should be no empty inventories'
+          )
         })
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 1', async () => {
