@@ -905,12 +905,12 @@ async function getDevicesForReport(auth, query) {
   const getCount = deviceQuery.clone().count('d.id as count').first()
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   const queryResults = knex('Result as r')
-    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
-      sample: 's',
+      sample: 'sa',
     })
-    .whereRaw('s.originSiteId = d.siteId')
+    .whereRaw('sa.originSiteId = d.siteId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   // get rows
@@ -964,18 +964,31 @@ async function getDevicesForReport(auth, query) {
 async function getDevicesForRifResistanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseQuery(
+    {
+      sortCol: 'name',
+      sortDir: 'asc',
+      hasResults: 1,
+      ...query,
+    },
+    dataConstraints
+  )
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    // Group for avoiding join duplications
+    .groupBy(['d.id'])
 
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
 
   const queryResults = knex('Result as r')
-    .innerJoin('Sample as s', 'r.sampleId', 's.id')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
       sample: 's',
     })
-    .whereRaw('s.originSiteId = d.siteId')
+    .whereRaw('r.siteId = d.siteId')
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   // get rows
