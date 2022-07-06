@@ -11,10 +11,7 @@ const mapExternalIdToId = (keys, externalId) => {
   if (externalId) {
     // Support filtering by multiple assay ids
     if (isArray(externalId)) {
-      key = []
-      externalId.forEach(x => {
-        key.push(keys[x])
-      })
+      key = externalId.map(x => keys[x])
     } else {
       key = keys[externalId]
     }
