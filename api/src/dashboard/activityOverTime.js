@@ -3,17 +3,27 @@ const omit = require('lodash/omit')
 const isWeekend = require('date-fns/isWeekend')
 const format = require('date-fns/format')
 const addDays = require('date-fns/addDays')
+const addMinutes = require('date-fns/addMinutes')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getArrayOfDaysInRange, formatDateOrDefault } = require('../shared/date')
+const {
+  getArrayOfDaysInRange,
+  getOffsetFromIsoDateStringInMinutes,
+  formatDateOrDefault,
+} = require('../shared/date')
 
 async function activityOverTimeDashboard(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
+
+  const offset = getOffsetFromIsoDateStringInMinutes(query.minDate)
+  const minDate = addMinutes(new Date(query.minDate), offset)
+  const maxDate = addMinutes(new Date(query.maxDate), offset)
+
   // build up array of days in date range, excluding today because it could be incomplete. It makes querying easier:
   let days = getArrayOfDaysInRange(
-    query.minDate,
-    min([query.maxDate, addDays(new Date(), -1)]),
+    minDate,
+    min([maxDate, addDays(new Date(), -1)]),
     {
       devicesActive: 0,
       devicesInactive: 0,
@@ -102,8 +112,8 @@ async function activityOverTimeDashboard(request) {
       'dms.id'
     )
     .whereRaw('dmsl.day >= ? AND dmsl.day < ?', [
-      formatDateOrDefault(query.minDate, 'yyyy-MM-dd'),
-      formatDateOrDefault(addDays(query.maxDate, 1), 'yyyy-MM-dd'),
+      formatDateOrDefault(minDate, 'yyyy-MM-dd'),
+      formatDateOrDefault(addDays(maxDate, 1), 'yyyy-MM-dd'),
     ])
     .whereNull('dmsl2.id') // see above description for alias `dmsl2`
     .select(`dmsl.day AS dayDate`)

@@ -165,20 +165,6 @@ function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
   return convertToLocalTime(dateString, { timeZone })
 }
 
-/**
- * Convert a Timezone name in a timeOffset
- * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
- * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
- * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
- */
-function getOffsetFromTimeZone(timeZone) {
-  try {
-    return formatToTimeZone(new Date(), 'Z', { timeZone })
-  } catch (error) {
-    return '+00:00'
-  }
-}
-
 function getLocalDateInUtc(dateTime) {
   return convertToLocalTime(dateTime, { timeZone: 'UTC' })
 }
@@ -199,14 +185,6 @@ for further information check the unit test api/test/shared/date.test.js:65
 */
 const REGEX_ISODATESTRING =
   /^\d{4}-[01]\d-[0-3]\dT[0-2]\d(:|%3A)[0-5]\d(:|%3A)[0-5]\d(\.\d{3})?(Z|[-+]|%2B)?(([0-2]\d)(:|%3A)([0-5]\d))?$/
-
-function getOffsetFromIsoDateString(time) {
-  return typeof time === 'string' &&
-    REGEX_ISODATESTRING.test(time) &&
-    time.slice(-1) !== 'Z'
-    ? time.slice(-6)
-    : '+00:00'
-}
 
 // this works with iso format dates with timezones.
 const endOfMonthUTC = dateString => {
@@ -262,15 +240,6 @@ function getWellFormattedDateStringWithTimezone(dateTime) {
   return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
 }
 
-function getDatesFromQuery(query) {
-  const now = new Date()
-  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
-  return {
-    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
-    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
-  }
-}
-
 /**
  * Retrieves the user timezone from the Person table in the database.
  * @param {knex} knex - Knex instance
@@ -298,6 +267,57 @@ async function getOffsetFromUser(knex, userName) {
   return getOffsetFromTimeZone(tz)
 }
 
+function getDatesFromQuery(query) {
+  const now = new Date()
+  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
+  return {
+    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
+    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
+  }
+}
+
+/**
+ * Convert a Timezone name in a timeOffset
+ * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
+ * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
+ * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
+ */
+function getOffsetFromTimeZone(timeZone) {
+  try {
+    return formatToTimeZone(new Date(), 'Z', { timeZone })
+  } catch (error) {
+    return '+00:00'
+  }
+}
+
+/**
+ * Returns the offset in minuts from a given string representing an ISO date.
+ * @param {*} isoDateTime - ISO date string (ex.: 2020-01-02T00:30:10.432-03:00)
+ * @returns Number - Timezone offset in minutos (i.e. -180)
+ */
+function getOffsetFromIsoDateStringInMinutes(isoDateTime) {
+  if (!REGEX_ISODATESTRING.test(isoDateTime))
+    throw new Error('Parameter is not an ISO date string')
+  return (
+    (-1 * (new Date(isoDateTime) - new Date(isoDateTime.slice(0, 10)))) /
+    1000 /
+    60
+  )
+}
+
+/**
+ * Returns the timezone offset in string in '[+/-]hh:mm' format
+ * @param {string} isoDateTime - ISO date string (ex.: 2020-01-02T00:30:10.432-03:00)
+ * @returns String containing the timezone offset in '[+/-]hh:mm' format, (i.e. '-03:00')
+ */
+function getOffsetFromIsoDateString(isoDateTime) {
+  return typeof isoDateTime === 'string' &&
+    REGEX_ISODATESTRING.test(isoDateTime) &&
+    isoDateTime.slice(-1) !== 'Z'
+    ? isoDateTime.slice(-6)
+    : '+00:00'
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -312,7 +332,6 @@ module.exports = {
   startOfTodayUtc,
   startOfMonthUTC,
   endOfMonthUTC,
-  getOffsetFromIsoDateString,
   REGEX_ISODATESTRING,
   getDateSubstring,
   getMonthYearField,
@@ -321,8 +340,10 @@ module.exports = {
   getDateTimeProjectionInUserTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
-  getOffsetFromTimeZone,
   getDatesFromQuery,
+  getOffsetFromTimeZone,
+  getOffsetFromIsoDateString,
+  getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,
   getOffsetFromUser,
 }
