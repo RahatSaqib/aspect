@@ -91,6 +91,7 @@ module.exports = [
         activity: 'view',
       },
     ],
+    reports: ['xdr_devices_summary'],
   }),
   mergeJobFunctions(regionalOfficer, {
     permissions: [
@@ -159,6 +160,7 @@ module.exports = [
         activity: 'edit',
       },
     ],
+    reports: ['xdr_devices_summary'],
   }),
   mergeJobFunctions(labUser, {
     permissions: [
@@ -231,6 +233,7 @@ module.exports = [
         activity: 'view',
       },
     ],
+    reports: ['xdr_devices_summary'],
   }),
   mergeJobFunctions(clinician, {
     permissions: [
@@ -303,6 +306,7 @@ module.exports = [
         activity: 'view',
       },
     ],
+    reports: ['xdr_devices_summary'],
   }),
   technician,
 ]
