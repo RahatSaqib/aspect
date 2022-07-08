@@ -316,7 +316,9 @@ async function renderExcelTemplate({
     // define sections on a sheet
     let { sections } = dataForSheet
     const isListWithSections = !!sections
-    sections = sections || [{}]
+    if (!sections || _.isEmpty(sections)) {
+      sections = [{}]
+    }
     if (sections) {
       _.forEach(sections, section => {
         section.tableToken = section.dataSource
