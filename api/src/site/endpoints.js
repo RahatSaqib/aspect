@@ -7,10 +7,11 @@ const {
   validateDateRangeParams,
   validateSortPageParams,
 } = require('../routes')
+const createSite = require('./createSite')
+const updateSite = require('./updateSite')
 const {
   listSites,
   showSite,
-  updateSite,
   listSitesForSelectList,
   listSitesWithReporters,
   disableSite,
@@ -352,6 +353,42 @@ const routes = [
       validate: {
         params: {
           siteId: Joi.string().description('Site ID').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/site',
+    handler: asyncHandler(createSite),
+    config: {
+      description: 'Create Site',
+      notes: 'Creates a new site',
+      auth: { scope: ['site:admin'] },
+      validate: {
+        params: null,
+        payload: {
+          name: Joi.string().max(255).required(),
+          shortName: Joi.string().max(45).required(),
+          notes: Joi.string().max(2000).allow('', null),
+          // partnerId: Joi.number().integer().positive().required(),
+          countryId: Joi.number().integer().positive().allow('', null),
+          stateId: Joi.number().integer().positive().allow('', null),
+          lgaId: Joi.number().integer().positive().allow('', null),
+          city: Joi.string().allow('', null),
+          street1: Joi.string().allow('', null),
+          street2: Joi.string().allow('', null),
+          zip: Joi.string().max(45).allow('', null),
+          longitude: Joi.number().allow('', null),
+          latitude: Joi.number().allow('', null),
+          timezoneid: Joi.string().allow('', null),
+          hoursStart: Joi.number().allow('', null),
+          hoursEnd: Joi.number().allow('', null),
+          siteTypeId: Joi.number().integer().positive().required(),
+          assignedWarehouseId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
         },
       },
     },

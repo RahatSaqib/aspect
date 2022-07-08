@@ -1,5 +1,4 @@
 const Boom = require('@hapi/boom')
-const _ = require('lodash')
 const {
   knex,
   filterParams,
@@ -8,7 +7,6 @@ const {
 } = require('../db')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { transformGeographyFromUpdates } = require('../geography/service')
 const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
@@ -176,44 +174,6 @@ async function showSite(request) {
 
   const result = { ok: true, data: site }
 
-  return result
-}
-
-async function updateSite(request) {
-  const { params, payload } = request
-
-  // TODO: check permission
-  const changedSiteFields = await transformGeographyFromUpdates(payload)
-  // update item
-  const site = Object.assign(
-    _.pick(changedSiteFields, [
-      'name',
-      'shortName',
-      'externalId',
-      'street1',
-      'street2',
-      'geographyId',
-      'city',
-      'zip',
-      'latitude',
-      'longitude',
-    ]),
-    {
-      timezoneId: _.isEmpty(changedSiteFields.timezone)
-        ? null
-        : changedSiteFields.timezone,
-    }
-  )
-
-  const updatedCount = await knex('Site')
-    .where('id', params.siteId)
-    .update(site)
-
-  if (updatedCount !== 1) {
-    throw new Error('Unknown error')
-  }
-
-  const result = await showSite(request)
   return result
 }
 
@@ -470,7 +430,6 @@ module.exports = {
   getSite,
   getSiteByPartnerCountry,
   showSite,
-  updateSite,
   listSitesForSelectList,
   listSitesWithReporters,
   getListSitesForSelectList,
