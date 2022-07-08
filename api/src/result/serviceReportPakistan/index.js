@@ -103,7 +103,7 @@ async function getReportXdrDevicesSummary(auth, query) {
       ),
     })
 
-  const counterField = name => knex.raw(`COALESCE(_sub.${name}, 0) as ${name}`)
+  const counterField = name => knex.raw(`IFNULL(_sub.${name}, 0) as ${name}`)
   const data = await knex('State as st')
     .innerJoin('Geography as g', 'g.stateId', 'st.id')
     .leftJoin(countsBase.as('_sub'), 'st.id', '_sub.stateId')
