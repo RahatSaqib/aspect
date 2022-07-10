@@ -9,11 +9,13 @@ module.exports = async function (request) {
   const { payload, auth } = request
 
   const errors = await validate(payload)
+
   if (errors.length > 0) {
     throw Boom.badRequest(errors)
   }
 
   const user = await getUserFromCredentials(auth.credentials)
+
   if (!user) {
     throw Boom.badImplementation(
       'Cannot retrieve user from create site request'

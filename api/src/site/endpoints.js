@@ -366,12 +366,10 @@ const routes = [
       notes: 'Creates a new site',
       auth: { scope: ['site:admin'] },
       validate: {
-        params: null,
         payload: {
           name: Joi.string().max(255).required(),
           shortName: Joi.string().max(45).required(),
           notes: Joi.string().max(2000).allow('', null),
-          // partnerId: Joi.number().integer().positive().required(),
           countryId: Joi.number().integer().positive().allow('', null),
           stateId: Joi.number().integer().positive().allow('', null),
           lgaId: Joi.number().integer().positive().allow('', null),

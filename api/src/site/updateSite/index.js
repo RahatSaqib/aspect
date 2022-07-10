@@ -4,7 +4,7 @@ const normalizeSiteParameters = require('../common')
 const showSite = require('../service')
 // const userService = require('../auth/service')
 
-async function updateSite(request) {
+module.exports = async function (request) {
   const { params, payload } = request
 
   // TODO: check permission
@@ -22,5 +22,3 @@ async function updateSite(request) {
   const result = await showSite(request)
   return result
 }
-
-module.exports = { default: updateSite }
