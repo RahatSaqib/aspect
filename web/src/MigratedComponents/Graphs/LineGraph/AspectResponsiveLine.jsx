@@ -37,7 +37,8 @@ const AspectResponsiveLine = ({
   type,
   i18nKeys,
 }) => {
-  const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
+  const i18n = useI18n()
+  const { formatMessage } = i18n
   const graphsToHaveCustomLegend = []
   const { id: graphId, sortByKeys } = baseConfig
   let filteredData = data
@@ -53,8 +54,20 @@ const AspectResponsiveLine = ({
         return {
           legend: 'legend-1', // `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
           ylegend: false,
-          yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          yTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           gridYValues: null,
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
@@ -86,7 +99,13 @@ const AspectResponsiveLine = ({
             true
           ),
           gridYValues: null,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
@@ -191,7 +210,7 @@ const AspectResponsiveLine = ({
                   { ...v.point, value: v.point.data.y },
                   displayMethod,
                   assaysFromState,
-                  intlFormatNumber,
+                  i18n.formatNumber,
                   type,
                   formatMessage,
                   messages,
@@ -204,7 +223,7 @@ const AspectResponsiveLine = ({
             tickSize: 5,
             tickValues: yTickValues,
             format: v => {
-              return formatValuesForGraphs(v, displayMethod, intlFormatNumber)
+              return formatValuesForGraphs(v, displayMethod, i18n)
             },
             legendPosition: 'middle',
             legendOffset: -60,

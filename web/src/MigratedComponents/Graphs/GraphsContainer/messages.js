@@ -127,6 +127,11 @@ export const messages = defineMessages({
     id: 'pages.Status.TB.rifDetectedTrendsInQuarterTitle.title',
     defaultMessage: 'RRD In Quarters',
   },
+
+  xdrAssayGraphTitle: {
+    id: 'pages.Status.XDR.xdrAssayGraph.title',
+    defaultMessage: 'XDR Assay',
+  },
 })
 
 export default messages

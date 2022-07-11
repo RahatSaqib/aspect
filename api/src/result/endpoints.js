@@ -45,6 +45,7 @@ const {
   listSampleTypes,
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
+  xdrAssayGraphAggregations,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
@@ -1473,6 +1474,35 @@ const routes = [
       description: 'Sample types',
       notes: 'List of all sample types',
       auth: { scope: ['result'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/xdr-assay-graph',
+    handler: asyncHandler(xdrAssayGraphAggregations),
+    config: {
+      description: 'XDR Assay graph on Dashboard',
+      notes: 'Returns data for 3 grouped bars and percentage line',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(clinicalIndicatorsValidGroups),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          grouped: Joi.array()
+            .required()
+            .description('List of prepared data for the graph'),
+          keysFromGrouped: Joi.array()
+            .required()
+            .description('List of keys for series'),
+          i18nKeys: Joi.object().required().description('Intl keys for axis X'),
+        }),
+      },
     },
   },
 ]

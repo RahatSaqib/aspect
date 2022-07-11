@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { subMonths, subDays } = require('date-fns')
+const { format, subMonths, subDays, eachMonthOfInterval } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
@@ -11,6 +11,8 @@ const {
   LIST_FIELDS_UTC,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
+  caseCondition,
+  countXdr,
 } = require('./query')
 const {
   knex,
@@ -28,6 +30,7 @@ const {
 const { getUser, getUserByUserId } = require('../auth/service')
 const {
   allAssayToId,
+  allResultCategoryToId,
   deviceTypeToId,
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
@@ -50,6 +53,7 @@ const {
   getAssayResultCategories,
 } = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
+const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
@@ -3470,6 +3474,96 @@ async function getCustomFieldsCompletion(auth, query) {
   }
 }
 
+// ---------------------------------------------------------------
+async function xdrAssayGraphAggregations(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 12)
+  }
+  const resultCategoryIds = await allResultCategoryToId()
+  const positiveResultCategories = _.values(
+    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
+  )
+
+  const months = eachMonthOfInterval({ start: dateFrom, end: dateTo })
+
+  const assayIds = await allAssayToId()
+
+  let data = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .whereIn('a.id', [assayIds.GxMtbXdr])
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      result: 'r',
+    })
+    .modify(
+      filterDateRangeParams,
+      { minDate: dateFrom, maxDate: dateTo },
+      'r.endedOn'
+    )
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .select(
+      knex.raw(`
+        DATE_FORMAT(r.endedOn, "%Y-%m") as month
+      `)
+    )
+    .groupBy('month')
+    .count({
+      Total: knex.raw('DISTINCT r.id'),
+      MTB: caseCondition(
+        'r.id',
+        `r.resultCategory1 IN (${positiveResultCategories})`
+      ),
+      FQR: countXdr('FLQ'),
+    })
+    .orderBy('month')
+
+  data = months.map(monthDate => {
+    const month = format(monthDate, 'yyyy-MM')
+    const item = data.find(it => it.month === month)
+    const { Total = 0, MTB = 0, FQR = 0 } = item || {}
+    const FQRToMTBPercentage = MTB === 0 ? 0 : (100 * FQR) / MTB
+
+    return {
+      month,
+      Total,
+      MTB,
+      FQR,
+      FQRToMTBPercentage,
+    }
+  })
+
+  return {
+    grouped: data,
+    // series
+    keysFromGrouped: ['Total', 'MTB', 'FQR', 'FQRToMTBPercentage'],
+    i18nKeys: {
+      Total: 'Test',
+      MTB: 'MTB',
+      FQR: 'FQR',
+      FQRToMTBPercentage: 'FQRPercent',
+    },
+  }
+}
+
 module.exports = {
   updateTransferNotification,
   listResults,
@@ -3517,4 +3611,6 @@ module.exports = {
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
   // trendInYears,
+
+  xdrAssayGraphAggregations,
 }

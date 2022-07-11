@@ -7,6 +7,7 @@ import isNull from 'lodash/isNull'
 import keys from 'lodash/keys'
 import last from 'lodash/last'
 import map from 'lodash/map'
+import max from 'lodash/max'
 import nth from 'lodash/nth'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
@@ -69,7 +70,7 @@ const filterByMultiple = (data, filterBy) => {
   )
 }
 
-const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
+const formatValuesForGraphs = (value, displayMethod, { formatNumber }) => {
   let formatted
   switch (true) {
     case (typeof value === 'number' || !Number.isNaN(Number(value))) &&
@@ -133,14 +134,18 @@ const clubsandwich = (boundaries, rounded = false) => {
   return uniq([low, rounded ? roundIfNumber(middle) : middle, high])
 }
 
-const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
+const getBoundaries = (data, keys, { whichAxes, zeroOut, groupMode }) => {
   let dataOut
   const dataOutTemp = zeroOut && whichAxes === 'Y' ? [0] : []
   switch (whichAxes) {
-    case 'Y':
-      data.map(d => dataOutTemp.push(sum(values(pick(d, keys)).map(Number))))
+    case 'Y': {
+      const aggregationFunc = groupMode === 'grouped' ? max : sum
+      data.map(d =>
+        dataOutTemp.push(aggregationFunc(values(pick(d, keys)).map(Number)))
+      )
       dataOut = sortByValue(dataOutTemp)
       break
+    }
 
     default:
       data.map(d => dataOutTemp.push(...valuesIn(pick(d, keys))))
@@ -151,6 +156,9 @@ const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
 }
 
 const incrementSplit = (boundaries, increment) => {
+  if (boundaries[1] === 1) {
+    return boundaries
+  }
   const split = Math.round(boundaries[1] / increment)
   const values = [boundaries[0], split * increment]
   times(split, v => values.push(v * increment))
@@ -162,11 +170,16 @@ const generateTickValues = (
   axesTicks,
   keys,
   whichAxes,
-  zeroOut = false
+  zeroOut = false,
+  { groupMode } = {}
 ) => {
   let values
   let dynamicAxesTicks
-  const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
+  const boundaries = getBoundaries(data, keys, {
+    whichAxes,
+    zeroOut,
+    groupMode,
+  })
   const upperBoundary = boundaries[1] || 0
 
   switch (true) {
@@ -302,14 +315,16 @@ const generateToolTip = (
     } else {
       totalOut = totalCnt
     }
-    const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
+    const percentage = formatValuesForGraphs(value, displayMethod, {
+      formatNumber,
+    })
     const percentageToValue = Math.round((parseFloat(value) / 100) * totalCnt)
     displayValue = {
       value: percentage,
       actual: { totalCnt: totalOut, percentageToValue },
     }
   } else {
-    displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+    displayValue = formatValuesForGraphs(value, displayMethod, { formatNumber })
   }
   return { color, displayId, indexValue, displayValue, externalId: id }
 }
