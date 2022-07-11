@@ -119,31 +119,39 @@ describe('Site routes', () => {
 
     describe('POST', () => {
       let insertedSites = []
-      const unitedStatesId = 3
-      const nebraskaId = 60
-      const hallCountyId = 8
-      const hallCountyGeographyId = 71 // geographyId for Hall County
-      const siteTypeLabId = 1
+      let geo = {}
+      let siteTypeLabId
+      let newSiteParams
       const newSiteName = 'New Site'
-      const newSiteParams = {
-        name: newSiteName,
-        shortName: newSiteName,
-        notes: 'Notes',
-        countryId: unitedStatesId,
-        stateId: nebraskaId,
-        lgaId: hallCountyId,
-        city: 'city',
-        street1: 'street 1',
-        street2: 'street 2',
-        zip: 'zip',
-        longitude: 59.912731,
-        latitude: 60.912731,
-        timezone: 'Argentina Standard Time',
-        hoursStart: '',
-        hoursEnd: '',
-        siteTypeId: siteTypeLabId,
-        assignedWarehouseId: null,
-      }
+      before(async () => {
+        geo = await knex('Geography')
+          .whereNotNull('lgaId')
+          .first('id', 'countryId', 'stateId', 'lgaId')
+
+        siteTypeLabId = +(await knex('SiteType')
+          .where('externalId', 'lab')
+          .pluck('id'))
+
+        newSiteParams = {
+          name: newSiteName,
+          shortName: newSiteName,
+          notes: 'Notes',
+          countryId: geo.countryId,
+          stateId: geo.stateId,
+          lgaId: geo.lgaId,
+          city: 'city',
+          street1: 'street 1',
+          street2: 'street 2',
+          zip: 'zip',
+          longitude: 59.912731,
+          latitude: 60.912731,
+          timezone: 'Argentina Standard Time',
+          hoursStart: '',
+          hoursEnd: '',
+          siteTypeId: siteTypeLabId,
+          assignedWarehouseId: null,
+        }
+      })
 
       afterEach(async () => {
         if (insertedSites.length > 0) {
@@ -170,7 +178,7 @@ describe('Site routes', () => {
           name: newSiteName,
           shortName: newSiteName,
           notes: 'Notes',
-          geographyId: hallCountyGeographyId,
+          geographyId: geo.id,
           city: 'city',
           street1: 'street 1',
           street2: 'street 2',
