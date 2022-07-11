@@ -79,7 +79,7 @@ describe('site endpoints', () => {
     })
   })
 
-  describe('PUT', () => {
+  describe.skip('PUT', () => {
     describe('/site/{siteId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
