@@ -489,7 +489,7 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
         qWhere.andWhere(_qWhere => {
           // The filter by tag matches...
           if (policy.sendToContactsWithMatchingTags) {
-            qWhere.orWhereIn('pt.tagId', _.uniq(tags))
+            _qWhere.orWhereIn('pt.tagId', _.uniq(tags))
           }
           // Or filter by job function ID (used on prev version of notifications)...
           if (policy.jobFunctionId)
