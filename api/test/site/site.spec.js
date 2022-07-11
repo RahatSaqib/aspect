@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { knex } = require('../../src/db')
@@ -6,6 +7,7 @@ const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
 
 const { assert } = chai
+const { expect } = chai.use(chaiSubset)
 const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
@@ -15,6 +17,7 @@ describe('Site routes', () => {
     let siteId = 1
 
     let siteData
+
     before(() => {
       shared.checkToken(server, path)
     })
@@ -114,7 +117,93 @@ describe('Site routes', () => {
       })
     })
 
-    describe('POST', () => {})
+    describe('POST', () => {
+      let insertedSites = []
+      const unitedStatesId = 3
+      const nebraskaId = 60
+      const hallCountyId = 8
+      const hallCountyGeographyId = 71 // geographyId for Hall County
+      const siteTypeLabId = 1
+      const newSiteName = 'New Site'
+      const newSiteParams = {
+        name: newSiteName,
+        shortName: newSiteName,
+        notes: 'Notes',
+        countryId: unitedStatesId,
+        stateId: nebraskaId,
+        lgaId: hallCountyId,
+        city: 'city',
+        street1: 'street 1',
+        street2: 'street 2',
+        zip: 'zip',
+        longitude: 59.912731,
+        latitude: 60.912731,
+        timezone: 'Argentina Standard Time',
+        hoursStart: '',
+        hoursEnd: '',
+        siteTypeId: siteTypeLabId,
+        assignedWarehouseId: null,
+      }
+
+      afterEach(async () => {
+        if (insertedSites.length > 0) {
+          await knex('Site').whereIn('id', insertedSites).del()
+          insertedSites = []
+        }
+      })
+
+      it('Should create a site given a new site data', async () => {
+        const createSiteResponse = await server
+          .post(`${path}`)
+          .send(newSiteParams)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(createSiteResponse.status, 200)
+        assert.typeOf(createSiteResponse.body, 'Array')
+        assert.typeOf(createSiteResponse.body[0], 'Number')
+
+        const siteId = createSiteResponse.body[0]
+        const insertedSite = await knex('Site').where('id', siteId).first()
+        insertedSites.push(siteId)
+
+        expect(insertedSite).to.containSubset({
+          name: newSiteName,
+          shortName: newSiteName,
+          notes: 'Notes',
+          geographyId: hallCountyGeographyId,
+          city: 'city',
+          street1: 'street 1',
+          street2: 'street 2',
+          zip: 'zip',
+          longitude: 59.912731,
+          latitude: 60.912731,
+          siteTypeId: siteTypeLabId,
+          assignedWarehouseId: null,
+        })
+        assert.equal(insertedSite.timezoneid, 'Argentina Standard Time')
+      })
+
+      it('Should reject create a duplicate site ', async () => {
+        const createSiteResponse = await server
+          .post(`${path}`)
+          .send(newSiteParams)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(createSiteResponse.status, 200)
+        assert.typeOf(createSiteResponse.body, 'Array')
+        assert.typeOf(createSiteResponse.body[0], 'Number')
+        const siteId = createSiteResponse.body[0]
+
+        insertedSites.push(siteId)
+
+        const createDuplSiteResponse = await server
+          .post(`${path}`)
+          .send(newSiteParams)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(createDuplSiteResponse.status, 400)
+      })
+    })
 
     describe('Disable Site', () => {
       it('should disable a site given a siteId', async () => {

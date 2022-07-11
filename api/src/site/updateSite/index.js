@@ -1,8 +1,7 @@
-const knex = require('knex')
+const { knex } = require('../../db')
 const { transformGeographyFromUpdates } = require('../../geography/service')
-const normalizeSiteParameters = require('../common')
-const showSite = require('../service')
-// const userService = require('../auth/service')
+const { normalizeSiteParameters } = require('../common/index')
+const { showSite } = require('../service')
 
 module.exports = async function (request) {
   const { params, payload } = request

@@ -379,7 +379,7 @@ const routes = [
           zip: Joi.string().max(45).allow('', null),
           longitude: Joi.number().allow('', null),
           latitude: Joi.number().allow('', null),
-          timezoneid: Joi.string().allow('', null),
+          timezone: Joi.string().allow('', null),
           hoursStart: Joi.number().allow('', null),
           hoursEnd: Joi.number().allow('', null),
           siteTypeId: Joi.number().integer().positive().required(),

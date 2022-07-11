@@ -24,10 +24,10 @@ module.exports = async function (request) {
 
   const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
 
-  const site = await normalizeSiteParameters(payloadWithGeographyId)
+  const siteParams = await normalizeSiteParameters(payloadWithGeographyId)
 
   const values = {
-    ...site,
+    ...siteParams,
     partnerId: user.partnerId,
     createdOn: new Date(),
     createdBy: user.id,
