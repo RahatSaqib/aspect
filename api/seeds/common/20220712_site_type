@@ -1,0 +1,39 @@
+module.exports = async knex => {
+  const { siteTypeLabId } = await knex('SiteType')
+    .where({ externalId: 'lab' })
+    .first('id as siteTypeLabId')
+
+  const { siteTypeClinicId } = await knex('SiteType')
+    .where({ externalId: 'clinic' })
+    .first('id as siteTypeClinicId')
+
+  await setAsLabSitesWithDevices(knex, siteTypeLabId)
+
+  await setAsClinicSitesWithoutSiteType(knex, siteTypeClinicId)
+}
+
+async function setAsLabSitesWithDevices(knex, siteTypeLabId) {
+  await knex('Site')
+    .update({
+      siteTypeId: siteTypeLabId,
+    })
+    .whereExists(function () {
+      this.select('id')
+        .from('Device as d')
+        .where({ 'd.siteId': knex.raw(`Site.id`) })
+    })
+    .modify(bypassMySqlSafeUpdateMode)
+}
+
+async function setAsClinicSitesWithoutSiteType(knex, siteTypeClinicId) {
+  await knex('Site')
+    .update({
+      siteTypeId: siteTypeClinicId,
+    })
+    .whereNull('siteTypeId')
+    .modify(bypassMySqlSafeUpdateMode)
+}
+
+function bypassMySqlSafeUpdateMode(queryBuilder) {
+  queryBuilder.where('id', '>', 0)
+}

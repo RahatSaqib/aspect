@@ -16,6 +16,7 @@ const {
   listSitesWithReporters,
   disableSite,
 } = require('./service')
+const { postSchema, updateSchema } = require('./requestValidation')
 
 const { exportSites, exportReporters } = require('./serviceReports')
 
@@ -206,30 +207,7 @@ const routes = [
       description: 'Update Site Detail',
       notes: 'Detail of a site',
       auth: { scope: ['site:edit'] },
-      validate: {
-        params: {
-          siteId: Joi.number()
-            .integer()
-            .positive()
-            .description('Site id')
-            .required(),
-        },
-        payload: {
-          name: Joi.string().required(),
-          shortName: Joi.string().required(),
-          externalId: Joi.string().allow('', null),
-          timezone: Joi.string().allow('', null),
-          countryId: Joi.number().integer().positive().allow('', null),
-          stateId: Joi.number().integer().positive().allow('', null),
-          lgaId: Joi.number().integer().positive().allow('', null),
-          street1: Joi.string().allow('', null),
-          street2: Joi.string().allow('', null),
-          city: Joi.string().allow('', null),
-          zip: Joi.string().max(45).allow('', null),
-          longitude: Joi.number().allow('', null),
-          latitude: Joi.number().allow('', null),
-        },
-      },
+      validate: updateSchema,
     },
   },
   {
@@ -365,30 +343,7 @@ const routes = [
       description: 'Create Site',
       notes: 'Creates a new site',
       auth: { scope: ['site:admin'] },
-      validate: {
-        payload: {
-          name: Joi.string().max(255).required(),
-          shortName: Joi.string().max(45).required(),
-          notes: Joi.string().max(2000).allow('', null),
-          countryId: Joi.number().integer().positive().allow('', null),
-          stateId: Joi.number().integer().positive().allow('', null),
-          lgaId: Joi.number().integer().positive().allow('', null),
-          city: Joi.string().allow('', null),
-          street1: Joi.string().allow('', null),
-          street2: Joi.string().allow('', null),
-          zip: Joi.string().max(45).allow('', null),
-          longitude: Joi.number().allow('', null),
-          latitude: Joi.number().allow('', null),
-          timezone: Joi.string().allow('', null),
-          hoursStart: Joi.number().allow('', null),
-          hoursEnd: Joi.number().allow('', null),
-          siteTypeId: Joi.number().integer().positive().required(),
-          assignedWarehouseId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-        },
-      },
+      validate: postSchema,
     },
   },
 ]

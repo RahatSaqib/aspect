@@ -51,6 +51,7 @@ const tables = [
   ['TimeZone', 'id'],
   'DeviceMaintenanceStatus',
   'NotificationTypeCategory',
+  'SiteType',
 ]
 
 const uniqueKeys = {

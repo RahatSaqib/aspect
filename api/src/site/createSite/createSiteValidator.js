@@ -1,23 +1,24 @@
-const { reject } = require('lodash')
-const { knex } = require('../../db')
+const Boom = require('@hapi/boom')
+const { getSite } = require('../query')
 
-module.exports = async function (site) {
-  const errors = []
-  await checkSiteNotExists(site, errors)
-  return errors
+module.exports = async site => {
+  await validateSiteNotExists(site)
 }
 
-async function checkSiteNotExists({ name, shortName }, errors) {
-  const existingSiteId = await knex('Site')
-    .where({ name })
-    .orWhere({ shortName })
-    .limit(1)
-    .pluck('id')
+async function validateSiteNotExists({ name, shortName }) {
+  const existingSiteId = await getRepeatedSiteIfExists(name, shortName)
 
-  if (existingSiteId > 0) {
-    errors.push(
+  if (existingSiteId) {
+    throw Boom.badData(
       `A site with the same name (${name}) or short name (${shortName}) already exists.`
     )
-    reject(errors)
   }
+}
+
+async function getRepeatedSiteIfExists(name, shortName) {
+  return getSite(
+    qb =>
+      qb.where({ name }).orWhere({ shortName }).first('id as existingSiteId') ||
+      {}
+  )
 }

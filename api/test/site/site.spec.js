@@ -28,6 +28,7 @@ describe('Site routes', () => {
         .where('id', siteIdToDisable)
         .update({ disabled: 0, disabledBy: null, disabledOn: null })
     })
+
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
         const res = await server
@@ -127,10 +128,9 @@ describe('Site routes', () => {
         geo = await knex('Geography')
           .whereNotNull('lgaId')
           .first('id', 'countryId', 'stateId', 'lgaId')
-
-        siteTypeLabId = +(await knex('SiteType')
+        ;({ siteTypeLabId } = await knex('SiteType')
           .where('externalId', 'lab')
-          .pluck('id'))
+          .first('id as siteTypeLabId'))
 
         newSiteParams = {
           name: newSiteName,
@@ -149,7 +149,7 @@ describe('Site routes', () => {
           hoursStart: '',
           hoursEnd: '',
           siteTypeId: siteTypeLabId,
-          assignedWarehouseId: null,
+          parentWarehouseId: null,
         }
       })
 
@@ -160,23 +160,31 @@ describe('Site routes', () => {
         }
       })
 
-      it('Should create a site given a new site data', async () => {
+      it('Should create a site given new site data', async () => {
         const createSiteResponse = await server
           .post(`${path}`)
           .send(newSiteParams)
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(createSiteResponse.status, 200)
-        assert.typeOf(createSiteResponse.body, 'Array')
-        assert.typeOf(createSiteResponse.body[0], 'Number')
+        const siteId = createSiteResponse?.body?.data?.id
+        if (siteId) {
+          insertedSites.push(siteId)
+        }
 
-        const siteId = createSiteResponse.body[0]
+        assert.equal(
+          createSiteResponse.status,
+          200,
+          createSiteResponse.body.message
+        )
+        assert.typeOf(createSiteResponse.body, 'Object')
+        assert.typeOf(createSiteResponse.body.data.id, 'Number')
+
         const insertedSite = await knex('Site').where('id', siteId).first()
-        insertedSites.push(siteId)
 
         expect(insertedSite).to.containSubset({
           name: newSiteName,
           shortName: newSiteName,
+          externalId: newSiteName,
           notes: 'Notes',
           geographyId: geo.id,
           city: 'city',
@@ -186,30 +194,27 @@ describe('Site routes', () => {
           longitude: 59.912731,
           latitude: 60.912731,
           siteTypeId: siteTypeLabId,
-          assignedWarehouseId: null,
+          parentWarehouseId: null,
         })
         assert.equal(insertedSite.timezoneid, 'Argentina Standard Time')
       })
 
       it('Should reject create a duplicate site ', async () => {
-        const createSiteResponse = await server
+        const [exisingSiteId] = await knex('Site').insert({
+          name: newSiteName,
+          shortName: newSiteName,
+          siteTypeId: siteTypeLabId,
+          externalId: newSiteName,
+        })
+
+        insertedSites.push(exisingSiteId)
+
+        const createDuplicatedSiteResponse = await server
           .post(`${path}`)
           .send(newSiteParams)
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(createSiteResponse.status, 200)
-        assert.typeOf(createSiteResponse.body, 'Array')
-        assert.typeOf(createSiteResponse.body[0], 'Number')
-        const siteId = createSiteResponse.body[0]
-
-        insertedSites.push(siteId)
-
-        const createDuplSiteResponse = await server
-          .post(`${path}`)
-          .send(newSiteParams)
-          .set('Authorization', `Bearer${shared.token}`)
-
-        assert.equal(createDuplSiteResponse.status, 400)
+        assert.equal(createDuplicatedSiteResponse.status, 422)
       })
     })
 

@@ -6,8 +6,21 @@ const isEmpty = require('lodash/isEmpty')
  * @param {Object} payload - site parameters
  * @returns - Normalized site parameters
  */
-async function normalizeSiteParameters(payload) {
-  const site = Object.assign(
+function normalizeSiteParameters(payload) {
+  let site = filterNotNeededParameters(payload)
+
+  site = normalizeFieldSizes(site)
+
+  return site
+}
+
+/**
+ * Removes complementary data from site parameters
+ * @param {Object} payload - Site parameters
+ * @returns New sanitized object only with site fields
+ */
+function filterNotNeededParameters(payload) {
+  return Object.assign(
     pick(payload, [
       'name',
       'shortName',
@@ -22,12 +35,27 @@ async function normalizeSiteParameters(payload) {
       'hoursStart',
       'hoursEnd',
       'siteTypeId',
-      'warehouseId',
+      'parentWarehouseId',
     ]),
     {
       timezoneId: isEmpty(payload.timezone) ? null : payload.timezone,
     }
   )
+}
+
+/**
+ * Trim exceded fields size
+ * @param {Object} site - Site parameters to be persisted
+ * @returns Same object with trimmed fields, if it's necessary
+ */
+function normalizeFieldSizes(site) {
+  if (site.name.length > 255) {
+    site.name = site.name.substr(0, 255)
+  }
+  if (site.shortName.length > 45) {
+    site.shortName = site.shortName.substr(0, 45)
+  }
+
   return site
 }
 

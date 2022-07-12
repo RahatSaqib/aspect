@@ -78,28 +78,4 @@ describe('site endpoints', () => {
       })
     })
   })
-
-  describe.skip('PUT', () => {
-    describe('/site/{siteId}', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('PUT', '/site/{siteId}', {
-          async updateSite() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-  })
 })

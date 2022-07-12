@@ -1,13 +1,11 @@
-const { addAuditFields } = require('./utils')
-
 const tableName = 'SiteType'
 
 module.exports.up = async function (knex) {
-  await knex.schema.createTable(tableName, locationType => {
-    locationType.increments('id').primary()
-    locationType.string('name').notNullable()
-    locationType.string('externalId').notNullable()
-    addAuditFields(locationType)
+  await knex.schema.createTable(tableName, siteType => {
+    siteType.increments('id').primary()
+    siteType.string('name').notNullable()
+    siteType.string('i18nKey').notNullable()
+    siteType.string('externalId').notNullable()
   })
 
   await knex.schema.alterTable('Site', device => {
@@ -19,7 +17,7 @@ module.exports.up = async function (knex) {
       .inTable('SiteType')
 
     device
-      .integer('assignedWarehouseId')
+      .integer('parentWarehouseId')
       .unsigned()
       .index()
       .references('id')
@@ -31,6 +29,6 @@ module.exports.down = async function (knex) {
   await knex.schema.dropTable(tableName)
   await knex.schema.alterTable('Device', device => {
     device.dropColumn('siteTypeId')
-    device.dropColumn('assignedWarehouseId')
+    device.dropColumn('parentWarehouseId')
   })
 }

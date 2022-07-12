@@ -6,18 +6,12 @@ const { showSite } = require('../service')
 module.exports = async function (request) {
   const { params, payload } = request
 
-  // TODO: check permission
   const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
-  const site = await normalizeSiteParameters(payloadWithGeographyId)
 
-  const updatedCount = await knex('Site')
-    .where('id', params.siteId)
-    .update(site)
+  const normalizedSiteParams = normalizeSiteParameters(payloadWithGeographyId)
 
-  if (updatedCount !== 1) {
-    throw new Error('Unknown error')
-  }
+  await knex('Site').where('id', params.siteId).update(normalizedSiteParams)
 
-  const result = await showSite(request)
-  return result
+  const site = await showSite(request)
+  return site
 }
