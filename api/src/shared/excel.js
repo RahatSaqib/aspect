@@ -261,7 +261,28 @@ function fillInSheetWithMap({
 }
 
 // ----------------------------------------------------------------------------------------------
+function replacePlaceholders(worksheet, replacements, data) {
+  // replace placeholders, i.e. <Dates>, <States>, etc in the header
+  _.each(
+    replacements,
+    ({ placeholder, value, condition = () => false, action = () => true }) => {
+      if (data && !_.isEmpty(data)) {
+        if (condition(data)) {
+          const [conditionalCell] = getCellsBySubstring(worksheet, placeholder)
+          action(conditionalCell, worksheet)
+        }
+        if (_.isFunction(value)) {
+          value = value(data)
+        }
+      }
+      replaceSubstringInCell(worksheet, placeholder, value)
+    }
+  )
+}
+
+// ----------------------------------------------------------------------------------------------
 async function renderExcelTemplate({
+  countryAbbreviation,
   culture,
   data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   extension, // xlsx
@@ -271,11 +292,11 @@ async function renderExcelTemplate({
 }) {
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
-  const workbook = await readTemplateFile(
-    templateFolderPath,
+  const workbook = await readTemplateFile(templateFolderPath, {
     lang,
-    LANG_DEFAULT
-  )
+    langDefault: LANG_DEFAULT,
+    countryAbbreviation,
+  })
 
   // get worksheets with specified in API way, 'workbook.worksheets' also works but not specified in API
   const worksheets = []
@@ -285,14 +306,29 @@ async function renderExcelTemplate({
 
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
+    const dataForSheet = dataSet[sheetIndex] || {}
     const {
       data,
       dynamicColumns = [],
       defaultNoDataMessage,
       dataSelector: dataSelectorSheet,
-    } = dataSet[sheetIndex] || {}
+    } = dataForSheet
+    // define sections on a sheet
+    let { sections } = dataForSheet
+    const isListWithSections = !!sections
+    if (!sections || _.isEmpty(sections)) {
+      sections = [{}]
+    }
+    if (sections) {
+      _.forEach(sections, section => {
+        section.tableToken = section.dataSource
+          ? `<Table-${section.dataSource}>`
+          : '<Table>'
+      })
+    }
 
-    const wayToFillInData = isDataAList(data) ? 'list' : 'mapping'
+    const wayToFillInData =
+      isListWithSections || isDataAList(data) ? 'list' : 'mapping'
 
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
@@ -308,154 +344,159 @@ async function renderExcelTemplate({
     }
 
     // replace placeholders, i.e. <Dates>, <States>, etc in the header
-    _.each(
-      replacements,
-      ({
-        placeholder,
-        value,
-        condition = () => false,
-        action = () => true,
-      }) => {
-        if (dataSet[sheetIndex]) {
-          if (condition(dataSet[sheetIndex])) {
-            const [conditionalCell] = getCellsBySubstring(
-              worksheet,
-              placeholder
-            )
-            action(conditionalCell, worksheet)
+    replacePlaceholders(worksheet, replacements, dataForSheet)
+
+    _.forEach(sections, section => {
+      const { tableToken, dataSource: sectionDataSource } = section
+      // position cell where data table begins
+      const tableTokenCells = getCellsByValue(worksheet, tableToken)
+
+      if (tableTokenCells.length > 0) {
+        // empty cells
+        tableTokenCells.forEach(cell => {
+          cell.value = ''
+        })
+
+        if (!data) return
+
+        // use 1st cell only (actually, should not be more than one)
+        const cellTableToken = tableTokenCells[0]
+
+        const allHeaderRows = getHeaderRows(worksheet, cellTableToken)
+        const headerRow = allHeaderRows[0]
+        const patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
+        const patternRow = worksheet.getRow(patternRowNumber)
+
+        // field names for data table - order of array elements should match columns order in template file
+        const fieldNames = []
+        patternRow.eachCell(cell => {
+          let v = _.trim(cell.value)
+          if (v[0] === '<' && v[v.length - 1] === '>') {
+            v = _.trim(v, '< >')
+            fieldNames.push(v)
+          } else {
+            fieldNames.push('')
           }
-          if (_.isFunction(value)) {
-            value = value(dataSet[sheetIndex])
-          }
+        })
+
+        // append dynamic columns if specified
+        if (dynamicColumns.length > 0) {
+          addColumnsToHeader(
+            worksheet,
+            dynamicColumns,
+            headerRow,
+            allHeaderRows.length
+          )
         }
-        replaceSubstringInCell(worksheet, placeholder, value)
-      }
-    )
 
-    // position cell where data table begins
-    const tableTokenCells = getCellsByValue(worksheet, '<Table>')
+        const dataRows =
+          wayToFillInData === 'mapping'
+            ? data.rows
+            : sectionDataSource
+            ? data[sectionDataSource]
+            : data
 
-    if (tableTokenCells.length > 0) {
-      // empty cells
-      tableTokenCells.forEach(cell => {
-        cell.value = ''
-      })
-
-      if (!data) return
-
-      // use 1st cell only (actually, should not be more than one)
-      const cellTableToken = tableTokenCells[0]
-
-      const allHeaderRows = getHeaderRows(worksheet, cellTableToken)
-      const headerRow = allHeaderRows[0]
-      const patternRowNumber = cellTableToken.row + 1 + allHeaderRows.length
-      const patternRow = worksheet.getRow(patternRowNumber)
-
-      // field names for data table - order of array elements should match columns order in template file
-      const fieldNames = []
-      patternRow.eachCell(cell => {
-        let v = _.trim(cell.value)
-        if (v[0] === '<' && v[v.length - 1] === '>') {
-          v = _.trim(v, '< >')
-          fieldNames.push(v)
-        } else {
-          fieldNames.push('')
-        }
-      })
-
-      // append dynamic columns if specified
-      if (dynamicColumns.length > 0) {
-        addColumnsToHeader(
-          worksheet,
-          dynamicColumns,
-          headerRow,
-          allHeaderRows.length
-        )
-      }
-
-      let dataRows = data
-      // If way to fill in data is mapping, then we need to get the rows inside the object, if they exist
-      if (wayToFillInData === 'mapping') dataRows = data.rows
-      // fill in array 'rows'
-      let rows = []
-      if (dataRows && dataRows.length > 0) {
-        rows = data.map((dataRow, rowIndex) => {
-          const valuesInPredefinedColumns = fieldNames.map(fieldName => {
-            if (fieldName === '#') {
-              return rowIndex + 1
+        // fill in array 'rows'
+        let rows = []
+        if (dataRows && dataRows.length > 0) {
+          rows = dataRows.map((dataRow, rowIndex) => {
+            const valuesInPredefinedColumns = fieldNames.map(fieldName => {
+              if (fieldName === '#') {
+                return rowIndex + 1
+              }
+              let value = fieldName && dataRow[fieldName]
+              value = _.isNil(value) ? '' : value
+              // TODO: think on a better generic way to handle such replacements in dataset
+              if (fieldName === 'patientAge' && value === 'null') {
+                value = ''
+              }
+              return value
+            })
+            let valuesInDynamicColumns = []
+            if (dynamicColumns.length > 0) {
+              let normalizedValues
+              const normalizer = dataSelector || dataSelectorSheet
+              if (normalizer) normalizedValues = normalizer(dataRow)
+              else normalizedValues = dataRow
+              valuesInDynamicColumns = dynamicColumns.map(
+                column => normalizedValues[column.key]
+              )
             }
-            let value = fieldName && dataRow[fieldName]
-            value = _.isNil(value) ? '' : value
-            // TODO: think on a better generic way to handle such replacements in dataset
-            if (fieldName === 'patientAge' && value === 'null') {
-              value = ''
-            }
-            return value
+            return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
           })
-          let valuesInDynamicColumns = []
-          if (dynamicColumns.length > 0) {
-            let normalizedValues
-            const normalizer = dataSelector || dataSelectorSheet
-            if (normalizer) normalizedValues = normalizer(dataRow)
-            else normalizedValues = dataRow
-            valuesInDynamicColumns = dynamicColumns.map(
-              column => normalizedValues[column.key]
-            )
+        } else {
+          rows = [
+            fieldNames.map((fieldName, fieldIndex) => {
+              const value = fieldIndex === 0 ? defaultNoDataMessage : ''
+              return value
+            }),
+          ]
+        }
+
+        // remove pattern row and insert rows from patternRowNumber
+        const fillRows = rows => {
+          const formulae = []
+          // `worksheet.duplicateRows` can't be used since the formulae references remains static
+          // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
+          // method, after data is filled with the destructive `worksheet.spliceRows`.
+          worksheet.getRow(patternRowNumber).eachCell((cell, index) => {
+            if (cell.type === excel.ValueType.Formula) {
+              formulae.push({ formula: cell.value.formula, index })
+            }
+            cell.value = null
+          })
+          worksheet.spliceRows(patternRowNumber, 1, ...rows)
+          const firstRow = worksheet.getRow(patternRowNumber)
+
+          _.each(formulae, f => {
+            const masterCell = firstRow.getCell(f.index)
+
+            const rangeToFillFormula = `${
+              masterCell.address
+            }:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
+              rows.length + masterCell.row - 1
+            }`
+
+            worksheet.fillFormula(rangeToFillFormula, f.formula)
+          })
+
+          /**
+           * style dynamic columns, if styling is defined
+           */
+          if (
+            dynamicColumns.length > 0 &&
+            dynamicColumns.find(column => !!column.style)
+          ) {
+            const dynamicColumnsStartCol = fieldNames.length + 1
+            dynamicColumns.forEach((column, dynamicColumnIndex) => {
+              if (!column.style) return
+              const colNumber = dynamicColumnsStartCol + dynamicColumnIndex
+              rows.forEach((rowData, rowIndex) => {
+                const rowNumber = patternRowNumber + rowIndex
+                const row = worksheet.getRow(rowNumber)
+                const cell = row.getCell(colNumber)
+                setCellStyle(cell, column.style)
+              })
+            })
           }
-          return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
-        })
-      } else {
-        rows = [
-          fieldNames.map((fieldName, fieldIndex) => {
-            const value = fieldIndex === 0 ? defaultNoDataMessage : ''
-            return value
-          }),
-        ]
+        }
+        fillRows(rows)
+        if (extension === 'csv') {
+          // get all header values from last item of array allHeaderRows
+          const headerRow = allHeaderRows[allHeaderRows.length - 1]
+          const headerValues = []
+          headerRow.eachCell(cell => {
+            headerValues.push(cell.value)
+          })
+
+          // put headers in 1st row
+          worksheet.getRow(1).values = headerValues
+
+          // remove all rows between 1st row and table body (remove table headers too)
+          worksheet.spliceRows(2, patternRowNumber - 1 - 1)
+        }
       }
-
-      // remove pattern row and insert rows from patternRowNumber
-      const fillRows = async rows => {
-        const formulae = []
-        // `worksheet.duplicateRows` can't be used since the formulae references remains static
-        // that way. We have to capture the formulae and fill the correct columns with `fillFormula`
-        // method, after data is filled with the destructive `worksheet.spliceRows`.
-        worksheet.getRow(patternRowNumber).eachCell((cell, index) => {
-          if (cell.type === excel.ValueType.Formula) {
-            formulae.push({ formula: cell.value.formula, index })
-          }
-          cell.value = null
-        })
-        worksheet.spliceRows(patternRowNumber, 1, ...rows)
-        const firstRow = worksheet.getRow(patternRowNumber)
-
-        _.each(formulae, f => {
-          const masterCell = firstRow.getCell(f.index)
-
-          const rangeToFillFormula = `${
-            masterCell.address
-          }:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
-            rows.length + masterCell.row - 1
-          }`
-
-          worksheet.fillFormula(rangeToFillFormula, f.formula)
-        })
-      }
-      await fillRows(rows)
-      if (extension === 'csv') {
-        // get all header values from last item of array allHeaderRows
-        const headerRow = allHeaderRows[allHeaderRows.length - 1]
-        const headerValues = []
-        headerRow.eachCell(cell => {
-          headerValues.push(cell.value)
-        })
-
-        // put headers in 1st row
-        worksheet.getRow(1).values = headerValues
-
-        // remove all rows between 1st row and table body (remove table headers too)
-        worksheet.spliceRows(2, patternRowNumber - 1 - 1)
-      }
-    }
+    })
   })
 
   // return binary buffer
@@ -466,6 +507,7 @@ async function renderExcelTemplate({
 
 // ----------------------------------------------------------------------------------------------
 async function renderExcelTemplateToCsv({
+  countryAbbreviation,
   culture,
   data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
@@ -474,11 +516,11 @@ async function renderExcelTemplateToCsv({
 }) {
   const lang = culture.split('-')[0].toLowerCase()
   // read file into workbook as ExcelWorkbook
-  const workbook = await readTemplateFile(
-    templateFolderPath,
+  const workbook = await readTemplateFile(templateFolderPath, {
     lang,
-    LANG_DEFAULT
-  )
+    langDefault: LANG_DEFAULT,
+    countryAbbreviation,
+  })
 
   const worksheet = workbook.worksheets[0]
   const worksheetData = dataSet[0]
@@ -562,6 +604,7 @@ async function renderExcelTemplateToCsv({
 async function streamExcelTemplate({
   stream,
   templateFolderPath,
+  countryAbbreviation,
   culture,
   data: dataSet, // i.e. data[0] is array of items for 1st sheet, data[1] for 2nd sheet, etc
   replacements = [],
@@ -572,11 +615,11 @@ async function streamExcelTemplate({
   /**
    * read file into workbook as ExcelWorkbook
    */
-  const workbookTemplate = await readTemplateFile(
-    templateFolderPath,
+  const workbookTemplate = await readTemplateFile(templateFolderPath, {
     lang,
-    LANG_DEFAULT
-  )
+    langDefault: LANG_DEFAULT,
+    countryAbbreviation,
+  })
 
   /**
    * create Excel Workbook which will write to `stream`
@@ -1013,8 +1056,9 @@ async function exportData(request, reply, sheetData, scope, options) {
   const { auth } = request
   const extension = request.query.format || 'xlsx'
 
-  const { culture } = await getUser(auth.credentials.name)
+  const { countryAbbreviation, culture } = await getUser(auth.credentials.name)
   const dataBuffer = await renderExcelTemplate({
+    countryAbbreviation,
     culture,
     templateFolderPath: `export/${scope}`,
     data: [sheetData],

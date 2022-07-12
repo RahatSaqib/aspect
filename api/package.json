@@ -27,7 +27,7 @@
     "prestart:background": "fsys --task=remove --fileFolder=out.log && fsys --task=remove --fileFolder=err.log",
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
     "prettier:write": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js --fix",
-    "start": "nodemon src/server.js",
+    "start": "TZ=UTC nodemon src/server.js",
     "start:background:pm2": "yarn && pm2 start src/server.js",
     "start:background": "forever start -o out.log -e err.log src/server.js",
     "start:background:quiet": "forever start src/server.js",

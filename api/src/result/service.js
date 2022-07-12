@@ -2340,6 +2340,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       diseaseId: 'dis.id',
       onlyReportableResults: 'rca.reportable',
       resultCategoryGroupId: 'rcg.externalId',
+      assayId: 'a.id',
     })
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter)
@@ -3610,7 +3611,10 @@ module.exports = {
 
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
-  // trendInYears,
 
   xdrAssayGraphAggregations,
+
+  getGroupBy,
+  getClinicalIndicatorQueryForResultsTable,
+  processGroupedQuery,
 }
