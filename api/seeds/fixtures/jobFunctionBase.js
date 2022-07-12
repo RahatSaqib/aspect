@@ -13,7 +13,6 @@ const admin = {
     'device_activity_percent',
     'module_swaps',
     'device_utilization',
-    'genexpert_issues',
     'all_results',
     'xpert_test_activities_report',
     'device_utilization_per_day',
@@ -528,7 +527,6 @@ const deviceMaker = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'genexpert_issues',
     'device_utilization_per_day',
   ],
   permissions: [
