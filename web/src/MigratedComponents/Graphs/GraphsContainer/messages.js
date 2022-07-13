@@ -128,9 +128,9 @@ export const messages = defineMessages({
     defaultMessage: 'RRD In Quarters',
   },
 
-  xdrAssayGraphTitle: {
-    id: 'pages.Status.XDR.xdrAssayGraph.title',
-    defaultMessage: 'XDR Assay',
+  xdrPercentageFQRDetectedOverMTBDetectedGraphTitle: {
+    id: 'pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title',
+    defaultMessage: 'XDR FLQ Resistance',
   },
 })
 

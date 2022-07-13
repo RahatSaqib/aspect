@@ -88,9 +88,9 @@ const xdrGraphs = {
     ],
   },
 
-  xdrAssay: {
-    id: 'xdrAssayGraph',
-    title: 'xdrAssayGraphTitle',
+  xdrPercentageFQRDetectedOverMTBDetected: {
+    id: 'xdrPercentageFQRDetectedOverMTBDetectedGraph',
+    title: 'xdrPercentageFQRDetectedOverMTBDetectedGraphTitle',
     assays,
     componentSize: 'full',
     group: 'xdr',
@@ -104,11 +104,15 @@ const xdrGraphs = {
         componentClasses: [],
         indexBy: 'month', // is used for setting jsx `key` in loops
         fields: [
-          { name: 'Total', colorId: 'caseTotal', target: 'bar' },
-          { name: 'MTB', colorId: '--aspect-color-slate', target: 'bar' },
-          { name: 'FQR', colorId: 'caseDetected', target: 'bar' },
+          { name: 'TotalTests', colorId: 'caseTotal', target: 'bar' },
           {
-            name: 'FQRToMTBPercentage',
+            name: 'MtbDetected',
+            colorId: '--aspect-color-slate',
+            target: 'bar',
+          },
+          { name: 'FqrDetected', colorId: 'caseDetected', target: 'bar' },
+          {
+            name: 'FqrToMtbPercentage',
             colorId: 'casePercentDetectedOfTotal',
             target: 'line',
           },
@@ -121,7 +125,7 @@ const xdrGraphs = {
         isServerSide: true,
         layers: [FqrToMtbPercentageLine, AxisRightLayer],
         axisRightProps: {
-          fieldName: 'FQRToMTBPercentage',
+          fieldName: 'FqrToMtbPercentage',
         },
         api: {
           endpoint: '/result/xdr-assay-graph',

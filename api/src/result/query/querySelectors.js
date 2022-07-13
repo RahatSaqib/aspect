@@ -358,14 +358,14 @@ const caseCondition = (id, condition) =>
     `)
 
 // ----------------
-const countXdr = value =>
+const countXdr = xdrResistanceValue =>
   caseCondition(
     'r.id',
     `
       JSON_SEARCH(
         r.resultData ->> '$.detectedResistance[*]',
         'one',
-        '${value}'
+        '${xdrResistanceValue}'
       ) IS NOT NULL
     `
   )

@@ -47,7 +47,7 @@ const cssClasses = classnames.bind(styles)
 
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
-const { xdrResults, xdrAssay } = xdrGraphs
+const { xdrResults, xdrPercentageFQRDetectedOverMTBDetected } = xdrGraphs
 const {
   covidResults,
   covidDailyConfirmed,
@@ -287,7 +287,7 @@ const Status = () => {
         groupTrendInYears,
         groupTrendInQuarters,
 
-        xdrAssay,
+        xdrPercentageFQRDetectedOverMTBDetected,
       ]
 
       setGraphs(graphs)

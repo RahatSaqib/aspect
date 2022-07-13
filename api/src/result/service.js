@@ -13,6 +13,8 @@ const {
   RESULT_STRING_TEMPLATE_FIELDS,
   caseCondition,
   countXdr,
+  getBaseQuery,
+  modifiers,
 } = require('./query')
 const {
   knex,
@@ -3481,11 +3483,7 @@ async function xdrAssayGraphAggregations(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dates = getDatesFromQuery(query)
-  let { dateFrom } = dates
-  const { dateTo } = dates
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 12)
-  }
+  const { dateFrom, dateTo } = dates
   const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(
     _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
@@ -3495,21 +3493,13 @@ async function xdrAssayGraphAggregations(request) {
 
   const assayIds = await allAssayToId()
 
-  let data = await knex('Result as r')
+  let data = await getBaseQuery(knex, dataConstraints)
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .modify(modifiers.join.resultCategory1)
+    .modify(modifiers.join.resultCategory2)
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .whereIn('a.id', [assayIds.GxMtbXdr])
-    .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
-      result: 'r',
-    })
+    .where('a.id', assayIds.GxMtbXdr)
     .modify(
       filterDateRangeParams,
       { minDate: dateFrom, maxDate: dateTo },
@@ -3528,39 +3518,45 @@ async function xdrAssayGraphAggregations(request) {
     )
     .groupBy('month')
     .count({
-      Total: knex.raw('DISTINCT r.id'),
-      MTB: caseCondition(
+      TotalTests: knex.raw('DISTINCT r.id'),
+      MtbDetected: caseCondition(
         'r.id',
         `r.resultCategory1 IN (${positiveResultCategories})`
       ),
-      FQR: countXdr('FLQ'),
+      FqrDetected: countXdr('FLQ'),
     })
     .orderBy('month')
 
   data = months.map(monthDate => {
     const month = format(monthDate, 'yyyy-MM')
     const item = data.find(it => it.month === month)
-    const { Total = 0, MTB = 0, FQR = 0 } = item || {}
-    const FQRToMTBPercentage = MTB === 0 ? 0 : (100 * FQR) / MTB
+    const { TotalTests = 0, MtbDetected = 0, FqrDetected = 0 } = item || {}
+    const FqrToMtbPercentage =
+      MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
 
     return {
       month,
-      Total,
-      MTB,
-      FQR,
-      FQRToMTBPercentage,
+      TotalTests,
+      MtbDetected,
+      FqrDetected,
+      FqrToMtbPercentage,
     }
   })
 
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['Total', 'MTB', 'FQR', 'FQRToMTBPercentage'],
+    keysFromGrouped: [
+      'TotalTests',
+      'MtbDetected',
+      'FqrDetected',
+      'FqrToMtbPercentage',
+    ],
     i18nKeys: {
-      Total: 'Test',
-      MTB: 'MTB',
-      FQR: 'FQR',
-      FQRToMTBPercentage: 'FQRPercent',
+      TotalTests: 'TotalTests',
+      MtbDetected: 'MtbDetected',
+      FqrDetected: 'FqrDetected',
+      FqrToMtbPercentage: 'FQRPercent',
     },
   }
 }

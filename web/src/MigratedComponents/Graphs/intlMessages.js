@@ -398,21 +398,21 @@ export const messages = {
       defaultMessage: 'RRD%',
     },
 
-    Test: {
-      id: 'legends.Unknown.Test',
-      defaultMessage: 'Test',
+    TotalTests: {
+      id: 'legends.Unknown.TotalTests',
+      defaultMessage: 'Total Tests',
     },
-    MTB: {
-      id: 'legends.Unknown.MTB',
-      defaultMessage: 'MTB',
+    MtbDetected: {
+      id: 'legends.Unknown.MtbDetected',
+      defaultMessage: 'MTB Detected',
     },
-    FQR: {
-      id: 'legends.Unknown.FQR',
-      defaultMessage: 'FQ-R',
+    FqrDetected: {
+      id: 'legends.Unknown.FqrDetected',
+      defaultMessage: 'FQ-R Detected',
     },
     FQRPercent: {
       id: 'legends.Unknown.FQRPercent',
-      defaultMessage: 'FQ-R%',
+      defaultMessage: 'FQ-R %',
     },
   }),
 }
