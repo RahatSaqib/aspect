@@ -474,36 +474,48 @@ async function getNotificationPolicy(
 
 async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
   const people = txKnex('Person as p')
-    .where('p.disabled', false)
     .innerJoin('Job as j', 'p.id', 'j.personId')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
-    .modify(queryBuilder => {
-      if (policy.sendToContactsWithMatchingTags) {
-        queryBuilder.whereIn('pt.tagId', _.uniq(tags))
-      }
-      if (policy.jobFunctionId)
-        queryBuilder.where('jf.id', policy.jobFunctionId)
-      if (!_.isEmpty(jobFunctions)) {
-        queryBuilder.where(jfBuilder => {
-          _.each(jobFunctions, ({ jobFunctionId, tags = [] }) => {
-            jfBuilder.orWhere(builder => {
-              builder.where('jf.id', jobFunctionId)
-              if (tags.length > 0) {
-                builder.whereIn(
-                  'pt.tagId',
-                  _.uniq(_.map(tags, tag => tag.value))
-                )
-              }
+    .where('p.disabled', false)
+    .modify(qWhere => {
+      // Where the person is NOT disabled and...
+      if (
+        policy.sendToContactsWithMatchingTags ||
+        policy.jobFunctionId ||
+        !_.isEmpty(jobFunctions) ||
+        !_.isEmpty(persons)
+      ) {
+        qWhere.andWhere(_qWhere => {
+          // The filter by tag matches...
+          if (policy.sendToContactsWithMatchingTags) {
+            _qWhere.orWhereIn('pt.tagId', _.uniq(tags))
+          }
+          // Or filter by job function ID (used on prev version of notifications)...
+          if (policy.jobFunctionId)
+            _qWhere.orWhere('jf.id', policy.jobFunctionId)
+
+          // Or filter by a list of job functions scoped to person tags...
+          if (!_.isEmpty(jobFunctions)) {
+            _.each(jobFunctions, ({ jobFunctionId, tags = [] }) => {
+              _qWhere.orWhere(jfWhere => {
+                jfWhere.where('jf.id', jobFunctionId)
+                if (tags.length > 0) {
+                  jfWhere.whereIn(
+                    'pt.tagId',
+                    _.uniq(_.map(tags, tag => tag.value))
+                  )
+                }
+              })
             })
-          })
-        })
-      }
-      if (!_.isEmpty(persons)) {
-        queryBuilder.orWhere(pBuilder => {
-          _.each(persons, ({ personId }) => {
-            pBuilder.orWhere(builder => builder.where('p.id', personId))
-          })
+          }
+
+          // Or filter by individual persons...
+          if (!_.isEmpty(persons)) {
+            _.each(persons, ({ personId }) => {
+              _qWhere.orWhere(pWhere => pWhere.where('p.id', personId))
+            })
+          }
         })
       }
     })

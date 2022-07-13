@@ -42,6 +42,9 @@ runs:
         echo admin.email='aspecttest@systemone.id' >> ./api/.env
         echo admin.cell='+18888452610' >> ./api/.env
 
+        echo manager.email='aspecttest2@systemone.id' >> ./api/.env
+        echo manager.cell='+18888452610' >> ./api/.env
+
         echo db.databaseName=${{ inputs.dbname }} >> ./api/.env
         echo db.user=${{ inputs.dbuser }} >> ./api/.env
         echo db.password=${{ inputs.dbpassword }} >> ./api/.env
