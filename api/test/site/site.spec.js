@@ -146,8 +146,8 @@ describe('Site routes', () => {
           longitude: 59.912731,
           latitude: 60.912731,
           timezone: 'Argentina Standard Time',
-          hoursStart: '',
-          hoursEnd: '',
+          hoursStart: null,
+          hoursEnd: null,
           siteTypeId: siteTypeLabId,
           parentWarehouseId: null,
         }
