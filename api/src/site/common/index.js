@@ -9,7 +9,7 @@ const isEmpty = require('lodash/isEmpty')
 function normalizeSiteParameters(payload) {
   let site = filterNotNeededParameters(payload)
 
-  site = normalizeFieldSizes(site)
+  site = normalizeFields(site)
 
   return site
 }
@@ -48,14 +48,19 @@ function filterNotNeededParameters(payload) {
  * @param {Object} site - Site parameters to be persisted
  * @returns Same object with trimmed fields, if it's necessary
  */
-function normalizeFieldSizes(site) {
+function normalizeFields(site) {
   if (site.name.length > 255) {
     site.name = site.name.substr(0, 255)
   }
   if (site.shortName.length > 45) {
     site.shortName = site.shortName.substr(0, 45)
   }
-
+  if (Number.isNaN(site.hoursStart)) {
+    site.hoursStart = null
+  }
+  if (Number.isNaN(site.hoursEnd)) {
+    site.hoursStart = null
+  }
   return site
 }
 

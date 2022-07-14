@@ -6,9 +6,9 @@ module.exports = async site => {
 }
 
 async function validateSiteNotExists({ name, shortName }) {
-  const existingSiteId = await getRepeatedSiteIfExists(name, shortName)
+  const existingSite = await getRepeatedSiteIfExists(name, shortName)
 
-  if (existingSiteId) {
+  if (existingSite) {
     throw Boom.badData(
       `A site with the same name (${name}) or short name (${shortName}) already exists.`
     )
@@ -16,9 +16,5 @@ async function validateSiteNotExists({ name, shortName }) {
 }
 
 async function getRepeatedSiteIfExists(name, shortName) {
-  return getSite(
-    qb =>
-      qb.where({ name }).orWhere({ shortName }).first('id as existingSiteId') ||
-      {}
-  )
+  return getSite(qb => qb.where({ name }).orWhere({ shortName }))
 }
