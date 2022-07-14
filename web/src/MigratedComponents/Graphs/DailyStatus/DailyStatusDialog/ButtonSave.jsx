@@ -14,7 +14,10 @@ export const ButtonSave = ({ onClick, deviceId, mode }) => {
     <Button
       color="primary"
       disabled={mode === MODE.SAVING || !formik.isValid}
-      onClick={() => onClick(deviceId, formik.values)}
+      onClick={() => {
+        onClick(deviceId, formik.values)
+        formik.resetForm()
+      }}
       variant="contained"
     >
       {formatMessage(messages.submit)}
