@@ -11,7 +11,7 @@ const adminEnhanced = mergeJobFunctions(admin, {
   reports: [...admin.reports, 'genexpert_issues'],
 })
 module.exports = [
-  adminEnhaced,
+  adminEnhanced,
   regionalOfficer,
   labUser,
   clinician,
