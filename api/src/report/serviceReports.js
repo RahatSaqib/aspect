@@ -204,14 +204,18 @@ async function getAllSheetsData(request, sheets) {
 async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
-  const { sheets, fileName } = await getReportDetails(auth, externalId)
+  const { sheets, fileName, exportExcel } = await getReportDetails(
+    auth,
+    externalId
+  )
   const user = await getUser(auth.credentials.name)
   const { countryAbbreviation, culture, userName } = user
   const email = user.email || '-'
   const cell = user.cell || '-'
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension = query.format || 'xlsx'
+  const extension =
+    (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
   if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
