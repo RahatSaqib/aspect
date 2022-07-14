@@ -31,30 +31,34 @@ const DailyStatusClinic = ({
       <div className={cssClasses('clinic__name')}>{name}</div>
       <div className={cssClasses('clinic__dayrow')}>
         {data.map(
-          ({
-            day,
-            daysInSameStatus,
-            isWeekend,
-            maintenanceStatusI18nKey,
-            maintenanceStatusExternalId,
-            maintenanceStatusName,
-            maintenanceStatusManuallySetBy,
-            totalResults,
-          }) => (
-            <DailyStatusClinicDay
-              key={`${deviceId}-${day}`}
-              consts={consts}
-              daysInSameStatus={daysInSameStatus}
-              isWeekend={isWeekend}
-              maintenanceStatusI18nKey={maintenanceStatusI18nKey}
-              maintenanceStatusName={maintenanceStatusName}
-              maintenanceStatusManuallySetBy={maintenanceStatusManuallySetBy}
-              maintenanceStatusExternalId={maintenanceStatusExternalId}
-              totalResults={totalResults}
-              statuses={statuses}
-              onClickDay={() => onClickDay({ day, deviceId })}
-            />
-          )
+          (
+            {
+              day,
+              daysInSameStatus,
+              isWeekend,
+              maintenanceStatusI18nKey,
+              maintenanceStatusExternalId,
+              maintenanceStatusName,
+              maintenanceStatusManuallySetBy,
+              totalResults,
+            },
+            idx
+          ) =>
+            idx + 1 <= totalDays ? (
+              <DailyStatusClinicDay
+                key={`${deviceId}-${day}`}
+                consts={consts}
+                daysInSameStatus={daysInSameStatus}
+                isWeekend={isWeekend}
+                maintenanceStatusI18nKey={maintenanceStatusI18nKey}
+                maintenanceStatusName={maintenanceStatusName}
+                maintenanceStatusManuallySetBy={maintenanceStatusManuallySetBy}
+                maintenanceStatusExternalId={maintenanceStatusExternalId}
+                totalResults={totalResults}
+                statuses={statuses}
+                onClickDay={() => onClickDay({ day, deviceId })}
+              />
+            ) : null
         )}
         {fillerDays.map(() => (
           <DayBlock dayModifier="future" consts={consts} />
