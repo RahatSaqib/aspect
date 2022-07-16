@@ -3481,6 +3481,7 @@ async function getCustomFieldsCompletion(auth, query) {
 async function xdrAssayGraphAggregations(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const offset = getOffsetFromIsoDateString(query.maxDate)
 
   const dates = getDatesFromQuery(query)
   const { dateFrom, dateTo } = dates
@@ -3498,7 +3499,6 @@ async function xdrAssayGraphAggregations(request) {
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .modify(modifiers.join.resultCategory1)
     .modify(modifiers.join.resultCategory2)
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .where('a.id', assayIds.GxMtbXdr)
     .modify(
       filterDateRangeParams,
@@ -3513,7 +3513,7 @@ async function xdrAssayGraphAggregations(request) {
     })
     .select(
       knex.raw(`
-        DATE_FORMAT(r.endedOn, "%Y-%m") as month
+        DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m') as month
       `)
     )
     .groupBy('month')
