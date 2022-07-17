@@ -1,16 +1,19 @@
 {
   "data": [
     {
+      "id": 1,
       "name": "Lab",
       "externalId": "lab",
       "i18nKey": "LabSiteType"
     },
     {
+      "id": 2,
       "name": "Clinic",
       "externalId": "clinic",
       "i18nKey": "ClinicSiteType"
     },
     {
+      "id": 3,
       "name": "Warehouse",
       "externalId": "warehouse",
       "i18nKey": "WarehouseSiteType"

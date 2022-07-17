@@ -1,11 +1,7 @@
 module.exports = async knex => {
-  const { siteTypeLabId } = await knex('SiteType')
-    .where({ externalId: 'lab' })
-    .first('id as siteTypeLabId')
+  const siteTypeLabId = 1
 
-  const { siteTypeClinicId } = await knex('SiteType')
-    .where({ externalId: 'clinic' })
-    .first('id as siteTypeClinicId')
+  const siteTypeClinicId = 2
 
   await setAsLabSitesWithDevices(knex, siteTypeLabId)
 

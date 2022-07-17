@@ -8,15 +8,18 @@ module.exports.up = async function (knex) {
     siteType.string('externalId').notNullable()
   })
 
-  await knex.schema.alterTable('Site', device => {
-    device
+  const sabSiteTypeFixedId = 1
+
+  await knex.schema.alterTable('Site', site => {
+    site
       .integer('siteTypeId')
       .unsigned()
       .index()
+      .defaultTo(sabSiteTypeFixedId)
       .references('id')
       .inTable('SiteType')
 
-    device
+    site
       .integer('parentWarehouseId')
       .unsigned()
       .index()
@@ -27,8 +30,8 @@ module.exports.up = async function (knex) {
 
 module.exports.down = async function (knex) {
   await knex.schema.dropTable(tableName)
-  await knex.schema.alterTable('Device', device => {
-    device.dropColumn('siteTypeId')
-    device.dropColumn('parentWarehouseId')
+  await knex.schema.alterTable('Site', site => {
+    site.dropColumn('siteTypeId')
+    site.dropColumn('parentWarehouseId')
   })
 }
