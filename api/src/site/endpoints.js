@@ -338,7 +338,7 @@ const routes = [
   {
     method: 'POST',
     path: '/site',
-    handler: asyncHandler(createSite),
+    handler: createSite,
     config: {
       description: 'Create Site',
       notes: 'Creates a new site',
