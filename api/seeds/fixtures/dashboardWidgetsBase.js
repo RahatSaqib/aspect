@@ -343,16 +343,20 @@ const activeDevicesCnt = {
   FROM Device as d
   INNER JOIN DeviceMaintenanceStatusLog as dmsl ON d.deviceMaintenanceStatusLogId = dmsl.id
   INNER JOIN DeviceMaintenanceStatus as dms ON dmsl.deviceMaintenanceStatusId = dms.id
-  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-  INNER JOIN Site AS s ON s.id = d.siteId
-  INNER JOIN Partner AS p ON s.partnerId = p.id
-  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id`,
+  INNER JOIN DeviceType as dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory as dtc ON dt.deviceTypeCategoryId = dtc.id
+  INNER JOIN Site as s ON s.id = d.siteId
+  INNER JOIN Partner as p ON s.partnerId = p.id
+  LEFT OUTER JOIN Geography as g ON s.geographyId = g.id
+  WHERE dtc.name = 'Lab'`,
   sqlForStatUnit: `SELECT SUM(CASE WHEN (d.lastPingOn BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN 1 ELSE 0 END) as cnt
   FROM Device as d
-  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-  INNER JOIN Site AS s ON s.id = d.siteId
+  INNER JOIN DeviceType as dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory as dtc ON dt.deviceTypeCategoryId = dtc.id
+  INNER JOIN Site as s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
-  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id`,
+  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+  WHERE dtc.name = 'Lab'`,
   statUnit: 'of {unit} online',
   statUnitI18nKey: 'ofOnlineDevices',
   link: '/browse/device',
