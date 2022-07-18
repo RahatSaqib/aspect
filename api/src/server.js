@@ -126,6 +126,14 @@ const messageQueuePlugin = {
   version,
   register: async server =>
     createMessageQueue(queueName)
+      .then(queue => {
+        server.ext('onPreHandler', (request, h) => {
+          request.plugins.messageContext =
+            queue.createMessageContext('aspect_request')
+          return h.continue
+        })
+        return queue
+      })
       .then(async queue => {
         addLoggers(server, queue)
         await addSubscriptions(queue)
@@ -135,11 +143,6 @@ const messageQueuePlugin = {
         return queue
       })
       .then(queue => {
-        server.ext('onPreHandler', (request, h) => {
-          request.plugins.messageContext =
-            queue.createMessageContext('aspect_request')
-          return h.continue
-        })
         return continueUnprocessedRawData(queue)
       })
       .catch(err => {
