@@ -69,7 +69,7 @@ async function onFactGenerateDeviceConnectivity(
     }))
     await knex.batchInsert('FactDeviceFlag', noFactDevices, 25)
 
-    const devicesQ = knex('Device as d')
+    const queryBase = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .join('Partner as p', 'd.partnerId', 'p.id')
       // if already have connectivity flag, no reason to calculate again
@@ -93,9 +93,10 @@ async function onFactGenerateDeviceConnectivity(
     if (deviceId != null) {
       // constrain by single device specified by action, or query all
       // devices on schedule
-      devicesQ.where({ 'd.id': deviceId })
+      queryBase.where({ 'd.id': deviceId })
     }
-    ;(await devicesQ).map(
+    const devicesQ = await queryBase
+    devicesQ.map(
       ({
         id,
         maxDaysDeviceOffline,
@@ -171,7 +172,7 @@ async function onFactGenerateResultCounts(action, context) {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-    await Promise.each(items, async ({ deviceId }) =>
+    return Promise.each(items, async ({ deviceId }) =>
       messageContext.factGenerateResultCounts(deviceId)
     )
   })
@@ -645,7 +646,7 @@ async function onFactCheckInventoryStock(action, { messageContext }) {
       )
 
     // loop all sites and for each check if there are enough inventory items in stock
-    _.map(sites, async site => {
+    return Promise.each(sites, async site => {
       const { siteId, consumableId } = site
       // notice that 'rate' field in table FactInventoryConsumptionRate stores total number of
       // tests during corresponding 'days'. So for actual rate you should do rate/days, but
@@ -691,9 +692,9 @@ async function onFactCalculateInventoryConsumptionRates(
       .select('siteId', 'consumableId')
 
     // loop through all sites/consumables and refresh rate
-    _.map(items, async item => {
-      await refreshConsumptionRates(knex, item.siteId, item.consumableId)
-    })
+    return Promise.each(items, async item =>
+      refreshConsumptionRates(knex, item.siteId, item.consumableId)
+    )
   })
 }
 
@@ -825,20 +826,20 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   const issueStatusId = await issueStatusToId('Active')
   const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
 
-  await context.run(async knex => {
+  return context.run(async knex => {
     // get all partners with defined plugin
     const partners = await knex('Partner')
       .whereNotNull('plugin')
       .select('id', 'plugin')
 
     // loop all partners
-    await Promise.each(partners, async ({ id: partnerId, plugin }) => {
+    return Promise.each(partners, async ({ id: partnerId, plugin }) => {
       const { dataCategories = [] } = await loadPlugin(
         [plugin],
         'dataCategories'
       )
       // check data categories for 'low status'
-      await Promise.each(dataCategories, async dataCategory => {
+      return Promise.each(dataCategories, async dataCategory => {
         const { externalId: categoryToken } = dataCategory
         const issueTypeId = await issueTypeToId(
           `DataCategoryLowFor${categoryToken}`
@@ -850,7 +851,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           .select('id', 'name')
 
         // for each site
-        _.map(sites, async site => {
+        return Promise.each(sites, async site => {
           const siteId = site.id
           // check if this type of IssueEvent has already been triggered and is Active
           const triggeredIssue = await knex('Issue as i')
@@ -1006,7 +1007,7 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
       .having(knex.raw('count(r.id) > 0'))
 
     // loop all and trigger issue
-    _.map(sites, async site => {
+    return Promise.each(sites, async site => {
       context.factNewResultsAvailable(site)
     })
   })
@@ -1053,9 +1054,9 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
       )
 
     // loop all and trigger issue
-    _.map(sitesWithLowCompletionRate, async site => {
+    return Promise.each(sitesWithLowCompletionRate, async site =>
       context.siteWithLowCompletionRateIssue(site)
-    })
+    )
   })
 }
 

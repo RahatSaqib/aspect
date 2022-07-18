@@ -135,13 +135,12 @@ const messageQueuePlugin = {
         return queue
       })
       .then(queue => {
-        return continueUnprocessedRawData(queue).then(() => {
-          server.ext('onPreHandler', (request, h) => {
-            request.plugins.messageContext =
-              queue.createMessageContext('aspect_request')
-            return h.continue
-          })
+        server.ext('onPreHandler', (request, h) => {
+          request.plugins.messageContext =
+            queue.createMessageContext('aspect_request')
+          return h.continue
         })
+        return continueUnprocessedRawData(queue)
       })
       .catch(err => {
         logger.error(err)
