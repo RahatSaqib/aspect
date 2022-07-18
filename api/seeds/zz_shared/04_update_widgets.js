@@ -1,5 +1,8 @@
 /* eslint-disable import/no-dynamic-require */
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = require('../utils').seed(
+  seed,
+  `${__filename}-${new Date().toISOString()}`
+)
 
 const { upsertDashboardWidgets } = require('../common')
 

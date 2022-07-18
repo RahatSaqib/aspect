@@ -45,6 +45,10 @@ export const messages = defineMessages({
     id: 'component.Widget.ofTotalModules',
     defaultMessage: 'of {unit} total modules',
   },
+  ofOnlineDevices: {
+    id: 'component.Widget.ofOnlineDevices',
+    defaultMessage: 'of {unit} online devices',
+  },
   sinceLastWeek: {
     id: 'component.Widget.sinceLastWeek',
     defaultMessage: '{unit} since last week',
@@ -385,6 +389,15 @@ export const messages = defineMessages({
     id: 'component.Widget.bangladeshAverageCompletionDescription',
     defaultMessage:
       "The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay",
+  },
+  activeDevicesCntTitle: {
+    id: 'component.Widget.activeDevicesCntTitle',
+    defaultMessage: 'Current Active Devices',
+  },
+  activeDevicesCntDescription: {
+    id: 'component.Widget.activeDevicesCntDescription',
+    defaultMessage:
+      'Scoped to the last 24 hours, shows the number of devices that uploaded tests, compared to the number of devices that pinged to Aspect (active vs online).',
   },
 })
 
