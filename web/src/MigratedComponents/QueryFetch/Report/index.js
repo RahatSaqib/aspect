@@ -3,4 +3,9 @@ const REPORT_LIST = {
   KEY: 'REPORT_LIST',
 }
 
-export default REPORT_LIST
+const REPORT_SELECT_LIST = {
+  ENDPOINT: '/report/select-list',
+  KEY: 'REPORT_SELECT_LIST',
+}
+
+export { REPORT_LIST, REPORT_SELECT_LIST }

@@ -3,20 +3,15 @@ import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { useQuery } from 'react-query'
 import { defineMessages, injectIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
-
 import AspectDialog from '../../../../components/shared/AspectDialog'
-import AutoComplete from '../../../../components/shared/AutoComplete'
 import CheckboxField from '../../../../components/shared/CheckboxField'
-import fetchWrapperForQueries from '../../../QueryFetch'
-import { SITE_ALL } from '../../../QueryFetch/Site'
 import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
 import { aspectFetch } from '../../../../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
-import { SitesAllErrors } from './errors'
 import messages from '../messages'
+import SiteAutoCompleteField from '../../../SiteAutocompleteField'
 
 import styles from '../Detail.css'
 
@@ -28,7 +23,6 @@ const ResultTransferModal = ({
   isOpen,
   onClose,
 }) => {
-  const [allSites, setAllSites] = useState([])
   const [sourceSite, setSourceSite] = useState(null)
   const [selectedSite, setSelectedSite] = useState(null)
   const [comment, setComment] = useState('')
@@ -37,23 +31,6 @@ const ResultTransferModal = ({
   const [transferError, setTransferError] = useState(null)
   const [isSuccessAlert, setSuccessAlert] = useState(false)
   const navigate = useNavigate()
-
-  useQuery(
-    [SITE_ALL.KEY],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: `${SITE_ALL.ENDPOINT}`,
-        customErrorNotifications: SitesAllErrors,
-      }),
-    {
-      onSuccess: ({ data }) =>
-        setAllSites(
-          data
-            .filter(({ id }) => +id !== +reportableSiteId)
-            .map(({ id, name }) => ({ text: name, value: id }))
-        ),
-    }
-  )
 
   const reset = () => {
     setSelectedSite(null)
@@ -209,15 +186,14 @@ const ResultTransferModal = ({
       disableEscapeKeyDown
     >
       <div>
-        <AutoComplete
-          classes={{ container: cssClasses('autocomplete-wrapper') }}
+        <SiteAutoCompleteField
+          name="siteName"
+          value={selectedSite}
+          onChange={(_, value) => setSelectedSite(value)}
+          floatingLabelFixed
           hintText={formatMessage(messages.hint)}
           floatingLabelText={formatMessage(messages.titleSites)}
-          floatingLabelFixed
-          dataSource={allSites}
-          listStyle={{ width: 'auto' }}
-          onSelect={selectedSite => setSelectedSite(selectedSite)}
-          filter={AutoComplete.caseInsensitiveFilter}
+          width="100%"
         />
         <TextField
           fullWidth
