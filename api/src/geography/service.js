@@ -252,6 +252,11 @@ async function lgaSelectList(request) {
   return { ok: true, data: lgas }
 }
 
+/**
+ * Adds geographyId field to @see {updates}, searching in DB for a record matching countryId, stateId and lgaId
+ * @param {Object} updates - Object with countryId, stateId and lgaId data.
+ * @returns - Input object transformed, now containing geographyId field added, with matching id if a record is found or null if not.
+ */
 async function transformGeographyFromUpdates(updates) {
   const geoFieldNames = ['countryId', 'stateId', 'lgaId']
   const geoFields = _.pick(updates, geoFieldNames)
