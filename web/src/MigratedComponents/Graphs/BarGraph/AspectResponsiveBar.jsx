@@ -103,13 +103,13 @@ const getLegend = (props, config, { formatMessage }) => {
 }
 
 // ----------------------------------------------------------
-const formatAxisLabel = (v, type, displayMethod, intlFormatNumber) => {
+const formatAxisLabel = (v, type, displayMethod, i18n) => {
   if (isFunction(displayMethod)) {
-    return displayMethod(v, intlFormatNumber)
+    return displayMethod(v, i18n, { type })
   }
   return type === 'stackedDeviceActivity'
     ? v.replace(/\D/g, '')
-    : formatValuesForGraphs(v, displayMethod, intlFormatNumber)
+    : formatValuesForGraphs(v, displayMethod, i18n)
 }
 
 /** ***********************************************************
@@ -135,7 +135,9 @@ const AspectResponsiveBar = props => {
     i18nKeys,
   } = props
   const { setConfig } = useGraphClickThrough()
-  const { format, formatNumber: intlFormatNumber, formatMessage } = useI18n()
+  const i18n = useI18n()
+  const { format, formatMessage } = i18n
+
   const { id: graphId, sortByKeys, groupMode, fields, layers = [] } = baseConfig
   const keysForBars = fields
     ? fields.filter(it => it.target === 'bar').map(it => it.name)
@@ -147,8 +149,20 @@ const AspectResponsiveBar = props => {
         return {
           legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
           ylegend: false,
-          yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          yTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           gridYValues: null,
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
@@ -183,7 +197,13 @@ const AspectResponsiveBar = props => {
           enableGridY: true,
           yTickValues: yAxisValues,
           enableGridX: true,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           translateX: -25,
           layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
           extraConfig: {},
@@ -207,7 +227,13 @@ const AspectResponsiveBar = props => {
             true
           ),
           gridYValues: null,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           extraConfig: {},
           padding: 0.03,
           translateX: 15,
@@ -244,12 +270,14 @@ const AspectResponsiveBar = props => {
         }
 
       case type === 'bar-line': {
+        const groupMode = 'grouped'
         const yAxisValues = generateTickValues(
           data,
           tickValuesYShape,
-          keys,
+          keysForBars,
           'Y',
-          true
+          true,
+          { groupMode }
         )
 
         return {
@@ -259,7 +287,13 @@ const AspectResponsiveBar = props => {
           enableGridY: true,
           yTickValues: yAxisValues,
           enableGridX: true,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
@@ -271,7 +305,7 @@ const AspectResponsiveBar = props => {
             axis: { ticks: { text: { fontSize: 12 } } },
           },
           markers: [],
-          groupMode: 'grouped',
+          groupMode,
           margin: { top: 40, right: 60, bottom: 60, left: 60 },
         }
       }
@@ -288,7 +322,13 @@ const AspectResponsiveBar = props => {
             true
           ),
           gridYValues: null,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X'),
+          xTickValues: generateTickValues(
+            data,
+            tickValuesXShape,
+            indexBy,
+            'X',
+            false
+          ),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
@@ -358,7 +398,7 @@ const AspectResponsiveBar = props => {
                   v,
                   displayMethod,
                   assaysFromState,
-                  intlFormatNumber,
+                  i18n.formatNumber,
                   type,
                   formatMessage,
                   messages,
@@ -370,8 +410,7 @@ const AspectResponsiveBar = props => {
           axisLeft={{
             tickSize: 5,
             tickValues: config.yTickValues,
-            format: v =>
-              formatValuesForGraphs(v, displayMethod, intlFormatNumber),
+            format: v => formatValuesForGraphs(v, displayMethod, i18n),
             legendPosition: 'middle',
             legendOffset: -60,
             legend: config.legend,
@@ -387,7 +426,7 @@ const AspectResponsiveBar = props => {
             format: v =>
               v && formatDate === 'MMM'
                 ? format(negateTimeZoneOffset(new Date(v)), formatDate)
-                : formatAxisLabel(v, type, formatDate),
+                : formatAxisLabel(v, type, formatDate, i18n),
           }}
           legends={baseLegend}
           theme={config.theme}

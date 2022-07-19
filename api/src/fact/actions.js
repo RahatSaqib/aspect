@@ -172,7 +172,7 @@ function siteWithLowCompletionRateIssue({
   partnerId,
   completionRatePerSite: completionRate,
 }) {
-  if (!siteId || !completionRate) {
+  if (!siteId || isNil(completionRate)) {
     throw new Error('Must specify siteId and completionRate for new Evaluation')
   }
   return {

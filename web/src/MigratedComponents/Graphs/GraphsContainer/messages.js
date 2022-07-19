@@ -127,6 +127,11 @@ export const messages = defineMessages({
     id: 'pages.Status.TB.rifDetectedTrendsInQuarterTitle.title',
     defaultMessage: 'RRD In Quarters',
   },
+
+  xdrPercentageFQRDetectedOverMTBDetectedGraphTitle: {
+    id: 'pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title',
+    defaultMessage: 'XDR FLQ Resistance',
+  },
 })
 
 export default messages
