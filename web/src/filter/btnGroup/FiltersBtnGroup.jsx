@@ -483,15 +483,10 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         })(filterKey, props)
       )
     },
-    sampleOriginSite: makeButton((sampleOriginSiteId, { siteItemsById }) =>
+    // eslint-disable-next-line no-empty-pattern
+    sampleOriginSite: makeButton((sampleOriginSiteId, {}) =>
       formatMessage(messages.sampleOriginSite, {
-        sampleOriginSiteName: siteItemsById
-          .find(
-            it => it.get('name') === sampleOriginSiteId,
-            EMPTY_CONTEXT,
-            EMPTY_MAP
-          )
-          .get('name'),
+        sampleOriginSiteName: sampleOriginSiteId,
       })
     ),
     contactNameOrEmail: makeButton(contactNameOrEmail =>

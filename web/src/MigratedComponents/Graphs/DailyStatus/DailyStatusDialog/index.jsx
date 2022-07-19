@@ -7,11 +7,11 @@ import AspectDialog from '../../../../components/shared/AspectDialog'
 import formConfig from './formConfig'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import AspectForm from '../../../Form'
-import { getDateString } from '../../../../shared/utils/dateFormat'
 import ButtonSave from './ButtonSave'
 import messages from './messages'
 import { MODE, getFormConfig } from './utils'
 import styles from './DailyStatusDialog.css'
+import { getISOFromString } from '../../../../components/shared/DateTimeInput/utils/date'
 
 const cssClasses = classnames.bind(styles)
 
@@ -40,8 +40,8 @@ export const DailyStatusDialog = ({
       values: {
         ...values,
         // make sure dates are strings as 'YYYY-MM-DD'
-        startedOn: getDateString(values.startedOn),
-        endedOn: getDateString(values.endedOn),
+        startedOn: getISOFromString(values.startedOn),
+        endedOn: getISOFromString(values.endedOn),
       },
     })
   }
@@ -62,7 +62,7 @@ export const DailyStatusDialog = ({
           <ButtonSave
             deviceId={data.deviceId}
             onClick={onSaveChanges}
-            mode={MODE.SAVING}
+            mode={mode}
           />,
         ]}
         classes={{

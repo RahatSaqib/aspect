@@ -18,41 +18,18 @@ Quick Start for development. Everything is explained in more detail throughout t
 
 ### New Development Setup
 
+#### Follow this guide for setting up MySQL and all other tools:
+
+- <https://systemone.youtrack.cloud/articles/ASP-A-27164676/Developer-Setup>
+
+#### Once completed, clone the repo as follow:
+
 ```bash
-# Install Node.js and Yarn
-# Install MySQL
-# Install RabbitMQ
-#  WINDOWS USERS READ THIS: https://www.rabbitmq.com/install-windows-manual.html
-
-# Enable RabbitMQ plugins
-rabbitmq-plugins enable rabbitmq_management
-# Management console at http://localhost:15672 guest:guest by default
-
-# Clone the repository
 git clone git@github.com:SystemOneId/aspect
 cd aspect/api
 
 # Install dependencies
 yarn install
-
-# Create database and database user (changing password as desired)
-mysql -u root <<EOT
-create database aspect;
-create user 'aspectapi'@'localhost' identified by 'mypassword';
-grant all on aspect. * to 'aspectapi'@'localhost';
-flush privileges;
-EOT
-
-# If you see an "You do not have the SUPER privilege and binary logging is enabled" error, then you can try the command below.
-mysql -u root <<EOT
-set global log_bin_trust_function_creators=1;
-EOT
-
-# If you have ONLY_FULL_GROUP_BY in your sql_mode by default, add this to my.cnf or my.ini in the [mysqld] section
-sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
-
-# Configure MySQL to use UTC. Add the following to my.cnf or my.ini in the [mysqld] section
-default-time-zone=+00:00
 
 # Create an .env file and configure settings for your environment
 # using .env.example as a template
@@ -60,6 +37,22 @@ default-time-zone=+00:00
 # seeds.directory='./seeds/development'
 cp .env.example .env
 vim .env
+
+# Populate the following fields in the .env file:
+secret = <some_secret_random_string>
+
+admin.email = 'your_email@systemone.co'
+admin.cell = '+5491151545676'
+
+swagger.enabled = false
+
+twilioAccountSid = "AC8b585894f40b206d25c75f944af1e664"
+twilioAuthToken = "64eaea18bc6487944c169781da7bcc61"
+twilioFromNumber = "+14423337971"
+twilioMessagingServiceSid = "MG3ce426d5d330c9720bff0237690cba14"
+
+webhook.redcap.url= 'asdf'
+webhook.redcap.authToken= 'jkasd'
 
 # Run migrations
 yarn run knex migrate:latest

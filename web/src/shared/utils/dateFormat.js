@@ -31,10 +31,6 @@ export function getDateObject(date, defaultValue) {
   return formatedDate
 }
 
-export const getDateString = date => {
-  return isString(date) ? date : formatDate(date)
-}
-
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
   const userSetTimeZone = getTimezoneId()
@@ -42,9 +38,7 @@ function formatBase(date, displayPreferenceKey) {
   const timeZone = getTimezoneById(userSetTimeZone)
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
   const timeToFormat = isString(date)
-    ? new Date(date).toLocaleString(localeCode, {
-        timeZone,
-      })
+    ? new Date(date).toLocaleString(localeCode, { timeZone })
     : date
 
   return timeToFormat === null

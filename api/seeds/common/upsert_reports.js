@@ -27,7 +27,7 @@ module.exports = async function upsertReports(
   const resultCategoryIds = await getIdsByExternalId('ResultCategory')
 
   const actualReports = {
-    ..._.cloneDeep(commonReportFixture),
+    ..._.cloneDeep(_.omit(commonReportFixture, ['genexpert_issues'])),
     ..._.cloneDeep(countrySpecificReportFixture),
   }
   const reportsById = {}
