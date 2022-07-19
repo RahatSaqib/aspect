@@ -132,8 +132,6 @@ describe('account details service', () => {
       }
 
       const now = new Date()
-      const clock = sinon.useFakeTimers(now.getTime())
-
       return runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
@@ -153,7 +151,6 @@ describe('account details service', () => {
           updatedOn: now,
           updatedBy: contactDetails.userId,
         })
-        clock.restore()
       })
     })
 
@@ -252,7 +249,6 @@ describe('account details service', () => {
       )
 
       const now = new Date()
-      const clock = sinon.useFakeTimers(now.getTime())
 
       return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
@@ -272,7 +268,6 @@ describe('account details service', () => {
           updatedOn: now,
           updatedBy: userPreferences.userId,
         })
-        clock.restore()
       })
     })
 
