@@ -137,7 +137,14 @@ const xdrGraphs = {
         },
         displayMethod: 'actual',
         displayLegend: true,
-        formatDate: (v, i18n) => i18n.format(new Date(v), 'MMM-yy'),
+        formatDate: (value, i18n) => {
+          /**
+           * 'value' has pattern `yyyy-mm` (i.e. `2022-07`), and to correctly
+           * format it to `Jul-22` with taking into account timezones, let's
+           * consider mid-month date - so, convert `yyyy-mm` to `yyyy-mm-15`
+           */
+          return i18n.format(new Date(`${value}-15`), 'MMM-yy')
+        },
         clickThrough: false,
       },
     ],
