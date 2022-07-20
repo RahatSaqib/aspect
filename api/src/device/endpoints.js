@@ -114,6 +114,7 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           'errorRate',
           'createdOn',
           'lastSeen',
+          'lastPingOn',
           'resultCountLastMonth',
           'resultCountThisMonth',
           'deliveredLastMonth',
