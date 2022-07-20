@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { safeDownloadFile } from '../../shared/utils/files'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import REPORT_LIST from '../../MigratedComponents/QueryFetch/Report/index'
+import { REPORT_LIST } from '../../MigratedComponents/QueryFetch/Report/index'
 import {
   makeSearchParamsSanitizer,
   composeSanitizer,

@@ -397,6 +397,23 @@ export const messages = {
       id: 'legends.Unknown.RRDPercent',
       defaultMessage: 'RRD%',
     },
+
+    TotalTests: {
+      id: 'legends.Unknown.TotalTests',
+      defaultMessage: 'Total Tests',
+    },
+    MtbDetected: {
+      id: 'legends.Unknown.MtbDetected',
+      defaultMessage: 'MTB Detected',
+    },
+    FqrDetected: {
+      id: 'legends.Unknown.FqrDetected',
+      defaultMessage: 'FQ-R Detected',
+    },
+    FQRPercent: {
+      id: 'legends.Unknown.FQRPercent',
+      defaultMessage: 'FQ-R %',
+    },
   }),
 }
 

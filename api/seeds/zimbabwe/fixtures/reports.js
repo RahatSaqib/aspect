@@ -21,4 +21,25 @@ module.exports = {
       },
     ],
   },
+  genexpert_issues: {
+    name: 'GeneXpert Issues',
+    description: 'This report shows all issues that apply to GeneXpert devices',
+    i18nKey: 'geneXpertIssues',
+    i18nKeyDescription: 'geneXpertIssues_description',
+    externalId: 'genexpert_issues',
+    fileName: 'geneXpertIssues',
+    sortOrder: 9,
+    sheets: [
+      {
+        sortOrder: 0,
+        moduleName: 'device/serviceReports',
+        functionName: 'getGeneXpertIssuesReport',
+        query: {
+          sortCol: 'triggeredOn',
+          sortDir: 'asc',
+          hasResults: 1,
+        },
+      },
+    ],
+  },
 }

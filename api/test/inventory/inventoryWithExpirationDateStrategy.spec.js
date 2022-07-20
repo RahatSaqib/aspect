@@ -54,6 +54,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       let inventoryItem4Id
       let inventoryItem5Id
       let inventoryItemInTransitId
+      let negativeQoHInventoryItemId
       let consumableId
       const expiresOn1 = startOfDayUtc(addDays(new Date(), 1))
       const expiresOn2 = startOfDayUtc(addDays(new Date(), 2))
@@ -116,6 +117,13 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           expiresOn: expiresOn3,
           quantityOnHand: 300,
         })
+        ;[negativeQoHInventoryItemId] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId: site2Id,
+          lotNumber: '0000018',
+          expiresOn: expiresOn3,
+          quantityOnHand: -1,
+        })
         await knex('FactInventoryConsumptionRate').insert({
           siteId: site2Id,
           consumableId,
@@ -143,6 +151,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             inventoryItemInTransitId,
             inventoryItem4Id,
             inventoryItem5Id,
+            negativeQoHInventoryItemId,
           ])
           .delete()
         await knex('FactInventoryConsumptionRate')
@@ -202,7 +211,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.isNotNull(inventoryItem2)
           assert.equal(inventoryItem2.quantityOnHand, 600)
 
-          // We should filter empty or negative inventories
+          // We should filter empty inventories
           const emptyInventoryItems = res.body.data.filter(
             ii => ii.quantityOnHand <= 0
           )
@@ -211,7 +220,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(res.body, 'total')
         })
 
-        it('should return a list of positive inventory items broken out by lot', async () => {
+        it('should return a list of non zero inventory items broken out by lot', async () => {
           const res = await server
             .get(`${path}?breakOutByLot=true&hasStock=true`)
             .set('Authorization', `Bearer ${shared.token}`)
@@ -222,11 +231,14 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 2)
 
-          // We should not filter empty or negative inventories
+          // We should not filter empty inventories
           const emptyInventoryItems = res.body.data.filter(
-            ii => ii.quantityOnHand <= 0
+            ii => ii.quantityOnHand === 0
           )
-          assert.isTrue(emptyInventoryItems.length === 0)
+          assert.isTrue(
+            emptyInventoryItems.length === 0,
+            'No empty inventories'
+          )
         })
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted', async () => {
@@ -354,25 +366,23 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           res.body.data.forEach(d => assert.equal(d.quantityOnHand, null))
         })
 
-        it('should accept consumableId and siteName as query string parameters', done => {
+        it('should accept consumableId and siteName as query string parameters', async () => {
           const consumableId = 2
           const siteNameFilter = 'clinic'
-          server
+          const res = await server
             .get(
               `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
             )
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              res.body.data.forEach(inventoryItem => {
-                assert.equal(inventoryItem.consumableId, consumableId)
-                assert.includes(
-                  inventoryItem.siteName.toLowerCase(),
-                  siteNameFilter.toLowerCase()
-                )
-              })
-              done()
-            })
+
+          assert.equal(res.status, 200)
+          res.body.data.forEach(inventoryItem => {
+            assert.equal(inventoryItem.consumableId, consumableId)
+            assert.includes(
+              inventoryItem.siteName.toLowerCase(),
+              siteNameFilter.toLowerCase()
+            )
+          })
         })
       })
     })
@@ -398,34 +408,30 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(item, 'noConsumption')
         }
 
-        it('should return a list of sites with inventories counts, when using valid token', done => {
-          server
+        it('should return a list of sites with inventories counts, when using valid token', async () => {
+          const res = await server
             .get(path)
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'array')
-              res.body.data.forEach(item => assertAggregatedItem(item))
-              assert.property(res.body, 'total')
-              done()
-            })
+
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          res.body.data.forEach(item => assertAggregatedItem(item))
+          assert.property(res.body, 'total')
         })
 
-        it('should accept consumableId and siteName as query string parameters', done => {
+        it('should accept consumableId and siteName as query string parameters', async () => {
           const consumableId = 1
           const siteNameFilter = 'lab'
-          server
+          const res = await server
             .get(
               `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
             )
             .set('Authorization', `Bearer ${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              res.body.data.forEach(item => assertAggregatedItem(item))
-              done()
-            })
+
+          assert.equal(res.status, 200)
+          res.body.data.forEach(item => assertAggregatedItem(item))
         })
       })
     })

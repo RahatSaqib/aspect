@@ -7,10 +7,6 @@
   display: flex;
 }
 
-.AutoCompleteField__Inner__AutoComplete {
-  flex-grow: 1;
-}
-
 .AutoCompleteField__Inner__Link {
   flex-shrink: 0;
   display: flex;

@@ -187,16 +187,16 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .select(
         'r.deviceId',
         knex.raw(`
-      DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
-    `),
+          DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
+        `),
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
          * for each device
          */
         knex.raw(`
-      ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
-    `)
+          ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
+        `)
       )
       .groupBy('yearAndMonth', 'r.deviceId')
       /**

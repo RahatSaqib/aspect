@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { knex } = require('../../src/db')
@@ -6,6 +7,7 @@ const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
 
 const { assert } = chai
+const { expect } = chai.use(chaiSubset)
 const server = require('../utils/testUtils')
 
 describe('Site routes', () => {
@@ -15,6 +17,7 @@ describe('Site routes', () => {
     let siteId = 1
 
     let siteData
+
     before(() => {
       shared.checkToken(server, path)
     })
@@ -25,6 +28,7 @@ describe('Site routes', () => {
         .where('id', siteIdToDisable)
         .update({ disabled: 0, disabledBy: null, disabledOn: null })
     })
+
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
         const res = await server
@@ -114,7 +118,105 @@ describe('Site routes', () => {
       })
     })
 
-    describe('POST', () => {})
+    describe('POST', () => {
+      let insertedSites = []
+      let geo = {}
+      let siteTypeLabId
+      let newSiteParams
+      const newSiteName = 'New Site'
+      before(async () => {
+        geo = await knex('Geography')
+          .whereNotNull('lgaId')
+          .first('id', 'countryId', 'stateId', 'lgaId')
+        ;({ siteTypeLabId } = await knex('SiteType')
+          .where('externalId', 'lab')
+          .first('id as siteTypeLabId'))
+
+        newSiteParams = {
+          name: newSiteName,
+          shortName: newSiteName,
+          notes: 'Notes',
+          countryId: geo.countryId,
+          stateId: geo.stateId,
+          lgaId: geo.lgaId,
+          city: 'city',
+          street1: 'street 1',
+          street2: 'street 2',
+          zip: 'zip',
+          longitude: 59.912731,
+          latitude: 60.912731,
+          timezone: 'Argentina Standard Time',
+          hoursStart: null,
+          hoursEnd: null,
+          siteTypeId: siteTypeLabId,
+          parentWarehouseId: null,
+        }
+      })
+
+      afterEach(async () => {
+        if (insertedSites.length > 0) {
+          await knex('Site').whereIn('id', insertedSites).del()
+          insertedSites = []
+        }
+      })
+
+      it('Should create a site given new site data', async () => {
+        const createSiteResponse = await server
+          .post(`${path}`)
+          .send(newSiteParams)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        const siteId = createSiteResponse?.body?.data?.id
+        if (siteId) {
+          insertedSites.push(siteId)
+        }
+
+        assert.equal(
+          createSiteResponse.status,
+          200,
+          createSiteResponse.body.message
+        )
+        assert.typeOf(createSiteResponse.body, 'Object')
+        assert.typeOf(createSiteResponse.body.data.id, 'Number')
+
+        const insertedSite = await knex('Site').where('id', siteId).first()
+
+        expect(insertedSite).to.containSubset({
+          name: newSiteName,
+          shortName: newSiteName,
+          externalId: newSiteName,
+          notes: 'Notes',
+          geographyId: geo.id,
+          city: 'city',
+          street1: 'street 1',
+          street2: 'street 2',
+          zip: 'zip',
+          longitude: 59.912731,
+          latitude: 60.912731,
+          siteTypeId: siteTypeLabId,
+          parentWarehouseId: null,
+        })
+        assert.equal(insertedSite.timezoneid, 'Argentina Standard Time')
+      })
+
+      it('Should reject create a duplicate site ', async () => {
+        const [exisingSiteId] = await knex('Site').insert({
+          name: newSiteName,
+          shortName: newSiteName,
+          siteTypeId: siteTypeLabId,
+          externalId: newSiteName,
+        })
+
+        insertedSites.push(exisingSiteId)
+
+        const createDuplicatedSiteResponse = await server
+          .post(`${path}`)
+          .send(newSiteParams)
+          .set('Authorization', `Bearer${shared.token}`)
+
+        assert.equal(createDuplicatedSiteResponse.status, 422)
+      })
+    })
 
     describe('Disable Site', () => {
       it('should disable a site given a siteId', async () => {

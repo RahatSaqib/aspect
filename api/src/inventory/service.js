@@ -495,7 +495,7 @@ function getInventoryLots(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
-function getInventoryItemsRaw() {
+function getInventoryItemsRawQuery() {
   const fldExpiresOn = `DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d')`
   const fldQuantity = `CAST( IFNULL(ii.quantityOnHand, 0) AS CHAR )`
   const itemRaw = `CONCAT(
@@ -545,8 +545,8 @@ async function listLog(
   return { ok: true, total, length: data.length, data }
 }
 
-function getInventorySites(constraints, request) {
-  const inventoryItemsRaw = getInventoryItemsRaw()
+function getInventorySitesQuery(constraints, request) {
+  const inventoryItemsRaw = getInventoryItemsRawQuery()
 
   return query('Search Inventory Sites')
     .from('Site as s')
@@ -623,7 +623,7 @@ function getInventorySites(constraints, request) {
       ),
       knex.raw(`CASE WHEN IFNULL(ficr.rate, 0) = 0
           THEN null
-          ELSE GetDaysStockLeft( NOW(), ficr.rate, ${inventoryItemsRaw})
+          ELSE GetDaysStockLeft(NOW(), ficr.rate, ${inventoryItemsRaw})
         END as daysStockLeft`),
       knex.raw(
         `CASE WHEN IFNULL(ficr.rate, 0) = 0
@@ -692,7 +692,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
   const range = getDaysStockLeftRanges(query.daysStockLeft)
 
-  let inventoryQuery = getInventorySites(dataConstraints, request)
+  let inventoryQuery = getInventorySitesQuery(dataConstraints, request)
 
   inventoryQuery = knex
     .from(inventoryQuery.as('t2'))
@@ -1053,7 +1053,10 @@ async function getDaysByLocation(request) {
       dataConstraints
     )
   */
-  const baseWithCalculatedFields = getInventorySites(dataConstraints, request)
+  const baseWithCalculatedFields = getInventorySitesQuery(
+    dataConstraints,
+    request
+  )
 
   // -----------------
   // group by location fields and consumableId, and return different counts

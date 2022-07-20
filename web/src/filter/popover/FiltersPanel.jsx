@@ -24,7 +24,7 @@ import DiseaseSelectField from '../resource/DiseaseSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ResultCategoryGroupSelectField from '../resource/ResultCategoryGroupSelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
-import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
+import SiteAutoCompleteField from '../../MigratedComponents/SiteAutocompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
@@ -36,7 +36,7 @@ import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import DaysStockLeftSelectField from '../hardcoded/daysStockLeftSelectField'
 import EnabledDisabledPersonsSelectField from '../hardcoded/toggleDisabledEnabledPersons'
-import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
+import ReportAutoCompleteField from '../../MigratedComponents/ReportAutocompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
 
@@ -126,30 +126,21 @@ const enhance = compose(
         }),
     onSampleOriginSiteChange:
       ({ onChangeFilters }) =>
-      sampleOriginSite =>
-        onChangeFilters({
-          sampleOriginSite,
-        }),
+      site =>
+        onChangeFilters({ sampleOriginSite: site.name }),
     onSiteNameChange:
       ({ onChangeFilters }) =>
-      siteName =>
-        onChangeFilters({
-          siteName,
-        }),
+      site =>
+        onChangeFilters({ siteName: site.name }),
     onReportableSiteChange:
       ({ onChangeFilters }) =>
       ({ id, name }) => {
-        onChangeFilters({
-          reportableSiteName: name,
-          reportableSiteId: id,
-        })
+        onChangeFilters({ reportableSiteName: name, reportableSiteId: id })
       },
     onSiteIdChange:
       ({ onChangeFilters }) =>
-      siteId =>
-        onChangeFilters({
-          siteId,
-        }),
+      site =>
+        onChangeFilters({ siteId: site.name }),
     onWorkflowStatusIdChange:
       ({ onChangeFilters }) =>
       workflowStatusId =>
@@ -241,10 +232,9 @@ const enhance = compose(
         }),
     onReportNameChange:
       ({ onChangeFilters }) =>
-      reportName =>
-        onChangeFilters({
-          reportName,
-        }),
+      report => {
+        onChangeFilters({ reportName: report.name })
+      },
     onToggleEnabledDisabled:
       ({ onChangeFilters }) =>
       contactStatus =>
@@ -529,14 +519,6 @@ const messages = {
     hasStock: {
       id: 'filter.popover.hasStock',
       defaultMessage: 'Has Stock',
-    },
-    reportName: {
-      id: 'filter.popover.reportName',
-      defaultMessage: 'Report',
-    },
-    enterReportName: {
-      id: 'filter.popover.enterReportName',
-      defaultMessage: 'Enter report name...',
     },
     lotNumber: {
       id: 'filter.popover.lotNumber',
@@ -938,7 +920,7 @@ export const FiltersPanel = ({
                 <SiteAutoCompleteField
                   name="siteName"
                   value={filters.siteName || ''}
-                  onSiteNameChange={onSiteNameChange}
+                  onChange={onSiteNameChange}
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSiteName)}
                   floatingLabelText={formatMessage(messages.site)}
@@ -962,7 +944,7 @@ export const FiltersPanel = ({
                 <SiteAutoCompleteField
                   name="sampleOriginSite"
                   value={filters.sampleOriginSite || ''}
-                  onSiteNameChange={onSampleOriginSiteChange}
+                  onChange={onSampleOriginSiteChange}
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSampleOriginSite)}
                   floatingLabelText={formatMessage(messages.sampleOriginSite)}
@@ -1151,7 +1133,7 @@ export const FiltersPanel = ({
                 <SiteAutoCompleteField
                   name="siteId"
                   value={filters.siteId || ''}
-                  onSiteNameChange={onSiteIdChange}
+                  onChange={onSiteIdChange}
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSiteId)}
                   floatingLabelText={formatMessage(messages.siteId)}
@@ -1257,10 +1239,7 @@ export const FiltersPanel = ({
                 <ReportAutoCompleteField
                   name="reportName"
                   value={filters.reportName || ''}
-                  onReportNameChange={onReportNameChange}
-                  floatingLabelFixed
-                  hintText={formatMessage(messages.enterReportName)}
-                  floatingLabelText={formatMessage(messages.reportName)}
+                  onChange={onReportNameChange}
                 />
               </div>
             )}

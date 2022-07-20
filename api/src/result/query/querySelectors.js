@@ -346,6 +346,30 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'pa.unreliablePatientExternalIdTemplate',
 ]
 
+// ----------------
+const caseCondition = (id, condition) =>
+  knex.raw(`
+      DISTINCT
+      CASE
+        WHEN ${condition}
+        THEN ${id}
+        ELSE null
+      END
+    `)
+
+// ----------------
+const countXdr = xdrResistanceValue =>
+  caseCondition(
+    'r.id',
+    `
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${xdrResistanceValue}'
+      ) IS NOT NULL
+    `
+  )
+
 module.exports = {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -354,4 +378,7 @@ module.exports = {
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
+
+  caseCondition,
+  countXdr,
 }

@@ -44,13 +44,7 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
 }
 
 async function getConstraints(credentials) {
-  const user = credentials.name
-    ? await getUser(credentials.name)
-    : credentials.userId
-    ? await getUserByUserId(credentials.userId)
-    : credentials.personId
-    ? await getPersonByPersonId(credentials.personId)
-    : null
+  const user = await getUserFromCredentials(credentials)
   if (!user) {
     return Promise.resolve()
   }
@@ -96,6 +90,16 @@ async function getConstraints(credentials) {
   }
 
   return constraints
+}
+
+async function getUserFromCredentials(credentials) {
+  return credentials.name
+    ? getUser(credentials.name)
+    : credentials.userId
+    ? getUserByUserId(credentials.userId)
+    : credentials.personId
+    ? getPersonByPersonId(credentials.personId)
+    : null
 }
 
 async function getContext({ userId, partnerId, jobFunctionId }) {
@@ -732,4 +736,5 @@ module.exports = {
   addPartnerQueryConstraints,
   getContext,
   getConstraintsByDeviceAPIKey,
+  getUserFromCredentials,
 }
