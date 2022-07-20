@@ -116,11 +116,13 @@ const getColumns = intl => [
     key: 'availabilityRate',
     label: intl.formatMessage(messages.availabilityRate),
     sortable: false,
+    tooltip: intl.formatMessage(messages.availabilityRateDescription),
   },
   {
     key: 'errorRate',
     label: intl.formatMessage(messages.errorRate),
     sortable: false,
+    tooltip: intl.formatMessage(messages.errorRateDescription),
   },
   {
     key: 'issueCategory',
@@ -135,6 +137,7 @@ const getColumns = intl => [
     key: 'lastSeen',
     sortable: true,
     label: intl.formatMessage(messages.lastSeen),
+    tooltip: intl.formatMessage(messages.lastSeenDescription),
   },
   {
     key: 'resultCountLastMonth',

@@ -24,9 +24,19 @@ export const messages = {
       id: 'pages.DeviceList.availabilityRate',
       defaultMessage: 'Active',
     },
+    availabilityRateDescription: {
+      id: 'pages.DeviceList.availabilityRateDescription',
+      defaultMessage:
+        'Percentage of reported active days over the total number of working days in the last 30 Days.',
+    },
     errorRate: {
       id: 'pages.DeviceList.errorRate',
       defaultMessage: 'Test failures',
+    },
+    errorRateDescription: {
+      id: 'pages.DeviceList.errorRateDescription',
+      defaultMessage:
+        'Results with errors over the total number of results in the last 30 Days',
     },
     issues: {
       id: 'pages.DeviceList.issues',
@@ -43,6 +53,11 @@ export const messages = {
     lastSeen: {
       id: 'pages.DeviceList.lastSeen',
       defaultMessage: 'Last Seen',
+    },
+    lastSeenDescription: {
+      id: 'pages.DeviceList.lastSeenDescription',
+      defaultMessage:
+        'Last connection of the device regardless of the amount of tests realized',
     },
     numberOfTests: {
       id: 'pages.DeviceList.numberOfTests',
