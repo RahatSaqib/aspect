@@ -9,11 +9,16 @@ import TableCell from '@material-ui/core/TableCell'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import PermissionsProvider from '../../../Providers/PermissionsProvider'
+import AspectTooltip from '../AspectTooltip'
 
 const styles = theme => {
   const style = {
     cell: {
       fontWeight: theme.typography.fontWeightBold,
+      whiteSpace: 'nowrap',
+    },
+    columnLabel: {
+      whiteSpace: 'normal',
     },
     clickable: {
       cursor: 'pointer',
@@ -29,6 +34,11 @@ const styles = theme => {
     },
     sortIcon: {
       fontSize: 24,
+      width: '1em',
+      height: '1em',
+    },
+    tooltipIcon: {
+      display: 'inline-flex',
       width: '1em',
       height: '1em',
     },
@@ -63,6 +73,7 @@ const DataTableHead = ({
             label,
             onClick,
             sortable = false,
+            tooltip,
             isHidden,
             hiddenOn,
             auth,
@@ -93,7 +104,7 @@ const DataTableHead = ({
                 )}
               >
                 {!sortable ? (
-                  label
+                  <span className={classes.columnLabel}>{label}</span>
                 ) : (
                   <TableSortLabel
                     active={sortColumnKey === key}
@@ -101,11 +112,19 @@ const DataTableHead = ({
                     onClick={() => onHeadColumnClick(key)}
                     IconComponent={KeyboardArrowDown}
                     classes={{
+                      root: classes.columnLabel,
                       icon: classes.sortIcon,
                     }}
                   >
                     {label}
                   </TableSortLabel>
+                )}
+                {tooltip && (
+                  <AspectTooltip
+                    title={tooltip}
+                    showHelpIcon
+                    toolTipContainerClass={classes.tooltipIcon}
+                  />
                 )}
               </TableCell>
             </PermissionsProvider>
