@@ -87,7 +87,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'availabilityRate',
     'errorRate',
     'createdOn',
-    'lastSeen',
+    'lastPingOn',
     'resultCountLastMonth',
     'resultCountThisMonth',
   ],
@@ -134,7 +134,7 @@ const getColumns = intl => [
     label: intl.formatMessage(messages.reportingFor),
   },
   {
-    key: 'lastSeen',
+    key: 'lastPingOn',
     sortable: true,
     label: intl.formatMessage(messages.lastSeen),
     tooltip: intl.formatMessage(messages.lastSeenDescription),
