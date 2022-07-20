@@ -365,7 +365,7 @@ const activeDevicesCnt = {
   statUnitI18nKey: 'ofOnlineDevices',
   link: '/browse/device',
   linkParams: {
-    deviceMaintenanceStatusId: ['active', 'reportedActive'],
+    link: '/operational-data#deviceStatus',
   },
   sortOrder: 1,
   externalId: 'activeDevicesCnt',
