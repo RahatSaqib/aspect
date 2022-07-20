@@ -58,7 +58,6 @@ const FILTERS_CONFIG = [
     siteName: true,
     requiredPermissions: ['site:view'],
   },
-  { date: true, requiredPermissions: [] },
   {
     deviceName: true,
     requiredPermissions: ['device'],
