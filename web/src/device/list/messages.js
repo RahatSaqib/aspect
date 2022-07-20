@@ -50,11 +50,11 @@ export const messages = {
     },
     lastMonth: {
       id: 'pages.DeviceList.lastMonth',
-      defaultMessage: 'Last 30 Days',
+      defaultMessage: '#Results (Last 30 Days)',
     },
     thisMonth: {
       id: 'pages.DeviceList.thisMonth',
-      defaultMessage: 'Preceding 30 Days',
+      defaultMessage: '#Results (Preceding 30 Days)',
     },
     needsRepair: {
       id: 'pages.DeviceList.needsRepair',
