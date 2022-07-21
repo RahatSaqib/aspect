@@ -348,7 +348,7 @@ const activeDevicesCnt = {
   INNER JOIN Site AS s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE dc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
+  WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
     "','"
   )}')`,
   sqlForStatUnit: `SELECT SUM(CASE WHEN (d.lastPingOn BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN 1 ELSE 0 END) as cnt
@@ -358,7 +358,7 @@ const activeDevicesCnt = {
   INNER JOIN Site AS s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE dc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
+  WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
     "','"
   )}')`,
   statUnit: 'of {unit} online',
