@@ -397,7 +397,7 @@ export const messages = defineMessages({
   activeDevicesCntDescription: {
     id: 'component.Widget.activeDevicesCntDescription',
     defaultMessage:
-      'Scoped to the last 24 hours, shows the number of devices that uploaded tests, compared to the number of devices that pinged to Aspect (active vs online).',
+      'Scoped to the last 24 hours, shows the number of devices that uploaded tests (Active), compared to the number of devices that pinged to Aspect (Online).',
   },
 })
 
