@@ -363,10 +363,7 @@ const activeDevicesCnt = {
   )}')`,
   statUnit: 'of {unit} online',
   statUnitI18nKey: 'ofOnlineDevices',
-  link: '/browse/device',
-  linkParams: {
-    link: '/operational-data#deviceStatus',
-  },
+  link: '/operational-data#deviceStatus',
   sortOrder: 1,
   externalId: 'activeDevicesCnt',
   description: `Scoped to the last 24 hours, shows the number of devices that uploaded at least 1 test or were manually set es 'reported active', compared to the number of devices that pinged to Aspect at least 1 time (active vs online).`,
