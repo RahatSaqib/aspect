@@ -11,6 +11,13 @@ const DEFAULT_SETTINGS = {
     dayMonthFormat: 'MM/dd',
     utilizationRateThreshold: 0.8,
     errorRateThreshold: 0.05,
+
+    stateLabel: 'State',
+    statesLabel: 'States',
+    countyLabel: 'County',
+    countiesLabel: 'Counties',
+    lgaLabel: 'LGA',
+    lgasLabel: 'LGAs',
   },
 }
 
@@ -380,4 +387,5 @@ async function onPatientUpdated(/* { patientId }, { messageContext } */) {
 
 module.exports = {
   loadPlugin,
+  DEFAULT_SETTINGS,
 }

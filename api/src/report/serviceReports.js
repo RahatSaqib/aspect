@@ -12,6 +12,7 @@ const {
   exportData,
   getBaseReplacements,
   getMaxLimitPlaceHolders,
+  getAdministrativeDivisionLabelPlaceHolders,
   renderExcelTemplateToCsv,
   renderExcelTemplate,
   streamExcelTemplate,
@@ -209,7 +210,7 @@ async function createReport(request, reply) {
     externalId
   )
   const user = await getUser(auth.credentials.name)
-  const { countryAbbreviation, culture, userName } = user
+  const { countryAbbreviation, culture, partnerId, userName } = user
   const email = user.email || '-'
   const cell = user.cell || '-'
 
@@ -225,6 +226,11 @@ async function createReport(request, reply) {
   if (Boom.isBoom(data)) {
     throw data
   }
+
+  const administrativeDivisionLabelPlaceHolders =
+    await getAdministrativeDivisionLabelPlaceHolders({
+      partnerId,
+    })
 
   const replacements = [
     {
@@ -256,6 +262,7 @@ async function createReport(request, reply) {
       value: userName,
     },
     ...getMaxLimitPlaceHolders(),
+    ...administrativeDivisionLabelPlaceHolders,
   ]
 
   if (extension === 'csv') {
@@ -327,6 +334,7 @@ async function renderExcelFile(params) {
 function renderExcelStream(params) {
   const stream = new Stream.PassThrough()
   const {
+    countryAbbreviation,
     culture,
     templateFolderPath,
     externalId,
@@ -347,6 +355,7 @@ function renderExcelStream(params) {
       streamExcelTemplate({
         stream,
         culture,
+        countryAbbreviation,
         templateFolderPath: templateFolderPath || externalId,
         data,
         replacements,
