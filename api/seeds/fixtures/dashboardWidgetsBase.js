@@ -332,6 +332,49 @@ const utilizationRate = {
   },
 }
 
+const activeDevicesCnt = {
+  jobFunctions: ['all'],
+  icon: 'MdCheck',
+  title: 'Current Active/Online Devices',
+  titleI18nKey: 'activeDevicesCntTitle',
+  subTitle: null,
+  subTitleI18nKey: null,
+  sqlForIndicator: `SELECT SUM(dms.active) as cnt
+  FROM Device AS d
+  INNER JOIN DeviceMaintenanceStatusLog AS dmsl ON d.deviceMaintenanceStatusLogId = dmsl.id
+  INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
+  INNER JOIN Site AS s ON s.id = d.siteId
+  INNER JOIN Partner AS p ON s.partnerId = p.id
+  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+  WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
+    "','"
+  )}')`,
+  sqlForStatUnit: `SELECT SUM(CASE WHEN (d.lastPingOn BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN 1 ELSE 0 END) as cnt
+  FROM Device AS d
+  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
+  INNER JOIN Site AS s ON s.id = d.siteId
+  INNER JOIN Partner AS p ON s.partnerId = p.id
+  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+  WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
+    "','"
+  )}')`,
+  statUnit: 'of {unit} online',
+  statUnitI18nKey: 'ofOnlineDevices',
+  link: '/operational-data#deviceStatus',
+  sortOrder: 1,
+  externalId: 'activeDevicesCnt',
+  description: `Scoped to the last 24 hours, shows the number of devices that uploaded at least 1 test or were manually set es 'reported active', compared to the number of devices that pinged to Aspect at least 1 time (active vs online).`,
+  descriptionI18nKey: 'activeDevicesCntDescription',
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+}
+
 const activeDevices = {
   jobFunctions: ['all'],
   icon: 'MdCheck',
@@ -2069,6 +2112,7 @@ module.exports = {
     dashboardWidgetValidResultsPc,
     utilizationRate,
     activeDevices,
+    activeDevicesCnt,
     stockouts,
     deviceDaysActive,
     errorRate,
