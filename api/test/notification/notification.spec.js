@@ -21,7 +21,7 @@ const { assert } = chai
 
 const { filterConditionWithAssay, filterConditionWithJf, baseFilterCondition } = require('./fitlerCondtions')
 
-describe('Issue based Notifications triggers', () => {
+describe.only('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const resultSample = await knex('Result').first()
@@ -72,7 +72,7 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe('Result Notifications triggers', () => {
+describe.only('Result Notifications triggers', () => {
   let results = []
   let ntId
   let messageContext
@@ -310,7 +310,7 @@ describe('Result Notifications triggers', () => {
     })
   })
 
-  describe('Filter by Person', () => {
+  describe.only('Filter by Person', () => {
     let adminId
     let managerId
 
@@ -339,9 +339,9 @@ describe('Result Notifications triggers', () => {
     it('should create a result based notification for particular person and job function', async () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(2000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).distinct()
-
+      console.log('notificationToPerson', notifications)
       const notificationToPerson = notifications.filter(n => n.personId === adminId)
       const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
       assert.isNotEmpty(notificationToPerson)

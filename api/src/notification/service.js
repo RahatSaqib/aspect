@@ -201,6 +201,7 @@ async function createNotifications(knex, action, context) {
     evaluationMethods[notificationTypeCategoryId],
     filterCondition
   )
+  console.log('evaluationMethods', evaluationMethods[notificationTypeCategoryId])
   // for each job function, find all policies with maximum constrained level,
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
