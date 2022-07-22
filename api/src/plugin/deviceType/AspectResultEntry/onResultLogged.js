@@ -1,28 +1,15 @@
 const _ = require('lodash')
-const {
-  resultCategoryToId,
-  resultSourceToId,
-} = require('../../../shared/dictionary')
+const { resultCategoryToId, resultSourceToId } = require('../../../shared/dictionary')
 const { parseDateOrDefault } = require('../../../shared/date')
-const {
-  processUsingDataSourceQuery,
-} = require('../../../stringTemplate/service')
-const {
-  getResultForStringTemplateProcessing,
-} = require('../../../result/service')
+const { processUsingDataSourceQuery } = require('../../../stringTemplate/service')
+const { getResultForStringTemplateProcessing } = require('../../../result/service')
 const { RESULT_STRING_TEMPLATE_FIELDS } = require('../../../result/query')
 const { resultUnusedModules } = require('../../../result/actions')
 
-const {
-  shouldTriggerModuleReplaced,
-  shouldTriggerResultErrorAnalysis,
-} = require('../../utils')
+const { shouldTriggerModuleReplaced, shouldTriggerResultErrorAnalysis } = require('../../utils')
 const logger = require('../../../shared/logger')
 
-async function onResultLogged(
-  { resultId, deviceLogId, userId },
-  { messageContext }
-) {
+async function onResultLogged({ resultId, deviceLogId, userId }, { messageContext }) {
   return messageContext.run(async knex => {
     logger.debug([resultId, deviceLogId, userId], {
       reLabel: 'mq:onResultLogged',
@@ -42,11 +29,7 @@ async function onResultLogged(
         .orderBy('dl.id', 'desc')
         .first('dt.externalId')) || {}
 
-    if (
-      !['Aspect', 'CepheidGeneXpert', 'GxAlert'].includes(
-        deviceLogDeviceTypeExternalId
-      )
-    ) {
+    if (!['Aspect', 'CepheidGeneXpert', 'GxAlert'].includes(deviceLogDeviceTypeExternalId)) {
       return
     }
     const result = await getResultForStringTemplateProcessing(
@@ -112,19 +95,13 @@ async function onResultLogged(
       await messageContext.resultUnusedModules(resultDeviceId)
 
       if (deviceLogDeviceTypeExternalId === 'Aspect') {
-        await updateCovidResultFromFormData(
-          { result, deviceLogId, userId },
-          { messageContext }
-        )
+        await updateCovidResultFromFormData({ result, deviceLogId, userId }, { messageContext })
       }
     }
   })
 }
 
-async function updateCovidResultFromFormData(
-  { result, userId },
-  { messageContext }
-) {
+async function updateCovidResultFromFormData({ result, userId }, { messageContext }) {
   return messageContext.transact(async knex => {
     // check if a module was replaced and trigger replacement-issue if it was
     const {
@@ -171,29 +148,23 @@ async function updateCovidResultFromFormData(
     if (formSchema) {
       formSchemaObject = JSON.parse(formSchema)
     }
-    const diagnosticDeviceResoultSourceId = await resultSourceToId(
-      'DiagnosticDevice'
-    )
-    const [{ deviceLogCountFromDiagnosticDevice }] = await knex(
-      'DeviceLog as dl'
-    )
+    const diagnosticDeviceResoultSourceId = await resultSourceToId('DiagnosticDevice')
+    const [{ deviceLogCountFromDiagnosticDevice }] = await knex('DeviceLog as dl')
       .join('Device as d', 'dl.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('Assay as a', 'dt.id', 'a.deviceTypeId')
       .where('dl.resultId', resultId)
       .andWhere('a.resultSourceId', diagnosticDeviceResoultSourceId)
       .count('dl.id as deviceLogCountFromDiagnosticDevice')
-    const canOverwriteDiagnosticDataByHand =
-      deviceLogCountFromDiagnosticDevice === 0
+    const canOverwriteDiagnosticDataByHand = deviceLogCountFromDiagnosticDevice === 0
 
     if (diseaseId) {
       let caseExternalId
       if (caseExternalIdTemplate) {
         ;({ reliableCaseExternalId: caseExternalId } =
-          (await processUsingDataSourceQuery(
-            { ...result, caseExternalIdTemplate },
-            ['reliableCaseExternalIdTemplate']
-          )) || {})
+          (await processUsingDataSourceQuery({ ...result, caseExternalIdTemplate }, [
+            'reliableCaseExternalIdTemplate',
+          ])) || {})
       }
       if (!caseExternalId) {
         caseExternalId = formDataObject.caseId
@@ -207,8 +178,7 @@ async function updateCovidResultFromFormData(
       }
     }
 
-    const testReasonOptions =
-      _.get(formSchemaObject, 'fields.testReason.control.options') || []
+    const testReasonOptions = _.get(formSchemaObject, 'fields.testReason.control.options') || []
     patientDataObject.testReason =
       (
         testReasonOptions.find(
@@ -220,12 +190,9 @@ async function updateCovidResultFromFormData(
     patientDataObject.age =
       formDataObject.age ||
       (formDataObject.ageYears ? `${formDataObject.ageYears} years` : null) ||
-      (formDataObject.ageMonths
-        ? `${formDataObject.ageMonths} months`
-        : null) ||
+      (formDataObject.ageMonths ? `${formDataObject.ageMonths} months` : null) ||
       (formDataObject.ageDays ? `${formDataObject.ageDays} days` : null)
-    const genderOptions =
-      _.get(formSchemaObject, 'fields.gender.control.options') || []
+    const genderOptions = _.get(formSchemaObject, 'fields.gender.control.options') || []
     patientDataObject.gender =
       (
         genderOptions.find(
@@ -235,8 +202,7 @@ async function updateCovidResultFromFormData(
     if (!_.isEqual(patientDataObject, originalPatientDataObject)) {
       resultUpdates.patientData = JSON.stringify(patientDataObject)
     }
-    const testResultOptions =
-      _.get(formSchemaObject, 'fields.testResult.control.options') || []
+    const testResultOptions = _.get(formSchemaObject, 'fields.testResult.control.options') || []
     const selectedResultText = (
       testResultOptions.find(
         option => option.value == formDataObject.testResult // eslint-disable-line eqeqeq
@@ -247,19 +213,14 @@ async function updateCovidResultFromFormData(
       testDate = parseDateOrDefault(formDataObject.dateAndTimeOfTest)
     }
     if (canOverwriteDiagnosticDataByHand) {
-      resultDataObject.resultText =
-        selectedResultText || resultDataObject.resultText
+      resultDataObject.resultText = selectedResultText || resultDataObject.resultText
       if (testDate) {
         resultUpdates.endedOn = testDate || resultEndedOn
         resultUpdates.startedOn = testDate || resultStartedOn
       }
     } else if (selectedResultText) {
-      resultDataObject.resultText =
-        resultDataObject.resultText || selectedResultText
-      if (
-        resultDataObject.resultText === 'Unknown' &&
-        selectedResultText !== 'Unknown'
-      ) {
+      resultDataObject.resultText = resultDataObject.resultText || selectedResultText
+      if (resultDataObject.resultText === 'Unknown' && selectedResultText !== 'Unknown') {
         resultDataObject.resultText = selectedResultText
       }
       if (testDate) {
@@ -268,21 +229,17 @@ async function updateCovidResultFromFormData(
       }
     }
     if (assayExternalId === 'assayGenericCovid19') {
-      const testTypeOptions =
-        _.get(formSchemaObject, 'fields.testType.control.options') || []
+      const testTypeOptions = _.get(formSchemaObject, 'fields.testType.control.options') || []
       const selectedTestType = (
         testTypeOptions.find(
           option => option.value == formDataObject.testType // eslint-disable-line eqeqeq
         ) || {}
       ).title
-      resultDataObject.typeOfTest =
-        selectedTestType || resultDataObject.typeOfTest
+      resultDataObject.typeOfTest = selectedTestType || resultDataObject.typeOfTest
     }
     if (!_.isEqual(resultDataObject, originalResultDataObject)) {
       if (resultDataObject.resultText) {
-        const resultCategoryId = await resultCategoryToId(
-          resultDataObject.resultText
-        )
+        const resultCategoryId = await resultCategoryToId(resultDataObject.resultText)
         if (resultCategoryId && resultCategoryId !== resultCategory1) {
           resultUpdates.resultCategory1 = resultCategoryId
         }

@@ -10,13 +10,7 @@ async function up(knex) {
   })
   await knex.schema.createTable('PatientCaseTreatmentStatusLog', tbl => {
     tbl.increments('id').primary()
-    tbl
-      .integer('patientCaseId')
-      .notNullable()
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('PatientCase')
+    tbl.integer('patientCaseId').notNullable().unsigned().index().references('id').inTable('PatientCase')
     tbl
       .integer('treatmentStatusId')
       .notNullable()

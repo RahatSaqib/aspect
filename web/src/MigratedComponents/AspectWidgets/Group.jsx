@@ -23,16 +23,9 @@ const AspectWidgetGroup = ({ data }) => {
   return (
     <Card className={cssClasses('summary__groupCard')}>
       {data.map(({ groupI18nKey, items }) => (
-        <Unit
-          key={groupI18nKey}
-          sm="1-2"
-          lg="1-4"
-          className={cssClasses('summary__groupWrapper')}
-        >
+        <Unit key={groupI18nKey} sm="1-2" lg="1-4" className={cssClasses('summary__groupWrapper')}>
           <div className={cssClasses('summary__groupContainer')}>
-            <div className={cssClasses('summary__groupTitle')}>
-              {intlFormatMessage(messages[groupI18nKey])}
-            </div>
+            <div className={cssClasses('summary__groupTitle')}>{intlFormatMessage(messages[groupI18nKey])}</div>
             <div className={cssClasses('summary__groupWidgets')}>
               <OrderedAspectWidget items={items} />
             </div>

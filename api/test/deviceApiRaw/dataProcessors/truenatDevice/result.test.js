@@ -164,10 +164,7 @@ describe('Truenat Result Upload Data Processor', () => {
       if (newResultId && knexSpy.chainedCalls.lastTable() === 'Result') {
         return Promise.resolve([newResultId])
       }
-      if (
-        newResultWorkflowStatusLogId &&
-        knexSpy.chainedCalls.lastTable() === 'ResultWorkflowLog'
-      ) {
+      if (newResultWorkflowStatusLogId && knexSpy.chainedCalls.lastTable() === 'ResultWorkflowLog') {
         return Promise.resolve([newResultWorkflowStatusLogId])
       }
       return Promise.resolve()
@@ -188,33 +185,27 @@ describe('Truenat Result Upload Data Processor', () => {
         return transaction(mockKnex)
       },
     }
-    return proxyquire(
-      '../../../../src/deviceApiRaw/dataProcessors/truenatDevice/result',
-      {
-        '../_base': {
-          SynchronousDataProcessor: class {
-            constructor(request, messageContext) {
-              this.request = request
-              this.messageContext = messageContext
-            }
-          },
+    return proxyquire('../../../../src/deviceApiRaw/dataProcessors/truenatDevice/result', {
+      '../_base': {
+        SynchronousDataProcessor: class {
+          constructor(request, messageContext) {
+            this.request = request
+            this.messageContext = messageContext
+          }
         },
-        '../../../shared/request': mockSharedRequestService,
-        '../../../db': mockDb,
-        '../../../device/service': mockDeviceService,
-        '../../../shared/dictionary': {
-          resultSourceToId: async resultSourceExternalId =>
-            Promise.resolve(staticData.resultSource[resultSourceExternalId]),
-          resultTypeToId: async resultTypeExternalId =>
-            Promise.resolve(staticData.resultType[resultTypeExternalId]),
-          allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
-          allResultCategoryToId: async () =>
-            Promise.resolve(staticData.resultCategory),
-          allResultWorkflowStatusToId: async () =>
-            Promise.resolve(staticData.resultWorkflowStatus),
-        },
-      }
-    )
+      },
+      '../../../shared/request': mockSharedRequestService,
+      '../../../db': mockDb,
+      '../../../device/service': mockDeviceService,
+      '../../../shared/dictionary': {
+        resultSourceToId: async resultSourceExternalId =>
+          Promise.resolve(staticData.resultSource[resultSourceExternalId]),
+        resultTypeToId: async resultTypeExternalId => Promise.resolve(staticData.resultType[resultTypeExternalId]),
+        allSampleTypeToId: async () => Promise.resolve(staticData.sampleType),
+        allResultCategoryToId: async () => Promise.resolve(staticData.resultCategory),
+        allResultWorkflowStatusToId: async () => Promise.resolve(staticData.resultWorkflowStatus),
+      },
+    })
   }
 
   describe('canProcessRequest', () => {
@@ -285,9 +276,7 @@ describe('Truenat Result Upload Data Processor', () => {
     })
 
     function fluentMockTruenatResultUploadDataProcessor() {
-      let deviceApiKeyDetails = JSON.parse(
-        JSON.stringify(defaultDeviceApiKeyDetails)
-      )
+      let deviceApiKeyDetails = JSON.parse(JSON.stringify(defaultDeviceApiKeyDetails))
       let assay = JSON.parse(JSON.stringify(defaultAssay))
       let sampleId = defaultSampleId
       let newSampleId = defaultNewSampleId
@@ -307,36 +296,30 @@ describe('Truenat Result Upload Data Processor', () => {
           )
         },
       }
-      mockTruenatResultUploadDataProcessorBuilder.withDeviceApiKeyDetails =
-        specifiedDeviceApiKeyDetails => {
-          deviceApiKeyDetails = specifiedDeviceApiKeyDetails
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
-      mockTruenatResultUploadDataProcessorBuilder.withAssay =
-        specifiedAssay => {
-          assay = specifiedAssay
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
-      mockTruenatResultUploadDataProcessorBuilder.withSampleId =
-        specifiedSampleId => {
-          sampleId = specifiedSampleId
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
-      mockTruenatResultUploadDataProcessorBuilder.withNewSampleId =
-        specifiedNewSampleId => {
-          newSampleId = specifiedNewSampleId
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
-      mockTruenatResultUploadDataProcessorBuilder.withExistingResult =
-        specifiedExistingResult => {
-          existingResult = specifiedExistingResult
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
-      mockTruenatResultUploadDataProcessorBuilder.withNewResultId =
-        specifiedNewResultId => {
-          newResultId = specifiedNewResultId
-          return mockTruenatResultUploadDataProcessorBuilder
-        }
+      mockTruenatResultUploadDataProcessorBuilder.withDeviceApiKeyDetails = specifiedDeviceApiKeyDetails => {
+        deviceApiKeyDetails = specifiedDeviceApiKeyDetails
+        return mockTruenatResultUploadDataProcessorBuilder
+      }
+      mockTruenatResultUploadDataProcessorBuilder.withAssay = specifiedAssay => {
+        assay = specifiedAssay
+        return mockTruenatResultUploadDataProcessorBuilder
+      }
+      mockTruenatResultUploadDataProcessorBuilder.withSampleId = specifiedSampleId => {
+        sampleId = specifiedSampleId
+        return mockTruenatResultUploadDataProcessorBuilder
+      }
+      mockTruenatResultUploadDataProcessorBuilder.withNewSampleId = specifiedNewSampleId => {
+        newSampleId = specifiedNewSampleId
+        return mockTruenatResultUploadDataProcessorBuilder
+      }
+      mockTruenatResultUploadDataProcessorBuilder.withExistingResult = specifiedExistingResult => {
+        existingResult = specifiedExistingResult
+        return mockTruenatResultUploadDataProcessorBuilder
+      }
+      mockTruenatResultUploadDataProcessorBuilder.withNewResultId = specifiedNewResultId => {
+        newResultId = specifiedNewResultId
+        return mockTruenatResultUploadDataProcessorBuilder
+      }
       mockTruenatResultUploadDataProcessorBuilder.withNewResultWorkflowStatusLogId =
         specifiedNewResultWorkflowStatusLogId => {
           newResultWorkflowStatusLogId = specifiedNewResultWorkflowStatusLogId
@@ -347,9 +330,7 @@ describe('Truenat Result Upload Data Processor', () => {
 
     describe('when device ID cannot be determined from the device API key specified', () => {
       it('will respond with 400', async () => {
-        const TruenatResult = fluentMockTruenatResultUploadDataProcessor()
-          .withDeviceApiKeyDetails({})
-          .build()
+        const TruenatResult = fluentMockTruenatResultUploadDataProcessor().withDeviceApiKeyDetails({}).build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         try {
           await truenatResultInstance.processRequest()
@@ -371,15 +352,10 @@ describe('Truenat Result Upload Data Processor', () => {
 
     describe('when the sample does not yet exist', () => {
       it('will create a new sample', async () => {
-        const TruenatResult =
-          fluentMockTruenatResultUploadDataProcessor().build()
+        const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
-        const {
-          deviceTypeExternalId,
-          siteExternalId,
-          deviceDefaultReportableSiteId,
-        } = defaultDeviceApiKeyDetails
+        const { deviceTypeExternalId, siteExternalId, deviceDefaultReportableSiteId } = defaultDeviceApiKeyDetails
         const { abbreviation } = defaultAssay
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
@@ -457,15 +433,8 @@ describe('Truenat Result Upload Data Processor', () => {
           .build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
-        const {
-          partnerId,
-          geographyId,
-          longitude,
-          latitude,
-          siteId,
-          deviceId,
-          deviceDefaultReportableSiteId,
-        } = defaultDeviceApiKeyDetails
+        const { partnerId, geographyId, longitude, latitude, siteId, deviceId, deviceDefaultReportableSiteId } =
+          defaultDeviceApiKeyDetails
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
         assert.isUndefined(knexInsertSpies.Sample)
@@ -584,10 +553,7 @@ describe('Truenat Result Upload Data Processor', () => {
           knexUpdateSpies.Result.lastCall.args[0].reportableSiteId,
           defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId
         )
-        assert.notEqual(
-          knexUpdateSpies.Result.lastCall.args[0].reportableSiteId,
-          defaultDeviceApiKeyDetails.siteId
-        )
+        assert.notEqual(knexUpdateSpies.Result.lastCall.args[0].reportableSiteId, defaultDeviceApiKeyDetails.siteId)
       })
     })
 
@@ -609,13 +575,11 @@ describe('Truenat Result Upload Data Processor', () => {
 
     describe('when the device has a default reportable site ID', () => {
       it("will assign the result's reportable site ID", async () => {
-        const TruenatResult =
-          fluentMockTruenatResultUploadDataProcessor().build()
+        const TruenatResult = fluentMockTruenatResultUploadDataProcessor().build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
         expect(knexInsertSpies.Result.lastCall.args[0]).to.containSubset({
-          reportableSiteId:
-            defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId,
+          reportableSiteId: defaultDeviceApiKeyDetails.deviceDefaultReportableSiteId,
         })
       })
     })

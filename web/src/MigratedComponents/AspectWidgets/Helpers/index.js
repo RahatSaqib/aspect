@@ -5,10 +5,7 @@ import remove from 'lodash/remove'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 
-import {
-  getTimePeriod,
-  getAllDaysInCurrentMonth,
-} from '../../../components/shared/DateTimeInput/utils/date'
+import { getTimePeriod, getAllDaysInCurrentMonth } from '../../../components/shared/DateTimeInput/utils/date'
 
 import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
 
@@ -59,15 +56,9 @@ const buildMessagesFromI18nKeys = item => {
 
 const buildWidgetToLinkParams = (link, linkParams) => {
   const inParams = JSON.parse(linkParams)
-  if (
-    inParams &&
-    Object.keys(inParams).length !== 0 &&
-    inParams.constructor === Object
-  ) {
+  if (inParams && Object.keys(inParams).length !== 0 && inParams.constructor === Object) {
     let tempParams = {}
-    for (const [key, value] of Object.entries(
-      omit(inParams, ['permissions'])
-    )) {
+    for (const [key, value] of Object.entries(omit(inParams, ['permissions']))) {
       switch (true) {
         case key === 'dateRange':
           tempParams = { ...tempParams, ...buildDateRange(value) }
@@ -78,9 +69,7 @@ const buildWidgetToLinkParams = (link, linkParams) => {
           break
       }
     }
-    return `${link}?filters=${encodeURIComponent(
-      new URLSearchParams(tempParams).toString()
-    )}`
+    return `${link}?filters=${encodeURIComponent(new URLSearchParams(tempParams).toString())}`
   }
   return link
 }
@@ -120,9 +109,4 @@ const translate = (i18nKey, defaultValue, { formatMessage, messages }) => {
   }
 }
 
-export {
-  buildMessagesFromI18nKeys,
-  buildWidgetToLinkParams,
-  groupWidgets,
-  translate,
-}
+export { buildMessagesFromI18nKeys, buildWidgetToLinkParams, groupWidgets, translate }

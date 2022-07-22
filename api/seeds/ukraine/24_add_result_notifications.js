@@ -13,9 +13,7 @@ const { partnerName, adminUserName } = require('./fixtures/partnerData')
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByName(knex, partnerName)
 
-  const { id: adminId } = await knex('User')
-    .where('name', adminUserName)
-    .first('id')
+  const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
 
   const issueTypeExternalId = 'ResultReceived'
 
@@ -28,9 +26,7 @@ async function seed(knex) {
   })
 
   // use escalation triggers to notify about new MTB+ Rif+ and MTB+ Rif+ results:
-  await seedIssueEscalationTriggersForPartner(knex, partnerId, [
-    'ResultCategory1DetectedResultCategory2Detected',
-  ])
+  await seedIssueEscalationTriggersForPartner(knex, partnerId, ['ResultCategory1DetectedResultCategory2Detected'])
 
   // set up the notifications that should go out
   const now = new Date()
@@ -42,17 +38,11 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const { id: messageSeverityId } = await knex('MessageSeverity')
-    .where('externalId', 'Alert')
-    .first('id')
+  const { id: messageSeverityId } = await knex('MessageSeverity').where('externalId', 'Alert').first('id')
 
-  const { id: issueTypeId } = await knex('IssueType')
-    .where('externalId', issueTypeExternalId)
-    .first('id')
+  const { id: issueTypeId } = await knex('IssueType').where('externalId', issueTypeExternalId).first('id')
 
-  const { id: jobFunctionId } = await knex('JobFunction')
-    .where('externalId', 'regionalOfficer')
-    .first('id')
+  const { id: jobFunctionId } = await knex('JobFunction').where('externalId', 'regionalOfficer').first('id')
 
   // Notify via email
   const resultRifPositiveMessage =

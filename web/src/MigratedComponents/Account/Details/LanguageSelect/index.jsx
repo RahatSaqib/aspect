@@ -19,14 +19,11 @@ const RenderOption = props => {
 const LanguageSelect = props => {
   const { inputProps } = props
 
-  inputProps.options = map(
-    languages,
-    ({ culture, languageName, isoAlpha2Code }) => ({
-      label: languageName,
-      value: culture,
-      iso: isoAlpha2Code,
-    })
-  )
+  inputProps.options = map(languages, ({ culture, languageName, isoAlpha2Code }) => ({
+    label: languageName,
+    value: culture,
+    iso: isoAlpha2Code,
+  }))
 
   inputProps.renderOption = RenderOption
 

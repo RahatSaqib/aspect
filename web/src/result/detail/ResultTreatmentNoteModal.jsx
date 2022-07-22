@@ -9,12 +9,7 @@ const ResultTreatmentNoteModal = ({ restProps }) => (
       <Button color="primary" onClick={restProps.onToggleShown}>
         Cancel
       </Button>,
-      <Button
-        color="primary"
-        variant="contained"
-        disabled={!restProps.isActive}
-        onClick={restProps.onNoteSubmit}
-      >
+      <Button color="primary" variant="contained" disabled={!restProps.isActive} onClick={restProps.onNoteSubmit}>
         Submit
       </Button>,
     ]}

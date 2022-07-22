@@ -19,14 +19,8 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import config from '../../config'
 import { Unit, Hidden } from '../../components/pureGrids'
 import AspectDialog from '../../components/shared/AspectDialog'
-import {
-  resetPasswordEnterEmailAddress,
-  resetPasswordEnterPassword,
-} from '../AuthRedux'
-import {
-  showError,
-  showAcknowledgement,
-} from '../../appNotification/AppNotificationRedux'
+import { resetPasswordEnterEmailAddress, resetPasswordEnterPassword } from '../AuthRedux'
+import { showError, showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './ResetPassword.css'
 import messages from './messages'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
@@ -98,10 +92,7 @@ export class ResetPassword extends PureComponent {
       resettingPassword: true,
       emailAddress,
     })
-    return resetPasswordEnterEmailAddress(emailAddress).then(
-      this.checkInbox,
-      this.createResetPasswordTokenFail
-    )
+    return resetPasswordEnterEmailAddress(emailAddress).then(this.checkInbox, this.createResetPasswordTokenFail)
   }
 
   createResetPasswordTokenFail = () => {
@@ -195,25 +186,15 @@ export class ResetPassword extends PureComponent {
             <Unit xs="11-12" md="5-6" xl="1-2">
               <Paper>
                 <Hidden xs sm className={styles.LargeConten}>
-                  <Stepper
-                    activeStep={stepIndex}
-                    orientation="horizontal"
-                    style={{ padding: 24 }}
-                  >
+                  <Stepper activeStep={stepIndex} orientation="horizontal" style={{ padding: 24 }}>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.enterEmailAddress)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
                     </Step>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.checkEmail)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.checkEmail)}</StepLabel>
                     </Step>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.enterNewPassword)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.enterNewPassword)}</StepLabel>
                     </Step>
                     <Step>
                       <StepLabel>{formatMessage(messages.finish)}</StepLabel>
@@ -234,14 +215,8 @@ export class ResetPassword extends PureComponent {
                   )}
                   {stepIndex === 1 && (
                     <div className={styles.Form}>
-                      <FormattedMessage
-                        {...messages.checkEmailContent}
-                        values={{ emailAddress }}
-                      />
-                      <a
-                        href="#showAdminHelp"
-                        onClick={this.showAdminHelpDialog}
-                      >
+                      <FormattedMessage {...messages.checkEmailContent} values={{ emailAddress }} />
+                      <a href="#showAdminHelp" onClick={this.showAdminHelpDialog}>
                         {formatMessage(messages.iDidntReceiveAnEmail)}
                       </a>
                     </div>
@@ -252,9 +227,7 @@ export class ResetPassword extends PureComponent {
                         intl={intl}
                         action={
                           <Link to="/login">
-                            <Button>
-                              {intl.formatMessage(messages.cancel)}
-                            </Button>
+                            <Button>{intl.formatMessage(messages.cancel)}</Button>
                           </Link>
                         }
                         onSubmit={this.updatePassword}
@@ -270,9 +243,7 @@ export class ResetPassword extends PureComponent {
                       <FormattedMessage {...messages.finishContent} />
                       <div className={styles.Form__ActionRow}>
                         <Link to="/login">
-                          <Button color="primary">
-                            {formatMessage(messages.loginWithMyNewPassword)}
-                          </Button>
+                          <Button color="primary">{formatMessage(messages.loginWithMyNewPassword)}</Button>
                         </Link>
                       </div>
                     </div>
@@ -280,23 +251,15 @@ export class ResetPassword extends PureComponent {
                 </Hidden>
                 <Hidden md lg xl>
                   {resettingPassword && <LinearProgress />}
-                  <Stepper
-                    activeStep={stepIndex}
-                    orientation="vertical"
-                    style={{ padding: 24 }}
-                  >
+                  <Stepper activeStep={stepIndex} orientation="vertical" style={{ padding: 24 }}>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.enterEmailAddress)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
                       <StepContent>
                         <ResetPasswordEnterEmail
                           intl={intl}
                           action={
                             <Link to="/login">
-                              <Button>
-                                {intl.formatMessage(messages.cancel)}
-                              </Button>
+                              <Button>{intl.formatMessage(messages.cancel)}</Button>
                             </Link>
                           }
                           onSubmit={this.createResetPasswordToken}
@@ -305,36 +268,24 @@ export class ResetPassword extends PureComponent {
                       </StepContent>
                     </Step>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.checkEmail)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.checkEmail)}</StepLabel>
                       <StepContent>
                         <div className={styles.Form}>
-                          <FormattedMessage
-                            {...messages.checkEmailContent}
-                            values={{ emailAddress }}
-                          />
-                          <a
-                            href="#showAdminHelp"
-                            onClick={this.showAdminHelpDialog}
-                          >
+                          <FormattedMessage {...messages.checkEmailContent} values={{ emailAddress }} />
+                          <a href="#showAdminHelp" onClick={this.showAdminHelpDialog}>
                             {formatMessage(messages.iDidntReceiveAnEmail)}
                           </a>
                         </div>
                       </StepContent>
                     </Step>
                     <Step>
-                      <StepLabel>
-                        {formatMessage(messages.enterNewPassword)}
-                      </StepLabel>
+                      <StepLabel>{formatMessage(messages.enterNewPassword)}</StepLabel>
                       <StepContent>
                         <ResetPasswordEnterPassword
                           intl={intl}
                           action={
                             <Link to="/login">
-                              <Button>
-                                {intl.formatMessage(messages.cancel)}
-                              </Button>
+                              <Button>{intl.formatMessage(messages.cancel)}</Button>
                             </Link>
                           }
                           onSubmit={this.updatePassword}
@@ -348,9 +299,7 @@ export class ResetPassword extends PureComponent {
                           <FormattedMessage {...messages.finishContent} />
                           <div className={styles.Form__ActionRow}>
                             <Link to="/login">
-                              <Button color="primary">
-                                {formatMessage(messages.loginWithMyNewPassword)}
-                              </Button>
+                              <Button color="primary">{formatMessage(messages.loginWithMyNewPassword)}</Button>
                             </Link>
                           </div>
                         </div>

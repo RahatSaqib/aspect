@@ -3,11 +3,7 @@ import React from 'react'
 import sinon from 'sinon'
 import { shallow } from 'enzyme'
 
-import {
-  LazyLoadItems,
-  LazyLoadParent,
-  LazyLoadChild,
-} from '../../geography/GeographyRedux'
+import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
 import SelectField from '../../components/shared/SelectField'
 import { mountWithTheme } from '../../test/common'
 
@@ -92,9 +88,7 @@ describe('CountrySelectField module', () => {
         onCountryIdChange: sinon.spy(),
         countryId: '2',
       }
-      const CountrySelectFieldWrapper = shallow(
-        <CountrySelectField {...props} />
-      )
+      const CountrySelectFieldWrapper = shallow(<CountrySelectField {...props} />)
       const SelectFieldWrapper = CountrySelectFieldWrapper.find(SelectField)
 
       SelectFieldWrapper.simulate('change', { target: { value: '2' } })

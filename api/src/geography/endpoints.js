@@ -33,8 +33,7 @@ const routes = [
     handler: asyncHandler(countrySelectList),
     config: {
       description: 'Country List With Selected Country',
-      notes:
-        'List of country IDs and Names With States Populated for Selected Country',
+      notes: 'List of country IDs and Names With States Populated for Selected Country',
       validate: {
         params: {
           countryId: Joi.number().description('Country ID').required(),
@@ -93,8 +92,7 @@ const routes = [
     handler: asyncHandler(stateSelectList),
     config: {
       description: 'State List With LGAs for Selected State',
-      notes:
-        'List of state IDs and Names with LGAs populated for selected state',
+      notes: 'List of state IDs and Names with LGAs populated for selected state',
       validate: {
         params: {
           countryId: Joi.number().description('Country ID').required(),

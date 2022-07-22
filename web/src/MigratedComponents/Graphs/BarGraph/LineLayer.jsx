@@ -41,9 +41,7 @@ const getColor = barGraphProps => {
     layerProps,
     baseConfig: { fields = [] },
   } = barGraphProps
-  const colorId =
-    getColorIdByFieldName(fields, layerProps.valueFieldName) ||
-    layerProps.colorId
+  const colorId = getColorIdByFieldName(fields, layerProps.valueFieldName) || layerProps.colorId
   return filterColour(colorId)
 }
 
@@ -53,15 +51,7 @@ const Point = ({
   onMouseOver,
   onMouseOut,
   onMouseMove,
-  pointProps: {
-    fillColor = '#fff',
-    shape,
-    r = 4,
-    strokeWidth = 1,
-    width,
-    height,
-    size,
-  } = {},
+  pointProps: { fillColor = '#fff', shape, r = 4, strokeWidth = 1, width, height, size } = {},
   transform,
 }) => {
   const commonProps = {
@@ -102,18 +92,10 @@ const Point = ({
 }
 
 // ----------------------------------------------------------
-const Tooltip = ({
-  coordinates,
-  index,
-  pointProps,
-  stroke,
-  tooltipProps,
-  value,
-}) => {
+const Tooltip = ({ coordinates, index, pointProps, stroke, tooltipProps, value }) => {
   if (!tooltipProps) return null
   const { r = 4, strokeWidth = 1, formatText = val => val } = pointProps || {}
-  const { width: tooltipWidth = 170, height: tooltipHeight = 24 } =
-    tooltipProps || {}
+  const { width: tooltipWidth = 170, height: tooltipHeight = 24 } = tooltipProps || {}
   const shapeWidth = 2 * r
   const lineLength = 3 + shapeWidth + 2 * strokeWidth + 3
   const dx = 5 // line-&-shape padding left
@@ -135,14 +117,7 @@ const Tooltip = ({
           style={{ pointerEvents: 'none' }}
           className={cssClasses('aspectresponsivebar__tooltip-rect')}
         />
-        <line
-          x1={0}
-          x2={lineLength}
-          y1={0}
-          y2={0}
-          transform={`translate(${dx}, ${dy}) rotate(0)`}
-          stroke={stroke}
-        />
+        <line x1={0} x2={lineLength} y1={0} y2={0} transform={`translate(${dx}, ${dy}) rotate(0)`} stroke={stroke} />
         <Point
           stroke={stroke}
           pointProps={pointProps}
@@ -186,8 +161,7 @@ const Line = barGraphProps => {
 
   const lineColor = getColor(barGraphProps)
 
-  const getValue = (bars, index) =>
-    bars[index].data.data[barGraphProps?.layerProps?.valueFieldName]
+  const getValue = (bars, index) => bars[index].data.data[barGraphProps?.layerProps?.valueFieldName]
 
   const onMouseOver = (event, index) => setVisibleTooltipIndex(index)
   const onMouseOut = () => setVisibleTooltipIndex(-1)
@@ -202,10 +176,7 @@ const Line = barGraphProps => {
         style={{ pointerEvents: 'none', strokeDasharray: '3 3', strokeWidth }}
       />
       {anchorBars.map((bar, index) => (
-        <g
-          key={bar.key}
-          transform={`translate(${coordinates[index].x}, ${coordinates[index].y})`}
-        >
+        <g key={bar.key} transform={`translate(${coordinates[index].x}, ${coordinates[index].y})`}>
           <Point
             stroke={lineColor}
             pointProps={pointProps}

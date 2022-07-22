@@ -5,9 +5,7 @@ const _ = require('lodash')
 const dashboardWidget = require('../fixtures/DashboardWidget')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Nigeria' })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: 'Nigeria' }).first('id')
 
   const widgetIds = {}
   await Promise.all(
@@ -46,9 +44,7 @@ async function seed(knex) {
     })
   )
 
-  const jobFunctions = await knex('JobFunction')
-    .where({ partnerId })
-    .select('id', 'name')
+  const jobFunctions = await knex('JobFunction').where({ partnerId }).select('id', 'name')
 
   const jobFunctionsSetups = jobFunctions.map(async jf => {
     await knex('JobFunctionDashboardWidget').insert([

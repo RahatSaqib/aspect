@@ -59,26 +59,11 @@ const { treatmentStatus } = treatmentStatusGraphs
 const { inventoryStatus } = inventoryStatusGraphs
 const { deviceStatus } = deviceStatusGraphs()
 const { testsOverTime } = testsPerFormedGraphs
-const {
-  trendInYearsAllTests,
-  trendInYearsMtbDetected,
-  trendInYearsRifDetected,
-} = trendInYears
-const { trendInQuartersMtbDetected, trendInQuartersRifDetected } =
-  trendInQuarters
+const { trendInYearsAllTests, trendInYearsMtbDetected, trendInYearsRifDetected } = trendInYears
+const { trendInQuartersMtbDetected, trendInQuartersRifDetected } = trendInQuarters
 const baseGroupFor = {
-  sortedByTotalResults: [
-    hivResults,
-    tbDetected,
-    tbResults,
-    xdrResults,
-    covidResults,
-  ],
-  trendInYears: [
-    trendInYearsAllTests,
-    trendInYearsMtbDetected,
-    trendInYearsRifDetected,
-  ],
+  sortedByTotalResults: [hivResults, tbDetected, tbResults, xdrResults, covidResults],
+  trendInYears: [trendInYearsAllTests, trendInYearsMtbDetected, trendInYearsRifDetected],
   trendInQuarters: [trendInQuartersMtbDetected, trendInQuartersRifDetected],
 }
 
@@ -88,10 +73,7 @@ const Status = () => {
    * get composed data from store and memoize their js values
    */
   const assaysComposed = useSelector(({ assay }) => assay.items)
-  const assays = useMemo(
-    () => assaysComposed.toJS().filter(a => a.hasResults),
-    [assaysComposed]
-  )
+  const assays = useMemo(() => assaysComposed.toJS().filter(a => a.hasResults), [assaysComposed])
   const auth = useAuthState()
   const {
     countryAbbreviation,
@@ -101,9 +83,7 @@ const Status = () => {
 
   const { formatMessage } = useI18n()
   const [graphs, setGraphs] = useState(false)
-  const [groupedGraphsInfo, setGroupedGraphsInfo] = useState(
-    getGroupedGraphsInitialValue(auth, assays)
-  )
+  const [groupedGraphsInfo, setGroupedGraphsInfo] = useState(getGroupedGraphsInitialValue(auth, assays))
   const [marginBottom] = useState(0)
   const dispatch = useDispatch()
 
@@ -118,10 +98,7 @@ const Status = () => {
   /**
    * 2. `groupedGraphs` - define permitted/whitelisted graphs in group
    */
-  useEffect(
-    () => setGroupedGraphsInfo(getGroupedGraphsInitialValue(auth, assays)),
-    [auth, assays]
-  )
+  useEffect(() => setGroupedGraphsInfo(getGroupedGraphsInitialValue(auth, assays)), [auth, assays])
 
   useEffect(() => {
     const { search } = location
@@ -171,10 +148,7 @@ const Status = () => {
     const groupName = GRAPHS_SORTED_BY_TOTAL_RESULTS
     const groupInfo = groupedGraphsInfo[groupName]
     let isReady = false
-    let groupItems = getPermittedGroupItems(
-      baseGroupFor.sortedByTotalResults,
-      groupInfo
-    )
+    let groupItems = getPermittedGroupItems(baseGroupFor.sortedByTotalResults, groupInfo)
 
     /**
      * if all members of the group loaded data - sort them by `totalResults desc`
@@ -214,9 +188,7 @@ const Status = () => {
      */
     const classNames = {}
     if (!isReady) {
-      classNames.cardTitleText = cssClasses(
-        'CardTitle--paint-when-group-is-not-ready'
-      )
+      classNames.cardTitleText = cssClasses('CardTitle--paint-when-group-is-not-ready')
     }
 
     return {
@@ -234,10 +206,7 @@ const Status = () => {
   const groupTrendInYears = useMemo(() => {
     const groupName = GRAPHS_TREND_IN_YEARS
     const groupInfo = groupedGraphsInfo[groupName]
-    const groupItems = getPermittedGroupItems(
-      baseGroupFor.trendInYears,
-      groupInfo
-    )
+    const groupItems = getPermittedGroupItems(baseGroupFor.trendInYears, groupInfo)
 
     return {
       id: groupName,
@@ -250,10 +219,7 @@ const Status = () => {
   const groupTrendInQuarters = useMemo(() => {
     const groupName = GRAPHS_TREND_IN_QUARTERS
     const groupInfo = groupedGraphsInfo[groupName]
-    const groupItems = getPermittedGroupItems(
-      baseGroupFor.trendInQuarters,
-      groupInfo
-    )
+    const groupItems = getPermittedGroupItems(baseGroupFor.trendInQuarters, groupInfo)
 
     return {
       id: groupName,
@@ -292,13 +258,7 @@ const Status = () => {
 
       setGraphs(graphs)
     }
-  }, [
-    culture,
-    groupSortedByTotalResults,
-    groupTrendInYears,
-    groupTrendInQuarters,
-    countryAbbreviation,
-  ])
+  }, [culture, groupSortedByTotalResults, groupTrendInYears, groupTrendInQuarters, countryAbbreviation])
 
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
@@ -308,10 +268,7 @@ const Status = () => {
       </div>
       <ErrorBoundary>
         <PermissionsProvider permissions={['dashboard']}>
-          <SummaryStatus
-            className={cssClasses('Section--summary')}
-            dashboard="home"
-          />
+          <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
         </PermissionsProvider>
       </ErrorBoundary>
 
@@ -341,10 +298,7 @@ const Status = () => {
           })
         : null}
 
-      <Reports
-        className={cssClasses('Section--withStatus')}
-        title={formatMessage(messages.reportsTitle)}
-      />
+      <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />
     </div>
   )
 }

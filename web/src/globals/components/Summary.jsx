@@ -20,11 +20,7 @@ const descriptionSection = (description, to, action) => (
         <FaExternalLink />
       </Link>
     )}
-    {action && (
-      <span className={cssClasses('Summary__Description__Action')}>
-        {action}
-      </span>
-    )}
+    {action && <span className={cssClasses('Summary__Description__Action')}>{action}</span>}
   </div>
 )
 
@@ -33,9 +29,7 @@ const Summary = ({ title, description, to, action, cols }) => (
     <div className={cssClasses('Summary__Title')}>{title}</div>
     {Array.isArray(description)
       ? description.map(item => (
-          <Fragment key={item.description}>
-            {descriptionSection(item.description, item.to, item.action)}
-          </Fragment>
+          <Fragment key={item.description}>{descriptionSection(item.description, item.to, item.action)}</Fragment>
         ))
       : descriptionSection(description, to, action)}
   </Unit>

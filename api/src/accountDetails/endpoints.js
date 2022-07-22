@@ -12,8 +12,7 @@ const routes = [
     path: '/account-details/current',
     handler: asyncHandler(getAccountDetailsForLoggedInUser),
     config: {
-      description:
-        "Get The Person Object Linked to the Logged In User's Profile",
+      description: "Get The Person Object Linked to the Logged In User's Profile",
       notes: 'Returns a person object',
       response: {
         schema: {
@@ -44,8 +43,7 @@ const routes = [
     path: '/account-details/current-contact',
     handler: asyncHandler(saveContactDetailsForLoggedInUser),
     config: {
-      description:
-        "Save the General and Contact Details of the Person Object Linked to the Logged In User's Profile",
+      description: "Save the General and Contact Details of the Person Object Linked to the Logged In User's Profile",
       notes:
         'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
       validate: {
@@ -74,8 +72,7 @@ const routes = [
     path: '/account-details/current-preferences',
     handler: asyncHandler(saveUserPreferencesForLoggedInUser),
     config: {
-      description:
-        'Save Time Zone and Culture of the person Object Linked for the Logged In User',
+      description: 'Save Time Zone and Culture of the person Object Linked for the Logged In User',
       notes:
         'Returns a person object, prevents a user from trying to edit a person object not linked to their own profile',
       validate: {

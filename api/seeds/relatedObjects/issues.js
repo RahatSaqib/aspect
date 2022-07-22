@@ -1,7 +1,4 @@
-const {
-  allIssueCategoryToId,
-  allMessageSeverityToId,
-} = require('../../src/shared/dictionary')
+const { allIssueCategoryToId, allMessageSeverityToId } = require('../../src/shared/dictionary')
 
 const msgInstrumentReplaced = `{{device.name}}:
   Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
@@ -371,16 +368,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        message: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         ...auditFields,
       },
       EmailTemplate: {
-        subject:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        subject: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         body: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-        htmlBody:
-          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
+        htmlBody: '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
         ...auditFields,
       },
     },
@@ -399,15 +393,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
+        message: '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: No Testing',
         body: '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
-        htmlBody:
-          '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
+        htmlBody: '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
       },
     },
@@ -448,20 +440,17 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
+        message: 'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+        message: 'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Critical Module Errors',
         body: 'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
-        htmlBody:
-          'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
+        htmlBody: 'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
     },
@@ -500,21 +489,17 @@ async function getBaseIssues(auditFields) {
       },
       MessageType: { messageSeverityId: messageSeverities.Alert },
       AlertTemplate: {
-        message:
-          'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
+        message: 'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
+        message: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
-        subject:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
+        subject: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
         body: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
-        htmlBody:
-          '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+        htmlBody: '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         ...auditFields,
       },
     },
@@ -533,16 +518,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
+        message: '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
-        subject:
-          '{{device.name}} has power errors on module {{issue.data.moduleName}}',
+        subject: '{{device.name}} has power errors on module {{issue.data.moduleName}}',
         body: '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
-        htmlBody:
-          '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
+        htmlBody: '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
         ...auditFields,
       },
     },
@@ -562,15 +544,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
+        message: '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Machine Temperature Errors',
         body: '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
+        htmlBody: '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
         ...auditFields,
       },
     },
@@ -589,15 +569,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}}: Power error across machine, conduct troubleshooting.',
+        message: '{{device.name}}: Power error across machine, conduct troubleshooting.',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Power error across machine',
         body: '{{device.name}}: Power error across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
+        htmlBody: '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
         ...auditFields,
       },
     },
@@ -612,14 +590,12 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        message: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
         ...auditFields,
       },
 
       SmsTemplate: {
-        message:
-          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        message: '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         ...auditFields,
       },
       EmailTemplate: {
@@ -645,15 +621,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
+        message: '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Procedural Errors',
         body: '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
+        htmlBody: '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
         ...auditFields,
       },
     },
@@ -668,20 +642,17 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        message: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        message: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject: 'Low Collection Rate',
         body: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-        htmlBody:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        htmlBody: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
     },
@@ -773,8 +744,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: 'Machine Temperature Errors',
         body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
-        htmlBody:
-          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+        htmlBody: 'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -896,8 +866,7 @@ async function getBaseIssues(auditFields) {
       issueType: {
         name: 'Failed To Verify Valid Background Error For Analyte On Module',
         externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
-        i18nKey:
-          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1422,8 +1391,7 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Site with low completion rate {{issue.data.completionRatePercentage}}%',
+        message: 'Site with low completion rate {{issue.data.completionRatePercentage}}%',
         ...auditFields,
       },
     },

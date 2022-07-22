@@ -28,14 +28,8 @@ describe('Device API Raw routes for Truenat Authentication', () => {
     const now = new Date()
     const { id: userId } = await knex('User').first('id')
 
-    const truenatDeviceType = await knex
-      .from('DeviceType')
-      .where('externalId', 'molbioTruenat')
-      .first()
-    const partner = await knex
-      .from('Partner')
-      .where('name', 'Partner One')
-      .first()
+    const truenatDeviceType = await knex.from('DeviceType').where('externalId', 'molbioTruenat').first()
+    const partner = await knex.from('Partner').where('name', 'Partner One').first()
     const geography = await knex
       .from('Country as c')
       .join('Geography as g', 'g.countryId', 'c.id')
@@ -43,10 +37,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       .andWhere('g.stateId', null)
       .andWhere('g.lgaId', null)
       .first('g.*')
-    const approvedDeviceApproval = await knex
-      .from('DeviceApproval')
-      .where('token', 'approved')
-      .first()
+    const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
     const deviceCapacity = await knex('DeviceCapacity')
       .where({ deviceTypeId: truenatDeviceType.id })
       .where({ partnerId: partner.id })
@@ -110,15 +101,11 @@ describe('Device API Raw routes for Truenat Authentication', () => {
   })
 
   after(async () => {
-    const { deviceId: validDeviceId, siteId: validSiteId } = await knex(
-      'DeviceApiKey as dak'
-    )
+    const { deviceId: validDeviceId, siteId: validSiteId } = await knex('DeviceApiKey as dak')
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.id', validApiKey.id)
       .first('dak.deviceId', 'd.siteId')
-    const { deviceId: expiredDeviceId, siteId: expiredSiteId } = await knex(
-      'DeviceApiKey as dak'
-    )
+    const { deviceId: expiredDeviceId, siteId: expiredSiteId } = await knex('DeviceApiKey as dak')
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.id', expiredApiKey.id)
       .first('dak.deviceId', 'd.siteId')
@@ -128,17 +115,9 @@ describe('Device API Raw routes for Truenat Authentication', () => {
     await knex('DeviceLog').where('deviceId', expiredDeviceId).delete()
 
     await knex('DeviceApiRaw').where('deviceApiKeyId', validApiKey.id).delete()
-    await knex('DeviceApiRaw')
-      .where('deviceApiKeyId', expiredApiKey.id)
-      .delete()
-    await knex('DeviceApiKey')
-      .where('id', validApiKey.id)
-      .orWhere('deviceId', validDeviceId)
-      .delete()
-    await knex('DeviceApiKey')
-      .where('id', expiredApiKey.id)
-      .orWhere('deviceId', expiredDeviceId)
-      .delete()
+    await knex('DeviceApiRaw').where('deviceApiKeyId', expiredApiKey.id).delete()
+    await knex('DeviceApiKey').where('id', validApiKey.id).orWhere('deviceId', validDeviceId).delete()
+    await knex('DeviceApiKey').where('id', expiredApiKey.id).orWhere('deviceId', expiredDeviceId).delete()
     await knex('Device').where('id', validDeviceId).delete()
     await knex('Device').where('id', expiredDeviceId).delete()
     await knex('Site').where('id', validSiteId).delete()
@@ -147,13 +126,10 @@ describe('Device API Raw routes for Truenat Authentication', () => {
 
   describe('with a valid API key', () => {
     it('should respond with the API Key token in the body', async () => {
-      const response = await server
-        .post(deviceApiRawPath)
-        .set('Content-type', 'application/json')
-        .send({
-          Username: validApiKey.username,
-          Password: validApiKey.password,
-        })
+      const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
+        Username: validApiKey.username,
+        Password: validApiKey.password,
+      })
       assert.equal(response.statusCode, 200)
       assert.equal(response.body.token, `Bearer ${validApiKey.token}`)
       assert.equal(response.body.username, validApiKey.username)
@@ -163,13 +139,10 @@ describe('Device API Raw routes for Truenat Authentication', () => {
 
   describe('with an expired API key', () => {
     it('should respond with a renewed API Key token in the body', async () => {
-      const response = await server
-        .post(deviceApiRawPath)
-        .set('Content-type', 'application/json')
-        .send({
-          Username: expiredApiKey.username,
-          Password: expiredApiKey.password,
-        })
+      const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
+        Username: expiredApiKey.username,
+        Password: expiredApiKey.password,
+      })
       assert.equal(response.statusCode, 200)
       assert.notEqual(response.body.token, `Bearer ${expiredApiKey.token}`)
       assert.equal(response.body.username, expiredApiKey.username)
@@ -188,10 +161,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
         })
       assert.equal(incorrectPasswordResponse.statusCode, 401)
       assert.isUndefined(incorrectPasswordResponse.body.token)
-      assert.equal(
-        incorrectPasswordResponse.body.message,
-        `{"username":"${validApiKey.username}","success":false}`
-      )
+      assert.equal(incorrectPasswordResponse.body.message, `{"username":"${validApiKey.username}","success":false}`)
 
       const incorrectUsernameResponse = await server
         .post(deviceApiRawPath)
@@ -202,10 +172,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
         })
       assert.equal(incorrectUsernameResponse.statusCode, 401)
       assert.isUndefined(incorrectUsernameResponse.body.token)
-      assert.equal(
-        incorrectUsernameResponse.body.message,
-        `{"username":"some-non-existent-username","success":false}`
-      )
+      assert.equal(incorrectUsernameResponse.body.message, `{"username":"some-non-existent-username","success":false}`)
 
       const incorrectCredentialsResponse = await server
         .post(deviceApiRawPath)
@@ -216,10 +183,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
         })
       assert.equal(incorrectCredentialsResponse.statusCode, 401)
       assert.isUndefined(incorrectCredentialsResponse.body.token)
-      assert.equal(
-        incorrectCredentialsResponse.body.message,
-        `{"username":"no_such_username","success":false}`
-      )
+      assert.equal(incorrectCredentialsResponse.body.message, `{"username":"no_such_username","success":false}`)
     })
   })
 })

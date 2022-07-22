@@ -42,9 +42,7 @@ describe('addConstraints should add disabled sites filter, only when applicable'
 
   it('If Site table alias is in the aliases object, adds Site disabled filter', async () => {
     await runTestWithKnex(async knex => {
-      const queryBuilder = knex('Result as r')
-        .join('Site as s', 's.id', 'r.siteId')
-        .first()
+      const queryBuilder = knex('Result as r').join('Site as s', 's.id', 'r.siteId').first()
 
       addConstraints(queryBuilder, dataConstraints, {
         result: 'r',
@@ -52,12 +50,8 @@ describe('addConstraints should add disabled sites filter, only when applicable'
       })
 
       const query = queryBuilder.toString()
-      query.should.to.have.string(
-        '(`someSiteAlias`.`id` is null or `someSiteAlias`.`disabled` = 0)'
-      )
-      const matchs = query.match(
-        /\(`.*`\.`id` is null or `.*`\.`disabled` = 0\)/g
-      )
+      query.should.to.have.string('(`someSiteAlias`.`id` is null or `someSiteAlias`.`disabled` = 0)')
+      const matchs = query.match(/\(`.*`\.`id` is null or `.*`\.`disabled` = 0\)/g)
       matchs.length.should.to.equal(1)
     })
   })
@@ -69,9 +63,7 @@ describe('addConstraints should add disabled sites filter, only when applicable'
       // Given:
 
       // Only Site alias
-      const queryBuilderWithSite = knex('Result as r')
-        .join('Site as s', 's.id', 'r.siteId')
-        .first()
+      const queryBuilderWithSite = knex('Result as r').join('Site as s', 's.id', 'r.siteId').first()
       addConstraints(queryBuilderWithSite, dataConstraints, {
         site: 's',
       })
@@ -117,9 +109,7 @@ describe('addConstraints should add disabled sites filter, only when applicable'
 
   it(`If there is no alias for Site, Result or Device, then no filter should be added`, async () => {
     await runTestWithKnex(async knex => {
-      const queryBuilder = knex('Partner as p')
-        .join('Geography as g', 'g.id', 'p.geographyId')
-        .first()
+      const queryBuilder = knex('Partner as p').join('Geography as g', 'g.id', 'p.geographyId').first()
 
       addConstraints(queryBuilder, dataConstraints, {
         partner: 'p',

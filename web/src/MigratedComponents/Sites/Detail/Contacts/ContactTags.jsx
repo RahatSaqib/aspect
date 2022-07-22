@@ -4,27 +4,15 @@ import Immutable from 'immutable'
 import { connect } from 'react-redux'
 
 import TagInput from '../../../../components/shared/TagInput'
-import {
-  fetchAvailablePersons,
-  fetchUpdateSiteContacts,
-} from '../../../../person/PersonRedux'
+import { fetchAvailablePersons, fetchUpdateSiteContacts } from '../../../../person/PersonRedux'
 
-const ContactsTag = ({
-  siteId,
-  contacts,
-  value,
-  fetchAvailablePersons,
-  fetchUpdateSiteContacts,
-  ...restProps
-}) => {
+const ContactsTag = ({ siteId, contacts, value, fetchAvailablePersons, fetchUpdateSiteContacts, ...restProps }) => {
   useEffect(() => {
     fetchAvailablePersons('person')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const contactsList = contacts
-    .getIn(['person', 'items'], Immutable.List())
-    .toJS()
+  const contactsList = contacts.getIn(['person', 'items'], Immutable.List()).toJS()
 
   const removeContact = ({ id }) => {
     const person = { id }
@@ -53,10 +41,7 @@ const mapStateToProps = state => ({
 })
 
 ContactsTag.propTypes = {
-  contacts: PropTypes.oneOfType([
-    PropTypes.instanceOf(Immutable.List),
-    PropTypes.instanceOf(Immutable.Map),
-  ]).isRequired,
+  contacts: PropTypes.oneOfType([PropTypes.instanceOf(Immutable.List), PropTypes.instanceOf(Immutable.Map)]).isRequired,
   fetchAvailablePersons: PropTypes.func.isRequired,
   fetchUpdateSiteContacts: PropTypes.func.isRequired,
   siteId: PropTypes.string.isRequired,

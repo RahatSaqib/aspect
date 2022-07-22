@@ -5,17 +5,13 @@ const _ = require('lodash')
 const labClinic = require('./fixtures/labClinic.json')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Philippines' })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: 'Philippines' }).first('id')
 
   const philippinesCountry = await knex('Country as c')
     .where({ 'c.a3': 'PHL' })
     .first('c.id', 'c.culture', 'c.timezone')
 
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
 
   const now = new Date()
   const auditFields = {

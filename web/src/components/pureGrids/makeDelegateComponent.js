@@ -8,29 +8,23 @@ import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 
-export const makeGetClassNames = curry(
-  (pureGridPropTypes, keyToClassNameMappings, props) => {
-    const initial = isString(props.className) ? [props.className] : []
+export const makeGetClassNames = curry((pureGridPropTypes, keyToClassNameMappings, props) => {
+  const initial = isString(props.className) ? [props.className] : []
 
-    return reduce(
-      pureGridPropTypes,
-      (acc, unused, key) => {
-        const value = props[key]
-        if (isBoolean(value) && value) {
-          acc.push(keyToClassNameMappings[key])
-        }
-        return acc
-      },
-      initial
-    )
-  }
-)
+  return reduce(
+    pureGridPropTypes,
+    (acc, unused, key) => {
+      const value = props[key]
+      if (isBoolean(value) && value) {
+        acc.push(keyToClassNameMappings[key])
+      }
+      return acc
+    },
+    initial
+  )
+})
 
-export function makeDelegateComponent(
-  componentName,
-  pureGridPropTypes,
-  keyToClassNameMappings
-) {
+export function makeDelegateComponent(componentName, pureGridPropTypes, keyToClassNameMappings) {
   const propTypes = {
     className: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     component: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
@@ -39,10 +33,7 @@ export function makeDelegateComponent(
 
   const excludedPropList = keys(propTypes)
 
-  const getClassNames = makeGetClassNames(
-    pureGridPropTypes,
-    keyToClassNameMappings
-  )
+  const getClassNames = makeGetClassNames(pureGridPropTypes, keyToClassNameMappings)
 
   return class extends PureComponent {
     static displayName = componentName

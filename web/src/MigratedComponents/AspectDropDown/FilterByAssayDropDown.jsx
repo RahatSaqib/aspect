@@ -20,8 +20,7 @@ const Group = props => {
       {...props}
       headingProps={{
         ...headingProps,
-        onClick: () =>
-          selectProps.onChange(options, { action: 'select-option' }),
+        onClick: () => selectProps.onChange(options, { action: 'select-option' }),
       }}
     />
   )
@@ -74,24 +73,16 @@ const FilterByAssayDropDown = props => {
       }
       // Set default assay group
       if (!isEqual(options, newOptions)) {
-        const defaultAssayGroup = orderBy(
-          data?.assays,
-          'resultCount',
-          'desc'
-        )[0]
+        const defaultAssayGroup = orderBy(data?.assays, 'resultCount', 'desc')[0]
         let defaultAssayGroupIndex = findIndex(
           newOptions,
           ({ label }) => label === defaultAssayGroup.assayTypeAbbreviation
         )
         // Default selected assay group to the provided one
         if (initByCountryDefaultGroup) {
-          const presetDefaultGroupIndex = findIndex(
-            newOptions,
-            ({ label }) => label === initByCountryDefaultGroup
-          )
+          const presetDefaultGroupIndex = findIndex(newOptions, ({ label }) => label === initByCountryDefaultGroup)
           // If it doesn't exist in the list, then default to the group of the assay with more results
-          if (presetDefaultGroupIndex > -1)
-            defaultAssayGroupIndex = presetDefaultGroupIndex
+          if (presetDefaultGroupIndex > -1) defaultAssayGroupIndex = presetDefaultGroupIndex
         }
         setDefaultValue(newOptions[defaultAssayGroupIndex]?.options)
         handleChange(newOptions[defaultAssayGroupIndex]?.options, {

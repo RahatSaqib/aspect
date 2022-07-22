@@ -13,20 +13,10 @@ const routes = [
       auth: { scope: ['task'] },
       validate: {
         query: {
-          alertType: Joi.string()
-            .allow('')
-            .description('Filter for alert type'),
-          issueCategory: Joi.string()
-            .allow('')
-            .description('Filter for issue category'),
-          deviceId: Joi.number()
-            .integer()
-            .allow(null)
-            .description('Filter for device id'),
-          siteId: Joi.number()
-            .integer()
-            .allow(null)
-            .description('Filter for site id'),
+          alertType: Joi.string().allow('').description('Filter for alert type'),
+          issueCategory: Joi.string().allow('').description('Filter for issue category'),
+          deviceId: Joi.number().integer().allow(null).description('Filter for device id'),
+          siteId: Joi.number().integer().allow(null).description('Filter for site id'),
           ...validateSortPageParams('issueCategory', 'site', 'time'),
         },
       },
@@ -41,50 +31,26 @@ const routes = [
               Joi.object().keys({
                 id: Joi.number()
                   .required()
-                  .description(
-                    'Returns the max alert message Id, it is only needed for the datatable'
-                  ),
+                  .description('Returns the max alert message Id, it is only needed for the datatable'),
                 alertTemplateId: Joi.number().required(),
                 site: Joi.string().required().description('The site name'),
-                issueStatus: Joi.string()
-                  .required()
-                  .description('The name of the issue status'),
-                issueStatusI18nKey: Joi.string()
-                  .required()
-                  .description('The key i18n of the issue status'),
-                issueStatusId: Joi.number()
-                  .required()
-                  .description('The id of the issue status'),
-                issueCategory: Joi.string()
-                  .required()
-                  .description('The name of the issue category'),
-                issueCategoryI18nKey: Joi.string()
-                  .required()
-                  .description('The key i18nkey of the issue category'),
-                issueCategoryId: Joi.number()
-                  .required()
-                  .description('The id of the issue category'),
+                issueStatus: Joi.string().required().description('The name of the issue status'),
+                issueStatusI18nKey: Joi.string().required().description('The key i18n of the issue status'),
+                issueStatusId: Joi.number().required().description('The id of the issue status'),
+                issueCategory: Joi.string().required().description('The name of the issue category'),
+                issueCategoryI18nKey: Joi.string().required().description('The key i18nkey of the issue category'),
+                issueCategoryId: Joi.number().required().description('The id of the issue category'),
                 time: Joi.date().required().description('Date for the alert'),
-                message: Joi.string()
-                  .allow(null)
-                  .description('Message of the alert'),
-                issueCount: Joi.number()
-                  .optional()
-                  .description('The amount of issues related to this alert'),
+                message: Joi.string().allow(null).description('Message of the alert'),
+                issueCount: Joi.number().optional().description('The amount of issues related to this alert'),
                 title: Joi.string().required().description("The alert's title"),
               })
             )
             .single(true)
             .description('The task list grouped by issueCategory and date'),
-          total: Joi.number().description(
-            'The amount of task for the personid in the database'
-          ),
-          countByAlert: Joi.object().description(
-            'The amount of task grouped by type'
-          ),
-          length: Joi.number().description(
-            'The amount of task present in this page'
-          ),
+          total: Joi.number().description('The amount of task for the personid in the database'),
+          countByAlert: Joi.object().description('The amount of task grouped by type'),
+          length: Joi.number().description('The amount of task present in this page'),
           ok: Joi.boolean().description('The status of the request'),
         },
       },
@@ -100,23 +66,13 @@ const routes = [
       auth: { scope: ['task'] },
       validate: {
         query: {
-          alertType: Joi.string()
-            .allow('')
-            .description('Filter for alert type'),
+          alertType: Joi.string().allow('').description('Filter for alert type'),
           topic: Joi.string().allow('').description('Filter for topic'),
           date: Joi.date().iso().description('Filter for the alert date'),
           categoryId: Joi.number().description('Filter for the issue category'),
-          alertTemplateId: Joi.number().description(
-            'Filter for the alert template'
-          ),
-          deviceId: Joi.number()
-            .integer()
-            .allow(null)
-            .description('Filter for device id'),
-          siteId: Joi.number()
-            .integer()
-            .allow(null)
-            .description('Filter for site id'),
+          alertTemplateId: Joi.number().description('Filter for the alert template'),
+          deviceId: Joi.number().integer().allow(null).description('Filter for device id'),
+          siteId: Joi.number().integer().allow(null).description('Filter for site id'),
           ...validateSortPageParams('topic', 'site', 'time'),
         },
       },
@@ -129,46 +85,26 @@ const routes = [
             .allow(null)
             .items(
               Joi.object().keys({
-                id: Joi.number()
-                  .required()
-                  .description('The id of the alert message'),
+                id: Joi.number().required().description('The id of the alert message'),
                 site: Joi.string().required().description('The site name'),
                 siteId: Joi.number().description('The site Id'),
                 deviceId: Joi.number().description('The device Id'),
                 device: Joi.string().description('The device name'),
-                issueStatus: Joi.string()
-                  .required()
-                  .description('The name of the issue status'),
-                issueStatusId: Joi.number()
-                  .required()
-                  .description('The id of the issue status'),
-                issueCategory: Joi.string()
-                  .required()
-                  .description('The name of the issue category'),
-                issueCategoryId: Joi.number()
-                  .required()
-                  .description('The id of the issue category'),
+                issueStatus: Joi.string().required().description('The name of the issue status'),
+                issueStatusId: Joi.number().required().description('The id of the issue status'),
+                issueCategory: Joi.string().required().description('The name of the issue category'),
+                issueCategoryId: Joi.number().required().description('The id of the issue category'),
                 time: Joi.date().required().description('Date for the alert'),
-                message: Joi.string()
-                  .allow(null)
-                  .description('Message of the alert'),
-                issueCount: Joi.number()
-                  .optional()
-                  .description('The amount of issues related with this alert'),
+                message: Joi.string().allow(null).description('Message of the alert'),
+                issueCount: Joi.number().optional().description('The amount of issues related with this alert'),
                 title: Joi.string().required().description("The alert's title"),
               })
             )
             .single(true)
             .description('The task list grouped by issueCategory and date'),
-          total: Joi.number().description(
-            'The amount of task for the personid in the database'
-          ),
-          countByAlert: Joi.object().description(
-            'The amount of task grouped by type'
-          ),
-          length: Joi.number().description(
-            'The amount of task present in this page'
-          ),
+          total: Joi.number().description('The amount of task for the personid in the database'),
+          countByAlert: Joi.object().description('The amount of task grouped by type'),
+          length: Joi.number().description('The amount of task present in this page'),
           ok: Joi.boolean().description('The status of the request'),
         },
       },
@@ -195,41 +131,23 @@ const routes = [
         schema: {
           task: Joi.object()
             .keys({
-              id: Joi.number()
-                .required()
-                .description('The id of the alert message'),
+              id: Joi.number().required().description('The id of the alert message'),
               site: Joi.string().required().description('The site name'),
               siteId: Joi.number().description('The site Id'),
               deviceId: Joi.number().description('The device Id'),
               device: Joi.string().description('The device name'),
-              issueStatus: Joi.string()
-                .required()
-                .description('The name of the issue status'),
-              issueStatusId: Joi.number()
-                .required()
-                .description('The id of the issue status'),
-              issueCategory: Joi.string()
-                .required()
-                .description('The name of the issue category'),
-              issueCategoryId: Joi.number()
-                .required()
-                .description('The id of the issue category'),
+              issueStatus: Joi.string().required().description('The name of the issue status'),
+              issueStatusId: Joi.number().required().description('The id of the issue status'),
+              issueCategory: Joi.string().required().description('The name of the issue category'),
+              issueCategoryId: Joi.number().required().description('The id of the issue category'),
               time: Joi.date().required().description('Date for the alert'),
-              message: Joi.string()
-                .allow(null)
-                .description('Message of the alert'),
-              personName: Joi.string().description(
-                'The name of the site contact'
-              ),
+              message: Joi.string().allow(null).description('Message of the alert'),
+              personName: Joi.string().description('The name of the site contact'),
               title: Joi.string().required().description("The alert's title"),
               jobPersons: Joi.array().items(
                 Joi.object().keys({
-                  personName: Joi.string()
-                    .required()
-                    .description('Name of the person alerted'),
-                  personId: Joi.string()
-                    .required()
-                    .description('Id of the person alerted'),
+                  personName: Joi.string().required().description('Name of the person alerted'),
+                  personId: Joi.string().required().description('Id of the person alerted'),
                 })
               ),
             })

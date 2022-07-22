@@ -30,9 +30,7 @@ const AspectNotificationDetails = () => {
     isError,
     data: { data } = [],
     error,
-  } = useQuery(JOBFUNCTIONS_LIST.KEY, async () =>
-    fetchWrapperForQueries({ endpoint: JOBFUNCTIONS_LIST.ENDPOINT })
-  )
+  } = useQuery(JOBFUNCTIONS_LIST.KEY, async () => fetchWrapperForQueries({ endpoint: JOBFUNCTIONS_LIST.ENDPOINT }))
 
   if (isError) {
     throw new Error(error)
@@ -63,10 +61,7 @@ const AspectNotificationDetails = () => {
     },
     {
       onSuccess: () => {
-        const path = getReturnUrl(
-          query.get('returnUrl'),
-          `/browse/notification`
-        )
+        const path = getReturnUrl(query.get('returnUrl'), `/browse/notification`)
         navigate(path)
       },
     }
@@ -76,12 +71,7 @@ const AspectNotificationDetails = () => {
 
   const onSubmit = formik => {
     const specificPersonId = 'specificPerson'
-    const formConfig = getFormConfig(
-      intl.formatMessage,
-      formik.values.notificationType,
-      jobFunctions,
-      true
-    )
+    const formConfig = getFormConfig(intl.formatMessage, formik.values.notificationType, jobFunctions, true)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
     values.notificationType = formik.values.notificationType
@@ -105,8 +95,7 @@ const AspectNotificationDetails = () => {
       []
     )
     values.jobFunctions = values.jobFunctions.filter(
-      ({ checked, jobFunctionId }) =>
-        checked && jobFunctionId !== specificPersonId
+      ({ checked, jobFunctionId }) => checked && jobFunctionId !== specificPersonId
     )
     if (sanitisedPersons?.length) {
       values.persons = sanitisedPersons
@@ -146,16 +135,10 @@ const AspectNotificationDetails = () => {
         <Create
           jobFunctions={jobFunctions}
           onSubmit={onSubmit}
-          notificationType={
-            isNumber(notificationId) ? +notificationId : notificationId
-          }
+          notificationType={isNumber(notificationId) ? +notificationId : notificationId}
         />
       ) : (
-        <Update
-          jobFunctions={jobFunctions}
-          onSubmit={onSubmit}
-          notificationId={id}
-        />
+        <Update jobFunctions={jobFunctions} onSubmit={onSubmit} notificationId={id} />
       )}
     </Fragment>
   )

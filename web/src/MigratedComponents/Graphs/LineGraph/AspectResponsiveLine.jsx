@@ -44,9 +44,7 @@ const AspectResponsiveLine = ({
   let filteredData = data
   if (sortByKeys?.length) {
     const firstDataItem = first(sortBy(data, sortByKeys))
-    filteredData = filter(data, d =>
-      every(sortByKeys, k => d[k] === firstDataItem[k])
-    )
+    filteredData = filter(data, d => every(sortByKeys, k => d[k] === firstDataItem[k]))
   }
   const generateConfig = (type, data) => {
     switch (true) {
@@ -54,20 +52,8 @@ const AspectResponsiveLine = ({
         return {
           legend: 'legend-1', // `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
           ylegend: false,
-          yTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           gridYValues: null,
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
@@ -91,21 +77,9 @@ const AspectResponsiveLine = ({
         return {
           legend: false,
           ylegend: false,
-          yTickValues: generateTickValues(
-            data,
-            tickValuesYShape,
-            keys,
-            'Y',
-            true
-          ),
+          yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
           gridYValues: null,
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
@@ -267,13 +241,7 @@ AspectResponsiveLine.propTypes = {
   formatDate: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   legendsNotToRender: PropTypes.oneOfType([PropTypes.array]),
-  tickValuesYShape: PropTypes.oneOf([
-    'bookends',
-    'clubsandwich',
-    'all',
-    'none',
-    'twos',
-  ]),
+  tickValuesYShape: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none', 'twos']),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none', 'twos']),
   type: PropTypes.oneOf(['line-trends']),
   i18nKeys: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,

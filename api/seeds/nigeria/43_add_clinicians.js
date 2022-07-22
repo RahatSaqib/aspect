@@ -3,38 +3,26 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const clinicians = require('./fixtures/clinicians')
 const config = require('../../src/config')
-const {
-  partnerName,
-  adminUserName,
-  defaultPassword,
-} = require('./fixtures/partnerData')
+const { partnerName, adminUserName, defaultPassword } = require('./fixtures/partnerData')
 const logger = require('../../src/shared/logger')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 module.exports = require('../utils').seed(async knex => {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', partnerName)
-    .first()
+  const { id: partnerId } = await knex('Partner').where('name', partnerName).first()
   const {
     culture,
     timezone,
     id: countryId,
-  } = await knex('Country')
-    .where({ abbreviation: 'NG' })
-    .first('culture', 'timezone', 'id')
-  const { id: adminId } = await knex('User')
-    .where('name', adminUserName)
-    .first()
+  } = await knex('Country').where({ abbreviation: 'NG' }).first('culture', 'timezone', 'id')
+  const { id: adminId } = await knex('User').where('name', adminUserName).first()
   const auditFields = {
     createdOn: new Date(),
     createdBy: adminId,
     updatedOn: new Date(),
     updatedBy: adminId,
   }
-  const { id: jobFunctionId } = await knex('JobFunction')
-    .where('externalId', 'clinician')
-    .first()
+  const { id: jobFunctionId } = await knex('JobFunction').where('externalId', 'clinician').first()
   await Promise.each(clinicians, async clinician => {
     const now = new Date()
     const [userId] = await knex('User').insert({
@@ -46,9 +34,7 @@ module.exports = require('../utils').seed(async knex => {
       failedPasswordAttempts: 0,
     })
     let { geographyId, id: siteId } =
-      (await knex('Site as s')
-        .where('name', clinician.site)
-        .first('geographyId', 'id')) || {}
+      (await knex('Site as s').where('name', clinician.site).first('geographyId', 'id')) || {}
 
     if (!siteId) {
       ;({ geographyId } =
@@ -84,9 +70,7 @@ module.exports = require('../utils').seed(async knex => {
       const [jobId] = await knex('Job').insert({ personId, jobFunctionId })
       await knex('JobContext').insert({ jobId, siteId })
     } else {
-      logger.warning(
-        `NOT found geography for:${clinician.lga} and ${clinician.site}`
-      )
+      logger.warning(`NOT found geography for:${clinician.lga} and ${clinician.site}`)
     }
   })
 }, __filename)

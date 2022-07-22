@@ -17,10 +17,7 @@ const getValidationSchema = formatMessage =>
       })
       .when('endedOn', {
         is: endedOnValue => !!endedOnValue, // is not empty string nor null, i.e. is defined
-        then: Yup.date().max(
-          Yup.ref('endedOn'),
-          formatMessage(messages.startedOnCannotBeAfterEndedOn)
-        ),
+        then: Yup.date().max(Yup.ref('endedOn'), formatMessage(messages.startedOnCannotBeAfterEndedOn)),
       }),
     endedOn: Yup.date()
       .required(formatMessage(messages.endedOnRequired))
@@ -34,9 +31,7 @@ const getValidationSchema = formatMessage =>
         message: formatMessage(messages.timeCannotBeGreaterThanNow),
         test: v => Date.parse(v) < new Date().getTime(),
       }),
-    resultCategory1: Yup.mixed().required(
-      formatMessage(messages.resultCategory1)
-    ),
+    resultCategory1: Yup.mixed().required(formatMessage(messages.resultCategory1)),
     errorCode: Yup.mixed().test({
       message: formatMessage(messages.errorCode),
       test: v => {

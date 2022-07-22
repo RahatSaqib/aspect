@@ -10,22 +10,12 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import Table from '@material-ui/core/Table'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
-import BrowseTablePaginator, {
-  ALL_KEY,
-  PAGE_SIZE_BUTTON_KEYS,
-} from '../../globals/components/BrowseTablePaginator'
+import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchCases } from '../CaseRedux'
@@ -85,23 +75,12 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'createdOn',
-    'externalId',
-    'sampleOriginSite',
-    'patientId',
-    'diseaseName',
-    'status',
-    'diseaseId',
-  ],
+  availableSortCol: ['createdOn', 'externalId', 'sampleOriginSite', 'patientId', 'diseaseName', 'status', 'diseaseId'],
 })
 
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -129,8 +108,7 @@ const enhance = compose(
     onInitialLoad:
       ({ location, fetchCases, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           fetchCases(filtersParams, sortCol, sortDir, pageAt, pageSize)
         }
@@ -147,11 +125,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -163,10 +138,7 @@ const enhance = compose(
           { replace: true }
         )
       }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
+      const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, this.props.userPermissions)
       this.setState({
         reducedFilters,
       })
@@ -247,9 +219,7 @@ export const CaseList = ({
       />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         {!items.currentIdList.isEmpty() && (
           <Table className={cssClasses('CaseDataTable')}>
             <DataTableHead

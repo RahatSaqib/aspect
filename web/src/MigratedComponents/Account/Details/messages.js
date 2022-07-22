@@ -23,8 +23,7 @@ export default defineMessages({
   },
   personEmailExist: {
     id: 'pages.Contacts.person.email.exist',
-    defaultMessage:
-      'A person with the same email exists. Please use a different email.',
+    defaultMessage: 'A person with the same email exists. Please use a different email.',
   },
   personEmailExistTitle: {
     id: 'pages.Contacts.person.email.exist.title',

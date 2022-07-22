@@ -21,12 +21,7 @@ async function getDeliverableTbResult(knex, resultId) {
     .first('r.id', 'r.patientData')
 }
 
-async function resultHasIssue(
-  knex,
-  resultId,
-  issueTypeExternalId,
-  issueStatuses
-) {
+async function resultHasIssue(knex, resultId, issueTypeExternalId, issueStatuses) {
   const activeIssues = await knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -39,19 +34,12 @@ async function resultHasIssue(
   return !_.isEmpty(activeIssues)
 }
 
-async function resultHasActiveOrResolvedIssue(
-  knex,
-  resultId,
-  issueTypeExternalId
-) {
+async function resultHasActiveOrResolvedIssue(knex, resultId, issueTypeExternalId) {
   return resultHasIssue(knex, resultId, issueTypeExternalId, ['Inactive'])
 }
 
 async function resultHasActiveIssue(knex, resultId, issueTypeExternalId) {
-  return resultHasIssue(knex, resultId, issueTypeExternalId, [
-    'Inactive',
-    'Resolved',
-  ])
+  return resultHasIssue(knex, resultId, issueTypeExternalId, ['Inactive', 'Resolved'])
 }
 
 async function shouldSendResultToItis(knex, action) {
@@ -64,11 +52,7 @@ async function shouldSendResultToItis(knex, action) {
     if (!patientData.id && !patientData.tbCaseNumber) {
       return false
     }
-    const hasActiveIssues = await resultHasActiveIssue(
-      knex,
-      action.resultId,
-      'ResultUpdated'
-    )
+    const hasActiveIssues = await resultHasActiveIssue(knex, action.resultId, 'ResultUpdated')
     if (!hasActiveIssues) {
       return true
     }
@@ -86,11 +70,7 @@ async function shouldSendResultToPatientAsSms(knex, action) {
     if (!patientData.phone) {
       return false
     }
-    const hasActiveIssues = await resultHasActiveOrResolvedIssue(
-      knex,
-      action.resultId,
-      'ResultUpdatedPatientSms'
-    )
+    const hasActiveIssues = await resultHasActiveOrResolvedIssue(knex, action.resultId, 'ResultUpdatedPatientSms')
     if (!hasActiveIssues) {
       return true
     }

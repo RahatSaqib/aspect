@@ -41,10 +41,7 @@ const PlaceholderTextField = props => {
   return (
     <FormControl className={cssClasses('form_FormControl')}>
       <AspectTextField {...props} inputRef={inputRef} />
-      <PlaceholderSelector
-        onClose={onClosePlaceholderSelector}
-        onSelect={onSelectPlaceholder}
-      />
+      <PlaceholderSelector onClose={onClosePlaceholderSelector} onSelect={onSelectPlaceholder} />
     </FormControl>
   )
 }

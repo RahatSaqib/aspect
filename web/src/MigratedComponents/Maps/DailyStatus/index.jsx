@@ -25,12 +25,7 @@ const DailyStatusMap = () => {
   const { formatMessage } = useI18n()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
-    statuses: {
-      visibleStatuses,
-      deviceStatusesIsLoading,
-      deviceStatusesIsError,
-      deviceStatusesError,
-    },
+    statuses: { visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
     actions: { toggleAll, toggleStatusVisibility },
   } = useDailyStatus(false, false, DEVICE_STATUS_LAST_REPORTED.ENDPOINT, {
     excludeNotLocalizableDevices: true,
@@ -74,11 +69,7 @@ const DailyStatusMap = () => {
     >
       {!devicesIsLoading && !deviceStatusesIsLoading ? (
         <Fragment>
-          <DailyStatusFilters
-            toggleAll={toggleAll}
-            statuses={visibleStatuses}
-            action={toggleStatusVisibility}
-          />
+          <DailyStatusFilters toggleAll={toggleAll} statuses={visibleStatuses} action={toggleStatusVisibility} />
           <div style={{ width: '100%', minHeight: '300px' }}>
             <AspectMap config={mapConfig} />
           </div>

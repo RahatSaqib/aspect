@@ -29,15 +29,11 @@ const result1CategoryMapping = {
   'medium @label_result_detected': 'Detected',
   'high @label_result_detected': 'Detected',
   '@label_result_detected': 'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low':
-    'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low': 'Detected',
   'detected very low': 'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low':
-    'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium':
-    'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high':
-    'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low': 'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium': 'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high': 'Detected',
   'detected low': 'Detected',
   'detected medium': 'Detected',
   'detected high': 'Detected',
@@ -140,15 +136,11 @@ const result2CategoryMapping = {
   'medium @label_result_detected': 'Detected',
   'high @label_result_detected': 'Detected',
   '@label_result_detected': 'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low':
-    'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low': 'Detected',
   'detected very low': 'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low':
-    'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium':
-    'Detected',
-  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high':
-    'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low': 'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium': 'Detected',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high': 'Detected',
   detectado: 'Detected',
   обнаружен: 'Detected',
   détecté: 'Detected',
@@ -205,9 +197,7 @@ const errorResultCategories = [
 ]
 
 const isMtbPositiveOrError = resultTextValues =>
-  mtbPositiveResultCategories.includes(
-    result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
-  )
+  mtbPositiveResultCategories.includes(result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])])
 
 const defaultResultCategory2Map = resultTextValues => {
   const result2Text = sanitizeResultTextValue(resultTextValues[1])
@@ -218,31 +208,25 @@ const allowedResultCategory2Mappings = {
   GxMtbXdr: {
     isAllowed: isMtbPositiveOrError,
     map: resultTextValues => {
-      const result1 =
-        result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
+      const result1 = result1CategoryMapping[sanitizeResultTextValue(resultTextValues[0])]
       if (errorResultCategories.includes(result1)) return result1
 
       // Get the first positive result present in the results chain...
       const resultCategory2Values = resultTextValues.slice(1)
       const positiveResult = resultCategory2Values.find(resultTextValue => {
-        const mappedResult =
-          result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
-        return (
-          mappedResult && mtbPositiveResultCategories.includes(mappedResult)
-        )
+        const mappedResult = result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
+        return mappedResult && mtbPositiveResultCategories.includes(mappedResult)
       })
 
       // ...then return DETECTED if at least one resistance result is positive
       if (positiveResult) return result2CategoryMapping.detected
 
       const errorResult = resultCategory2Values.find(resultTextValue => {
-        const mappedResult =
-          result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
+        const mappedResult = result2CategoryMapping[sanitizeResultTextValue(resultTextValue)]
         return mappedResult && errorResultCategories.includes(mappedResult)
       })
       // ...or return error if at least one resistance result is error
-      if (errorResult)
-        return result2CategoryMapping[sanitizeResultTextValue(errorResult)]
+      if (errorResult) return result2CategoryMapping[sanitizeResultTextValue(errorResult)]
 
       // ...or not detected as default
       return result2CategoryMapping['not detected']
@@ -269,9 +253,7 @@ const allowedResultCategory2Mappings = {
  * @returns The result category 2 external id (Ex.: 'NotDetected', 'Detected', etc). Returns null if the result category 2 does not apply.
  */
 const mapResultCategory2 = (assayExternalId, resultTextValues) => {
-  const mapping =
-    resultTextValues.length > 1 &&
-    allowedResultCategory2Mappings[assayExternalId]
+  const mapping = resultTextValues.length > 1 && allowedResultCategory2Mappings[assayExternalId]
   if (mapping && mapping.isAllowed(resultTextValues)) {
     const { map } = mapping
     return map(resultTextValues)
@@ -296,10 +278,8 @@ function getResultCategoriesHivVL(result1Text) {
   if (copies) {
     if (copies < 1000 && copies >= 40) return 'LessThan1000'
     if (copies >= 1000) return 'MoreThan1000'
-  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40'))
-    return 'LessThan40'
-  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0)
-    return 'NoResult'
+  } else if (result1Text && result1Text.toLowerCase().includes('detected < 40')) return 'LessThan40'
+  else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0) return 'NoResult'
 }
 
 /**
@@ -312,18 +292,13 @@ const parseResultText = resultText => {
 
   const resultTextValues = splitResultTextValues(resultText)
   resultTextValues.forEach(val => {
-    const categoryType = categoryTypes.find(ct =>
-      val.toLowerCase().includes(ct.toLowerCase())
-    )
+    const categoryType = categoryTypes.find(ct => val.toLowerCase().includes(ct.toLowerCase()))
 
     if (categoryType === 'HIV-1') {
-      results['HIV-1'] =
-        result1CategoryMapping[sanitizeResultTextValue(val)] ||
-        getResultCategoriesHivVL(val)
+      results['HIV-1'] = result1CategoryMapping[sanitizeResultTextValue(val)] || getResultCategoriesHivVL(val)
     } else {
       const resultValue =
-        result1CategoryMapping[sanitizeResultTextValue(val)] ||
-        result2CategoryMapping[sanitizeResultTextValue(val)]
+        result1CategoryMapping[sanitizeResultTextValue(val)] || result2CategoryMapping[sanitizeResultTextValue(val)]
 
       if (categoryType && resultValue) {
         results[categoryType] = resultValue
@@ -342,10 +317,7 @@ const getDetectedResistanceCategoryTypes = resultText => {
   const detectedResistances = []
   const resultsCollection = parseResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {
-    if (
-      categoryType !== 'MTB' &&
-      resultsCollection[categoryType] === 'Detected'
-    )
+    if (categoryType !== 'MTB' && resultsCollection[categoryType] === 'Detected')
       detectedResistances.push(categoryType.replace('RESISTANCE', '').trim())
   })
   return detectedResistances

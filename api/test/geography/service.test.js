@@ -513,28 +513,20 @@ describe('geography service', () => {
 
   describe('buildGeographySelectList', () => {
     beforeEach(() => {
-      dbSpy.query
-        .for('Get countries, states and LGAs for select lists')
-        .resolvesWith(countriesStatesAndLGAs)
+      dbSpy.query.for('Get countries, states and LGAs for select lists').resolvesWith(countriesStatesAndLGAs)
     })
 
     it('Should query the country, state and lga tables, sorting the results by country name, then state name, then lga name', () =>
       runTest(service.buildGeographySelectList)(() => {
-        const countriesStatesAndLGAsQuery = dbSpy.query.withArgs(
-          'Get countries, states and LGAs for select lists'
-        ).lastCall.returnValue
-        assert.equal(
-          countriesStatesAndLGAsQuery.from.lastCall.args[0],
-          'Country as c'
-        )
+        const countriesStatesAndLGAsQuery = dbSpy.query.withArgs('Get countries, states and LGAs for select lists')
+          .lastCall.returnValue
+        assert.equal(countriesStatesAndLGAsQuery.from.lastCall.args[0], 'Country as c')
         const leftJoins = countriesStatesAndLGAsQuery.leftJoin.getCalls()
         const statesLeftJoin = _.find(leftJoins, leftJoin =>
           _.isEqual(leftJoin.args, ['State as s', 's.id', 'g.stateId'])
         )
         assert.isOk(statesLeftJoin, "Can't find the join to the states table")
-        const lgasLeftJoin = _.find(leftJoins, leftJoin =>
-          _.isEqual(leftJoin.args, ['Lga as l', 'l.id', 'g.lgaId'])
-        )
+        const lgasLeftJoin = _.find(leftJoins, leftJoin => _.isEqual(leftJoin.args, ['Lga as l', 'l.id', 'g.lgaId']))
         assert.isOk(lgasLeftJoin, "Can't find the join to the LGAs table")
         assert.deepEqual(
           countriesStatesAndLGAsQuery.orderBy.lastCall.args,
@@ -561,38 +553,33 @@ describe('geography service', () => {
         assert.deepEqual(response.data, countries)
       }))
 
-    const countries = _.map(
-      _.uniqBy(countriesStatesAndLGAs, 'countryId'),
-      countryRecord => ({
-        id: countryRecord.countryId,
-        name: countryRecord.countryName,
-        states: _.map(
-          _.filter(
-            _.uniqBy(countriesStatesAndLGAs, 'stateId'),
-            stateRecord =>
-              stateRecord.stateId &&
-              stateRecord.countryId === countryRecord.countryId
-          ),
-          stateRecord => ({
-            id: stateRecord.stateId,
-            name: stateRecord.stateName,
-            lgas: _.map(
-              _.filter(
-                _.uniqBy(countriesStatesAndLGAs, 'lgaId'),
-                lgaRecord =>
-                  lgaRecord.lgaId &&
-                  lgaRecord.countryId === countryRecord.countryId &&
-                  lgaRecord.stateId === stateRecord.stateId
-              ),
-              lgaRecord => ({
-                id: lgaRecord.lgaId,
-                name: lgaRecord.lgaName,
-              })
-            ),
-          })
+    const countries = _.map(_.uniqBy(countriesStatesAndLGAs, 'countryId'), countryRecord => ({
+      id: countryRecord.countryId,
+      name: countryRecord.countryName,
+      states: _.map(
+        _.filter(
+          _.uniqBy(countriesStatesAndLGAs, 'stateId'),
+          stateRecord => stateRecord.stateId && stateRecord.countryId === countryRecord.countryId
         ),
-      })
-    )
+        stateRecord => ({
+          id: stateRecord.stateId,
+          name: stateRecord.stateName,
+          lgas: _.map(
+            _.filter(
+              _.uniqBy(countriesStatesAndLGAs, 'lgaId'),
+              lgaRecord =>
+                lgaRecord.lgaId &&
+                lgaRecord.countryId === countryRecord.countryId &&
+                lgaRecord.stateId === stateRecord.stateId
+            ),
+            lgaRecord => ({
+              id: lgaRecord.lgaId,
+              name: lgaRecord.lgaName,
+            })
+          ),
+        })
+      ),
+    }))
   })
 
   describe('countrySelectList', () => {
@@ -609,16 +596,12 @@ describe('geography service', () => {
       )
 
       beforeEach(() => {
-        dbSpy.query
-          .for('Get countries for select list')
-          .resolvesWith(countriesForSelectList)
+        dbSpy.query.for('Get countries for select list').resolvesWith(countriesForSelectList)
       })
 
       it('Should query the country table, sorting the results by country name', () =>
         runTest(service.countrySelectList, [{ params: {} }])(() => {
-          const countryQuery = dbSpy.query.withArgs(
-            'Get countries for select list'
-          ).lastCall.returnValue
+          const countryQuery = dbSpy.query.withArgs('Get countries for select list').lastCall.returnValue
           assert.equal(countryQuery.from.lastCall.args[0], 'Country as c')
           assert.deepEqual(
             countryQuery.orderBy.lastCall.args,
@@ -645,27 +628,20 @@ describe('geography service', () => {
         _.map(countriesStatesAndLGAs, result => ({
           countryId: result.countryId,
           countryName: result.countryName,
-          stateId:
-            selectedCountryId === result.countryId ? result.stateId : null,
-          stateName:
-            selectedCountryId === result.countryId ? result.stateName : null,
+          stateId: selectedCountryId === result.countryId ? result.stateId : null,
+          stateName: selectedCountryId === result.countryId ? result.stateName : null,
         })),
         ['countryName', 'stateName']
       )
 
       beforeEach(() => {
-        dbSpy.query
-          .for('Get countries and country states for select lists')
-          .resolvesWith(countriesForSelectList)
+        dbSpy.query.for('Get countries and country states for select lists').resolvesWith(countriesForSelectList)
       })
 
       it('Should query the country and state tables, sorting the results by country name and then state name', () =>
-        runTest(service.countrySelectList, [
-          { params: { countryId: selectedCountryId } },
-        ])(() => {
-          const countryQuery = dbSpy.query.withArgs(
-            'Get countries and country states for select lists'
-          ).lastCall.returnValue
+        runTest(service.countrySelectList, [{ params: { countryId: selectedCountryId } }])(() => {
+          const countryQuery = dbSpy.query.withArgs('Get countries and country states for select lists').lastCall
+            .returnValue
           assert.equal(countryQuery.from.lastCall.args[0], 'Country as c')
           assert.equal(countryQuery.leftJoin.lastCall.args[0], 'State as s')
 
@@ -673,19 +649,13 @@ describe('geography service', () => {
           const knexQueryBuilderSpy = {
             on: sinon.stub(),
           }
-          const boundJoinOnCallbackFunction =
-            joinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          const boundJoinOnCallbackFunction = joinOnCallbackFunction.bind(knexQueryBuilderSpy)
           knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
           dbSpy.knex.raw.withArgs(2).returns(`${selectedCountryId}`)
           boundJoinOnCallbackFunction()
           assert.isOk(knexQueryBuilderSpy.on.calledTwice)
-          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, [
-            's.id',
-            'g.stateId',
-          ])
-          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [
-            { 'g.countryId': `${selectedCountryId}` },
-          ])
+          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['s.id', 'g.stateId'])
+          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ 'g.countryId': `${selectedCountryId}` }])
 
           assert.deepEqual(
             countryQuery.orderBy.lastCall.args,
@@ -694,32 +664,21 @@ describe('geography service', () => {
           )
           assert.deepEqual(
             countryQuery.distinct.lastCall.args,
-            [
-              'c.id as countryId',
-              'c.name as countryName',
-              's.id as stateId',
-              's.name as stateName',
-            ],
+            ['c.id as countryId', 'c.name as countryName', 's.id as stateId', 's.name as stateName'],
             'The select clause seems to be incorrect'
           )
         }))
 
       it("Should return a list of countries with the selected country's states populated", () => {
-        const expectedCountries = _.map(
-          _.uniqBy(countriesForSelectList, 'countryId'),
-          countryRecord => ({
-            id: countryRecord.countryId,
-            name: countryRecord.countryName,
-          })
-        )
+        const expectedCountries = _.map(_.uniqBy(countriesForSelectList, 'countryId'), countryRecord => ({
+          id: countryRecord.countryId,
+          name: countryRecord.countryName,
+        }))
         const selectedCountry = _.find(expectedCountries, {
           id: selectedCountryId,
         })
         const selectedCountryStates = _.map(
-          _.filter(
-            countriesForSelectList,
-            stateRecord => stateRecord.stateId != null
-          ),
+          _.filter(countriesForSelectList, stateRecord => stateRecord.stateId != null),
           stateRecord => ({
             id: stateRecord.stateId,
             name: stateRecord.stateName,
@@ -727,9 +686,7 @@ describe('geography service', () => {
         )
         selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
 
-        return runTest(service.countrySelectList, [
-          { params: { countryId: selectedCountryId } },
-        ])(response => {
+        return runTest(service.countrySelectList, [{ params: { countryId: selectedCountryId } }])(response => {
           assert.isTrue(response.ok)
           assert.deepEqual(response.data, expectedCountries)
         })
@@ -743,10 +700,8 @@ describe('geography service', () => {
         _.map(countriesStatesAndLGAs, result => ({
           countryId: result.countryId,
           countryName: result.countryName,
-          stateId:
-            selectedCountryId === result.countryId ? result.stateId : null,
-          stateName:
-            selectedCountryId === result.countryId ? result.stateName : null,
+          stateId: selectedCountryId === result.countryId ? result.stateId : null,
+          stateName: selectedCountryId === result.countryId ? result.stateName : null,
           lgaId: selectedStateId === result.stateId ? result.lgaId : null,
           lgaName: selectedStateId === result.stateId ? result.lgaName : null,
         })),
@@ -765,9 +720,8 @@ describe('geography service', () => {
             params: { countryId: selectedCountryId, stateId: selectedStateId },
           },
         ])(() => {
-          const countryQuery = dbSpy.query.withArgs(
-            'Get countries, country states and state LGAs for select lists'
-          ).lastCall.returnValue
+          const countryQuery = dbSpy.query.withArgs('Get countries, country states and state LGAs for select lists')
+            .lastCall.returnValue
           assert.equal(countryQuery.from.lastCall.args[0], 'Country as c')
           assert.isOk(countryQuery.leftJoin.calledTwice)
           assert.equal(countryQuery.leftJoin.firstCall.args[0], 'State as s')
@@ -776,40 +730,26 @@ describe('geography service', () => {
             on: sinon.stub(),
           }
           knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
-          const stateJoinOnCallbackFunction =
-            countryQuery.leftJoin.firstCall.args[1]
-          const boundStateJoinOnCallbackFunction =
-            stateJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          const stateJoinOnCallbackFunction = countryQuery.leftJoin.firstCall.args[1]
+          const boundStateJoinOnCallbackFunction = stateJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
           dbSpy.knex.raw.withArgs(2).returns(`${selectedCountryId}`)
           boundStateJoinOnCallbackFunction()
           assert.isOk(knexQueryBuilderSpy.on.calledTwice)
-          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, [
-            's.id',
-            'g.stateId',
-          ])
-          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [
-            { 'g.countryId': `${selectedCountryId}` },
-          ])
+          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['s.id', 'g.stateId'])
+          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ 'g.countryId': `${selectedCountryId}` }])
 
           knexQueryBuilderSpy = {
             on: sinon.stub(),
           }
           knexQueryBuilderSpy.on.returns(knexQueryBuilderSpy)
           assert.equal(countryQuery.leftJoin.secondCall.args[0], 'Lga as l')
-          const lgaJoinOnCallbackFunction =
-            countryQuery.leftJoin.secondCall.args[1]
-          const boundLgaJoinOnCallbackFunction =
-            lgaJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
+          const lgaJoinOnCallbackFunction = countryQuery.leftJoin.secondCall.args[1]
+          const boundLgaJoinOnCallbackFunction = lgaJoinOnCallbackFunction.bind(knexQueryBuilderSpy)
           dbSpy.knex.raw.withArgs(32).returns(`${selectedStateId}`)
           boundLgaJoinOnCallbackFunction()
           assert.isOk(knexQueryBuilderSpy.on.calledTwice)
-          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, [
-            'l.id',
-            'g.lgaId',
-          ])
-          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [
-            { 'g.stateId': `${selectedStateId}` },
-          ])
+          assert.deepEqual(knexQueryBuilderSpy.on.firstCall.args, ['l.id', 'g.lgaId'])
+          assert.deepEqual(knexQueryBuilderSpy.on.secondCall.args, [{ 'g.stateId': `${selectedStateId}` }])
 
           assert.deepEqual(
             countryQuery.orderBy.lastCall.args,
@@ -831,22 +771,16 @@ describe('geography service', () => {
         }))
 
       it("Should return a list of countries with the selected country's states populated and the selected state's LGAs populated", () => {
-        const expectedCountries = _.map(
-          _.uniqBy(countriesForSelectList, 'countryId'),
-          countryRecord => ({
-            id: countryRecord.countryId,
-            name: countryRecord.countryName,
-          })
-        )
+        const expectedCountries = _.map(_.uniqBy(countriesForSelectList, 'countryId'), countryRecord => ({
+          id: countryRecord.countryId,
+          name: countryRecord.countryName,
+        }))
         const selectedCountry = _.find(expectedCountries, {
           id: selectedCountryId,
         })
         const selectedCountryStates = _.map(
           _.uniqBy(
-            _.filter(
-              countriesForSelectList,
-              stateRecord => stateRecord.stateId != null
-            ),
+            _.filter(countriesForSelectList, stateRecord => stateRecord.stateId != null),
             'stateId'
           ),
           stateRecord => ({
@@ -859,10 +793,7 @@ describe('geography service', () => {
           id: selectedStateId,
         })
         const selectedStateLgas = _.map(
-          _.filter(
-            countriesForSelectList,
-            lgaRecord => lgaRecord.lgaId != null
-          ),
+          _.filter(countriesForSelectList, lgaRecord => lgaRecord.lgaId != null),
           lgaRecord => ({
             id: lgaRecord.lgaId,
             name: lgaRecord.lgaName,
@@ -898,23 +829,16 @@ describe('geography service', () => {
     const requestData = { params: { countryId: 2 } }
 
     beforeEach(() => {
-      dbSpy.query
-        .for('Get states for select list')
-        .resolvesWith(statesForSelectList)
+      dbSpy.query.for('Get states for select list').resolvesWith(statesForSelectList)
     })
 
     it('Should query the state table, filtering by country ID, sorting the results by state name', () =>
       runTest(service.stateSelectList, [requestData])(() => {
-        const stateQuery = dbSpy.query.withArgs('Get states for select list')
-          .lastCall.returnValue
+        const stateQuery = dbSpy.query.withArgs('Get states for select list').lastCall.returnValue
         assert.equal(stateQuery.from.lastCall.args[0], 'State as s')
         assert.deepEqual(
           stateQuery.modify.lastCall.args,
-          [
-            addConstraints,
-            { country: { id: requestData.params.countryId } },
-            { geography: 'g' },
-          ],
+          [addConstraints, { country: { id: requestData.params.countryId } }, { geography: 'g' }],
           'The modify clause seems to be incorrect'
         )
         assert.deepEqual(
@@ -924,12 +848,7 @@ describe('geography service', () => {
         )
         assert.deepEqual(
           stateQuery.distinct.lastCall.args,
-          [
-            's.id as stateId',
-            's.name as stateName',
-            'l.id as lgaId',
-            'l.name as lgaName',
-          ],
+          ['s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName'],
           'The select clause seems to be incorrect'
         )
       }))
@@ -978,15 +897,12 @@ describe('geography service', () => {
     const requestData = { params: { stateId: 32 } }
 
     beforeEach(() => {
-      dbSpy.query
-        .for('Get LGAs for select list')
-        .resolvesWith(lgasForSelectList)
+      dbSpy.query.for('Get LGAs for select list').resolvesWith(lgasForSelectList)
     })
 
     it('Should query the lga table, filtering by state ID, sorting the results by LGA name', () =>
       runTest(service.lgaSelectList, [requestData])(() => {
-        const stateQuery = dbSpy.query.withArgs('Get LGAs for select list')
-          .lastCall.returnValue
+        const stateQuery = dbSpy.query.withArgs('Get LGAs for select list').lastCall.returnValue
         assert.equal(stateQuery.from.lastCall.args[0], 'Lga as l')
         assert.deepEqual(
           stateQuery.where.lastCall.args,

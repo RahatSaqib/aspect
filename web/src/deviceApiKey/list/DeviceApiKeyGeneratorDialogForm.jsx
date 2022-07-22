@@ -17,10 +17,7 @@ import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import AspectDialog from '../../components/shared/AspectDialog'
 
-import {
-  fetchCountriesForLocationSelector,
-  LazyLoadItems,
-} from '../../geography/GeographyRedux'
+import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../geography/GeographyRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import PropTypeOf from '../../shared/types'
 
@@ -65,12 +62,8 @@ const messages = defineMessages({
 
 const getInitialValues = (partnerList, countries) => ({
   count: 1,
-  partnerId:
-    partnerList && partnerList.size > 0 ? partnerList.first().get('id') : null,
-  countryId:
-    countries && countries.items && countries.items.size > 0
-      ? countries.items.first().get('id')
-      : null,
+  partnerId: partnerList && partnerList.size > 0 ? partnerList.first().get('id') : null,
+  countryId: countries && countries.items && countries.items.size > 0 ? countries.items.first().get('id') : null,
 })
 
 const enhance = compose(
@@ -79,8 +72,7 @@ const enhance = compose(
   connect(
     state => {
       const countries = state.geography.countriesForLocationSelector
-      const partnerList =
-        state.jobs.partnersAndJobFunctionsForSelectList.partners
+      const partnerList = state.jobs.partnersAndJobFunctionsForSelectList.partners
       return {
         partnerList,
         countries,
@@ -181,12 +173,7 @@ export function DeviceApiKeyGeneratorDialogForm({
     <Button type="button" color="secondary" onClick={onCancel}>
       {intl.formatMessage(messages.cancel)}
     </Button>,
-    <Button
-      disabled={!form.valid || form.submitting}
-      onClick={handleSubmit}
-      type="button"
-      color="primary"
-    >
+    <Button disabled={!form.valid || form.submitting} onClick={handleSubmit} type="button" color="primary">
       {intl.formatMessage(messages.generate)}
     </Button>,
   ]

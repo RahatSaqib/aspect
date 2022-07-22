@@ -51,30 +51,18 @@ export const DiseaseSelectField = ({
   fetchDiseases,
   ...restProps
 }) => {
-  const validDisease = onlyWithResults
-    ? diseases.items.filter(a => a.get('hasResults'))
-    : diseases.items
+  const validDisease = onlyWithResults ? diseases.items.filter(a => a.get('hasResults')) : diseases.items
   const { formatMessage } = useI18n()
   return (
     <SelectField
       {...restProps}
       onChange={onChange}
-      disabled={
-        restProps.disabled ||
-        diseases.loading ||
-        validDisease.isEmpty() ||
-        validDisease.size <= 1
-      }
+      disabled={restProps.disabled || diseases.loading || validDisease.isEmpty() || validDisease.size <= 1}
     >
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {validDisease.map(d => (
         <MenuItem key={d.get('id')} value={d.get('id')}>
-          {formatI18nMessage(
-            messages,
-            formatMessage,
-            d.get('i18nKey'),
-            d.get('name')
-          )}
+          {formatI18nMessage(messages, formatMessage, d.get('i18nKey'), d.get('name'))}
         </MenuItem>
       ))}
     </SelectField>

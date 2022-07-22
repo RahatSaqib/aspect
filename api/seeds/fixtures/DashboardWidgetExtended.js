@@ -15,6 +15,7 @@ module.exports = {
       'dashboardWidgetValidResultsPc',
       'utilizationRate',
       'activeDevices',
+      'activeDevicesCnt',
       'stockouts',
       'deviceDaysActive',
       'errorRate',

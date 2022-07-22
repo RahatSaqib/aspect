@@ -19,14 +19,8 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
   before(async () => {
     const now = new Date()
     const { id: userId } = await knex('User').first('id')
-    const senaiteLimsDeviceType = await knex
-      .from('DeviceType')
-      .where('externalId', 'SenaiteLims')
-      .first()
-    const partner = await knex
-      .from('Partner')
-      .where('name', 'Partner One')
-      .first()
+    const senaiteLimsDeviceType = await knex.from('DeviceType').where('externalId', 'SenaiteLims').first()
+    const partner = await knex.from('Partner').where('name', 'Partner One').first()
 
     const geography = await knex
       .from('Country as c')
@@ -35,10 +29,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .whereNull('g.stateId')
       .whereNull('g.lgaId')
       .first('g.*')
-    const approvedDeviceApproval = await knex
-      .from('DeviceApproval')
-      .where('token', 'approved')
-      .first()
+    const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
     const deviceCapacity = await knex('DeviceCapacity')
       .where({ deviceTypeId: senaiteLimsDeviceType.id })
       .where({ partnerId: partner.id })
@@ -110,53 +101,35 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
         'originSiteId'
       )
     )
-    const opIds = await knex('DeviceOperation')
-      .where('deviceId', deviceId)
-      .pluck('id')
+    const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
     await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-    await knex('DeviceLog')
-      .where('deviceId', deviceId)
-      .orWhereIn('resultId', resultIds)
-      .delete()
+    await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
     await knex('DeviceOperation').whereIn('id', opIds).delete()
     await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
     await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
     await knex('FactResultsDevice').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
-    await knex('FactResultsDeviceByCategory1')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('FactResultsDeviceByCategory1And2')
-      .where('deviceId', deviceId)
-      .delete()
+    await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
+    await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-    await knex('DeviceApiKey')
-      .where('token', validApiKeyToken)
-      .orWhere('deviceId', deviceId)
-      .delete()
+    await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
       .where('ii.siteId', siteId)
       .distinct('ii.id')
       .pluck('ii.id')
-    await knex('InventoryLog')
-      .whereIn('inventoryItemId', inventoryItemIds)
-      .delete()
+    await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
     await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
     await knex('IssueEvent')
       .whereIn('issueId', issueIds)
       .orWhere(function () {
         if (resultIds != null && resultIds.length > 0) {
-          this.whereRaw(
-            `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
-          )
+          this.whereRaw(`JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`)
         }
       })
       .delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultQualityControlLog')
-      .whereIn('resultId', resultIds)
-      .delete()
+    await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
     await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)
@@ -166,10 +139,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     await knex('Result').whereIn('id', resultIds).delete()
     await knex('Device').where('id', deviceId).delete()
     await knex('Sample').whereIn('id', sampleIds).delete()
-    await knex('Site')
-      .whereIn('id', originSiteIds)
-      .orWhere('id', siteId)
-      .delete()
+    await knex('Site').whereIn('id', originSiteIds).orWhere('id', siteId).delete()
   })
 
   it('should save the request in DeviceApiRaw and respond with the record ID', async () => {
@@ -295,8 +265,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'SampleAppearance',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample appearance',
+          getPrioritySortkey: '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample appearance',
           getRequestID: 'AS18-02004-R01',
           getRetested: false,
           getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
@@ -435,8 +404,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'SampleVolume',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample volume',
+          getPrioritySortkey: '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample volume',
           getRequestID: 'AS18-02004-R01',
           getRetested: false,
           getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
@@ -582,8 +550,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'SmearMicroscopy',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000smear microscopy',
+          getPrioritySortkey: '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000smear microscopy',
           getRequestID: 'AS18-02004-R01',
           getRetested: false,
           getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
@@ -1292,12 +1259,8 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .set('Authorization', `Bearer ${validApiKeyToken}`)
       .send(payload)
     assert.equal(response.statusCode, 200)
-    const deviceApiRawRecord = await knex('DeviceApiRaw')
-      .where({ id: response.body })
-      .first()
-    expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(
-      payload
-    )
+    const deviceApiRawRecord = await knex('DeviceApiRaw').where({ id: response.body }).first()
+    expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(payload)
   })
 
   it('should process the request data using the correct data processor', async () => {
@@ -1309,9 +1272,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .send(payload)
     assert.equal(response.statusCode, 200)
     await Promise.delay(2000)
-    const deviceApiRawRecord = await knex('DeviceApiRaw')
-      .where({ id: response.body })
-      .first()
+    const deviceApiRawRecord = await knex('DeviceApiRaw').where({ id: response.body }).first()
     assert.equal(deviceApiRawRecord.dataProcessor, 'DefaultSenaiteLIMS')
     const processedStatusId = await deviceApiRawStatusToId('Processed')
     expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(processedStatusId)
@@ -1440,8 +1401,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'SampleAppearance',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample appearance',
+          getPrioritySortkey: '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample appearance',
           getRequestID: 'SP18-127022-R01',
           getRetested: false,
           getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
@@ -1580,8 +1540,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'SampleVolume',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample volume',
+          getPrioritySortkey: '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample volume',
           getRequestID: 'SP18-127022-R01',
           getRetested: false,
           getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
@@ -1727,8 +1686,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'SmearMicroscopy',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000smear microscopy',
+          getPrioritySortkey: '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000smear microscopy',
           getRequestID: 'SP18-127022-R01',
           getRetested: false,
           getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
@@ -1870,8 +1828,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'TBCulture',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2018-03-20T15:43:41+02:00.sp17-000022-r01.999999.000tb culture',
+          getPrioritySortkey: '3.2018-03-20T15:43:41+02:00.sp17-000022-r01.999999.000tb culture',
           getRequestID: 'SP18-127022-R01',
           getRetested: false,
           getSampleTypeUID: null,
@@ -2041,8 +1998,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
           getKeyword: 'TBIntepretation',
           getMethodUID: null,
           getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
-          getPrioritySortkey:
-            '3.2018-03-20T15:43:41+02:00.sp17-000022-r01.999999.000result intepretation',
+          getPrioritySortkey: '3.2018-03-20T15:43:41+02:00.sp17-000022-r01.999999.000result intepretation',
           getRequestID: 'SP18-127022-R01',
           getRetested: false,
           getSampleTypeUID: null,
@@ -2231,10 +2187,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
         },
       ],
     }
-    const { id: sampleIdBefore } =
-      (await knex('Sample')
-        .where('externalId', payload.SampleID)
-        .first('id')) || {}
+    const { id: sampleIdBefore } = (await knex('Sample').where('externalId', payload.SampleID).first('id')) || {}
     assert.isUndefined(sampleIdBefore)
     const response = await server
       .post(deviceApiRawPath)
@@ -2242,15 +2195,11 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .send(payload)
     assert.equal(response.statusCode, 200)
     await Promise.delay(2000)
-    const deviceApiRawRecord = await knex('DeviceApiRaw')
-      .where({ id: response.body })
-      .first()
+    const deviceApiRawRecord = await knex('DeviceApiRaw').where({ id: response.body }).first()
     assert.equal(deviceApiRawRecord.dataProcessor, 'DefaultSenaiteLIMS')
     const processedStatusId = await deviceApiRawStatusToId('Processed')
     expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(processedStatusId)
-    const sampleIdsAfter = await knex('Sample')
-      .where('externalId', payload.SampleID)
-      .pluck('id')
+    const sampleIdsAfter = await knex('Sample').where('externalId', payload.SampleID).pluck('id')
     expect(sampleIdsAfter).to.be.an('array').that.has.lengthOf(1)
     const results = await knex('Result as r')
       .join('Assay as a', 'r.assayId', 'a.id')
@@ -2261,11 +2210,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       .join('State as st', 'g.stateId', 'st.id')
       .join('Lga as l', 'g.lgaId', 'l.id')
       .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
-      .join(
-        'ResultWorkflowStatus as rws',
-        'rwl.resultWorkflowStatusId',
-        'rws.id'
-      )
+      .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
       .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
       .where('r.sampleId', sampleIdsAfter[0])
       .select(
@@ -2299,10 +2244,9 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     const sampleAppearanceAnalysis = _.find(payload.Analyses, {
       id: 'SampleAppearance',
     })
-    const selectedAppearanceText = _.find(
-      sampleAppearanceAnalysis.ResultOptions,
-      { ResultValue: sampleAppearanceAnalysis.Result }
-    ).ResultText
+    const selectedAppearanceText = _.find(sampleAppearanceAnalysis.ResultOptions, {
+      ResultValue: sampleAppearanceAnalysis.Result,
+    }).ResultText
     const sampleAppearance = sampleAppearanceAnalysis.Unit
       ? `${selectedAppearanceText} ${sampleAppearanceAnalysis.Unit}`
       : selectedAppearanceText
@@ -2364,9 +2308,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
         referringFacilityName: payload.Client,
         sampleType,
         sampleId: payload.SampleID,
-        sampleCollectedOn: JSON.stringify(
-          parseDateOrDefault(payload.DateSampled)
-        ),
+        sampleCollectedOn: JSON.stringify(parseDateOrDefault(payload.DateSampled)),
         resultData: {
           senaiteAnalysisRequest: {
             creationDate: payload.creation_date,
@@ -2412,8 +2354,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
             pointOfCapture: testResultAnalysis.PointOfCapture,
             manualEntryOfResults: testResultAnalysis.ManualEntryOfResults,
             instrument: testResultAnalysis.Instrument,
-            instrumentEntryOfResults:
-              testResultAnalysis.InstrumentEntryOfResults,
+            instrumentEntryOfResults: testResultAnalysis.InstrumentEntryOfResults,
             hidden: testResultAnalysis.Hidden,
             hiddenManually: testResultAnalysis.HiddenManually,
             analyst: testResultAnalysis.Analyst,
@@ -2432,23 +2373,16 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       })
       if (assayResultMappings[testResultAnalysis.id]) {
         const resultOptions = testResultAnalysis.ResultOptions
-        const selectedResultOption =
-          _.find(resultOptions, { ResultValue: testResultAnalysis.Result }) ||
-          {}
+        const selectedResultOption = _.find(resultOptions, { ResultValue: testResultAnalysis.Result }) || {}
         const expectedResult =
-          assayResultMappings[testResultAnalysis.id].resultCategories[
-            selectedResultOption.ResultText
-          ] || 'Unknown'
+          assayResultMappings[testResultAnalysis.id].resultCategories[selectedResultOption.ResultText] || 'Unknown'
         expect(result).to.containSubset({
           assayId: assayResultMappings[testResultAnalysis.id].assayId,
           result1: expectedResult,
         })
       }
       if (resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]) {
-        assert.equal(
-          result.workflowStatus,
-          resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]
-        )
+        assert.equal(result.workflowStatus, resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state])
       }
     })
   })

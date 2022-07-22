@@ -3,25 +3,15 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { upsertJobFunction } = require('../common')
-const {
-  rowsAsObject,
-  getPermissionModules,
-  seedIssueEventTriggersForPartner,
-} = require('../utils')
+const { rowsAsObject, getPermissionModules, seedIssueEventTriggersForPartner } = require('../utils')
 
-const {
-  assayTypeToId,
-  partnerTypeToId,
-  resultSourceToId,
-} = require('../../src/shared/dictionary')
+const { assayTypeToId, partnerTypeToId, resultSourceToId } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'gates_rdt' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'gates_rdt' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -105,9 +95,7 @@ async function seed(knex) {
     }),
   })
 
-  const [usCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'USA' })
-    .select('c.id', 'c.culture', 'c.timezone')
+  const [usCountry] = await knex('Country as c').where({ 'c.a3': 'USA' }).select('c.id', 'c.culture', 'c.timezone')
   const { culture, timezone, id: countryId } = usCountry
   const { id: geographyId } = await knex('Geography')
     .where({ countryId })
@@ -149,9 +137,7 @@ async function seed(knex) {
     },
   ])
 
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
+  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   // Issue Escalation Triggers

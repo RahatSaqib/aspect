@@ -2,24 +2,10 @@ const chai = require('chai')
 const chaiSubset = require('chai-subset')
 const Promise = require('bluebird')
 const _ = require('lodash')
-const {
-  addDays,
-  subDays,
-  subMonths,
-  startOfToday,
-  startOfMonth,
-  endOfMonth,
-  setMilliseconds,
-} = require('date-fns')
+const { addDays, subDays, subMonths, startOfToday, startOfMonth, endOfMonth, setMilliseconds } = require('date-fns')
 const shared = require('../utils/sharedToken')
-const {
-  createMessageContext,
-  waitForAction,
-  waitForIdle,
-} = require('../utils/mqUtils')
-const {
-  assertPropertiesOfListItem,
-} = require('../utils/assertPropertiesOfDeviceItem')
+const { createMessageContext, waitForAction, waitForIdle } = require('../utils/mqUtils')
+const { assertPropertiesOfListItem } = require('../utils/assertPropertiesOfDeviceItem')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const {
   allDeviceMaintenanceStatusToId,
@@ -36,9 +22,7 @@ const {
 const { knex } = require('../../src/db')
 const { logDeviceMaintenanceStatus } = require('../../src/device/actions')
 const { resultLogged } = require('../../src/result/actions')
-const {
-  createGxConnectTestContext,
-} = require('../deviceApi/geneXpert/gxconnect_utils')
+const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 
 const { createTestContext } = require('../deviceApi/utils')
 
@@ -69,22 +53,13 @@ describe('Device routes', () => {
       const issueStatus = await allIssueStatusToId()
       const issueTypes = await allIssueTypeToId()
 
-      daktariManagerUserId = await createUser(
-        'Partner One',
-        'US',
-        daktariManagerUsername,
-        daktariManagerPassword,
-        [
-          {
-            jobFunctionExternalId: 'manager',
-            deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
-          },
-        ]
-      )
-      daktariManagerAuthAccessToken = await getAccessToken(
-        daktariManagerUsername,
-        daktariManagerPassword
-      )
+      daktariManagerUserId = await createUser('Partner One', 'US', daktariManagerUsername, daktariManagerPassword, [
+        {
+          jobFunctionExternalId: 'manager',
+          deviceTypeExternalId: daktariVirologyDeviceTypeExternalId,
+        },
+      ])
+      daktariManagerAuthAccessToken = await getAccessToken(daktariManagerUsername, daktariManagerPassword)
 
       const device = await knex('Device as d')
         .join('Partner as p', 'd.partnerId', 'p.id')
@@ -93,93 +68,65 @@ describe('Device routes', () => {
         .where('p.name', 'Partner One')
         .where('c.abbreviation', 'US')
         .first('d.*')
-      const { id: personId } = await knex('Person')
-        .where({ lastPartnerId: device.partnerId })
-        .first()
-      const { id: messageStatusSentId } = await knex('MessageStatus')
-        .where('externalId', 'Sent')
-        .first('id')
+      const { id: personId } = await knex('Person').where({ lastPartnerId: device.partnerId }).first()
+      const { id: messageStatusSentId } = await knex('MessageStatus').where('externalId', 'Sent').first('id')
       const luAlertMessages = {
         [issueTypes.DeviceOffline.id]: 'Cannot reach network for 12 days',
         [issueTypes.DeviceNoResults.id]: 'No testing for 9 days',
-        [issueTypes.ModuleFailureError.id]:
-          'Module A1: Critical errors; notify R.O.',
-        [issueTypes.ModuleTemperatureError.id]:
-          'Temperature errors on Module A2; notify R.O.',
-        [issueTypes.ModulePowerError.id]:
-          'Power errors on Module A3; notify RO',
-        [issueTypes.MachineTemperatureError.id]:
-          'Temperature errors across machine, conduct troubleshooting',
-        [issueTypes.MachinePowerError.id]:
-          'Power errors across machine, conduct troubleshooting',
-        [issueTypes.ModuleProceduralError.id]:
-          'Module A2 errors, conduct troubleshooting',
-        [issueTypes.MachineProceduralError.id]:
-          'Procedural errors across machine, conduct troubleshooting',
+        [issueTypes.ModuleFailureError.id]: 'Module A1: Critical errors; notify R.O.',
+        [issueTypes.ModuleTemperatureError.id]: 'Temperature errors on Module A2; notify R.O.',
+        [issueTypes.ModulePowerError.id]: 'Power errors on Module A3; notify RO',
+        [issueTypes.MachineTemperatureError.id]: 'Temperature errors across machine, conduct troubleshooting',
+        [issueTypes.MachinePowerError.id]: 'Power errors across machine, conduct troubleshooting',
+        [issueTypes.ModuleProceduralError.id]: 'Module A2 errors, conduct troubleshooting',
+        [issueTypes.MachineProceduralError.id]: 'Procedural errors across machine, conduct troubleshooting',
         [issueTypes.StockLevelUpdate.id]: 'Stock Level',
-        [issueTypes.ReagentHealthError.id]:
-          'Cartridge-specific errors exceed 5%',
+        [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
       }
-      issuesToDelete = await Promise.map(
-        [issueTypes.ModuleReplaced, issueTypes.ModuleDisabled],
-        async issueTypeId => {
-          const issueId = await knex('Issue').insert({
-            issueTypeId,
-            issueStatusId:
-              issueTypeId === issueTypes.ModuleDisabled
-                ? issueStatus.Resolved
-                : issueStatus.Active,
-            partnerId: device.partnerId,
-            geographyId: device.geographyId,
-            siteId: device.siteId,
-            deviceId: device.id,
-            createdOn: new Date(),
-            updatedOn: new Date(),
-          })
+      issuesToDelete = await Promise.map([issueTypes.ModuleReplaced, issueTypes.ModuleDisabled], async issueTypeId => {
+        const issueId = await knex('Issue').insert({
+          issueTypeId,
+          issueStatusId: issueTypeId === issueTypes.ModuleDisabled ? issueStatus.Resolved : issueStatus.Active,
+          partnerId: device.partnerId,
+          geographyId: device.geographyId,
+          siteId: device.siteId,
+          deviceId: device.id,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+        })
 
-          const { id: alertTemplateId } = await knex('AlertTemplate').first()
-          const [alertMessageId] = await knex('AlertMessage').insert({
-            messageStatusId: messageStatusSentId,
-            message: luAlertMessages[issueTypeId],
-            createdOn: new Date(),
-            updatedOn: new Date(),
-            siteId: device.siteId,
-            personId,
-            deviceId: device.id,
-            alertTemplateId,
-          })
-          const { id: notificationTypeId } = await knex('NotificationType')
-            .where({ partnerId: device.partnerId })
-            .first()
+        const { id: alertTemplateId } = await knex('AlertTemplate').first()
+        const [alertMessageId] = await knex('AlertMessage').insert({
+          messageStatusId: messageStatusSentId,
+          message: luAlertMessages[issueTypeId],
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          siteId: device.siteId,
+          personId,
+          deviceId: device.id,
+          alertTemplateId,
+        })
+        const { id: notificationTypeId } = await knex('NotificationType').where({ partnerId: device.partnerId }).first()
 
-          await knex('Notification').insert({
-            createdOn: new Date(),
-            alertMessageId,
-            issueId,
-            personId,
-            notificationTypeId,
-          })
+        await knex('Notification').insert({
+          createdOn: new Date(),
+          alertMessageId,
+          issueId,
+          personId,
+          notificationTypeId,
+        })
 
-          return issueId
-        }
-      )
+        return issueId
+      })
 
       // Status test
       statusesToTest = [
         // [approval status, maintenance status, expected status]
         [deviceApprovals.provisioned, null, 'Provisioned'],
-        [
-          deviceApprovals.provisioned,
-          deviceMaintenanceStatuses.active,
-          'Provisioned',
-        ],
+        [deviceApprovals.provisioned, deviceMaintenanceStatuses.active, 'Provisioned'],
         [deviceApprovals.approved, null, 'Approved'],
         [deviceApprovals.approved, deviceMaintenanceStatuses.active, 'Active'],
-        [
-          deviceApprovals.approved,
-          deviceMaintenanceStatuses.inactiveOutOfInventory,
-          'Out of Inventory',
-        ],
+        [deviceApprovals.approved, deviceMaintenanceStatuses.inactiveOutOfInventory, 'Out of Inventory'],
       ]
       const statusTestDeviceContext = createGxConnectTestContext(server, {
         macAddress: 'A really cool mac address',
@@ -191,16 +138,12 @@ describe('Device routes', () => {
         hostId: 'The best host id ever',
       })
       await statusTestDeviceContext.registerAndSetDevice()
-      theGreatestDeviceIEverCreated = await knex('Device')
-        .where({ name: 'The greatest device I ever created' })
-        .first()
+      theGreatestDeviceIEverCreated = await knex('Device').where({ name: 'The greatest device I ever created' }).first()
     })
 
     after(async () => {
       removeUser(daktariManagerUserId)
-      const { id } = await knex('Device')
-        .where({ name: 'The greatest device I ever created' })
-        .first()
+      const { id } = await knex('Device').where({ name: 'The greatest device I ever created' }).first()
       await knex('Notification').whereIn('issueId', issuesToDelete).delete()
       await knex('Issue').whereIn('id', issuesToDelete).delete()
       await knex('DeviceApiKey').where({ deviceId: id }).delete()
@@ -211,50 +154,35 @@ describe('Device routes', () => {
     })
 
     it('should return a list of devices with the correspondent status', async () => {
-      await Promise.each(
-        statusesToTest,
-        async ([
-          deviceApprovalId,
-          deviceMaintenanceStatusId,
-          expectedStatus,
-        ]) => {
-          if (deviceMaintenanceStatusId) {
-            const [deviceMaintenanceStatusLogId] = await knex(
-              'DeviceMaintenanceStatusLog'
-            ).insert({
-              deviceId: theGreatestDeviceIEverCreated.id,
-              deviceMaintenanceStatusId,
-              data: '{}',
-              day: new Date(),
-              createdOn: new Date(),
-            })
-            await knex('Device')
-              .where({ id: theGreatestDeviceIEverCreated.id })
-              .update({
-                deviceMaintenanceStatusLogId,
-                deviceApprovalId,
-              })
-          } else {
-            await knex('Device')
-              .where({ id: theGreatestDeviceIEverCreated.id })
-              .update({
-                deviceMaintenanceStatusLogId: null,
-                deviceApprovalId,
-              })
-          }
-
-          const res = await server
-            .get(`${path}?deviceName=The greatest device I ever created`)
-            .set('Authorization', `Bearer ${shared.token}`)
-          assert.equal(res.body.data[0].status, expectedStatus)
+      await Promise.each(statusesToTest, async ([deviceApprovalId, deviceMaintenanceStatusId, expectedStatus]) => {
+        if (deviceMaintenanceStatusId) {
+          const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
+            deviceId: theGreatestDeviceIEverCreated.id,
+            deviceMaintenanceStatusId,
+            data: '{}',
+            day: new Date(),
+            createdOn: new Date(),
+          })
+          await knex('Device').where({ id: theGreatestDeviceIEverCreated.id }).update({
+            deviceMaintenanceStatusLogId,
+            deviceApprovalId,
+          })
+        } else {
+          await knex('Device').where({ id: theGreatestDeviceIEverCreated.id }).update({
+            deviceMaintenanceStatusLogId: null,
+            deviceApprovalId,
+          })
         }
-      )
+
+        const res = await server
+          .get(`${path}?deviceName=The greatest device I ever created`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.body.data[0].status, expectedStatus)
+      })
     })
 
     it('should return a list of devices when using valid token "approved"', async () => {
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -299,9 +227,7 @@ describe('Device routes', () => {
     })
 
     it('should return only devices that have are configured for tb disease', async () => {
-      const res = await server
-        .get(`${path}?page=0&size=100&diseaseId=1`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}?page=0&size=100&diseaseId=1`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -331,13 +257,8 @@ describe('Device routes', () => {
 
     it.skip('should return only devices that have linked issues', async () => {
       const devicesWithIssues = devices =>
-        _.filter(
-          devices,
-          device => device.issueCategories && device.issueCategories.length > 0
-        )
-      let res = await server
-        .get(`${path}?onlyOpenIssues=1`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        _.filter(devices, device => device.issueCategories && device.issueCategories.length > 0)
+      let res = await server.get(`${path}?onlyOpenIssues=1`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -350,22 +271,16 @@ describe('Device routes', () => {
         .get(`${path}?onlyOpenIssues=1&issueTypeId=ModuleDisabled`)
         .set('Authorization', `Bearer ${shared.token}`)
       assert.isEmpty(devicesWithIssues(res.body.data))
-      res = await server
-        .get(`${path}?issueTypeId=ModuleDisabled`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      res = await server.get(`${path}?issueTypeId=ModuleDisabled`).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.body.data.length, 1)
       res = await server
-        .get(
-          `${path}?onlyOpenIssues=1&issueTypeId=ModuleReplaced&issueTypeId=ModuleDisabled"`
-        )
+        .get(`${path}?onlyOpenIssues=1&issueTypeId=ModuleReplaced&issueTypeId=ModuleDisabled"`)
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.body.data.length, 1)
     })
 
     it('should return details of a specific device', async () => {
-      const res = await server
-        .get(`${path}/1`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}/1`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -401,9 +316,7 @@ describe('Device routes', () => {
 
     it('should return details of a filter device from a site', async () => {
       const res = await server
-        .get(
-          `${path}?sortCol=name&sortDir=asc&page=0&size=10&siteId=1&hasResults=1`
-        )
+        .get(`${path}?sortCol=name&sortDir=asc&page=0&size=10&siteId=1&hasResults=1`)
         .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
@@ -414,9 +327,7 @@ describe('Device routes', () => {
     })
 
     it('should return performance report of a specific device', async () => {
-      const res = await server
-        .get(`${path}/performance/2`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}/performance/2`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -433,9 +344,7 @@ describe('Device routes', () => {
     })
 
     it("should constrain devices returned based on the user's job context", async () => {
-      const devicesReponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${daktariManagerAuthAccessToken}`)
+      const devicesReponse = await server.get(path).set('Authorization', `Bearer ${daktariManagerAuthAccessToken}`)
       assert.isAbove(devicesReponse.body.data.length, 0)
       const { name: daktariVirologyDeviceTypeName } = await knex('DeviceType')
         .where('externalId', daktariVirologyDeviceTypeExternalId)
@@ -461,21 +370,15 @@ describe('Device routes', () => {
 
       before(async () => {
         deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        const res = await server
-          .get(endpointPath)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(endpointPath).set('Authorization', `Bearer ${shared.token}`)
         assertResponse(res)
         ;[{ id: deviceId }] = res.body.data
-        oldDevice = await knex('Device')
-          .where('id', deviceId)
-          .first('deviceMaintenanceStatusLogId', 'lastSeenOn')
+        oldDevice = await knex('Device').where('id', deviceId).first('deviceMaintenanceStatusLogId', 'lastSeenOn')
       })
 
       after(async () => {
         await knex('Device').where('id', deviceId).update(oldDevice)
-        await knex('DeviceMaintenanceStatusLog')
-          .where('id', deviceMaintenanceStatusLogId)
-          .del()
+        await knex('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLogId).del()
       })
 
       it('should sync lastSeenOn and DeviceMaintenanceStatusLog entry for Active status', async () => {
@@ -483,9 +386,7 @@ describe('Device routes', () => {
          * insert new DeviceMaintenanceStatusLog with Active status for today
          * and set old date for device lastSeenOn
          */
-        ;[deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        ;[deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
           data: '{}',
@@ -502,9 +403,7 @@ describe('Device routes', () => {
          * make a new request and see that lastSeenOn has changed and is equal
          * DeviceMaintenanceStatusLog.day which was just inserted
          */
-        const res = await server
-          .get(endpointPath)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(endpointPath).set('Authorization', `Bearer ${shared.token}`)
         assertResponse(res)
         const [device2] = res.body.data
         const newLastSeenOn = new Date(device2.lastSeen)
@@ -517,15 +416,10 @@ describe('Device routes', () => {
     describe('/maintenance-status', () => {
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should return a list of devices with a snapshot of each device maintenance status during the month', async () => {
-        const devicesReponse = await server
-          .get(maintenanceStatusPath)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const devicesReponse = await server.get(maintenanceStatusPath).set('Authorization', `Bearer ${shared.token}`)
         assert.isOk(devicesReponse.body.ok)
         assert.equal(devicesReponse.body.length, devicesReponse.body.total)
-        assert.equal(
-          devicesReponse.body.length,
-          devicesReponse.body.data.length
-        )
+        assert.equal(devicesReponse.body.length, devicesReponse.body.data.length)
         assert.property(devicesReponse.body.data[0], 'id')
         assert.property(devicesReponse.body.data[0], 'name')
         assert.property(devicesReponse.body.data[0], 'shortName')
@@ -547,39 +441,21 @@ describe('Device routes', () => {
         )}&maxDate=${formatDateOrDefault(
           endOfMonth(subMonths(new Date(), 1)),
           'yyyy-MM-dd'
-        )}&${filterOnDeviceMaintenanceStatus
-          .map(status => `deviceMaintenanceStatusId=${status}`)
-          .join('&')}`
+        )}&${filterOnDeviceMaintenanceStatus.map(status => `deviceMaintenanceStatusId=${status}`).join('&')}`
 
-        const devicesResponse = await server
-          .get(url)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const devicesResponse = await server.get(url).set('Authorization', `Bearer ${shared.token}`)
 
-        assert.equal(
-          devicesResponse.status,
-          200,
-          `${url} - must return HTTP status 200`
-        )
+        assert.equal(devicesResponse.status, 200, `${url} - must return HTTP status 200`)
         assert.isOk(devicesResponse.body.ok)
         assert.isAbove(devicesResponse.body.length, 0)
-        assert.equal(
-          devicesResponse.body.length,
-          devicesResponse.body.data.length
-        )
+        assert.equal(devicesResponse.body.length, devicesResponse.body.data.length)
         devicesResponse.body.data.forEach(device => {
-          assert.isAbove(
-            device.days.filter(day =>
-              filterOnDeviceMaintenanceStatus.includes(day.externalId)
-            ).length,
-            0
-          )
+          assert.isAbove(device.days.filter(day => filterOnDeviceMaintenanceStatus.includes(day.externalId)).length, 0)
         })
       })
 
       it('should show a device status for each day of the current month by default', async () => {
-        const devicesReponse = await server
-          .get(maintenanceStatusPath)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const devicesReponse = await server.get(maintenanceStatusPath).set('Authorization', `Bearer ${shared.token}`)
         const days = []
         let day = startOfMonth(new Date())
         while (day <= startOfToday()) {
@@ -618,11 +494,7 @@ describe('Device routes', () => {
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should return the latest maintenance status log for the devices current status', async () => {
         const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        const filterOnDeviceMaintenanceStatus = [
-          'inactiveUnknown',
-          'inactiveNoTestsPerformed',
-          'inactiveDownForRepair',
-        ]
+        const filterOnDeviceMaintenanceStatus = ['inactiveUnknown', 'inactiveNoTestsPerformed', 'inactiveDownForRepair']
         let devicesReponse = await server
           .get(
             `${maintenanceStatusPath}?minDate=${formatDateOrDefault(
@@ -631,34 +503,25 @@ describe('Device routes', () => {
             )}&maxDate=${formatDateOrDefault(
               endOfMonth(subMonths(new Date(), 1)),
               'yyyy-MM-dd'
-            )}&${filterOnDeviceMaintenanceStatus
-              .map(status => `deviceMaintenanceStatusId=${status}`)
-              .join('&')}`
+            )}&${filterOnDeviceMaintenanceStatus.map(status => `deviceMaintenanceStatusId=${status}`).join('&')}`
           )
           .set('Authorization', `Bearer ${shared.token}`)
         const { id: deviceId } = devicesReponse.body.data[0]
         const newDeviceMaintenanceStatusLog = {
           deviceId,
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveOutOfInventory,
           day: getLocalDateInUtc(startOfToday()),
           data: JSON.stringify({
             options: { data: { notes: 'More cartridges expected next month' } },
           }),
           createdOn: setMilliseconds(new Date(), 0),
         }
-        const [lastLogId] = await knex('DeviceMaintenanceStatusLog').insert(
-          newDeviceMaintenanceStatusLog
-        )
+        const [lastLogId] = await knex('DeviceMaintenanceStatusLog').insert(newDeviceMaintenanceStatusLog)
         await knex('Device').where('id', deviceId).update({
           deviceMaintenanceStatusLogId: lastLogId,
         })
         const deviceWithLogWithNote = await knex('Device as d')
-          .join(
-            'DeviceMaintenanceStatusLog as dmsl',
-            'd.deviceMaintenanceStatusLogId',
-            'dmsl.id'
-          )
+          .join('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
           .where(queryBuilder => {
             queryBuilder.whereRaw(
               "IFNULL(JSON_UNQUOTE(JSON_EXTRACT(IFNULL(dmsl.data, '{}'), '$.options.data.notes')), '') <> ''"
@@ -676,8 +539,7 @@ describe('Device routes', () => {
           day: newDeviceMaintenanceStatusLog.day.toISOString(),
           createdOn: newDeviceMaintenanceStatusLog.createdOn.toISOString(),
           data: JSON.parse(newDeviceMaintenanceStatusLog.data),
-          notes: JSON.parse(newDeviceMaintenanceStatusLog.data).options.data
-            .notes,
+          notes: JSON.parse(newDeviceMaintenanceStatusLog.data).options.data.notes,
         })
       })
     })
@@ -685,15 +547,10 @@ describe('Device routes', () => {
     describe('/maintenance-statuses', () => {
       const maintenanceStatusesPath = `${path}/maintenance-statuses`
       it('should return a list of different maintenance statuses that a device can be in', async () => {
-        const devicesReponse = await server
-          .get(maintenanceStatusesPath)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const devicesReponse = await server.get(maintenanceStatusesPath).set('Authorization', `Bearer ${shared.token}`)
         assert.isOk(devicesReponse.body.ok)
         assert.equal(devicesReponse.body.length, devicesReponse.body.total)
-        assert.equal(
-          devicesReponse.body.length,
-          devicesReponse.body.data.length
-        )
+        assert.equal(devicesReponse.body.length, devicesReponse.body.data.length)
         expect(devicesReponse.body.data).to.containSubset([
           {
             name: 'Active',
@@ -756,15 +613,10 @@ describe('Device routes', () => {
       let deviceId
 
       before(async () => {
-        const res = await server
-          .get(path)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
-        ;[{ id: deviceId }] = _.reject(res.body.data, [
-          'maintenanceStatus',
-          'inactiveDecommissioned',
-        ])
+        ;[{ id: deviceId }] = _.reject(res.body.data, ['maintenanceStatus', 'inactiveDecommissioned'])
         assert.isAbove(deviceId, 0)
       })
       beforeEach(async () => {
@@ -782,13 +634,9 @@ describe('Device routes', () => {
           x => !deviceMaintenanceIdsToRestore.includes(x)
         )
 
-        await knex('DeviceMaintenance')
-          .whereIn('id', deviceMaintenanceIdsToDelete)
-          .del()
+        await knex('DeviceMaintenance').whereIn('id', deviceMaintenanceIdsToDelete).del()
 
-        await knex('DeviceMaintenance')
-          .whereIn('id', deviceMaintenanceIdsToRestore)
-          .update({ current: 1 })
+        await knex('DeviceMaintenance').whereIn('id', deviceMaintenanceIdsToRestore).update({ current: 1 })
       })
 
       // actual tests
@@ -808,10 +656,7 @@ describe('Device routes', () => {
         assert.property(device, notesPropName)
         // values in request and response should match
         assert.equal(deviceId, device.id)
-        assert.equal(
-          new Date(device[datePropName]).toDateString(),
-          new Date(contextDate).toDateString()
-        )
+        assert.equal(new Date(device[datePropName]).toDateString(), new Date(contextDate).toDateString())
         assert.equal(device[notesPropName], notes)
         // additional assertions
         assert.isAbove(deviceMaintenanceId, 0)
@@ -851,10 +696,7 @@ describe('Device routes', () => {
           assert.equal(response2.status, 200)
           assertBase(reqData, response2.body, options)
           // we updated DeviceMaintenance, so id did not change
-          assert.equal(
-            prevDeviceMaintenanceId,
-            response2.body.deviceMaintenanceId
-          )
+          assert.equal(prevDeviceMaintenanceId, response2.body.deviceMaintenanceId)
 
           // ----------------------
           // post new date
@@ -869,10 +711,7 @@ describe('Device routes', () => {
           assert.equal(response3.status, 200)
           assertBase(reqData, response3.body, options)
           // we inserted new entry into DeviceMaintenance - so id's differ
-          assert.notEqual(
-            prevDeviceMaintenanceId,
-            response3.body.deviceMaintenanceId
-          )
+          assert.notEqual(prevDeviceMaintenanceId, response3.body.deviceMaintenanceId)
         })
       }
     })
@@ -895,9 +734,7 @@ describe('Device routes', () => {
           hostId: 'What should I put here?',
         })
         await statusTestDeviceContext.registerAndSetDevice()
-        theGreatestDeviceIEverCreated = await knex('Device')
-          .where({ name: 'Oh, this device is great' })
-          .first()
+        theGreatestDeviceIEverCreated = await knex('Device').where({ name: 'Oh, this device is great' }).first()
 
         // Set the createdOn date to 6 days ago, so we can update the status log for a range of days
         await knex('Device')
@@ -917,17 +754,9 @@ describe('Device routes', () => {
       ) => {
         const logs = await knex('DeviceMaintenanceStatusLog as dmsl')
           .innerJoin('Device as d', 'dmsl.deviceId', 'd.id')
-          .innerJoin(
-            'DeviceMaintenanceStatus as dms',
-            'dmsl.deviceMaintenanceStatusId',
-            'dms.id'
-          )
+          .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
           .whereIn('dmsl.id', deviceMaintenanceStatusLogIds)
-          .select(
-            'd.name as deviceName',
-            'dms.externalId',
-            knex.raw('DATE(dmsl.day) as day')
-          )
+          .select('d.name as deviceName', 'dms.externalId', knex.raw('DATE(dmsl.day) as day'))
         const logsByDay = []
         logs.forEach(log => {
           logsByDay[log.day.toISOString()] = _.omit(log, 'day')
@@ -935,10 +764,7 @@ describe('Device routes', () => {
         getArrayOfDaysInRange(dateFrom, dateTo).forEach(day => {
           const utcDay = startOfDayUtc(day).toISOString()
           assert.equal(logsByDay[utcDay].deviceName, deviceName)
-          assert.equal(
-            logsByDay[utcDay].externalId,
-            deviceMaintenanceStatusExternalId
-          )
+          assert.equal(logsByDay[utcDay].externalId, deviceMaintenanceStatusExternalId)
         })
         assert.equal(deviceMaintenanceStatusLogIds.length, 8)
       }
@@ -952,8 +778,7 @@ describe('Device routes', () => {
           externalId: deviceMaintenanceStatusExternalId,
           dateFrom,
           dateTo,
-          notes:
-            "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+          notes: "Service engineer visited yesterday and couldn't finish by 3:30 PM",
         }
 
         // Should update to inactiveDownForRepair
@@ -965,18 +790,14 @@ describe('Device routes', () => {
         await assertValidStatusInDateRange(
           dateFrom,
           dateTo,
-          toInactiveDownForRepairResponse.body.data
-            .deviceMaintenanceStatusLogIds,
+          toInactiveDownForRepairResponse.body.data.deviceMaintenanceStatusLogIds,
           deviceMaintenanceStatusExternalId
         )
 
-        const { deviceMaintenanceStatusLogIds } =
-          toInactiveDownForRepairResponse.body.data
+        const { deviceMaintenanceStatusLogIds } = toInactiveDownForRepairResponse.body.data
 
         // Change all the inserted logs to Active
-        const [activeStatusId] = await knex('DeviceMaintenanceStatus')
-          .where({ externalId: 'active' })
-          .pluck('id')
+        const [activeStatusId] = await knex('DeviceMaintenanceStatus').where({ externalId: 'active' }).pluck('id')
         await knex('DeviceMaintenanceStatusLog')
           .whereIn('id', deviceMaintenanceStatusLogIds)
           .update({ deviceMaintenanceStatusId: activeStatusId })
@@ -1000,10 +821,7 @@ describe('Device routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .send(payload)
         assert.equal(toActiveResponse.body.statusCode, 400)
-        assert.equal(
-          toActiveResponse.body.message,
-          "The status you are trying to assign can't be set manually"
-        )
+        assert.equal(toActiveResponse.body.message, "The status you are trying to assign can't be set manually")
 
         // TODO: add validations for 'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"'
       })
@@ -1017,16 +835,12 @@ describe('Device routes', () => {
       let deviceMaintenanceStatusLogId = null
       before(async () => {
         const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        editableDeviceMaintenanceStatusIds = await knex(
-          'DeviceMaintenanceStatus'
-        )
+        editableDeviceMaintenanceStatusIds = await knex('DeviceMaintenanceStatus')
           .where('manuallySet', true)
           .andWhere('externalId', '<>', 'inactiveDownForRepair')
           .pluck('externalId')
-        const [deviceMaintenanceStatusExternalId] =
-          editableDeviceMaintenanceStatusIds
-        deviceMaintenanceStatusId =
-          deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
+        const [deviceMaintenanceStatusExternalId] = editableDeviceMaintenanceStatusIds
+        deviceMaintenanceStatusId = deviceMaintenanceStatuses[deviceMaintenanceStatusExternalId]
 
         device = await knex('DeviceTypeCategory as dtc')
           .join('DeviceType as dt', 'dtc.id', 'dt.deviceTypeCategoryId')
@@ -1037,9 +851,7 @@ describe('Device routes', () => {
           .first('d.id', 'd.deviceMaintenanceStatusLogId', 'd.createdOn')
         deviceId = device.id
 
-        await knex('Device')
-          .where('id', deviceId)
-          .update('createdOn', subDays(startOfToday(), 6))
+        await knex('Device').where('id', deviceId).update('createdOn', subDays(startOfToday(), 6))
       })
       afterEach(async () => {
         if (deviceMaintenanceStatusLogId) {
@@ -1048,25 +860,19 @@ describe('Device routes', () => {
             deviceMaintenanceStatusLogId: device.deviceMaintenanceStatusLogId,
           })
           // remove inserted entry in DeviceMaintenanceStatusLog
-          await knex('DeviceMaintenanceStatusLog')
-            .where('id', deviceMaintenanceStatusLogId)
-            .del()
+          await knex('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLogId).del()
           // reset value
           deviceMaintenanceStatusLogId = null
         }
       })
 
       after(async () => {
-        await knex('Device')
-          .where('id', deviceId)
-          .update('createdOn', device.createdOn)
+        await knex('Device').where('id', deviceId).update('createdOn', device.createdOn)
       })
 
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should save the maintenance status of the device', async () => {
-        ;[deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        ;[deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
           deviceMaintenanceStatusId,
           data: '{}',
@@ -1090,8 +896,7 @@ describe('Device routes', () => {
           externalId: 'inactiveDownForRepair',
           options: {
             data: {
-              notes:
-                "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+              notes: "Service engineer visited yesterday and couldn't finish by 3:30 PM",
             },
           },
         }
@@ -1100,28 +905,16 @@ describe('Device routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
-        assert.isOk(
-          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
-        )
-        const deviceMaitnenanceStatusLog = await knex(
-          'DeviceMaintenanceStatusLog'
-        )
-          .where(
-            'id',
-            updateMaintenanceStatusResponse.body.data
-              .deviceMaintenanceStatusLogId
-          )
+        assert.isOk(updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId)
+        const deviceMaitnenanceStatusLog = await knex('DeviceMaintenanceStatusLog')
+          .where('id', updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId)
           .first()
-        deviceMaitnenanceStatusLog.data = JSON.parse(
-          deviceMaitnenanceStatusLog.data
-        )
+        deviceMaitnenanceStatusLog.data = JSON.parse(deviceMaitnenanceStatusLog.data)
         expect(deviceMaitnenanceStatusLog.data).to.containSubset(payload)
       })
 
       it('should provide shallow access to write to data.options.data.notes', async () => {
-        ;[deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        ;[deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
           deviceMaintenanceStatusId,
           data: '{}',
@@ -1150,21 +943,11 @@ describe('Device routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .send(payload)
         assert.isOk(updateMaintenanceStatusResponse.body.ok)
-        assert.isOk(
-          updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId
-        )
-        const deviceMaitnenanceStatusLog = await knex(
-          'DeviceMaintenanceStatusLog'
-        )
-          .where(
-            'id',
-            updateMaintenanceStatusResponse.body.data
-              .deviceMaintenanceStatusLogId
-          )
+        assert.isOk(updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId)
+        const deviceMaitnenanceStatusLog = await knex('DeviceMaintenanceStatusLog')
+          .where('id', updateMaintenanceStatusResponse.body.data.deviceMaintenanceStatusLogId)
           .first()
-        deviceMaitnenanceStatusLog.data = JSON.parse(
-          deviceMaitnenanceStatusLog.data
-        )
+        deviceMaitnenanceStatusLog.data = JSON.parse(deviceMaitnenanceStatusLog.data)
         expect(deviceMaitnenanceStatusLog.data).to.containSubset({
           options: {
             data: {
@@ -1185,56 +968,37 @@ describe('Device routes', () => {
     before(async () => {
       deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
       // get all devices
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
       devices = res.body.data
       // get first device with non-Decommissioned maintenance status
       ;[deviceDecommissioned] = devices.filter(
-        d =>
-          d.maintenanceStatus &&
-          d.maintenanceStatus !== 'inactiveDecommissioned'
+        d => d.maintenanceStatus && d.maintenanceStatus !== 'inactiveDecommissioned'
       )
       // ... and it's current maintenance status log
       deviceMaintenanceStatusLog = await knex('Device as d')
-        .innerJoin(
-          'DeviceMaintenanceStatusLog as dml',
-          'd.deviceMaintenanceStatusLogId',
-          'dml.id'
-        )
+        .innerJoin('DeviceMaintenanceStatusLog as dml', 'd.deviceMaintenanceStatusLogId', 'dml.id')
         .where('d.id', deviceDecommissioned.id)
         .first('dml.*')
     })
 
     after(async () => {
       const { id, deviceMaintenanceStatusId } = deviceMaintenanceStatusLog
-      await knex('DeviceMaintenanceStatusLog')
-        .where({ id })
-        .update({ deviceMaintenanceStatusId })
+      await knex('DeviceMaintenanceStatusLog').where({ id }).update({ deviceMaintenanceStatusId })
     })
 
     it('should set device maintenance status to "inactiveDecommissioned" and check that endpoint skips it', async () => {
-      const liveDevices = devices.filter(
-        d => d.maintenanceStatus !== 'inactiveDecommissioned'
-      )
+      const liveDevices = devices.filter(d => d.maintenanceStatus !== 'inactiveDecommissioned')
       expect(liveDevices.length).to.be.greaterThan(0)
 
       // set device maintenance status to 'decommissioned'
-      await knex('DeviceMaintenanceStatusLog')
-        .where('id', deviceMaintenanceStatusLog.id)
-        .update({
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveDecommissioned,
-        })
+      await knex('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLog.id).update({
+        deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveDecommissioned,
+      })
 
       // read new list of devices
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
       const devicesNew = res.body.data
-      const liveDevicesNew = devicesNew.filter(
-        d => d.maintenanceStatus !== 'inactiveDecommissioned'
-      )
+      const liveDevicesNew = devicesNew.filter(d => d.maintenanceStatus !== 'inactiveDecommissioned')
       // we set live device to 'decommissioned' state, so new
       // list of devices should be less than original list
       expect(liveDevicesNew.length).to.be.lessThan(liveDevices.length)
@@ -1249,9 +1013,7 @@ describe('Device routes', () => {
         partner: 'Partner One',
       })
       const startOfTodayUtc = getLocalDateInUtc(startOfToday())
-      const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(
-        subDays(startOfToday(), 2)
-      )
+      const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(subDays(startOfToday(), 2))
       const dispatchDeviceMaintenanceStatusForDay = async day => {
         const messageContext = await createMessageContext()
         const action = logDeviceMaintenanceStatus(day)
@@ -1280,24 +1042,11 @@ describe('Device routes', () => {
       const getDeviceDetails = async (today, deviceId) =>
         knex('Device as d')
           .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-          .leftJoin(
-            'DeviceMaintenanceStatusLog as today_dmsl',
-            queryBuilder => {
-              queryBuilder
-                .on('d.id', 'today_dmsl.deviceId')
-                .andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
-            }
-          )
-          .leftJoin(
-            'DeviceMaintenanceStatus as today_dms',
-            'today_dmsl.deviceMaintenanceStatusId',
-            'today_dms.id'
-          )
-          .leftJoin(
-            'DeviceMaintenanceStatusLog as current_dmsl',
-            'd.deviceMaintenanceStatusLogId',
-            'current_dmsl.id'
-          )
+          .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
+            queryBuilder.on('d.id', 'today_dmsl.deviceId').andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
+          })
+          .leftJoin('DeviceMaintenanceStatus as today_dms', 'today_dmsl.deviceMaintenanceStatusId', 'today_dms.id')
+          .leftJoin('DeviceMaintenanceStatusLog as current_dmsl', 'd.deviceMaintenanceStatusLogId', 'current_dmsl.id')
           .leftJoin(
             'DeviceMaintenanceStatus as current_dms',
             'current_dmsl.deviceMaintenanceStatusId',
@@ -1316,9 +1065,7 @@ describe('Device routes', () => {
         /**
          * set device.deviceMaintenanceStatusId to 'inactiveUnknown' as of 2 days ago
          */
-        const [deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
           data: '{}',
@@ -1360,12 +1107,9 @@ describe('Device routes', () => {
         /**
          * 3 DAYS AGO - set device.deviceMaintenanceStatusId to 'inactiveOutOfInventory'
          */
-        const [deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveOutOfInventory,
           data: '{}',
           day: getLocalDateInUtc(subDays(startOfToday(), 3)),
           createdOn: new Date(),
@@ -1375,10 +1119,7 @@ describe('Device routes', () => {
           deviceMaintenanceStatusLogId,
         })
 
-        let deviceDetails = await getDeviceDetails(
-          startOfDayTwoDaysAgoUtc,
-          deviceId
-        )
+        let deviceDetails = await getDeviceDetails(startOfDayTwoDaysAgoUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1390,10 +1131,7 @@ describe('Device routes', () => {
 
         await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
-        deviceDetails = await getDeviceDetails(
-          startOfDayTwoDaysAgoUtc,
-          deviceId
-        )
+        deviceDetails = await getDeviceDetails(startOfDayTwoDaysAgoUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1409,12 +1147,9 @@ describe('Device routes', () => {
         /**
          * 1 DAY AGO - Set maintenance status 'inactiveOutOfInventory'
          */
-        const [deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveOutOfInventory,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveOutOfInventory,
           data: '{}',
           day: getLocalDateInUtc(subDays(startOfToday(), 1)),
           createdOn: new Date(),
@@ -1435,10 +1170,7 @@ describe('Device routes', () => {
         await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(
-          startOfDayTwoDaysAgoUtc,
-          deviceId
-        )
+        const deviceDetails = await getDeviceDetails(startOfDayTwoDaysAgoUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1464,10 +1196,7 @@ describe('Device routes', () => {
         await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(
-          startOfDayTwoDaysAgoUtc,
-          deviceId
-        )
+        const deviceDetails = await getDeviceDetails(startOfDayTwoDaysAgoUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1482,9 +1211,7 @@ describe('Device routes', () => {
          * TODAY - The created context created a result for today
          * 2 DAYS AGO - create log 'inactiveUnknown'
          */
-        const [deviceMaintenanceStatusLogId] = await knex(
-          'DeviceMaintenanceStatusLog'
-        ).insert({
+        const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
           deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveUnknown,
           data: '{}',
@@ -1502,10 +1229,7 @@ describe('Device routes', () => {
         await dispatchDeviceMaintenanceStatusForDay(startOfDayTwoDaysAgoUtc)
 
         // check after dispatch
-        const deviceDetails = await getDeviceDetails(
-          startOfDayTwoDaysAgoUtc,
-          deviceId
-        )
+        const deviceDetails = await getDeviceDetails(startOfDayTwoDaysAgoUtc, deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1592,8 +1316,7 @@ describe('Device routes', () => {
          */
         await knex('DeviceMaintenanceStatusLog').insert({
           deviceId,
-          deviceMaintenanceStatusId:
-            deviceMaintenanceStatuses.inactiveDownForRepair,
+          deviceMaintenanceStatusId: deviceMaintenanceStatuses.inactiveDownForRepair,
           data: '{}',
           day: getLocalDateInUtc(subDays(startOfToday(), 2)),
           createdOn: new Date(),
@@ -1603,9 +1326,7 @@ describe('Device routes', () => {
          * We will update all the inactiveUnknowns that were set before the result endedOn date (today)
          */
         const [resultId] = await knex('Result').where({ deviceId }).pluck('id')
-        const [deviceLogId] = await knex('DeviceLog')
-          .where({ resultId })
-          .pluck('id')
+        const [deviceLogId] = await knex('DeviceLog').where({ resultId }).pluck('id')
         const messageContext = await createMessageContext()
         const action = resultLogged(resultId, deviceLogId)
         await messageContext.dispatch(action)
@@ -1615,10 +1336,7 @@ describe('Device routes', () => {
         /**
          * 1 DAY AGO - The maintenance status log should be inactiveNoTestsPerformed
          */
-        let deviceDetails = await getDeviceDetails(
-          getLocalDateInUtc(subDays(startOfToday(), 1)),
-          deviceId
-        )
+        let deviceDetails = await getDeviceDetails(getLocalDateInUtc(subDays(startOfToday(), 1)), deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,
@@ -1629,10 +1347,7 @@ describe('Device routes', () => {
         /**
          * 2 DAYS AGO - The maintenance status log should be inactiveDownForRepair (only inactiveUnknown(s) should be changed)
          */
-        deviceDetails = await getDeviceDetails(
-          getLocalDateInUtc(subDays(startOfToday(), 2)),
-          deviceId
-        )
+        deviceDetails = await getDeviceDetails(getLocalDateInUtc(subDays(startOfToday(), 2)), deviceId)
         expect(deviceDetails).to.containSubset([
           {
             id: deviceId,

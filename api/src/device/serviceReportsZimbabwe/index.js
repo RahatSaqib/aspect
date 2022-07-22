@@ -43,12 +43,8 @@ function getResultsBaseQuery(query) {
       'd.name as deviceName',
       'st.name as state',
       'lg.name as lga',
-      knex.raw(
-        `ROUND(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END) * 100 / COUNT(r.id), 2) as errorRate`
-      ),
-      knex.raw(
-        `IFNULL(ROUND(COUNT(r.id) * 100 / (${days.length} * dc.dailyCapacity), 2), 0) as utilizationRate`
-      ),
+      knex.raw(`ROUND(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END) * 100 / COUNT(r.id), 2) as errorRate`),
+      knex.raw(`IFNULL(ROUND(COUNT(r.id) * 100 / (${days.length} * dc.dailyCapacity), 2), 0) as utilizationRate`),
       knex.raw(
         `IFNULL(ROUND(SUM(TIMESTAMPDIFF(MINUTE, IFNULL(r.endedOn, NOW()), r.createdOn)) / 60 / COUNT(r.id), 2), 0) as averageDelayToUpload`
       ),
@@ -64,34 +60,19 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
       .innerJoin('Geography as g', 's.geographyId', 'g.id')
       .leftOuterJoin('State as st', 'g.stateId', 'st.id')
       .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
-      .leftOuterJoin(
-        'DeviceMaintenanceStatusLog as dmsl',
-        'd.id',
-        'dmsl.deviceId'
-      )
-      .leftOuterJoin(
-        'DeviceMaintenanceStatusLog as dmslNewer',
-        queryBuilder => {
-          queryBuilder
-            .on('dmslNewer.deviceId', 'dmsl.deviceId')
-            .andOn('dmslNewer.day', 'dmsl.day')
-            .andOn(function () {
-              this.on('dmslNewer.createdOn', '>', 'dmsl.createdOn')
-              this.orOn(function () {
-                this.on('dmslNewer.createdOn', '=', 'dmsl.createdOn').andOn(
-                  'dmslNewer.id',
-                  '>',
-                  'dmsl.id'
-                )
-              })
+      .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
+      .leftOuterJoin('DeviceMaintenanceStatusLog as dmslNewer', queryBuilder => {
+        queryBuilder
+          .on('dmslNewer.deviceId', 'dmsl.deviceId')
+          .andOn('dmslNewer.day', 'dmsl.day')
+          .andOn(function () {
+            this.on('dmslNewer.createdOn', '>', 'dmsl.createdOn')
+            this.orOn(function () {
+              this.on('dmslNewer.createdOn', '=', 'dmsl.createdOn').andOn('dmslNewer.id', '>', 'dmsl.id')
             })
-        }
-      )
-      .leftOuterJoin(
-        'DeviceMaintenanceStatus as dms',
-        'dmsl.deviceMaintenanceStatusId',
-        'dms.id'
-      )
+          })
+      })
+      .leftOuterJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
       // Get only the latest log of the day
       .where('dt.externalId', 'CepheidGeneXpert')
       .whereNull('dmslNewer.id')
@@ -115,9 +96,7 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
         'd.name as deviceName',
         'st.name as state',
         'lg.name as lga',
-        knex.raw(
-          `ROUND(SUM(CASE WHEN dms.active THEN 0 ELSE 1 END) * 100 / COUNT(dms.id)) as offlineRate`
-        ),
+        knex.raw(`ROUND(SUM(CASE WHEN dms.active THEN 0 ELSE 1 END) * 100 / COUNT(dms.id)) as offlineRate`),
         knex.raw(`ROUND(SUM(dms.active) * 100 / COUNT(dms.id)) as activeRate`),
       ])
   )
@@ -135,11 +114,7 @@ async function getDevicePerformanceReport(auth, query) {
         partner: 'p',
       })
       .orderBy(['state', 'lga', 'deviceName']),
-    getMaintenanceBaseQuery(dataConstraints, query).orderBy([
-      'state',
-      'lga',
-      'deviceName',
-    ]),
+    getMaintenanceBaseQuery(dataConstraints, query).orderBy(['state', 'lga', 'deviceName']),
   ])
 
   // Group by deviceId
@@ -149,12 +124,7 @@ async function getDevicePerformanceReport(auth, query) {
   // Merge by deviceId
   let data = []
   keys(resultBasedDataByDevice).forEach(deviceId => {
-    data.push(
-      merge(
-        resultBasedDataByDevice[deviceId],
-        maintenanceBasedDataByDevice[deviceId]
-      )
-    )
+    data.push(merge(resultBasedDataByDevice[deviceId], maintenanceBasedDataByDevice[deviceId]))
   })
   data = orderBy(data, ['state', 'lga', 'deviceName'])
 

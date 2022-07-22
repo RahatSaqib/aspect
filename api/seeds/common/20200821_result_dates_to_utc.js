@@ -5,24 +5,18 @@ const logger = require('../../src/shared/logger')
 const MAX_ROWS_PER_UPDATE = 10000.0
 async function seed(knex) {
   const [{ mySqlTimezoneTablesMissing }] = await knex.select(
-    knex.raw(
-      "ISNULL(CONVERT_TZ(now(), 'EST', 'UTC')) as mySqlTimezoneTablesMissing"
-    )
+    knex.raw("ISNULL(CONVERT_TZ(now(), 'EST', 'UTC')) as mySqlTimezoneTablesMissing")
   )
   if (mySqlTimezoneTablesMissing === 1)
     throw new Error(
       "TimeZone tables weren't configured on the MySql server. For more information, check the next link: https://dev.mysql.com/downloads/timezones.html."
     )
 
-  const { minId: minResultId = 0, maxId: maxResultId = 0 } = await knex(
-    'Result'
-  )
+  const { minId: minResultId = 0, maxId: maxResultId = 0 } = await knex('Result')
     .max('id as maxId')
     .min('id as minId')
     .first()
-  const { minId: minSampleId = 0, maxId: maxSampleId = 0 } = await knex(
-    'Sample'
-  )
+  const { minId: minSampleId = 0, maxId: maxSampleId = 0 } = await knex('Sample')
     .max('id as maxId')
     .min('id as minId')
     .first()
@@ -36,18 +30,8 @@ async function batchUpdate(knex, minValue, maxValue, queryBuilderFunction) {
   const queries = []
   try {
     return knex.transaction(async trx => {
-      _.range(
-        0,
-        Math.ceil((maxValue - minValue) / MAX_ROWS_PER_UPDATE)
-      ).forEach(() => {
-        queries.push(
-          queryBuilderFunction(
-            knex,
-            currentMinValue,
-            currentMinValue + MAX_ROWS_PER_UPDATE,
-            trx
-          )
-        )
+      _.range(0, Math.ceil((maxValue - minValue) / MAX_ROWS_PER_UPDATE)).forEach(() => {
+        queries.push(queryBuilderFunction(knex, currentMinValue, currentMinValue + MAX_ROWS_PER_UPDATE, trx))
         currentMinValue += MAX_ROWS_PER_UPDATE
       })
       return Promise.all(queries)

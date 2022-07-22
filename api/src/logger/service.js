@@ -59,16 +59,11 @@ function logAction(action, dispatcher = null) {
 function logConsole({ logKey, severity, data, userName, createdOn }) {
   const dataKeys = logConsoleDataKeys[logKey] || []
   const message = dataKeys.map(key => data[key] || '').join(' ')
-  const logMessage = `${data.timeElapsed}ms ${message} ${
-    userName || ''
-  } [${createdOn}]`
+  const logMessage = `${data.timeElapsed}ms ${message} ${userName || ''} [${createdOn}]`
   logger[severity](logMessage, { reLabel: `aspect:api:${logKey}` })
 }
 
-async function onLogDatabase(
-  { logKey, severity, data, userName, createdOn },
-  { messageContext }
-) {
+async function onLogDatabase({ logKey, severity, data, userName, createdOn }, { messageContext }) {
   return messageContext.run(knex =>
     knex('AuditLog').insert({
       logKey,

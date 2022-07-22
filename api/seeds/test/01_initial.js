@@ -6,11 +6,7 @@ const Promise = require('bluebird')
 const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
 const jobFunctionsFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
 const jobFunctionsFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
-const {
-  upsertJobFunctionFixture,
-  upsertPermissionFixture,
-  upsertGeneXpertDeviceTypeAndAssays,
-} = require('../common')
+const { upsertJobFunctionFixture, upsertPermissionFixture, upsertGeneXpertDeviceTypeAndAssays } = require('../common')
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const {
@@ -44,26 +40,15 @@ const patientNumber = patients.length - 1
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
+function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
+  const daysToSubtract = resultTimeFrameInDays - Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
+  return addMilliseconds(subDays(now, daysToSubtract), _.random(randomMillisToAdd))
 }
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'admin' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -84,10 +69,7 @@ async function seed(knex) {
   }
 
   // Create partner types
-  const {
-    Funding: partnerTypeFundingId,
-    Implementing: partnerTypeImplementingId,
-  } = await allPartnerTypeToId()
+  const { Funding: partnerTypeFundingId, Implementing: partnerTypeImplementingId } = await allPartnerTypeToId()
 
   // Create partners
   const [partnerOneId] = await knex('Partner').insert({
@@ -249,10 +231,7 @@ async function seed(knex) {
   })
 
   // Result source
-  const {
-    DiagnosticDevice: resultSourceDiagnosticId,
-    LIMS: resultSourceLIMSId,
-  } = await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId, LIMS: resultSourceLIMSId } = await allResultSourceToId()
 
   // Assays and AssayTypes
   const {
@@ -898,12 +877,8 @@ async function seed(knex) {
             city: `${lga.name} City`,
             street1: `${lgaData.id} Main Street`,
             zip: `12345-${lgaData.id}`,
-            latitude: _.has(state, 'lat')
-              ? state.lat + _.random(-0.5, 0.5, true)
-              : undefined,
-            longitude: _.has(state, 'lng')
-              ? state.lng + _.random(-0.5, 0.5, true)
-              : undefined,
+            latitude: _.has(state, 'lat') ? state.lat + _.random(-0.5, 0.5, true) : undefined,
+            longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
             ...auditFields,
           }
           const [siteId] = await knex('Site').insert(siteData)
@@ -1045,12 +1020,8 @@ async function seed(knex) {
       updatedOn: new Date(+now - i * millisInHour),
       lastPingOn: new Date(+now - (i * millisInHour) / 3),
       lastSeenOn: new Date(+now - (i * millisInHour) / 3),
-      hostId: _.times(8, () =>
-        String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
-      ).join(''),
-      serial: _.times(24, () =>
-        String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
-      ).join(''),
+      hostId: _.times(8, () => String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))).join(''),
+      serial: _.times(24, () => String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))).join(''),
     }
 
     ;[device.id] = await knex('Device').insert(device)
@@ -1074,13 +1045,9 @@ async function seed(knex) {
     await knex('InventoryItem').insert({
       consumableId: consumableGxTbCartridgeId,
       siteId: siteData.id,
-      lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${
-        (siteData.id + i) * consumableGxTbCartridgeId
-      }`,
+      lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id + i) * consumableGxTbCartridgeId}`,
       expiresOn: new Date(
-        new Date(
-          now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
-        ).setHours(0, 0, 0, 0)
+        new Date(now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)).setHours(0, 0, 0, 0)
       ),
       quantityOnHand: _.random(0, 1000),
       ...auditFields,
@@ -1151,9 +1118,7 @@ async function seed(knex) {
       copies = null
       log = null
     }
-    resultData.resultText = result.resultText
-      .replace('{0}', copies)
-      .replace('{1}', log)
+    resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
     resultDatas.push({
       ...auditFields,
@@ -1186,14 +1151,8 @@ async function seed(knex) {
       senderVersion: '4.4',
       senderOperator: 'Aaron',
       notes: 'This is an HIV test result, 123-12',
-      errorCode:
-        result.category1 === resultCategoryErrorId
-          ? errorCodes[_.random(errorCodes.length)]
-          : null,
-      errorNotes:
-        result.category1 === resultCategoryErrorId
-          ? 'Exceeded cycle threshold'
-          : null,
+      errorCode: result.category1 === resultCategoryErrorId ? errorCodes[_.random(errorCodes.length)] : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
       reportableSiteId: sample.originSiteId || siteData.id,
     })
   })
@@ -1230,22 +1189,12 @@ async function seed(knex) {
       createdBy: adminId,
     })
 
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   await upsertPermissionFixture(knex)
-  await upsertJobFunctionFixture(
-    knex,
-    jobFunctionsFixturePartnerOne,
-    partnerOneId
-  )
-  await upsertJobFunctionFixture(
-    knex,
-    jobFunctionsFixturePartnerTwo,
-    partnerTwoId
-  )
+  await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerOne, partnerOneId)
+  await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerTwo, partnerTwoId)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction')
     .where({ externalId: 'admin', partnerId: partnerOneId })
@@ -1277,17 +1226,11 @@ async function seed(knex) {
   })
 
   // Constrain jobs by context
-  await knex('JobContext').insert([
-    { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
-  ])
+  await knex('JobContext').insert([{ jobId: jobIdAdmin, geographyId: countries.US.geographyId }])
 
-  await knex('JobContext').insert([
-    { jobId: jobIdManager, geographyId: countries.US.geographyId },
-  ])
+  await knex('JobContext').insert([{ jobId: jobIdManager, geographyId: countries.US.geographyId }])
 
-  await knex('JobContext').insert([
-    { jobId: jobIdClinician, siteId: siteDataDayton.id },
-  ])
+  await knex('JobContext').insert([{ jobId: jobIdClinician, siteId: siteDataDayton.id }])
 
   // Create DashboardWidget
   const widgetIds = {}
@@ -1305,9 +1248,7 @@ async function seed(knex) {
       'descriptionI18nKey',
       'dashboards',
     ])
-    widgetData.dashboards = JSON.stringify(
-      widgetData.dashboards || { home: {} }
-    )
+    widgetData.dashboards = JSON.stringify(widgetData.dashboards || { home: {} })
 
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
     const statWidgetData = _.pick(widget, [

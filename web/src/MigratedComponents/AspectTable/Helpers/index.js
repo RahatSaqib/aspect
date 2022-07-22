@@ -72,9 +72,7 @@ function mockDatafetch(cnt = 10) {
   times(cnt, index => {
     const contacts = []
     const mutatedDate =
-      random(0, 1) === 0
-        ? subMinutes(new Date(), random(0, 35000))
-        : addMinutes(new Date(), random(0, 35000))
+      random(0, 1) === 0 ? subMinutes(new Date(), random(0, 35000)) : addMinutes(new Date(), random(0, 35000))
     const triggerRandom = random(0, 120000)
     times(random(0, 9), i => contacts.push(mockedDataContacts[i]))
     data.push({
@@ -90,11 +88,7 @@ function mockDatafetch(cnt = 10) {
   return { data }
 }
 
-function buildColumnsFromData({
-  columns,
-  columnOrder,
-  contextualMenu = false,
-}) {
+function buildColumnsFromData({ columns, columnOrder, contextualMenu = false }) {
   const output = []
   /**
    * When `initialSortBy` is defined for any column in table config then
@@ -111,9 +105,7 @@ function buildColumnsFromData({
     */
   const { key, initialSortBy } = filter(columns, 'initialSortBy')[0] || false
   if (columns) {
-    map(columns, ({ key, label, ...rest }) =>
-      output.push({ Header: label, accessor: key, ...rest })
-    )
+    map(columns, ({ key, label, ...rest }) => output.push({ Header: label, accessor: key, ...rest }))
   }
   return {
     columns: output,
@@ -171,12 +163,7 @@ function timeAndDate(val, dateFormat) {
   return format(new Date(date), dateFormat)
 }
 
-async function shapeTableParamsForApi({
-  pageIndex,
-  pageSize,
-  sortBy,
-  initialOrder,
-}) {
+async function shapeTableParamsForApi({ pageIndex, pageSize, sortBy, initialOrder }) {
   const page = pageIndex
   const size = pageSize
   const sortCol = sortBy.length ? sortBy[0].id : initialOrder[0]

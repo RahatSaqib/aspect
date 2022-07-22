@@ -5,18 +5,8 @@ async function up(knex) {
     table.increments('id')
     table.string('method').notNullable().defaultTo('app')
     table.timestamp('createdOn').notNullable().defaultTo(knex.fn.now())
-    table
-      .integer('createdBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
-    table
-      .integer('resultId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Result')
+    table.integer('createdBy').unsigned().index().references('id').inTable('User')
+    table.integer('resultId').unsigned().index().references('id').inTable('Result')
   })
 }
 

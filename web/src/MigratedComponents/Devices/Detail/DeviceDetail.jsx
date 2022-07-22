@@ -5,14 +5,7 @@ import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
 import { defineMessages, useIntl } from 'react-intl'
 
-import {
-  Routes,
-  Navigate,
-  Route,
-  useNavigate,
-  useParams,
-  useLocation,
-} from 'react-router-dom'
+import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 
 import { useAuthState } from '../../../Providers/AuthProvider'
@@ -28,15 +21,8 @@ import ShellHeader from '../../Shell/Header'
 import ShellContent from '../../Shell/Content'
 import AspectButton from '../../../components/shared/AspectButton'
 import fetchWrapperForQueries from '../../QueryFetch/index'
-import {
-  DEVICE_DETAIL,
-  DEVICE_PERFORMANCE,
-} from '../../QueryFetch/Device/index'
-import {
-  updateSingleDevice,
-  updateDeviceMaintenanceStatus,
-  updateDeviceMaintenance,
-} from '../../../device/DeviceRedux'
+import { DEVICE_DETAIL, DEVICE_PERFORMANCE } from '../../QueryFetch/Device/index'
+import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../device/DeviceRedux'
 
 import styles from './DeviceDetail.css'
 
@@ -72,8 +58,9 @@ export const DeviceDetail = props => {
   const intl = useIntl()
   const queryClient = useQueryClient()
 
-  const { data: { device = {}, devicePerformance = {} } = {}, isLoading } =
-    useQuery([DEVICE_DETAIL.KEY, { deviceId }], async () => {
+  const { data: { device = {}, devicePerformance = {} } = {}, isLoading } = useQuery(
+    [DEVICE_DETAIL.KEY, { deviceId }],
+    async () => {
       const { data: device = false } = await fetchWrapperForQueries({
         endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
       })
@@ -82,17 +69,17 @@ export const DeviceDetail = props => {
         params: searchParams,
       })
       return { device, devicePerformance }
-    })
+    }
+  )
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
     queryClient.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
   }, [deviceId, queryClient])
 
-  const { mutate: updateDevice } = useMutation(
-    ({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)),
-    { onSuccess }
-  )
+  const { mutate: updateDevice } = useMutation(({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)), {
+    onSuccess,
+  })
 
   const { mutate: onMaintenanceSubmit } = useMutation(
     values =>
@@ -201,20 +188,10 @@ export const DeviceDetail = props => {
               />
             </Route>
             <Route path="operation">
-              <DeviceDetailOperation
-                intl={intl}
-                {...props}
-                device={Immutable.fromJS(device)}
-                disabled={!editable}
-              />
+              <DeviceDetailOperation intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
             </Route>
             <Route path="alerts">
-              <DeviceDetailAlerts
-                intl={intl}
-                {...props}
-                device={Immutable.fromJS(device)}
-                disabled={!editable}
-              />
+              <DeviceDetailAlerts intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
             </Route>
             <Route path="edit">
               {editable ? (

@@ -34,44 +34,30 @@ describe('LoginDetailsForm module', () => {
     })
 
     it('should disable all fields when form is loading', () => {
-      const element = renderer.render(
-        <LoginDetailsForm {...props} form={{}} loading />
-      )
+      const element = renderer.render(<LoginDetailsForm {...props} form={{}} loading />)
       expect(element).toMatchSnapshot()
     })
 
     it('should disable the submit button when the form is pristine, invalid or submitting', () => {
       let element = renderer.render(
-        <LoginDetailsForm
-          {...props}
-          form={{ pristine: true, valid: false, submitting: false }}
-        />
+        <LoginDetailsForm {...props} form={{ pristine: true, valid: false, submitting: false }} />
       )
       expect(element).toMatchSnapshot()
 
       element = renderer.render(
-        <LoginDetailsForm
-          {...props}
-          form={{ pristine: false, valid: false, submitting: false }}
-        />
+        <LoginDetailsForm {...props} form={{ pristine: false, valid: false, submitting: false }} />
       )
       expect(element).toMatchSnapshot()
 
       element = renderer.render(
-        <LoginDetailsForm
-          {...props}
-          form={{ pristine: false, valid: true, submitting: true }}
-        />
+        <LoginDetailsForm {...props} form={{ pristine: false, valid: true, submitting: true }} />
       )
       expect(element).toMatchSnapshot()
     })
 
     it('should enable the submit button when the form is dirty, valid and not submitting', () => {
       const element = renderer.render(
-        <LoginDetailsForm
-          {...props}
-          form={{ pristine: false, valid: true, submitting: false }}
-        />
+        <LoginDetailsForm {...props} form={{ pristine: false, valid: true, submitting: false }} />
       )
       expect(element).toMatchSnapshot()
     })

@@ -10,12 +10,7 @@ const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
 
-const assays = [
-  'assayGXCovid19',
-  'assayMP96Covid19',
-  'assayQS7Covid19',
-  'assayGenericCovid19',
-]
+const assays = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
 const covidGraphs = {
   covidResults: {

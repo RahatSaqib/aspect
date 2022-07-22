@@ -83,10 +83,7 @@ async function transformInitialPayload({ payload }, countryAbbreviation) {
         id: _.get(form, 'study_id'),
         age: _.get(form, 'age'),
         gender: _.get(form, 'gender'),
-        phone: normalizePhoneNumber(
-          _.get(form, 'phone_number'),
-          countryAbbreviation
-        ),
+        phone: normalizePhoneNumber(_.get(form, 'phone_number'), countryAbbreviation),
         educationLevel: _.get(form, 'education_level'),
         previousTesting: _.get(form, 'previous_testing'),
       },

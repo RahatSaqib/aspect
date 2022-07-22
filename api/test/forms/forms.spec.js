@@ -10,22 +10,13 @@ const { assert } = chai
 
 describe.skip('Forms routes', () => {
   const path = '/api/get-forms'
-  const COMMON_FIELDS = [
-    'name',
-    'i18nKey',
-    'fieldType',
-    'order',
-    'caption',
-    'i18nKeyCaption',
-    'controlType',
-  ]
+  const COMMON_FIELDS = ['name', 'i18nKey', 'fieldType', 'order', 'caption', 'i18nKeyCaption', 'controlType']
   before(() => {
     shared.checkToken(server, path)
   })
 
   async function getDiseaseId(externalId) {
-    const { id: diseaseId } =
-      (await knex('Disease').where({ externalId }).first('id')) || {}
+    const { id: diseaseId } = (await knex('Disease').where({ externalId }).first('id')) || {}
     return diseaseId
   }
 
@@ -34,10 +25,7 @@ describe.skip('Forms routes', () => {
       assert.isTrue(!_.isNil(elem))
       assert.property(elem, 'diseaseId')
       assert.property(elem, 'assayId')
-      assert.hasAllKeys(
-        _.orderBy(elem.fields, field => field.order)[0],
-        fieldsToTest
-      )
+      assert.hasAllKeys(_.orderBy(elem.fields, field => field.order)[0], fieldsToTest)
       assert.property(elem, 'formTypeId')
       assert.property(elem, 'fields')
       assert.typeOf(elem.fields, 'array')
@@ -59,10 +47,7 @@ describe.skip('Forms routes', () => {
         const fields = _.concat(COMMON_FIELDS, ['title'])
         checkResponseCommonForms(TBResult, fields)
 
-        checkResponseCommonForms(
-          TBProbes,
-          _.concat(COMMON_FIELDS, ['condition'])
-        )
+        checkResponseCommonForms(TBProbes, _.concat(COMMON_FIELDS, ['condition']))
       })
       it('should return a form by hiv disease and formtype result web form', async () => {
         const diseaseId = await getDiseaseId('hiv')
@@ -74,19 +59,8 @@ describe.skip('Forms routes', () => {
         assert.typeOf(res.body, 'Object')
         assert.isTrue(!_.isNil(res.body))
         const { HIVProbes, HIVResult } = res.body
-        checkResponseCommonForms(
-          HIVProbes,
-          _.concat(COMMON_FIELDS, [
-            'encrypted',
-            'required',
-            'title',
-            'validation',
-          ])
-        )
-        checkResponseCommonForms(
-          HIVResult,
-          _.concat(COMMON_FIELDS, ['encrypted', 'required', 'validation'])
-        )
+        checkResponseCommonForms(HIVProbes, _.concat(COMMON_FIELDS, ['encrypted', 'required', 'title', 'validation']))
+        checkResponseCommonForms(HIVResult, _.concat(COMMON_FIELDS, ['encrypted', 'required', 'validation']))
       })
 
       it('should return a form by covid disease and formtype result web form', async () => {
@@ -137,13 +111,7 @@ describe.skip('Forms routes', () => {
         ])
         checkResponseCommonForms(
           TBCaseTreatment,
-          _.concat(COMMON_FIELDS, [
-            'items',
-            'required',
-            'title',
-            'typeOfOptionSource',
-            'encrypted',
-          ])
+          _.concat(COMMON_FIELDS, ['items', 'required', 'title', 'typeOfOptionSource', 'encrypted'])
         )
       })
       it('should return a form by hiv disease and formtype', async () => {
@@ -159,21 +127,11 @@ describe.skip('Forms routes', () => {
         const { HIVCaseHealthCondition, HIVCaseTreatment } = res.body
         checkResponseCommonForms(
           HIVCaseHealthCondition,
-          _.concat(COMMON_FIELDS, [
-            'items',
-            'required',
-            'title',
-            'typeOfOptionSource',
-          ])
+          _.concat(COMMON_FIELDS, ['items', 'required', 'title', 'typeOfOptionSource'])
         )
         checkResponseCommonForms(
           HIVCaseTreatment,
-          _.concat(COMMON_FIELDS, [
-            'items',
-            'required',
-            'title',
-            'typeOfOptionSource',
-          ])
+          _.concat(COMMON_FIELDS, ['items', 'required', 'title', 'typeOfOptionSource'])
         )
       })
 
@@ -186,37 +144,18 @@ describe.skip('Forms routes', () => {
         assert.typeOf(res.body, 'Object')
         assert.isTrue(!_.isNil(res.body))
 
-        const {
-          CovidCaseHealthCondition,
-          CovidCaseTreatment,
-          CovidCaseAditionalData,
-        } = res.body
+        const { CovidCaseHealthCondition, CovidCaseTreatment, CovidCaseAditionalData } = res.body
         checkResponseCommonForms(
           CovidCaseTreatment,
-          _.concat(COMMON_FIELDS, [
-            'items',
-            'required',
-            'title',
-            'typeOfOptionSource',
-          ])
+          _.concat(COMMON_FIELDS, ['items', 'required', 'title', 'typeOfOptionSource'])
         )
         checkResponseCommonForms(
           CovidCaseAditionalData,
-          _.concat(COMMON_FIELDS, [
-            'items',
-            'required',
-            'title',
-            'typeOfOptionSource',
-          ])
+          _.concat(COMMON_FIELDS, ['items', 'required', 'title', 'typeOfOptionSource'])
         )
         checkResponseCommonForms(
           CovidCaseHealthCondition,
-          _.concat(COMMON_FIELDS, [
-            'items',
-            'required',
-            'title',
-            'typeOfOptionSource',
-          ])
+          _.concat(COMMON_FIELDS, ['items', 'required', 'title', 'typeOfOptionSource'])
         )
       })
     })

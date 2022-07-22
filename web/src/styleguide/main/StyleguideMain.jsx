@@ -133,11 +133,7 @@ export class StyleguideMain extends PureComponent {
         </div>
 
         <FallbackUntilDone
-          fallbacks={[
-            { style: { width: '100px' } },
-            { style: { width: '200px' } },
-            { style: { width: '300px' } },
-          ]}
+          fallbacks={[{ style: { width: '100px' } }, { style: { width: '200px' } }, { style: { width: '300px' } }]}
           isDone={node => node.getBoundingClientRect().width >= 400}
         >
           <div>98tyfchgvjbknl</div>
@@ -169,15 +165,10 @@ export class StyleguideMain extends PureComponent {
             }}
             contentClassName={styles.FiltersPanel__Content}
             filterTemplate={formatMessage(messages.filterTemplate)}
-            filterTemplateOptional={formatMessage(
-              messages.filterTemplateOptional
-            )}
+            filterTemplateOptional={formatMessage(messages.filterTemplateOptional)}
           />
         </div>
-        <CountrySelectField
-          onCountryIdChange={this.handleCountryIdChange}
-          countryId={this.state.countryId}
-        />
+        <CountrySelectField onCountryIdChange={this.handleCountryIdChange} countryId={this.state.countryId} />
         <StateSelectField
           onStateIdChange={this.handleStateIdChange}
           countryId={this.state.countryId}

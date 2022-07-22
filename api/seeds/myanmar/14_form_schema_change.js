@@ -8,14 +8,10 @@ const { getResultForms } = require('../utils')
 
 async function seed(knex) {
   const resultForms = await getResultForms(knex)
-  const saNhlsPartner = await knex('Partner')
-    .where('name', 'South Africa NHLS')
-    .first('id')
+  const saNhlsPartner = await knex('Partner').where('name', 'South Africa NHLS').first('id')
 
   // Skip if form schemas have already been changed
-  if (
-    _.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))
-  ) {
+  if (_.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))) {
     return
   }
   await Promise.map(
@@ -24,10 +20,7 @@ async function seed(knex) {
       if (_.isNil(resultForm.formSchema.fields)) {
         const newFormSchema = {
           fields: resultForm.formSchema,
-          sendChangesOn:
-            !saNhlsPartner || resultForm.partnerId !== saNhlsPartner
-              ? 'change'
-              : 'submit',
+          sendChangesOn: !saNhlsPartner || resultForm.partnerId !== saNhlsPartner ? 'change' : 'submit',
         }
         return knex('ResultForm')
           .where(_.pick(resultForm, ['partnerId', 'assayId']))

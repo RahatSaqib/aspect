@@ -35,12 +35,7 @@ async function seed(knex) {
 
   await seedLabClinicFixture(
     labClinic,
-    _.pick(migrationSeededData, [
-      'adminId',
-      'partnerId',
-      'countryId',
-      'statesByName',
-    ]),
+    _.pick(migrationSeededData, ['adminId', 'partnerId', 'countryId', 'statesByName']),
     knex
   )
 }

@@ -12,9 +12,7 @@ async function exportSites(request, reply) {
     data: data.map(item => ({
       ...item,
       // replace array of `siteIssues` with csv-string of IssueCategory shortNames
-      siteIssues: _.map(item.siteIssues, key => issueCategories[key]).join(
-        ', '
-      ),
+      siteIssues: _.map(item.siteIssues, key => issueCategories[key]).join(', '),
     })),
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',

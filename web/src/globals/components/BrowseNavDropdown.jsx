@@ -97,10 +97,7 @@ const enhance = compose(
     ...restProps,
     onChange: ({ target: { value } }) => {
       const searchParams = new URLSearchParams()
-      searchParams.set(
-        'filters',
-        new URLSearchParams(location.search).get('filters') || ''
-      )
+      searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
       /**
        * Set filter to date range = `Last 30 days` if missing in url.

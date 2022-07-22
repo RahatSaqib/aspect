@@ -7,37 +7,22 @@ const { subDays } = require('date-fns')
 const { knex } = require('../../src/db')
 const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 
-const {
-  issueTypeToId,
-  resultCategoryToId,
-  allIssueTypeToId,
-  issueStatusToId,
-} = require('../../src/shared/dictionary')
+const { issueTypeToId, resultCategoryToId, allIssueTypeToId, issueStatusToId } = require('../../src/shared/dictionary')
 
 const regex = /[^0-9a-zA-Z():,.-]+/gm
-const {
-  createGxConnectTestContext,
-} = require('../deviceApi/geneXpert/gxconnect_utils')
+const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 
 const { postToDeviceApi } = require('../deviceApi/utils')
-const {
-  basicResultPayload,
-} = require('../deviceApi/geneXpert/geneXpertConstants')
+const { basicResultPayload } = require('../deviceApi/geneXpert/geneXpertConstants')
 
-const {
-  createMessageContext,
-  waitForAction,
-  waitForIdle,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForAction, waitForIdle } = require('../utils/mqUtils')
 
 const getMessageTemplates = async () => {
   const {
     ProbeCheckTooLowModule: ProbeCheckTooLowModuleId,
     ProbeCheckTooLowLot: ProbeCheckTooLowLotId,
-    FailedToVerifyValidBackgroundErrorForAnalyteModule:
-      FailedToVerifyValidBackgroundErrorForAnalyteModuleId,
-    FailedToVerifyValidBackgroundErrorForAnalyteLot:
-      FailedToVerifyValidBackgroundErrorForAnalyteLotId,
+    FailedToVerifyValidBackgroundErrorForAnalyteModule: FailedToVerifyValidBackgroundErrorForAnalyteModuleId,
+    FailedToVerifyValidBackgroundErrorForAnalyteLot: FailedToVerifyValidBackgroundErrorForAnalyteLotId,
     ProbeCheckFailedModule: ProbeCheckFailedModuleId,
     ProbeCheckFailedLot: ProbeCheckFailedLotId,
   } = await allIssueTypeToId()
@@ -85,14 +70,10 @@ const getMessageTemplates = async () => {
     email: `Probe Check Too Low (5007) ${defaultmessageLot(5007)}`,
   }
   messageTemplates[FailedToVerifyValidBackgroundErrorForAnalyteModuleId] = {
-    email: `Failed To Verify Valid Background Error For Analyte ${defaultMessageModule(
-      5016
-    )}`,
+    email: `Failed To Verify Valid Background Error For Analyte ${defaultMessageModule(5016)}`,
   }
   messageTemplates[FailedToVerifyValidBackgroundErrorForAnalyteLotId] = {
-    email: `Failed To Verify Valid Background Error For Analyte (5016) ${defaultmessageLot(
-      5016
-    )}`,
+    email: `Failed To Verify Valid Background Error For Analyte (5016) ${defaultmessageLot(5016)}`,
   }
   messageTemplates[ProbeCheckFailedModuleId] = {
     email: `Probe Check Failed ${defaultMessageModule(5017)}`,
@@ -105,9 +86,7 @@ const getMessageTemplates = async () => {
 
 const server = require('../utils/testUtils')
 const { startOfDayUtc } = require('../../src/shared/date')
-const {
-  getDeviceErrorHistoryForAttachment,
-} = require('../../src/result/serviceReport')
+const { getDeviceErrorHistoryForAttachment } = require('../../src/result/serviceReport')
 
 const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const messageTemplates = await getMessageTemplates()
@@ -119,25 +98,14 @@ const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   assert.isNotNull(notification)
   assert.isNotNull(notification.emailMessageId)
 
-  assert.isTrue(
-    notification.body.indexOf('{{') < 0 && notification.body.indexOf('}}') < 0
-  )
+  assert.isTrue(notification.body.indexOf('{{') < 0 && notification.body.indexOf('}}') < 0)
 
-  if (
-    !notification.body.indexOf('M-123456-0') > 0 &&
-    issueTypeId === (await issueTypeToId('ProbeCheckTooLowModule'))
-  ) {
-    assert.containSubset(
-      notification.body.toString().replace(regex, ''),
-      messageTemplates[issueTypeId].email
-    )
+  if (!notification.body.indexOf('M-123456-0') > 0 && issueTypeId === (await issueTypeToId('ProbeCheckTooLowModule'))) {
+    assert.containSubset(notification.body.toString().replace(regex, ''), messageTemplates[issueTypeId].email)
   }
 }
 const getIssues = (deviceId, issueTypeId) =>
-  knex('Issue')
-    .where({ deviceId, issueTypeId })
-    .orderBy('createdOn', 'DESC')
-    .select()
+  knex('Issue').where({ deviceId, issueTypeId }).orderBy('createdOn', 'DESC').select()
 
 const evaluateIssues = async (
   response,
@@ -154,8 +122,7 @@ const evaluateIssues = async (
   assert.equal(issues.length, qtyIssuesExpected)
   if (qtyIssuesExpected > 0) {
     assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
-    if (issueStatus === 'Active')
-      await checkNotificationsForIssue(issues[0].id, issueTypeId)
+    if (issueStatus === 'Active') await checkNotificationsForIssue(issues[0].id, issueTypeId)
   }
   if (moduleCheck) {
     let issueSelected = issues[0].data
@@ -183,12 +150,7 @@ describe('This test suite is for testing different triggers conditions', async (
     resultCategoryPositive = await resultCategoryToId('Positive')
   })
 
-  const getPayload = async (
-    thecontext,
-    errorCode,
-    resultCategoryExternalId,
-    excludeLot = false
-  ) => {
+  const getPayload = async (thecontext, errorCode, resultCategoryExternalId, excludeLot = false) => {
     ;[results] = await thecontext.getAllResults()
     return _.merge(
       {},
@@ -218,9 +180,7 @@ describe('This test suite is for testing different triggers conditions', async (
             notes: 'some ,notes',
           },
           data: {
-            resultText: resultCategoryExternalId
-              ? resultCategoryExternalId.toUpperCase()
-              : null,
+            resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
           },
           instrument: {
             serial: _.get(results, 'instrumentSerial') || 'S-1234-0',
@@ -251,9 +211,7 @@ describe('This test suite is for testing different triggers conditions', async (
       before(async () => {
         issueTypeModuleId = await issueTypeToId(issueTypeModule)
         issueTypeLotId = await issueTypeToId(issueTypeLot)
-        resultCategoryId = resultCategoryExternalId
-          ? await resultCategoryToId(resultCategoryExternalId)
-          : null
+        resultCategoryId = resultCategoryExternalId ? await resultCategoryToId(resultCategoryExternalId) : null
       })
 
       describe('With previous results older than 30 days', () => {
@@ -299,9 +257,7 @@ describe('This test suite is for testing different triggers conditions', async (
         })
 
         it(`should NOT create MODULE or LOT issues when it has less than 4 results for the last 30 days ${
-          errorCode
-            ? `error ${errorCode}`
-            : `category ${resultCategoryExternalId}`
+          errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            * in this testcase we are testing:
@@ -316,17 +272,10 @@ describe('This test suite is for testing different triggers conditions', async (
           const results = await context.getAllResults()
           assert.equal(results.length, 3)
           assert.equal(
-            _.filter(
-              results,
-              result => result.endedOn >= subDays(new Date(), 30)
-            ),
+            _.filter(results, result => result.endedOn >= subDays(new Date(), 30)),
             0
           )
-          const anotherPayload = await getPayload(
-            context,
-            errorCode,
-            resultCategoryExternalId
-          )
+          const anotherPayload = await getPayload(context, errorCode, resultCategoryExternalId)
 
           // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
           const response = await postToDeviceApi({
@@ -339,14 +288,8 @@ describe('This test suite is for testing different triggers conditions', async (
            * We are going to push the same lot for a different device and we are going to expect to create a new issue
            */
 
-          const issuesForModule = await getIssues(
-            response.body.device.id,
-            await issueTypeToId(issueTypeModule)
-          )
-          const issuesForLot = await getIssues(
-            response.body.device.id,
-            await issueTypeToId(issueTypeLot)
-          )
+          const issuesForModule = await getIssues(response.body.device.id, await issueTypeToId(issueTypeModule))
+          const issuesForLot = await getIssues(response.body.device.id, await issueTypeToId(issueTypeLot))
 
           assert.equal(issuesForModule.length, 0)
           assert.equal(issuesForLot.length, 0)
@@ -396,20 +339,14 @@ describe('This test suite is for testing different triggers conditions', async (
         })
 
         it(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
-          errorCode
-            ? `error ${errorCode}`
-            : `category ${resultCategoryExternalId}`
+          errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
            The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
-          const firstPayload = await getPayload(
-            context,
-            errorCode,
-            resultCategoryExternalId
-          )
+          const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
 
           const consumableLot = 'The super Lot 0'
           const { deviceAuth } = context
@@ -425,10 +362,7 @@ describe('This test suite is for testing different triggers conditions', async (
                 consumableLot,
                 errorCode,
                 resultCategory1: resultCategoryId,
-                moduleSerial:
-                  i > 5
-                    ? 'THE-ONE-WHICH-TRIGGERS-MODULE'
-                    : `M-123456-0-${_.random(1, 9999999999)}`,
+                moduleSerial: i > 5 ? 'THE-ONE-WHICH-TRIGGERS-MODULE' : `M-123456-0-${_.random(1, 9999999999)}`,
               },
             })
           )
@@ -456,9 +390,7 @@ describe('This test suite is for testing different triggers conditions', async (
                 sample: { id: `The-sample-${_.random(1, 999999999999)}` },
               },
               data: {
-                resultText: resultCategoryExternalId
-                  ? resultCategoryExternalId.toUpperCase()
-                  : null,
+                resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
               },
             }),
           })
@@ -487,9 +419,7 @@ describe('This test suite is for testing different triggers conditions', async (
                 sample: { id: `The-sample-${_.random(1, 999999999999)}` },
               },
               data: {
-                resultText: resultCategoryExternalId
-                  ? resultCategoryExternalId.toUpperCase()
-                  : null,
+                resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
               },
             }),
           })
@@ -503,20 +433,14 @@ describe('This test suite is for testing different triggers conditions', async (
         })
         // TODO: Fails only eventually in Bamboo, works locally
         it(`should create one issue LOT and NOT MODULE based issue per device ${
-          errorCode
-            ? `error ${errorCode}`
-            : `category ${resultCategoryExternalId}`
+          errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
         } because their have the same module number and the most important one is the LOT `, async () => {
           /**
            Since we are sending 10 different results 5 with random module number but same lot, the first 5 will execute the LOT issue.
            The other 5 have the same module name and same lot, so we are going to create only 1 issue of type module. 
            The idea is only to send 1 lot issue and not the one with the same module number, because the issue was already triggered over different modules.
            */
-          const firstPayload = await getPayload(
-            context,
-            errorCode,
-            resultCategoryExternalId
-          )
+          const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
           const consumableLot = 'The super Lot 1'
           const {
             deviceAuth,
@@ -535,10 +459,7 @@ describe('This test suite is for testing different triggers conditions', async (
                 consumableLot,
                 errorCode,
                 resultCategory1: resultCategoryId,
-                moduleSerial:
-                  i <= 4
-                    ? 'THE-ONE-WHICH-TRIGGERS-LOT'
-                    : `M-123456-0-${_.random(1, 9999999999)}`,
+                moduleSerial: i <= 4 ? 'THE-ONE-WHICH-TRIGGERS-LOT' : `M-123456-0-${_.random(1, 9999999999)}`,
               },
             })
           )
@@ -568,9 +489,7 @@ describe('This test suite is for testing different triggers conditions', async (
                 sample: { id: `The-sample-${_.random(1, 999999999999)}` },
               },
               data: {
-                resultText: resultCategoryExternalId
-                  ? resultCategoryExternalId.toUpperCase()
-                  : null,
+                resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
               },
             }),
           })
@@ -591,9 +510,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await evaluateIssues(resp, issueTypeModuleId, 0)
         })
         it(`should only create one issue per device MODULE based ${
-          errorCode
-            ? `error ${errorCode}`
-            : `category ${resultCategoryExternalId}`
+          errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
            * in this testcase we are testing:
@@ -605,12 +522,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
           const { deviceAuth } = context
 
-          const firstPayload = await getPayload(
-            context,
-            errorCode,
-            resultCategoryExternalId,
-            true
-          )
+          const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId, true)
 
           // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
           const response = await postToDeviceApi({
@@ -643,11 +555,7 @@ describe('This test suite is for testing different triggers conditions', async (
           let issues = await getIssues(context.device.id, issueTypeId)
           assert.equal(issues.length, 1)
 
-          const firstPayload = await getPayload(
-            context,
-            errorCode,
-            resultCategoryExternalId
-          )
+          const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
           // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
           const response = await postToDeviceApi({
             authHeader: deviceAuth,
@@ -658,11 +566,7 @@ describe('This test suite is for testing different triggers conditions', async (
           const minDate = startOfDayUtc(subDays(new Date(), 30))
           if (qtyOfRuns < 2) {
             qtyOfRuns += 1
-            const data = await getDeviceErrorHistoryForAttachment(
-              context.device.id,
-              minDate,
-              null
-            )
+            const data = await getDeviceErrorHistoryForAttachment(context.device.id, minDate, null)
             assert.equal(data.items.length, 8)
           }
           issues = await getIssues(context.device.id, issueTypeId)
@@ -691,11 +595,7 @@ describe('This test suite is for testing different triggers conditions', async (
             let issues = await getIssues(context.device.id, issueTypeId)
             assert.equal(issues.length, 1)
 
-            const firstPayload = await getPayload(
-              context,
-              errorCode,
-              resultCategoryExternalId
-            )
+            const firstPayload = await getPayload(context, errorCode, resultCategoryExternalId)
             // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
             await postToDeviceApi({
               authHeader: deviceAuth,
@@ -774,11 +674,7 @@ describe('This test suite is for testing different triggers conditions', async (
     })
 
     it('should only create one issue and one notification per device', async () => {
-      const payload = await getPayload(
-        deviceContextForUnusedModules,
-        null,
-        null
-      )
+      const payload = await getPayload(deviceContextForUnusedModules, null, null)
       const { deviceAuth } = deviceContextForUnusedModules
       // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
       await postToDeviceApi({

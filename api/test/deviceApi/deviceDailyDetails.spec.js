@@ -43,16 +43,12 @@ describe('Device daily details', () => {
       return deviceMaintenanceStatusLogId
     }
     const getDeviceMaintenance = async whereClause => {
-      const deviceMaintenance = await knex('DeviceMaintenance')
-        .where(whereClause)
-        .first()
+      const deviceMaintenance = await knex('DeviceMaintenance').where(whereClause).first()
       return deviceMaintenance
     }
 
     it('should process it and may set calibration date for device', async () => {
-      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
-        'calibration'
-      )
+      const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
 
       const { deviceAuth, deviceId } = context
 
@@ -110,10 +106,7 @@ describe('Device daily details', () => {
 
       // DeviceMaintenance.contextDate is NOT set with just posted lastCalibrated
       const { contextDate } = await getDeviceMaintenance(where)
-      assert.notEqual(
-        lastCalibratedAttempt.toISOString(),
-        contextDate.toISOString()
-      )
+      assert.notEqual(lastCalibratedAttempt.toISOString(), contextDate.toISOString())
       // ... it's value remained unchanged because posted lastCalibrated is before than saved value
       assert.equal(lastCalibrated.toISOString(), calibratedOn.toISOString())
 
@@ -138,10 +131,7 @@ describe('Device daily details', () => {
 
       // DeviceMaintenance.contextDate is set with just posted lastCalibrated
       const newDeviceMaintenance = await getDeviceMaintenance(where)
-      assert.equal(
-        lastCalibratedNew.toISOString(),
-        newDeviceMaintenance.contextDate.toISOString()
-      )
+      assert.equal(lastCalibratedNew.toISOString(), newDeviceMaintenance.contextDate.toISOString())
     })
   })
 
@@ -164,14 +154,7 @@ describe('Device daily details', () => {
       getPeopleBase()
         .where('p.name', name)
         .groupBy('p.id')
-        .first(
-          'p.id',
-          'p.name',
-          'p.email',
-          'p.email2',
-          'p.cell',
-          'j.id as jobId'
-        )
+        .first('p.id', 'p.name', 'p.email', 'p.email2', 'p.cell', 'j.id as jobId')
 
     beforeEach(() => {
       personIds = []
@@ -181,9 +164,7 @@ describe('Device daily details', () => {
       await knex('Job').whereIn('personId', personIds).del()
       await knex('Person')
         .where(builder => {
-          builder
-            .whereIn('name', [labContactName, installerName])
-            .whereIn('id', personIds)
+          builder.whereIn('name', [labContactName, installerName]).whereIn('id', personIds)
         })
         .del()
     })
@@ -229,9 +210,7 @@ describe('Device daily details', () => {
       /**
        * person is assigned to device's site as Lab User
        */
-      const { id: jobFunctionIdLab } = await knex('JobFunction')
-        .where({ name: 'Lab User' })
-        .first('id')
+      const { id: jobFunctionIdLab } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
 
       // person's job for Lab User
       const job = await knex('Job').where('id', person.jobId).first()

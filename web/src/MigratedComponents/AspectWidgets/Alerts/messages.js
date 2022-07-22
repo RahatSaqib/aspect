@@ -11,8 +11,7 @@ const messagesByOperators = defineMessages({
   },
   between: {
     id: 'widgetAlerts.between',
-    defaultMessage:
-      'The {representing} is between {comparedToFrom} and {comparedToTo}',
+    defaultMessage: 'The {representing} is between {comparedToFrom} and {comparedToTo}',
   },
   containedIn: {
     id: 'widgetAlerts.containerIn',
@@ -63,8 +62,7 @@ const valueRepresentations = defineMessages({
   },
   percentageOfSitesWithoutGxStockEntered: {
     id: 'widgetAlerts.percentageOfSitesWithoutGxStockEntered',
-    defaultMessage:
-      'percentage of sites that never entered stock of GeneXpert assays',
+    defaultMessage: 'percentage of sites that never entered stock of GeneXpert assays',
   },
   averageDurationOfServiceInterrumption: {
     id: 'widgetAlerts.averageDurationOfServiceInterrumption',
@@ -100,10 +98,7 @@ const valueRepresentations = defineMessages({
   },
 })
 
-const format = (
-  formatFunc,
-  { whenIs, representing: representingKey, comparedTo }
-) => {
+const format = (formatFunc, { whenIs, representing: representingKey, comparedTo }) => {
   let comparisonStrings
 
   switch (whenIs) {
@@ -123,9 +118,7 @@ const format = (
       break
   }
 
-  const representing = formatFunc(
-    valueRepresentations[representingKey] || valueRepresentations.defaultMessage
-  )
+  const representing = formatFunc(valueRepresentations[representingKey] || valueRepresentations.defaultMessage)
 
   return formatFunc(messagesByOperators[whenIs], {
     representing,

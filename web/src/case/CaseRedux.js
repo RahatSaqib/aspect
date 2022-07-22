@@ -9,11 +9,7 @@ import {
   errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { getFilters } from '../filter/utils'
 
 export const types = {

@@ -1,10 +1,7 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import { messages } from './SiteList'
 import { formatRelative } from '../../shared/utils/dateFormat'

@@ -63,8 +63,7 @@ const mapStateToProps = state => {
 
   const jwtExp = state.user.jwt.exp
   if (isNumber(jwtExp) && state.globals.lastServerResponseTime) {
-    const isExpired =
-      jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
+    const isExpired = jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
     if (isExpired) {
       isLoggedOut = true
       loggedOutReason = reasonTypes.expiredJWT
@@ -134,11 +133,7 @@ export const appFactory = compose(
         <I18nProvider>
           <div id="I-am-reactroot">
             <RefreshToken refreshStart={refreshStart} />
-            <IdleDetection
-              isLoggedOut={restProps.isLoggedOut}
-              idleStart={idleStart}
-              idleStop={idleStop}
-            />
+            <IdleDetection isLoggedOut={restProps.isLoggedOut} idleStart={idleStart} idleStop={idleStop} />
             <LocalStorage
               access={access}
               refresh={refresh}
@@ -149,9 +144,7 @@ export const appFactory = compose(
               drawerOpen={drawerOpen}
             />
             <QueryClientProvider client={queryClient}>
-              {process.env.NODE_ENV !== 'production' ? (
-                <ReactQueryDevtools initialIsOpen />
-              ) : null}
+              {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
 
               {render(restProps)}
             </QueryClientProvider>
@@ -160,9 +153,7 @@ export const appFactory = compose(
       </IntlProvider>
     )
 
-    return React.createFactory(
-      connect(mapStateToProps, mapDispatchToProps)(App)
-    )
+    return React.createFactory(connect(mapStateToProps, mapDispatchToProps)(App))
   },
   routerFactory
 )

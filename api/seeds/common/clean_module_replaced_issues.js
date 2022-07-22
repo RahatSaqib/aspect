@@ -6,11 +6,7 @@ const logger = require('../../src/shared/logger')
 const { createNewIssue, findOpenIssue } = require('../../src/issue/service')
 const cleanIssueTypes = require('./remove_unused_issues')
 
-module.exports = async function cleanModuleReplacedIssues(
-  knex,
-  adminUserName,
-  partnerName
-) {
+module.exports = async function cleanModuleReplacedIssues(knex, adminUserName, partnerName) {
   try {
     await knex.transaction(async trx => {
       const moduleReplacedIssue = await issueTypeToId('ModuleReplaced')
@@ -19,15 +15,14 @@ module.exports = async function cleanModuleReplacedIssues(
       await updateIssueData(trx, moduleReplacedIssue)
       const possibleResultsWithIssues = await getPossibleResultsWithIssues(trx)
       await Promise.each(possibleResultsWithIssues, async result => {
-        const previousResultWithDifferentSerial =
-          await getPreviousResultWithDifferentModuleSerial(
-            knex,
-            result.deviceId,
-            result.moduleName,
-            result.moduleSerial,
-            result.instrumentSerial,
-            result.startedOn
-          )
+        const previousResultWithDifferentSerial = await getPreviousResultWithDifferentModuleSerial(
+          knex,
+          result.deviceId,
+          result.moduleName,
+          result.moduleSerial,
+          result.instrumentSerial,
+          result.startedOn
+        )
 
         if (previousResultWithDifferentSerial) {
           const action = {
@@ -37,8 +32,7 @@ module.exports = async function cleanModuleReplacedIssues(
             options: {
               data: {
                 moduleName: result.moduleName,
-                replacedModuleSerial:
-                  previousResultWithDifferentSerial.moduleSerial,
+                replacedModuleSerial: previousResultWithDifferentSerial.moduleSerial,
                 instrumentSerial: result.instrumentSerial,
                 newModuleSerial: result.moduleSerial,
                 oldResultId: previousResultWithDifferentSerial.id,
@@ -46,12 +40,9 @@ module.exports = async function cleanModuleReplacedIssues(
             },
           }
 
-          const openIssue = await findOpenIssue(
-            knex,
-            'ModuleReplaced',
-            action,
-            { evaluationFunction: 'filterByModuleReplaced' }
-          )
+          const openIssue = await findOpenIssue(knex, 'ModuleReplaced', action, {
+            evaluationFunction: 'filterByModuleReplaced',
+          })
 
           if (!openIssue) {
             await createNewIssue(trx, 'ModuleReplaced', action)
@@ -66,10 +57,7 @@ module.exports = async function cleanModuleReplacedIssues(
   }
 }
 const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
-  const issuesToUpdate = await getRightTriggeredIssues(
-    knex,
-    issueTypeModuleReplacedId
-  )
+  const issuesToUpdate = await getRightTriggeredIssues(knex, issueTypeModuleReplacedId)
     .clone()
     .groupBy(
       'q.newModuleSerial',
@@ -86,9 +74,7 @@ const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
   await knex('Issue as i')
     .join('Result as r', 'i.resultId', 'r.id')
     .update({
-      'i.data': knex.raw(
-        "JSON_SET(i.data, '$.moduleName', r.moduleName,'$.instrumentSerial',r.instrumentSerial)"
-      ),
+      'i.data': knex.raw("JSON_SET(i.data, '$.moduleName', r.moduleName,'$.instrumentSerial',r.instrumentSerial)"),
     })
     .whereIn(
       'i.id',
@@ -98,9 +84,7 @@ const updateIssueData = async (knex, issueTypeModuleReplacedId) => {
   await Promise.each(issuesToUpdate, ({ oldResultId, issueId }) =>
     knex('Issue as i')
       .update({
-        'i.data': knex.raw("JSON_SET(i.data, '$.oldResultId', ?)", [
-          oldResultId,
-        ]),
+        'i.data': knex.raw("JSON_SET(i.data, '$.oldResultId', ?)", [oldResultId]),
       })
       .where('i.id', issueId)
   )
@@ -115,9 +99,7 @@ const getRightTriggeredIssues = (knex, moduleReplacedIssue) =>
         .select(
           'innerIssue.id AS issueId',
           'newResult.endedOn',
-          knex.raw(
-            "innerIssue.data->>'$.replacedModuleSerial' AS oldModuleSerial"
-          ),
+          knex.raw("innerIssue.data->>'$.replacedModuleSerial' AS oldModuleSerial"),
           'newResult.moduleSerial as newModuleSerial',
           'newResult.moduleName',
           'innerIssue.deviceId',
@@ -137,9 +119,7 @@ const getRightTriggeredIssues = (knex, moduleReplacedIssue) =>
 
 const dropBadTriggeredIssues = async (knex, moduleReplacedIssue) => {
   // find those issues that were triggered ok.
-  const rightIssues = await getRightTriggeredIssues(knex, moduleReplacedIssue)
-    .clone()
-    .pluck('issueId')
+  const rightIssues = await getRightTriggeredIssues(knex, moduleReplacedIssue).clone().pluck('issueId')
   // Removes those issues triggered badly because the module serial was different but there the result wasn't on the same module bay or because the modulename is null
   await knex('Issue')
     .where('issueTypeId', moduleReplacedIssue)
@@ -156,12 +136,7 @@ const getPossibleResultsWithIssues = knex =>
     .join(
       knex('Result as r')
         .whereNotNull('r.moduleName')
-        .groupBy(
-          'r.instrumentSerial',
-          'r.moduleName',
-          'r.moduleSerial',
-          'r.deviceId'
-        )
+        .groupBy('r.instrumentSerial', 'r.moduleName', 'r.moduleSerial', 'r.deviceId')
         .select('r.modulename', 'r.moduleSerial', 'r.deviceId')
         .min('r.endedOn as endedOn')
         .as('q'),
@@ -171,14 +146,7 @@ const getPossibleResultsWithIssues = knex =>
           .andOn('r1.moduleSerial', 'q.moduleSerial')
           .andOn('r1.endedOn', 'q.endedOn')
     )
-    .select(
-      'r1.id',
-      'r1.deviceId',
-      'r1.startedOn',
-      'r1.moduleSerial',
-      'r1.moduleName',
-      'r1.instrumentSerial'
-    )
+    .select('r1.id', 'r1.deviceId', 'r1.startedOn', 'r1.moduleSerial', 'r1.moduleName', 'r1.instrumentSerial')
 
 const getPreviousResultWithDifferentModuleSerial = (
   knex,

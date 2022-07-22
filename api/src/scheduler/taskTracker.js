@@ -16,22 +16,11 @@ const getCustomToday = day => {
   return startOfTodayUtc()
 }
 const getDaysWithNoRuns = (executedDates, daysRange = 30) => {
-  const days = _.map(_.range(daysRange), day =>
-    startOfDayUtc(subDays(new Date(), day))
-  )
-  const daysToRun = _.differenceWith(
-    days,
-    executedDates,
-    (elem1, elem2) => elem1.toISOString() === elem2.toISOString()
-  )
-  logger.debug(
-    `Days to run task: ${
-      daysToRun.length === 0 ? 'No dates to run' : daysToRun
-    }`,
-    {
-      reLabel: 'aspect:taskTracker:getDaysWithNoRuns',
-    }
-  )
+  const days = _.map(_.range(daysRange), day => startOfDayUtc(subDays(new Date(), day)))
+  const daysToRun = _.differenceWith(days, executedDates, (elem1, elem2) => elem1.toISOString() === elem2.toISOString())
+  logger.debug(`Days to run task: ${daysToRun.length === 0 ? 'No dates to run' : daysToRun}`, {
+    reLabel: 'aspect:taskTracker:getDaysWithNoRuns',
+  })
   return daysToRun
 }
 
@@ -39,11 +28,7 @@ const getDaysWithExecution = async (knex, taskName, daysRange = 30) => {
   const executedDates =
     (await knex('SchedulerTaskExecutionLog')
       .where({ taskName })
-      .andWhere(
-        'processingDate',
-        '>=',
-        startOfDayUtc(subDays(new Date(), daysRange))
-      )
+      .andWhere('processingDate', '>=', startOfDayUtc(subDays(new Date(), daysRange)))
       .distinct('processingDate')
       .where({ success: true })
       .pluck('processingDate')) || []
@@ -67,10 +52,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
 
       let daysToRun = [today]
 
-      const executedDates = await getDaysWithExecution(
-        knex,
-        schedulerMethod.name
-      )
+      const executedDates = await getDaysWithExecution(knex, schedulerMethod.name)
       // If this task is daily basis it will complete the range of dates
       // we want to run the task.
       if (dailyRun) daysToRun = getDaysWithNoRuns(executedDates)
@@ -83,12 +65,9 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
             startDate: new Date(),
           })
 
-          logger.debug(
-            `Execute Task ${schedulerMethod.name} for dates ${getCustomToday(
-              day
-            )}`,
-            { reLabel: 'aspect:taskTracker' }
-          )
+          logger.debug(`Execute Task ${schedulerMethod.name} for dates ${getCustomToday(day)}`, {
+            reLabel: 'aspect:taskTracker',
+          })
           await schedulerMethod({ ...action, today: day }, { messageContext })
           await knex('SchedulerTaskExecutionLog')
             .update({
@@ -102,9 +81,7 @@ const taskTracker = async (schedulerMethod, action, { messageContext }) => {
           await knex('SchedulerTaskExecutionLog')
             .update({
               endDate: new Date(),
-              errorMessage: _.isEmpty(errorMessage)
-                ? dailyException
-                : errorMessage,
+              errorMessage: _.isEmpty(errorMessage) ? dailyException : errorMessage,
             })
             .where('id', jobExecutionId)
         }

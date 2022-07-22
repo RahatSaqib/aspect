@@ -9,9 +9,7 @@ const {
   DATE_RANGE_KEYS: { CURRENT_MONTH },
 } = DATE_CONSTS
 const dateRanges = dateRangeOptions('resultsDateRange', false)
-const currentMonth = dateRanges.resultsDateRange.find(
-  dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH
-).value.minDate
+const currentMonth = dateRanges.resultsDateRange.find(dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH).value.minDate
 
 const resultsTransmittedGraphs = () => ({
   resultsTransmitted: {

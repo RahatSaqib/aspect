@@ -6,9 +6,7 @@ async function seed(knex) {
   const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
   await knex('Partner').where('id', partnerId).update('plugin', 'philippines')
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
 
   const auditFields = {
     createdOn: now,
@@ -18,11 +16,7 @@ async function seed(knex) {
   }
   const { patientSmsTemplateId } =
     (await knex('SmsTemplate')
-      .where(
-        'message',
-        'LIKE',
-        'Your {{result.assay.name}} result tested last {{formatDate%'
-      )
+      .where('message', 'LIKE', 'Your {{result.assay.name}} result tested last {{formatDate%')
       .first('id as patientSmsTemplateId')) || {}
   if (patientSmsTemplateId) {
     const smsDateFormat = 'dd/MM/yyyy'

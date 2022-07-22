@@ -33,10 +33,8 @@ const styles = theme => ({
     maxHeight: `calc(${theme.typography.button.lineHeight} * ${theme.typography.button.fontSize} * 10)`,
   },
   chip: {
-    backgroundColor:
-      theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
-    borderRadius:
-      theme.customPropertiesVariables['--aspect-button-border-radius'],
+    backgroundColor: theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
+    borderRadius: theme.customPropertiesVariables['--aspect-button-border-radius'],
     color: theme.palette.common.white,
     padding: `0 ${theme.spacing(1)}`,
     marginRight: theme.spacing(0.5),
@@ -47,14 +45,7 @@ const styles = theme => ({
   },
 })
 
-const renderSuggestion = ({
-  suggestion,
-  index,
-  itemProps,
-  highlightedIndex,
-  selectedItem,
-  tagName,
-}) => {
+const renderSuggestion = ({ suggestion, index, itemProps, highlightedIndex, selectedItem, tagName }) => {
   const isHighlighted = highlightedIndex === index
   const isSelected = (selectedItem || '').indexOf(suggestion.text) > -1
   return (
@@ -78,9 +69,7 @@ const getSuggestions = (suggestions, selectedItem, value = '', tagName) => {
   return inputValue.length === 0
     ? []
     : suggestions.filter(
-        suggestion =>
-          !some(selectedItem, suggestion) &&
-          suggestion[tagName].toLowerCase().indexOf(inputValue) > -1
+        suggestion => !some(selectedItem, suggestion) && suggestion[tagName].toLowerCase().indexOf(inputValue) > -1
       )
 }
 
@@ -150,21 +139,8 @@ const TagInput = ({
       tagName={tagName}
       noMatch={noMatch}
     >
-      {({
-        getInputProps,
-        getItemProps,
-        getMenuProps,
-        isOpen,
-        inputValue,
-        selectedItem,
-        highlightedIndex,
-      }) => {
-        const options = getSuggestions(
-          source,
-          selectedItem,
-          inputValue,
-          tagName
-        )
+      {({ getInputProps, getItemProps, getMenuProps, isOpen, inputValue, selectedItem, highlightedIndex }) => {
+        const options = getSuggestions(source, selectedItem, inputValue, tagName)
         return (
           <div className={classNameValues.container}>
             <Grid container spacing={4} alignItems="stretch">
@@ -177,9 +153,7 @@ const TagInput = ({
                         key={item.id}
                         tabIndex={-1}
                         label={name}
-                        deleteIcon={
-                          <ClearIcon className={classNameValues.deleteIcon} />
-                        }
+                        deleteIcon={<ClearIcon className={classNameValues.deleteIcon} />}
                         className={classNameValues.chip}
                         onDelete={handleDelete(item)}
                       />

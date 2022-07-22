@@ -15,46 +15,25 @@ async function getPartner(knex, partnerName) {
   return knex('Partner').where('name', partnerName).first()
 }
 
-async function getSite(
-  knex,
-  { countryAbbreviation, partnerId, userId, requireInventory = false }
-) {
+async function getSite(knex, { countryAbbreviation, partnerId, userId, requireInventory = false }) {
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Site as s')
     .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
     .join('Geography as regionalGeography', function () {
-      this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull(
-        'regionalGeography.lgaId'
-      )
+      this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull('regionalGeography.lgaId')
     })
     .join('Country as c', 'lgaGeography.countryId', 'c.id')
     .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
     .join('Job as labUserJob', 'labUser.id', 'labUserJob.personId')
-    .join(
-      'JobFunction as labUserJobFunction',
-      'labUserJob.jobFunctionId',
-      'labUserJobFunction.id'
-    )
-    .join(
-      'JobContext as regionalContext',
-      'regionalGeography.id',
-      'regionalContext.geographyId'
-    )
-    .join(
-      'Job as regionalOfficerJob',
-      'regionalContext.jobId',
-      'regionalOfficerJob.id'
-    )
+    .join('JobFunction as labUserJobFunction', 'labUserJob.jobFunctionId', 'labUserJobFunction.id')
+    .join('JobContext as regionalContext', 'regionalGeography.id', 'regionalContext.geographyId')
+    .join('Job as regionalOfficerJob', 'regionalContext.jobId', 'regionalOfficerJob.id')
     .join(
       'JobFunction as regionalOfficerJobFunction',
       'regionalOfficerJob.jobFunctionId',
       'regionalOfficerJobFunction.id'
     )
-    .join(
-      'Person as regionalOfficer',
-      'regionalOfficerJob.personId',
-      'regionalOfficer.id'
-    )
+    .join('Person as regionalOfficer', 'regionalOfficerJob.personId', 'regionalOfficer.id')
     .leftJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .where('c.abbreviation', countryAbbreviation)
     .andWhere(function () {
@@ -91,24 +70,13 @@ async function getIssue(knex, issueId) {
 async function getIssueNotifications(knex, issueId) {
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Notification')
-    .join(
-      'NotificationType',
-      'Notification.notificationTypeId',
-      'NotificationType.id'
-    )
+    .join('NotificationType', 'Notification.notificationTypeId', 'NotificationType.id')
     .where('issueId', issueId)
     .options({ nestTables: true })
     .select()
 }
 
-async function getNotificationType(
-  knex,
-  partnerId,
-  issueTypeId,
-  jobFunctionId,
-  level,
-  notificationTypeName
-) {
+async function getNotificationType(knex, partnerId, issueTypeId, jobFunctionId, level, notificationTypeName) {
   return knex('NotificationType')
     .where({
       partnerId,
@@ -164,13 +132,7 @@ async function createAndTriggerIssueBase({
   return issueId
 }
 
-async function createNotification(
-  knex,
-  notificationTypeId,
-  issueId,
-  personId,
-  createdOn
-) {
+async function createNotification(knex, notificationTypeId, issueId, personId, createdOn) {
   return knex('Notification').insert({
     notificationTypeId,
     issueId,
@@ -180,9 +142,7 @@ async function createNotification(
 }
 
 async function cleanUpIssues(knex, issueIds) {
-  const notifications = await knex('Notification')
-    .whereIn('issueId', issueIds)
-    .select()
+  const notifications = await knex('Notification').whereIn('issueId', issueIds).select()
   const alertMessageIds = _.filter(
     _.uniq(_.map(notifications, 'alertMessageId')),
     alertMessageId => !_.isNull(alertMessageId)
@@ -197,10 +157,7 @@ async function cleanUpIssues(knex, issueIds) {
   if (!_.isEmpty(emailMessageIds)) {
     await knex('EmailMessage').whereIn('id', emailMessageIds).del()
   }
-  const smsMessageIds = _.filter(
-    _.uniq(_.map(notifications, 'smsMessageId')),
-    smsMessageId => !_.isNull(smsMessageId)
-  )
+  const smsMessageIds = _.filter(_.uniq(_.map(notifications, 'smsMessageId')), smsMessageId => !_.isNull(smsMessageId))
   if (!_.isEmpty(smsMessageIds)) {
     await knex('SmsMessage').whereIn('id', smsMessageIds).del()
   }

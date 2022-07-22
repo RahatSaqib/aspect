@@ -47,8 +47,7 @@ describe('AccountDetails module', () => {
 
     describe('dialog', () => {
       const saveLoginDetailsSuccess = () => Promise.resolve()
-      const saveLoginDetailsWithOtherError = () =>
-        Promise.reject({ otherError: 'other-error-message' }) // eslint-disable-line prefer-promise-reject-errors
+      const saveLoginDetailsWithOtherError = () => Promise.reject({ otherError: 'other-error-message' }) // eslint-disable-line prefer-promise-reject-errors
       const saveLoginDetailsWithCurrentPasswordError = () =>
         Promise.reject({ currentPassword: 'currentPassword-error' }) // eslint-disable-line prefer-promise-reject-errors
 
@@ -106,12 +105,7 @@ describe('AccountDetails module', () => {
       describe('componentDidMount', () => {
         it('should invoke `fetchAccountDetails` when the component is mounted', () => {
           const fetchAccountDetails = jest.fn()
-          shallow(
-            <AccountDetails
-              {...props}
-              fetchAccountDetails={fetchAccountDetails}
-            />
-          )
+          shallow(<AccountDetails {...props} fetchAccountDetails={fetchAccountDetails} />)
           expect(fetchAccountDetails).toBeCalled()
         })
       })

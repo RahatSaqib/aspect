@@ -88,9 +88,7 @@ const FormItem = ({
           readOnly: !toggleEdit,
           // is used for TextField, TextArea, Select
           disabled:
-            !toggleEdit ||
-            type === 'readOnly' ||
-            (disabledIf && disabledIf(formik.values, toggleEdit, subRowIndex)),
+            !toggleEdit || type === 'readOnly' || (disabledIf && disabledIf(formik.values, toggleEdit, subRowIndex)),
           disableUnderline: !toggleEdit || type === 'readOnly',
         }}
         InputLabelProps={{
@@ -128,11 +126,7 @@ FormItem.propTypes = {
   fullWidth: PropTypes.bool,
   hideIfNull: PropTypes.bool,
   id: PropTypes.string.isRequired,
-  initialValue: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool,
-    PropTypes.array,
-  ]),
+  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.array]),
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   labelI18nKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),

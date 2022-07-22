@@ -32,16 +32,8 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False on any non-fatal error'),
-          total: Joi.number()
-            .required()
-            .description(
-              'The total number of notifications that match the given filters'
-            ),
-          length: Joi.number()
-            .required()
-            .description(
-              'The number of notifications included in this response'
-            ),
+          total: Joi.number().required().description('The total number of notifications that match the given filters'),
+          length: Joi.number().required().description('The number of notifications included in this response'),
           data: Joi.array()
             .allow(null)
             .items(
@@ -96,74 +88,37 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False on any non-fatal error'),
-          total: Joi.number()
-            .required()
-            .description('The total number of items aggregated by consumable'),
+          total: Joi.number().required().description('The total number of items aggregated by consumable'),
           data: Joi.array()
             .allow(null)
             .items(
               Joi.object().keys({
                 id: Joi.number().description('id'),
-                webhookSent: Joi.number().description(
-                  'The number of webhook notification sent'
-                ),
-                webhookWithErrors: Joi.number().description(
-                  'The number of webhook notification sent but with errors'
-                ),
-                webhookPending: Joi.number().description(
-                  'The number of webhook notification pending to be sent'
-                ),
-                smsSent: Joi.number().description(
-                  'The number of sms notification sent'
-                ),
-                smsWithErrors: Joi.number().description(
-                  'The number of sms notification sent'
-                ),
-                smsPending: Joi.number().description(
-                  'The number of sms notification sent'
-                ),
-                emailSent: Joi.number().description(
-                  'The number of email notification sent'
-                ),
-                emailWithErrors: Joi.number().description(
-                  'The number of email notification sent with errors'
-                ),
-                emailPending: Joi.number().description(
-                  'The number of email notification pending to be send'
-                ),
-                date: Joi.date().description(
-                  'The date notification was sent or received'
-                ),
-                issueId: Joi.number()
-                  .allow(null)
-                  .description(`Notification's issueId`),
-                resultId: Joi.number()
-                  .allow(null)
-                  .description(`Notification's resultId`),
+                webhookSent: Joi.number().description('The number of webhook notification sent'),
+                webhookWithErrors: Joi.number().description('The number of webhook notification sent but with errors'),
+                webhookPending: Joi.number().description('The number of webhook notification pending to be sent'),
+                smsSent: Joi.number().description('The number of sms notification sent'),
+                smsWithErrors: Joi.number().description('The number of sms notification sent'),
+                smsPending: Joi.number().description('The number of sms notification sent'),
+                emailSent: Joi.number().description('The number of email notification sent'),
+                emailWithErrors: Joi.number().description('The number of email notification sent with errors'),
+                emailPending: Joi.number().description('The number of email notification pending to be send'),
+                date: Joi.date().description('The date notification was sent or received'),
+                issueId: Joi.number().allow(null).description(`Notification's issueId`),
+                resultId: Joi.number().allow(null).description(`Notification's resultId`),
 
-                sampleId: Joi.alternatives()
-                  .allow(null, '')
-                  .try(Joi.number(), Joi.string())
-                  .description('Sample id'),
-                patientId: Joi.string()
-                  .allow(null, '')
-                  .description('The patient Id'),
+                sampleId: Joi.alternatives().allow(null, '').try(Joi.number(), Joi.string()).description('Sample id'),
+                patientId: Joi.string().allow(null, '').description('The patient Id'),
 
                 emailRecipients: Joi.array()
                   .allow(null)
-                  .description(
-                    'Comma-separated person names who get notification email'
-                  ),
+                  .description('Comma-separated person names who get notification email'),
                 smsRecipients: Joi.array()
                   .allow(null)
-                  .description(
-                    'Comma-separated person names who get notification sms'
-                  ),
+                  .description('Comma-separated person names who get notification sms'),
                 webhookRecipients: Joi.array()
                   .allow(null)
-                  .description(
-                    'Comma-separated url who get notification the webhook'
-                  ),
+                  .description('Comma-separated url who get notification the webhook'),
               })
             ),
         }),
@@ -192,30 +147,16 @@ const routes = [
           data: Joi.object()
             .allow(null)
             .keys({
-              notificationTypeName: Joi.string()
-                .required()
-                .description('Notification Type Category name'),
-              notificationType: Joi.string()
-                .required()
-                .description('Notification Type external Id'),
-              name: Joi.string()
-                .required()
-                .description('Name of the notification'),
-              filterCondition: Joi.string()
-                .allow(null)
-                .description('The condition Filters'),
-              emailSubject: Joi.string()
-                .allow(null)
-                .description('email subject'),
+              notificationTypeName: Joi.string().required().description('Notification Type Category name'),
+              notificationType: Joi.string().required().description('Notification Type external Id'),
+              name: Joi.string().required().description('Name of the notification'),
+              filterCondition: Joi.string().allow(null).description('The condition Filters'),
+              emailSubject: Joi.string().allow(null).description('email subject'),
               emailBody: Joi.string().allow(null).description('email body'),
               smsBody: Joi.string().allow(null).description('sms body'),
               webUrl: Joi.string().allow(null).description('Web url'),
               webBody: Joi.string().allow(null).description('Web body'),
-              enabled: Joi.number()
-                .min(0)
-                .max(1)
-                .required()
-                .description('is the notification enable'),
+              enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
             }),
         }),
       },
@@ -246,9 +187,7 @@ const routes = [
       validate: {
         payload: resultBasedNotificationPayload,
         params: {
-          id: Joi.string()
-            .description('Item id depending on payload.notificationType')
-            .required(),
+          id: Joi.string().description('Item id depending on payload.notificationType').required(),
         },
       },
       response: saveNotificationResponse,

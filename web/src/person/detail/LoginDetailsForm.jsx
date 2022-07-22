@@ -24,25 +24,16 @@ export function validate(
     errors.username = intl.formatMessage(messages.usernameRequired)
   }
   if (currentPasswordInputDialogOpen === true && !currentPassword) {
-    errors.currentPassword = intl.formatMessage(
-      messages.currentPasswordRequired
-    )
+    errors.currentPassword = intl.formatMessage(messages.currentPasswordRequired)
   }
   if (newPassword) {
     if (newPassword.trim().length < 8) {
       errors.newPassword = intl.formatMessage(messages.newPasswordTooShort)
-    } else if (
-      !/\d/.test(newPassword) &&
-      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(newPassword)
-    ) {
-      errors.newPassword = intl.formatMessage(
-        messages.newPasswordMustContainANumberOrSpecialCharacter
-      )
+    } else if (!/\d/.test(newPassword) && !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(newPassword)) {
+      errors.newPassword = intl.formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
     }
     if (newPassword !== confirmNewPassword) {
-      errors.confirmNewPassword = intl.formatMessage(
-        messages.passwordsDoNotMatch
-      )
+      errors.confirmNewPassword = intl.formatMessage(messages.passwordsDoNotMatch)
     }
   } else {
     errors.newPassword = intl.formatMessage(messages.newPasswordRequired)
@@ -60,12 +51,9 @@ const DEFAULT_VALUES = {
 
 const getInitialValues = (loginDetails, shouldPrefill, emailValue) => ({
   ...DEFAULT_VALUES,
-  username: shouldPrefill
-    ? emailValue
-    : loginDetails.get('username') || DEFAULT_VALUES.username,
+  username: shouldPrefill ? emailValue : loginDetails.get('username') || DEFAULT_VALUES.username,
   // username: loginDetails.get('username') || DEFAULT_VALUES.username,
-  userLockedOut:
-    loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
+  userLockedOut: loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
   shouldPrefill,
 })
 
@@ -76,11 +64,7 @@ const enhance = compose(
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
-        values: getInitialValues(
-          this.props.loginDetails,
-          this.props.shouldPrefill,
-          this.props.emailValue
-        ),
+        values: getInitialValues(this.props.loginDetails, this.props.shouldPrefill, this.props.emailValue),
       })
     },
 
@@ -89,9 +73,7 @@ const enhance = compose(
 
       if (this.props.loginDetails !== loginDetails) {
         // Re-initialize
-        this.state.onChange(
-          getInitialValues(loginDetails, shouldPrefill, emailValue)
-        )
+        this.state.onChange(getInitialValues(loginDetails, shouldPrefill, emailValue))
       }
     },
   }),
@@ -232,11 +214,7 @@ export const LoginDetailsForm = ({
     </div>
     <AspectDialog
       actions={[
-        <Button
-          color="primary"
-          disabled={loading}
-          onClick={closeCurrentPasswordInputDialog}
-        >
+        <Button color="primary" disabled={loading} onClick={closeCurrentPasswordInputDialog}>
           {intl.formatMessage(messages.cancelCurrentPassword)}
         </Button>,
         <Button

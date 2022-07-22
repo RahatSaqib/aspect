@@ -5,9 +5,7 @@ const geography = require('./fixtures/geography.json')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
-  const { id: jobFunctionIdRegionalOfficer, partnerId } = await knex(
-    'JobFunction as jf'
-  )
+  const { id: jobFunctionIdRegionalOfficer, partnerId } = await knex('JobFunction as jf')
     .join('Partner as p', 'p.id', 'jf.partnerId')
     .where({ 'p.name': 'Myanmar', 'jf.name': 'Regional Officer' })
     .first('jf.id', 'p.id as partnerId')
@@ -29,9 +27,7 @@ async function seed(knex) {
   }
 
   const now = new Date()
-  const { id: adminId } = await knex('User as u')
-    .where({ 'u.name': 'myanmar_admin' })
-    .first('u.id')
+  const { id: adminId } = await knex('User as u').where({ 'u.name': 'myanmar_admin' }).first('u.id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -245,9 +241,7 @@ async function seed(knex) {
 
   // remove decimals from target data collection
   await knex('DashboardWidgetTarget').update({
-    sqlForDataCollection: knex.raw(
-      "replace(sqlForDataCollection, '100,2),', '100,0),')"
-    ),
+    sqlForDataCollection: knex.raw("replace(sqlForDataCollection, '100,2),', '100,0),')"),
   })
 
   // adjust RR rate to be a percentage
@@ -257,13 +251,11 @@ async function seed(knex) {
   })
 
   // Change TI subtitle
-  await knex('DashboardWidgetStat')
-    .where({ statStatus: 'Trace Indet.' })
-    .update({
-      statStatus: 'Indeterminate',
-      sqlForStatUnit:
-        'select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDeviceByCategory1 as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where f.resultCategory1=1 and f.assayId in (1,2) and f.days = 30',
-    })
+  await knex('DashboardWidgetStat').where({ statStatus: 'Trace Indet.' }).update({
+    statStatus: 'Indeterminate',
+    sqlForStatUnit:
+      'select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDeviceByCategory1 as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where f.resultCategory1=1 and f.assayId in (1,2) and f.days = 30',
+  })
 
   // Change TI calculation
   await knex('DashboardWidget').where({ title: 'TI Rate' }).update({
@@ -299,7 +291,5 @@ async function seed(knex) {
   )
 
   // update ro stock level update to be acknowledgable
-  await knex('NotificationType')
-    .where('name', 'RO Stock Level Update')
-    .update('canAcknowledge', 1)
+  await knex('NotificationType').where('name', 'RO Stock Level Update').update('canAcknowledge', 1)
 }

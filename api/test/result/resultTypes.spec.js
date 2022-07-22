@@ -12,9 +12,7 @@ describe('Result type routes', () => {
   })
   describe('GET', () => {
     it('should return a list of result types when using valid token', async () => {
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')

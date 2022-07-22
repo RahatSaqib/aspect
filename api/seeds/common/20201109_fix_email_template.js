@@ -23,9 +23,7 @@ async function seed(knex) {
     .select('et.id as emailTemplateId, it.externalId')
   await Promise.each(emailTemplatesId, et => {
     if (issues[et.externalId])
-      return knex('EmailTemplate')
-        .update(issues[et.externalId].EmailTemplate)
-        .where('id', et.emailTemplateId)
+      return knex('EmailTemplate').update(issues[et.externalId].EmailTemplate).where('id', et.emailTemplateId)
   })
 }
 

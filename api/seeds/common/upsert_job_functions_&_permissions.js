@@ -1,7 +1,4 @@
-const {
-  upsertJobFunctionFixture,
-  upsertPermissionFixture,
-} = require('../common')
+const { upsertJobFunctionFixture, upsertPermissionFixture } = require('../common')
 const jobFunctionsFixtureDefault = require('../fixtures/jobFunctions')
 const { getPartnerByName } = require('../utils')
 

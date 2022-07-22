@@ -18,32 +18,17 @@ import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveListWithSet, Items } from '../../shared/metaReducers/items'
 import { gotoWithReturnUrl } from '../../shared/utils/browser'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
-import BrowseTablePaginator, {
-  ALL_KEY,
-  PAGE_SIZE_BUTTON_KEYS,
-} from '../../globals/components/BrowseTablePaginator'
+import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import AspectExportListButton from '../../MigratedComponents/AspectExportListButton'
 import requirePermissions from '../../components/shared/requirePermissions'
-import {
-  ResultDataTable,
-  ResultDataTableHead,
-  ResultDataTableRow,
-} from './ResultDataTable'
+import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './ResultDataTable'
 import AspectButton from '../../components/shared/AspectButton'
 import { useAuthState } from '../../Providers/AuthProvider'
 import messages from './messages'
@@ -147,10 +132,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -160,8 +142,7 @@ const messageByI18nKey = partial(
   // Explicit declare messageBy[i18nKey] so that the keys are searchable.
   (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
   {
-    resultCategoryCopiesMl: (title, formatMessage) =>
-      formatMessage(messages.resultCategoryCopiesMl),
+    resultCategoryCopiesMl: (title, formatMessage) => formatMessage(messages.resultCategoryCopiesMl),
     default: identity,
   }
 )
@@ -205,10 +186,7 @@ const getBaseColumns = (extraColumns = []) => {
         },
         ...map(extraColumns, column => ({
           key: column?.fieldName,
-          label: messageByI18nKey(column?.i18nKey)(
-            column?.title,
-            formatMessage
-          ),
+          label: messageByI18nKey(column?.i18nKey)(column?.title, formatMessage),
           sortable: true,
           hiddenOn: 'md',
         })),
@@ -239,9 +217,7 @@ const getBaseColumns = (extraColumns = []) => {
           hiddenOn: 'xs',
         },
       ],
-      elem =>
-        (extraColumns.length > 0 && elem.key !== 'resultText') ||
-        extraColumns.length === 0
+      elem => (extraColumns.length > 0 && elem.key !== 'resultText') || extraColumns.length === 0
     )
   )
 }
@@ -281,9 +257,7 @@ export const ResultListWithProps = ({
         reportName="Results"
         disableExcel
       />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} />
-      )}
+      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
       {!items.currentIdList.isEmpty() && (
         <ResultDataTable className={cssClasses('ResultDataTable')}>
           <ResultDataTableHead
@@ -384,8 +358,7 @@ const ResultList = () => {
   }, [tableLoading])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
@@ -427,15 +400,7 @@ const ResultList = () => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
       setIsLoading(true)
-      return getExportableFile(
-        filtersParams,
-        formatType,
-        sortCol,
-        sortDir,
-        0,
-        Math.min(total, 50000),
-        'results'
-      )
+      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, Math.min(total, 50000), 'results')
         .then(response => {
           setIsLoading(false)
           return response

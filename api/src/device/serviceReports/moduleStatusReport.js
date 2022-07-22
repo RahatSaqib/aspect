@@ -1,24 +1,12 @@
 const { knex } = require('../../db')
 const { filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
-const {
-  getBaseQuery: getResultBaseQuery,
-  modifiers,
-} = require('../../result/query')
+const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 
-async function getModuleStatusReportData(
-  minDate,
-  maxDate,
-  dataConstraints,
-  query
-) {
-  const [issueTypeModuleDisabledId] = await knex('IssueType')
-    .where({ name: 'Module Disabled' })
-    .pluck('id')
+async function getModuleStatusReportData(minDate, maxDate, dataConstraints, query) {
+  const [issueTypeModuleDisabledId] = await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id')
 
-  const [issueStatusActiveId] = await knex('IssueStatus')
-    .where({ name: 'Active' })
-    .pluck('id')
+  const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
 
   const lastResults = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.lastResultPerModule, knex)
@@ -34,21 +22,14 @@ async function getModuleStatusReportData(
     .from(lastResults.as('lastResult'))
     .leftJoin('Issue as issueModuleDisabled', function () {
       this.on('issueModuleDisabled.deviceId', 'lastResult.deviceId')
-        .andOn(
-          'lastResult.moduleSerial',
-          knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"')
-        )
+        .andOn('lastResult.moduleSerial', knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"'))
         .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
         .andOn('issueModuleDisabled.issueStatusId', issueStatusActiveId)
     })
     .select([
       'lastResult.deviceId',
-      knex.raw(
-        'sum(case when issueModuleDisabled.id is null then 1 else 0 end) as enabled'
-      ),
-      knex.raw(
-        'sum(case when issueModuleDisabled.id is null then 0 else 1 end) as disabled'
-      ),
+      knex.raw('sum(case when issueModuleDisabled.id is null then 1 else 0 end) as enabled'),
+      knex.raw('sum(case when issueModuleDisabled.id is null then 0 else 1 end) as disabled'),
     ])
     .groupBy('lastResult.deviceId')
 

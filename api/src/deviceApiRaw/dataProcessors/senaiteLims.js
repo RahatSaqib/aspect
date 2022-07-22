@@ -52,43 +52,29 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
     }
     const now = new Date()
     await transact(async knex => {
-      const {
-        deviceId,
-        partnerId,
-        siteId,
-        longitude,
-        latitude,
-        geographyId,
-        countryId,
-        defaultReportableSiteId,
-      } = await knex('DeviceApiKey as dak')
-        .leftJoin('Site as s1', 'dak.siteId', 's1.id')
-        .leftJoin('Device as d', 'dak.deviceId', 'd.id')
-        .leftJoin('Site as s2', 'd.siteId', 's2.id')
-        .leftJoin('Geography as g1', 's2.geographyId', 'g1.id')
-        .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
-        .leftJoin('Geography as g3', 'd.geographyId', 'g3.id')
-        .leftJoin('Geography as g4', 'dak.geographyId', 'g4.id')
-        .where('dak.token', auth.credentials.token)
-        .first(
-          'dak.deviceId',
-          'dak.partnerId',
-          knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
-          knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
-          knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
-          knex.raw(
-            'COALESCE(s2.geographyId, s1.geographyId, d.geographyId, dak.geographyId) as geographyId'
-          ),
-          knex.raw(
-            'COALESCE(g1.countryId, g2.countryId, g3.countryId, g4.countryId) as countryId'
-          ),
-          'd.defaultReportableSiteId'
-        )
+      const { deviceId, partnerId, siteId, longitude, latitude, geographyId, countryId, defaultReportableSiteId } =
+        await knex('DeviceApiKey as dak')
+          .leftJoin('Site as s1', 'dak.siteId', 's1.id')
+          .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+          .leftJoin('Site as s2', 'd.siteId', 's2.id')
+          .leftJoin('Geography as g1', 's2.geographyId', 'g1.id')
+          .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
+          .leftJoin('Geography as g3', 'd.geographyId', 'g3.id')
+          .leftJoin('Geography as g4', 'dak.geographyId', 'g4.id')
+          .where('dak.token', auth.credentials.token)
+          .first(
+            'dak.deviceId',
+            'dak.partnerId',
+            knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
+            knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
+            knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
+            knex.raw('COALESCE(s2.geographyId, s1.geographyId, d.geographyId, dak.geographyId) as geographyId'),
+            knex.raw('COALESCE(g1.countryId, g2.countryId, g3.countryId, g4.countryId) as countryId'),
+            'd.defaultReportableSiteId'
+          )
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
-        throw Boom.badRequest(
-          'Invalid device API key: Cannot determine which device this came from'
-        )
+        throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
       }
       await knex('DeviceLog').insert({
         deviceId,
@@ -98,9 +84,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         // TODO: DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
-      await knex('Device')
-        .where({ id: deviceId })
-        .update({ lastSeenOn: now, updatedOn: now })
+      await knex('Device').where({ id: deviceId }).update({ lastSeenOn: now, updatedOn: now })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       const provinceName = payload.getProvince // "Mashonaland Central"
@@ -208,10 +192,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           (originSite.name !== facilityName && facilityName)
         ) {
           const updatedSiteInfo = {}
-          if (
-            (!originSite.stateId && stateId) ||
-            (!originSite.lgaId && lgaId)
-          ) {
+          if ((!originSite.stateId && stateId) || (!originSite.lgaId && lgaId)) {
             updatedSiteInfo.geographyId = originSiteGeographyId
             updatedSiteInfo.updatedOn = now
           }
@@ -242,10 +223,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         (await knex('Sample as s')
           .join('SampleType as st', 's.sampleTypeId', 'st.id')
           .where(function () {
-            this.where('s.externalId', limsSampleId).andWhere(
-              'st.externalId',
-              sampleTypeExternalId
-            )
+            this.where('s.externalId', limsSampleId).andWhere('st.externalId', sampleTypeExternalId)
             if (originSiteId) {
               this.andWhere('s.originSiteId', originSiteId)
             }
@@ -337,28 +315,23 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       if (sampleAppearanceAnalysis) {
         if (sampleAppearanceAnalysis.Result) {
           if (!_.isEmpty(sampleAppearanceAnalysis.ResultOptions)) {
-            const selectedSampleAppearance = _.find(
-              sampleAppearanceAnalysis.ResultOptions,
-              { ResultValue: sampleAppearanceAnalysis.Result }
-            )
+            const selectedSampleAppearance = _.find(sampleAppearanceAnalysis.ResultOptions, {
+              ResultValue: sampleAppearanceAnalysis.Result,
+            })
             if (_.get(selectedSampleAppearance, 'ResultText')) {
               if (sampleAppearanceAnalysis.Unit) {
                 baseResultData.senaiteSample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
               } else {
-                baseResultData.senaiteSample.appearance =
-                  selectedSampleAppearance.ResultText
+                baseResultData.senaiteSample.appearance = selectedSampleAppearance.ResultText
               }
             } else if (_.get(selectedSampleAppearance, 'value')) {
-              baseResultData.senaiteSample.appearance =
-                selectedSampleAppearance.value
+              baseResultData.senaiteSample.appearance = selectedSampleAppearance.value
             }
           } else {
-            baseResultData.senaiteSample.appearance =
-              sampleAppearanceAnalysis.Result
+            baseResultData.senaiteSample.appearance = sampleAppearanceAnalysis.Result
           }
         }
-        baseResultData.senaiteSample.appearanceRemarks =
-          sampleAppearanceAnalysis.Remarks
+        baseResultData.senaiteSample.appearanceRemarks = sampleAppearanceAnalysis.Remarks
       }
       const sampleVolumeAnalysis = _.find(payload.Analyses, {
         id: 'SampleVolume',
@@ -366,16 +339,14 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       if (sampleVolumeAnalysis) {
         if (sampleVolumeAnalysis.Result) {
           if (!_.isEmpty(sampleVolumeAnalysis.ResultOptions)) {
-            const selectedSampleVolume = _.find(
-              sampleVolumeAnalysis.ResultOptions,
-              { ResultValue: sampleVolumeAnalysis.Result }
-            )
+            const selectedSampleVolume = _.find(sampleVolumeAnalysis.ResultOptions, {
+              ResultValue: sampleVolumeAnalysis.Result,
+            })
             if (_.get(selectedSampleVolume, 'ResultText')) {
               if (sampleVolumeAnalysis.Unit) {
                 baseResultData.senaiteSample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
               } else {
-                baseResultData.senaiteSample.volume =
-                  selectedSampleVolume.ResultText
+                baseResultData.senaiteSample.volume = selectedSampleVolume.ResultText
               }
             } else if (_.get(selectedSampleVolume, 'value')) {
               baseResultData.senaiteSample.volume = selectedSampleVolume.value
@@ -384,8 +355,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             baseResultData.senaiteSample.volume = sampleVolumeAnalysis.Result
           }
         }
-        baseResultData.senaiteSample.volumeRemarks =
-          sampleVolumeAnalysis.Remarks
+        baseResultData.senaiteSample.volumeRemarks = sampleVolumeAnalysis.Remarks
       }
       const testResultAnalyses = _.filter(
         payload.Analyses,
@@ -425,9 +395,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             .where('sampleId', sampleId)
             .andWhere(function () {
               if (assayId === assayIds.senaiteUnknown) {
-                this.whereRaw(
-                  `resultData->"$.senaiteResult.testTypeId" = '${testResultAnalysis.id}'`
-                )
+                this.whereRaw(`resultData->"$.senaiteResult.testTypeId" = '${testResultAnalysis.id}'`)
               } else {
                 this.where('assayId', assayId)
               }
@@ -438,15 +406,11 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           }
           if (resultRecord.id) {
             resultRecord.patientData = _.merge(
-              resultRecord.patientData
-                ? JSON.parse(resultRecord.patientData)
-                : {},
+              resultRecord.patientData ? JSON.parse(resultRecord.patientData) : {},
               patientData
             )
             resultRecord.resultData = _.merge(
-              resultRecord.resultData
-                ? JSON.parse(resultRecord.resultData)
-                : {},
+              resultRecord.resultData ? JSON.parse(resultRecord.resultData) : {},
               baseResultData
             )
           } else {
@@ -458,9 +422,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             resultRecord.rawData = JSON.stringify(payload)
             resultRecord.createdOn = now
             resultRecord.senderOperator =
-              testResultAnalysis.Creator ||
-              testResultAnalysis.Analyst ||
-              testResultAnalysis.Verificators
+              testResultAnalysis.Creator || testResultAnalysis.Analyst || testResultAnalysis.Verificators
           }
           if (!resultRecord.geographyId) {
             resultRecord.geographyId = geographyId
@@ -482,103 +444,65 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           }
           if (!resultRecord.senderOperator) {
             resultRecord.senderOperator =
-              testResultAnalysis.Creator ||
-              testResultAnalysis.Analyst ||
-              testResultAnalysis.Verificators
+              testResultAnalysis.Creator || testResultAnalysis.Analyst || testResultAnalysis.Verificators
           }
           if (!resultRecord.startedOn) {
-            resultRecord.startedOn = parseDateOrDefault(
-              testResultAnalysis.ResultCaptureDate
-            )
+            resultRecord.startedOn = parseDateOrDefault(testResultAnalysis.ResultCaptureDate)
           }
           if (!resultRecord.endedOn) {
-            resultRecord.endedOn = parseDateOrDefault(
-              testResultAnalysis.ResultCaptureDate
-            )
+            resultRecord.endedOn = parseDateOrDefault(testResultAnalysis.ResultCaptureDate)
           }
           resultRecord.updatedOn = now
-          resultRecord.resultData.senaiteResult.testTypeId =
-            testResultAnalysis.id // "MGITRESULT"
+          resultRecord.resultData.senaiteResult.testTypeId = testResultAnalysis.id // "MGITRESULT"
           resultRecord.resultData.senaiteResult.title = testResultAnalysis.title // "MGIT RESULT"
           resultRecord.resultData.senaiteResult.uid = testResultAnalysis.UID // "d2b24013cefd4ab49b55ca1b7afcee52"
-          resultRecord.resultData.senaiteResult.retested =
-            testResultAnalysis.Retested // false
-          resultRecord.resultData.senaiteResult.result =
-            testResultAnalysis.Result // ""
+          resultRecord.resultData.senaiteResult.retested = testResultAnalysis.Retested // false
+          resultRecord.resultData.senaiteResult.result = testResultAnalysis.Result // ""
           const resultOptions = testResultAnalysis.ResultOptions // Array with objects like { "ResultText": "Positive", "ResultValue": "0", "value": "" }
           const selectedResultOption =
             _.find(resultOptions, {
               ResultValue: resultRecord.resultData.senaiteResult.result,
             }) || {}
-          resultRecord.resultData.senaiteResult.resultText =
-            selectedResultOption.ResultText
+          resultRecord.resultData.senaiteResult.resultText = selectedResultOption.ResultText
           const unknownResultCategoryId = await resultCategoryToId('Unknown')
-          if (
-            !resultRecord.resultCategory1 ||
-            resultRecord.resultCategory1 === unknownResultCategoryId
-          ) {
-            const resultCategoryExternalId =
-              resultCategories[selectedResultOption.ResultText] || 'Unknown'
-            resultRecord.resultCategory1 = await resultCategoryToId(
-              resultCategoryExternalId
-            )
+          if (!resultRecord.resultCategory1 || resultRecord.resultCategory1 === unknownResultCategoryId) {
+            const resultCategoryExternalId = resultCategories[selectedResultOption.ResultText] || 'Unknown'
+            resultRecord.resultCategory1 = await resultCategoryToId(resultCategoryExternalId)
           }
-          resultRecord.resultData.senaiteResult.value =
-            selectedResultOption.value
-          resultRecord.resultData.senaiteResult.resultCaptureDate =
-            parseDateOrDefault(testResultAnalysis.ResultCaptureDate) // "2018/03/20 06:23:3.774431 GMT+2"
-          resultRecord.resultData.senaiteResult.remarks =
-            testResultAnalysis.Remarks // ""
+          resultRecord.resultData.senaiteResult.value = selectedResultOption.value
+          resultRecord.resultData.senaiteResult.resultCaptureDate = parseDateOrDefault(
+            testResultAnalysis.ResultCaptureDate
+          ) // "2018/03/20 06:23:3.774431 GMT+2"
+          resultRecord.resultData.senaiteResult.remarks = testResultAnalysis.Remarks // ""
           resultRecord.resultData.senaiteResult.unit = testResultAnalysis.Unit // ""
-          resultRecord.resultData.senaiteResult.pointOfCapture =
-            testResultAnalysis.PointOfCapture // "lab"
-          resultRecord.resultData.senaiteResult.manualEntryOfResults =
-            testResultAnalysis.ManualEntryOfResults // true
-          resultRecord.resultData.senaiteResult.instrument =
-            testResultAnalysis.Instrument // null
-          resultRecord.resultData.senaiteResult.instrumentEntryOfResults =
-            testResultAnalysis.InstrumentEntryOfResults // false
-          resultRecord.resultData.senaiteResult.hidden =
-            testResultAnalysis.Hidden // true
-          resultRecord.resultData.senaiteResult.hiddenManually =
-            testResultAnalysis.HiddenManually // false
-          resultRecord.resultData.senaiteResult.analyst =
-            testResultAnalysis.Analyst // "" <- LIMS Username
-          resultRecord.resultData.senaiteResult.verificators =
-            testResultAnalysis.Verificators // "" <- LIMS Username
-          resultRecord.resultData.senaiteResult.testReviewState =
-            testResultAnalysis.review_state // "verified"
+          resultRecord.resultData.senaiteResult.pointOfCapture = testResultAnalysis.PointOfCapture // "lab"
+          resultRecord.resultData.senaiteResult.manualEntryOfResults = testResultAnalysis.ManualEntryOfResults // true
+          resultRecord.resultData.senaiteResult.instrument = testResultAnalysis.Instrument // null
+          resultRecord.resultData.senaiteResult.instrumentEntryOfResults = testResultAnalysis.InstrumentEntryOfResults // false
+          resultRecord.resultData.senaiteResult.hidden = testResultAnalysis.Hidden // true
+          resultRecord.resultData.senaiteResult.hiddenManually = testResultAnalysis.HiddenManually // false
+          resultRecord.resultData.senaiteResult.analyst = testResultAnalysis.Analyst // "" <- LIMS Username
+          resultRecord.resultData.senaiteResult.verificators = testResultAnalysis.Verificators // "" <- LIMS Username
+          resultRecord.resultData.senaiteResult.testReviewState = testResultAnalysis.review_state // "verified"
           resultRecord.resultData.senaiteResult.worksheetAnalysisReviewState =
             testResultAnalysis.worksheetanalysis_review_state // "unassigned"
-          resultRecord.resultData.senaiteResult.creationDate =
-            parseDateOrDefault(testResultAnalysis.creation_date) // "2017/10/23 09:04:58 GMT+2"
-          resultRecord.resultData.senaiteResult.creator =
-            testResultAnalysis.Creator // "kadyea"
-          const senaiteResultModificationDate = parseDateOrDefault(
-            testResultAnalysis.modification_date
-          ) // "2018/03/20 06:23:4.257171 GMT+2"
-          resultRecord.resultData.senaiteResult.modificationDate =
-            senaiteResultModificationDate
+          resultRecord.resultData.senaiteResult.creationDate = parseDateOrDefault(testResultAnalysis.creation_date) // "2017/10/23 09:04:58 GMT+2"
+          resultRecord.resultData.senaiteResult.creator = testResultAnalysis.Creator // "kadyea"
+          const senaiteResultModificationDate = parseDateOrDefault(testResultAnalysis.modification_date) // "2018/03/20 06:23:4.257171 GMT+2"
+          resultRecord.resultData.senaiteResult.modificationDate = senaiteResultModificationDate
 
           const resultWorkflowStatusSenaiteMapping = {
             sample_received: 'Ordered',
             to_be_verified: 'Processed',
             verified: 'Validated',
           }
-          const proposedResultWorkflowStatus =
-            resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]
+          const proposedResultWorkflowStatus = resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]
           let resultWorkflowStatus = null
           if (testResultAnalysis.review_state && proposedResultWorkflowStatus) {
             let currentResultWorkflowStatus = 'null'
             if (resultRecord.resultWorkflowStatusLogId) {
-              ;({ externlId: currentResultWorkflowStatus } = (await knex(
-                'ResultWorkflowLog as rwl'
-              )
-                .join(
-                  'ResultWorkflowStatus as rws',
-                  'rwl.resultWorkflowStatusId',
-                  'rws.id'
-                )
+              ;({ externlId: currentResultWorkflowStatus } = (await knex('ResultWorkflowLog as rwl')
+                .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
                 .where('rwl.id', resultRecord.resultWorkflowStatusLogId)
                 .first('rws.externalId')) || { externalId: 'null' })
             }
@@ -609,49 +533,31 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           resultRecord.resultData = JSON.stringify(resultRecord.resultData)
           if (resultRecord.id) {
             if (resultWorkflowStatus) {
-              const [resultWorkflowStatusLogId] = await knex(
-                'ResultWorkflowLog'
-              ).insert({
+              const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
                 resultId: resultRecord.id,
-                resultWorkflowStatusId: await resultWorkflowStatusToId(
-                  resultWorkflowStatus
-                ),
+                resultWorkflowStatusId: await resultWorkflowStatusToId(resultWorkflowStatus),
                 reason: `Senaite LIMS Reported ${testResultAnalysis.review_state}}`,
-                operator:
-                  testResultAnalysis.Verificators ||
-                  testResultAnalysis.Analyst ||
-                  testResultAnalysis.Creator,
+                operator: testResultAnalysis.Verificators || testResultAnalysis.Analyst || testResultAnalysis.Creator,
                 changedOn: senaiteResultModificationDate || now,
                 createdOn: now,
               })
               resultRecord.resultWorkflowStatusLogId = resultWorkflowStatusLogId
             }
-            await knex('Result')
-              .where('id', resultRecord.id)
-              .update(resultRecord)
+            await knex('Result').where('id', resultRecord.id).update(resultRecord)
           } else {
             resultRecord.reportableSiteId = reportableSiteId
             const [resultId] = await knex('Result').insert(resultRecord)
             if (resultWorkflowStatus) {
-              const [resultWorkflowStatusLogId] = await knex(
-                'ResultWorkflowLog'
-              ).insert({
+              const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
                 resultId,
-                resultWorkflowStatusId: await resultWorkflowStatusToId(
-                  resultWorkflowStatus
-                ),
+                resultWorkflowStatusId: await resultWorkflowStatusToId(resultWorkflowStatus),
                 reason: `Senaite LIMS Reported ${testResultAnalysis.review_state}}`,
-                operator:
-                  testResultAnalysis.Verificators ||
-                  testResultAnalysis.Analyst ||
-                  testResultAnalysis.Creator,
+                operator: testResultAnalysis.Verificators || testResultAnalysis.Analyst || testResultAnalysis.Creator,
                 changedOn: senaiteResultModificationDate || now,
                 createdOn: now,
               })
               resultRecord.resultWorkflowStatusLogId = resultWorkflowStatusLogId
-              await knex('Result')
-                .where('id', resultId)
-                .update({ resultWorkflowStatusLogId })
+              await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
             }
           }
         })
