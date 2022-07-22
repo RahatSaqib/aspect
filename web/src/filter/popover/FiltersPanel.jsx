@@ -38,6 +38,7 @@ import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersPanel.css'
+import GxConnectStatusSelectField from '../resource/GxConnectStatusSelectField'
 
 const cssClasses = classnames.bind(styles)
 
@@ -155,6 +156,12 @@ const enhance = compose(
       deviceApprovalId =>
         onChangeFilters({
           deviceApprovalId,
+        }),
+    onGxConnectStatusChange:
+      ({ onChangeFilters }) =>
+      gxConnectStatus =>
+        onChangeFilters({
+          gxConnectStatus,
         }),
     onDeviceTypeChange:
       ({ onChangeFilters }) =>
@@ -522,6 +529,14 @@ const messages = {
       id: 'filter.popover.contactStatusHint',
       defaultMessage: 'Select contact status...',
     },
+    selectGxConnectStatus: {
+      id: 'filter.popover.selectGxConnectStatus',
+      defaultMessage: 'Select GxConnect status...',
+    },
+    gxConnectStatus: {
+      id: 'filter.popover.gxConnectStatus',
+      defaultMessage: 'GxConnect Status',
+    },
   }),
 }
 
@@ -553,6 +568,7 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onTreatmentStatusChange,
   onDeviceApprovalIdChange,
+  onGxConnectStatusChange,
   onResultCategoryGroupChange,
   onDeviceMaintenanceStatusIdChange,
   onDeviceTypeChange,
@@ -967,6 +983,18 @@ export const FiltersPanel = ({
                   hintText={formatMessage(messages.selectDeviceApproval)}
                   floatingLabelText={formatMessage(messages.deviceApproval)}
                   style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.gxConnectStatus && (
+              <div className={cssClasses('Control')}>
+                <GxConnectStatusSelectField
+                  value={filters.gxConnectStatus}
+                  onGxConnectStatusChange={onGxConnectStatusChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectGxConnectStatus)}
+                  floatingLabelText={formatMessage(messages.gxConnectStatus)}
                   autoWidth
                 />
               </div>

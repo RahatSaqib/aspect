@@ -133,6 +133,10 @@ export const messages = {
       id: 'pages.DeviceList.connectivityHealth',
       defaultMessage: 'Connectivity',
     },
+    gxConnectStatus: {
+      id: 'pages.DeviceList.gxConnectStatus',
+      defaultMessage: 'GxConnect Status',
+    },
   }),
 }
 

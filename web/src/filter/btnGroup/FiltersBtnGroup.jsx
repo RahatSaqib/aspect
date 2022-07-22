@@ -108,6 +108,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withDeviceType',
     defaultMessage: 'type is {deviceTypeName}',
   },
+  withGxConnectStatus: {
+    id: 'filter.btnGroup.withGxConnectStatus',
+    defaultMessage: 'GxConnect Status is {gxConnectStatus}',
+  },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
     defaultMessage: 'ID includes "{externalId}"',
@@ -195,6 +199,14 @@ const messages = defineMessages({
   contactEnabledStatus: {
     id: 'filter.btnGroup.contactEnabledStatus',
     defaultMessage: 'Contact Status: {contactStatus}',
+  },
+  online: {
+    id: 'filter.btnGroup.online',
+    defaultMessage: 'Online',
+  },
+  offline: {
+    id: 'filter.btnGroup.offline',
+    defaultMessage: 'Offline',
   },
 })
 const revokedOptions = [
@@ -570,6 +582,11 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     contactStatus: makeButton(status =>
       formatMessage(messages.contactEnabledStatus, {
         contactStatus: statusOptions.find(it => it.id === status, EMPTY_CONTEXT, EMPTY_MAP).name,
+      })
+    ),
+    gxConnectStatus: makeButton(gxConnectStatus =>
+      formatMessage(messages.withGxConnectStatus, {
+        gxConnectStatus: formatMessage(messages[gxConnectStatus]),
       })
     ),
   }

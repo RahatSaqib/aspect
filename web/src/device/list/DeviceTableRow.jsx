@@ -11,6 +11,7 @@ import { formatRelative } from '../../shared/utils/dateFormat'
 
 import styles from './DeviceTableRow.css'
 import stylesShared from '../../components/shared/DataTableRow.css'
+import StatusIcon from '../../components/shared/StatusIcon'
 
 const cssClasses = classnames.bind(styles)
 const sharedCssClasses = classnames.bind(stylesShared)
@@ -61,6 +62,9 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     </TableCell>
     <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
     <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
+    <TableCell>
+      <StatusIcon status={device.get('gxConnectStatus') === 'online' ? 'success' : 'error'} />
+    </TableCell>
     <TableCell hiddenOn="lg" numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>

@@ -66,6 +66,10 @@ const FILTERS_CONFIG = [
     issueTypeId: true,
     requiredPermissions: [],
   },
+  {
+    gxConnectStatus: true,
+    requiredPermissions: [],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -130,6 +134,11 @@ const getColumns = intl => [
     sortable: true,
     label: intl.formatMessage(messages.lastSeen),
     tooltip: intl.formatMessage(messages.lastSeenDescription),
+  },
+  {
+    key: 'gxConnectStatus',
+    sortable: false,
+    label: intl.formatMessage(messages.gxConnectStatus),
   },
   {
     key: 'resultCountLastMonth',

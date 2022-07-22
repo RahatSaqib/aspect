@@ -262,6 +262,9 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'deviceApproval':
               result.deviceApproval = true
               break
+            case 'gxConnectStatus':
+              result.gxConnectStatus = true
+              break
             case 'deviceMaintenanceStatus':
               result.deviceMaintenanceStatus = true
               break
