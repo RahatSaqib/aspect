@@ -52,10 +52,7 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
             contacts.map(contact => (
               <Fragment>
                 {contact.name}
-                <Link
-                  to={`/browse/person/${contact.id}`}
-                  className={cssClasses('Summary__Description__Link')}
-                >
+                <Link to={`/browse/person/${contact.id}`} className={cssClasses('Summary__Description__Link')}>
                   <FaExternalLink />
                 </Link>
               </Fragment>
@@ -64,14 +61,8 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
             <i>{formatMessage(messages.fieldNoContact)}</i>
           )}
           <span className={cssClasses('Summary__Description__Action')}>
-            <Button
-              variant="contained"
-              onClick={saveContacts}
-              disabled={disabled}
-            >
-              {contacts.length
-                ? formatMessage(messages.actionUpdate)
-                : formatMessage(messages.actionAdd)}
+            <Button variant="contained" onClick={saveContacts} disabled={disabled}>
+              {contacts.length ? formatMessage(messages.actionUpdate) : formatMessage(messages.actionAdd)}
             </Button>
           </span>
         </div>

@@ -48,9 +48,7 @@ describe('App Notification SnackBar component', () => {
   }
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(
-      <StyledAppNotificationSnackBar {...props} />
-    )
+    const element = renderer.render(<StyledAppNotificationSnackBar {...props} />)
 
     expect(element).toMatchSnapshot()
   })

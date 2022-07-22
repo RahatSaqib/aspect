@@ -4,10 +4,7 @@ import sortBy from 'lodash/sortBy'
 import reduce from 'lodash/reduce'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_WORKFLOW_STATUSES: 'REQUEST_WORKFLOW_STATUSES',
@@ -94,10 +91,7 @@ function sortWorkFlowStatuses(workflowStatusArr) {
     sortedWorkflowStatusArr,
     (result, item) => {
       result.push(item)
-      if (
-        item.name.toUpperCase() === 'ERROR' ||
-        item.name.toUpperCase() === 'FLAGGED'
-      ) {
+      if (item.name.toUpperCase() === 'ERROR' || item.name.toUpperCase() === 'FLAGGED') {
         errorStatusArr.push(result.pop())
       }
       return result

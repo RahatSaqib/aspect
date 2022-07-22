@@ -19,12 +19,7 @@ const AspectTooltip = ({
   iconClass,
   ...rest
 }) => (
-  <Tooltip
-    classes={{ tooltip: cssClasses(toolTipClass) }}
-    title={title}
-    disableInteractive
-    {...rest}
-  >
+  <Tooltip classes={{ tooltip: cssClasses(toolTipClass) }} title={title} disableInteractive {...rest}>
     <div className={cssClasses(toolTipContainerClass)}>
       <span
         className={cssClasses('ChildrenContainer', {
@@ -33,9 +28,7 @@ const AspectTooltip = ({
       >
         {children}
       </span>
-      {showHelpIcon ? (
-        <IconProvider icon="MdHelp" className={cssClasses(iconClass)} />
-      ) : null}
+      {showHelpIcon ? <IconProvider icon="MdHelp" className={cssClasses(iconClass)} /> : null}
     </div>
   </Tooltip>
 )

@@ -7,13 +7,7 @@ async function up(knex) {
   })
 
   await knex.schema.alterTable('Result', row => {
-    row
-      .integer('caseId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Case')
-      .onDelete('SET NULL')
+    row.integer('caseId').unsigned().index().references('id').inTable('Case').onDelete('SET NULL')
   })
 }
 

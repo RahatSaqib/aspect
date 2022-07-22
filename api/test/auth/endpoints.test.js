@@ -63,15 +63,11 @@ describe('auth endpoints', () => {
       const expectedResponse = { value: 'Expected auth token' }
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'PUT',
-          '/auth/update-password/{resetPasswordToken}',
-          {
-            async updatePasswordWithResetPasswordToken() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('PUT', '/auth/update-password/{resetPasswordToken}', {
+          async updatePasswordWithResetPasswordToken() {
+            return expectedResponse
+          },
+        })
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -89,15 +85,11 @@ describe('auth endpoints', () => {
       const expectedResponse = { value: 'Expected auth token' }
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'PUT',
-          '/auth/update-person-login-details/{personId}',
-          {
-            async updateUsernameAndPasswordForPerson() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('PUT', '/auth/update-person-login-details/{personId}', {
+          async updateUsernameAndPasswordForPerson() {
+            return expectedResponse
+          },
+        })
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -161,15 +153,11 @@ describe('auth endpoints', () => {
       const expectedResponse = { value: 'Expected auth token' }
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'POST',
-          '/auth/send-reset-password-token/{email}',
-          {
-            async createResetPasswordToken() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('POST', '/auth/send-reset-password-token/{email}', {
+          async createResetPasswordToken() {
+            return expectedResponse
+          },
+        })
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils

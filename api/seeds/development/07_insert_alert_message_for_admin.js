@@ -22,12 +22,8 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: userId,
   }
-  const deviceType = await knex('DeviceType')
-    .where('externalId', 'CepheidGeneXpert')
-    .first()
-  const { deviceApprovalId } = await knex('DeviceApproval')
-    .where('token', 'approved')
-    .first('id as deviceApprovalId')
+  const deviceType = await knex('DeviceType').where('externalId', 'CepheidGeneXpert').first()
+  const { deviceApprovalId } = await knex('DeviceApproval').where('token', 'approved').first('id as deviceApprovalId')
   const sites = await knex('Site as s')
     .join('Geography as g', 's.geographyid', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -66,14 +62,8 @@ async function seed(knex) {
     .select('d.*')
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusResolvedId = await getId(knex, 'IssueStatus', 'Resolved')
-  const issueStatusAcknowledgedId = await getId(
-    knex,
-    'IssueStatus',
-    'Acknowledged'
-  )
-  const consumableIds = await knex('Consumable')
-    .where('manufacturer', 'Cepheid')
-    .select('id')
+  const issueStatusAcknowledgedId = await getId(knex, 'IssueStatus', 'Acknowledged')
+  const consumableIds = await knex('Consumable').where('manufacturer', 'Cepheid').select('id')
   const issue = {
     level: 1,
     partnerId: _.head(devices).partnerId,
@@ -101,11 +91,7 @@ async function seed(knex) {
       await Promise.all(
         _.map(luIssueTypeIds, async issueTypeId => {
           const isStockIssue = _.includes(
-            [
-              issueTypes.StockLevelUpdate.id,
-              issueTypes.InventoryStockout.id,
-              issueTypes.InventoryStockExpiring.id,
-            ],
+            [issueTypes.StockLevelUpdate.id, issueTypes.InventoryStockout.id, issueTypes.InventoryStockExpiring.id],
             issueTypeId
           )
           const issueDate = subDays(now, _.random(1, 90))
@@ -123,15 +109,10 @@ async function seed(knex) {
             geographyId: device.geographyId,
             createdOn: issueDate,
             updatedOn: issueDate,
-            consumableId: isStockIssue
-              ? consumableIds[_.random(consumableIds.length - 1)].id
-              : null,
+            consumableId: isStockIssue ? consumableIds[_.random(consumableIds.length - 1)].id : null,
             ...issue,
           })
-          if (
-            issueStatusId === issueStatusAcknowledgedId ||
-            issueStatusId === issueStatusResolvedId
-          ) {
+          if (issueStatusId === issueStatusAcknowledgedId || issueStatusId === issueStatusResolvedId) {
             await knex('IssueStatusLog').insert({
               issueId,
               issueStatusId: issueStatusActiveId,
@@ -175,11 +156,7 @@ async function seed(knex) {
         _.map(roIssueTypeIds, async issueTypeId => {
           const issueDate = subDays(now, _.random(1, 90))
           const isStockIssue = _.includes(
-            [
-              issueTypes.StockLevelUpdate.id,
-              issueTypes.InventoryStockout.id,
-              issueTypes.InventoryStockExpiring.id,
-            ],
+            [issueTypes.StockLevelUpdate.id, issueTypes.InventoryStockout.id, issueTypes.InventoryStockExpiring.id],
             issueTypeId
           )
           const issueStatusId =
@@ -196,15 +173,10 @@ async function seed(knex) {
             geographyId: device.geographyId,
             createdOn: issueDate,
             updatedOn: issueDate,
-            consumableId: isStockIssue
-              ? consumableIds[_.random(consumableIds.length - 1)].id
-              : null,
+            consumableId: isStockIssue ? consumableIds[_.random(consumableIds.length - 1)].id : null,
             ...issue,
           })
-          if (
-            issueStatusId === issueStatusAcknowledgedId ||
-            issueStatusId === issueStatusResolvedId
-          ) {
+          if (issueStatusId === issueStatusAcknowledgedId || issueStatusId === issueStatusResolvedId) {
             await knex('IssueStatusLog').insert({
               issueId,
               issueStatusId: issueStatusActiveId,
@@ -281,17 +253,8 @@ async function getId(knex, table, externalId) {
 function fillPlaceholders(message) {
   return message
     .replace('{{numberOfDays device.lastPingOn}}', `${_.random(6, 30)} days`)
-    .replace(
-      '{{issue.data.moduleName}}',
-      `${['A', 'B', 'C', 'D'][_.random(0, 3)]}${_.random(1, 4)}`
-    )
-    .replace(
-      '{{numberOfDays issue.data.lastResultOn}}',
-      `${_.random(12, 30)} days`
-    )
-    .replace(
-      '{{formatDate issue.data.date}}',
-      formatDateOrDefault(addDays(new Date(), 26), 'MM/dd/yyyy')
-    )
+    .replace('{{issue.data.moduleName}}', `${['A', 'B', 'C', 'D'][_.random(0, 3)]}${_.random(1, 4)}`)
+    .replace('{{numberOfDays issue.data.lastResultOn}}', `${_.random(12, 30)} days`)
+    .replace('{{formatDate issue.data.date}}', formatDateOrDefault(addDays(new Date(), 26), 'MM/dd/yyyy'))
     .replace('{{issue.data.totalWasted}}', _.random(100, 10000))
 }

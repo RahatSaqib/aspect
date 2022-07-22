@@ -19,9 +19,7 @@ describe('recomposeForm module', () => {
         validate,
       })(() => <div />)
 
-      const testInstance = ReactTestRenderer.create(
-        <DecoratedComponent values={initialValues} />
-      )
+      const testInstance = ReactTestRenderer.create(<DecoratedComponent values={initialValues} />)
       expect(testInstance).toMatchSnapshot()
     })
 
@@ -35,9 +33,7 @@ describe('recomposeForm module', () => {
         return <div />
       })
 
-      const testInstance = ReactTestRenderer.create(
-        <DecoratedComponent values={initialValues} />
-      )
+      const testInstance = ReactTestRenderer.create(<DecoratedComponent values={initialValues} />)
       expect(innerProps.form).toMatchSnapshot()
     })
 
@@ -51,9 +47,7 @@ describe('recomposeForm module', () => {
         return <div />
       })
 
-      const testInstance = ReactTestRenderer.create(
-        <DecoratedComponent values={initialValues} />
-      )
+      const testInstance = ReactTestRenderer.create(<DecoratedComponent values={initialValues} />)
       expect(innerProps.meta.name).toMatchSnapshot()
       expect(innerProps.meta.email).toMatchSnapshot()
     })
@@ -68,9 +62,7 @@ describe('recomposeForm module', () => {
         return <div />
       })
 
-      const testInstance = ReactTestRenderer.create(
-        <DecoratedComponent values={initialValues} />
-      )
+      const testInstance = ReactTestRenderer.create(<DecoratedComponent values={initialValues} />)
       expect(innerProps.handleSubmit).toMatchSnapshot()
     })
 
@@ -86,10 +78,7 @@ describe('recomposeForm module', () => {
         })
 
         const testInstance = ReactTestRenderer.create(
-          <DecoratedComponent
-            values={initialValues}
-            onSubmit={() => Promise.resolve()}
-          />
+          <DecoratedComponent values={initialValues} onSubmit={() => Promise.resolve()} />
         )
         expect(innerProps.form).toMatchSnapshot()
         expect(innerProps.handleSubmit).toMatchSnapshot()
@@ -116,10 +105,7 @@ describe('recomposeForm module', () => {
         })
 
         const testInstance = ReactTestRenderer.create(
-          <DecoratedComponent
-            values={initialValues}
-            onSubmit={() => Promise.resolve()}
-          />
+          <DecoratedComponent values={initialValues} onSubmit={() => Promise.resolve()} />
         )
         expect(innerProps.form).toMatchSnapshot()
         expect(innerProps.handleSubmit).toMatchSnapshot()
@@ -144,9 +130,7 @@ describe('recomposeForm module', () => {
         return <div />
       })
 
-      const testInstance = ReactTestRenderer.create(
-        <DecoratedComponent values={initialValues} />
-      )
+      const testInstance = ReactTestRenderer.create(<DecoratedComponent values={initialValues} />)
       expect(innerProps.onNameChange).toMatchSnapshot()
       expect(innerProps.onEmailChange).toMatchSnapshot()
     })
@@ -178,9 +162,7 @@ describe('recomposeForm module', () => {
       it('should update field states from props', () => {
         let innerProps
         const handleChange = values =>
-          testInstance.update(
-            <DecoratedComponent values={values} onChange={handleChange} />
-          )
+          testInstance.update(<DecoratedComponent values={values} onChange={handleChange} />)
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
           validate(values) {
@@ -212,9 +194,7 @@ describe('recomposeForm module', () => {
       it('should update field states from props', () => {
         let innerProps
         const handleChange = values =>
-          testInstance.update(
-            <DecoratedComponent values={values} onChange={handleChange} />
-          )
+          testInstance.update(<DecoratedComponent values={values} onChange={handleChange} />)
         const DecoratedComponent = recomposeForm({
           fields: ['name', 'email'],
           validate(values) {

@@ -1,7 +1,4 @@
-import {
-  getInitialValuesFromFormConfig,
-  mergeFormConfigWithData,
-} from '../../Form/Formik/Helpers'
+import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../Form/Formik/Helpers'
 
 import getFormConfig from '../Forms/editConfig'
 import { getNotificationMeta } from '../List/config'
@@ -16,12 +13,7 @@ export const getFormConfigWithData = (
   isEdit,
   values
 ) => {
-  const formSchema = getFormConfig(
-    intl.formatMessage,
-    notificationType,
-    jobFunctions,
-    isEdit
-  )
+  const formSchema = getFormConfig(intl.formatMessage, notificationType, jobFunctions, isEdit)
   const { name } = getNotificationMeta(notificationType, intl)
   const initialValues = {
     ...getInitialValuesFromFormConfig(formSchema, values),

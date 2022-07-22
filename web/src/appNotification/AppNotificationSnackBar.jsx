@@ -12,11 +12,7 @@ import { green, amber } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/styles'
 
 // Our own imports
-import {
-  showMoreDetails,
-  hideAppNotification,
-  Error,
-} from './AppNotificationRedux'
+import { showMoreDetails, hideAppNotification, Error } from './AppNotificationRedux'
 import PropTypeOf from '../shared/types'
 
 const genericMessages = defineMessages({
@@ -30,10 +26,7 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)
+const enhance = flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))
 
 const styles = {
   info: {
@@ -62,10 +55,7 @@ export class AppNotificationSnackBar extends PureComponent {
   }
 
   handleClose = () => {
-    const onClose = this.props.appNotification.getIn([
-      'notificationOptions',
-      'onClose',
-    ])
+    const onClose = this.props.appNotification.getIn(['notificationOptions', 'onClose'])
     if (onClose) {
       onClose()
     }
@@ -82,10 +72,7 @@ export class AppNotificationSnackBar extends PureComponent {
     } = this.props
 
     const appNotificationMessageOrDefault = (messageKey, fallbackMessage) => {
-      const messageDescriptor = appNotification.getIn([
-        'notificationOptions',
-        messageKey,
-      ])
+      const messageDescriptor = appNotification.getIn(['notificationOptions', messageKey])
       if (messageDescriptor) {
         return messageDescriptor.toJS()
       }
@@ -97,28 +84,13 @@ export class AppNotificationSnackBar extends PureComponent {
       : {}
     const messageValues = appNotification.get('messageValues')
 
-    const isError =
-      appNotification.getIn(['notificationOptions', 'notificationType']) ===
-      'error'
-    const title = appNotificationMessageOrDefault(
-      'title',
-      isError ? genericMessages.title : undefined
-    )
+    const isError = appNotification.getIn(['notificationOptions', 'notificationType']) === 'error'
+    const title = appNotificationMessageOrDefault('title', isError ? genericMessages.title : undefined)
     const { showProceed } = notificationOptions
-    const message = appNotificationMessageOrDefault(
-      'message',
-      isError ? genericMessages.message : undefined
-    )
-    const resolution = appNotificationMessageOrDefault(
-      'resolution',
-      isError ? genericMessages.resolution : undefined
-    )
-    const actionText =
-      showProceed || message || resolution
-        ? formatMessage(genericMessages.moreDetails)
-        : undefined
-    const actionTouchTap =
-      showProceed || message || resolution ? this.handleShowDetails : undefined
+    const message = appNotificationMessageOrDefault('message', isError ? genericMessages.message : undefined)
+    const resolution = appNotificationMessageOrDefault('resolution', isError ? genericMessages.resolution : undefined)
+    const actionText = showProceed || message || resolution ? formatMessage(genericMessages.moreDetails) : undefined
+    const actionTouchTap = showProceed || message || resolution ? this.handleShowDetails : undefined
 
     const hasNotification = appNotification.get('hasNotification')
     const showDetails = appNotification.get('showDetails')
@@ -163,8 +135,6 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export const StyledAppNotificationSnackBar = withStyles(styles)(
-  AppNotificationSnackBar
-)
+export const StyledAppNotificationSnackBar = withStyles(styles)(AppNotificationSnackBar)
 
 export default enhance(StyledAppNotificationSnackBar)

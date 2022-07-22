@@ -36,11 +36,7 @@ export const IdleDialog = ({ intl, idleStatus }) => {
   const { formatMessage } = intl
 
   return (
-    <AspectDialog
-      title={formatMessage(messages.title)}
-      modal
-      open={idleStatus === 'INACTIVE'}
-    >
+    <AspectDialog title={formatMessage(messages.title)} modal open={idleStatus === 'INACTIVE'}>
       <span>{formatMessage(messages.help)}</span>
     </AspectDialog>
   )

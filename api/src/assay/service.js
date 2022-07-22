@@ -136,10 +136,7 @@ async function listAssays(request) {
   const getCount = assayQuery.clone().count('a.id as count').first()
 
   // get rows
-  const getItems = assayQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select(SELECT_LIST_FIELDS)
+  const getItems = assayQuery.clone().modify(sortPageParams, query, 'name').select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   const [{ count: total }, rawAssays] = await Promise.all([getCount, getItems])
@@ -157,22 +154,12 @@ async function listAssays(request) {
   const rawResultCategoryGroups = await knex('ResultCategoryGroup as rcg')
     .whereIn('rcg.assayId', assayIds)
     .select(SELECT_LIST_RESULT_CATEGORY_GROUP_FIELDS)
-  const resultCategoryGroupsByAssayId = _.groupBy(
-    rawResultCategoryGroups,
-    'assayId'
-  )
+  const resultCategoryGroupsByAssayId = _.groupBy(rawResultCategoryGroups, 'assayId')
 
   const rawPartnerAssays = await knex('PartnerAssay as pa')
     .innerJoin('Partner as p', 'pa.partnerId', 'p.id')
     .whereIn('pa.assayId', assayIds)
-    .distinct(
-      'pa.assayId',
-      'pa.partnerId',
-      'p.name as partnerName',
-      'pa.canCreate',
-      'pa.canDelete',
-      'pa.canEdit'
-    )
+    .distinct('pa.assayId', 'pa.partnerId', 'p.name as partnerName', 'pa.canCreate', 'pa.canDelete', 'pa.canEdit')
   const abilitiesByAssayId = _.groupBy(rawPartnerAssays, 'assayId')
 
   // map rawAssays with extra values
@@ -193,8 +180,7 @@ async function listAssays(request) {
       resultCategories: resultCategoriesByAssayId[assay.id],
       resultCategoryGroups: resultCategoryGroupsByAssayId[assay.id],
       abilities,
-      patientDataSchema:
-        assay.patientDataSchema && JSON.parse(assay.patientDataSchema),
+      patientDataSchema: assay.patientDataSchema && JSON.parse(assay.patientDataSchema),
     }
   })
   const result = { ok: true, total, length: assays.length, data: assays }
@@ -227,8 +213,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .modify((queryBuilder, assayId) => {
       if (assayId && _.isArray(assayId)) queryBuilder.whereIn('a.id', assayId)
-      else if (assayId && !_.isArray(assayId))
-        queryBuilder.where('a.id', assayId)
+      else if (assayId && !_.isArray(assayId)) queryBuilder.where('a.id', assayId)
     }, assayId)
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -237,14 +222,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
       assayType: 'at',
     })
     .where('d.partnerId', partnerId)
-    .distinct(
-      'a.id',
-      'a.name',
-      'a.externalId',
-      'at.diseaseId',
-      'a.resultDataSchema',
-      'a.patientDataSchema'
-    )
+    .distinct('a.id', 'a.name', 'a.externalId', 'at.diseaseId', 'a.resultDataSchema', 'a.patientDataSchema')
   return query
 }
 

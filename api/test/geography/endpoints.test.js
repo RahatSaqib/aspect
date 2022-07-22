@@ -68,15 +68,11 @@ describe('geography endpoints', () => {
       const expectedResponse = ['List of Countries']
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'GET',
-          '/geography/country-select-list/{countryId}',
-          {
-            async countrySelectList() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('GET', '/geography/country-select-list/{countryId}', {
+          async countrySelectList() {
+            return expectedResponse
+          },
+        })
       })
 
       it('Should respond with the data returned from the service', done => {
@@ -98,15 +94,11 @@ describe('geography endpoints', () => {
       const expectedResponse = ['List of Countries']
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'GET',
-          '/geography/country-select-list/{countryId}/{stateId}',
-          {
-            async countrySelectList() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('GET', '/geography/country-select-list/{countryId}/{stateId}', {
+          async countrySelectList() {
+            return expectedResponse
+          },
+        })
       })
 
       it('Should respond with the data returned from the service', done => {
@@ -128,15 +120,11 @@ describe('geography endpoints', () => {
       const expectedResponse = ['List of States']
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'GET',
-          '/geography/state-select-list/{countryId}',
-          {
-            async stateSelectList() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('GET', '/geography/state-select-list/{countryId}', {
+          async stateSelectList() {
+            return expectedResponse
+          },
+        })
       })
 
       it('Should respond with the data returned from the service', done => {

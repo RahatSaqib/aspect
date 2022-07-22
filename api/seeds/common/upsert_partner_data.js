@@ -1,7 +1,5 @@
 module.exports = async (knex, partnerData) => {
-  const dbPartner = await knex('Partner')
-    .where({ name: partnerData.partnerName })
-    .first()
+  const dbPartner = await knex('Partner').where({ name: partnerData.partnerName }).first()
 
   const defaultValues = {
     plugin: '',

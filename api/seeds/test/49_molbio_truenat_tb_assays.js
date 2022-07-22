@@ -4,9 +4,7 @@ const { partnerName, adminName } = require('./fixtures/partnerData')
 
 module.exports = require('../utils').seed(async knex => {
   await upsertTruenatDeviceTypeAndAssays(knex)
-  const { id: partnerId } = await knex('Partner')
-    .where('name', partnerName)
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
 
   const { id: userId } = await knex('User').where('name', adminName).first('id')
 
@@ -20,12 +18,5 @@ module.exports = require('../utils').seed(async knex => {
     updatedBy: userId,
   }
 
-  await createDevicesForAllMissingTypes(
-    knex,
-    siteDatas,
-    partnerId,
-    auditFields,
-    1,
-    ['molbioTruenat']
-  )
+  await createDevicesForAllMissingTypes(knex, siteDatas, partnerId, auditFields, 1, ['molbioTruenat'])
 }, __filename)

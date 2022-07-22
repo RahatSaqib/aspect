@@ -10,12 +10,8 @@ module.exports = async knex => {
     await knex('DeviceMaintenanceStatusLog')
       .where({ deviceMaintenanceStatusId: inactiveConnectivityId })
       .update({ deviceMaintenanceStatusId: inactiveUnknownId })
-    await knex('DeviceMaintenanceStatus')
-      .where({ id: inactiveConnectivityId })
-      .del()
+    await knex('DeviceMaintenanceStatus').where({ id: inactiveConnectivityId }).del()
   }
 
-  await knex('DeviceMaintenanceStatus')
-    .where({ externalId: 'inactiveDecommissioned' })
-    .update({ manuallySet: false })
+  await knex('DeviceMaintenanceStatus').where({ externalId: 'inactiveDecommissioned' }).update({ manuallySet: false })
 }

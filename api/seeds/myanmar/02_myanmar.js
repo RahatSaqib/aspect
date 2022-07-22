@@ -9,16 +9,8 @@ const partnerData = require('./fixtures/partnerData')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget')
-const {
-  rowsAsObject,
-  getDefaultMessageTypes,
-  getPermissionModules,
-} = require('../utils')
-const {
-  deviceApprovalToId,
-  deviceTypeToId,
-  partnerTypeToId,
-} = require('../../src/shared/dictionary')
+const { rowsAsObject, getDefaultMessageTypes, getPermissionModules } = require('../utils')
+const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
 const upsertPartnerData = require('../common/upsert_partner_data')
 
 const now = new Date()
@@ -29,9 +21,7 @@ const { adminUserName, adminPassword, deviceApiToken } = partnerData
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: adminUserName })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: adminUserName }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -60,15 +50,10 @@ async function seed(knex) {
   await addIssueTypes(knex, partnerId, adminId, null)
   // Reuse previously seeded "static" data
   const defaultMessageTypes = await getDefaultMessageTypes(knex)
-  const [myanmarCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MMR' })
-    .select('c.id', 'c.culture', 'c.timezone')
+  const [myanmarCountry] = await knex('Country as c').where({ 'c.a3': 'MMR' }).select('c.id', 'c.culture', 'c.timezone')
   const countryId = myanmarCountry.id
 
-  const { id: myanmarGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first()
+  const { id: myanmarGeographyId } = await knex('Geography').where({ countryId }).whereNull('stateId', 'lgaId').first()
 
   const myanmarStates = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
@@ -143,44 +128,34 @@ async function seed(knex) {
     modules.dashboard.target,
   ])
 
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId,
-    [
-      modules.device.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.view,
-      modules.issue.edit,
-      modules.actionDashboard.edit,
-      modules.inventory.edit,
-      modules.dashboard.summary,
-      modules.dashboard.action,
-      modules.dashboard.report,
-      modules.dashboard.siteFilter,
-      modules.dashboard.actionInventoryLevelUpdate,
-      modules.dashboard.target,
-    ]
-  )
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(knex, 'Regional Officer', partnerId, [
+    modules.device.edit,
+    modules.result.edit,
+    modules.site.edit,
+    modules.assay.view,
+    modules.issue.edit,
+    modules.actionDashboard.edit,
+    modules.inventory.edit,
+    modules.dashboard.summary,
+    modules.dashboard.action,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.actionInventoryLevelUpdate,
+    modules.dashboard.target,
+  ])
 
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId,
-    [
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.view,
-      modules.issue.edit,
-      modules.inventory.edit,
-      modules.device.edit,
-      modules.dashboard.summary,
-      modules.dashboard.action,
-      modules.dashboard.report,
-      modules.dashboard.actionInventoryLevelUpdate,
-    ]
-  )
+  const jobFunctionIdLabUser = await upsertJobFunction(knex, 'Lab User', partnerId, [
+    modules.result.edit,
+    modules.site.edit,
+    modules.assay.view,
+    modules.issue.edit,
+    modules.inventory.edit,
+    modules.device.edit,
+    modules.dashboard.summary,
+    modules.dashboard.action,
+    modules.dashboard.report,
+    modules.dashboard.actionInventoryLevelUpdate,
+  ])
 
   // Admin Job
   const [jobIdAdmin] = await knex('Job').insert({
@@ -196,10 +171,7 @@ async function seed(knex) {
   const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
   await Promise.all(
     _.map(myanmarStates, async state => {
-      const regionUserName = `${state.name
-        .replace(/\W/gi, '')
-        .toLowerCase()
-        .trim()}_ro`
+      const regionUserName = `${state.name.replace(/\W/gi, '').toLowerCase().trim()}_ro`
       const { id: regionId } = await knex('Geography')
         .where({
           countryId,
@@ -642,8 +614,7 @@ async function seed(knex) {
       escalateToLevel: 3,
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+        evaluationParameter: './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
       }),
       createdOn: now,
       updatedOn: now,

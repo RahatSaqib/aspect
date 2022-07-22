@@ -90,14 +90,7 @@ const enhance = compose(
       setState({ values: nextValues })
     }
 
-    return (
-      <WrappedComponent
-        {...props}
-        {...state}
-        onSubmit={onSubmit}
-        onChange={onChange}
-      />
-    )
+    return <WrappedComponent {...props} {...state} onSubmit={onSubmit} onChange={onChange} />
   },
   recomposeForm({
     fields: [
@@ -125,24 +118,9 @@ const enhance = compose(
   })
 )
 
-const AspectLogo = () => (
-  <img
-    className={cssClasses('Logo__Image')}
-    src={require('../logo_aspect.png')}
-    alt="Aspect"
-  />
-)
+const AspectLogo = () => <img className={cssClasses('Logo__Image')} src={require('../logo_aspect.png')} alt="Aspect" />
 
-export const Login = ({
-  intl,
-  location,
-  form,
-  meta,
-  values,
-  onUserChange,
-  onPasswordChange,
-  handleSubmit,
-}) => (
+export const Login = ({ intl, location, form, meta, values, onUserChange, onPasswordChange, handleSubmit }) => (
   <div className={cssClasses('Background')}>
     <Helmet title="Login" />
     <div>
@@ -153,11 +131,7 @@ export const Login = ({
             <AspectLogo />
           </div>
           <form onSubmit={handleSubmit} className={cssClasses('Form')}>
-            <Reason
-              intl={intl}
-              location={location}
-              className={cssClasses('Form__Info')}
-            />
+            <Reason intl={intl} location={location} className={cssClasses('Form__Info')} />
             <TextField
               autoFocus
               fullWidth
@@ -200,9 +174,7 @@ export const Login = ({
               </Link>
             </div>
           </form>
-          {form.submitting && (
-            <LinearProgress className={cssClasses('Progress')} />
-          )}
+          {form.submitting && <LinearProgress className={cssClasses('Progress')} />}
         </Card>
       </Unit>
     </div>

@@ -2,11 +2,7 @@ const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
-const {
-  resultViewerNo,
-  resultViewerYes,
-  clinician,
-} = require('../fixtures/jobFunctionBase')
+const { resultViewerNo, resultViewerYes, clinician } = require('../fixtures/jobFunctionBase')
 module.exports = require('../utils').seed(seed, __filename)
 
 const now = new Date()
@@ -32,10 +28,7 @@ async function seed(knex) {
   }
   // ---------------------
   // few country props
-  const { culture, timezone } = await knex('Country')
-    .where({ id: countryId })
-    .select('culture', 'timezone')
-    .first()
+  const { culture, timezone } = await knex('Country').where({ id: countryId }).select('culture', 'timezone').first()
   // ---------------------
   // get siteId with most of results
   const { siteId, geographyId } =
@@ -105,13 +98,9 @@ async function seed(knex) {
       permArray.push(permissions[`${perm.module}:${perm.activity}`])
       return permArray
     }, [])
-    const jobFunctionId = await upsertJobFunction(
-      knex,
-      jobFunction.name,
-      partnerId,
-      permissionsToUpsert,
-      { reports: jobFunction.reports }
-    )
+    const jobFunctionId = await upsertJobFunction(knex, jobFunction.name, partnerId, permissionsToUpsert, {
+      reports: jobFunction.reports,
+    })
     // --------
     const jobFunctions = await knex('JobFunction')
       .where({ partnerId })
@@ -125,9 +114,7 @@ async function seed(knex) {
     const jobFunctionsClinicianId = jobFunctions[clinician.name]
     // --------
 
-    const { id: widgetResultsId } = await knex('DashboardWidget')
-      .where('title', 'Results')
-      .first('id')
+    const { id: widgetResultsId } = await knex('DashboardWidget').where('title', 'Results').first('id')
     //
     // Job Function Widget - if missing then copy items from jobFunction.name = 'Clinician'
     const jobFunctionWidgets = await knex('JobFunctionDashboardWidget as jfw')
@@ -136,11 +123,7 @@ async function seed(knex) {
       .select('jfw.*')
     if (!jobFunctionWidgets.find(x => x.jobFunctionId === jobFunctionId)) {
       const items = jobFunctionWidgets
-        .filter(
-          x =>
-            x.jobFunctionId === jobFunctionsClinicianId &&
-            x.widgetId !== widgetResultsId
-        )
+        .filter(x => x.jobFunctionId === jobFunctionsClinicianId && x.widgetId !== widgetResultsId)
         .map(({ widgetId }) => ({
           jobFunctionId,
           widgetId,
@@ -164,15 +147,13 @@ async function seed(knex) {
       await delPermission(knex, jobFunctionId, permissions['result:view'])
     }
     // add base permissions
-    await Promise.each(
-      ['browse:view', 'reporter:view', 'site:view', 'assay:view'],
-      perm => addPermission(knex, jobFunctionId, permissions[perm])
+    await Promise.each(['browse:view', 'reporter:view', 'site:view', 'assay:view'], perm =>
+      addPermission(knex, jobFunctionId, permissions[perm])
     )
 
     // --------
     // Job
-    const userName =
-      jobFunction.name === resultViewerYes.name ? userNames[0] : userNames[1]
+    const userName = jobFunction.name === resultViewerYes.name ? userNames[0] : userNames[1]
     const [jobId] = await knex('Job').insert({
       personId: users.find(x => x.userName === userName).personId,
       jobFunctionId,

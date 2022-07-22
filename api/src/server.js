@@ -8,23 +8,14 @@ const Sentry = require('@sentry/node')
 
 const config = require('./config')
 const { version } = require('../package.json')
-const {
-  addClientRoutes,
-  addDeviceRoutes,
-  addDeviceRawRoutes,
-} = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
 const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
-const {
-  plugin: deviceApiKeyPlugin,
-  validateApiKeyAuthBasic,
-} = require('./deviceApi/deviceApiKeyPlugin')
-const {
-  plugin: deviceApiRawUnauthenticatedPlugin,
-} = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
+const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
+const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
 const { port } = config
@@ -117,9 +108,7 @@ const rawPayloadPlugin = {
   },
 }
 
-const queueName = config.scheduler.enabled
-  ? config.amqp.name
-  : `${config.amqp.name}_for_testing`
+const queueName = config.scheduler.enabled ? config.amqp.name : `${config.amqp.name}_for_testing`
 
 const messageQueuePlugin = {
   name: 'messageQueue',
@@ -137,8 +126,7 @@ const messageQueuePlugin = {
       .then(queue => {
         return continueUnprocessedRawData(queue).then(() => {
           server.ext('onPreHandler', (request, h) => {
-            request.plugins.messageContext =
-              queue.createMessageContext('aspect_request')
+            request.plugins.messageContext = queue.createMessageContext('aspect_request')
             return h.continue
           })
         })
@@ -214,10 +202,7 @@ const start = async () => {
     allowEmptyUsername: true,
     ...validateApiKeyAuthBasic,
   })
-  server.auth.strategy(
-    'deviceApiRawUnauthenticated',
-    'deviceApiRawUnauthenticated'
-  )
+  server.auth.strategy('deviceApiRawUnauthenticated', 'deviceApiRawUnauthenticated')
 
   // Client API uses JWT
   server.auth.strategy('clientApi', 'jwt', {
@@ -226,12 +211,8 @@ const start = async () => {
       let isValid = true
       let errorMessage = null
       // if user has to accept license, deny all requests except to the license api:
-      if (
-        decoded.hasToAcceptLicenseId &&
-        request.url.pathname.indexOf('/api/auth/license') === -1
-      ) {
-        errorMessage =
-          "The user you're trying to login didn't accept the license"
+      if (decoded.hasToAcceptLicenseId && request.url.pathname.indexOf('/api/auth/license') === -1) {
+        errorMessage = "The user you're trying to login didn't accept the license"
         isValid = false
       }
       // can specify either module or permission, e.g. "device" or "device:view"
@@ -245,10 +226,7 @@ const start = async () => {
       const modules = decoded.permissions
         ? _.uniq(
             _.map(
-              _.filter(
-                decoded.permissions,
-                permission => permission.indexOf(':') > 0
-              ),
+              _.filter(decoded.permissions, permission => permission.indexOf(':') > 0),
               permission => permission.substr(0, permission.indexOf(':'))
             )
           )

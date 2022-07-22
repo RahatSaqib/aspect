@@ -1,14 +1,6 @@
-const {
-  resultDataMappings,
-} = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm/mappings')
-const {
-  testTypes,
-} = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
-const {
-  dstAssayGenericDst,
-  smearAssaySmear,
-  genexpertGxMtbRif,
-} = require('./ritmMappings')
+const { resultDataMappings } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlRitm/mappings')
+const { testTypes } = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
+const { dstAssayGenericDst, smearAssaySmear, genexpertGxMtbRif } = require('./ritmMappings')
 const { testMappings } = require('./common')
 
 describe('Philippines RITM Data Processor', () => {

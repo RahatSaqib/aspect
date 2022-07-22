@@ -54,8 +54,7 @@ const themedColors = {
   text: customPropertiesVariables['--aspect-color-white'],
   primary: customPropertiesVariables['--ming'], // '--aspect-color-chill-blue-primary'
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
-  buttonBorderRadius:
-    customPropertiesVariables['--aspect-button-border-radius'],
+  buttonBorderRadius: customPropertiesVariables['--aspect-button-border-radius'],
 }
 
 export default {

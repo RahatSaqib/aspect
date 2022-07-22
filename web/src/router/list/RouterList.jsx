@@ -8,16 +8,8 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -25,11 +17,7 @@ import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchRouters, exportRouters } from '../RouterRedux'
-import {
-  RouterDataTable,
-  RouterDataTableHead,
-  RouterDataTableRow,
-} from './RouterDataTable'
+import { RouterDataTable, RouterDataTableHead, RouterDataTableRow } from './RouterDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
 
 import styles from './RouterList.css'
@@ -82,10 +70,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -97,9 +82,7 @@ const enhance = compose(
     }),
     ({ location }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
       return {
         filters: getFilters(filtersParams),
       }
@@ -120,17 +103,9 @@ const enhance = compose(
     onInitialLoad:
       ({ location, fetchRouters, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
-          fetchRouters(
-            filtersParams,
-            { hasResults: 0, hasConnectivity: 1 },
-            sortCol,
-            sortDir,
-            pageAt,
-            pageSize
-          )
+          fetchRouters(filtersParams, { hasResults: 0, hasConnectivity: 1 }, sortCol, sortDir, pageAt, pageSize)
         }
       },
 
@@ -138,8 +113,7 @@ const enhance = compose(
       ({ location, exportRouters, sortCol, sortDir, pageAt, table }) =>
       formatType => {
         const format = formatType.id
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportRouters(
             filtersParams,
@@ -164,11 +138,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -180,10 +151,7 @@ const enhance = compose(
           { replace: true }
         )
       }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
+      const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, this.props.userPermissions)
       this.setState({
         reducedFilters,
       })
@@ -219,12 +187,7 @@ export const RouterList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
-    <BrowseFilters
-      navigate={navigate}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-    />
+    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       <ExportListButton
@@ -234,9 +197,7 @@ export const RouterList = ({
         reportName="Routers"
       />
 
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} />
-      )}
+      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
       {!items.currentIdList.isEmpty() && (
         <RouterDataTable className={cssClasses('RouterDataTable')}>
           <RouterDataTableHead

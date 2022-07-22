@@ -5,9 +5,7 @@ const { partnerName } = require('./fixtures/partnerData')
 const forms = require('./fixtures/forms')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
 
   await knex('FormDefinition').del()
   await knex('FormDefinitionSchema').del()

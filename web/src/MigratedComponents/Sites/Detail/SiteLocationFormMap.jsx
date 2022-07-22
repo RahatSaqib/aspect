@@ -9,11 +9,7 @@ import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { latLng, address } from '../../../shared/selectors/site'
-import {
-  isValidLatLng,
-  isValidFullAddress,
-  formatFullAddressToAddressQuery,
-} from '../../../site/utils/address'
+import { isValidLatLng, isValidFullAddress, formatFullAddressToAddressQuery } from '../../../site/utils/address'
 import SiteMap from './SiteMap'
 import styles from './SiteLocationFormMap.css'
 import PropTypeOf from '../../../shared/types'
@@ -102,9 +98,7 @@ export class SiteLocationFormMap extends PureComponent {
   }
 
   handleQueryAddress({ fullAddressInForm, fullAddressInSite }) {
-    const fullAddress = isValidFullAddress(fullAddressInForm)
-      ? fullAddressInForm
-      : fullAddressInSite
+    const fullAddress = isValidFullAddress(fullAddressInForm) ? fullAddressInForm : fullAddressInSite
     const addressQuery = formatFullAddressToAddressQuery(fullAddress)
 
     this.geocoder.geocode(
@@ -151,15 +145,7 @@ const selector = formValueSelector('siteDetail')
 function mapStateToProps(state, props) {
   const latLngInForm = selector(state, 'lat', 'lng')
   const latLngInSite = latLng(props.site)
-  const fullAddressInForm = selector(
-    state,
-    'country',
-    'state',
-    'lga',
-    'city',
-    'address',
-    'address2'
-  )
+  const fullAddressInForm = selector(state, 'country', 'state', 'lga', 'city', 'address', 'address2')
   const fullAddressInSite = address(props.site)
 
   return {

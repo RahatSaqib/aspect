@@ -9,10 +9,7 @@ import { getValidation } from './Helpers'
  * extra logic, or transformers.
  */
 
-const AspectPureFormik = ({
-  config: { id, debug, rows, initialValues },
-  actions,
-}) => (
+const AspectPureFormik = ({ config: { id, debug, rows, initialValues }, actions }) => (
   <Formik
     initialValues={initialValues}
     validateOnChange
@@ -29,15 +26,8 @@ const AspectPureFormik = ({
               style={{ display: 'flex', justifyContent: 'space-between' }}
             >
               {map(items, ({ component: Input, ...input }) => (
-                <div
-                  key={`${id}-row${index}-${input?.id}`}
-                  style={{ width: '100%', margin: '0 10px' }}
-                >
-                  <FastField
-                    name={input?.id}
-                    inputProps={input}
-                    component={Input}
-                  />
+                <div key={`${id}-row${index}-${input?.id}`} style={{ width: '100%', margin: '0 10px' }}>
+                  <FastField name={input?.id} inputProps={input} component={Input} />
                 </div>
               ))}
             </div>

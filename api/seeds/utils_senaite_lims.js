@@ -290,9 +290,7 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
     .first('id')
   await Promise.each(bdMgitGndResultCategories, async resultCategory => {
     let { id: resultCategoryId } =
-      (await knex('ResultCategory')
-        .where('externalId', resultCategory.externalId)
-        .first()) || {}
+      (await knex('ResultCategory').where('externalId', resultCategory.externalId).first()) || {}
     if (!resultCategoryId) {
       ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
     }
@@ -308,9 +306,7 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
     }
   })
 
-  const { id: deviceTypeId } = await knex('DeviceType')
-    .where('externalId', 'SenaiteLims')
-    .first()
+  const { id: deviceTypeId } = await knex('DeviceType').where('externalId', 'SenaiteLims').first()
   const [assaySenaiteLimsSmearMicroscopyId] = await knex('Assay').insert({
     name: 'Senaite LIMS Smear Microscopy',
     i18nKey: 'assaySenaiteLIMSSmearMicroscopy',
@@ -357,9 +353,7 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
   ]
   await Promise.each(smearMicroscopyResultCategories, async resultCategory => {
     let { id: resultCategoryId } =
-      (await knex('ResultCategory')
-        .where('externalId', resultCategory.externalId)
-        .first()) || {}
+      (await knex('ResultCategory').where('externalId', resultCategory.externalId).first()) || {}
     if (!resultCategoryId) {
       ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
     }
@@ -416,9 +410,7 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
   ]
   await Promise.each(tbCultureResultCategories, async resultCategory => {
     let { id: resultCategoryId } =
-      (await knex('ResultCategory')
-        .where('externalId', resultCategory.externalId)
-        .first()) || {}
+      (await knex('ResultCategory').where('externalId', resultCategory.externalId).first()) || {}
     if (!resultCategoryId) {
       ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
     }
@@ -454,9 +446,7 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
   ]
   await Promise.each(senaiteUnknownResultCategories, async resultCategory => {
     let { id: resultCategoryId } =
-      (await knex('ResultCategory')
-        .where('externalId', resultCategory.externalId)
-        .first()) || {}
+      (await knex('ResultCategory').where('externalId', resultCategory.externalId).first()) || {}
     if (!resultCategoryId) {
       ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
     }
@@ -473,46 +463,37 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
   })
 
   await Promise.each(assayExternalIds, async assayExternalId => {
-    const {
-      resultDataSchema: resultDataSchemaString,
-      patientDataSchema: patientDataSchemaString,
-    } = await knex('Assay')
+    const { resultDataSchema: resultDataSchemaString, patientDataSchema: patientDataSchemaString } = await knex('Assay')
       .where('externalId', assayExternalId)
       .first('resultDataSchema', 'patientDataSchema')
     const resultDataSchema = JSON.parse(resultDataSchemaString || '{}')
     const patientDataSchema = JSON.parse(patientDataSchemaString || '{}')
-    _.each(
-      Object.keys(senaiteLimsResultDataSchema),
-      senaiteLimsResultDataSchemaKey => {
-        if (!resultDataSchema[senaiteLimsResultDataSchemaKey]) {
-          const resultDataSchemaFields = Object.values(resultDataSchema)
-          const resultDataSchemaFieldOrder = _.isEmpty(resultDataSchemaFields)
-            ? 0
-            : _.max(_.map(resultDataSchemaFields, 'order')) + 1
-          resultDataSchema[senaiteLimsResultDataSchemaKey] = _.assign(
-            {},
-            senaiteLimsResultDataSchema[senaiteLimsResultDataSchemaKey],
-            { order: resultDataSchemaFieldOrder }
-          )
-        }
+    _.each(Object.keys(senaiteLimsResultDataSchema), senaiteLimsResultDataSchemaKey => {
+      if (!resultDataSchema[senaiteLimsResultDataSchemaKey]) {
+        const resultDataSchemaFields = Object.values(resultDataSchema)
+        const resultDataSchemaFieldOrder = _.isEmpty(resultDataSchemaFields)
+          ? 0
+          : _.max(_.map(resultDataSchemaFields, 'order')) + 1
+        resultDataSchema[senaiteLimsResultDataSchemaKey] = _.assign(
+          {},
+          senaiteLimsResultDataSchema[senaiteLimsResultDataSchemaKey],
+          { order: resultDataSchemaFieldOrder }
+        )
       }
-    )
-    _.each(
-      Object.keys(senaiteLimsPatientDataSchema),
-      senaiteLimsPatientDataSchemaKey => {
-        if (!patientDataSchema[senaiteLimsPatientDataSchemaKey]) {
-          const patientDataSchemaFields = Object.values(patientDataSchema)
-          const patientDataSchemaFieldOrder = _.isEmpty(patientDataSchemaFields)
-            ? 0
-            : _.max(_.map(patientDataSchemaFields, 'order')) + 1
-          patientDataSchema[senaiteLimsPatientDataSchemaKey] = _.assign(
-            {},
-            senaiteLimsPatientDataSchema[senaiteLimsPatientDataSchemaKey],
-            { order: patientDataSchemaFieldOrder }
-          )
-        }
+    })
+    _.each(Object.keys(senaiteLimsPatientDataSchema), senaiteLimsPatientDataSchemaKey => {
+      if (!patientDataSchema[senaiteLimsPatientDataSchemaKey]) {
+        const patientDataSchemaFields = Object.values(patientDataSchema)
+        const patientDataSchemaFieldOrder = _.isEmpty(patientDataSchemaFields)
+          ? 0
+          : _.max(_.map(patientDataSchemaFields, 'order')) + 1
+        patientDataSchema[senaiteLimsPatientDataSchemaKey] = _.assign(
+          {},
+          senaiteLimsPatientDataSchema[senaiteLimsPatientDataSchemaKey],
+          { order: patientDataSchemaFieldOrder }
+        )
       }
-    )
+    })
     await knex('Assay')
       .where('externalId', assayExternalId)
       .update({

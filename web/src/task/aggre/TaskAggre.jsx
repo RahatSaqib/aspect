@@ -15,16 +15,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import {
-  searchSanitizer,
-  filtersSanitizer,
-  filtersFromLocation,
-} from '../list/TaskList'
-import {
-  TaskDataTable,
-  TaskDataTableHead,
-  TaskDataTableRow,
-} from '../list/TaskDataTable'
+import { searchSanitizer, filtersSanitizer, filtersFromLocation } from '../list/TaskList'
+import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from '../list/TaskDataTable'
 import { getTasksByAlertTemplateAndDate } from '../TaskRedux'
 
 import styles from './TaskAggre.css'
@@ -54,17 +46,9 @@ const enhance = compose(
   ),
   withHandlers({
     onInitialLoad:
-      ({
-        location,
-        getTasksByAlertTemplateAndDate,
-        sortCol,
-        sortDir,
-        pageAt,
-        pageSize,
-      }) =>
+      ({ location, getTasksByAlertTemplateAndDate, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         const taskDetails = queryString.parse(location.search)
         if (!sanitized) {
           getTasksByAlertTemplateAndDate(
@@ -97,11 +81,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -156,13 +137,8 @@ export const TaskAggre = ({
             sites.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.site}
-                <Link
-                  to={`/browse/site/${element.siteId}`}
-                  className={cssClasses('Summary__Item__Link')}
-                >
-                  <FaArrowUp
-                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
-                  />
+                <Link to={`/browse/site/${element.siteId}`} className={cssClasses('Summary__Item__Link')}>
+                  <FaArrowUp className={cssClasses('Summary__Item__Link__FaArrowUp')} />
                 </Link>
               </span>
             ))}
@@ -176,13 +152,8 @@ export const TaskAggre = ({
             devices.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.device}
-                <Link
-                  to={`/browse/device/${element.deviceId}`}
-                  className={cssClasses('Summary__Item__Link')}
-                >
-                  <FaArrowUp
-                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
-                  />
+                <Link to={`/browse/device/${element.deviceId}`} className={cssClasses('Summary__Item__Link')}>
+                  <FaArrowUp className={cssClasses('Summary__Item__Link__FaArrowUp')} />
                 </Link>
               </span>
             ))}
@@ -192,9 +163,7 @@ export const TaskAggre = ({
     <section className={cssClasses('Section')}>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         {!items.currentIdList.isEmpty() && (
           <TaskDataTable className={cssClasses('TaskDataTable')}>
             <TaskDataTableHead

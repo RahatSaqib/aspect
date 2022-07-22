@@ -20,10 +20,7 @@ const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
       data-testid={`hide_column_${headerIndex}`}
       title={formatMessage(messages.hideColumn)}
     >
-      <IconProvider
-        icon="MdVisibilityOff"
-        className="tableheader__hidebutton"
-      />
+      <IconProvider icon="MdVisibilityOff" className="tableheader__hidebutton" />
     </IconButton>
   )
 }

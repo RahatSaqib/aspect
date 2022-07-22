@@ -33,23 +33,19 @@ export default defineMessages({
   },
   resultCategoryRequired: {
     id: 'pages.Notifications.resultCategoryRequired',
-    defaultMessage:
-      'You should select at least one Result Category for this assay',
+    defaultMessage: 'You should select at least one Result Category for this assay',
   },
   assayRequired: {
     id: 'pages.Notifications.assayRequired',
-    defaultMessage:
-      'At least one assay is required for result based notifications',
+    defaultMessage: 'At least one assay is required for result based notifications',
   },
   jobFunctionRequired: {
     id: 'pages.Notifications.jobFunctionRequired',
-    defaultMessage:
-      'Should select at least one job function or individiual person for this notification',
+    defaultMessage: 'Should select at least one job function or individiual person for this notification',
   },
   personOrJobFunctionRequired: {
     id: 'pages.Notifications.personOrJobFunctionRequired',
-    defaultMessage:
-      'Should select at least one job function or individiual person for this notification',
+    defaultMessage: 'Should select at least one job function or individiual person for this notification',
   },
   invalidWebhookUrl: {
     id: 'pages.Notifications.invalidWebhookUrl',
@@ -65,7 +61,6 @@ export default defineMessages({
   },
   notificationChannels: {
     id: 'pages.Notifications.notificationChannels',
-    defaultMessage:
-      'At least one of the notification channels should be selected',
+    defaultMessage: 'At least one of the notification channels should be selected',
   },
 })

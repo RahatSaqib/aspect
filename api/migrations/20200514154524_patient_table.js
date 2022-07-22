@@ -5,13 +5,7 @@ const { addAuditFields } = require('./utils')
 async function up(knex) {
   await knex.schema.createTable('Patient', patient => {
     patient.increments('id').primary()
-    patient
-      .integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
-      .onDelete('SET NULL')
+    patient.integer('partnerId').unsigned().index().references('id').inTable('Partner').onDelete('SET NULL')
     patient.string('externalId').notNullable()
     patient.boolean('reliable').notNullable().default(false)
     patient.boolean('died').notNullable().default(false)
@@ -19,13 +13,7 @@ async function up(knex) {
     addAuditFields(patient)
   })
   await knex.schema.alterTable('Sample', sample => {
-    sample
-      .integer('patientId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Patient')
-      .onDelete('CASCADE')
+    sample.integer('patientId').unsigned().index().references('id').inTable('Patient').onDelete('CASCADE')
   })
 }
 

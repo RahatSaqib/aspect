@@ -14,14 +14,8 @@ module.exports = async knex => {
   await Promise.each(devices, async device => {
     await knex('Result')
       .update({
-        startedOn: knex.raw(
-          `CONVERT_TZ(startedOn, 'UTC', ?)`,
-          device.timeZone || countryTimezone
-        ),
-        endedOn: knex.raw(
-          `CONVERT_TZ(endedOn, 'UTC', ?)`,
-          device.timeZone || countryTimezone
-        ),
+        startedOn: knex.raw(`CONVERT_TZ(startedOn, 'UTC', ?)`, device.timeZone || countryTimezone),
+        endedOn: knex.raw(`CONVERT_TZ(endedOn, 'UTC', ?)`, device.timeZone || countryTimezone),
       })
       .where({ deviceId: device.id })
   })

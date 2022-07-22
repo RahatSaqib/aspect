@@ -63,11 +63,9 @@ function getOptionByValue(data, requestedValue, idKey) {
     // Take the option in different ways, depending on the data format
     if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
 
-    if (isArray(data))
-      return data.find(option => option[idKey] === requestedValue)
+    if (isArray(data)) return data.find(option => option[idKey] === requestedValue)
 
-    if (isNumber(requestedValue))
-      return data.find(option => option[idKey] === requestedValue)
+    if (isNumber(requestedValue)) return data.find(option => option[idKey] === requestedValue)
   }
 
   // When the requested value is a position in the array
@@ -109,8 +107,7 @@ export const getAspectTheme = () => {
         ...provided,
         ...styleOptionBase,
         color: isSelected ? aspectWhite : aspectChillBlue1,
-        backgroundColor:
-          (isSelected && aspectChillBlue3) || (isFocused && lilac2),
+        backgroundColor: (isSelected && aspectChillBlue3) || (isFocused && lilac2),
       }
     },
     control: provided => ({
@@ -185,8 +182,7 @@ export const getMuiTheme = () => {
         bottom: 0,
         content: '" "',
         position: 'absolute',
-        transition:
-          'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        transition: 'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
         borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
         pointerEvents: 'none',
       },
@@ -253,19 +249,14 @@ const SelectComponent = ({
   const { formatMessage } = useI18n()
   const [busy, setBusy] = useState(true)
   const [defaultOptionValue, setDefaultOptionValue] = useState(false)
-  const [currentSelectedOption, setCurrentSelectedOption] = useState(
-    defaultSelectedOption
-  )
+  const [currentSelectedOption, setCurrentSelectedOption] = useState(defaultSelectedOption)
   const [defaultOption] = useState(selectedValue)
   const [, setInputValue] = useState(false)
 
   const [options, setOptions] = useState(false)
 
   // if defaultSelectedOption is true, then the default selection is set to the first element
-  defaultSelectedOption =
-    defaultSelectedOption === true && data?.length > 0
-      ? data[0][idKey]
-      : defaultSelectedOption
+  defaultSelectedOption = defaultSelectedOption === true && data?.length > 0 ? data[0][idKey] : defaultSelectedOption
 
   useEffect(() => {
     if (
@@ -316,9 +307,7 @@ const SelectComponent = ({
         components={components}
         name={identifier}
         id={identifier}
-        getOptionLabel={val =>
-          formatMessage(messages[val[nameKey]], {}, val[nameKey])
-        }
+        getOptionLabel={val => formatMessage(messages[val[nameKey]], {}, val[nameKey])}
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         isDisabled={isDisabled}
@@ -383,29 +372,16 @@ const replacePlaceholders = (originalString, values) => {
   return processedString
 }
 const sanitizeDependencies = (dependenciesWithPlaceholders, values) => {
-  return dependenciesWithPlaceholders.map(fieldName =>
-    replacePlaceholders(fieldName, values)
-  )
+  return dependenciesWithPlaceholders.map(fieldName => replacePlaceholders(fieldName, values))
 }
 
-const getQueryDependencies = (
-  formik,
-  initialQueryDependencies,
-  dependenciesWithPlaceholders,
-  subRowIndex
-) => {
+const getQueryDependencies = (formik, initialQueryDependencies, dependenciesWithPlaceholders, subRowIndex) => {
   let queryDependencies = [...initialQueryDependencies, subRowIndex]
-  if (
-    formik &&
-    dependenciesWithPlaceholders &&
-    isArray(dependenciesWithPlaceholders)
-  ) {
+  if (formik && dependenciesWithPlaceholders && isArray(dependenciesWithPlaceholders)) {
     const dependencyNames = sanitizeDependencies(dependenciesWithPlaceholders, {
       subRowIndex,
     })
-    const dependencyValues = dependencyNames.map(
-      fieldName => get(formik.values, fieldName) || null
-    )
+    const dependencyValues = dependencyNames.map(fieldName => get(formik.values, fieldName) || null)
 
     queryDependencies = [...queryDependencies, ...dependencyValues]
   }
@@ -419,9 +395,7 @@ const getActualValue = (options, currentValue, defaultValue) => {
     const actualValue = intersectionWith(options, currentValue, isEqual)
     return actualValue.length === 0 ? defaultValue : actualValue
   }
-  return options.find(({ value }) => value === currentValue)
-    ? currentValue
-    : defaultValue
+  return options.find(({ value }) => value === currentValue) ? currentValue : defaultValue
 }
 
 const groupStyles = {
@@ -430,16 +404,10 @@ const groupStyles = {
   fontSize: '15px',
   textTransform: 'none',
 }
-const GroupHeading = props => (
-  <components.GroupHeading {...props} style={groupStyles} />
-)
+const GroupHeading = props => <components.GroupHeading {...props} style={groupStyles} />
 
 const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
-  const options = getSelectedOptions(
-    selectOptions,
-    defaultSelectedOption,
-    keyMapping.idKey
-  )
+  const options = getSelectedOptions(selectOptions, defaultSelectedOption, keyMapping.idKey)
 
   let text = '-'
   if (options) {
@@ -497,20 +465,11 @@ const AspectDropDown = ({
     isError,
     data: responseFromQuery = false,
     error: queryErrorMessage,
-  } = useQuery(
-    reduxStateId,
-    async () => (endpoint ? fetchWrapperForQueries({ endpoint }) : passedData),
-    {
-      initialData: passedData,
-      initialStale: true,
-    }
-  )
-  const queryDependencies = getQueryDependencies(
-    formik,
-    [responseFromQuery, selectOptions],
-    dependencies,
-    subRowIndex
-  )
+  } = useQuery(reduxStateId, async () => (endpoint ? fetchWrapperForQueries({ endpoint }) : passedData), {
+    initialData: passedData,
+    initialStale: true,
+  })
+  const queryDependencies = getQueryDependencies(formik, [responseFromQuery, selectOptions], dependencies, subRowIndex)
   useEffect(() => {
     if (responseFromQuery) {
       const isLoadedFromApi =
@@ -531,12 +490,7 @@ const AspectDropDown = ({
       const initialValue = get(formik?.initialValues, identifier)
       const currentValue = get(formik?.values, identifier)
       const actualValue = getActualValue(options, currentValue, initialValue)
-      if (
-        formik &&
-        currentValue !== initialValue &&
-        isArray(options) &&
-        !isEqual(currentValue, actualValue)
-      ) {
+      if (formik && currentValue !== initialValue && isArray(options) && !isEqual(currentValue, actualValue)) {
         updateField(identifier, actualValue, { formik })
       }
     }
@@ -547,11 +501,7 @@ const AspectDropDown = ({
   }
 
   const onChanged = eventData => {
-    const actionData = pick(eventData, [
-      'identifier',
-      'selectedOption',
-      'action',
-    ])
+    const actionData = pick(eventData, ['identifier', 'selectedOption', 'action'])
     const { ok, data: dataSource } = responseFromQuery
     action(actionData, ok ? dataSource : null)
   }
@@ -560,11 +510,7 @@ const AspectDropDown = ({
 
   if (showLabelWhenDisabled && isDisabled && showUi) {
     return (
-      <LabelValue
-        selectOptions={selectOptions}
-        defaultSelectedOption={defaultSelectedOption}
-        keyMapping={keyMapping}
-      />
+      <LabelValue selectOptions={selectOptions} defaultSelectedOption={defaultSelectedOption} keyMapping={keyMapping} />
     )
   }
 
@@ -600,11 +546,7 @@ AspectDropDown.propTypes = {
   props: PropTypes.shape({
     classNames: PropTypes.oneOfType([PropTypes.object]),
     components: PropTypes.oneOfType([PropTypes.object]),
-    data: PropTypes.oneOfType([
-      PropTypes.object,
-      PropTypes.array,
-      PropTypes.bool,
-    ]),
+    data: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.bool]),
     defaultSelectedOption: defaultSelectedOptionPropType,
     dependencies: PropTypes.arrayOf(PropTypes.string),
     endpoint: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),

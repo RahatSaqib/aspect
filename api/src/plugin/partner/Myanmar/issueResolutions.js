@@ -26,10 +26,7 @@ const {
   maxInvalidReagentErrorRatio,
   invalidResultBatchRatio,
 } = require('./errors')
-const {
-  getDataCategoryStatus,
-  MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
-} = require('../../../fact/service')
+const { getDataCategoryStatus, MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW } = require('../../../fact/service')
 
 const { totalWastedInventoryItems } = require('../../../fact/service')
 
@@ -44,10 +41,7 @@ async function resolveModuleFailureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
   if (replacedModuleSerials.includes(issueData.moduleSerial)) {
     return true
   }
@@ -58,15 +52,10 @@ async function resolveModuleFailureError(knex, issue) {
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
     .whereIn('r.errorCode', MODULE_FAILURE_ERROR_CODES)
-    .select(
-      'r.moduleSerial as moduleSerial',
-      knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName')
-    )
+    .select('r.moduleSerial as moduleSerial', knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'))
     .count('r.id as errorCount')
     .groupBy('r.moduleSerial')
-  const [module] = modules.filter(
-    mod => mod.resultModuleName === issueData.resultModuleName
-  )
+  const [module] = modules.filter(mod => mod.resultModuleName === issueData.resultModuleName)
   return module != null && module.errorCount <= moduleFailureMaxErrors
 }
 
@@ -75,10 +64,7 @@ async function resolveModuleTemperatureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
   if (replacedModuleSerials.includes(issueData.moduleSerial)) {
     return true
   }
@@ -89,25 +75,17 @@ async function resolveModuleTemperatureError(knex, issue) {
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
     .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
-    .select(
-      'r.moduleSerial as moduleSerial',
-      knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
-    )
+    .select('r.moduleSerial as moduleSerial', knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName'))
     .count('r.id as errorCount')
     .groupBy('r.moduleSerial')
-  const [module] = modules.filter(
-    mod => mod.moduleName === issueData.moduleName
-  )
+  const [module] = modules.filter(mod => mod.moduleName === issueData.moduleName)
   if (module != null && module.errorCount <= moduleTemperatureMaxErrors) {
     return true
   }
 
   // - OR - Machine temperature error active or ack
   const machineTempIssueTypeId = await issueTypeToId('MachineTemperatureError')
-  const openIssueStatusIds = await Promise.all([
-    issueStatusToId('Active'),
-    issueStatusToId('Acknowledged'),
-  ])
+  const openIssueStatusIds = await Promise.all([issueStatusToId('Active'), issueStatusToId('Acknowledged')])
   const machineTempError = await knex('Issue')
     .where({
       deviceId: issue.deviceId,
@@ -121,10 +99,7 @@ async function resolveModuleTemperatureError(knex, issue) {
 async function resolveMachineTemperatureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
 
   const [machine] = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -140,11 +115,7 @@ async function resolveMachineTemperatureError(knex, issue) {
     .whereNotIn('r.moduleSerial', replacedModuleSerials)
     .count('r.id as resultCount')
 
-  return (
-    machine != null &&
-    (100 * machine.errorCount) / total.resultCount <
-      minPrcntMachineTemperatureResolve
-  )
+  return machine != null && (100 * machine.errorCount) / total.resultCount < minPrcntMachineTemperatureResolve
 }
 
 async function resolveModulePowerError(knex, issue) {
@@ -152,10 +123,7 @@ async function resolveModulePowerError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
   if (replacedModuleSerials.includes(issueData.moduleSerial)) {
     return true
   }
@@ -166,25 +134,17 @@ async function resolveModulePowerError(knex, issue) {
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
     .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
-    .select(
-      'r.moduleSerial as moduleSerial',
-      knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
-    )
+    .select('r.moduleSerial as moduleSerial', knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName'))
     .count('r.id as errorCount')
     .groupBy('r.moduleSerial')
-  const [module] = modules.filter(
-    mod => mod.moduleName === issueData.moduleName
-  )
+  const [module] = modules.filter(mod => mod.moduleName === issueData.moduleName)
   if (module != null && module.errorCount <= modulePowerMaxErrors) {
     return true
   }
 
   // - OR - Machine power error active or ack
   const machinePowerIssueTypeId = await issueTypeToId('MachinePowerError')
-  const openIssueStatusIds = await Promise.all([
-    issueStatusToId('Active'),
-    issueStatusToId('Acknowledged'),
-  ])
+  const openIssueStatusIds = await Promise.all([issueStatusToId('Active'), issueStatusToId('Acknowledged')])
   const machinePowerError = await knex('Issue')
     .where({
       deviceId: issue.deviceId,
@@ -220,10 +180,8 @@ async function resolveMachinePowerError(knex, issue) {
 
   return (
     machine != null &&
-    (100 * machine.errorCount) / total.resultCount <
-      minPrcntMachinePowerResolve &&
-    (100 * noResult.resultCount) / total.resultCount <
-      maxPrcntMachinePowerErrors
+    (100 * machine.errorCount) / total.resultCount < minPrcntMachinePowerResolve &&
+    (100 * noResult.resultCount) / total.resultCount < maxPrcntMachinePowerErrors
   )
 }
 
@@ -231,10 +189,7 @@ async function resolveModuleProceduralError(knex, issue) {
   const { moduleSerial = null } = JSON.parse(issue.data) || {}
   const last30day = subDays(new Date(), 30)
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
   if (replacedModuleSerials.includes(moduleSerial)) {
     return true
   }
@@ -252,20 +207,13 @@ async function resolveModuleProceduralError(knex, issue) {
     .where('r.endedOn', '>=', last30day)
     .where('r.moduleSerial', moduleSerial)
     .count('r.id as resultCount')
-  return (
-    module != null &&
-    (100 * module.errorCount) / total.resultCount <
-      minPrcntModuleProceduralResolve
-  )
+  return module != null && (100 * module.errorCount) / total.resultCount < minPrcntModuleProceduralResolve
 }
 
 async function resolveMachineProceduralError(knex, issue) {
   const last30day = subDays(new Date(), 30)
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
 
   const [machine] = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -280,21 +228,14 @@ async function resolveMachineProceduralError(knex, issue) {
     .where('r.endedOn', '>=', last30day)
     .whereNotIn('r.moduleSerial', replacedModuleSerials)
     .count('r.id as resultCount')
-  return (
-    machine != null &&
-    (100 * machine.errorCount) / total.resultCount <
-      minPrcntMachineProceduralResolve
-  )
+  return machine != null && (100 * machine.errorCount) / total.resultCount < minPrcntMachineProceduralResolve
 }
 
 async function resolveModuleUnknownError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
   if (replacedModuleSerials.includes(issueData.moduleSerial)) {
     return true
   }
@@ -305,16 +246,11 @@ async function resolveModuleUnknownError(knex, issue) {
     .whereNull('r.errorCode')
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
-    .select(
-      'r.moduleSerial as moduleSerial',
-      knex.raw('coalesce(r.moduleName, r.moduleSerial) as moduleName')
-    )
+    .select('r.moduleSerial as moduleSerial', knex.raw('coalesce(r.moduleName, r.moduleSerial) as moduleName'))
     .count('r.id as errorCount')
     .groupBy('r.moduleSerial')
 
-  const [module] = modules.filter(
-    mod => mod.moduleName === issueData.moduleName
-  )
+  const [module] = modules.filter(mod => mod.moduleName === issueData.moduleName)
   if (module == null) {
     return false
   }
@@ -324,19 +260,13 @@ async function resolveModuleUnknownError(knex, issue) {
     .where('r.deviceId', issue.deviceId)
     .count('r.id as moduleResultCount')
   const prcntModuleError = (module.errorCount / moduleResultCount) * 100
-  return (
-    prcntModuleError <= maxPrcntErrors ||
-    module.errorCount < moduleMaxUnknownErrors
-  )
+  return prcntModuleError <= maxPrcntErrors || module.errorCount < moduleMaxUnknownErrors
 }
 
 async function resolveMachineUnknownError(knex, issue) {
   const last30day = subDays(new Date(), 30)
 
-  const replacedModuleSerials = await getReplacedModuleSerials(
-    knex,
-    issue.deviceId
-  )
+  const replacedModuleSerials = await getReplacedModuleSerials(knex, issue.deviceId)
 
   const modules = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -345,10 +275,7 @@ async function resolveMachineUnknownError(knex, issue) {
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
     .whereNotIn('r.moduleSerial', replacedModuleSerials)
-    .select(
-      'r.moduleSerial as moduleSerial',
-      knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName')
-    )
+    .select('r.moduleSerial as moduleSerial', knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'))
     .count('r.id as errorCount')
     .groupBy('r.moduleSerial')
 
@@ -363,8 +290,7 @@ async function resolveMachineUnknownError(knex, issue) {
       .where('r.moduleSerial', module.moduleSerial)
       .count('r.id as moduleResultCount')
     const prcntModuleError = (module.errorCount / moduleResultCount) * 100
-    allModulesErr =
-      allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+    allModulesErr = allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
     allModulesTotalErrors += module.errorCount
   }
   return !allModulesErr || allModulesTotalErrors < machineMaxUnknownErrors
@@ -379,16 +305,10 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
     .where({
       'r.deviceId': deviceId,
     })
-    .whereIn(
-      'r.assayId',
-      knex('ConsumableAssay as ac')
-        .where({ 'ac.consumableId': consumableId })
-        .select('ac.assayId')
-    )
+    .whereIn('r.assayId', knex('ConsumableAssay as ac').where({ 'ac.consumableId': consumableId }).select('ac.assayId'))
   const [{ reagentErrorRatio }] = await reagentErrorQuery.clone().select(
     (() => {
-      const errorCount =
-        "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
+      const errorCount = "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
       const totalCount = 'count(distinct r.id)'
       return knex.raw(
         `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as reagentErrorRatio`,
@@ -396,40 +316,31 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
       )
     })()
   )
-  const [{ invalidReagentErrorRatio, invalidReagentErrorCount }] =
-    await reagentErrorQuery.clone().select(
-      (() => {
-        const errorCount =
-          "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
-        const totalCount = 'count(distinct r.id)'
+  const [{ invalidReagentErrorRatio, invalidReagentErrorCount }] = await reagentErrorQuery.clone().select(
+    (() => {
+      const errorCount =
+        "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
+      const totalCount = 'count(distinct r.id)'
 
-        return [
-          knex.raw(
-            `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
-            [REAGENT_HEALTH_ERROR_CODES]
-          ),
-          knex.raw(`${errorCount} as invalidReagentErrorCount`, [
-            REAGENT_HEALTH_ERROR_CODES,
-          ]),
-        ]
-      })()
-    )
+      return [
+        knex.raw(
+          `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
+          [REAGENT_HEALTH_ERROR_CODES]
+        ),
+        knex.raw(`${errorCount} as invalidReagentErrorCount`, [REAGENT_HEALTH_ERROR_CODES]),
+      ]
+    })()
+  )
   const invalidResultQuery = knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('r.endedOn', '>=', last30day)
     .where({
       'r.deviceId': deviceId,
     })
-    .whereIn(
-      'r.assayId',
-      knex('ConsumableAssay as ac')
-        .where({ 'ac.consumableId': consumableId })
-        .select('ac.assayId')
-    )
+    .whereIn('r.assayId', knex('ConsumableAssay as ac').where({ 'ac.consumableId': consumableId }).select('ac.assayId'))
   const [{ invalidResultRatio }] = await invalidResultQuery.clone().select(
     (() => {
-      const invalidCount =
-        "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+      const invalidCount = "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
       const totalCount = 'count(distinct r.id)'
 
       return knex.raw(
@@ -450,8 +361,7 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
     .clone()
     .select(
       (() => {
-        const invalidCount =
-          "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+        const invalidCount = "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
         const totalCount = 'count(distinct r.id)'
 
         return knex.raw(
@@ -460,12 +370,7 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
       })()
     )
     .groupBy(['r.consumableLot', 'r.assayId'])
-  if (
-    _.find(
-      invalidResultBatchRatios,
-      ratio => ratio.invalidResultRatio > invalidResultBatchRatio
-    ) != null
-  ) {
+  if (_.find(invalidResultBatchRatios, ratio => ratio.invalidResultRatio > invalidResultBatchRatio) != null) {
     return false
   }
 
@@ -484,10 +389,7 @@ async function resolveDataCategoryLow(knex, issue) {
       .first('p.plugin')) || {}
   const { loadPlugin } = require('../../registration')
   const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
-  const dataCategory = _.find(
-    dataCategories,
-    category => category.externalId === categoryToken
-  )
+  const dataCategory = _.find(dataCategories, category => category.externalId === categoryToken)
 
   if (dataCategory) {
     const now = new Date()
@@ -498,10 +400,7 @@ async function resolveDataCategoryLow(knex, issue) {
     const props = { period, siteId, dataCategory }
     const { totals, percentage } = await getDataCategoryStatus(knex, props)
 
-    return (
-      totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW ||
-      percentage >= dataCategory.cutoffPercentage
-    )
+    return totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW || percentage >= dataCategory.cutoffPercentage
   }
   return false
 }

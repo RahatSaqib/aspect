@@ -18,14 +18,7 @@ const messages = defineMessages({
   },
 })
 
-export const SiteDetailBackBar = ({
-  formatMessage,
-  navigate,
-  location,
-  params,
-  title,
-  disabled,
-}) => {
+export const SiteDetailBackBar = ({ formatMessage, navigate, location, params, title, disabled }) => {
   const onBackClick = () => {
     navigate(-1)
   }

@@ -6,9 +6,7 @@ const encodeQueryFromObject = obj => {
   return encodeURIComponent(encodedQuery)
 }
 
-const hasObjectParams = params =>
-  Object.keys(params).filter(pKey => typeof params[pKey] === 'object').length >
-  0
+const hasObjectParams = params => Object.keys(params).filter(pKey => typeof params[pKey] === 'object').length > 0
 
 /**
  * Based on a baseUrl and parameters, builds to whole URL converting the provided parameters on a query string.
@@ -48,12 +46,9 @@ export const buildURL = (baseUrl, params = {}) => {
  */
 export const getParamsFromQuery = query =>
   query
-    ? JSON.parse(
-        `{"${query.replace(/&/g, '","').replace(/=/g, '":"')}"}`,
-        function (key, value) {
-          return key === '' ? value : decodeURIComponent(value)
-        }
-      )
+    ? JSON.parse(`{"${query.replace(/&/g, '","').replace(/=/g, '":"')}"}`, function (key, value) {
+        return key === '' ? value : decodeURIComponent(value)
+      })
     : {}
 
 /**

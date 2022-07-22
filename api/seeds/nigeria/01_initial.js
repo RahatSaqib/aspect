@@ -7,8 +7,7 @@ const { commonUpserts } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
 
-const { deviceApiToken, adminPassword, partnerAbbreviation, adminUserName } =
-  partnerData
+const { deviceApiToken, adminPassword, partnerAbbreviation, adminUserName } = partnerData
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -28,12 +27,5 @@ async function seed(knex) {
     partnerTypeId: await partnerTypeToId('Operating'),
   })
 
-  await commonUpserts(
-    knex,
-    partnerId,
-    adminId,
-    geography,
-    partnerAbbreviation,
-    deviceApiToken
-  )
+  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, deviceApiToken)
 }

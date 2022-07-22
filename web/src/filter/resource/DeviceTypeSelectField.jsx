@@ -53,12 +53,7 @@ export class DeviceTypeSelectField extends PureComponent {
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceTypeItems.map(a => (
           <MenuItem key={a.get('externalId')} value={a.get('externalId')}>
-            {formatI18nMessage(
-              messages,
-              formatMessage,
-              a.get('i18nKey'),
-              a.get('name')
-            )}
+            {formatI18nMessage(messages, formatMessage, a.get('i18nKey'), a.get('name'))}
           </MenuItem>
         ))}
       </SelectField>
@@ -81,6 +76,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  DeviceTypeSelectField
-)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(DeviceTypeSelectField)

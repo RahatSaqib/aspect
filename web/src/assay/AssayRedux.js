@@ -2,10 +2,7 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_ASSAYS: 'REQUEST_ASSAYS',
@@ -34,10 +31,7 @@ export function fetchAssays(forceRefresh) {
     if (assay.loading) {
       return
     }
-    const shouldFetch =
-      forceRefresh ||
-      !assay.lastRefreshed ||
-      differenceInMinutes(new Date(), assay.lastRefreshed) > 5 // five minutes
+    const shouldFetch = forceRefresh || !assay.lastRefreshed || differenceInMinutes(new Date(), assay.lastRefreshed) > 5 // five minutes
     if (!shouldFetch) {
       return
     }

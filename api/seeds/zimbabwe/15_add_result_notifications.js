@@ -1,21 +1,13 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  seedIssueEventTriggersForPartner,
-  seedIssueEscalationTriggersForPartner,
-} = require('../utils')
+const { seedIssueEventTriggersForPartner, seedIssueEscalationTriggersForPartner } = require('../utils')
 
-const {
-  messageSeverityToId,
-  issueTypeToId,
-} = require('../../src/shared/dictionary')
+const { messageSeverityToId, issueTypeToId } = require('../../src/shared/dictionary')
 
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Zimbabwe')
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where('name', 'Zimbabwe').first('id')
 
   const { id: adminId } = await knex('User').where('name', 'admin').first('id')
 
@@ -47,9 +39,7 @@ async function seed(knex) {
 
   const messageSeverityId = await messageSeverityToId('Alert')
   const issueTypeId = await issueTypeToId('ResultReceived')
-  const { id: jobFunctionId } = await knex('JobFunction')
-    .where('externalId', 'regionalOfficer')
-    .first('id')
+  const { id: jobFunctionId } = await knex('JobFunction').where('externalId', 'regionalOfficer').first('id')
 
   // Result 1 positive only via email.
   const result1PositiveMessage =

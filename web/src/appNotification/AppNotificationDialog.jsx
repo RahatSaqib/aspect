@@ -26,8 +26,7 @@ const genericMessages = defineMessages({
   },
   message: {
     id: 'errorResponseMessages.generic.message',
-    defaultMessage:
-      'Our technical team has been notified of the problem and will attend to it as soon as possible.',
+    defaultMessage: 'Our technical team has been notified of the problem and will attend to it as soon as possible.',
   },
   closeText: {
     id: 'errorResponseMessages.generic.closeText',
@@ -39,10 +38,7 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)
+const enhance = flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))
 
 export class AppNotificationDialog extends PureComponent {
   static propTypes = {
@@ -56,10 +52,7 @@ export class AppNotificationDialog extends PureComponent {
   }
 
   handleClose = () => {
-    const onClose = this.props.appNotification.getIn([
-      'notificationOptions',
-      'onClose',
-    ])
+    const onClose = this.props.appNotification.getIn(['notificationOptions', 'onClose'])
     if (onClose) {
       onClose()
     }
@@ -69,10 +62,7 @@ export class AppNotificationDialog extends PureComponent {
   }
 
   handleProceed = () => {
-    const onProceed = this.props.appNotification.getIn([
-      'notificationOptions',
-      'onProceed',
-    ])
+    const onProceed = this.props.appNotification.getIn(['notificationOptions', 'onProceed'])
     if (onProceed) {
       onProceed()
     }
@@ -88,66 +78,35 @@ export class AppNotificationDialog extends PureComponent {
     } = this.props
 
     const toJSOrDefault = (immutableObject, defaultValue) =>
-      immutableObject && immutableObject.toJS
-        ? immutableObject.toJS()
-        : defaultValue
+      immutableObject && immutableObject.toJS ? immutableObject.toJS() : defaultValue
     const appNotificationMessageOrDefault = (messageKey, fallbackMessage) =>
-      toJSOrDefault(
-        appNotification.getIn(['notificationOptions', messageKey]),
-        fallbackMessage
-      )
+      toJSOrDefault(appNotification.getIn(['notificationOptions', messageKey]), fallbackMessage)
 
-    const notificationOptions = toJSOrDefault(
-      appNotification.get('notificationOptions'),
-      {}
-    )
-    const messageValues = toJSOrDefault(
-      appNotification.get('messageValues'),
-      {}
-    )
+    const notificationOptions = toJSOrDefault(appNotification.get('notificationOptions'), {})
+    const messageValues = toJSOrDefault(appNotification.get('messageValues'), {})
 
-    const isError =
-      appNotification.getIn(['notificationOptions', 'notificationType']) ===
-      'error'
-    const title = appNotificationMessageOrDefault(
-      'title',
-      isError ? genericMessages.title : undefined
-    )
+    const isError = appNotification.getIn(['notificationOptions', 'notificationType']) === 'error'
+    const title = appNotificationMessageOrDefault('title', isError ? genericMessages.title : undefined)
     const actions = []
     const { showProceed } = notificationOptions
     if (notificationOptions.showClose) {
-      const closeText = appNotificationMessageOrDefault(
-        'closeText',
-        genericMessages.closeText
-      )
+      const closeText = appNotificationMessageOrDefault('closeText', genericMessages.closeText)
       actions.push(
-        <Button
-          color={!showProceed ? 'primary' : ''}
-          onClick={this.handleClose}
-        >
+        <Button color={!showProceed ? 'primary' : ''} onClick={this.handleClose}>
           {formatMessage(closeText, messageValues)}
         </Button>
       )
     }
     if (showProceed) {
-      const proceedText = appNotificationMessageOrDefault(
-        'proceedText',
-        genericMessages.proceedText
-      )
+      const proceedText = appNotificationMessageOrDefault('proceedText', genericMessages.proceedText)
       actions.push(
         <Button color="primary" onClick={this.handleProceed}>
           {formatMessage(proceedText, messageValues)}
         </Button>
       )
     }
-    const message = appNotificationMessageOrDefault(
-      'message',
-      isError ? genericMessages.message : undefined
-    )
-    const resolution = appNotificationMessageOrDefault(
-      'resolution',
-      isError ? genericMessages.resolution : undefined
-    )
+    const message = appNotificationMessageOrDefault('message', isError ? genericMessages.message : undefined)
+    const resolution = appNotificationMessageOrDefault('resolution', isError ? genericMessages.resolution : undefined)
     const iconStyle = {
       width: '6em',
       height: '6em',
@@ -164,20 +123,10 @@ export class AppNotificationDialog extends PureComponent {
         onRequestClose={this.handleClose}
       >
         {notificationOptions.severity && (
-          <div
-            className={
-              styles.AppNotificationDialogDialog__SeverityIconContainer
-            }
-          >
-            {notificationOptions.severity === 'info' && (
-              <InfoIcon style={{ ...iconStyle, color: lightBlue[600] }} />
-            )}
-            {notificationOptions.severity === 'warn' && (
-              <WarningIcon style={{ ...iconStyle, color: orange[500] }} />
-            )}
-            {notificationOptions.severity === 'error' && (
-              <ErrorIcon style={{ ...iconStyle, color: red[800] }} />
-            )}
+          <div className={styles.AppNotificationDialogDialog__SeverityIconContainer}>
+            {notificationOptions.severity === 'info' && <InfoIcon style={{ ...iconStyle, color: lightBlue[600] }} />}
+            {notificationOptions.severity === 'warn' && <WarningIcon style={{ ...iconStyle, color: orange[500] }} />}
+            {notificationOptions.severity === 'error' && <ErrorIcon style={{ ...iconStyle, color: red[800] }} />}
           </div>
         )}
         <div className={styles.AppNotificationDialogDialog__ContentContainer}>

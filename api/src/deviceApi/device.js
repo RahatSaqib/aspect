@@ -1,9 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const {
-  deviceApprovalToId,
-  deviceMaintenanceTypeToId,
-} = require('../shared/dictionary')
+const { deviceApprovalToId, deviceMaintenanceTypeToId } = require('../shared/dictionary')
 const { parseDateOrDefault } = require('../shared/date')
 const { getPeopleBase } = require('../shared/utilsPerson')
 const { setDeviceCalibrationStatus } = require('../plugin/utils')
@@ -11,9 +8,7 @@ const { setDeviceCalibrationStatus } = require('../plugin/utils')
 async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
   const configurationData =
-    previousConfig == null
-      ? payload.data
-      : _.merge(previousConfig.data, _.omitBy(payload.data, _.isNull))
+    previousConfig == null ? payload.data : _.merge(previousConfig.data, _.omitBy(payload.data, _.isNull))
 
   // process prop 'lastCalibrated' in 'payload', if any defined
   await tryUpdateDeviceMaintenance(knex, deviceId, payload)
@@ -38,9 +33,7 @@ async function tryUpdateDeviceMaintenance(knex, deviceId, payload) {
     data: { lastCalibrated },
   } = payload
   const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
-  const calibratedOn = lastCalibrated
-    ? parseDateOrDefault(lastCalibrated)
-    : null
+  const calibratedOn = lastCalibrated ? parseDateOrDefault(lastCalibrated) : null
 
   if (calibratedOn) {
     await setDeviceCalibrationStatus(knex, deviceId, calibratedOn, {
@@ -106,18 +99,7 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
 // --------------------------------------------------------------------
 const getCreateAssignPerson = async (
   knex,
-  {
-    countryId,
-    partnerId,
-    geographyId,
-    siteId,
-    name,
-    email,
-    cell,
-    timezone,
-    culture,
-    jobFunctionExternalId,
-  }
+  { countryId, partnerId, geographyId, siteId, name, email, cell, timezone, culture, jobFunctionExternalId }
 ) => {
   const personQuery = getPeopleBase()
     .where('g.countryId', countryId)
@@ -166,12 +148,8 @@ const getCreateAssignPerson = async (
       (await knex('Geography as g')
         .join('Country as c', 'c.id', 'g.countryId')
         .where('g.id', geographyId)
-        .first('c.timezone as timeZone')) ||
-      (await knex('Country as c').first('c.timezone as timeZone'))
-    const { existingTimeZone } =
-      (await knex('TimeZone')
-        .where('id', timezone)
-        .first('id as existingTimeZone')) || {}
+        .first('c.timezone as timeZone')) || (await knex('Country as c').first('c.timezone as timeZone'))
+    const { existingTimeZone } = (await knex('TimeZone').where('id', timezone).first('id as existingTimeZone')) || {}
     timezone = existingTimeZone || defaultTimeZone
     ;[personId] = await knex('Person').insert({
       geographyId,
@@ -196,13 +174,9 @@ const getCreateAssignPerson = async (
   if (personId) {
     // create Job for person
     if (!jobId) {
-      const jobFunction = await knex('JobFunction')
-        .where({ externalId: jobFunctionExternalId })
-        .first('id')
+      const jobFunction = await knex('JobFunction').where({ externalId: jobFunctionExternalId }).first('id')
       if (!jobFunction) {
-        throw Boom.expectationFailed(
-          `Required job function '${jobFunctionExternalId}' is missing`
-        )
+        throw Boom.expectationFailed(`Required job function '${jobFunctionExternalId}' is missing`)
       }
 
       ;[jobId] = await knex('Job').insert({
@@ -233,14 +207,9 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
   if (deviceId) {
     // Compare existing device to these details
     // which field vakues are different?
-    const existingDevice = await knex('Device as d')
-      .where({ 'd.id': deviceId })
-      .first()
+    const existingDevice = await knex('Device as d').where({ 'd.id': deviceId }).first()
     /* validates if the tz is included in our db */
-    if (
-      deviceDetails.timezone &&
-      existingDevice.timezone !== deviceDetails.timezone
-    ) {
+    if (deviceDetails.timezone && existingDevice.timezone !== deviceDetails.timezone) {
       const { timeZone: defaultTimeZone } =
         (await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
@@ -259,8 +228,7 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
     }
     const changedDetails = _.omitBy(
       deviceDetails,
-      (v, k) =>
-        ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
+      (v, k) => ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
     )
     if (!_.isEmpty(changedDetails)) {
       await knex('Device')
@@ -277,9 +245,7 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
 }
 
 async function getDeviceConfiguration(knex, deviceId) {
-  const deviceQuery = knex('Device as d')
-    .first('d.configurationData')
-    .where({ id: deviceId })
+  const deviceQuery = knex('Device as d').first('d.configurationData').where({ id: deviceId })
   const deviceConfiguration = await getDeviceConfigurationFromQuery(deviceQuery)
   return deviceConfiguration
 }
@@ -373,14 +339,10 @@ async function createNewDevice(
     lastPingOn,
   }
 ) {
-  const deviceType = await knex('DeviceType')
-    .where({ externalId: deviceTypeExternalId })
-    .first('id', 'name', 'plugin')
+  const deviceType = await knex('DeviceType').where({ externalId: deviceTypeExternalId }).first('id', 'name', 'plugin')
   if (deviceType == null) {
     return {
-      error: Boom.badRequest(
-        `Cannot find DeviceType with id ${deviceTypeExternalId}`
-      ),
+      error: Boom.badRequest(`Cannot find DeviceType with id ${deviceTypeExternalId}`),
     }
   }
 

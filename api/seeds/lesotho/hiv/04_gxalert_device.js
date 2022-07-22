@@ -7,11 +7,5 @@ const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
 const partnerData = require('./fixtures/partnerData')
 
 async function seed(knex) {
-  await sharedSeed(
-    knex,
-    contactsFromGxAlert,
-    customFieldsFromGxAlert,
-    sitesFromGxAlert,
-    partnerData
-  )
+  await sharedSeed(knex, contactsFromGxAlert, customFieldsFromGxAlert, sitesFromGxAlert, partnerData)
 }

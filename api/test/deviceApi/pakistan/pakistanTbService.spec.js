@@ -16,10 +16,7 @@ const { assert, expect } = chai.use(chaiSubset)
 const adminUsername = 'admin'
 const adminPassword = 'test07'
 const countryCode = 'US'
-const macAddress = `MAC${String(_.random(1, 99999999, false)).padStart(
-  8,
-  '0'
-)}FAKE`
+const macAddress = `MAC${String(_.random(1, 99999999, false)).padStart(8, '0')}FAKE`
 
 const testExternalId = 'Pakistan Api TEST GeneXpert'
 const deviceSerialNumber = String(_.random(1, 99999999, false)).padStart(8, '0')
@@ -69,17 +66,11 @@ describe('Pakistan stats api', async () => {
     // he has no state, so the device is created without state, and therefore the results are
     // generated without state too.
     // This hack force the state and geography of the newly created device.
-    const seedSite = await knex('Site as s')
-      .where({ externalId: testExternalId })
-      .first('s.id')
+    const seedSite = await knex('Site as s').where({ externalId: testExternalId }).first('s.id')
     const siteId = seedSite.id
 
-    await knex('Device')
-      .where('macAddress', macAddress)
-      .update({ siteId, geographyId: ALASKA_VALID_GEOGRAPHY_ID })
-    await knex('Site')
-      .where('id', siteId)
-      .update({ geographyId: ALASKA_VALID_GEOGRAPHY_ID })
+    await knex('Device').where('macAddress', macAddress).update({ siteId, geographyId: ALASKA_VALID_GEOGRAPHY_ID })
+    await knex('Site').where('id', siteId).update({ geographyId: ALASKA_VALID_GEOGRAPHY_ID })
     contextAlaskaDevice.device.geographyId = ALASKA_VALID_GEOGRAPHY_ID
     contextAlaskaDevice.device.siteId = siteId
     contextAlaskaDevice.site.geographyId = ALASKA_VALID_GEOGRAPHY_ID
@@ -139,9 +130,7 @@ describe('Pakistan stats api', async () => {
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
 
-    const res = await server
-      .get(path)
-      .set('Authorization', ntpContext.deviceAuth)
+    const res = await server.get(path).set('Authorization', ntpContext.deviceAuth)
 
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
@@ -178,9 +167,7 @@ describe('Pakistan stats api', async () => {
     const path = `/device/result/pakistan?from=${encodedTo}&to=${encodedTo}`
     assert.isDefined(ntpContext, 'context')
     assert.isDefined(ntpContext.deviceAuth)
-    const res = await server
-      .get(path)
-      .set('Authorization', ntpContext.deviceAuth)
+    const res = await server.get(path).set('Authorization', ntpContext.deviceAuth)
 
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')

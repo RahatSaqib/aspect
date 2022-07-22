@@ -3,23 +3,13 @@ const chai = require('chai')
 const { addDays, addHours, format, subDays, parseISO } = require('date-fns')
 const Promise = require('bluebird')
 
-const {
-  allDeviceMaintenanceStatusToId,
-} = require('../../../src/shared/dictionary')
+const { allDeviceMaintenanceStatusToId } = require('../../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { postToDeviceApi } = require('../utils')
 const { knex } = require('../../../src/db')
 const { basicResultPayload } = require('./geneXpertConstants')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-  dispatchAndWaitForAction,
-} = require('../../utils/mqUtils')
-const {
-  deviceOffline,
-  logDeviceMaintenanceStatus,
-} = require('../../../src/device/actions')
+const { createMessageContext, waitForIdle, waitForAction, dispatchAndWaitForAction } = require('../../utils/mqUtils')
+const { deviceOffline, logDeviceMaintenanceStatus } = require('../../../src/device/actions')
 const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
 const server = require('../../utils/testUtils')
@@ -42,11 +32,7 @@ describe('Backward update db after getting tests from offline device', () => {
           .andOn(function () {
             this.on('dmsl2.createdOn', '>', 'dmsl.createdOn')
             this.orOn(function () {
-              this.on('dmsl2.createdOn', '=', 'dmsl.createdOn').andOn(
-                'dmsl2.id',
-                '>',
-                'dmsl.id'
-              )
+              this.on('dmsl2.createdOn', '=', 'dmsl.createdOn').andOn('dmsl2.id', '>', 'dmsl.id')
             })
           })
       })
@@ -152,9 +138,7 @@ describe('Backward update db after getting tests from offline device', () => {
      * Notice that we dispatch in MQ same action 'logDeviceMaintenanceStatus' as in `api/src/scheduler.js`,
      * but pass there a day which is treated as 'today' to process past date.
      */
-    await Promise.each(days, day =>
-      dispatchAndWaitForAction(logDeviceMaintenanceStatus(day))
-    )
+    await Promise.each(days, day => dispatchAndWaitForAction(logDeviceMaintenanceStatus(day)))
     await waitForIdle()
     /**
      * 4.2. check that all processed days should be set to `inactiveUnknown` because
@@ -164,9 +148,7 @@ describe('Backward update db after getting tests from offline device', () => {
      */
     let logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
-      expect(log.deviceMaintenanceStatusId).to.be.equal(
-        deviceMaintenanceStatusToId.inactiveUnknown
-      )
+      expect(log.deviceMaintenanceStatusId).to.be.equal(deviceMaintenanceStatusToId.inactiveUnknown)
     })
 
     /**
@@ -177,20 +159,14 @@ describe('Backward update db after getting tests from offline device', () => {
       deviceMaintenanceStatusToId.inactiveOutOfInventory,
       deviceMaintenanceStatusToId.inactiveDownForRepair,
     ]
-    await Promise.each(
-      customStatuses,
-      async (deviceMaintenanceStatusId, index) =>
-        knex('DeviceMaintenanceStatusLog')
-          .update({ deviceMaintenanceStatusId })
-          .where('id', logs[index].id)
+    await Promise.each(customStatuses, async (deviceMaintenanceStatusId, index) =>
+      knex('DeviceMaintenanceStatusLog').update({ deviceMaintenanceStatusId }).where('id', logs[index].id)
     )
     // reread logs and see that first 3 days have manually changed to another statuses
     logs = await getLatestLogs(deviceId, minDate)
     logs.forEach((log, index) => {
       expect(log.deviceMaintenanceStatusId).to.be.equal(
-        index < customStatuses.length
-          ? customStatuses[index]
-          : deviceMaintenanceStatusToId.inactiveUnknown
+        index < customStatuses.length ? customStatuses[index] : deviceMaintenanceStatusToId.inactiveUnknown
       )
     })
 
@@ -246,9 +222,7 @@ describe('Backward update db after getting tests from offline device', () => {
      */
     logs = await getLatestLogs(deviceId, minDate)
     logs.forEach(log => {
-      expect(log.deviceMaintenanceStatusId).to.be.equal(
-        deviceMaintenanceStatusToId.active
-      )
+      expect(log.deviceMaintenanceStatusId).to.be.equal(deviceMaintenanceStatusToId.active)
     })
   })
 })

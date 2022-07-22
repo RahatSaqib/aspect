@@ -34,14 +34,7 @@ export default class PageableSelectField extends PureComponent {
   }
 
   render() {
-    const {
-      children,
-      onLoadMoreClick,
-      isLoadingMore,
-      loadMoreText,
-      loadingMoreText,
-      ...restProps
-    } = this.props
+    const { children, onLoadMoreClick, isLoadingMore, loadMoreText, loadingMoreText, ...restProps } = this.props
 
     return (
       <Select {...restProps} onChange={this.handleChange}>

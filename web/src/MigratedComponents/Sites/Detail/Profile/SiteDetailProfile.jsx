@@ -7,10 +7,7 @@ import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
 import Summary from '../../../../globals/components/Summary'
-import {
-  getCustomMessage,
-  commonDefinitions,
-} from '../../../../shared/utils/customMessages'
+import { getCustomMessage, commonDefinitions } from '../../../../shared/utils/customMessages'
 
 import styles from '../SiteDetail.css'
 
@@ -21,14 +18,7 @@ const messages = {
   ...localMessages,
 }
 
-const SiteDetailProfile = ({
-  site,
-  siteTags,
-  siteContacts,
-  formatMessage,
-  disabled,
-  user,
-}) => {
+const SiteDetailProfile = ({ site, siteTags, siteContacts, formatMessage, disabled, user }) => {
   const fields = [
     {
       label: formatMessage(messages.fieldName),
@@ -73,10 +63,7 @@ const SiteDetailProfile = ({
           .toJS()
           .map(device => ({
             description: device.name,
-            to:
-              device.category === 2
-                ? '/browse/router'
-                : `/browse/device/${device.id}`,
+            to: device.category === 2 ? '/browse/router' : `/browse/device/${device.id}`,
           })),
     },
     {

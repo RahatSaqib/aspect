@@ -58,12 +58,7 @@ describe('Table Helpers', () => {
         initialSortBy: false,
         columnOrder: {
           allow: true,
-          initialOrder: [
-            'name',
-            'lastTriggeredOn',
-            'totalTriggers',
-            'contacts',
-          ],
+          initialOrder: ['name', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
         },
       }
 
@@ -83,11 +78,7 @@ describe('Table Helpers', () => {
         pageIndex: 2, // will not have a page three
         pageSize: 50,
       }
-      const grouped = getFirstAndLastVisibleRowNumbers(
-        dataLength,
-        pageIndex,
-        pageSize
-      )
+      const grouped = getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize)
       expect(grouped).toEqual(false)
     })
 
@@ -97,11 +88,7 @@ describe('Table Helpers', () => {
         pageIndex: 2,
         pageSize: 25,
       }
-      const grouped = getFirstAndLastVisibleRowNumbers(
-        dataLength,
-        pageIndex,
-        pageSize
-      )
+      const grouped = getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize)
       expect(grouped).toEqual([51, 75])
     })
   })

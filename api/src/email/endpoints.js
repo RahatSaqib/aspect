@@ -1,7 +1,4 @@
-const {
-  onEmailMessageCreated,
-  onEmailMessageReadyForSending,
-} = require('./service')
+const { onEmailMessageCreated, onEmailMessageReadyForSending } = require('./service')
 
 const subscriptions = [
   {

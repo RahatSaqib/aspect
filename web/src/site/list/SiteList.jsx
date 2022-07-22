@@ -3,33 +3,16 @@ import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
-import {
-  compose,
-  withProps,
-  withHandlers,
-  lifecycle,
-  setPropTypes,
-} from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
 
-import {
-  getCustomMessage,
-  commonDefinitions,
-} from '../../shared/utils/customMessages'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { getCustomMessage, commonDefinitions } from '../../shared/utils/customMessages'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -37,11 +20,7 @@ import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchSites, exportSites } from '../SiteRedux'
-import {
-  SiteDataTable,
-  SiteDataTableHead,
-  SiteDataTableRow,
-} from './SiteDataTable'
+import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
@@ -119,20 +98,11 @@ const FILTERS_CONFIG = [
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'name',
-    'state',
-    'lga',
-    'totalDevices',
-    'inventoryUpdatedOn',
-  ],
+  availableSortCol: ['name', 'state', 'lga', 'totalDevices', 'inventoryUpdatedOn'],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -144,9 +114,7 @@ const enhance = compose(
     }),
     ({ location }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
       return {
         filters: getFilters(filtersParams),
       }
@@ -189,19 +157,10 @@ const enhance = compose(
       ({ location, exportSites, sortCol, sortDir, pageAt, pageSize }) =>
       formatType => {
         const format = formatType.id
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
 
         if (!sanitized) {
-          exportSites(
-            filtersParams,
-            sortCol,
-            sortDir,
-            pageAt,
-            pageSize,
-            format,
-            'sites'
-          )
+          exportSites(filtersParams, sortCol, sortDir, pageAt, pageSize, format, 'sites')
         }
       },
 
@@ -216,11 +175,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -232,10 +188,7 @@ const enhance = compose(
           { replace: true }
         )
       }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
+      const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, this.props.userPermissions)
       this.setState({
         reducedFilters,
       })
@@ -285,16 +238,10 @@ export const SiteList = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.sitesTitle)} />
       <NavTitle title={formatMessage(messages.sitesTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        config={reducedFilters}
-      />
+      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={siteList} />
-        {!siteList && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {!siteList && <BrowseEmptyList navigate={navigate} location={location} />}
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}

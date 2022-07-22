@@ -20,18 +20,10 @@ const getBaseQuery = (knex, dataConstraints) =>
 const modifiers = {
   join: {
     resultCategory1: queryBuilder => {
-      queryBuilder.leftJoin(
-        'ResultCategory as rc1',
-        'r.resultCategory1',
-        'rc1.id'
-      )
+      queryBuilder.leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     },
     resultCategory2: queryBuilder => {
-      queryBuilder.leftJoin(
-        'ResultCategory as rc2',
-        'r.resultCategory2',
-        'rc2.id'
-      )
+      queryBuilder.leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     },
     /**
      * Inner joins each result with the latest result made in the same module name.

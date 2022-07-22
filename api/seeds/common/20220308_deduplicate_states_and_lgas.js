@@ -6,11 +6,7 @@ module.exports = async (knex, countryId) => {
     const statesWithDuplicates = await knex('Geography as g')
       .join('State as st', 'g.stateId', 'st.id')
       .where('g.countryId', countryId)
-      .select(
-        { originalId: knex.raw('min(`st`.`id`)') },
-        { numberOfIds: knex.raw('count(`st`.`id`)') },
-        'st.name'
-      )
+      .select({ originalId: knex.raw('min(`st`.`id`)') }, { numberOfIds: knex.raw('count(`st`.`id`)') }, 'st.name')
       .groupBy('st.name')
       .having('numberOfIds', '>', 1)
 
@@ -73,21 +69,8 @@ module.exports = async (knex, countryId) => {
       const duplicateGeographyIds = duplicatedGeographyRecords.map(g => g.id)
 
       await Promise.each(
-        [
-          'Device',
-          'Target',
-          'Site',
-          'Result',
-          'Person',
-          'JobContext',
-          'Issue',
-          'DeviceConfiguration',
-          'DeviceApiKey',
-        ],
-        table =>
-          knex(table)
-            .whereIn('geographyId', duplicateGeographyIds)
-            .update({ geographyId: geography.originalId })
+        ['Device', 'Target', 'Site', 'Result', 'Person', 'JobContext', 'Issue', 'DeviceConfiguration', 'DeviceApiKey'],
+        table => knex(table).whereIn('geographyId', duplicateGeographyIds).update({ geographyId: geography.originalId })
       )
 
       await knex('Geography').whereIn('id', duplicateGeographyIds).delete()

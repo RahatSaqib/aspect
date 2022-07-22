@@ -3,15 +3,9 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 
 async function seed(knex) {
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('externalId', 'admin')
-    .first('id')
-  const { id: jobFunctionIdSystemOne } = await knex('JobFunction')
-    .where('externalId', 'systemOne')
-    .first('id')
-  const { id: jobFunctionIdDeviceMaker } = await knex('JobFunction')
-    .where('externalId', 'deviceMaker')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('externalId', 'admin').first('id')
+  const { id: jobFunctionIdSystemOne } = await knex('JobFunction').where('externalId', 'systemOne').first('id')
+  const { id: jobFunctionIdDeviceMaker } = await knex('JobFunction').where('externalId', 'deviceMaker').first('id')
 
   // get notification types for hardware issues:
   const notificationTypes = await knex('NotificationType as nt')
@@ -32,9 +26,7 @@ async function seed(knex) {
 
   await Promise.each(notificationTypes, async nt => {
     // assign all that were assigned to admin to systemOne instead
-    await knex('NotificationType')
-      .update('jobFunctionId', jobFunctionIdSystemOne)
-      .where('id', nt.id)
+    await knex('NotificationType').update('jobFunctionId', jobFunctionIdSystemOne).where('id', nt.id)
 
     // add new entry for deviceMaker
     await knex('NotificationType').insert({

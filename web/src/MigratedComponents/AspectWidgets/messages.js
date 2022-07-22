@@ -79,8 +79,7 @@ export const messages = defineMessages({
   },
   geneXpertDevices: {
     id: 'component.Widget.geneXpertDevices',
-    defaultMessage:
-      'The number of approved GeneXpert devices (excluding decommissioned devices).',
+    defaultMessage: 'The number of approved GeneXpert devices (excluding decommissioned devices).',
   },
   personTitle: {
     id: 'component.Widget.personTitle',
@@ -96,8 +95,7 @@ export const messages = defineMessages({
   },
   devicesDescription: {
     id: 'component.Widget.devicesDescription',
-    defaultMessage:
-      'The number of approved lab devices (excluding decommissioned devices)',
+    defaultMessage: 'The number of approved lab devices (excluding decommissioned devices)',
   },
   resultsTitle: {
     id: 'component.Widget.resultsTitle',
@@ -147,8 +145,7 @@ export const messages = defineMessages({
   },
   activeDevicesDescription: {
     id: 'component.Widget.activeDevicesDescription',
-    defaultMessage:
-      'The average daily percentage of devices sending results, excluding weekends.',
+    defaultMessage: 'The average daily percentage of devices sending results, excluding weekends.',
   },
   StockoutsTitle: {
     id: 'component.Widget.StockoutsTitle',
@@ -165,8 +162,7 @@ export const messages = defineMessages({
   },
   deviceDaysActiveDescription: {
     id: 'component.Widget.deviceDaysActiveDescription',
-    defaultMessage:
-      'Average number of days each device has been active, excluding weekends.',
+    defaultMessage: 'Average number of days each device has been active, excluding weekends.',
   },
   errorRateTitle: {
     id: 'component.Widget.errorRateTitle',
@@ -236,8 +232,7 @@ export const messages = defineMessages({
   },
   averageRecipientsOfEmailDescription: {
     id: 'component.Widget.averageRecipientsOfEmailDescription',
-    defaultMessage:
-      'The average number of email recipients per positive GeneXpert result.',
+    defaultMessage: 'The average number of email recipients per positive GeneXpert result.',
   },
   averageRecipientsOfSms: {
     id: 'component.Widget.averageRecipientsOfSms',
@@ -245,8 +240,7 @@ export const messages = defineMessages({
   },
   averageRecipientsOfSmsDescription: {
     id: 'component.Widget.averageRecipientsOfSmsDescription',
-    defaultMessage:
-      'The average number of SMS recipients per positive GeneXpert result.',
+    defaultMessage: 'The average number of SMS recipients per positive GeneXpert result.',
   },
   averageLengthOfSms: {
     id: 'component.Widget.averageLengthOfSms',
@@ -254,8 +248,7 @@ export const messages = defineMessages({
   },
   averageLengthOfSmsDescription: {
     id: 'component.Widget.averageLengthOfSmsDescription',
-    defaultMessage:
-      'The average number of characters in SMS messages sent about positive GeneXpert results.',
+    defaultMessage: 'The average number of characters in SMS messages sent about positive GeneXpert results.',
   },
   dashboardWidgetSmsSentTitle: {
     id: 'component.Widget.dashboardWidgetSmsSentTitle',
@@ -340,8 +333,7 @@ export const messages = defineMessages({
   },
   totalRecoveredCasesDescription: {
     id: 'component.Widget.totalRecoveredCasesDescription',
-    defaultMessage:
-      'The number of results that belong to a patient that recovered',
+    defaultMessage: 'The number of results that belong to a patient that recovered',
   },
   serverUptimeTitle: {
     id: 'component.Widget.serverUptimeTitle',
@@ -357,8 +349,7 @@ export const messages = defineMessages({
   },
   deviceCalibrationPastDueDescription: {
     id: 'component.Widget.deviceCalibrationPastDueDescription',
-    defaultMessage:
-      'The number of instruments that had their last calibration more than one year ago.',
+    defaultMessage: 'The number of instruments that had their last calibration more than one year ago.',
   },
   deviceCalibratedWhenDueTitle: {
     id: 'component.Widget.deviceCalibratedWhenDueTitle',

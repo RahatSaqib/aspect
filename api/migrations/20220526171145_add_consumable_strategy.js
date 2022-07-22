@@ -2,9 +2,7 @@ const tableName = 'Consumable'
 
 module.exports.up = async function (knex) {
   await knex.schema.alterTable(tableName, x => {
-    x.string('strategy')
-      .notNullable()
-      .default('withLotAndExpirationDateStrategy')
+    x.string('strategy').notNullable().default('withLotAndExpirationDateStrategy')
   })
 }
 

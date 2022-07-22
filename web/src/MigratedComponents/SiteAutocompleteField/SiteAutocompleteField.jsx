@@ -16,12 +16,9 @@ const SiteAutoCompleteField = ({
   errorText,
   width,
 }) => {
-  const [selectedValue, setSelectedValue] = useState(
-    value === '' ? undefined : value
-  )
-  const { isLoading, data: { data: siteData } = false } = useQuery(
-    [SITE_ALL.KEY],
-    async () => fetchWrapperForQueries({ endpoint: SITE_ALL.ENDPOINT })
+  const [selectedValue, setSelectedValue] = useState(value === '' ? undefined : value)
+  const { isLoading, data: { data: siteData } = false } = useQuery([SITE_ALL.KEY], async () =>
+    fetchWrapperForQueries({ endpoint: SITE_ALL.ENDPOINT })
   )
 
   const onSelect = (_, value, reason) => {
@@ -36,15 +33,11 @@ const SiteAutoCompleteField = ({
   return siteData ? (
     <Autocomplete
       name={name}
-      isOptionEqualToValue={(o, val) =>
-        o.name === (val.name || val) || o.id === (val.id || val)
-      }
+      isOptionEqualToValue={(o, val) => o.name === (val.name || val) || o.id === (val.id || val)}
       getOptionLabel={option => option.name ?? option}
       disableClearable={disableClearable}
       filterOptions={(options, state) =>
-        options.filter(o =>
-          o.name.toLowerCase().includes(state.inputValue.toLowerCase())
-        )
+        options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))
       }
       value={
         selectedValue && !Number.isNaN(parseInt(selectedValue, 10))

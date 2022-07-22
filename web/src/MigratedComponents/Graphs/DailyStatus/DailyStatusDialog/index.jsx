@@ -15,15 +15,7 @@ import { getISOFromString } from '../../../../components/shared/DateTimeInput/ut
 
 const cssClasses = classnames.bind(styles)
 
-export const DailyStatusDialog = ({
-  data = {},
-  isOpen,
-  onCancel,
-  onSubmit,
-  statuses,
-  title,
-  deviceName,
-}) => {
+export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statuses, title, deviceName }) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useIntl()
 
@@ -52,18 +44,10 @@ export const DailyStatusDialog = ({
     <FormikProvider config={config}>
       <AspectDialog
         actions={[
-          <Button
-            disabled={mode === MODE.SAVING}
-            color="primary"
-            onClick={onCancel}
-          >
+          <Button disabled={mode === MODE.SAVING} color="primary" onClick={onCancel}>
             {formatMessage(messages.cancel)}
           </Button>,
-          <ButtonSave
-            deviceId={data.deviceId}
-            onClick={onSaveChanges}
-            mode={mode}
-          />,
+          <ButtonSave deviceId={data.deviceId} onClick={onSaveChanges} mode={mode} />,
         ]}
         classes={{
           paper: cssClasses('reset-overflow'),

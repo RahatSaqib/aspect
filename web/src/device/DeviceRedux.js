@@ -12,11 +12,7 @@ import {
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveItem, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { getDateObject } from '../components/shared/DateTimeInput/utils/date'
 
 export const types = {
@@ -32,10 +28,8 @@ export const types = {
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
 
-  REQUEST_DEVICES_FOR_PERFORMANCE_REPORT:
-    'REQUEST_DEVICES_FOR_PERFORMANCE_REPORT',
-  RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT:
-    'RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT',
+  REQUEST_DEVICES_FOR_PERFORMANCE_REPORT: 'REQUEST_DEVICES_FOR_PERFORMANCE_REPORT',
+  RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT: 'RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT',
 
   DEVICE_MAINTENANCE_FORM_SHOW: 'DEVICE_MAINTENANCE_FORM_SHOW',
   DEVICE_MAINTENANCE_FORM_HIDE: 'DEVICE_MAINTENANCE_FORM_HIDE',
@@ -68,14 +62,7 @@ function rejectDevices() {
   }
 }
 
-export function fetchDevices(
-  rawFiltersParams,
-  extraFilters = {},
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
+export function fetchDevices(rawFiltersParams, extraFilters = {}, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = getFilters(filtersParams)
@@ -244,8 +231,7 @@ export function updateSingleDevice(deviceId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Device',
+              defaultMessage: 'An Error Occurred When Trying to Save the Device',
             },
           })
         ),
@@ -409,12 +395,7 @@ export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
       })
 }
 
-export function updateDeviceMaintenance({
-  externalId,
-  device,
-  values,
-  requestedAt = new Date(),
-}) {
+export function updateDeviceMaintenance({ externalId, device, values, requestedAt = new Date() }) {
   const deviceId = device.get('id')
   const i18nErrorTitleDescriptor =
     externalId === 'calibration'
@@ -525,9 +506,7 @@ export default function deviceReducer(state = initialState, action) {
         })
 
         const nextCurrentIdList = immutList.map(item => item.get('id'))
-        const newItem = mutState.items
-          .set('byId', nextById)
-          .set('currentIdList', nextCurrentIdList)
+        const newItem = mutState.items.set('byId', nextById).set('currentIdList', nextCurrentIdList)
 
         mutState.set('items', newItem)
         mutState.set('table', receiveTableItems(mutState.table, action.total))

@@ -18,10 +18,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
 
   const getSearch = filter => {
     const searchParams = new URLSearchParams()
-    searchParams.set(
-      'filters',
-      mergeToFiltersParams(filter, new URLSearchParams(''))
-    )
+    searchParams.set('filters', mergeToFiltersParams(filter, new URLSearchParams('')))
     return searchParams
   }
   const { countryId, stateId, lgaId, siteId } = assignment
@@ -38,11 +35,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div className={cssClasses('Assignment__Title')}>
         {assignment.jobFunctionName}
         {onAskConfirmation && (
-          <Link
-            to="#"
-            onClick={() => onAskConfirmation(assignment)}
-            className={cssClasses('Assignment__Link')}
-          >
+          <Link to="#" onClick={() => onAskConfirmation(assignment)} className={cssClasses('Assignment__Link')}>
             <CloseIcon style={{ fill: '--aspect-color-chill-blue-1' }} />
           </Link>
         )}
@@ -50,10 +43,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div>
         <span>{assignment.countryName}</span>
         {showLinks && (
-          <Link
-            to={`/browse/site?${searchCountryParams.toString()}`}
-            className={cssClasses('Assignment__Link')}
-          >
+          <Link to={`/browse/site?${searchCountryParams.toString()}`} className={cssClasses('Assignment__Link')}>
             <FaExternalLink />
           </Link>
         )}
@@ -61,10 +51,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div>
         <span>{assignment.stateName || formatMessage(messages.allStates)}</span>
         {showLinks && (
-          <Link
-            to={`/browse/site?${searchStateParams.toString()}`}
-            className={cssClasses('Assignment__Link')}
-          >
+          <Link to={`/browse/site?${searchStateParams.toString()}`} className={cssClasses('Assignment__Link')}>
             <FaExternalLink />
           </Link>
         )}
@@ -72,10 +59,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div>
         <span>{assignment.lgaName || formatMessage(messages.allAreas)}</span>
         {showLinks && (
-          <Link
-            to={`/browse/site?${searchLgaParams.toString()}`}
-            className={cssClasses('Assignment__Link')}
-          >
+          <Link to={`/browse/site?${searchLgaParams.toString()}`} className={cssClasses('Assignment__Link')}>
             <FaExternalLink />
           </Link>
         )}
@@ -84,11 +68,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
         <span>{assignment.siteName || formatMessage(messages.allSites)}</span>
         {showLinks && (
           <Link
-            to={
-              siteId
-                ? `/browse/site/${siteId}`
-                : `/browse/site?${searchLgaParams.toString()}`
-            }
+            to={siteId ? `/browse/site/${siteId}` : `/browse/site?${searchLgaParams.toString()}`}
             className={cssClasses('Assignment__Link')}
           >
             <FaExternalLink />
@@ -96,44 +76,27 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
         )}
       </div>
       <div>
-        {assignment.diseaseName && (
-          <strong>{formatMessage(messages.disease)}&nbsp;</strong>
-        )}
+        {assignment.diseaseName && <strong>{formatMessage(messages.disease)}&nbsp;</strong>}
         <span>
-          {textForAssignmentItem(
-            assignment.diseasei18nKey,
-            assignment.diseaseName
-          ) || formatMessage(messages.allDiseases)}
+          {textForAssignmentItem(assignment.diseasei18nKey, assignment.diseaseName) ||
+            formatMessage(messages.allDiseases)}
         </span>
       </div>
       <div>
-        {assignment.deviceTypeName && (
-          <strong>{formatMessage(messages.deviceType)}&nbsp;</strong>
-        )}
+        {assignment.deviceTypeName && <strong>{formatMessage(messages.deviceType)}&nbsp;</strong>}
+        <span>{assignment.deviceTypeName || formatMessage(messages.allDeviceTypes)}</span>
+      </div>
+      <div>
+        {assignment.assayTypeName && <strong>{formatMessage(messages.assayType)}&nbsp;</strong>}
         <span>
-          {assignment.deviceTypeName || formatMessage(messages.allDeviceTypes)}
+          {textForAssignmentItem(assignment.assayTypei18nKey, assignment.assayTypeName) ||
+            formatMessage(messages.allAssayTypes)}
         </span>
       </div>
       <div>
-        {assignment.assayTypeName && (
-          <strong>{formatMessage(messages.assayType)}&nbsp;</strong>
-        )}
+        {assignment.assayName && <strong>{formatMessage(messages.assay)}&nbsp;</strong>}
         <span>
-          {textForAssignmentItem(
-            assignment.assayTypei18nKey,
-            assignment.assayTypeName
-          ) || formatMessage(messages.allAssayTypes)}
-        </span>
-      </div>
-      <div>
-        {assignment.assayName && (
-          <strong>{formatMessage(messages.assay)}&nbsp;</strong>
-        )}
-        <span>
-          {textForAssignmentItem(
-            assignment.assayi18nKey,
-            assignment.assayName
-          ) || formatMessage(messages.allAssays)}
+          {textForAssignmentItem(assignment.assayi18nKey, assignment.assayName) || formatMessage(messages.allAssays)}
         </span>
       </div>
     </div>

@@ -12,11 +12,7 @@ import Card from '@material-ui/core/Card'
 import { Helmet } from 'react-helmet'
 import { Unit } from '../../components/pureGrids'
 
-import {
-  fetchLicense,
-  userRequestedLogout,
-  acceptLicenseStart,
-} from '../AuthRedux'
+import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../AuthRedux'
 
 import styles from './License.css'
 
@@ -85,20 +81,9 @@ const enhance = compose(
   })
 )
 
-const AspectLogo = () => (
-  <img
-    className={cssClasses('Logo__Image')}
-    src={require('../logo_aspect.png')}
-    alt="Aspect"
-  />
-)
+const AspectLogo = () => <img className={cssClasses('Logo__Image')} src={require('../logo_aspect.png')} alt="Aspect" />
 
-export const License = ({
-  intl,
-  licenseContent,
-  onDoNotAcceptClick,
-  onAcceptClick,
-}) => (
+export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClick }) => (
   <div className={cssClasses('Background')}>
     <Helmet title="License" />
     <div>
@@ -117,19 +102,10 @@ export const License = ({
                   .map((item, key) => <p key={key}>{item}</p>)}
             </div>
             <div className={cssClasses('License__Container__ActionRow')}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                onClick={onAcceptClick}
-              >
+              <Button type="submit" variant="contained" color="primary" onClick={onAcceptClick}>
                 {intl.formatMessage(messages.accept)}
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                onClick={onDoNotAcceptClick}
-              >
+              <Button type="submit" variant="contained" onClick={onDoNotAcceptClick}>
                 {intl.formatMessage(messages.doNotAccept)}
               </Button>
             </div>

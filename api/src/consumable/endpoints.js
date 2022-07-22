@@ -1,9 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listConsumableTypes,
-  listConsumableReasons,
-} = require('./consumableService')
+const { listConsumableTypes, listConsumableReasons } = require('./consumableService')
 const {
   getConsumableAssays,
   getAssayConsumables,
@@ -23,9 +20,7 @@ const routes = [
       auth: { scope: ['inventory'] },
       validate: {
         query: {
-          name: Joi.string()
-            .allow('')
-            .description('Filter for consumable type'),
+          name: Joi.string().allow('').description('Filter for consumable type'),
           ...validateSortPageParams('name'),
         },
       },
@@ -61,9 +56,7 @@ const routes = [
       auth: { scope: ['inventory'] },
       validate: {
         query: {
-          name: Joi.string()
-            .allow('')
-            .description('Filter for consumable reason'),
+          name: Joi.string().allow('').description('Filter for consumable reason'),
           ...validateSortPageParams('name'),
         },
       },
@@ -90,8 +83,7 @@ const routes = [
     path: '/consumable-assays/{consumableId}',
     handler: asyncHandler(getConsumableAssays),
     config: {
-      description:
-        'Gets the consumable quantities for each assay for a specific consumable',
+      description: 'Gets the consumable quantities for each assay for a specific consumable',
       notes: 'Returns a list of assay consumable records',
       auth: { scope: ['assay'] },
       validate: {
@@ -168,9 +160,7 @@ const routes = [
             .positive()
             .precision(2)
             .required()
-            .description(
-              'Amount of consumable used per test (up to 2 decimal places)'
-            ),
+            .description('Amount of consumable used per test (up to 2 decimal places)'),
         },
       },
     },
@@ -193,9 +183,7 @@ const routes = [
             .positive()
             .precision(2)
             .required()
-            .description(
-              'Amount of consumable used per test (up to 2 decimal places)'
-            ),
+            .description('Amount of consumable used per test (up to 2 decimal places)'),
         },
       },
     },

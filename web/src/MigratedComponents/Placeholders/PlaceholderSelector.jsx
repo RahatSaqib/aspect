@@ -38,10 +38,7 @@ const PlaceholderSelector = ({ onSelect, onClose }) => {
         className={cssClasses('trigger_button')}
         size="small"
       >
-        <IconProvider
-          icon="BsBraces"
-          title={formatMessage(messages.placeholdersTriggerButtonLabel)}
-        />
+        <IconProvider icon="BsBraces" title={formatMessage(messages.placeholdersTriggerButtonLabel)} />
       </IconButton>
       <Menu
         id="long-menu"

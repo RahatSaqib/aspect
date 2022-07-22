@@ -7,12 +7,7 @@ const { knex } = require('../../src/db')
 
 const config = require('../../src/config')
 const server = require('../utils/testUtils')
-const {
-  dispatchAndWaitForAction,
-  waitForIdle,
-  createMessageContext,
-  updateSubscription,
-} = require('../utils/mqUtils')
+const { dispatchAndWaitForAction, waitForIdle, createMessageContext, updateSubscription } = require('../utils/mqUtils')
 const { resultLogged } = require('../../src/result/actions')
 const { issueCreated } = require('../../src/issue/actions')
 const {
@@ -24,23 +19,15 @@ const {
 
 const { assert } = chai
 
-const {
-  filterConditionWithAssay,
-  filterConditionWithJf,
-  baseFilterCondition,
-} = require('./fitlerCondtions')
+const { filterConditionWithAssay, filterConditionWithJf, baseFilterCondition } = require('./fitlerCondtions')
 
 describe('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const resultSample = await knex('Result').first()
-    const messageTypes = await knex('MessageType')
-      .whereNotNull('smsTemplateId')
-      .select()
+    const messageTypes = await knex('MessageType').whereNotNull('smsTemplateId').select()
 
-    const notificationTypeCategoryId = await notificationTypeCategoryToId(
-      'issueBased'
-    )
+    const notificationTypeCategoryId = await notificationTypeCategoryToId('issueBased')
     const issueTypes = await knex('IssueType')
       .where({ externalId: 'HardwareCartridgeIntegrityTestFailure' })
       .pluck('id')
@@ -73,20 +60,14 @@ describe('Issue based Notifications triggers', () => {
   after(async () => {
     await knex('Notification').where('issueId', insertedIssueId).delete()
     await knex('Issue').where({ id: insertedIssueId }).delete()
-    await knex('NotificationType')
-      .where({ name: 'Random issue based notification' })
-      .delete()
+    await knex('NotificationType').where({ name: 'Random issue based notification' }).delete()
   })
   it('should create a issue based notification without special filter conditions', async () => {
-    let notifications = await knex('Notification')
-      .where({ issueId: insertedIssueId })
-      .select()
+    let notifications = await knex('Notification').where({ issueId: insertedIssueId }).select()
     assert.equal(notifications.length, 0)
     await dispatchAndWaitForAction(issueCreated(insertedIssueId))
     await waitForIdle(1000)
-    notifications = await knex('Notification')
-      .where({ issueId: insertedIssueId })
-      .select()
+    notifications = await knex('Notification').where({ issueId: insertedIssueId }).select()
     assert.equal(notifications.length, 1)
   })
 })
@@ -104,9 +85,7 @@ describe('Result Notifications triggers', () => {
       .whereNotNull('emailTemplateId')
       .select()
 
-    const notificationTypeCategoryId = await notificationTypeCategoryToId(
-      'resultBased'
-    )
+    const notificationTypeCategoryId = await notificationTypeCategoryToId('resultBased')
 
     ;[ntId] = await knex('NotificationType').insert({
       partnerId: 1,
@@ -122,15 +101,13 @@ describe('Result Notifications triggers', () => {
     await updateSubscription('notification')
   }
   const removeTestContext = async () => {
-    await Promise.each(
-      ['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'],
-      table =>
-        knex(table)
-          .whereIn(
-            'resultId',
-            _.map(results, r => r.id)
-          )
-          .delete()
+    await Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'], table =>
+      knex(table)
+        .whereIn(
+          'resultId',
+          _.map(results, r => r.id)
+        )
+        .delete()
     )
     await knex('Notification')
       .whereIn(
@@ -151,32 +128,18 @@ describe('Result Notifications triggers', () => {
       .join('Geography as g', 'r.geographyId', 'g.id')
       .join('Lga as l', 'g.lgaId', 'l.id')
       .where({ partnerId: 1 })
-      .whereNotExists(
-        knex('Notification as n').whereRaw('n.resultId = r.id').select()
-      )
+      .whereNotExists(knex('Notification as n').whereRaw('n.resultId = r.id').select())
       .distinct('r.*', 'l.name as lgaName')
     assert.isAtLeast(results.length, 1)
     const result = _.sample(_.filter(results, elem => elem.lgaName === 'Wayne'))
     ;[insertedResultDetected] = await knex('Result').insert({
-      ..._.omit(result, [
-        'id',
-        'resultCategory1',
-        'lgaName',
-        'externalId',
-        'endedOn',
-      ]),
+      ..._.omit(result, ['id', 'resultCategory1', 'lgaName', 'externalId', 'endedOn']),
       resultCategory1,
       externalId: 'MytestsResultID',
       endedOn: new Date(),
     })
     ;[insertedResultUnknow] = await knex('Result').insert({
-      ..._.omit(result, [
-        'id',
-        'resultCategory1',
-        'lgaName',
-        'externalId',
-        'endedOn',
-      ]),
+      ..._.omit(result, ['id', 'resultCategory1', 'lgaName', 'externalId', 'endedOn']),
       resultCategory1: await resultCategoryToId('Unknown'),
       externalId: 'MytestsResultID2',
       endedOn: new Date(),
@@ -198,32 +161,15 @@ describe('Result Notifications triggers', () => {
   })
   after(async () => {
     const resultsId = await knex('Result')
-      .whereIn('externalId', [
-        'MytestsResultID',
-        'MytestsResultID2',
-        'MytestsResultID3',
-        'MyPatienttestsResultID',
-      ])
+      .whereIn('externalId', ['MytestsResultID', 'MytestsResultID2', 'MytestsResultID3', 'MyPatienttestsResultID'])
       .pluck('id')
-    await Promise.each(
-      ['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'],
-      table =>
-        knex(table)
-          .whereIn('resultId', [
-            insertedResultDetected,
-            insertedResultUnknow,
-            notWayneResult,
-            ...resultsId,
-          ])
-          .delete()
+    await Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'], table =>
+      knex(table)
+        .whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult, ...resultsId])
+        .delete()
     )
     await knex('Result')
-      .whereIn('id', [
-        insertedResultDetected,
-        insertedResultUnknow,
-        notWayneResult,
-        ...resultsId,
-      ])
+      .whereIn('id', [insertedResultDetected, insertedResultUnknow, notWayneResult, ...resultsId])
 
       .delete()
   })
@@ -232,9 +178,7 @@ describe('Result Notifications triggers', () => {
     after(removeTestContext)
     describe('Filter for wayne country and Detected result', () => {
       it('should NOT create a result based notification for particular lga BUT with unapproved Device', async () => {
-        let notifications = await knex('Notification')
-          .whereIn('resultId', [insertedResultDetected])
-          .distinct()
+        let notifications = await knex('Notification').whereIn('resultId', [insertedResultDetected]).distinct()
         const qtyOfNotifications = notifications.length
         assert.isAtLeast(notifications.length, 0)
         const device = await knex('Device as d')
@@ -249,9 +193,7 @@ describe('Result Notifications triggers', () => {
 
         messageContext.dispatch(resultLogged(insertedResultDetected, 1, 1))
         await waitForIdle(1000)
-        notifications = await knex('Notification')
-          .whereIn('resultId', [insertedResultDetected])
-          .distinct()
+        notifications = await knex('Notification').whereIn('resultId', [insertedResultDetected]).distinct()
         assert.equal(qtyOfNotifications, notifications.length)
         await knex('Device')
           .update({
@@ -264,9 +206,7 @@ describe('Result Notifications triggers', () => {
       it('should NOT create a result based notification for particular lga', async () => {
         messageContext.dispatch(resultLogged(insertedResultDetected, 1, 1))
         await waitForIdle(2000)
-        const notifications = await knex('Notification')
-          .whereIn('resultId', [insertedResultDetected])
-          .distinct()
+        const notifications = await knex('Notification').whereIn('resultId', [insertedResultDetected]).distinct()
         assert.isAtLeast(notifications.length, 0)
       })
     })
@@ -276,9 +216,7 @@ describe('Result Notifications triggers', () => {
       messageContext.dispatch(resultLogged(resultId, 1, 1))
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId })
-        .select()
+      const notifications = await knex('Notification').where({ resultId }).select()
       assert.isEmpty(notifications)
     })
     it('should NOT create a result based notification for a different LGA than wayne', async () => {
@@ -286,26 +224,18 @@ describe('Result Notifications triggers', () => {
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId })
-        .select()
+      const notifications = await knex('Notification').where({ resultId }).select()
       assert.isEmpty(notifications)
     })
     it('should NOT create a result based notification because the endedon is older than 30 days', async () => {
       const sampleResult = _.sample(
-        _.filter(
-          results,
-          elem =>
-            elem.lgaName === 'Wayne' && elem.resultCategory1 === resultCategory1
-        )
+        _.filter(results, elem => elem.lgaName === 'Wayne' && elem.resultCategory1 === resultCategory1)
       )
       assert.isNotNaN(sampleResult)
       assert.isTrue(sampleResult.endedOn < subDays(new Date(), 30))
       await dispatchAndWaitForAction(resultLogged(sampleResult.id, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId: sampleResult.id })
-        .select()
+      const notifications = await knex('Notification').where({ resultId: sampleResult.id }).select()
       assert.isEmpty(notifications)
     })
   })
@@ -316,27 +246,17 @@ describe('Result Notifications triggers', () => {
     after(async () => {
       await removeTestContext()
       await knex('PersonTag').where('TagId', '>=', inserted).delete()
-      await knex('Tag')
-        .whereIn('title', ['oneTag', 'secondTag', 'thirdTag'])
-        .delete()
+      await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
     })
     afterEach(async () =>
-      knex('Notification')
-        .whereIn('resultId', [
-          insertedResultDetected,
-          insertedResultUnknow,
-          notWayneResult,
-        ])
-        .delete()
+      knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
     )
     it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId, notificationTypeId: ntId })
-        .distinct()
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).distinct()
       assert.equal(notifications.length, 1)
     })
 
@@ -346,14 +266,10 @@ describe('Result Notifications triggers', () => {
         { partnerId: 1, title: 'secondTag' },
         { partnerId: 1, title: 'thirdTag' },
       ])
-      const notificationTypeCategoryId = await notificationTypeCategoryToId(
-        'resultBased'
-      )
+      const notificationTypeCategoryId = await notificationTypeCategoryToId('resultBased')
       const resultId = insertedResultDetected
       messageContext.dispatch(resultLogged(resultId, 1, 1))
-      let notifications = await knex('Notification')
-        .where({ resultId })
-        .distinct()
+      let notifications = await knex('Notification').where({ resultId }).distinct()
       assert.equal(notifications.length, 0)
       await knex('NotificationType')
         .update({
@@ -399,20 +315,12 @@ describe('Result Notifications triggers', () => {
     let managerId
 
     beforeEach(async () => {
-      ;[adminId] = await knex('Person')
-        .where({ email: config.admin.email })
-        .pluck('id')
+      ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
 
-      const [managerJobFunctionId] = await knex('JobFunction')
-        .where({ externalId: 'manager' })
-        .pluck('id')
-      ;[managerId] = await knex('Person')
-        .where({ email: config.manager.email })
-        .pluck('id')
+      const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
+      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
 
-      const [adminJobFunctionId] = await knex('JobFunction')
-        .where({ externalId: 'admin' })
-        .pluck('id')
+      const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
       // Notify to the person called "Admin" - Send notification
       // Notify to a person assigned to the job function "Manager" - Send notification
@@ -421,10 +329,7 @@ describe('Result Notifications triggers', () => {
       const filterConditions = {
         ...filterConditionWithAssay,
         persons: [{ personId: `${adminId}` }],
-        jobFunctions: [
-          { jobFunctionId: `${managerJobFunctionId}` },
-          { jobFunctionId: `${adminJobFunctionId}` },
-        ],
+        jobFunctions: [{ jobFunctionId: `${managerJobFunctionId}` }, { jobFunctionId: `${adminJobFunctionId}` }],
       }
       await createTestContext(filterConditions)
     })
@@ -435,16 +340,10 @@ describe('Result Notifications triggers', () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId, notificationTypeId: ntId })
-        .distinct()
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).distinct()
 
-      const notificationToPerson = notifications.filter(
-        n => n.personId === adminId
-      )
-      const notificationToJobFunction = notifications.filter(
-        n => n.personId === managerId
-      )
+      const notificationToPerson = notifications.filter(n => n.personId === adminId)
+      const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
       assert.isNotEmpty(notificationToPerson)
       assert.isNotEmpty(notificationToJobFunction)
       assert.equal(notifications.length, 2)
@@ -464,22 +363,8 @@ describe('Result Notifications triggers', () => {
     )
     after(async () => removeTestContext())
     afterEach(async () =>
-      Promise.each(
-        [
-          'EmailMessage',
-          'SmsMessage',
-          'AlertMessage',
-          'WebhookMessage',
-          'Notification',
-        ],
-        table =>
-          knex(table)
-            .whereIn('resultId', [
-              insertedResultDetected,
-              insertedResultUnknow,
-              notWayneResult,
-            ])
-            .delete()
+      Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'WebhookMessage', 'Notification'], table =>
+        knex(table).whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
       )
     )
     it('Should create a result based notification', async () => {
@@ -487,23 +372,17 @@ describe('Result Notifications triggers', () => {
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId, notificationTypeId: ntId })
-        .distinct()
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).distinct()
       assert.equal(notifications.length, 1)
     })
 
     it('Should not create a disabled result based notification', async () => {
-      await knex('NotificationType')
-        .where({ id: ntId })
-        .update({ enabled: false })
+      await knex('NotificationType').where({ id: ntId }).update({ enabled: false })
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId, notificationTypeId: ntId })
-        .distinct()
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).distinct()
       assert.equal(notifications.length, 0)
     })
   })
@@ -514,26 +393,15 @@ describe('Result Notifications triggers', () => {
         .join('Geography as g', 'r.geographyId', 'g.id')
         .join('Lga as l', 'g.lgaId', 'l.id')
         .where({ partnerId: 1 })
-        .whereNotExists(
-          knex('Notification as n').whereRaw('n.resultId = r.id').select()
-        )
+        .whereNotExists(knex('Notification as n').whereRaw('n.resultId = r.id').select())
         .distinct('r.*', 'l.name as lgaName')
       assert.isAtLeast(results.length, 1)
-      const result = _.sample(
-        _.filter(results, elem => elem.lgaName === 'Wayne')
-      )
+      const result = _.sample(_.filter(results, elem => elem.lgaName === 'Wayne'))
       const patientData = JSON.parse(result.patientData)
       patientData.phone = config.admin.cell
       patientData.email = config.admin.email
       await knex('Result').insert({
-        ..._.omit(result, [
-          'id',
-          'resultCategory1',
-          'lgaName',
-          'externalId',
-          'endedOn',
-          'patientData',
-        ]),
+        ..._.omit(result, ['id', 'resultCategory1', 'lgaName', 'externalId', 'endedOn', 'patientData']),
         resultCategory1,
         patientData: JSON.stringify(patientData),
         externalId: 'MyPatienttestsResultID',
@@ -552,14 +420,10 @@ describe('Result Notifications triggers', () => {
     afterEach(removeTestContext)
 
     it('sms and email to a non-person contact', async () => {
-      const { id: resultId } = await knex('Result')
-        .where('externalId', 'MyPatienttestsResultID')
-        .first()
+      const { id: resultId } = await knex('Result').where('externalId', 'MyPatienttestsResultID').first()
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(1000)
-      const notifications = await knex('Notification')
-        .where({ resultId, notificationTypeId: ntId })
-        .distinct()
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).distinct()
       assert.equal(notifications.length, 1)
       const [notification] = notifications
       assert.isNotNull(notification.emailTemplateId)
@@ -584,9 +448,7 @@ describe('Notification routes', () => {
       name: 'A notification',
       createdOn: new Date(),
       updatedOn: new Date(),
-      notificationTypeCategoryId: await notificationTypeCategoryToId(
-        'resultBased'
-      ),
+      notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
       filterCondition: JSON.stringify({
         persons: [{ personId: `${personId}`, checked: true }],
       }),
@@ -625,9 +487,7 @@ describe('Notification routes', () => {
   afterEach(async () => knex('NotificationType').where('id', ntId).del())
 
   it('GET - With filterConditions', async () => {
-    const res = await server
-      .get(path)
-      .set('Authorization', `Bearer ${shared.token}`)
+    const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
@@ -650,30 +510,22 @@ describe('Notification routes', () => {
   })
 
   it('GET - With jobFunctionId', async () => {
-    await knex('NotificationType')
-      .where({ id: ntId })
-      .update({ filterCondition: null, jobFunctionId: 1 })
+    await knex('NotificationType').where({ id: ntId }).update({ filterCondition: null, jobFunctionId: 1 })
 
-    const res = await server
-      .get(path)
-      .set('Authorization', `Bearer ${shared.token}`)
+    const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
     assert.property(res.body, 'data')
     assert.typeOf(res.body.data, 'array')
     assert.isAtLeast(res.body.data.length, 1)
-    const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(
-      n => n.id === ntId
-    )
+    const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(n => n.id === ntId)
     assert.equal(jobFunctions, 'Admin')
     assert.equal(jobFunctionsCount, 1)
   })
 
   it('GET /id', async () => {
-    const res = await server
-      .get(`${path}/${ntId}`)
-      .set('Authorization', `Bearer ${shared.token}`)
+    const res = await server.get(`${path}/${ntId}`).set('Authorization', `Bearer ${shared.token}`)
 
     assert.typeOf(res.body, 'Object')
     assert.property(res.body, 'data')
@@ -711,10 +563,7 @@ describe('Notification routes', () => {
       })
 
     assert.equal(res.status, 400)
-    assert.equal(
-      res.body.message,
-      'Attempt to set unexisting person to notification'
-    )
+    assert.equal(res.body.message, 'Attempt to set unexisting person to notification')
   })
 
   it('PUT - Unexisting job function, should return error 400', async () => {
@@ -732,10 +581,7 @@ describe('Notification routes', () => {
       })
 
     assert.equal(res.status, 400)
-    assert.equal(
-      res.body.message,
-      'Attempt to set unexisting job function to notification'
-    )
+    assert.equal(res.body.message, 'Attempt to set unexisting job function to notification')
   })
 
   it('PUT - Existing person but without assigned job, should return error 400', async () => {
@@ -757,23 +603,15 @@ describe('Notification routes', () => {
       })
 
     assert.equal(res.status, 400)
-    assert.equal(
-      res.body.message,
-      'Attempt to set to notifications persons without assigned jobs'
-    )
+    assert.equal(res.body.message, 'Attempt to set to notifications persons without assigned jobs')
   })
 
   it('PUT - Correct payload, filterCondition should be updated properly', async () => {
-    const res = await server
-      .put(`${path}/${ntId}`)
-      .set('Authorization', `Bearer ${shared.token}`)
-      .send(basePayload)
+    const res = await server.put(`${path}/${ntId}`).set('Authorization', `Bearer ${shared.token}`).send(basePayload)
 
     assert.equal(res.status, 200)
 
-    const { filterCondition } = await knex('NotificationType')
-      .where({ id: ntId })
-      .first()
+    const { filterCondition } = await knex('NotificationType').where({ id: ntId }).first()
     assert.deepEqual(JSON.parse(filterCondition), {
       persons: [
         {
@@ -813,9 +651,7 @@ describe('Notification - View Logs', () => {
   const partnerId = 1
   beforeEach(async () => {
     const messageType = await knex('MessageType').select().first()
-    const { id: messageStatusId } = await knex('MessageStatus')
-      .where('externalId', 'Sent')
-      .first()
+    const { id: messageStatusId } = await knex('MessageStatus').where('externalId', 'Sent').first()
     ;[{ id: resultId }] = [await knex('Result').where({ partnerId }).first()]
     const { id: emailTemplateId } = await knex('EmailTemplate').first()
 
@@ -833,9 +669,7 @@ describe('Notification - View Logs', () => {
       name: 'A notification',
       createdOn: now,
       updatedOn: now,
-      notificationTypeCategoryId: await notificationTypeCategoryToId(
-        'resultBased'
-      ),
+      notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
       messageTypeId: messageType.id,
     })
     ;[notificationId] = await knex('Notification').insert({
@@ -857,9 +691,7 @@ describe('Notification - View Logs', () => {
 
   it('GET - notification logs', async () => {
     const path = `/api/notification/history/${notificationTypeId}`
-    const res = await server
-      .get(path)
-      .set('Authorization', `Bearer ${shared.token}`)
+    const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
     assert.equal(res.status, 200)
     assert.typeOf(res.body, 'Object')
     assert.property(res.body, 'data')

@@ -33,9 +33,7 @@ async function seed(knex) {
     partnerData
   )
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerData.partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerData.partnerName }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgets)
 }

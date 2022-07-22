@@ -15,14 +15,8 @@ const WidgetAlert = ({ alert }) => {
   const { formatMessage } = useIntl()
   const explanation = format(formatMessage, alert)
   return (
-    <AspectTooltip
-      title={explanation}
-      className={cssClasses('summary_widgetAlertTooltip')}
-    >
-      <IconProvider
-        icon="FaExclamationCircle"
-        className={cssClasses('summary_widgetAlertIcon')}
-      />
+    <AspectTooltip title={explanation} className={cssClasses('summary_widgetAlertTooltip')}>
+      <IconProvider icon="FaExclamationCircle" className={cssClasses('summary_widgetAlertIcon')} />
     </AspectTooltip>
   )
 }

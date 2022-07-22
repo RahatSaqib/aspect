@@ -31,9 +31,7 @@ const Welcome = () => {
         <Typography variant="h4" sx={{ mb: 2 }}>
           {formatMessage(messages.welcome)}
         </Typography>
-        <Typography variant="subtitle1">
-          {formatMessage(messages.setupNeeded)}
-        </Typography>
+        <Typography variant="subtitle1">{formatMessage(messages.setupNeeded)}</Typography>
       </Paper>
     </Box>
   )

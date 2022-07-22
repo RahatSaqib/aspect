@@ -20,13 +20,7 @@ const EMPTY_MAP = Immutable.Map()
 const enhance = identity
 
 const format = (type, intl) =>
-  type === 'number'
-    ? intl.formatNumber
-    : type === 'date'
-    ? formatDate
-    : type === 'time'
-    ? formatDateTime
-    : null
+  type === 'number' ? intl.formatNumber : type === 'date' ? formatDate : type === 'time' ? formatDateTime : null
 
 const makeLink = (template, data) => {
   try {
@@ -56,9 +50,7 @@ export const DetailGroup = compose(
         .filter(value => value && value.get('type') !== 'object')
         .sortBy(value => value.get('order'))
         .map(row =>
-          row
-            .set('row', defaultRow + (Math.floor(row.get('order') / 3) || 0))
-            .set('order', row.get('order') || 0)
+          row.set('row', defaultRow + (Math.floor(row.get('order') / 3) || 0)).set('order', row.get('order') || 0)
         )
       groupSchema = groupSchema.mergeDeepIn(['detail', 'rows'], schema)
     }
@@ -123,9 +115,7 @@ export const DetailGroup = compose(
           .toJSON()}
       />
     </AccordionHeader>
-    {groupSchema
-      .getIn(['detail', 'rows'], EMPTY_MAP)
-      .filter(it => it.get('row') > 0).size > 0 && (
+    {groupSchema.getIn(['detail', 'rows'], EMPTY_MAP).filter(it => it.get('row') > 0).size > 0 && (
       <AccordionDetail>
         {groupSchema
           .getIn(['detail', 'rows'], EMPTY_MAP)
@@ -148,25 +138,13 @@ export const DetailGroup = compose(
               },
             }))
           )
-          .map(fields => (
-            <ReadOnlyFields
-              className={cssClasses('Field__Container')}
-              fields={fields}
-            />
-          ))
+          .map(fields => <ReadOnlyFields className={cssClasses('Field__Container')} fields={fields} />)
           .toJSON()}
       </AccordionDetail>
     )}
   </Accordion>
 ))
-export const DetailPanel = ({
-  intl,
-  data,
-  schema,
-  renderRightTitle,
-  titleSection,
-  ...restProps
-}) => (
+export const DetailPanel = ({ intl, data, schema, renderRightTitle, titleSection, ...restProps }) => (
   <Card {...restProps}>
     <CardTitle
       title={schema.get('title')}
@@ -182,13 +160,7 @@ export const DetailPanel = ({
       .sortBy(value => value.get('order'))
       .entrySeq()
       .map(([key, groupSchema]) => (
-        <DetailGroup
-          intl={intl}
-          key={key}
-          groupSchema={groupSchema}
-          rawData={data}
-          data={data.get(key)}
-        />
+        <DetailGroup intl={intl} key={key} groupSchema={groupSchema} rawData={data} data={data.get(key)} />
       ))}
     {restProps.children}
   </Card>

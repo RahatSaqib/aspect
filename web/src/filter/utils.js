@@ -8,11 +8,7 @@ import intersection from 'lodash/intersection'
 import flowRight from 'lodash/flowRight'
 import mapKeys from 'lodash/mapKeys'
 import find from 'lodash/find'
-import {
-  getPermissions,
-  groupByPermissionTypes,
-  isPermittedUser,
-} from '../components/shared/requirePermissions'
+import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../components/shared/requirePermissions'
 import { navigations } from '../globals/components/BrowseFilters'
 
 export function nonEmptyFilterValue(x) {
@@ -40,19 +36,12 @@ export const mergeToFiltersParams = (filters, filtersParams) => {
 }
 
 const groups = {
-  assayAndResultCategory: [
-    'assayId',
-    'resultCategoryId',
-    'resultCategory2Id',
-    'resultCategoryGroupId',
-    'diseaseId',
-  ],
+  assayAndResultCategory: ['assayId', 'resultCategoryId', 'resultCategory2Id', 'resultCategoryGroupId', 'diseaseId'],
   geography: ['countryId', 'stateId', 'lgaId'],
   date: ['minDate', 'maxDate'],
 }
 
-const findFilterConfigByKey = (config, key) =>
-  find(config, configObject => configObject[key])
+const findFilterConfigByKey = (config, key) => find(config, configObject => configObject[key])
 
 const getFilterGroupsContainingKey = filterKey =>
   filter(Object.keys(groups), groupKey => groups[groupKey].includes(filterKey))
@@ -60,11 +49,8 @@ const getFilterGroupsContainingKey = filterKey =>
 const isFilterKeyInGroupedFilter = (filtersConfig, filterKey) => {
   const filterGroupsContainingKey = getFilterGroupsContainingKey(filterKey)
   const anyGroupsSetInFiltersConfig =
-    filter(
-      filterGroupsContainingKey,
-      filterGroupKey =>
-        !isNil(findFilterConfigByKey(filtersConfig, filterGroupKey))
-    ).length > 0
+    filter(filterGroupsContainingKey, filterGroupKey => !isNil(findFilterConfigByKey(filtersConfig, filterGroupKey)))
+      .length > 0
   return anyGroupsSetInFiltersConfig
 }
 
@@ -73,15 +59,12 @@ const defaultSanitizer = ({ a, k, config, dependencies }) => {
   const { value } = a
   const filterGroupsContainingKey = getFilterGroupsContainingKey(k)
 
-  const filterConfigKey = find(filterGroupsContainingKey, groupKey =>
-    findFilterConfigByKey(config, groupKey)
-  )
+  const filterConfigKey = find(filterGroupsContainingKey, groupKey => findFilterConfigByKey(config, groupKey))
 
   if (
     (!filterConfigKey ||
       !config[filterConfigKey] ||
-      (config[filterConfigKey].isEnabled &&
-        !config[filterConfigKey].isEnabled(dependencies))) &&
+      (config[filterConfigKey].isEnabled && !config[filterConfigKey].isEnabled(dependencies))) &&
     nonEmptyFilterValue(value.get(k))
   ) {
     // If there isn't any filter group configured that contains the specified key and the value is set,
@@ -100,9 +83,7 @@ const makeArraySanitizer =
   keys =>
   ({ a, config }) =>
     // Removes from the filters only the keys that weren't configured independently
-    keys
-      .filter(k => !findFilterConfigByKey(config, k))
-      .reduce((a, k) => defaultSanitizer({ a, k, config }), a)
+    keys.filter(k => !findFilterConfigByKey(config, k)).reduce((a, k) => defaultSanitizer({ a, k, config }), a)
 
 const makeKeySanitizer =
   k =>
@@ -153,36 +134,35 @@ const sanitizerByConfigKey = {
   }]
  * @returns the function to sanitize filters, based on the provided configuration
  */
-export const sanitizeFiltersStringBy =
-  config => (filtersString, dependencies) =>
-    reduce(
-      sanitizerByConfigKey,
-      (acc, sanitizer, key) => {
-        const filterConfig = findFilterConfigByKey(config, key)
-        if (
-          // if...
-          // the filter key was not configured...
-          (!filterConfig &&
-            // and it is not included in a group of keys (like assayId is included in assayAndResultCategory)...
-            !isFilterKeyInGroupedFilter(config, key)) ||
-          // or the filter key was configured...
-          (filterConfig &&
-            // and the filter key should be enabled based on the provided dependencies...
-            filterConfig.isEnabled &&
-            dependencies &&
-            !filterConfig.isEnabled(dependencies))
-        ) {
-          // then evaluate the sanitization and return the updated collection of filters
-          return sanitizer({ a: acc, k: key, config, dependencies })
-        }
-
-        return acc
-      },
-      {
-        sanitized: false,
-        value: new URLSearchParams(filtersString),
+export const sanitizeFiltersStringBy = config => (filtersString, dependencies) =>
+  reduce(
+    sanitizerByConfigKey,
+    (acc, sanitizer, key) => {
+      const filterConfig = findFilterConfigByKey(config, key)
+      if (
+        // if...
+        // the filter key was not configured...
+        (!filterConfig &&
+          // and it is not included in a group of keys (like assayId is included in assayAndResultCategory)...
+          !isFilterKeyInGroupedFilter(config, key)) ||
+        // or the filter key was configured...
+        (filterConfig &&
+          // and the filter key should be enabled based on the provided dependencies...
+          filterConfig.isEnabled &&
+          dependencies &&
+          !filterConfig.isEnabled(dependencies))
+      ) {
+        // then evaluate the sanitization and return the updated collection of filters
+        return sanitizer({ a: acc, k: key, config, dependencies })
       }
-    )
+
+      return acc
+    },
+    {
+      sanitized: false,
+      value: new URLSearchParams(filtersString),
+    }
+  )
 
 const sanitizeBrowseLink = userPermissions => {
   const permissions = []
@@ -196,10 +176,7 @@ const sanitizeBrowseLink = userPermissions => {
     }
   })
 
-  const source = filter(
-    navigations,
-    link => intersection(link.requiredPermissions, permissions).length >= 1
-  )
+  const source = filter(navigations, link => intersection(link.requiredPermissions, permissions).length >= 1)
   return source.length >= 1 ? source[0] : false
 }
 
@@ -207,10 +184,7 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
   const reducedNav = reduce(
     linkArray,
     (result, source) => {
-      const permissionsByTypes = flowRight([
-        groupByPermissionTypes,
-        getPermissions,
-      ])(source.requiredPermissions, [], [])
+      const permissionsByTypes = flowRight([groupByPermissionTypes, getPermissions])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
 
@@ -244,18 +218,11 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
   return reducedNav
 }
 
-export const reduceFiltersConfig = (
-  configObject,
-  userPermissions,
-  dependencies
-) => {
+export const reduceFiltersConfig = (configObject, userPermissions, dependencies) => {
   const reducedFilters = reduce(
     configObject,
     (result, source) => {
-      const permissionsByTypes = flowRight([
-        groupByPermissionTypes,
-        getPermissions,
-      ])(source.requiredPermissions, [], [])
+      const permissionsByTypes = flowRight([groupByPermissionTypes, getPermissions])(source.requiredPermissions, [], [])
 
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
       const isEnabled = !source.isEnabled || source.isEnabled(dependencies)
@@ -394,9 +361,7 @@ export const reduceFiltersConfig = (
 }
 
 export const isCountryFilterHidden = countries =>
-  countries.loading === false &&
-  !!countries.lastRefreshed &&
-  countries.items.size === 1
+  countries.loading === false && !!countries.lastRefreshed && countries.items.size === 1
 
 export const getFilters = urlSearchParams => {
   const filters = {}
