@@ -16,6 +16,10 @@ export const messages = {
       id: 'pages.DeviceList.device',
       defaultMessage: 'Device',
     },
+    site: {
+      id: 'pages.DeviceList.site',
+      defaultMessage: 'Site',
+    },
     status: {
       id: 'pages.DeviceList.status',
       defaultMessage: 'Status',

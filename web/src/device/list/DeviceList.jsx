@@ -71,6 +71,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
+    'siteName',
     'statusI18nKey',
     'availabilityRate',
     'errorRate',
@@ -91,6 +92,12 @@ const getColumns = intl => [
     key: 'name',
     label: intl.formatMessage(messages.device),
     sortable: true,
+  },
+  {
+    key: 'siteName',
+    label: intl.formatMessage(messages.site),
+    sortable: true,
+    hiddenOn: 'lg',
   },
   {
     key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly

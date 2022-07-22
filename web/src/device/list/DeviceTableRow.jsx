@@ -31,6 +31,7 @@ const Rate = ({ intl, it, messageId, threshold }) => (
 const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses('TableRow', restProps.className)}>
     <TableCell>{device.get('name')}</TableCell>
+    <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
     <TableCell>{intl.formatMessage(messages[device.get('statusI18nKey')])}</TableCell>
     <TableCell>
       <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
