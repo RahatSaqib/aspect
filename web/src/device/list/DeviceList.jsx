@@ -135,11 +135,13 @@ const getColumns = intl => [
     key: 'resultCountLastMonth',
     sortable: true,
     label: intl.formatMessage(messages.lastMonth),
+    hiddenOn: 'lg',
   },
   {
     key: 'resultCountThisMonth',
     sortable: true,
     label: intl.formatMessage(messages.thisMonth),
+    hiddenOn: 'lg',
   },
 ]
 

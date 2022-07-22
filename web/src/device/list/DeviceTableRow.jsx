@@ -61,8 +61,12 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     </TableCell>
     <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
     <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('resultCountLastMonth'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('resultCountThisMonth'))}</TableCell>
+    <TableCell hiddenOn="lg" numeric>
+      {intl.formatNumber(device.get('resultCountLastMonth'))}
+    </TableCell>
+    <TableCell hiddenOn="lg" numeric>
+      {intl.formatNumber(device.get('resultCountThisMonth'))}
+    </TableCell>
   </TableRow>
 )
 
